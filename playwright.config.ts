@@ -21,7 +21,15 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        // CI runners have no GPU, and headless Firefox then turns WebGL off; this makes it use
+        // its software renderer instead. Desktop Firefox with a graphics card needs nothing.
+        launchOptions: { firefoxUserPrefs: { 'webgl.force-enabled': true } },
+      },
+    },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   ...(published === undefined

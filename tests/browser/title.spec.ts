@@ -31,20 +31,33 @@ async function openTitle(page: Page): Promise<string> {
   return build;
 }
 
-const SIZES = [
-  { label: 'exact fit at 2x', width: 1280, height: 720 },
-  { label: 'letterboxed at 2x', width: 1500, height: 900 },
-  { label: 'letterboxed at 1x', width: 900, height: 500 },
-] as const;
+/** CSS viewport sizes; `ratio` forces a device pixel ratio (a Retina-class screen). */
+const SIZES: readonly { width: number; height: number; ratio?: number }[] = [
+  { width: 1280, height: 720 },
+  { width: 1500, height: 900 },
+  { width: 900, height: 500 },
+  { width: 1000, height: 600, ratio: 2 },
+];
 
 for (const size of SIZES) {
-  test(`title screen matches the composed frame, ${size.label}`, async ({ page }) => {
-    await page.setViewportSize({ width: size.width, height: size.height });
-    const build = await openTitle(page);
+  const label = `${size.width} x ${size.height}${size.ratio === undefined ? '' : ` at pixel ratio ${size.ratio}`}`;
+  test(`title screen matches the composed frame at ${label}`, async ({ page, browser }, info) => {
+    let target = page;
+    if (size.ratio !== undefined) {
+      const context = await browser.newContext({
+        viewport: { width: size.width, height: size.height },
+        deviceScaleFactor: size.ratio,
+        baseURL: info.project.use.baseURL ?? '',
+      });
+      target = await context.newPage();
+    } else {
+      await page.setViewportSize({ width: size.width, height: size.height });
+    }
+    const build = await openTitle(target);
 
     const name = formatString(strings, 'ui.title.name');
-    await expect(page).toHaveTitle(name);
-    await expect(page.locator('canvas#screen')).toHaveAttribute(
+    await expect(target).toHaveTitle(name);
+    await expect(target.locator('canvas#screen')).toHaveAttribute(
       'aria-label',
       formatString(strings, 'ui.title.screen_label', { build }),
     );
@@ -59,10 +72,16 @@ for (const size of SIZES) {
     const letterbox = art.palette.entries[paletteIndex(art.palette, art.layout.letterbox)]?.rgb;
     if (letterbox === undefined) throw new Error('letterbox colour missing');
 
-    const shot = decodePng(await page.screenshot());
+    // Screenshots are in device pixels: CSS size times the page's pixel ratio.
+    const ratio = await target.evaluate(() => window.devicePixelRatio);
+    const shot = decodePng(await target.screenshot());
+    expect([shot.width, shot.height]).toEqual([
+      Math.round(size.width * ratio),
+      Math.round(size.height * ratio),
+    ]);
     const vp = computeViewport(shot.width, shot.height);
     expect(vp.scale).toBe(
-      Math.min(Math.floor(size.width / LOGICAL_WIDTH), Math.floor(size.height / LOGICAL_HEIGHT)),
+      Math.min(Math.floor(shot.width / LOGICAL_WIDTH), Math.floor(shot.height / LOGICAL_HEIGHT)),
     );
 
     let mismatched = 0;

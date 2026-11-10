@@ -17,41 +17,61 @@ export interface BootElements {
   readonly notice: HTMLElement;
 }
 
+/**
+ * The canvas size in device pixels: CSS size times the pixel ratio, or the browser's exact
+ * device-pixel size when it reports one that agrees (it avoids a rounding error of one pixel).
+ * Some browsers, including emulated and headless ones, report CSS pixels as "device pixels";
+ * trusting those would let the browser stretch the canvas and blur the art.
+ */
+export function deviceSize(
+  cssWidth: number,
+  cssHeight: number,
+  pixelRatio: number,
+  exact?: { readonly inlineSize: number; readonly blockSize: number },
+): { width: number; height: number } {
+  const width = Math.round(cssWidth * pixelRatio);
+  const height = Math.round(cssHeight * pixelRatio);
+  if (
+    exact !== undefined &&
+    Math.abs(exact.inlineSize - width) <= 1 &&
+    Math.abs(exact.blockSize - height) <= 1
+  ) {
+    return { width: exact.inlineSize, height: exact.blockSize };
+  }
+  return { width, height };
+}
+
 /** Measures the canvas in device pixels and keeps the presenter sized to it. */
 function trackSize(canvas: HTMLCanvasElement, presenter: Presenter): void {
-  const fallback = (): void => {
+  const measure = (exact?: ResizeObserverSize): void => {
     const rect = canvas.getBoundingClientRect();
-    presenter.resize(
-      Math.round(rect.width * window.devicePixelRatio),
-      Math.round(rect.height * window.devicePixelRatio),
-    );
+    const size = deviceSize(rect.width, rect.height, window.devicePixelRatio, exact);
+    presenter.resize(size.width, size.height);
   };
   const observer = new ResizeObserver((entries) => {
     // Safari's entries have no devicePixelContentBoxSize at all.
     const sizes: readonly ResizeObserverSize[] | undefined = entries[0]?.devicePixelContentBoxSize;
-    const exact = sizes?.[0];
-    if (exact !== undefined) presenter.resize(exact.inlineSize, exact.blockSize);
-    else fallback();
+    measure(sizes?.[0]);
   });
   try {
     // Exact device pixels where supported (Chromium, Firefox).
     observer.observe(canvas, { box: 'device-pixel-content-box' });
   } catch {
-    // Safari: CSS size times pixel ratio, and re-measure when the ratio changes.
     observer.observe(canvas);
-    const watchRatio = (): void => {
-      matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener(
-        'change',
-        () => {
-          fallback();
-          watchRatio();
-        },
-        { once: true },
-      );
-    };
-    watchRatio();
   }
-  fallback();
+  // Re-measure when the pixel ratio changes (browser zoom, or a window moved to another screen).
+  const watchRatio = (): void => {
+    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener(
+      'change',
+      () => {
+        measure();
+        watchRatio();
+      },
+      { once: true },
+    );
+  };
+  watchRatio();
+  measure();
 }
 
 export function boot(elements: BootElements, buildId: string): void {
