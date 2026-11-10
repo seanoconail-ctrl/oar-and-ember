@@ -14,7 +14,7 @@ Made by `npm run capture -- art-pass` (src/tools/art/capture.ts). Compare with
 
 | Clip | Continuous motion |
 |---|---|
-| This capture (41 frames over 6.4 s) | 95.8% |
+| This capture (41 frames over 6.4 s) | 96.0% |
 | Reference: Wreck Strand target | 100.0% |
 | Reference: Wreck Strand target, cloud shadows frozen | 89.2% |
 | Book 7 threshold | 80.0% |

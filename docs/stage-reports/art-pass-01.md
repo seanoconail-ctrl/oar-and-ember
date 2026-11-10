@@ -86,7 +86,7 @@ This pass's checks, from the user's request:
    `docs/art/reference/`).
 2. **CLAUDE.md rule**: PASS.
 3. **Automated checks on every build:**
-   - Moving pixels with the camera still: PASS. 97.7% in the browser test and 95.8% in the
+   - Moving pixels with the camera still: PASS. 97.7% in the browser test and 96.0% in the
      capture, against a threshold of 80%. The reference measures 89.2% with clouds frozen and
      100% with them. With reduced motion at low detail: 71.7%, against a threshold of 50%.
    - A ground shadow under every character, creature and prop: PASS, in art lint and the unit
