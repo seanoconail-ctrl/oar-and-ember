@@ -1,0 +1,96 @@
+{
+  "sheet": "actor_p_steerer_a",
+  "kind": "sprite",
+  "image": "actor_p_steerer_a.png",
+  "width": 32,
+  "height": 40,
+  "pivot": {
+    "x": 16,
+    "y": 39
+  },
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "idle": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    }
+  },
+  "events": {},
+  "placeholder": false,
+  "frames": {
+    "idle/s/0": [
+      0,
+      0
+    ],
+    "idle/s/1": [
+      32,
+      0
+    ],
+    "idle/s/2": [
+      64,
+      0
+    ],
+    "idle/s/3": [
+      96,
+      0
+    ],
+    "idle/n/0": [
+      0,
+      40
+    ],
+    "idle/n/1": [
+      32,
+      40
+    ],
+    "idle/n/2": [
+      64,
+      40
+    ],
+    "idle/n/3": [
+      96,
+      40
+    ],
+    "idle/e/0": [
+      0,
+      80
+    ],
+    "idle/e/1": [
+      32,
+      80
+    ],
+    "idle/e/2": [
+      64,
+      80
+    ],
+    "idle/e/3": [
+      96,
+      80
+    ],
+    "idle/w/0": [
+      0,
+      120
+    ],
+    "idle/w/1": [
+      32,
+      120
+    ],
+    "idle/w/2": [
+      64,
+      120
+    ],
+    "idle/w/3": [
+      96,
+      120
+    ]
+  }
+}

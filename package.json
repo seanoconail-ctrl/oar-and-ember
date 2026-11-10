@@ -14,12 +14,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "playwright test",
-    "lint": "eslint . && prettier --check . && node src/tools/content/lint.ts",
+    "lint": "eslint . && prettier --check . && node src/tools/content/lint.ts && node src/tools/art/lint.ts",
     "format": "prettier --write .",
-    "art:check": "node src/tools/art/render-title-check.ts",
+    "art:check": "node src/tools/art/render-title-check.ts && node src/tools/art/render-check.ts",
     "content:lint": "node src/tools/content/lint.ts",
     "balance": "node src/tools/content/generate-balance.ts",
-    "golden": "node src/tools/saves/golden.ts"
+    "golden": "node src/tools/saves/golden.ts",
+    "art:sheets": "node src/tools/art/generate-sheets.ts",
+    "art:compile": "node src/tools/art/compile.ts",
+    "art:lint": "node src/tools/art/lint.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

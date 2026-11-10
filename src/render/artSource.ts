@@ -48,7 +48,8 @@ export class ArtSourceError extends Error {
 }
 
 const HEADER = /^([a-zA-Z][\w.-]*):\s*(.*)$/;
-const BLOCK_OPEN = /^([a-z]+)\s+(\S)$/;
+/** "<kind> <name>": a font glyph ("glyph O") or a sprite frame ("frame idle s 0"). */
+const BLOCK_OPEN = /^(glyph|frame)\s+(\S(?:.*\S)?)$/;
 
 export function parseArtSource(text: string, file: string): ArtSource {
   const header = new Map<string, HeaderValue>();

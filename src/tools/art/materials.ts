@@ -1,0 +1,172 @@
+/**
+ * The material-map generator (Book 7 section 11 allows deterministic generator scripts committed
+ * with their output). A map draws each base pose with one letter per material (hair, skin, tunic,
+ * cloak...) and lowercase marks for fixed details (eyes). The generator writes the palette-coded
+ * sheet that the art compiler reads:
+ *
+ * - a one-pixel ink outline around the figure;
+ * - three-tone shading lit from the upper left: an edge facing up or left takes the material's
+ *   highlight, an edge facing down or right its shadow, and a material just below another takes a
+ *   cast shadow;
+ * - animation frames built from the base pose (`bob.<state>`: per-frame vertical offsets for the
+ *   rows above a line, the idle breath);
+ * - mirrored facings (`mirror.w: e`), shaded after mirroring so the light still comes from the
+ *   upper left.
+ *
+ * Map headers, in addition to the sheet headers they pass through:
+ *   material.T: o r t        highlight, base, shadow palette codes for material letter T
+ *   mark.e: k                a fixed palette code for mark letter e
+ *   outline: k 4             outline code and neighbourhood (4 or 8)
+ *   bob.idle: 0 1 1 0 above 27
+ *   mirror.w: e
+ */
+import { ArtSourceError, parseArtSource, requireHeader } from '../../render/artSource.ts';
+
+const PASS_THROUGH = [
+  'sheet',
+  'kind',
+  'palette',
+  'size',
+  'pivot',
+  'footprint',
+  'facings',
+  'placeholder',
+  'reserved',
+];
+
+type Grid = string[][];
+
+function shade(
+  map: Grid,
+  materials: Map<string, [string, string, string]>,
+  marks: Map<string, string>,
+  outline: { code: string; n: 4 | 8 },
+): string[] {
+  const h = map.length;
+  const w = map[0]?.length ?? 0;
+  const at = (x: number, y: number): string =>
+    x < 0 || y < 0 || x >= w || y >= h ? '.' : (map[y]?.[x] ?? '.');
+  const body = (x: number, y: number): boolean => at(x, y) !== '.';
+  const rows: string[] = [];
+  for (let y = 0; y < h; y++) {
+    let row = '';
+    for (let x = 0; x < w; x++) {
+      const cell = at(x, y);
+      if (cell === '.') {
+        const edge = body(x - 1, y) || body(x + 1, y) || body(x, y - 1) || body(x, y + 1);
+        const corner =
+          body(x - 1, y - 1) || body(x + 1, y - 1) || body(x - 1, y + 1) || body(x + 1, y + 1);
+        row += edge || (outline.n === 8 && corner) ? outline.code : '.';
+        continue;
+      }
+      const mark = marks.get(cell);
+      if (mark !== undefined) {
+        row += mark;
+        continue;
+      }
+      const ramp = materials.get(cell);
+      if (ramp === undefined) throw new Error(`map letter "${cell}" has no material or mark`);
+      const [hi, base, sh] = ramp;
+      const up = at(x, y - 1);
+      if (up === '.' || at(x - 1, y) === '.') row += hi;
+      else if (at(x, y + 1) === '.' || at(x + 1, y) === '.') row += sh;
+      else if (up !== cell && !marks.has(up)) row += sh;
+      else row += base;
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+/** Moves the rows above `above` down by `offset` pixels (the idle breath). */
+function bob(map: Grid, offset: number, above: number): Grid {
+  const out = map.map((r) => [...r]);
+  if (offset === 0) return out;
+  const width = map[0]?.length ?? 0;
+  for (let y = above - 1; y >= 0; y--) {
+    const source = map[y];
+    if (y + offset < out.length && source !== undefined) out[y + offset] = [...source];
+  }
+  for (let y = 0; y < offset; y++) out[y] = new Array<string>(width).fill('.');
+  return out;
+}
+
+/** Generates the palette-coded sheet text from a material map. */
+export function generateSheet(mapText: string, file: string): string {
+  const source = parseArtSource(mapText, file);
+  const materials = new Map<string, [string, string, string]>();
+  const marks = new Map<string, string>();
+  const bobs = new Map<string, { offsets: number[]; above: number }>();
+  const mirrors = new Map<string, string>();
+  for (const [key, { value, line }] of source.header) {
+    if (key.startsWith('material.')) {
+      const codes = value.split(/\s+/);
+      if (codes.length !== 3)
+        throw new ArtSourceError(file, line, 'a material lists highlight, base and shadow codes');
+      materials.set(key.slice(9), [codes[0] ?? '', codes[1] ?? '', codes[2] ?? '']);
+    } else if (key.startsWith('mark.')) {
+      marks.set(key.slice(5), value);
+    } else if (key.startsWith('bob.')) {
+      const m = /^([\d ]+) above (\d+)$/.exec(value);
+      if (m === null)
+        throw new ArtSourceError(file, line, '"bob" must look like "0 1 1 0 above 27"');
+      bobs.set(key.slice(4), {
+        offsets: (m[1] ?? '').trim().split(/\s+/).map(Number),
+        above: Number(m[2]),
+      });
+    } else if (key.startsWith('mirror.')) {
+      mirrors.set(key.slice(7), value);
+    }
+  }
+  const outlineHeader = requireHeader(source, 'outline').value.split(/\s+/);
+  const outline = {
+    code: outlineHeader[0] ?? 'k',
+    n: outlineHeader[1] === '8' ? (8 as const) : (4 as const),
+  };
+
+  const lines: string[] = [
+    `# Generated by src/tools/art/materials.ts from ${file}. Do not edit by hand:`,
+    '# change the map and run npm run art:sheets.',
+  ];
+  for (const key of PASS_THROUGH) {
+    const entry = source.header.get(key);
+    if (entry !== undefined) lines.push(`${key}: ${entry.value}`);
+  }
+  for (const [key, { value }] of source.header) {
+    if (key.startsWith('anim.') || key.startsWith('event.')) lines.push(`${key}: ${value}`);
+  }
+
+  const bases = new Map<string, Grid>();
+  for (const block of source.blocks)
+    bases.set(
+      block.name,
+      block.rows.map((r) => Array.from(r)),
+    );
+  const facings = requireHeader(source, 'facings').value.split(/\s+/);
+  for (const [key, { value }] of source.header) {
+    if (!key.startsWith('anim.')) continue;
+    const state = key.slice(5);
+    const frames = Number(/frames (\d+)/.exec(value)?.[1] ?? '1');
+    for (const facing of facings) {
+      const mirrorOf = mirrors.get(facing);
+      let base = bases.get(`${state} ${mirrorOf ?? facing} 0`);
+      if (base === undefined)
+        throw new ArtSourceError(file, 1, `no base pose "${state} ${mirrorOf ?? facing} 0"`);
+      if (mirrorOf !== undefined) base = base.map((r) => [...r].reverse());
+      for (let i = 0; i < frames; i++) {
+        const motion = bobs.get(state);
+        const pose =
+          motion === undefined
+            ? base
+            : bob(base, motion.offsets[i % motion.offsets.length] ?? 0, motion.above);
+        lines.push(
+          '',
+          `frame ${state} ${facing} ${i}`,
+          ...shade(pose, materials, marks, outline),
+          'end',
+        );
+      }
+    }
+  }
+  return `${lines.join('\n')}\n`;
+}

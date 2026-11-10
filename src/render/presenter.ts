@@ -36,15 +36,21 @@ void main() {
 }`;
 
 export interface Presenter {
+  readonly gl: WebGL2RenderingContext;
   /** Sets the drawing surface size in device pixels and redraws the last frame. */
   resize(deviceWidth: number, deviceHeight: number): void;
   /** Uploads and shows a frame of LOGICAL_WIDTH x LOGICAL_HEIGHT RGBA bytes. */
   present(rgba: Uint8Array): void;
+  /** Shows a LOGICAL_WIDTH x LOGICAL_HEIGHT texture whose row 0 is the top of the frame. */
+  presentTexture(texture: WebGLTexture): void;
+  /** Runs `rebuild` after a lost context is restored, so other renderers can recreate resources. */
+  onRestore(rebuild: () => void): void;
   readonly viewport: Viewport;
 }
 
 interface GlResources {
-  readonly gl: WebGL2RenderingContext;
+  readonly program: WebGLProgram;
+  readonly vao: WebGLVertexArrayObject;
   readonly texture: WebGLTexture;
   readonly uniforms: {
     readonly origin: WebGLUniformLocation | null;
@@ -54,7 +60,11 @@ interface GlResources {
   };
 }
 
-function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
+export function compileShader(
+  gl: WebGL2RenderingContext,
+  type: number,
+  source: string,
+): WebGLShader {
   const name = type === gl.VERTEX_SHADER ? 'vertex' : 'fragment';
   const shader = gl.createShader(type);
   if (shader === null) {
@@ -74,38 +84,49 @@ function compile(gl: WebGL2RenderingContext, type: number, source: string): WebG
   return shader;
 }
 
-function setUp(gl: WebGL2RenderingContext): GlResources {
+export function linkProgram(
+  gl: WebGL2RenderingContext,
+  vertex: string,
+  fragment: string,
+): WebGLProgram {
   const program = gl.createProgram();
-  gl.attachShader(program, compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER));
-  gl.attachShader(program, compile(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER));
+  gl.attachShader(program, compileShader(gl, gl.VERTEX_SHADER, vertex));
+  gl.attachShader(program, compileShader(gl, gl.FRAGMENT_SHADER, fragment));
   gl.linkProgram(program);
   if (gl.getProgramParameter(program, gl.LINK_STATUS) !== true) {
     throw new Error(`WebGL2 program failed: ${gl.getProgramInfoLog(program) ?? 'no log'}`);
   }
-  gl.useProgram(program);
-  gl.bindVertexArray(gl.createVertexArray());
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const corner = gl.getAttribLocation(program, 'a_corner');
-  gl.enableVertexAttribArray(corner);
-  gl.vertexAttribPointer(corner, 2, gl.FLOAT, false, 0, 0);
+  return program;
+}
 
+/** A logical-size RGBA8 texture with nearest sampling. */
+export function frameTexture(gl: WebGL2RenderingContext): WebGLTexture {
   const texture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, LOGICAL_WIDTH, LOGICAL_HEIGHT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-  gl.uniform1i(gl.getUniformLocation(program, 'u_frame'), 0);
-  gl.disable(gl.BLEND);
-  gl.disable(gl.DITHER);
+  return texture;
+}
 
+function setUp(gl: WebGL2RenderingContext): GlResources {
+  const program = linkProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER);
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const corner = gl.getAttribLocation(program, 'a_corner');
+  gl.enableVertexAttribArray(corner);
+  gl.vertexAttribPointer(corner, 2, gl.FLOAT, false, 0, 0);
+  gl.bindVertexArray(null);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+  gl.disable(gl.DITHER);
   return {
-    gl,
-    texture,
+    program,
+    vao,
+    texture: frameTexture(gl),
     uniforms: {
       origin: gl.getUniformLocation(program, 'u_origin'),
       scale: gl.getUniformLocation(program, 'u_scale'),
@@ -136,29 +157,42 @@ export function createPresenter(
 
   let resources: GlResources | null = setUp(gl);
   let lastFrame: Uint8Array | null = null;
+  let source: WebGLTexture | null = null;
   let viewport = computeViewport(canvas.width, canvas.height);
+  const restorers: (() => void)[] = [];
 
   const draw = (): void => {
-    if (resources === null || lastFrame === null) return;
-    const { gl: g, uniforms } = resources;
-    g.viewport(0, 0, canvas.width, canvas.height);
-    g.uniform2f(uniforms.origin, viewport.x, canvas.height - viewport.y - viewport.height);
-    g.uniform1f(uniforms.scale, viewport.scale);
-    g.uniform2i(uniforms.size, LOGICAL_WIDTH, LOGICAL_HEIGHT);
-    g.uniform4f(uniforms.letterbox, letterbox[0] / 255, letterbox[1] / 255, letterbox[2] / 255, 1);
-    g.drawArrays(g.TRIANGLES, 0, 3);
+    if (resources === null || source === null) return;
+    const { program, vao, uniforms } = resources;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.useProgram(program);
+    gl.bindVertexArray(vao);
+    gl.disable(gl.BLEND);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, source);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_frame'), 0);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.uniform2f(uniforms.origin, viewport.x, canvas.height - viewport.y - viewport.height);
+    gl.uniform1f(uniforms.scale, viewport.scale);
+    gl.uniform2i(uniforms.size, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    gl.uniform4f(uniforms.letterbox, letterbox[0] / 255, letterbox[1] / 255, letterbox[2] / 255, 1);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindVertexArray(null);
   };
 
   canvas.addEventListener('webglcontextlost', (event) => {
     event.preventDefault();
     resources = null;
+    source = null;
   });
   canvas.addEventListener('webglcontextrestored', () => {
     resources = setUp(gl);
     if (lastFrame !== null) presenter.present(lastFrame);
+    for (const rebuild of restorers) rebuild();
   });
 
   const presenter: Presenter = {
+    gl,
     get viewport() {
       return viewport;
     },
@@ -176,20 +210,28 @@ export function createPresenter(
       }
       lastFrame = rgba;
       if (resources === null) return;
-      const { gl: g, texture } = resources;
-      g.bindTexture(g.TEXTURE_2D, texture);
-      g.texSubImage2D(
-        g.TEXTURE_2D,
+      gl.bindTexture(gl.TEXTURE_2D, resources.texture);
+      gl.texSubImage2D(
+        gl.TEXTURE_2D,
         0,
         0,
         0,
         LOGICAL_WIDTH,
         LOGICAL_HEIGHT,
-        g.RGBA,
-        g.UNSIGNED_BYTE,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
         rgba,
       );
+      source = resources.texture;
       draw();
+    },
+    presentTexture(texture) {
+      lastFrame = null;
+      source = texture;
+      draw();
+    },
+    onRestore(rebuild) {
+      restorers.push(rebuild);
     },
   };
   return presenter;

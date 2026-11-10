@@ -1,8 +1,9 @@
 # The design books, the decision log and the stage reports are authored text: never reformat them.
 docs/
 CLAUDE.md
-# Generated from Book 10; formatting is owned by its generator.
+# Generated files: their format is owned by their generators (lint checks they are up to date).
 content/balance.json
+assets/atlases/
 # Build and test output.
 dist/
 coverage/

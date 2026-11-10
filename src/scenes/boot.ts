@@ -8,6 +8,7 @@ import { toRgba } from '../render/indexedImage.ts';
 import { paletteIndex } from '../render/palette.ts';
 import { createPresenter } from '../render/presenter.ts';
 import type { Presenter } from '../render/presenter.ts';
+import { artViewRequested, showArtView } from './artView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
 import { composeTitleFrame } from './title.ts';
 
@@ -116,6 +117,27 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     notice.textContent = formatString(strings, 'ui.boot.webgl2_missing');
     notice.hidden = false;
     canvas.dataset['state'] = 'no-webgl2';
+    return;
+  }
+
+  if (artViewRequested(location.search)) {
+    // A renderer check view instead of the title (see src/scenes/artView.ts).
+    step('frame');
+    trackSize(canvas, presenter);
+    showArtView(location.search, presenter, art.palette).then(
+      (label) => {
+        canvas.setAttribute('aria-label', label);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            step('painted');
+            canvas.dataset['state'] = 'art';
+          });
+        });
+      },
+      (error: unknown) => {
+        canvas.dataset['error'] = error instanceof Error ? error.message : String(error);
+      },
+    );
     return;
   }
 

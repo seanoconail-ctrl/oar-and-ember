@@ -1,0 +1,42 @@
+{
+  "sheet": "decal_blood_01",
+  "kind": "decal",
+  "image": "decal_blood_01.png",
+  "width": 16,
+  "height": 8,
+  "pivot": {
+    "x": 8,
+    "y": 4
+  },
+  "footprint": {
+    "w": 16,
+    "h": 8
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "pool": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "drops": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "placeholder": false,
+  "frames": {
+    "pool/-/0": [
+      0,
+      0
+    ],
+    "drops/-/0": [
+      0,
+      8
+    ]
+  }
+}

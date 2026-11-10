@@ -1,0 +1,10 @@
+{
+  "about": "Art direction for the renderer (Book 7 sections 01 and 08). Ambient light multiplies every colour by value/255; light pools add their colour in bands. Day is cool and clear; dusk warms the land and dims the sea; night leaves the scene readable in blue shadow, with lantern and hearth pools.",
+  "phases": {
+    "day": { "ambient": [255, 255, 255] },
+    "dusk": { "ambient": [240, 196, 160] },
+    "night": { "ambient": [92, 116, 164] }
+  },
+  "poolBands": 3,
+  "cutawayFade": 0.5
+}
