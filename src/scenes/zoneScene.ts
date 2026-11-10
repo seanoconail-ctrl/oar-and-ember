@@ -14,7 +14,7 @@ import { hash01 } from '../render/noise.ts';
 import type { Anim } from '../render/sheet.ts';
 import type { Phase, Scene, SceneEffects, SceneSprite, ShadowCaster } from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
-import { gustGrid, plantLean, STRAND_WIND } from '../render/wind.ts';
+import { gustGrid, STRAND_WIND, SWAY_PERIOD } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import type { OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
@@ -53,8 +53,23 @@ export function clampCamera(map: ZoneMap, x: number, y: number): { x: number; y:
 }
 
 /** The dual-grid ground tiles in view, camera-relative (each visual tile sits half a tile up-left). */
+/** Each visual tile's frame name, built once per map. */
+const groundCache = new WeakMap<ZoneMap, string[]>();
+function groundFrames(map: ZoneMap): string[] {
+  let names = groundCache.get(map);
+  if (names === undefined) {
+    names = [];
+    for (let j = 0; j <= map.height; j++)
+      for (let i = 0; i <= map.width; i++)
+        names.push(`${tileState(visualCorners(map.rows, i, j), phaseOf(i, j))}/-/0`);
+    groundCache.set(map, names);
+  }
+  return names;
+}
+
 export function groundSprites(map: ZoneMap, camera: { x: number; y: number }): SceneSprite[] {
   const out: SceneSprite[] = [];
+  const names = groundFrames(map);
   const i0 = Math.floor((camera.x + TILE / 2) / TILE);
   const j0 = Math.floor((camera.y + TILE / 2) / TILE);
   for (let j = j0; j <= j0 + Math.ceil(LOGICAL_HEIGHT / TILE); j++) {
@@ -62,7 +77,7 @@ export function groundSprites(map: ZoneMap, camera: { x: number; y: number }): S
       if (i < 0 || j < 0 || i > map.width || j > map.height) continue;
       out.push({
         sheet: GROUND_SHEET,
-        frame: `${tileState(visualCorners(map.rows, i, j), phaseOf(i, j))}/-/0`,
+        frame: names[j * (map.width + 1) + i] ?? '',
         x: i * TILE - TILE / 2 - camera.x,
         y: j * TILE - TILE / 2 - camera.y,
         layer: 'ground',
@@ -82,6 +97,11 @@ interface IndexedPlant {
   readonly y: number;
   readonly phase: number;
   readonly tall: boolean;
+  /** sin and cos of the two sway phases (swayAt, by angle addition: no trig per frame). */
+  readonly s1: number;
+  readonly c1: number;
+  readonly s2: number;
+  readonly c2: number;
   /** Frame names for leans -3..3. */
   readonly frames: readonly string[];
 }
@@ -109,6 +129,10 @@ function zoneIndex(map: ZoneMap): ZoneIndex {
       x,
       y,
       phase: hash01(x, y, 5),
+      s1: Math.sin(hash01(x, y, 5) * 2 * Math.PI),
+      c1: Math.cos(hash01(x, y, 5) * 2 * Math.PI),
+      s2: Math.sin(hash01(x, y, 5) * 3.1 * 2 * Math.PI),
+      c2: Math.cos(hash01(x, y, 5) * 3.1 * 2 * Math.PI),
       tall: kind === 'marram' || kind === 'tussock',
       frames,
     });
@@ -166,6 +190,12 @@ export function plantSprites(
     LOGICAL_HEIGHT + 48,
     seconds,
   );
+  const a1 = (seconds / SWAY_PERIOD) * 2 * Math.PI;
+  const a2 = (seconds / (SWAY_PERIOD * 0.47)) * 2 * Math.PI;
+  const sa1 = Math.sin(a1);
+  const ca1 = Math.cos(a1);
+  const sa2 = Math.sin(a2);
+  const ca2 = Math.cos(a2);
   for (let r = r0; r <= r1; r++) {
     for (const plant of index.plants[r] ?? []) {
       const { x, y } = plant;
@@ -173,17 +203,19 @@ export function plantSprites(
       if (share < 1 && plant.phase >= share) continue;
       near.length = 0;
       for (const w of walkers) if (Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8) near.push(w);
-      const lean = plantLean(
-        wind,
-        x,
-        y,
-        seconds,
-        plant.phase,
-        plant.tall,
-        near,
-        reducedMotion,
-        gust(x, y),
-      );
+      // The same lean as plantLean (render/wind.ts), inlined for the thousands of plants a
+      // frame: the sway's sines by angle addition from the frame's own sin and cos.
+      const g = gust(x, y);
+      const push = wind.dirX * wind.strength * (0.6 + (plant.tall ? 2.6 : 1.9) * g);
+      const sw = (sa1 * plant.c1 + ca1 * plant.s1) * 0.7 + (sa2 * plant.c2 + ca2 * plant.s2) * 0.3;
+      let lean = push + sw * (reducedMotion ? 0.35 : 0.8 + 0.6 * g);
+      for (const w of near) {
+        const dx = x - w.x;
+        const dy = (y - w.y) * 1.6;
+        const d = Math.hypot(dx, dy);
+        if (d < 11) lean += Math.sign(Math.abs(dx) > 0.5 ? dx : 1) * ((11 - d) / 11) * 4.5;
+      }
+      lean = Math.max(-3, Math.min(3, Math.round(lean)));
       out.push({
         sheet: PLANT_SHEET,
         frame: plant.frames[UPRIGHT + lean] ?? '',

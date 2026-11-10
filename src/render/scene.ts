@@ -128,41 +128,53 @@ export function buildDrawList(
   sheets: ReadonlyMap<string, SheetGeometry>,
   cutawayFade: number,
 ): DrawItem[] {
-  const placed = scene.sprites.map((sprite, index) => {
+  const sprites = scene.sprites;
+  const n = sprites.length;
+  const items = new Array<DrawItem>(n);
+  // Sort keys in typed arrays (thousands of plants a frame): layer, foot line, x, then order.
+  // The plants arrive already in foot-line order, so the sort finds long runs.
+  const layerKey = new Uint8Array(n);
+  const sortKey = new Float64Array(n);
+  const xKey = new Float64Array(n);
+  const order = new Array<number>(n);
+  let focusIndex = -1;
+  sprites.forEach((sprite, i) => {
     const sheet = sheets.get(sprite.sheet);
     if (sheet === undefined) throw new Error(`Scene uses unknown sheet "${sprite.sheet}"`);
     const footY = Math.round(sprite.y);
-    const sortY = sprite.sort ?? footY;
-    const item: DrawItem = {
+    const x = Math.round(sprite.x) - sheet.pivot.x;
+    items[i] = {
       sheet: sprite.sheet,
       frame: sprite.frame,
-      x: Math.round(sprite.x) - sheet.pivot.x,
+      x,
       y: footY - sheet.pivot.y,
       width: sheet.width,
       height: sheet.height,
       fade: 0,
       layer: sprite.layer,
     };
-    return { sprite, item, sortY, index };
+    const actor = sprite.layer === 'actor';
+    layerKey[i] = LAYER_ORDER[sprite.layer];
+    sortKey[i] = actor ? (sprite.sort ?? footY) : 0;
+    xKey[i] = actor ? x : 0;
+    order[i] = i;
+    if (sprite.focus === true) focusIndex = i;
   });
-  placed.sort(
+  order.sort(
     (a, b) =>
-      LAYER_ORDER[a.sprite.layer] - LAYER_ORDER[b.sprite.layer] ||
-      (a.sprite.layer === 'actor' ? a.sortY - b.sortY || a.item.x - b.item.x : 0) ||
-      a.index - b.index,
+      (layerKey[a] ?? 0) - (layerKey[b] ?? 0) ||
+      (sortKey[a] ?? 0) - (sortKey[b] ?? 0) ||
+      (xKey[a] ?? 0) - (xKey[b] ?? 0) ||
+      a - b,
   );
-  const focusAt = placed.findIndex((p) => p.sprite.focus === true);
-  const focus = placed[focusAt];
-  return placed.map((p, i) => {
-    if (
-      focus !== undefined &&
-      i > focusAt &&
-      p.sprite.tall === true &&
-      overlaps(p.item, focus.item)
-    ) {
-      return { ...p.item, fade: cutawayFade };
-    }
-    return p.item;
+  const focusAt = order.indexOf(focusIndex);
+  const focus = focusIndex < 0 ? undefined : items[focusIndex];
+  return order.map((i, k) => {
+    const item = items[i];
+    if (item === undefined) throw new Error('draw list: lost an item');
+    if (focus !== undefined && k > focusAt && sprites[i]?.tall === true && overlaps(item, focus))
+      return { ...item, fade: cutawayFade };
+    return item;
   });
 }
 

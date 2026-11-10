@@ -39,7 +39,10 @@ export function gustAt(wind: Wind, x: number, y: number, t: number): number {
 }
 
 /** A slow sway that never stops, out of step between plants (each has its own phase). */
-export function swayAt(t: number, phase: number, period = 3.6): number {
+/** The period of the plants' sway, seconds. */
+export const SWAY_PERIOD = 3.6;
+
+export function swayAt(t: number, phase: number, period = SWAY_PERIOD): number {
   return (
     Math.sin((t / period + phase) * 2 * Math.PI) * 0.7 +
     Math.sin((t / (period * 0.47) + phase * 3.1) * 2 * Math.PI) * 0.3
