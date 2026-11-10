@@ -27,8 +27,13 @@ import type { Season } from '../content/balance.ts';
 export type SimState = WorldState;
 export const SIM_STATE_VERSION = WORLD_STATE_VERSION;
 
+/** Crew orders (Book 2 section 12); the crew who carry them out arrive with Stages 8 and 9. */
+export type CrewOrder = 'FOLLOW' | 'HOLD' | 'ATTACK' | 'PROTECT' | 'CARRY' | 'WITHDRAW';
+
 export type Command =
-  { readonly type: 'SLEEP' } | { readonly type: 'SET_DAY_LENGTH'; readonly multiplier: number };
+  | { readonly type: 'SLEEP' }
+  | { readonly type: 'SET_DAY_LENGTH'; readonly multiplier: number }
+  | { readonly type: 'CREW_ORDER'; readonly order: CrewOrder };
 
 export type RefusalReason = 'TOO_EARLY_TO_SLEEP' | 'DAY_LENGTH_OUT_OF_RANGE';
 
@@ -51,6 +56,7 @@ export type SimEvent =
     }
   | { readonly type: 'MORNING_REPORT_DUE'; readonly day: number }
   | { readonly type: 'DAY_LENGTH_CHANGED'; readonly percent: number }
+  | { readonly type: 'CREW_ORDER_GIVEN'; readonly order: CrewOrder; readonly tick: number }
   | {
       readonly type: 'COMMAND_REFUSED';
       readonly command: Command['type'];
@@ -148,6 +154,9 @@ export function createSimulation(b: TimeBalance, state: SimState): Simulation {
         events.emit({ type: 'DAY_LENGTH_CHANGED', percent });
         return;
       }
+      case 'CREW_ORDER':
+        events.emit({ type: 'CREW_ORDER_GIVEN', order: command.order, tick: state.tick });
+        return;
     }
   };
 

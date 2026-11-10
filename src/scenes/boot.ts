@@ -10,6 +10,7 @@ import { createPresenter } from '../render/presenter.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { artViewRequested, showArtView } from './artView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
+import { shellViewRequested, showShellView } from './shellView.ts';
 import { composeTitleFrame } from './title.ts';
 
 export interface BootElements {
@@ -117,6 +118,15 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     notice.textContent = formatString(strings, 'ui.boot.webgl2_missing');
     notice.hidden = false;
     canvas.dataset['state'] = 'no-webgl2';
+    return;
+  }
+
+  if (shellViewRequested(location.search)) {
+    // The Stage 5 controls, menus and sound check (see src/scenes/shellView.ts).
+    step('frame');
+    trackSize(canvas, presenter);
+    showShellView(canvas, presenter, art.palette, strings);
+    step('painted');
     return;
   }
 

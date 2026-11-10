@@ -292,5 +292,170 @@
   },
   "fitting.name.fit_gilt_weather_vane": {
     "text": "Gilt weather-vane"
+  },
+  "caption.music.home_dawn": {
+    "text": "Music: the hearth at dawn"
+  },
+  "caption.music.home_day": {
+    "text": "Music: the hearth by day"
+  },
+  "caption.music.home_dusk": {
+    "text": "Music: the hearth at dusk"
+  },
+  "caption.music.home_night": {
+    "text": "Music: the hearth at night, sparse"
+  },
+  "caption.music.raid_approach": {
+    "text": "Music: a low pulse, held breath"
+  },
+  "caption.music.raid_alarm": {
+    "text": "Music: drums, the alarm is raised"
+  },
+  "caption.music.combat_1": {
+    "text": "Music: fighting"
+  },
+  "caption.stinger.horn": {
+    "text": "A horn call"
+  },
+  "caption.stinger.discovery": {
+    "text": "Something found"
+  },
+  "caption.sfx.horn": {
+    "text": "Horn"
+  },
+  "caption.sfx.charge_level_2": {
+    "text": "Heavy blow fully charged"
+  },
+  "caption.sfx.parry": {
+    "text": "Parry"
+  },
+  "caption.sfx.tell_ran": {
+    "text": "A hum under the water"
+  },
+  "caption.format.with_direction": {
+    "text": "{caption}, {direction}"
+  },
+  "caption.direction.n": {
+    "text": "north"
+  },
+  "caption.direction.ne": {
+    "text": "north-east"
+  },
+  "caption.direction.e": {
+    "text": "east"
+  },
+  "caption.direction.se": {
+    "text": "south-east"
+  },
+  "caption.direction.s": {
+    "text": "south"
+  },
+  "caption.direction.sw": {
+    "text": "south-west"
+  },
+  "caption.direction.w": {
+    "text": "west"
+  },
+  "caption.direction.nw": {
+    "text": "north-west"
+  },
+  "ui.menu.refused": {
+    "text": "Not now: {count} hostile aware of you."
+  },
+  "ui.menu.refused_many": {
+    "text": "Not now: {count} hostiles aware of you."
+  },
+  "ui.menu.open": {
+    "text": "{menu} (time stopped)"
+  },
+  "ui.menu.overlay": {
+    "text": "{menu} (overlay; time is running)"
+  },
+  "ui.menu.name.map": {
+    "text": "Map"
+  },
+  "ui.menu.name.inventory": {
+    "text": "Inventory"
+  },
+  "ui.menu.name.build": {
+    "text": "Build"
+  },
+  "ui.menu.name.report": {
+    "text": "Report"
+  },
+  "ui.menu.name.planning": {
+    "text": "Planning"
+  },
+  "ui.menu.name.system": {
+    "text": "System menu"
+  },
+  "ui.ring.order.follow": {
+    "text": "Follow"
+  },
+  "ui.ring.order.hold": {
+    "text": "Hold"
+  },
+  "ui.ring.order.attack": {
+    "text": "Attack my target"
+  },
+  "ui.ring.order.protect": {
+    "text": "Protect"
+  },
+  "ui.ring.order.carry": {
+    "text": "Carry"
+  },
+  "ui.ring.order.withdraw": {
+    "text": "Withdraw to the ship"
+  },
+  "ui.ring.open": {
+    "text": "Orders: {selected}"
+  },
+  "ui.ring.none": {
+    "text": "move to choose"
+  },
+  "ui.ring.issued": {
+    "text": "Order given: {order}"
+  },
+  "ui.shell.title": {
+    "text": "Controls, menus and sound (Stage 5 check)"
+  },
+  "ui.shell.help": {
+    "text": "Keys: 1-6 orders, hold Tab for the order ring, M map, I inventory, B build, J report, Esc system menu. H toggles a test hostile. P next music, O stinger, K horn, L parry. F2 then a key rebinds Interact. T toggles hold-or-toggle for Run. Click once to start sound."
+  },
+  "ui.shell.status": {
+    "text": "Tick {tick} · {time} · hostile aware: {hostile} · music: {music}"
+  },
+  "ui.shell.binding": {
+    "text": "Interact: {keys}. Run: {run}."
+  },
+  "ui.shell.rebind": {
+    "text": "Press a key for Interact."
+  },
+  "ui.shell.rebound": {
+    "text": "Interact is now {key}."
+  },
+  "ui.shell.displaced": {
+    "text": "Interact is now {key} ({others} lost it)."
+  },
+  "ui.shell.audio_locked": {
+    "text": "Sound starts on your first click or key."
+  },
+  "ui.shell.audio_temporary": {
+    "text": "Sound: temporary test tones (Book 11 section 11)."
+  },
+  "ui.mode.hold": {
+    "text": "hold"
+  },
+  "ui.mode.toggle": {
+    "text": "toggle"
+  },
+  "ui.value.yes": {
+    "text": "yes"
+  },
+  "ui.value.no": {
+    "text": "no"
+  },
+  "ui.value.none": {
+    "text": "none"
   }
 }

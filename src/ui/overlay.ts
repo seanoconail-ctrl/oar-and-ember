@@ -1,0 +1,75 @@
+/**
+ * The text overlay (Book 7 section 01: UI text may render on an accessible overlay at native
+ * resolution, never blurred into the pixel layer). Real HTML text placed over the frame, so it is
+ * sharp at any scale, readable by screen readers and sized by the text-size option (100 to 200
+ * percent, Book 2 section 21).
+ */
+import type { Viewport } from '../render/viewport.ts';
+
+export const TEXT_SIZE_RANGE = { min: 100, max: 200 } as const;
+
+export interface Overlay {
+  readonly root: HTMLElement;
+  /** Places the overlay over the frame: `viewport` in device pixels. */
+  fit(viewport: Viewport, devicePixelRatio: number): void;
+  setTextSize(percent: number): void;
+  /** A named text region (created on first use). */
+  region(name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel'): HTMLElement;
+}
+
+const STYLE = `
+.oe-overlay { position: fixed; pointer-events: none; color: #f4efe4; font-family: system-ui, sans-serif;
+  text-shadow: 0 1px 0 #22313a, 1px 0 0 #22313a, 0 -1px 0 #22313a, -1px 0 0 #22313a; }
+.oe-overlay [data-region] { position: absolute; left: 4%; right: 4%; }
+.oe-overlay [data-region=captions] { bottom: 4%; text-align: center; font-size: 1.1em; }
+.oe-overlay [data-region=captions] p { margin: 0.15em auto; display: table; padding: 0.1em 0.5em;
+  background: rgba(34, 49, 58, 0.85); border-radius: 2px; }
+.oe-overlay [data-region=prompt] { bottom: 16%; text-align: center; }
+.oe-overlay [data-region=menu] { top: 30%; text-align: center; font-size: 1.3em; }
+.oe-overlay [data-region=menu]:not(:empty) { background: rgba(58, 38, 22, 0.88); border: 2px solid #7b5434;
+  padding: 0.6em; }
+.oe-overlay [data-region=ring] { top: 42%; text-align: center; font-size: 1.1em; }
+.oe-overlay [data-region=panel] { top: 3%; font-size: 0.85em; line-height: 1.4; white-space: pre-wrap; }
+`;
+
+export function createOverlay(doc: Document): Overlay {
+  const style = doc.createElement('style');
+  style.textContent = STYLE;
+  doc.head.append(style);
+  const root = doc.createElement('div');
+  root.className = 'oe-overlay';
+  root.setAttribute('aria-live', 'polite');
+  doc.body.append(root);
+  const regions = new Map<string, HTMLElement>();
+  let scale = 1;
+  let textSize = 100;
+  const applyFont = (): void => {
+    // 16 CSS px at 1x logical-to-CSS scale, times the text-size option.
+    root.style.fontSize = `${Math.max(10, 8 * scale) * (textSize / 100)}px`;
+  };
+  return {
+    root,
+    fit(viewport, dpr) {
+      root.style.left = `${viewport.x / dpr}px`;
+      root.style.top = `${viewport.y / dpr}px`;
+      root.style.width = `${viewport.width / dpr}px`;
+      root.style.height = `${viewport.height / dpr}px`;
+      scale = viewport.scale / dpr;
+      applyFont();
+    },
+    setTextSize(percent) {
+      textSize = Math.min(TEXT_SIZE_RANGE.max, Math.max(TEXT_SIZE_RANGE.min, percent));
+      applyFont();
+    },
+    region(name) {
+      let el = regions.get(name);
+      if (el === undefined) {
+        el = doc.createElement('div');
+        el.dataset['region'] = name;
+        root.append(el);
+        regions.set(name, el);
+      }
+      return el;
+    },
+  };
+}

@@ -1,0 +1,139 @@
+{
+  "about": "Audio cues (Book 11 sections 03, 07 and 10). Every cue here is temporary: synthesized test tones until the music and sound are produced (Book 11 section 11: Stage 5 has temporary cues, clearly flagged; Stage 30 has none). Tempos and bar lengths are provisional and belong to the composed cues.",
+  "captionSeconds": 3,
+  "stingerDuck": 0.35,
+  "cues": [
+    {
+      "id": "MUS_HOME_DAWN",
+      "kind": "music",
+      "bpm": 72,
+      "beatsPerBar": 3,
+      "stems": ["bed", "rhythm", "melody"],
+      "captionKey": "caption.music.home_dawn",
+      "temporary": true
+    },
+    {
+      "id": "MUS_HOME_DAY",
+      "kind": "music",
+      "bpm": 84,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "melody"],
+      "captionKey": "caption.music.home_day",
+      "temporary": true
+    },
+    {
+      "id": "MUS_HOME_DUSK",
+      "kind": "music",
+      "bpm": 66,
+      "beatsPerBar": 3,
+      "stems": ["bed", "melody"],
+      "captionKey": "caption.music.home_dusk",
+      "temporary": true
+    },
+    {
+      "id": "MUS_HOME_NIGHT",
+      "kind": "music",
+      "bpm": 56,
+      "beatsPerBar": 3,
+      "stems": ["bed", "melody"],
+      "captionKey": "caption.music.home_night",
+      "temporary": true
+    },
+    {
+      "id": "MUS_RAID_APPROACH",
+      "kind": "music",
+      "bpm": 90,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "danger"],
+      "captionKey": "caption.music.raid_approach",
+      "temporary": true
+    },
+    {
+      "id": "MUS_RAID_ALARM",
+      "kind": "music",
+      "bpm": 120,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "melody", "danger"],
+      "captionKey": "caption.music.raid_alarm",
+      "temporary": true
+    },
+    {
+      "id": "MUS_COMBAT_1",
+      "kind": "music",
+      "bpm": 132,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "melody", "voice", "danger"],
+      "captionKey": "caption.music.combat_1",
+      "temporary": true
+    },
+    {
+      "id": "MUS_STINGER_HORN",
+      "kind": "stinger",
+      "lengthBeats": 4,
+      "captionKey": "caption.stinger.horn",
+      "temporary": true
+    },
+    {
+      "id": "MUS_STINGER_DISCOVERY",
+      "kind": "stinger",
+      "lengthBeats": 3,
+      "captionKey": "caption.stinger.discovery",
+      "temporary": true
+    },
+    {
+      "id": "SFX_HORN",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.horn",
+      "temporary": true
+    },
+    {
+      "id": "SFX_CHARGE_LEVEL_2",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.charge_level_2",
+      "temporary": true
+    },
+    {
+      "id": "SFX_PARRY",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.parry",
+      "temporary": true
+    },
+    {
+      "id": "SFX_TELL_RAN",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.tell_ran",
+      "temporary": true
+    },
+    {
+      "id": "AMB_SURF_SHINGLE",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_STRAND", "ZONE_SK_NAUST"],
+      "temporary": true
+    },
+    {
+      "id": "AMB_WIND_HEATHER",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_ROOK", "ZONE_SK_MACHAIR", "ZONE_SK_HAGSEAT"],
+      "temporary": true
+    },
+    {
+      "id": "AMB_HEARTH",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "phases": ["dusk", "night"],
+      "temporary": true
+    }
+  ],
+  "events": {
+    "HORN_BLOWN": "SFX_HORN",
+    "HEAVY_CHARGE_LEVEL_2": "SFX_CHARGE_LEVEL_2",
+    "PARRY": "SFX_PARRY",
+    "SIGN_RAN": "SFX_TELL_RAN",
+    "DISCOVERY": "MUS_STINGER_DISCOVERY",
+    "ALARM_HORN": "MUS_STINGER_HORN"
+  }
+}

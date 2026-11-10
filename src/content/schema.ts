@@ -60,6 +60,11 @@ export const text: Check<string> = (value, path, ctx) =>
     ? value
     : problem(ctx, path, `expected text, found ${describe(value)}`);
 
+export const bool: Check<boolean> = (value, path, ctx) =>
+  typeof value === 'boolean'
+    ? value
+    : problem(ctx, path, `expected true or false, found ${describe(value)}`);
+
 export function int(min: number, max: number): Check<number> {
   return (value, path, ctx) =>
     typeof value === 'number' && Number.isInteger(value) && value >= min && value <= max

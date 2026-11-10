@@ -6,7 +6,7 @@
 import type { Id } from '../core/ids.ts';
 import { parseIdRegistry } from './idRegistry.ts';
 import type { IdRegistry } from './idRegistry.ts';
-import { arrayOf, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
+import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
 import { parseStringTable } from './strings.ts';
 import type { StringTable } from './strings.ts';
@@ -22,6 +22,7 @@ export const CONTENT_FILES = {
   factions: 'content/factions.json',
   hulls: 'content/hulls.json',
   fittings: 'content/fittings.json',
+  audio: 'content/audio.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -121,7 +122,37 @@ const fittingCheck = object({
   nameKey: ref('string'),
 });
 
+export const AUDIO_BUSES = ['music', 'ambience', 'effects', 'voice', 'tells'] as const;
+const cueCheck = object(
+  {
+    id: id(['MUS', 'SFX', 'AMB', 'VO']),
+    kind: oneOf(['music', 'stinger', 'sfx', 'ambience'] as const),
+    bpm: int(20, 240),
+    beatsPerBar: int(2, 12),
+    stems: arrayOf(oneOf(['bed', 'rhythm', 'melody', 'voice', 'danger'] as const)),
+    lengthBeats: int(1, 32),
+    bus: oneOf(AUDIO_BUSES),
+    zones: arrayOf(ref('zone')),
+    phases: arrayOf(oneOf(['day', 'dusk', 'night'] as const)),
+    captionKey: ref('string'),
+    temporary: bool,
+  },
+  ['bpm', 'beatsPerBar', 'stems', 'lengthBeats', 'bus', 'zones', 'phases', 'captionKey'],
+);
+const audioCheck = object({
+  about: text,
+  captionSeconds: int(1, 10),
+  stingerDuck: (v, path, ctx) =>
+    typeof v === 'number' && v >= 0 && v <= 1
+      ? v
+      : (ctx.issues.push({ file: ctx.file, path, reason: 'expected a level from 0 to 1' }), null),
+  cues: arrayOf(cueCheck),
+  events: recordOf(text, id(['MUS', 'SFX', 'AMB', 'VO'])),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
+export type CueDef = Out<typeof cueCheck>;
+export type AudioTable = Out<typeof audioCheck>;
 export type PlaceDef = Out<typeof placeCheck>;
 export type HazardDef = Out<typeof hazardCheck>;
 export type RegionDef = Out<typeof regionCheck>;
@@ -142,6 +173,8 @@ export interface Content {
   readonly factions: ReadonlyMap<Id, FactionDef>;
   readonly hulls: ReadonlyMap<Id, HullDef>;
   readonly fittings: ReadonlyMap<Id, FittingDef>;
+  readonly audio: AudioTable | null;
+  readonly cues: ReadonlyMap<Id, CueDef>;
 }
 
 function balanceRows(
@@ -222,6 +255,37 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     issues,
   );
 
+  const audio = audioCheck(files.audio, '', ctx(CONTENT_FILES.audio));
+  const cues = toMap(audio?.cues ?? null, CONTENT_FILES.audio, issues);
+  (audio?.cues ?? []).forEach((cue, i) => {
+    const at = (field: string) => `cues[${i}].${field}`;
+    const need = (field: keyof CueDef, why: string) => {
+      if (cue[field] === undefined)
+        issues.push({
+          file: CONTENT_FILES.audio,
+          path: at(field),
+          reason: `${cue.kind} cues need ${why}`,
+        });
+    };
+    if (cue.kind === 'music') {
+      need('bpm', 'a tempo');
+      need('beatsPerBar', 'a bar length');
+      need('stems', 'stems');
+    }
+    if (cue.kind === 'stinger') need('lengthBeats', 'a length');
+    if (cue.kind === 'sfx') need('bus', 'a bus');
+    // Book 11 section 09: a caption for every gameplay-relevant sound.
+    if (cue.kind !== 'ambience') need('captionKey', 'a caption (Book 11 section 09)');
+  });
+  for (const [event, cue] of Object.entries(audio?.events ?? {})) {
+    if (!cues.has(cue))
+      issues.push({
+        file: CONTENT_FILES.audio,
+        path: `events.${event}`,
+        reason: `unknown cue "${cue}"`,
+      });
+  }
+
   const hullRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'hulls', 'Hull');
   const fittingRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'fittings', 'Fitting');
   const known: Record<RefKind, (id: string) => boolean> = {
@@ -265,6 +329,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     [CONTENT_FILES.factions, factions],
     [CONTENT_FILES.hulls, hulls],
     [CONTENT_FILES.fittings, fittings],
+    [CONTENT_FILES.audio, cues],
   ];
   for (const [file, map] of defined) {
     for (const key of map.keys()) {
@@ -313,6 +378,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       factions,
       hulls,
       fittings,
+      audio,
+      cues,
     },
     issues,
   };
@@ -320,4 +387,16 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
 
 export function formatIssue(issue: Issue): string {
   return `${issue.file}: ${issue.path}: ${issue.reason}`;
+}
+
+/** Validates the audio table on its own (the browser bundles it without the other content). */
+export function parseAudioTable(json: unknown): AudioTable {
+  const issues: Issue[] = [];
+  const audio = audioCheck(json, '', { file: CONTENT_FILES.audio, issues, refs: [] });
+  if (audio === null || issues.length > 0) {
+    throw new Error(
+      `${CONTENT_FILES.audio}: ${issues.map((i) => `${i.path}: ${i.reason}`).join('; ')}`,
+    );
+  }
+  return audio;
 }
