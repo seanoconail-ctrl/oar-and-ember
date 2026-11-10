@@ -37,6 +37,9 @@ const FORBIDDEN = {
   scenes: ['tools'],
 };
 
+const DETERMINISM =
+  'Book 2 section 03: no Math.random() or wall-clock time in sim/ or core/; use the RNG streams and the tick.';
+
 const NODE_BUILTINS = '^(node:|(fs|path|os|child_process|crypto|url|util|zlib|stream)(/|$))';
 
 const layerRules = Object.entries(FORBIDDEN).map(([layer, forbidden]) => ({
@@ -99,5 +102,31 @@ export default defineConfig(
     extends: [tseslint.configs.disableTypeChecked],
   },
   ...layerRules,
+  {
+    // Book 2 sections 03 and 24: the simulation is deterministic. No Math.random, wall-clock time
+    // or timers in sim/ or core/; randomness comes from the named RNG streams in core/rng.ts.
+    files: ['src/sim/**/*.ts', 'src/core/**/*.ts'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        { object: 'Math', property: 'random', message: DETERMINISM },
+        { object: 'Date', property: 'now', message: DETERMINISM },
+        { object: 'performance', property: 'now', message: DETERMINISM },
+        { object: 'crypto', property: 'getRandomValues', message: DETERMINISM },
+        { object: 'crypto', property: 'randomUUID', message: DETERMINISM },
+      ],
+      'no-restricted-globals': [
+        'error',
+        ...[
+          'Date',
+          'performance',
+          'setTimeout',
+          'setInterval',
+          'requestAnimationFrame',
+          'crypto',
+        ].map((name) => ({ name, message: DETERMINISM })),
+      ],
+    },
+  },
   prettier,
 );
