@@ -122,10 +122,6 @@ def main():
     subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-framerate', str(FPS), '-i',
                     os.path.join(tmp, '%04d.png'), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '16',
                     os.path.join(OUT, 'target-walk.mp4')], check=True)
-    half = frames[::2]
-    pal = [im.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE) for im in half]
-    pal[0].save(os.path.join(OUT, 'target-walk.gif'), save_all=True, append_images=pal[1:],
-                duration=int(2000 / FPS), loop=0, disposal=1)
 
 
 if __name__ == '__main__':
