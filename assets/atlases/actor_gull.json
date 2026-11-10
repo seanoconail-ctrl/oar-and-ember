@@ -1,0 +1,137 @@
+{
+  "sheet": "actor_gull",
+  "kind": "sprite",
+  "image": "actor_gull.png",
+  "width": 16,
+  "height": 10,
+  "pivot": {
+    "x": 8,
+    "y": 8
+  },
+  "footprint": {
+    "w": 4,
+    "h": 2
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "fly": {
+      "frames": 4,
+      "ticks": 6,
+      "loop": true
+    },
+    "stand": {
+      "frames": 2,
+      "ticks": 60,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 8,
+    "h": 2
+  },
+  "placeholder": false,
+  "frames": {
+    "fly/s/0": [
+      0,
+      0
+    ],
+    "fly/s/1": [
+      16,
+      0
+    ],
+    "fly/s/2": [
+      32,
+      0
+    ],
+    "fly/s/3": [
+      48,
+      0
+    ],
+    "fly/n/0": [
+      0,
+      10
+    ],
+    "fly/n/1": [
+      16,
+      10
+    ],
+    "fly/n/2": [
+      32,
+      10
+    ],
+    "fly/n/3": [
+      48,
+      10
+    ],
+    "fly/e/0": [
+      0,
+      20
+    ],
+    "fly/e/1": [
+      16,
+      20
+    ],
+    "fly/e/2": [
+      32,
+      20
+    ],
+    "fly/e/3": [
+      48,
+      20
+    ],
+    "fly/w/0": [
+      0,
+      30
+    ],
+    "fly/w/1": [
+      16,
+      30
+    ],
+    "fly/w/2": [
+      32,
+      30
+    ],
+    "fly/w/3": [
+      48,
+      30
+    ],
+    "stand/s/0": [
+      0,
+      40
+    ],
+    "stand/s/1": [
+      16,
+      40
+    ],
+    "stand/n/0": [
+      0,
+      50
+    ],
+    "stand/n/1": [
+      16,
+      50
+    ],
+    "stand/e/0": [
+      0,
+      60
+    ],
+    "stand/e/1": [
+      16,
+      60
+    ],
+    "stand/w/0": [
+      0,
+      70
+    ],
+    "stand/w/1": [
+      16,
+      70
+    ]
+  }
+}

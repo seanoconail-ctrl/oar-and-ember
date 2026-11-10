@@ -28,7 +28,10 @@
     }
   },
   "events": {},
-  "shadow": null,
+  "shadow": {
+    "w": 120,
+    "h": 18
+  },
   "placeholder": false,
   "frames": {
     "large/-/0": [

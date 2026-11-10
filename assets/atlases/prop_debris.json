@@ -1,0 +1,82 @@
+{
+  "sheet": "prop_debris",
+  "kind": "prop",
+  "image": "prop_debris.png",
+  "width": 80,
+  "height": 16,
+  "pivot": {
+    "x": 40,
+    "y": 14
+  },
+  "footprint": {
+    "w": 30,
+    "h": 4
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "log_long": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "log_short": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "planks": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "barrel": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "net": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "rope": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 34,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "log_long/-/0": [
+      0,
+      0
+    ],
+    "log_short/-/0": [
+      0,
+      16
+    ],
+    "planks/-/0": [
+      0,
+      32
+    ],
+    "barrel/-/0": [
+      0,
+      48
+    ],
+    "net/-/0": [
+      0,
+      64
+    ],
+    "rope/-/0": [
+      0,
+      80
+    ]
+  }
+}

@@ -54,6 +54,146 @@
       "frame": "wrecked/-/0",
       "x": 21.5,
       "y": 51.6
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "log_long/-/0",
+      "x": 58,
+      "y": 33.6
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "log_short/-/0",
+      "x": 46,
+      "y": 32.2
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "planks/-/0",
+      "x": 77,
+      "y": 34.4
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "barrel/-/0",
+      "x": 34,
+      "y": 33.0
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "net/-/0",
+      "x": 74,
+      "y": 36.0
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "rope/-/0",
+      "x": 52,
+      "y": 34.8
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "log_short/-/0",
+      "x": 84,
+      "y": 35.3
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/0",
+      "x": 60,
+      "y": 20
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/1",
+      "x": 40,
+      "y": 14
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/2",
+      "x": 82,
+      "y": 22
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/3",
+      "x": 20,
+      "y": 18
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 50,
+      "y": 24
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/1",
+      "x": 66,
+      "y": 16
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 30,
+      "y": 22
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 88,
+      "y": 14
+    }
+  ],
+  "cuts": [
+    [28, 31],
+    [66, 72],
+    [86, 89]
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 60,
+      "y": 32,
+      "r": 4
+    },
+    {
+      "kind": "gull",
+      "x": 48,
+      "y": 36,
+      "r": 3
+    },
+    {
+      "kind": "gull",
+      "x": 74,
+      "y": 30,
+      "r": 5
+    },
+    {
+      "kind": "gull_standing",
+      "x": 58.4,
+      "y": 33.5
+    },
+    {
+      "kind": "cormorant",
+      "x": 40.2,
+      "y": 36.2
+    },
+    {
+      "kind": "seal",
+      "x": 26,
+      "y": 50.5
+    },
+    {
+      "kind": "crab",
+      "x": 61,
+      "y": 38.6
+    },
+    {
+      "kind": "crab",
+      "x": 37,
+      "y": 38.9
     }
   ]
 }

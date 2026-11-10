@@ -1,0 +1,68 @@
+{
+  "sheet": "actor_seal",
+  "kind": "sprite",
+  "image": "actor_seal.png",
+  "width": 26,
+  "height": 12,
+  "pivot": {
+    "x": 13,
+    "y": 10
+  },
+  "footprint": {
+    "w": 14,
+    "h": 3
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "rest": {
+      "frames": 2,
+      "ticks": 90,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 18,
+    "h": 4
+  },
+  "placeholder": false,
+  "frames": {
+    "rest/s/0": [
+      0,
+      0
+    ],
+    "rest/s/1": [
+      26,
+      0
+    ],
+    "rest/n/0": [
+      0,
+      12
+    ],
+    "rest/n/1": [
+      26,
+      12
+    ],
+    "rest/e/0": [
+      0,
+      24
+    ],
+    "rest/e/1": [
+      26,
+      24
+    ],
+    "rest/w/0": [
+      0,
+      36
+    ],
+    "rest/w/1": [
+      26,
+      36
+    ]
+  }
+}

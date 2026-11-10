@@ -23,7 +23,10 @@
     }
   },
   "events": {},
-  "shadow": null,
+  "shadow": {
+    "w": 70,
+    "h": 10
+  },
   "placeholder": false,
   "frames": {
     "wrecked/-/0": [

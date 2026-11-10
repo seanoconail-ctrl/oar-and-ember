@@ -11,12 +11,18 @@
  * - shingle within a few tiles of the tidal flats or the sea lies below the high-tide line;
  * - the plan file adds authored features (rock outcrops) and the spawns.
  *
+ * - where the machair meets the beach it ends in a low bank (b: a cliff face a tile high, which
+ *   blocks movement), broken by the plan's cuts where a path climbs it (Book 7 section 14);
+ * - then the zone is furnished (Book 7 section 14): pebble clusters with calm sand between them,
+ *   shells, the wrack line along the tide line, grass in tussocks and as a sward everywhere, flower
+ *   drifts, marram on the dunes under the bank, and the plan's props and wildlife.
+ *
  * Tile codes in the output: ~ sea, - tidal flats, _ shingle below the tide line, . shingle above
- * it, , machair, w stream, r rock.
+ * it, , machair, b the bank, w stream, r rock.
  */
 import { cyrb53 } from '../../core/hash.ts';
 
-export const TILE_CODES = ['~', '-', '_', '.', ',', 'w', 'r'] as const;
+export const TILE_CODES = ['~', '-', '_', '.', ',', 'b', 'w', 'r'] as const;
 export type TileCode = (typeof TILE_CODES)[number];
 
 export interface ZonePlan {
@@ -43,7 +49,26 @@ export interface ZonePlan {
   >;
   /** Scenery sprites, in tiles at their foot anchor. */
   readonly props: readonly ZoneProp[];
+  /** Columns (in tiles, inclusive) where a path cuts through the bank. */
+  readonly cuts: readonly (readonly [number, number])[];
+  /** Wildlife, drawn by the renderer only (never simulated). */
+  readonly life: readonly ZoneLife[];
 }
+
+export interface ZoneLife {
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab';
+  /** In tiles. */
+  readonly x: number;
+  readonly y: number;
+  /** For circling gulls: the radius of the circle, in tiles. */
+  readonly r?: number;
+}
+
+/** Decoration placements: [frame index into `decalFrames`, x, y] in pixels. */
+export type DecalPlacement = readonly [number, number, number];
+/** Plant placements: [kind index into PLANT_KINDS, x, y, variant] in pixels. */
+export type PlantPlacement = readonly [number, number, number, number];
+export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
 
 export interface ZoneProp {
   readonly sheet: string;
@@ -64,6 +89,11 @@ export interface ZoneMap {
   /** Spawns in tiles (fractions allowed): where people start, and the facing they start in. */
   readonly spawns: ZonePlan['spawns'];
   readonly props: readonly ZoneProp[];
+  readonly life: readonly ZoneLife[];
+  /** Sheet and frame of each decoration index ("decal_strand pebbles/-/3"). */
+  readonly decalFrames: readonly string[];
+  readonly decals: readonly DecalPlacement[];
+  readonly plants: readonly PlantPlacement[];
 }
 
 const BLOCK = 8;
@@ -186,6 +216,22 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
   }
   for (const [tx, ty] of wet) set(tx, ty, '_');
 
+  // The bank: the last machair tile above the beach becomes a cliff face, except at the cuts and
+  // beside the stream.
+  const inCut = (tx: number): boolean => plan.cuts.some(([a, b]) => tx >= a && tx <= b);
+  for (let tx = 0; tx < width; tx++) {
+    if (inCut(tx)) continue;
+    for (let ty = 1; ty < height; ty++) {
+      if (at(tx, ty - 1) !== ',' || at(tx, ty) !== '.') continue;
+      const nearStream = [-2, -1, 0, 1, 2].some(
+        (d) => at(tx + d, ty) === 'w' || at(tx + d, ty - 1) === 'w',
+      );
+      if (!nearStream) set(tx, ty - 1, 'b');
+    }
+  }
+
+  const rows = tiles.map((r) => r.join(''));
+  const furnished = furnish(rows, width, height, seed);
   return {
     zone: plan.zone,
     about: plan.about,
@@ -193,15 +239,146 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     width,
     height,
     origin: { x: ox, y: oy },
-    rows: tiles.map((r) => r.join('')),
+    rows,
     spawns: plan.spawns,
-    props: plan.props,
+    props: [...plan.props, ...furnished.props],
+    life: plan.life,
+    decalFrames: DECAL_FRAMES,
+    decals: furnished.decals,
+    plants: furnished.plants,
   };
 }
 
-/** The generated map as committed: stable key order, one row per line. */
+/** The decoration frames placed by `furnish` (sheet decal_strand). */
+export const DECAL_FRAMES: readonly string[] = [
+  ...Array.from({ length: 10 }, (_, k) => `decal_strand pebbles/-/${k}`),
+  ...Array.from({ length: 4 }, (_, k) => `decal_strand shells/-/${k}`),
+  ...Array.from({ length: 8 }, (_, k) => `decal_strand wrack/-/${k}`),
+  ...Array.from({ length: 3 }, (_, k) => `decal_strand twigs/-/${k}`),
+  ...Array.from({ length: 4 }, (_, k) => `decal_strand stones/-/${k}`),
+];
+const DECAL_START = { pebbles: 0, shells: 10, wrack: 14, twigs: 22, stones: 25 } as const;
+
+/**
+ * Furnishing (Book 7 section 14): clusters, never uniform speckle, and calm ground between them
+ * so people stay readable; but grass everywhere has at least a sward that moves in the wind.
+ */
+function furnish(
+  rows: readonly string[],
+  width: number,
+  height: number,
+  seed: number,
+): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
+  const T = 24;
+  const code = (px: number, py: number): string =>
+    rows[Math.floor(py / T)]?.[Math.floor(px / T)] ?? '~';
+  const r = (k: number, x: number, y: number): number =>
+    (cyrb53(`${k}:${x}:${y}`, seed) % 100003) / 100003;
+  const decals: DecalPlacement[] = [];
+  const plants: PlantPlacement[] = [];
+  const props: ZoneProp[] = [];
+  const W = width * T;
+  const H = height * T;
+  // Distance (in tiles) from each tile to the nearest bank or machair, for dunes and the tide line.
+  const nearBank = (px: number, py: number, reach: number): boolean => {
+    for (let d = 1; d <= reach; d++) {
+      const c = code(px, py - d * T);
+      if (c === 'b' || c === ',') return true;
+    }
+    return false;
+  };
+  const tideLine = (px: number, py: number): boolean =>
+    code(px, py) === '.' &&
+    (code(px, py + 6) === '_' || code(px + 6, py) === '_' || code(px - 6, py) === '_');
+  // Pebble clusters on the beach: one cluster per few tiles where the cluster noise is high.
+  for (let y = 4; y < H; y += 7) {
+    for (let x = 4; x < W; x += 7) {
+      const px = x + Math.floor(r(1, x, y) * 6);
+      const py = y + Math.floor(r(2, x, y) * 6);
+      const c = code(px, py);
+      const cluster = noise(seed + 20, px / T, py / T, 3);
+      // Clusters with calm sand between them (Book 7 section 14: no even sprinkle).
+      if (c === '.' && cluster > 0.64 && r(3, x, y) < (cluster - 0.64) * 2.2) {
+        decals.push([DECAL_START.pebbles + Math.floor(r(4, x, y) * 10), px, py]);
+      } else if ((c === '_' || c === '-') && r(5, x, y) < 0.012) {
+        decals.push([DECAL_START.shells + Math.floor(r(6, x, y) * 4), px, py]);
+      } else if (c === ',' && r(7, x, y) < 0.006) {
+        decals.push([DECAL_START.stones + Math.floor(r(8, x, y) * 4), px, py]);
+      }
+      if (tideLine(px, py) && r(9, x, y) < 0.75) {
+        decals.push([DECAL_START.wrack + Math.floor(r(10, x, y) * 8), px, py + 4]);
+        if (r(11, x, y) < 0.12)
+          decals.push([DECAL_START.twigs + Math.floor(r(12, x, y) * 3), px + 3, py + 5]);
+      }
+    }
+  }
+  // Plants: a sward over all the machair, tussocks in clumps, flowers in drifts, thrift on the
+  // bank's lip, marram on the dunes below the bank.
+  for (let y = 2; y < H; y += 5) {
+    for (let x = 2; x < W; x += 5) {
+      const px = x + Math.floor(r(20, x, y) * 5);
+      const py = y + Math.floor(r(21, x, y) * 5);
+      const c = code(px, py);
+      const v = Math.floor(r(22, x, y) * 4);
+      if (c === ',') {
+        const tussock = noise(seed + 30, px / T, py / T, 2.2);
+        const drift = noise(seed + 31, px / T, py / T, 3.5);
+        const lip = code(px, py + T) === 'b' || code(px, py + T) === '.';
+        if (lip && r(23, x, y) < 0.35) plants.push([3, px, py, v]);
+        else if (tussock > 0.55 && r(24, x, y) < (tussock - 0.5) * 2.2) plants.push([1, px, py, v]);
+        else if (drift > 0.62 && r(25, x, y) < (drift - 0.6) * 3)
+          plants.push([drift > 0.7 ? 4 : 5, px, py, v]);
+        else if (r(26, x, y) < 0.42) plants.push([0, px, py, v]);
+      } else if (c === '.' && nearBank(px, py, 4)) {
+        // Marram in clumps on the dunes under the bank, sand showing between them.
+        const clump = noise(seed + 32, px / T, py / T, 1.6);
+        if (clump > 0.5 && r(27, x, y) < (clump - 0.45) * 1.6) plants.push([2, px, py, v]);
+      } else if (c === '.' && r(28, x, y) < 0.02) {
+        plants.push([2, px, py, v]);
+      }
+    }
+  }
+  // Small stones scattered round the rock outcrops and skerries, on the beach side.
+  for (let y = 0; y < H; y += 9) {
+    for (let x = 0; x < W; x += 9) {
+      const px = x + Math.floor(r(40, x, y) * 8);
+      const py = y + Math.floor(r(41, x, y) * 8);
+      const c = code(px, py);
+      if (
+        (c === '_' || c === '-') &&
+        (code(px + 14, py) === 'r' || code(px - 14, py) === 'r' || code(px, py - 14) === 'r') &&
+        r(42, x, y) < 0.5
+      ) {
+        props.push({
+          sheet: 'prop_stones',
+          frame: `small/-/${Math.floor(r(43, x, y) * 4)}`,
+          x: px / T,
+          y: py / T,
+        });
+      }
+    }
+  }
+  return { decals, plants, props };
+}
+
+/** The generated map as committed: stable key order, one row per line, placements packed. */
 export function zoneMapText(map: ZoneMap): string {
-  const { rows, ...rest } = map;
+  const { rows, decals, plants, ...rest } = map;
   const head = JSON.stringify(rest, null, 2).replace(/\n}$/, '');
-  return `${head},\n  "rows": [\n${rows.map((r) => `    "${r}"`).join(',\n')}\n  ]\n}\n`;
+  const packed = (list: readonly (readonly number[])[]): string => {
+    const lines: string[] = [];
+    for (let i = 0; i < list.length; i += 24) {
+      lines.push(
+        `    ${list
+          .slice(i, i + 24)
+          .map((e) => JSON.stringify(e))
+          .join(',')}`,
+      );
+    }
+    return lines.join(',\n');
+  };
+  return (
+    `${head},\n  "decals": [\n${packed(decals)}\n  ],\n  "plants": [\n${packed(plants)}\n  ],\n` +
+    `  "rows": [\n${rows.map((r) => `    "${r}"`).join(',\n')}\n  ]\n}\n`
+  );
 }

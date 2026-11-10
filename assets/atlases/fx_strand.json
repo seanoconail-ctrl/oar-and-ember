@@ -1,0 +1,133 @@
+{
+  "sheet": "fx_strand",
+  "kind": "decal",
+  "image": "fx_strand.png",
+  "width": 8,
+  "height": 8,
+  "pivot": {
+    "x": 4,
+    "y": 4
+  },
+  "footprint": {
+    "w": 8,
+    "h": 8
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "spray": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "sand": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "rain": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "dust": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_dry": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_wet": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ripple": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "midge": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "spray/-/0": [
+      0,
+      0
+    ],
+    "spray/-/1": [
+      8,
+      0
+    ],
+    "spray/-/2": [
+      16,
+      0
+    ],
+    "sand/-/0": [
+      0,
+      8
+    ],
+    "sand/-/1": [
+      8,
+      8
+    ],
+    "sand/-/2": [
+      16,
+      8
+    ],
+    "rain/-/0": [
+      0,
+      16
+    ],
+    "dust/-/0": [
+      0,
+      24
+    ],
+    "dust/-/1": [
+      8,
+      24
+    ],
+    "dust/-/2": [
+      16,
+      24
+    ],
+    "print_dry/-/0": [
+      0,
+      32
+    ],
+    "print_wet/-/0": [
+      0,
+      40
+    ],
+    "ripple/-/0": [
+      0,
+      48
+    ],
+    "ripple/-/1": [
+      8,
+      48
+    ],
+    "ripple/-/2": [
+      16,
+      48
+    ],
+    "midge/-/0": [
+      0,
+      56
+    ],
+    "midge/-/1": [
+      8,
+      56
+    ]
+  }
+}

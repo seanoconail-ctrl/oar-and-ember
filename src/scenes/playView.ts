@@ -19,11 +19,13 @@ import type { Action } from '../input/actions.ts';
 import { attachBrowserInput } from '../input/browserInput.ts';
 import { InputMapper } from '../input/inputState.ts';
 import { browserStorage, loadSettings } from '../input/settingsStore.ts';
+import { resolveDisplaySettings, saveDisplaySettings } from '../input/displaySettings.ts';
+import { bakeElevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
-import { clockText, tideAt } from '../sim/calendar/calendar.ts';
+import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow } from '../sim/land/onFoot.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
@@ -37,6 +39,7 @@ import type { NamingChoice } from './namingView.ts';
 import { BODY_SHEETS } from './namingView.ts';
 import { Session } from './session.ts';
 import { zoneScene } from './zoneScene.ts';
+import { ZoneVisuals } from './zoneVisuals.ts';
 
 export interface PlayOptions {
   readonly seed: string;
@@ -76,12 +79,32 @@ export function startPlay(
     geometry.set(manifest.sheet, manifest);
   }
   const anims = new Map([...geometry].map(([name, m]) => [name, m.anims]));
+  const shadows = new Map([...geometry].map(([name, m]) => [name, m.shadow]));
+  const elevation = bakeElevation(map.rows);
+  renderer.addElevation(map.zone, elevation);
+  const store = browserStorage();
+  let display = resolveDisplaySettings(
+    store,
+    window.location.search,
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const visuals = new ZoneVisuals(map, elevation, display.reducedMotion);
+  // Reduced motion can be changed from the system menu with M (Book 2 section 21).
+  window.addEventListener('keydown', (e) => {
+    if (e.code !== 'KeyM' || session.menus.open !== 'system') return;
+    display = { reducedMotion: !display.reducedMotion };
+    visuals.reducedMotion = display.reducedMotion;
+    saveDisplaySettings(store, display);
+  });
   const look = { steerer: BODY_SHEETS[choice.bodyModel], people: { C_HILD: 'actor_c_hild' } };
 
   const audioTable = content.audio;
   const engine = new WebAudioEngine();
   const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
   const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
+  visuals.onStep = (surface, x) => {
+    if (engine.unlocked) engine.footstep(surface, (x - (sim.state.onFoot?.player.x ?? x)) / 200);
+  };
   const overlay = createOverlay(document);
   const root = overlay.root;
 
@@ -159,6 +182,7 @@ export function startPlay(
   let moved = false;
   let last = started;
   let first = true;
+  let lastVisual = started;
   const frame = (now: number): void => {
     browser.poll();
     const result = session.frame(now - last, browser.aim());
@@ -172,7 +196,20 @@ export function startPlay(
     const onFoot = sim.state.onFoot;
     if (onFoot === null) return;
     if (onFoot.player.moving) moved = true;
-    const tideOpen = tideAt(sim.state.calendar, b).tidalGroundOpen;
+    const tide = tideAt(sim.state.calendar, b);
+    const tideOpen = tide.tidalGroundOpen;
+    const daylight = b.daylight[seasonOf(sim.state.calendar.day)];
+    const frameInput = {
+      dt: (now - lastVisual) / 1000,
+      tick: sim.state.tick,
+      onFoot,
+      tide,
+      sky: { minuteOfDay: sim.state.calendar.minuteOfDay, ...daylight },
+      anims,
+      steererSheet: look.steerer,
+    };
+    lastVisual = now;
+    visuals.update(frameInput);
     const interaction = interactionNow(onFoot, map, land.rules, tideOpen);
 
     // The one prompt that fits the moment.
@@ -214,7 +251,13 @@ export function startPlay(
     );
     const open = session.menus.open;
     overlay.region('menu').textContent =
-      open === null ? '' : t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) });
+      open === null
+        ? ''
+        : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
+            open === 'system'
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })}`
+              : ''
+          }`;
 
     const scene = zoneScene({
       map,
@@ -224,7 +267,9 @@ export function startPlay(
       phase: lightPhase(sim.state.calendar, b),
       look,
       anims,
+      shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
+      visual: visuals.view(frameInput),
     });
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
 
@@ -243,6 +288,8 @@ export function startPlay(
     root.dataset['menu'] = open ?? '';
     root.dataset['body'] = sim.state.player.bodyModel ?? '';
     root.dataset['steerer'] = sim.state.player.name;
+    root.dataset['motion'] = display.reducedMotion ? 'reduced' : 'full';
+    root.dataset['seconds'] = visuals.seconds.toFixed(2);
     canvas.setAttribute(
       'aria-label',
       t('ui.play.label', { time: clockText(sim.state.calendar.minuteOfDay) }),

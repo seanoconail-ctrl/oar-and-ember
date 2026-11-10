@@ -11,6 +11,7 @@ export const TERRAIN = {
   _: 'foreshore',
   '.': 'shingle',
   ',': 'machair',
+  b: 'bank',
   w: 'stream',
   r: 'rock',
 } as const;
@@ -28,6 +29,17 @@ export interface ZoneProp {
   readonly y: number;
 }
 
+/** Wildlife the renderer draws (never simulated). */
+export interface ZoneLife {
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab';
+  readonly x: number;
+  readonly y: number;
+  readonly r?: number;
+}
+
+export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
+export type PlantKind = (typeof PLANT_KINDS)[number];
+
 export interface ZoneMap {
   readonly zone: Id;
   readonly tile: number;
@@ -38,6 +50,13 @@ export interface ZoneMap {
     Record<Id, { readonly x: number; readonly y: number; readonly facing: Facing }>
   >;
   readonly props: readonly ZoneProp[];
+  readonly life: readonly ZoneLife[];
+  /** "sheet state/facing/index" for each decoration index. */
+  readonly decalFrames: readonly string[];
+  /** [frame index, x, y] in pixels: flat decoration on the ground. */
+  readonly decals: readonly (readonly [number, number, number])[];
+  /** [kind index, x, y, variant] in pixels: plants that move in the wind. */
+  readonly plants: readonly (readonly [number, number, number, number])[];
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -48,7 +67,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export function checkZoneMap(json: unknown): { map: ZoneMap | null; problems: string[] } {
   const problems: string[] = [];
   if (!isRecord(json)) return { map: null, problems: ['expected an object'] };
-  const { zone, tile, width, height, rows, spawns, props } = json;
+  const { zone, tile, width, height, rows, spawns, props, decals, plants, decalFrames, life } =
+    json;
   if (typeof zone !== 'string' || !zone.startsWith('ZONE_'))
     problems.push('zone must be a ZONE_ ID');
   if (tile !== 24) problems.push('tile must be 24 (Book 9 section 01)');
@@ -89,6 +109,14 @@ export function checkZoneMap(json: unknown): { map: ZoneMap | null; problems: st
       if (!ok) problems.push(`props[${i}] needs sheet, frame, x and y`);
     });
   }
+  if (!Array.isArray(decalFrames) || !decalFrames.every((f) => typeof f === 'string'))
+    problems.push('decalFrames must be a list of frame names');
+  const triples = (list: unknown, n: number): boolean =>
+    Array.isArray(list) &&
+    list.every((e) => Array.isArray(e) && e.length === n && e.every(Number.isInteger));
+  if (!triples(decals, 3)) problems.push('decals must be [frame, x, y] triples');
+  if (!triples(plants, 4)) problems.push('plants must be [kind, x, y, variant] entries');
+  if (!Array.isArray(life)) problems.push('life must be a list');
   return { map: problems.length === 0 ? (json as unknown as ZoneMap) : null, problems };
 }
 

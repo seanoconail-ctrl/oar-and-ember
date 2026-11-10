@@ -22,6 +22,8 @@ export interface SceneSprite {
   readonly tall?: boolean;
   /** The actor the camera follows; tall objects in front of it are cut away. */
   readonly focus?: boolean;
+  /** Sort line within the actor layer, if not the foot (a bird in flight sorts over everything). */
+  readonly sort?: number;
 }
 
 export interface LightPool {
@@ -32,12 +34,66 @@ export interface LightPool {
   readonly colour: readonly [number, number, number];
 }
 
+/** A ground shadow: a soft contact ellipse under the feet, and a long cast shadow at low sun. */
+export interface ShadowCaster {
+  /** Foot position on screen, logical pixels. */
+  readonly x: number;
+  readonly y: number;
+  /** Contact ellipse, from the sheet's `shadow: WxH` header. */
+  readonly w: number;
+  readonly h: number;
+  /** The sprite whose silhouette is cast along the ground when the sun is low. */
+  readonly sheet?: string;
+  readonly frame?: string;
+  /** Height above the ground (a bird in flight): the shadow falls this far below. */
+  readonly lift?: number;
+}
+
+/**
+ * The living-world layers of a zone (Book 7 section 14). Visual only, computed from the
+ * simulation's view and a visual clock; the WebGL renderer draws them. The CPU reference renderer
+ * ignores them: it is the exact reference for the indexed sprite pass and the light, and the
+ * effects are checked by the browser captures instead (decision AP-9).
+ */
+export interface SceneEffects {
+  /** Visual clock, seconds. */
+  readonly seconds: number;
+  /** World pixel at the screen's top-left corner. */
+  readonly camera: { readonly x: number; readonly y: number };
+  /** Water over the zone's height field, or null for no water. */
+  readonly water: {
+    readonly zone: string;
+    /** Drawn tide height, 0 (low water) to 1 (high). */
+    readonly tide: number;
+    /** The highest the water has been drawn recently: sand below it is still drying. */
+    readonly wetTo: number;
+  } | null;
+  readonly wind: { readonly dirX: number; readonly dirY: number; readonly strength: number };
+  readonly shadows: readonly ShadowCaster[];
+  /** Cast-shadow direction per pixel of height (screen axes), and its strength 0..1. */
+  readonly sun: { readonly x: number; readonly y: number; readonly strength: number };
+  /** Cloud cover 0..1: drifting cloud shadows. */
+  readonly clouds: number;
+  /** Colour grade: out = colour * gain + lift (0..255 scale for lift). */
+  readonly grade: {
+    readonly gain: readonly [number, number, number];
+    readonly lift: readonly [number, number, number];
+  };
+  /** Light shafts through broken cloud, 0..1. */
+  readonly shafts: number;
+  /** Lightning flash 0..1 (reduced flashes caps it). */
+  readonly flash: number;
+  /** Mist 0..1. */
+  readonly fog: number;
+}
+
 export interface Scene {
   /** Palette code behind everything. */
   readonly background: string;
   readonly sprites: readonly SceneSprite[];
   readonly phase: Phase;
   readonly pools: readonly LightPool[];
+  readonly effects?: SceneEffects;
 }
 
 export interface SheetGeometry {
@@ -56,6 +112,7 @@ export interface DrawItem {
   readonly height: number;
   /** 0 draws every pixel; 0.5 drops half of them in an ordered-dither pattern (a cutaway). */
   readonly fade: number;
+  readonly layer: Layer;
 }
 
 const LAYER_ORDER: Record<Layer, number> = { ground: 0, decal: 1, actor: 2 };
@@ -73,6 +130,7 @@ export function buildDrawList(
     const sheet = sheets.get(sprite.sheet);
     if (sheet === undefined) throw new Error(`Scene uses unknown sheet "${sprite.sheet}"`);
     const footY = Math.round(sprite.y);
+    const sortY = sprite.sort ?? footY;
     const item: DrawItem = {
       sheet: sprite.sheet,
       frame: sprite.frame,
@@ -81,13 +139,14 @@ export function buildDrawList(
       width: sheet.width,
       height: sheet.height,
       fade: 0,
+      layer: sprite.layer,
     };
-    return { sprite, item, footY, index };
+    return { sprite, item, sortY, index };
   });
   placed.sort(
     (a, b) =>
       LAYER_ORDER[a.sprite.layer] - LAYER_ORDER[b.sprite.layer] ||
-      (a.sprite.layer === 'actor' ? a.footY - b.footY || a.item.x - b.item.x : 0) ||
+      (a.sprite.layer === 'actor' ? a.sortY - b.sortY || a.item.x - b.item.x : 0) ||
       a.index - b.index,
   );
   const focusAt = placed.findIndex((p) => p.sprite.focus === true);

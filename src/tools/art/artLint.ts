@@ -16,7 +16,8 @@ export interface ArtIssue {
  * Book 7 section 11 naming patterns, plus prop_ and decal_ for scenery and gore layers (S4-2) and
  * ui_ for in-world interface marks such as the interaction marker (S6-9).
  */
-export const SHEET_NAME = /^(actor|ship|token|tile|bld|fx|prop|decal|ui)_[a-z0-9]+(_[a-z0-9]+)*$/;
+export const SHEET_NAME =
+  /^(actor|ship|token|tile|bld|fx|prop|decal|ui|plant)_[a-z0-9]+(_[a-z0-9]+)*$/;
 
 /** Book 7 section 01: a 32 x 40 canvas, foot anchor at bottom centre, about 18 x 30 occupied. */
 export const ACTOR = {
@@ -57,7 +58,9 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
   };
   if (!SHEET_NAME.test(sheet.name))
     add('name does not follow Book 7 section 11 (actor_, tile_, prop_, decal_, ...)');
-  const isActor = sheet.name.startsWith('actor_');
+  // People (actor_<id>, Book 7 section 11) are held to the adult canvas; animals are not.
+  const isActor = /^actor_(p|c|l|r|e|h)_/.test(sheet.name);
+  const isCreature = sheet.name.startsWith('actor_') && !isActor;
   if (isActor) {
     if (sheet.width !== ACTOR.width || sheet.height !== ACTOR.height)
       add(`an actor canvas is ${ACTOR.width} x ${ACTOR.height}`);
@@ -66,6 +69,8 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
     if (['s', 'n', 'e', 'w'].some((f) => !sheet.facings.includes(f)))
       add('a person has four facings: s n e w');
   }
+  if (isCreature && ['s', 'n', 'e', 'w'].some((f) => !sheet.facings.includes(f)))
+    add('wildlife has four facings: s n e w (Book 7 section 13)');
   if (sheet.kind === 'tile' && (sheet.width !== TILE_SIZE || sheet.height !== TILE_SIZE))
     add('a tile is 24 x 24');
 
@@ -110,8 +115,8 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
       add('the frame is empty', key);
       continue;
     }
-    // A carried person and an in-world marker are off the ground.
-    const grounded = pose !== 'carried' && !sheet.name.startsWith('ui_');
+    // A carried person, a bird on the wing and an in-world marker are off the ground.
+    const grounded = pose !== 'carried' && pose !== 'flying' && !sheet.name.startsWith('ui_');
     if ((sheet.kind === 'sprite' || sheet.kind === 'prop') && grounded) {
       if (box.y1 !== sheet.pivot.y)
         add(`the feet (lowest row ${box.y1}) are not on the pivot row ${sheet.pivot.y}`, key);

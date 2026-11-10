@@ -389,6 +389,12 @@
   "ui.menu.name.system": {
     "text": "System menu"
   },
+  "ui.system.motion_on": {
+    "text": "Reduced motion: on. Press {key} to change."
+  },
+  "ui.system.motion_off": {
+    "text": "Reduced motion: off. Press {key} to change."
+  },
   "ui.ring.order.follow": {
     "text": "Follow"
   },

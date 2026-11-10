@@ -25,26 +25,50 @@ export interface Manifest {
   readonly frames: Readonly<Record<string, readonly [number, number]>>;
 }
 
+/** Atlases stay within this size on each side, well inside every WebGL2 device's limit. */
+export const MAX_ATLAS = 4096;
+
 export function packSheet(sheet: Sheet): { image: IndexedImage; manifest: Manifest } {
   const states = Object.entries(sheet.anims);
   const rows = states.length * sheet.facings.length;
   const columns = Math.max(...states.map(([, a]) => a.frames));
-  const image = createIndexedImage(columns * sheet.width, rows * sheet.height);
   const frames: Record<string, readonly [number, number]> = {};
-  let row = 0;
-  for (const [state, anim] of states) {
-    for (const facing of sheet.facings) {
-      for (let i = 0; i < anim.frames; i++) {
-        const key = frameKey(state, facing, i);
-        const frame = sheet.frames.get(key);
-        if (frame === undefined) throw new Error(`${sheet.name}: missing frame ${key}`);
-        const x = i * sheet.width;
-        const y = row * sheet.height;
-        blit(image, frame, x, y);
-        frames[key] = [x, y];
+  const keys: string[] = [];
+  for (const [state, anim] of states)
+    for (const facing of sheet.facings)
+      for (let i = 0; i < anim.frames; i++) keys.push(frameKey(state, facing, i));
+  let image;
+  if (rows * sheet.height <= MAX_ATLAS) {
+    // One row per state and facing: easy to read when the atlas is inspected.
+    image = createIndexedImage(columns * sheet.width, rows * sheet.height);
+    let row = 0;
+    for (const [state, anim] of states) {
+      for (const facing of sheet.facings) {
+        for (let i = 0; i < anim.frames; i++)
+          frames[frameKey(state, facing, i)] = [i * sheet.width, row * sheet.height];
+        row++;
       }
-      row++;
     }
+  } else {
+    // A large sheet (the autotiles) packs its frames in reading order into a square-ish grid.
+    const across = Math.max(
+      1,
+      Math.min(Math.floor(MAX_ATLAS / sheet.width), Math.ceil(Math.sqrt(keys.length))),
+    );
+    const down = Math.ceil(keys.length / across);
+    if (down * sheet.height > MAX_ATLAS)
+      throw new Error(`${sheet.name}: too many frames for one atlas`);
+    image = createIndexedImage(across * sheet.width, down * sheet.height);
+    keys.forEach((key, n) => {
+      frames[key] = [(n % across) * sheet.width, Math.floor(n / across) * sheet.height];
+    });
+  }
+  for (const key of keys) {
+    const frame = sheet.frames.get(key);
+    const at = frames[key];
+    if (frame === undefined || at === undefined)
+      throw new Error(`${sheet.name}: missing frame ${key}`);
+    blit(image, frame, at[0], at[1]);
   }
   return {
     image,

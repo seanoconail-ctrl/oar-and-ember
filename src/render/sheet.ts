@@ -26,7 +26,7 @@ import { createIndexedImage } from './indexedImage.ts';
 import type { IndexedImage } from './indexedImage.ts';
 import type { Palette } from './palette.ts';
 
-export type SheetKind = 'sprite' | 'tile' | 'decal' | 'prop';
+export type SheetKind = 'sprite' | 'tile' | 'decal' | 'prop' | 'plant';
 
 export interface Anim {
   readonly frames: number;
@@ -34,8 +34,8 @@ export interface Anim {
   readonly loop: boolean;
 }
 
-export type Pose = 'lying' | 'carried' | 'seated';
-const POSES: readonly Pose[] = ['lying', 'carried', 'seated'];
+export type Pose = 'lying' | 'carried' | 'seated' | 'flying';
+const POSES: readonly Pose[] = ['lying', 'carried', 'seated', 'flying'];
 
 export interface Sheet {
   readonly name: string;
@@ -83,7 +83,7 @@ export function compileSheet(text: string, file: string, palette: Palette): Shee
   };
   const name = requireHeader(source, 'sheet').value;
   const kindHeader = requireHeader(source, 'kind');
-  const kinds: readonly SheetKind[] = ['sprite', 'tile', 'decal', 'prop'];
+  const kinds: readonly SheetKind[] = ['sprite', 'tile', 'decal', 'prop', 'plant'];
   const kind =
     kinds.find((k) => k === kindHeader.value) ??
     fail(kindHeader.line, `kind must be one of ${kinds.join(', ')}`);

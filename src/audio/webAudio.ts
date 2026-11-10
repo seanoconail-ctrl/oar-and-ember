@@ -237,6 +237,41 @@ export class WebAudioEngine implements AudioSink {
     while (this.#voices.length > MAX_VOICES) this.#voices.shift()?.stop();
   }
 
+  /**
+   * A footstep on a surface (Book 7 section 14, footsteps by surface). TEMPORARY SOUND: a
+   * filtered noise burst shaped per surface until the Book 11 foley is recorded.
+   */
+  footstep(surface: string, pan: number): void {
+    const ctx = this.#ctx;
+    const bus = this.#buses.get('effects');
+    if (ctx === null || bus === undefined) return;
+    const shape: Record<string, [number, number, number]> = {
+      sand: [0.09, 0.22, 900],
+      wet_sand: [0.11, 0.25, 520],
+      shingle: [0.07, 0.3, 2600],
+      grass: [0.12, 0.16, 1500],
+      water: [0.22, 0.3, 700],
+      rock: [0.05, 0.28, 1900],
+    };
+    const [length, level, hz] = shape[surface] ?? shape['sand'] ?? [0.1, 0.2, 900];
+    const panner = ctx.createStereoPanner();
+    panner.pan.value = Math.max(-1, Math.min(1, pan));
+    panner.connect(bus);
+    const start = ctx.currentTime;
+    const made = [this.#noiseBurst(start, length, panner, level, hz)];
+    // Shingle crunches: a second, brighter click among the stones.
+    if (surface === 'shingle') made.push(this.#noiseBurst(start + 0.03, 0.05, panner, 0.18, 4200));
+    if (surface === 'water') made.push(this.#noiseBurst(start + 0.05, 0.18, panner, 0.15, 1800));
+    for (const node of made) {
+      if (node === null) continue;
+      this.#voices.push(node);
+      node.addEventListener('ended', () => {
+        this.#voices = this.#voices.filter((v) => v !== node);
+      });
+    }
+    while (this.#voices.length > MAX_VOICES) this.#voices.shift()?.stop();
+  }
+
   ambience(cues: readonly CueDef[], at: number): void {
     const ctx = this.#ctx;
     const bus = this.#buses.get('ambience');

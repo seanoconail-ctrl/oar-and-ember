@@ -4,9 +4,7 @@ import { join } from 'node:path';
 import { listFiles, loadPalette, MAPS_DIR, readRepo, SHEETS_DIR } from './artFiles.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { generateSheet } from './materials.ts';
-import { generateTerrainSheet } from './terrain.ts';
-
-export const TERRAIN_DIR = 'assets/art/terrain';
+import { strandDecals, strandFx, strandPlants, strandTiles } from './strandArt.ts';
 
 export function generatedSheets(): Map<string, string> {
   const out = new Map<string, string>();
@@ -16,11 +14,12 @@ export function generatedSheets(): Map<string, string> {
     if (name === undefined) throw new Error(`${file}: no "sheet:" header`);
     out.set(`${SHEETS_DIR}/${name}.txt`, generateSheet(readRepo(file), file, palette));
   }
-  for (const file of listFiles(TERRAIN_DIR, '.json')) {
-    const name = (JSON.parse(readRepo(file)) as { sheet?: string }).sheet;
-    if (name === undefined) throw new Error(`${file}: no "sheet" field`);
-    out.set(`${SHEETS_DIR}/${name}.txt`, generateTerrainSheet(readRepo(file), file));
-  }
+  // Wreck Strand's ground follows its zone map (generate the zone first: npm run zones).
+  const strand = JSON.parse(readRepo('content/zones/zone_sk_strand.json')) as { rows: string[] };
+  out.set(`${SHEETS_DIR}/tile_strand.txt`, strandTiles(palette, strand.rows));
+  out.set(`${SHEETS_DIR}/decal_strand.txt`, strandDecals(palette));
+  out.set(`${SHEETS_DIR}/plant_strand.txt`, strandPlants(palette));
+  out.set(`${SHEETS_DIR}/fx_strand.txt`, strandFx(palette));
   return out;
 }
 

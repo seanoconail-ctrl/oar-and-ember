@@ -15,7 +15,12 @@ export function terrainAt(map: ZoneMap, tx: number, ty: number): Terrain {
 }
 
 export function blocksMovement(terrain: Terrain, tidalGroundOpen: boolean): boolean {
-  return terrain === 'sea' || terrain === 'rock' || (terrain === 'flats' && !tidalGroundOpen);
+  return (
+    terrain === 'sea' ||
+    terrain === 'rock' ||
+    terrain === 'bank' ||
+    (terrain === 'flats' && !tidalGroundOpen)
+  );
 }
 
 /**
