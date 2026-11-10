@@ -21,11 +21,22 @@ const attr = async (page: Page, name: string): Promise<string> =>
 test('control within five seconds of the naming screen, with the chosen name and body', async ({
   page,
 }) => {
+  // Generous for a machine without a graphics card, which prepares slowly on the title; the
+  // five seconds from the naming screen are checked below.
+  test.setTimeout(120_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('./');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'title', {
     timeout: 15_000,
   });
+  // The title prepares the play renderer behind itself (decision AP-18); like a player reading
+  // the title, the test lets it finish. Its step costs are printed for slow machines.
+  await expect(page.locator('canvas#screen')).toHaveAttribute('data-prepared', 'ready', {
+    timeout: 60_000,
+  });
+  console.log(
+    `prepared ${(await page.locator('canvas#screen').getAttribute('data-prepare')) ?? '?'}`,
+  );
   await page.keyboard.press('Enter');
   const naming = page.locator('.oe-naming');
   await expect(naming).toBeVisible();

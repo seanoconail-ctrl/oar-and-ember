@@ -166,7 +166,10 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
   const contentNow = (): ReturnType<typeof bundledContent> => (content ??= bundledContent());
   // The play renderer, prepared while the title shows (decision AP-18).
   let prepared: PreparedPlay | null = null;
+  // Set on waking: preparation still unfinished then stops, so it never competes with play.
+  let woken = false;
   const play = (choice: NamingChoice, wokeAt: number): void => {
+    woken = true;
     step('atlases');
     loadAtlases().then((atlases) => {
       step('play');
@@ -229,20 +232,35 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     });
   });
   Promise.all([atlasesReady, painted]).then(([atlases]) => {
-    setTimeout(() => {
+    const steps = preparePlay(presenter, art.palette, contentNow(), atlases, {
+      name: formatString(strings, 'ui.naming.name_default'),
+      bodyModel: 'A',
+    });
+    // Each step's cost in ms, on the canvas as data-prepare, for diagnosing slow machines.
+    const costs: Record<string, number> = {};
+    const next = (): void => {
+      if (woken) {
+        canvas.dataset['prepared'] = prepared === null ? 'unfinished' : 'ready';
+        return;
+      }
       const startedAt = performance.now();
+      let done = false;
       try {
-        prepared = preparePlay(presenter, art.palette, contentNow(), atlases, {
-          name: formatString(strings, 'ui.naming.name_default'),
-          bodyModel: 'A',
-        });
+        const step = steps.next();
+        if (step.done === true) {
+          prepared = step.value;
+          done = true;
+        } else costs[step.value] = Math.round(performance.now() - startedAt);
       } catch {
         // Not fatal: play builds its own renderer on waking, as before.
-        prepared = null;
+        done = true;
       }
       if (onTitle) presenter.present(titleRgba);
-      canvas.dataset['prepareMs'] = String(Math.round(performance.now() - startedAt));
-    }, 0);
+      canvas.dataset['prepare'] = JSON.stringify(costs);
+      if (done) canvas.dataset['prepared'] = prepared === null ? 'failed' : 'ready';
+      else setTimeout(next, 0);
+    };
+    setTimeout(next, 0);
   }, fail);
   const leave = (e: Event): void => {
     if (e instanceof KeyboardEvent && (e.repeat || e.key === 'Tab')) return;

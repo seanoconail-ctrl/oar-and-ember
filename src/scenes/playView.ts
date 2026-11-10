@@ -85,18 +85,27 @@ function startDetail(): 0 | 1 | 2 {
 
 /**
  * Prepares play while the title shows (decision AP-18). A browser compiles shaders and uploads
- * textures for real only when they are first drawn with, which takes seconds on a machine without
- * a graphics card. So the opening frame is drawn once here, with each body, and waited for, and
- * the caller puts the title back on screen in the same task, so it is never seen. Waking then
- * reuses this renderer, and control comes within Stage 6's five seconds of the naming screen.
+ * textures for real only when they are first used, which takes seconds on a machine without a
+ * graphics card. So the renderer is built, its programs linked and the opening frame drawn once
+ * with each body, one step per task so the title still answers keys between steps; each step
+ * waits for the graphics to finish (reading one pixel), so its cost is measured and none of it is
+ * left for the first frame. The caller presents the title again after every step that draws, in
+ * the same task, so no hidden frame is ever seen. Waking reuses the renderer.
+ *
+ * A generator: each `next()` runs one step and yields its name; the return value is the result.
  */
-export function preparePlay(
+export function* preparePlay(
   presenter: Presenter,
   palette: Palette,
   content: Content,
   atlases: ReadonlyMap<string, LoadedAtlas>,
   choice: NamingChoice,
-): PreparedPlay | null {
+): Generator<string, PreparedPlay | null> {
+  const gl = presenter.gl;
+  const pixel = new Uint8Array(4);
+  const finish = (): void => {
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+  };
   const b = parseTimeBalance(content.balance);
   const world = newCampaign('prepare', b, parsePeopleBasics(content.balance), content, choice);
   const land = landContext(content, content.balance);
@@ -104,14 +113,23 @@ export function preparePlay(
   if (map === undefined) return null;
   const sim = createSimulation(b, world, land);
   const prepared = playRenderer(presenter, palette, atlases, map);
+  finish();
+  yield 'renderer';
+  const detail = startDetail();
+  prepared.renderer.compile(detail, 'water');
+  finish();
+  yield 'water';
+  prepared.renderer.compile(detail, 'post');
+  finish();
+  yield 'post';
   const anims = new Map([...prepared.geometry].map(([name, m]) => [name, m.anims]));
   const shadows = new Map([...prepared.geometry].map(([name, m]) => [name, m.shadow]));
   const visuals = new ZoneVisuals(map, prepared.elevation, false);
-  visuals.detail = startDetail();
+  visuals.detail = detail;
   const onFoot = sim.state.onFoot;
   if (onFoot === null) return null;
   const style = parseRenderStyle(renderJson);
-  for (const steerer of Object.values(BODY_SHEETS)) {
+  for (const [body, steerer] of Object.entries(BODY_SHEETS)) {
     const tide = tideAt(sim.state.calendar, b);
     const scene = zoneScene({
       map,
@@ -137,17 +155,9 @@ export function preparePlay(
       }),
     });
     prepared.renderer.render(scene, buildDrawList(scene, prepared.geometry, style.cutawayFade));
+    finish();
+    yield `draw${body}`;
   }
-  // Reading one pixel waits for the drawing to finish, so none of it is left for the first frame.
-  presenter.gl.readPixels(
-    0,
-    0,
-    1,
-    1,
-    presenter.gl.RGBA,
-    presenter.gl.UNSIGNED_BYTE,
-    new Uint8Array(4),
-  );
   return prepared;
 }
 

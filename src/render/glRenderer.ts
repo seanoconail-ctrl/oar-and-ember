@@ -96,6 +96,8 @@ export interface SceneRenderer {
   addElevation(zone: string, elevation: Elevation): void;
   /** Draws `items` over `scene.background` under the scene's light, and presents the frame. */
   render(scene: Scene, items: readonly DrawItem[]): void;
+  /** Links the water and post programs a scene at `detail` draws with, ahead of the first frame. */
+  compile(detail: number, pass: 'water' | 'post'): void;
 }
 
 /** Colours the water shader draws with, from the palette's ramps (0 to 255). */
@@ -515,6 +517,9 @@ export function createSceneRenderer(
   };
 
   return {
+    compile(detail, pass) {
+      program(detail === 0 ? `${pass}-low` : pass);
+    },
     addAtlas(manifest, image) {
       const atlas: Atlas = { manifest, image, texture: null };
       atlases.set(manifest.sheet, atlas);
