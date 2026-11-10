@@ -56,10 +56,18 @@ of consecutive frames, so a one-off change such as a light switch does not count
 | Clip | Continuous motion |
 |---|---|
 | Current build (Stage 6), standing still on Wreck Strand | 21.2% of cells: only the sea tiles and the steerer's breathing |
-| Wreck Strand target | 99.8% |
-| Kelda target | 98.8% |
-| Wreck Strand target, cloud shadows frozen | see the Step 1 report in the commit message |
-| Kelda target, cloud shadows frozen | see the Step 1 report in the commit message |
+| Wreck Strand target | 100% |
+| Kelda target | 100% |
+| Wreck Strand target, cloud shadows frozen | 89.2% |
+| Kelda target, cloud shadows frozen | 93.1% |
+
+The frozen-cloud figures show what moves without the sweeping cloud shadows: water, plants,
+creatures, smoke and weather. The cells still without motion there are solid things: the drystone
+wall, boulder crowns, the bank face and the middle of the wreck.
+
+The current build's 80 frames were captured over about 28 seconds, not 6.4, because the browser
+shared the machine with the renders. A longer window can only make the current build look more
+lively, not less.
 
 ## Regenerating
 ```bash
