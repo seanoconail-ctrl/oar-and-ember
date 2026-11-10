@@ -1,12 +1,14 @@
-# Art direction targets (Step 1 of the art pass, awaiting approval)
+# Art direction targets (approved 2026-11-10)
 
-These are mockups of the new environment standard. They are not the game yet. They are painted
+These mockups set the environment standard (Book 7 section 14). The user approved them; they now
+live in `reference/`, and every stage's capture (`captures/`, made by `npm run capture`) is
+compared with them. They are mockups, not the game. They are painted
 with the proposed palette at 1 logical pixel per pixel (640 x 360, 24 px tiles, 32 x 40 people)
 by a concept renderer in `mockup-src/`. That renderer applies the same kinds of pass the WebGL
 renderer will get in Step 2: soft cast shadows and contact occlusion, cloud shadows, light pools
 and a colour grade. The people are the game's own sprites, recoloured with the new ramps.
 
-| File | What it is |
+| File (in `reference/`) | What it is |
 |---|---|
 | `wreck-strand-target.png` / `.gif` | Wreck Strand, grey and windswept, late afternoon: a 6.4-second seamless loop |
 | `kelda-summer-target.png` / `.gif` | The Kelda Spring and the machair in summer: a 6.4-second seamless loop |
@@ -74,7 +76,7 @@ lively, not less.
 python3 docs/art/mockup-src/make_strand.py     # wreck-strand-target.png and .gif
 python3 docs/art/mockup-src/scene_kelda.py     # kelda-summer-target.png and .gif
 python3 docs/art/mockup-src/walk.py            # target-walk.mp4 (needs ffmpeg)
-python3 docs/art/mockup-src/measure.py docs/art/wreck-strand-target.gif
+python3 docs/art/mockup-src/measure.py docs/art/reference/wreck-strand-target.gif
 ```
 Needs Python 3 with numpy and Pillow; the people come from `assets/art/maps` through
 `mockup-src/export_people.ts` (run with Node 22).

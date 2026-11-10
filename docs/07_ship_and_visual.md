@@ -198,7 +198,7 @@ Two body models, A and B, offered side by side without labels. Both share the fu
 > Figure: the colour palette (drawn in the PDF version of this book).
 
 ### Light
-Day is cool and clear; dusk warms the land and darkens the sea; night uses lantern and hearth pools with the rest of the scene readable in blue shadow. Fire and hearth are the warmest colours in the game. Reserved accents (sea-light, sídhe glamour, corpse-light, danger tell) never appear in ordinary scenery.
+Day is cool and clear; first and last light are a grey half-light, a little warm, and low sun casts long shadows; night uses lantern and hearth pools with the rest of the scene readable in blue shadow (the full grade is in section 14). Fire and hearth are the warmest colours in the game. Reserved accents (sea-light, sídhe glamour, corpse-light, danger tell) never appear in ordinary scenery.
 
 ### Weather
 Rain is a light overlay that never hides an actionable threat. Fog uses layered dithering and reduces sight ranges in the simulation, not only visually. Storm scenes add spray, tilt the horizon a pixel or two and darken the palette, but threats and the ship's edge remain readable.
@@ -244,12 +244,16 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 | Ship token | `token_<tier>_<heading>_<sail>` | `token_t1_ne_full` |
 | Tile | `tile_<biome>_<variant>` | `tile_machair_03` |
 | Building | `bld_<culture>_<type>_<stage>` | `bld_norse_longhouse_s3` |
-| Effect | `fx_<power>_<name>` | `fx_ran_sealight` |
+| Effect | `fx_<power>_<name>`, or `fx_<place>` for a place's particles and prints | `fx_ran_sealight`, `fx_strand` |
+| Animal | `actor_<animal>` | `actor_gull` |
+| Plant | `plant_<place>` (states `<kind><variant>`, frames lean -3 to +3) | `plant_strand` |
+| Decoration | `decal_<place>` or `decal_<name>_<variant>` | `decal_strand`, `decal_blood_01` |
+| Prop | `prop_<name>` | `prop_boulder` |
 
 ### The art pipeline: authored by Claude
 - **Palette file:** the Book 7 palette plus blood reds, as indexed colours; sources may use only these indices.
 - **Sources:** one text file per sheet: frame size, frame list, and each frame as rows of single-character palette codes, with pivot, footprint and animation events. Deterministic generator scripts are allowed for tiles and variations and are committed with their output.
-- **Style rules:** one-pixel ink outline on characters and props (not on terrain); light from the upper left; three-tone ramps per material (shadow, base, highlight) plus a fourth for metal glints; ordered dithering only for fog, mist and gradients in sky and water.
+- **Style rules:** one-pixel ink outline on characters and props (not on terrain); light from the upper left; three tones per material (shadow, base, highlight) chosen from the hue-shifted ramps of section 14, plus a fourth for metal glints; ordered dithering only for fog, mist, gradients in sky and water, and sand drying after the water.
 - **Compile and check:** the art compiler packs atlases and manifests. Claude renders every new or changed sheet at 1x and 4x, inspects the images against these rules, and records the check in the stage report.
 - **Review:** the user reviews art at each build gate; changes requested there are logged and applied before the next gate.
 
@@ -266,6 +270,7 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 - Night, fog and rain never hide an actionable threat.
 - Ship states are complete for every tier in use; no stretched segments.
 - Every reserved accent appears only where this book allows it.
+- The place meets the terrain art standard (section 14), and its capture has been compared with the reference.
 
 ## 12 / Blood and gore
 *The game is for adults. Violence should look costly and ugly, drawn in the same pixel language as everything else.*
@@ -308,3 +313,78 @@ Anything the player can climb, pull, light, read, align or take has a consistent
 
 ### Wildlife
 Wolf, boar, red deer, hare, seal, otter, gulls, cormorants, a sea eagle, sheep and small black cattle, each with four facings and the states they need (walk, run, attack or flee, eat, sleep, dead).
+
+## 14 / Terrain art standard
+*The approved look of every place the player walks (art-direction pass, 2026-11-10). It is permanent: every stage that adds or changes something visible meets it, and is not done until it does (CLAUDE.md).*
+
+The standard was set by mockups the user approved; they are the reference every capture is compared with:
+
+| Reference | What it shows |
+|---|---|
+| [`wreck-strand-target.png`](art/reference/wreck-strand-target.png), [`.gif`](art/reference/wreck-strand-target.gif) | Wreck Strand, grey and windswept, late afternoon: a 6.4-second loop |
+| [`kelda-summer-target.png`](art/reference/kelda-summer-target.png), [`.gif`](art/reference/kelda-summer-target.gif) | The Kelda spring and the machair in summer: a 6.4-second loop |
+| [`target-walk.mp4`](art/reference/target-walk.mp4) | Ten seconds of the steerer walking the waterline, climbing the cut and crossing the machair |
+| [`palette-proposed.png`](art/reference/palette-proposed.png) | The palette: 37 hue-shifted ramps, 226 colours (in `assets/palette/book07.json`) |
+| [`current-walk.mp4`](art/reference/current-walk.mp4) | The Stage 6 build before the pass, for contrast: what the standard replaced |
+
+The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-src/`). The tone is a darker North Atlantic: grey-green sea, cool sand, wet stone, weathered timber; warmth comes from fire, low sun and cloth, never from the whole scene.
+
+### Palette
+- Colours come from named, hue-shifted ramps (shadows cooler and bluer, highlights warmer), five to eleven steps each: sea, sky, wet and dry sand, two stones, grass, moss, marram, fern, bracken, kelp, driftwood, tar, earth, fire, smoke, flowers, skins, hair, dyes, wool and the animals. Sources name a ramp and a step (`material.X: <ramp> <shadow> <base> <highlight>`), not a raw colour.
+- Shadows are cool blue-violet and never black. Ink outlines use the ink ramp.
+
+### Terrain
+- **Organic transitions.** Ground is drawn on a dual grid: each visual tile sits half a tile off the world grid, so its four corners are four world tiles, and inside it each pixel takes the highest terrain whose blended coverage, plus world-periodic noise, passes one half. No boundary follows a tile edge; no boundary runs straight for more than two thirds of a tile (16 px). Collision still uses the world tiles.
+- **Variants.** Every terrain that covers ground has at least 8 distinct plain tiles (the noise pattern repeats every 5 tiles, so up to 25), with tonal clusters and calm patches, never an even speckle.
+- **Edges carry detail:** the grass lip and its dark undercut over a bank; strata, ledges and a shadowed foot on a bank face; a damp line where dry sand meets the foreshore; wet, weedy, barnacled rock bases; a textured sea bed visible through the shallows.
+- **Height.** Banks and cliffs have a face with ledges and a shadow at their foot, broken by cuts where paths climb.
+- **Rocks** have dark wet bases, hanging weed, barnacles, lichen on lit faces, and smaller stones round them.
+
+### Decoration
+- A decoration layer over the ground: pebble clusters with calm sand between, shells, a wrack line of kelp and twigs along the top of the tide, driftwood and debris, worn footpaths through the grass, stones in the turf.
+- Plants are sprites that move: grass sward, tussocks, marram on the dunes, thrift on the bank's lip, clover and trefoil in drifts. Grass carries at least 6 plants a tile on average and no two-by-two block of grass is bare (at least 3 plants or decals).
+- Open ground is broken up with paths, rocks, bushes (heather), walls and bogs where the place has them.
+
+### Animation and movement
+- **Motion with the camera still:** at least 80% of the screen keeps moving, measured as the mockups were (20 x 20 pixel cells; a cell counts if at least 2% of its pixels change visibly between at least a quarter of consecutive frames). The approved strand mockup measures 89.2% with its cloud shadows frozen and 100% with them. Solid things (a wall, a boulder's crown, a bank face) may be still; nothing else.
+- **People** walk at the Book 10 walk speed (2.0 tiles a second) with a grounded 8-frame cycle whose planted foot keeps pace with the ground: no sliding, no floating. Runs bounce; carrying is heavier.
+- **Idles:** a breath, a weight shift, looking round after a few seconds still, bracing and holding the cloak in a strong gust.
+- **Secondary motion** on hair, cloaks and bags (the cloak flutters in the wind).
+- **Footfalls** leave prints in sand (wet prints hold water and are taken by the tide; dry ones fade), raise dust when running on dry ground, splash and ripple in water, part the grass round the legs, and sound by surface (sand, wet sand, shingle, grass, rock, water).
+- **Residents are shown at their tasks**, never standing idle in a row (from the first stage that has residents).
+
+### Wind
+- One wind per place drives everything. Gusts travel downwind across the ground as bands broken into patches; every plant leans with the steady wind, eases into each gust, and sways on its own phase so neighbours never move in step; flowers bob.
+- The same wind bends smoke, drifts dry sand along the beach in streamers, slants rain, lifts cloaks and flogs loose cloth, and runs a faint sheen over grass in each gust.
+
+### Water
+- Colour darkens from pale shallows over the sand to the deep, in ordered-dithered palette steps; broad swells lie in bands parallel to the shore and roll in, breaking into white lines in a surf zone.
+- Foam runs up the beach with each wave and back; the sand behind it is dark and sheened, then dries in steps; above the reach of the waves, sand wet from the tide dries over a few minutes.
+- The tide rises and falls as the calendar says; what is drawn never disagrees with where the simulation lets the player walk (the flats are always under water while the tidal ground is closed).
+- Kelp sways under the surface; glints flicker on crests in sunlight; spray bursts where waves meet rock; ripples ring anyone standing in water.
+- Streams flow (streaks drifting downstream), foam along their banks and at narrows; springs bubble.
+
+### Life
+- Every outdoor place has animals going about their lives: here gulls wheeling with their shadows on the ground, a gull standing and turning its head, a cormorant drying its wings, a seal lifting its head, crabs scuttling; midges in still air by water. Elsewhere sheep, cattle, insects and birds as Book 7 section 13 lists. Wildlife is visual unless a stage makes it more.
+
+### Light
+- A grade by time of day and weather: cool clear days; first and last light a grey half-light, a little warm; low sun warms the light and cools the shadows; night readable in blue shadow with lantern and hearth pools.
+- Every character, creature and prop has a soft contact shadow; when the sun is up its silhouette also casts a long shadow away from the sun, longest when it is low. Flying creatures cast their shadow on the ground below them.
+- Cloud shadows drift across land and sea with the wind; shafts of light fall through broken cloud when the sun is low; fire and lanterns flicker and throw light pools; lightning flashes in storms; fog and mist drift in layers.
+
+### Camera feel
+- The camera follows smoothly with a look-ahead in the direction of travel, and moves with the steerer by whole pixels so nothing jitters. Hits shake it briefly.
+
+### Accessibility
+- **Reduced motion** (from the system's preference, `?motion=reduced`, or the system menu): no camera shake or flashes, calmer plant sway, half the blown sand and insects. The world still moves (at least 50% of cells with the camera still).
+
+### Engineering limits
+- Visual only: the renderer, shaders and visual state never change the simulation, and use no `Math.random`.
+- Within the Book 2 frame budget: building a frame's scene and draw list under 4 ms in the test runner; the script's share of a browser frame under 5.5 ms.
+- 640 x 360 logical pixels, 24-pixel tiles and 32 x 40 people are unchanged.
+
+### How the standard is enforced
+- **Art lint** (`npm run lint`, so every build and CI) fails if an actor or prop sheet has no `shadow:` header, a zone has a terrain boundary straight for more than 16 px, a terrain has fewer than 8 plain tile variants, or grass is under-decorated (`src/tools/art/standard.ts`).
+- **Tests:** `tests/unit/standard.test.ts` checks shadows under everything drawn, transitions, variants, density and the frame budget; `tests/browser/standard.spec.ts` measures motion with the camera still, with and without reduced motion, and the script time per frame.
+- **Captures:** `npm run capture -- stage-NN` writes `docs/art/captures/stage-NN/` (a still at 1x and 2x, a 10-second walk at 25 fps, the reference beside the capture, a motion map and the figures). Each stage report compares the capture with `docs/art/reference/`.
+- **New places** start with a mockup the user approves before they are built (Book 3).

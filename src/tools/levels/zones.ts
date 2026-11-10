@@ -231,7 +231,7 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
   }
 
   const rows = tiles.map((r) => r.join(''));
-  const furnished = furnish(rows, width, height, seed);
+  const furnished = furnish(rows, width, height, seed, plan.cuts);
   return {
     zone: plan.zone,
     about: plan.about,
@@ -256,8 +256,9 @@ export const DECAL_FRAMES: readonly string[] = [
   ...Array.from({ length: 8 }, (_, k) => `decal_strand wrack/-/${k}`),
   ...Array.from({ length: 3 }, (_, k) => `decal_strand twigs/-/${k}`),
   ...Array.from({ length: 4 }, (_, k) => `decal_strand stones/-/${k}`),
+  ...Array.from({ length: 4 }, (_, k) => `decal_strand path/-/${k}`),
 ];
-const DECAL_START = { pebbles: 0, shells: 10, wrack: 14, twigs: 22, stones: 25 } as const;
+const DECAL_START = { pebbles: 0, shells: 10, wrack: 14, twigs: 22, stones: 25, path: 29 } as const;
 
 /**
  * Furnishing (Book 7 section 14): clusters, never uniform speckle, and calm ground between them
@@ -268,6 +269,7 @@ function furnish(
   width: number,
   height: number,
   seed: number,
+  cuts: readonly (readonly [number, number])[],
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -290,6 +292,21 @@ function furnish(
   const tideLine = (px: number, py: number): boolean =>
     code(px, py) === '.' &&
     (code(px, py + 6) === '_' || code(px + 6, py) === '_' || code(px - 6, py) === '_');
+  // Footpaths: from each cut in the bank, a worn path winds north across the machair.
+  const paths = cuts.map(
+    ([a, b], k) =>
+      (py: number): number =>
+        ((a + b + 1) / 2) * T + Math.sin(py / 90 + k * 2.1) * 30 + Math.sin(py / 37 + k) * 12,
+  );
+  const onPath = (px: number, py: number, reach: number): boolean =>
+    paths.some((f) => Math.abs(px - f(py)) < reach);
+  for (const f of paths) {
+    for (let py = 2; py < H; py += 5) {
+      const px = Math.round(f(py));
+      if (code(px, py) !== ',') continue;
+      decals.push([DECAL_START.path + Math.floor(r(13, px, py) * 4), px, py]);
+    }
+  }
   // Pebble clusters on the beach: one cluster per few tiles where the cluster noise is high.
   for (let y = 4; y < H; y += 7) {
     for (let x = 4; x < W; x += 7) {
@@ -320,7 +337,10 @@ function furnish(
       const py = y + Math.floor(r(21, x, y) * 5);
       const c = code(px, py);
       const v = Math.floor(r(22, x, y) * 4);
-      if (c === ',') {
+      if (c === ',' && onPath(px, py, 7)) {
+        // Trodden: the sward thins to the odd tuft at the path's edge.
+        if (!onPath(px, py, 5) && r(29, x, y) < 0.3) plants.push([0, px, py, v]);
+      } else if (c === ',') {
         const tussock = noise(seed + 30, px / T, py / T, 2.2);
         const drift = noise(seed + 31, px / T, py / T, 3.5);
         const lip = code(px, py + T) === 'b' || code(px, py + T) === '.';

@@ -10,7 +10,7 @@ from core import C, FPS, FRAMES, LOOP, Sprite, banded, blur, ramp_lookup, shift,
 from kelda import H, W, Kelda, SHADE, SUN, VIEW, bracken, fern
 from scene_strand import cast, contact
 
-OUT = os.path.join(os.path.dirname(__file__), '..')
+OUT = os.path.join(os.path.dirname(__file__), '..', 'reference')
 SPRING = (262, 148)
 HILD_AT = (300, 204)          # kneeling on the south lip of the pool
 

@@ -266,16 +266,17 @@ export function strandDecals(palette: Palette): string {
     'anim.wrack: frames 8, ticks 1',
     'anim.twigs: frames 3, ticks 1',
     'anim.stones: frames 4, ticks 1',
+    'anim.path: frames 4, ticks 1',
   );
   const out: string[] = [];
   const kinds: readonly (readonly [string, number])[] = [
-    ['stone', 5],
+    ['stone_warm', 5],
     ['stone', 6],
-    ['stone', 4],
-    ['stone_warm', 3],
-    ['stone', 7],
-    ['sand', 2],
     ['stone_warm', 4],
+    ['sand', 5],
+    ['stone', 7],
+    ['sand', 3],
+    ['stone_warm', 6],
   ];
   for (let k = 0; k < 10; k++) {
     const g = grid(18, 12);
@@ -328,6 +329,28 @@ export function strandDecals(palette: Palette): string {
     pebble(g, palette, 8 + hash01(k, 11) * 2, 6, 2.2 + hash01(k, 12), 'stone', 5);
     if (k % 2 === 0) pebble(g, palette, 12, 7, 1.4, 'stone', 4);
     out.push(...block('stones', k, g));
+  }
+  for (let k = 0; k < 4; k++) {
+    // A worn patch of footpath: bare earth, flattened grass at its edges, a stone or two.
+    const g = grid(18, 12);
+    for (let y = 0; y < 12; y++) {
+      for (let x = 0; x < 18; x++) {
+        const dx = (x + 0.5 - 9) / (7.5 + hash01(k, y, 30) * 1.2);
+        const dy = (y + 0.5 - 6) / 4.6;
+        const d = Math.hypot(dx, dy);
+        if (d > 1) continue;
+        if (d > 0.78) {
+          if (hash01(k, x, y, 31) < 0.55) put(g, x, y, c('grass', 3 + hash01(k, x, y, 32) * 1.5));
+          continue;
+        }
+        const n = hash01(k, x, y, 33);
+        // Flattened grass shows through the trodden earth.
+        if (n < 0.28) put(g, x, y, c('grass', 3.5 + n * 4));
+        else put(g, x, y, c('stone_warm', 2.6 + (n - 0.5) * 1.1 + (y < 4 ? 0.4 : 0)));
+        if (n > 0.95) put(g, x, y, c('stone', 5));
+      }
+    }
+    out.push(...block('path', k, g));
   }
   return `${[...lines, ...out].join('\n')}\n`;
 }

@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageDraw
 from palette import RAMPS, hex_rgb
 
-OUT = os.path.join(os.path.dirname(__file__), '..', 'palette-proposed.png')
+OUT = os.path.join(os.path.dirname(__file__), '..', 'reference', 'palette-proposed.png')
 S = 20
 rows = list(RAMPS.items())
 img = Image.new('RGB', (160 + 11 * S + 10, len(rows) * (S + 4) + 10), (34, 40, 52))

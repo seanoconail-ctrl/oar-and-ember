@@ -301,8 +301,18 @@ export function startPlay(
     // budget check in tests/browser/standard.spec.ts reads it.
     frameMs = frameMs * 0.95 + (performance.now() - workStart) * 0.05;
     root.dataset['frameMs'] = frameMs.toFixed(2);
-    requestAnimationFrame(frame);
+    if (!manual) requestAnimationFrame(frame);
   };
-  requestAnimationFrame(frame);
+  // Capture mode (?capture, for npm run capture): the page does not run by itself; the capture
+  // tool advances it one frame of a fixed length at a time, so every captured frame is exact.
+  const manual = new URLSearchParams(window.location.search).has('capture');
+  if (manual) {
+    let clock = performance.now();
+    (window as unknown as { oeStep: (ms: number) => void }).oeStep = (ms: number) => {
+      clock += ms;
+      frame(clock);
+    };
+    frame(clock);
+  } else requestAnimationFrame(frame);
   canvas.dataset['state'] = 'play';
 }

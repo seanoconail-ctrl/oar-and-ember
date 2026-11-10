@@ -9,7 +9,7 @@ from core import FPS, FRAMES, LOOP, to_u8
 from scene_strand import StrandRenderer
 from strand import VIEW
 
-OUT = os.path.join(os.path.dirname(__file__), '..')
+OUT = os.path.join(os.path.dirname(__file__), '..', 'reference')
 
 
 def actors(R, t):

@@ -96,7 +96,10 @@ void main() {
     // Colour by the depth of water: pale over the sand in the shallows, darker out to the deep.
     float d = depth + max(0.0, -e) * 0.6;
     // A smooth ramp from pale shallows to the deep, ordered-dithered between palette steps.
-    float idxf = 8.6 - 7.4 * pow(clamp(d / 1.1, 0.0, 1.0), 0.55);
+    float idxf = 9.0 - 6.2 * pow(clamp(d / 1.2, 0.0, 1.0), 0.6);
+    // Broad swells: a lighter crest band and a darker trough, wavy, rolling in to the shore.
+    float sw = fract(d * 2.4 + vnoise(w / 34.0) * 0.9 + vnoise(w / 12.0) * 0.2 - u_t * 0.09);
+    if (d > 0.15) idxf += sw < 0.22 ? 0.9 : sw > 0.62 && sw < 0.85 ? -0.8 : 0.0;
     float idx = floor(idxf + b * 0.999);
     vec3 c = seaStep(idx);
     float a = depth < 0.02 ? 0.42 : depth < 0.05 ? 0.62 : depth < 0.11 ? 0.82 : 1.0;
@@ -113,8 +116,12 @@ void main() {
     float n = vnoise(w / 30.0) * 0.8 + vnoise(w / 11.0) * 0.25;
     float phase = fract(d * 3.2 + n - u_t * 0.11);
     float broken = vnoise(vec2(w.x / 16.0, w.y / 7.0) + u_t * 0.1);
-    if (d > 0.04 && phase < 0.045 && broken > 0.42) c = d < 0.2 ? u_foam[1] : seaStep(idx + 2.0);
-    else if (d > 0.04 && phase < 0.09 && broken > 0.55) c = d < 0.2 ? u_foam[0] : seaStep(idx + 1.0);
+    // White crest lines on the swell, and a surf zone of breaking lines in the shallows.
+    if (d > 0.04 && phase < 0.045 && broken > 0.42) c = d < 0.25 ? u_foam[1] : seaStep(idx + 2.0);
+    else if (d > 0.04 && phase < 0.09 && broken > 0.55) c = d < 0.25 ? u_foam[0] : seaStep(idx + 1.0);
+    float surf = fract(d * 14.0 + vnoise(w / 10.0) * 0.8 - u_t * 0.35);
+    if (d < 0.16 && surf < 0.16 + 0.3 * (1.0 - d / 0.16) && vnoise(w / 3.0 + u_t * 0.3) > 0.4)
+      c = surf < 0.07 ? u_foam[2] : u_foam[1];
     // Ripples catching the light on the open water.
     if (d > 0.3 && vnoise(vec2(w.x / 7.0 - u_t * 0.3, w.y / 2.0 + u_t * 0.5)) > 0.8) c = seaStep(idx + 1.0);
     // The shore break: bright foam at the run-up's edge, lace and bubbles behind it.
@@ -133,8 +140,11 @@ void main() {
   vec3 c = bed;
   if (e < u_tide + ${SWASH.toFixed(3)}) {
     // Where the last wave ran: dark, with a film of sky on it just behind the edge.
-    c = bed * 0.68;
+    c = bed * 0.62;
     if (dry < 0.016 && vnoise(w / 2.0 + u_t) > 0.38) c = mix(bed, u_glint, 0.35);
+  } else if (e < u_tide + ${SWASH.toFixed(3)} + 0.06) {
+    // The dark band of sand the waves keep wet.
+    c = bed * 0.7;
   } else if (e < u_wetTo + 0.16) {
     // Sand still wet from the tide, drying lighter up the beach in dithered steps.
     float k = smoothstep(u_tide + ${SWASH.toFixed(3)}, u_wetTo + 0.16, e);

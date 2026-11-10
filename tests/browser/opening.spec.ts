@@ -50,17 +50,23 @@ test('control within five seconds of the naming screen, with the chosen name and
 /** Holds the key for one axis until the steerer's feet reach `target` along it. */
 async function walkAxis(page: Page, axis: 'x' | 'y', target: number): Promise<void> {
   const now = async (): Promise<number> => Number(await attr(page, axis === 'x' ? 'px' : 'py'));
-  let at = await now();
-  if (Math.abs(target - at) < 3) return;
-  const forward = target > at;
-  const key = axis === 'x' ? (forward ? 'KeyD' : 'KeyA') : forward ? 'KeyS' : 'KeyW';
-  await page.keyboard.down(key);
-  const deadline = Date.now() + 15_000;
-  while (Date.now() < deadline) {
-    at = await now();
-    if (forward ? at >= target - 2 : at <= target + 2) break;
+  // A player who overshoots steps back: on a slow machine the key may be released late, so
+  // correct up to a few times, each run shorter.
+  for (let attempt = 0; attempt < 4; attempt++) {
+    let at = await now();
+    if (Math.abs(target - at) < 4) return;
+    const forward = target > at;
+    const key = axis === 'x' ? (forward ? 'KeyD' : 'KeyA') : forward ? 'KeyS' : 'KeyW';
+    await page.keyboard.down(key);
+    const deadline = Date.now() + 15_000;
+    while (Date.now() < deadline) {
+      at = await now();
+      if (forward ? at >= target - 2 : at <= target + 2) break;
+    }
+    await page.keyboard.up(key);
+    // Let the last frames land before checking again.
+    await page.waitForTimeout(150);
   }
-  await page.keyboard.up(key);
 }
 
 /** Walks a tile path by straight runs, the way a player steers with the keys. */
@@ -82,7 +88,8 @@ async function here(page: Page): Promise<Tile> {
 }
 
 test('the rescue, played with the keys and taught by the moment', async ({ page }) => {
-  test.setTimeout(90_000);
+  // The walk is 2.0 tiles a second since the art pass (AP-1), and software GL is slow: allow time.
+  test.setTimeout(240_000);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('./?view=play&name=Ash&body=A');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play', {

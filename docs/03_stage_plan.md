@@ -29,6 +29,8 @@ _Planning only. No stage has been implemented or tested._
 - Write tests for each acceptance check, run them and report honestly, including failures.
 - If a prerequisite is missing, a requirement conflicts or a decision is needed, stop and ask.
 - Finish with a stage report in the Book 2 format, saved to `docs/stage-reports/`.
+- Every stage that adds a new place or new visible content has the acceptance check "meets the Book 7 standard (section 14); capture compared with the reference", tested by art lint, `tests/unit/standard.test.ts`, `tests/browser/standard.spec.ts` and a capture (`npm run capture -- stage-NN`) compared with `docs/art/reference/` in the report. If it does not meet the standard, the stage is not done.
+- Every new place starts with a mockup to that standard, and the stage waits for the user's approval of it before the place is built (the "First step" of Stages 7, 10, 14, 16, 21, 27 and 29).
 
 ### Gates
 Stages 12, 20 and 24 are **build gates**: the user playtests the build personally and writes a short note against the Book 1 fun tests. Wider playtests can be added later.
@@ -190,11 +192,13 @@ carrying and the Wreck Strand opening. Author and check the sprites. Test latenc
 ### Stage 7: Day and night, shelter and first tasks
 **Goal:** a small success: warmth, food, a first day and a first night.
 **Prerequisites:** Stage 6.
+**First step:** produce a mockup of the broch shelter and the camp at stages S0 and S1, by day and by night with the fire lit, to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-07/`), then stop and wait for the user's approval before building it.
 **Deliverables:** the broch shelter; fire; treating an injury; camp stages S0 to S1; the visible day clock, lighting and sleep; the task system v0 with player actions for gathering driftwood and fishing from the shore; tutorial food guard; morning report v0; home music and ambience for dawn, day, dusk and night.
 **Acceptance checks:**
 1. No starvation or spoilage before `tutorialComplete`.
 2. Sleeping after 18:00 advances to dawn and produces a morning report in sentences.
 3. The player's task action adds output at their skill, and missed timing never ruins a task.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-07/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 7. Read Book 1 sections 03 and 10, Book 2 sections 03 and 07, Book 10 sections 02-03
 and Book 11 section 05. Build the broch shelter, fire, treatment, day clock, sleep, task system v0
@@ -209,6 +213,7 @@ with two player actions, the tutorial guard, report v0 and home audio. Test the 
 1. Hild starts useful work immediately after rescue and is always visibly doing something.
 2. Talking to a wounded resident offers a topic about the wound.
 3. Unit tests cover regard deltas and band transitions with the two-day spacing.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-08/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 8. Read Book 5 sections 01-02, Book 8 sections 05 and 08-09, Book 2 section 06 and
 Book 10 section 08. Implement people, schedules, jobs, delegation, reason codes, barks, topics and
@@ -223,6 +228,7 @@ the regard flow. Add Oddi's theft scene. Test topics, deltas and bands.
 1. Frame data matches Book 10; every attack's tell precedes its active frames by at least 6 ticks.
 2. A parry inside the window staggers the attacker; a full charge breaks a block but not a parry.
 3. The steerer's death shows game over and reloads the latest autosave.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-09/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 9. Read Book 1 section 09, Book 2 sections 12-13, Book 7 section 12, Book 10 sections
 06-07 and Book 11 section 07. Implement combat, gore, death rules, surrender, finishers, morale,
@@ -232,11 +238,13 @@ perception basics, the scavengers and quick commands. Test timing, parry, charge
 ### Stage 10: The three searches and the southern island
 **Goal:** three searches that teach different things across real island ground.
 **Prerequisites:** Stage 9.
+**First step:** produce a mockup of Skarvholm's southern zones beyond Wreck Strand and the broch (the machair, Kelda, the sheepfold, the Hag's Seat headland) to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-10/`), then stop and wait for the user's approval before building it.
 **Deliverables:** Skarvholm's southern zones from Book 9 (Wreck Strand, machair, broch, Kelda, sheepfold, Hag's Seat headland); Oddi near the wreck; Bran guarding Thorkel's body at the sheepfold (fight, sneak or bargain); Runa at the Hag's Seat with the first supernatural sign; checkpoints.
 **Acceptance checks:**
 1. Each search has at least two viable approaches and records its decision as a fact.
 2. Reachability tests pass for the southern zones at high and low tide.
 3. The Hag's Seat event declares sign, rule, response and consequence.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-10/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 10. Read Book 4 sections 02 and 07-08, Book 5 section 02 and Book 9 sections 02-05.
 Build the southern zones, the three searches, Thorkel's body, checkpoints and the Hag's Seat event.
@@ -251,6 +259,7 @@ Run reachability and scenario-runner tests for each approach.
 1. Each repair visibly changes the boat sprite.
 2. `deriveStats` tests pass for T1 with each fitting, using Book 10 values.
 3. No task requires collecting a large count of one resource.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-11/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 11. Read Book 7 sections 02-05, Book 2 section 08, Book 10 section 05 and Book 4
 section 08 (beats 4-6). Implement the ship model, deriveStats, T1 art and states, the three repairs,
@@ -265,6 +274,7 @@ the fitting choice and the rites. Test stats, sprites and reversibility.
 1. Chapter 1 takes 45 to 60 minutes for a new player, with combat inside 25 minutes (measured by telemetry).
 2. User playtest: the chapter is finished and the user wants to launch.
 3. Art lint clean for every Build 1 asset; no placeholders remain.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-12/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 12. Read Book 1 sections 15-16, Book 7 section 04 and Book 11 section 04. Build the
 naming, sail mark, launch, reveal and chapter end. Prepare the user's playtest script and golden
@@ -280,6 +290,7 @@ save. Report timing honestly.
 1. Travel times are deterministic and match Book 10.
 2. The Cauldron is passable only at slack water.
 3. The governor keeps two quiet legs per eventful one over 200 simulated voyages.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-13/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 13. Read Book 1 section 08, Book 2 section 09, Book 4 sections 01 and 04, Book 10
 section 02 and Book 11 section 03. Implement the sea map, travel, weather, tide gates, stores,
@@ -289,11 +300,13 @@ discovery, encounters and handoffs. Test times, gates and governor ratios.
 ### Stage 14: The whole island: exploration, resources and puzzles
 **Goal:** Skarvholm worth exploring every day.
 **Prerequisites:** Stage 13.
+**First step:** produce a mockup of every new Skarvholm zone, the Seal Cave, the Skerry of the Drowned, the Hollow Cairn interior and the hermit's cell to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-14/`), then stop and wait for the user's approval before building it.
 **Deliverables:** every Skarvholm zone from Book 9; seasonal resource nodes; climbing routes; the Seal Cave tide puzzle and its back passage (reused in the Return); the Grey Men sunrise alignment; the Skerry of the Drowned causeway at spring low tides; the Hollow Cairn interior; the hermit's cell; region map discovery; zone ambiences.
 **Acceptance checks:**
 1. Reachability passes for every zone under each tide and season condition.
 2. Each puzzle has an in-world hint and a solved fact, and the scenario runner can solve it.
 3. Resource nodes appear and respawn only in their seasons.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-14/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 14. Read Book 1 section 11, Book 2 section 10, Book 4 section 02, Book 9 sections
 02-04 and Book 10 section 03. Build every island zone, resource nodes, climbing, the four puzzles,
@@ -308,6 +321,7 @@ the cairn and the cell. Run reachability and puzzle-solver tests.
 1. Hidden truth never appears before it is revealed.
 2. The plan validates berths and party size.
 3. Scouting reveals the Carrick items listed in Book 6.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-15/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 15. Read Book 1 section 05, Book 2 section 11 and Book 6 sections 01-02. Build leads,
 intel, scouting and the plan screen. Test that hidden truth stays hidden.
@@ -316,11 +330,13 @@ intel, scouting and the plan screen. Test that hidden truth stays hidden.
 ### Stage 16: Carrick Landing
 **Goal:** the first raid site, with every approach working.
 **Prerequisites:** Stage 15.
+**First step:** produce a mockup of Carrick Landing to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-16/`), then stop and wait for the user's approval before building it.
 **Deliverables:** the Carrick scene from Book 9; true state; guards with Book 10 sight and hearing; the watch post; runner and horn; dogs after a first raid; civilians (Colla, Eithne, the herdsman) with behaviours; dialogue for bargaining and threats; approaches steal, bargain, threaten, fight and slaughter; raid music.
 **Acceptance checks:**
 1. The scenario runner completes each approach on several seeds.
 2. Sight and dead zones match Book 9's sightline table.
 3. Alarm spreads only through sight, shouts, horns, dogs and the runner.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-16/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 16. Read Book 6 section 02, Book 9 sections 06-07, Book 2 sections 11-13 and Book 10
 section 07. Build Carrick, its true state, AI, civilians, alarm channels, Colla, Eithne and every
@@ -335,6 +351,7 @@ approach. Test approaches and sightlines.
 1. At most one complication per Carrick raid; withdrawal reachable from every state.
 2. Carry distances at high and low tide match Book 9.
 3. Killing every witness leaves evidence that can still be discovered.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-17/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 17. Read Book 6 section 02, Book 9 section 07 and Book 2 sections 11 and 15. Implement
 complications, extraction, cargo, towing, launch, evidence and the summary. Test withdrawal, carry
@@ -363,6 +380,7 @@ hostility, no quarter and crew judgement. Test each rule.
 1. Invalid placements show the failing rule; valid ones are built by residents and the player.
 2. A headless 120-day delegated run meets the Book 10 survival targets with no player input.
 3. A day with the player working beside residents produces noticeably more than one without.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-19/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 19. Read Book 1 sections 10 and 12, Book 2 section 07, Book 9 section 04 and Book 10
 sections 03 and 09. Implement tasks, player actions, designation, seasons, the steward, report v1
@@ -387,11 +405,13 @@ and progression against the day-30 targets.
 ### Stage 21: Saltvik on foot and trade
 **Goal:** a voyage that works without violence, in a town you can walk.
 **Prerequisites:** Stage 20.
+**First step:** produce a mockup of Saltvik to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-21/`), then stop and wait for the user's approval before building it.
 **Deliverables:** Saltvik as an on-foot scene; traders and prices from Book 10; recognition of marked goods; hiring bench; Gunnhild's yard; Kolbeinn and Asa's debts; the wind-knot; town guards following hostility rules; harbour music.
 **Acceptance checks:**
 1. A player who never fights leaves with a fitting, a resident or a contact.
 2. Goods from Carrick are recognised by their marks.
 3. Guards greet, warn or attack according to Saltvik's hostility.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-21/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 21. Read Book 6 section 04, Book 5 sections 02 and 04, Book 4 section 07, Book 8
 section 06 and Book 10 section 04. Build Saltvik on foot, trade, recognition, hiring, the yard, the
@@ -406,6 +426,7 @@ debts, the wind-knot and guard behaviour. Test the no-combat route.
 1. Every fitting changes stats and sprite as Books 7 and 10 list.
 2. Either ship can break off before grappling.
 3. Boarding resolves within ten minutes on average.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-22/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 22. Read Book 7 sections 02-05, Book 2 sections 08 and 14 and Book 10 section 05.
 Implement fittings, refits, wear, marks and the sea battle. Test stats, sprites and break-off.
@@ -419,6 +440,7 @@ Implement fittings, refits, wear, marks and the sea battle. Test stats, sprites 
 1. The roster never exceeds sixteen; shelter requires a plan.
 2. Residents raise a topic about a deed they witnessed within two days.
 3. No resident leaves without the request scene; no romance tie can be created.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-23/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 23. Read Book 5 sections 01-02, 05 and 08, Book 8 sections 05 and 09 and Book 2
 section 06. Implement ties, memories, topics, value shifts, departures, Ulf, the Followers, the
@@ -433,6 +455,7 @@ cap, shelter and generated residents. Test the cap, topics and departure flow.
 1. Accepted terms survive save and load unchanged.
 2. Fairness lint fails any dangerous mechanic missing a field.
 3. User playtest: the user sets their own next goal rather than following a checklist.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-24/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 24. Read Book 1 section 13, Book 4 section 07, Book 6 sections 03 and 08, Book 5
 section 03, Book 8 section 07 and Book 2 section 17. Implement powers, bargains, lint, omens, the
@@ -448,6 +471,7 @@ Light in the Fog, the lyngbakr and Thorkel's draugr. Test immutability and the T
 1. A household at the Book 10 day-90 targets survives winter without deaths from cold or hunger; one at half fails visibly with warnings.
 2. Nessa's reveal fires once and never repeats on load.
 3. Hull replacement transfers name, marks, history and two fittings.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-25/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 25. Read Book 4 sections 04 and 08 (Chapters 3-4), Book 6 sections 05-07, Book 5
 section 03, Book 10 sections 03, 10 and 11 and Book 11 section 05. Implement these chapters, the
@@ -462,6 +486,7 @@ scenarios, the karvi, harvest, winter and the Year 1 threats. Test the winter ta
 1. The answer matches the ledger for each autoplay policy.
 2. Precursors appear at least five days before every answer.
 3. Every answer can be settled before or during the fight.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-26/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 26. Read Book 6 section 09, Book 4 section 08 (Chapter 5), Book 9 sections 02-03 and Book
 2 section 15. Implement the scheduler, precursors, the defence, settlement options, island failure
@@ -471,11 +496,13 @@ and the council. Test ledger matching and timing.
 ### Stage 27: Chapter 6 and the mainland on foot
 **Goal:** a new home on someone else's coast, with a hinterland to explore.
 **Prerequisites:** Stage 26.
+**First step:** produce a mockup of the three mainland hinterland regions and the mainland home sites to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-27/`), then stop and wait for the user's approval before building it.
 **Deliverables:** three sites with acquisition paths; multi-voyage migration; the consort on the sea map only; mainland home stages M0 to M2; the three hinterland regions from Book 4 with known and unknown places, wilderness, wildlife, outlaws, territory guards and puzzles; outpost options; mainland music and ambience. This stage may be split into 27a to 27c (one region each) with a decision-log entry.
 **Acceptance checks:**
 1. Each site can be secured by at least two paths, and migration preserves everything moved.
 2. Reachability passes for every hinterland region; unknown places start hidden.
 3. Hostile territory guards attack on sight and stop after a settlement.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-27/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 27. Read Book 1 sections 11 and 14, Book 4 sections 03 and 08 (Chapter 6), Book 7
 sections 06 and 13 and Book 10 section 07. Implement sites, migration, the consort, mainland
@@ -490,6 +517,7 @@ stages and the hinterlands. Run reachability and hostility tests.
 1. Each ally's state is computed with readable reasons.
 2. Conflicts between allies from Book 5 are enforced.
 3. The annal reading matches the ledger exactly, including deeds the coast learned of.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-28/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 28. Read Book 5 sections 06-09, Book 4 sections 06-07, Book 8 section 06 and Book 2
 section 16. Implement the council, the annal, rival reactions, the keys, Asgrim and Heid. Test ally
@@ -499,11 +527,13 @@ states, conflicts and annal accuracy.
 ### Stage 29: The Return to Skarvholm, the Sea King and the endings
 **Goal:** a hostile return to the abandoned island, then a finale built from everything the player did. May be split into 29a (the Return) and 29b (the finale) with a decision-log entry.
 **Prerequisites:** Stage 28.
+**First step:** produce a mockup of the occupied island and the Hollow Cairn interior as Orm holds them to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-29/`), then stop and wait for the user's approval before building it.
 **Deliverables:** the occupied island and the Hollow Cairn interior from Book 9 sections 08 and 09; the garrison, horn, beacon, stakes and patrols; approaches A to E including the hólmganga; the Door of Three Truths with ledger-truth statements; Gróa, the drowned diggers and the wardens; the Cup's surge timers and exits; captives; the retry rule; the compact renewal at Inis Rón; preparation and checkpoint; the washer at the ford; the linked battle (sea engagement and home defence); weather tied to the keys; Orm's fates; endings and epilogue with reasons; finale music.
 **Acceptance checks:**
 1. Each Return approach recovers the Cup on some seed; the Door accepts exactly the ledger-true statements; surge timers match Book 10.
 2. The Return is hard: the good-player policy succeeds first time in no more than 60% of seeds, and failure leaves the campaign winnable with one retry.
 3. Defeat or the steerer's death restarts at the labelled checkpoint; each ending is reachable by at least one autoplay policy.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-29/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 29. Read Book 1 sections 04 and 14, Book 4 sections 07-08, Book 5 section 06, Book 6
 section 10, Book 9 sections 08-09, Book 10 section 13 and Book 11 section 04. Build the Return to
@@ -519,6 +549,7 @@ the surge, the retry rule, the checkpoint and ending reachability.
 1. All Book 2 performance budgets are met on the reference machine.
 2. Every golden save loads and migrates.
 3. No placeholders remain in art or audio and both lints are clean.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-30/` against `docs/art/reference/`).
 ```
 PROMPT  Stage 30. Read Book 2 sections 21-23, Book 7 section 11 and Book 11 sections 09-11. Run the
 accessibility, performance, migration, autoplay, lint and audio passes. Report every remaining

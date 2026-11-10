@@ -12,7 +12,7 @@ from core import C, to_u8
 from scene_strand import StrandRenderer, Trails
 from strand import CUT_X, H, W, shore_y
 
-OUT = os.path.join(os.path.dirname(__file__), '..')
+OUT = os.path.join(os.path.dirname(__file__), '..', 'reference')
 FPS = 25
 SECONDS = 10.0
 SPEED = 3.5 * 24            # Book 10 walk, tiles per second, in pixels
