@@ -14,7 +14,8 @@ import { loadAtlases } from './atlases.ts';
 import { bundledContent } from './bundledContent.ts';
 import { showNaming } from './namingView.ts';
 import type { NamingChoice } from './namingView.ts';
-import { startPlay } from './playView.ts';
+import { preparePlay, startPlay } from './playView.ts';
+import type { PreparedPlay } from './playView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
 import { shellViewRequested, showShellView } from './shellView.ts';
 import { composeTitleFrame } from './title.ts';
@@ -161,13 +162,18 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
   const fail = (error: unknown): void => {
     canvas.dataset['error'] = error instanceof Error ? error.message : String(error);
   };
+  let content: ReturnType<typeof bundledContent> | null = null;
+  const contentNow = (): ReturnType<typeof bundledContent> => (content ??= bundledContent());
+  // The play renderer, prepared while the title shows (decision AP-18).
+  let prepared: PreparedPlay | null = null;
   const play = (choice: NamingChoice, wokeAt: number): void => {
     step('atlases');
     loadAtlases().then((atlases) => {
       step('play');
-      startPlay(canvas, presenter, art.palette, strings, bundledContent(), atlases, choice, {
+      startPlay(canvas, presenter, art.palette, strings, contentNow(), atlases, choice, {
         seed: `campaign-${Math.floor(wokeAt)}`,
         wokeAt,
+        prepared,
       });
     }, fail);
   };
@@ -190,7 +196,8 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     name,
     buildLine: formatString(strings, 'ui.title.build', { build: buildId }),
   });
-  presenter.present(toRgba(frame, art.palette));
+  const titleRgba = toRgba(frame, art.palette);
+  presenter.present(titleRgba);
   step('size');
   trackSize(canvas, presenter);
   // Mark the title as shown once the browser has painted it.
@@ -211,6 +218,32 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
   document.body.append(press);
   // The atlases load while the title shows, so waking needs no wait.
   const atlasesReady = loadAtlases();
+  // Once the title is painted, the play renderer is prepared behind it (AP-18): drawn once, then
+  // the title is presented again in the same task, so the player never sees the hidden frame.
+  let onTitle = true;
+  const painted = new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        resolve();
+      });
+    });
+  });
+  Promise.all([atlasesReady, painted]).then(([atlases]) => {
+    setTimeout(() => {
+      const startedAt = performance.now();
+      try {
+        prepared = preparePlay(presenter, art.palette, contentNow(), atlases, {
+          name: formatString(strings, 'ui.naming.name_default'),
+          bodyModel: 'A',
+        });
+      } catch {
+        // Not fatal: play builds its own renderer on waking, as before.
+        prepared = null;
+      }
+      if (onTitle) presenter.present(titleRgba);
+      canvas.dataset['prepareMs'] = String(Math.round(performance.now() - startedAt));
+    }, 0);
+  }, fail);
   const leave = (e: Event): void => {
     if (e instanceof KeyboardEvent && (e.repeat || e.key === 'Tab')) return;
     // The key that leaves the title must not also act on the naming screen it opens.
@@ -218,6 +251,7 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     window.removeEventListener('keydown', leave);
     canvas.removeEventListener('pointerdown', leave);
     press.remove();
+    onTitle = false;
     step('naming');
     canvas.dataset['state'] = 'naming';
     atlasesReady.then(

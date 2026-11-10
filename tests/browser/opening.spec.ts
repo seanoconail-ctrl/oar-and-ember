@@ -56,6 +56,8 @@ test('control within five seconds of the naming screen, with the chosen name and
     `control in ${ms} ms; steps ${steps.join(', ')}; start-up ${(await overlay(page).getAttribute('data-startup')) ?? '?'}`,
   );
   await page.keyboard.up('KeyD');
+  // Waking reused the renderer prepared behind the title (decision AP-18).
+  expect(await overlay(page).getAttribute('data-startup')).toContain('"prepared":1');
   expect(ms).toBeLessThan(5000);
   await expect(overlay(page)).toHaveAttribute('data-steerer', 'Ash');
   await expect(overlay(page)).toHaveAttribute('data-body', 'B');

@@ -21,7 +21,9 @@ import { InputMapper } from '../input/inputState.ts';
 import { browserStorage, loadSettings } from '../input/settingsStore.ts';
 import { resolveDisplaySettings, saveDisplaySettings } from '../input/displaySettings.ts';
 import { bakeElevation } from '../render/elevation.ts';
+import type { Elevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
+import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
@@ -29,6 +31,7 @@ import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow } from '../sim/land/onFoot.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
+import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
@@ -45,6 +48,107 @@ export interface PlayOptions {
   readonly seed: string;
   /** performance.now() when the player pressed Wake, to measure the time to control. */
   readonly wokeAt: number;
+  /** The renderer prepared while the title showed (preparePlay), if it is ready. */
+  readonly prepared?: PreparedPlay | null;
+}
+
+/** The scene renderer for a zone, with every atlas and the zone's height field registered. */
+export interface PreparedPlay {
+  readonly zone: string;
+  readonly renderer: SceneRenderer;
+  readonly geometry: ReadonlyMap<string, LoadedAtlas['manifest']>;
+  readonly elevation: Elevation;
+}
+
+function playRenderer(
+  presenter: Presenter,
+  palette: Palette,
+  atlases: ReadonlyMap<string, LoadedAtlas>,
+  map: ZoneMap,
+): PreparedPlay {
+  const renderer = createSceneRenderer(presenter, palette, parseRenderStyle(renderJson));
+  const geometry = new Map<string, LoadedAtlas['manifest']>();
+  for (const { manifest, image } of atlases.values()) {
+    renderer.addAtlas(manifest, image);
+    geometry.set(manifest.sheet, manifest);
+  }
+  const elevation = bakeElevation(map.rows);
+  renderer.addElevation(map.zone, elevation);
+  return { zone: map.zone, renderer, geometry, elevation };
+}
+
+/** The effect detail a session starts at: ?quality=full|lite|low, else low (AP-16). */
+function startDetail(): 0 | 1 | 2 {
+  const forced = new URLSearchParams(window.location.search).get('quality');
+  return forced === 'full' ? 2 : forced === 'lite' ? 1 : 0;
+}
+
+/**
+ * Prepares play while the title shows (decision AP-18). A browser compiles shaders and uploads
+ * textures for real only when they are first drawn with, which takes seconds on a machine without
+ * a graphics card. So the opening frame is drawn once here, with each body, and waited for, and
+ * the caller puts the title back on screen in the same task, so it is never seen. Waking then
+ * reuses this renderer, and control comes within Stage 6's five seconds of the naming screen.
+ */
+export function preparePlay(
+  presenter: Presenter,
+  palette: Palette,
+  content: Content,
+  atlases: ReadonlyMap<string, LoadedAtlas>,
+  choice: NamingChoice,
+): PreparedPlay | null {
+  const b = parseTimeBalance(content.balance);
+  const world = newCampaign('prepare', b, parsePeopleBasics(content.balance), content, choice);
+  const land = landContext(content, content.balance);
+  const map = world.onFoot === null ? undefined : land.maps.get(world.onFoot.zone);
+  if (map === undefined) return null;
+  const sim = createSimulation(b, world, land);
+  const prepared = playRenderer(presenter, palette, atlases, map);
+  const anims = new Map([...prepared.geometry].map(([name, m]) => [name, m.anims]));
+  const shadows = new Map([...prepared.geometry].map(([name, m]) => [name, m.shadow]));
+  const visuals = new ZoneVisuals(map, prepared.elevation, false);
+  visuals.detail = startDetail();
+  const onFoot = sim.state.onFoot;
+  if (onFoot === null) return null;
+  const style = parseRenderStyle(renderJson);
+  for (const steerer of Object.values(BODY_SHEETS)) {
+    const tide = tideAt(sim.state.calendar, b);
+    const scene = zoneScene({
+      map,
+      onFoot,
+      tick: sim.state.tick,
+      tideOpen: tide.tidalGroundOpen,
+      phase: lightPhase(sim.state.calendar, b),
+      look: { steerer, people: { C_HILD: 'actor_c_hild' } },
+      anims,
+      shadows,
+      highlight: null,
+      visual: visuals.view({
+        dt: 1 / 60,
+        tick: sim.state.tick,
+        onFoot,
+        tide,
+        sky: {
+          minuteOfDay: sim.state.calendar.minuteOfDay,
+          ...b.daylight[seasonOf(sim.state.calendar.day)],
+        },
+        anims,
+        steererSheet: steerer,
+      }),
+    });
+    prepared.renderer.render(scene, buildDrawList(scene, prepared.geometry, style.cutawayFade));
+  }
+  // Reading one pixel waits for the drawing to finish, so none of it is left for the first frame.
+  presenter.gl.readPixels(
+    0,
+    0,
+    1,
+    1,
+    presenter.gl.RGBA,
+    presenter.gl.UNSIGNED_BYTE,
+    new Uint8Array(4),
+  );
+  return prepared;
 }
 
 /**
@@ -90,17 +194,15 @@ export function startPlay(
   const session = new Session(sim, input, { awareHostiles: () => 0 });
   const style = parseRenderStyle(renderJson);
   mark('world');
-  const renderer = createSceneRenderer(presenter, palette, style);
-  const geometry = new Map<string, LoadedAtlas['manifest']>();
-  for (const { manifest, image } of atlases.values()) {
-    renderer.addAtlas(manifest, image);
-    geometry.set(manifest.sheet, manifest);
-  }
+  const prepared =
+    options.prepared?.zone === map.zone
+      ? options.prepared
+      : playRenderer(presenter, palette, atlases, map);
+  if (prepared === options.prepared) marks['prepared'] = 1;
+  const { renderer, geometry, elevation } = prepared;
   const anims = new Map([...geometry].map(([name, m]) => [name, m.anims]));
   const shadows = new Map([...geometry].map(([name, m]) => [name, m.shadow]));
   mark('renderer');
-  const elevation = bakeElevation(map.rows);
-  renderer.addElevation(map.zone, elevation);
   const store = browserStorage();
   let display = resolveDisplaySettings(
     store,
@@ -207,13 +309,12 @@ export function startPlay(
   let frames = 0;
   // Effect detail (AP-16): full unless forced with ?quality=full|lite|low, stepped down when
   // frames keep coming slower than 10 a second, so a slow machine stays playable.
-  const forced = new URLSearchParams(window.location.search).get('quality');
-  const DETAIL = { full: 2, lite: 1, low: 0 } as const;
+  const quality = new URLSearchParams(window.location.search).get('quality');
+  const forced = quality === 'full' || quality === 'lite' || quality === 'low' ? quality : null;
   // Every session starts at low detail and steps up only once frames prove fast, so a slow
   // machine never compiles or draws the heavy effects (AP-16); a software renderer stays low.
   const software = softwareRenderer(presenter.gl);
-  if (forced === 'full' || forced === 'lite' || forced === 'low') visuals.detail = DETAIL[forced];
-  else visuals.detail = 0;
+  visuals.detail = startDetail();
   let slowFrames = 0;
   let fastFrames = 0;
   let steppedDown = false;
