@@ -200,9 +200,14 @@ export function startPlay(
   // frames keep coming slower than 10 a second, so a slow machine stays playable.
   const forced = new URLSearchParams(window.location.search).get('quality');
   const DETAIL = { full: 2, lite: 1, low: 0 } as const;
+  // Every session starts at low detail and steps up only once frames prove fast, so a slow
+  // machine never compiles or draws the heavy effects (AP-16); a software renderer stays low.
+  const software = softwareRenderer(presenter.gl);
   if (forced === 'full' || forced === 'lite' || forced === 'low') visuals.detail = DETAIL[forced];
-  else if (softwareRenderer(presenter.gl)) visuals.detail = 0;
+  else visuals.detail = 0;
   let slowFrames = 0;
+  let fastFrames = 0;
+  let steppedDown = false;
   let lastFrameAt = -1;
   const frame = (now: number): void => {
     const workStart = performance.now();
@@ -211,9 +216,14 @@ export function startPlay(
       // A very slow frame counts at once; merely slow ones must keep coming.
       slowFrames =
         gap > 400 ? slowFrames + 4 : gap > 100 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+      fastFrames = gap < 30 ? fastFrames + 1 : 0;
       if (slowFrames >= 4 && visuals.detail > 0) {
         visuals.detail = visuals.detail === 2 ? 1 : 0;
         slowFrames = 0;
+        steppedDown = true;
+      } else if (fastFrames >= 45 && visuals.detail < 2 && !steppedDown && !software) {
+        visuals.detail = visuals.detail === 0 ? 1 : 2;
+        fastFrames = 0;
       }
     }
     lastFrameAt = now;

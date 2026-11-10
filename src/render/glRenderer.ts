@@ -268,8 +268,10 @@ export function createSceneRenderer(
   build();
   presenter.onRestore(build);
 
+  /** Vertex scratch, reused every frame: 6 corners x (x, y, u, v, fade) a sprite. */
+  let scratch = new Float32Array(30 * 1024);
   const quad = (
-    out: number[],
+    at: number,
     x: number,
     y: number,
     w: number,
@@ -277,16 +279,29 @@ export function createSceneRenderer(
     tx: number,
     ty: number,
     fade: number,
-  ): void => {
-    const corners = [
-      [x, y, tx, ty],
-      [x + w, y, tx + w, ty],
-      [x, y + h, tx, ty + h],
-      [x, y + h, tx, ty + h],
-      [x + w, y, tx + w, ty],
-      [x + w, y + h, tx + w, ty + h],
-    ];
-    for (const [px = 0, py = 0, u = 0, v = 0] of corners) out.push(px, py, u, v, fade);
+  ): number => {
+    if (at + 30 > scratch.length) {
+      const bigger = new Float32Array(scratch.length * 2);
+      bigger.set(scratch);
+      scratch = bigger;
+    }
+    const v = scratch;
+    let i = at;
+    const put = (px: number, py: number, u: number, w2: number): void => {
+      v[i] = px;
+      v[i + 1] = py;
+      v[i + 2] = u;
+      v[i + 3] = w2;
+      v[i + 4] = fade;
+      i += 5;
+    };
+    put(x, y, tx, ty);
+    put(x + w, y, tx + w, ty);
+    put(x, y + h, tx, ty + h);
+    put(x, y + h, tx, ty + h);
+    put(x + w, y, tx + w, ty);
+    put(x + w, y + h, tx + w, ty + h);
+    return i;
   };
 
   const uniform = (p: WebGLProgram, name: string): WebGLUniformLocation | null =>
@@ -307,18 +322,18 @@ export function createSceneRenderer(
       const sheet = items[i]?.sheet ?? '';
       const atlas = atlases.get(sheet);
       if (atlas?.texture == null) throw new Error(`No atlas loaded for sheet "${sheet}"`);
-      const vertices: number[] = [];
+      let n = 0;
       while (i < items.length && items[i]?.sheet === sheet) {
         const item = items[i];
         i++;
         if (item === undefined) continue;
         const at = atlas.manifest.frames[item.frame];
         if (at === undefined) throw new Error(`Atlas ${sheet} has no frame ${item.frame}`);
-        quad(vertices, item.x, item.y, item.width, item.height, at[0], at[1], item.fade);
+        n = quad(n, item.x, item.y, item.width, item.height, at[0], at[1], item.fade);
       }
       gl.bindTexture(gl.TEXTURE_2D, atlas.texture);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STREAM_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 5);
+      gl.bufferData(gl.ARRAY_BUFFER, scratch.subarray(0, n), gl.STREAM_DRAW);
+      gl.drawArrays(gl.TRIANGLES, 0, n / 5);
     }
   };
 
@@ -527,10 +542,9 @@ export function createSceneRenderer(
       const bg = palette.entries[paletteIndex(palette, scene.background)]?.rgb ?? [0, 0, 0];
       gl.uniform1i(uniform(sprite, 'u_solid'), 1);
       gl.uniform3f(uniform(sprite, 'u_solidColour'), bg[0], bg[1], bg[2]);
-      const full: number[] = [];
-      quad(full, 0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT, 0, 0, 0);
+      const fullN = quad(0, 0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT, 0, 0, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, spriteBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(full), gl.STREAM_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, scratch.subarray(0, fullN), gl.STREAM_DRAW);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
       const split = items.findIndex((d) => d.layer === 'actor');
@@ -542,7 +556,8 @@ export function createSceneRenderer(
         fx?.water === undefined || fx.water === null ? undefined : elevations.get(fx.water.zone);
       if (fx !== undefined) {
         if (elev !== undefined) drawWater(fx, elev);
-        drawShadows(fx);
+        // Low detail (a slow machine) skips the shadow pass.
+        if ((fx.detail ?? 2) > 0) drawShadows(fx);
         gl.bindFramebuffer(gl.FRAMEBUFFER, sceneFbo);
       }
       drawSprites(upper);

@@ -150,6 +150,8 @@ export function plantSprites(
   wind: Wind,
   walkers: readonly Walker[],
   reducedMotion: boolean,
+  /** Share of plants drawn (low effect detail draws fewer, AP-16). */
+  share = 1,
 ): SceneSprite[] {
   const out: SceneSprite[] = [];
   const index = zoneIndex(map);
@@ -168,6 +170,7 @@ export function plantSprites(
     for (const plant of index.plants[r] ?? []) {
       const { x, y } = plant;
       if (x < camera.x - 10 || x > camera.x + LOGICAL_WIDTH + 10) continue;
+      if (share < 1 && plant.phase >= share) continue;
       near.length = 0;
       for (const w of walkers) if (Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8) near.push(w);
       const lean = plantLean(
@@ -466,7 +469,10 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       });
     }
   }
-  sprites.push(...plantSprites(map, camera, seconds, wind, walkers, reduced));
+  const detail = visual?.effects?.detail ?? 2;
+  sprites.push(
+    ...plantSprites(map, camera, seconds, wind, walkers, reduced, detail === 0 ? 0.45 : 1),
+  );
   for (const m of visual?.marks ?? []) {
     const x = m.x - camera.x;
     const y = m.y - camera.y;
