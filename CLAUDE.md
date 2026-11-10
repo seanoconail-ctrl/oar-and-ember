@@ -63,6 +63,8 @@ Book 10 and `content/balance.json` are the only source of tuning numbers.
   tests (`npm run test:browser`) when the stage touches anything visible.
 - For visible work, run `npm run capture -- stage-NN` and compare the capture with
   `docs/art/reference/` in the report.
-- Write `docs/stage-reports/stage-NN.md` in the Book 2 report format.
+- Write `docs/stage-reports/stage-NN.md` in the Book 2 report format, including the latest CI
+  results for Chromium, Firefox and WebKit. Firefox and WebKit do not block publishing until they
+  are fixed (decision BR-1, temporary); they must block again before Stage 12 (Book 3).
 - Commit with a clear message and tell the user, in plain words, what changed, what to try at the
   published link, and anything they need to decide.

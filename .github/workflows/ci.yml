@@ -1,6 +1,10 @@
 # Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
-# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux)
-# and Firefox (macOS). WebKit, Safari's engine, also runs on macOS but does not block publishing.
+# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux),
+# Firefox and WebKit (macOS). Publishing waits only for the Linux check job.
+#
+# TEMPORARY (decision BR-1): the Firefox job does not block publishing until its failure is fixed.
+# It still runs and fails visibly on every push. Firefox and WebKit must both block publishing
+# again before Stage 12 (Book 3, Stage 12 acceptance check).
 #
 # Repository settings needed once:
 # - Settings > Pages > Build and deployment > Source: "GitHub Actions".
@@ -44,8 +48,10 @@ jobs:
         with:
           path: dist
 
+  # Does not block publishing for now (decision BR-1, temporary); no continue-on-error, so a
+  # failure still shows red on every run.
   browsers-firefox:
-    name: Firefox smoke test (macOS)
+    name: Firefox smoke test (macOS, temporarily not blocking publishing)
     runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v6
@@ -77,7 +83,8 @@ jobs:
 
   deploy:
     name: Publish to GitHub Pages
-    needs: [check, browsers-firefox]
+    # Restore browsers-firefox here (and make WebKit blocking) before Stage 12: decision BR-1.
+    needs: [check]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
     runs-on: ubuntu-latest
     permissions:
