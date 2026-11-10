@@ -138,7 +138,7 @@ export async function capture(label: string): Promise<string> {
       viewport: { width: 640, height: 360 },
       deviceScaleFactor: 2,
     });
-    await page.goto('http://localhost:5287/?capture');
+    await page.goto('http://localhost:5287/?capture&quality=full');
     await page.waitForSelector('canvas#screen[data-state=title]', { timeout: 30_000 });
     await page.keyboard.press('Enter');
     await page.keyboard.type('Ash');

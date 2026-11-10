@@ -47,6 +47,18 @@ export interface PlayOptions {
   readonly wokeAt: number;
 }
 
+/**
+ * Whether WebGL is drawn in software (no graphics card, as on CI machines and some virtual
+ * desktops): the game then starts at low effect detail rather than discovering it frame by frame.
+ */
+export function softwareRenderer(gl: WebGL2RenderingContext): boolean {
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  const name = String(
+    gl.getParameter(info === null ? gl.RENDERER : info.UNMASKED_RENDERER_WEBGL) ?? '',
+  );
+  return /swiftshader|llvmpipe|softpipe|software|basic render|warp/i.test(name);
+}
+
 export function startPlay(
   canvas: HTMLCanvasElement,
   presenter: Presenter,
@@ -189,6 +201,7 @@ export function startPlay(
   const forced = new URLSearchParams(window.location.search).get('quality');
   const DETAIL = { full: 2, lite: 1, low: 0 } as const;
   if (forced === 'full' || forced === 'lite' || forced === 'low') visuals.detail = DETAIL[forced];
+  else if (softwareRenderer(presenter.gl)) visuals.detail = 0;
   let slowFrames = 0;
   let lastFrameAt = -1;
   const frame = (now: number): void => {
