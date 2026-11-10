@@ -43,6 +43,8 @@ standard to be made permanent and enforced. Stage 7 has not been started.
   simulation's states; footprints (wet ones taken by the tide), dust when running, splashes and
   ripples in water, spray on the rocks, blown sand, midges by the stream; footsteps by surface
   (AP-10, temporary synthesized sound).
+- **Adaptive detail** (AP-16): full, lite and low effect levels; the play view steps down when
+  frames keep coming slower than ten a second; `?quality=` forces one.
 - **Reduced motion** (AP-9, `src/input/displaySettings.ts`): from the system preference,
   `?motion=reduced|full`, or M in the system menu (remembered).
 - **Enforcement** (AP-11, AP-12):
@@ -86,7 +88,7 @@ This pass's checks, from the user's request:
 3. **Automated checks on every build:**
    - Moving pixels with the camera still: PASS. 97.7% in the browser test and 95.8% in the
      capture, against a threshold of 80%. The reference measures 89.2% with clouds frozen and
-     100% with them. With reduced motion: 97.7%, against a threshold of 50%.
+     100% with them. With reduced motion at low detail: 71.7%, against a threshold of 50%.
    - A ground shadow under every character, creature and prop: PASS, in art lint and the unit
      test.
    - No straight boundary without a transition: PASS. The longest run is 16 px, against a
@@ -99,7 +101,7 @@ This pass's checks, from the user's request:
      - The Book 2 target of 60 fps at 1080p on integrated graphics cannot be measured here
        (no GPU). It is listed under known issues.
 4. **Book 3 acceptance check and mockup-first steps**: PASS (AP-12).
-5. **Logged**: PASS (AP-2 to AP-15).
+5. **Logged**: PASS (AP-2 to AP-16).
 
 ## Art check
 - Every new and changed sheet was rendered at 1x and 4x and inspected:
@@ -137,10 +139,10 @@ No Book 10 numbers changed in this part of the pass (walk 2.0 tiles a second was
 recorded). The standard's QA thresholds are art rules in Book 7 section 14, not tuning (AP-11).
 
 ## Deviations
-Decision log AP-2 to AP-15 (palette, dual grid and bank, sheet kinds and names, water and the
+Decision log AP-2 to AP-16 (palette, dual grid and bank, sheet kinds and names, water and the
 height field, the post pass and CPU parity scope, first-light ambient, visual-only life, reduced
 motion early, temporary footsteps, thresholds, permanence and extra mockup steps, captures,
-idles, and the parts of the standard with nothing to draw yet).
+idles, the parts of the standard with nothing to draw yet, and adaptive detail).
 
 ## Known issues
 - **Medium:** parts of the standard have nothing to draw yet, so they are not in the game. Each
@@ -149,6 +151,10 @@ idles, and the parts of the standard with nothing to draw yet).
   - rain, lightning and fog banks: weather is Stage 13;
   - residents at tasks: Stage 8;
   - the wreck's sail and sheep: Stage 10.
+- **Medium:** CI's macOS Firefox and WebKit render WebGL in software. The first renderer commits
+  failed there: Firefox was too slow for the Stage 6 control check, and WebKit lost its WebGL
+  context. Adaptive detail (AP-16) is the fix for Firefox. WebKit does not block publishing
+  (S1-18), and its cause is not yet confirmed. See the CI result of the last commit.
 - **Medium:** 60 fps on integrated graphics is unmeasured. Software GL here runs at well under
   60 fps. A check on real hardware is wanted at the next build gate.
 - **Low:** footsteps are temporary synthesized sounds (AP-10).

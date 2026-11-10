@@ -72,6 +72,8 @@ export class ZoneVisuals {
   readonly elevation: Elevation;
   readonly wind: Wind = STRAND_WIND;
   reducedMotion: boolean;
+  /** Effect detail (2 full, 1 lite, 0 low): the play view steps it down on a slow machine. */
+  detail: 0 | 1 | 2 = 2;
   seconds = 0;
   #cam = { x: 0, y: 0 };
   #look = { x: 0, y: 0 };
@@ -419,6 +421,7 @@ export class ZoneVisuals {
         ...sky,
         water: { zone: this.map.zone, tide: Math.max(0, this.#tide), wetTo: this.#wetTo },
         flash: this.reducedMotion ? 0 : sky.flash,
+        detail: this.detail,
       },
     };
   }

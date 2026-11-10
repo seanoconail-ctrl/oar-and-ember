@@ -333,6 +333,7 @@ export function createSceneRenderer(
     gl.uniform3fv(uniform(water, 'u_foam'), colours.foam);
     gl.uniform3fv(uniform(water, 'u_glint'), colours.glint);
     gl.uniform3fv(uniform(water, 'u_kelp'), colours.kelp);
+    gl.uniform1i(uniform(water, 'u_detail'), fx.detail ?? 2);
     gl.uniform1iv(uniform(water, 'u_bayer'), Int32Array.from(BAYER4));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.activeTexture(gl.TEXTURE1);
@@ -371,7 +372,7 @@ export function createSceneRenderer(
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(ev), gl.STREAM_DRAW);
     gl.drawArrays(gl.TRIANGLES, 0, ev.length / 4);
     // Long cast shadows: each silhouette sheared along the ground away from the sun.
-    if (fx.sun.strength > 0.05) {
+    if (fx.sun.strength > 0.05 && (fx.detail ?? 2) >= 2) {
       gl.useProgram(sprite);
       gl.bindVertexArray(spriteVao);
       gl.bindBuffer(gl.ARRAY_BUFFER, spriteBuffer);
@@ -471,6 +472,7 @@ export function createSceneRenderer(
       gl.uniform1f(u('u_fog'), fx.fog);
       gl.uniform3f(u('u_fogColour'), 178, 187, 187);
       gl.uniform1f(u('u_flash'), fx.flash);
+      gl.uniform1i(u('u_detail'), fx.detail ?? 2);
       gl.uniform1f(u('u_dryAbove'), fx.water === null ? -9 : fx.water.wetTo + 0.16);
     }
     gl.drawArrays(gl.TRIANGLES, 0, 3);

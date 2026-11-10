@@ -184,8 +184,26 @@ export function startPlay(
   let first = true;
   let lastVisual = started;
   let frameMs = 0;
+  // Effect detail (AP-16): full unless forced with ?quality=full|lite|low, stepped down when
+  // frames keep coming slower than 10 a second, so a slow machine stays playable.
+  const forced = new URLSearchParams(window.location.search).get('quality');
+  const DETAIL = { full: 2, lite: 1, low: 0 } as const;
+  if (forced === 'full' || forced === 'lite' || forced === 'low') visuals.detail = DETAIL[forced];
+  let slowFrames = 0;
+  let lastFrameAt = -1;
   const frame = (now: number): void => {
     const workStart = performance.now();
+    if (forced === null && lastFrameAt >= 0) {
+      const gap = now - lastFrameAt;
+      // A very slow frame counts at once; merely slow ones must keep coming.
+      slowFrames =
+        gap > 400 ? slowFrames + 4 : gap > 100 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+      if (slowFrames >= 4 && visuals.detail > 0) {
+        visuals.detail = visuals.detail === 2 ? 1 : 0;
+        slowFrames = 0;
+      }
+    }
+    lastFrameAt = now;
     browser.poll();
     const result = session.frame(now - last, browser.aim());
     last = now;
@@ -291,6 +309,7 @@ export function startPlay(
     root.dataset['body'] = sim.state.player.bodyModel ?? '';
     root.dataset['steerer'] = sim.state.player.name;
     root.dataset['motion'] = display.reducedMotion ? 'reduced' : 'full';
+    root.dataset['detail'] = String(visuals.detail);
     root.dataset['seconds'] = visuals.seconds.toFixed(2);
     canvas.setAttribute(
       'aria-label',

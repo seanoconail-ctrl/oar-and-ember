@@ -62,6 +62,7 @@ uniform vec3 u_sea[11];
 uniform vec3 u_foam[3];
 uniform vec3 u_glint;
 uniform vec3 u_kelp;
+uniform int u_detail;   // 2 full, 1 lite, 0 low (slow machines)
 uniform int u_bayer[16];
 out vec4 outColour;
 ${NOISE}
@@ -105,30 +106,34 @@ void main() {
     float a = depth < 0.02 ? 0.42 : depth < 0.05 ? 0.62 : depth < 0.11 ? 0.82 : 1.0;
     c = mix(bed * 0.6, c, a);
     // Kelp under the surface, its fronds leaning back and forth with the swell.
-    float kelpPatch = vnoise(w / 22.0 + 17.0);
-    if (d > 0.15 && d < 0.65 && kelpPatch > 0.66) {
+    float kelpPatch = u_detail >= 2 ? vnoise(w / 22.0 + 17.0) : 0.0;
+    if (u_detail >= 2 && d > 0.15 && d < 0.65 && kelpPatch > 0.66) {
       float sway = sin(u_t * 1.1 + w.y * 0.12) * 1.8;
       float frond = vnoise(vec2((w.x + sway) / 2.5, w.y / 7.0) + 31.0);
       if (frond > 0.7) c = mix(c, u_kelp, 0.35);
     }
     // Swells: a few bands parallel to the shore (contours of depth) rolling in, broken into
     // lengths. In the shallows they break white; out in the deep they are lighter streaks.
+    if (u_detail >= 1) {
     float n = vnoise(w / 30.0) * 0.8 + vnoise(w / 11.0) * 0.25;
     float phase = fract(d * 3.2 + n - u_t * 0.11);
     float broken = vnoise(vec2(w.x / 16.0, w.y / 7.0) + u_t * 0.1);
     // White crest lines on the swell, and a surf zone of breaking lines in the shallows.
     if (d > 0.04 && phase < 0.045 && broken > 0.42) c = d < 0.25 ? u_foam[1] : seaStep(idx + 2.0);
     else if (d > 0.04 && phase < 0.09 && broken > 0.55) c = d < 0.25 ? u_foam[0] : seaStep(idx + 1.0);
+    if (u_detail >= 2) {
     float surf = fract(d * 14.0 + vnoise(w / 10.0) * 0.8 - u_t * 0.35);
     if (d < 0.16 && surf < 0.16 + 0.3 * (1.0 - d / 0.16) && vnoise(w / 3.0 + u_t * 0.3) > 0.4)
       c = surf < 0.07 ? u_foam[2] : u_foam[1];
     // Ripples catching the light on the open water.
     if (d > 0.3 && vnoise(vec2(w.x / 7.0 - u_t * 0.3, w.y / 2.0 + u_t * 0.5)) > 0.8) c = seaStep(idx + 1.0);
+    }
+    }
     // The shore break: bright foam at the run-up's edge, lace and bubbles behind it.
     float edge = 0.014 + vnoise(w / 4.0 + u_t * 0.4) * 0.016;
     if (depth < edge) c = u_foam[2];
-    else if (depth < edge * 2.4 && vnoise(w / 2.5 + vec2(u_t * 0.5, -u_t * 0.3)) > 0.5) c = u_foam[1];
-    else if (depth < edge * 4.5 && vnoise(w / 2.0 - u_t * 0.2) > 0.66) c = u_foam[0];
+    else if (u_detail >= 1 && depth < edge * 2.4 && vnoise(w / 2.5 + vec2(u_t * 0.5, -u_t * 0.3)) > 0.5) c = u_foam[1];
+    else if (u_detail >= 1 && depth < edge * 4.5 && vnoise(w / 2.0 - u_t * 0.2) > 0.66) c = u_foam[0];
     // Glints where the light catches a crest.
     if (u_sun > 0.05 && d > 0.05 && hash2(w + floor(u_t * 3.0) * vec2(17.0, 31.0)) > 0.9975 - 0.002 * u_sun) c = u_glint;
     outColour = vec4(c / 255.0, 1.0);
@@ -214,6 +219,7 @@ uniform vec3 u_fogColour;
 uniform float u_flash;
 uniform bool u_hasElev;
 uniform float u_dryAbove;
+uniform int u_detail;
 out vec4 outColour;
 ${NOISE}
 void main() {
@@ -232,11 +238,15 @@ void main() {
   }
   vec2 w = vec2(p) + u_cam + 0.5;
   vec2 drift = u_wind.xy * u_t * 9.0;
-  float cloud = smoothstep(0.52, 0.7, vnoise((w - drift) / 150.0) * 0.7 + vnoise((w - drift * 1.3) / 60.0) * 0.3);
+  float cloud = u_detail >= 1
+    ? smoothstep(0.52, 0.7, vnoise((w - drift) / 150.0) * 0.7 + vnoise((w - drift * 1.3) / 60.0) * 0.3)
+    : 0.0;
   float k = 1.0 - 0.17 * cloud * u_clouds;
-  float shaft = smoothstep(0.62, 0.86, vnoise(vec2((w.x + w.y * 0.55) / 64.0 + u_t * 0.018, 0.5)));
-  k *= 1.0 + 0.08 * shaft * u_shafts * (1.0 - cloud);
-  if (u_hasElev) {
+  if (u_detail >= 2) {
+    float shaft = smoothstep(0.62, 0.86, vnoise(vec2((w.x + w.y * 0.55) / 64.0 + u_t * 0.018, 0.5)));
+    k *= 1.0 + 0.08 * shaft * u_shafts * (1.0 - cloud);
+  }
+  if (u_hasElev && u_detail >= 1) {
     // The terrain under the pixel (nearest sample): a sheen runs over the grass in the gusts,
     // and dry sand drifts along the beach in streamers.
     vec4 E = texelFetch(u_elev, ivec2(w / ${ELEVATION_CELL.toFixed(1)}), 0);
@@ -253,7 +263,7 @@ void main() {
     }
   }
   vec3 g = c * u_gain + u_lift;
-  g = mix(g, u_fogColour, u_fog * (0.55 + 0.45 * vnoise((w - drift * 0.6) / 90.0)));
+  if (u_fog > 0.0) g = mix(g, u_fogColour, u_fog * (0.55 + 0.45 * vnoise((w - drift * 0.6) / 90.0)));
   vec3 outc = floor(clamp(g * light * k / 255.0, 0.0, 255.0) + 1e-6);
   outc = mix(outc, vec3(235.0, 240.0, 255.0), u_flash);
   outColour = vec4(outc / 255.0, 1.0);

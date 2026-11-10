@@ -85,6 +85,8 @@ export interface SceneEffects {
   readonly flash: number;
   /** Mist 0..1. */
   readonly fog: number;
+  /** Effect detail: 2 full, 1 lite, 0 low, stepped down on a machine too slow for full. */
+  readonly detail?: 0 | 1 | 2;
 }
 
 export interface Scene {

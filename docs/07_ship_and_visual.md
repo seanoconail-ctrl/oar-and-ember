@@ -382,6 +382,7 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 - Visual only: the renderer, shaders and visual state never change the simulation, and use no `Math.random`.
 - Within the Book 2 frame budget: building a frame's scene and draw list under 4 ms in the test runner; the script's share of a browser frame under 5.5 ms.
 - 640 x 360 logical pixels, 24-pixel tiles and 32 x 40 people are unchanged.
+- On a machine too slow for the full effects (frames slower than ten a second), the effects step down to lite and then low detail so the game stays playable; the standard is judged at full detail, and low detail with reduced motion still keeps half the screen moving.
 
 ### How the standard is enforced
 - **Art lint** (`npm run lint`, so every build and CI) fails if an actor or prop sheet has no `shadow:` header, a zone has a terrain boundary straight for more than 16 px, a terrain has fewer than 8 plain tile variants, or grass is under-decorated (`src/tools/art/standard.ts`).

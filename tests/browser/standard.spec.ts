@@ -50,7 +50,8 @@ test.describe('the Book 7 standard on Wreck Strand', () => {
   test(`with the camera still, at least ${MOTION_THRESHOLD * 100}% of the screen keeps moving`, async ({
     page,
   }) => {
-    await standStill(page, '');
+    // The full effects, as a capable machine shows them (a slow one steps them down, AP-16).
+    await standStill(page, '?quality=full');
     const share = await still(page, 33);
     console.log(`continuous motion: ${(share * 100).toFixed(1)}%`);
     expect(share).toBeGreaterThanOrEqual(MOTION_THRESHOLD);
@@ -60,11 +61,12 @@ test.describe('the Book 7 standard on Wreck Strand', () => {
     expect(ms).toBeLessThan(FRAME_SCRIPT_MS);
   });
 
-  test('with reduced motion the world still moves, and the setting is honoured', async ({
+  test('with reduced motion and low detail the world still moves, and both settings hold', async ({
     page,
   }) => {
-    await standStill(page, '?motion=reduced');
+    await standStill(page, '?motion=reduced&quality=low');
     await expect(page.locator('.oe-overlay')).toHaveAttribute('data-motion', 'reduced');
+    await expect(page.locator('.oe-overlay')).toHaveAttribute('data-detail', '0');
     const share = await still(page, 25);
     console.log(`continuous motion, reduced: ${(share * 100).toFixed(1)}%`);
     expect(share).toBeGreaterThanOrEqual(REDUCED_MOTION_THRESHOLD);
