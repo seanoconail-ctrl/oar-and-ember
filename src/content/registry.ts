@@ -8,7 +8,10 @@ import { parseIdRegistry } from './idRegistry.ts';
 import type { IdRegistry } from './idRegistry.ts';
 import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
+import { steererWordingProblems } from './steererWords.ts';
 import { parseStringTable } from './strings.ts';
+import { checkZoneMap } from './zoneMap.ts';
+import type { ZoneMap } from './zoneMap.ts';
 import type { StringTable } from './strings.ts';
 
 export const CONTENT_FILES = {
@@ -23,6 +26,9 @@ export const CONTENT_FILES = {
   hulls: 'content/hulls.json',
   fittings: 'content/fittings.json',
   audio: 'content/audio.json',
+  onFoot: 'content/onfoot.json',
+  opening: 'content/opening.json',
+  zoneStrand: 'content/zones/zone_sk_strand.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -150,7 +156,42 @@ const audioCheck = object({
   events: recordOf(text, id(['MUS', 'SFX', 'AMB', 'VO'])),
 });
 
+const fraction =
+  (min: number, max: number): Check<number> =>
+  (v, path, ctx) =>
+    typeof v === 'number' && v >= min && v <= max
+      ? v
+      : (ctx.issues.push({
+          file: ctx.file,
+          path,
+          reason: `expected a number from ${min} to ${max}`,
+        }),
+        null);
+
+const onFootCheck = object({
+  about: text,
+  interactRadiusTiles: fraction(0.5, 4),
+  footprint: object({ w: int(2, 24), h: int(1, 24) }),
+  setDownReach: int(1, 48),
+});
+
+const openingCheck = object({
+  about: text,
+  beat: id(['BEAT']),
+  zone: ref('zone'),
+  caller: ref('person'),
+  firstCallSeconds: int(0, 60),
+  callEverySeconds: int(1, 60),
+  moveHintSeconds: int(1, 60),
+  callLines: arrayOf(ref('string')),
+  foundLine: ref('string'),
+  safeLine: ref('string'),
+  refusedLine: ref('string'),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
+export type OnFootDef = Out<typeof onFootCheck>;
+export type OpeningDef = Out<typeof openingCheck>;
 export type CueDef = Out<typeof cueCheck>;
 export type AudioTable = Out<typeof audioCheck>;
 export type PlaceDef = Out<typeof placeCheck>;
@@ -175,6 +216,9 @@ export interface Content {
   readonly fittings: ReadonlyMap<Id, FittingDef>;
   readonly audio: AudioTable | null;
   readonly cues: ReadonlyMap<Id, CueDef>;
+  readonly onFoot: OnFootDef | null;
+  readonly opening: OpeningDef | null;
+  readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
 function balanceRows(
@@ -286,6 +330,48 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       });
   }
 
+  // Book 8 section 03: no gendered word to or about the steerer.
+  for (const [key, entry] of strings) {
+    for (const reason of steererWordingProblems(entry.text, entry.tags))
+      issues.push({ file: CONTENT_FILES.strings, path: key, reason });
+  }
+
+  const onFoot = onFootCheck(files.onFoot, '', ctx(CONTENT_FILES.onFoot));
+  const opening = openingCheck(files.opening, '', ctx(CONTENT_FILES.opening));
+  const zoneMaps = new Map<Id, ZoneMap>();
+  const strand = checkZoneMap(files.zoneStrand);
+  for (const reason of strand.problems)
+    issues.push({ file: CONTENT_FILES.zoneStrand, path: '(map)', reason });
+  if (strand.map !== null) {
+    zoneMaps.set(strand.map.zone, strand.map);
+    if (!zones.has(strand.map.zone))
+      issues.push({
+        file: CONTENT_FILES.zoneStrand,
+        path: 'zone',
+        reason: `unknown zone "${strand.map.zone}"`,
+      });
+    for (const who of Object.keys(strand.map.spawns)) {
+      if (who !== 'P_STEERER' && !people.has(who))
+        issues.push({
+          file: CONTENT_FILES.zoneStrand,
+          path: `spawns.${who}`,
+          reason: `unknown person "${who}"`,
+        });
+    }
+  }
+  if (opening !== null && !ids.byId.has(opening.beat))
+    issues.push({
+      file: CONTENT_FILES.opening,
+      path: 'beat',
+      reason: `"${opening.beat}" is not in the ID registry (${CONTENT_FILES.ids})`,
+    });
+  if (opening !== null && strand.map !== null && strand.map.spawns[opening.caller] === undefined)
+    issues.push({
+      file: CONTENT_FILES.opening,
+      path: 'caller',
+      reason: `${opening.caller} has no spawn in ${opening.zone}`,
+    });
+
   const hullRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'hulls', 'Hull');
   const fittingRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'fittings', 'Fitting');
   const known: Record<RefKind, (id: string) => boolean> = {
@@ -380,6 +466,9 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       fittings,
       audio,
       cues,
+      onFoot,
+      opening,
+      zoneMaps,
     },
     issues,
   };

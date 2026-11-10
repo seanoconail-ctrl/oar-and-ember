@@ -1,0 +1,6 @@
+{
+  "about": "On-foot controller settings that Book 10 does not give (decision S6-4, provisional until the user approves). Speeds come from balance.json, never from here.",
+  "interactRadiusTiles": 1.5,
+  "footprint": { "w": 10, "h": 4 },
+  "setDownReach": 14
+}

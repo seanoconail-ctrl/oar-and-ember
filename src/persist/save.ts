@@ -118,8 +118,17 @@ export interface Migration {
   readonly up: (state: Record<string, unknown>) => Record<string, unknown>;
 }
 
-/** The real migration chain. Empty while the world state is at version 1. */
-export const MIGRATIONS: readonly Migration[] = [];
+/**
+ * The real migration chain. Version 1 to 2 (Stage 6) adds `onFoot`, empty: a version 1 save
+ * holds no positions, so the game places the steerer at the zone's spawn when it loads one.
+ */
+export const MIGRATIONS: readonly Migration[] = [
+  {
+    from: 1,
+    describe: 'adds onFoot (Stage 6), empty',
+    up: (state) => ({ ...state, onFoot: null }),
+  },
+];
 
 export interface ReadOptions {
   readonly migrations?: readonly Migration[];

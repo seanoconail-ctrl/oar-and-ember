@@ -4,7 +4,7 @@
  */
 import type { TimeBalance } from '../content/balance.ts';
 import { createSimulation, stateHash } from './simulation.ts';
-import type { Command, SimState } from './simulation.ts';
+import type { Command, SimState, SimWorldContext } from './simulation.ts';
 
 export interface TimedCommand {
   readonly tick: number;
@@ -34,9 +34,10 @@ export function record(
   inputs: readonly TimedCommand[],
   ticks: number,
   every: number,
+  land: SimWorldContext | null = null,
 ): Recording & { readonly final: SimState } {
   const sorted = [...inputs].sort((x, y) => x.tick - y.tick);
-  const sim = createSimulation(b, snapshot(start));
+  const sim = createSimulation(b, snapshot(start), land);
   const first = sim.state.tick;
   const checkpoints: { tick: number; hash: string }[] = [];
   let next = 0;
@@ -60,12 +61,24 @@ export interface ReplayResult {
   readonly mismatches: readonly { tick: number; expected: string; actual: string }[];
 }
 
-export function replay(b: TimeBalance, recording: Recording): ReplayResult {
+/** Content (zone maps, the opening) is not part of a recording: pass the same `land` again. */
+export function replay(
+  b: TimeBalance,
+  recording: Recording,
+  land: SimWorldContext | null = null,
+): ReplayResult {
   const every =
     recording.checkpoints.length > 1
       ? (recording.checkpoints[1]?.tick ?? 0) - (recording.checkpoints[0]?.tick ?? 0)
       : recording.ticks;
-  const again = record(b, recording.start, recording.inputs, recording.ticks, Math.max(1, every));
+  const again = record(
+    b,
+    recording.start,
+    recording.inputs,
+    recording.ticks,
+    Math.max(1, every),
+    land,
+  );
   const mismatches = recording.checkpoints.flatMap((cp, i) => {
     const actual = again.checkpoints[i];
     return actual?.tick === cp.tick && actual.hash === cp.hash

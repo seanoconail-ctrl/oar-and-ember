@@ -4,6 +4,8 @@ CLAUDE.md
 # Generated files: their format is owned by their generators (lint checks they are up to date).
 content/balance.json
 assets/atlases/
+content/zones/*.json
+!content/zones/*.plan.json
 # Build and test output.
 dist/
 coverage/

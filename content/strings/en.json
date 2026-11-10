@@ -6,7 +6,7 @@
     "text": "Build {build}"
   },
   "ui.title.screen_label": {
-    "text": "Oar and Ember title screen. Build {build}."
+    "text": "Oar and Ember title screen. Build {build}. Press any key to begin."
   },
   "ui.boot.webgl2_missing": {
     "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge, Firefox and Safari all support it."
@@ -457,5 +457,86 @@
   },
   "ui.value.none": {
     "text": "none"
+  },
+  "c_hild.bark.call.01": {
+    "text": "Here! Over here, past the rocks!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.call.02": {
+    "text": "Is that you? I'm by the rocks. The water's coming in!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.call.03": {
+    "text": "Over here! I'd come to you, but my leg has other ideas.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.found.01": {
+    "text": "{steerer}! The sea spat you out too. Get me up the beach before it changes its mind.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.tide.01": {
+    "text": "Not here. The tide comes this far. Higher, up past the weed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.safe.01": {
+    "text": "That'll do. The sea's not having either of us today.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.voice.hild_calling": {
+    "text": "Hild, calling"
+  },
+  "caption.format.subtitle": {
+    "text": "{speaker}: {line}"
+  },
+  "ui.naming.title": {
+    "text": "Who washed up on Wreck Strand?"
+  },
+  "ui.naming.name_label": {
+    "text": "Your name"
+  },
+  "ui.naming.name_default": {
+    "text": "Steerer"
+  },
+  "ui.naming.body_label": {
+    "text": "How you look"
+  },
+  "ui.naming.body_first": {
+    "text": "First body"
+  },
+  "ui.naming.body_second": {
+    "text": "Second body"
+  },
+  "ui.naming.wake": {
+    "text": "Wake"
+  },
+  "ui.naming.hint": {
+    "text": "Enter to wake. A name can be left as Steerer."
+  },
+  "ui.title.start": {
+    "text": "Press any key"
+  },
+  "ui.prompt.lift": {
+    "text": "{key}  Lift {name}"
+  },
+  "ui.prompt.set_down": {
+    "text": "{key}  Set {name} down"
+  },
+  "ui.prompt.below_tide": {
+    "text": "The tide comes this far. Carry {name} up past the weed line."
+  },
+  "ui.prompt.no_room": {
+    "text": "No room to set {name} down here."
+  },
+  "ui.prompt.move": {
+    "text": "{keys} to move"
+  },
+  "ui.play.label": {
+    "text": "Wreck Strand, Skarvholm. {time}."
+  },
+  "ui.prompt.hands_full": {
+    "text": "Your hands are full."
+  },
+  "person.short.c_hild": {
+    "text": "Hild"
   }
 }

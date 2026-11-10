@@ -12,8 +12,11 @@ export interface ArtIssue {
   readonly reason: string;
 }
 
-/** Book 7 section 11 naming patterns (plus prop_ and decal_ for scenery and gore layers). */
-export const SHEET_NAME = /^(actor|ship|token|tile|bld|fx|prop|decal)_[a-z0-9]+(_[a-z0-9]+)*$/;
+/**
+ * Book 7 section 11 naming patterns, plus prop_ and decal_ for scenery and gore layers (S4-2) and
+ * ui_ for in-world interface marks such as the interaction marker (S6-9).
+ */
+export const SHEET_NAME = /^(actor|ship|token|tile|bld|fx|prop|decal|ui)_[a-z0-9]+(_[a-z0-9]+)*$/;
 
 /** Book 7 section 01: a 32 x 40 canvas, foot anchor at bottom centre, about 18 x 30 occupied. */
 export const ACTOR = {
@@ -93,18 +96,25 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
     if ((sheet.kind === 'sprite' || sheet.kind === 'prop') && badEdge > 0) {
       add(`${badEdge} edge pixel(s) are not the one-pixel ink outline (Book 7 section 11)`, key);
     }
-    if (sheet.kind === 'tile' && transparent > 0) add('a ground tile must be fully opaque', key);
+    // Edge tiles are overlays: a band of one terrain lapping over the tile below it (S6-7).
+    const state = key.split('/')[0] ?? '';
+    const pose = sheet.poses[state];
+    if (sheet.kind === 'tile' && transparent > 0 && !state.startsWith('edge_'))
+      add('a ground tile must be fully opaque', key);
     const box = bounds(pixels, w, h);
     if (box === null) {
       add('the frame is empty', key);
       continue;
     }
-    if (sheet.kind === 'sprite' || sheet.kind === 'prop') {
+    // A carried person and an in-world marker are off the ground.
+    const grounded = pose !== 'carried' && !sheet.name.startsWith('ui_');
+    if ((sheet.kind === 'sprite' || sheet.kind === 'prop') && grounded) {
       if (box.y1 !== sheet.pivot.y)
         add(`the feet (lowest row ${box.y1}) are not on the pivot row ${sheet.pivot.y}`, key);
       footRows.set(key.split('/')[0] ?? '', box.y1);
     }
-    if (isActor) {
+    // The standing size applies to standing poses; lying, carried and seated ones differ (S6-8).
+    if (isActor && pose === undefined) {
       const ow = box.x1 - box.x0 + 1;
       const oh = box.y1 - box.y0 + 1;
       if (

@@ -1,36 +1,47 @@
 /**
  * Golden saves (Book 2 section 20): fixed scenarios saved to tests/golden-saves/ so every later
- * schema change must migrate them. Golden save 1: a new campaign played through two on-foot days
- * (a sleep after 18:00, then a collapse at 02:00) with the opening one-shot fired.
+ * schema change must migrate them.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-01.json
+ * - Golden save 1 (schema 1, Stage 3) is frozen: a new campaign played through two on-foot days
+ *   (a sleep after 18:00, then a collapse at 02:00) with the opening one-shot fired. It is never
+ *   rewritten; it must load through the migration chain.
+ * - Golden save 2 (schema 2, Stage 6): the steerer named and embodied, Hild carried above the
+ *   tide line by the scripted player, then the same two days.
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-02.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parsePeopleBasics, parseTimeBalance } from '../../content/balance.ts';
 import { writeSave } from '../../persist/save.ts';
 import type { SaveFile } from '../../persist/save.ts';
-import { fireOneShot, setFact } from '../../sim/ledger/ledger.ts';
+import { landContext } from '../../sim/land/context.ts';
 import { createSimulation } from '../../sim/simulation.ts';
 import { newCampaign } from '../../sim/world.ts';
 import type { WorldState } from '../../sim/world.ts';
 import { REPO_ROOT } from '../art/loadTitleArt.ts';
 import { loadBalanceJson } from '../content/loadBalance.ts';
 import { loadContentFromDisk } from '../content/loadContentFiles.ts';
+import { OpeningBot } from '../play/openingBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
+export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
 
-export function goldenWorld01(): WorldState {
+export function goldenWorld02(): WorldState {
   const balance = loadBalanceJson();
   const b = parseTimeBalance(balance);
   const { content, issues } = loadContentFromDisk();
   if (issues.length > 0)
     throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
-  const world = newCampaign('golden-01', b, parsePeopleBasics(balance), content);
-  fireOneShot(world, 'BEAT_1_WAKE', () => {
-    setFact(world, 'opening.woke', true);
+  const world = newCampaign('golden-02', b, parsePeopleBasics(balance), content, {
+    name: 'Ash',
+    bodyModel: 'B',
   });
-  const sim = createSimulation(b, world);
+  const land = landContext(content, balance);
+  const sim = createSimulation(b, world, land);
+  const strand = land.maps.get('ZONE_SK_STRAND');
+  if (strand === undefined) throw new Error('no Wreck Strand map');
+  new OpeningBot(sim, strand, b).rescue('C_HILD');
   // Day 1: play to 19:00 and sleep.
   while (sim.state.calendar.minuteOfDay !== 19 * 60) sim.step();
   sim.submit({ type: 'SLEEP' });
@@ -40,18 +51,18 @@ export function goldenWorld01(): WorldState {
   return sim.state;
 }
 
-export function goldenSave01(): SaveFile {
-  return writeSave(goldenWorld01(), {
+export function goldenSave02(): SaveFile {
+  return writeSave(goldenWorld02(), {
     build: 'golden',
     kind: 'checkpoint',
-    slot: 'checkpoint:golden-01',
-    label: 'golden-01',
+    slot: 'checkpoint:golden-02',
+    label: 'golden-02',
     sequence: 1,
     savedAt: '2026-11-10T00:00:00.000Z',
   });
 }
 
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_01), `${JSON.stringify(goldenSave01(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_01}`);
+  writeFileSync(join(REPO_ROOT, GOLDEN_02), `${JSON.stringify(goldenSave02(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_02}`);
 }

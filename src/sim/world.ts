@@ -12,8 +12,11 @@ import type { Id } from '../core/ids.ts';
 import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
 import type { CalendarState } from './calendar/calendar.ts';
+import { placeOnFoot } from './land/onFoot.ts';
+import type { OnFootState } from './land/onFoot.ts';
 
-export const WORLD_STATE_VERSION = 1;
+/** Version 2 (Stage 6) adds `onFoot`: where the steerer and the people nearby stand in a zone. */
+export const WORLD_STATE_VERSION = 2;
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -175,6 +178,8 @@ export interface WorldState {
   facts: Record<string, FactValue>;
   /** One-shot id and the day it fired; recorded before its effect applies. */
   oneShots: Record<Id, number>;
+  /** The on-foot scene the steerer is in (decision S6-3); null at sea or in a world with no zone. */
+  onFoot: OnFootState | null;
 }
 
 /** An empty world: the calendar and RNG only. Used by runtime tests that need no content. */
@@ -211,6 +216,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     chapters: {},
     facts: {},
     oneShots: {},
+    onFoot: null,
   };
 }
 
@@ -230,9 +236,15 @@ export function newCampaign(
   seed: string,
   b: TimeBalance,
   basics: PeopleBasics,
-  content: Content,
+  content: Pick<Content, 'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps'>,
+  steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
+    name: '',
+    bodyModel: null,
+  },
 ): WorldState {
   const world = emptyWorld(seed, b);
+  world.player.name = steerer.name;
+  world.player.bodyModel = steerer.bodyModel;
   world.player.vitality = basics.vitality;
   world.player.stamina = basics.stamina;
   for (const def of content.people.values()) {
@@ -281,6 +293,12 @@ export function newCampaign(
   CHAPTERS.forEach((ch, i) => {
     world.chapters[ch] = i === 0 ? { status: 'ACTIVE', openedDay: 1 } : { status: 'LOCKED' };
   });
+  // Chapter 1 beat 1: the steerer wakes on Wreck Strand; Hild lies beyond the rocks.
+  const opening = content.opening;
+  const strand = opening === null ? undefined : content.zoneMaps.get(opening.zone);
+  if (opening !== null && strand !== undefined) {
+    world.onFoot = placeOnFoot(strand, [opening.caller]);
+  }
   return world;
 }
 

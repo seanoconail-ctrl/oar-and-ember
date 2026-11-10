@@ -11,7 +11,7 @@ import { newCampaign } from '../../src/sim/world.ts';
 import type { WorldState } from '../../src/sim/world.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
-import { GOLDEN_01, goldenSave01 } from '../../src/tools/saves/golden.ts';
+import { GOLDEN_01, GOLDEN_02, goldenSave02 } from '../../src/tools/saves/golden.ts';
 import { repoFile } from './books.ts';
 
 const balance = loadBalanceJson();
@@ -87,7 +87,7 @@ describe('save files', () => {
       day: 1,
       chapter: 'CH_1_WRECK',
       seed: 'save-test',
-      schemaVersion: 1,
+      schemaVersion: 2,
     });
     const resumed = createSimulation(b, state);
     for (let i = 0; i < 50_000; i++) {
@@ -97,9 +97,9 @@ describe('save files', () => {
     expect(stateHash(resumed.state)).toBe(stateHash(sim.state));
   });
 
-  it('migrate a v1 save to v2 through the chain', () => {
-    const v2: Migration = {
-      from: 1,
+  it('migrate a save through the chain', () => {
+    const v3: Migration = {
+      from: 2,
       describe: 'test: move player.name into player.identity.name',
       up: (s) => {
         const player = s['player'] as Record<string, unknown>;
@@ -110,11 +110,11 @@ describe('save files', () => {
     const world = campaign();
     world.player.name = 'Ingrid';
     const { state, migratedFrom } = readSave(writeSave(world, meta), {
-      migrations: [v2],
-      currentVersion: 2,
+      migrations: [v3],
+      currentVersion: 3,
     });
-    expect(migratedFrom).toBe(1);
-    expect(state.version).toBe(2);
+    expect(migratedFrom).toBe(2);
+    expect(state.version).toBe(3);
     expect((state.player as unknown as { identity: { name: string } }).identity.name).toBe(
       'Ingrid',
     );
@@ -136,7 +136,7 @@ describe('save files', () => {
       () => readSave({ ...file, header: { ...file.header, schemaVersion: 9 } }),
       'FUTURE_VERSION',
     );
-    expectReason(() => readSave(file, { migrations: [], currentVersion: 2 }), 'NO_MIGRATION');
+    expectReason(() => readSave(file, { migrations: [], currentVersion: 3 }), 'NO_MIGRATION');
     expectReason(
       () => readSave({ ...file, header: { ...file.header, stateHash: '00000000000000' } }),
       'CORRUPT',
@@ -207,18 +207,35 @@ describe('save slots', () => {
   });
 });
 
-describe('golden save 1', () => {
+describe('golden save 1 (schema 1, frozen)', () => {
   const golden = JSON.parse(repoFile(GOLDEN_01)) as SaveFile;
 
-  it('loads, matches its hash and holds the scenario', () => {
+  it('loads through the real migration chain and still holds its scenario', () => {
+    expect(golden.header.schemaVersion).toBe(1);
     const { state, migratedFrom } = readSave(golden);
-    expect(migratedFrom).toBeNull();
+    expect(migratedFrom).toBe(1);
+    expect(state.version).toBe(2);
+    expect(state.onFoot).toBeNull();
     expect(state.calendar).toEqual({ day: 3, minuteOfDay: 8 * 60 });
     expect(state.player.staminaMaxChange).toBe(-30);
     expect(state.oneShots).toEqual({ BEAT_1_WAKE: 1 });
   });
+});
+
+describe('golden save 2 (schema 2)', () => {
+  const golden = JSON.parse(repoFile(GOLDEN_02)) as SaveFile;
+
+  it('loads, matches its hash and holds the rescue', () => {
+    const { state, migratedFrom } = readSave(golden);
+    expect(migratedFrom).toBeNull();
+    expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
+    expect(state.household.residents).toEqual(['C_HILD']);
+    expect(state.onFoot?.actors['C_HILD']?.pose).toBe('sit');
+    expect(state.calendar).toEqual({ day: 3, minuteOfDay: 8 * 60 });
+    expect(state.oneShots).toEqual({ BEAT_1_WAKE: 1 });
+  });
 
   it('is reproduced exactly by its scenario', () => {
-    expect(goldenSave01()).toEqual(golden);
+    expect(goldenSave02()).toEqual(golden);
   });
 });

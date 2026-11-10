@@ -83,6 +83,13 @@ for (const size of SIZES) {
     const letterbox = art.palette.entries[paletteIndex(art.palette, art.layout.letterbox)]?.rgb;
     if (letterbox === undefined) throw new Error('letterbox colour missing');
 
+    // The "press any key" line is HTML text over the frame (decision S5-5): check it, then set it
+    // aside so the screenshot holds only the pixel frame being compared.
+    await expect(target.locator('.oe-press')).toHaveText(formatString(strings, 'ui.title.start'));
+    await target.evaluate(() => {
+      document.querySelector<HTMLElement>('.oe-press')?.style.setProperty('visibility', 'hidden');
+    });
+
     // Screenshots are in device pixels: CSS size times the page's pixel ratio.
     const ratio = await target.evaluate(() => window.devicePixelRatio);
     const shot = decodePng(await target.screenshot());

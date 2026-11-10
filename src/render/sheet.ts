@@ -34,6 +34,9 @@ export interface Anim {
   readonly loop: boolean;
 }
 
+export type Pose = 'lying' | 'carried' | 'seated';
+const POSES: readonly Pose[] = ['lying', 'carried', 'seated'];
+
 export interface Sheet {
   readonly name: string;
   readonly kind: SheetKind;
@@ -44,6 +47,8 @@ export interface Sheet {
   readonly facings: readonly string[];
   readonly anims: Readonly<Record<string, Anim>>;
   readonly events: Readonly<Record<string, string>>;
+  /** States that are not a standing figure: lying, carried or seated (`pose.<state>` headers). */
+  readonly poses: Readonly<Record<string, Pose>>;
   readonly placeholder: boolean;
   /** Palette codes of reserved accents this sheet is allowed to use. */
   readonly reserved: readonly string[];
@@ -93,7 +98,13 @@ export function compileSheet(text: string, file: string, palette: Palette): Shee
 
   const anims: Record<string, Anim> = {};
   const events: Record<string, string> = {};
+  const poses: Record<string, Pose> = {};
   for (const [key, { value, line }] of source.header) {
+    if (key.startsWith('pose.')) {
+      const pose = POSES.find((p) => p === value);
+      if (pose === undefined) fail(line, `"${key}" must be one of ${POSES.join(', ')}`);
+      else poses[key.slice(5)] = pose;
+    }
     if (key.startsWith('anim.')) {
       const m = /^frames (\d+), ticks (\d+)(, loop)?$/.exec(value);
       if (m === null) fail(line, `"${key}" must look like "frames 4, ticks 12, loop"`);
@@ -159,6 +170,7 @@ export function compileSheet(text: string, file: string, palette: Palette): Shee
     facings,
     anims,
     events,
+    poses,
     placeholder,
     reserved,
     frames,

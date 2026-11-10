@@ -7,6 +7,7 @@ import { planSteps } from '../core/fixedStep.ts';
 import { CommandRing } from '../input/commandRing.ts';
 import type { CrewOrder } from '../input/commandRing.ts';
 import type { InputFrame, InputMapper } from '../input/inputState.ts';
+import { disabledActions } from '../sim/land/onFoot.ts';
 import type { Simulation } from '../sim/simulation.ts';
 import { MenuController } from '../ui/menus.ts';
 import type { MenuId, OpenResult, ThreatView } from '../ui/menus.ts';
@@ -26,6 +27,8 @@ export interface FrameResult {
   readonly orders: readonly CrewOrder[];
   readonly menuResults: readonly OpenResult[];
   readonly alpha: number;
+  /** Actions pressed this frame that were refused, with the reason (none yet but CARRYING). */
+  readonly refusedActions: readonly { readonly action: string; readonly reason: 'CARRYING' }[];
 }
 
 export class Session {
@@ -34,6 +37,7 @@ export class Session {
   readonly menus: MenuController;
   readonly ring = new CommandRing();
   #accumulator = 0;
+  #lastMove = '';
 
   constructor(sim: Simulation, input: InputMapper, threat: ThreatView) {
     this.sim = sim;
@@ -60,6 +64,33 @@ export class Session {
     const orders = this.menus.timeStopped ? [] : this.ring.update(input, aim);
     for (const order of orders) this.sim.submit({ type: 'CREW_ORDER', order });
 
+    // On foot: the movement wanted and Interact, applied at the start of the very next tick, so
+    // a key pressed before this frame moves the steerer in this frame (no added latency).
+    const refusedActions: { action: string; reason: 'CARRYING' }[] = [];
+    const onFoot = this.sim.state.onFoot;
+    if (onFoot !== null && !this.menus.timeStopped && this.menus.open === null) {
+      const move = {
+        type: 'MOVE' as const,
+        x: input.move.x,
+        y: input.move.y,
+        run: input.held.has('run'),
+        sneak: input.held.has('sneak'),
+      };
+      const key = `${move.x},${move.y},${move.run},${move.sneak}`;
+      if (key !== this.#lastMove) {
+        this.sim.submit(move);
+        this.#lastMove = key;
+      }
+      if (input.pressed.has('interact')) this.sim.submit({ type: 'INTERACT' });
+      for (const [action, reason] of disabledActions(onFoot)) {
+        if (input.pressed.has(action as never)) refusedActions.push({ action, reason });
+      }
+    } else if (onFoot !== null && this.#lastMove !== '0,0,false,false') {
+      // A menu opened: stand still rather than walk on under it.
+      this.sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+      this.#lastMove = '0,0,false,false';
+    }
+
     const plan = planSteps(this.#accumulator, elapsedMs);
     this.#accumulator = plan.accumulator;
     let ticks = 0;
@@ -67,6 +98,6 @@ export class Session {
       for (let i = 0; i < plan.steps; i++) this.sim.step();
       ticks = plan.steps;
     }
-    return { ticks, orders, menuResults, alpha: plan.alpha };
+    return { ticks, orders, menuResults, alpha: plan.alpha, refusedActions };
   }
 }

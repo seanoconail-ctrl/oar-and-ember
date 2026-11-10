@@ -112,10 +112,12 @@ for (const [width, height] of [
 }
 
 test('a sheet compiled from source renders identically to its preview image', async ({ page }) => {
-  const sheet = sheets.get('actor_p_steerer_a');
-  if (sheet === undefined) throw new Error('steerer sheet missing');
+  // Any compiled sheet whose preview fits one 640 x 360 frame (the steerer's has grown past it).
+  const sheet = sheets.get('prop_rock_strand');
+  if (sheet === undefined) throw new Error('rock sheet missing');
   const { manifest } = packSheet(sheet);
   const { width, height } = previewSize(sheet);
+  expect(width <= 640 && height <= 360).toBe(true);
   const preview = renderSceneCpu(
     sheetPreviewScene(sheet.name, sheet, manifest.frames),
     sheets,
@@ -128,7 +130,7 @@ test('a sheet compiled from source renders identically to its preview image', as
   const frame = new Uint8Array(640 * 360 * 4);
   for (let y = 0; y < height; y++)
     frame.set(preview.subarray(y * width * 4, (y + 1) * width * 4), y * 640 * 4);
-  const shot = await open(page, 'view=sheet&sheet=actor_p_steerer_a', 1280, 720);
+  const shot = await open(page, 'view=sheet&sheet=prop_rock_strand', 1280, 720);
   const result = compare(shot, frame, width, height, 0);
   expect(result.mismatched, `first difference ${result.first}`).toBe(0);
 });

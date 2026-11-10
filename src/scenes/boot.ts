@@ -1,7 +1,8 @@
 /**
  * The Boot mode (Book 2 section 02): load what the title needs, start the presenter, then hand
- * over to Title. Stage 1 has no tick loop yet (Stage 2): the title frame is static and redrawn
- * only when the window or its pixel density changes.
+ * over to Title. The title waits for any key or click, then the naming screen, then play on
+ * Wreck Strand (Stage 6). `?view=play&name=<name>&body=A|B` starts play directly (tests and
+ * screenshots); `?view=shell`, `?view=art-test` and `?view=sheet` are the earlier check views.
  */
 import { formatString } from '../content/strings.ts';
 import { toRgba } from '../render/indexedImage.ts';
@@ -9,6 +10,11 @@ import { paletteIndex } from '../render/palette.ts';
 import { createPresenter } from '../render/presenter.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { artViewRequested, showArtView } from './artView.ts';
+import { loadAtlases } from './atlases.ts';
+import { bundledContent } from './bundledContent.ts';
+import { showNaming } from './namingView.ts';
+import type { NamingChoice } from './namingView.ts';
+import { startPlay } from './playView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
 import { shellViewRequested, showShellView } from './shellView.ts';
 import { composeTitleFrame } from './title.ts';
@@ -81,7 +87,8 @@ function trackSize(canvas: HTMLCanvasElement, presenter: Presenter): void {
  * from outside (the browser smoke tests report it). `data-state` is the outcome: `title` or
  * `no-webgl2`; an exception is recorded as `data-error`.
  */
-export type BootStep = 'strings' | 'art' | 'presenter' | 'frame' | 'size' | 'painted';
+export type BootStep =
+  'strings' | 'art' | 'presenter' | 'frame' | 'size' | 'painted' | 'naming' | 'atlases' | 'play';
 
 export function boot(elements: BootElements, buildId: string): void {
   const { canvas } = elements;
@@ -151,6 +158,33 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     return;
   }
 
+  const fail = (error: unknown): void => {
+    canvas.dataset['error'] = error instanceof Error ? error.message : String(error);
+  };
+  const play = (choice: NamingChoice, wokeAt: number): void => {
+    step('atlases');
+    loadAtlases().then((atlases) => {
+      step('play');
+      startPlay(canvas, presenter, art.palette, strings, bundledContent(), atlases, choice, {
+        seed: `campaign-${Math.floor(wokeAt)}`,
+        wokeAt,
+      });
+    }, fail);
+  };
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('view') === 'play') {
+    step('frame');
+    trackSize(canvas, presenter);
+    const body = params.get('body') === 'B' ? 'B' : 'A';
+    const nameParam = params.get('name');
+    play(
+      { name: nameParam ?? formatString(strings, 'ui.naming.name_default'), bodyModel: body },
+      performance.now(),
+    );
+    return;
+  }
+
   step('frame');
   const frame = composeTitleFrame(art, {
     name,
@@ -166,4 +200,34 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
       canvas.dataset['state'] = 'title';
     });
   });
+
+  // Any key or click leaves the title for the naming screen.
+  const press = document.createElement('p');
+  press.className = 'oe-press';
+  press.textContent = formatString(strings, 'ui.title.start');
+  press.style.cssText =
+    'position:fixed;left:0;right:0;bottom:8%;margin:0;text-align:center;color:#f4efe4;' +
+    'font-family:system-ui,sans-serif;font-size:1.1em;text-shadow:0 1px 0 #22313a;pointer-events:none';
+  document.body.append(press);
+  // The atlases load while the title shows, so waking needs no wait.
+  const atlasesReady = loadAtlases();
+  const leave = (e: Event): void => {
+    if (e instanceof KeyboardEvent && (e.repeat || e.key === 'Tab')) return;
+    // The key that leaves the title must not also act on the naming screen it opens.
+    e.preventDefault();
+    window.removeEventListener('keydown', leave);
+    canvas.removeEventListener('pointerdown', leave);
+    press.remove();
+    step('naming');
+    canvas.dataset['state'] = 'naming';
+    atlasesReady.then(
+      (atlases) =>
+        showNaming(document, strings, atlases).then((choice) => {
+          play(choice, performance.now());
+        }),
+      fail,
+    );
+  };
+  window.addEventListener('keydown', leave);
+  canvas.addEventListener('pointerdown', leave);
 }

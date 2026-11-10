@@ -77,3 +77,19 @@ export function saveSettings(store: KeyValueStore, settings: ControlSettings): b
     return false;
   }
 }
+
+/** localStorage when the browser allows it; a store that forgets when storage is blocked. */
+export function browserStorage(): KeyValueStore {
+  return {
+    getItem: (k) => {
+      try {
+        return localStorage.getItem(k);
+      } catch {
+        return null;
+      }
+    },
+    setItem: (k, v) => {
+      localStorage.setItem(k, v);
+    },
+  };
+}

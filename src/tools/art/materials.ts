@@ -19,6 +19,15 @@
  *   outline: k 4             outline code and neighbourhood (4 or 8)
  *   bob.idle: 0 1 1 0 above 27
  *   mirror.w: e
+ *   derive.walk: idle         a state with no base pose of its own starts from another's
+ *   move.walk.s: - | 12,29,14,38:0,-1 | ...
+ *                             per frame (separated by |), parts of the pose moved: a box
+ *                             x0,y0,x1,y1 (inclusive) shifted by dx,dy; "-" for none
+ *   drop.sneak: 30 32         rows removed and everything above lowered (a crouch)
+ *   frame walk e 3            a frame drawn in full replaces the base pose for that frame
+ *   alias.down.s: e           a state's facing drawn from another facing ("e mirror" flips it)
+ *
+ * Each frame is built in this order: base pose, moves, drop, bob, mirror, then shading.
  */
 import { ArtSourceError, parseArtSource, requireHeader } from '../../render/artSource.ts';
 
@@ -91,6 +100,68 @@ function bob(map: Grid, offset: number, above: number): Grid {
   return out;
 }
 
+interface Move {
+  readonly x0: number;
+  readonly y0: number;
+  readonly x1: number;
+  readonly y1: number;
+  readonly dx: number;
+  readonly dy: number;
+}
+
+function parseMoves(value: string, file: string, line: number): Move[][] {
+  return value.split('|').map((frame) => {
+    const text = frame.trim();
+    if (text === '-') return [];
+    return text.split(/\s+/).map((part) => {
+      const m = /^(\d+),(\d+),(\d+),(\d+):(-?\d+),(-?\d+)$/.exec(part);
+      if (m === null)
+        throw new ArtSourceError(file, line, `a move looks like "12,29,14,38:0,-1", not "${part}"`);
+      const [x0, y0, x1, y1, dx, dy] = m.slice(1).map(Number) as [
+        number,
+        number,
+        number,
+        number,
+        number,
+        number,
+      ];
+      return { x0, y0, x1, y1, dx, dy };
+    });
+  });
+}
+
+/** Lifts the drawn pixels inside each box and sets them down shifted, in order. */
+function applyMoves(map: Grid, moves: readonly Move[]): Grid {
+  let out = map.map((r) => [...r]);
+  for (const m of moves) {
+    const next = out.map((r) => [...r]);
+    const lifted: [number, number, string][] = [];
+    for (let y = m.y0; y <= m.y1; y++) {
+      for (let x = m.x0; x <= m.x1; x++) {
+        const cell = out[y]?.[x];
+        if (cell === undefined || cell === '.') continue;
+        lifted.push([x, y, cell]);
+        const row = next[y];
+        if (row !== undefined) row[x] = '.';
+      }
+    }
+    for (const [x, y, cell] of lifted) {
+      const row = next[y + m.dy];
+      if (row !== undefined && x + m.dx >= 0 && x + m.dx < row.length) row[x + m.dx] = cell;
+    }
+    out = next;
+  }
+  return out;
+}
+
+/** Removes rows y0 to y1 and lowers everything above them (a crouch). */
+function drop(map: Grid, y0: number, y1: number): Grid {
+  const width = map[0]?.length ?? 0;
+  const count = y1 - y0 + 1;
+  const kept = [...map.slice(0, y0), ...map.slice(y1 + 1)];
+  return [...Array.from({ length: count }, () => new Array<string>(width).fill('.')), ...kept];
+}
+
 /** Generates the palette-coded sheet text from a material map. */
 export function generateSheet(mapText: string, file: string): string {
   const source = parseArtSource(mapText, file);
@@ -98,7 +169,24 @@ export function generateSheet(mapText: string, file: string): string {
   const marks = new Map<string, string>();
   const bobs = new Map<string, { offsets: number[]; above: number }>();
   const mirrors = new Map<string, string>();
+  const derives = new Map<string, string>();
+  const moves = new Map<string, Move[][]>();
+  const drops = new Map<string, [number, number]>();
+  const aliases = new Map<string, { facing: string; mirror: boolean }>();
   for (const [key, { value, line }] of source.header) {
+    if (key.startsWith('derive.')) derives.set(key.slice(7), value);
+    if (key.startsWith('alias.')) {
+      const m = /^(\S+)( mirror)?$/.exec(value);
+      if (m === null)
+        throw new ArtSourceError(file, line, '"alias" must look like "e" or "e mirror"');
+      aliases.set(key.slice(6), { facing: m[1] ?? '', mirror: m[2] !== undefined });
+    }
+    if (key.startsWith('move.')) moves.set(key.slice(5), parseMoves(value, file, line));
+    if (key.startsWith('drop.')) {
+      const m = /^(\d+) (\d+)$/.exec(value);
+      if (m === null) throw new ArtSourceError(file, line, '"drop" must look like "30 32"');
+      drops.set(key.slice(5), [Number(m[1]), Number(m[2])]);
+    }
     if (key.startsWith('material.')) {
       const codes = value.split(/\s+/);
       if (codes.length !== 3)
@@ -133,7 +221,8 @@ export function generateSheet(mapText: string, file: string): string {
     if (entry !== undefined) lines.push(`${key}: ${entry.value}`);
   }
   for (const [key, { value }] of source.header) {
-    if (key.startsWith('anim.') || key.startsWith('event.')) lines.push(`${key}: ${value}`);
+    if (key.startsWith('anim.') || key.startsWith('event.') || key.startsWith('pose.'))
+      lines.push(`${key}: ${value}`);
   }
 
   const bases = new Map<string, Grid>();
@@ -148,17 +237,42 @@ export function generateSheet(mapText: string, file: string): string {
     const state = key.slice(5);
     const frames = Number(/frames (\d+)/.exec(value)?.[1] ?? '1');
     for (const facing of facings) {
-      const mirrorOf = mirrors.get(facing);
-      let base = bases.get(`${state} ${mirrorOf ?? facing} 0`);
+      // Which drawn facing this one comes from, and whether it is flipped.
+      let from = facing;
+      let flip = false;
+      const alias = aliases.get(`${state}.${facing}`);
+      if (alias !== undefined) {
+        from = alias.facing;
+        flip = alias.mirror;
+      }
+      const mirrorOf = mirrors.get(from);
+      if (mirrorOf !== undefined && !bases.has(`${state} ${from} 0`)) {
+        from = mirrorOf;
+        flip = !flip;
+      }
+      const baseState = bases.has(`${state} ${from} 0`) ? state : (derives.get(state) ?? state);
+      const base = bases.get(`${baseState} ${from} 0`);
       if (base === undefined)
-        throw new ArtSourceError(file, 1, `no base pose "${state} ${mirrorOf ?? facing} 0"`);
-      if (mirrorOf !== undefined) base = base.map((r) => [...r].reverse());
+        throw new ArtSourceError(file, 1, `no base pose "${state} ${from} 0"`);
+      const frameMoves = moves.get(`${state}.${from}`);
+      if (frameMoves !== undefined && frameMoves.length !== frames)
+        throw new ArtSourceError(
+          file,
+          1,
+          `move.${state}.${from} lists ${frameMoves.length} frames; anim.${state} has ${frames}`,
+        );
+      const crouch = drops.get(`${state}.${from}`) ?? drops.get(state);
       for (let i = 0; i < frames; i++) {
+        // A map may draw a frame of its own ("walk e 3"); otherwise frame 0 is the base.
+        let pose = applyMoves(
+          bases.get(`${baseState} ${from} ${i}`) ?? base,
+          frameMoves?.[i] ?? [],
+        );
+        if (crouch !== undefined) pose = drop(pose, crouch[0], crouch[1]);
         const motion = bobs.get(state);
-        const pose =
-          motion === undefined
-            ? base
-            : bob(base, motion.offsets[i % motion.offsets.length] ?? 0, motion.above);
+        if (motion !== undefined)
+          pose = bob(pose, motion.offsets[i % motion.offsets.length] ?? 0, motion.above);
+        if (flip) pose = pose.map((r) => [...r].reverse());
         lines.push(
           '',
           `frame ${state} ${facing} ${i}`,

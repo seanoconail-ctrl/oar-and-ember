@@ -1,0 +1,255 @@
+/**
+ * Play on foot (Stage 6): the steerer on Wreck Strand under the camera, Hild calling beyond the
+ * rocks, and the rescue. The overlay carries only what the moment needs: Hild's words as subtitles
+ * with the direction of her voice, the prompt for the nearest thing to do, and a refusal's reason.
+ * There is no control list (Book 3 Stage 6 check 2); the only control text is a single movement
+ * hint if the steerer has not moved after a few seconds.
+ *
+ * The overlay root carries data-* attributes the browser tests read.
+ */
+import renderJson from '../../assets/art/render.json';
+import { AudioRouter } from '../audio/router.ts';
+import { WebAudioEngine } from '../audio/webAudio.ts';
+import { parsePeopleBasics, parseTimeBalance } from '../content/balance.ts';
+import type { Content } from '../content/registry.ts';
+import { formatString } from '../content/strings.ts';
+import type { StringTable } from '../content/strings.ts';
+import { bindingLabel } from '../input/actions.ts';
+import type { Action } from '../input/actions.ts';
+import { attachBrowserInput } from '../input/browserInput.ts';
+import { InputMapper } from '../input/inputState.ts';
+import { browserStorage, loadSettings } from '../input/settingsStore.ts';
+import { createSceneRenderer } from '../render/glRenderer.ts';
+import type { Palette } from '../render/palette.ts';
+import type { Presenter } from '../render/presenter.ts';
+import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
+import { clockText, tideAt } from '../sim/calendar/calendar.ts';
+import { landContext } from '../sim/land/context.ts';
+import { interactionNow } from '../sim/land/onFoot.ts';
+import { tileOf } from '../sim/land/zoneMap.ts';
+import { createSimulation } from '../sim/simulation.ts';
+import type { SimEvent } from '../sim/simulation.ts';
+import { newCampaign } from '../sim/world.ts';
+import { createOverlay } from '../ui/overlay.ts';
+import type { LoadedAtlas } from './atlases.ts';
+import { lightPhase } from './lightPhase.ts';
+import type { NamingChoice } from './namingView.ts';
+import { BODY_SHEETS } from './namingView.ts';
+import { Session } from './session.ts';
+import { zoneScene } from './zoneScene.ts';
+
+export interface PlayOptions {
+  readonly seed: string;
+  /** performance.now() when the player pressed Wake, to measure the time to control. */
+  readonly wokeAt: number;
+}
+
+export function startPlay(
+  canvas: HTMLCanvasElement,
+  presenter: Presenter,
+  palette: Palette,
+  strings: StringTable,
+  content: Content,
+  atlases: ReadonlyMap<string, LoadedAtlas>,
+  choice: NamingChoice,
+  options: PlayOptions,
+): void {
+  const t = (key: string, vars: Record<string, string> = {}): string =>
+    formatString(strings, key, vars);
+  const b = parseTimeBalance(content.balance);
+  const world = newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice);
+  const land = landContext(content, content.balance);
+  const opening = content.opening;
+  if (opening === null || world.onFoot === null) throw new Error('No opening to play');
+  const map = land.maps.get(world.onFoot.zone);
+  if (map === undefined) throw new Error(`No map for ${world.onFoot.zone}`);
+  const sim = createSimulation(b, world, land);
+
+  const settings = loadSettings(browserStorage());
+  const input = new InputMapper(settings.bindings, settings.toggle);
+  const session = new Session(sim, input, { awareHostiles: () => 0 });
+  const style = parseRenderStyle(renderJson);
+  const renderer = createSceneRenderer(presenter, palette, style);
+  const geometry = new Map<string, LoadedAtlas['manifest']>();
+  for (const { manifest, image } of atlases.values()) {
+    renderer.addAtlas(manifest, image);
+    geometry.set(manifest.sheet, manifest);
+  }
+  const anims = new Map([...geometry].map(([name, m]) => [name, m.anims]));
+  const look = { steerer: BODY_SHEETS[choice.bodyModel], people: { C_HILD: 'actor_c_hild' } };
+
+  const audioTable = content.audio;
+  const engine = new WebAudioEngine();
+  const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
+  const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
+  const overlay = createOverlay(document);
+  const root = overlay.root;
+
+  // Book 8 section 01: patronymics in formal speech only; barks and prompts use the short name.
+  const nameOf = (id: string): string => {
+    const short = `person.short.${id.toLowerCase()}`;
+    if (strings.has(short)) return t(short);
+    const key = world.people[id]?.nameKey;
+    return key === undefined ? id : t(key);
+  };
+  const line = (key: string): string => t(key, { steerer: world.player.name });
+  let subtitles: { text: string; until: number }[] = [];
+  const say = (text: string, now: number): void => {
+    subtitles = subtitles.filter((s) => s.text !== text);
+    subtitles.push({ text, until: now + captionMs });
+    if (subtitles.length > 3) subtitles.shift();
+  };
+  let notice: { text: string; until: number } | null = null;
+  let beat = '';
+  const onEvent = (e: SimEvent): void => {
+    const now = performance.now();
+    switch (e.type) {
+      case 'PERSON_CALLED':
+        say(
+          t('caption.format.with_direction', {
+            caption: t('caption.voice.hild_calling'),
+            direction: t(`caption.direction.${e.direction}`),
+          }),
+          now,
+        );
+        say(
+          t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
+          now,
+        );
+        return;
+      case 'PERSON_SPOKE':
+        say(
+          t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
+          now,
+        );
+        return;
+      case 'COMMAND_REFUSED':
+        if (e.reason === 'BELOW_TIDE_LINE' || e.reason === 'NO_ROOM') {
+          const key = e.reason === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room';
+          notice = { text: t(key, { name: nameOf(e.detail) }), until: now + captionMs };
+        }
+        return;
+      case 'BEAT_COMPLETED':
+        beat = e.beat;
+        return;
+      default:
+        return;
+    }
+  };
+  sim.events.onAny(onEvent);
+
+  const browser = attachBrowserInput(window, canvas, input, {
+    firstInput: () => {
+      if (!engine.unlocked && audio !== null) {
+        engine.unlock();
+        // Book 11: no music in the first seconds of the opening; wind, surf and Hild's voice.
+        audio.setPlace(map.zone, lightPhase(world.calendar, b), engine.now);
+      }
+    },
+  });
+  const keys = (action: Action): string =>
+    settings.bindings[action]
+      .filter((x) => x.device === 'key')
+      .slice(0, 1)
+      .map(bindingLabel)
+      .join('');
+  const moveKeys = (['moveUp', 'moveLeft', 'moveDown', 'moveRight'] as const).map(keys).join(' ');
+
+  const started = performance.now();
+  let moved = false;
+  let last = started;
+  let first = true;
+  const frame = (now: number): void => {
+    browser.poll();
+    const result = session.frame(now - last, browser.aim());
+    last = now;
+    if (first) {
+      root.dataset['controlMs'] = String(Math.round(now - options.wokeAt));
+      first = false;
+    }
+    if (result.refusedActions.length > 0)
+      notice = { text: t('ui.prompt.hands_full'), until: now + captionMs };
+    const onFoot = sim.state.onFoot;
+    if (onFoot === null) return;
+    if (onFoot.player.moving) moved = true;
+    const tideOpen = tideAt(sim.state.calendar, b).tidalGroundOpen;
+    const interaction = interactionNow(onFoot, map, land.rules, tideOpen);
+
+    // The one prompt that fits the moment.
+    let prompt = '';
+    let promptKind = '';
+    const interactKey = keys('interact');
+    if (interaction?.kind === 'LIFT') {
+      prompt = t('ui.prompt.lift', { key: interactKey, name: nameOf(interaction.target) });
+      promptKind = 'lift';
+    } else if (interaction?.kind === 'SET_DOWN') {
+      const name = nameOf(interaction.target);
+      if (interaction.refusal === null) {
+        prompt = t('ui.prompt.set_down', { key: interactKey, name });
+        promptKind = 'set_down';
+      } else {
+        prompt = t(
+          interaction.refusal === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room',
+          {
+            name,
+          },
+        );
+        promptKind = interaction.refusal === 'BELOW_TIDE_LINE' ? 'below_tide' : 'no_room';
+      }
+    } else if (!moved && now - started > opening.moveHintSeconds * 1000) {
+      prompt = t('ui.prompt.move', { keys: moveKeys });
+      promptKind = 'move';
+    }
+    if (notice !== null && notice.until < now) notice = null;
+    overlay.region('prompt').textContent = notice?.text ?? prompt;
+
+    subtitles = subtitles.filter((s) => s.until > now);
+    const soundCaptions = audio === null ? [] : audio.update(engine.now).map((c) => c.text);
+    overlay.region('captions').replaceChildren(
+      ...[...subtitles.map((s) => s.text), ...soundCaptions].map((text) => {
+        const p = document.createElement('p');
+        p.textContent = text;
+        return p;
+      }),
+    );
+    const open = session.menus.open;
+    overlay.region('menu').textContent =
+      open === null ? '' : t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) });
+
+    const scene = zoneScene({
+      map,
+      onFoot,
+      tick: sim.state.tick,
+      tideOpen,
+      phase: lightPhase(sim.state.calendar, b),
+      look,
+      anims,
+      highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
+    });
+    renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
+
+    const tile = tileOf(map, onFoot.player.x, onFoot.player.y);
+    root.dataset['tick'] = String(sim.state.tick);
+    root.dataset['x'] = String(tile.tx);
+    root.dataset['y'] = String(tile.ty);
+    root.dataset['px'] = onFoot.player.x.toFixed(1);
+    root.dataset['py'] = onFoot.player.y.toFixed(1);
+    root.dataset['gait'] = onFoot.player.gait;
+    root.dataset['moving'] = String(onFoot.player.moving);
+    root.dataset['carrying'] = onFoot.carrying ?? '';
+    root.dataset['hild'] = onFoot.actors['C_HILD']?.pose ?? '';
+    root.dataset['prompt'] = notice === null ? promptKind : 'notice';
+    root.dataset['beat'] = beat;
+    root.dataset['menu'] = open ?? '';
+    root.dataset['body'] = sim.state.player.bodyModel ?? '';
+    root.dataset['steerer'] = sim.state.player.name;
+    canvas.setAttribute(
+      'aria-label',
+      t('ui.play.label', { time: clockText(sim.state.calendar.minuteOfDay) }),
+    );
+    overlay.fit(presenter.viewport, window.devicePixelRatio);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+  canvas.dataset['state'] = 'play';
+}

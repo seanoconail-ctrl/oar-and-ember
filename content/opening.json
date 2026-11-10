@@ -1,0 +1,13 @@
+{
+  "about": "Chapter 1 beat 1 (Book 4 section 08): wake on Wreck Strand; Hild is calling beyond the rocks; carry her above the tide line.",
+  "beat": "BEAT_1_WAKE",
+  "zone": "ZONE_SK_STRAND",
+  "caller": "C_HILD",
+  "firstCallSeconds": 1,
+  "callEverySeconds": 6,
+  "callLines": ["c_hild.bark.call.01", "c_hild.bark.call.02", "c_hild.bark.call.03"],
+  "foundLine": "c_hild.bark.found.01",
+  "safeLine": "c_hild.bark.safe.01",
+  "refusedLine": "c_hild.bark.tide.01",
+  "moveHintSeconds": 8
+}

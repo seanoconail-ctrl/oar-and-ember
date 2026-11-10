@@ -3,7 +3,8 @@
  * 60 Hz tick. All changes arrive as commands, applied at the start of a tick in the order they
  * were submitted; systems report what happened as events. No wall-clock time or Math.random here.
  *
- * Systems so far: the calendar and the on-foot clock with sleep and collapse (Stage 2).
+ * Systems so far: the calendar and the on-foot clock with sleep and collapse (Stage 2); the
+ * on-foot controller, interaction and carrying, and Chapter 1 beat 1 on Wreck Strand (Stage 6).
  */
 import type { TimeBalance } from '../content/balance.ts';
 import { EventBus } from '../core/events.ts';
@@ -22,6 +23,12 @@ import {
 } from './calendar/calendar.ts';
 import type { TidePhase, Watch } from './calendar/calendar.ts';
 import type { Season } from '../content/balance.ts';
+import type { OpeningDef } from '../content/registry.ts';
+import type { Id } from '../core/ids.ts';
+import { applyInteraction, interactionNow, stepMovement } from './land/onFoot.ts';
+import type { LandContext, RefusalReason as OnFootRefusal } from './land/onFoot.ts';
+import { onLifted, onSetDown, onTideRefusal, stepOpening } from './narrative/opening.ts';
+import type { OpeningEvent } from './narrative/opening.ts';
 
 /** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
 export type SimState = WorldState;
@@ -33,9 +40,23 @@ export type CrewOrder = 'FOLLOW' | 'HOLD' | 'ATTACK' | 'PROTECT' | 'CARRY' | 'WI
 export type Command =
   | { readonly type: 'SLEEP' }
   | { readonly type: 'SET_DAY_LENGTH'; readonly multiplier: number }
-  | { readonly type: 'CREW_ORDER'; readonly order: CrewOrder };
+  | { readonly type: 'CREW_ORDER'; readonly order: CrewOrder }
+  /** The movement wanted from now on: a vector of length at most 1, and the gait buttons. */
+  | {
+      readonly type: 'MOVE';
+      readonly x: number;
+      readonly y: number;
+      readonly run: boolean;
+      readonly sneak: boolean;
+    }
+  | { readonly type: 'INTERACT' };
 
-export type RefusalReason = 'TOO_EARLY_TO_SLEEP' | 'DAY_LENGTH_OUT_OF_RANGE';
+export type RefusalReason =
+  | 'TOO_EARLY_TO_SLEEP'
+  | 'DAY_LENGTH_OUT_OF_RANGE'
+  | 'NOT_ON_FOOT'
+  | 'NOTHING_IN_REACH'
+  | OnFootRefusal;
 
 export type SimEvent =
   | { readonly type: 'WATCH_STARTED'; readonly day: number; readonly watch: Watch }
@@ -57,6 +78,9 @@ export type SimEvent =
   | { readonly type: 'MORNING_REPORT_DUE'; readonly day: number }
   | { readonly type: 'DAY_LENGTH_CHANGED'; readonly percent: number }
   | { readonly type: 'CREW_ORDER_GIVEN'; readonly order: CrewOrder; readonly tick: number }
+  | { readonly type: 'PERSON_LIFTED'; readonly person: Id }
+  | { readonly type: 'PERSON_SET_DOWN'; readonly person: Id; readonly aboveTideLine: true }
+  | OpeningEvent
   | {
       readonly type: 'COMMAND_REFUSED';
       readonly command: Command['type'];
@@ -91,7 +115,16 @@ export interface Simulation {
   step(): void;
 }
 
-export function createSimulation(b: TimeBalance, state: SimState): Simulation {
+/** What the on-foot systems need: zone maps, Book 10 speeds and the controller rules. */
+export interface SimWorldContext extends LandContext {
+  readonly opening: OpeningDef | null;
+}
+
+export function createSimulation(
+  b: TimeBalance,
+  state: SimState,
+  land: SimWorldContext | null = null,
+): Simulation {
   if (state.version !== SIM_STATE_VERSION) {
     throw new Error(`Simulation state version ${state.version} is not ${SIM_STATE_VERSION}`);
   }
@@ -157,7 +190,61 @@ export function createSimulation(b: TimeBalance, state: SimState): Simulation {
       case 'CREW_ORDER':
         events.emit({ type: 'CREW_ORDER_GIVEN', order: command.order, tick: state.tick });
         return;
+      case 'MOVE': {
+        if (state.onFoot === null) return;
+        const length = Math.hypot(command.x, command.y);
+        const scale = length > 1 ? 1 / length : 1;
+        state.onFoot.player.intent = {
+          x: command.x * scale,
+          y: command.y * scale,
+          run: command.run,
+          sneak: command.sneak,
+        };
+        return;
+      }
+      case 'INTERACT': {
+        const onFoot = state.onFoot;
+        const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+        const refuse = (reason: RefusalReason, detail = ''): void => {
+          events.emit({ type: 'COMMAND_REFUSED', command: command.type, reason, detail });
+        };
+        if (onFoot === null || map === undefined || land === null) {
+          refuse('NOT_ON_FOOT');
+          return;
+        }
+        const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
+        const interaction = interactionNow(onFoot, map, land.rules, tideOpen);
+        if (interaction === null) {
+          refuse('NOTHING_IN_REACH');
+          return;
+        }
+        if (interaction.kind === 'SET_DOWN' && interaction.refusal !== null) {
+          refuse(interaction.refusal, interaction.target);
+          if (interaction.refusal === 'BELOW_TIDE_LINE' && land.opening !== null)
+            onTideRefusal(land.opening, interaction.target, events.emit.bind(events));
+          return;
+        }
+        applyInteraction(onFoot, interaction);
+        const emit = events.emit.bind(events);
+        if (interaction.kind === 'LIFT') {
+          events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
+          if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
+        } else {
+          events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
+          if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
+        }
+        return;
+      }
     }
+  };
+
+  const stepLand = (): void => {
+    const onFoot = state.onFoot;
+    if (land === null || onFoot === null) return;
+    const map = land.maps.get(onFoot.zone);
+    if (map === undefined) return;
+    stepMovement(onFoot, map, land, tideAt(state.calendar, b).tidalGroundOpen);
+    if (land.opening !== null) stepOpening(state, land.opening, map.tile, events.emit.bind(events));
   };
 
   const advanceOneMinute = (): void => {
@@ -186,6 +273,7 @@ export function createSimulation(b: TimeBalance, state: SimState): Simulation {
       const pending = queue;
       queue = [];
       for (const command of pending) apply(command);
+      stepLand();
       state.clock.subMinute += TICK_UNITS;
       const threshold = unitsPerMinute(b, state.clock.dayLengthPercent);
       while (state.clock.subMinute >= threshold) {

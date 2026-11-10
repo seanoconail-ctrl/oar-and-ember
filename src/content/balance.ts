@@ -163,3 +163,21 @@ export function parsePeopleBasics(json: unknown): PeopleBasics {
   if (stamina === null) fail('vitalityStaminaAndArmour.stamina', staminaText, '"N; ..."');
   return { vitality: Number(vitality[1]), stamina: Number(stamina[1]) };
 }
+
+/** Book 10 section 02: movement on foot, in tiles per second. */
+export interface MovementBalance {
+  readonly sneak: number;
+  readonly walk: number;
+  readonly run: number;
+  readonly carry: number;
+}
+
+export function parseMovementBalance(json: unknown): MovementBalance {
+  const list = rows(json, 'timeAndTravel', 'movementOnFoot');
+  const speed = (mode: string): number => {
+    const row = list.find((r) => r['Mode'] === mode);
+    if (row === undefined) throw new Error(`balance.json: movementOnFoot has no ${mode} row`);
+    return number(`movementOnFoot.${mode}`, row['Speed'] ?? '');
+  };
+  return { sneak: speed('Sneak'), walk: speed('Walk'), run: speed('Run'), carry: speed('Carry') };
+}

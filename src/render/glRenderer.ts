@@ -160,6 +160,10 @@ export function createSceneRenderer(
     },
     render(scene, items) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+      // The last present left the frame texture bound; drawing into it while it is bound is a
+      // feedback loop that WebGL refuses, so let go of it before drawing the next frame.
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, null);
       gl.viewport(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
       gl.useProgram(program);
       gl.bindVertexArray(vao);

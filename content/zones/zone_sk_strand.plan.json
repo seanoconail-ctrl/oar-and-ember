@@ -1,0 +1,59 @@
+{
+  "zone": "ZONE_SK_STRAND",
+  "about": "Wreck Strand, expanded from Book 9 section 05 (blocks 12 to 23, 23 to 30) by src/tools/levels/zones.ts. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_strand",
+  "blocks": {
+    "x": 12,
+    "y": 23,
+    "w": 12,
+    "h": 8
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 3,
+  "outcrops": [
+    {
+      "x": 39.5,
+      "y": 36.5,
+      "rx": 2.2,
+      "ry": 1.3
+    },
+    {
+      "x": 63,
+      "y": 36.5,
+      "rx": 1.8,
+      "ry": 1.1
+    }
+  ],
+  "spawns": {
+    "P_STEERER": {
+      "x": 70.5,
+      "y": 38.5,
+      "facing": "w"
+    },
+    "C_HILD": {
+      "x": 31.5,
+      "y": 37.6,
+      "facing": "e"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_rock_strand",
+      "frame": "large/-/0",
+      "x": 39.5,
+      "y": 37.95
+    },
+    {
+      "sheet": "prop_rock_strand",
+      "frame": "small/-/0",
+      "x": 63,
+      "y": 37.95
+    },
+    {
+      "sheet": "prop_wreck_t1",
+      "frame": "wrecked/-/0",
+      "x": 21.5,
+      "y": 51.6
+    }
+  ]
+}

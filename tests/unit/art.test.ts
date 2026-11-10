@@ -59,10 +59,16 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
   it('passes on every committed sheet', () => {
     expect(sheets.flatMap((s) => lintSheet(s, palette))).toEqual([]);
     expect(sheets.map((s) => s.name).sort()).toEqual([
+      'actor_c_hild',
       'actor_p_steerer_a',
+      'actor_p_steerer_b',
       'decal_blood_01',
       'prop_greymen_stone',
+      'prop_rock_strand',
+      'prop_wreck_t1',
       'tile_machair_01',
+      'tile_strand',
+      'ui_marker',
     ]);
   });
 
@@ -152,10 +158,12 @@ describe('atlases', () => {
     const steerer = byName.get('actor_p_steerer_a');
     if (steerer === undefined) throw new Error('missing');
     const { image, manifest } = packSheet(steerer);
-    expect([image.width, image.height]).toEqual([4 * 32, 4 * 40]);
-    expect(Object.keys(manifest.frames)).toHaveLength(16);
-    expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(16);
+    // Five states (idle 4, walk 6, run 8, sneak 6, carry 6) in four facings: 20 rows of up to 8.
+    expect([image.width, image.height]).toEqual([8 * 32, 20 * 40]);
+    expect(Object.keys(manifest.frames)).toHaveLength(4 * (4 + 6 + 8 + 6 + 6));
+    expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(120);
     expect(manifest.frames['idle/w/3']).toEqual([96, 120]);
+    expect(manifest.frames['run/s/7']).toEqual([224, 320]);
   });
 });
 

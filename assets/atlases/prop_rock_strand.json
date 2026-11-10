@@ -1,0 +1,42 @@
+{
+  "sheet": "prop_rock_strand",
+  "kind": "prop",
+  "image": "prop_rock_strand.png",
+  "width": 132,
+  "height": 84,
+  "pivot": {
+    "x": 66,
+    "y": 82
+  },
+  "footprint": {
+    "w": 120,
+    "h": 72
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "large": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "small": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "placeholder": false,
+  "frames": {
+    "large/-/0": [
+      0,
+      0
+    ],
+    "small/-/0": [
+      0,
+      84
+    ]
+  }
+}
