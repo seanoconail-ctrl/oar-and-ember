@@ -42,10 +42,10 @@ Each character is one tile (or one block in island grids). The legend under each
 ### Routes
 | Route | Length | Walk | Run | Notes |
 |---|---|---|---|---|
-| Main path loop: broch, Kelda, Rook Hill, Grey Men, cairn, Naust Cove, strand | 48 blocks (384 tiles) | 110 s | 64 s | The daily circuit |
-| Cliff path: Rook Hill, hermit's cell, Hag's Seat | 23 blocks (184 tiles) | 53 s | 31 s | Narrow; falls possible in rain |
-| Grey Men to Seal Cave | 15 blocks (122 tiles) | 35 s | 20 s | Across the bog's northern edge |
-| Naust Cove to the Skerry causeway | 5 blocks (40 tiles) | 11 s | 7 s | Spring low tides only |
+| Main path loop: broch, Kelda, Rook Hill, Grey Men, cairn, Naust Cove, strand | 48 blocks (384 tiles) | 192 s | 64 s | The daily circuit |
+| Cliff path: Rook Hill, hermit's cell, Hag's Seat | 23 blocks (184 tiles) | 92 s | 31 s | Narrow; falls possible in rain |
+| Grey Men to Seal Cave | 15 blocks (122 tiles) | 61 s | 20 s | Across the bog's northern edge |
+| Naust Cove to the Skerry causeway | 5 blocks (40 tiles) | 20 s | 7 s | Spring low tides only |
 
 ### Sightlines from the watch cairn
 A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), which covers the strand, the machair, Naust Cove, the cairn and the Skerry. It cannot see Gull Geo (below the cliffs) or Seal Cave (out of range). A raider who knows the island lands at Gull Geo. Building a second post at the hermit's cell closes that gap; this is a choice the threat schedule rewards.
@@ -217,7 +217,7 @@ These are suggested plots, not fixed sites: the player can designate any buildin
 | Storehouse door to the high-tide jetty berth | 18 tiles | 10 s carrying | Low tide doubles it: 32 tiles, 18 s |
 | Storehouse door to L2 waterline | 23 tiles high, 38 low | 13 s or 21 s carrying | |
 | Stealth route: L3, gully, headland, scrub, back hatch | 42 tiles | 24 s sneaking | Outside every day cone; dunes and scrub hide a sneaking party |
-| Open approach: L1 to storehouse door | 10 tiles | 3 s walking | In the jetty and storehouse cones |
+| Open approach: L1 to storehouse door | 10 tiles | 5 s walking | In the jetty and storehouse cones |
 | Runner: byre to the east edge | 50 tiles | 8.4 s running | Leaves the map at (95, 35) |
 | Ardcarn horn after the runner leaves | | 60 s | Visible and audible warning |
 | Fiachra's patrol arrives | | 120 s after the runner leaves | Enters at (95, 35) |

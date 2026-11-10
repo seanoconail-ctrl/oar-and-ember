@@ -69,7 +69,11 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
   if (sheet.kind === 'tile' && (sheet.width !== TILE_SIZE || sheet.height !== TILE_SIZE))
     add('a tile is 24 x 24');
 
-  const ink = palette.indexOf.get('k');
+  // Ink: Book 7's outline colour or either step of the art-direction ink ramp.
+  const inks = new Set<number>([
+    ...(palette.indexOf.has('k') ? [palette.indexOf.get('k') ?? -1] : []),
+    ...(palette.ramps.get('ink') ?? []),
+  ]);
   const reserved = new Set(
     palette.entries.flatMap((e, i) => (e.reserved && !sheet.reserved.includes(e.code) ? [i] : [])),
   );
@@ -90,7 +94,7 @@ export function lintSheet(sheet: Sheet, palette: Palette): ArtIssue[] {
         if (reserved.has(v))
           add(`uses the reserved accent "${palette.entries[v]?.name ?? v}"`, key);
         const onEdge = [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].includes(NO_PIXEL);
-        if (onEdge && v !== ink) badEdge++;
+        if (onEdge && !inks.has(v)) badEdge++;
       }
     }
     if ((sheet.kind === 'sprite' || sheet.kind === 'prop') && badEdge > 0) {

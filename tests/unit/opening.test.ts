@@ -228,10 +228,11 @@ describe('check 2: the rescue teaches by doing', () => {
     const bot = new OpeningBot(sim, map, b);
     bot.rescue('C_HILD');
     const types = events.map((e) => e.type).filter((t) => t !== 'WATCH_STARTED');
-    expect(types).toEqual([
-      'PERSON_CALLED',
-      'PERSON_CALLED',
-      'PERSON_CALLED',
+    // She calls until she is reached (how many times depends on the walking pace), then the rest.
+    const calls = types.filter((t) => t === 'PERSON_CALLED').length;
+    expect(calls).toBeGreaterThanOrEqual(3);
+    expect(types.slice(0, calls).every((t) => t === 'PERSON_CALLED')).toBe(true);
+    expect(types.slice(calls)).toEqual([
       'PERSON_LIFTED',
       'PERSON_SPOKE',
       'COMMAND_REFUSED',

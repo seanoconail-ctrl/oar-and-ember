@@ -23,6 +23,7 @@
     }
   },
   "events": {},
+  "shadow": null,
   "placeholder": false,
   "frames": {
     "tile/-/0": [

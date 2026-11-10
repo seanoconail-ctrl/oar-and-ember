@@ -818,6 +818,7 @@
     }
   },
   "events": {},
+  "shadow": null,
   "placeholder": false,
   "frames": {
     "sea0/-/0": [

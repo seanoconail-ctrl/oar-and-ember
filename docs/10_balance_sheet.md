@@ -52,7 +52,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | Mode | Speed | Notes |
 |---|---|---|
 | Sneak | 1.75 | Noise x0.25 |
-| Walk | 3.5 | Default |
+| Walk | 2.0 | Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people) |
 | Run | 6.0 | Drains 5 stamina per second only while in combat |
 | Carry | 1.8 | Lot or person; attacks disabled |
 | Charge (heavy) | 1.5 | While holding a heavy |

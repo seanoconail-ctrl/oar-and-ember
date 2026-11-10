@@ -12,6 +12,9 @@ export interface PaletteEntry {
   /** Reserved accents never appear in ordinary scenery (Book 7 section 08). */
   readonly reserved: boolean;
   readonly rgb: readonly [number, number, number];
+  /** For the art-direction ramps (Book 7 section 14): the ramp's name and the step, dark first. */
+  readonly ramp?: string;
+  readonly step?: number;
 }
 
 export interface Palette {
@@ -21,6 +24,8 @@ export interface Palette {
   readonly entries: readonly PaletteEntry[];
   /** Palette index by code. */
   readonly indexOf: ReadonlyMap<string, number>;
+  /** Each hue-shifted ramp's palette indices, from its deepest shadow to its brightest light. */
+  readonly ramps: ReadonlyMap<string, readonly number[]>;
 }
 
 const HEX = /^#[0-9A-F]{6}$/;
@@ -47,7 +52,7 @@ export function parsePalette(json: unknown): Palette {
   const indexOf = new Map<string, number>();
   const parsed: PaletteEntry[] = entries.map((raw: unknown, i): PaletteEntry => {
     if (!isRecord(raw)) fail(`entry ${i} is not an object`);
-    const { code, name: entryName, hex, group, reserved } = raw;
+    const { code, name: entryName, hex, group, reserved, ramp, step } = raw;
     if (typeof code !== 'string' || Array.from(code).length !== 1 || /\s/.test(code)) {
       fail(`entry ${i}: code must be one visible character`);
     }
@@ -59,6 +64,9 @@ export function parsePalette(json: unknown): Palette {
     if (reserved !== undefined && typeof reserved !== 'boolean') {
       fail(`entry ${i}: reserved must be true or false`);
     }
+    if (ramp !== undefined && (typeof ramp !== 'string' || !Number.isInteger(step))) {
+      fail(`entry ${i}: a ramp entry needs a ramp name and a whole-number step`);
+    }
     indexOf.set(code, i);
     const value = Number.parseInt(hex.slice(1), 16);
     return {
@@ -68,10 +76,19 @@ export function parsePalette(json: unknown): Palette {
       group,
       reserved: reserved === true,
       rgb: [(value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff],
+      ...(typeof ramp === 'string' ? { ramp, step: step as number } : {}),
     };
   });
+  const ramps = new Map<string, number[]>();
+  parsed.forEach((e, i) => {
+    if (e.ramp === undefined) return;
+    const list = ramps.get(e.ramp) ?? [];
+    if ((e.step ?? -1) !== list.length) fail(`ramp ${e.ramp}: steps must run 0, 1, 2... in order`);
+    list.push(i);
+    ramps.set(e.ramp, list);
+  });
 
-  return { name, transparent, entries: parsed, indexOf };
+  return { name, transparent, entries: parsed, indexOf, ramps };
 }
 
 /** Palette index for a code, or a thrown error naming the code. */
@@ -79,4 +96,12 @@ export function paletteIndex(palette: Palette, code: string): number {
   const index = palette.indexOf.get(code);
   if (index === undefined) throw new Error(`Palette ${palette.name}: unknown code "${code}"`);
   return index;
+}
+
+/** The code for step `step` of a ramp, clamped to the ramp's ends. */
+export function rampCode(palette: Palette, ramp: string, step: number): string {
+  const list = palette.ramps.get(ramp);
+  if (list === undefined) throw new Error(`Palette ${palette.name}: unknown ramp "${ramp}"`);
+  const i = list[Math.max(0, Math.min(list.length - 1, Math.round(step)))] ?? 0;
+  return palette.entries[i]?.code ?? '';
 }

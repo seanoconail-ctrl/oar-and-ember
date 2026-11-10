@@ -19,6 +19,7 @@ export interface Manifest {
   readonly facings: readonly string[];
   readonly anims: Readonly<Record<string, Anim>>;
   readonly events: Readonly<Record<string, string>>;
+  readonly shadow: { readonly w: number; readonly h: number } | null;
   readonly placeholder: boolean;
   /** Frame key "state/facing/index" to its top-left corner in the atlas image. */
   readonly frames: Readonly<Record<string, readonly [number, number]>>;
@@ -58,6 +59,7 @@ export function packSheet(sheet: Sheet): { image: IndexedImage; manifest: Manife
       facings: sheet.facings,
       anims: sheet.anims,
       events: sheet.events,
+      shadow: sheet.shadow,
       placeholder: sheet.placeholder,
       frames,
     },

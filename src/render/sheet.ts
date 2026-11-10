@@ -47,6 +47,11 @@ export interface Sheet {
   readonly facings: readonly string[];
   readonly anims: Readonly<Record<string, Anim>>;
   readonly events: Readonly<Record<string, string>>;
+  /**
+   * The soft contact shadow under the sheet's foot anchor, in pixels (Book 7 section 14: every
+   * character and prop has one), or null for sheets that sit flat on the ground.
+   */
+  readonly shadow: { readonly w: number; readonly h: number } | null;
   /** States that are not a standing figure: lying, carried or seated (`pose.<state>` headers). */
   readonly poses: Readonly<Record<string, Pose>>;
   readonly placeholder: boolean;
@@ -99,6 +104,13 @@ export function compileSheet(text: string, file: string, palette: Palette): Shee
   const anims: Record<string, Anim> = {};
   const events: Record<string, string> = {};
   const poses: Record<string, Pose> = {};
+  let shadow: { w: number; h: number } | null = null;
+  const shadowHeader = source.header.get('shadow');
+  if (shadowHeader !== undefined) {
+    const m = /^(\d+)x(\d+)$/.exec(shadowHeader.value);
+    if (m === null) fail(shadowHeader.line, '"shadow" must look like 14x5');
+    else shadow = { w: Number(m[1]), h: Number(m[2]) };
+  }
   for (const [key, { value, line }] of source.header) {
     if (key.startsWith('pose.')) {
       const pose = POSES.find((p) => p === value);
@@ -170,6 +182,7 @@ export function compileSheet(text: string, file: string, palette: Palette): Shee
     facings,
     anims,
     events,
+    shadow,
     poses,
     placeholder,
     reserved,

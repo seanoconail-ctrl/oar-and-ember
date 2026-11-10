@@ -11,7 +11,10 @@ describe('the Book 7 palette', () => {
   const palette = parsePalette(raw);
 
   it('holds the 24 colours of section 08 and the 4 blood reds of section 12', () => {
-    expect(palette.entries).toHaveLength(28);
+    // Book 7's 28 colours keep their places; the art-direction ramps follow (Book 7 section 14).
+    expect(palette.entries).toHaveLength(254);
+    expect(palette.entries.filter((e) => e.ramp === undefined)).toHaveLength(28);
+    expect(palette.ramps.size).toBe(37);
     expect(palette.entries.filter((e) => e.group === 'blood')).toHaveLength(4);
   });
 

@@ -158,12 +158,13 @@ describe('atlases', () => {
     const steerer = byName.get('actor_p_steerer_a');
     if (steerer === undefined) throw new Error('missing');
     const { image, manifest } = packSheet(steerer);
-    // Five states (idle 4, walk 6, run 8, sneak 6, carry 6) in four facings: 20 rows of up to 8.
-    expect([image.width, image.height]).toEqual([8 * 32, 20 * 40]);
-    expect(Object.keys(manifest.frames)).toHaveLength(4 * (4 + 6 + 8 + 6 + 6));
-    expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(120);
+    // Seven states (idle 4, look 4, idlewind 4, walk 8, run 8, sneak 6, carry 6) in four facings:
+    // 28 rows of up to 8.
+    expect([image.width, image.height]).toEqual([8 * 32, 28 * 40]);
+    expect(Object.keys(manifest.frames)).toHaveLength(4 * (4 + 4 + 4 + 8 + 8 + 6 + 6));
+    expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(160);
     expect(manifest.frames['idle/w/3']).toEqual([96, 120]);
-    expect(manifest.frames['run/s/7']).toEqual([224, 320]);
+    expect(manifest.frames['run/s/7']).toEqual([224, 640]);
   });
 });
 
@@ -203,7 +204,8 @@ describe('the draw list — Stage 4 acceptance check 3 (depth sorting and cutawa
     const f = frame('front');
     const s = front[find(front, 'actor_p_steerer_a')];
     if (s === undefined) throw new Error('missing');
-    const tunic = palette.entries[palette.indexOf.get('r') ?? 0]?.rgb ?? [0, 0, 0];
+    // The tunic's base tone: the madder ramp's step 3 (Book 7 section 14).
+    const tunic = palette.entries[palette.ramps.get('madder')?.[3] ?? 0]?.rgb ?? [0, 0, 0];
     const tx = s.x + 15;
     const ty = s.y + 21;
     expect([...f.subarray((ty * 640 + tx) * 4, (ty * 640 + tx) * 4 + 3)]).toEqual([...tunic]);

@@ -108,8 +108,8 @@
     },
     {
      "Mode": "Walk",
-     "Speed": "3.5",
-     "Notes": "Default"
+     "Speed": "2.0",
+     "Notes": "Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people)"
     },
     {
      "Mode": "Run",

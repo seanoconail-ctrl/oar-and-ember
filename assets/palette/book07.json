@@ -1,26 +1,116 @@
 {
   "name": "book07",
-  "source": "Book 7 section 08 palette figure (hex values transcribed from docs/pdf/07_Oar_and_Ember_Ship_and_Visual_Reference.pdf, page 9) and section 12 blood palette",
+  "source": "Book 7 section 08 palette figure (hex values transcribed from docs/pdf/07_Oar_and_Ember_Ship_and_Visual_Reference.pdf, page 9) and section 12 blood palette; plus the 37 hue-shifted ramps of the art-direction pass (docs/art/reference/palette.png, Book 7 section 14)",
   "transparent": ".",
   "entries": [
-    { "code": "D", "name": "Deep sea", "hex": "#1F4E5F", "group": "sea and sky" },
-    { "code": "S", "name": "Shallows", "hex": "#3C7A86", "group": "sea and sky" },
-    { "code": "W", "name": "Swell", "hex": "#4F8B95", "group": "sea and sky" },
-    { "code": "F", "name": "Foam / mist", "hex": "#DCE7E4", "group": "sea and sky" },
-    { "code": "O", "name": "Overcast", "hex": "#8FA7AE", "group": "sea and sky" },
-    { "code": "N", "name": "Night water", "hex": "#2B3B4A", "group": "sea and sky" },
-    { "code": "g", "name": "Machair grass", "hex": "#8C9A7A", "group": "land and timber" },
-    { "code": "h", "name": "Heather", "hex": "#5F6E4E", "group": "land and timber" },
-    { "code": "s", "name": "Shingle", "hex": "#9A8B6E", "group": "land and timber" },
-    { "code": "t", "name": "Tarred oak", "hex": "#5A3B24", "group": "land and timber" },
-    { "code": "n", "name": "New timber", "hex": "#7B5434", "group": "land and timber" },
-    { "code": "p", "name": "Pitch / shadow", "hex": "#3A2616", "group": "land and timber" },
-    { "code": "r", "name": "Madder red", "hex": "#A8462C", "group": "cloth and hearth" },
-    { "code": "o", "name": "Ochre / hearth", "hex": "#C98F3A", "group": "cloth and hearth" },
-    { "code": "w", "name": "Undyed wool", "hex": "#E7D7B5", "group": "cloth and hearth" },
-    { "code": "b", "name": "Woad blue", "hex": "#4E5D7A", "group": "cloth and hearth" },
-    { "code": "G", "name": "Weld-green", "hex": "#6E7F4C", "group": "cloth and hearth" },
-    { "code": "l", "name": "Bleached linen", "hex": "#F4EFE4", "group": "cloth and hearth" },
+    {
+      "code": "D",
+      "name": "Deep sea",
+      "hex": "#1F4E5F",
+      "group": "sea and sky"
+    },
+    {
+      "code": "S",
+      "name": "Shallows",
+      "hex": "#3C7A86",
+      "group": "sea and sky"
+    },
+    {
+      "code": "W",
+      "name": "Swell",
+      "hex": "#4F8B95",
+      "group": "sea and sky"
+    },
+    {
+      "code": "F",
+      "name": "Foam / mist",
+      "hex": "#DCE7E4",
+      "group": "sea and sky"
+    },
+    {
+      "code": "O",
+      "name": "Overcast",
+      "hex": "#8FA7AE",
+      "group": "sea and sky"
+    },
+    {
+      "code": "N",
+      "name": "Night water",
+      "hex": "#2B3B4A",
+      "group": "sea and sky"
+    },
+    {
+      "code": "g",
+      "name": "Machair grass",
+      "hex": "#8C9A7A",
+      "group": "land and timber"
+    },
+    {
+      "code": "h",
+      "name": "Heather",
+      "hex": "#5F6E4E",
+      "group": "land and timber"
+    },
+    {
+      "code": "s",
+      "name": "Shingle",
+      "hex": "#9A8B6E",
+      "group": "land and timber"
+    },
+    {
+      "code": "t",
+      "name": "Tarred oak",
+      "hex": "#5A3B24",
+      "group": "land and timber"
+    },
+    {
+      "code": "n",
+      "name": "New timber",
+      "hex": "#7B5434",
+      "group": "land and timber"
+    },
+    {
+      "code": "p",
+      "name": "Pitch / shadow",
+      "hex": "#3A2616",
+      "group": "land and timber"
+    },
+    {
+      "code": "r",
+      "name": "Madder red",
+      "hex": "#A8462C",
+      "group": "cloth and hearth"
+    },
+    {
+      "code": "o",
+      "name": "Ochre / hearth",
+      "hex": "#C98F3A",
+      "group": "cloth and hearth"
+    },
+    {
+      "code": "w",
+      "name": "Undyed wool",
+      "hex": "#E7D7B5",
+      "group": "cloth and hearth"
+    },
+    {
+      "code": "b",
+      "name": "Woad blue",
+      "hex": "#4E5D7A",
+      "group": "cloth and hearth"
+    },
+    {
+      "code": "G",
+      "name": "Weld-green",
+      "hex": "#6E7F4C",
+      "group": "cloth and hearth"
+    },
+    {
+      "code": "l",
+      "name": "Bleached linen",
+      "hex": "#F4EFE4",
+      "group": "cloth and hearth"
+    },
     {
       "code": "1",
       "name": "Sea-light (Rán)",
@@ -49,11 +139,1849 @@
       "group": "reserved accents",
       "reserved": true
     },
-    { "code": "5", "name": "Hit flash", "hex": "#FFFFFF", "group": "reserved accents" },
-    { "code": "k", "name": "Outline ink", "hex": "#22313A", "group": "reserved accents" },
-    { "code": "6", "name": "Blood, fresh", "hex": "#B32424", "group": "blood" },
-    { "code": "7", "name": "Blood, dark", "hex": "#8E1B1B", "group": "blood" },
-    { "code": "8", "name": "Blood, dried", "hex": "#5A0F12", "group": "blood" },
-    { "code": "9", "name": "Blood, highlight", "hex": "#D9483B", "group": "blood" }
+    {
+      "code": "5",
+      "name": "Hit flash",
+      "hex": "#FFFFFF",
+      "group": "reserved accents"
+    },
+    {
+      "code": "k",
+      "name": "Outline ink",
+      "hex": "#22313A",
+      "group": "reserved accents"
+    },
+    {
+      "code": "6",
+      "name": "Blood, fresh",
+      "hex": "#B32424",
+      "group": "blood"
+    },
+    {
+      "code": "7",
+      "name": "Blood, dark",
+      "hex": "#8E1B1B",
+      "group": "blood"
+    },
+    {
+      "code": "8",
+      "name": "Blood, dried",
+      "hex": "#5A0F12",
+      "group": "blood"
+    },
+    {
+      "code": "9",
+      "name": "Blood, highlight",
+      "hex": "#D9483B",
+      "group": "blood"
+    },
+    {
+      "code": "À",
+      "name": "ink 0",
+      "hex": "#161A28",
+      "group": "ramp:ink",
+      "ramp": "ink",
+      "step": 0
+    },
+    {
+      "code": "Á",
+      "name": "ink 1",
+      "hex": "#232838",
+      "group": "ramp:ink",
+      "ramp": "ink",
+      "step": 1
+    },
+    {
+      "code": "Â",
+      "name": "sea 0",
+      "hex": "#0F1D2E",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 0
+    },
+    {
+      "code": "Ã",
+      "name": "sea 1",
+      "hex": "#142A3C",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 1
+    },
+    {
+      "code": "Ä",
+      "name": "sea 2",
+      "hex": "#19374A",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 2
+    },
+    {
+      "code": "Å",
+      "name": "sea 3",
+      "hex": "#20465A",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 3
+    },
+    {
+      "code": "Æ",
+      "name": "sea 4",
+      "hex": "#295669",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 4
+    },
+    {
+      "code": "Ç",
+      "name": "sea 5",
+      "hex": "#356877",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 5
+    },
+    {
+      "code": "È",
+      "name": "sea 6",
+      "hex": "#4A7D88",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 6
+    },
+    {
+      "code": "É",
+      "name": "sea 7",
+      "hex": "#6A979C",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 7
+    },
+    {
+      "code": "Ê",
+      "name": "sea 8",
+      "hex": "#93B5B3",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 8
+    },
+    {
+      "code": "Ë",
+      "name": "sea 9",
+      "hex": "#BFD4CD",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 9
+    },
+    {
+      "code": "Ì",
+      "name": "sea 10",
+      "hex": "#E4EEE8",
+      "group": "ramp:sea",
+      "ramp": "sea",
+      "step": 10
+    },
+    {
+      "code": "Í",
+      "name": "sky 0",
+      "hex": "#3C4656",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 0
+    },
+    {
+      "code": "Î",
+      "name": "sky 1",
+      "hex": "#56626F",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 1
+    },
+    {
+      "code": "Ï",
+      "name": "sky 2",
+      "hex": "#738089",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 2
+    },
+    {
+      "code": "Ð",
+      "name": "sky 3",
+      "hex": "#929EA3",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 3
+    },
+    {
+      "code": "Ñ",
+      "name": "sky 4",
+      "hex": "#B2BBBB",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 4
+    },
+    {
+      "code": "Ò",
+      "name": "sky 5",
+      "hex": "#D0D6D2",
+      "group": "ramp:sky",
+      "ramp": "sky",
+      "step": 5
+    },
+    {
+      "code": "Ó",
+      "name": "sand_wet 0",
+      "hex": "#2F3138",
+      "group": "ramp:sand_wet",
+      "ramp": "sand_wet",
+      "step": 0
+    },
+    {
+      "code": "Ô",
+      "name": "sand_wet 1",
+      "hex": "#3D3E44",
+      "group": "ramp:sand_wet",
+      "ramp": "sand_wet",
+      "step": 1
+    },
+    {
+      "code": "Õ",
+      "name": "sand_wet 2",
+      "hex": "#4D4C4F",
+      "group": "ramp:sand_wet",
+      "ramp": "sand_wet",
+      "step": 2
+    },
+    {
+      "code": "Ö",
+      "name": "sand_wet 3",
+      "hex": "#5E5B59",
+      "group": "ramp:sand_wet",
+      "ramp": "sand_wet",
+      "step": 3
+    },
+    {
+      "code": "Ø",
+      "name": "sand_wet 4",
+      "hex": "#716B64",
+      "group": "ramp:sand_wet",
+      "ramp": "sand_wet",
+      "step": 4
+    },
+    {
+      "code": "Ù",
+      "name": "sand 0",
+      "hex": "#5D5650",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 0
+    },
+    {
+      "code": "Ú",
+      "name": "sand 1",
+      "hex": "#736A5F",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 1
+    },
+    {
+      "code": "Û",
+      "name": "sand 2",
+      "hex": "#8A7F6E",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 2
+    },
+    {
+      "code": "Ü",
+      "name": "sand 3",
+      "hex": "#A0947E",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 3
+    },
+    {
+      "code": "Ý",
+      "name": "sand 4",
+      "hex": "#B6A98F",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 4
+    },
+    {
+      "code": "Þ",
+      "name": "sand 5",
+      "hex": "#CBBFA3",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 5
+    },
+    {
+      "code": "ß",
+      "name": "sand 6",
+      "hex": "#DDD3BA",
+      "group": "ramp:sand",
+      "ramp": "sand",
+      "step": 6
+    },
+    {
+      "code": "à",
+      "name": "stone 0",
+      "hex": "#1C1D2A",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 0
+    },
+    {
+      "code": "á",
+      "name": "stone 1",
+      "hex": "#282A38",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 1
+    },
+    {
+      "code": "â",
+      "name": "stone 2",
+      "hex": "#373948",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 2
+    },
+    {
+      "code": "ã",
+      "name": "stone 3",
+      "hex": "#484A58",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 3
+    },
+    {
+      "code": "ä",
+      "name": "stone 4",
+      "hex": "#5C5D69",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 4
+    },
+    {
+      "code": "å",
+      "name": "stone 5",
+      "hex": "#72727B",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 5
+    },
+    {
+      "code": "æ",
+      "name": "stone 6",
+      "hex": "#8A888D",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 6
+    },
+    {
+      "code": "ç",
+      "name": "stone 7",
+      "hex": "#A3A0A0",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 7
+    },
+    {
+      "code": "è",
+      "name": "stone 8",
+      "hex": "#BDB8B3",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 8
+    },
+    {
+      "code": "é",
+      "name": "stone 9",
+      "hex": "#D6D0C8",
+      "group": "ramp:stone",
+      "ramp": "stone",
+      "step": 9
+    },
+    {
+      "code": "ê",
+      "name": "stone_warm 0",
+      "hex": "#3A302F",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 0
+    },
+    {
+      "code": "ë",
+      "name": "stone_warm 1",
+      "hex": "#504340",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 1
+    },
+    {
+      "code": "ì",
+      "name": "stone_warm 2",
+      "hex": "#685851",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 2
+    },
+    {
+      "code": "í",
+      "name": "stone_warm 3",
+      "hex": "#816E63",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 3
+    },
+    {
+      "code": "î",
+      "name": "stone_warm 4",
+      "hex": "#9B8676",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 4
+    },
+    {
+      "code": "ï",
+      "name": "stone_warm 5",
+      "hex": "#B59F8B",
+      "group": "ramp:stone_warm",
+      "ramp": "stone_warm",
+      "step": 5
+    },
+    {
+      "code": "ð",
+      "name": "grass 0",
+      "hex": "#18221F",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 0
+    },
+    {
+      "code": "ñ",
+      "name": "grass 1",
+      "hex": "#1F2D27",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 1
+    },
+    {
+      "code": "ò",
+      "name": "grass 2",
+      "hex": "#283A2F",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 2
+    },
+    {
+      "code": "ó",
+      "name": "grass 3",
+      "hex": "#334838",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 3
+    },
+    {
+      "code": "ô",
+      "name": "grass 4",
+      "hex": "#3F5640",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 4
+    },
+    {
+      "code": "õ",
+      "name": "grass 5",
+      "hex": "#4C6448",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 5
+    },
+    {
+      "code": "ö",
+      "name": "grass 6",
+      "hex": "#5A7150",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 6
+    },
+    {
+      "code": "ø",
+      "name": "grass 7",
+      "hex": "#6A7E58",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 7
+    },
+    {
+      "code": "ù",
+      "name": "grass 8",
+      "hex": "#7D8C62",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 8
+    },
+    {
+      "code": "ú",
+      "name": "grass 9",
+      "hex": "#93A070",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 9
+    },
+    {
+      "code": "û",
+      "name": "grass 10",
+      "hex": "#AAB384",
+      "group": "ramp:grass",
+      "ramp": "grass",
+      "step": 10
+    },
+    {
+      "code": "ü",
+      "name": "moss 0",
+      "hex": "#19271F",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 0
+    },
+    {
+      "code": "ý",
+      "name": "moss 1",
+      "hex": "#213426",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 1
+    },
+    {
+      "code": "þ",
+      "name": "moss 2",
+      "hex": "#2B442C",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 2
+    },
+    {
+      "code": "ÿ",
+      "name": "moss 3",
+      "hex": "#375533",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 3
+    },
+    {
+      "code": "Ā",
+      "name": "moss 4",
+      "hex": "#46663A",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 4
+    },
+    {
+      "code": "ā",
+      "name": "moss 5",
+      "hex": "#587843",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 5
+    },
+    {
+      "code": "Ă",
+      "name": "moss 6",
+      "hex": "#6D8A4E",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 6
+    },
+    {
+      "code": "ă",
+      "name": "moss 7",
+      "hex": "#86A05D",
+      "group": "ramp:moss",
+      "ramp": "moss",
+      "step": 7
+    },
+    {
+      "code": "Ą",
+      "name": "marram 0",
+      "hex": "#3F4535",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 0
+    },
+    {
+      "code": "ą",
+      "name": "marram 1",
+      "hex": "#545A45",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 1
+    },
+    {
+      "code": "Ć",
+      "name": "marram 2",
+      "hex": "#6C7155",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 2
+    },
+    {
+      "code": "ć",
+      "name": "marram 3",
+      "hex": "#878A68",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 3
+    },
+    {
+      "code": "Ĉ",
+      "name": "marram 4",
+      "hex": "#A2A37E",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 4
+    },
+    {
+      "code": "ĉ",
+      "name": "marram 5",
+      "hex": "#BCBB95",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 5
+    },
+    {
+      "code": "Ċ",
+      "name": "marram 6",
+      "hex": "#D3D0AD",
+      "group": "ramp:marram",
+      "ramp": "marram",
+      "step": 6
+    },
+    {
+      "code": "ċ",
+      "name": "fern 0",
+      "hex": "#1A2A1F",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 0
+    },
+    {
+      "code": "Č",
+      "name": "fern 1",
+      "hex": "#243826",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 1
+    },
+    {
+      "code": "č",
+      "name": "fern 2",
+      "hex": "#30492C",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 2
+    },
+    {
+      "code": "Ď",
+      "name": "fern 3",
+      "hex": "#3E5C31",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 3
+    },
+    {
+      "code": "ď",
+      "name": "fern 4",
+      "hex": "#4F7038",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 4
+    },
+    {
+      "code": "Đ",
+      "name": "fern 5",
+      "hex": "#648543",
+      "group": "ramp:fern",
+      "ramp": "fern",
+      "step": 5
+    },
+    {
+      "code": "đ",
+      "name": "bracken 0",
+      "hex": "#2E2218",
+      "group": "ramp:bracken",
+      "ramp": "bracken",
+      "step": 0
+    },
+    {
+      "code": "Ē",
+      "name": "bracken 1",
+      "hex": "#47321F",
+      "group": "ramp:bracken",
+      "ramp": "bracken",
+      "step": 1
+    },
+    {
+      "code": "ē",
+      "name": "bracken 2",
+      "hex": "#634527",
+      "group": "ramp:bracken",
+      "ramp": "bracken",
+      "step": 2
+    },
+    {
+      "code": "Ĕ",
+      "name": "bracken 3",
+      "hex": "#80592F",
+      "group": "ramp:bracken",
+      "ramp": "bracken",
+      "step": 3
+    },
+    {
+      "code": "ĕ",
+      "name": "bracken 4",
+      "hex": "#9C703A",
+      "group": "ramp:bracken",
+      "ramp": "bracken",
+      "step": 4
+    },
+    {
+      "code": "Ė",
+      "name": "kelp 0",
+      "hex": "#191A14",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 0
+    },
+    {
+      "code": "ė",
+      "name": "kelp 1",
+      "hex": "#25251A",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 1
+    },
+    {
+      "code": "Ę",
+      "name": "kelp 2",
+      "hex": "#333221",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 2
+    },
+    {
+      "code": "ę",
+      "name": "kelp 3",
+      "hex": "#434129",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 3
+    },
+    {
+      "code": "Ě",
+      "name": "kelp 4",
+      "hex": "#565331",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 4
+    },
+    {
+      "code": "ě",
+      "name": "kelp 5",
+      "hex": "#6B673B",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 5
+    },
+    {
+      "code": "Ĝ",
+      "name": "kelp 6",
+      "hex": "#827D47",
+      "group": "ramp:kelp",
+      "ramp": "kelp",
+      "step": 6
+    },
+    {
+      "code": "ĝ",
+      "name": "driftwood 0",
+      "hex": "#2E2A2E",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 0
+    },
+    {
+      "code": "Ğ",
+      "name": "driftwood 1",
+      "hex": "#433D3E",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 1
+    },
+    {
+      "code": "ğ",
+      "name": "driftwood 2",
+      "hex": "#5A524F",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 2
+    },
+    {
+      "code": "Ġ",
+      "name": "driftwood 3",
+      "hex": "#736961",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 3
+    },
+    {
+      "code": "ġ",
+      "name": "driftwood 4",
+      "hex": "#8D8274",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 4
+    },
+    {
+      "code": "Ģ",
+      "name": "driftwood 5",
+      "hex": "#A89C89",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 5
+    },
+    {
+      "code": "ģ",
+      "name": "driftwood 6",
+      "hex": "#C4B8A1",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 6
+    },
+    {
+      "code": "Ĥ",
+      "name": "driftwood 7",
+      "hex": "#DCD2BB",
+      "group": "ramp:driftwood",
+      "ramp": "driftwood",
+      "step": 7
+    },
+    {
+      "code": "ĥ",
+      "name": "tar 0",
+      "hex": "#181312",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 0
+    },
+    {
+      "code": "Ħ",
+      "name": "tar 1",
+      "hex": "#251C19",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 1
+    },
+    {
+      "code": "ħ",
+      "name": "tar 2",
+      "hex": "#352720",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 2
+    },
+    {
+      "code": "Ĩ",
+      "name": "tar 3",
+      "hex": "#47332A",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 3
+    },
+    {
+      "code": "ĩ",
+      "name": "tar 4",
+      "hex": "#5C4234",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 4
+    },
+    {
+      "code": "Ī",
+      "name": "tar 5",
+      "hex": "#745440",
+      "group": "ramp:tar",
+      "ramp": "tar",
+      "step": 5
+    },
+    {
+      "code": "ī",
+      "name": "earth 0",
+      "hex": "#1F1A1C",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 0
+    },
+    {
+      "code": "Ĭ",
+      "name": "earth 1",
+      "hex": "#2E2523",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 1
+    },
+    {
+      "code": "ĭ",
+      "name": "earth 2",
+      "hex": "#40322B",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 2
+    },
+    {
+      "code": "Į",
+      "name": "earth 3",
+      "hex": "#544233",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 3
+    },
+    {
+      "code": "į",
+      "name": "earth 4",
+      "hex": "#6A543F",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 4
+    },
+    {
+      "code": "İ",
+      "name": "earth 5",
+      "hex": "#80684D",
+      "group": "ramp:earth",
+      "ramp": "earth",
+      "step": 5
+    },
+    {
+      "code": "ı",
+      "name": "fire 0",
+      "hex": "#3C1A1D",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 0
+    },
+    {
+      "code": "Ĳ",
+      "name": "fire 1",
+      "hex": "#6B2622",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 1
+    },
+    {
+      "code": "ĳ",
+      "name": "fire 2",
+      "hex": "#9C3A26",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 2
+    },
+    {
+      "code": "Ĵ",
+      "name": "fire 3",
+      "hex": "#C8592C",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 3
+    },
+    {
+      "code": "ĵ",
+      "name": "fire 4",
+      "hex": "#E3823A",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 4
+    },
+    {
+      "code": "Ķ",
+      "name": "fire 5",
+      "hex": "#F0AD4C",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 5
+    },
+    {
+      "code": "ķ",
+      "name": "fire 6",
+      "hex": "#F8D576",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 6
+    },
+    {
+      "code": "ĸ",
+      "name": "fire 7",
+      "hex": "#FFF2BF",
+      "group": "ramp:fire",
+      "ramp": "fire",
+      "step": 7
+    },
+    {
+      "code": "Ĺ",
+      "name": "smoke 0",
+      "hex": "#3A3D46",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 0
+    },
+    {
+      "code": "ĺ",
+      "name": "smoke 1",
+      "hex": "#4F525A",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 1
+    },
+    {
+      "code": "Ļ",
+      "name": "smoke 2",
+      "hex": "#676A70",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 2
+    },
+    {
+      "code": "ļ",
+      "name": "smoke 3",
+      "hex": "#828487",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 3
+    },
+    {
+      "code": "Ľ",
+      "name": "smoke 4",
+      "hex": "#9D9E9E",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 4
+    },
+    {
+      "code": "ľ",
+      "name": "smoke 5",
+      "hex": "#B8B8B5",
+      "group": "ramp:smoke",
+      "ramp": "smoke",
+      "step": 5
+    },
+    {
+      "code": "Ŀ",
+      "name": "thrift 0",
+      "hex": "#4D2C40",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 0
+    },
+    {
+      "code": "ŀ",
+      "name": "thrift 1",
+      "hex": "#6F3A55",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 1
+    },
+    {
+      "code": "Ł",
+      "name": "thrift 2",
+      "hex": "#94516E",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 2
+    },
+    {
+      "code": "ł",
+      "name": "thrift 3",
+      "hex": "#B86F8A",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 3
+    },
+    {
+      "code": "Ń",
+      "name": "thrift 4",
+      "hex": "#D595A8",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 4
+    },
+    {
+      "code": "ń",
+      "name": "thrift 5",
+      "hex": "#EBBFC9",
+      "group": "ramp:thrift",
+      "ramp": "thrift",
+      "step": 5
+    },
+    {
+      "code": "Ņ",
+      "name": "clover_white 0",
+      "hex": "#9AA197",
+      "group": "ramp:clover_white",
+      "ramp": "clover_white",
+      "step": 0
+    },
+    {
+      "code": "ņ",
+      "name": "clover_white 1",
+      "hex": "#BCC1B6",
+      "group": "ramp:clover_white",
+      "ramp": "clover_white",
+      "step": 1
+    },
+    {
+      "code": "Ň",
+      "name": "clover_white 2",
+      "hex": "#DCDFD4",
+      "group": "ramp:clover_white",
+      "ramp": "clover_white",
+      "step": 2
+    },
+    {
+      "code": "ň",
+      "name": "clover_white 3",
+      "hex": "#F1F1E8",
+      "group": "ramp:clover_white",
+      "ramp": "clover_white",
+      "step": 3
+    },
+    {
+      "code": "ŉ",
+      "name": "trefoil 0",
+      "hex": "#6D5A24",
+      "group": "ramp:trefoil",
+      "ramp": "trefoil",
+      "step": 0
+    },
+    {
+      "code": "Ŋ",
+      "name": "trefoil 1",
+      "hex": "#94802F",
+      "group": "ramp:trefoil",
+      "ramp": "trefoil",
+      "step": 1
+    },
+    {
+      "code": "ŋ",
+      "name": "trefoil 2",
+      "hex": "#B9A43C",
+      "group": "ramp:trefoil",
+      "ramp": "trefoil",
+      "step": 2
+    },
+    {
+      "code": "Ō",
+      "name": "trefoil 3",
+      "hex": "#D9C457",
+      "group": "ramp:trefoil",
+      "ramp": "trefoil",
+      "step": 3
+    },
+    {
+      "code": "ō",
+      "name": "trefoil 4",
+      "hex": "#ECE08A",
+      "group": "ramp:trefoil",
+      "ramp": "trefoil",
+      "step": 4
+    },
+    {
+      "code": "Ŏ",
+      "name": "redclover 0",
+      "hex": "#5A2A3A",
+      "group": "ramp:redclover",
+      "ramp": "redclover",
+      "step": 0
+    },
+    {
+      "code": "ŏ",
+      "name": "redclover 1",
+      "hex": "#7C3A4C",
+      "group": "ramp:redclover",
+      "ramp": "redclover",
+      "step": 1
+    },
+    {
+      "code": "Ő",
+      "name": "redclover 2",
+      "hex": "#A05062",
+      "group": "ramp:redclover",
+      "ramp": "redclover",
+      "step": 2
+    },
+    {
+      "code": "ő",
+      "name": "redclover 3",
+      "hex": "#C0707E",
+      "group": "ramp:redclover",
+      "ramp": "redclover",
+      "step": 3
+    },
+    {
+      "code": "Œ",
+      "name": "violet 0",
+      "hex": "#33304F",
+      "group": "ramp:violet",
+      "ramp": "violet",
+      "step": 0
+    },
+    {
+      "code": "œ",
+      "name": "violet 1",
+      "hex": "#46426B",
+      "group": "ramp:violet",
+      "ramp": "violet",
+      "step": 1
+    },
+    {
+      "code": "Ŕ",
+      "name": "violet 2",
+      "hex": "#5D5A88",
+      "group": "ramp:violet",
+      "ramp": "violet",
+      "step": 2
+    },
+    {
+      "code": "ŕ",
+      "name": "violet 3",
+      "hex": "#7A77A5",
+      "group": "ramp:violet",
+      "ramp": "violet",
+      "step": 3
+    },
+    {
+      "code": "Ŗ",
+      "name": "violet 4",
+      "hex": "#9C99C2",
+      "group": "ramp:violet",
+      "ramp": "violet",
+      "step": 4
+    },
+    {
+      "code": "ŗ",
+      "name": "iris 0",
+      "hex": "#6E5C1E",
+      "group": "ramp:iris",
+      "ramp": "iris",
+      "step": 0
+    },
+    {
+      "code": "Ř",
+      "name": "iris 1",
+      "hex": "#9C8628",
+      "group": "ramp:iris",
+      "ramp": "iris",
+      "step": 1
+    },
+    {
+      "code": "ř",
+      "name": "iris 2",
+      "hex": "#C7AE35",
+      "group": "ramp:iris",
+      "ramp": "iris",
+      "step": 2
+    },
+    {
+      "code": "Ś",
+      "name": "iris 3",
+      "hex": "#E3CD57",
+      "group": "ramp:iris",
+      "ramp": "iris",
+      "step": 3
+    },
+    {
+      "code": "ś",
+      "name": "skin_light 0",
+      "hex": "#4A302F",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 0
+    },
+    {
+      "code": "Ŝ",
+      "name": "skin_light 1",
+      "hex": "#6E4840",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 1
+    },
+    {
+      "code": "ŝ",
+      "name": "skin_light 2",
+      "hex": "#956554",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 2
+    },
+    {
+      "code": "Ş",
+      "name": "skin_light 3",
+      "hex": "#B98569",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 3
+    },
+    {
+      "code": "ş",
+      "name": "skin_light 4",
+      "hex": "#D4A383",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 4
+    },
+    {
+      "code": "Š",
+      "name": "skin_light 5",
+      "hex": "#E9C5A6",
+      "group": "ramp:skin_light",
+      "ramp": "skin_light",
+      "step": 5
+    },
+    {
+      "code": "š",
+      "name": "skin_deep 0",
+      "hex": "#2C1D1C",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 0
+    },
+    {
+      "code": "Ţ",
+      "name": "skin_deep 1",
+      "hex": "#432B26",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 1
+    },
+    {
+      "code": "ţ",
+      "name": "skin_deep 2",
+      "hex": "#5E3D31",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 2
+    },
+    {
+      "code": "Ť",
+      "name": "skin_deep 3",
+      "hex": "#7D5340",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 3
+    },
+    {
+      "code": "ť",
+      "name": "skin_deep 4",
+      "hex": "#9C6C53",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 4
+    },
+    {
+      "code": "Ŧ",
+      "name": "skin_deep 5",
+      "hex": "#B98868",
+      "group": "ramp:skin_deep",
+      "ramp": "skin_deep",
+      "step": 5
+    },
+    {
+      "code": "ŧ",
+      "name": "hair_brown 0",
+      "hex": "#231816",
+      "group": "ramp:hair_brown",
+      "ramp": "hair_brown",
+      "step": 0
+    },
+    {
+      "code": "Ũ",
+      "name": "hair_brown 1",
+      "hex": "#36241D",
+      "group": "ramp:hair_brown",
+      "ramp": "hair_brown",
+      "step": 1
+    },
+    {
+      "code": "ũ",
+      "name": "hair_brown 2",
+      "hex": "#4C3324",
+      "group": "ramp:hair_brown",
+      "ramp": "hair_brown",
+      "step": 2
+    },
+    {
+      "code": "Ū",
+      "name": "hair_brown 3",
+      "hex": "#64452E",
+      "group": "ramp:hair_brown",
+      "ramp": "hair_brown",
+      "step": 3
+    },
+    {
+      "code": "ū",
+      "name": "hair_brown 4",
+      "hex": "#7D5939",
+      "group": "ramp:hair_brown",
+      "ramp": "hair_brown",
+      "step": 4
+    },
+    {
+      "code": "Ŭ",
+      "name": "hair_blond 0",
+      "hex": "#4F3B22",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 0
+    },
+    {
+      "code": "ŭ",
+      "name": "hair_blond 1",
+      "hex": "#735630",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 1
+    },
+    {
+      "code": "Ů",
+      "name": "hair_blond 2",
+      "hex": "#98763F",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 2
+    },
+    {
+      "code": "ů",
+      "name": "hair_blond 3",
+      "hex": "#BB9652",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 3
+    },
+    {
+      "code": "Ű",
+      "name": "hair_blond 4",
+      "hex": "#D7B46B",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 4
+    },
+    {
+      "code": "ű",
+      "name": "hair_blond 5",
+      "hex": "#EAD08C",
+      "group": "ramp:hair_blond",
+      "ramp": "hair_blond",
+      "step": 5
+    },
+    {
+      "code": "Ų",
+      "name": "madder 0",
+      "hex": "#3A1A20",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 0
+    },
+    {
+      "code": "ų",
+      "name": "madder 1",
+      "hex": "#58232A",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 1
+    },
+    {
+      "code": "Ŵ",
+      "name": "madder 2",
+      "hex": "#7A2F32",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 2
+    },
+    {
+      "code": "ŵ",
+      "name": "madder 3",
+      "hex": "#9E413A",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 3
+    },
+    {
+      "code": "Ŷ",
+      "name": "madder 4",
+      "hex": "#BD5B47",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 4
+    },
+    {
+      "code": "ŷ",
+      "name": "madder 5",
+      "hex": "#D27E5F",
+      "group": "ramp:madder",
+      "ramp": "madder",
+      "step": 5
+    },
+    {
+      "code": "Ÿ",
+      "name": "woad 0",
+      "hex": "#191D2F",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 0
+    },
+    {
+      "code": "Ź",
+      "name": "woad 1",
+      "hex": "#252B42",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 1
+    },
+    {
+      "code": "ź",
+      "name": "woad 2",
+      "hex": "#333C59",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 2
+    },
+    {
+      "code": "Ż",
+      "name": "woad 3",
+      "hex": "#465072",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 3
+    },
+    {
+      "code": "ż",
+      "name": "woad 4",
+      "hex": "#5D688C",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 4
+    },
+    {
+      "code": "Ž",
+      "name": "woad 5",
+      "hex": "#7C86A6",
+      "group": "ramp:woad",
+      "ramp": "woad",
+      "step": 5
+    },
+    {
+      "code": "ž",
+      "name": "weld 0",
+      "hex": "#232A1E",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 0
+    },
+    {
+      "code": "ſ",
+      "name": "weld 1",
+      "hex": "#323C27",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 1
+    },
+    {
+      "code": "Α",
+      "name": "weld 2",
+      "hex": "#445032",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 2
+    },
+    {
+      "code": "Β",
+      "name": "weld 3",
+      "hex": "#58653D",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 3
+    },
+    {
+      "code": "Γ",
+      "name": "weld 4",
+      "hex": "#6E7A4A",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 4
+    },
+    {
+      "code": "Δ",
+      "name": "weld 5",
+      "hex": "#878F5B",
+      "group": "ramp:weld",
+      "ramp": "weld",
+      "step": 5
+    },
+    {
+      "code": "Ε",
+      "name": "wool 0",
+      "hex": "#4E4840",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 0
+    },
+    {
+      "code": "Ζ",
+      "name": "wool 1",
+      "hex": "#6A6255",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 1
+    },
+    {
+      "code": "Η",
+      "name": "wool 2",
+      "hex": "#877D6C",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 2
+    },
+    {
+      "code": "Θ",
+      "name": "wool 3",
+      "hex": "#A49884",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 3
+    },
+    {
+      "code": "Ι",
+      "name": "wool 4",
+      "hex": "#BFB39C",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 4
+    },
+    {
+      "code": "Κ",
+      "name": "wool 5",
+      "hex": "#D8CDB5",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 5
+    },
+    {
+      "code": "Λ",
+      "name": "wool 6",
+      "hex": "#ECE4CF",
+      "group": "ramp:wool",
+      "ramp": "wool",
+      "step": 6
+    },
+    {
+      "code": "Μ",
+      "name": "gull 0",
+      "hex": "#3B4150",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 0
+    },
+    {
+      "code": "Ν",
+      "name": "gull 1",
+      "hex": "#5F6672",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 1
+    },
+    {
+      "code": "Ξ",
+      "name": "gull 2",
+      "hex": "#8D929A",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 2
+    },
+    {
+      "code": "Ο",
+      "name": "gull 3",
+      "hex": "#B9BCBF",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 3
+    },
+    {
+      "code": "Π",
+      "name": "gull 4",
+      "hex": "#DFE0DD",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 4
+    },
+    {
+      "code": "Ρ",
+      "name": "gull 5",
+      "hex": "#F6F5EF",
+      "group": "ramp:gull",
+      "ramp": "gull",
+      "step": 5
+    },
+    {
+      "code": "Σ",
+      "name": "seal 0",
+      "hex": "#1D1F27",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 0
+    },
+    {
+      "code": "Τ",
+      "name": "seal 1",
+      "hex": "#2A2D36",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 1
+    },
+    {
+      "code": "Υ",
+      "name": "seal 2",
+      "hex": "#3A3D47",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 2
+    },
+    {
+      "code": "Φ",
+      "name": "seal 3",
+      "hex": "#4D505A",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 3
+    },
+    {
+      "code": "Χ",
+      "name": "seal 4",
+      "hex": "#62646C",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 4
+    },
+    {
+      "code": "Ψ",
+      "name": "seal 5",
+      "hex": "#7B7C82",
+      "group": "ramp:seal",
+      "ramp": "seal",
+      "step": 5
+    },
+    {
+      "code": "Ω",
+      "name": "fleece 0",
+      "hex": "#5A554E",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 0
+    },
+    {
+      "code": "Ϊ",
+      "name": "fleece 1",
+      "hex": "#7B7468",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 1
+    },
+    {
+      "code": "Ϋ",
+      "name": "fleece 2",
+      "hex": "#9C9384",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 2
+    },
+    {
+      "code": "ά",
+      "name": "fleece 3",
+      "hex": "#BBB19F",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 3
+    },
+    {
+      "code": "έ",
+      "name": "fleece 4",
+      "hex": "#D6CCB8",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 4
+    },
+    {
+      "code": "ή",
+      "name": "fleece 5",
+      "hex": "#EAE2CF",
+      "group": "ramp:fleece",
+      "ramp": "fleece",
+      "step": 5
+    },
+    {
+      "code": "ί",
+      "name": "crab 0",
+      "hex": "#3C1E1A",
+      "group": "ramp:crab",
+      "ramp": "crab",
+      "step": 0
+    },
+    {
+      "code": "ΰ",
+      "name": "crab 1",
+      "hex": "#622B22",
+      "group": "ramp:crab",
+      "ramp": "crab",
+      "step": 1
+    },
+    {
+      "code": "α",
+      "name": "crab 2",
+      "hex": "#8A3C2A",
+      "group": "ramp:crab",
+      "ramp": "crab",
+      "step": 2
+    },
+    {
+      "code": "β",
+      "name": "crab 3",
+      "hex": "#B0573A",
+      "group": "ramp:crab",
+      "ramp": "crab",
+      "step": 3
+    },
+    {
+      "code": "γ",
+      "name": "beak 0",
+      "hex": "#7A5A1E",
+      "group": "ramp:beak",
+      "ramp": "beak",
+      "step": 0
+    },
+    {
+      "code": "δ",
+      "name": "beak 1",
+      "hex": "#B8892C",
+      "group": "ramp:beak",
+      "ramp": "beak",
+      "step": 1
+    },
+    {
+      "code": "ε",
+      "name": "beak 2",
+      "hex": "#E0B447",
+      "group": "ramp:beak",
+      "ramp": "beak",
+      "step": 2
+    }
   ]
 }

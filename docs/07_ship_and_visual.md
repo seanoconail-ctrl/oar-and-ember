@@ -27,7 +27,7 @@ _Specification. Dimensions and statistics are starting values for balancing. His
 > Figure: the adult sprite canvas (drawn in the PDF version of this book).
 
 ### Animation targets
-Idle 4 frames, walk 6, run 8, sneak 6, light attacks 5 to 7 each with a clear tell frame, charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2), heavy release 6, parry 3, riposte 5, block 3, guard broken 3, stagger 3, dodge 4, shove 4, hurt 2, finisher 8, carry walk 6, row 4, downed 2, surrendered 2, and a work loop of 4 to 8 frames for every homestead task. Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch) live in the manifest and must agree with collision and damage timing.
+Idle 4 frames, walk 8 (a grounded cycle: contact, down, passing, up, for each foot), run 8, sneak 6, light attacks 5 to 7 each with a clear tell frame, charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2), heavy release 6, parry 3, riposte 5, block 3, guard broken 3, stagger 3, dodge 4, shove 4, hurt 2, finisher 8, carry walk 6, row 4, downed 2, surrendered 2, and a work loop of 4 to 8 frames for every homestead task. Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch) live in the manifest and must agree with collision and damage timing.
 
 ## 02 / Vessel progression
 *One ship that grows: a repaired coastal boat, a karvi, then a choice between a war hull and a cargo hull. A second vessel can be owned from Chapter 6 but is managed only on the sea map.*

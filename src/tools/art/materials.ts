@@ -15,6 +15,8 @@
  *
  * Map headers, in addition to the sheet headers they pass through:
  *   material.T: o r t        highlight, base, shadow palette codes for material letter T
+ *   material.T: madder 1 3 4 or a ramp of the palette by name: shadow, base, highlight steps
+ *   mark.e: ink 0            a mark may also name a ramp step
  *   mark.e: k                a fixed palette code for mark letter e
  *   outline: k 4             outline code and neighbourhood (4 or 8)
  *   bob.idle: 0 1 1 0 above 27
@@ -25,11 +27,15 @@
  *                             x0,y0,x1,y1 (inclusive) shifted by dx,dy; "-" for none
  *   drop.sneak: 30 32         rows removed and everything above lowered (a crouch)
  *   frame walk e 3            a frame drawn in full replaces the base pose for that frame
+ *   flutter.idlewind: C 1 2 2 1   per frame, how many pixels the loose cloth (material C) streams
+ *                             out on its downwind (east) side, applied after mirroring
  *   alias.down.s: e           a state's facing drawn from another facing ("e mirror" flips it)
  *
  * Each frame is built in this order: base pose, moves, drop, bob, mirror, then shading.
  */
 import { ArtSourceError, parseArtSource, requireHeader } from '../../render/artSource.ts';
+import { rampCode } from '../../render/palette.ts';
+import type { Palette } from '../../render/palette.ts';
 
 const PASS_THROUGH = [
   'sheet',
@@ -41,6 +47,7 @@ const PASS_THROUGH = [
   'facings',
   'placeholder',
   'reserved',
+  'shadow',
 ];
 
 type Grid = string[][];
@@ -107,6 +114,9 @@ interface Move {
   readonly y1: number;
   readonly dx: number;
   readonly dy: number;
+  /** Move only this material letter, filling the space it leaves with `fill` (a hand over a tunic). */
+  readonly only?: string;
+  readonly fill?: string;
 }
 
 function parseMoves(value: string, file: string, line: number): Move[][] {
@@ -114,7 +124,7 @@ function parseMoves(value: string, file: string, line: number): Move[][] {
     const text = frame.trim();
     if (text === '-') return [];
     return text.split(/\s+/).map((part) => {
-      const m = /^(\d+),(\d+),(\d+),(\d+):(-?\d+),(-?\d+)$/.exec(part);
+      const m = /^(\d+),(\d+),(\d+),(\d+):(-?\d+),(-?\d+)(?:@(\S)\/(\S))?$/.exec(part);
       if (m === null)
         throw new ArtSourceError(file, line, `a move looks like "12,29,14,38:0,-1", not "${part}"`);
       const [x0, y0, x1, y1, dx, dy] = m.slice(1).map(Number) as [
@@ -125,7 +135,9 @@ function parseMoves(value: string, file: string, line: number): Move[][] {
         number,
         number,
       ];
-      return { x0, y0, x1, y1, dx, dy };
+      return m[7] === undefined
+        ? { x0, y0, x1, y1, dx, dy }
+        : { x0, y0, x1, y1, dx, dy, only: m[7], fill: m[8] ?? '.' };
     });
   });
 }
@@ -140,9 +152,10 @@ function applyMoves(map: Grid, moves: readonly Move[]): Grid {
       for (let x = m.x0; x <= m.x1; x++) {
         const cell = out[y]?.[x];
         if (cell === undefined || cell === '.') continue;
+        if (m.only !== undefined && cell !== m.only) continue;
         lifted.push([x, y, cell]);
         const row = next[y];
-        if (row !== undefined) row[x] = '.';
+        if (row !== undefined) row[x] = m.fill ?? '.';
       }
     }
     for (const [x, y, cell] of lifted) {
@@ -162,8 +175,46 @@ function drop(map: Grid, y0: number, y1: number): Grid {
   return [...Array.from({ length: count }, () => new Array<string>(width).fill('.')), ...kept];
 }
 
+/**
+ * Secondary motion in the wind: the loose cloth's downwind (east) edge streams out by `reach`
+ * pixels, more towards its hem, in a ripple.
+ */
+function flutter(map: Grid, letter: string, reach: number): Grid {
+  const out = map.map((r) => [...r]);
+  if (reach <= 0) return out;
+  const rows = map.map((r, y) => ({ y, xs: r.flatMap((c, x) => (c === letter ? [x] : [])) }));
+  const withCloth = rows.filter((r) => r.xs.length > 0);
+  const top = withCloth[0]?.y ?? 0;
+  const bottom = withCloth.at(-1)?.y ?? 0;
+  for (const { y, xs } of withCloth) {
+    const edge = Math.max(...xs);
+    const f = bottom === top ? 1 : (y - top) / (bottom - top);
+    // Wider towards the hem, with a gentle ripple running down it from frame to frame.
+    const n = Math.max(
+      0,
+      Math.round(reach * (0.15 + 0.95 * f) + 0.45 * Math.sin(y * 0.8 + reach * 1.9)),
+    );
+    const row = out[y];
+    if (row === undefined) continue;
+    for (let k = 1; k <= n && edge + k < row.length - 1; k++) {
+      if (row[edge + k] === '.') row[edge + k] = letter;
+    }
+  }
+  return out;
+}
+
 /** Generates the palette-coded sheet text from a material map. */
-export function generateSheet(mapText: string, file: string): string {
+export function generateSheet(mapText: string, file: string, palette?: Palette): string {
+  const ramp = (name: string, step: string, line: number): string => {
+    if (palette === undefined)
+      throw new ArtSourceError(
+        file,
+        line,
+        `ramp "${name}" needs the palette (pass it to the generator)`,
+      );
+    if (!palette.ramps.has(name)) throw new ArtSourceError(file, line, `unknown ramp "${name}"`);
+    return rampCode(palette, name, Number(step));
+  };
   const source = parseArtSource(mapText, file);
   const materials = new Map<string, [string, string, string]>();
   const marks = new Map<string, string>();
@@ -173,8 +224,13 @@ export function generateSheet(mapText: string, file: string): string {
   const moves = new Map<string, Move[][]>();
   const drops = new Map<string, [number, number]>();
   const aliases = new Map<string, { facing: string; mirror: boolean }>();
+  const flutters = new Map<string, { letter: string; reach: number[] }>();
   for (const [key, { value, line }] of source.header) {
     if (key.startsWith('derive.')) derives.set(key.slice(7), value);
+    if (key.startsWith('flutter.')) {
+      const [letter = '', ...reach] = value.split(/\s+/);
+      flutters.set(key.slice(8), { letter, reach: reach.map(Number) });
+    }
     if (key.startsWith('alias.')) {
       const m = /^(\S+)( mirror)?$/.exec(value);
       if (m === null)
@@ -189,11 +245,28 @@ export function generateSheet(mapText: string, file: string): string {
     }
     if (key.startsWith('material.')) {
       const codes = value.split(/\s+/);
-      if (codes.length !== 3)
-        throw new ArtSourceError(file, line, 'a material lists highlight, base and shadow codes');
-      materials.set(key.slice(9), [codes[0] ?? '', codes[1] ?? '', codes[2] ?? '']);
+      if (codes.length === 4) {
+        const [name = '', sh = '', base = '', hi = ''] = codes;
+        materials.set(key.slice(9), [
+          ramp(name, hi, line),
+          ramp(name, base, line),
+          ramp(name, sh, line),
+        ]);
+      } else if (codes.length === 3) {
+        materials.set(key.slice(9), [codes[0] ?? '', codes[1] ?? '', codes[2] ?? '']);
+      } else {
+        throw new ArtSourceError(
+          file,
+          line,
+          'a material lists highlight, base and shadow codes, or a ramp and its shadow, base and highlight steps',
+        );
+      }
     } else if (key.startsWith('mark.')) {
-      marks.set(key.slice(5), value);
+      const parts = value.split(/\s+/);
+      marks.set(
+        key.slice(5),
+        parts.length === 2 ? ramp(parts[0] ?? '', parts[1] ?? '', line) : value,
+      );
     } else if (key.startsWith('bob.')) {
       const m = /^([\d ]+) above (\d+)$/.exec(value);
       if (m === null)
@@ -207,9 +280,13 @@ export function generateSheet(mapText: string, file: string): string {
     }
   }
   const outlineHeader = requireHeader(source, 'outline').value.split(/\s+/);
+  // "outline: k 4", or by ramp: "outline: ink 0 4".
+  const byRamp = outlineHeader.length === 3;
   const outline = {
-    code: outlineHeader[0] ?? 'k',
-    n: outlineHeader[1] === '8' ? (8 as const) : (4 as const),
+    code: byRamp
+      ? ramp(outlineHeader[0] ?? '', outlineHeader[1] ?? '0', requireHeader(source, 'outline').line)
+      : (outlineHeader[0] ?? 'k'),
+    n: (byRamp ? outlineHeader[2] : outlineHeader[1]) === '8' ? (8 as const) : (4 as const),
   };
 
   const lines: string[] = [
@@ -273,6 +350,9 @@ export function generateSheet(mapText: string, file: string): string {
         if (motion !== undefined)
           pose = bob(pose, motion.offsets[i % motion.offsets.length] ?? 0, motion.above);
         if (flip) pose = pose.map((r) => [...r].reverse());
+        const wind = flutters.get(state);
+        if (wind !== undefined)
+          pose = flutter(pose, wind.letter, wind.reach[i % wind.reach.length] ?? 0);
         lines.push(
           '',
           `frame ${state} ${facing} ${i}`,

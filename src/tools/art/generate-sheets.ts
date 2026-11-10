@@ -1,7 +1,7 @@
 /** Writes assets/art/sheets/<sheet>.txt from every material map.   npm run art:sheets */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { listFiles, MAPS_DIR, readRepo, SHEETS_DIR } from './artFiles.ts';
+import { listFiles, loadPalette, MAPS_DIR, readRepo, SHEETS_DIR } from './artFiles.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { generateSheet } from './materials.ts';
 import { generateTerrainSheet } from './terrain.ts';
@@ -10,10 +10,11 @@ export const TERRAIN_DIR = 'assets/art/terrain';
 
 export function generatedSheets(): Map<string, string> {
   const out = new Map<string, string>();
+  const palette = loadPalette();
   for (const file of listFiles(MAPS_DIR, '.map.txt')) {
     const name = /^sheet: (\S+)$/m.exec(readRepo(file))?.[1];
     if (name === undefined) throw new Error(`${file}: no "sheet:" header`);
-    out.set(`${SHEETS_DIR}/${name}.txt`, generateSheet(readRepo(file), file));
+    out.set(`${SHEETS_DIR}/${name}.txt`, generateSheet(readRepo(file), file, palette));
   }
   for (const file of listFiles(TERRAIN_DIR, '.json')) {
     const name = (JSON.parse(readRepo(file)) as { sheet?: string }).sheet;

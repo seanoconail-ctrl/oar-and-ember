@@ -35,11 +35,11 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
     expect(sheets.get('actor_c_hild')?.footprint).toEqual(content.onFoot?.footprint);
   });
 
-  it('meets the Book 7 frame counts: idle 4, walk 6, run 8, sneak 6, carry walk 6', () => {
+  it('meets the Book 7 frame counts: idle 4, walk 8, run 8, sneak 6, carry walk 6', () => {
     const a = sheets.get('actor_p_steerer_a');
     expect(
       Object.fromEntries(Object.entries(a?.anims ?? {}).map(([k, v]) => [k, v.frames])),
-    ).toEqual({ idle: 4, walk: 6, run: 8, sneak: 6, carry: 6 });
+    ).toEqual({ idle: 4, look: 4, idlewind: 4, walk: 8, run: 8, sneak: 6, carry: 6 });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);
   });

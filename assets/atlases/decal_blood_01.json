@@ -28,6 +28,7 @@
     }
   },
   "events": {},
+  "shadow": null,
   "placeholder": false,
   "frames": {
     "pool/-/0": [
