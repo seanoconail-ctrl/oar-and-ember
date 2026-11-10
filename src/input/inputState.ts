@@ -46,6 +46,8 @@ export class InputMapper {
   }
 
   keyDown(code: string): void {
+    // Auto-repeat sends more key-downs while the key is held; only a new press counts.
+    if (this.#keys.has(code)) return;
     this.#keys.add(code);
     this.#tappedKeys.add(code);
   }
@@ -53,6 +55,7 @@ export class InputMapper {
     this.#keys.delete(code);
   }
   mouseDown(button: number): void {
+    if (this.#mouse.has(button)) return;
     this.#mouse.add(button);
     this.#tappedMouse.add(button);
   }
@@ -92,10 +95,20 @@ export class InputMapper {
     const physical = new Set<Action>();
     for (const action of ACTIONS)
       if (this.#bindings[action].some((b) => this.#down(b))) physical.add(action);
+    // A key let go and pressed again between two samples is a new press, though it looks held.
+    const fresh = new Set<Action>();
+    for (const action of ACTIONS) {
+      const retapped = this.#bindings[action].some(
+        (b) =>
+          (b.device === 'key' && this.#tappedKeys.has(b.code)) ||
+          (b.device === 'mouse' && this.#tappedMouse.has(b.button)),
+      );
+      if (retapped) fresh.add(action);
+    }
     const held = new Set<Action>();
     for (const action of ACTIONS) {
       if (this.#toggle.has(action)) {
-        if (physical.has(action) && !this.#physicalBefore.has(action)) {
+        if (physical.has(action) && (!this.#physicalBefore.has(action) || fresh.has(action))) {
           if (this.#toggled.has(action)) this.#toggled.delete(action);
           else this.#toggled.add(action);
         }
@@ -106,7 +119,11 @@ export class InputMapper {
     }
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();
-    const pressed = new Set([...held].filter((a) => !this.#heldBefore.has(a)));
+    const pressed = new Set(
+      [...held].filter(
+        (a) => !this.#heldBefore.has(a) || (fresh.has(a) && !this.#toggle.has(a)),
+      ),
+    );
     const released = new Set([...this.#heldBefore].filter((a) => !held.has(a)));
     this.#physicalBefore = physical;
     this.#heldBefore = held;

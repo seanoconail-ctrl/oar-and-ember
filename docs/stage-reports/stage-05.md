@@ -88,3 +88,6 @@ Decision log entries S5-1 to S5-9 (2026-11-10).
 
 ## Next stage ready
 **YES.** All three acceptance checks pass.
+
+## Follow-up after CI
+The first CI run failed one Chromium browser test (`menus refuse to open while a test hostile is aware`): on the slower CI machine, Esc (closing the system menu) and M (opening the map) arrived in the same frame, and the session handled M first and then reopened the system menu. Fixes: the system key is now handled first and closes any open menu; a key tapped again in the very next frame counts as a new press; key auto-repeat no longer counts. Two unit tests cover these cases, and the browser test passed 48 of 48 repeated runs locally.

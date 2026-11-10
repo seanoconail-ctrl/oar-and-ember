@@ -114,4 +114,23 @@ describe('the command ring (Book 2 section 12)', () => {
     expect(session.menus.open).toBe('map');
     expect(session.sim.state.tick).toBe(before);
   });
+
+  it('closes the open menu and opens another when both keys land in one frame', () => {
+    const input = new InputMapper(DEFAULT_BINDINGS);
+    const session = new Session(createSimulation(b, emptyWorld('keys', b)), input, testHostile());
+    input.keyDown('Escape');
+    input.keyUp('Escape');
+    session.frame(1000 / 60);
+    expect(session.menus.open).toBe('system');
+    for (const code of ['Escape', 'KeyM']) {
+      input.keyDown(code);
+      input.keyUp(code);
+    }
+    session.frame(1000 / 60);
+    expect(session.menus.open).toBe('map');
+    input.keyDown('Escape');
+    input.keyUp('Escape');
+    session.frame(1000 / 60);
+    expect(session.menus.open).toBeNull();
+  });
 });

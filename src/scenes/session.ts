@@ -19,7 +19,6 @@ const MENU_ACTIONS: readonly [
   ['inventory', 'inventory'],
   ['buildMenu', 'build'],
   ['report', 'report'],
-  ['systemMenu', 'system'],
 ];
 
 export interface FrameResult {
@@ -46,6 +45,12 @@ export class Session {
   frame(elapsedMs: number, aim: { x: number; y: number } = { x: 0, y: 0 }): FrameResult {
     const input = this.input.sample();
     const menuResults: OpenResult[] = [];
+    // The system key comes first and closes whatever is open, so "close, then open another" works
+    // even when both presses land in one frame (slow frames do this).
+    if (input.pressed.has('systemMenu')) {
+      if (this.menus.open !== null) this.menus.close();
+      else menuResults.push(this.menus.request('system'));
+    }
     for (const [action, menu] of MENU_ACTIONS) {
       if (!input.pressed.has(action)) continue;
       if (this.menus.open === menu) this.menus.close();

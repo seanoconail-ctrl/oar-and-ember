@@ -99,6 +99,23 @@ describe('the input mapper', () => {
     expect(input.sample().released.has('interact')).toBe(true);
   });
 
+  it('counts a second tap in the next frame, and ignores auto-repeat', () => {
+    const input = new InputMapper(DEFAULT_BINDINGS);
+    input.keyDown('KeyE');
+    input.keyUp('KeyE');
+    expect(input.sample().pressed.has('interact')).toBe(true);
+    input.keyDown('KeyE');
+    input.keyUp('KeyE');
+    expect(input.sample().pressed.has('interact')).toBe(true);
+    input.keyDown('KeyE');
+    expect(input.sample().pressed.has('interact')).toBe(true);
+    input.keyDown('KeyE');
+    input.keyDown('KeyE');
+    const repeated = input.sample();
+    expect(repeated.pressed.size).toBe(0);
+    expect(repeated.held.has('interact')).toBe(true);
+  });
+
   it('lets go of everything when the window loses focus', () => {
     const input = new InputMapper(DEFAULT_BINDINGS);
     input.keyDown('KeyW');
