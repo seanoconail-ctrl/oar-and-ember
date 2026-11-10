@@ -24,7 +24,18 @@ async function openTitle(page: Page): Promise<string> {
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('./');
   const canvas = page.locator('canvas#screen');
-  await expect(canvas).toHaveAttribute('data-state', 'title', { timeout: 15_000 });
+  try {
+    await expect(canvas).toHaveAttribute('data-state', 'title', { timeout: 15_000 });
+  } catch (cause) {
+    // Say where start-up stopped (see BootStep in src/scenes/boot.ts).
+    const where = await canvas.evaluate((c: HTMLElement) =>
+      Object.fromEntries(Object.entries(c.dataset)),
+    );
+    throw new Error(
+      `title not shown: canvas ${JSON.stringify(where)}; page errors ${JSON.stringify(errors)}`,
+      { cause },
+    );
+  }
   expect(errors).toEqual([]);
   const build = (await canvas.getAttribute('data-build')) ?? '';
   expect(build).toMatch(BUILD_ID);

@@ -74,9 +74,31 @@ function trackSize(canvas: HTMLCanvasElement, presenter: Presenter): void {
   measure();
 }
 
+/**
+ * Start-up steps, recorded on the canvas as `data-boot` so a browser that stalls can be diagnosed
+ * from outside (the browser smoke tests report it). `data-state` is the outcome: `title` or
+ * `no-webgl2`; an exception is recorded as `data-error`.
+ */
+export type BootStep = 'strings' | 'art' | 'presenter' | 'frame' | 'size' | 'painted';
+
 export function boot(elements: BootElements, buildId: string): void {
+  const { canvas } = elements;
+  const step = (name: BootStep): void => {
+    canvas.dataset['boot'] = name;
+  };
+  try {
+    start(elements, buildId, step);
+  } catch (error) {
+    canvas.dataset['error'] = error instanceof Error ? error.message : String(error);
+    throw error;
+  }
+}
+
+function start(elements: BootElements, buildId: string, step: (name: BootStep) => void): void {
   const { canvas, notice } = elements;
+  step('strings');
   const strings = bundledStrings();
+  step('art');
   const art = bundledTitleArt();
   const name = formatString(strings, 'ui.title.name');
   document.title = name;
@@ -86,6 +108,7 @@ export function boot(elements: BootElements, buildId: string): void {
     formatString(strings, 'ui.title.screen_label', { build: buildId }),
   );
 
+  step('presenter');
   const letterbox = art.palette.entries[paletteIndex(art.palette, art.layout.letterbox)];
   const presenter = letterbox === undefined ? null : createPresenter(canvas, letterbox.rgb);
   if (presenter === null) {
@@ -96,15 +119,18 @@ export function boot(elements: BootElements, buildId: string): void {
     return;
   }
 
+  step('frame');
   const frame = composeTitleFrame(art, {
     name,
     buildLine: formatString(strings, 'ui.title.build', { build: buildId }),
   });
   presenter.present(toRgba(frame, art.palette));
+  step('size');
   trackSize(canvas, presenter);
   // Mark the title as shown once the browser has painted it.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
+      step('painted');
       canvas.dataset['state'] = 'title';
     });
   });

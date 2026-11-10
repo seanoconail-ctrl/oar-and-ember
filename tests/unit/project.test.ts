@@ -88,8 +88,10 @@ describe('the GitHub Actions workflow', () => {
     }
   });
 
-  it('checks Firefox and WebKit on macOS, which has a GPU (decision S1-16)', () => {
-    expect(workflow).toMatch(/runs-on: macos-15-intel[\s\S]*--project=firefox --project=webkit/);
+  it('checks Firefox and WebKit on macOS, which has a GPU (decisions S1-16, S1-18)', () => {
+    expect(workflow).toMatch(/runs-on: macos-15-intel[\s\S]*--project=firefox\n/);
+    expect(workflow).toMatch(/continue-on-error: true[\s\S]*--project=webkit\n/);
+    expect(workflow).toContain('needs: [check, browsers-firefox]');
   });
 
   it('publishes to GitHub Pages only from a push, and checks the published address', () => {
