@@ -1,0 +1,238 @@
+{
+  "id": "MUS_ISLAND_SKARVHOLM",
+  "title": "Skarvholm",
+  "about": "The island theme (Book 11 section 04): a bone flute over a wind-like hummed pad and a drone, seabirds in the gaps. Bright in summer (A Dorian, harp and hand percussion); thin in winter (A Aeolian, slower, solo flute with long silences and a bell).",
+  "mode": "A dorian",
+  "tempo": 92,
+  "beatsPerBar": 3,
+  "stepsPerBeat": 2,
+  "bars": 16,
+  "echo": {
+    "delay": 0.31,
+    "feedback": 0.33,
+    "mix": 0.28,
+    "tone": 3000
+  },
+  "layers": [
+    {
+      "id": "drone",
+      "name": "Drone",
+      "instrument": "drone",
+      "gain": 0.45,
+      "pan": 0,
+      "echo": 0.15,
+      "bars": [
+        "A2:24",
+        "-",
+        "-",
+        "-",
+        "A2:24",
+        "-",
+        "-",
+        "-",
+        "A2:24",
+        "-",
+        "-",
+        "-",
+        "A2:24",
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "id": "pad",
+      "name": "Wind pad",
+      "instrument": "pad",
+      "gain": 0.45,
+      "pan": -0.25,
+      "echo": 0.4,
+      "bars": [
+        "E3:24",
+        "-",
+        "-",
+        "-",
+        "D3:24",
+        "-",
+        "-",
+        "-",
+        "C3:24",
+        "-",
+        "-",
+        "-",
+        "E3:24",
+        "-",
+        "-",
+        "-"
+      ]
+    },
+    {
+      "id": "melody",
+      "name": "Bone flute",
+      "instrument": "flute",
+      "gain": 0.8,
+      "pan": 0.05,
+      "echo": 0.35,
+      "bars": [
+        "A4:2 C5 E5:3",
+        "D5:2 B4 G4:3",
+        "A4:2 B4 C5:2 D5",
+        "E5:6",
+        "F#5:2 E5 D5:2 B4",
+        "C5:2 A4 ~G4:3",
+        "E4:2 G4 A4:2 B4",
+        "A4:6",
+        "E5:2 F#5 G5:3",
+        "F#5:2 E5 ~D5:3",
+        "E5:2 D5 B4:2 G4",
+        "A4:3 B4:3",
+        "C5:2 D5 E5:2 G5",
+        "F#5:2 D5 E5:3",
+        "D5:2 B4 G4:2 B4",
+        "A4:6"
+      ]
+    },
+    {
+      "id": "harp",
+      "name": "Harp",
+      "instrument": "harp",
+      "gain": 0.42,
+      "pan": 0.3,
+      "echo": 0.35,
+      "bars": [
+        "A3! E4 A4 C5 E4 A4",
+        "G3! D4 G4 B4 D4 G4",
+        "A3! E4 A4 C5 E4 A4",
+        "E3! B3 E4 G4 B3 E4",
+        "D3! A3 D4 F#4 A3 D4",
+        "A3! E4 A4 C5 E4 A4",
+        "E3! B3 E4 G4 B3 E4",
+        "A3! E4 A4 C5 E4 A4",
+        "C3! G3 C4 E4 G3 C4",
+        "D3! A3 D4 F#4 A3 D4",
+        "G3! D4 G4 B4 D4 G4",
+        "A3! E4 A4 C5 E4 A4",
+        "A3! E4 A4 C5 E4 A4",
+        "D3! A3 D4 F#4 A3 D4",
+        "G3! D4 G4 B4 D4 G4",
+        "A3! E4 A4 C5 E4 A4"
+      ]
+    },
+    {
+      "id": "knock",
+      "name": "Hand percussion",
+      "instrument": "knock",
+      "gain": 0.5,
+      "pan": -0.35,
+      "echo": 0.1,
+      "bars": [
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r r r F6, r",
+        "F6! r:5"
+      ]
+    },
+    {
+      "id": "gulls",
+      "name": "Seabirds",
+      "instrument": "gull",
+      "gain": 0.5,
+      "pan": 0.5,
+      "echo": 0.45,
+      "bars": [
+        "r:6",
+        "r:3 A5 r:2",
+        "r:6",
+        "r:6",
+        "r A5, r:4",
+        "r:6",
+        "r:4 G5 r",
+        "r:6",
+        "r:6",
+        "r:2 A5 r:3",
+        "r:6",
+        "r:6",
+        "r:3 B5, r:2",
+        "r:6",
+        "r A5 r:4",
+        "r:6"
+      ]
+    },
+    {
+      "id": "bells",
+      "name": "Bell",
+      "instrument": "bells",
+      "gain": 0.5,
+      "pan": -0.1,
+      "echo": 0.6,
+      "on": false,
+      "bars": [
+        "A5:6",
+        "r:6",
+        "r:6",
+        "r:6",
+        "E5:6",
+        "r:6",
+        "r:6",
+        "r:6",
+        "C6:6",
+        "r:6",
+        "r:6",
+        "r:6",
+        "A5:6",
+        "r:6",
+        "r:6",
+        "r:6"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": "summer",
+      "name": "Summer",
+      "layers": {
+        "harp": true,
+        "knock": true,
+        "bells": false,
+        "gulls": true
+      }
+    },
+    {
+      "id": "winter",
+      "name": "Winter",
+      "tempo": 74,
+      "mode": "A aeolian",
+      "map": {
+        "F#": "F"
+      },
+      "layers": {
+        "harp": false,
+        "knock": false,
+        "bells": true,
+        "gulls": true
+      },
+      "rest": {
+        "melody": [9, 10, 11, 12],
+        "gulls": [2, 5, 7, 13, 15]
+      },
+      "echo": {
+        "delay": 0.42,
+        "feedback": 0.46,
+        "mix": 0.36,
+        "tone": 2200
+      }
+    }
+  ]
+}

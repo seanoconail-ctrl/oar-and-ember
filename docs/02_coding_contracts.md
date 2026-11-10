@@ -98,7 +98,7 @@ A menu or planning screen may open only when no hostile actor is aware of the pl
 | `BLD_ TASK_ RES_ ITEM_ CROP_` | Buildings, tasks, resources, items, crops |
 | `SCN_ CMP_ BEAT_ CH_ PUZ_` | Scenarios, complications, beats, chapters, puzzles |
 | `BARGAIN_ POWER_ OMEN_` | Supernatural bargains, powers, omens |
-| `MUS_ SFX_ AMB_ VO_` | Music cues, sound effects, ambiences, voiced barks |
+| `MUS_ SFX_ AMB_ VO_` | Music cues, sound effects, ambiences, voice blips |
 
 One schema per content type, validated at load; every cross-reference must resolve. `content/balance.json` is generated from Book 10's tables and is the only place numbers live. All player-facing text uses string keys.
 
@@ -332,13 +332,15 @@ interface Bargain { id: Id; power: Id; parties: Id[]; terms: Term[]; benefits: E
 Accepted terms are frozen and hashed. Every dangerous mechanic declares `sign, rule, response, consequence`; lint fails if any is missing. Omens never cause a death. Revenants have an `anchor` and a `resolution`; violence only banishes them until a day.
 
 ## 18 / Audio
-*Music matters. The audio layer is event-driven and never reads hidden truth.*
+*Music matters. The game generates all of its own audio; the audio layer is event-driven, presentation only, and never reads hidden truth.*
 
-- **Music state machine** with states and transitions from Book 11; stems mixed by an `intensity` parameter from threat level; changes on bar boundaries with stingers for key events.
-- **Ambience** layers by zone, season, weather and time of day. **SFX** by event and surface material.
-- **Voiced barks** only, chosen by the bark system; every voiced line has a subtitle.
+- **Generated, not recorded** (Book 11 section 12): music is note data in `content/music/` played by the in-game sequencer and synthesiser (`src/audio/synth/`); effects, tells, ambience and voice blips are generated in code. No recordings, licensed or sampled audio.
+- **Music state machine** with states and transitions from Book 11; layers mixed by an `intensity` parameter from threat level; every change lands on a bar line; loops are seamless; stingers for key events. SNES-like limits: 8 music voices, small instruments, one shared echo.
+- **Ambience** layers by zone, season, weather and time of day, driven by the game's state (the wind from the game's own wind field, the tide). **SFX** by event and surface material.
+- **Voice blips**, not voiced barks: each speaker's lines appear as text with a short blip voice of their own; the steerer has none. Every line has a subtitle.
 - **Captions** for every gameplay-relevant sound (a charge tell, a horn, a supernatural sign).
-- Formats, loudness and budgets follow Book 11.
+- **Presentation only:** audio reacts to simulation events and never affects gameplay, saves or determinism. Its random streams are its own (seeded), never the simulation's.
+- Sliders for master, music, ambience, effects, voice blips and supernatural tells, and a mono option. Loudness and budgets follow Book 11.
 
 ## 19 / Art pipeline (authored by Claude)
 *Final art is written as palette-indexed pixel sources, compiled and checked, never improvised at runtime.*

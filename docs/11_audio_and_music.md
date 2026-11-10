@@ -4,40 +4,62 @@
 
 Music is a priority. It should make the household's growth audible, make the sea feel enormous, and make the strange things in the mist feel old. Sound must also carry gameplay: in a game without a pause, the ears warn first.
 
-**How to use:** Composers and sound designers use sections 01 to 07; the coding LLM implements sections 03 and 08 to 10 against Book 2 section 18. Every cue and sound has a stable ID (`MUS_`, `SFX_`, `AMB_`, `VO_`).
+**How to use:** The game generates all of its own audio (section 12). Claude composes the music as note data and writes every sound, ambience and voice blip as code, using sections 01 to 09; sections 03 and 08 to 12 are implemented against Book 2 section 18. Every cue and sound has a stable ID (`MUS_`, `SFX_`, `AMB_`, `VO_`).
 
-_Direction, not delivered audio. All music and lyrics must be original or properly licensed; no existing songs, recordings or melodies are reproduced. Instrument choices are period-inspired, not claims of historical accuracy._
+_Every tune, sound and ambience is original, written for this project and played by the game. No recordings, no commissioned composer, no voice acting, no licensed or sampled music; no existing song, recording or melody is reproduced or imitated. Instrument choices are period-inspired, not claims of historical accuracy._
 
 
 ## 01 / Direction
-*Intimate and huge at once: a few human voices and instruments against wind, sea and silence.*
+*SNES-era and Stardew-like, darker and more wind-blown: a few small instruments against wind, sea and silence.*
 
+- **Style.** The sound of a 16-bit console played on a cold night: small sampled-sounding instruments, about eight voices, one shared echo, melodies you can hum. Stardew's warmth and seasons, but darker and more wind-blown. Modal and Celtic-Norse in feel: mostly Dorian and Aeolian, drones underneath, ornamented melodies (cuts and rolls on whistle and harp).
 - **Home is small and warm.** Few instruments, close and dry, as if played in the longhouse.
-- **The sea is vast and indifferent.** Low drones, wide reverb, the sound of distance.
+- **The sea is vast and indifferent.** Low drones, a long echo, the sound of distance; dread rather than adventure.
 - **Violence is percussive and sudden**, not orchestral bombast. Drums, breath, impacts.
-- **The supernatural is old and slightly wrong**: detuned intervals, voices without words, sounds that move against the wind.
-- **Silence is a tool.** Long stretches of ambience only; music arrives when it means something.
-- **Growth is audible.** The household theme gains instruments and voices as the household grows and prospers.
+- **The supernatural is old and slightly wrong**: detuned unisons, lowered seconds, voices without words, sounds that move against the wind.
+- **Silence is a tool.** Long stretches of ambience only; music arrives when it means something. At least a third of time at home is ambience only.
+- **Growth is audible.** The household theme gains an instrument or part as the household grows, and a new verse each year.
+
+### References (match their qualities, never their melodies)
+| Reference | Quality to match | Used for |
+|---|---|---|
+| Chrono Trigger | Celtic-flavoured 16-bit melody, singable themes | The main themes |
+| Terranigma; Kingdom: Two Crowns | Sparse, melancholy, ambience-led | The island |
+| Stardew Valley | Seasonal variations; plenty of near-silence at home | Home and seasons |
+| Dredge; Hyper Light Drifter | Dread and the uncanny | The sea and the supernatural |
+| Final Fantasy VI | Dark drama | Orm, Heid and the finale |
+| Wardruna | Norse drones and frame drums | Instrument and mood guidance |
+
+Two tests of the result: **the hearth theme should feel like Chrono Trigger played on a cold night; the sea should feel like Dredge.**
 
 ## 02 / Instruments and palette
-### Core instruments (period-inspired)
-| Instrument | Use |
-|---|---|
-| Lyre (plucked, six strings) | Norse household; the hearth theme |
-| Early Gaelic harp | Gaelic coast, Kilbrecc's patrons, Órlaith |
-| Bowed lyre | Sorrow, the drowned, Heid |
-| Bone and wooden flutes | Skarvholm, wind, birds |
-| Reed pipes and horn | Shepherds, signals, the ship |
-| Frame drums and hand percussion | Rowing, combat, feasts |
-| Bells (hand-bell, small iron bells) | Kilbrecc, the Bell of Brecc |
-| Voices: solo unaccompanied song, men's and women's choirs, chant | Everything; the most important instrument |
-| Herding calls and keening | Mountain shielings; mourning |
+*Small instruments synthesised in code or built from short generated samples, played SNES-style: one short sample per instrument, pitched for every note, with a loop over the sustain.*
 
-### Supporting textures
-Low sustained strings and modern drones used sparingly to give scale at sea and in the finale. Field recordings of wind, surf, seabirds and fire processed into pads. No guitars, no modern drum kits, no synth leads in the foreground. No bagpipes or fiddles, which feel later and Scottish or Irish-cliché.
+### Core instruments (generated)
+| Instrument | How it is made | Use |
+|---|---|---|
+| Plucked lyre | A plucked string (Karplus-Strong) | Norse household; the hearth theme |
+| Bright harp | A brighter, longer-ringing pluck | Gaelic coast, Kilbrecc's patrons, Órlaith; counter-melodies |
+| Breathy flute (bone or wooden) | Soft harmonics, breath noise and a chiff | Skarvholm, wind, birds; Hild's tune |
+| Tin whistle | Purer, brighter harmonics with less breath | Ornamented Gaelic melodies |
+| Frame drum and hand percussion | A falling membrane thump with a skin slap; struck noise through a resonator | Rowing, combat, feasts, the raid |
+| Low drone | A reedy fifth, slowly beating | Under everything; the sea |
+| Soft choir-like pad | An "ah" from formant-weighted harmonics, three detuned voices | The hummed voice, the Keepers, Rán's choir, Yule |
+| Bells | Inharmonic struck partials | Kilbrecc, the Bell of Brecc, winter |
+| Horn | Brassy harmonics, slow opening | Calls, signals, the alarm, Orm |
+| Seabirds | A generated gull call | In the gaps of the island theme |
+
+Instruments still to build as later stages need them, to the same rules: bowed lyre (sorrow, the drowned, Heid), reed pipe, keening voice, struck stone (the Cailleach).
+
+### Limits that keep it of a piece
+- **About eight voices** for music at once; a ninth note steals the voice nearest its end (as the SNES did). Effects, ambience and blips have their own budget.
+- **Small instruments:** one short sample each (32 kHz), pitched for every note.
+- **One shared echo** (a delay with feedback through a low-pass), set per piece: close and dry at the hearth, long at sea and for the supernatural.
+- A gentle low-pass (about 7 kHz) on the music gives the soft top of interpolated samples.
+- No guitars, modern drum kits, synth leads in the foreground, bagpipes or fiddles.
 
 ### Scales and intervals
-Modal, mostly Dorian and Aeolian with drones. The Gaelic coast leans pentatonic and ornamented; the Norse household leans on fourths and fifths. The supernatural uses detuned unisons, a lowered second, and slow glissandi.
+Modal, mostly Dorian and Aeolian with drones. The Gaelic coast leans pentatonic and ornamented; the Norse household leans on fourths and fifths. The supernatural uses detuned unisons, a lowered second, and slow glissandi. A season can change a piece's mode (Skarvholm is Dorian in summer and Aeolian in winter).
 
 ## 03 / The music system
 *Adaptive music driven by place, time, season, threat and story. Changes land on bar lines.*
@@ -146,20 +168,18 @@ Oar creak and splash in time with the stroke; sail flap, fill and strain; hull g
 Each sign has a unique, learnable audio tell, so a careful player can hear danger before seeing it: Rán's sea-light hum under the water, hooves on water for Manannán, hail on stone for the Cailleach, verse from the troughs for the Blue Men, a dripping that follows for the draugr, keening for the bean sí, and the washer's rhythmic slap of cloth on stone. Each tell has a caption.
 
 ## 08 / Voice
-*Voiced barks only. Music and song carry the emotion; text carries the conversation.*
+*No voice acting. Dialogue and barks are text; each speaker has a short voice blip.*
 
-- **Scope:** about 40 to 80 barks per major resident and 15 to 30 per minor speaker, covering Book 8 categories; plus sung performances for the five singers.
-- **Accents:** natural Irish, Scottish and Scandinavian-accented English for the respective peoples; no stage-Irish or comedy-Viking delivery. Glossary words pronounced correctly.
-- **Old Norse and Old Irish:** short phrases only (oaths, blessings, toasts), checked by a speaker of the modern language and a specialist where possible.
-- **The steerer** has no voiced lines, keeping the steerer's gender unstated.
-- **Recording:** 48 kHz, 24-bit, dry, consistent mic distance; delivered as mono files named by string key.
-- Every voiced line has its subtitle; barks are never the only source of required information.
+- **Voice blips:** as a line appears, its speaker "speaks" it in short blips, one per syllable, in their own pitch, timbre and rhythm. The text's vowels colour each blip; punctuation shapes the line (a question rises, an exclamation lifts, a comma pauses). Each speaker's voice follows who they are (Book 5): Hild warm and lively, Bran low and measured, Runa clipped and firm, Oddi quick and jittery.
+- **The steerer** has no voice blip, keeping the steerer's gender unstated.
+- **Song** is music: the residents who sing (section 06) are heard as melody lines on the hummed-voice pad or a whistle, with their lyrics as text.
+- Every line has its subtitle; blips are never the only source of required information.
 
 ## 09 / Mix and accessibility
-- **Priority order:** threat tells, combat feedback, barks, music, ambience. Threat tells are never masked.
-- **Ducking:** music ducks under barks and stingers; ambience ducks under combat.
-- **Loudness:** integrated about -16 LUFS for the master on the web; true peak below -1 dBTP.
-- **Sliders:** master, music, ambience, effects, voice, and a separate slider for supernatural tells.
+- **Priority order:** threat tells, combat feedback, voice blips, music, ambience. Threat tells are never masked.
+- **Ducking:** music ducks under blips and stingers; ambience ducks under combat.
+- **Loudness:** integrated about -16 LUFS for the master on the web; true peak below -1 dBTP. Music sits about -21 to -24 dBFS RMS, ambience about -22, so effects and tells stand out.
+- **Sliders:** master, music, ambience, effects, voice blips, and a separate slider for supernatural tells.
 - **Captions** for every gameplay-relevant sound, with direction where it helps ("Horn, north").
 - **Mono** option and a reduced dynamic range option for small speakers.
 - **Gore audio** follows the gore setting.
@@ -167,28 +187,65 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 ## 10 / Technical specification
 | Item | Specification |
 |---|---|
-| Engine | Web Audio API, one `AudioContext`, unlocked on first input |
-| Music | Streamed stems, Opus in Ogg with AAC fallback for Safari; loop points in metadata; bar and beat grid per cue |
-| Effects | Decoded buffers; pooled voices; maximum 48 simultaneous voices |
+| Engine | Web Audio API, one `AudioContext`, unlocked on first input; the same code renders offline (`OfflineAudioContext`) for tests |
+| Music | Note data in `content/music/<piece>.json` (tempo, metre, mode, echo, layers, seasonal variants), played by an in-game sequencer and synthesiser (`src/audio/synth/`); notes scheduled ahead of the audio clock; loops seamless; every change lands on a bar line |
+| Instruments | Short samples generated in code at load (32 kHz), deterministic; 8 music voices with stealing |
+| Effects and tells | Generated per event from oscillators, noise and filters; at most 48 voices |
+| Ambience | Generated layers driven by the game's state: the wind from the game's own wind field, the tide, the zone, season, weather and time |
 | Latency | Combat sounds scheduled within one frame of the hit event |
 | Spatial | Stereo panning and distance attenuation by tile distance; no HRTF required |
-| Memory | Under 120 MB decoded audio at once |
-| Events | Sim events map to `SFX_`, `AMB_`, `MUS_` and `VO_` IDs through a content table; audio never reads hidden truth |
-| Naming | `mus_<state>_<stem>.ogg`, `sfx_<event>_<variant>.ogg`, `amb_<zone>_<season>_<time>.ogg`, `vo_<stringKey>.ogg` |
+| Memory | Under 20 MB of generated samples and buffers |
+| Events | Sim events map to `SFX_`, `AMB_`, `MUS_` and `VO_` IDs through a content table; audio never reads hidden truth and never affects the simulation, saves or determinism |
+| Naming | IDs `amb_<zone>_<season>_<time>`, `sfx_<event>_<variant>`, `mus_<state>_<stem>` and `vo_<stringKey>` (the voice blip of a line), written in capitals in content (`AMB_`, `SFX_`, `MUS_`, `VO_`); offline renders take the same names with `.wav` |
+| Listening back | `npm run audio:render` renders every piece and sound to WAV with its levels (`artifacts/audio/`); the sound test page (`sound.html`) plays them all |
 
 ## 11 / Production plan
-*Music matters, so it needs an owner. Claude can design the system and sketch music; final recordings need a composer or licensed sources.*
+*All audio is generated by the game, composed and designed by Claude (section 12). Nothing is recorded or licensed.*
 
 | Phase | Audio deliverable |
 |---|---|
-| Stage 5 | Audio engine, music state machine, captions; temporary cues clearly flagged |
-| Build 1 (Stage 12) | Hearth theme, Skarvholm theme, wreck opening ambience, first combat layers, Chapter 1 SFX |
+| Stage 5 | Audio engine, music state machine, captions |
+| Art and audio passes | The synthesiser and sequencer; the hearth, Skarvholm and raid music; the Wreck Strand ambience; combat set; three tells; voice blips; the sound test page |
+| Build 1 (Stage 12) | Audio wired into play for everything built; home music by time of day with the silence rule; the wreck opening ambience; first combat layers; Chapter 1 effects |
 | Build 2 (Stage 20) | Sea states, raid approach, alarm and extraction, Carrick ambience, home seasons |
-| Build 3 (Stage 24) | Saltvik, sea battle, first supernatural motifs, barks for the starting crew |
+| Build 3 (Stage 24) | Saltvik, sea battle, first supernatural motifs, blips for the starting crew |
 | Campaign (Stages 25 to 29) | Regional palettes, festivals, all motifs, laments, the Return to Skarvholm, the finale |
-| Stage 30 | Final mix, loudness pass, captions complete, no temporary audio |
+| Stage 30 | Final mix, loudness pass, captions complete |
 
-### Decisions still to make
-- Who composes the final score: a commissioned composer (recommended), or licensed libraries with original arrangement.
-- Whether Claude produces music sketches as MIDI or notation for the composer, and procedural ambience generators in code.
-- Budget and schedule for recording singers and voiced barks.
+Each stage that adds a place, character or system adds its sounds and music to the section 12 standard.
+
+## 12 / Audio standard
+*Permanent, like Book 7's terrain art standard: every stage that adds a place, character or system meets it, and is not done until it does.*
+
+### The decision
+The game generates all of its own audio. No recordings, no commissioned composer, no voice acting, no licensed or sampled music. Every tune, sound and ambience is original, written by Claude and played by the game.
+
+### Music
+- **Style:** SNES-era and Stardew-like, darker and more wind-blown than Stardew. Modal and Celtic-Norse: mostly Dorian and Aeolian, drones underneath, ornamented melodies.
+- **How it works:** each piece is composed as note data (patterns, instruments, tempo, layers) and played by the in-game synthesiser and sequencer, within SNES-like limits: about 8 voices, small instruments, one shared echo.
+- **Instruments:** plucked lyre, bright harp, breathy flute and tin whistle, frame drum and hand percussion, low drone, soft choir-like pad, bells, a horn call (section 02).
+- **Kept from this book:** the themes and motifs (section 04), the music states, layers driven by an intensity value, stingers, changes on bar lines (section 03), seasonal variations and festivals (section 05).
+- **The household theme grows:** it gains an instrument or part as the household grows, and a new verse each year.
+- **Silence matters:** at least a third of time at home is ambience only.
+- **References** (section 01): match their qualities, never their melodies. The hearth theme should feel like Chrono Trigger played on a cold night; the sea should feel like Dredge.
+
+### Sound effects and ambience (also generated)
+- Ambience in layers by zone, season, weather and time of day: surf on shingle and sand, wind tied to the game's own wind direction and strength, rain, the hearth fire, seabirds, sheep.
+- Footsteps by surface; work sounds for every homestead task; ship sounds (oars, sail, hull).
+- Combat: distinct sounds for light hits, both charge levels of the heavy, parry (bright and unmistakable), block, guard break, dodge and gore, all scaled by the gore setting.
+- Every supernatural sign has its own learnable sound tell (section 07).
+- Every gameplay-relevant sound keeps its caption.
+
+### Voice
+No voiced barks. Dialogue and barks stay as text, with a short voice blip for each speaker (their own pitch, timbre and rhythm). The steerer has no voice blip.
+
+### Engineering
+- Audio is presentation only: it reacts to simulation events and never affects gameplay, saves or determinism, and never reveals hidden truth.
+- Web Audio API, one AudioContext unlocked on the first input. Loops are seamless, and music changes always land on a bar line.
+- Separate volume sliders for master, music, ambience, effects and voice blips, plus one for supernatural tells. Mono option. Within the Book 2 and section 10 budgets.
+
+### How it is checked
+- `tests/unit/synth.test.ts`: every bar fits its metre; every pitched note is in its piece's mode in every season; no piece needs more than 8 voices; samples are deterministic, never clip and loop without a click; every combat sound and tell has a caption; every speaker has a voice of their own and the steerer none.
+- `tests/browser/sound.spec.ts`: the sound test page offers every item; rendered offline, every item sounds and none clips, the hearth theme loops without a gap, and a raised alarm lands on the next bar line.
+- Listening back: `npm run audio:render` writes every item to `artifacts/audio/` with its levels, for spectrograms and a listen against this section before anything is shown to the user.
+

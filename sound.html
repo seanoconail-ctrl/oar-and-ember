@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Oar and Ember: the sound test page (generated music and sound)."
+    />
+    <link rel="icon" href="data:," />
+    <title>Oar and Ember: sound test</title>
+    <style>
+      :root {
+        --bg: #16202a;
+        --panel: #1f2c38;
+        --line: #33475a;
+        --text: #e7d7b5;
+        --dim: #a9b4b6;
+        --accent: #e3823a;
+        --on: #6a979c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 60rem;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0.5rem 0;
+      }
+      h2 {
+        font-size: 1.15rem;
+        margin: 0 0 0.5rem;
+      }
+      h3 {
+        font-size: 1rem;
+        margin: 0.75rem 0 0.25rem;
+        color: var(--dim);
+      }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 12px 14px;
+        margin: 12px 0;
+      }
+      button {
+        font: inherit;
+        color: var(--text);
+        background: #283a4a;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 6px 12px;
+        margin: 3px 4px 3px 0;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--on);
+      }
+      button[aria-pressed='true'] {
+        background: #2f5560;
+        border-color: var(--on);
+      }
+      label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 3px 14px 3px 0;
+      }
+      input[type='range'] {
+        width: 10rem;
+        accent-color: var(--accent);
+      }
+      .status,
+      .note {
+        color: var(--dim);
+        font-size: 0.9rem;
+      }
+      .line {
+        color: var(--dim);
+        font-style: italic;
+      }
+      #captions p {
+        margin: 2px 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+        gap: 4px 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="sound" data-state="loading"></main>
+    <script type="module" src="/src/sound.ts"></script>
+  </body>
+</html>

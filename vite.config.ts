@@ -31,6 +31,10 @@ export default defineConfig({
     outDir: 'dist',
     // Art sources are imported as text and decoded at load; keep them out of separate requests.
     assetsInlineLimit: 0,
+    // Two pages: the game, and the sound test page (Book 11, generated audio).
+    rolldownOptions: {
+      input: { main: 'index.html', sound: 'sound.html' },
+    },
   },
   preview: {
     port: 4173,

@@ -24,7 +24,8 @@
     "art:compile": "node src/tools/art/compile.ts",
     "art:lint": "node src/tools/art/lint.ts",
     "zones": "node src/tools/levels/generate-zones.ts",
-    "capture": "node src/tools/art/capture.ts"
+    "capture": "node src/tools/art/capture.ts",
+    "audio:render": "node src/tools/audio/render.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

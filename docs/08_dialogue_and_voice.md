@@ -173,7 +173,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 - Barks never block play and never deliver required information alone; important facts also appear in the report or on screen.
 - No identical bark from the same speaker within ten minutes; no two speakers repeating the same line within a minute.
 - Priority: danger, orders, wounds, discoveries, reactions, idle.
-- Every voiced bark (Book 11) is also subtitled.
+- Barks are text; as one appears its speaker's voice blip plays (Book 11 section 08). Nothing is voice-acted, and the steerer has no blip.
 
 ### Samples by category
 | Category | Samples |

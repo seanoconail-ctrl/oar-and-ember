@@ -1,0 +1,134 @@
+{
+  "id": "MUS_RAID",
+  "title": "Raid (approach and alarm)",
+  "about": "The raid loop (Book 11 section 03): held breath in E Aeolian, a low drone, a muted lyre ostinato and a heartbeat. When the alarm is raised, on the next bar line the heartbeat and the held breath give way to driving frame drums, clacking bones and a horn call.",
+  "mode": "E aeolian",
+  "tempo": 84,
+  "beatsPerBar": 4,
+  "stepsPerBeat": 4,
+  "bars": 8,
+  "echo": {
+    "delay": 0.36,
+    "feedback": 0.38,
+    "mix": 0.25,
+    "tone": 1800
+  },
+  "layers": [
+    {
+      "id": "drone",
+      "name": "Drone",
+      "instrument": "drone",
+      "gain": 0.6,
+      "pan": 0,
+      "echo": 0.2,
+      "bars": ["E2:64", "-", "-", "-", "E2:64", "-", "-", "-"]
+    },
+    {
+      "id": "pad",
+      "name": "Held breath (voice pad)",
+      "instrument": "pad",
+      "gain": 0.45,
+      "pan": -0.2,
+      "echo": 0.45,
+      "bars": ["B3:32", "-", "C4:32", "-", "B3:32", "-", "A3:32", "-"],
+      "group": "calm"
+    },
+    {
+      "id": "ostinato",
+      "name": "Lyre ostinato",
+      "instrument": "lyre",
+      "gain": 0.6,
+      "pan": 0.2,
+      "echo": 0.2,
+      "bars": [
+        "E3:2! E3:2 G3:2 E3:2 B3:2 E3:2 A3:2 G3:2",
+        "E3:2! E3:2 G3:2 E3:2 B3:2 E3:2 A3:2 G3:2",
+        "E3:2! E3:2 G3:2 E3:2 B3:2 E3:2 A3:2 G3:2",
+        "E3:2! E3:2 G3:2 E3:2 B3:2 E3:2 A3:2 G3:2",
+        "E3:2! E3:2 G3:2 E3:2 C4:2 B3:2 A3:2 F#3:2",
+        "E3:2! E3:2 G3:2 E3:2 C4:2 B3:2 A3:2 F#3:2",
+        "E3:2! E3:2 G3:2 E3:2 C4:2 B3:2 A3:2 F#3:2",
+        "E3:2! E3:2 G3:2 E3:2 C4:2 B3:2 A3:2 F#3:2"
+      ]
+    },
+    {
+      "id": "pulse",
+      "name": "Heartbeat",
+      "instrument": "drum",
+      "gain": 0.5,
+      "pan": 0,
+      "echo": 0.05,
+      "bars": [
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9",
+        "E2! r:5 E2, r:9"
+      ],
+      "group": "calm"
+    },
+    {
+      "id": "drums",
+      "name": "War drums",
+      "instrument": "drum",
+      "gain": 0.95,
+      "pan": 0,
+      "echo": 0.1,
+      "group": "alarm",
+      "on": false,
+      "bars": [
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2, r E2 r E2, r E2! r E2, E2, E2 r E2, r",
+        "E2! r E2 r E2! r E2 r E2! E2 E2 E2 E2! E2 E2! E2!"
+      ]
+    },
+    {
+      "id": "bones",
+      "name": "Bones",
+      "instrument": "knock",
+      "gain": 0.6,
+      "pan": 0.35,
+      "echo": 0.1,
+      "group": "alarm",
+      "on": false,
+      "bars": [
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2",
+        "r:2 F6 r:3 F6 r:2 F6 r:3 F6 r:2"
+      ]
+    },
+    {
+      "id": "horn",
+      "name": "Horn call",
+      "instrument": "horn",
+      "gain": 0.85,
+      "pan": -0.3,
+      "echo": 0.5,
+      "group": "alarm",
+      "on": false,
+      "bars": [
+        "E4:4! B4:4 E5:8",
+        "r:16",
+        "r:16",
+        "r:16",
+        "E4:4! B4:4 D5:4 B4:4",
+        "r:16",
+        "r:16",
+        "r:16"
+      ]
+    }
+  ]
+}

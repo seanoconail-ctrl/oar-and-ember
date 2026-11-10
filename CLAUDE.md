@@ -49,6 +49,11 @@ Book 10 and `content/balance.json` are the only source of tuning numbers.
   not done. Art lint and `tests/*/standard.*` enforce the measurable parts; never weaken their
   thresholds to pass.
 - A new place starts with a mockup; wait for the user's approval before building it (Book 3).
+- The game generates all of its own audio (Book 11 section 12): music as note data played by the
+  in-game synthesiser, effects, ambience and voice blips in code. No recordings, composer, voice
+  acting, or licensed or sampled music. Any work that adds a place, character or system adds its
+  sounds and music to the Book 11 audio standard, with captions, and listens back
+  (`npm run audio:render`) against the standard before it is shown.
 - Write tests for every acceptance check, run them, and report results honestly, failures included.
 - Record every departure from the books in `docs/decision-log.md` with the reason.
 - If something is missing, contradictory or needs a decision, stop and ask.

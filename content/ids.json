@@ -3074,24 +3074,24 @@
     },
     {
       "pattern": "AMB_<zone>_<season>_<time>",
-      "ref": "`amb_<zone>_<season>_<time>.ogg`",
+      "ref": "`amb_<zone>_<season>_<time>`",
       "book": 11,
       "section": "10",
       "note": "Derived from the file naming pattern; \"Every zone has a day and a night bed and seasonal variants\" (section 07). Members would follow ZONE_ ids; not expanded."
     },
     {
       "pattern": "SFX_<event>_<variant>",
-      "ref": "`sfx_<event>_<variant>.ogg`",
+      "ref": "`sfx_<event>_<variant>`",
       "book": 11,
       "section": "10",
       "note": "Derived from the file naming pattern; whether <variant> is a named variant (surface, material) or a take number is not stated."
     },
     {
       "pattern": "VO_<stringKey>",
-      "ref": "`vo_<stringKey>.ogg`",
+      "ref": "`vo_<stringKey>`",
       "book": 11,
       "section": "10",
-      "note": "Voiced barks are files named by string key (section 08); no bark is named in Book 11, so there are no VO_ entries."
+      "note": "The voice blip of a line, by string key (section 08, generated audio); no line is named in Book 11, so there are no VO_ entries."
     }
   ],
   "deedTags": [
