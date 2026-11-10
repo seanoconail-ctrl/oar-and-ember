@@ -72,6 +72,11 @@ export function startPlay(
   const t = (key: string, vars: Record<string, string> = {}): string =>
     formatString(strings, key, vars);
   const b = parseTimeBalance(content.balance);
+  // Start-up timings (ms since Wake), for diagnosing slow machines: data-startup on the overlay.
+  const marks: Record<string, number> = { start: Math.round(performance.now() - options.wokeAt) };
+  const mark = (name: string): void => {
+    marks[name] = Math.round(performance.now() - options.wokeAt);
+  };
   const world = newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice);
   const land = landContext(content, content.balance);
   const opening = content.opening;
@@ -84,6 +89,7 @@ export function startPlay(
   const input = new InputMapper(settings.bindings, settings.toggle);
   const session = new Session(sim, input, { awareHostiles: () => 0 });
   const style = parseRenderStyle(renderJson);
+  mark('world');
   const renderer = createSceneRenderer(presenter, palette, style);
   const geometry = new Map<string, LoadedAtlas['manifest']>();
   for (const { manifest, image } of atlases.values()) {
@@ -92,6 +98,7 @@ export function startPlay(
   }
   const anims = new Map([...geometry].map(([name, m]) => [name, m.anims]));
   const shadows = new Map([...geometry].map(([name, m]) => [name, m.shadow]));
+  mark('renderer');
   const elevation = bakeElevation(map.rows);
   renderer.addElevation(map.zone, elevation);
   const store = browserStorage();
@@ -100,6 +107,7 @@ export function startPlay(
     window.location.search,
     window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
+  mark('elevation');
   const visuals = new ZoneVisuals(map, elevation, display.reducedMotion);
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
@@ -196,6 +204,7 @@ export function startPlay(
   let first = true;
   let lastVisual = started;
   let frameMs = 0;
+  let frames = 0;
   // Effect detail (AP-16): full unless forced with ?quality=full|lite|low, stepped down when
   // frames keep coming slower than 10 a second, so a slow machine stays playable.
   const forced = new URLSearchParams(window.location.search).get('quality');
@@ -314,7 +323,13 @@ export function startPlay(
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
       visual: visuals.view(frameInput),
     });
+    if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
+    if (frames < 3) {
+      mark(`frame${frames}`);
+      root.dataset['startup'] = JSON.stringify(marks);
+    }
+    frames++;
 
     const tile = tileOf(map, onFoot.player.x, onFoot.player.y);
     root.dataset['tick'] = String(sim.state.tick);

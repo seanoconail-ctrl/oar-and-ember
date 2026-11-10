@@ -30,17 +30,31 @@ test('control within five seconds of the naming screen, with the chosen name and
   const naming = page.locator('.oe-naming');
   await expect(naming).toBeVisible();
   const shown = Date.now();
+  const steps: string[] = [];
+  const lap = (name: string): void => {
+    steps.push(`${name} ${Date.now() - shown}`);
+  };
   // The two bodies are offered side by side with no visible label.
   const bodies = naming.locator('[role=radio]');
   await expect(bodies).toHaveCount(2);
   for (const body of await bodies.all()) expect((await body.innerText()).trim()).toBe('');
+  lap('checked');
   await page.keyboard.type('Ash');
+  lap('typed');
   await bodies.nth(1).click();
+  lap('chose');
   await naming.locator('input').press('Enter');
+  lap('woke');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play');
+  lap('play');
   await page.keyboard.down('KeyD');
   await expect(overlay(page)).toHaveAttribute('data-moving', 'true');
   const ms = Date.now() - shown;
+  // Where the time went, for a slow machine: the test's steps, and the game's start-up marks
+  // (ms since Wake: world, renderer, height field, first frames).
+  console.log(
+    `control in ${ms} ms; steps ${steps.join(', ')}; start-up ${(await overlay(page).getAttribute('data-startup')) ?? '?'}`,
+  );
   await page.keyboard.up('KeyD');
   expect(ms).toBeLessThan(5000);
   await expect(overlay(page)).toHaveAttribute('data-steerer', 'Ash');
