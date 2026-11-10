@@ -10,10 +10,11 @@ import { computeViewport, LOGICAL_HEIGHT, LOGICAL_WIDTH } from './viewport.ts';
 import type { Viewport } from './viewport.ts';
 
 const VERTEX_SHADER = `#version 300 es
+in vec2 a_corner;
 void main() {
-  // One triangle that covers the whole canvas.
-  vec2 corner = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
-  gl_Position = vec4(corner * 2.0 - 1.0, 0.0, 1.0);
+  // One triangle that covers the whole canvas (corners from a 3-vertex buffer; gl_VertexID is
+  // avoided because some WebKit builds have rejected it).
+  gl_Position = vec4(a_corner, 0.0, 1.0);
 }`;
 
 const FRAGMENT_SHADER = `#version 300 es
@@ -54,12 +55,21 @@ interface GlResources {
 }
 
 function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
+  const name = type === gl.VERTEX_SHADER ? 'vertex' : 'fragment';
   const shader = gl.createShader(type);
-  if (shader === null) throw new Error('WebGL2: could not create a shader');
+  if (shader === null) {
+    throw new Error(
+      `WebGL2: could not create the ${name} shader (context lost: ${gl.isContextLost()})`,
+    );
+  }
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) !== true) {
-    throw new Error(`WebGL2 shader failed: ${gl.getShaderInfoLog(shader) ?? 'no log'}`);
+    const log = gl.getShaderInfoLog(shader);
+    throw new Error(
+      `WebGL2 ${name} shader failed: ${log === null || log === '' ? 'no log' : log} ` +
+        `(context lost: ${gl.isContextLost()}, error: ${gl.getError()})`,
+    );
   }
   return shader;
 }
@@ -74,6 +84,11 @@ function setUp(gl: WebGL2RenderingContext): GlResources {
   }
   gl.useProgram(program);
   gl.bindVertexArray(gl.createVertexArray());
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const corner = gl.getAttribLocation(program, 'a_corner');
+  gl.enableVertexAttribArray(corner);
+  gl.vertexAttribPointer(corner, 2, gl.FLOAT, false, 0, 0);
 
   const texture = gl.createTexture();
   gl.activeTexture(gl.TEXTURE0);

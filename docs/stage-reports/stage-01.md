@@ -56,10 +56,9 @@ In the Book 2 section 23 format: one heading per report field.
 
 ## Gate checks
 1. **`npm ci && npm run lint && npm test && npm run build` passes locally and in GitHub Actions.** Locally: **PASS** (exit code 0, figures above). In GitHub Actions: **PASS**. `npm ci`, lint, unit tests and build passed in runs 1 and 2 (links above). The first push had been refused for lack of GitHub access until the user fixed it.
-2. **The published Pages address shows the title screen in Chromium, Firefox and Safari.** **FAIL after two attempts; stopped for the user.**
-   - Not yet published: Pages needs the repository setting "Source: GitHub Actions" and a push to `main` (or an allowed branch).
-   - Against the built site in CI: Chromium passes pixel-exact; Firefox and WebKit fail on GitHub's GPU-less runners (Tests above).
-   - Options proposed to the user: run the Firefox and WebKit checks on a macOS runner, which has a GPU and is closer to real Safari, or have the user check Firefox and Safari by hand at the published link.
+2. **The published Pages address shows the title screen in Chromium, Firefox and Safari.** **PASS for Chromium and Firefox; Safari to be checked by the user** (decision S1-18, approved by the user).
+   - Run 5 ([42856868851](https://github.com/seanoconail-ctrl/oar-and-ember/actions/runs/42856868851)) published the branch to GitHub Pages. It then ran the pixel-exact check against the published address in Chromium (Linux, 5 of 5) and Firefox (macOS, 5 of 5): both passed.
+   - WebKit (macOS, not blocking) failed. The start-up diagnostic showed that the renderer's shader failed to compile with an empty log. In response, the presenter now draws its triangle from a vertex buffer instead of `gl_VertexID`, and its error names the shader and the context state. The WebKit check keeps running on every push.
 3. **The decision log contains all twenty Stage 0 decisions.** **PASS**: `tests/unit/decisionLog.test.ts` reads rows 1 to 20 from the log and Book 3 section 03, and finds decision 9 still open in both.
 
 ## Art check
@@ -81,7 +80,7 @@ In the Book 2 section 23 format: one heading per report field.
 - The main ones: S1-2, the palette values transcribed from the Book 7 PDF; S1-3, the font source format; S1-4, fonts compiled at load until Stage 4; S1-10 to S1-12, how the ID registry was seeded and when assigned IDs freeze.
 
 ## Known issues
-- **High:** the Firefox and WebKit browser checks fail on GitHub's Linux runners (see Tests). The cause is the runner, not shown to be the game, but it is unproven until a GPU-backed run or a human check.
+- **Medium:** WebKit, Safari's engine, failed to compile the presenter's shader on GitHub's macOS runner (empty log). The vertex-buffer change may fix it; the user's own Safari check at the published link is the real test.
 - **Medium:** gate check 2 is unverified until Pages is switched on and the work is published from a branch Pages accepts (`main` by default).
 - **Low:** WebKit on Linux is Safari's engine, not Safari. The user should open the published address in Safari once.
 - **Low:** `npm audit` reports a moderate advisory in `minimatch`, pulled in by ESLint and typescript-eslint. It is used only for linting, is never shipped to players, and the suggested fix downgrades ESLint. Accepted for now.
@@ -94,4 +93,4 @@ In the Book 2 section 23 format: one heading per report field.
   - Book 3 Stage 14 says "four puzzles" where Book 9 lists six "puzzle or secret" rows.
 
 ## Next stage ready
-**NO.** Gate check 2 has failed twice in Firefox and WebKit on CI and is not yet published, so Stage 2 waits for the user's decision. Checks 1 and 3 pass.
+**YES.** Checks 1 and 3 pass. Check 2 passes in Chromium and Firefox at the published address; Safari is the user's check, as agreed.
