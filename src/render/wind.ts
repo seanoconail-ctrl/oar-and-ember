@@ -66,9 +66,7 @@ export function plantLean(
   const push = wind.dirX * wind.strength * (0.6 + (tall ? 2.6 : 1.9) * g);
   const sway = swayAt(t, phase) * (reducedMotion ? 0.35 : 0.8 + 0.6 * g);
   let lean = push + sway;
-  for (let i = 0; i < walkers.length; i++) {
-    const w = walkers[i];
-    if (w === undefined) continue;
+  for (const w of walkers) {
     const dx = x - w.x;
     const dy = (y - w.y) * 1.6;
     const d = Math.hypot(dx, dy);
