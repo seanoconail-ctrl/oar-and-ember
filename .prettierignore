@@ -1,0 +1,12 @@
+# The design books, the decision log and the stage reports are authored text: never reformat them.
+docs/
+CLAUDE.md
+# Generated from Book 10; formatting is owned by its generator.
+content/balance.json
+# Build and test output.
+dist/
+coverage/
+playwright-report/
+test-results/
+artifacts/
+package-lock.json

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Oar and Ember: a pixel-art Viking settlement RPG." />
+    <link rel="icon" href="data:," />
+    <title>Oar and Ember</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        /* Outline ink (Book 7), the letterbox colour, shown until the first frame is drawn. */
+        background: #22313a;
+      }
+      #screen {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      #notice {
+        max-width: 36em;
+        margin: 20vh auto 0;
+        padding: 0 16px;
+        color: #e7d7b5;
+        font:
+          18px/1.5 system-ui,
+          sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="screen" role="img" aria-label="Oar and Ember"></canvas>
+    <p id="notice" role="alert" hidden></p>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

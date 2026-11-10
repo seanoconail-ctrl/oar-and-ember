@@ -1,0 +1,3213 @@
+{
+  "about": "The ID registry (Book 2 section 04), seeded in Stage 1 from Books 4 to 11. origin \"stated\": the ID is written in a book; \"expanded\": written as a shorthand such as X_A/B; \"assigned\": given in Stage 1 to an entity a book names, following Book 2 prefixes and the books' own naming. ref is copied verbatim from the book. IDs are stable forever: an assigned ID may be renamed, with a decision-log entry, only until content first uses it (Stage 3 onwards).",
+  "version": 1,
+  "entries": [
+    {
+      "id": "ISLE_SKARV",
+      "ref": "Skarvholm",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "ISLE_INISRON",
+      "ref": "Inis Rón",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "ISLE_KALDNESS",
+      "ref": "Kaldness",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "TOWN_ARDCARN",
+      "ref": "Ardcarn",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "TOWN_SALTVIK",
+      "ref": "Saltvik",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "FORT_DUNFIACH",
+      "ref": "Dún Fiach",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "ABBEY_KILBRECC",
+      "ref": "Kilbrecc",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "GLEN_ARRA",
+      "ref": "Glen Arra",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "CAMP_CROWWICK",
+      "ref": "Crowwick",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "SITE_CARRICK",
+      "ref": "Carrick Landing",
+      "book": 4,
+      "section": "01",
+      "origin": "stated",
+      "note": "Raid site. The ID has no LANDING token and sits beside SITE_CARRICK_STRAND (a home site); see questions."
+    },
+    {
+      "id": "SITE_CARRICK_STRAND",
+      "ref": "Carrick Strand, beside Ardcarn",
+      "book": 4,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "SITE_SALTNESS",
+      "ref": "Saltness headland, outside Saltvik",
+      "book": 4,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "SITE_ARRAFOOT",
+      "ref": "Arra Foot, mouth of Loch Arra",
+      "book": 4,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "REG_SK",
+      "ref": "Skarvholm is 384 x 256 tiles",
+      "book": 4,
+      "section": "02",
+      "origin": "assigned",
+      "note": "No book names the Skarvholm on-foot region; assigned in Stage 1 so the stated ZONE_SK_* zones have a parent region."
+    },
+    {
+      "id": "REG_CARRAIG",
+      "ref": "Carrick hinterland",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Uses the Irish spelling Carraig, while the places use Carrick. The zones below use CARRAIG as their stem."
+    },
+    {
+      "id": "REG_SALTNESS",
+      "ref": "Saltness hinterland",
+      "book": 4,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "REG_ARRA",
+      "ref": "Loch Arra hinterland",
+      "book": 4,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_STRAND",
+      "ref": "ZONE_SK_STRAND",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Its place is SK_WRECK_STRAND."
+    },
+    {
+      "id": "ZONE_SK_MACHAIR",
+      "ref": "ZONE_SK_MACHAIR",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_KELDA",
+      "ref": "ZONE_SK_KELDA",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_ROOK",
+      "ref": "ZONE_SK_ROOK",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Its place is SK_ROOKHILL."
+    },
+    {
+      "id": "ZONE_SK_BOG",
+      "ref": "ZONE_SK_BOG",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_GREYMEN",
+      "ref": "ZONE_SK_GREYMEN",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_CAIRN",
+      "ref": "ZONE_SK_CAIRN",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_CLIFFS",
+      "ref": "ZONE_SK_CLIFFS",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Holds SK_EAGLE."
+    },
+    {
+      "id": "ZONE_SK_GEO",
+      "ref": "ZONE_SK_GEO",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Holds SK_GEO and SK_CELL."
+    },
+    {
+      "id": "ZONE_SK_SEALCAVE",
+      "ref": "ZONE_SK_SEALCAVE",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Its place is SK_TIDECAVE."
+    },
+    {
+      "id": "ZONE_SK_HAGSEAT",
+      "ref": "ZONE_SK_HAGSEAT",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "ZONE_SK_NAUST",
+      "ref": "ZONE_SK_NAUST",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Holds SK_NAUST and SK_SKERRY."
+    },
+    {
+      "id": "ZONE_CARRAIG_STRAND",
+      "ref": "Carrick Strand (home site)",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The home zone on foot. Its sea-map place is SITE_CARRICK_STRAND."
+    },
+    {
+      "id": "ZONE_CARRAIG_LANDING",
+      "ref": "Carrick Landing and Ardcarn",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Split from a row that names two places. Book 9 section 06 makes Carrick Landing its own scene, with Ardcarn off the map to the east. Sea-map place: SITE_CARRICK."
+    },
+    {
+      "id": "ZONE_CARRAIG_ARDCARN",
+      "ref": "Carrick Landing and Ardcarn",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Split from the same row as ZONE_CARRAIG_LANDING; merge the two if they are one zone. Sea-map place: TOWN_ARDCARN."
+    },
+    {
+      "id": "ZONE_CARRAIG_LOCHCARN",
+      "ref": "Loch Carn and Brigid's well",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Brigid's well (the each-uisce's binding) is a feature of this zone and has no ID of its own."
+    },
+    {
+      "id": "ZONE_CARRAIG_KILBRECC",
+      "ref": "Coastal path to Kilbrecc",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Named for what the row holds (the monastery and its tenants); the coastal path itself is probably a link on foot. Sea-map place: ABBEY_KILBRECC."
+    },
+    {
+      "id": "ZONE_CARRAIG_RIDGE_ROAD",
+      "ref": "Ridge road to Dún Fiach",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The row's holding is the road itself (Fiachra's riders patrol it). Dún Fiach is not listed as a place on foot."
+    },
+    {
+      "id": "ZONE_CARRAIG_FIODHDUBH",
+      "ref": "Fiodh Dubh, the Black Wood",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. Holds a hill-folk ringfort with a souterrain."
+    },
+    {
+      "id": "ZONE_CARRAIG_MOINMHOR",
+      "ref": "Móin Mhór, the great bog",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start."
+    },
+    {
+      "id": "ZONE_CARRAIG_SLIABHCARN",
+      "ref": "Sliabh Carn",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start."
+    },
+    {
+      "id": "ZONE_SALTNESS_HEADLAND",
+      "ref": "Saltness headland (home site)",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The home zone on foot. Its sea-map place is SITE_SALTNESS."
+    },
+    {
+      "id": "ZONE_SALTNESS_SALTVIK",
+      "ref": "Saltvik",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The Saltvik row of the Saltness hinterland. Sea-map place: TOWN_SALTVIK. Saltvik on foot is built in Book 3 Stage 21, long before Chapter 6; see questions."
+    },
+    {
+      "id": "ZONE_SALTNESS_SALT_PANS",
+      "ref": "The salt pans and Ottar's farms",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "One row naming two places; Ottar's farms have no ID of their own."
+    },
+    {
+      "id": "ZONE_SALTNESS_MOUNDFIELD",
+      "ref": "The Mound Field",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start."
+    },
+    {
+      "id": "ZONE_SALTNESS_MOOR",
+      "ref": "The moor",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. Holds an old hill-fort."
+    },
+    {
+      "id": "ZONE_SALTNESS_RIVER_FORD",
+      "ref": "The river ford",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The border with Dún Fiach's land."
+    },
+    {
+      "id": "ZONE_SALTNESS_SMUGGLERS_CAVE",
+      "ref": "Smugglers' cave and the sea-wife's hut",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. One row naming two places."
+    },
+    {
+      "id": "ZONE_ARRA_FOOT",
+      "ref": "Arra Foot (home site)",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The home zone on foot. Its sea-map place is SITE_ARRAFOOT. The region stem is not repeated, as in ZONE_SK_STRAND."
+    },
+    {
+      "id": "ZONE_ARRA_STEADINGS",
+      "ref": "Glen Arra's steadings",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Sea-map place: GLEN_ARRA."
+    },
+    {
+      "id": "ZONE_ARRA_COIREARD",
+      "ref": "Coire Ard shielings",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start."
+    },
+    {
+      "id": "ZONE_ARRA_PINEWOOD",
+      "ref": "The pinewood",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start."
+    },
+    {
+      "id": "ZONE_ARRA_BEINNNACAILLICH",
+      "ref": "Beinn na Caillich",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. The proper name is joined into one token as the rules say, which makes the token hard to read (BEINNNA...). BEINN_NA_CAILLICH is the alternative."
+    },
+    {
+      "id": "ZONE_ARRA_SHORE_PATH",
+      "ref": "Shore path to Crowwick",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Looks across the water to CAMP_CROWWICK. It may be a link on foot rather than a zone."
+    },
+    {
+      "id": "ZONE_ARRA_INISRON_CROSSING",
+      "ref": "Crossing to Inis Rón",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. A tidal crossing open only at spring low tides. It may be a link on foot with a tide condition (Book 2 FootLink) rather than a zone."
+    },
+    {
+      "id": "ZONE_ARRA_SELKIE_COVE",
+      "ref": "Selkie cove and the old broch",
+      "book": 4,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Unknown at start. This 'old broch' (Ulf's lookout) is not SK_BROCH."
+    },
+    {
+      "id": "SK_WRECK_STRAND",
+      "ref": "Wreck Strand",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_BROCH",
+      "ref": "The old broch",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_KELDA",
+      "ref": "Kelda Spring",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_NAUST",
+      "ref": "Naust Cove",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_MACHAIR",
+      "ref": "The machair",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_HAGSEAT",
+      "ref": "The Hag's Seat",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_CAIRN",
+      "ref": "The Hollow Cairn",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_TIDECAVE",
+      "ref": "Seal Cave",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Displayed as Seal Cave, but its zone is ZONE_SK_SEALCAVE (a different stem)."
+    },
+    {
+      "id": "SK_ROOKHILL",
+      "ref": "Rook Hill",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_GREYMEN",
+      "ref": "The Grey Men",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_BOG",
+      "ref": "The peat bog",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_GEO",
+      "ref": "Gull Geo",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_CELL",
+      "ref": "The hermit's cell",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_SKERRY",
+      "ref": "Skerry of the Drowned",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Not the skerry that holds the wreck (SK_WRECK)."
+    },
+    {
+      "id": "SK_EAGLE",
+      "ref": "Eagle stack",
+      "book": 4,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "SK_STEADING",
+      "ref": "The steading plan",
+      "book": 9,
+      "section": "04",
+      "origin": "assigned",
+      "note": "The household's home ground around the broch (64 x 40 tiles, inside ZONE_SK_MACHAIR). It is also its own tile plan, docs/levels/steading_tiles.txt."
+    },
+    {
+      "id": "SK_WRECK",
+      "ref": "the wreck on the skerry",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The broken ship on the offshore skerry at block (14, 29) ('W' in the grid), reachable on foot at low tide. This is where Oddi, the chest and the rigging are in Chapter 1. Not SK_SKERRY."
+    },
+    {
+      "id": "HAZ_CAULDRON",
+      "ref": "The Cailleach's Cauldron",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "HAZ_BLUEMEN",
+      "ref": "Blue Men's Sound",
+      "book": 4,
+      "section": "01",
+      "origin": "stated",
+      "note": "The place (the Sound). The Blue Men themselves are POWER_BLUEMEN."
+    },
+    {
+      "id": "HAZ_MIST",
+      "ref": "Manannán's Mist",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "HAZ_RANSREACH",
+      "ref": "Rán's Reach",
+      "book": 4,
+      "section": "01",
+      "origin": "stated"
+    },
+    {
+      "id": "P_STEERER",
+      "ref": "the steerer",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_HILD",
+      "ref": "Hild",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_ODDI",
+      "ref": "Oddi",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_BRAN",
+      "ref": "Bran",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_RUNA",
+      "ref": "Runa",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_EITHNE",
+      "ref": "Eithne",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_NESSA",
+      "ref": "Nessa",
+      "book": 5,
+      "section": "02",
+      "origin": "stated",
+      "note": "ID stated in section 02; described in full in section 03 (hidden stances, reveal, branches)."
+    },
+    {
+      "id": "C_GUDRUN",
+      "ref": "Gudrun",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_ARNBJORN",
+      "ref": "Arnbjörn",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_KARI",
+      "ref": "Kári",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_KOLLA",
+      "ref": "Kolla",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_TOFI",
+      "ref": "Tófi One-Eye",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_YLVA",
+      "ref": "Ylva",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_KOLBEINN",
+      "ref": "Kolbeinn",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_ASA",
+      "ref": "Asa",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_THRAND",
+      "ref": "Thrand Halfhand",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_AINE",
+      "ref": "Áine",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "C_SENAN",
+      "ref": "Brother Senán",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "L_FIACHRA",
+      "ref": "King Fiachra mac Áeda",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_ORLAITH",
+      "ref": "Órlaith",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_COLMAN",
+      "ref": "Abbot Colmán",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_MUIRENN",
+      "ref": "Sister Muirenn",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_MUIREDACH",
+      "ref": "Muiredach the hospitaller",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_OTTAR",
+      "ref": "Ottar Silkbeard",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_GUNNHILD",
+      "ref": "Gunnhild Sea-Mare",
+      "book": 5,
+      "section": "04",
+      "origin": "stated",
+      "note": "Also appears under rival captains in section 05, explicitly 'listed once as a leader'; no separate R_ ID."
+    },
+    {
+      "id": "L_GILLAMUIRE",
+      "ref": "Gilla Muire",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_BRONACH",
+      "ref": "Brónach",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "R_ULF",
+      "ref": "Ulf Hrafnsson",
+      "book": 5,
+      "section": "05",
+      "origin": "stated"
+    },
+    {
+      "id": "R_ASGRIM",
+      "ref": "Asgrim Cold-Hand",
+      "book": 5,
+      "section": "05",
+      "origin": "stated"
+    },
+    {
+      "id": "R_FERGAL",
+      "ref": "Fergal mac Cathail",
+      "book": 5,
+      "section": "05",
+      "origin": "stated"
+    },
+    {
+      "id": "R_GILLACIARAIN",
+      "ref": "Gilla Ciaráin",
+      "book": 5,
+      "section": "05",
+      "origin": "stated"
+    },
+    {
+      "id": "E_ORM",
+      "ref": "Orm Sveinsson",
+      "book": 5,
+      "section": "06",
+      "origin": "stated"
+    },
+    {
+      "id": "E_HEID",
+      "ref": "Heid the Grey",
+      "book": 5,
+      "section": "06",
+      "origin": "stated"
+    },
+    {
+      "id": "E_KOLGRIM",
+      "ref": "Kolgrím the Burner",
+      "book": 5,
+      "section": "06",
+      "origin": "stated"
+    },
+    {
+      "id": "E_GROA",
+      "ref": "Gróa",
+      "book": 5,
+      "section": "06",
+      "origin": "stated"
+    },
+    {
+      "id": "H_DONNCHAD",
+      "ref": "Donnchad mac Muiredaig",
+      "book": 5,
+      "section": "02",
+      "origin": "stated"
+    },
+    {
+      "id": "FAC_ARDCARN",
+      "ref": "Ardcarn",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of TOWN_ARDCARN."
+    },
+    {
+      "id": "FAC_DUNFIACH",
+      "ref": "Dún Fiach",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of FORT_DUNFIACH."
+    },
+    {
+      "id": "FAC_KILBRECC",
+      "ref": "Kilbrecc",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of ABBEY_KILBRECC. Book 6 also speaks of 'the Church' (see questions)."
+    },
+    {
+      "id": "FAC_SALTVIK",
+      "ref": "Saltvik",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of TOWN_SALTVIK."
+    },
+    {
+      "id": "FAC_ARRA",
+      "ref": "Glen Arra",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of GLEN_ARRA (the GLEN_ prefix dropped, as REG_ARRA does). Alternative FAC_GLENARRA not used; see questions."
+    },
+    {
+      "id": "FAC_KEEPERS",
+      "ref": "Keepers",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The faction is named 'Keepers' in the book; ID uses the stem of its home place ISLE_INISRON per the home-place rule. See questions."
+    },
+    {
+      "id": "FAC_CROWWICK",
+      "ref": "Crowwick",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of CAMP_CROWWICK. Ulf's crew, called 'the Crows' in Book 6."
+    },
+    {
+      "id": "FAC_KALDNESS",
+      "ref": "Kaldness",
+      "book": 5,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stem of ISLE_KALDNESS. Orm's people; the household calls them 'grey-cloaks' (Book 8 section 02)."
+    },
+    {
+      "id": "HULL_COASTAL_BOAT",
+      "ref": "Coastal boat",
+      "book": 7,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Tier 'T1' (Book 2 section 08). Stats repeated in Book 10 section 05."
+    },
+    {
+      "id": "HULL_KARVI",
+      "ref": "Karvi",
+      "book": 7,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Tier 'T2'."
+    },
+    {
+      "id": "HULL_SNEKKJA",
+      "ref": "Snekkja",
+      "book": 7,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Tier 'T3A' (books write T3a)."
+    },
+    {
+      "id": "HULL_KNARR",
+      "ref": "Knarr",
+      "book": 7,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Tier 'T3B' (books write T3b). The consort (a second T2 or T3b) is a ship role, not a hull type, so it has no HULL_ id."
+    },
+    {
+      "id": "FIT_EXTENDED_HOLD",
+      "ref": "Extended hold",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "FIT_RAISED_BOW_PLATFORM",
+      "ref": "Raised bow platform",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "FIT_SHIELD_RACK",
+      "ref": "Shield rack",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Slot \"Gunwale (free on T2+)\"; see questions on slot kinds."
+    },
+    {
+      "id": "FIT_GRAPNELS_BOARDING_PLANKS",
+      "ref": "Grapnels and boarding planks",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 10 section 05 names it \"Grapnels and planks\"; Book 7 name used per the citation rule."
+    },
+    {
+      "id": "FIT_AWNING_STORES",
+      "ref": "Awning and stores",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "FIT_BAILING_STATION",
+      "ref": "Bailing station",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "FIT_TOWING_GEAR",
+      "ref": "Towing gear",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "FIT_BETTER_SAIL_RIGGING",
+      "ref": "Better sail and rigging",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Rig slot; T1 lists no rig slot."
+    },
+    {
+      "id": "FIT_CARVED_BEAST_HEAD",
+      "ref": "Carved beast-head",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Slot \"Bow (identity)\"."
+    },
+    {
+      "id": "FIT_GILT_WEATHER_VANE",
+      "ref": "Gilt weather-vane",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Slot \"Mast (identity)\"."
+    },
+    {
+      "id": "REFIT_SHALLOW_DRAFT",
+      "ref": "Shallow draft",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 10 key shallowDraft."
+    },
+    {
+      "id": "REFIT_DOUBLED_STRAKES",
+      "ref": "Doubled strakes",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 10 key doubledStrakes."
+    },
+    {
+      "id": "BLD_SAIL_SHELTER",
+      "ref": "Sail shelter in the broch",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Location qualifier \"in the broch\" dropped. Book 7 section 06 stage S1 calls it \"Broch shelter\"."
+    },
+    {
+      "id": "BLD_LONGHOUSE",
+      "ref": "Longhouse",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_SECOND_HOUSE",
+      "ref": "Second house",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Name as written in Books 1, 7 and 10; an ordinal name for a smaller house type (14 x 6, housing 8); see questions."
+    },
+    {
+      "id": "BLD_BOATSHED",
+      "ref": "Boatshed (naust)",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Book 7 section 06: \"a naust boatshed\". Also part of mainland stages M1 and M2."
+    },
+    {
+      "id": "BLD_FORGE",
+      "ref": "Forge",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Book 10 also names a \"Mainland forge\" (swords); see questions."
+    },
+    {
+      "id": "BLD_DRYING_RACKS",
+      "ref": "Drying racks",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Book 7 section 06 stage S2 calls them \"fish racks\"."
+    },
+    {
+      "id": "BLD_SMOKE_HOUSE",
+      "ref": "Smoke-house",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_STOREHOUSE",
+      "ref": "Storehouse",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_BYRE",
+      "ref": "Byre",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_WATCH_CAIRN",
+      "ref": "Watch cairn",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Built on Rook Hill; the place itself may also have an SK_ or ZONE_ id."
+    },
+    {
+      "id": "BLD_WORKSHOP",
+      "ref": "Workshop",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_SHRINE",
+      "ref": "Shrine, cross or hammer-post",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Read as one building with faith variants (Book 1: \"a shrine chosen by the residents\"); see questions."
+    },
+    {
+      "id": "BLD_PALISADE",
+      "ref": "Palisade (mainland)",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "BLD_GATE_WATCH_PLATFORM",
+      "ref": "Gate and watch platform",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_SOW",
+      "ref": "sowLabour",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_WEED",
+      "ref": "weedLabour",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_HARVEST",
+      "ref": "harvestLabour",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_FISH_SHORE",
+      "ref": "Fishing from shore",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 2 lists \"fish (shore and boat)\"; split because station and yield differ."
+    },
+    {
+      "id": "TASK_FISH_BOAT",
+      "ref": "Fishing from the boat (2 crew)",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Split from Book 2 \"fish (shore and boat)\"."
+    },
+    {
+      "id": "TASK_GATHER_SHELLFISH",
+      "ref": "Shellfish and seaweed",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 2 lists shellfish and seaweed separately; Book 10 gives them one yield row; see questions."
+    },
+    {
+      "id": "TASK_GATHER_SEAWEED",
+      "ref": "Shellfish and seaweed",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "See TASK_GATHER_SHELLFISH."
+    },
+    {
+      "id": "TASK_GATHER_EGGS",
+      "ref": "4 rd per climb",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Spring days 10 to 40; climbing on cliffs."
+    },
+    {
+      "id": "TASK_GATHER_DRIFTWOOD",
+      "ref": "1 load per search",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_CUT_PEAT",
+      "ref": "peatCut",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_CUT_HAY",
+      "ref": "hayCut",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_BUILD",
+      "ref": "build, carpentry",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Name only in Book 2; numbers are the worker-days in Book 10 section 09 (and hull build labour in section 05)."
+    },
+    {
+      "id": "TASK_CARPENTRY",
+      "ref": "Carpentry",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_SMITH",
+      "ref": "Smithing (per iron lot at the forge)",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_COOK",
+      "ref": "cook, care",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Not named in Books 7, 10 or 11."
+    },
+    {
+      "id": "TASK_CARE",
+      "ref": "With a healer caring",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Also \"needs care\" for grave wounds (Book 10 section 08)."
+    },
+    {
+      "id": "TASK_HERD",
+      "ref": "herd, shear",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Not named in Books 7, 10 or 11."
+    },
+    {
+      "id": "TASK_SHEAR",
+      "ref": "at shearing",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "TASK_SLAUGHTER",
+      "ref": "Slaughter",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 2 lists \"slaughter and preserve\" as one item; split because slaughter (livestock) and preservation (fish and meat at racks, smoke-house or with salt) use different stations; see questions."
+    },
+    {
+      "id": "TASK_PRESERVE",
+      "ref": "slaughter and preserve",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Split from Book 2 \"slaughter and preserve\". Methods and numbers in Book 10 section 03 food items (dried, smoked, salted)."
+    },
+    {
+      "id": "TASK_REPAIR_SHIP",
+      "ref": "repair ship",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Numbers in Book 10 section 05 (repair, maintenance)."
+    },
+    {
+      "id": "TASK_TRAIN",
+      "ref": "train, watch",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Not named in Books 7, 10 or 11."
+    },
+    {
+      "id": "TASK_WATCH",
+      "ref": "train, watch",
+      "book": 2,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Effect in Book 10 section 09: watch cairn gives \"One watch of warning when manned\"."
+    },
+    {
+      "id": "RES_GRAIN",
+      "ref": "Grain lot",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Also seed (seedPerPlot 25 rd of grain) and a cargo lot (section 04). Food state \"grain\" in Book 2 section 07."
+    },
+    {
+      "id": "RES_FRESH_FISH",
+      "ref": "Fresh fish",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_DRIED_FISH",
+      "ref": "Dried fish",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_SMOKED_FISH",
+      "ref": "Smoked fish or meat",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 10 row covers fish or meat; split into fish and meat; see questions."
+    },
+    {
+      "id": "RES_SMOKED_MEAT",
+      "ref": "Smoked fish or meat",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "See RES_SMOKED_FISH."
+    },
+    {
+      "id": "RES_SALTED_FISH",
+      "ref": "Salted fish or meat",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Book 10 row covers fish or meat; split into fish and meat; see questions."
+    },
+    {
+      "id": "RES_SALTED_MEAT",
+      "ref": "Salted fish or meat",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "See RES_SALTED_FISH."
+    },
+    {
+      "id": "RES_EGG",
+      "ref": "Eggs",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "4 rd per climb; keeps 5 days."
+    },
+    {
+      "id": "RES_MILK",
+      "ref": "Milk and cheese",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Milk per day in the livestock table; no keeping time given."
+    },
+    {
+      "id": "RES_CHEESE",
+      "ref": "Milk and cheese",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Keeps 1 season."
+    },
+    {
+      "id": "RES_SHELLFISH",
+      "ref": "Shellfish and seaweed",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Yield \"2 per low-tide window\" has no unit."
+    },
+    {
+      "id": "RES_PEAT",
+      "ref": "peatDry",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Has a drying state (20 dry days before use; \"30 peat loads drying\" vs \"50 dry peat\" in section 10); see questions on fuel."
+    },
+    {
+      "id": "RES_DRIFTWOOD",
+      "ref": "Driftwood",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Measured in loads; fuel or timber not stated; see questions."
+    },
+    {
+      "id": "RES_HAY",
+      "ref": "hay needed",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_SALT",
+      "ref": "Salt lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_IRON",
+      "ref": "Iron lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_TIMBER",
+      "ref": "Timber lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_TAR",
+      "ref": "Tar lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_WOOL",
+      "ref": "Wool lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_CLOTH",
+      "ref": "Cloth lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_DYE",
+      "ref": "Dye lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Book 7 section 04 names madder red, woad blue and weld yellow dyes; see questions."
+    },
+    {
+      "id": "RES_HIDE",
+      "ref": "Hides lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Also used for shields (section 09)."
+    },
+    {
+      "id": "RES_WINE",
+      "ref": "Wine lot",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "RES_CHURCH_PLATE",
+      "ref": "Church plate",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "A cargo lot (1 slot, 30 oz)."
+    },
+    {
+      "id": "RES_SILVER",
+      "ref": "ounces (oz) of silver",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Silver counted in oz (the unit of every price). Ref is from the units line above section 01."
+    },
+    {
+      "id": "RES_COW",
+      "ref": "Cow",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Livestock: no Book 2 prefix fits exactly; filed under RES_ as household stock and cargo (pen, 2 slots); see questions."
+    },
+    {
+      "id": "RES_SHEEP",
+      "ref": "Sheep",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Livestock; see RES_COW. Cargo as \"Sheep (pen of 3)\"."
+    },
+    {
+      "id": "RES_BOAT_RIVET",
+      "ref": "Boat rivets",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Smithed component (30 per iron lot). Could be ITEM_."
+    },
+    {
+      "id": "RES_TOOL_HEAD",
+      "ref": "Tool heads",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Smithed component (4 per iron lot); also bought as \"Tool head (axe, adze, sickle, spade)\" in section 04. Filed as a component; could be ITEM_."
+    },
+    {
+      "id": "RES_SPEARHEAD",
+      "ref": "Spearheads",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Smithed component (6 per iron lot). Could be ITEM_."
+    },
+    {
+      "id": "RES_AXE_HEAD",
+      "ref": "Axe heads",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Smithed component (2 per iron lot). Could be ITEM_; see questions on axe heads vs tool heads."
+    },
+    {
+      "id": "RES_SPEAR_SHAFT",
+      "ref": "Spear shafts",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Carpentry component (6 per timber). Could be ITEM_."
+    },
+    {
+      "id": "ITEM_BELL_BRECC",
+      "ref": "Bell of Brecc",
+      "book": 6,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Relic in a silver shrine-case; one of the three keys to Orm's bargain (Book 4)."
+    },
+    {
+      "id": "ITEM_MANANNAN_CUP",
+      "ref": "Manannán's Cup",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned",
+      "note": "Relic in the Hollow Cairn; needed to renew Manannán's compact."
+    },
+    {
+      "id": "ITEM_NESSA_SEALSKIN",
+      "ref": "seal-skin",
+      "book": 5,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Runaway stance only: hidden on Skarvholm; whoever finds it holds power over her (Book 5 sections 03 and 09)."
+    },
+    {
+      "id": "ITEM_SPEAR",
+      "ref": "Spear",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Combat row in section 06."
+    },
+    {
+      "id": "ITEM_SHIELD",
+      "ref": "Shield",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Carpentry recipe in section 09."
+    },
+    {
+      "id": "ITEM_AXE",
+      "ref": "Axe",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Weapon axe (combat row in section 06). Tool axes may differ; see questions."
+    },
+    {
+      "id": "ITEM_SEAX",
+      "ref": "Seax",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "ITEM_BOW",
+      "ref": "Bow and arrows",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Section 06 calls the weapon \"Bow\". Arrows are not tracked separately in Book 10."
+    },
+    {
+      "id": "ITEM_SWORD",
+      "ref": "Sword",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Not forgeable on Skarvholm."
+    },
+    {
+      "id": "ITEM_DANE_AXE",
+      "ref": "Dane axe",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "ITEM_HELMET",
+      "ref": "Helmet",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned"
+    },
+    {
+      "id": "ITEM_MAIL_SHIRT",
+      "ref": "Mail shirt",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Armour key \"mail\" in section 06."
+    },
+    {
+      "id": "ITEM_TORCH",
+      "ref": "torchLightRadius",
+      "book": 10,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Also Kolgrim's weapon \"Dane axe, torch\" in section 13."
+    },
+    {
+      "id": "ITEM_ADZE",
+      "ref": "adze",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Tool; bought via \"Tool head (axe, adze, sickle, spade)\"."
+    },
+    {
+      "id": "ITEM_SICKLE",
+      "ref": "sickle",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Tool; bought via the tool head row."
+    },
+    {
+      "id": "ITEM_SPADE",
+      "ref": "spade",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Tool; bought via the tool head row."
+    },
+    {
+      "id": "ITEM_FISHING_NET",
+      "ref": "Fishing net",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Carpentry recipe in section 09."
+    },
+    {
+      "id": "ITEM_AMBER_NECKLACE",
+      "ref": "Amber necklace",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Valuable good; takes no cargo slot."
+    },
+    {
+      "id": "ITEM_SILVER_ARM_RING",
+      "ref": "Silver arm-ring",
+      "book": 10,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Valuable good; takes no cargo slot."
+    },
+    {
+      "id": "CROP_BARLEY",
+      "ref": "Barley and kale",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Harvest yields RES_GRAIN (150 rd, 3 grain lots per plot)."
+    },
+    {
+      "id": "CROP_KALE",
+      "ref": "kaleGarden",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "A garden with a flat yield of 1 rd per day in summer and autumn; Book 10 gives it no sowing or growth stages."
+    },
+    {
+      "id": "SCN_CARRICK",
+      "ref": "The Carrick Storehouse",
+      "book": 6,
+      "section": "02",
+      "origin": "stated",
+      "statedIn": {
+        "book": 2,
+        "section": "23"
+      },
+      "note": "ID stated verbatim in Book 2 section 23 (`scenario run SCN_CARRICK`), not in Book 6; Book 6 section 02 defines the scenario."
+    },
+    {
+      "id": "SCN_FOG_LIGHT",
+      "ref": "The Light in the Fog",
+      "book": 6,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Books 4 and 5 call this 'the fog-light event'; Book 3 calls it 'the Light in the Fog'. One scenario."
+    },
+    {
+      "id": "SCN_SALTVIK_MARKET",
+      "ref": "Saltvik Market Day",
+      "book": 6,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Stem of TOWN_SALTVIK plus title word, so later Saltvik visits are not confused with this scenario."
+    },
+    {
+      "id": "SCN_ARRA_CATTLE",
+      "ref": "The Glen Arra Cattle",
+      "book": 6,
+      "section": "05",
+      "origin": "assigned",
+      "note": "Stem of GLEN_ARRA plus title word."
+    },
+    {
+      "id": "SCN_BELL_BRECC",
+      "ref": "The Bell of Brecc",
+      "book": 6,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Title-based ('of' dropped as MUS_RETURN_SKARVHOLM drops 'to'). Set at ABBEY_KILBRECC; SCN_KILBRECC would mirror SCN_CARRICK instead (see questions)."
+    },
+    {
+      "id": "SCN_TRIBUTE_SHIP",
+      "ref": "The Tribute Ship",
+      "book": 6,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SCN_ISLAND_NO_BIRDS",
+      "ref": "The Island With No Birds",
+      "book": 6,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Books 3 and 4 call this 'the lyngbakr'; title-based ID chosen to match the other scenarios."
+    },
+    {
+      "id": "SCN_ANSWER",
+      "ref": "The Answer",
+      "book": 6,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Includes the defence of Skarvholm and the settlement options; answer variants not given IDs (see questions)."
+    },
+    {
+      "id": "SCN_RETURN",
+      "ref": "The Return to Skarvholm",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned",
+      "note": "Reuses the stem of MUS_RETURN_SKARVHOLM (Book 11). Book 6 section 11 and Book 3 call it 'the Return'."
+    },
+    {
+      "id": "CMP_CARRICK_CROWS",
+      "ref": "The Crows arrive.",
+      "book": 6,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Book 5 section 05 calls this 'the rival-crew complication'."
+    },
+    {
+      "id": "CMP_CARRICK_PAYMENT",
+      "ref": "The defenders offer payment.",
+      "book": 6,
+      "section": "02",
+      "origin": "assigned"
+    },
+    {
+      "id": "CMP_CARRICK_PATROL",
+      "ref": "The patrol.",
+      "book": 6,
+      "section": "02",
+      "origin": "assigned"
+    },
+    {
+      "id": "CMP_RETURN_REINFORCED",
+      "ref": "Early reinforcement",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned",
+      "note": "Book name 'Early reinforcement'; CMP_RETURN_SKARVHOLM_REINFORCEMENT would be 34 characters, over the 32 limit."
+    },
+    {
+      "id": "CMP_RETURN_FOG",
+      "ref": "Fog:",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned"
+    },
+    {
+      "id": "CMP_RETURN_HEID",
+      "ref": "Heid comes for the Cup",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned"
+    },
+    {
+      "id": "CMP_RETURN_CAPTIVES",
+      "ref": "The captives are moved",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_1_WRECK",
+      "ref": "Chapter 1: The Wreck",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_2_FIRST_RAID",
+      "ref": "Chapter 2: The First Raid",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_3_OPEN_COAST",
+      "ref": "Chapter 3: The Open Coast",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_4_NAME_ON_WATER",
+      "ref": "Chapter 4: A Name on the Water",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_5_LONG_MEMORY",
+      "ref": "Chapter 5: The Long Memory",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_6_BORROWED_SHORE",
+      "ref": "Chapter 6: The Borrowed Shore",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_7_GATHERING",
+      "ref": "Chapter 7: The Gathering",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "CH_8_SEA_KING",
+      "ref": "Chapter 8: The Sea King",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_1_WAKE",
+      "ref": "Wake on Wreck Strand",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 1."
+    },
+    {
+      "id": "BEAT_1_BROCH",
+      "ref": "Hild leads to the old broch",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 2."
+    },
+    {
+      "id": "BEAT_1_SEARCHES",
+      "ref": "Three searches, any order",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 3, the parent of the three searches. Keep the parent, the three parts, or both."
+    },
+    {
+      "id": "BEAT_1_REPAIRS",
+      "ref": "Three repairs",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 4, the parent of the three repairs. Keep the parent, the three parts, or both."
+    },
+    {
+      "id": "BEAT_1_CUSTOMISE",
+      "ref": "One reversible customisation",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 5."
+    },
+    {
+      "id": "BEAT_1_RITES",
+      "ref": "Thorkel's rites (optional, recommended by Hild)",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 6."
+    },
+    {
+      "id": "BEAT_1_FIRST_DAYS",
+      "ref": "Days and nights pass in real time",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 7: the first night, the first dawn report and the first fish. Possibly three beats."
+    },
+    {
+      "id": "BEAT_1_LAUNCH",
+      "ref": "Name the boat and choose a sail mark",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Chapter 1 beat 8, and its gate."
+    },
+    {
+      "id": "BEAT_2_RETURN",
+      "ref": "Return to Skarvholm: the haul becomes tangible",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Not the Chapter 8 Return to Skarvholm (BEAT_8_RETURN)."
+    },
+    {
+      "id": "BEAT_2_LEADS",
+      "ref": "Two leads are offered",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Also Chapter 2's gate."
+    },
+    {
+      "id": "BEAT_3_SALTVIK",
+      "ref": "Saltvik: trade, the first ship fittings",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Wraps Book 6 scenario 3 (Saltvik Market Day)."
+    },
+    {
+      "id": "BEAT_3_ULF",
+      "ref": "Ulf appears as a rival",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_3_FOG_LIGHT",
+      "ref": "The fog-light event brings Nessa",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Wraps Book 6 scenario 2 (The Light in the Fog)."
+    },
+    {
+      "id": "BEAT_3_FOLLOWERS",
+      "ref": "Followers' boat",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_3_FIRST_TIDE",
+      "ref": "First sign of the tides",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_4_ASGRIM",
+      "ref": "Asgrim Cold-Hand",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Asgrim arrives with Orm's demand. His return at the end of winter is the chapter gate."
+    },
+    {
+      "id": "BEAT_4_WINTER",
+      "ref": "The Cailleach's washing closes the sea",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Winter at home: Samhain, the Yule feast, and the Nessa reveal window opens."
+    },
+    {
+      "id": "BEAT_4_KELDA_BRACKISH",
+      "ref": "The Kelda spring turns brackish at spring tides",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_5_RETALIATION",
+      "ref": "Retaliation falls due according to the deed ledger",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Earned from the deed ledger, not scripted; possibly a family of beats, one per retaliating party."
+    },
+    {
+      "id": "BEAT_5_HARBOUR_TAKEN",
+      "ref": "Orm's fleet takes an independent harbour",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Refugees arrive."
+    },
+    {
+      "id": "BEAT_5_STORM_TIDE",
+      "ref": "A storm-tide slumps Naust Cove",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_5_COUNCIL",
+      "ref": "The household council",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Choosing to stay leads to the Lonely Isle path."
+    },
+    {
+      "id": "BEAT_6_SECURE_SITE",
+      "ref": "Secure the chosen site",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_6_MOVE",
+      "ref": "Move people, livestock, stores and workshops",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_6_HALL",
+      "ref": "Raise a hall and a palisade",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Includes meeting the neighbours who remember you."
+    },
+    {
+      "id": "BEAT_6_OUTPOST",
+      "ref": "Decide what remains on Skarvholm",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_7_COUNCIL",
+      "ref": "A council under sanctuary at Kilbrecc",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_7_NEGOTIATION",
+      "ref": "Compensation, returned captives, returned relics",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_7_BETRAYAL",
+      "ref": "Rival raiders call it betrayal",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_7_SKARVHOLM_TAKEN",
+      "ref": "Orm's ships take Skarvholm",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_7_KEEPERS_REVEAL",
+      "ref": "The Keepers reveal how Orm's bargain can be broken",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "The same list item settles Nessa's fate, which may need its own beat."
+    },
+    {
+      "id": "BEAT_8_RETURN",
+      "ref": "The Return to Skarvholm (days 241 to 252)",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Wraps Book 6 scenario 9."
+    },
+    {
+      "id": "BEAT_8_PREPARATION",
+      "ref": "A last preparation window",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned"
+    },
+    {
+      "id": "BEAT_8_WASHER",
+      "ref": "The washer at the ford names who will die",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "The beat where OMEN_WASHER fires."
+    },
+    {
+      "id": "BEAT_8_BATTLE",
+      "ref": "Battle in two linked parts",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "The sea engagement and the home defence may each need a beat."
+    },
+    {
+      "id": "BEAT_8_ORM_FATE",
+      "ref": "Orm can be killed, captured, exiled or bargained with",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "The same list item: breaking the bargain during the battle turns the weather."
+    },
+    {
+      "id": "PUZ_SEALCAVE_TIDES",
+      "ref": "Seal Cave tides",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Includes the back passage to the cairn at spring lows (Book 3 Stage 14; Return approach B)."
+    },
+    {
+      "id": "PUZ_GREYMEN",
+      "ref": "the Grey Men alignment",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The sunrise shadow on a festival morning opens the cairn's sealed east door."
+    },
+    {
+      "id": "PUZ_HERMIT_NICHE",
+      "ref": "The hermit's niche",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "PUZ_BOG_OFFERING",
+      "ref": "The bog offering",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned"
+    },
+    {
+      "id": "PUZ_THREETRUTHS",
+      "ref": "Door of Three Truths",
+      "book": 6,
+      "section": "10",
+      "origin": "assigned",
+      "note": "The puzzle whose state is the words spoken (Book 2 section 10). Book 2 section 16 also treats it as ledger-truth dialogue. The joined token is THREETRUTHS, because PUZ_DOOR would clash with the sealed east door."
+    },
+    {
+      "id": "POWER_RAN",
+      "ref": "Rán and her daughters",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "POWER_MANANNAN",
+      "ref": "Manannán mac Lir",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Appears as the Ferryman (Book 6 section 03); his mist is HAZ_MIST."
+    },
+    {
+      "id": "POWER_CAILLEACH",
+      "ref": "The Cailleach (Gaelic)",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "POWER_BLUEMEN",
+      "ref": "The Blue Men (Scottish)",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Same stem as HAZ_BLUEMEN (the Sound)."
+    },
+    {
+      "id": "POWER_LANDSPIRITS",
+      "ref": "Land-spirits and the hill-folk",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Landvættir and aos sí: 'the same kind of power seen through two traditions'. It is local and territorial, so each shore, ring or mound may need its own power (POWER_CAIRN_KEEPERS is one)."
+    },
+    {
+      "id": "POWER_CAIRN_KEEPERS",
+      "ref": "the Hollow Cairn's keepers",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The aos sí who keep SK_CAIRN; their goodwill is saved state. Not the Keepers of Inis Rón (people). Whether the cairn's 'wardens' are these keepers is unclear; see questions."
+    },
+    {
+      "id": "POWER_EACHUISCE",
+      "ref": "The each-uisce",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Bound by Brigid's well in ZONE_CARRAIG_LOCHCARN. Book 10 also lists it as an enemy, so it may need an E_ ID as well."
+    },
+    {
+      "id": "POWER_LYNGBAKR",
+      "ref": "The lyngbakr",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The Island With No Birds (Book 6 section 08). It could instead be a HAZ_ hazard or an E_ enemy."
+    },
+    {
+      "id": "POWER_LONGSWIMMER",
+      "ref": "The Long Swimmer",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "It could instead be a HAZ_ hazard or an E_ enemy."
+    },
+    {
+      "id": "OMEN_FETCH",
+      "ref": "The fetch and the fylgja",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Covers both forms (the double and the animal). Split into OMEN_FETCH and OMEN_FYLGJA if their data differ."
+    },
+    {
+      "id": "OMEN_WASHER",
+      "ref": "The washer at the ford",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Fires in BEAT_8_WASHER."
+    },
+    {
+      "id": "OMEN_BEANSI",
+      "ref": "The bean sí",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "OMEN_DROWNED_FEAST",
+      "ref": "The drowned at the feast",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "BARGAIN_ORM",
+      "ref": "Orm's bargain",
+      "book": 4,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Orm with Rán, through Heid."
+    },
+    {
+      "id": "BARGAIN_MANANNAN_COMPACT",
+      "ref": "Manannán's compact",
+      "book": 4,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Covers both the ancient compact and its renewal at Inis Rón. Split if the renewal needs its own Bargain record."
+    },
+    {
+      "id": "BARGAIN_FERRYMAN_HOSPITALITY",
+      "ref": "A promise of hospitality",
+      "book": 6,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The only Ferryman price the book says 'is saved as a bargain with Manannán'. It binds Thrand's arrival. The true story and the gift are recorded as gifts and have no ID here."
+    },
+    {
+      "id": "MUS_HOME_DAWN",
+      "ref": "MUS_HOME_DAWN/DAY/DUSK/NIGHT",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_HOME_DAY",
+      "ref": "MUS_HOME_DAWN/DAY/DUSK/NIGHT",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_HOME_DUSK",
+      "ref": "MUS_HOME_DAWN/DAY/DUSK/NIGHT",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_HOME_NIGHT",
+      "ref": "MUS_HOME_DAWN/DAY/DUSK/NIGHT",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_ISLAND_EXPLORE",
+      "ref": "MUS_ISLAND_EXPLORE",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_REGION_CARRAIG",
+      "ref": "MUS_REGION_<id>",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded",
+      "note": "Expanded from the family using REG_CARRAIG (Book 4) with the REG_ prefix dropped; see questions."
+    },
+    {
+      "id": "MUS_REGION_SALTNESS",
+      "ref": "MUS_REGION_<id>",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded",
+      "note": "Expanded from the family using REG_SALTNESS (Book 4) with the REG_ prefix dropped; see questions."
+    },
+    {
+      "id": "MUS_REGION_ARRA",
+      "ref": "MUS_REGION_<id>",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded",
+      "note": "Expanded from the family using REG_ARRA (Book 4) with the REG_ prefix dropped; see questions."
+    },
+    {
+      "id": "MUS_SEA_CALM",
+      "ref": "MUS_SEA_CALM/WIND/STORM",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_SEA_WIND",
+      "ref": "MUS_SEA_CALM/WIND/STORM",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_SEA_STORM",
+      "ref": "MUS_SEA_CALM/WIND/STORM",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_RAID_APPROACH",
+      "ref": "MUS_RAID_APPROACH",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_RAID_ALARM",
+      "ref": "MUS_RAID_ALARM",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_COMBAT_1",
+      "ref": "MUS_COMBAT_1/2/3",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_COMBAT_2",
+      "ref": "MUS_COMBAT_1/2/3",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_COMBAT_3",
+      "ref": "MUS_COMBAT_1/2/3",
+      "book": 11,
+      "section": "03",
+      "origin": "expanded"
+    },
+    {
+      "id": "MUS_EXTRACTION",
+      "ref": "MUS_EXTRACTION",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_SEABATTLE",
+      "ref": "MUS_SEABATTLE",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_COUNCIL",
+      "ref": "MUS_COUNCIL",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_RETURN_SKARVHOLM",
+      "ref": "MUS_RETURN_SKARVHOLM",
+      "book": 11,
+      "section": "03",
+      "origin": "stated"
+    },
+    {
+      "id": "MUS_STINGER_DISCOVERY",
+      "ref": "discovery",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger."
+    },
+    {
+      "id": "MUS_STINGER_RESIDENT_DEATH",
+      "ref": "a resident's death",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger. Rule: music silences for a bar before the lament."
+    },
+    {
+      "id": "MUS_STINGER_BARGAIN_ACCEPTED",
+      "ref": "a bargain accepted",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger."
+    },
+    {
+      "id": "MUS_STINGER_HORN",
+      "ref": "the horn",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger played when the horn sounds; the horn itself is SFX_HORN."
+    },
+    {
+      "id": "MUS_STINGER_CHARGE_LEVEL_2",
+      "ref": "the charge level-2 tell (also a sound effect)",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger; the book says it is also a sound effect (SFX_CHARGE_LEVEL_2); see questions."
+    },
+    {
+      "id": "MUS_STINGER_LEVEL_UP",
+      "ref": "a level up",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger."
+    },
+    {
+      "id": "MUS_STINGER_BUILDING_FINISHED",
+      "ref": "a building finished",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger."
+    },
+    {
+      "id": "MUS_STINGER_CHAPTER_END",
+      "ref": "a chapter end",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stinger."
+    },
+    {
+      "id": "MUS_FESTIVAL_BEALTAINE",
+      "ref": "Bealtaine (day 31)",
+      "book": 11,
+      "section": "05",
+      "origin": "assigned"
+    },
+    {
+      "id": "MUS_FESTIVAL_LUNASA",
+      "ref": "Lúnasa (day 61)",
+      "book": 11,
+      "section": "05",
+      "origin": "assigned"
+    },
+    {
+      "id": "MUS_FESTIVAL_SAMHAIN",
+      "ref": "Samhain (day 91)",
+      "book": 11,
+      "section": "05",
+      "origin": "assigned"
+    },
+    {
+      "id": "MUS_FESTIVAL_YULE",
+      "ref": "Yule (day 105)",
+      "book": 11,
+      "section": "05",
+      "origin": "assigned"
+    },
+    {
+      "id": "MUS_LAMENT_GAELIC",
+      "ref": "keening for the Gaelic dead",
+      "book": 11,
+      "section": "06",
+      "origin": "assigned"
+    },
+    {
+      "id": "MUS_LAMENT_NORSE",
+      "ref": "a sung list of deeds for the Norse dead",
+      "book": 11,
+      "section": "06",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_FOOTSTEP_SHINGLE",
+      "ref": "shingle",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_SAND",
+      "ref": "sand",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_MACHAIR",
+      "ref": "machair",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_HEATHER",
+      "ref": "heather",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_PEAT",
+      "ref": "peat",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_MUD",
+      "ref": "mud",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_STONE",
+      "ref": "stone",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_TIMBER_DECK",
+      "ref": "timber deck",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_PLANK_ROAD",
+      "ref": "plank road",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_FOOTSTEP_SNOW",
+      "ref": "snow",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "From \"Footsteps by surface\"."
+    },
+    {
+      "id": "SFX_WORK_ADZE",
+      "ref": "adze",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_HAMMER",
+      "ref": "hammer",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_FORGE",
+      "ref": "forge",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_SICKLE",
+      "ref": "sickle",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_NET",
+      "ref": "net",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_SPADE",
+      "ref": "spade",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_QUERN",
+      "ref": "quern",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_WORK_LOOM",
+      "ref": "loom",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Work sound from the foley list."
+    },
+    {
+      "id": "SFX_LIGHT_ATTACK",
+      "ref": "Light attack",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Short whoosh, varied by weapon."
+    },
+    {
+      "id": "SFX_HIT_FLESH",
+      "ref": "flesh",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Hit by material \"(flesh, mail, shield)\"."
+    },
+    {
+      "id": "SFX_HIT_MAIL",
+      "ref": "mail",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Hit by material."
+    },
+    {
+      "id": "SFX_HIT_SHIELD",
+      "ref": "shield",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Hit by material."
+    },
+    {
+      "id": "SFX_CHARGE_LEVEL_1",
+      "ref": "Charge level 1",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Tell: a tightening creak and breath."
+    },
+    {
+      "id": "SFX_CHARGE_LEVEL_2",
+      "ref": "Charge level 2",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The audible guard-break warning; also a stinger (MUS_STINGER_CHARGE_LEVEL_2)."
+    },
+    {
+      "id": "SFX_PARRY",
+      "ref": "Parry",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_BLOCK",
+      "ref": "Block",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_GUARD_BREAK",
+      "ref": "Guard break",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_DODGE",
+      "ref": "Dodge",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_GORE_WET_IMPACT",
+      "ref": "Wet impacts",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Scaled by the gore setting."
+    },
+    {
+      "id": "SFX_GORE_BONE_CRACK",
+      "ref": "bone crack on heavy blows",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Scaled by the gore setting."
+    },
+    {
+      "id": "SFX_GORE_DISMEMBERMENT",
+      "ref": "dismemberment with a short, sickening detail",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Scaled by the gore setting; off at Low and Off."
+    },
+    {
+      "id": "SFX_DOWNED",
+      "ref": "Downed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "A fall, breath, and a heartbeat for crew."
+    },
+    {
+      "id": "SFX_OAR_CREAK",
+      "ref": "Oar creak and splash",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "In time with the stroke."
+    },
+    {
+      "id": "SFX_OAR_SPLASH",
+      "ref": "Oar creak and splash",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "In time with the stroke."
+    },
+    {
+      "id": "SFX_SAIL_FLAP",
+      "ref": "sail flap, fill and strain",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_SAIL_FILL",
+      "ref": "sail flap, fill and strain",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_SAIL_STRAIN",
+      "ref": "sail flap, fill and strain",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_HULL_GROAN",
+      "ref": "hull groan in storms",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_BEACHING",
+      "ref": "the scrape of beaching",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_GRAPNEL_IMPACT",
+      "ref": "grapnel and boarding-plank impacts",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_BOARDING_PLANK_IMPACT",
+      "ref": "grapnel and boarding-plank impacts",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_ARROW_WOOD",
+      "ref": "arrows into wood and shields",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_ARROW_SHIELD",
+      "ref": "arrows into wood and shields",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned"
+    },
+    {
+      "id": "SFX_TELL_RAN",
+      "ref": "Rán's sea-light hum under the water",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell; captioned; own volume slider (section 09)."
+    },
+    {
+      "id": "SFX_TELL_MANANNAN",
+      "ref": "hooves on water for Manannán",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell."
+    },
+    {
+      "id": "SFX_TELL_CAILLEACH",
+      "ref": "hail on stone for the Cailleach",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell."
+    },
+    {
+      "id": "SFX_TELL_BLUEMEN",
+      "ref": "verse from the troughs for the Blue Men",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell; \"Blue Men\" joined as one proper name."
+    },
+    {
+      "id": "SFX_TELL_DRAUGR",
+      "ref": "a dripping that follows for the draugr",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell."
+    },
+    {
+      "id": "SFX_TELL_BEANSI",
+      "ref": "keening for the bean sí",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell; see questions (bean sí vs washer at the ford)."
+    },
+    {
+      "id": "SFX_TELL_WASHER",
+      "ref": "the washer's rhythmic slap of cloth on stone",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Supernatural tell (Book 7 section 09 \"Washer at the ford\")."
+    },
+    {
+      "id": "SFX_HORN",
+      "ref": "Horn, north",
+      "book": 11,
+      "section": "09",
+      "origin": "assigned",
+      "note": "The alarm horn (caption example in section 09; stinger in section 03; noiseHorn 60 in Book 10)."
+    },
+    {
+      "id": "AMB_SURF_SHINGLE",
+      "ref": "surf on shingle",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_SURF_SAND",
+      "ref": "versus sand",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer (\"surf on shingle versus sand\")."
+    },
+    {
+      "id": "AMB_WIND_HEATHER",
+      "ref": "wind through heather",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_CORMORANTS_GULLS",
+      "ref": "cormorants and gulls",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_SEALS",
+      "ref": "seals",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_SHEEP",
+      "ref": "sheep",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_HEARTH",
+      "ref": "the hearth",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_RAIN_THATCH",
+      "ref": "rain on thatch",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_WIND_RIGGING",
+      "ref": "wind in rigging",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_FOG_QUIET",
+      "ref": "the dead quiet of fog",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Ambience layer."
+    },
+    {
+      "id": "AMB_WRECK_OPENING",
+      "ref": "wreck opening ambience",
+      "book": 11,
+      "section": "11",
+      "origin": "assigned",
+      "note": "Build 1 deliverable; may be a set of zone beds under the AMB_<zone>_<season>_<time> family."
+    },
+    {
+      "id": "AMB_CARRICK",
+      "ref": "Carrick ambience",
+      "book": 11,
+      "section": "11",
+      "origin": "assigned",
+      "note": "Build 2 deliverable; may be a set of zone beds under the AMB_<zone>_<season>_<time> family. Spelling follows the book; the region id is REG_CARRAIG."
+    }
+  ],
+  "families": [
+    {
+      "pattern": "MUS_REGION_<id>",
+      "ref": "`MUS_REGION_<id>`",
+      "book": 11,
+      "section": "03",
+      "note": "Mainland hinterland palettes. Members expanded as entries from the three stated REG_ ids (REG_CARRAIG, REG_SALTNESS, REG_ARRA) with the REG_ prefix dropped."
+    },
+    {
+      "pattern": "MUS_SUPERNATURAL_<power>",
+      "ref": "`MUS_SUPERNATURAL_<power>`",
+      "book": 11,
+      "section": "03",
+      "note": "One per power motif. Not expanded: no POWER_ ids are stated in the books. Book 11 section 04 gives motifs for Rán, Manannán, the Cailleach and the Blue Men, and section 05 an aos sí motif."
+    },
+    {
+      "pattern": "MUS_FINALE_*",
+      "ref": "`MUS_FINALE_*`",
+      "book": 11,
+      "section": "03",
+      "note": "Chapter 8 cues, all themes converging; members not listed."
+    },
+    {
+      "pattern": "AMB_<zone>_<season>_<time>",
+      "ref": "`amb_<zone>_<season>_<time>.ogg`",
+      "book": 11,
+      "section": "10",
+      "note": "Derived from the file naming pattern; \"Every zone has a day and a night bed and seasonal variants\" (section 07). Members would follow ZONE_ ids; not expanded."
+    },
+    {
+      "pattern": "SFX_<event>_<variant>",
+      "ref": "`sfx_<event>_<variant>.ogg`",
+      "book": 11,
+      "section": "10",
+      "note": "Derived from the file naming pattern; whether <variant> is a named variant (surface, material) or a take number is not stated."
+    },
+    {
+      "pattern": "VO_<stringKey>",
+      "ref": "`vo_<stringKey>.ogg`",
+      "book": 11,
+      "section": "10",
+      "note": "Voiced barks are files named by string key (section 08); no bark is named in Book 11, so there are no VO_ entries."
+    }
+  ],
+  "deedTags": [
+    {
+      "tag": "THEFT",
+      "ref": "`THEFT`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "THREAT",
+      "ref": "`THREAT`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "TRIBUTE_TAKEN",
+      "ref": "`TRIBUTE_TAKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "FAIR_TRADE",
+      "ref": "`FAIR_TRADE`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "KILLING",
+      "ref": "`KILLING`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "CIVILIAN_KILLED",
+      "ref": "`CIVILIAN_KILLED`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SURRENDERED_KILLED",
+      "ref": "`SURRENDERED_KILLED`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SACRILEGE",
+      "ref": "`SACRILEGE`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SPARED",
+      "ref": "`SPARED`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "BURNING",
+      "ref": "`BURNING`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SEED_TAKEN",
+      "ref": "`SEED_TAKEN` / `SEED_LEFT`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SEED_LEFT",
+      "ref": "`SEED_TAKEN` / `SEED_LEFT`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SACRED_TAKEN",
+      "ref": "`SACRED_TAKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "RESCUE",
+      "ref": "`RESCUE`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "HOSTAGE_TAKEN",
+      "ref": "`HOSTAGE_TAKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "PROMISE_MADE",
+      "ref": "`PROMISE_MADE` / `PROMISE_KEPT` / `PROMISE_BROKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "PROMISE_KEPT",
+      "ref": "`PROMISE_MADE` / `PROMISE_KEPT` / `PROMISE_BROKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "PROMISE_BROKEN",
+      "ref": "`PROMISE_MADE` / `PROMISE_KEPT` / `PROMISE_BROKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "SAIL_SEEN",
+      "ref": "`SAIL_SEEN`",
+      "book": 6,
+      "section": "01"
+    }
+  ]
+}

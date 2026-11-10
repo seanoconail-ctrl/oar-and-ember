@@ -1,0 +1,234 @@
+# Small interface lettering for the build line. Authored by Claude for Stage 1.
+# Glyphs are full-resolution masks: '#' body, '.' empty; no outline or shading.
+# Covers "Build " and every character of a build id (digits, '.', '+', lowercase hex).
+# Add glyphs here before using new text in this face.
+sheet: font_small
+kind: font
+palette: book07
+rows: 7
+scale: 1
+outline: none
+shading: none
+spacing: 1
+space: 3
+ramp.muted: O
+
+glyph 0
+.##.
+#..#
+#..#
+#..#
+#..#
+#..#
+.##.
+end
+
+glyph 1
+.#.
+##.
+.#.
+.#.
+.#.
+.#.
+###
+end
+
+glyph 2
+.##.
+#..#
+...#
+..#.
+.#..
+#...
+####
+end
+
+glyph 3
+.##.
+#..#
+...#
+.##.
+...#
+#..#
+.##.
+end
+
+glyph 4
+..#.
+.##.
+#.#.
+#.#.
+####
+..#.
+..#.
+end
+
+glyph 5
+####
+#...
+###.
+...#
+...#
+#..#
+.##.
+end
+
+glyph 6
+.##.
+#...
+#...
+###.
+#..#
+#..#
+.##.
+end
+
+glyph 7
+####
+...#
+..#.
+..#.
+.#..
+.#..
+.#..
+end
+
+glyph 8
+.##.
+#..#
+#..#
+.##.
+#..#
+#..#
+.##.
+end
+
+glyph 9
+.##.
+#..#
+#..#
+.###
+...#
+...#
+.##.
+end
+
+glyph .
+.
+.
+.
+.
+.
+.
+#
+end
+
+glyph +
+...
+...
+.#.
+###
+.#.
+...
+...
+end
+
+glyph B
+###.
+#..#
+#..#
+###.
+#..#
+#..#
+###.
+end
+
+glyph a
+....
+....
+.##.
+...#
+.###
+#..#
+.###
+end
+
+glyph b
+#...
+#...
+###.
+#..#
+#..#
+#..#
+###.
+end
+
+glyph c
+....
+....
+.###
+#...
+#...
+#...
+.###
+end
+
+glyph d
+...#
+...#
+.###
+#..#
+#..#
+#..#
+.###
+end
+
+glyph e
+....
+....
+.##.
+#..#
+####
+#...
+.###
+end
+
+glyph f
+.##
+#..
+###
+#..
+#..
+#..
+#..
+end
+
+glyph i
+#
+.
+#
+#
+#
+#
+#
+end
+
+glyph l
+#
+#
+#
+#
+#
+#
+#
+end
+
+glyph u
+....
+....
+#..#
+#..#
+#..#
+#..#
+.###
+end

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+# Render-to-image checks (npm run art:check) write here; the images are inspected, not committed.
+artifacts/
+*.log
+.DS_Store

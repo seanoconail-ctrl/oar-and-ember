@@ -1,0 +1,59 @@
+{
+  "name": "book07",
+  "source": "Book 7 section 08 palette figure (hex values transcribed from docs/pdf/07_Oar_and_Ember_Ship_and_Visual_Reference.pdf, page 9) and section 12 blood palette",
+  "transparent": ".",
+  "entries": [
+    { "code": "D", "name": "Deep sea", "hex": "#1F4E5F", "group": "sea and sky" },
+    { "code": "S", "name": "Shallows", "hex": "#3C7A86", "group": "sea and sky" },
+    { "code": "W", "name": "Swell", "hex": "#4F8B95", "group": "sea and sky" },
+    { "code": "F", "name": "Foam / mist", "hex": "#DCE7E4", "group": "sea and sky" },
+    { "code": "O", "name": "Overcast", "hex": "#8FA7AE", "group": "sea and sky" },
+    { "code": "N", "name": "Night water", "hex": "#2B3B4A", "group": "sea and sky" },
+    { "code": "g", "name": "Machair grass", "hex": "#8C9A7A", "group": "land and timber" },
+    { "code": "h", "name": "Heather", "hex": "#5F6E4E", "group": "land and timber" },
+    { "code": "s", "name": "Shingle", "hex": "#9A8B6E", "group": "land and timber" },
+    { "code": "t", "name": "Tarred oak", "hex": "#5A3B24", "group": "land and timber" },
+    { "code": "n", "name": "New timber", "hex": "#7B5434", "group": "land and timber" },
+    { "code": "p", "name": "Pitch / shadow", "hex": "#3A2616", "group": "land and timber" },
+    { "code": "r", "name": "Madder red", "hex": "#A8462C", "group": "cloth and hearth" },
+    { "code": "o", "name": "Ochre / hearth", "hex": "#C98F3A", "group": "cloth and hearth" },
+    { "code": "w", "name": "Undyed wool", "hex": "#E7D7B5", "group": "cloth and hearth" },
+    { "code": "b", "name": "Woad blue", "hex": "#4E5D7A", "group": "cloth and hearth" },
+    { "code": "G", "name": "Weld-green", "hex": "#6E7F4C", "group": "cloth and hearth" },
+    { "code": "l", "name": "Bleached linen", "hex": "#F4EFE4", "group": "cloth and hearth" },
+    {
+      "code": "1",
+      "name": "Sea-light (Rán)",
+      "hex": "#7FD6C9",
+      "group": "reserved accents",
+      "reserved": true
+    },
+    {
+      "code": "2",
+      "name": "Sídhe glamour",
+      "hex": "#C9B8E0",
+      "group": "reserved accents",
+      "reserved": true
+    },
+    {
+      "code": "3",
+      "name": "Corpse-light",
+      "hex": "#E9F0A0",
+      "group": "reserved accents",
+      "reserved": true
+    },
+    {
+      "code": "4",
+      "name": "Danger tell",
+      "hex": "#D23C2C",
+      "group": "reserved accents",
+      "reserved": true
+    },
+    { "code": "5", "name": "Hit flash", "hex": "#FFFFFF", "group": "reserved accents" },
+    { "code": "k", "name": "Outline ink", "hex": "#22313A", "group": "reserved accents" },
+    { "code": "6", "name": "Blood, fresh", "hex": "#B32424", "group": "blood" },
+    { "code": "7", "name": "Blood, dark", "hex": "#8E1B1B", "group": "blood" },
+    { "code": "8", "name": "Blood, dried", "hex": "#5A0F12", "group": "blood" },
+    { "code": "9", "name": "Blood, highlight", "hex": "#D9483B", "group": "blood" }
+  ]
+}

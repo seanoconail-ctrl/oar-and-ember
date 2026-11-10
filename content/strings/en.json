@@ -1,0 +1,14 @@
+{
+  "ui.title.name": {
+    "text": "Oar and Ember"
+  },
+  "ui.title.build": {
+    "text": "Build {build}"
+  },
+  "ui.title.screen_label": {
+    "text": "Oar and Ember title screen. Build {build}."
+  },
+  "ui.boot.webgl2_missing": {
+    "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge, Firefox and Safari all support it."
+  }
+}

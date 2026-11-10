@@ -1,0 +1,37 @@
+{
+  "palette": "book07",
+  "letterbox": "k",
+  "backdrop": [
+    {
+      "colour": "k",
+      "toY": 128,
+      "blend": 64
+    },
+    {
+      "colour": "N",
+      "toY": 238
+    },
+    {
+      "colour": "S",
+      "toY": 239
+    },
+    {
+      "colour": "D",
+      "toY": 304,
+      "blend": 72
+    },
+    {
+      "colour": "N"
+    }
+  ],
+  "title": {
+    "font": "font_title",
+    "wordRamps": ["wool", "wool", "hearth"],
+    "centreY": 168
+  },
+  "build": {
+    "font": "font_small",
+    "ramp": "muted",
+    "bottomMargin": 14
+  }
+}

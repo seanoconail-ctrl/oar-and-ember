@@ -3,8 +3,35 @@
 A pixel-art Viking settlement RPG for the desktop browser.
 
 - Design documents: `docs/` (start with `docs/01_game_bible.md`; PDFs in `docs/pdf/`)
-- Build plan: `docs/03_stage_plan.md`
+- Build plan: `docs/03_stage_plan.md`; stage reports in `docs/stage-reports/`
+- Decisions and departures from the books: `docs/decision-log.md`
 - Instructions for coding sessions: `CLAUDE.md`
-- Tuning numbers: `content/balance.json`
+- Tuning numbers: `content/balance.json`; stable IDs: `content/ids.json`
 
-Status: design complete; no code yet. Stage 1 sets up the project.
+Status: Stage 1 (project setup) is done: the title screen builds, tests and publishes itself.
+
+## Play
+
+Every push to `main` is published by GitHub Actions to GitHub Pages:
+<https://seanoconail-ctrl.github.io/oar-and-ember/> (once Pages is switched on, see below).
+
+## Develop
+
+Needs Node 22.12 or later.
+
+```bash
+npm ci                 # install exact dependencies
+npm run dev            # play locally with live reload
+npm run lint           # ESLint (including the Book 2 layer rules) and Prettier
+npm test               # unit tests (Vitest)
+npm run build          # type-check and build to dist/
+npm run test:browser   # pixel-exact title screen check in Chromium, Firefox and WebKit (after build)
+npm run art:check      # render the title and fonts at 1x and 4x to artifacts/ for inspection
+```
+
+## Publishing
+
+`.github/workflows/ci.yml` runs lint, tests, the build and the browser smoke tests on every push.
+On `main` it also publishes `dist/` to GitHub Pages and re-runs the smoke tests against the
+published address. One repository setting is needed once: **Settings > Pages > Build and
+deployment > Source: GitHub Actions**.
