@@ -120,9 +120,7 @@ export class InputMapper {
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();
     const pressed = new Set(
-      [...held].filter(
-        (a) => !this.#heldBefore.has(a) || (fresh.has(a) && !this.#toggle.has(a)),
-      ),
+      [...held].filter((a) => !this.#heldBefore.has(a) || (fresh.has(a) && !this.#toggle.has(a))),
     );
     const released = new Set([...this.#heldBefore].filter((a) => !held.has(a)));
     this.#physicalBefore = physical;
