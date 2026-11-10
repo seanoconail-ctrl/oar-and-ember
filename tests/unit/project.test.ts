@@ -88,10 +88,19 @@ describe('the GitHub Actions workflow', () => {
     }
   });
 
-  it('checks Firefox and WebKit on macOS, which has a GPU (decisions S1-16, S1-18)', () => {
+  it('checks Firefox and WebKit on macOS, which has a GPU (decisions S1-16, S1-18, BR-1)', () => {
     expect(workflow).toMatch(/runs-on: macos-15-intel[\s\S]*--project=firefox\n/);
     expect(workflow).toMatch(/continue-on-error: true[\s\S]*--project=webkit\n/);
-    expect(workflow).toContain('needs: [check, browsers-firefox]');
+    // TEMPORARY (BR-1): publishing waits only for the Linux check until Stage 12, when the deploy
+    // must need browsers-firefox again and WebKit must block too (Book 3, Stage 12 check 5).
+    expect(workflow).toContain('needs: [check]');
+    expect(workflow).toContain('browsers-firefox:');
+    // The Firefox job is not excused: a failure still shows red.
+    const firefoxJob = workflow.slice(
+      workflow.indexOf('browsers-firefox:'),
+      workflow.indexOf('--project=firefox'),
+    );
+    expect(firefoxJob).not.toContain('continue-on-error');
   });
 
   it('publishes to GitHub Pages only from a push, and checks the published address', () => {
