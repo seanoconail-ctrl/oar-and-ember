@@ -1,0 +1,2265 @@
+{
+ "title": "Oar and Ember balance sheet",
+ "revision": "2.1",
+ "source": "Book 10",
+ "tables": {
+  "timeAndTravel": {
+   "clock": [
+    {
+     "Key": "secondsPerHour",
+     "Value": "50",
+     "Notes": "Real seconds per game hour on foot"
+    },
+    {
+     "Key": "dayStart",
+     "Value": "06:00",
+     "Notes": "Waking time"
+    },
+    {
+     "Key": "dayEnd",
+     "Value": "02:00",
+     "Notes": "Collapse if still awake"
+    },
+    {
+     "Key": "activeDayMinutes",
+     "Value": "16.7",
+     "Notes": "Real minutes from 06:00 to 02:00"
+    },
+    {
+     "Key": "sleepAfter",
+     "Value": "18:00",
+     "Notes": "Earliest time a bed ends the day"
+    },
+    {
+     "Key": "collapsePenalty",
+     "Value": "Wake 08:00, stamina max -30 for the day",
+     "Notes": ""
+    },
+    {
+     "Key": "dayLengthOption",
+     "Value": "0.75 to 1.5",
+     "Notes": "Multiplier on secondsPerHour"
+    },
+    {
+     "Key": "watchHours",
+     "Value": "6",
+     "Notes": "Morning, Day, Evening, Night"
+    },
+    {
+     "Key": "seaWatchAnimSeconds",
+     "Value": "4",
+     "Notes": "Real seconds per watch on the sea map"
+    }
+   ],
+   "daylight": [
+    {
+     "Season": "Spring",
+     "Light from": "06:30",
+     "Dark from": "20:00"
+    },
+    {
+     "Season": "Summer",
+     "Light from": "04:30",
+     "Dark from": "23:00"
+    },
+    {
+     "Season": "Autumn",
+     "Light from": "07:00",
+     "Dark from": "19:00"
+    },
+    {
+     "Season": "Winter",
+     "Light from": "08:30",
+     "Dark from": "16:00"
+    }
+   ],
+   "tide": [
+    {
+     "Key": "alternation",
+     "Value": "Flood and ebb each watch",
+     "Notes": "Low water at the end of each ebb watch"
+    },
+    {
+     "Key": "phaseShift",
+     "Value": "1 watch every 3 days",
+     "Notes": ""
+    },
+    {
+     "Key": "springTideDays",
+     "Value": "1, 2, 3 and 16, 17, 18 of each season",
+     "Notes": ""
+    },
+    {
+     "Key": "tidalGroundWindow",
+     "Value": "3 game hours around low water",
+     "Notes": "2.5 real minutes"
+    },
+    {
+     "Key": "springLowExtra",
+     "Value": "Causeways and deep caves open only on spring tide days",
+     "Notes": ""
+    }
+   ],
+   "movementOnFoot": [
+    {
+     "Mode": "Sneak",
+     "Speed": "1.75",
+     "Notes": "Noise x0.25"
+    },
+    {
+     "Mode": "Walk",
+     "Speed": "3.5",
+     "Notes": "Default"
+    },
+    {
+     "Mode": "Run",
+     "Speed": "6.0",
+     "Notes": "Drains 5 stamina per second only while in combat"
+    },
+    {
+     "Mode": "Carry",
+     "Speed": "1.8",
+     "Notes": "Lot or person; attacks disabled"
+    },
+    {
+     "Mode": "Charge (heavy)",
+     "Speed": "1.5",
+     "Notes": "While holding a heavy"
+    },
+    {
+     "Mode": "Climb",
+     "Speed": "1.0",
+     "Notes": "On marked climbing routes"
+    }
+   ],
+   "seaTravel": [
+    {
+     "Key": "watchesFormula",
+     "Value": "baseWatches x 3 / effectiveSpeed"
+    },
+    {
+     "Key": "windFactorRunning",
+     "Value": "1.2"
+    },
+    {
+     "Key": "windFactorBroadReach",
+     "Value": "1.0"
+    },
+    {
+     "Key": "windFactorBeam",
+     "Value": "0.8"
+    },
+    {
+     "Key": "windFactorCloseHauled",
+     "Value": "0.5"
+    },
+    {
+     "Key": "windFactorAgainst",
+     "Value": "0 (row)"
+    },
+    {
+     "Key": "rowingFactor",
+     "Value": "oarSpeed x rowersPresent / rowingCrew x 0.8"
+    },
+    {
+     "Key": "storesPerPersonPerWatch",
+     "Value": "0.25 rd"
+    },
+    {
+     "Key": "forecastAccuracy",
+     "Value": "0.8"
+    }
+   ],
+   "routes": [
+    {
+     "Route": "Skarvholm to Carrick",
+     "Base watches": "2",
+     "Exposure": "2",
+     "Notes": ""
+    },
+    {
+     "Route": "Skarvholm to Saltvik",
+     "Base watches": "3",
+     "Exposure": "2",
+     "Notes": ""
+    },
+    {
+     "Route": "Skarvholm to Kilbrecc",
+     "Base watches": "3",
+     "Exposure": "2",
+     "Notes": ""
+    },
+    {
+     "Route": "Skarvholm to Crowwick",
+     "Base watches": "2",
+     "Exposure": "1",
+     "Notes": ""
+    },
+    {
+     "Route": "Skarvholm to the Cauldron",
+     "Base watches": "1",
+     "Exposure": "3",
+     "Notes": "Tide gate: slack only"
+    },
+    {
+     "Route": "Cauldron to Glen Arra",
+     "Base watches": "1",
+     "Exposure": "2",
+     "Notes": "Saves about two watches"
+    },
+    {
+     "Route": "Crowwick to Glen Arra",
+     "Base watches": "2",
+     "Exposure": "1",
+     "Notes": ""
+    },
+    {
+     "Route": "Crowwick to Inis Rón",
+     "Base watches": "2",
+     "Exposure": "1",
+     "Notes": ""
+    },
+    {
+     "Route": "Carrick to Kilbrecc",
+     "Base watches": "1",
+     "Exposure": "1",
+     "Notes": "Coastal"
+    },
+    {
+     "Route": "Kilbrecc to Dún Fiach",
+     "Base watches": "2",
+     "Exposure": "1",
+     "Notes": "Coastal"
+    },
+    {
+     "Route": "Carrick to Saltvik",
+     "Base watches": "2",
+     "Exposure": "1",
+     "Notes": "Coastal"
+    },
+    {
+     "Route": "Saltvik to Crowwick",
+     "Base watches": "2",
+     "Exposure": "2",
+     "Notes": ""
+    },
+    {
+     "Route": "Skarvholm to Blue Men's Sound",
+     "Base watches": "3",
+     "Exposure": "3",
+     "Notes": "Winter closed"
+    },
+    {
+     "Route": "Blue Men's Sound to Kaldness",
+     "Base watches": "3",
+     "Exposure": "3",
+     "Notes": "Winter closed"
+    }
+   ]
+  },
+  "foodFuelAndSeasons": {
+   "consumption": [
+    {
+     "Key": "foodPerPersonPerDay",
+     "Value": "1 rd (residents, player, hostages)"
+    },
+    {
+     "Key": "rationFull",
+     "Value": "1.0: no penalty"
+    },
+    {
+     "Key": "rationShort",
+     "Value": "0.75: morale -1 band per 5 days, healing -25%"
+    },
+    {
+     "Key": "rationHungry",
+     "Value": "0.5: morale -1 band per 3 days, healing -50%, work -20%"
+    },
+    {
+     "Key": "rationStarving",
+     "Value": "0: sickness risk +10% per day, death risk after 5 days"
+    }
+   ],
+   "foodItems": [
+    {
+     "Item": "Grain lot",
+     "Food value": "50 rd",
+     "Keeps": "1 year in a storehouse; loses 10% per season without",
+     "Notes": "One cargo slot"
+    },
+    {
+     "Item": "Fresh fish",
+     "Food value": "1 rd per fish",
+     "Keeps": "2 days",
+     "Notes": ""
+    },
+    {
+     "Item": "Dried fish",
+     "Food value": "0.8 of fresh",
+     "Keeps": "1 season",
+     "Notes": "Racks, 3 dry days"
+    },
+    {
+     "Item": "Smoked fish or meat",
+     "Food value": "0.9 of fresh",
+     "Keeps": "2 seasons",
+     "Notes": "Smoke-house, 1 day, 1 fuel per 20 rd"
+    },
+    {
+     "Item": "Salted fish or meat",
+     "Food value": "1.0 of fresh",
+     "Keeps": "1 year",
+     "Notes": "1 salt lot per 60 rd"
+    },
+    {
+     "Item": "Preserved lot",
+     "Food value": "40 rd",
+     "Keeps": "As its method",
+     "Notes": "One cargo slot"
+    },
+    {
+     "Item": "Eggs",
+     "Food value": "4 rd per climb",
+     "Keeps": "5 days",
+     "Notes": "Spring days 10 to 40"
+    },
+    {
+     "Item": "Milk and cheese",
+     "Food value": "See livestock",
+     "Keeps": "Cheese 1 season",
+     "Notes": ""
+    }
+   ],
+   "gatheringAndFishing": [
+    {
+     "Source": "Fishing from shore",
+     "Spring": "3",
+     "Summer": "4",
+     "Autumn": "3",
+     "Winter": "1 (calm days only)"
+    },
+    {
+     "Source": "Fishing from the boat (2 crew)",
+     "Spring": "5",
+     "Summer": "6",
+     "Autumn": "4",
+     "Winter": "0"
+    },
+    {
+     "Source": "Shellfish and seaweed",
+     "Spring": "2 per low-tide window",
+     "Summer": "2",
+     "Autumn": "2",
+     "Winter": "1"
+    },
+    {
+     "Source": "Driftwood",
+     "Spring": "1 load per search",
+     "Summer": "1",
+     "Autumn": "2 after storms",
+     "Winter": "3 after storms"
+    }
+   ],
+   "barleyAndKale": [
+    {
+     "Key": "skarvholmPlots",
+     "Value": "4 (6 after clearing; 2 more worker-days each)"
+    },
+    {
+     "Key": "seedPerPlot",
+     "Value": "25 rd of grain"
+    },
+    {
+     "Key": "sowWindow",
+     "Value": "Spring days 1 to 25; -4% yield per day late after day 20"
+    },
+    {
+     "Key": "sowLabour",
+     "Value": "2 worker-days per plot"
+    },
+    {
+     "Key": "weedLabour",
+     "Value": "1 worker-day per plot in summer; unweeded -30%"
+    },
+    {
+     "Key": "harvestWindow",
+     "Value": "Autumn days 61 to 75"
+    },
+    {
+     "Key": "harvestLabour",
+     "Value": "3 worker-days per plot"
+    },
+    {
+     "Key": "yieldPerPlot",
+     "Value": "150 rd (3 grain lots); bad summer -30%"
+    },
+    {
+     "Key": "overripe",
+     "Value": "-50% after day 80; lost after day 90"
+    },
+    {
+     "Key": "kaleGarden",
+     "Value": "1 rd per day in summer and autumn"
+    }
+   ],
+   "livestock": [
+    {
+     "Animal": "Cow",
+     "Milk per day": "1.5 spring and summer, 0.75 autumn, 0 winter",
+     "Slaughter": "80 rd",
+     "Winter needs": "0.15 hay per day and a byre",
+     "Notes": "Without byre: condition falls, death after 15 days"
+    },
+    {
+     "Animal": "Sheep",
+     "Milk per day": "0.25 summer",
+     "Slaughter": "15 rd",
+     "Winter needs": "0.03 hay per day",
+     "Notes": "Graze machair; 1 wool lot per 6 sheep at shearing"
+    },
+    {
+     "Animal": "Starting flock",
+     "Milk per day": "6 half-wild sheep on Skarvholm",
+     "Slaughter": "",
+     "Winter needs": "",
+     "Notes": ""
+    }
+   ],
+   "fuelAndHay": [
+    {
+     "Key": "peatCut",
+     "Value": "5 loads per worker-day, spring and summer"
+    },
+    {
+     "Key": "peatDry",
+     "Value": "20 dry days before use"
+    },
+    {
+     "Key": "houseFuelPerDay",
+     "Value": "Summer 0.2, spring and autumn 0.5, winter 1.0"
+    },
+    {
+     "Key": "forgeFuel",
+     "Value": "1 load per working day"
+    },
+    {
+     "Key": "coldEffect",
+     "Value": "No fuel in a winter house: vitality max -10, sickness +5% per day, healing -50%"
+    },
+    {
+     "Key": "hayCut",
+     "Value": "3 loads per worker-day, summer days 31 to 60; needs 3 dry days"
+    }
+   ],
+   "sickness": [
+    {
+     "Condition": "Baseline",
+     "Daily risk per resident": "0.2%"
+    },
+    {
+     "Condition": "Autumn",
+     "Daily risk per resident": "+0.5%"
+    },
+    {
+     "Condition": "Winter",
+     "Daily risk per resident": "+1%"
+    },
+    {
+     "Condition": "Cold",
+     "Daily risk per resident": "+5%"
+    },
+    {
+     "Condition": "Hungry",
+     "Daily risk per resident": "+3%"
+    },
+    {
+     "Condition": "Wounded",
+     "Daily risk per resident": "+2%"
+    },
+    {
+     "Condition": "Crowded (over 10 in one house)",
+     "Daily risk per resident": "+1%"
+    },
+    {
+     "Condition": "With a healer caring",
+     "Daily risk per resident": "x0.5"
+    }
+   ],
+   "winterPreparationFormulaText": "food needed  = 30 days x mouths + 25% reserve\nfuel needed  = 30 x heated houses x 1.0 + smoke-house and forge use\nhay needed   = 30 x (cows x 0.15 + sheep x 0.03)\nExample, day 90 with 15 mouths, 2 houses, 3 cows, 12 sheep:\nfood 563 rd   fuel 75 loads   hay 25 loads"
+  },
+  "cargoTradeAndSilver": {
+   "cargoValues": [
+    {
+     "Lot or item": "Grain lot",
+     "Value": "2",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Preserved fish or meat lot",
+     "Value": "2",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Salt lot",
+     "Value": "3",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Iron lot",
+     "Value": "6",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Timber lot",
+     "Value": "2",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Tar lot",
+     "Value": "3",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Wool lot",
+     "Value": "3",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Cloth lot",
+     "Value": "8",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Dye lot",
+     "Value": "6",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Hides lot",
+     "Value": "4",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Silver lot (hacksilver)",
+     "Value": "20",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Church plate",
+     "Value": "30",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Wine lot",
+     "Value": "12",
+     "Slots": "1"
+    },
+    {
+     "Lot or item": "Cow",
+     "Value": "5",
+     "Slots": "2 (pen)"
+    },
+    {
+     "Lot or item": "Sheep (pen of 3)",
+     "Value": "3",
+     "Slots": "2"
+    },
+    {
+     "Lot or item": "Amber necklace",
+     "Value": "6",
+     "Slots": "0"
+    },
+    {
+     "Lot or item": "Silver arm-ring",
+     "Value": "12",
+     "Slots": "0"
+    }
+   ],
+   "priceModifiers": [
+    {
+     "Condition": "Recognised stolen goods at an honest buyer",
+     "Effect": "-30% and a SAIL_SEEN"
+    },
+    {
+     "Condition": "Sold quietly through Ottar",
+     "Effect": "-20% cut"
+    },
+    {
+     "Condition": "Lúnasa fair",
+     "Effect": "+10% sale prices"
+    },
+    {
+     "Condition": "Local scarcity or glut",
+     "Effect": "+50% or -50%"
+    },
+    {
+     "Condition": "Faction hostile",
+     "Effect": "No trade"
+    }
+   ],
+   "weaponsArmourAndTools": [
+    {
+     "Item": "Spear",
+     "Price": "2",
+     "Notes": ""
+    },
+    {
+     "Item": "Shield",
+     "Price": "1",
+     "Notes": ""
+    },
+    {
+     "Item": "Axe",
+     "Price": "3",
+     "Notes": ""
+    },
+    {
+     "Item": "Seax",
+     "Price": "2",
+     "Notes": ""
+    },
+    {
+     "Item": "Bow and arrows",
+     "Price": "3",
+     "Notes": ""
+    },
+    {
+     "Item": "Helmet",
+     "Price": "10",
+     "Notes": ""
+    },
+    {
+     "Item": "Mail shirt",
+     "Price": "40",
+     "Notes": ""
+    },
+    {
+     "Item": "Sword",
+     "Price": "24",
+     "Notes": "Not forgeable on Skarvholm"
+    },
+    {
+     "Item": "Dane axe",
+     "Price": "12",
+     "Notes": ""
+    },
+    {
+     "Item": "Tool head (axe, adze, sickle, spade)",
+     "Price": "1",
+     "Notes": ""
+    },
+    {
+     "Item": "Fishing net",
+     "Price": "2",
+     "Notes": ""
+    }
+   ],
+   "wagesDebtsAndPayments": [
+    {
+     "Key": "hiredOarsman",
+     "Value": "1 oz per voyage-day plus one share"
+    },
+    {
+     "Key": "sellsword",
+     "Value": "3 oz per day"
+    },
+    {
+     "Key": "kolbeinnDebt",
+     "Value": "30 oz"
+    },
+    {
+     "Key": "asaDebt",
+     "Value": "40 oz"
+    },
+    {
+     "Key": "ransomDonnchad",
+     "Value": "60 oz"
+    },
+    {
+     "Key": "ransomOrdinary",
+     "Value": "15 oz"
+    },
+    {
+     "Key": "carrickTribute",
+     "Value": "20 oz (the hidden silver lot)"
+    },
+    {
+     "Key": "ormTribute",
+     "Value": "One tenth of all plunder plus one hostage"
+    },
+    {
+     "Key": "shareSystem",
+     "Value": "Plunder split: household 60%, crew shares 40% (affects Gain regard)"
+    }
+   ]
+  },
+  "shipStatisticsAndCosts": {
+   "hulls": [
+    {
+     "Hull": "T1 Coastal boat",
+     "Length tiles": "7",
+     "Oars": "6",
+     "Berths": "8",
+     "Rowing crew": "4",
+     "Cargo": "4",
+     "Draft": "Shallow",
+     "Sea": "2",
+     "Oar": "2",
+     "Sail": "3",
+     "Integrity": "100",
+     "Slots": "3"
+    },
+    {
+     "Hull": "T2 Karvi",
+     "Length tiles": "12",
+     "Oars": "16",
+     "Berths": "18",
+     "Rowing crew": "10",
+     "Cargo": "10",
+     "Draft": "Shallow",
+     "Sea": "3",
+     "Oar": "3",
+     "Sail": "4",
+     "Integrity": "180",
+     "Slots": "5"
+    },
+    {
+     "Hull": "T3a Snekkja",
+     "Length tiles": "18",
+     "Oars": "26",
+     "Berths": "30",
+     "Rowing crew": "16",
+     "Cargo": "8",
+     "Draft": "Medium",
+     "Sea": "3",
+     "Oar": "5",
+     "Sail": "4",
+     "Integrity": "240",
+     "Slots": "6"
+    },
+    {
+     "Hull": "T3b Knarr",
+     "Length tiles": "13",
+     "Oars": "4",
+     "Berths": "10",
+     "Rowing crew": "4",
+     "Cargo": "24",
+     "Draft": "Deep",
+     "Sea": "5",
+     "Oar": "1",
+     "Sail": "4",
+     "Integrity": "260",
+     "Slots": "5"
+    }
+   ],
+   "hullCosts": [
+    {
+     "Hull": "T2 Karvi",
+     "Buy": "160 oz",
+     "Build materials": "14 timber, 4 iron, 3 tar, 2 cloth",
+     "Build labour": "40 worker-days, boatwright skill 3"
+    },
+    {
+     "Hull": "T3a Snekkja",
+     "Buy": "420 oz",
+     "Build materials": "26 timber, 8 iron, 5 tar, 4 cloth",
+     "Build labour": "90 worker-days, boatwright skill 4"
+    },
+    {
+     "Hull": "T3b Knarr",
+     "Buy": "320 oz",
+     "Build materials": "22 timber, 6 iron, 5 tar, 4 cloth",
+     "Build labour": "70 worker-days, boatwright skill 4"
+    }
+   ],
+   "fittings": [
+    {
+     "Fitting": "Extended hold",
+     "Cost": "12 oz",
+     "Self-built": "1 timber, 1 iron, 3 worker-days",
+     "Effect": "Cargo +2 (+1 on T1)",
+     "Drawback": "Oar -1; rowing crew +1"
+    },
+    {
+     "Fitting": "Raised bow platform",
+     "Cost": "10 oz",
+     "Self-built": "2 timber, 2 worker-days",
+     "Effect": "Boarding defence +20%; archers +3 tiles",
+     "Drawback": "Cargo -1"
+    },
+    {
+     "Fitting": "Shield rack",
+     "Cost": "4 oz",
+     "Self-built": "1 timber",
+     "Effect": "Missile hits -40% with shields up; intimidation +1",
+     "Drawback": "Identification +0.2"
+    },
+    {
+     "Fitting": "Grapnels and planks",
+     "Cost": "8 oz",
+     "Self-built": "2 iron",
+     "Effect": "Grapple contest +25%",
+     "Drawback": "Cargo -1"
+    },
+    {
+     "Fitting": "Awning and stores",
+     "Cost": "8 oz",
+     "Self-built": "2 cloth",
+     "Effect": "Stores +4 days; light wounds heal at sea",
+     "Drawback": "Cargo -1"
+    },
+    {
+     "Fitting": "Bailing station",
+     "Cost": "5 oz",
+     "Self-built": "1 timber",
+     "Effect": "Storm and hull damage -25%",
+     "Drawback": "Cargo -1"
+    },
+    {
+     "Fitting": "Towing gear",
+     "Cost": "4 oz",
+     "Self-built": "1 timber",
+     "Effect": "Tow a boat for +2 cargo",
+     "Drawback": "Speed -1 while towing"
+    },
+    {
+     "Fitting": "Better sail and rigging",
+     "Cost": "30 oz",
+     "Self-built": "3 cloth, 1 tar",
+     "Effect": "Sail +1; close-hauled factor 0.65",
+     "Drawback": "Wear +50% without a shipwright"
+    },
+    {
+     "Fitting": "Carved beast-head",
+     "Cost": "12 oz",
+     "Self-built": "4 worker-days, carving skill 3",
+     "Effect": "Intimidation +1",
+     "Drawback": "Offends land-spirits and locals if not unshipped"
+    },
+    {
+     "Fitting": "Gilt weather-vane",
+     "Cost": "40 oz",
+     "Self-built": "1 silver lot",
+     "Effect": "Trade prices +5%; forecast 0.9",
+     "Drawback": "Identification +0.3"
+    }
+   ],
+   "refitsWearAndRepair": [
+    {
+     "Key": "shallowDraft",
+     "Value": "20 oz or 2 timber and 4 worker-days; sea -1, cargo -1"
+    },
+    {
+     "Key": "doubledStrakes",
+     "Value": "30 oz or 3 timber, 1 iron, 6 worker-days; integrity +30%, oar -1"
+    },
+    {
+     "Key": "recaulk",
+     "Value": "1 tar, 2 worker-days; wear to 0"
+    },
+    {
+     "Key": "wearPerWatchAtSea",
+     "Value": "1"
+    },
+    {
+     "Key": "wearPerBattle",
+     "Value": "5"
+    },
+    {
+     "Key": "wearLeak",
+     "Value": "At 50: oar -1"
+    },
+    {
+     "Key": "wearSailRisk",
+     "Value": "At 80: 10% per storm watch of sail damage"
+    },
+    {
+     "Key": "maintenance",
+     "Value": "Shipwright removes 10 wear per worker-day"
+    },
+    {
+     "Key": "repair",
+     "Value": "1 timber per 25 integrity; 1 worker-day per 20"
+    },
+    {
+     "Key": "stormDamage",
+     "Value": "5 x storm strength x exposure / seaworthiness per watch"
+    }
+   ]
+  },
+  "combatTimings": {
+   "weapons": [
+    {
+     "Weapon": "Spear",
+     "Reach tiles": "1.7",
+     "Combo": "2",
+     "Windup": "14",
+     "Active": "6",
+     "Recovery": "16",
+     "Chain window": "10",
+     "Damage": "22",
+     "vs shield": "8",
+     "Stamina": "14"
+    },
+    {
+     "Weapon": "Axe",
+     "Reach tiles": "1.1",
+     "Combo": "3",
+     "Windup": "16",
+     "Active": "6",
+     "Recovery": "20",
+     "Chain window": "10",
+     "Damage": "26",
+     "vs shield": "22",
+     "Stamina": "18"
+    },
+    {
+     "Weapon": "Sword",
+     "Reach tiles": "1.25",
+     "Combo": "3",
+     "Windup": "11",
+     "Active": "5",
+     "Recovery": "13",
+     "Chain window": "9",
+     "Damage": "22",
+     "vs shield": "10",
+     "Stamina": "12"
+    },
+    {
+     "Weapon": "Seax",
+     "Reach tiles": "0.75",
+     "Combo": "3",
+     "Windup": "8",
+     "Active": "4",
+     "Recovery": "9",
+     "Chain window": "8",
+     "Damage": "14",
+     "vs shield": "4",
+     "Stamina": "8"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Reach tiles": "1.4",
+     "Combo": "2",
+     "Windup": "24",
+     "Active": "7",
+     "Recovery": "26",
+     "Chain window": "12",
+     "Damage": "40",
+     "vs shield": "35",
+     "Stamina": "26"
+    },
+    {
+     "Weapon": "Bow",
+     "Reach tiles": "8.3",
+     "Combo": "1",
+     "Windup": "30 draw",
+     "Active": "-",
+     "Recovery": "20",
+     "Chain window": "-",
+     "Damage": "18",
+     "vs shield": "6",
+     "Stamina": "10"
+    },
+    {
+     "Weapon": "Thrown spear",
+     "Reach tiles": "5",
+     "Combo": "1",
+     "Windup": "18",
+     "Active": "-",
+     "Recovery": "22",
+     "Chain window": "-",
+     "Damage": "24",
+     "vs shield": "12",
+     "Stamina": "16"
+    }
+   ],
+   "chargedHeavy": [
+    {
+     "Key": "level1At",
+     "Value": "18 ticks held: damage x1.5, vs shield x1.5, tell: glint"
+    },
+    {
+     "Key": "level2At",
+     "Value": "45 ticks held: damage x2.0, guard break (unblockable, parryable), tell: flash and sound"
+    },
+    {
+     "Key": "maxHold",
+     "Value": "90 ticks, then auto-release"
+    },
+    {
+     "Key": "releaseRecovery",
+     "Value": "Weapon recovery + 10 ticks"
+    },
+    {
+     "Key": "staminaCost",
+     "Value": "Weapon stamina x1.5 (L1), x2.0 (L2)"
+    }
+   ],
+   "defence": [
+    {
+     "Key": "parryStartup",
+     "Value": "2 ticks"
+    },
+    {
+     "Key": "parryWindow",
+     "Value": "8 ticks (option: up to 12)"
+    },
+    {
+     "Key": "parryRecoveryOnMiss",
+     "Value": "18 ticks"
+    },
+    {
+     "Key": "parryCost",
+     "Value": "8 stamina, refunded on success"
+    },
+    {
+     "Key": "parryStagger",
+     "Value": "Attacker staggered 36 ticks; riposte damage x1.5"
+    },
+    {
+     "Key": "blockArc",
+     "Value": "120 degrees front"
+    },
+    {
+     "Key": "blockCost",
+     "Value": "0.6 x the attack's shield damage"
+    },
+    {
+     "Key": "guardBreak",
+     "Value": "Stamina empty while blocking: 40 ticks broken"
+    },
+    {
+     "Key": "dodge",
+     "Value": "20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles"
+    },
+    {
+     "Key": "shove",
+     "Value": "12 stamina; breaks block; target staggered 20 ticks"
+    },
+    {
+     "Key": "turnLock",
+     "Value": "Facing locked from windup start to recovery end"
+    }
+   ],
+   "vitalityStaminaAndArmour": [
+    {
+     "Key": "vitality",
+     "Value": "100 for the steerer and adult residents"
+    },
+    {
+     "Key": "stamina",
+     "Value": "100; regenerates 25 per second after 36 ticks without spending; half while blocking"
+    },
+    {
+     "Key": "padded",
+     "Value": "-10% all damage"
+    },
+    {
+     "Key": "mail",
+     "Value": "-30% cut, -15% thrust and missiles"
+    },
+    {
+     "Key": "helmet",
+     "Value": "Head-blow critical chance halved"
+    },
+    {
+     "Key": "bloodiedBelow",
+     "Value": "50% vitality"
+    },
+    {
+     "Key": "downedBleedOut",
+     "Value": "45 seconds unless carried or treated"
+    },
+    {
+     "Key": "secondWind",
+     "Value": "5 seconds; adjacent ally lifts the steerer to 25 vitality; once per scene"
+    },
+    {
+     "Key": "dismemberChance",
+     "Value": "35% on killing blows from heavy axe, Dane axe or sword"
+    },
+    {
+     "Key": "finisherHold",
+     "Value": "24 ticks"
+    },
+    {
+     "Key": "hitStop",
+     "Value": "3 ticks"
+    }
+   ]
+  },
+  "enemiesWildlifeAndPerception": {
+   "archetypes": [
+    {
+     "Archetype": "Civilian (farmer, keeper, trader)",
+     "Vitality": "60",
+     "Armour": "None",
+     "Weapons": "Tool or seax",
+     "Behaviour": "Flees, hides, pleads; fights if cornered"
+    },
+    {
+     "Archetype": "Monk",
+     "Vitality": "50",
+     "Armour": "None",
+     "Weapons": "None",
+     "Behaviour": "Flees to tower or church; claims sanctuary"
+    },
+    {
+     "Archetype": "Guard",
+     "Vitality": "100",
+     "Armour": "Padded",
+     "Weapons": "Spear and shield",
+     "Behaviour": "Holds posts, raises alarm"
+    },
+    {
+     "Archetype": "Warrior",
+     "Vitality": "110",
+     "Armour": "Padded, sometimes mail",
+     "Weapons": "Axe or sword and shield",
+     "Behaviour": "Fights in line, flanks"
+    },
+    {
+     "Archetype": "Raider (Crowwick)",
+     "Vitality": "100",
+     "Armour": "Padded",
+     "Weapons": "Axe, spear",
+     "Behaviour": "Aggressive, loots, rarely surrenders"
+    },
+    {
+     "Archetype": "Archer",
+     "Vitality": "80",
+     "Armour": "None",
+     "Weapons": "Bow, seax",
+     "Behaviour": "Keeps distance, falls back"
+    },
+    {
+     "Archetype": "Huscarl (Orm)",
+     "Vitality": "130",
+     "Armour": "Mail, helmet",
+     "Weapons": "Sword or Dane axe",
+     "Behaviour": "Disciplined, holds formation"
+    },
+    {
+     "Archetype": "Outlaw",
+     "Vitality": "90",
+     "Armour": "None",
+     "Weapons": "Mixed",
+     "Behaviour": "Ambushes, flees when hurt"
+    },
+    {
+     "Archetype": "Draugr",
+     "Vitality": "160",
+     "Armour": "Resists stagger",
+     "Weapons": "Grip and blows",
+     "Behaviour": "Slow, relentless at night; returns until its anchor is resolved"
+    },
+    {
+     "Archetype": "Wolf",
+     "Vitality": "50",
+     "Armour": "None",
+     "Weapons": "Bite",
+     "Behaviour": "Packs of 3 to 5; circles; flees at half pack lost"
+    },
+    {
+     "Archetype": "Boar",
+     "Vitality": "120",
+     "Armour": "Hide",
+     "Weapons": "Charge",
+     "Behaviour": "Charges when cornered; drops 40 rd of meat"
+    },
+    {
+     "Archetype": "Each-uisce",
+     "Vitality": "300",
+     "Armour": "Supernatural",
+     "Weapons": "Drag into water",
+     "Behaviour": "Avoid or bind; violence only drives it off"
+    }
+   ],
+   "perception": [
+    {
+     "Key": "sightDay",
+     "Value": "15"
+    },
+    {
+     "Key": "sightDusk",
+     "Value": "9"
+    },
+    {
+     "Key": "sightNightUnlit",
+     "Value": "5"
+    },
+    {
+     "Key": "sightInLight",
+     "Value": "Full day range inside a light radius"
+    },
+    {
+     "Key": "fogFactor",
+     "Value": "0.5"
+    },
+    {
+     "Key": "heightBonus",
+     "Value": "x1.5 from watch posts and hilltops"
+    },
+    {
+     "Key": "sightCone",
+     "Value": "110 degrees"
+    },
+    {
+     "Key": "noiseSneak",
+     "Value": "0.5"
+    },
+    {
+     "Key": "noiseWalk",
+     "Value": "2"
+    },
+    {
+     "Key": "noiseRun",
+     "Value": "5"
+    },
+    {
+     "Key": "noiseCombat",
+     "Value": "10"
+    },
+    {
+     "Key": "noiseShout",
+     "Value": "14"
+    },
+    {
+     "Key": "noiseHorn",
+     "Value": "60"
+    },
+    {
+     "Key": "noiseDog",
+     "Value": "20 (dogs hear at 20 and bark)"
+    },
+    {
+     "Key": "surfaceShingle",
+     "Value": "Noise x1.5"
+    },
+    {
+     "Key": "surfaceSand",
+     "Value": "Noise x0.7"
+    },
+    {
+     "Key": "memorySeconds",
+     "Value": "20"
+    },
+    {
+     "Key": "torchLightRadius",
+     "Value": "4 tiles"
+    }
+   ],
+   "cohesionAndSurrender": [
+    {
+     "Key": "groupCohesionStart",
+     "Value": "100"
+    },
+    {
+     "Key": "allyKilled",
+     "Value": "-20"
+    },
+    {
+     "Key": "allyDowned",
+     "Value": "-10"
+    },
+    {
+     "Key": "leaderKilled",
+     "Value": "-15"
+    },
+    {
+     "Key": "outnumberedTwoToOne",
+     "Value": "-10 per 10 seconds"
+    },
+    {
+     "Key": "surrenderBelow",
+     "Value": "30"
+    },
+    {
+     "Key": "fleeBelow",
+     "Value": "20"
+    },
+    {
+     "Key": "noQuarterAfter",
+     "Value": "2 known SURRENDERED_KILLED deeds by the household"
+    }
+   ],
+   "occupiedSkarvholmGarrison": [
+    {
+     "Post": "Broch fort",
+     "Strength": "Kolgrím the Burner and 9 huscarls, 3 dogs",
+     "Notes": "Captives held inside; dogs hear with three times the normal noise radius"
+    },
+    {
+     "Post": "Barracks (old longhouse)",
+     "Strength": "12 raiders",
+     "Notes": "Asleep at night unless the horn sounds"
+    },
+    {
+     "Post": "Watch cairn on Rook Hill",
+     "Strength": "2, a horn and a beacon",
+     "Notes": "If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early"
+    },
+    {
+     "Post": "Hermit's cell",
+     "Strength": "1 sentry at night",
+     "Notes": "Sees down into Gull Geo"
+    },
+    {
+     "Post": "Naust Cove ships",
+     "Strength": "2 ships, 6 on watch",
+     "Notes": "Crews join a fight 120 s after the horn; ships can be burned"
+    },
+    {
+     "Post": "The dig at the cairn",
+     "Strength": "Gróa, 4 guards, 6 conscripted diggers",
+     "Notes": "Diggers are civilians"
+    },
+    {
+     "Post": "Patrol",
+     "Strength": "3",
+     "Notes": "One loop every 240 s"
+    },
+    {
+     "Post": "Stakes in the drowned strand",
+     "Strength": "Wreck Strand",
+     "Notes": "A hull landing there at high tide takes 20 integrity damage"
+    }
+   ],
+   "hostilityAndEvidence": [
+    {
+     "Key": "hostileOnSightAt",
+     "Value": "Faction regard -60 or a known CIVILIAN_KILLED deed"
+    },
+    {
+     "Key": "waryAt",
+     "Value": "Faction regard -30"
+    },
+    {
+     "Key": "identificationLinkThreshold",
+     "Value": "0.5"
+    },
+    {
+     "Key": "bodyFoundNearSettlement",
+     "Value": "Next morning"
+    },
+    {
+     "Key": "bodyFoundWilderness",
+     "Value": "3 to 10 days"
+    },
+    {
+     "Key": "offshoreFishermanChance",
+     "Value": "25% per daytime raid on a coast"
+    },
+    {
+     "Key": "droppedGearPoints",
+     "Value": "0.3 per recognisable item"
+    }
+   ]
+  },
+  "peopleSkillsAndWounds": {
+   "skills": [
+    {
+     "Key": "levels",
+     "Value": "0 to 5"
+    },
+    {
+     "Key": "xpPerWorkerDay",
+     "Value": "1 in the skill used"
+    },
+    {
+     "Key": "xpToLevel",
+     "Value": "10 for 2, 30 for 3, 60 for 4, 100 for 5 (cumulative)"
+    },
+    {
+     "Key": "outputMultiplier",
+     "Value": "0.6 + 0.15 x level (0.6 at 0, 1.35 at 5)"
+    },
+    {
+     "Key": "playerTimingBonus",
+     "Value": "Up to +25% task output for good timing"
+    }
+   ],
+   "regardDeltasByDeed": [
+    {
+     "Deed": "THEFT",
+     "Gain": "+2",
+     "Mercy": "+1",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "THREAT",
+     "Gain": "+2",
+     "Mercy": "-1",
+     "Glory": "+1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "TRIBUTE_TAKEN",
+     "Gain": "+2",
+     "Mercy": "+1",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "FAIR_TRADE",
+     "Gain": "+1",
+     "Mercy": "+1",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "+2"
+    },
+    {
+     "Deed": "KILLING",
+     "Gain": "0",
+     "Mercy": "-2",
+     "Glory": "+2",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "CIVILIAN_KILLED",
+     "Gain": "0",
+     "Mercy": "-4",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "-1",
+     "Word": "-1"
+    },
+    {
+     "Deed": "SURRENDERED_KILLED",
+     "Gain": "0",
+     "Mercy": "-4",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "-3"
+    },
+    {
+     "Deed": "SPARED",
+     "Gain": "0",
+     "Mercy": "+3",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "+1"
+    },
+    {
+     "Deed": "BURNING",
+     "Gain": "-1",
+     "Mercy": "-3",
+     "Glory": "+1",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "SEED_TAKEN",
+     "Gain": "+1",
+     "Mercy": "-2",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "SEED_LEFT",
+     "Gain": "-1",
+     "Mercy": "+2",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "SACRED_TAKEN",
+     "Gain": "+2",
+     "Mercy": "0",
+     "Glory": "+1",
+     "Kin": "0",
+     "Faith": "-4 (same faith)",
+     "Word": "0"
+    },
+    {
+     "Deed": "SACRILEGE",
+     "Gain": "0",
+     "Mercy": "-1",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "-3 (same faith)",
+     "Word": "0"
+    },
+    {
+     "Deed": "RESCUE",
+     "Gain": "-1",
+     "Mercy": "+3",
+     "Glory": "0",
+     "Kin": "+1",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "HOSTAGE_TAKEN",
+     "Gain": "+1",
+     "Mercy": "-1",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "PROMISE_KEPT",
+     "Gain": "0",
+     "Mercy": "0",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "+3"
+    },
+    {
+     "Deed": "PROMISE_BROKEN",
+     "Gain": "0",
+     "Mercy": "0",
+     "Glory": "0",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "-4"
+    },
+    {
+     "Deed": "Resident left behind",
+     "Gain": "0",
+     "Mercy": "-1",
+     "Glory": "0",
+     "Kin": "-4",
+     "Faith": "0",
+     "Word": "-1"
+    },
+    {
+     "Deed": "Crew member died",
+     "Gain": "0",
+     "Mercy": "0",
+     "Glory": "0",
+     "Kin": "-2",
+     "Faith": "0",
+     "Word": "0"
+    },
+    {
+     "Deed": "Retreat with everyone alive",
+     "Gain": "0",
+     "Mercy": "+1",
+     "Glory": "-2",
+     "Kin": "+2",
+     "Faith": "0",
+     "Word": "0"
+    }
+   ],
+   "regardBands": [
+    {
+     "Band": "Devoted",
+     "From": "70"
+    },
+    {
+     "Band": "Loyal",
+     "From": "40"
+    },
+    {
+     "Band": "Content",
+     "From": "10"
+    },
+    {
+     "Band": "Uneasy",
+     "From": "-10"
+    },
+    {
+     "Band": "Resentful",
+     "From": "-40"
+    },
+    {
+     "Band": "Estranged",
+     "From": "below -40"
+    }
+   ],
+   "wounds": [
+    {
+     "Severity": "Light",
+     "Recovery": "2 days",
+     "Effect": "-10 vitality max"
+    },
+    {
+     "Severity": "Serious",
+     "Recovery": "6 days",
+     "Effect": "Cannot fight; half work"
+    },
+    {
+     "Severity": "Grave",
+     "Recovery": "14 days",
+     "Effect": "Bed-bound; needs care; 10% death risk without care"
+    },
+    {
+     "Severity": "Maimed",
+     "Recovery": "Permanent",
+     "Effect": "A trait (lost eye, stiff hand) with a skill penalty"
+    }
+   ]
+  },
+  "buildingsToolsAndCrafting": {
+   "buildings": [
+    {
+     "Building": "Sail shelter in the broch",
+     "Footprint tiles": "Broch",
+     "Materials": "Salvaged sail",
+     "Worker-days": "1",
+     "Capability": "Shelter for 6"
+    },
+    {
+     "Building": "Longhouse",
+     "Footprint tiles": "16 x 6",
+     "Materials": "10 timber, 1 iron",
+     "Worker-days": "12",
+     "Capability": "Housing 10; hearth; morale +1"
+    },
+    {
+     "Building": "Second house",
+     "Footprint tiles": "14 x 6",
+     "Materials": "8 timber, 1 iron",
+     "Worker-days": "10",
+     "Capability": "Housing 8"
+    },
+    {
+     "Building": "Boatshed (naust)",
+     "Footprint tiles": "14 x 5",
+     "Materials": "6 timber",
+     "Worker-days": "8",
+     "Capability": "Ship maintenance, winter lay-up, refits, hull building"
+    },
+    {
+     "Building": "Forge",
+     "Footprint tiles": "6 x 5",
+     "Materials": "1 timber, 1 iron, stone",
+     "Worker-days": "4",
+     "Capability": "Smithing"
+    },
+    {
+     "Building": "Drying racks",
+     "Footprint tiles": "8 x 5",
+     "Materials": "2 timber",
+     "Worker-days": "2",
+     "Capability": "Dry fish"
+    },
+    {
+     "Building": "Smoke-house",
+     "Footprint tiles": "6 x 5",
+     "Materials": "3 timber",
+     "Worker-days": "4",
+     "Capability": "Smoke fish and meat"
+    },
+    {
+     "Building": "Storehouse",
+     "Footprint tiles": "8 x 4",
+     "Materials": "5 timber, 1 iron",
+     "Worker-days": "6",
+     "Capability": "No grain loss; capacity 40 lots"
+    },
+    {
+     "Building": "Byre",
+     "Footprint tiles": "10 x 5",
+     "Materials": "5 timber",
+     "Worker-days": "6",
+     "Capability": "Winter shelter for 6 cattle"
+    },
+    {
+     "Building": "Watch cairn",
+     "Footprint tiles": "Rook Hill",
+     "Materials": "Stone",
+     "Worker-days": "4",
+     "Capability": "One watch of warning when manned"
+    },
+    {
+     "Building": "Workshop",
+     "Footprint tiles": "6 x 5",
+     "Materials": "3 timber",
+     "Worker-days": "4",
+     "Capability": "Carpentry, tools, shields"
+    },
+    {
+     "Building": "Shrine, cross or hammer-post",
+     "Footprint tiles": "4 x 3",
+     "Materials": "1 timber",
+     "Worker-days": "2",
+     "Capability": "Faith morale for those it suits"
+    },
+    {
+     "Building": "Palisade (mainland)",
+     "Footprint tiles": "Per 2 tiles",
+     "Materials": "1 timber",
+     "Worker-days": "1",
+     "Capability": "Defence"
+    },
+    {
+     "Building": "Gate and watch platform",
+     "Footprint tiles": "4 x 2",
+     "Materials": "3 timber, 1 iron",
+     "Worker-days": "4",
+     "Capability": "Defence, sight x1.5"
+    },
+    {
+     "Building": "removalRefund",
+     "Footprint tiles": "",
+     "Materials": "50% of materials",
+     "Worker-days": "",
+     "Capability": ""
+    }
+   ],
+   "smithing": [
+    {
+     "Product": "Tool heads",
+     "Yield": "4",
+     "Labour": "1 worker-day",
+     "Skill": "1"
+    },
+    {
+     "Product": "Spearheads",
+     "Yield": "6",
+     "Labour": "1 worker-day",
+     "Skill": "1"
+    },
+    {
+     "Product": "Axe heads",
+     "Yield": "2",
+     "Labour": "1 worker-day",
+     "Skill": "2"
+    },
+    {
+     "Product": "Boat rivets",
+     "Yield": "30",
+     "Labour": "1 worker-day",
+     "Skill": "1"
+    },
+    {
+     "Product": "Helmet",
+     "Yield": "1 (needs 1 lot)",
+     "Labour": "3 worker-days",
+     "Skill": "3"
+    },
+    {
+     "Product": "Mail shirt",
+     "Yield": "1 (needs 4 lots)",
+     "Labour": "20 worker-days",
+     "Skill": "4"
+    },
+    {
+     "Product": "Sword",
+     "Yield": "1 (needs 2 lots)",
+     "Labour": "10 worker-days",
+     "Skill": "5, mainland forge only"
+    }
+   ],
+   "carpentry": [
+    {
+     "Product": "Shield",
+     "Materials": "1 timber per 3, hides",
+     "Labour": "1 worker-day per 3"
+    },
+    {
+     "Product": "Spear shafts",
+     "Materials": "1 timber per 6",
+     "Labour": "0.5 worker-day"
+    },
+    {
+     "Product": "Fishing net",
+     "Materials": "1 wool lot per 2",
+     "Labour": "1 worker-day"
+    },
+    {
+     "Product": "Hull patch (Chapter 1)",
+     "Materials": "4 boards, 30 rivets",
+     "Labour": "2 worker-days"
+    }
+   ]
+  },
+  "targetProgressionForAGoodPlayer": {
+   "table": [
+    {
+     "Day": "6",
+     "Milestone": "Chapter 1 done; boat launched",
+     "Residents": "4",
+     "Voyages (raids)": "0",
+     "Tools and weapons": "Wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line",
+     "Ship": "T1, 1 fitting",
+     "Buildings": "Sail shelter, fire",
+     "Food and stores": "8 to 10 days runway"
+    },
+    {
+     "Day": "15",
+     "Milestone": "First raid home",
+     "Residents": "5 (Eithne)",
+     "Voyages (raids)": "1 (1)",
+     "Tools and weapons": "+1 to 2 iron lots",
+     "Ship": "T1, 1 fitting",
+     "Buildings": "Forge marked out",
+     "Food and stores": "30 days runway"
+    },
+    {
+     "Day": "30",
+     "Milestone": "Two raids and one trade; plots sown",
+     "Residents": "6 to 8 (Kolbeinn, Asa)",
+     "Voyages (raids)": "3 (2)",
+     "Tools and weapons": "Axes 3, adze, 2 sickles, 2 spades, 2 nets; spears for all, 5 shields, 2 axes, 1 sword, 1 helmet",
+     "Ship": "T1, 2 fittings",
+     "Buildings": "Forge, racks, longhouse framed; 30 peat loads drying",
+     "Food and stores": "150 rd stored; 25 days runway"
+    },
+    {
+     "Day": "45",
+     "Milestone": "The Followers arrive",
+     "Residents": "12 to 13",
+     "Voyages (raids)": "5 (3)",
+     "Tools and weapons": "Spears and shields for all fighters",
+     "Ship": "T1, 3 fittings",
+     "Buildings": "Longhouse done, smoke-house; hay cutting begins",
+     "Food and stores": "200 rd; runway 15 days (more mouths)"
+    },
+    {
+     "Day": "60",
+     "Milestone": "End of Chapter 3; Nessa joined",
+     "Residents": "13",
+     "Voyages (raids)": "7 (4)",
+     "Tools and weapons": "3 helmets, 2 bows",
+     "Ship": "First refit; 8 timber stockpiled for the karvi",
+     "Buildings": "Second house started, storehouse, byre, watch cairn; 2 cows, 8 sheep",
+     "Food and stores": "300 rd; 50 dry peat"
+    },
+    {
+     "Day": "75",
+     "Milestone": "Harvest in",
+     "Residents": "13 to 14",
+     "Voyages (raids)": "8 (5)",
+     "Tools and weapons": "",
+     "Ship": "Karvi bought or keel laid",
+     "Buildings": "All four plots harvested",
+     "Food and stores": "+600 rd from barley"
+    },
+    {
+     "Day": "90",
+     "Milestone": "Winter ready",
+     "Residents": "14",
+     "Voyages (raids)": "9 (6)",
+     "Tools and weapons": "1 to 2 mail shirts, 4 helmets",
+     "Ship": "Karvi acquired or 60% built; laid up in the boatshed",
+     "Buildings": "2 houses, store, byre, smoke-house, racks, forge, workshop, shrine",
+     "Food and stores": "600 rd (40 days), 75 fuel, 25 hay"
+    },
+    {
+     "Day": "120",
+     "Milestone": "Winter survived",
+     "Residents": "14 to 15",
+     "Voyages (raids)": "9",
+     "Tools and weapons": "",
+     "Ship": "Karvi launched if built",
+     "Buildings": "Repairs done",
+     "Food and stores": "No deaths from cold or hunger; Yule feast held"
+    },
+    {
+     "Day": "150",
+     "Milestone": "First answer settled or beaten",
+     "Residents": "15 to 16",
+     "Voyages (raids)": "12 (8)",
+     "Tools and weapons": "All fighters helmeted; 3 mail",
+     "Ship": "Second hull planned",
+     "Buildings": "Defences on Skarvholm",
+     "Food and stores": "30 days runway"
+    },
+    {
+     "Day": "180",
+     "Milestone": "Council commits to a site",
+     "Residents": "16",
+     "Voyages (raids)": "14",
+     "Tools and weapons": "",
+     "Ship": "Consort acquired",
+     "Buildings": "Mainland site scouted on foot",
+     "Food and stores": "Island failing: water hauled"
+    },
+    {
+     "Day": "210",
+     "Milestone": "Mainland home defensible",
+     "Residents": "16",
+     "Voyages (raids)": "17",
+     "Tools and weapons": "Mainland forge: swords possible",
+     "Ship": "Two ships",
+     "Buildings": "M2: hall, palisade, gate, boatshed",
+     "Food and stores": "4 hinterland places known"
+    },
+    {
+     "Day": "240",
+     "Milestone": "Council ends; Orm holds Skarvholm",
+     "Residents": "16",
+     "Voyages (raids)": "19",
+     "Tools and weapons": "",
+     "Ship": "T3 hull",
+     "Buildings": "M2 complete",
+     "Food and stores": "4 allies committed, 1 conditional; 2 of 3 keys in hand or in reach"
+    },
+    {
+     "Day": "250",
+     "Milestone": "The Return: the Cup recovered",
+     "Residents": "16",
+     "Voyages (raids)": "20 (the Return)",
+     "Tools and weapons": "",
+     "Ship": "Flagship, consort, an allied ship",
+     "Buildings": "Beacon unlit; Orm's two ships burned",
+     "Food and stores": "Compact renewed at Inis Rón"
+    },
+    {
+     "Day": "270",
+     "Milestone": "Finale",
+     "Residents": "16 plus allies",
+     "Voyages (raids)": "21",
+     "Tools and weapons": "",
+     "Ship": "",
+     "Buildings": "",
+     "Food and stores": ""
+    }
+   ]
+  },
+  "homesteadThreatSchedule": {
+   "year1OnSkarvholm": [
+    {
+     "Days": "3 to 6",
+     "Threat": "Wreck-scavengers return at night",
+     "Condition": "Not dealt with in Chapter 1",
+     "Warning": "Lights in Seal Cave",
+     "Scale": "3",
+     "Counter": "Watch, fight, bargain"
+    },
+    {
+     "Days": "8 to 14",
+     "Threat": "First storm",
+     "Condition": "Always",
+     "Warning": "Sky and swell a day ahead",
+     "Scale": "Camp damage",
+     "Counter": "Secure the sail roof; driftwood after"
+    },
+    {
+     "Days": "18 to 28",
+     "Threat": "Crowwick skiff lands at Gull Geo to steal",
+     "Condition": "Ulf's interest or 50%",
+     "Warning": "Unknown sail at dusk from Rook Hill",
+     "Scale": "4 to 5",
+     "Counter": "A watcher at the cell; dogs later"
+    },
+    {
+     "Days": "From 20",
+     "Threat": "Thorkel's draugr on Wreck Strand at low-tide nights",
+     "Condition": "No rites given",
+     "Warning": "Wet footprints to the door",
+     "Scale": "1, escalating weekly",
+     "Counter": "Rites; the promise he wants"
+    },
+    {
+     "Days": "25 to 40",
+     "Threat": "Hollow Cairn disturbances",
+     "Condition": "Cairn looted or insulted",
+     "Warning": "Tools moved, milk soured",
+     "Scale": "Losses",
+     "Counter": "An offering; returning what was taken"
+    },
+    {
+     "Days": "35 to 55",
+     "Threat": "Ulf's visit demanding a share",
+     "Condition": "Household wealth over 40 oz or Oddi's debt",
+     "Warning": "His sail two days before",
+     "Scale": "12 to 15 men",
+     "Counter": "Pay, bargain, fight, or ally"
+    },
+    {
+     "Days": "50 to 60",
+     "Threat": "Storm surge reaches the broch",
+     "Condition": "Always",
+     "Warning": "Spring tide forecast",
+     "Scale": "Flooded stores if low",
+     "Counter": "Raise stores; storehouse"
+    },
+    {
+     "Days": "61 to 90",
+     "Threat": "Autumn storms (up to three) and fever",
+     "Condition": "Always",
+     "Warning": "Forecasts; coughs",
+     "Scale": "Damage; sickness",
+     "Counter": "Fuel, care, roofs"
+    },
+    {
+     "Days": "70 to 85",
+     "Threat": "Asgrim's first visit",
+     "Condition": "Always",
+     "Warning": "Grey sails at anchor",
+     "Scale": "3 ships, demand only",
+     "Counter": "Answer or delay"
+    },
+    {
+     "Days": "86 to 94",
+     "Threat": "The Cailleach's washing",
+     "Condition": "Always",
+     "Warning": "Hag-cloud over the Cauldron",
+     "Scale": "Severe storm",
+     "Counter": "Ship in the boatshed; roofs"
+    },
+    {
+     "Days": "91",
+     "Threat": "Samhain night",
+     "Condition": "Always",
+     "Warning": "The dead and hill-folk walk",
+     "Scale": "Supernatural",
+     "Counter": "Stay in, keep the fires, or bargain"
+    },
+    {
+     "Days": "91 to 120",
+     "Threat": "Cold, hunger, long nights",
+     "Condition": "Preparation",
+     "Warning": "Morning report from day 70",
+     "Scale": "Deaths if unprepared",
+     "Counter": "Winter stores"
+    },
+    {
+     "Days": "100 to 115",
+     "Threat": "Desperate men in a calm window",
+     "Condition": "SEED_TAKEN or Ardcarn hungry",
+     "Warning": "A small boat seen at dusk",
+     "Scale": "4 to 6",
+     "Counter": "Watch, defend, feed them"
+    },
+    {
+     "Days": "105",
+     "Threat": "Yule",
+     "Condition": "Always",
+     "Warning": "Feast",
+     "Scale": "The draugr strongest if unresolved",
+     "Counter": "Rites; the feast's morale"
+    },
+    {
+     "Days": "118 to 120",
+     "Threat": "Asgrim returns for an answer",
+     "Condition": "Always",
+     "Warning": "Sails at Imbolc",
+     "Scale": "Demand",
+     "Counter": "Pay, refuse, deceive"
+    }
+   ],
+   "year2AndTheMainland": [
+    {
+     "Days": "121 to 150",
+     "Threat": "The coast's answer (Book 6 scenario 8)",
+     "Condition": "Ledger",
+     "Warning": "Precursors 5 days ahead",
+     "Scale": "Raid, arson, interdict or envoy",
+     "Counter": "Settle or defend"
+    },
+    {
+     "Days": "130 to 160",
+     "Threat": "Orm's scout ship probes",
+     "Condition": "Always",
+     "Warning": "A grey sail off Rook Hill",
+     "Scale": "1 ship",
+     "Counter": "Hide strength or show it"
+    },
+    {
+     "Days": "About 140",
+     "Threat": "Storm-tide slumps Naust Cove",
+     "Condition": "Always",
+     "Warning": "Spring tide forecast",
+     "Scale": "Landing lost",
+     "Counter": "Move the boat; new slip"
+    },
+    {
+     "Days": "150 to 180",
+     "Threat": "The spring fails at every spring tide; refugees",
+     "Condition": "Always",
+     "Warning": "Brackish water",
+     "Scale": "Thirst, crowding",
+     "Counter": "Haul water; shelter plans"
+    },
+    {
+     "Days": "181 to 240",
+     "Threat": "Hostile guards on sight in wronged territory",
+     "Condition": "Ledger",
+     "Warning": "Region map shows hostile ground",
+     "Scale": "Patrols of 3 to 6",
+     "Counter": "Avoid, sneak, settle"
+    },
+    {
+     "Days": "181 to 240",
+     "Threat": "Wolves at night, worst in winter",
+     "Condition": "Wilderness",
+     "Warning": "Howls, tracks",
+     "Scale": "Packs of 3 to 5",
+     "Counter": "Fires, fences, hunting"
+    },
+    {
+     "Days": "181 to 240",
+     "Threat": "Outlaws on roads",
+     "Condition": "Wilderness",
+     "Warning": "Signs of a camp",
+     "Scale": "4 to 8",
+     "Counter": "Fight, pay, recruit"
+    },
+    {
+     "Days": "About 200",
+     "Threat": "Neighbours test the new home: cattle lifted",
+     "Condition": "Always",
+     "Warning": "Cattle restless at night",
+     "Scale": "6 to 10",
+     "Counter": "Watch, return in kind, negotiate"
+    },
+    {
+     "Days": "About 220",
+     "Threat": "Ulf's attack on the mainland home",
+     "Condition": "Ulf hostile",
+     "Warning": "His raven sail",
+     "Scale": "25",
+     "Counter": "Defences, allies"
+    },
+    {
+     "Days": "About 228",
+     "Threat": "Orm takes Skarvholm as a forward base",
+     "Condition": "Always; outpost residents are taken captive",
+     "Warning": "Smoke over the island, seen from the mainland",
+     "Scale": "2 ships, about 40",
+     "Counter": "Abandon, reinforce, or accept; rescue in the Return"
+    },
+    {
+     "Days": "241 to 252",
+     "Threat": "The Return to Skarvholm (required)",
+     "Condition": "Always",
+     "Warning": "The Keepers' revelation and scouting reports",
+     "Scale": "Garrison in section 07",
+     "Counter": "Book 6 scenario 9; section 13; checkpoint before landing; one retry before day 255"
+    },
+    {
+     "Days": "256 to 270",
+     "Threat": "Orm's fleet and the finale",
+     "Condition": "Always",
+     "Warning": "The washer at the ford",
+     "Scale": "6 to 10 ships; two fewer if the Naust ships were burned; 5 days earlier if the beacon was lit",
+     "Counter": "Everything prepared"
+    }
+   ]
+  },
+  "theReturnToSkarvholm": {
+   "timersAndRules": [
+    {
+     "Key": "ormTakesSkarvholm",
+     "Value": "About day 228"
+    },
+    {
+     "Key": "returnWindow",
+     "Value": "Days 241 to 252; one retry before day 255"
+    },
+    {
+     "Key": "hornToReinforcement",
+     "Value": "360 s real after the horn"
+    },
+    {
+     "Key": "naustCrewsJoin",
+     "Value": "120 s after the horn"
+    },
+    {
+     "Key": "beaconDelay",
+     "Value": "60 s after the horn, if the cairn watch lives"
+    },
+    {
+     "Key": "patrolLoop",
+     "Value": "240 s"
+    },
+    {
+     "Key": "falseHornDelay",
+     "Value": "60 s (Thrand's signals)"
+    },
+    {
+     "Key": "surgeTidalGround",
+     "Value": "180 s after the Cup is lifted"
+    },
+    {
+     "Key": "surgeSealCavePassage",
+     "Value": "240 s"
+    },
+    {
+     "Key": "surgeCauseway",
+     "Value": "300 s"
+    },
+    {
+     "Key": "surgeStrand",
+     "Value": "480 s"
+    },
+    {
+     "Key": "liesToSeal",
+     "Value": "3; the Door reopens at the next spring tide"
+    },
+    {
+     "Key": "wardenPerLie",
+     "Value": "One cairn warden per lie"
+    },
+    {
+     "Key": "retryGarrison",
+     "Value": "+50% fighters; dogs at the cell"
+    },
+    {
+     "Key": "holmgangaRule",
+     "Value": "Duel on the Skerry at low tide; three shields each; the loser's side yields the night"
+    },
+    {
+     "Key": "kolgrimFairDefeat",
+     "Value": "Garrison cohesion -30 for the night"
+    },
+    {
+     "Key": "firstAttemptTarget",
+     "Value": "Good-player autoplay recovers the Cup on the first attempt in no more than 60% of seeds"
+    }
+   ],
+   "lateGameEnemies": [
+    {
+     "Archetype": "Kolgrím the Burner",
+     "Vitality": "160",
+     "Armour": "Mail, helmet",
+     "Weapons": "Dane axe, torch",
+     "Behaviour": "Aggressive; loves fire; accepts a public challenge"
+    },
+    {
+     "Archetype": "Garrison huscarl",
+     "Vitality": "130",
+     "Armour": "Mail, helmet",
+     "Weapons": "Sword or spear and shield",
+     "Behaviour": "Disciplined; holds the palisade"
+    },
+    {
+     "Archetype": "Gróa",
+     "Vitality": "70",
+     "Armour": "None",
+     "Weapons": "Sea-light",
+     "Behaviour": "Pulls targets within 6 tiles towards water at 1 tile per second; flees when hurt"
+    },
+    {
+     "Archetype": "Drowned digger",
+     "Vitality": "90",
+     "Armour": "Resists stagger",
+     "Weapons": "Grip",
+     "Behaviour": "Slow; banished by daylight or rites, not killed"
+    },
+    {
+     "Archetype": "Cairn warden",
+     "Vitality": "200",
+     "Armour": "Cannot be killed",
+     "Weapons": "Blows that knock down",
+     "Behaviour": "Driven back for 20 s by heavy blows; leaves when the truths are complete or the party leaves"
+    }
+   ]
+  }
+ }
+}
