@@ -104,16 +104,23 @@ class StrandRenderer:
         fx.draw_spray(f, 520, 506, t, 0.4, 3, 1.2)
         fx.draw_spray(f, 610, 512, t, 1.9, 4, 0.9)
         fx.draw_spray(f, 700, 556, t, 1.1, 5, 1.4)
-        fx.draw_blown_sand(f, self.dry, t, 260, 9)
+        fx.draw_blown_sand(f, self.dry, t, 520, 9)
         for b in birds:
             b(f)
+        # The gust sheen over the machair and the marram.
+        grassy = (w.material == 0) & ~w.bog & ~w.track
+        gx = ((np.arange(W)[None, :] - t / LOOP * 320) % 320).astype(int) % 320
+        import strand as _s
+        _s.gust_at(0, 0)
+        field = _s._GUST[np.arange(H)[:, None] % H, gx]
+        f = fx.gust_sheen(f, grassy, np.clip((field - 0.42) * 2.4, 0, 1), 0.13)
         # Light: cloud shadows sweeping east, the low sun, firelight, the grade.
         view = f[cy0:cy0 + 360, cx0:cx0 + 640]
         cloud = fx.cloud_shadow(360, 640, t, cx0, cy0, 1280)
         out = fx.grade(view, cloud, warm_sun=1.0)
         pool = fx.light_pool(360, 640, w.fire[0] - cx0, w.fire[1] - cy0 - 4, 78, t)[..., None]
         out = out * (1 + pool * np.array([0.55, 0.28, 0.02])) + pool * np.array([26, 10, 0])
-        fx.draw_rain(out, t, 170, 13, 0.35)
+        fx.draw_rain(out, t, 300, 13, 0.3)
         return out
 
     def _wreck_sail(self, f, t):

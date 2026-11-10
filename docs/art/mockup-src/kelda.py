@@ -126,7 +126,7 @@ class Kelda:
         species = fbm(H, W, 90, 11)
         species = (species - species.min()) / (species.max() - species.min()) * 0.999
         kinds = ['clover', 'trefoil', 'redclover', 'violet']
-        for _ in range(15000):
+        for _ in range(26000):
             x, y = r.uniform(0, W), r.uniform(0, H)
             xi, yi = int(x), int(y)
             if self.pool[yi, xi] or self.stream[yi, xi]:
@@ -151,8 +151,8 @@ class Kelda:
                     self.tufts.append((k, x, y, r.uniform(3, 6), r.random()))
             elif tu > 0.58 and r.random() < (tu - 0.58) * 3:
                 self.tufts.append(('grass', x, y, r.uniform(5, 9), r.random()))
-            elif r.random() < 0.025:
-                self.tufts.append(('grass', x, y, r.uniform(3, 6), r.random()))
+            elif r.random() < 0.3:
+                self.tufts.append(('grass', x, y, r.uniform(3, 5), r.random()))
         # Flower drifts colour the ground under them too.
         g = self.ground
         for k_i, kind in enumerate(kinds):

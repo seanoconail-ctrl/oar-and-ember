@@ -18,7 +18,8 @@ def loopsin(t, cycles, phase=0.0):
 def draw_tuft(frame, kind, x, y, height, phase, t, gust, walkers=()):
     """A clump of grass, marram or flowers, swaying in the gust and parting round walkers."""
     H, W = frame.shape[:2]
-    lean = gust * (3.2 if kind == 'marram' else 2.2) + 0.7 * loopsin(t, 3, phase * TAU) * (0.5 + gust)
+    lean = (gust * (3.2 if kind == 'marram' else 2.2) + 1.1 * loopsin(t, 4, phase * TAU) * (0.7 + gust)
+            + 0.6 * loopsin(t, 7, phase * TAU * 3))
     squash = 1.0
     for (wx, wy) in walkers:
         dx, dy = x - wx, (y - wy) * 1.6
@@ -45,7 +46,7 @@ def draw_tuft(frame, kind, x, y, height, phase, t, gust, walkers=()):
         n = len_ramp(ramp)
         tall = kind == 'iris'
         stem = (height if tall else min(3, height * 0.5)) * squash
-        bx = x + lean * (0.6 if tall else 0.35) + 0.5 * loopsin(t, 5, phase * TAU)
+        bx = x + lean * (0.6 if tall else 0.45) + 1.0 * loopsin(t, 6, phase * TAU)
         top = y - stem
         # Leaves at the foot, a short stem, and a head of two to four pixels that bobs.
         _px(frame, x - 1, y, C('grass', 4))
@@ -69,7 +70,7 @@ def draw_tuft(frame, kind, x, y, height, phase, t, gust, walkers=()):
     for b in range(blades):
         off = (b - (blades - 1) / 2) * (1.0 if kind == 'marram' else 0.9)
         h = height * squash * (0.7 + 0.3 * hash01(int(x), int(y), b))
-        wob = 0.5 * loopsin(t, 4, phase * TAU + b * 1.7)
+        wob = 0.8 * loopsin(t, 6, phase * TAU + b * 1.7)
         bend = lean + wob + off * 0.4
         steps = int(max(2, h))
         for k in range(steps):
@@ -362,3 +363,10 @@ def grade(frame, cloud, warm_sun=0.0, cool=(0.8, 0.83, 0.93), lift=(9, 13, 22), 
     out = out * (1 - desat) + grey * desat
     out = out * 0.94 + np.array(lift)
     return out
+
+
+def gust_sheen(frame, grass_mask, gust_field, strength=0.12):
+    """Where a gust bends the grass over, its paler undersides show: a sheen that travels
+    across the field with the wind."""
+    k = np.clip(gust_field, 0, 1)[..., None] * strength * grass_mask[..., None]
+    return frame * (1 - k) + C('grass', 9) * k

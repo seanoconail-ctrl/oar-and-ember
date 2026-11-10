@@ -125,6 +125,16 @@ class KeldaRenderer:
                 obj(f)
             else:
                 stamp(f, obj, x, y)
+        # The gust sheen over the turf, travelling with the wind.
+        gx = (np.arange(W)[None, :] - t / LOOP * 350) % 350
+        from kelda import _gust as _g
+        if not hasattr(self, '_gf'):
+            import kelda as _k
+            _g(0, 0)
+            self._gf = _k._G
+        field = self._gf[np.arange(H)[:, None] % H, gx.astype(int) % 350]
+        grassy = ~(k.pool | k.stream | k.bog)
+        f = fx.gust_sheen(f, grassy, np.clip((field - 0.45) * 2.4, 0, 1), 0.14)
         # Insects over the flowers, pollen and seed drifting downwind.
         for i in range(14):
             bx, by = 380 + (i * 47) % 300, 90 + (i * 61) % 280
