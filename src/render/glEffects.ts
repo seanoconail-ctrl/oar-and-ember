@@ -12,7 +12,7 @@ export const MAX_POOLS = 8;
 
 /** A triangle covering the whole target. */
 export const FULLSCREEN_VERTEX = `#version 300 es
-in vec2 a_pos;
+layout(location = 0) in vec2 a_pos;
 void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }`;
 
 const NOISE = `
@@ -267,4 +267,37 @@ void main() {
   vec3 outc = floor(clamp(g * light * k / 255.0, 0.0, 255.0) + 1e-6);
   outc = mix(outc, vec3(235.0, 240.0, 255.0), u_flash);
   outColour = vec4(outc / 255.0, 1.0);
+}`;
+
+/**
+ * The low-detail water and post shaders: u_detail fixed at 0, so the compiler drops every branch
+ * that needs it. A software renderer compiles these quickly; the full ones are compiled only
+ * when full or lite detail is first drawn (AP-16).
+ */
+export function lowDetail(source: string): string {
+  return source.replace(/uniform int u_detail;[^\n]*/, 'const int u_detail = 0;');
+}
+
+/** The post pass without effects (the Stage 4 art scenes): light only, no noise at all. */
+export const POST_PLAIN_FRAGMENT = `#version 300 es
+precision highp float;
+precision highp int;
+uniform sampler2D u_scene;
+uniform vec3 u_ambient;
+uniform int u_poolCount;
+uniform vec3 u_poolAt[${MAX_POOLS}];
+uniform vec3 u_poolColour[${MAX_POOLS}];
+uniform float u_bands;
+out vec4 outColour;
+void main() {
+  ivec2 p = ivec2(gl_FragCoord.xy);
+  vec3 c = floor(texelFetch(u_scene, p, 0).rgb * 255.0 + 0.5);
+  vec3 light = u_ambient;
+  for (int i = 0; i < ${MAX_POOLS}; i++) {
+    if (i >= u_poolCount) break;
+    float d = distance(vec2(p) + 0.5, u_poolAt[i].xy);
+    if (d < u_poolAt[i].z) light += u_poolColour[i] * (ceil(u_bands * (1.0 - d / u_poolAt[i].z)) / u_bands);
+  }
+  light = min(light, vec3(255.0));
+  outColour = vec4(floor(c * light / 255.0 + 1e-6) / 255.0, 1.0);
 }`;

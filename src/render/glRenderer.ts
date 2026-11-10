@@ -21,8 +21,10 @@ import {
   ELLIPSE_FRAGMENT,
   ELLIPSE_VERTEX,
   FULLSCREEN_VERTEX,
+  lowDetail,
   MAX_POOLS,
   POST_FRAGMENT,
+  POST_PLAIN_FRAGMENT,
   SHADOW_FRAGMENT,
   WATER_FRAGMENT,
 } from './glEffects.ts';
@@ -128,9 +130,25 @@ export function createSceneRenderer(
   const colours = waterColours(palette);
   let sprite!: WebGLProgram;
   let ellipse!: WebGLProgram;
-  let water!: WebGLProgram;
   let shade!: WebGLProgram;
-  let post!: WebGLProgram;
+  // The water and post programs, compiled on first use: a software renderer takes seconds to
+  // compile the full ones, so they are only built when full or lite detail is drawn (AP-16).
+  const lazy = new Map<string, WebGLProgram>();
+  const SOURCES: Readonly<Record<string, () => string>> = {
+    water: () => WATER_FRAGMENT,
+    'water-low': () => lowDetail(WATER_FRAGMENT),
+    post: () => POST_FRAGMENT,
+    'post-low': () => lowDetail(POST_FRAGMENT),
+    'post-plain': () => POST_PLAIN_FRAGMENT,
+  };
+  const program = (key: string): WebGLProgram => {
+    let p = lazy.get(key);
+    if (p === undefined) {
+      p = linkProgram(gl, FULLSCREEN_VERTEX, SOURCES[key]?.() ?? POST_PLAIN_FRAGMENT);
+      lazy.set(key, p);
+    }
+    return p;
+  };
   let spriteVao!: WebGLVertexArrayObject;
   let ellipseVao!: WebGLVertexArrayObject;
   let fullVao!: WebGLVertexArrayObject;
@@ -191,9 +209,8 @@ export function createSceneRenderer(
   const build = (): void => {
     sprite = linkProgram(gl, VERTEX, FRAGMENT);
     ellipse = linkProgram(gl, ELLIPSE_VERTEX, ELLIPSE_FRAGMENT);
-    water = linkProgram(gl, FULLSCREEN_VERTEX, WATER_FRAGMENT);
     shade = linkProgram(gl, FULLSCREEN_VERTEX, SHADOW_FRAGMENT);
-    post = linkProgram(gl, FULLSCREEN_VERTEX, POST_FRAGMENT);
+    lazy.clear();
 
     spriteVao = gl.createVertexArray();
     spriteBuffer = gl.createBuffer();
@@ -221,13 +238,8 @@ export function createSceneRenderer(
     gl.bindVertexArray(fullVao);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    for (const p of [water, shade, post]) {
-      const at = gl.getAttribLocation(p, 'a_pos');
-      if (at >= 0) {
-        gl.enableVertexAttribArray(at);
-        gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
-      }
-    }
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
     gl.bindVertexArray(null);
 
     sceneTarget = frameTexture(gl);
@@ -315,6 +327,7 @@ export function createSceneRenderer(
     // The water reads the ground drawn so far from a copy of the target.
     gl.bindTexture(gl.TEXTURE_2D, bedCopy);
     gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    const water = program((fx.detail ?? 2) === 0 ? 'water-low' : 'water');
     gl.useProgram(water);
     gl.bindVertexArray(fullVao);
     gl.activeTexture(gl.TEXTURE0);
@@ -433,6 +446,10 @@ export function createSceneRenderer(
 
   const drawPost = (scene: Scene, elev: ElevationTexture | undefined): void => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, outFbo);
+    const fxDetail = scene.effects?.detail ?? 2;
+    const post = program(
+      scene.effects === undefined ? 'post-plain' : fxDetail === 0 ? 'post-low' : 'post',
+    );
     gl.useProgram(post);
     gl.bindVertexArray(fullVao);
     gl.activeTexture(gl.TEXTURE0);
