@@ -6,6 +6,7 @@ palette: book07
 size: 16x44
 pivot: 8,42
 footprint: 10x3
+shadow: 14x4
 facings: -
 placeholder: false
 anim.stand: frames 1, ticks 1

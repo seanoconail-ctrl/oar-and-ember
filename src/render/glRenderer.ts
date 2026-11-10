@@ -471,6 +471,7 @@ export function createSceneRenderer(
       gl.uniform1f(u('u_fog'), fx.fog);
       gl.uniform3f(u('u_fogColour'), 178, 187, 187);
       gl.uniform1f(u('u_flash'), fx.flash);
+      gl.uniform1f(u('u_dryAbove'), fx.water === null ? -9 : fx.water.wetTo + 0.16);
     }
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.activeTexture(gl.TEXTURE1);

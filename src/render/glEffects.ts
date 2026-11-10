@@ -203,6 +203,7 @@ uniform float u_fog;
 uniform vec3 u_fogColour;
 uniform float u_flash;
 uniform bool u_hasElev;
+uniform float u_dryAbove;
 out vec4 outColour;
 ${NOISE}
 void main() {
@@ -226,8 +227,20 @@ void main() {
   float shaft = smoothstep(0.62, 0.86, vnoise(vec2((w.x + w.y * 0.55) / 64.0 + u_t * 0.018, 0.5)));
   k *= 1.0 + 0.08 * shaft * u_shafts * (1.0 - cloud);
   if (u_hasElev) {
-    float e = texture(u_elev, w / (${ELEVATION_CELL.toFixed(1)} * u_elevSize)).r * 3.0 - 1.0;
-    if (e > 1.02 && e < 1.38) k *= 1.0 + 0.045 * gust(w, u_wind.xy, u_t) * u_wind.z;
+    // The terrain under the pixel (nearest sample): a sheen runs over the grass in the gusts,
+    // and dry sand drifts along the beach in streamers.
+    vec4 E = texelFetch(u_elev, ivec2(w / ${ELEVATION_CELL.toFixed(1)}), 0);
+    int layer = int(E.a * 255.0) / 32;
+    if (layer == 2 && E.r * 3.0 - 1.0 < u_dryAbove) layer = -1;
+    float g = gust(w, u_wind.xy, u_t) * u_wind.z;
+    if (layer == 6) k *= 1.0 + 0.05 * g;
+    if (layer == 4 || layer == 2) {
+      float along = dot(w, u_wind.xy);
+      float across = dot(w, vec2(-u_wind.y, u_wind.x));
+      float streak = vnoise(vec2((along - u_t * 70.0) / 7.0, across / 1.6));
+      float wisp = vnoise(vec2((along - u_t * 40.0) / 30.0, across / 9.0));
+      if (streak > 0.72 && wisp > 0.42 && g + 0.25 * u_wind.z > 0.3) k *= 1.07;
+    }
   }
   vec3 g = c * u_gain + u_lift;
   g = mix(g, u_fogColour, u_fog * (0.55 + 0.45 * vnoise((w - drift * 0.6) / 90.0)));

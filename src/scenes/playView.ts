@@ -183,7 +183,9 @@ export function startPlay(
   let last = started;
   let first = true;
   let lastVisual = started;
+  let frameMs = 0;
   const frame = (now: number): void => {
+    const workStart = performance.now();
     browser.poll();
     const result = session.frame(now - last, browser.aim());
     last = now;
@@ -295,6 +297,10 @@ export function startPlay(
       t('ui.play.label', { time: clockText(sim.state.calendar.minuteOfDay) }),
     );
     overlay.fit(presenter.viewport, window.devicePixelRatio);
+    // The script's share of the frame (simulation, scene, draw calls), smoothed: the Book 2
+    // budget check in tests/browser/standard.spec.ts reads it.
+    frameMs = frameMs * 0.95 + (performance.now() - workStart) * 0.05;
+    root.dataset['frameMs'] = frameMs.toFixed(2);
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);

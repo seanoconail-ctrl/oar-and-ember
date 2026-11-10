@@ -59,16 +59,51 @@ export function plantLean(
   tall: boolean,
   walkers: readonly { readonly x: number; readonly y: number }[],
   reducedMotion: boolean,
+  /** The gust here, if already known (a frame samples it on a grid). */
+  gust?: number,
 ): number {
-  const g = gustAt(wind, x, y, t);
+  const g = gust ?? gustAt(wind, x, y, t);
   const push = wind.dirX * wind.strength * (0.6 + (tall ? 2.6 : 1.9) * g);
   const sway = swayAt(t, phase) * (reducedMotion ? 0.35 : 0.8 + 0.6 * g);
   let lean = push + sway;
-  for (const w of walkers) {
+  for (let i = 0; i < walkers.length; i++) {
+    const w = walkers[i];
+    if (w === undefined) continue;
     const dx = x - w.x;
     const dy = (y - w.y) * 1.6;
     const d = Math.hypot(dx, dy);
     if (d < 11) lean += Math.sign(Math.abs(dx) > 0.5 ? dx : 1) * ((11 - d) / 11) * 4.5;
   }
   return Math.max(-3, Math.min(3, Math.round(lean)));
+}
+
+/** The gust sampled every GRID pixels over a view, for many plants at once. */
+export const GUST_GRID = 16;
+export function gustGrid(
+  wind: Wind,
+  x0: number,
+  y0: number,
+  width: number,
+  height: number,
+  t: number,
+): (x: number, y: number) => number {
+  const cols = Math.ceil(width / GUST_GRID) + 2;
+  const rows = Math.ceil(height / GUST_GRID) + 2;
+  const v = new Float32Array(cols * rows);
+  for (let j = 0; j < rows; j++)
+    for (let i = 0; i < cols; i++)
+      v[j * cols + i] = gustAt(wind, x0 + i * GUST_GRID, y0 + j * GUST_GRID, t);
+  return (x, y) => {
+    const fx = Math.max(0, Math.min(cols - 1.001, (x - x0) / GUST_GRID));
+    const fy = Math.max(0, Math.min(rows - 1.001, (y - y0) / GUST_GRID));
+    const i = Math.floor(fx);
+    const j = Math.floor(fy);
+    const tx = fx - i;
+    const ty = fy - j;
+    const a = v[j * cols + i] ?? 0;
+    const b = v[j * cols + i + 1] ?? 0;
+    const c = v[(j + 1) * cols + i] ?? 0;
+    const d = v[(j + 1) * cols + i + 1] ?? 0;
+    return a + (b - a) * tx + (c - a + (d - c - b + a) * tx) * ty;
+  };
 }

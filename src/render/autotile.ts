@@ -113,7 +113,8 @@ export function pixelInfo(
       c(tl) * (1 - u) * (1 - v) + c(tr) * u * (1 - v) + c(bl) * (1 - u) * v + c(br) * u * v;
     const n = valueNoise(wx, wy, 8, 300 + L, PERIOD * TILE) - 0.5;
     const n2 = valueNoise(wx, wy, 3, 400 + L, PERIOD * TILE) - 0.5;
-    return cov + (n * 1.6 + n2 * 0.5) * ROUGHNESS[layer] - 0.5;
+    const n3 = valueNoise(wx, wy, 5, 500 + L, PERIOD * TILE) - 0.5;
+    return cov + (n * 1.6 + n3 * 0.7 + n2 * 1.0) * ROUGHNESS[layer] - 0.5;
   });
   let layer = lo;
   for (let L = lo + 1; L <= hi; L++) if ((margins[L] ?? -1) > 0) layer = L;

@@ -105,8 +105,13 @@ function paint(
       const r = Math.sin(TAU * ((wy * 8) / P + Math.sin((TAU * wx * 2) / P) * 0.3) + detail);
       return c('sand_wet', 3 + (r > 0.8 ? 1 : r < -0.85 ? -1 : 0) + (tone - 0.5) * 0.6);
     }
-    case '~':
-      return c('sand_wet', 0.5 + tone * 0.8);
+    case '~': {
+      // The sea bed, seen through the shallows: dark sand, stones and weed in patches.
+      const st = valueNoise(wx, wy, 5, 26, P);
+      if (st > 0.7) return c('stone', 1 + (st > 0.8 ? 1 : 0));
+      if (valueNoise(wx, wy, 9, 27, P) > 0.72 && detail > 0.5) return c('kelp', 1);
+      return c('sand_wet', 0.4 + tone * 1.2 + (detail - 0.5) * 0.8);
+    }
     case 'w': {
       // The stream bed: stones and dark sand (the water itself is drawn by the water shader).
       const st = valueNoise(wx, wy, 4, 17, P);

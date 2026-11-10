@@ -10,7 +10,7 @@
  *   dry land    above 1      never under water
  * The stream is flagged: it always shows running water, whatever the tide.
  */
-import { terrainAtPixel, TILE, visualCorners } from './autotile.ts';
+import { LAYERS, terrainAtPixel, TILE, visualCorners } from './autotile.ts';
 
 export const ELEVATION_CELL = 4;
 
@@ -22,7 +22,10 @@ export interface Elevation {
   readonly height01: Float32Array;
   /** 1 where the stream runs. */
   readonly stream: Uint8Array;
-  /** RGBA bytes for the shader: R height ((e + 1) / 3), G stream, B distance into the stream. */
+  /**
+   * RGBA bytes for the shaders: R height ((e + 1) / 3), G stream, B distance into the stream,
+   * A the drawn terrain (its index in autotile LAYERS, times 32, plus 16).
+   */
   readonly rgba: Uint8Array;
 }
 
@@ -156,7 +159,7 @@ export function bakeElevation(rows: readonly string[]): Elevation {
     rgba[i * 4] = Math.max(0, Math.min(255, Math.round((((e[i] ?? 0) + 1) / 3) * 255)));
     rgba[i * 4 + 1] = s * 255;
     rgba[i * 4 + 2] = Math.min(255, Math.round((dDry[i] ?? 0) * 40));
-    rgba[i * 4 + 3] = 255;
+    rgba[i * 4 + 3] = (LAYERS as readonly string[]).indexOf(code[i] ?? '~') * 32 + 16;
   }
   const out: Elevation = { width: w, height: h, height01: e, stream, rgba };
   cache.set(rows, out);

@@ -14,7 +14,7 @@ import { hash01 } from '../render/noise.ts';
 import type { Anim } from '../render/sheet.ts';
 import type { Phase, Scene, SceneEffects, SceneSprite, ShadowCaster } from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
-import { plantLean, STRAND_WIND } from '../render/wind.ts';
+import { gustGrid, plantLean, STRAND_WIND } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import type { OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
@@ -72,22 +72,48 @@ export function groundSprites(map: ZoneMap, camera: { x: number; y: number }): S
   return out;
 }
 
-/** Decals and plants bucketed by tile row, built once per map, so a frame reads only what is in view. */
+/**
+ * Decals and plants bucketed by tile row, built once per map, so a frame reads only what is in
+ * view. Plants in each row are sorted by their foot line (so the draw list's sort finds them in
+ * order), and carry their sway phase and frame names precomputed.
+ */
+interface IndexedPlant {
+  readonly x: number;
+  readonly y: number;
+  readonly phase: number;
+  readonly tall: boolean;
+  /** Frame names for leans -3..3. */
+  readonly frames: readonly string[];
+}
 interface ZoneIndex {
   readonly decals: readonly (readonly (readonly [number, number, number])[])[];
-  readonly plants: readonly (readonly (readonly [number, number, number, number])[])[];
+  readonly plants: readonly (readonly IndexedPlant[])[];
 }
 const indexCache = new WeakMap<ZoneMap, ZoneIndex>();
 function zoneIndex(map: ZoneMap): ZoneIndex {
   const hit = indexCache.get(map);
   if (hit !== undefined) return hit;
   const decals = Array.from({ length: map.height + 2 }, () => [] as [number, number, number][]);
-  const plants = Array.from(
-    { length: map.height + 2 },
-    () => [] as [number, number, number, number][],
-  );
+  const plants = Array.from({ length: map.height + 2 }, () => [] as IndexedPlant[]);
+  const names = new Map<string, string[]>();
   for (const d of map.decals) decals[Math.max(0, Math.floor(d[2] / TILE))]?.push([...d]);
-  for (const p of map.plants) plants[Math.max(0, Math.floor(p[2] / TILE))]?.push([...p]);
+  for (const [k, x, y, v] of map.plants) {
+    const kind = PLANT_KINDS[k] ?? 'grass';
+    const state = `${kind}${v}`;
+    let frames = names.get(state);
+    if (frames === undefined) {
+      frames = Array.from({ length: 7 }, (_, i) => `${state}/-/${i}`);
+      names.set(state, frames);
+    }
+    plants[Math.max(0, Math.floor(y / TILE))]?.push({
+      x,
+      y,
+      phase: hash01(x, y, 5),
+      tall: kind === 'marram' || kind === 'tussock',
+      frames,
+    });
+  }
+  for (const row of plants) row.sort((a, b) => a.y - b.y || a.x - b.x);
   const index = { decals, plants };
   indexCache.set(map, index);
   return index;
@@ -129,16 +155,35 @@ export function plantSprites(
   const index = zoneIndex(map);
   const r0 = Math.max(0, Math.floor(camera.y / TILE) - 1);
   const r1 = Math.floor((camera.y + LOGICAL_HEIGHT + 16) / TILE) + 1;
+  const near: Walker[] = [];
+  const gust = gustGrid(
+    wind,
+    camera.x - 16,
+    camera.y - 16,
+    LOGICAL_WIDTH + 32,
+    LOGICAL_HEIGHT + 48,
+    seconds,
+  );
   for (let r = r0; r <= r1; r++) {
-    for (const [k, x, y, v] of index.plants[r] ?? []) {
+    for (const plant of index.plants[r] ?? []) {
+      const { x, y } = plant;
       if (x < camera.x - 10 || x > camera.x + LOGICAL_WIDTH + 10) continue;
-      const kind = PLANT_KINDS[k] ?? 'grass';
-      const near = walkers.filter((w) => Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8);
-      const tall = kind === 'marram' || kind === 'tussock';
-      const lean = plantLean(wind, x, y, seconds, hash01(x, y, 5), tall, near, reducedMotion);
+      near.length = 0;
+      for (const w of walkers) if (Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8) near.push(w);
+      const lean = plantLean(
+        wind,
+        x,
+        y,
+        seconds,
+        plant.phase,
+        plant.tall,
+        near,
+        reducedMotion,
+        gust(x, y),
+      );
       out.push({
         sheet: PLANT_SHEET,
-        frame: `${kind}${v}/-/${UPRIGHT + lean}`,
+        frame: plant.frames[UPRIGHT + lean] ?? '',
         x: x - camera.x,
         y: y - camera.y,
         layer: 'actor',

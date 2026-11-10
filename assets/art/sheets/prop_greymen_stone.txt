@@ -8,6 +8,7 @@ pivot: 8,42
 footprint: 10x3
 facings: -
 placeholder: false
+shadow: 14x4
 anim.stand: frames 1, ticks 1
 
 frame stand - 0
