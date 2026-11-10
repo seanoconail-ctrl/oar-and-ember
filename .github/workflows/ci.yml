@@ -1,7 +1,11 @@
-# Lint, test and build on every push; on main, publish the build to GitHub Pages and check the
-# published address in Chromium, Firefox and WebKit (Safari's engine).
+# Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
+# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux)
+# and Firefox and WebKit (macOS, which has a GPU and is closer to real Safari).
 #
-# One-time repository setting: Settings > Pages > Build and deployment > Source: "GitHub Actions".
+# Repository settings needed once:
+# - Settings > Pages > Build and deployment > Source: "GitHub Actions".
+# - Settings > Environments > github-pages > Deployment branches: allow claude/lucid-bell-kgmdfi
+#   (only while that branch is published; main is allowed by default).
 name: CI and Pages
 
 on:
@@ -14,12 +18,12 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  # Never cancel a run on main part-way through publishing.
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  # Never cancel a run on a published branch part-way through publishing.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/claude/lucid-bell-kgmdfi' }}
 
 jobs:
   check:
-    name: Lint, test, build and browser smoke test
+    name: Lint, test, build and Chromium smoke test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -31,19 +35,34 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
-      - name: Install browsers for the smoke test
-        run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run test:browser
+      - name: Install Chromium for the smoke test
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:browser -- --project=chromium
       - name: Keep the built site for Pages
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 
+  browsers-mac:
+    name: Firefox and WebKit smoke test (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install Firefox and WebKit
+        run: npx playwright install firefox webkit
+      - run: npm run test:browser -- --project=firefox --project=webkit
+
   deploy:
     name: Publish to GitHub Pages
-    needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: [check, browsers-mac]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -58,7 +77,7 @@ jobs:
         uses: actions/deploy-pages@v5
 
   published:
-    name: Smoke-test the published address
+    name: Smoke-test the published address (Chromium)
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -68,7 +87,23 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run test:browser
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser -- --project=chromium
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page_url }}
+
+  published-mac:
+    name: Smoke-test the published address (Firefox and WebKit, macOS)
+    needs: deploy
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install firefox webkit
+      - run: npm run test:browser -- --project=firefox --project=webkit
         env:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}

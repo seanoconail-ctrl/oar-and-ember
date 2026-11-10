@@ -31,7 +31,10 @@ npm run art:check      # render the title and fonts at 1x and 4x to artifacts/ f
 
 ## Publishing
 
-`.github/workflows/ci.yml` runs lint, tests, the build and the browser smoke tests on every push.
-On `main` it also publishes `dist/` to GitHub Pages and re-runs the smoke tests against the
-published address. One repository setting is needed once: **Settings > Pages > Build and
-deployment > Source: GitHub Actions**.
+`.github/workflows/ci.yml` runs lint, tests, the build and the browser smoke tests on every push
+(Chromium on Linux; Firefox and WebKit on macOS, which has a GPU). Pushes to `main`, and to the
+working branch `claude/lucid-bell-kgmdfi` while Stages 1 to 6 are built, also publish `dist/` to
+GitHub Pages and re-run the smoke tests against the published address. Settings needed once:
+
+- **Settings > Pages > Build and deployment > Source: GitHub Actions**
+- **Settings > Environments > github-pages > Deployment branches:** allow `claude/lucid-bell-kgmdfi`

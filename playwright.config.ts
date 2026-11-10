@@ -25,8 +25,8 @@ export default defineConfig({
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
-        // CI runners have no GPU, and headless Firefox then turns WebGL off; this makes it use
-        // its software renderer instead. Desktop Firefox with a graphics card needs nothing.
+        // Overrides Firefox's graphics blocklist, which can turn WebGL off on the virtual GPUs of
+        // CI machines. A desktop Firefox with a supported graphics card needs nothing.
         launchOptions: { firefoxUserPrefs: { 'webgl.force-enabled': true } },
       },
     },

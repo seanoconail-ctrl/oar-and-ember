@@ -88,10 +88,17 @@ describe('the GitHub Actions workflow', () => {
     }
   });
 
-  it('publishes main, and only main, to GitHub Pages and checks the published address', () => {
+  it('checks Firefox and WebKit on macOS, which has a GPU (decision S1-16)', () => {
+    expect(workflow).toMatch(/runs-on: macos-latest[\s\S]*--project=firefox --project=webkit/);
+  });
+
+  it('publishes to GitHub Pages only from a push, and checks the published address', () => {
     expect(workflow).toContain('actions/upload-pages-artifact');
     expect(workflow).toContain('actions/deploy-pages');
-    expect(workflow).toMatch(/if: github\.ref == 'refs\/heads\/main'/);
+    // Published from main and, while Stages 1 to 6 are built, the working branch (decision S1-17).
+    expect(workflow).toMatch(
+      /if: github\.event_name == 'push' && \(github\.ref == 'refs\/heads\/main' \|\|/,
+    );
     expect(workflow).toContain('BASE_URL: ${{ needs.deploy.outputs.page_url }}');
   });
 });
