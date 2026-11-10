@@ -42,14 +42,24 @@ In the Book 2 section 23 format: one heading per report field.
   - decision log: 20 decisions matching Book 3 section 03
   - layer rules: ESLint rejects 8 forbidden imports and Node built-ins
   - project layout, workflow content, build id and PNG round trip
-- `npx playwright test --project=chromium`, run locally against the production build: **4 tests, 4 passed**.
-  - Three screen sizes (1280 x 720 exact fit at 2x, 1500 x 900 letterboxed at 2x, 900 x 500 letterboxed at 1x). For each, a real screenshot matches the frame composed in Node at every device pixel, letterbox bars included, with no pixel off.
+- `npx playwright test --project=chromium`, run locally against the production build: **5 tests, 5 passed**.
+  - Four screens: 1280 x 720, 1500 x 900 and 900 x 500 at pixel ratio 1, and 1000 x 600 at pixel ratio 2. For each, a real screenshot matches the frame composed in Node at every device pixel, letterbox bars included.
   - The no-WebGL2 explanation.
-- Firefox and WebKit are not installed in this environment, so they run only in GitHub Actions, which has not run yet: the push was refused (see "Known issues").
+  - The pixel-ratio-2 case found a real bug: emulated browsers report CSS pixels as "device pixels", and trusting them let the browser stretch the canvas. Fixed (decision S1-15).
+- GitHub Actions, run 1 ([42847724006](https://github.com/seanoconail-ctrl/oar-and-ember/actions/runs/42847724006)): `npm ci`, lint, unit tests and build **passed**. Browser tests: Chromium 4 of 4 passed. Firefox and WebKit passed the no-WebGL2 test and failed the 3 screen comparisons each:
+  - Firefox: headless Firefox had WebGL2 turned off on the GPU-less runner, so the game showed its "needs WebGL2" message.
+  - WebKit: my test ignored Playwright's Retina emulation (pixel ratio 2).
+- GitHub Actions, run 2 ([42848786424](https://github.com/seanoconail-ctrl/oar-and-ember/actions/runs/42848786424)), after the fixes: `npm ci`, lint, unit tests and build **passed**. Browser tests: Chromium 5 of 5 passed. Firefox and WebKit passed the no-WebGL2 test and failed the 4 screen comparisons each:
+  - Firefox: WebGL2 still off despite `webgl.force-enabled`.
+  - WebKit: every screenshot entirely black.
+  - Both look like limits of headless browsers on GPU-less Linux runners rather than game defects. That is not proven, because Firefox and WebKit cannot run in this session.
 
 ## Gate checks
-1. **`npm ci && npm run lint && npm test && npm run build` passes locally and in GitHub Actions.** Locally: **PASS** (exit code 0, figures above). In GitHub Actions: **BLOCKED**. `git push` was refused with "Claude doesn't have GitHub access to seanoconail-ctrl/oar-and-ember for your organization" (HTTP 403), and creating the branch through the GitHub API was refused too ("Resource not accessible by integration"). The workflow has therefore never run. The commit exists only in this session's container.
-2. **The published Pages address shows the title screen in Chromium, Firefox and Safari.** **NOT YET VERIFIED.** Pages publishing needs the repository setting "Source: GitHub Actions" and a push to `main`; neither has happened yet. The same smoke test already passes in Chromium against the local production build. Once both happen, the workflow's `published` job runs it against the live address in Chromium, Firefox and WebKit. Real Safari is for the user to open (decision S1-9).
+1. **`npm ci && npm run lint && npm test && npm run build` passes locally and in GitHub Actions.** Locally: **PASS** (exit code 0, figures above). In GitHub Actions: **PASS**. `npm ci`, lint, unit tests and build passed in runs 1 and 2 (links above). The first push had been refused for lack of GitHub access until the user fixed it.
+2. **The published Pages address shows the title screen in Chromium, Firefox and Safari.** **FAIL after two attempts; stopped for the user.**
+   - Not yet published: Pages needs the repository setting "Source: GitHub Actions" and a push to `main` (or an allowed branch).
+   - Against the built site in CI: Chromium passes pixel-exact; Firefox and WebKit fail on GitHub's GPU-less runners (Tests above).
+   - Options proposed to the user: run the Firefox and WebKit checks on a macOS runner, which has a GPU and is closer to real Safari, or have the user check Firefox and Safari by hand at the published link.
 3. **The decision log contains all twenty Stage 0 decisions.** **PASS**: `tests/unit/decisionLog.test.ts` reads rows 1 to 20 from the log and Book 3 section 03, and finds decision 9 still open in both.
 
 ## Art check
@@ -71,7 +81,7 @@ In the Book 2 section 23 format: one heading per report field.
 - The main ones: S1-2, the palette values transcribed from the Book 7 PDF; S1-3, the font source format; S1-4, fonts compiled at load until Stage 4; S1-10 to S1-12, how the ID registry was seeded and when assigned IDs freeze.
 
 ## Known issues
-- **High:** this session has no write access to the GitHub repository, so nothing can be pushed and CI cannot run. The fix is on the user's side: reconnect GitHub, or install the Claude GitHub App on the repository with write access.
+- **High:** the Firefox and WebKit browser checks fail on GitHub's Linux runners (see Tests). The cause is the runner, not shown to be the game, but it is unproven until a GPU-backed run or a human check.
 - **Medium:** gate check 2 is unverified until Pages is switched on and the work is published from a branch Pages accepts (`main` by default).
 - **Low:** WebKit on Linux is Safari's engine, not Safari. The user should open the published address in Safari once.
 - **Low:** `npm audit` reports a moderate advisory in `minimatch`, pulled in by ESLint and typescript-eslint. It is used only for linting, is never shipped to players, and the suggested fix downgrades ESLint. Accepted for now.
@@ -84,4 +94,4 @@ In the Book 2 section 23 format: one heading per report field.
   - Book 3 Stage 14 says "four puzzles" where Book 9 lists six "puzzle or secret" rows.
 
 ## Next stage ready
-**NO.** Gate check 1 cannot finish in GitHub Actions until GitHub write access is fixed. Gate check 2 needs that access, the Pages setting, and a published branch. Everything Stage 2 builds on is in place locally.
+**NO.** Gate check 2 has failed twice in Firefox and WebKit on CI and is not yet published, so Stage 2 waits for the user's decision. Checks 1 and 3 pass.
