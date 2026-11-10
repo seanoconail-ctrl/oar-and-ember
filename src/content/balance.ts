@@ -140,3 +140,26 @@ export function parseTimeBalance(json: unknown): TimeBalance {
     },
   };
 }
+
+/** Book 10 section 06: the starting vitality and stamina of the steerer and adult residents. */
+export interface PeopleBasics {
+  readonly vitality: number;
+  readonly stamina: number;
+}
+
+export function parsePeopleBasics(json: unknown): PeopleBasics {
+  const table = keyed(json, 'combatTimings', 'vitalityStaminaAndArmour');
+  const vitalityText = table('vitality');
+  const vitality = /^(\d+) for the steerer and adult residents$/.exec(vitalityText);
+  if (vitality === null) {
+    fail(
+      'vitalityStaminaAndArmour.vitality',
+      vitalityText,
+      '"N for the steerer and adult residents"',
+    );
+  }
+  const staminaText = table('stamina');
+  const stamina = /^(\d+);/.exec(staminaText);
+  if (stamina === null) fail('vitalityStaminaAndArmour.stamina', staminaText, '"N; ..."');
+  return { vitality: Number(vitality[1]), stamina: Number(stamina[1]) };
+}

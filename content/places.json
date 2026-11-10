@@ -1,0 +1,157 @@
+[
+  {
+    "id": "ISLE_SKARV",
+    "type": "HOME_ISLAND",
+    "nameKey": "place.name.isle_skarv"
+  },
+  {
+    "id": "SITE_CARRICK",
+    "type": "RAID_SITE",
+    "nameKey": "place.name.site_carrick"
+  },
+  {
+    "id": "TOWN_ARDCARN",
+    "type": "FARM_SETTLEMENT",
+    "nameKey": "place.name.town_ardcarn"
+  },
+  {
+    "id": "ABBEY_KILBRECC",
+    "type": "MONASTERY",
+    "nameKey": "place.name.abbey_kilbrecc"
+  },
+  {
+    "id": "FORT_DUNFIACH",
+    "type": "RINGFORT",
+    "nameKey": "place.name.fort_dunfiach"
+  },
+  {
+    "id": "TOWN_SALTVIK",
+    "type": "HARBOUR",
+    "nameKey": "place.name.town_saltvik"
+  },
+  {
+    "id": "GLEN_ARRA",
+    "type": "FARMSTEADS",
+    "nameKey": "place.name.glen_arra"
+  },
+  {
+    "id": "ISLE_INISRON",
+    "type": "SACRED_ISLAND",
+    "nameKey": "place.name.isle_inisron"
+  },
+  {
+    "id": "CAMP_CROWWICK",
+    "type": "RAIDERS_CAMP",
+    "nameKey": "place.name.camp_crowwick"
+  },
+  {
+    "id": "ISLE_KALDNESS",
+    "type": "SEA_KING_SEAT",
+    "nameKey": "place.name.isle_kaldness"
+  },
+  {
+    "id": "SITE_CARRICK_STRAND",
+    "type": "HOME_SITE",
+    "nameKey": "place.name.site_carrick_strand"
+  },
+  {
+    "id": "SITE_SALTNESS",
+    "type": "HOME_SITE",
+    "nameKey": "place.name.site_saltness"
+  },
+  {
+    "id": "SITE_ARRAFOOT",
+    "type": "HOME_SITE",
+    "nameKey": "place.name.site_arrafoot"
+  },
+  {
+    "id": "SK_WRECK_STRAND",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_wreck_strand"
+  },
+  {
+    "id": "SK_BROCH",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_broch"
+  },
+  {
+    "id": "SK_KELDA",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_kelda"
+  },
+  {
+    "id": "SK_NAUST",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_naust"
+  },
+  {
+    "id": "SK_MACHAIR",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_machair"
+  },
+  {
+    "id": "SK_HAGSEAT",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_hagseat"
+  },
+  {
+    "id": "SK_CAIRN",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_cairn"
+  },
+  {
+    "id": "SK_TIDECAVE",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_tidecave"
+  },
+  {
+    "id": "SK_ROOKHILL",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_rookhill"
+  },
+  {
+    "id": "SK_GREYMEN",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_greymen"
+  },
+  {
+    "id": "SK_BOG",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_bog"
+  },
+  {
+    "id": "SK_GEO",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_geo"
+  },
+  {
+    "id": "SK_CELL",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_cell"
+  },
+  {
+    "id": "SK_SKERRY",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_skerry"
+  },
+  {
+    "id": "SK_EAGLE",
+    "type": "SKARVHOLM_PLACE",
+    "region": "REG_SK",
+    "nameKey": "place.name.sk_eagle"
+  }
+]

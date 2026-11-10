@@ -3,14 +3,13 @@
  * 60 Hz tick. All changes arrive as commands, applied at the start of a tick in the order they
  * were submitted; systems report what happened as events. No wall-clock time or Math.random here.
  *
- * Stage 2 holds the calendar, the on-foot clock with sleep and collapse, and the RNG streams.
- * Stage 3 grows this state into the full WorldState of Book 2 section 05.
+ * Systems so far: the calendar and the on-foot clock with sleep and collapse (Stage 2).
  */
 import type { TimeBalance } from '../content/balance.ts';
 import { EventBus } from '../core/events.ts';
 import { hashValue } from '../core/hash.ts';
-import { seedAllStreams } from '../core/rng.ts';
-import type { RngState, RngStream } from '../core/rng.ts';
+import { emptyWorld, WORLD_STATE_VERSION } from './world.ts';
+import type { WorldState } from './world.ts';
 import {
   advanceMinutes,
   clockText,
@@ -21,30 +20,12 @@ import {
   watchOf,
   yearOf,
 } from './calendar/calendar.ts';
-import type { CalendarState, TidePhase, Watch } from './calendar/calendar.ts';
+import type { TidePhase, Watch } from './calendar/calendar.ts';
 import type { Season } from '../content/balance.ts';
 
-export const SIM_STATE_VERSION = 1;
-
-export interface SimState {
-  readonly version: number;
-  readonly seed: string;
-  /** Ticks run since the campaign began. */
-  tick: number;
-  rng: Record<RngStream, RngState>;
-  calendar: CalendarState;
-  clock: {
-    /** Progress towards the next game minute, in hundredths of a tick (see TICK_UNITS). */
-    subMinute: number;
-    /** The day-length option as a percentage of Book 10's secondsPerHour. */
-    dayLengthPercent: number;
-  };
-  player: {
-    awake: boolean;
-    /** Change to maximum stamina for the current day (the collapse penalty). */
-    staminaMaxChange: number;
-  };
-}
+/** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
+export type SimState = WorldState;
+export const SIM_STATE_VERSION = WORLD_STATE_VERSION;
 
 export type Command =
   { readonly type: 'SLEEP' } | { readonly type: 'SET_DAY_LENGTH'; readonly multiplier: number };
@@ -86,16 +67,9 @@ function unitsPerMinute(b: TimeBalance, percent: number): number {
   return b.secondsPerHour * percent;
 }
 
+/** A world with only the calendar and RNG, for runtime tests. Campaigns use newCampaign. */
 export function initialState(seed: string, b: TimeBalance): SimState {
-  return {
-    version: SIM_STATE_VERSION,
-    seed,
-    tick: 0,
-    rng: seedAllStreams(seed),
-    calendar: { day: 1, minuteOfDay: b.dayStart },
-    clock: { subMinute: 0, dayLengthPercent: 100 },
-    player: { awake: true, staminaMaxChange: 0 },
-  };
+  return emptyWorld(seed, b);
 }
 
 export function stateHash(state: SimState): string {

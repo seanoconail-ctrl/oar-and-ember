@@ -1,0 +1,26 @@
+[
+  {
+    "id": "HULL_COASTAL_BOAT",
+    "tier": "T1",
+    "balanceRow": "T1 Coastal boat",
+    "nameKey": "hull.name.hull_coastal_boat"
+  },
+  {
+    "id": "HULL_KARVI",
+    "tier": "T2",
+    "balanceRow": "T2 Karvi",
+    "nameKey": "hull.name.hull_karvi"
+  },
+  {
+    "id": "HULL_SNEKKJA",
+    "tier": "T3A",
+    "balanceRow": "T3a Snekkja",
+    "nameKey": "hull.name.hull_snekkja"
+  },
+  {
+    "id": "HULL_KNARR",
+    "tier": "T3B",
+    "balanceRow": "T3b Knarr",
+    "nameKey": "hull.name.hull_knarr"
+  }
+]

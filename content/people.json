@@ -1,0 +1,341 @@
+[
+  {
+    "id": "P_STEERER",
+    "kind": "PLAYER",
+    "nameKey": "person.name.p_steerer"
+  },
+  {
+    "id": "C_HILD",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_hild",
+    "values": {
+      "KIN": 3,
+      "GLORY": 2
+    }
+  },
+  {
+    "id": "C_ODDI",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_oddi",
+    "values": {
+      "GAIN": 3,
+      "KIN": 1
+    }
+  },
+  {
+    "id": "C_BRAN",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_bran",
+    "values": {
+      "MERCY": 3,
+      "WORD": 2
+    }
+  },
+  {
+    "id": "C_RUNA",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_runa",
+    "values": {
+      "WORD": 2,
+      "FAITH": 2,
+      "KIN": 1
+    },
+    "ties": [
+      {
+        "to": "C_ASA",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_EITHNE",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_eithne",
+    "values": {
+      "WORD": 3,
+      "MERCY": 2,
+      "KIN": 1
+    }
+  },
+  {
+    "id": "C_NESSA",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_nessa"
+  },
+  {
+    "id": "C_KOLBEINN",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_kolbeinn",
+    "values": {
+      "GAIN": 2,
+      "GLORY": 2
+    },
+    "ties": [
+      {
+        "to": "C_ASA",
+        "kind": "SPOUSE"
+      }
+    ]
+  },
+  {
+    "id": "C_THRAND",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_thrand",
+    "values": {
+      "WORD": 3,
+      "MERCY": 1,
+      "GLORY": 2
+    }
+  },
+  {
+    "id": "C_AINE",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_aine",
+    "values": {
+      "KIN": 2,
+      "GLORY": 2
+    }
+  },
+  {
+    "id": "C_SENAN",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_senan",
+    "values": {
+      "FAITH": 3,
+      "MERCY": 2,
+      "WORD": 2
+    }
+  },
+  {
+    "id": "C_GUDRUN",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_gudrun",
+    "values": {
+      "KIN": 3,
+      "WORD": 2
+    },
+    "ties": [
+      {
+        "to": "C_ARNBJORN",
+        "kind": "KIN"
+      },
+      {
+        "to": "C_YLVA",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_ARNBJORN",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_arnbjorn",
+    "values": {
+      "KIN": 2,
+      "MERCY": 1
+    },
+    "ties": [
+      {
+        "to": "C_GUDRUN",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_KARI",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_kari",
+    "values": {
+      "GLORY": 3
+    },
+    "ties": [
+      {
+        "to": "C_KOLLA",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_KOLLA",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_kolla",
+    "values": {
+      "KIN": 2,
+      "GAIN": 2
+    },
+    "ties": [
+      {
+        "to": "C_KARI",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_TOFI",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_tofi",
+    "values": {
+      "GLORY": 2,
+      "WORD": 2
+    },
+    "ties": [
+      {
+        "to": "C_YLVA",
+        "kind": "SPOUSE"
+      }
+    ]
+  },
+  {
+    "id": "C_YLVA",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_ylva",
+    "ties": [
+      {
+        "to": "C_TOFI",
+        "kind": "SPOUSE"
+      },
+      {
+        "to": "C_GUDRUN",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "C_ASA",
+    "kind": "RESIDENT",
+    "nameKey": "person.name.c_asa",
+    "ties": [
+      {
+        "to": "C_KOLBEINN",
+        "kind": "SPOUSE"
+      },
+      {
+        "to": "C_RUNA",
+        "kind": "KIN"
+      }
+    ]
+  },
+  {
+    "id": "L_FIACHRA",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_fiachra",
+    "home": "FORT_DUNFIACH",
+    "faction": "FAC_DUNFIACH"
+  },
+  {
+    "id": "L_ORLAITH",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_orlaith",
+    "home": "FORT_DUNFIACH",
+    "faction": "FAC_DUNFIACH"
+  },
+  {
+    "id": "L_COLMAN",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_colman",
+    "home": "ABBEY_KILBRECC",
+    "faction": "FAC_KILBRECC"
+  },
+  {
+    "id": "L_MUIRENN",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_muirenn",
+    "home": "ABBEY_KILBRECC",
+    "faction": "FAC_KILBRECC"
+  },
+  {
+    "id": "L_MUIREDACH",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_muiredach",
+    "home": "TOWN_ARDCARN",
+    "faction": "FAC_ARDCARN"
+  },
+  {
+    "id": "L_OTTAR",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_ottar",
+    "home": "TOWN_SALTVIK",
+    "faction": "FAC_SALTVIK"
+  },
+  {
+    "id": "L_GUNNHILD",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_gunnhild",
+    "home": "TOWN_SALTVIK",
+    "faction": "FAC_SALTVIK"
+  },
+  {
+    "id": "L_GILLAMUIRE",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_gillamuire",
+    "home": "GLEN_ARRA",
+    "faction": "FAC_ARRA"
+  },
+  {
+    "id": "L_BRONACH",
+    "kind": "LEADER",
+    "nameKey": "person.name.l_bronach",
+    "home": "ISLE_INISRON",
+    "faction": "FAC_KEEPERS"
+  },
+  {
+    "id": "R_ULF",
+    "kind": "RIVAL_CAPTAIN",
+    "nameKey": "person.name.r_ulf",
+    "home": "CAMP_CROWWICK",
+    "faction": "FAC_CROWWICK"
+  },
+  {
+    "id": "R_ASGRIM",
+    "kind": "RIVAL_CAPTAIN",
+    "nameKey": "person.name.r_asgrim",
+    "home": "ISLE_KALDNESS",
+    "faction": "FAC_KALDNESS"
+  },
+  {
+    "id": "R_FERGAL",
+    "kind": "RIVAL_CAPTAIN",
+    "nameKey": "person.name.r_fergal",
+    "home": "FORT_DUNFIACH",
+    "faction": "FAC_DUNFIACH"
+  },
+  {
+    "id": "R_GILLACIARAIN",
+    "kind": "RIVAL_CAPTAIN",
+    "nameKey": "person.name.r_gillaciarain"
+  },
+  {
+    "id": "E_ORM",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_orm",
+    "home": "ISLE_KALDNESS",
+    "faction": "FAC_KALDNESS"
+  },
+  {
+    "id": "E_HEID",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_heid",
+    "home": "ISLE_KALDNESS",
+    "faction": "FAC_KALDNESS"
+  },
+  {
+    "id": "E_KOLGRIM",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_kolgrim",
+    "home": "ISLE_KALDNESS",
+    "faction": "FAC_KALDNESS"
+  },
+  {
+    "id": "E_GROA",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_groa",
+    "home": "ISLE_KALDNESS",
+    "faction": "FAC_KALDNESS"
+  },
+  {
+    "id": "H_DONNCHAD",
+    "kind": "HOSTAGE",
+    "nameKey": "person.name.h_donnchad",
+    "home": "TOWN_ARDCARN",
+    "faction": "FAC_ARDCARN"
+  }
+]

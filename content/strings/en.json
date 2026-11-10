@@ -10,5 +10,287 @@
   },
   "ui.boot.webgl2_missing": {
     "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge, Firefox and Safari all support it."
+  },
+  "place.name.isle_skarv": {
+    "text": "Skarvholm"
+  },
+  "place.name.site_carrick": {
+    "text": "Carrick Landing"
+  },
+  "place.name.town_ardcarn": {
+    "text": "Ardcarn"
+  },
+  "place.name.abbey_kilbrecc": {
+    "text": "Kilbrecc"
+  },
+  "place.name.fort_dunfiach": {
+    "text": "Dún Fiach"
+  },
+  "place.name.town_saltvik": {
+    "text": "Saltvik"
+  },
+  "place.name.glen_arra": {
+    "text": "Glen Arra"
+  },
+  "place.name.isle_inisron": {
+    "text": "Inis Rón"
+  },
+  "place.name.camp_crowwick": {
+    "text": "Crowwick"
+  },
+  "place.name.isle_kaldness": {
+    "text": "Kaldness"
+  },
+  "place.name.site_carrick_strand": {
+    "text": "Carrick Strand"
+  },
+  "place.name.site_saltness": {
+    "text": "Saltness headland"
+  },
+  "place.name.site_arrafoot": {
+    "text": "Arra Foot"
+  },
+  "place.name.sk_wreck_strand": {
+    "text": "Wreck Strand"
+  },
+  "place.name.sk_broch": {
+    "text": "The old broch"
+  },
+  "place.name.sk_kelda": {
+    "text": "Kelda Spring"
+  },
+  "place.name.sk_naust": {
+    "text": "Naust Cove"
+  },
+  "place.name.sk_machair": {
+    "text": "The machair"
+  },
+  "place.name.sk_hagseat": {
+    "text": "The Hag's Seat"
+  },
+  "place.name.sk_cairn": {
+    "text": "The Hollow Cairn"
+  },
+  "place.name.sk_tidecave": {
+    "text": "Seal Cave"
+  },
+  "place.name.sk_rookhill": {
+    "text": "Rook Hill"
+  },
+  "place.name.sk_greymen": {
+    "text": "The Grey Men"
+  },
+  "place.name.sk_bog": {
+    "text": "The peat bog"
+  },
+  "place.name.sk_geo": {
+    "text": "Gull Geo"
+  },
+  "place.name.sk_cell": {
+    "text": "The hermit's cell"
+  },
+  "place.name.sk_skerry": {
+    "text": "Skerry of the Drowned"
+  },
+  "place.name.sk_eagle": {
+    "text": "Eagle stack"
+  },
+  "hazard.name.haz_cauldron": {
+    "text": "The Cailleach's Cauldron"
+  },
+  "hazard.name.haz_bluemen": {
+    "text": "Blue Men's Sound"
+  },
+  "hazard.name.haz_mist": {
+    "text": "Manannán's Mist"
+  },
+  "hazard.name.haz_ransreach": {
+    "text": "Rán's Reach"
+  },
+  "region.name.reg_sk": {
+    "text": "Skarvholm"
+  },
+  "region.name.reg_carraig": {
+    "text": "Carrick hinterland"
+  },
+  "region.name.reg_saltness": {
+    "text": "Saltness hinterland"
+  },
+  "region.name.reg_arra": {
+    "text": "Loch Arra hinterland"
+  },
+  "person.name.p_steerer": {
+    "text": "Steerer"
+  },
+  "person.name.c_hild": {
+    "text": "Hild Thorkelsdóttir"
+  },
+  "person.name.c_oddi": {
+    "text": "Oddi Gunnarsson"
+  },
+  "person.name.c_bran": {
+    "text": "Bran Gilla Brigte"
+  },
+  "person.name.c_runa": {
+    "text": "Runa Ásdísardóttir"
+  },
+  "person.name.c_eithne": {
+    "text": "Eithne ingen Domnaill"
+  },
+  "person.name.c_nessa": {
+    "text": "Nessa of Inis Rón"
+  },
+  "person.name.c_kolbeinn": {
+    "text": "Kolbeinn the Smith"
+  },
+  "person.name.c_thrand": {
+    "text": "Thrand Halfhand"
+  },
+  "person.name.c_aine": {
+    "text": "Áine of Glen Arra"
+  },
+  "person.name.c_senan": {
+    "text": "Brother Senán"
+  },
+  "person.name.c_gudrun": {
+    "text": "Gudrun"
+  },
+  "person.name.c_arnbjorn": {
+    "text": "Arnbjörn"
+  },
+  "person.name.c_kari": {
+    "text": "Kári"
+  },
+  "person.name.c_kolla": {
+    "text": "Kolla"
+  },
+  "person.name.c_tofi": {
+    "text": "Tófi One-Eye"
+  },
+  "person.name.c_ylva": {
+    "text": "Ylva"
+  },
+  "person.name.c_asa": {
+    "text": "Asa"
+  },
+  "person.name.l_fiachra": {
+    "text": "King Fiachra mac Áeda"
+  },
+  "person.name.l_orlaith": {
+    "text": "Órlaith ingen Fhiachrach"
+  },
+  "person.name.l_colman": {
+    "text": "Abbot Colmán"
+  },
+  "person.name.l_muirenn": {
+    "text": "Sister Muirenn"
+  },
+  "person.name.l_muiredach": {
+    "text": "Muiredach the hospitaller"
+  },
+  "person.name.l_ottar": {
+    "text": "Ottar Silkbeard"
+  },
+  "person.name.l_gunnhild": {
+    "text": "Gunnhild Sea-Mare"
+  },
+  "person.name.l_gillamuire": {
+    "text": "Gilla Muire"
+  },
+  "person.name.l_bronach": {
+    "text": "Brónach"
+  },
+  "person.name.r_ulf": {
+    "text": "Ulf Hrafnsson, \"the Crow\""
+  },
+  "person.name.r_asgrim": {
+    "text": "Asgrim Cold-Hand"
+  },
+  "person.name.r_fergal": {
+    "text": "Fergal mac Cathail"
+  },
+  "person.name.r_gillaciarain": {
+    "text": "Gilla Ciaráin"
+  },
+  "person.name.e_orm": {
+    "text": "Orm Sveinsson, Sea King of Kaldness"
+  },
+  "person.name.e_heid": {
+    "text": "Heid the Grey"
+  },
+  "person.name.e_kolgrim": {
+    "text": "Kolgrím the Burner"
+  },
+  "person.name.e_groa": {
+    "text": "Gróa"
+  },
+  "person.name.h_donnchad": {
+    "text": "Donnchad mac Muiredaig"
+  },
+  "faction.name.fac_ardcarn": {
+    "text": "Ardcarn"
+  },
+  "faction.name.fac_dunfiach": {
+    "text": "Dún Fiach"
+  },
+  "faction.name.fac_kilbrecc": {
+    "text": "Kilbrecc"
+  },
+  "faction.name.fac_saltvik": {
+    "text": "Saltvik"
+  },
+  "faction.name.fac_arra": {
+    "text": "Glen Arra"
+  },
+  "faction.name.fac_keepers": {
+    "text": "Keepers"
+  },
+  "faction.name.fac_crowwick": {
+    "text": "Crowwick"
+  },
+  "faction.name.fac_kaldness": {
+    "text": "Kaldness"
+  },
+  "hull.name.hull_coastal_boat": {
+    "text": "Coastal boat"
+  },
+  "hull.name.hull_karvi": {
+    "text": "Karvi"
+  },
+  "hull.name.hull_snekkja": {
+    "text": "Snekkja"
+  },
+  "hull.name.hull_knarr": {
+    "text": "Knarr"
+  },
+  "fitting.name.fit_extended_hold": {
+    "text": "Extended hold"
+  },
+  "fitting.name.fit_raised_bow_platform": {
+    "text": "Raised bow platform"
+  },
+  "fitting.name.fit_shield_rack": {
+    "text": "Shield rack"
+  },
+  "fitting.name.fit_grapnels_boarding_planks": {
+    "text": "Grapnels and planks"
+  },
+  "fitting.name.fit_awning_stores": {
+    "text": "Awning and stores"
+  },
+  "fitting.name.fit_bailing_station": {
+    "text": "Bailing station"
+  },
+  "fitting.name.fit_towing_gear": {
+    "text": "Towing gear"
+  },
+  "fitting.name.fit_better_sail_rigging": {
+    "text": "Better sail and rigging"
+  },
+  "fitting.name.fit_carved_beast_head": {
+    "text": "Carved beast-head"
+  },
+  "fitting.name.fit_gilt_weather_vane": {
+    "text": "Gilt weather-vane"
   }
 }

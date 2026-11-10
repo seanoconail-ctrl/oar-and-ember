@@ -1,0 +1,62 @@
+[
+  {
+    "id": "FIT_EXTENDED_HOLD",
+    "slot": "MIDSHIP",
+    "balanceRow": "Extended hold",
+    "nameKey": "fitting.name.fit_extended_hold"
+  },
+  {
+    "id": "FIT_RAISED_BOW_PLATFORM",
+    "slot": "BOW",
+    "balanceRow": "Raised bow platform",
+    "nameKey": "fitting.name.fit_raised_bow_platform"
+  },
+  {
+    "id": "FIT_SHIELD_RACK",
+    "slot": "GUNWALE",
+    "balanceRow": "Shield rack",
+    "nameKey": "fitting.name.fit_shield_rack"
+  },
+  {
+    "id": "FIT_GRAPNELS_BOARDING_PLANKS",
+    "slot": "STERN",
+    "balanceRow": "Grapnels and planks",
+    "nameKey": "fitting.name.fit_grapnels_boarding_planks"
+  },
+  {
+    "id": "FIT_AWNING_STORES",
+    "slot": "MIDSHIP",
+    "balanceRow": "Awning and stores",
+    "nameKey": "fitting.name.fit_awning_stores"
+  },
+  {
+    "id": "FIT_BAILING_STATION",
+    "slot": "MIDSHIP",
+    "balanceRow": "Bailing station",
+    "nameKey": "fitting.name.fit_bailing_station"
+  },
+  {
+    "id": "FIT_TOWING_GEAR",
+    "slot": "STERN",
+    "balanceRow": "Towing gear",
+    "nameKey": "fitting.name.fit_towing_gear"
+  },
+  {
+    "id": "FIT_BETTER_SAIL_RIGGING",
+    "slot": "RIG",
+    "balanceRow": "Better sail and rigging",
+    "nameKey": "fitting.name.fit_better_sail_rigging"
+  },
+  {
+    "id": "FIT_CARVED_BEAST_HEAD",
+    "slot": "BOW_IDENTITY",
+    "balanceRow": "Carved beast-head",
+    "nameKey": "fitting.name.fit_carved_beast_head"
+  },
+  {
+    "id": "FIT_GILT_WEATHER_VANE",
+    "slot": "MAST_IDENTITY",
+    "balanceRow": "Gilt weather-vane",
+    "nameKey": "fitting.name.fit_gilt_weather_vane"
+  }
+]

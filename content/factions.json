@@ -1,0 +1,50 @@
+[
+  {
+    "id": "FAC_ARDCARN",
+    "nameKey": "faction.name.fac_ardcarn",
+    "home": "TOWN_ARDCARN",
+    "startAttitude": "NEUTRAL"
+  },
+  {
+    "id": "FAC_DUNFIACH",
+    "nameKey": "faction.name.fac_dunfiach",
+    "home": "FORT_DUNFIACH",
+    "startAttitude": "WARY"
+  },
+  {
+    "id": "FAC_KILBRECC",
+    "nameKey": "faction.name.fac_kilbrecc",
+    "home": "ABBEY_KILBRECC",
+    "startAttitude": "WARY"
+  },
+  {
+    "id": "FAC_SALTVIK",
+    "nameKey": "faction.name.fac_saltvik",
+    "home": "TOWN_SALTVIK",
+    "startAttitude": "NEUTRAL"
+  },
+  {
+    "id": "FAC_ARRA",
+    "nameKey": "faction.name.fac_arra",
+    "home": "GLEN_ARRA",
+    "startAttitude": "NEUTRAL"
+  },
+  {
+    "id": "FAC_KEEPERS",
+    "nameKey": "faction.name.fac_keepers",
+    "home": "ISLE_INISRON",
+    "startAttitude": "UNKNOWN"
+  },
+  {
+    "id": "FAC_CROWWICK",
+    "nameKey": "faction.name.fac_crowwick",
+    "home": "CAMP_CROWWICK",
+    "startAttitude": "RIVAL"
+  },
+  {
+    "id": "FAC_KALDNESS",
+    "nameKey": "faction.name.fac_kaldness",
+    "home": "ISLE_KALDNESS",
+    "startAttitude": "DEMANDING"
+  }
+]
