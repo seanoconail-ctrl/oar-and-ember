@@ -1,9 +1,13 @@
 /**
  * Prints what WebGL2 a browser offers on this machine (renderer, version, whether a shader
  * compiles and whether the context survives), so a CI runner's graphics can be judged from its
- * log. Not a test: `node tests/browser/webgl-probe.ts firefox|webkit|chromium [headed]`.
+ * log. Not a test: `node tests/browser/webgl-probe.ts firefox|webkit|chromium [headed] [base URL]`.
+ * With the address of a served build, it also says how much of the art test view and of play is
+ * drawn (not black) in a screenshot, just after the view is shown and two seconds later.
  */
 import { chromium, firefox, webkit } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { decodePng } from '../../src/tools/art/png.ts';
 
 const name = process.argv[2] ?? 'firefox';
 const headed = process.argv[3] === 'headed';
@@ -37,4 +41,28 @@ const info = await page.evaluate(() => {
   };
 });
 console.log(`WebGL2 in ${name}${headed ? ' (headed)' : ''}: ${JSON.stringify(info)}`);
+
+/** The share of a screenshot's pixels that are not black. */
+async function drawn(at: Page): Promise<string> {
+  const shot = decodePng(await at.screenshot());
+  let lit = 0;
+  for (let i = 0; i < shot.data.length; i += 4)
+    if ((shot.data[i] ?? 0) + (shot.data[i + 1] ?? 0) + (shot.data[i + 2] ?? 0) > 24) lit++;
+  return `${((100 * lit) / (shot.width * shot.height)).toFixed(1)}%`;
+}
+
+const base = process.argv[4];
+if (base !== undefined) {
+  for (const [query, state] of [
+    ['view=art-test&case=front', 'art'],
+    ['view=play&name=Ash&body=A', 'play'],
+  ] as const) {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto(`${base}?${query}`);
+    await page.locator(`canvas#screen[data-state=${state}]`).waitFor({ timeout: 60_000 });
+    const first = await drawn(page);
+    await page.waitForTimeout(2000);
+    console.log(`${query}: drawn ${first} at once, ${await drawn(page)} two seconds later`);
+  }
+}
 await browser.close();

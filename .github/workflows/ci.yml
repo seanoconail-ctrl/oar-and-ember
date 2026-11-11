@@ -125,12 +125,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: What WebGL2 the browser offers
+      - name: What WebGL2 the browser offers, and how much of the game it draws
         run: |
+          npx vite preview --port 4173 --strictPort > /dev/null 2>&1 &
+          sleep 3
           if [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed || true
+            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed http://localhost:4173/ || true
           else
-            node tests/browser/webgl-probe.ts webkit || true
+            node tests/browser/webgl-probe.ts webkit headless http://localhost:4173/ || true
           fi
       - name: Browser tests
         run: |
