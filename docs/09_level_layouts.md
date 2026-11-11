@@ -1,8 +1,8 @@
 # Oar and Ember, Book 09: Level Layouts
 
-*Tile-level plans for Skarvholm, the steading, Carrick Landing, the occupied island and the Hollow Cairn, with routes, sightlines, landing points and water depth; the mainland's twenty areas and the dungeons in outline; and the rule for how densely the world is filled.*
+*Tile-level plans for Skarvholm, the steading, Carrick Landing, the occupied island and the Hollow Cairn, with routes, sightlines, landing points and water depth; the mainland's sites, road legs and wilderness routes, and the dungeons, in outline; and the rule for how densely the world is filled.*
 
-These plans are the ground truth for the first builds and the late-game return. Each one exists twice: as a drawing for people and as a character grid that an LLM can transcribe directly into tilemap data. Sections 10 to 12 set the mainland, the dungeons and the density of the world at outline level; the tile plans for those places are drawn by the stages that build them and must agree with these outlines.
+These plans are the ground truth for the first builds and the late-game return. Each one exists twice: as a drawing for people and as a character grid that an LLM can transcribe directly into tilemap data. Sections 10 to 12 and 14 set the mainland, the dungeons, the density of the world and the six wilderness routes at outline level; the tile plans for those places are drawn by the stages that build them and must agree with these outlines.
 
 **How to use:** Coordinates are in tiles unless marked as blocks. The grids at the end of each section are authoritative; the drawings explain them. Distances, speeds and perception ranges come from Book 10. Any change to a grid needs a reachability test re-run and a decision-log entry.
 
@@ -18,11 +18,14 @@ _Layout specification. Grids are generated from the same source as the drawings 
 | Block | 8 x 8 tiles, used for the island-scale grids |
 | Layers | ground, collision, objects, triggers, spawns, navigation, light |
 | Landing point | A place a boat can beach or moor, with its tide condition |
-| Route | A path with a length in tiles and a time at Book 10 speeds |
+| Route | A path with a length in tiles and a time at Book 10 speeds (a wilderness route, below, is a whole place) |
 | Sightline | What an observer at a post can see, its range and its dead zones |
 | Dead zone | Ground an observer cannot see because of cliffs, buildings, dunes or scrub |
 | Depth band | How deep a water tile is for a person: wet, ankle, knee, waist or deep, at low and at high water |
-| Area | One of the mainland's twenty places on foot (section 10); like a Skarvholm zone, it is one or more streamed scenes |
+| Site | One of the mainland's sixteen destinations explored on foot (section 10); like a Skarvholm zone, it is one or more streamed scenes |
+| Wilderness route | One of the mainland's six long places between sites, crossed on foot whenever a journey passes through it (sections 10 and 14); one or more streamed scenes |
+| Road leg | An off-screen stretch of road joining a site's road exit to another site or to a route's end (section 10) |
+| Point of interest | A place worth stopping at: major (a village, dungeon, ruin, shrine or camp) or minor (section 12) |
 
 ### Transcribing a grid
 Each character is one tile (or one block in island grids). The legend under each drawing maps characters to terrain. Collision comes from terrain: cliff, rock and walls block movement; deep water is the edge of the walkable ground unless the plan allows swimming there (below); dunes, scrub and woodland allow movement and hide sneaking actors. Buildings are solid except at the doors listed in each section. Height: headlands and hills (`^`) give observers the Book 10 height bonus, but no observer sees down past a cliff edge unless standing at it.
@@ -318,7 +321,7 @@ Two more guards by day, and two dogs at the keeper's house that hear with three 
 | Broken chamber | (18 to 29, 10 to 18) | Where Gróa's shaft from the surface (23, 2) breaks in; sea-light; her drowned diggers |
 | Door of Three Truths | (12, 14) | Speaks from either side; see Book 6 scenario 9 |
 | Inner chamber and the Cup | (4 to 11, 9 to 19); Cup at (7, 14) | The Cup will not leave its stone until the truths are spoken |
-| Spring room | (6 to 9, 20 to 22) | The island's last fresh water, untouched by Rán |
+| Spring room | (6 to 9, 20 to 22) | The island's last fresh water, untouched by Rán. Its outflow channel, (10, 22) to (19, 24), joins the Seal Cave passage at (20, 24): the spring-room passage, which spares whoever holds the cairn door (Book 4 section 14) if the party has found it |
 | Seal Cave passage | From (20, 24) to (47, 28) | Tidal; floods within the Book 10 surge time once the Cup is lifted |
 
 ### Grid: the occupied island (blocks)
@@ -466,78 +469,83 @@ Two more guards by day, and two dogs at the keeper's house that hear with three 
 ```
 
 ## 10 / The mainland overview
-*The mainland's twenty areas at overview scale: how they join, how long each link takes to walk, where ships land and what blocks the way. Book 4 section 03 holds what is in each area.*
+*The mainland's sixteen sites and six wilderness routes at overview scale: how road legs join them, where each route's ends lie, where ships land and what blocks the way. Book 4 section 03 holds what is in each place.*
 
-The mainland (`REG_MAINLAND`) is one region of twenty areas on the Irish coast, the same for every player. This section fixes how the areas fit together. Each area's tile plan is drawn by the stage that builds it, starting from a mockup the user approves (Book 3), and must agree with this overview. Carrick Landing's plan (sections 06 and 07) is the first of them.
+The mainland (`REG_MAINLAND`) is one region on the Irish coast, the same for every player. It has two kinds of playable place: **sites**, explored in full on foot, and **wilderness routes**, long places between sites that a journey crosses on foot. **Road legs** join sites and route ends off screen (Book 4 section 03). This section fixes how they fit together. Each site's and route's tile plan is drawn by the stage that builds it, starting from a mockup the user approves (Book 3), and must agree with this overview; section 14 outlines the routes. Carrick Landing's plan (sections 06 and 07) is the first of them.
 
-### Areas
-| # | ID | Area | Coast and landing | Layout notes |
+### Sites and routes
+| ID | Place | Kind | Coast and landing | Layout notes |
 |---|---|---|---|---|
-| 1 | `MAIN_CARRICK_STRAND` | Carrick Strand | Coast; beach landing | Shore farmland beside Carrick Landing; home site A |
-| 2 | `MAIN_CARRICK_LANDING` | Carrick Landing | Coast; landings L1 to L4 (section 06) | The raid site plan; the track to Ardcarn leaves east at (95, 35) |
-| 3 | `MAIN_ARDCARN` | Ardcarn | Inland; reached from the sea through Carrick Landing | Farms, fields and the guesthouse; the hub of the western roads |
-| 4 | `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Inland | Loch shore with a shelf of shallows and deep water beyond; the well beside it |
-| 5 | `MAIN_KILBRECC` | Kilbrecc | Coast; landing below the headland | Round tower, church, guesthouse, workshops |
-| 6 | `MAIN_KILBRECC_FARMS` | The tenant farms | Inland | Tithe barns and the pilgrims' road to Kilbrecc |
-| 7 | `MAIN_BLACKWOOD_EDGE` | Fiodh Dubh: the edge | Inland, wilderness | Oakwood with clearings, charcoal burners' hearths and outlaw lookouts |
-| 8 | `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Inland, dungeon | Old forest round the hill-folk's ringfort and its souterrain (section 11) |
-| 9 | `MAIN_MOIN_MHOR` | Móin Mhór, the Great Bog | Inland, wilderness | Peat banks, bog pools and the plank road; floods in winter |
-| 10 | `MAIN_TRACKWAY` | The Drowned Trackway | Inland, dungeon | The sunken trackway and its shrine (section 11) |
-| 11 | `MAIN_SLIABH_CARN` | Sliabh Carn | Inland, wilderness | Shielings on the lower slopes; marked climbs to the summit cairn |
-| 12 | `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Inland, dungeon | Cave mouth high on the mountain (section 11) |
-| 13 | `MAIN_HIGH_PASS` | The High Pass | Inland, wilderness | A pass road between scree slopes; the landslide (below) |
-| 14 | `MAIN_DUN_FIACH` | Dún Fiach | Coast; landing below the crag | The royal rath on its crag; gate on the landward side |
-| 15 | `MAIN_RIDGE_ROAD` | The Ridge Road | Inland | A road along the ridge with a toll post; Fiachra's riders patrol it |
-| 16 | `MAIN_FORD` | The River Ford | Inland | The ford, the ford-keeper's post and the bridge plot beside the ford |
-| 17 | `MAIN_SALT_PANS` | Ottar's farms and salt pans | Coast; beach landing | Salt pans on the shore, farms behind them |
-| 18 | `MAIN_SALTVIK` | Saltvik | Coast; the harbour | Market, yards, jetties and the guards' posts |
-| 19 | `MAIN_SALTNESS` | Saltness headland | Coast; landing in the cove | The headland, with sea caves below it; home site B |
-| 20 | `MAIN_MOUND_FIELD` | The Mound Field and the moor | Inland, wilderness and dungeons | The Norse mounds and the Barrow-King's mound; the moor and the outlaws' hill-fort beyond (section 11) |
+| `MAIN_CARRICK_STRAND` | Carrick Strand | Site | Coast; beach landing | Shore farmland beside Carrick Landing; home site A |
+| `MAIN_CARRICK_LANDING` | Carrick Landing | Site | Coast; landings L1 to L4 (section 06) | The raid site plan; the road to Ardcarn leaves east at (95, 35) |
+| `MAIN_ARDCARN` | Ardcarn | Site | Inland; reached from the sea through Carrick Landing | Farms, fields and the guesthouse; the hub of the western roads |
+| `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Site | Inland | Loch shore with a shelf of shallows and deep water beyond; the well beside it |
+| `MAIN_KILBRECC_FARMS` | The tenant farms | Site | Inland | Tithe barns, the bondmen's houses and the pilgrims' road to Kilbrecc |
+| `MAIN_KILBRECC` | Kilbrecc | Site | Coast; landing below the headland | Round tower, church, guesthouse, workshops |
+| `MAIN_BLACKWOOD_EDGE` | The Black Wood path | **Route** | Inland | Oakwood path from Ardcarn's road to Móin Mhór's; the hill-folk's gate to the heart lies off it (section 14) |
+| `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Site, dungeon | Inland; entered from the Black Wood path | Old forest round the hill-folk's ringfort and its souterrain (section 11) |
+| `MAIN_MOIN_MHOR` | Móin Mhór: the turf village and bog edge | Site | Inland | The turf village, peat banks and bog pools at the Great Bog's edge; the plank road's west end and the moor road's north end are near |
+| `MAIN_PLANK_ROAD` | The plank road across the Great Bog | **Route** | Inland | Timber trackway across open bog; the Trackway branches off it (section 14) |
+| `MAIN_TRACKWAY` | The Drowned Trackway | Site, dungeon | Inland; entered from the plank road | The sunken trackway and its shrine (section 11) |
+| `MAIN_SLIABH_CARN` | Sliabh Carn | Site | Inland | Shielings on the lower slopes; marked climbs to the summit cairn |
+| `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Site, dungeon | Inland | Cave mouth high on the mountain (section 11) |
+| `MAIN_HIGH_PASS` | The High Pass | **Route** | Inland | A pass road between scree slopes and a gorge; the landslide (below) |
+| `MAIN_DUN_FIACH` | Dún Fiach | Site | Coast; landing below the crag | The royal rath on its crag; gate on the landward side |
+| `MAIN_RIDGE_ROAD` | The Ridge Road | **Route** | Inland | A road along the ridge with a toll post and three ends: west, east and the south branch |
+| `MAIN_FORD` | The river path and the Ford | **Route** | Inland | A river path, the ford-keeper's house, the Ford and the bridge plot beside it |
+| `MAIN_SALT_PANS` | Ottar's farms and salt pans | Site | Coast; beach landing | Salt pans on the shore, farms behind them |
+| `MAIN_SALTVIK` | Saltvik | Site | Coast; the harbour | Market, yards, jetties and the guards' posts |
+| `MAIN_SALTNESS` | Saltness headland | Site | Coast; landing in the cove | The headland, with sea caves below it; home site B |
+| `MAIN_MOOR_ROAD` | The moor road | **Route** | Inland | Heather moor with standing stones; the turn to the Mound Field lies off it (section 14) |
+| `MAIN_MOUND_FIELD` | The Mound Field | Site, dungeons | Inland; entered from the moor road | The Norse mounds and the Barrow-King's mound; the outlaws' hill-fort beyond (section 11) |
 
-From Chapter 3 the seven coastal areas (1, 2, 5, 14, 17, 18 and 19) are landings on the sea map; the other thirteen are reached only on foot.
+From Chapter 3 the seven coastal sites (Carrick Strand, Carrick Landing, Kilbrecc, Dún Fiach, the salt pans, Saltvik and Saltness) are landings on the sea map; the other nine sites and all six routes are reached only on foot, through the routes.
 
-### Links and walking times
-Each link is a route on foot between two areas, entered at an edge exit (Book 2 section 10, FootLink). Times are real time at walking speed, from Book 10 section 14.
+### The network
+Road legs are off screen. A site has a **road exit** for each road leg that leaves it, and a route has an **end** for each: the party walks to a road exit or an end, the travel map shows the journey's chain, and the next place it plays is the next route's end or the destination's road exit. The two ends of a road leg are its exits below. Times are in Book 4 section 03 and Book 10 section 14 ("Network").
 
-| Link | Walk | Route | Condition |
+| Road leg | Leaves by | Arrives by | Condition |
 |---|---|---|---|
-| Carrick Strand to Carrick Landing | 1 min | Along the shore | |
-| Carrick Landing to Ardcarn | 1.5 min | The track east from (95, 35) | |
-| Ardcarn to Loch Carn | 2 min | A track up to the loch | |
-| Ardcarn to Kilbrecc farms | 2 min | Field lanes | |
-| Kilbrecc farms to Kilbrecc | 1 min | The pilgrims' road | |
-| Ardcarn to Black Wood edge | 2.5 min | A cattle track into the oakwood | |
-| Black Wood edge to Black Wood heart | 3 min | A path that leads back to the edge until the hill-folk give leave | The hill-folk's leave |
-| Black Wood edge to Móin Mhór | 2.5 min | Down out of the trees to the bog's edge | |
-| Móin Mhór to Drowned Trackway | 2 min | The plank road, then the sunken trackway | Summer and autumn, or a winter cold snap |
-| Móin Mhór to Sliabh Carn | 3 min | A climbing path off the bog | |
-| Sliabh Carn to Cailleach's Cave | 2 min | A marked climb | Closed by snow in winter |
-| Sliabh Carn to High Pass | 2 min | The drove road | |
-| High Pass to Dún Fiach | 2.5 min | The pass road down to the rath | The landslide, until cleared |
-| Kilbrecc to Ridge Road | 2 min | The road up from the monastery | |
-| Ridge Road to Dún Fiach | 2 min | The king's road to the gate | Guards attack if Dún Fiach is hostile |
-| Ridge Road to River Ford | 2.5 min | The road down to the river | |
-| River Ford to Salt pans | 2 min | Across the ford | Closed in spate unless bridged |
-| Salt pans to Saltvik | 1 min | The shore road | |
-| Saltvik to Saltness | 1 min | The headland path | |
-| Salt pans to Mound Field and moor | 2.5 min | A moor track inland | |
-| Mound Field and moor to Móin Mhór | 3 min | A moor track to the bog | Wolves in winter |
+| Carrick Strand to Carrick Landing | The shore path | Carrick Landing's shore, at an edge exit placed when Carrick Strand's plan is drawn | |
+| Carrick Landing to Ardcarn | The road east from (95, 35) | Ardcarn's west road | |
+| Ardcarn to Loch Carn | Ardcarn's track up to the loch | The loch's lower shore | |
+| Ardcarn to Kilbrecc farms | The field lanes | The farms' west lane | |
+| Kilbrecc farms to Kilbrecc | The pilgrims' road | Kilbrecc's gate | |
+| Ardcarn to the Black Wood path | A cattle track to the trees | The path's south end | |
+| The Black Wood path to Móin Mhór | The path's north end | The turf village's wood road | |
+| Móin Mhór to the plank road | The bog edge | The plank road's west end | |
+| The plank road to Sliabh Carn | The plank road's east end | The drove road at the mountain's foot | |
+| Sliabh Carn to the Cailleach's Cave | A marked climb | The cave mouth | Closed by snow in winter |
+| Sliabh Carn to the High Pass | The drove road | The pass's north end | |
+| The High Pass to Dún Fiach | The pass's south end | The rath's landward gate | |
+| Kilbrecc to the Ridge Road | The road up from the monastery | The Ridge Road's west end | |
+| The Ridge Road to Dún Fiach | The Ridge Road's east end | The king's road to the gate | Guards attack if Dún Fiach is hostile |
+| The Ridge Road to the river path | The Ridge Road's south branch | The river path's north end | |
+| The river path to the salt pans | The river path's south end | The farms behind the pans | |
+| Salt pans to Saltvik | The shore road | Saltvik's land gate | |
+| Saltvik to Saltness | The headland path | The headland's neck | |
+| Salt pans to the moor road | A moor track inland | The moor road's south end | |
+| The moor road to Móin Mhór | The moor road's north end | The turf village's moor track | |
 
-The link from Carrick Strand leaves the Carrick Landing plan at an edge exit placed when Carrick Strand's plan is drawn; it must not open a new approach inside the raid's sightlines (section 07). Each area places a **waymark** where a road leaves it; quick travel runs between known waymarks when it is safe, at the game-time cost in Book 10 section 14. A link's time is the walk from one area's waymark to the other's, through the ground between them; that ground is drawn in the two areas' plans, so the walking is spent in places worth stopping in (section 12).
+A road exit or a route end is drawn as the road leaving the plan, with a waymark beside it; it must not open a new approach inside a raid site's sightlines (section 07). A route's main path joins its ends; its side paths, pockets and branches do not leave the route except through a dungeon's or a site's entry (section 14). There is no quick travel through a route: a journey through it is walked.
+
+### Journey-event scenes
+A road leg's journey event (Book 4 section 03) plays in a short road scene drawn for the country the leg crosses: a farm lane, a wood's edge, a bog edge, open moor, a hill road or a shore road. Each is a small plan with the road through it, cover to either side and an exit at each end, and meets the same art standard and density rule as any other scene. When the event ends, the leg goes on.
 
 ### Blocks
 | Block | Where | Layout | How it opens |
 |---|---|---|---|
-| The landslide | The High Pass, on the road to Dún Fiach | A slope of fallen rock and broken timber across the pass road; not climbable; seen from both sides | Cleared by a work party, by Fiachra's men after an alliance, or by the Cailleach's maul; the cleared pass is a second state of the scene |
-| The ford in spate | The River Ford | The ford tiles are knee or waist deep at most times and deep and fast in spate, sweeping a person downstream (section 01) | Wait for the water to fall, or build the timber bridge on its plot beside the ford, which crosses at every level |
-| The Black Wood heart | The edge's path into the heart | The path loops back to the edge past the same split oak until leave is given; the sign is visible on the second pass | The hill-folk's leave (Book 4 section 03) |
-| The Drowned Trackway | The end of the plank road | The sunken trackway lies under deep bog water in spring and winter, and at ankle to knee depth in summer and autumn; a cold snap freezes it to walkable ice | Season, or a cold snap |
+| The landslide | The High Pass, across its main path near the south end | A slope of fallen rock and broken timber across the pass road; not climbable; seen from both sides; no side path or shortcut gets round it | Cleared by a work party, by Fiachra's men after an alliance, or by the Cailleach's maul; the cleared pass is a second state of the route |
+| The Ford in spate | The river path's crossing | The Ford's tiles are knee or waist deep at most times and deep and fast in spate, sweeping a person downstream (section 01); the path either side stays walkable, so the route is closed only at the crossing | Wait for the water to fall, or build the timber bridge on its plot beside the Ford, which crosses at every level |
+| The hill-folk's gate | Off the Black Wood path, at the end of a side path | The side path loops back to the main path past the same split oak until leave is given; the sign is visible on the second pass | The hill-folk's leave (Book 4 section 03) |
+| The Drowned Trackway | Its branch off the plank road | The sunken trackway lies under deep bog water in spring and winter, and at ankle to knee depth in summer and autumn; a cold snap freezes it to walkable ice | Season, or a cold snap |
+| The bog in winter flood | The plank road's side paths | Off the planks, the bog's pools rise to deep water; the planks themselves stay at ankle depth | Spring, or a cold snap |
 | Snow on the climb | Sliabh Carn to the Cailleach's Cave | Drifts close the marked climb in winter | Spring |
 
-Hostile ground is never blocked: guards stand at the territory's edges (the Ridge Road's toll post, Dún Fiach's gate, Saltvik's jetties) and attack on sight while the faction is hostile (Book 2 section 10).
+A closed way is shown on the travel map with its reason, and the journey goes round it where the network allows. Hostile ground is never blocked: guards stand at the territory's edges (the Ridge Road's toll post, Dún Fiach's gate, Saltvik's jetties) and attack on sight while the faction is hostile (Book 2 section 10).
 
 ### Season and tide on the mainland
-Every area changes with season and tide (Book 4 section 03), so every area plan has a state for each season where Book 4 says it changes: the ford in spate, the bog flooded in winter or frozen in a cold snap, snow on the high climbs, the shielings occupied in summer, harvest work in the farms in autumn. The coastal areas follow the tide like Skarvholm, with landing conditions and depth bands at low and high water.
+Every site and route changes with season and tide (Book 4 section 03), so every plan has a state for each season where Book 4 says it changes: the Ford in spate, the bog flooded in winter or frozen in a cold snap, snow on the high climbs and in the pass, the shielings occupied in summer, harvest work in the farms in autumn, fairs and pilgrims on the Ridge Road in summer. The coastal sites follow the tide like Skarvholm, with landing conditions and depth bands at low and high water.
 
 ## 11 / Dungeon layouts in outline
 *Eight dungeons, two on Skarvholm and six on the mainland. Each is planned around a lead, puzzles from the world, fair traps with signs and a guardian room.*
@@ -555,22 +563,35 @@ Every area changes with season and tide (Book 4 section 03), so every area plan 
 |---|---|---|---|---|---|
 | The Hollow Cairn (Skarvholm) | The sealed east door, the Grey Men and the cairn's keepers | Section 09 | The Grey Men alignment; the Door of Three Truths | Grave goods that wake their keepers (the cells are marked by carvings that seem to listen) | The inner chamber and the Cup behind the Door |
 | The Seal Cave's deep passage (Skarvholm) | The scavengers' skiff in the inner chamber, and the back passage that shows at spring lows | The inner chamber, then the tidal passage under the bog to the cairn (section 09) | Reading the tide; a stretch of waist-deep wading at the passage's lowest point | The rising tide: a weed line on the walls shows how high the water comes, and the passage grows loud as the tide turns | None but the tide; the passage comes out below the cairn's broken chamber |
-| The Black Wood souterrain (area 8) | The hill-folk's leave; the hermit's psalter; the charcoal burners' warnings | The ringfort's bank and ditch in the old forest, and under it a souterrain of narrow stone passages, low creeps and small chambers | Riddling doors that open to the right answer; the psalter holds the hints | Passages that lead back to their start, marked by flowers out of season; a door that shuts on a wrong answer, with a longer way round | The champion's chamber past the last door, where fog fills the room |
-| The Barrow-King's mound (area 20) | Ottar's family stories; grave-light seen from the moor track | A long mound with a passage, side cells of grave goods and the court hall | The order in which the goods were laid; what Hrolf will hear at his court | Roof props that give way (dust trickles and timbers creak first); draugar that wake when goods are taken (frost forms on the goods) | Hrolf's court: his chair among his goods, his draugar round the walls |
-| The Drowned Trackway (area 10) | The peat-cutters' warnings; an old offering in a cut bank | The plank road from Móin Mhór's edge, then the sunken trackway to the shrine on an islet | The season, and the safe steps marked by old posts | Bog holes (bright moss and bubbles); rotten planks (dark and sagging) | The shrine on its islet, with deep bog water round it, so the fight stays on the planks |
-| The outlaws' hill-fort (area 20, moor) | Outlaw scouts in the Black Wood, robbed travellers, a captured outlaw | An old hill-fort on the moor: bank, ditch, gate, huts and a lookout; open to a stealth raid or an assault (Book 1 section 05) | Finding a way in unseen; the lookout's blind side | Snares and deadfalls on the paths (bent saplings, cut twine, a log hung high) | Faolán's hall, where the Frankish sword is kept |
-| The Cailleach's Cave (area 12) | The herders' stories on Sliabh Carn; frost on one stone only | A marked climb to the cave mouth, ice galleries, a wind passage and an inner hall of old stone | Crossing between the gusts, which come in a rhythm; ice that a fire melts | Falling ice (creaking and drip lines below it); gusts that push towards an edge (snow streamers in the air before each one) | The inner hall, where the Cailleach shows herself after the wind and ice |
-| Loch Carn (area 4), a quest | Ardcarn's fears; Brigid's Well and its offerings | The loch shore, the well, the shallows where the horse stands and deep water beyond | The well's offerings and the binding | The horse's offer of a ride (weed in its mane; it walks into deep water) | The water's edge where the each-uisce stands; the bridle is won at the well |
+| The Black Wood souterrain (the heart) | The hill-folk's leave; the hermit's psalter; the charcoal burners' warnings on the Black Wood path | The ringfort's bank and ditch in the old forest, and under it a souterrain of narrow stone passages, low creeps and small chambers | Riddling doors that open to the right answer; the psalter holds the hints | Passages that lead back to their start, marked by flowers out of season; a door that shuts on a wrong answer, with a longer way round | The champion's chamber past the last door, where fog fills the room |
+| The Barrow-King's mound (the Mound Field) | Ottar's family stories; grave-light seen from the moor road | A long mound with a passage, side cells of grave goods and the court hall | The order in which the goods were laid; what Hrolf will hear at his court | Roof props that give way (dust trickles and timbers creak first); draugar that wake when goods are taken (frost forms on the goods) | Hrolf's court: his chair among his goods, his draugar round the walls |
+| The Drowned Trackway (off the plank road) | The peat-cutters' warnings; an old offering in a cut bank | A branch off the plank road (section 14), then the sunken trackway to the shrine on an islet | The season, and the safe steps marked by old posts | Bog holes (bright moss and bubbles); rotten planks (dark and sagging) | The shrine on its islet, with deep bog water round it, so the fight stays on the planks |
+| The outlaws' hill-fort (beyond the Mound Field) | Outlaw scouts on the Black Wood path, robbed travellers on the moor road, a captured outlaw | An old hill-fort on the moor: bank, ditch, gate, huts and a lookout; open to a stealth raid or an assault (Book 1 section 05) | Finding a way in unseen; the lookout's blind side | Snares and deadfalls on the paths (bent saplings, cut twine, a log hung high) | Faolán's hall, where the Frankish sword is kept |
+| The Cailleach's Cave (above Sliabh Carn) | The herders' stories on Sliabh Carn; frost on one stone only | A marked climb to the cave mouth, ice galleries, a wind passage and an inner hall of old stone | Crossing between the gusts, which come in a rhythm; ice that a fire melts | Falling ice (creaking and drip lines below it); gusts that push towards an edge (snow streamers in the air before each one) | The inner hall, where the Cailleach shows herself after the wind and ice |
+| Loch Carn, a quest | Ardcarn's fears; Brigid's Well and its offerings | The loch shore, the well, the shallows where the horse stands and deep water beyond | The well's offerings and the binding | The horse's offer of a ride (weed in its mane; it walks into deep water) | The water's edge where the each-uisce stands; the bridle is won at the well |
 
 ## 12 / Exploration density
-*Every area is worth walking through slowly. Plans are filled to a rule, not by eye.*
+*Every site and route is worth walking through slowly. Plans are filled to a rule, not by eye.*
 
 ### The rule
-- **Something worth stopping for** lies every 20 to 30 seconds of walking along every route (Book 10 section 20): an item, a detail, a creature, a view or a resource. A plan is checked by walking each route at walking speed and measuring the gaps.
-- **A real secret or small puzzle** sits in every area and every Skarvholm zone. In a wilderness area there is also one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger (Book 4 section 09).
-- **Return value:** every area changes with season and tide (section 10), so each plan lists what is different in each season and at low and high water.
+- **Something worth stopping for** lies every 20 to 30 seconds of walking along every path, a wilderness route's main path and side paths included (Book 10 section 20): an item, a detail, a creature, a view or a resource. A plan is checked by walking each path at walking speed and measuring the gaps.
+- **A real secret or small puzzle** sits in every site, every wilderness route and every Skarvholm zone. On a wilderness route and in a wild site there is also one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger (Book 4 section 09).
+- **Return value:** every site and route changes with season and tide (section 10), so each plan lists what is different in each season and at low and high water.
 - **Collectibles** are placed as stopping points: shells, carved stones, the hermit's psalter pages, the names of the dead, songs learned and lore for each power.
 - **Objectives:** the current goal is always shown, and a side discovery is always close to the route towards it.
+
+### Points of interest
+Every mainland site and wilderness route places its points of interest to this rule (Book 4 section 03):
+
+| Place | Major points of interest | Minor points of interest |
+|---|---|---|
+| A site | One or two: a village, dungeon, ruin, shrine or camp with people and quests | 4 to 8 |
+| A wilderness route | One (section 14) | 4 to 8 |
+
+- **Minor points of interest** are things such as a cairn, a wreck, a carved stone, a hermit's hut, a hidden cache, a viewpoint, an eagle's nest, a herb patch, a grave or a burned farm. They count towards the stopping rule above.
+- **Off the beaten track:** the best minor rewards lie off the obvious paths, behind a climb, a wade, a hazard or a puzzle (the movement verbs below), and reward curiosity with food, materials, lore, collectibles or equipment. At least one minor point of interest in every site and route is placed this way.
+- **Fair guarding:** hazards guard many of the best finds, and each one shows its sign from the path before it can hurt anyone (Book 4 section 09). An off-path reward is visible, or hinted, from somewhere a curious player will stand.
+- **Gathering spots** (herbs, nuts, berries, timber, peat, fish in streams) and **camp spots** are placed with the points of interest but are not counted as them.
 
 ### Movement verbs in a plan
 | Verb | How a plan marks it | Layout rule |
@@ -591,6 +612,108 @@ Every area changes with season and tide (Book 4 section 03), so every area plan 
 - Placement tests: every suggested plot passes the Book 2 placement rules.
 - The occupied island: approach B is impassable outside spring low tides; approach A is impossible without dealing with the cell sentry or slipping past him in fog.
 - Water: every water tile has a depth band at low and at high water; no required route crosses deep water; every deep tile a person can enter is marked as swimming water; in the opening, Hild's spot on Wreck Strand is knee to waist deep and reachable from dry shingle without a swim.
-- The mainland: every area and link is reachable under its stated season, tide and block conditions, and closed when they say so (the landslide, the ford in spate, the Black Wood heart before leave, the Drowned Trackway out of season, the snow on the climb); each link's walk matches Book 10 section 14 within its stated tolerance; the seven coastal areas, and only they, have sea-map landings.
+- The mainland: every site, route and road leg is reachable under its stated season, tide and block conditions, and closed when they say so (the landslide on the High Pass, the Ford in spate, the hill-folk's gate before leave, the Trackway branch out of season, the plank road's side paths in winter flood, the snow on the climb); the network's legs and the shortest journeys between sites match Book 10 section 14 ("Network", "Shortest journeys") within its stated tolerance; every journey between two inland sites passes through the routes the network puts between them; the seven coastal sites, and only they, have sea-map landings.
+- Wilderness routes: each route's direct path, walked from end to end at walking speed, takes 1.5 to 2.5 real minutes and matches its Book 10 section 14 time within tolerance, and walking every side path and pocket as well takes about twice that or less; each has a main path joining all its ends, at least one shortcut that shortens the crossing, one or two camp spots, and its waystation spot on one of them; the hill-folk's gate, the Trackway branch and the Mound Field turn lie off their routes' main paths; no side path or shortcut gets round a block; every ambush place has its sign in view from the main path before the ambush point.
+- Points of interest: every site has one or two major and 4 to 8 minor points of interest, and every route one major and 4 to 8 minor; at least one minor point of interest in each sits behind a climb, a wade, a hazard or a puzzle off the obvious paths; every hazard guarding a find shows its sign from the path.
 - Dungeons: each passes reachability with its traps armed; every trap's sign is in view on the approach before its trigger; every guardian room has a way out.
-- Density: walking every route at walking speed, the gap between stopping points stays within Book 10 section 20; every area and zone has at least one secret or small puzzle; every climb and swim has a rest point within a full stamina bar (Book 10 section 06).
+- Density: walking every path at walking speed, the gap between stopping points stays within Book 10 section 20; every site, route and zone has at least one secret or small puzzle; every climb and swim has a rest point within a full stamina bar (Book 10 section 06).
+
+## 14 / Wilderness route layouts in outline
+*The six wilderness routes that a journey crosses on foot: long places with a clear main path, side paths, pockets, camp spots and a shortcut to find. Each is planned around its ends, its major point of interest and the branches that lead off it.*
+
+### Rules for every route
+- **Shape:** long rather than square, with a clear main path joining the route's ends, side paths, pockets, one or two camp spots and at least one shortcut to find. A route is one or more streamed scenes.
+- **Length:** the direct path takes about 1.5 to 2.5 real minutes of walking (2 to 3 game hours at the Book 10 clock); exploring off it can double that. Each route's time is in Book 10 section 14 ("Network"), and the plan's main path is drawn to match it at walking speed. Time runs at its normal rate.
+- **Ends:** each end is where a road leg arrives (section 10), with a waymark and a clear view of the main path setting off. The party can leave by any end, including the one it came in by.
+- **Contents:** one major point of interest, 4 to 8 minor ones (section 12), wildlife ground, gathering spots, hazards and camp spots. The major point of interest is on the main path or plainly signposted from it; the best minor finds are off it.
+- **Shortcut:** at least one, off the main path and not obvious, that once found shortens later crossings. A shortcut may need a climb, a wade or a jump; it never needs a swim, and it never gets round a block.
+- **Camp spots and the waystation spot (proposal):** one or two sheltered camp spots by water. One of them is marked as the route's waystation spot, with room for the hut and its store, so a waystation is built where the plan expects it (Book 4 section 03).
+- **Ambush places:** a few stretches of the main path with cover close on both sides. Each has room for its sign (a fallen tree across the path, a crows' roost that rises, fresh tracks in soft ground) in view from the path before the ambush point.
+- **Branches:** a site entered from a route (the heart of the Black Wood, the Drowned Trackway, the Mound Field) lies at the end of a side path, never on the main path, with its threshold visible before the party commits (section 11).
+- **Art:** every route meets the terrain art standard set at Stage 6 (Book 7 section 14): wind, moving plants, light, water and wildlife.
+- **Seasons:** each plan has a state for each season where Book 4 section 03 says the route changes.
+
+### The Black Wood path (`MAIN_BLACKWOOD_EDGE`)
+| Part | Layout |
+|---|---|
+| Ends | The south end, where the cattle track from Ardcarn arrives; the north end, where the wood road leaves for Móin Mhór |
+| Main path | An old cart track winding north through oakwood and holly, through shafts of light in small clearings, crossing two streams on stepping stones at ankle depth |
+| Side paths and pockets | A stream valley running east; a ring of old oaks; a holly-dark hollow that holds fog; a hazel coppice |
+| Shortcut | A deer trail across a stream bend, found by following deer or their slots in the mud, which cuts the main path's long loop round the hollow |
+| Camp spots | The charcoal burners' clearing; a dry knoll by the northern stream, the waystation spot |
+| Major point of interest | The charcoal burners' camp beside the main path, about a third of the way north: hearths, turf huts, people and quests |
+| The hill-folk's gate | About two thirds of the way north, a side path leaves the main path into the oldest trees, to a gap between two hollies by a split oak. Until the hill-folk give leave it loops back to the main path past the same split oak (section 10, Blocks); with their leave it leads into the heart (`MAIN_BLACKWOOD_HEART`) |
+| Minor points of interest | An outlaw lookout platform high in an oak, with a cache, reached by a marked climb; an empty hermit's hut with a carved cross; a charcoal burner's grave by a cold hearth; a fallen oak bridging the eastern stream to a bank of honey and mushrooms; a wild bees' nest in a hollow oak; a rock outcrop above the canopy, a climb, with a view to Móin Mhór |
+| Gathering | Hazelnuts and acorns, mushrooms in autumn, herbs, deadfall timber, fish in the streams, honey |
+| Hazards | Boar ground (rooted earth, a snort in the undergrowth); fog in the hollow; getting lost off the path; wolves in winter; the hill-folk's rules near the gate |
+
+### The plank road (`MAIN_PLANK_ROAD`)
+| Part | Layout |
+|---|---|
+| Ends | The west end at Móin Mhór's bog edge; the east end at the drove road below Sliabh Carn |
+| Main path | The timber trackway of split planks on brushwood, in long straight reaches between islands of firmer ground, across open bog with pools and cotton grass either side |
+| Side paths and pockets | Peat-cutters' tracks out to the cut banks; a birch island; a string of pools where otters fish |
+| Shortcut | Where the planks swing round a deep pool, a line of old marker posts crosses firm ground: the peat-cutters' safe steps, found by asking them or by watching where the moss is dull |
+| Camp spots | The turf-cutters' shelter; the birch island near the east end, the waystation spot |
+| Major point of interest | The turf-cutters' shelter on an island of firm ground about halfway, and the branch to the Drowned Trackway beside it |
+| The Trackway branch | From beside the shelter, old posts lead out across the bog to where the sunken trackway begins (`MAIN_TRACKWAY`). It is reachable in summer and autumn, or over ice in a cold snap, and under deep bog water otherwise (section 10, Blocks) |
+| Minor points of interest | A body in a cut bank, old and dark, best left (lore); a keg of bog butter in the peat, which is the Bog King's if taken (Book 4 section 07); a sunk cart with iron fittings, reached by a wade past a bog hole; a cairn on the one hummock, with a view of Sliabh Carn; an otter's holt; a broken reach of planks where the bog has taken them, with a way round on firm tussocks |
+| Gathering | Peat at the cut banks, bog cotton, bog myrtle and herbs, cranberries in late summer, eels in the pools |
+| Hazards | Bog holes off the planks (bright moss, bubbles); rotten planks (dark and sagging); mist; will-o'-the-wisps that draw a walker off the planks; the Bog King's drowned near the branch at night |
+
+### The High Pass (`MAIN_HIGH_PASS`)
+| Part | Layout |
+|---|---|
+| Ends | The north end, where the drove road from Sliabh Carn arrives; the south end, where the pass road falls towards Dún Fiach |
+| Main path | A pass road climbing between scree slopes beside a stream in a gorge, over a windy saddle, then down in long bends |
+| Side paths and pockets | The gorge floor along the stream; a high shelf under the crags; a hollow below the saddle out of the wind |
+| Shortcut | A goat track over a shoulder of the crag that cuts the northern bends: a marked climb with a ledge to rest on (section 12) |
+| Camp spots | The sheltered hollow below the saddle, the waystation spot; the ruined watchtower |
+| Major point of interest | The landslide across the pass road near the south end (section 10, Blocks), until it is cleared; and a ruined watchtower on a knoll above the saddle |
+| Minor points of interest | An eagle's nest on a crag, reached by a climb; a wayside cairn where travellers add a stone; an overhang with old bones and an outlaws' cache; a waterfall pool in the gorge, reached by a wade; a pedlar's grave with his pack; the saddle's view to the sea and Dún Fiach |
+| Gathering | Herbs and juniper on the crags, trout in the gorge pools |
+| Hazards | Rockfall and scree; cold, on high ground in any season; wolves; Faolán's outlaws; new slides after rain; lightning on the saddle in storms |
+| Seasons | Snow drifts on the saddle slow it in winter |
+
+### The Ridge Road (`MAIN_RIDGE_ROAD`)
+| Part | Layout |
+|---|---|
+| Ends | Three: the west end, from Kilbrecc; the east end, to Dún Fiach; and the south branch, down to the river path |
+| Main path | A road along an open ridge of heather with cairns and long views to the sea, which forks at Fiachra's toll post: east to Dún Fiach and south down to the river |
+| Side paths and pockets | A corrie below the ridge with a lochan; the crest path to a summit cairn; a pilgrims' path to a holy stone; a hollow where the summer fair is held |
+| Shortcut | A drove path on the ridge's lee from the west end to the south branch, which does not pass the toll post: the smugglers' way, and a way round the riders when Dún Fiach is hostile |
+| Camp spots | The lochan in the corrie, the waystation spot; a sheepfold by the south branch |
+| Major point of interest | Fiachra's toll post at the fork: a hut, a bar across the road, riders and tolls |
+| Minor points of interest | A pilgrims' cross-slab with offerings; a burial cairn; a beacon stance with the view over the sea; a shepherd's bothy; a dead horse and a rider's lost satchel; the summit cairn, reached by a climb |
+| Gathering | Heather, bilberries in summer, peat, hares |
+| Hazards | Fiachra's riders if Dún Fiach is hostile; toll disputes; wind, cold and fog on the crest; lightning in storms |
+| Seasons | Busiest in summer, with fairs in the hollow and pilgrims on the road |
+
+### The river path and the Ford (`MAIN_FORD`)
+| Part | Layout |
+|---|---|
+| Ends | The north end, from the Ridge Road's south branch; the south end, towards the salt pans |
+| Main path | A path along the riverbank through alder and willow, down to the Ford, where stepping stones and a gravel bar cross the wide brown river, then on along the far bank |
+| Side paths and pockets | An otters' backwater; a willow island reached by a wade; an eel weir; a water meadow in an oxbow |
+| Shortcut | A cut across the oxbow meadow that saves the path's long bend on the north bank |
+| Camp spots | A terrace above the flood line by Cuán's ford-house, the waystation spot; the willow island |
+| Major point of interest | Cuán's ford-house and the crossing, with the bridge plot beside the Ford (section 10, Blocks) |
+| Minor points of interest | A smugglers' cache under a cut bank, reached by a wade; the eel weir; a drowned man's cairn; a heronry; a carved stone at the Ford marked with old flood heights; a sunken boat in the backwater |
+| Gathering | Fish and eels, willow withies, alder timber, watercress, herbs |
+| Hazards | Spate; the river itself, deep in its channel (section 01); smugglers |
+| Seasons | Closed at the Ford in spate unless bridged; the path either side stays open |
+
+### The moor road (`MAIN_MOOR_ROAD`)
+| Part | Layout |
+|---|---|
+| Ends | The south end, from the salt pans; the north end, towards Móin Mhór |
+| Main path | A track over heather moor past standing stones and a gallows tree, dipping to cross peaty burns |
+| Side paths and pockets | A burn running down to a ruined shieling; a low ridge with a ring cairn; a hollow of bog cotton |
+| Shortcut | A sheep trod over the moor's shoulder that cuts the road's long curve, passing close under the gallows tree |
+| Camp spots | The ruined shieling, the waystation spot; a burnside hollow |
+| Major point of interest | The standing stones, and the turn to the Mound Field beside them |
+| The Mound Field turn | From the standing stones a side path runs off over the moor to the mounds (`MAIN_MOUND_FIELD`); grave-light on the Barrow-King's mound can be seen from the road at night (section 11) |
+| Minor points of interest | The gallows tree and what was left under it; a burned farm; the ring cairn; a boundary stone carved with ogham; a merlin's nest; a view over the salt pans to the sea |
+| Gathering | Heather, peat, bilberries, grouse, trout in the burns |
+| Hazards | Wolves in winter; outlaws; the barrow-dead near the turn at night; bog holes in the burn hollows; fog |
+| Seasons | Long dark nights in winter |

@@ -643,3 +643,56 @@ A seed that is kept is part of the world truth from the start of every campaign,
 
 ### The event deck
 An event deck of about forty rare events brings the unexpected. Each fires at most once per campaign, and only when its conditions fit the moment: a whale stranding, a poet's satire spreading, a sickness a resident hides, a lost child's shoe found (no child appears), a stolen boat, a feud at a feast, a sacred stone found in a field. About one comes every 5 to 10 days, never during a tutorial and never two at once (Book 10 section 17).
+
+## 13 / Optional quests and companions
+*Quests the player can mount at any time for the ship, for equipment and for the residents; and up to two companions on any expedition on foot.*
+
+### Optional quests
+Optional quests can be mounted at any time, between the story gates, and never move the story on by themselves:
+
+| For | Examples |
+|---|---|
+| Ship enhancements | A better sail, a carved prow, a sea-charm, a famous mast timber |
+| Character equipment | The dungeon rewards (section 10), and smaller finds off the beaten track (section 03) |
+| Residents' requests | What residents ask of the steerer, some of which grow into quests across the map (Book 5 section 11) |
+
+### Companions
+- **Up to two:** the steerer can take up to two friendly characters, residents or allies who agree to come, on any expedition on foot: a journey, a site, a dungeon or a raid ashore.
+- **What they do:** they fight, help with puzzles and hazards, comment, react through their traits, values and stance (Book 5), and can be wounded or downed like anyone (section 14). While they are away the home runs without them (Book 10 section 19).
+- **Some quests need a particular companion:** Runa to judge a mast timber, or Senán to read a carved stone. The quest says so before the party sets out.
+
+## 14 / Downed, left behind, and scripted deaths
+*Downed friends generally live if they are brought to safety. Crew die mainly by being left behind, by berserkers and cruel enemies, and in scripted deaths and death-choices, and every death changes the household.*
+
+### Downed, not dead
+- **Downed friendly characters generally survive** if the steerer brings them back to the boat or the village before the scene ends; on a journey, a safe camp or a waystation counts (section 03). They do not bleed out on a timer.
+- **Carrying is slow** and leaves the carrier unable to fight (Book 10 section 06, "Downed and carried").
+- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies, and those do so with a visible warning first.
+- **Left behind** at the end of a scene, a downed ally is captured or killed, according to the enemy. Captives can be rescued or ransomed back later.
+- **Where deaths come from:** crew permadeath now comes mainly from being left behind, from berserkers and cruel enemies, and from scripted deaths. The *Rán's mercy* option still prevents unscripted deaths; scripted deaths still happen.
+
+### Scripted deaths and death-choices (proposal)
+| Death | When | What happens |
+|---|---|---|
+| Rán's debt | Thorkel's bargain comes due (section 12, twist 1) | Someone must go into the sea. Gudrun offers herself. The steerer can accept, choose otherwise, or refuse and pay another way: the ship, the household's luck or a later life |
+| The Return's cairn door | The Return to Skarvholm (Chapter 8) | Someone must hold the cairn door as the tide rises. Whoever stays dies, unless the party found the spring-room passage first (Book 9 section 09) |
+| Bran's reckoning | Once Bran is known at Kilbrecc (Book 5) | A monk's family demands Bran's life as blood-price. Bran can go to his death, be exiled, or be defended at the cost of the alliance |
+| Thrand's proof | Thrand challenges Asgrim to prove Heid's crimes | Without the evidence, Thrand dies in the duel |
+| The defence of Skarvholm | The night of the attack (Chapter 5) | Whoever leads the watch may die holding the landing, depending on the preparation |
+| Berserk deaths | Any fight | A berserker such as Kári can die charging alone, through the trait (Book 5) |
+| The washer at the ford | Before the final battle (section 07) | She names who will die; changing orders can save them, at a cost elsewhere |
+
+### Every death counts
+Every death is consequential: grief (happiness falls across the household), lost skills and jobs, changed relationships, a grave to tend, songs at the fire, ghosts or fetches where the dead had unfinished business (section 07), story branches that close, and enemies who mock or allies who honour the dead. Rites matter: dead left without them invite draugar and shame the kin.
+
+## 15 / Raids, attacks and defences
+*The household fights by sea and by land, attacking and defending. Each fight is a story gate when it is a story event, and optional otherwise.*
+
+| Kind | What it is | Where |
+|---|---|---|
+| Raids by sea | Stealth or an all-out assault (Book 6 section 12) | Any shore the ship can reach |
+| Attacks by land | Once the household is on the mainland, it marches overland with its people and allies, by the network of section 03, and assaults a camp, a farm or a fort, with the same formation and objective rules as an assault from the sea | Mainland camps, farms and forts, outlaw camps among them |
+| Sea-borne attacks | The household lands in force from its ships on a coastal settlement | Mainland coastal places (Carrick, Kilbrecc, Saltvik's outer harbour) as well as Crowwick and Orm's outposts |
+| Defences | Watch, warning and preparation (walls, traps, stakes, archers on platforms), then the battle | The homestead on Skarvholm, and the mainland home |
+
+Each is a gate when it is a story event (section 08: the Carrick raid, the defence of Skarvholm, the final battle), with a readiness screen and a warning that it is a point of no return, and optional otherwise. A story defence waits at its gate: its signs show, the attackers gather, and the battle comes when the player stands to for it.

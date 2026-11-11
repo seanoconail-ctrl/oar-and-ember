@@ -1,6 +1,6 @@
 {
  "title": "Oar and Ember balance sheet",
- "revision": "2.2",
+ "revision": "2.3",
  "source": "Book 10",
  "tables": {
   "timeAndTravel": {
@@ -2700,7 +2700,7 @@
      "Tools and weapons": "Mainland forge: swords possible",
      "Ship": "Two ships",
      "Buildings": "M2: hall, palisade, gate, boatshed",
-     "Food and stores": "16 of the 20 mainland areas known"
+     "Food and stores": "Most mainland sites known; four routes crossed"
     },
     {
      "Day": "240",
@@ -2944,7 +2944,7 @@
      "Condition": "Always",
      "Warning": "The Keepers' revelation and scouting reports",
      "Scale": "Garrison in section 07",
-     "Counter": "Book 6 scenario 9; section 13; checkpoint before landing; one retry before day 255"
+     "Counter": "Book 6 scenario 9; section 13; checkpoint before landing; one retry before the household sets out for the final battle"
     },
     {
      "Days": "256 to 270",

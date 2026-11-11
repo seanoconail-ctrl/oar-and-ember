@@ -659,6 +659,8 @@ export function startPlay(
     root.dataset['steererMask'] = String(view.water['P_STEERER']?.wade?.mask ?? 0);
     root.dataset['hildMask'] = String(view.water['C_HILD']?.wade?.mask ?? 0);
     root.dataset['hildPose'] = onFoot.actors['C_HILD']?.pose ?? '';
+    root.dataset['hildPx'] = onFoot.actors['C_HILD']?.x.toFixed(1) ?? '';
+    root.dataset['hildPy'] = onFoot.actors['C_HILD']?.y.toFixed(1) ?? '';
     root.dataset['tide'] = visuals.tideLevel.toFixed(4);
     if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));

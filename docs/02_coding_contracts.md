@@ -190,7 +190,7 @@ Leaders are people too: friendship and fear apply to every named leader of a set
 - **Happiness** is mood now. It is recomputed each morning from food, warmth, rest, safety, recent success, grief, festivals and how the person was treated, and moves during the day as those change. `moodToday` holds the reasons so the interface can say why.
 - **Friendship** is how the person feels about the steerer over time. It moves with kept and broken promises, care, gifts, time spent together, and shared deeds that fit the person's values.
 - **Fear** is how much the person fears the steerer. It moves with brutality, punishments, displays of strength and threats.
-- **Deeds feed friendship and fear, judged by the witness's own code.** Each deed a person witnesses or hears of (section 15) is weighed first by the witness's culture (Book 10 section 08, "Deed reactions by culture": the same deed reads differently to the Norse, the Gaels, the Church, the Keepers and Saltvik), then by their values, their traits ("Traits") and their stance ("Stances"), with the witness factor, giving the friendship and fear deltas. A person with two codes judges, and is judged, by either. The steerer's acts at home (a gift, a punishment, a judgement, a promise) are deeds of the same kind, and the household reacts by its own code even when the player acts against it.
+- **Deeds feed friendship and fear, judged by the witness's own code.** Each deed a person witnesses or hears of (section 15) is weighed first by the witness's culture (Book 10 section 08, "Deed reactions by culture": the same deed reads differently to the Norse, the Gaels, the Church, the Keepers and Saltvik), then by their values, their traits ("Traits") and their stance ("Stances"), with the witness factor, giving the friendship and fear deltas. A person with two codes judges, and is judged, by either, taking the stronger of the two cultures' factors (Book 10 section 08). The steerer's acts at home (a gift, a punishment, a judgement, a promise) are deeds of the same kind, and the household reacts by its own code even when the player acts against it.
 - **Effects** follow the Book 10 section 08 table "Happiness, friendship and fear": work output scales with happiness, and low happiness makes disputes likelier; high friendship volunteers for danger, defends the steerer and stays in hard times; low friendship without fear leaves; high fear without friendship obeys any order at lower quality and may desert or betray while the steerer is away or wounded; high fear with high friendship is fierce devotion.
 - **The warning flow** stays: crossing a friendship band downwards (Book 10 section 08, "Friendship bands"), or falling into one of the effects above that ends in leaving, triggers in order, with at least two days between steps: a remark, a complaint scene, refusal of the order class that caused it, a request to leave.
 - **Ties** include existing relationships (spouses, siblings) from content; there is no romance system and no tie of type lover can be created in play.
@@ -398,7 +398,7 @@ interface RegionState { discoveredZones: Id[]; places: Record<Id, MainlandPlaceS
 - **How it opens.** From Chapter 3 the coastal sites have landings on the sea map; inland places open as they are discovered (walking there, a chart, testimony, a view from a height, a journey event) and as blocks are cleared.
 
 ### Water depth bands
-- Every water tile has a bed height; its **depth band** (`WET, ANKLE, KNEE, WAIST, DEEP`) is the water level (tide, spate, flood, freeze) over the bed, computed from the calendar and weather (Book 10 section 02, "Water depth bands"). It is never stored per frame, and what is drawn always agrees with it.
+- Every water tile has a bed height, from the height field baked with the zone (`src/content/terrain/`, so the simulation may read it); its **depth band** (`WET, ANKLE, KNEE, WAIST, DEEP`) is the still water level (the calendar's tide, spate, flood or freeze; never the drawn swash, which is visual only) over the bed, computed from the calendar and weather (Book 10 section 02, "Water depth bands"; decision S6R-3). It is never stored per frame, and what is drawn always agrees with it.
 - **Who reads it:** movement (each band's speed), stamina (waist-deep wading and swimming drain, section 24), combat (waist deep, carrying and fighting are harder by the Book 10 band modifiers), AI and pathing (band costs; deep water is collision unless the scene allows swimming and the actor can swim), hearing (wading and splashing are louder), evidence (tracks do not hold in water), render (the band's mask, the waterline, ripples, splashes and wet sprites, Book 7 sections 07 and 14) and audio (water footsteps).
 - **Deep water** allows swimming only where the scene marks it; the kelpie bridle's water-horse crosses where its rules allow.
 - **Masking** is presentation: the actor view carries the band and the waterline, and the renderer hides the sprite below it by the band's mask height (Book 10 section 02).
@@ -409,20 +409,26 @@ interface RegionState { discoveredZones: Id[]; places: Record<Id, MainlandPlaceS
 
 ### Camping and companions
 ```ts
-interface CampState { area: Id; pos: Vec2; day: number; fire: boolean; sheltered: boolean; watch?: Id }
+interface CampState { place: Id; spot?: Id /* a route's camp spot */; waystation?: Id; pos: Vec2; day: number;
+  fire: boolean; sheltered: boolean; watch?: Id }
 ```
-- **Camping:** the `CAMP` command needs a bedroll and a fire's makings, an area that is not hostile, and the safe rule. A camp ends the day (to 06:00, section 03), heals by the Book 10 section 15 amount, and **saves if safe** (section 20). Its risk (wolves, outlaws, cold) comes from the area and season on the `encounters` stream and falls with a good fire, a companion on watch and a sheltered spot. An attack wakes the steerer into `OnFoot` at the camp, with no save.
-- **Companions on foot:** up to two residents (Book 10 section 15) travel with the steerer on the mainland, in `party.companions`. They follow, comment from their topics, help (pulling the steerer out of a bog hole, carrying, tasks) and fight under the crew commands of section 12. While away they are out of the home's work and in their own condition (hunger, cold, wounds).
+- **Camping:** if night falls away from home, the steerer camps at a site, at a route's camp spot or at a waystation. The `CAMP` command needs a bedroll and a fire's makings (a waystation provides both), a place that is not hostile, and the safe rule. A camp ends the day (to 06:00, section 03), heals by the Book 10 section 15 amount, and **saves if safe** (section 20). Its risk (wolves, outlaws, cold) comes from the place and season on the `encounters` stream and falls with a good fire, a companion on watch and a sheltered spot; a waystation is safer still (Book 10 section 15, "Waystations"). An attack wakes the steerer into `OnFoot` at the camp, with no save.
+- **Companions on foot:** up to two friendly characters (Book 10 section 15) go with the steerer on any expedition on foot, in `party.companions`, and cross every route with them. They follow, comment from their topics, react through their traits, help with puzzles and hazards (pulling the steerer out of a bog hole, carrying, tasks), fight under the crew commands of section 12, and can be wounded and downed. Some quests need a particular companion (Book 6). While away they are out of the home's work and in their own condition (hunger, cold, wounds).
 
-## 11 / Local scenes and raids
-*A raid is data: a scene, a true state, intel, complications, extraction and outcome bands. Every raid is a stealth raid or an all-out assault.*
+## 11 / Local scenes, raids, attacks and defences
+*A raid, an attack or a defence is data: a scene, a true state, intel, complications, extraction and outcome bands. Every raid is a stealth raid or an all-out assault; attacks by land and from the sea, and defences, use the same assault rules.*
 
 ```ts
-interface ScenarioDef { id: Id; sceneId: Id; placeId: Id; trueState: TrueStateDef;
-  modes: ('STEALTH'|'ASSAULT')[]; assault?: AssaultDef;
+interface ScenarioDef { id: Id; kind: 'RAID'|'LAND_ATTACK'|'SEA_ATTACK'|'DEFENCE'|'JOURNEY_EVENT'|'OTHER';
+  sceneId: Id; placeId: Id; trueState: TrueStateDef; gate?: Id /* a story gate (section 16); optional otherwise */;
+  modes: ('STEALTH'|'ASSAULT')[]; assault?: AssaultDef; defence?: DefenceDef;
+  safePlaces: Id[] /* where a carried downed ally is safe: the boat, the village, a safe camp or waystation (section 12) */;
   intel: IntelItem[]; approaches: ApproachDef[]; complications: ComplicationRule[];
   maxComplications: 1|2; extraction: ExtractionDef; bands: OutcomeBandDef[]; leads: Id[] }
-interface AssaultDef { landing: Id; muster: MusterWave[]; objectives: AssaultObjective[] }
+interface AssaultDef { landing: Id /* a landing from the ships, or the muster point a land march arrives at */;
+  approach: 'SEA'|'LAND'; allies: Id[]; muster: MusterWave[]; objectives: AssaultObjective[] }
+interface DefenceDef { home: Id; watch: Id[]; warning: 'NONE'|'HORN'|'BEACON'|'SCOUT'; preparations: Id[] /* walls, traps, stakes, archers' platforms: designations */;
+  attackers: MusterWave[] /* the time to prepare is the warning the threat gives, Book 10 section 11 */ }
 interface MusterWave { group: Id; size: number /* Book 10 section 18 */; archers: boolean;
   from: Id /* where they really are: a house, a neighbour, a hall */; trigger: 'START'|'HORN'|'RUNNER'|'BEACON'|Condition }
 type AssaultObjective = 'BREAK_GATE'|'FIRE_THATCH'|'SEIZE_STORE'|'TAKE_LEADER'|'KILL_LEADER'|'HOLD_LANDING';
@@ -436,7 +442,7 @@ interface RaidOutcome { band: Id; haul: CargoLot[]; casualties: Casualty[]; deed
 - Complications come from rules reading true state, plan and seed; never more than `maxComplications`.
 - Scenarios may declare **escalation timers** (reinforcements, beacons, tide surges) and a **retry rule**. A timer is shown to the player once the household knows of it.
 - **Withdrawal** is a command available at any time; leaving with anyone ashore requires confirmation and records them as left behind.
-- Carrying occupies both hands, sets speed to carry speed and disables attacks (shove remains).
+- Carrying occupies both hands, sets speed to carry speed and disables attacks (shove remains). Carrying a downed ally uses the carry gait and speed of Book 10 section 06, "Downed and carried" (section 12).
 - **Civilians** in scenes have behaviours (flee, hide, plead, fight with tools, surrender) and can be killed; their deaths are deeds with witnesses and evidence.
 - Outcome bands are computed from facts. The post-raid summary reports haul, casualties, deeds and likely consequences in plain sentences.
 
@@ -445,6 +451,13 @@ interface RaidOutcome { band: Id; haul: CargoLot[]; casualties: Casualty[]; deed
 - In an assault the full crew lands by day. Defenders **muster over time**: each wave starts where its people really are and comes when its trigger fires (a horn heard, a runner arriving, a beacon seen), so alarm still spreads only by the channels of section 13. Archers take positions; battles run 10 to 30 a side (Book 10 section 18).
 - **Objectives** (break the gate, fire the thatch, seize the store, take or kill the leader, hold the landing) are facts that the outcome bands read.
 - **Consequences** are heavier and more public: assault deeds carry `context.assault`, every defender who sees the fight is a witness, and the answer scheduler uses the assault timings of Book 10 section 18 (precursors still come first, section 15). The Glory-minded value it by the ordinary deed deltas.
+
+### Attacks by land and sea, and defences
+- **Raids** come by sea: a stealth raid or an all-out assault (above).
+- **Attacks by land:** once the household is on the mainland it can march overland, with the household and its allies, as a journey (section 10), and assault a camp, farm or fort (`approach: 'LAND'`). The march's road legs and routes are crossed like any journey, with the war band as the party; the assault begins at the muster point it arrives at, with the same formations, muster waves and objectives as a raid assault.
+- **Sea-borne attacks:** landing in force from the ships on a coastal settlement (`approach: 'SEA'`), including mainland coastal places (Carrick, Kilbrecc, Saltvik's outer harbour, Crowwick, Orm's outposts), by the assault rules above.
+- **Defences** of the homestead and the mainland home run in four phases: the **watch** (who stands it, section 07), the **warning** (a horn, a beacon, a scout, or none), **preparation** in the time the warning buys (walls, traps, stakes and archers on platforms, built as designations, section 07) and then the **battle**, with the attackers mustering by the waves of their `DefenceDef`. A defence while the steerer is away is resolved by the away simulation (section 07).
+- Each of these is a **gate** when it is a story event (section 16), and optional otherwise.
 
 ## 12 / Combat
 *Tick-based, real-time melee with readable tells, four-way facing and no pause. All numbers come from Book 10 section 06.*
@@ -462,14 +475,20 @@ interface RaidOutcome { band: Id; haul: CargoLot[]; casualties: Casualty[]; deed
 - **Vitality and armour** reduce by damage type; wounds result after a fight by severity.
 - **Gore:** hits spawn blood particles and decals; bloodied overlays below half vitality; killing blows from heavy cutting weapons roll for dismemberment (`gore` stream). Corpses persist for the scene; at home they persist until buried or burned. A gore setting (off, low, full) changes presentation only, never simulation.
 - **The steerer** at zero vitality dies and the game ends, unless *Second wind* is enabled (a short downed window in which an adjacent ally can lift them once per scene). Game over offers reload of the latest autosave or checkpoint.
-- **Crew** at zero vitality are downed and bleed out after the Book 10 time unless carried or treated; *Rán's mercy* converts death to a grave wound.
+- **Downed, not dead.** Crew, companions and allies at zero vitality are `downed`: they lie where they fell and do not bleed out; there is no timer. A downed ally carried to one of the scene's `safePlaces` (the boat, the village, or on a journey a safe camp or waystation, section 11) before the scene ends lives, with the wound of Book 10 section 06, "Downed and carried".
+- **Carrying a downed ally** puts the carrier in `carry`: carry speed, both hands full, no attacks, parries or blocks (shove remains). Heavy residents carry faster but tire sooner when running (Book 10 section 24). Allies can be ordered to `CARRY(person)` (crew commands, below).
+- **Left behind.** At the end of a scene, each downed ally not in a safe place is captured or killed according to the enemy holding the ground: enemies who take captives capture (the person becomes `captive` at a place, to be rescued or ransomed later), the rest kill (Book 10 section 06, "Downed and carried", `leftBehind`). Captives are people, never currency (section 26).
+- **The downed are not finished off** by enemies. The exceptions are berserkers and the named cruel enemies whose content says so (`finishesDowned`), and they give a visible and audible warning first (a raised weapon, a shout, and an information caption) for the Book 10 time (`finishWarning`), so the player can intervene.
+- **Berserk.** A person with the berserk trait (section 06), when wounded or when a friend falls, may go berserk on the `combat` stream for the Book 10 section 08 time ("Traits"): they ignore crew commands, attack the nearest enemy wildly (the surrendering, and farmers in reach, included), deal more damage and defend less. Their deeds are household deeds (`doer: 'HOUSEHOLD'`, `context.berserk` naming them) and count against the household like any other.
+- **Rán's mercy** prevents every unscripted death of the crew and household: what would kill them (left behind with killers, a berserker's or cruel enemy's finishing blow, a hazard) becomes a grave wound, or capture where the enemy takes captives. **Scripted deaths** (section 16) still happen.
 - **Finishing blows:** the player can kill downed and surrendered actors with a held finisher input. This records a deed.
+- **Poise and the heavy build:** a heavy fighter (section 19) has poise: light attacks do not stagger them. Their wind-ups are slower, their hits heavier and their run a little slower, by Book 10 section 24. They reward the charged heavy attack, the parry and the dodge.
 
 - **In water:** waist deep, attacks, dodges and carrying are harder by the Book 10 section 02 band modifiers.
 - **Aim:** melee attacks commit to the four-way facing nearest the aim vector (section 21); bows and thrown spears fire along the aim vector itself, which is part of the command, so replays stay deterministic.
 
 ### Crew commands and formations
-`FOLLOW, HOLD(point), ATTACK(target), PROTECT(person), CARRY(lot|person), WITHDRAW(extraction), SHIELD_WALL(line), CHARGE(target), VOLLEY(area), FALL_BACK(ships)` on quick keys and a command ring that does not stop time. Each is acknowledged with a bark and an icon. Allies never block a `keepClear` tile for more than a second.
+`FOLLOW, HOLD(point), ATTACK(target), PROTECT(person), CARRY(lot|person), WITHDRAW(extraction), SHIELD_WALL(line), CHARGE(target), VOLLEY(area), FALL_BACK(ships)` on quick keys and a command ring that does not stop time. Each is acknowledged with a bark and an icon. A person gone berserk ignores them until the fit passes. Allies never block a `keepClear` tile for more than a second.
 - **Shield wall:** members lock into the slots of a line; the line has a wide front arc, moves slowly and is strong against missiles (Book 10 section 18). A fallen member's slot is filled from behind; a line with a gap it cannot fill, or whose cohesion breaks (section 13), falls apart.
 - **Charge:** the group runs at its target and, on contact, delivers a cohesion shock to the group it hits.
 - **Volley:** the group's archers loose together at an area on one command; shields up reduces it.
@@ -484,9 +503,10 @@ interface RaidOutcome { band: Id; haul: CargoLot[]; casualties: Casualty[]; deed
 - **Memory:** last known position per target, decaying after the Book 10 time.
 - **Alarm** spreads only by sight, shouts, horns, dogs and runners who physically travel.
 - **Behaviour selection:** utility scoring over `GUARD, PATROL, INVESTIGATE, RAISE_ALARM, FIGHT, HOLD_LINE, FLANK, PROTECT, FLEE, HIDE, PLEAD, SURRENDER, LOOT, CARRY, WORK, SLEEP`, evaluated at 10 Hz from the `ai` stream.
-- **Groups** hold narrow ground, flank when outnumbering by two, support allies, form shield walls, charge and volley (section 12), and break when cohesion drops below the Book 10 thresholds. In a formation the group leader decides at 10 Hz and members steer to their slots, choosing their own behaviour only when in contact, so a battle of 30 a side stays within budget (section 22).
+- **Groups** hold narrow ground, flank when outnumbering by two, support allies, form shield walls, charge and volley (section 12), and break when cohesion drops below the Book 10 thresholds (sooner for the cowardly, later for the brave; a superstitious member panics at supernatural signs; Book 10 section 08, "Traits"). In a formation the group leader decides at 10 Hz and members steer to their slots, choosing their own behaviour only when in contact, so a battle of 30 a side stays within budget (section 22).
 - **Muster:** defenders who hear a horn or meet a runner arm and gather at their muster point before moving, as the assault's waves say (section 11).
 - **Travellers** use the same behaviours with their own needs (keep to the road, trade, rest, flee, hide, plead, fight back); bandits ambush from cover on roads (section 25).
+- **The downed are left alone:** no AI chooses a downed actor as a target, except a berserker or a cruel enemy allowed to finish the downed, after its warning (section 12).
 - **No quarter:** when a faction knows at least the Book 10 number of `SURRENDERED_KILLED` deeds by the household, its fighters stop surrendering to the household.
 - **Hostility on sight:** guards in a faction's territory attack the household on sight when that faction's hostility is `HOSTILE`, warn and follow when `WARY`.
 - **Wildlife:** wolves hunt in packs at night and in winter, boar charge when cornered, seals flee, birds flush and warn of approach.
@@ -510,21 +530,62 @@ interface Evidence { id: Id; kind: 'BODY'|'ITEM'|'TRACKS'|'BURNED'; placeId: Id;
 - **News travels with people:** knowledge of a deed, and any notable happening, moves only with carriers (witnesses, travellers, traders, runners) at the speed they really travel, as news items (section 25). A place learns when a carrier arrives.
 - A deed with no escaping witness and identification below the Book 10 threshold is known only to the household. The crew always knows what it saw.
 - Faction updates on knowledge arrival: regard, fear, grievance, resources, **hostility** and territory guards. Every person who witnesses or hears of a deed, residents and leaders alike, updates friendship and fear (section 06).
+- **Each culture judges by its own code.** The same deed reads differently to the Norse, the Gaels, the Church, the Keepers and Saltvik: a witness's reaction is weighted first by their culture (Book 10 section 08, "Deed reactions by culture"), then by their values, traits and stance (section 06). Factions apply their culture's factor too. What people say about it (section 16) gives a period reason, never a modern one.
+- **Deed tags added by design addendum 2.3 (proposal; Book 6 section 01):** `KILLING_HIDDEN`, a killing concealed (the body hidden, or the killing denied when asked) rather than declared; `HOSPITALITY_BROKEN`, harm to a host or guest, or under truce; `BLOOD_PRICE_PAID` and `BLOOD_PRICE_TAKEN`; `RITES_DENIED`, the dead left unburied or without rites; and `CHALLENGE_REFUSED`. The berserk deeds of section 12 are ordinary household deeds.
 - **Answer scheduler** at season start and chapter open, with precursors at least five days before arrival.
 - **Anti-dominance:** the autoplay harness reports value per approach family per chapter; gates fail if one dominates every measure.
 
-## 16 / Narrative, chapters and dialogue
-*Chapters open windows; beats fire from facts; dialogue reads and writes facts.*
+## 16 / Narrative, chapters, story gates and conversation
+*Chapters move forward only through gates the player chooses to start; beats fire from facts; conversation reads time, season, deeds, feelings and story, and writes facts.*
 
 ```ts
 interface ChapterState { id: Id; status: 'LOCKED'|'OPEN'|'ACTIVE'|'RESOLVED';
   openedDay?: number; resolvedDay?: number; resolvedBy?: string[] }
 interface BeatDef { id: Id; chapter: Id; prereqs: Condition[]; trigger: Trigger;
-  oneShot: boolean; effects: Effect[]; fallbackDay?: number }
+  oneShot: boolean; effects: Effect[]; waitsAt?: Id /* the gate a dated story event waits at */;
+  typicalDay?: number /* Book 4: a guide, never a deadline */; death?: ScriptedDeath }
 interface DialogueNode { id: Id; speaker: Id; textKey: string; conditions: Condition[];
   choices: { textKey: string; conditions: Condition[]; effects: Effect[]; next?: Id }[] }
 ```
 Event deck cards (section 25) and quest steps (section 06) are beats. Dialogue follows Book 8. Barks are short and unblocking. **Ledger-truth dialogue:** the Door of Three Truths offers statements generated from the ledger and from residents' secrets (true) alongside plausible fabrications (false); its response reads the ledger, and spoken truths become memories for everyone present. The Chapter 7 council resolves each ally to `COMMITTED | CONDITIONAL | ABSENT | HOSTILE` with reasons. Endings are a pure function of the final state, with reasons recorded for the epilogue.
+
+### Story gates
+```ts
+interface GateDef { id: Id /* BEAT_ */; chapter: Id; kind: 'RAID'|'EXPEDITION'|'DEFENCE'|'COUNCIL'|'VOYAGE'|'BATTLE';
+  opensWhen: Condition[]; typicalDay: number /* Book 10 section 22 */; scenario?: Id;
+  readiness: { kind: 'CREW'|'SHIP'|'STORES'|'ALLIES'|'EQUIPMENT'|'OTHER'; measure: Id; labelKey: string }[];
+  pressure: Effect[] /* demands grow, rumours spread: Book 10 section 22 */; retries: number }
+interface GateState { status: 'CLOSED'|'OPEN'|'STARTED'|'PASSED'; openedDay?: number; startedDay?: number;
+  pressureSteps: number; retriesUsed: number }
+interface ReadinessView { gate: Id; lines: { kind: string; state: 'READY'|'SHORT'|'UNKNOWN'; textKey: string }[];
+  pointOfNoReturnKey: string }
+```
+- **The story moves forward only through gates**, major events the player chooses to start: a raid, an expedition, a defence, a council (proposal list, Book 4 and Book 10 section 22: the launch, the Carrick raid, the reply to Asgrim, the defence of Skarvholm, the household council, the move ashore, the Gathering, the Return to Skarvholm and the final battle). A gate opens when its conditions hold and starts only on a player command; nothing else starts it.
+- **The calendar keeps running** (section 03). A dated story event is a beat that `waitsAt` its gate: it fires when the gate starts, never on its date alone. Chapter windows are typical dates (`typicalDay`), a guide for a well-paced player, never a limit; Book 10's ideal progression is the same guide.
+- **Gentle pressure.** While a gate waits past its typical day, its `pressure` effects apply at the Book 10 section 22 rates (a demand grows, a rumour spreads), carried by people like any news (section 25). Pressure never starts a gate, never fails a chapter and never closes the story.
+- **The readiness screen** (`Planning` mode, safe rule) shows the crew, ship, stores, allies and equipment the gate calls on, each in plain words from the household's knowledge (never hidden truth), and a clear warning that starting is a point of no return. Starting the gate takes a confirmation, makes a labelled checkpoint (section 20) and hands off to its scenario.
+- **Retries** are counted per gate (`retries`). The Return to Skarvholm allows one retry before the player sets out for the final battle; once the final battle's gate starts, the retry is gone.
+- **Scripted deaths** are beats with a `death`: a named person dies, or a choice decides who (Rán's debt, the Return's cairn door, Bran's reckoning, Thrand's proof, the defence of Skarvholm, a berserk death, the washer at the ford; proposals in Book 6). *Rán's mercy* does not prevent them (section 12). Every death applies its consequences: household grief (happiness), lost skills and jobs, changed ties, a grave to tend, songs at the fire, a ghost or fetch where the dead had unfinished business, story branches that close, and enemies who mock or allies who honour (Book 6; numbers in Book 10 section 08).
+
+### Conversation
+```ts
+interface LinePool { id: Id; speakerKind: 'FARMER'|'TRADER'|'GUARD'|'TRAVELLER'|'MONK'|'HERDER'|'OTHER';
+  culture: Code; lines: { textKey: string; when: LineWhen }[] }        // one or two lines per minor character
+interface LineWhen { seasons?: Season[]; times?: Watch[]; weather?: WeatherKind[]; feastDay?: boolean;
+  deeds?: { tag: DeedTag; known: boolean }[]; reputation?: Condition[] }
+interface ConversationDef { person: Id; major: true;
+  greetings: { season: Season; time: Watch; feastDay?: Id; node: Id }[];
+  topics: { id: Id; root: Id /* a DialogueNode tree */ }[];
+  reactions: { deed: DeedTag; node: Id }[];              // what they say about a deed they witnessed or heard of
+  callbacks: { memory: Condition; node: Id }[];          // remembered events: a death, a raid, a storm, a kindness
+  voices: { when: Condition /* friendship or fear past a threshold */; voice: 'WARM'|'COLD'|'AFRAID'|'DEVOTED' }[] }
+```
+- **Most people are ordinary.** Minor characters (farmers, traders, guards, travellers) say one or two lines, drawn from pools keyed by culture, season, time of day, weather and the household's known deeds and reputation; the best-matching line is picked on the `people` stream.
+- **Major characters** (leaders, antagonists, residents and quest characters) have branching topic and reaction trees. Every node's conditions can read the time of day and season (a dawn greeting, a winter fire, a feast day), the household's deeds and reputation, the speaker's happiness, friendship and fear towards the steerer, quest and story state, and recent events (a death, a raid, a storm). The voice changes when friendship or fear crosses a threshold.
+- **Minimum-depth lint.** Content lint fails a major character whose conversation lacks the Book 10 section 23 minimums ("Conversation depth"): a greeting for each season and time of day, the topic trees, reactions to the deed types, the callbacks to remembered events, and a voice change at the friendship and fear thresholds. A minor character's pool must have one or two lines.
+- **Deed reactions** pick their line by the same weighting as the deltas (section 15): the witness's culture first, then values, traits and stance. The line gives a period reason in the speaker's own code (honour and shame, luck, oaths, kin and vengeance, hospitality, the blood-price, sin and penance, what the gods or saints will do), never a modern one (Book 8).
+- **The steerer's choices** cover the range a person of the time might take (conventional, pragmatic, merciful, cruel, transgressive), each phrased with a period reason. The player can act against the household's code; the household reacts by that code.
+- **Period views are spoken, never systems.** Characters may speak of thralls, the slave market, arranged marriages, blood-feud and harsh penance as ordinary, and may urge the steerer to take captives for sale; no system lets them be bought or sold (section 26). No line applies period attitudes to women or men to the steerer, or reveals the steerer's gender (section 06; Book 8 section 03).
 
 ## 17 / Supernatural
 *Powers have a true state, signs, rules, responses and bargains that cannot be rewritten.*
@@ -543,15 +604,27 @@ Accepted terms are frozen and hashed. Every dangerous mechanic declares `sign, r
 - **Music state machine** with states and transitions from Book 11; layers mixed by an `intensity` parameter from threat level; every change lands on a bar line; loops are seamless; stingers for key events. SNES-like limits: 8 music voices, small instruments, one shared echo.
 - **Ambience** layers by zone, season, weather and time of day, driven by the game's state (the wind from the game's own wind field, the tide). **SFX** by event and surface material.
 - **Voice blips**, not voiced barks: each speaker's lines appear as text with a short blip voice of their own; the steerer has none. Every line has a subtitle.
-- **Captions** for every gameplay-relevant sound (a charge tell, a horn, a supernatural sign).
+- **Captions** for every gameplay-relevant sound (a charge tell, a horn, a supernatural sign), as information captions (below).
 - **Presentation only:** audio reacts to simulation events and never affects gameplay, saves or determinism. Its random streams are its own (seeded), never the simulation's.
 - Sliders for master, music, ambience, effects, voice blips and supernatural tells, and a mono option. Loudness and budgets follow Book 11.
+
+### Subtitles and captions: speech and information
+```ts
+type CaptionKind = 'SPEECH' | 'INFO';
+interface CaptionLine { kind: CaptionKind; text: string /* already formatted */; until: number }
+```
+- **Two kinds of line, and they look different.** **Speech** is what someone says: the speaker's name, a colon and the words, in upright type ("Hild: Here! Over here, past the rocks!"). **Information** is sounds, directions and other cues that aren't speech: italic, with no speaker prefix and no quotation marks ("Hild, calling from the west"; "Surf breaking on the rocks"). When both show at once, information lines sit above speech lines.
+- **Every caption string is tagged** `SPEECH` or `INFO` in the string table (every key under `caption.`), and the event that shows it carries the kind. **Content lint** fails a caption string tagged neither or both, a `SPEECH` string that does not start with its speaker (`{speaker}: `), and an `INFO` string with a speaker, a "Name:" prefix, quotation marks, or eight words or more. Speech follows Book 8's period rules; information lines are short, in the present tense, plain modern-neutral English with no glossary words and no slang, and give a direction when it helps the player find the source (Book 8).
+- **Speaker names come from what the player knows.** A speaker the player has not met is named by what they appear to be ("Monk:", "Stranger:", "Ardcarn guard:") until introduced; the name is chosen from `knowledge`, never from hidden truth, so a hidden identity (Nessa's stance, a disguised enemy) is never given away by a subtitle name.
+- **Drawing:** captions are text on the native-resolution overlay (Book 7 sections 01 and 10). Information uses a real italic face of the caption font, never a synthesised slant (`font-synthesis: none`), so it is crisp at 1x; speech is upright. A browser test checks the order and both styles.
+- **Settings:** information captions can be turned off separately from speech subtitles (the information toggle is in the display settings of the system menu, section 21). Display settings are per-viewer presentation, never world state.
 
 ## 19 / Art pipeline (authored by Claude)
 *Final art is written as palette-indexed pixel sources, compiled and checked, never improvised at runtime.*
 
 - **Source format:** one file per sprite sheet: a palette reference (Book 7), frame size (people 32 x 48, Book 7 section 01), and frames as rows of palette indices or characters, with pivots, footprints, a ground shadow and animation events. A sheet can also be produced by a deterministic generator script committed with its output.
 - **Compiler** (`tools/art`) validates sources, packs atlases and writes manifests. Builds fail on unknown palette indices, missing facings or missing states.
+- **Art lint** (`npm run lint`) runs the checks of Book 7 section 14 on every sheet and zone, including for people: a 32 x 48 canvas about 18 x 40 occupied (the heavy build up to about 4 px wider) with feet on the pivot row; the 6-frame walk with the torso and head dropping exactly 1 px on its down frames (1 to 2 px for the heavy build); the 8-frame **run cycle** (Book 7 section 17), whose two suspension frames have both feet at least 1 px above the ground line and whose down frames drop the torso 1 to 2 px; every layer sheet matching its body's states, facings, frame counts, pivots and events; and the composite outline (below).
 
 ### Equipment layers (paper doll)
 ```ts
@@ -564,6 +637,8 @@ interface LayerSheet { sheet: string; slot: LayerSlot; body: string /* the body 
 - Each layer has a draw order per facing (a shield in front facing south, behind facing north; a weapon on the side it is carried). Layers are composited at draw time, or baked into an outfit atlas when equipment changes, never per frame in the simulation.
 - **Secondary motion** (hair, cloaks, sashes, bags lagging a frame behind the body, Book 7 section 07) is authored in the frames, or for a whole layer by `lag: 1`, which draws it with the body's previous frame.
 - Every layer the steerer can wear exists for both body models. Equipment is simulation state (it changes armour, recognition and noise); its drawing is presentation.
+- **Body builds.** People are drawn on one of three builds: the steerer's two body models (A and B) and the **heavy build** (`actor_heavy`), a third body for some residents and enemies, never the steerer (Book 7 section 16). Every build shares the same 32 x 48 cell, foot anchor, states, facings, frame counts and timing, so all animation logic is shared; only the drawing differs. Paper-doll layers are fitted to each build (`layer_<slot>_<name>_<body>`, Book 7 section 11): every layer a heavy person wears exists for the heavy build. A person's build is part of `appearance` (section 06); its play effects (poise, wind-ups, hits, run, carrying and running stamina) are Book 10 section 24's, applied by the simulation (section 12), never by the art.
+- **Outlines on the composite.** The one-pixel ink outline is checked on each person as composited (every layers file, every frame), not on each layer alone, so cloth that meets skin is not double-outlined; body sheets alone keep the edge-ink rule (decision S6R-6).
 - **Visual check:** before a stage marks art done, Claude renders every new sheet at 1x and 4x to an image, inspects it, and records the check in the stage report.
 - **Gore layers:** bloodied overlays, dismemberment pieces and decals are separate sheets so the gore setting can change presentation.
 - **Placeholders** carry `placeholder: true` and are listed in the stage report; never circles, boxes or emoji.
@@ -572,15 +647,15 @@ interface LayerSheet { sheet: string; slot: LayerSlot; body: string /* the body 
 *Saves are versioned, migratable, and safe to load without repeating one-shot events.*
 
 - JSON world state, compressed; header with schema version, build, seed, day, chapter and state hash.
-- Migration chain with golden-save tests; unknown future versions refused.
-- **Autosaves:** on waking (before the morning report), on waking at a camp when it is safe (not attacked in the night, no hostile aware, the area not hostile), before departure, before landing, and labelled **checkpoints** before major danger and the final battle. Three rotating autosaves plus manual slots.
+- Migration chain with golden-save tests; unknown future versions refused. Every version of the world state (section 05) keeps a frozen golden save that loads through the chain (version 2 through the version-3 migration, decision S6R-7).
+- **Autosaves:** on waking (before the morning report), on waking at a camp or waystation when it is safe (not attacked in the night, no hostile aware, the place not hostile), before departure (by sea or on a journey), before landing, and labelled **checkpoints** at every story gate once its readiness screen is confirmed (section 16), before other major danger and before the final battle. Three rotating autosaves plus manual slots.
 - Manual saves are allowed only under the safe rule. Game over offers the latest autosave or checkpoint.
 - One-shots, ledger, evidence and bargain hashes survive every save and load.
 
 ## 21 / Input, interface and accessibility
 *Mouse, keyboard or gamepad, accessible without a pause. Devices make commands; the simulation never sees a raw pointer.*
 
-- Actions: move, run, sneak, use selected item (attack with a weapon; hold to charge a heavy), interact, aim, hotbar slots 1 to 12, next and previous slot, parry, block, dodge, shove, finisher (hold), jump, camp, command ring, quick commands 1 to 6 (on their own keys: the number keys select hotbar slots), map (and quick travel from it), inventory, build menu, report, system menu. All remappable on keyboard, mouse and gamepad.
+- Actions: move, run, sneak, use selected item (attack with a weapon; hold to charge a heavy), interact, aim, hotbar slots 1 to 12, next and previous slot, parry, block, dodge, shove, finisher (hold), jump, camp, command ring, quick commands 1 to 6 (on their own keys: the number keys select hotbar slots), map (and the travel map, section 10), inventory, build menu, report, system menu. All remappable on keyboard, mouse and gamepad.
 - The command ring opens on hold and leaves time running.
 
 ### Hotbar and target tile
@@ -602,7 +677,7 @@ type PlayerCommand =
 ### Camera
 - The camera follows the steerer with a **look-ahead towards the cursor**: `lookAheadScale` x the cursor's distance from the steerer, ignored inside `lookAheadDeadZone`, capped at `lookAheadMax`, or `lookAheadAiming` while drawing a bow or aiming a spear (Book 10 section 21 "Controls and camera"). With a gamepad it leads towards the right stick, and in keyboard-only play towards the direction of travel.
 - Smoothing runs in sub-pixel space with the `camera smoothing` half-life; only the final offset is snapped to whole logical pixels, with its hysteresis, so a still or slowly moving cursor never makes the view step one pixel back and forth. The camera is presentation: it never changes what the simulation can see (sight ranges are those of Book 10 section 07).
-- Options: combat speed 70 to 100%, parry window widening, enemy damage, *Second wind*, *Rán's mercy*, gore level, day length, text size 100 to 200%, subtitles and sound captions, colour-blind presets, reduced shake and flashes, hold-or-toggle inputs.
+- Options: combat speed 70 to 100%, parry window widening, enemy damage, *Second wind*, *Rán's mercy*, gore level, day length, text size 100 to 200%, speech subtitles and information captions (each on its own switch, section 18), colour-blind presets, reduced shake and flashes, hold-or-toggle inputs.
 - Generous interaction radius with the target tile highlighted; every refusal or shortage shows its reason in words.
 - **Stamina bar:** its length shows the current maximum, and each reason it is smaller is shown with its icon and a plain word ("Cold", "Hungry"), from the stamina view of section 24 (art in Book 7 section 10).
 
@@ -612,7 +687,7 @@ type PlayerCommand =
 | Frame rate | 60 fps at 1080p on integrated graphics (WebGL2) |
 | Simulation tick | Under 4 ms with 60 active actors including residents |
 | Assault battle | Simulation tick under 4 ms with 30 a side plus the scene's civilians; 60 fps held |
-| World step (off screen) | Under 2 ms per game-hour step for all twenty mainland areas, their travellers and bandit camps, and the away simulation |
+| World step (off screen) | Under 2 ms per game-hour step for every mainland site and route, their travellers and bandit camps, a journey's road leg, and the away simulation |
 | Scene streaming | No visible hitch at link edges; full scene load under 3 s |
 | Sea-map watch resolution | Under 2 ms |
 | Save | Under 200 ms |
@@ -623,18 +698,22 @@ type PlayerCommand =
 ## 23 / Testing
 *Each stage proves itself. Tests are part of the deliverable.*
 
-- **Unit tests** for pure functions: ship stats, friendship and fear deltas by deed, happiness from its factors and the work multiplier, food runway, spoilage, crop stages, fuel, frame data, tide and calendar, depth band from bed and water level, the stamina maximum from each reason, traversal drains, the away efficiency, the target tile for each device and reach, the melee facing snap and aim quantisation, and camera look-ahead and snapping.
-- **Property tests:** ledger append-only, roster cap, no resource below zero, accepted bargains unchanged, one-shots never refire, no gendered steerer strings; stamina `current <= max`, the maximum never below its floor, and every point of lost maximum listed with a reason; companions never more than the cap; an event card never fires twice, never during a tutorial and never two at once; news never reaches a place sooner than a carrier could walk or sail there; every quest that can end in a killing has another out; every layer sheet matches its body's frames.
+- **Unit tests** for pure functions: ship stats, friendship and fear deltas by deed (weighted by culture, then values, traits and stance, with two codes taking the stronger factor), each trait's effect, likes and dislikes as mood factors, happiness from its factors and the work multiplier, food runway, spoilage, crop stages, fuel, frame data, tide and calendar, depth band from bed and water level, the stamina maximum from each reason, traversal drains, the away efficiency, the target tile for each device and reach, the melee facing snap and aim quantisation, camera look-ahead and snapping, a road leg's time under each journey modifier, and the **shortest journeys** between all sites computed from the network, row by row against Book 10 section 14 ("Shortest journeys").
+- **Property tests:** ledger append-only, roster cap, no resource below zero, accepted bargains unchanged, one-shots never refire, no gendered steerer strings; stamina `current <= max`, the maximum never below its floor, and every point of lost maximum listed with a reason; companions never more than the cap; an event card never fires twice, never during a tutorial and never two at once; news never reaches a place sooner than a carrier could walk or sail there; every quest that can end in a killing has another out; every layer sheet matches its body's frames; no gate starts without a player command, and no event that waits at a gate fires before it starts; no journey reaches a place beyond a route without crossing that route on foot; no downed ally dies or is captured while the scene runs except by a finishing blow after its warning; with *Rán's mercy* on, no unscripted death; captives are never traded as goods.
 - **Stamina and traversal:** emptying the bar mid-climb slides the steerer down; mid-swim starts the sink; walking, ordinary carrying and water up to the knee never drain; a homestead task advances the clock by its game time and costs only its small stamina; restorers lift the reasons Book 10 gives them.
 - **Scenario runner:** `scenario run SCN_CARRICK --approach STEAL --seed 42` asserts bands, deeds, evidence and leads; `--mode ASSAULT` runs the assault (muster waves arrive by their triggers, objectives become facts, formations hold and break by the rules).
 - **Homestead simulation:** a headless run of 120 days under a delegated policy reports food, fuel, sickness and deaths against Book 10 targets. An **away run** with the steerer gone reports output against the Book 10 section 19 efficiency (with and without a skilled steward), shows the home never starves while food is stored, and checks every queued event appears in the homecoming report.
 - **Living world:** a headless world run of a year reports traveller and event density on roads, in settlements and in the wilderness, trader visit intervals, bandit camps forming and breaking, and event deck pacing against Book 10 sections 17 and 20.
-- **Reachability:** flood-fill every scene from Book 9 under tide and season conditions; walk the mainland's area graph under every season and every combination of cleared blocks, proving every area reachable once its blocks are cleared and both home sites reachable from Chapter 3.
-- **Camping:** a camp ends the day, heals, and saves only when safe; its risk falls with a fire, a watch and shelter.
+- **Reachability:** flood-fill every scene from Book 9 under tide and season conditions, including each route's main path end to end, its camp spots and its branches to sites; walk the mainland's network of road legs and routes under every season and every combination of cleared blocks, proving every site reachable once its blocks are cleared and both home sites reachable from Chapter 3.
+- **Camping:** a camp ends the day, heals, and saves only when safe; its risk falls with a fire, a watch, shelter and a waystation.
+- **Journeys:** a road leg advances the clock by its modified time through the world step and only under the safe rule; a journey event stops the leg, plays its scene and resumes with the time left; route encounter rates over many seeded crossings match Book 10 section 14 ("Route encounters") with their season, faction, cargo and cleared modifiers; every ambush shows its sign first.
+- **Downed and carried:** a downed ally never bleeds out; carried to a safe place before the scene ends they live; left behind they are captured or killed by the enemy's rule; enemies do not attack the downed except berserkers and cruel enemies after their warning; a berserker ignores orders and its deeds are household deeds.
+- **Story gates:** a delaying bot that never starts a gate sees the calendar, seasons and crops go on, pressure build at the Book 10 section 22 rates and no gate or waiting event fire; the readiness screen shows only known state; the Return's retry closes when the final battle's gate starts.
 - **Input and camera:** replaying a recorded mouse-and-keyboard session reproduces identical state hashes; `sim/` imports nothing from `input/`, `render/` or the DOM; keyboard-only and gamepad-only bots can do every task and interaction; a still cursor gives a still camera (no one-pixel oscillation over a long run); every new action is remappable.
 - **Performance:** an assault of 30 a side and the off-screen world step stay within section 22.
 - **Autoplay harness:** bot policies (greedy, merciful, trader, glory, brutal, mixed) play from any chapter and report Book 10 progression metrics.
-- **Content and art lint**, **golden saves**, **determinism replay**.
+- **Content lint** (`npm run lint`): schemas and references; the ID registry; no gendered word to or about the steerer (section 06); caption tags, `SPEECH` with a speaker and `INFO` without (section 18); no event card puts a child on stage (section 25); every quest that can end in a killing has another out (section 06); every site and route has its points of interest (section 10); the conversation minimum depth for each major character and the one or two lines of each minor pool (section 16); and the **dialogue word list** (Book 8): dialogue strings may not use modern register words ("okay", "guys" and the rest of Book 8's list) or modern moral vocabulary: rights, war crime, genocide, trauma, civilian, ethics, morality, values, consent, abuse, victim, tolerance, equality. "Innocent" is allowed (it is a Church word); dialogue says "farmers", "folk" or "people who bore no weapon". Interface text (the household screen, menus, reports' labels) is exempt.
+- **Art lint** (section 19; Book 7 section 14), including the walk drop, the run cycle's suspension and down frames, layers matching their bodies and the composite outline. **Golden saves**, **determinism replay**.
 
 ### Stage report format
 ```
@@ -642,7 +721,7 @@ STAGE <n> REPORT
 Implemented:        <list with file paths>
 Tests:              <commands run, pass/fail counts>
 Gate checks:        <each acceptance check: PASS / FAIL with evidence>
-Art check:          <sheets rendered and inspected; placeholders remaining>
+Art check:          <sheets rendered and inspected; walk and run GIFs if people changed; placeholders remaining>
 Balance:            <Book 10 values used or changed, with reasons>
 Deviations:         <decision-log entries added>
 Known issues:       <with severity>
@@ -690,27 +769,27 @@ type TravellerKind = 'PILGRIM'|'MONK'|'HERDER'|'RIDER'|'POET'|'TRADER'|'PEDLAR'|
 interface TravellerDef { id: Id; kind: TravellerKind; person?: Id /* a named wanderer */; partyKey: string;
   schedule: { from: Id; to: Id; reasonKey: string; seasons: Season[]; conditions?: Condition[] }[];
   goods: Id[]; dialogue: Id; recruitable: boolean }
-interface TravellerState { def: Id; members: Id[]; area: Id; detail: 'FULL'|'LOW';
-  leg?: { link: Id; departed: number; arrives: number /* minutes of campaign time */ };
+interface TravellerState { def: Id; members: Id[]; place: Id; detail: 'FULL'|'LOW';
+  leg?: { leg: Id /* a road leg, or a route crossing */; departed: number; arrives: number /* minutes of campaign time */ };
   goods: CargoLot[]; news: Id[]; status: 'TRAVELLING'|'STAYING'|'CAMPED'|'GONE'|'DEAD'|'CAPTIVE' }
 interface NewsItem { id: Id; about: { deed?: Id; fact?: string }; origin: Id; day: number;
   truth: boolean /* rumours can be wrong */; carriers: Id[]; reached: { place: Id; day: number }[] }
 interface TraderVisit { kind: 'SALTVIK_KNARR'|'GAELIC_PEDLAR'|'WANDERING_SMITH'|'SEA_WIFE'|'FENCE';
   traveller: Id; nextDay: number; conditions: Condition[]; stock: CargoLot[]; leads: Id[] }
-interface BanditCamp { id: Id; area: Id; leader?: Id; members: Id[]; formedDay: number;
+interface BanditCamp { id: Id; place: Id /* a route or a wilderness site */; leader?: Id; members: Id[]; formedDay: number;
   status: 'FORMING'|'ACTIVE'|'BROKEN'; targets: Id[] }
 interface EventCard extends BeatDef { deck: true; oneShot: true }
 interface LivingWorldState { travellers: Record<Id, TravellerState>; banditCamps: Record<Id, BanditCamp>;
   news: Record<Id, NewsItem>; traders: TraderVisit[]; deck: { lastFiredDay?: number; active?: Id } }
 ```
-- **Full and low detail.** Whatever is in the active or a streamed scene runs at full detail as actors. Everything else runs at low detail in the **world step**, once per game hour on foot and per watch at sea, on the `world` stream: travellers move link by link at the walk times of Book 10 section 14, trade, rest and camp; places spend and refill their stores and move their people's moods; bandit camps grow, strike and scatter. The low-detail step applies the same rules in summary, so nothing is gained or lost by being watched. Moving between detail levels is lossless: a traveller entering a scene appears where its leg puts it; one leaving keeps its state.
+- **Full and low detail.** Whatever is in the active or a streamed scene runs at full detail as actors. Everything else runs at low detail in the **world step**, once per game hour on foot and per watch at sea, on the `world` stream: travellers move leg by leg along the mainland's network (road legs and route crossings) at the times of Book 10 section 14, trade, rest and camp; places spend and refill their stores and move their people's moods; bandit camps grow, strike and scatter. The low-detail step applies the same rules in summary, so nothing is gained or lost by being watched. Moving between detail levels is lossless: a traveller entering a scene (a route being crossed, a site, a journey event) appears where its leg puts it; one leaving keeps its state.
 - **Travellers** follow schedules with an origin, a destination and a reason (pilgrims to Kilbrecc, monks, herders driving cattle, Fiachra's riders, a travelling poet, traders' carts, tinkers, fugitives, refugees from Orm's raids). They can be talked to, traded with, helped, recruited or robbed, and each of those is a deed with witnesses (section 15). Named wanderers (the poet, the pedlar, the hermit, the disgraced warrior) are people with memories and recur across the campaign.
 - **News** is carried, never broadcast. A deed's knowledge and any notable happening (a fire at Saltvik, a raid by Orm, a death at Ardcarn) become news items on the people who know them; a place learns when a carrier arrives, and passes it on with its own travellers. The steerer hears news by talking to a carrier, from a visiting trader, or in the morning report when a carrier reaches the home. Rumours can be wrong.
 - **Visiting traders** come to the homestead on the Book 10 section 17 schedule (a Saltvik knarr in the sailing season, a Gaelic pedlar once the household is on the mainland, a wandering smith once a season, the sea-wife now and then, Ulf's men as fences for stolen goods). They arrive as travellers, whether or not the steerer is home, and bring goods, prices, news and leads.
-- **Bandits:** outlaw camps form in wilderness areas when Book 10 section 17's conditions hold, take in fugitives, ambush roads, raid farms when unchecked (deeds against those places, carried as news) and break up when beaten, when their leader dies, or when they starve.
+- **Bandits:** outlaw camps form on routes and in wilderness sites when Book 10 section 17's conditions hold, take in fugitives, ambush routes and road legs, raid farms when unchecked (deeds against those places, carried as news) and break up when beaten, when their leader dies, or when they starve.
 - **Leaders:** every settlement and camp has a named leader (`PlaceState.leader`), a person with friendship and fear (section 06).
 - **The event deck** holds about forty cards (Book 4), each a beat with conditions that fit the moment. A governor draws at most one at day start on the `world` stream, keeping the Book 10 section 17 interval between cards, never during a tutorial and never while another is active; every card fires at most once per campaign (a one-shot, recorded before its effects). Content lint rejects any card that puts a child on stage.
-- **Density** is a content and world-step target, measured by the living-world run (section 23): on a road or in a settlement a traveller or living event about every minute, in the wilderness a creature, sign or event every 30 to 60 seconds, and something worth stopping for every 20 to 30 seconds of walking (Book 10 sections 17 and 20).
+- **Density** is a content and world-step target, measured by the living-world run (section 23): on a road or in a settlement a traveller or living event about every minute, on a route or in the wilderness a creature, sign or event every 30 to 60 seconds, and something worth stopping for every 20 to 30 seconds of walking (Book 10 sections 17 and 20).
 
 ## 26 / Prohibited shortcuts and the decision log
 - Do not delete or bypass a locked feature to make a test pass.
@@ -720,7 +799,9 @@ interface LivingWorldState { travellers: Record<Id, TravellerState>; banditCamps
 - Do not rewrite accepted bargains or delete ledger or evidence entries.
 - Do not hard-code tuning numbers; read them from `balance.json`.
 - Do not add children as actors, sexual violence of any kind, or a player torture action.
-- Do not refer to the steerer with gendered pronouns or terms.
+- Do not make captives currency or add a slave-market loop: period views of thralls and the slave market may be spoken (section 16), never become a system.
+- Do not add a bleed-out timer for the downed (section 12), or let the calendar force a story gate (section 16).
+- Do not refer to the steerer with gendered pronouns or terms, or apply period attitudes to women or men to the steerer.
 - Do not add a tactical pause.
 - Do not let the simulation read the pointer, the screen or the camera; devices make commands (section 21).
 

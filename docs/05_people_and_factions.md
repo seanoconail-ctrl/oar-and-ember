@@ -23,7 +23,7 @@ Each resident and leader has two or three of six values, weighted 1 (cares) to 3
 | **Faith** | Respect for what that person holds sacred | Desecration of it; mockery; the dead left without rites |
 | **Word** | Keeping promises and oaths, honest dealing | Broken agreements, lies, betrayal of guests or hosts, a killing kept hidden |
 
-Values say what a person cares about. Traits say how they behave (section 17). Their culture's code, and their **stance** towards it, say how they judge a deed and how they justify themselves (section 16). A witnessed deed is weighed first by the witness's culture (Book 6 section 15), then by their values, traits and stance. Everyone, the household included, judges by the ethics of their own people around AD 900, and speaks of right and wrong as honour and shame, luck, oaths, kin and vengeance, hospitality, blood-price, sin and penance, and what the gods or saints will do; never in modern terms (Book 8 section 16).
+Values say what a person cares about. Traits say how they behave (section 17). Their culture's code, and their **stance** towards it, say how they judge a deed and how they justify themselves (section 16). A witnessed deed is weighed first by the witness's culture (Book 6 section 01), then by their values, traits and stance. Everyone, the household included, judges by the ethics of their own people around AD 900, and speaks of right and wrong as honour and shame, luck, oaths, kin and vengeance, hospitality, blood-price, sin and penance, and what the gods or saints will do; never in modern terms (Book 8 section 16).
 
 ### Happiness, friendship and fear
 Every resident holds three separate measures of how they stand.
@@ -50,7 +50,7 @@ Witnessed deeds move a resident's friendship and fear, as their culture, values,
 Every resident follows a daily schedule shaped by job, season, weather and wounds, so the player always finds them doing something: mending nets, arguing over the forge, nursing a hand, teaching a song. Talking to them opens topics drawn from their memories: the last raid, a death, a wound, the weather, their worries and their ties. Some residents seek the player out when something matters to them, with a request (section 11) or a grievance against someone else (section 10). Every resident also has a **tendency**, a small daily habit that makes them readable (one prays at dawn, one walks the shore at night, one hoards stones, one sings at the oars; section 17). Every resident has one **signature colour** from the Book 7 palette and one **silhouette detail** that picks them out at a glance; those chosen so far (Hild, Bran, Runa and Áine) are in their entries, and the rest are still to be chosen. Most people have one of the two ordinary builds; a few have the **heavy build** of Book 7 section 07 (broad shoulders, a thick torso and limbs, big hands; men and women both). Among the residents, Bran, Kolbeinn and Tófi One-Eye are heavy (proposal); among enemies, Kolgrím the Burner, some of Orm's grey-cloaks, Fiachra's champion and the berserkers (proposal); and about one in six generated people, farmers and smiths as well as fighters (proposal; Book 10 section 24, "Heavy build"). It is occasional, never the norm, and the steerer keeps the two existing models. Heavy residents carry loads and downed allies faster but tire sooner when running. Book 8 holds how they speak.
 
 ### Brutality and the crew
-A few residents relish brutality (Kári, and Ulf's sort of raider), and call it the fear that spreads a name. Most are shaken by the killing of farmers and other people who bore no weapon, or of people who had surrendered, and say so in the terms of their own code: there was no glory in it, it brings bad luck, the dead have kin who will come, it shamed the crew, it was a sin, or an honour-price is owed (section 16). Taking captives in a fight is ordinary to most Norse residents: the Mercy-minded object to cruelty towards captives, not to their capture. Theft from the household's own stores is judged more harshly than open plunder abroad, because it robs one's own; secret theft from kin is the deepest Norse shame (Book 6 section 15). The steerer can order or commit such killings. Brutality raises the fear of everyone who sees it, and moves their friendship by their values: the crew's reactions follow Book 10 section 08 ("Friendship deltas by deed" and "Fear deltas") and never stay hidden.
+A few residents relish brutality (Kári, and Ulf's sort of raider), and call it the fear that spreads a name. Most are shaken by the killing of farmers and other people who bore no weapon, or of people who had surrendered, and say so in the terms of their own code: there was no glory in it, it brings bad luck, the dead have kin who will come, it shamed the crew, it was a sin, or an honour-price is owed (section 16). Taking captives in a fight is ordinary to most Norse residents: the Mercy-minded object to cruelty towards captives, not to their capture. Theft from the household's own stores is judged more harshly than open plunder abroad, because it robs one's own; secret theft from kin is the deepest Norse shame (Book 6 section 01). The steerer can order or commit such killings. Brutality raises the fear of everyone who sees it, and moves their friendship by their values: the crew's reactions follow Book 10 section 08 ("Friendship deltas by deed" and "Fear deltas") and never stay hidden.
 
 ### Change through experience
 Values can shift by one point after strong shared events. A Glory-minded warrior saved by a merciful bargain may gain Mercy. A Mercy-minded healer who watches the merciful choice get a friend killed may lose it. Shifts are rare (no more than two per resident per campaign) and always shown with a scene. A stance (section 16) can shift after strong events in the same way, and is shown the same way.
@@ -180,7 +180,7 @@ The mainland's smaller places have leaders of their own (Book 4 holds the twenty
 - **Órlaith** is the real negotiator. A marriage tie between households is a political alliance between willing adults of the two households (Arnbjörn is the obvious candidate), never the steerer; there is no romance system. She will not agree to one that is only her father's idea.
 - **Colmán** will mediate the final council if Kilbrecc is spared or compensated. Stance cynical (proposal): he guards his community by any bargain and calls it God's will. The Church's cruelty is his to carry (section 15): the bondmen who work Kilbrecc's tithe farms and cannot leave, floggings for penance, hired swords when prayer fails, and **the abbot's curse**, a fast and a malediction against a household, after the Gaelic custom of fasting against an enemy. **Muirenn's** annals are the human face of the deed ledger: at the council she reads out what the household did, accurately. Stance sceptical of the powerful (proposal): she records the Church's own sins as faithfully as the heathens'.
 - **Muiredach** is a plain farmer with a guesthouse, and a kind believer: his hospitality is a Christian duty and a briugu's honour at once. His storehouse at Carrick is the first raid. He can forgive almost anything except his people starving, and will trade almost anything for his son.
-- **Ottar** will sell to anyone and is privately considering submitting to Orm. Stance cynical (proposal): he uses any code's words to close a deal. Saltvik judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong (Book 6 section 15). **Gunnhild** respects skill and contracts above blood or belief.
+- **Ottar** will sell to anyone and is privately considering submitting to Orm. Stance cynical (proposal): he uses any code's words to close a deal. Saltvik judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong (Book 6 section 01). **Gunnhild** respects skill and contracts above blood or belief.
 - **Gilla Muire** wants someone to deal with Ulf. **Brónach** is gruff, old and Nessa's mother's sister.
 - **Lasair** guides the household across Móin Mhór, or does not; without her the bog's plank road is the only safe line. **Dubhthach** feeds any guest at the shielings and expects the same pride in return; his feud with Fiachra makes him a friend worth having and a risk to Dún Fiach's goodwill.
 - **Cuán** takes his toll from king, monk and raider alike, and what he hears at the ford he passes on, to the household or to anyone else who pays.
@@ -353,7 +353,7 @@ Some quests are revenge, including **revenge killings in other towns**. A killin
 | Exile | The target leaves the coast and does not come back |
 | The truth | The reveal that changes the demand: who really ordered it, or what the dead did first |
 
-The one who asked judges the outcome by their culture and values: Kin and Glory want blood, Word accepts a lawful price, and Mercy is content with exile or the truth. A Gael holds a blood-price proper and expected; a Glory-minded Norse calls it carrying your kin in your purse (Book 6 section 15). A price paid or taken writes `BLOOD_PRICE_PAID` or `BLOOD_PRICE_TAKEN` (proposal; Book 6 section 01), and a challenge to a duel that is turned down writes `CHALLENGE_REFUSED` (proposal). Taking another way out can still cost their friendship, and the cost is spoken, not hidden.
+The one who asked judges the outcome by their culture and values: Kin and Glory want blood, Word accepts a lawful price, and Mercy is content with exile or the truth. A Gael holds a blood-price proper and expected; a Glory-minded Norse calls it carrying your kin in your purse (Book 6 section 01). A price paid or taken writes `BLOOD_PRICE_PAID` or `BLOOD_PRICE_TAKEN` (proposal; Book 6 section 01), and a challenge to a duel that is turned down writes `CHALLENGE_REFUSED` (proposal). Taking another way out can still cost their friendship, and the cost is spoken, not hidden.
 
 ### Personal quest seeds (proposal)
 Seven residents carry a personal quest in their entry in section 02: Hild, Oddi, Bran, Runa, Eithne, Thrand and Áine.
@@ -395,3 +395,184 @@ They travel the roads and the coast and are simulated like other travellers (Boo
 
 ### The grateful survivor
 Someone the household spared in an early raid (a guard who was let go, a keeper left alive, a fisherman not drowned) comes back at the worst moment, to help or to repay a different debt. They are a real person from the deed record, named and remembered, and what they do depends on what they saw. Book 4 holds the other twist seeds and the event deck.
+
+## 15 / The cruelty of every tradition
+*Every tradition is shown with its cruelty as well as its comfort, even-handedly, through what its believers do. No tradition is the good one.*
+
+| Tradition | Cruelty shown in play | Who carries it | Kind, doubtful or ashamed believers |
+|---|---|---|---|
+| Norse belief | Thralls killed to follow a chieftain into death; captured crews given to Rán; blood-oaths that bind sons to their fathers' feuds; hostages drowned when their families fail to pay | Heid, who gives captured crews to Rán; Orm, who drowns hostages whose families failed to pay; Kolgrím's fires | Thrand, who deserted over Heid's rite; Tófi, who tells the ugly truth about old raids; Gróa, frightened at the cairn; Gudrun, who keeps the rites and restrains the raiding |
+| The Church at Kilbrecc | Bondmen who work the tithe farms and cannot leave; public floggings for penance; the abbot's curse, a fast and a malediction against a household (the Gaelic custom of fasting against an enemy); hired swords when prayer fails; shrines of the older faith smashed | Abbot Colmán; the hired swords he and Ardcarn can pay (Gilla Ciaráin) | Brother Senán, uneasy about the bondmen and the swords; Sister Muirenn, who records the Church's own sins; Ninnid, who worries for the poor of the tenant farms; Muiredach and Bran, whose faith is mostly kindness |
+| Gaelic custom | Satire that can ruin a person; the blood-price that lets the rich kill the poor; hostages starved when treaties break; geasa that doom people to impossible choices | The poet (section 13); Fiachra, whose honour-price is a king's; Eithne's late husband's kin, who would marry her off to settle a debt | Órlaith, who wants fewer feuds; Muiredach the hospitaller; Dubhthach, who feeds even Fiachra's riders |
+| The Keepers and the old powers | Seal-kin women bound by whoever holds their skin; the sick left on a skerry for the sea to judge; the Bog King's drowned offerings in the peat | The Keepers' law, which Brónach upholds; the Bog King (Book 6 section 13) | Nessa, who in every stance speaks of the skerry with grief, and who as the Runaway fled a binding (proposal) |
+
+### Rules
+- **Shown, not glorified.** Cruelty is seen in what believers do and say, never celebrated by the game and never rewarded by a system for its own sake.
+- **Always with believers who are kind, doubtful or ashamed.** Every tradition that shows its cruelty also shows the people of the same faith who flinch from it.
+- **Even-handed.** No tradition is the true or the good one; each comforts and each harms.
+- **Hard limits remain.** No children as actors, no sexual violence and no player torture. A seal-kin binding is shown as a hold over where she lives and whom she must serve; nothing sexual is shown or implied. Thralls killed at a chieftain's burial and floggings for penance are told or seen at a distance in others' hands, never a player action.
+- Book 8 section 16 holds how each tradition's cruelty is voiced.
+
+## 16 / Codes and stances
+*Everyone judges by the code of their own culture around AD 900, the household included. Each major character holds a stance towards that code.*
+
+### The codes
+| People | How they speak of right and wrong |
+|---|---|
+| The Norse (the household, Orm, Ulf) | Honour and shame, luck, a good name, oaths, kin and vengeance, what the gods will do |
+| The Gaels (Dún Fiach, Ardcarn, Glen Arra) | Honour-price by rank, éraic, hospitality and the briugu's duty, sureties, satire and geasa |
+| The Church (Kilbrecc) | Sin and penance, sanctuary, the saints' anger and favour, martyrdom |
+| The Keepers (Inis Rón) | Give and take with the sea, oaths above all, what happens on their shore |
+| Saltvik | The bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong |
+
+People of mixed birth (Bran, Senán, Áine, Gilla Ciaráin and much of Saltvik) carry both codes, and judge and are judged by either. Book 6 section 01 holds how each people reads each deed, and Book 10 section 08 ("Deed reactions by culture") its weights.
+
+**Compassion is real, and speaks in period terms.** A Mercy-minded Norse rower does not say a killing was wrong because the man was innocent. She says there was no need of it, that it brings bad luck, that his kin will come, that it shamed the crew. A monk calls it a sin. A Gael says his honour-price must be paid.
+
+### Stances
+A person's **stance** towards their own culture's code shapes how they justify themselves and what they say aloud. Values say what they care about; traits say how they behave. A stance can shift after strong events, as values do (section 01; Book 10 section 08, "Stances"). This is a different thing from Nessa's hidden stance (section 03).
+| Stance | Meaning |
+|---|---|
+| **Conventional** | Most people: keeps the code and judges by it |
+| **Sceptical** | Doubts the gods, the saints or the code's worth, but mostly keeps it |
+| **Cynical** | Uses the code's words for gain |
+| **Transgressive** | Openly breaks a central rule of the code, and knows it |
+
+### Who holds which stance (proposal)
+| Character | Stance | How it shows |
+|---|---|---|
+| Gudrun | Conventional | Keeper of the rites; the household's conscience by its own code |
+| Runa | Conventional | Proudly superstitious; keeps every rite and judges those who don't |
+| Kári | Conventional, to the hilt | Lives the drengr ideal; despises stealth raids and blood-price |
+| Tófi One-Eye | Sceptical | Has seen what glory costs; tells the ugly truth about old raids |
+| Bran | Between two codes | A Christian conscience inside a raider's past; tries to keep both and keeps failing |
+| Oddi | Transgressive | Steals from his own, the deepest Norse shame, and knows it |
+| Eithne | Transgressive | Defied her husband's kin and their marriage plan; holds herself to her word all the harder |
+| Thrand | Transgressive | Broke his oath to Orm for conscience; calls it the one right thing he has done |
+| Brother Senán | Conventional, uneasy | Devout; troubled by the abbey's bondmen and hired swords |
+| Sister Muirenn | Sceptical of the powerful | Records the Church's own sins as faithfully as the heathens' |
+| Abbot Colmán | Cynical | Guards his community by any bargain, and calls it God's will |
+| Ottar Silkbeard | Cynical | Uses any code's words to close a deal |
+| Orm | Cynical | Rules through Rán and Heid; trusts his own luck more than the gods |
+| Heid | Conventional, to the extreme | Believes every cruel rite is owed; never doubts |
+| Nessa | Follows her hidden stance | Conventional as the Watcher; transgressive as the Bound or the Runaway (section 03) |
+| Every other major character | Conventional | Until a writer or an event gives cause otherwise |
+
+### Period views are spoken; the hard limits hold in the systems
+Characters may treat thralls, the slave market, arranged marriages, blood-feud and harsh penance as ordinary, and some will urge the steerer to take captives for sale. The game still has no slave-market loop, and captives are never currency (section 01). Period attitudes to women and men exist in the world (Eithne's marriage, Órlaith's), but no line applies them to the steerer or reveals the steerer's gender (Book 8 section 03).
+
+### The household's code and the steerer
+The household judges by the Norse code. The player can act against it, and the household reacts by that code: a merciful choice is praised as luck kept or a feud not started, not as kindness for its own sake; a cruel one is condemned as shame or bad luck, not as a crime against anyone's rights. The steerer's choices are period voices too (conventional, pragmatic, merciful, cruel, transgressive), each phrased with a period reason (Book 8 section 16).
+
+## 17 / Traits, likes, relationships and tendencies
+*Every resident and companion is a person with habits, tastes and friends, learned over time.*
+
+### Traits
+Every resident and companion has **two to four traits**. One or two show at once; the rest are discovered over time, through behaviour first and then on the household screen. Traits affect work, combat behaviour, reactions to deeds, disputes and conversation. Book 10 section 08 ("Traits") holds every number.
+| Trait | Effect |
+|---|---|
+| Berserk | In combat, when wounded or when a friend falls, may go berserk: ignores orders, attacks the nearest enemy wildly (including those surrendering, and people who bore no weapon in reach), deals more damage, defends less. The deeds count against the household |
+| Cowardly | Breaks first when cohesion falls; may flee a fight; hates night raids |
+| Superstitious | Refuses tasks or voyages after bad omens; panics at supernatural signs; insists on rites |
+| Brave | Holds the line longer; volunteers for danger |
+| Greedy | Pockets loot; argues over shares |
+| Pious (to a given faith) | Prays daily; reacts strongly to sacrilege and to its own faith's cruelty |
+| Hot-tempered | Starts disputes; quick to fight |
+| Gentle | Calms disputes; hates killing |
+| Drinker | Drinks at feasts and in hard times; unreliable the morning after |
+| Light-fingered | Steals small things from the stores (Oddi) |
+| Keen-eyed | Spots things first at sea and on watch, and an ambush's signs sooner |
+| Sea-sick | Worse at sea; better on land |
+| Storyteller or singer | Raises happiness at the fire |
+| Grudge-holder | Remembers every slight; feuds |
+| Diligent or lazy | Works more or less without supervision |
+
+### Likes and dislikes
+Each person likes and dislikes particular foods (salt fish, honey, ale, kale), activities (fishing, carving, fighting), places, weather, people and gifts. Meeting a like raises happiness; ignoring one does not hurt, but meeting a dislike does. A gift that suits a like is the best gift (Book 10 section 08, "Likes and dislikes").
+
+### Relationships between residents
+Residents form and break ties with each other through shared events: friends, rivals, grudges, mentors, drinking companions, and family. A shared fight or a meal together draws two people closer; a dispute lost to the other drives them apart (Book 10 section 08, "Relationships"). There is no romance system: no romance tie forms in play, and existing marriages and family ties remain (section 08). Starting relationships beyond the family ties of section 08 (proposal):
+| Residents | Relationship | Why |
+|---|---|---|
+| Tófi and Kári | Mentor | Tófi trains him, and tells him what glory costs |
+| Bran and Kári | Rivals | They will not see a burned farm the same way |
+| Bran and Oddi | Mentor | Bran gave him work instead of a beating once before |
+| Hild and Oddi | Friends | Shipmates since the voyage south |
+| Nessa and Ylva | Friends, from her first days | Ylva speaks to her about fetches as if they were ordinary |
+| Eithne and Runa | Rivals | The cross or the stone by the well (section 10) |
+| Tófi and Kolbeinn | Drinking companions, from his first feast | Two Drinkers and one fire |
+
+### Tendencies
+A tendency is a small daily behaviour that makes a person readable from across the steading: one prays at dawn, one wanders the shore at night, one hoards stones, one sings at the oars. It runs inside their schedule (section 01) and is not a job.
+
+### The household screen
+The household screen shows each person's known traits, likes and dislikes, relationships, happiness, friendship and fear, each with a line on why it is what it is ("Friendship: you brought her father's body home"; "Hidden traits: one still to learn"). It is interface text, so it may say things plainly that dialogue never would (Book 8 section 10); it never shows a trait that has not yet been discovered, or anyone's secret.
+
+### The residents (proposal)
+Every assignment below is a proposal except Oddi's Light-fingered trait, which is decided. Traits marked *hidden* are discovered in play.
+| Resident | Traits | Likes | Dislikes | Tendency |
+|---|---|---|---|---|
+| Hild | Brave, Keen-eyed; *hidden:* Grudge-holder | Salt fish; fishing; the bow in a rising wind; jokes at the fire | Being told to rest; a flat calm; kale | Walks the shore at dusk, watching the water where her father drowned |
+| Oddi | Light-fingered (found on the second night), Keen-eyed; *hidden:* Cowardly | Honey; dice; climbing; being trusted with a job | Being watched while he eats; rain; Ulf's men | Counts his share every evening, twice |
+| Bran | Gentle, Pious (Christ and the saints, kept quietly); *hidden:* Diligent | Cooking for everyone; kale broth; Irish songs; a quiet morning | Boasting over kills; burned farms; the Kilbrecc road | Prays at dawn, in two languages |
+| Runa | Superstitious, Diligent; *hidden:* Grudge-holder | Good oak; carving; a dry naust; rites kept | Green timber; whistling at sea; hands on her tool chest | Touches the stem-post and says a word to it before work |
+| Eithne | Pious (Christ), Diligent; *hidden:* Grudge-holder | An honest tally; herding; kale; a cross by the well | Lies; waste; talk of marriage-brokers | Counts the stores aloud at dusk |
+| Nessa | Gentle, Keen-eyed; *hidden:* Storyteller (old seal songs, once she trusts the household) | Fish; the sea in any weather; mending nets; Ylva's company | Seal meat; questions about where she came from; peat smoke | Swims at first light in water that would kill anyone else |
+| Gudrun | Pious (the old gods), Storyteller; *hidden:* Grudge-holder | Rites kept; honey; the old stories; the family together at the fire | Reckless raiding; slack rites; being hurried | Pours a little ale on the ground for the land-spirits each evening |
+| Arnbjörn | Gentle, Diligent; *hidden:* Cowardly | Cattle; mending fences; quiet; kale | Fighting; night raids; loud feasts | Checks every gate twice at dusk |
+| Kári | Brave, Hot-tempered; *hidden:* Berserk | Fighting; ale; praise poems; a crowd to boast to | Stealth raids; blood-price; waiting | Practises with his axe at dawn where everyone can see |
+| Kolla | Keen-eyed, Diligent; *hidden:* Singer | Fishing; salt fish; a fair share; a quiet sea | Kári's boasting; Ulf's men; waste | Sings at the oars |
+| Tófi One-Eye | Brave, Storyteller; *hidden:* Drinker | Ylva's company; ale; teaching a fight; old songs | Glory-talk; boasting; the cold | Sharpens every blade in the house at the evening fire |
+| Ylva | Superstitious, Gentle | Warmth; honey; Nessa's company; Tófi's stories | Cold; wind at the door; mockery of omens | Sits by the door at dusk and watches who passes |
+| Kolbeinn | Hot-tempered, Diligent; *hidden:* Drinker | Good iron; ale; a proper forge; Asa's counting | A cold forge; debt; Ottar | Hums to the beat of the hammer |
+| Asa | Diligent; *hidden:* Grudge-holder | A proper loom; honest accounts; Runa's visits | Ottar; waste; weaving on a door | Collects round shore stones for loom weights, far more than she needs |
+| Thrand | Brave, Keen-eyed; *hidden:* Grudge-holder | Plain talk; salt fish; a sound watch | Heid's name; boasting; deep water at night | Walks the shore at night when he cannot sleep |
+| Áine | Keen-eyed, Brave, Sea-sick; *hidden:* Grudge-holder | Hunting; the high ground; praise; honey | Ulf's Crows; being doubted; long voyages | Climbs to high ground every morning to look over the land |
+| Brother Senán | Pious (Christ and the saints), Gentle; *hidden:* Diligent | Ink and vellum; quiet; honey; old carved stones | Burned books; cold hands; hired swords | Writes down the day's doings each night |
+
+Kári's Berserk trait fits his drengr ideal and is the one most likely to kill him (section 19). Generated residents draw from the same lists (section 02).
+
+## 18 / Who gets depth
+*Major characters have branching conversation and reaction trees; minor characters have one or two lines.*
+
+### Major characters
+Leaders, antagonists, residents and quest characters are **major**: every named character in sections 02 to 06, and the four wandering characters of section 13 (proposal). Each has **branching conversation and reaction trees** that change with:
+- time of day and season (a different greeting at dawn, at a winter fire, on a feast day);
+- the household's deeds and reputation, read by their culture and values;
+- their happiness, friendship and fear towards the steerer;
+- quest and story state;
+- recent events (a death, a raid, a storm).
+
+### Minimum depth
+Every major character has at least: greetings for each season and time of day; three topic trees; reactions to ten deed types; callbacks to remembered events from their memory list (section 01); and a change in voice when friendship or fear crosses a threshold (Book 10 section 23, "Conversation depth"). Book 8 section 17 holds how they are written, and content lint checks the minimum.
+
+### Minor characters
+Farmers, traders, guards, travellers and the people of a site have one or two lines, drawn from pools that vary by culture, season, time of day, weather and what the household has done (Book 8 section 17). Their motives are simple. They are not schemers or philosophers, and they do not explain the plot.
+
+## 19 / Downed, captured and dead
+*A downed ally is not dead. People die by being left behind, by berserkers and cruel enemies, and in scripted deaths, and every death matters.*
+
+### Downed, not dead
+- **No bleed-out timer.** A friendly character brought down is downed and stays downed until the scene ends. Downed allies generally survive if the steerer, or anyone, carries them back to the boat or the village before the scene ends; on a journey a safe camp or a waystation counts (Book 10 section 06, "Downed and carried"). They come home with a serious wound.
+- **Carrying is slow** and leaves the carrier unable to fight. Heavy residents carry faster but tire sooner.
+- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner, proposal), and those always give a visible warning first: a raised weapon, a shout.
+
+### Left behind
+A downed ally still lying on the field when the scene ends is captured or killed, according to the enemy: those who take captives (Norse raiders, Gaelic lords, Orm's men, the Church's hired swords) carry them off; outlaws in a hurry, wolves and the dead kill them. Captives can be rescued or ransomed later, and a captive resident's absence is felt at home. Leaving someone behind is a deed the household remembers (Book 10 section 08, "Resident left behind").
+
+### Deaths
+Crew permadeath comes mainly from being left behind, from berserkers and cruel enemies, and from **scripted deaths**. The *Rán's mercy* option still prevents unscripted deaths; scripted deaths still happen.
+
+### Scripted deaths and death-choices (proposal)
+| Death | Who it touches | What happens | Where |
+|---|---|---|---|
+| **Rán's debt** | Gudrun, and whoever the steerer chooses | Thorkel's debt to Rán comes due: someone must go into the sea. Gudrun offers herself; the steerer can accept, choose otherwise, or refuse and pay another way (the ship, the household's luck or a later life) | Book 4 section 12 (Thorkel's debt) |
+| **The cairn door** | Whoever stays | In the Return, someone must hold the cairn door as the tide rises. Whoever stays dies, unless the party found the spring-room passage first | Book 6 section 10 |
+| **Bran's reckoning** | Bran | A monk's family demands Bran's life as blood-price. Bran can go to his death, be exiled, or be defended at the cost of the alliance | Section 02; Book 6 section 17 |
+| **Thrand's proof** | Thrand | Thrand challenges Asgrim to prove Heid's crimes. Without the evidence, he dies in the duel | Section 02; Book 6 section 17 |
+| **The defence of Skarvholm** | Whoever leads the watch | On the night of the attack, the watch leader may die holding the landing, depending on preparation | Book 6 section 09 |
+| **Berserk deaths** | Kári, or any Berserk resident | A berserker can die charging alone, through the trait | Section 17 |
+| **The washer at the ford** | Whoever she names | Before the final battle she names who will die; changing orders can save them, at a cost elsewhere | Book 4 section 07 |
+
+### Every death is consequential
+Grief: happiness falls household-wide, hardest for the dead person's ties. Their skills and jobs are lost and must be learned again. Relationships change: a friend grieves, a rival is ashamed or relieved. There is a grave to tend and songs at the fire. Where the dead had unfinished business, a ghost or a fetch may come. Story branches the dead person carried close. Enemies mock the death, and allies honour it. No death is a silent change of numbers.

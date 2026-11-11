@@ -10,6 +10,7 @@
  *   still.png        the opening view at 1x (640 x 360), the steerer standing
  *   still@2x.png     the same at 2x
  *   walk.mp4         10 seconds at 2x: the steerer walks up the strand and onto the machair
+ *   wade.mp4/.gif    about 12 seconds: along the strand to Hild, wading beside her, and back out
  *   compare.png      the reference mockup beside the capture, both at 2x
  *   motion.png       the still view with cells that do not keep moving marked red
  *   README.md        the figures: motion with the camera still, against the reference
@@ -21,6 +22,10 @@ import { join } from 'node:path';
 import { chromium } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { createServer } from 'vite';
+import { parseTimeBalance, parseWaterBalance } from '../../content/balance.ts';
+import { bakeElevation } from '../../content/terrain/elevation.ts';
+import { tideAt } from '../../sim/calendar/calendar.ts';
+import { bandAt, stillWaterLevel } from '../../sim/land/water.ts';
 import { parseZoneMap, tileOf } from '../../sim/land/zoneMap.ts';
 import { findPath } from '../play/openingBot.ts';
 import type { Tile } from '../play/openingBot.ts';
@@ -175,86 +180,6 @@ export async function capture(label: string): Promise<string> {
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
 
-    // The wade (design addendum 2.2 section 2): running along the strand to Hild, wading out
-    // beside her into the shallows, a pause, and back out, dripping (wade.mp4 and wade.gif at 2x).
-    {
-      const hild = { x: 31.5 * 24, y: 35.6 * 24 };
-      const wadeDir = join(out, '.wade');
-      rmSync(wadeDir, { recursive: true, force: true });
-      mkdirSync(wadeDir, { recursive: true });
-      const begin = await where(page);
-      const route =
-        findPath(map, false, tileOf(map, begin.x, begin.y), (t: Tile) => {
-          const c = tileOf(map, hild.x + 30, hild.y + 6);
-          return Math.abs(t.tx - c.tx) <= 0 && Math.abs(t.ty - c.ty) <= 0;
-        }) ?? [];
-      const targets = route
-        .filter((_, i) => i % 2 === 0 || i === route.length - 1)
-        .map((t) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.6) * 24 }));
-      const keys = new Set<string>();
-      let k = 0;
-      let frame = 0;
-      const save = async (): Promise<void> => {
-        writeFileSync(
-          join(wadeDir, `${String(frame).padStart(4, '0')}.png`),
-          encodePng(await shot(page)),
-        );
-        frame++;
-      };
-      // Run until a few seconds out from Hild, recording the last stretch.
-      await page.keyboard.down('ShiftLeft');
-      for (let guard = 0; guard < 3000 && k < targets.length; guard++) {
-        const to = targets[k];
-        if (to !== undefined && (await steer(page, keys, to))) k++;
-        await step(page);
-        const at = await where(page);
-        if (Math.hypot(at.x - hild.x, at.y - hild.y) < 9 * 24 && frame < 15 * FPS) await save();
-        if (k === targets.length - 3) await page.keyboard.up('ShiftLeft');
-      }
-      await page.keyboard.up('ShiftLeft');
-      // Into the water beside her, a pause, and back out.
-      const near = await where(page);
-      for (const to of [
-        { x: hild.x + 26, y: hild.y + 2 },
-        { x: hild.x + 26, y: hild.y + 2 },
-        { x: near.x + 10, y: near.y + 40 },
-      ]) {
-        for (let guard = 0; guard < 160; guard++) {
-          if (await steer(page, keys, to)) break;
-          await step(page);
-          await save();
-        }
-        for (let i = 0; i < FPS * 1.5; i++) {
-          await step(page);
-          await save();
-        }
-      }
-      for (const key of keys) await page.keyboard.up(key);
-      for (const [name, args] of [
-        ['wade.mp4', ['-c:v', 'libx264', '-crf', '14', '-pix_fmt', 'yuv420p']],
-        [
-          'wade.gif',
-          [
-            '-vf',
-            'fps=12.5,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=none',
-          ],
-        ],
-      ] as const) {
-        execFileSync('ffmpeg', [
-          '-y',
-          '-loglevel',
-          'error',
-          '-framerate',
-          String(FPS),
-          '-i',
-          join(wadeDir, '%04d.png'),
-          ...args,
-          join(out, name),
-        ]);
-      }
-      rmSync(wadeDir, { recursive: true, force: true });
-    }
-
     // The walk: up the strand from where the steerer wakes, through the cut onto the machair.
     const start = await where(page);
     const from = tileOf(map, start.x, start.y);
@@ -286,7 +211,7 @@ export async function capture(label: string): Promise<string> {
       if (recorded > 0 || at.y - grassY < 10 * 24) {
         writeFileSync(
           join(framesDir, `${String(recorded).padStart(4, '0')}.png`),
-          encodePng(await shot(page)),
+          await page.screenshot(),
         );
         recorded++;
       }
@@ -303,12 +228,15 @@ export async function capture(label: string): Promise<string> {
       '-c:v',
       'libx264',
       '-crf',
-      '12',
+      '20',
       '-pix_fmt',
       'yuv420p',
       join(out, 'walk.mp4'),
     ]);
     rmSync(framesDir, { recursive: true, force: true });
+
+    // The wade (design addendum 2.2 section 2), after the walk so the walk's clip is unchanged.
+    const waded = await wadeClip(page, map, out);
 
     const pct = (v: number): string => `${(v * 100).toFixed(1)}%`;
     writeFileSync(
@@ -323,7 +251,7 @@ export async function capture(label: string): Promise<string> {
         '|---|---|',
         '| `still.png`, `still@2x.png` | Wreck Strand where the steerer wakes, at 1x and 2x |',
         '| `walk.mp4` | 10 seconds at 2x, 25 fps: up the strand, through the cut, onto the machair |',
-        '| `wade.mp4`, `wade.gif` | At 2x: running along the strand to Hild, wading out beside her, and back out |',
+        `| \`wade.mp4\`, \`wade.gif\` | ${(waded / FPS).toFixed(1)} s: running along the strand to Hild, wading out beside her, a pause, and back out onto the shingle (mp4 at 2x; gif 320 x 180 round the action at 2x, 12.5 fps) |`,
         '| `compare.png` | The approved reference (left) beside the capture (right), both at 2x |',
         '| `motion.png` | The still view; cells without continuous motion are marked red |',
         '',
@@ -347,6 +275,155 @@ export async function capture(label: string): Promise<string> {
     await browser.close();
     await server.close();
   }
+}
+
+/** The longest the wade clip may run, in frames (about 12 s). */
+const WADE_FRAMES = 12 * FPS;
+
+/**
+ * The wade: the steerer runs along the strand towards Hild (out of deep and waist water, by a
+ * tile path), walks the last stretch, wades out to stand knee to waist deep beside her, turns to
+ * face her, pauses, and walks back out onto the shingle, dripping. Records at most WADE_FRAMES
+ * frames, from a few tiles out, and writes wade.mp4 (2x) and wade.gif (320 x 180 round the
+ * action, 2x, 12.5 fps, one palette). Returns the frames recorded.
+ */
+async function wadeClip(
+  page: Page,
+  map: ReturnType<typeof parseZoneMap>,
+  out: string,
+): Promise<number> {
+  const balance = JSON.parse(
+    readFileSync(join(REPO_ROOT, 'content/balance.json'), 'utf8'),
+  ) as unknown;
+  const water = parseWaterBalance(balance);
+  const b = parseTimeBalance(balance);
+  const elevation = bakeElevation(map.rows);
+  const o = page.locator('.oe-overlay');
+  const minute =
+    6 * 60 + Math.round(Number(await o.getAttribute('data-seconds')) / (b.secondsPerHour / 60));
+  const level = stillWaterLevel(tideAt({ day: 1, minuteOfDay: minute }, b));
+  const band = (x: number, y: number) => bandAt(water, elevation, x, y, level)?.band ?? null;
+  const shallow = (t: Tile): boolean => {
+    const at = band((t.tx + 0.5) * 24, (t.ty + 0.7) * 24);
+    return at !== 'WAIST' && at !== 'DEEP';
+  };
+  const hild = {
+    x: Number(await o.getAttribute('data-hild-px')),
+    y: Number(await o.getAttribute('data-hild-py')),
+  };
+  const hildTile = tileOf(map, hild.x, hild.y);
+  // Where to stand: knee or waist water beside her, on her shore side, 14 to 30 px away.
+  let spot: { x: number; y: number } | null = null;
+  for (let r = 14; r <= 30 && spot === null; r += 2)
+    for (let a = 0; a < 32 && spot === null; a++) {
+      const ang = (a / 32) * 2 * Math.PI;
+      const x = hild.x + Math.cos(ang) * r;
+      const y = hild.y + Math.sin(ang) * r * 0.6;
+      const at = band(x, y);
+      if ((at === 'KNEE' || at === 'WAIST') && x > hild.x + 8) spot = { x, y };
+    }
+  if (spot === null) throw new Error('no knee or waist water beside Hild');
+  // The stand-off: the nearest dry or shallow tile to the spot, reached by a path.
+  const begin = await where(page);
+  const route =
+    findPath(
+      map,
+      false,
+      tileOf(map, begin.x, begin.y),
+      (t) =>
+        Math.abs(t.tx - tileOf(map, spot.x, spot.y).tx) +
+          Math.abs(t.ty - tileOf(map, spot.x, spot.y).ty) <=
+          1 &&
+        (band((t.tx + 0.5) * 24, (t.ty + 0.7) * 24) === null ||
+          band((t.tx + 0.5) * 24, (t.ty + 0.7) * 24) === 'WET'),
+      shallow,
+    ) ?? [];
+  if (route.length === 0) throw new Error('no path to Hild');
+  const ashore = route[route.length - 1] ?? hildTile;
+  const ashorePoint = { x: (ashore.tx + 0.5) * 24, y: (ashore.ty + 0.7) * 24 };
+  const waypoints = route.map((t) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.7) * 24 }));
+  const wadeDir = join(out, '.wade');
+  rmSync(wadeDir, { recursive: true, force: true });
+  mkdirSync(wadeDir, { recursive: true });
+  const keys = new Set<string>();
+  let frames = 0;
+  const save = async (): Promise<void> => {
+    if (frames >= WADE_FRAMES) return;
+    writeFileSync(join(wadeDir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  };
+  const release = async (): Promise<void> => {
+    for (const k of keys) await page.keyboard.up(k);
+    keys.clear();
+  };
+  // Run along the strand; walk the last few tiles; record from about four seconds out.
+  let k = 1;
+  let running = false;
+  for (let guard = 0; guard < 4000 && k < waypoints.length; guard++) {
+    const left = waypoints.length - k;
+    const run = left > 3;
+    if (run !== running) {
+      if (run) await page.keyboard.down('ShiftLeft');
+      else await page.keyboard.up('ShiftLeft');
+      running = run;
+    }
+    const to = waypoints[k];
+    if (to !== undefined && (await steer(page, keys, to))) k++;
+    await step(page);
+    if (left <= 14) await save();
+  }
+  if (running) await page.keyboard.up('ShiftLeft');
+  const go = async (to: { x: number; y: number }, limit: number): Promise<void> => {
+    for (let guard = 0; guard < limit; guard++) {
+      if (await steer(page, keys, to)) break;
+      await step(page);
+      await save();
+    }
+    await release();
+  };
+  // Out into the water beside her, a turn to face her, a pause, and back out onto the shingle.
+  await go(spot, 120);
+  await page.keyboard.down('KeyA');
+  await step(page);
+  await page.keyboard.up('KeyA');
+  for (let i = 0; i < FPS * 2; i++) {
+    await step(page);
+    await save();
+  }
+  await go(ashorePoint, 120);
+  await go({ x: ashorePoint.x, y: ashorePoint.y - 30 }, 80);
+  for (let i = 0; i < FPS && frames < WADE_FRAMES; i++) {
+    await step(page);
+    await save();
+  }
+  const input = [
+    '-y',
+    '-loglevel',
+    'error',
+    '-framerate',
+    String(FPS),
+    '-i',
+    join(wadeDir, '%04d.png'),
+  ];
+  execFileSync('ffmpeg', [
+    ...input,
+    '-c:v',
+    'libx264',
+    '-crf',
+    '23',
+    '-pix_fmt',
+    'yuv420p',
+    join(out, 'wade.mp4'),
+  ]);
+  // The gif: the middle of the view (the camera keeps the steerer centred), 320 x 180 at 2x.
+  execFileSync('ffmpeg', [
+    ...input,
+    '-vf',
+    'fps=12.5,crop=640:360:320:200,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    join(out, 'wade.gif'),
+  ]);
+  rmSync(wadeDir, { recursive: true, force: true });
+  return frames;
 }
 
 if (import.meta.filename === process.argv[1]) {

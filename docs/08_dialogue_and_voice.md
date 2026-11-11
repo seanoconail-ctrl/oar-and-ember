@@ -4,7 +4,7 @@
 
 Without a voice guide, LLM-written dialogue drifts into one polite, modern, explanatory voice. This book gives every person and culture a recognisable way of speaking, with sample lines to imitate and rules to check against.
 
-**How to use:** Writers and the coding LLM read section 01 to 03 before writing any line, then the section for the speaker. Sample lines are illustrative and original; they may be reused or rewritten. Section 10 is the checklist every string passes before it is committed.
+**How to use:** Writers and the coding LLM read section 01 to 03 and section 16 before writing any line, then the section for the speaker. Sample lines are illustrative and original; they may be reused or rewritten. Section 10 is the checklist every string passes before it is committed.
 
 _Writing specification. All lines are original to this project. No line quotes or adapts a copyrighted text; Old Norse and Old Irish words are used as vocabulary, not quotation._
 
@@ -16,10 +16,12 @@ _Writing specification. All lines are original to this project. No line quotes o
 - **Short lines.** Most spoken lines are under 15 words. Long speeches belong to poets, priests and Heid.
 - **Subtext over exposition.** Nobody explains the plot to someone who already knows it. Information arrives sideways, in arguments, jokes and complaints.
 - **People reveal their values.** A Mercy-minded speaker notices the hurt; a Gain-minded one notices the price. Book 5 values should be audible.
+- **Period ethics.** Everyone judges by the code of their own culture around AD 900, the household included. Right and wrong are spoken of as honour and shame, luck, oaths, kin and vengeance, hospitality, blood-price, sin and penance, and what the gods or saints will do; never in modern terms (section 16).
+- **Ordinary people talk about ordinary things.** Most people's motives are simple: food, safety, family, money, pride, fear, a grudge, a debt. Minor characters are not schemers or philosophers.
 - **Humour is dry and frequent.** Understatement, insult between friends, gallows jokes. The harder the moment, the drier the joke.
 - **No modern register.** No therapy-speak, no management language, no "okay", no "guys", no winking at the player.
 - **No mock-archaic either.** No "thee" and "thou", no "ye olde", no stage dialect, no phonetic accents.
-- **Violence is spoken plainly.** People describe wounds and deaths without relish or euphemism. The crew does not cheer atrocity, except those whose values say they would.
+- **Violence is spoken plainly.** People describe wounds and deaths without relish or euphemism. The crew does not cheer a slaughter, except those whose values say they would. Each tradition's cruelty is shown through its believers, never glorified, and always beside believers who are kind, doubtful or ashamed (section 16).
 
 ## 02 / Norse and Irish words in English
 *The decided mix: names keep their native forms; dialogue is English; a small curated set of native words appears untranslated where English would lose something.*
@@ -71,6 +73,7 @@ Write specific oaths rooted in each culture rather than generic Viking shouting.
 - When speaking about the steerer in the third person, use the name or "the steerer", or "they" if unavoidable.
 - Neutral kinship terms are allowed: cousin and kin. Instead of nephew or niece, say "Thorkel's sister's child".
 - Content lint (Book 2) flags any string tagged `ADDRESS_STEERER` or `ABOUT_STEERER` that contains a word from the banned list.
+- Period attitudes to women and men exist in the world and may be spoken (Eithne's marriage, Órlaith's), but no line applies them to the steerer or reveals the steerer's gender (section 16).
 
 | Instead of | Write |
 |---|---|
@@ -195,7 +198,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Idle and evening | "Sing the one about the goat." / "Dry feet. I'd forgotten." / "Pass the ale before Kári sees it." |
 | Weather and season | "Smell that? Snow." / "Gulls inland. Storm tomorrow." / "Long light. Too long to sleep." |
 | Supernatural signs | "The water's moving wrong." / "Footprints. Wet ones." / "That fog's going against the wind." |
-| Reactions to brutality | "That wasn't a fight." (Bran) / "Now that's a story." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) |
+| Reactions to brutality | "That wasn't a fight." (Bran) / "Now that's a story." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) / "No need of that. Bad luck, that." (Kolla) |
 | Assault | "Horn! More coming." / "Lock shields!" / "Hold the beach!" / "Archers on the roof!" / "Fall back to the ships!" |
 | Return to Skarvholm | "That's our roof. Their smoke." / "They've salted the spring." / "Father's stones are still there." (Hild) |
 
@@ -203,9 +206,9 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 *Talking to a resident opens a short conversation built from topics. It should feel like catching someone at work.*
 
 ### Structure
-1. **Greeting** that reflects what they are doing, their happiness and their friendship ("Hand me that rope, if you're staying.").
-2. **Up to three topics**, chosen by priority from memories: a recent deed they saw, a wound, a death, their job, the weather and season, a tie, a worry, a request.
-3. **One player choice** per topic at most: agree, disagree, ask more, or move on. Choices can change friendship, and sometimes happiness or fear.
+1. **Greeting** that reflects what they are doing, the season and the time of day, their happiness and their friendship ("Hand me that rope, if you're staying.").
+2. **Up to three topics**, chosen by priority from memories: a recent deed they saw, a wound, a death, their job, the weather and season, a tie, a worry, a request. For a major character each topic is a branch of one of their topic trees (section 17).
+3. **A player choice** per step of a topic: agree, disagree, ask more, or move on, worded as period voices (section 16). "Ask more" can open a further branch; most topics end within two or three steps. Choices can change friendship, and sometimes happiness or fear.
 4. **Exit** that returns them to their work.
 
 ### Topic samples
@@ -225,9 +228,27 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 ## 10 / Writing for content files
 ### String rules
 - Subtitles: at most two lines of 42 characters each.
-- String keys: `<speaker>.<context>.<id>`, for example `c_hild.bark.danger.03`.
-- Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`. Never a pronoun variable for the steerer.
-- Tags: `ADDRESS_STEERER`, `ABOUT_STEERER`, `VOICED`, `GLOSSARY:<word>`.
+- String keys: `<speaker>.<context>.<id>`, for example `c_hild.bark.danger.03`. Caption strings start `caption.`.
+- Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`, `{speaker}`. Never a pronoun variable for the steerer.
+- Tags: `ADDRESS_STEERER`, `ABOUT_STEERER`, `VOICED`, `GLOSSARY:<word>`, and on every caption string `SPEECH` or `INFO`.
+
+### Modern moral words
+Dialogue strings, meaning every line spoken by a person (keys whose speaker is a person: `c_`, `l_`, `r_`, `e_`, `h_`, `p_`), never use modern moral vocabulary: **rights, war crime, genocide, trauma, civilian, ethics, morality, values, consent, abuse, victim, tolerance, equality**. Dialogue says "farmers", "folk" or "people who bore no weapon" rather than "civilians". "Innocent" is allowed: it is a Church word. Interface text, such as the household screen, and information captions are exempt. Content lint (Book 2) flags these words in dialogue strings, as it flags gendered words about the steerer (section 03).
+
+### Subtitles and captions
+Subtitles show two kinds of line, and they look different:
+- **Speech** is what someone says: the speaker's name, a colon and the words, in upright type. `Hild: Here! Over here, past the rocks!` Speech follows every rule of this book.
+- **Information** is a sound, a direction or another cue that is not speech: *italic*, with no speaker prefix and no quotation marks. *Hild, calling from the west*; *Surf breaking on the rocks*; *A horn, far off to the north*.
+
+| Rule | Detail |
+|---|---|
+| Information lines | Under eight words, in the present tense, with a direction when it helps the player find the source. Plain, modern-neutral English: no glossary words, no slang, no period voice |
+| Unmet speakers | A speaker the player has not met is named by what they appear to be ("Monk:", "Stranger:", "Ardcarn guard:") until introduced |
+| Hidden identities | A subtitle name never gives away a hidden identity: Nessa's hidden stance, a disguised enemy, an outlaw prince |
+| Both at once | The information line sits above the speech line |
+| Italic | A real italic of the caption font, or a hand-made slanted variant if the font is a pixel font; crisp at 1x, never a blurred, synthetic skew |
+| Settings | Information captions can be turned off separately from speech subtitles (Book 2 section 21) |
+| Tags and lint | Every caption string is tagged `SPEECH` or `INFO`. Content lint checks that a `SPEECH` string has a speaker (it starts `{speaker}: `) and an `INFO` string has none (no "Name:" prefix, no quotation marks, under eight words) |
 
 ### Interface wording
 - Interface words are short, plain and the same everywhere: one word for one thing.
@@ -237,13 +258,15 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 ### Checklist before committing a line
 1. Does it sound like this speaker and no one else?
 2. Is it concrete, short and in plain period English?
-3. No banned modern words (okay, guys, cool, stress, process, deal with it) and no mock-archaic forms.
+3. No banned modern words (okay, guys, cool, stress, process, deal with it), no modern moral words (rights, war crime, genocide, trauma, civilian, ethics, morality, values, consent, abuse, victim, tolerance, equality) and no mock-archaic forms.
 4. At most one glossary word, clear from context.
 5. No gendered term for the steerer.
 6. Does it reveal or hide only what the speaker would know?
 7. Is violence described plainly, without relish (unless the speaker's values say otherwise)?
 8. No quotation or close adaptation of any copyrighted text.
 9. Interface words: short, plain, and the same word for the same thing everywhere.
+10. Does the speaker judge by their own culture's code, giving a period reason (section 16)?
+11. Is a caption string tagged `SPEECH` (with a speaker) or `INFO` (without one, under eight words)?
 
 ## 11 / Happiness, friendship and fear in speech
 *Nobody says "I am unhappy with you". People talk about the cold, the food, and what they saw the steerer do.*
@@ -254,6 +277,7 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 - **Friendship** is heard in talk about the steerer over time: what they did, what they promised, whether they came back for someone.
 - **Fear** is heard in what people stop saying. Frightened people answer shorter, agree faster and look for someone else to speak for them.
 - Each step of the warning flow (Book 5 section 01) has its own line, in the speaker's voice, and the steps are never skipped.
+- A major character's voice changes when friendship or fear crosses a threshold (Book 10 section 23, "Conversation depth"): warmer and more open as a friend, shorter and colder when resentful, quick and quiet when afraid (section 17).
 
 ### The warning flow
 | Step | Friendship falling | Happiness low |
@@ -348,7 +372,7 @@ Choices: "Give Kári the ring." / "Give Oddi the ring." / "Sell it and split the
 *The roads talk. Everything the household learns from far away comes from someone who saw it or heard it.*
 
 ### Travellers
-One or two lines each, about their road and their reason.
+One or two lines each, about their road and their reason, drawn from the minor characters' pools (section 17). A traveller the player has not met is named in the subtitle by what they appear to be ("Pilgrim:", "Rider:"), never by name (section 10).
 | Traveller | Sample lines |
 |---|---|
 | Pilgrim | "Kilbrecc by the saint's day, if the ford lets us." |
