@@ -63,6 +63,13 @@ jobs:
       - run: npm run build
       - run: npx playwright install firefox
       - run: npm run test:browser -- --project=firefox
+      - name: Keep the failed tests' screenshots and page snapshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-firefox-macos
+          path: test-results
+          retention-days: 7
 
   # WebKit does not block publishing (decision S1-18): it stalls on CI for reasons not yet found,
   # and the user checks real Safari at the published link. Its result stays visible on every run.
@@ -80,6 +87,85 @@ jobs:
       - run: npm run build
       - run: npx playwright install webkit
       - run: npm run test:browser -- --project=webkit
+      - name: Keep the failed tests' screenshots and page snapshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-webkit-macos
+          path: test-results
+          retention-days: 7
+
+  # EXPERIMENT (temporary): Firefox and WebKit on Linux, headless and headed under a virtual
+  # display, to see whether software WebGL2 there now runs the game. Never blocks anything.
+  browsers-linux-probe:
+    name: Experiment - ${{ matrix.browser }} on Linux (${{ matrix.mode }})
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+        mode: [headless, headed]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: What WebGL2 the browser offers
+        run: |
+          cat > "$RUNNER_TEMP/probe.mjs" <<'PROBE'
+          import { createRequire } from 'node:module';
+          const require = createRequire(process.cwd() + '/package.json');
+          const pw = require('@playwright/test');
+          const [name, mode] = process.argv.slice(2);
+          const browser = await pw[name].launch({
+            headless: mode !== 'headed',
+            ...(name === 'firefox' ? { firefoxUserPrefs: { 'webgl.force-enabled': true } } : {}),
+          });
+          const page = await browser.newPage();
+          await page.setContent('<canvas id="c" width="64" height="64"></canvas>');
+          const info = await page.evaluate(() => {
+            const c = document.getElementById('c');
+            const gl = c.getContext('webgl2');
+            if (gl === null) return { webgl2: false };
+            const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+            const vs = gl.createShader(gl.VERTEX_SHADER);
+            gl.shaderSource(vs, '#version 300 es\nin vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}');
+            gl.compileShader(vs);
+            return {
+              webgl2: true,
+              renderer: gl.getParameter(dbg === null ? gl.RENDERER : dbg.UNMASKED_RENDERER_WEBGL),
+              version: gl.getParameter(gl.VERSION),
+              compiled: gl.getShaderParameter(vs, gl.COMPILE_STATUS),
+              lost: gl.isContextLost(),
+            };
+          });
+          console.log(name, mode, JSON.stringify(info));
+          await browser.close();
+          PROBE
+          if [ "${{ matrix.mode }}" = headed ]; then
+            xvfb-run -a node "$RUNNER_TEMP/probe.mjs" ${{ matrix.browser }} headed
+          else
+            node "$RUNNER_TEMP/probe.mjs" ${{ matrix.browser }} headless
+          fi
+      - name: Browser tests
+        run: |
+          if [ "${{ matrix.mode }}" = headed ]; then
+            xvfb-run -a npm run test:browser -- --project=${{ matrix.browser }} --headed
+          else
+            npm run test:browser -- --project=${{ matrix.browser }}
+          fi
+      - name: Keep the failed tests' screenshots and page snapshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.browser }}-linux-${{ matrix.mode }}
+          path: test-results
+          retention-days: 7
 
   deploy:
     name: Publish to GitHub Pages
