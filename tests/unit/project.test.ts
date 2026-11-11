@@ -88,19 +88,23 @@ describe('the GitHub Actions workflow', () => {
     }
   });
 
-  it('checks Firefox and WebKit on macOS, which has a GPU (decisions S1-16, S1-18, BR-1)', () => {
+  it("checks Firefox on macOS and WebKit in Playwright's Linux image (decisions S1-16, BR-4)", () => {
     expect(workflow).toMatch(/runs-on: macos-15-intel[\s\S]*--project=firefox\n/);
-    expect(workflow).toMatch(/continue-on-error: true[\s\S]*--project=webkit\n/);
-    // TEMPORARY (BR-1): publishing waits only for the Linux check until Stage 12, when the deploy
-    // must need browsers-firefox again and WebKit must block too (Book 3, Stage 12 check 5).
-    expect(workflow).toContain('needs: [check]');
-    expect(workflow).toContain('browsers-firefox:');
-    // The Firefox job is not excused: a failure still shows red.
-    const firefoxJob = workflow.slice(
-      workflow.indexOf('browsers-firefox:'),
-      workflow.indexOf('--project=firefox'),
+    const version = (
+      JSON.parse(repoFile('package.json')) as { devDependencies: Record<string, string> }
+    ).devDependencies['@playwright/test'];
+    // The image carries the browsers of one Playwright version: it must follow package.json.
+    expect(workflow).toMatch(
+      new RegExp(
+        `image: mcr\\.microsoft\\.com/playwright:v${version ?? ''}-noble[\\s\\S]*--project=webkit\\n`,
+      ),
     );
-    expect(firefoxJob).not.toContain('continue-on-error');
+  });
+
+  it('publishes only when Chromium, Firefox and WebKit pass (Book 3 Stage 12; decision BR-7)', () => {
+    expect(workflow).toContain('needs: [check, browsers-firefox, browsers-webkit]');
+    // Neither browser is excused: a failure blocks publishing and shows red.
+    expect(workflow).not.toContain('continue-on-error');
   });
 
   it('publishes to GitHub Pages only from a push, and checks the published address', () => {

@@ -1,10 +1,7 @@
 # Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
 # are built, publish the build to GitHub Pages and check the published address in Chromium (Linux),
-# Firefox and WebKit (macOS). Publishing waits only for the Linux check job.
-#
-# TEMPORARY (decision BR-1): the Firefox job does not block publishing until its failure is fixed.
-# It still runs and fails visibly on every push. Firefox and WebKit must both block publishing
-# again before Stage 12 (Book 3, Stage 12 acceptance check).
+# Firefox (macOS) and WebKit (Linux, in Playwright's image). Publishing waits for all three browser
+# checks (decision BR-7, ending BR-1 and S1-18; Book 3, Stage 12 acceptance check).
 #
 # Repository settings needed once:
 # - Settings > Pages > Build and deployment > Source: "GitHub Actions".
@@ -50,10 +47,10 @@ jobs:
         with:
           path: dist
 
-  # Does not block publishing for now (decision BR-1, temporary); no continue-on-error, so a
-  # failure still shows red on every run.
+  # Firefox runs on macOS, where it has WebGL2 (software rendering, about four frames a second;
+  # the tests that play the game step it frame by frame: decision BR-2). Blocks publishing.
   browsers-firefox:
-    name: Firefox smoke test (macOS, temporarily not blocking publishing)
+    name: Firefox smoke test (macOS)
     runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v6
@@ -79,13 +76,12 @@ jobs:
   # WebKit runs on Linux inside Playwright's own image (pinned to the Playwright version in
   # package.json), which carries every library WebKit needs. On the macOS runners WebKit's WebGL
   # context was lost as soon as it was made (renderer "null"), headless or headed.
-  # Not yet blocking (decision S1-18) until it has passed twice in a row.
+  # Blocks publishing (decision BR-4, BR-7).
   browsers-webkit:
-    name: WebKit smoke test (Linux, does not block publishing yet)
+    name: WebKit smoke test (Linux)
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -111,8 +107,7 @@ jobs:
 
   deploy:
     name: Publish to GitHub Pages
-    # Restore browsers-firefox here (and make WebKit blocking) before Stage 12: decision BR-1.
-    needs: [check]
+    needs: [check, browsers-firefox, browsers-webkit]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
     runs-on: ubuntu-latest
     permissions:
@@ -160,12 +155,11 @@ jobs:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}
 
   published-webkit:
-    name: Smoke-test the published address (WebKit, Linux, does not block yet)
+    name: Smoke-test the published address (WebKit, Linux)
     needs: deploy
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
