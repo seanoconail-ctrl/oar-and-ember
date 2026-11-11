@@ -10,5 +10,7 @@
   "safeLine": "c_hild.bark.safe.01",
   "refusedLine": "c_hild.bark.tide.01",
   "moveHintSeconds": 8,
-  "callerPose": "call"
+  "callerPose": "call",
+  "bowLine": "c_hild.bark.bow.01",
+  "bowLineSeconds": 4
 }

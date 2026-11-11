@@ -56,6 +56,12 @@
       "y": 51.6
     },
     {
+      "sheet": "prop_wreck_stern",
+      "frame": "wrecked/-/0",
+      "x": 92.4,
+      "y": 35.9
+    },
+    {
       "sheet": "prop_debris",
       "frame": "log_long/-/0",
       "x": 58,

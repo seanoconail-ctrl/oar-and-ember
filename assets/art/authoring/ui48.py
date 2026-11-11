@@ -49,7 +49,7 @@ MAT = {
     'H': (c('driftwood', 4), c('driftwood', 5), c('driftwood', 7)),     # bone and antler
     'Y': (c('bracken', 3), c('bracken', 4), c('hair_blond', 3)),         # a yew bow stave
     'L': (c('wool', 5), c('wool', 5), c('wool', 6)),           # line and bowstring
-    'F': (c('sky', 3), c('sky', 4), c('sky', 5)),              # frost
+    'F': (c('sky', 3), c('sky', 4), c('sky', 5)),              # frost, and goose fletching
     'K': (c('skin_light', 2), c('skin_light', 3), c('skin_light', 4)),  # skin
     'Z': (c('woad', 2), c('woad', 3), c('woad', 4)),           # woad cloth
 }
@@ -423,6 +423,29 @@ def bow():
     return outline(shade(g))
 
 
+def arrow():
+    """Arrows: two arrows crossed low, fletched in grey goose bound with madder, iron heads."""
+    g = blank(16, 16)
+    for (x0, y0, dx) in [(2, 13, 1), (13, 13, -1)]:
+        for i in range(11):
+            x, y = x0 + dx * i, y0 - i
+            g[y][x] = 'S' if i < 9 else '*'
+        # The head: a small leaf of iron round the point.
+        hx, hy = x0 + dx * 10, y0 - 10
+        g[hy + 1][hx] = 'I'
+        g[hy][hx - dx] = 'I'
+        # Fletching either side of the tail, and the thread binding it.
+        for k in range(3):
+            fx, fy = x0 + dx * k, y0 - k
+            if 0 <= fx - dx < 16:
+                g[fy - 1][fx] = 'F' if g[fy - 1][fx] == T else g[fy - 1][fx]
+            if 0 <= fy + 1 < 16 and 0 <= fx + dx < 16:
+                g[fy][fx + dx] = 'F' if g[fy][fx + dx] == T else g[fy][fx + dx]
+        g[y0 - 3][x0 + dx * 3] = 'M'
+    out = shade(g, {'*': 'I'})
+    return outline(out)
+
+
 def bread():
     g = blank(16, 16)
     cx, cy, rx, ry = 7.8, 8.6, 6.4, 5.4
@@ -510,6 +533,7 @@ def icons():
         ('axe', axe), ('spade', ic(SPADE)), ('sickle', sickle()), ('seed_bag', seed_out),
         ('pail', pail), ('hammer', hammer), ('fishing_line', fishing()), ('spear', spear()),
         ('bow', bow()), ('seax', seax), ('bread', bread()), ('rope', rope()),
+        ('arrow', arrow()),
     ]
     write_sheet('ui_icons', 'decal', 16, 16, (8, 8), (16, 16),
                 [(n, [g], 1, False) for n, g in sets],

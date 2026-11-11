@@ -355,3 +355,219 @@ export function parseControlsBalance(json: unknown): ControlsBalance {
     ),
   };
 }
+
+/** Book 10 section 06: a missile weapon's reach (tiles) and its draw or wind-up (ticks). */
+export interface RangedWeapon {
+  readonly reachTiles: number;
+  /** Ticks to a full draw (the bow) or the throw's wind-up (a thrown spear). */
+  readonly drawTicks: number;
+}
+
+/** Book 10 section 21, "Starting weapons", and the missile rows of section 06. */
+export interface StartingWeaponsBalance {
+  /** The hotbar on waking: empty (decision DD-6). */
+  readonly startingHotbarEmpty: true;
+  /** Minutes of play by which the seax and the bow are found. */
+  readonly seaxFoundByMinutes: number;
+  readonly bowFoundByMinutes: number;
+  /** Arrows in the quiver found with the bow. */
+  readonly startingArrows: number;
+}
+
+export function parseStartingWeapons(json: unknown): StartingWeaponsBalance {
+  const table = keyed(json, 'controlsAndCamera', 'startingWeapons');
+  const hotbar = table('startingHotbar');
+  if (hotbar !== 'Empty') fail('startingWeapons.startingHotbar', hotbar, '"Empty"');
+  const minutes = (key: string): number => {
+    const text = table(key);
+    const m = /^(\d+) minutes of play:/.exec(text);
+    if (m === null) fail(`startingWeapons.${key}`, text, '"N minutes of play: ..."');
+    return Number(m[1]);
+  };
+  return {
+    startingHotbarEmpty: true,
+    seaxFoundByMinutes: minutes('seaxFoundBy'),
+    bowFoundByMinutes: minutes('bowFoundBy'),
+    startingArrows: number('startingWeapons.startingArrows', table('startingArrows')),
+  };
+}
+
+/** Book 10 section 21, "Missiles", with the bow and thrown spear of section 06. */
+export interface MissileBalance {
+  readonly bow: RangedWeapon;
+  readonly spear: RangedWeapon;
+  /** A draw released sooner is cancelled and spends nothing. */
+  readonly minDrawTicks: number;
+  /** Tiles per second. */
+  readonly arrowSpeed: number;
+  readonly spearSpeed: number;
+  /** Height of the arc at the weapon's full range, in tiles (in proportion for shorter shots). */
+  readonly arcApexTiles: number;
+  /** Degrees either side of the aim at a full draw. */
+  readonly spreadFullDraw: { readonly bow: number; readonly spear: number };
+  /** Degrees either side at the minimum draw. */
+  readonly spreadQuickDraw: number;
+  /** A raised shield stops missiles from this many degrees in front. */
+  readonly shieldArcDegrees: number;
+  /** Low cover stops a missile only below this height, in tiles. */
+  readonly lowCoverTiles: number;
+  /** Most missiles left stuck in a zone (the oldest goes first). */
+  readonly stuckMax: number;
+  /** Game days a missile stays stuck in the ground. */
+  readonly stuckGroundDays: number;
+  /** The shadow under a missile, in pixels. */
+  readonly shadow: { readonly w: number; readonly h: number };
+}
+
+function weaponRow(json: unknown, weapon: string): Row {
+  const row = rows(json, 'combatTimings', 'weapons').find((r) => r['Weapon'] === weapon);
+  if (row === undefined) throw new Error(`balance.json: weapons has no ${weapon} row`);
+  return row;
+}
+
+export function parseMissileBalance(json: unknown): MissileBalance {
+  const table = keyed(json, 'controlsAndCamera', 'missiles');
+  const N = '(\\d+(?:\\.\\d+)?)';
+  const match = (key: string, pattern: RegExp, expected: string): RegExpExecArray => {
+    const text = table(key);
+    const m = pattern.exec(text);
+    if (m === null) fail(`missiles.${key}`, text, expected);
+    return m;
+  };
+  const bowRow = weaponRow(json, 'Bow');
+  const spearRow = weaponRow(json, 'Thrown spear');
+  const drawText = bowRow['Windup'] ?? '';
+  const draw = /^(\d+) draw$/.exec(drawText);
+  if (draw === null) fail('weapons.Bow.Windup', drawText, '"N draw"');
+  const bow: RangedWeapon = {
+    reachTiles: number('weapons.Bow.Reach tiles', bowRow['Reach tiles'] ?? ''),
+    drawTicks: Number(draw[1]),
+  };
+  const spear: RangedWeapon = {
+    reachTiles: number('weapons.Thrown spear.Reach tiles', spearRow['Reach tiles'] ?? ''),
+    drawTicks: number('weapons.Thrown spear.Windup', spearRow['Windup'] ?? ''),
+  };
+  const full = match(
+    'spreadFullDraw',
+    new RegExp(
+      `^${N} degrees either side for a bow at full draw \\((\\d+) ticks\\); ${N} for a thrown spear$`,
+    ),
+    '"N degrees either side for a bow at full draw (N ticks); N for a thrown spear"',
+  );
+  if (Number(full[2]) !== bow.drawTicks)
+    fail(
+      'missiles.spreadFullDraw',
+      table('spreadFullDraw'),
+      `a full draw of ${bow.drawTicks} ticks`,
+    );
+  const shield = match(
+    'shieldBlock',
+    new RegExp(`from the front ${N} degrees`),
+    '"... from the front N degrees ..."',
+  );
+  const cover = match(
+    'coverBlock',
+    new RegExp(`below ${N} tiles of height`),
+    '"... below N tiles of height ..."',
+  );
+  const stuck = match(
+    'stuckArrows',
+    new RegExp(`in the ground for ${N} game days?,.* at most (\\d+) in a zone`),
+    '"... in the ground for N game day, ... at most N in a zone ..."',
+  );
+  const shadow = match('shadow', /^A soft (\d+) x (\d+) shadow/, '"A soft W x H shadow ..."');
+  return {
+    bow,
+    spear,
+    minDrawTicks: Number(match('minDraw', /^(\d+) ticks:/, '"N ticks: ..."')[1]),
+    arrowSpeed: Number(
+      match('arrowSpeed', new RegExp(`^${N} tiles per second$`), '"N tiles per second"')[1],
+    ),
+    spearSpeed: Number(
+      match('spearSpeed', new RegExp(`^${N} tiles per second$`), '"N tiles per second"')[1],
+    ),
+    arcApexTiles: Number(
+      match(
+        'arcApex',
+        new RegExp(`^${N} tiles of height at the weapon's full range`),
+        '"N tiles of height at the weapon\'s full range ..."',
+      )[1],
+    ),
+    spreadFullDraw: { bow: Number(full[1]), spear: Number(full[3]) },
+    spreadQuickDraw: Number(
+      match(
+        'spreadQuickDraw',
+        new RegExp(`^${N} degrees either side at the minimum draw`),
+        '"N degrees either side at the minimum draw ..."',
+      )[1],
+    ),
+    shieldArcDegrees: Number(shield[1]),
+    lowCoverTiles: Number(cover[1]),
+    stuckGroundDays: Number(stuck[1]),
+    stuckMax: Number(stuck[2]),
+    shadow: { w: Number(shadow[1]), h: Number(shadow[2]) },
+  };
+}
+
+/** Where a missile ends up, for the recovery chances of Book 10 section 21, "Arrows". */
+export type MissileRest = 'ground' | 'stone' | 'body' | 'shield' | 'water';
+
+/** Book 10 section 21, "Arrows". */
+export interface ArrowBalance {
+  readonly quiverMax: number;
+  /** Share recoverable (0 to 1) by where the arrow ended up; the rest break. */
+  readonly recover: Readonly<Record<MissileRest, number>>;
+  readonly fletching: {
+    readonly shafts: number;
+    readonly feathers: number;
+    readonly heads: number;
+    readonly makes: number;
+    readonly gameHours: number;
+    readonly skill: number;
+  };
+  /** Arrows found in a cache, a dead archer's quiver or a hunter's camp. */
+  readonly finds: { readonly min: number; readonly max: number };
+}
+
+export function parseArrowBalance(json: unknown): ArrowBalance {
+  const table = keyed(json, 'controlsAndCamera', 'arrows');
+  const share = (key: string): number => {
+    const text = table(key);
+    const m = /^(\d+)%/.exec(text);
+    if (m === null) fail(`arrows.${key}`, text, '"N% ..."');
+    return Number(m[1]) / 100;
+  };
+  const fletchText = table('fletching');
+  const fletch =
+    /^(\d+) driftwood or timber shaft-blank, (\d+) feathers and (\d+) head \(bone or iron\) make (\d+) arrows in (\d+(?:\.\d+)?) game hours, fletching skill (\d+) or more$/.exec(
+      fletchText,
+    );
+  if (fletch === null)
+    fail(
+      'arrows.fletching',
+      fletchText,
+      '"N ... shaft-blank, N feathers and N head ... make N arrows in N game hours, fletching skill N or more"',
+    );
+  const findsText = table('finds');
+  const finds = /^(\d+) to (\d+) arrows/.exec(findsText);
+  if (finds === null) fail('arrows.finds', findsText, '"N to N arrows ..."');
+  return {
+    quiverMax: number('arrows.quiverMax', table('quiverMax')),
+    recover: {
+      ground: share('recoverGround'),
+      stone: share('recoverStone'),
+      body: share('recoverBody'),
+      shield: share('recoverShield'),
+      water: share('recoverWater'),
+    },
+    fletching: {
+      shafts: Number(fletch[1]),
+      feathers: Number(fletch[2]),
+      heads: Number(fletch[3]),
+      makes: Number(fletch[4]),
+      gameHours: Number(fletch[5]),
+      skill: Number(fletch[6]),
+    },
+    finds: { min: Number(finds[1]), max: Number(finds[2]) },
+  };
+}

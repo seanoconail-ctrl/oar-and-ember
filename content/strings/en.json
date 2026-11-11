@@ -873,5 +873,191 @@
   },
   "ui.sound.call.bow_loose": {
     "text": "Bow loosed"
+  },
+  "item.name.arrows": {
+    "text": "Arrows"
+  },
+  "ui.refusal.no_arrows": {
+    "text": "No arrows"
+  },
+  "ui.refusal.quiver_full": {
+    "text": "Quiver full"
+  },
+  "ui.refusal.hotbar_full": {
+    "text": "Hotbar full"
+  },
+  "ui.prompt.pick_up": {
+    "text": "{key}  Pick up {item}"
+  },
+  "ui.prompt.pick_up_click": {
+    "text": "Right-click  Pick up {item}"
+  },
+  "ui.tip.seax": {
+    "text": "{use} strikes with the seax towards the cursor. With nothing in hand, {use} shoves."
+  },
+  "ui.tip.seax.keys": {
+    "text": "{use} strikes with the seax the way you face. With nothing in hand, {use} shoves."
+  },
+  "ui.tip.seax.pad": {
+    "text": "{use} strikes with the seax towards the right stick. With nothing in hand, {use} shoves."
+  },
+  "ui.tip.bow": {
+    "text": "{slot} takes the bow in hand. Hold {use} to draw and aim with the mouse; let go to loose. You stand still while it is drawn: {cancel} lowers it."
+  },
+  "ui.tip.bow.keys": {
+    "text": "{slot} takes the bow in hand. Hold {use} to draw; {move} turn the aim; let go to loose. You stand still while it is drawn: {cancel} lowers it."
+  },
+  "ui.tip.bow.pad": {
+    "text": "{slot} takes the bow in hand. Hold {use} to draw and aim with the right stick; let go to loose. You stand still while it is drawn: {cancel} lowers it."
+  },
+  "ui.tip.arrows": {
+    "text": "Arrows: {count} in the quiver. No arrows, no shot. {interact} on a spent arrow pulls it free; some break."
+  },
+  "ui.tip.title": {
+    "text": "{item}"
+  },
+  "ui.input.or": {
+    "text": "{a} or {b}"
+  },
+  "ui.input.mouse.0": {
+    "text": "Left-click"
+  },
+  "ui.input.mouse.1": {
+    "text": "Middle-click"
+  },
+  "ui.input.mouse.2": {
+    "text": "Right-click"
+  },
+  "ui.input.wheel.up": {
+    "text": "Wheel up"
+  },
+  "ui.input.wheel.down": {
+    "text": "Wheel down"
+  },
+  "ui.input.pad.0": {
+    "text": "A"
+  },
+  "ui.input.pad.1": {
+    "text": "B"
+  },
+  "ui.input.pad.2": {
+    "text": "X"
+  },
+  "ui.input.pad.3": {
+    "text": "Y"
+  },
+  "ui.input.pad.4": {
+    "text": "LB"
+  },
+  "ui.input.pad.5": {
+    "text": "RB"
+  },
+  "ui.input.pad.6": {
+    "text": "LT"
+  },
+  "ui.input.pad.7": {
+    "text": "RT"
+  },
+  "ui.input.pad.8": {
+    "text": "Back"
+  },
+  "ui.input.pad.9": {
+    "text": "Start"
+  },
+  "ui.input.pad.10": {
+    "text": "L3"
+  },
+  "ui.input.pad.11": {
+    "text": "R3"
+  },
+  "ui.input.pad.12": {
+    "text": "D-pad up"
+  },
+  "ui.input.pad.13": {
+    "text": "D-pad down"
+  },
+  "ui.input.pad.14": {
+    "text": "D-pad left"
+  },
+  "ui.input.pad.15": {
+    "text": "D-pad right"
+  },
+  "ui.input.stick.left": {
+    "text": "the left stick"
+  },
+  "ui.input.stick.right": {
+    "text": "the right stick"
+  },
+  "ui.system.help": {
+    "text": "Help: press {key}."
+  },
+  "ui.help.title": {
+    "text": "Help"
+  },
+  "ui.help.empty": {
+    "text": "Nothing here yet. What you pick up explains itself, and is kept here."
+  },
+  "ui.help.close": {
+    "text": "Press {key} to go back."
+  },
+  "c_hild.bark.bow.01": {
+    "text": "Father's hunting bow was in the stern. The stern came ashore east. Fetch it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.sfx.arrow_flight": {
+    "text": "An arrow whistles past",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_wood": {
+    "text": "An arrow thuds into wood",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_shield": {
+    "text": "An arrow strikes a shield",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_earth": {
+    "text": "An arrow thuds into the ground",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_stone": {
+    "text": "An arrow cracks on stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_water": {
+    "text": "An arrow splashes into water",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.quiver_empty": {
+    "text": "An empty quiver",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.pickup": {
+    "text": "Something picked up",
+    "tags": ["INFO"]
+  },
+  "ui.sound.call.arrow_flight": {
+    "text": "Arrow in flight"
+  },
+  "ui.sound.call.arrow_wood": {
+    "text": "Arrow into wood"
+  },
+  "ui.sound.call.arrow_shield": {
+    "text": "Arrow into a shield"
+  },
+  "ui.sound.call.arrow_earth": {
+    "text": "Arrow into sand or earth"
+  },
+  "ui.sound.call.arrow_stone": {
+    "text": "Arrow breaking on stone"
+  },
+  "ui.sound.call.arrow_water": {
+    "text": "Arrow into water"
+  },
+  "ui.sound.call.quiver_empty": {
+    "text": "Empty quiver"
+  },
+  "ui.sound.call.pickup": {
+    "text": "Picking something up"
   }
 }

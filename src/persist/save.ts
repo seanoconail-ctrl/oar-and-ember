@@ -4,6 +4,7 @@
  * future versions and runs the migration chain.
  */
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
+import { parseStartingWeapons } from '../content/balance.ts';
 import { hashValue } from '../core/hash.ts';
 import { activeChapter, WORLD_STATE_VERSION } from '../sim/world.ts';
 import type { WorldState } from '../sim/world.ts';
@@ -111,17 +112,27 @@ export function writeSave(world: WorldState, meta: SaveMeta): SaveFile {
   return { format: SAVE_FORMAT, header, data: toBase64(deflateSync(strToU8(json), { level: 6 })) };
 }
 
+/** What a migration may read besides the save: balance.json (a step that needs a Book 10 number). */
+export interface MigrationContext {
+  readonly balance: unknown;
+}
+
 /** One step of the migration chain: a save at `from` becomes a save at `from + 1`. */
 export interface Migration {
   readonly from: number;
   readonly describe: string;
-  readonly up: (state: Record<string, unknown>) => Record<string, unknown>;
+  readonly up: (
+    state: Record<string, unknown>,
+    ctx: MigrationContext | null,
+  ) => Record<string, unknown>;
 }
 
 /**
  * The real migration chain. Version 1 to 2 (Stage 6) adds `onFoot`, empty: a version 1 save
  * holds no positions, so the game places the steerer at the zone's spawn when it loads one.
- * Version 2 to 3 (the Stage 6 rework) adds the hotbar and the aim.
+ * Version 2 to 3 (the Stage 6 rework) adds the hotbar and the aim. Version 3 to 4 (starting weapons
+ * and missiles) adds the inventory with counts, the pickup tooltips shown, an aim's distance, and
+ * the zone's items and missiles; it reads Book 10's startingArrows, so it needs balance.json.
  */
 export const MIGRATIONS: readonly Migration[] = [
   {
@@ -144,11 +155,54 @@ export const MIGRATIONS: readonly Migration[] = [
       };
     },
   },
+  {
+    from: 3,
+    describe:
+      'adds the inventory (arrows), the pickup tooltips shown, the aim distance, and the zone items and missiles',
+    // A version 3 save woke with the bow and seax in hand (the Stage 6 rework): it keeps them, and
+    // a steerer holding the bow gets Book 10's starting arrows. No tooltip has been shown. What
+    // lay in the zone is not known to a version 3 save, so nothing lies there; nothing is in
+    // flight or stuck. A draw in progress flies to full range.
+    up: (state, ctx) => {
+      if (ctx === null)
+        throw new SaveError('NO_MIGRATION', 'Migrating a schema 3 save needs balance.json');
+      const player = state['player'] as Record<string, unknown> & {
+        hotbar?: { slots?: unknown[] };
+      };
+      const hasBow = (player.hotbar?.slots ?? []).includes('ITEM_BOW');
+      const arrows = parseStartingWeapons(ctx.balance).startingArrows;
+      const onFoot = state['onFoot'] as {
+        player: Record<string, unknown> & { aim?: Record<string, unknown> | null };
+      } | null;
+      const aim = onFoot?.player.aim;
+      return {
+        ...state,
+        player: {
+          ...player,
+          inventory: hasBow ? { ITEM_ARROW: arrows } : {},
+          tipsSeen: [],
+        },
+        onFoot:
+          onFoot === null
+            ? null
+            : {
+                ...onFoot,
+                player: { ...onFoot.player, aim: aim == null ? null : { ...aim, dist: null } },
+                items: [],
+                projectiles: [],
+                nextMissile: 1,
+                stuck: [],
+              },
+      };
+    },
+  },
 ];
 
 export interface ReadOptions {
   readonly migrations?: readonly Migration[];
   readonly currentVersion?: number;
+  /** For migrations that read balance.json (schema 3 to 4). */
+  readonly context?: MigrationContext;
 }
 
 export function readSave(
@@ -183,7 +237,7 @@ export function readSave(
     const step = migrations.find((m) => m.from === version);
     if (step === undefined)
       throw new SaveError('NO_MIGRATION', `No migration from schema ${version}`);
-    state = { ...step.up(state), version: version + 1 };
+    state = { ...step.up(state, options.context ?? null), version: version + 1 };
     version++;
   }
   return {

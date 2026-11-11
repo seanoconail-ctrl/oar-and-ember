@@ -1,0 +1,55 @@
+{
+  "sheet": "prop_pickup",
+  "kind": "prop",
+  "image": "prop_pickup.png",
+  "width": 40,
+  "height": 18,
+  "pivot": {
+    "x": 20,
+    "y": 16
+  },
+  "footprint": {
+    "w": 24,
+    "h": 4
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "seax": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "arrow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 26,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "seax/-/0": [
+      0,
+      0
+    ],
+    "bow/-/0": [
+      0,
+      18
+    ],
+    "arrow/-/0": [
+      0,
+      36
+    ]
+  }
+}

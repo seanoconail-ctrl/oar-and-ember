@@ -1,6 +1,8 @@
 /** Builds what the on-foot systems need from loaded content and balance.json. */
 import {
+  parseArrowBalance,
   parseControlsBalance,
+  parseMissileBalance,
   parseMovementBalance,
   parseWaterBalance,
 } from '../../content/balance.ts';
@@ -22,6 +24,8 @@ export function landContext(
     movement: parseMovementBalance(balance),
     water: parseWaterBalance(balance),
     controls: parseControlsBalance(balance),
+    missiles: parseMissileBalance(balance),
+    arrows: parseArrowBalance(balance),
     elevations,
     rules: content.onFoot,
     opening: content.opening,

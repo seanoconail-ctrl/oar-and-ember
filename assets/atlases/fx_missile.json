@@ -1,0 +1,427 @@
+{
+  "sheet": "fx_missile",
+  "kind": "decal",
+  "image": "fx_missile.png",
+  "width": 40,
+  "height": 40,
+  "pivot": {
+    "x": 20,
+    "y": 20
+  },
+  "footprint": {
+    "w": 40,
+    "h": 40
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "arrow": {
+      "frames": 16,
+      "ticks": 1,
+      "loop": false
+    },
+    "spear": {
+      "frames": 16,
+      "ticks": 1,
+      "loop": false
+    },
+    "stuck_ground": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "stuck_wood": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "stuck_shield": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "stuck_body": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "lying": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    },
+    "broken": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    },
+    "spear_ground": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "spear_wood": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "arrow/-/0": [
+      0,
+      0
+    ],
+    "arrow/-/1": [
+      40,
+      0
+    ],
+    "arrow/-/2": [
+      80,
+      0
+    ],
+    "arrow/-/3": [
+      120,
+      0
+    ],
+    "arrow/-/4": [
+      160,
+      0
+    ],
+    "arrow/-/5": [
+      200,
+      0
+    ],
+    "arrow/-/6": [
+      240,
+      0
+    ],
+    "arrow/-/7": [
+      280,
+      0
+    ],
+    "arrow/-/8": [
+      320,
+      0
+    ],
+    "arrow/-/9": [
+      360,
+      0
+    ],
+    "arrow/-/10": [
+      400,
+      0
+    ],
+    "arrow/-/11": [
+      440,
+      0
+    ],
+    "arrow/-/12": [
+      480,
+      0
+    ],
+    "arrow/-/13": [
+      520,
+      0
+    ],
+    "arrow/-/14": [
+      560,
+      0
+    ],
+    "arrow/-/15": [
+      600,
+      0
+    ],
+    "spear/-/0": [
+      0,
+      40
+    ],
+    "spear/-/1": [
+      40,
+      40
+    ],
+    "spear/-/2": [
+      80,
+      40
+    ],
+    "spear/-/3": [
+      120,
+      40
+    ],
+    "spear/-/4": [
+      160,
+      40
+    ],
+    "spear/-/5": [
+      200,
+      40
+    ],
+    "spear/-/6": [
+      240,
+      40
+    ],
+    "spear/-/7": [
+      280,
+      40
+    ],
+    "spear/-/8": [
+      320,
+      40
+    ],
+    "spear/-/9": [
+      360,
+      40
+    ],
+    "spear/-/10": [
+      400,
+      40
+    ],
+    "spear/-/11": [
+      440,
+      40
+    ],
+    "spear/-/12": [
+      480,
+      40
+    ],
+    "spear/-/13": [
+      520,
+      40
+    ],
+    "spear/-/14": [
+      560,
+      40
+    ],
+    "spear/-/15": [
+      600,
+      40
+    ],
+    "stuck_ground/-/0": [
+      0,
+      80
+    ],
+    "stuck_ground/-/1": [
+      40,
+      80
+    ],
+    "stuck_ground/-/2": [
+      80,
+      80
+    ],
+    "stuck_ground/-/3": [
+      120,
+      80
+    ],
+    "stuck_ground/-/4": [
+      160,
+      80
+    ],
+    "stuck_ground/-/5": [
+      200,
+      80
+    ],
+    "stuck_ground/-/6": [
+      240,
+      80
+    ],
+    "stuck_ground/-/7": [
+      280,
+      80
+    ],
+    "stuck_wood/-/0": [
+      0,
+      120
+    ],
+    "stuck_wood/-/1": [
+      40,
+      120
+    ],
+    "stuck_wood/-/2": [
+      80,
+      120
+    ],
+    "stuck_wood/-/3": [
+      120,
+      120
+    ],
+    "stuck_wood/-/4": [
+      160,
+      120
+    ],
+    "stuck_wood/-/5": [
+      200,
+      120
+    ],
+    "stuck_wood/-/6": [
+      240,
+      120
+    ],
+    "stuck_wood/-/7": [
+      280,
+      120
+    ],
+    "stuck_shield/-/0": [
+      0,
+      160
+    ],
+    "stuck_shield/-/1": [
+      40,
+      160
+    ],
+    "stuck_shield/-/2": [
+      80,
+      160
+    ],
+    "stuck_shield/-/3": [
+      120,
+      160
+    ],
+    "stuck_shield/-/4": [
+      160,
+      160
+    ],
+    "stuck_shield/-/5": [
+      200,
+      160
+    ],
+    "stuck_shield/-/6": [
+      240,
+      160
+    ],
+    "stuck_shield/-/7": [
+      280,
+      160
+    ],
+    "stuck_body/-/0": [
+      0,
+      200
+    ],
+    "stuck_body/-/1": [
+      40,
+      200
+    ],
+    "stuck_body/-/2": [
+      80,
+      200
+    ],
+    "stuck_body/-/3": [
+      120,
+      200
+    ],
+    "stuck_body/-/4": [
+      160,
+      200
+    ],
+    "stuck_body/-/5": [
+      200,
+      200
+    ],
+    "stuck_body/-/6": [
+      240,
+      200
+    ],
+    "stuck_body/-/7": [
+      280,
+      200
+    ],
+    "lying/-/0": [
+      0,
+      240
+    ],
+    "lying/-/1": [
+      40,
+      240
+    ],
+    "lying/-/2": [
+      80,
+      240
+    ],
+    "lying/-/3": [
+      120,
+      240
+    ],
+    "broken/-/0": [
+      0,
+      280
+    ],
+    "broken/-/1": [
+      40,
+      280
+    ],
+    "broken/-/2": [
+      80,
+      280
+    ],
+    "broken/-/3": [
+      120,
+      280
+    ],
+    "spear_ground/-/0": [
+      0,
+      320
+    ],
+    "spear_ground/-/1": [
+      40,
+      320
+    ],
+    "spear_ground/-/2": [
+      80,
+      320
+    ],
+    "spear_ground/-/3": [
+      120,
+      320
+    ],
+    "spear_ground/-/4": [
+      160,
+      320
+    ],
+    "spear_ground/-/5": [
+      200,
+      320
+    ],
+    "spear_ground/-/6": [
+      240,
+      320
+    ],
+    "spear_ground/-/7": [
+      280,
+      320
+    ],
+    "spear_wood/-/0": [
+      0,
+      360
+    ],
+    "spear_wood/-/1": [
+      40,
+      360
+    ],
+    "spear_wood/-/2": [
+      80,
+      360
+    ],
+    "spear_wood/-/3": [
+      120,
+      360
+    ],
+    "spear_wood/-/4": [
+      160,
+      360
+    ],
+    "spear_wood/-/5": [
+      200,
+      360
+    ],
+    "spear_wood/-/6": [
+      240,
+      360
+    ],
+    "spear_wood/-/7": [
+      280,
+      360
+    ]
+  }
+}

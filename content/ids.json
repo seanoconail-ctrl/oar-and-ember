@@ -385,7 +385,7 @@
       "book": 5,
       "section": "02",
       "origin": "stated",
-      "note": "ID stated in section 02; described in full in section 03 (hidden stances, reveal, branches)."
+      "note": "ID stated in section 02; described in full in section 03 (Nessa's secret, reveal, branches)."
     },
     {
       "id": "C_GUDRUN",
@@ -1326,7 +1326,7 @@
       "book": 5,
       "section": "03",
       "origin": "assigned",
-      "note": "Runaway stance only: hidden on Skarvholm; whoever finds it holds power over her (Book 5 sections 03 and 09)."
+      "note": "Only when Nessa's secret is the Runaway: hidden on Skarvholm; whoever finds it holds power over her (Book 5 sections 03 and 09)."
     },
     {
       "id": "ITEM_SPEAR",
@@ -1365,7 +1365,15 @@
       "book": 10,
       "section": "04",
       "origin": "assigned",
-      "note": "Section 06 calls the weapon \"Bow\". Arrows are not tracked separately in Book 10."
+      "note": "Section 06 calls the weapon \"Bow\". Its arrows are a separate item (ITEM_ARROW)."
+    },
+    {
+      "id": "ITEM_ARROW",
+      "ref": "Arrows",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Arrows with a count, separate from the bow (decision DD-8; Book 10 section 21, \"Arrows\")."
     },
     {
       "id": "ITEM_SWORD",
@@ -2535,6 +2543,54 @@
       "section": "01",
       "origin": "assigned",
       "note": "Stage 6 rework: people in water and the bow (generated, Book 11 section 12)."
+    },
+    {
+      "id": "SFX_ARROW_FLIGHT",
+      "ref": "Every shot is a visible projectile",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). A quiet whistle while an arrow is in flight."
+    },
+    {
+      "id": "SFX_ARROW_EARTH",
+      "ref": "sticks in what it hits",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). An arrow into sand, turf or earth."
+    },
+    {
+      "id": "SFX_ARROW_STONE",
+      "ref": "recoverable from rock and walls",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). An arrow against stone: a crack, and the break."
+    },
+    {
+      "id": "SFX_ARROW_WATER",
+      "ref": "an arrow into water is lost",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). An arrow into water: a small splash."
+    },
+    {
+      "id": "SFX_QUIVER_EMPTY",
+      "ref": "No arrows, no shot",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). A draw refused with an empty quiver: a dry click."
+    },
+    {
+      "id": "SFX_PICKUP",
+      "ref": "when first picked up",
+      "book": 10,
+      "section": "21",
+      "origin": "assigned",
+      "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). Something picked up from the ground."
     },
     {
       "id": "SFX_BLOCK",

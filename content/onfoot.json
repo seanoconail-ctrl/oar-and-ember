@@ -1,5 +1,5 @@
 {
-  "about": "On-foot controller settings that Book 10 does not give (decision S6-4, provisional until the user approves). Speeds come from balance.json, never from here.",
+  "about": "On-foot controller settings that Book 10 does not give (decision S6-4, provisional until the user approves). Speeds, reach, missile and arrow numbers come from balance.json, never from here; these are the art's geometry (where a missile leaves the hand, the body a missile meets, the props that stop missiles) and where the starting weapons lie.",
   "interactRadiusTiles": 1.5,
   "footprint": {
     "w": 10,
@@ -7,8 +7,8 @@
   },
   "setDownReach": 14,
   "hotbar": {
-    "about": "What the steerer wakes with on Wreck Strand (Stage 6 rework, provisional until the user approves): their own bow, slung on their back in the approved sprite, and a seax, the knife every adult carries. Nothing else came ashore with them; the wreck kit of Book 10 section 10 is salvaged during Chapter 1.",
-    "start": ["ITEM_BOW", "ITEM_SEAX"],
+    "about": "The steerer wakes with nothing in hand (Book 10 section 21, startingHotbar: Empty; decision DD-6). The seax is found in the wreck's debris and the bow with its quiver by the wreck's stern (pickups below).",
+    "start": [],
     "selected": 0
   },
   "items": {
@@ -16,14 +16,61 @@
       "nameKey": "item.name.bow",
       "icon": "bow",
       "use": "AIM",
-      "refusalKey": "ui.refusal.nothing_to_shoot"
+      "missile": "arrow",
+      "ammo": "ITEM_ARROW",
+      "refusalKey": "ui.refusal.no_arrows",
+      "tipKey": "ui.tip.bow"
     },
     "ITEM_SEAX": {
       "nameKey": "item.name.seax",
       "icon": "seax",
       "glyph": "sword",
       "use": "MELEE",
-      "refusalKey": "ui.refusal.nothing_to_cut"
+      "refusalKey": "ui.refusal.nothing_to_cut",
+      "tipKey": "ui.tip.seax"
+    },
+    "ITEM_ARROW": {
+      "nameKey": "item.name.arrows",
+      "icon": "arrow",
+      "use": "AMMO",
+      "refusalKey": "ui.refusal.quiver_full",
+      "tipKey": "ui.tip.arrows"
     }
-  }
+  },
+  "releaseHeightPx": 26,
+  "missileHitBox": {
+    "w": 12,
+    "h": 6
+  },
+  "cover": {
+    "prop_wreck_t1": { "w": 64, "h": 14, "material": "wood", "tall": true },
+    "prop_wreck_stern": { "w": 34, "h": 8, "material": "wood", "tall": true },
+    "prop_rock_strand": { "w": 40, "h": 14, "material": "stone", "tall": true },
+    "prop_boulder": { "w": 20, "h": 8, "material": "stone", "tall": true },
+    "prop_greymen_stone": { "w": 14, "h": 6, "material": "stone", "tall": true },
+    "prop_debris": { "w": 24, "h": 4, "material": "wood", "tall": false }
+  },
+  "pickups": [
+    {
+      "key": "wreck_seax",
+      "zone": "ZONE_SK_STRAND",
+      "item": "ITEM_SEAX",
+      "count": 1,
+      "x": 72.6,
+      "y": 36.8,
+      "glint": true
+    },
+    {
+      "key": "stern_bow",
+      "zone": "ZONE_SK_STRAND",
+      "item": "ITEM_BOW",
+      "count": 1,
+      "quiver": true,
+      "x": 89.6,
+      "y": 35.3,
+      "after": "ch1.hild_safe",
+      "glint": true
+    }
+  ],
+  "tipSeconds": 12
 }

@@ -195,12 +195,43 @@ const itemCheck = object(
      */
     icon: text,
     glyph: text,
-    use: oneOf(['AIM', 'MELEE', 'TOOL'] as const),
-    /** The refusal word when there is nothing to use it on ("Nothing to cut"). */
+    use: oneOf(['AIM', 'MELEE', 'TOOL', 'AMMO'] as const),
+    /** The refusal word when there is nothing to use it on ("Nothing to cut", "No arrows"). */
     refusalKey: ref('string'),
+    /** An aimed item's missile and the item each shot spends (Book 10 section 21). */
+    missile: oneOf(['arrow', 'spear'] as const),
+    ammo: id(['ITEM']),
+    /** The tooltip shown the first time one is picked up, naming its controls. */
+    tipKey: ref('string'),
   },
-  ['glyph'],
+  ['glyph', 'missile', 'ammo', 'tipKey'],
 );
+
+const pickupCheck = object(
+  {
+    /** Unique within the zone; stable, as saves record what is still lying there. */
+    key: text,
+    zone: ref('zone'),
+    item: id(['ITEM']),
+    count: int(1, 99),
+    /** Tile coordinates of its foot. */
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    /** A quiver with Book 10's startingArrows comes with it. */
+    quiver: bool,
+    /** A fact that must be true before it shows. */
+    after: text,
+    glint: bool,
+  },
+  ['quiver', 'after', 'glint'],
+);
+
+const coverCheck = object({
+  w: int(1, 200),
+  h: int(1, 200),
+  material: oneOf(['wood', 'stone'] as const),
+  tall: bool,
+});
 
 const onFootCheck = object({
   about: text,
@@ -210,6 +241,16 @@ const onFootCheck = object({
   /** What the steerer wakes with: hotbar slots from the first, and the one in hand. */
   hotbar: object({ about: text, start: arrayOf(id(['ITEM'])), selected: int(0, 11) }),
   items: recordOf(id(['ITEM']), itemCheck),
+  /** The height a missile leaves the hand at, in pixels above the feet. */
+  releaseHeightPx: int(0, 48),
+  /** A person's body as a missile meets it, on the ground plane, in pixels. */
+  missileHitBox: object({ w: int(2, 32), h: int(1, 16) }),
+  /** Props that stop missiles, by sheet. */
+  cover: recordOf(text, coverCheck),
+  /** Items lying in zones at the start of a campaign. */
+  pickups: arrayOf(pickupCheck),
+  /** How long a pickup tooltip stays up, in seconds. */
+  tipSeconds: int(1, 60),
 });
 
 const openingCheck = object({
@@ -226,6 +267,9 @@ const openingCheck = object({
   foundLine: ref('string'),
   safeLine: ref('string'),
   refusedLine: ref('string'),
+  /** Once she is safe, Hild names the bow in the wreck's stern, after this many seconds. */
+  bowLine: ref('string'),
+  bowLineSeconds: int(0, 60),
 });
 
 type Out<C> = C extends Check<infer T> ? T : never;
@@ -418,6 +462,21 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
           reason: `"${item}" has no entry in items`,
         });
     });
+    onFoot.pickups.forEach((p, i) => {
+      if (onFoot.items[p.item] === undefined)
+        issues.push({
+          file: CONTENT_FILES.onFoot,
+          path: `pickups[${i}].item`,
+          reason: `"${p.item}" has no entry in items`,
+        });
+    });
+    for (const [item, def] of Object.entries(onFoot.items))
+      if (def.ammo !== undefined && onFoot.items[def.ammo] === undefined)
+        issues.push({
+          file: CONTENT_FILES.onFoot,
+          path: `items.${item}.ammo`,
+          reason: `"${def.ammo}" has no entry in items`,
+        });
     for (const item of Object.keys(onFoot.items))
       if (!ids.byId.has(item))
         issues.push({

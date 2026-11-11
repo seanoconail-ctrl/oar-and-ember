@@ -8,7 +8,13 @@
  * Positions are logical pixels; an actor's (x, y) is its foot anchor. Pure and deterministic:
  * the simulation calls these once per 60 Hz tick.
  */
-import type { ControlsBalance, MovementBalance, WaterBalance } from '../../content/balance.ts';
+import type {
+  ArrowBalance,
+  ControlsBalance,
+  MissileBalance,
+  MovementBalance,
+  WaterBalance,
+} from '../../content/balance.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
 import { heightAt } from '../../content/terrain/elevation.ts';
@@ -33,11 +39,24 @@ export interface MoveIntent {
   sneak: boolean;
 }
 
-/** A bow or thrown spear being drawn: the aim vector (quantised) and the tick the draw began. */
+/**
+ * A bow or thrown spear being drawn: the aim vector (quantised), the tick the draw began, and how
+ * far away the aim point is in tiles (null: on to the weapon's full range).
+ */
 export interface Aim {
   readonly x: number;
   readonly y: number;
   readonly since: number;
+  readonly dist: number | null;
+}
+
+/**
+ * Book 10 section 21, drawPlantsFeet: while a bow is drawn or a spear held to throw, movement is
+ * ignored, for anyone with an aim (the steerer, crew and enemies alike). They turn to the aim and
+ * can only loose or cancel.
+ */
+export function feetPlanted(who: { readonly aim?: Aim | null }): boolean {
+  return who.aim != null;
 }
 
 export interface OnFootPlayer {
@@ -58,6 +77,91 @@ export interface OnFootActor {
   pose: Pose;
   /** Stepping this tick (a wader keeping their footing as the tide moves); absent when still. */
   moving?: boolean;
+  /** The walk this person wants (crew and enemies from Stage 9); absent when standing. */
+  intent?: MoveIntent;
+  /** A bow drawn or a spear held to throw: the feet are planted (feetPlanted). */
+  aim?: Aim | null;
+  /** A shield held up (blocking or in a shield wall): it stops missiles from the front. */
+  blocking?: boolean;
+  /** An archer's stop, draw, loose, move (src/sim/combat/archer.ts). */
+  archer?: ArcherState;
+}
+
+/** Where an archer is in its stop, draw, loose and move. */
+export interface ArcherState {
+  phase: 'stopping' | 'drawing' | 'moving';
+  /** The aim point, in world pixels. */
+  readonly target: { readonly x: number; readonly y: number };
+  /** The walk it takes once it has loosed. */
+  readonly then: MoveIntent;
+}
+
+export type MissileKind = 'arrow' | 'spear';
+
+/** What a missile struck: the ground, a prop's wood, stone, a raised shield, a body, or water. */
+export type MissileStrike = 'ground' | 'wood' | 'stone' | 'shield' | 'body' | 'water';
+
+/**
+ * A missile in flight (Book 10 section 21, "Missiles"). Its ground track runs straight from the
+ * shooter's feet towards the aim point at the missile's speed; its height `z` above that track is
+ * a parabola, 0 at both ends with its apex half way. Positions are world pixels.
+ */
+export interface Projectile {
+  readonly n: number;
+  readonly kind: MissileKind;
+  readonly shooter: Id;
+  readonly x0: number;
+  readonly y0: number;
+  /** Unit direction of the ground track (after the spread), rounded to 1/4096. */
+  readonly ux: number;
+  readonly uy: number;
+  /** Length of the ground track in pixels, and the ticks it takes to fly it. */
+  readonly length: number;
+  readonly ticks: number;
+  /** Height of the arc at its middle, in pixels. */
+  readonly apex: number;
+  /** Ticks flown so far, and where it is now. */
+  t: number;
+  x: number;
+  y: number;
+  z: number;
+}
+
+/**
+ * A missile that has come to rest: stuck in the ground, a prop or a body, lying at the foot of
+ * stone, or broken. In a body or shield its position is relative to that person's feet.
+ */
+export interface StuckMissile {
+  readonly n: number;
+  readonly kind: MissileKind;
+  readonly x: number;
+  readonly y: number;
+  /** Height above the ground where it sits, in pixels (0 in the ground). */
+  readonly h: number;
+  /** Its flight direction, one of 16 (0 east, clockwise). */
+  readonly dir: number;
+  readonly in: Exclude<MissileStrike, 'water'>;
+  /** The person it is in (a body or a shield). */
+  readonly target?: Id;
+  readonly broken: boolean;
+  /** Game minutes since the campaign began, when it struck (in the ground it lasts a day). */
+  readonly at: number;
+}
+
+/** An item lying in the zone to be picked up (right-click or Interact within reach). */
+export interface GroundItem {
+  readonly key: string;
+  readonly item: Id;
+  readonly count: number;
+  /** Arrows in a quiver found with it. */
+  readonly arrows?: number;
+  /** Tile coordinates of its foot, as zone props are placed. */
+  readonly x: number;
+  readonly y: number;
+  /** A fact that must be true before it shows (the bow, after Hild is safe). */
+  readonly after?: string;
+  /** A glint marks it (Book 7 section 14: a glint on a ledge). */
+  readonly glint?: boolean;
 }
 
 export interface OnFootState {
@@ -66,6 +170,13 @@ export interface OnFootState {
   actors: Record<Id, OnFootActor>;
   /** The person being carried, if any. */
   carrying: Id | null;
+  /** Items lying in the zone (version 4). */
+  items: GroundItem[];
+  /** Missiles in flight, and the serial of the next one (version 4). */
+  projectiles: Projectile[];
+  nextMissile: number;
+  /** Missiles at rest in the zone, oldest first (Book 10 stuckArrows: at most 40). */
+  stuck: StuckMissile[];
 }
 
 /** Controller settings that are not Book 10 tuning numbers (content/onfoot.json). */
@@ -75,12 +186,36 @@ export interface OnFootRules {
   readonly footprint: { readonly w: number; readonly h: number };
   /** How far ahead of the steerer a carried person is set down, in pixels. */
   readonly setDownReach: number;
-  /** How each hotbar item is used: drawn and aimed (a bow), or used at a tile within reach. */
-  readonly items: Readonly<Record<Id, { readonly use: ItemUse }>>;
+  /** How each item is used: drawn and aimed (a bow), used at a tile within reach, or ammunition. */
+  readonly items: Readonly<Record<Id, ItemRules>>;
+  /** The height a missile leaves the hand at, in pixels above the feet (the art's draw pose). */
+  readonly releaseHeightPx: number;
+  /** A person's body as a missile meets it: width and depth on the ground, in pixels. */
+  readonly missileHitBox: { readonly w: number; readonly h: number };
+  /** Props that stop missiles, by sheet: a footprint round the foot, and what they are made of. */
+  readonly cover: Readonly<Record<string, CoverRule>>;
 }
 
-/** AIM: drawn and aimed freely (a bow); MELEE: struck towards a facing; TOOL: used at a tile. */
-export type ItemUse = 'AIM' | 'MELEE' | 'TOOL';
+export interface ItemRules {
+  readonly use: ItemUse;
+  /** An aimed item's missile, and the item each shot spends (the bow's arrows). */
+  readonly missile?: MissileKind;
+  readonly ammo?: Id;
+}
+
+/** A prop that stops missiles: tall cover stops every missile, low cover only near the ground. */
+export interface CoverRule {
+  readonly w: number;
+  readonly h: number;
+  readonly material: 'wood' | 'stone';
+  readonly tall: boolean;
+}
+
+/**
+ * AIM: drawn and aimed freely (a bow); MELEE: struck towards a facing; TOOL: used at a tile; AMMO:
+ * carried in the inventory and spent by another item (arrows).
+ */
+export type ItemUse = 'AIM' | 'MELEE' | 'TOOL' | 'AMMO';
 
 export interface LandContext {
   readonly maps: ReadonlyMap<Id, ZoneMap>;
@@ -92,6 +227,9 @@ export interface LandContext {
   readonly controls: ControlsBalance;
   /** Each zone's baked ground height (the water's depth comes from it). */
   readonly elevations: ReadonlyMap<Id, Elevation>;
+  /** Book 10 section 21, "Missiles" (with the bow and thrown spear of section 06), and "Arrows". */
+  readonly missiles: MissileBalance;
+  readonly arrows: ArrowBalance;
 }
 
 /** The tide as movement needs it: whether the tidal ground is open, and the still water level. */
@@ -102,7 +240,12 @@ export interface TideNow {
 
 export const TICKS_PER_SECOND = 60;
 
-export function placeOnFoot(map: ZoneMap, people: readonly Id[], pose: Pose = 'down'): OnFootState {
+export function placeOnFoot(
+  map: ZoneMap,
+  people: readonly Id[],
+  pose: Pose = 'down',
+  items: readonly GroundItem[] = [],
+): OnFootState {
   const steerer = map.spawns['P_STEERER'];
   if (steerer === undefined) throw new Error(`${map.zone} has no P_STEERER spawn`);
   const px = (t: number): number => t * map.tile;
@@ -124,6 +267,10 @@ export function placeOnFoot(map: ZoneMap, people: readonly Id[], pose: Pose = 'd
     },
     actors,
     carrying: null,
+    items: items.map((i) => ({ ...i })),
+    projectiles: [],
+    nextMissile: 1,
+    stuck: [],
   };
 }
 
@@ -198,8 +345,10 @@ export function stepMovement(
 ): void {
   const p = state.player;
   p.gait = gaitFor(state);
-  const { x: ix, y: iy } = p.intent;
-  // While drawing, the steerer faces the aim (snapped to the nearest facing).
+  // While drawing, the steerer faces the aim (snapped to the nearest facing) and stands still:
+  // the movement wanted is kept, but not walked, until the bow is loosed or lowered.
+  const planted = feetPlanted(p);
+  const { x: ix, y: iy } = planted ? { x: 0, y: 0 } : p.intent;
   p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
   const perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;
   const dx = ix * perTick;
@@ -271,10 +420,72 @@ export function keepFooting(
   actor.moving = true;
 }
 
+/**
+ * One tick of a person's own walk (crew and enemies, Stage 9): their intent at walking pace, axis
+ * by axis against the terrain, never while their feet are planted to draw or throw.
+ */
+export function stepActor(
+  actor: OnFootActor,
+  map: ZoneMap,
+  ctx: Pick<LandContext, 'movement' | 'rules'>,
+  tidalGroundOpen: boolean,
+): void {
+  const intent = actor.intent;
+  if (intent === undefined || NEEDS_LIFT.includes(actor.pose) || actor.pose === 'carried') return;
+  if (feetPlanted(actor)) {
+    delete actor.moving;
+    if (actor.aim != null) actor.facing = facingOf(actor.aim.x, actor.aim.y, actor.facing);
+    return;
+  }
+  const perTick = (ctx.movement.walk * map.tile) / TICKS_PER_SECOND;
+  const before = { x: actor.x, y: actor.y };
+  const dx = intent.x * perTick;
+  const dy = intent.y * perTick;
+  if (dx !== 0 && footprintClear(map, ctx.rules, actor.x + dx, actor.y, tidalGroundOpen))
+    actor.x += dx;
+  if (dy !== 0 && footprintClear(map, ctx.rules, actor.x, actor.y + dy, tidalGroundOpen))
+    actor.y += dy;
+  actor.facing = facingOf(intent.x, intent.y, actor.facing);
+  if (actor.x !== before.x || actor.y !== before.y) actor.moving = true;
+  else delete actor.moving;
+}
+
+/** Facts the zone reads: an item shows once its `after` fact is true. */
+export type FactView = Readonly<Record<string, string | number | boolean>>;
+
+/** Whether a ground item can be seen and picked up now. */
+export function itemShown(item: GroundItem, facts: FactView): boolean {
+  return item.after === undefined || facts[item.after] === true;
+}
+
+/** A missile at rest that can be pulled free and used again (not broken, not in a person). */
+export function stuckRecoverable(s: StuckMissile): boolean {
+  return !s.broken && s.target === undefined;
+}
+
+/** Where something to pick up lies, in world pixels: its key, and its foot. */
+export interface PickupSpot {
+  readonly key: string;
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Everything that can be picked up now: items shown, and missiles that can be pulled free. */
+export function pickupSpots(state: OnFootState, map: ZoneMap, facts: FactView): PickupSpot[] {
+  const out: PickupSpot[] = [];
+  for (const item of state.items)
+    if (itemShown(item, facts))
+      out.push({ key: item.key, x: item.x * map.tile, y: item.y * map.tile });
+  for (const s of state.stuck)
+    if (stuckRecoverable(s)) out.push({ key: `stuck:${s.n}`, x: s.x, y: s.y });
+  return out;
+}
+
 export type RefusalReason = 'BELOW_TIDE_LINE' | 'NO_ROOM';
 
 export type Interaction =
   | { readonly kind: 'LIFT'; readonly target: Id }
+  | { readonly kind: 'PICK_UP'; readonly key: string }
   | {
       readonly kind: 'SET_DOWN';
       readonly target: Id;
@@ -297,6 +508,7 @@ export function interactionNow(
   map: ZoneMap,
   rules: OnFootRules,
   tidalGroundOpen: boolean,
+  facts: FactView = {},
 ): Interaction | null {
   const p = state.player;
   if (state.carrying !== null) {
@@ -316,6 +528,13 @@ export function interactionNow(
     const d = Math.hypot(actor.x - p.x, actor.y - p.y);
     if (d <= reach && (best === null || d < best.d)) best = { id, d };
   }
+  // Something lying nearer than anyone to lift is picked up instead.
+  let pick: { key: string; d: number } | null = null;
+  for (const spot of pickupSpots(state, map, facts)) {
+    const d = Math.hypot(spot.x - p.x, spot.y - p.y);
+    if (d <= reach && (pick === null || d < pick.d)) pick = { key: spot.key, d };
+  }
+  if (pick !== null && (best === null || pick.d < best.d)) return { kind: 'PICK_UP', key: pick.key };
   return best === null ? null : { kind: 'LIFT', target: best.id };
 }
 
@@ -353,6 +572,7 @@ export function interactionAt(
   rules: OnFootRules,
   tidalGroundOpen: boolean,
   tile: TilePos,
+  facts: FactView = {},
 ): Interaction | null {
   if (state.carrying !== null) {
     const at = { x: (tile.tx + 0.5) * map.tile, y: (tile.ty + 0.7) * map.tile };
@@ -368,13 +588,20 @@ export function interactionAt(
     if (feet.tx === tile.tx && (feet.ty === tile.ty || feet.ty === tile.ty + 1))
       return { kind: 'LIFT', target: id };
   }
+  // Something lying on the tile (or just below it: a click on a tall thing counts).
+  for (const spot of pickupSpots(state, map, facts)) {
+    const at = tileOf(map, spot.x, spot.y - 0.001);
+    if (at.tx === tile.tx && (at.ty === tile.ty || at.ty === tile.ty + 1))
+      return { kind: 'PICK_UP', key: spot.key };
+  }
   return null;
 }
 
 const OPPOSITE: Record<Facing, Facing> = { s: 'n', n: 's', e: 'w', w: 'e' };
 
-/** Applies an interaction that `interactionNow` allowed. */
+/** Applies a lift or set-down that `interactionNow` allowed (picking up is the simulation's). */
 export function applyInteraction(state: OnFootState, interaction: Interaction): void {
+  if (interaction.kind === 'PICK_UP') return;
   const actor = state.actors[interaction.target];
   if (actor === undefined) return;
   delete actor.moving;

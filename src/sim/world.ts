@@ -6,7 +6,7 @@
  * Fields that later stages fill (ships, homes' buildings, regions' resource nodes, knowledge,
  * bargains, powers) are present with their Book 2 shape and start empty.
  */
-import { parseControlsBalance } from '../content/balance.ts';
+import { parseControlsBalance, parseStartingWeapons } from '../content/balance.ts';
 import type { PeopleBasics, TimeBalance } from '../content/balance.ts';
 import type { Content, VALUES, TIE_KINDS } from '../content/registry.ts';
 import type { Id } from '../core/ids.ts';
@@ -14,14 +14,18 @@ import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
 import type { CalendarState } from './calendar/calendar.ts';
 import { placeOnFoot } from './land/onFoot.ts';
-import type { OnFootState } from './land/onFoot.ts';
+import type { GroundItem, OnFootState } from './land/onFoot.ts';
 
 /**
  * Version 2 (Stage 6) adds `onFoot`: where the steerer and the people nearby stand in a zone.
  * Version 3 (the Stage 6 rework) adds the steerer's hotbar (`player.hotbar`) and a drawn bow's aim
  * (`onFoot.player.aim`).
+ * Version 4 (starting weapons and missiles, decisions DD-6 to DD-9) adds the steerer's inventory
+ * with counts (`player.inventory`: arrows), the pickup tooltips already shown
+ * (`player.tipsSeen`), an aim's distance (`aim.dist`), and in the zone the items lying there,
+ * missiles in flight and missiles at rest (`onFoot.items`, `projectiles`, `nextMissile`, `stuck`).
  */
-export const WORLD_STATE_VERSION = 3;
+export const WORLD_STATE_VERSION = 4;
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -83,6 +87,10 @@ export interface PlayerState {
   staminaMaxChange: number;
   /** Book 2 section 21: the slots (Book 10 section 21, hotbarSlots) and the one in hand. */
   hotbar: Hotbar;
+  /** Items carried by count rather than in a slot: arrows (Book 10 section 21, "Arrows"). */
+  inventory: Record<Id, number>;
+  /** Item kinds whose pickup tooltip has been shown; the help pages list them. */
+  tipsSeen: Id[];
 }
 
 export interface Hotbar {
@@ -213,6 +221,8 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
       awake: true,
       staminaMaxChange: 0,
       hotbar: { slots: [], selected: 0 },
+      inventory: {},
+      tipsSeen: [],
     },
     household: { residents: [], hostages: [], guests: [] },
     people: {},
@@ -322,9 +332,37 @@ export function newCampaign(
   const opening = content.opening;
   const strand = opening === null ? undefined : content.zoneMaps.get(opening.zone);
   if (opening !== null && strand !== undefined) {
-    world.onFoot = placeOnFoot(strand, [opening.caller], opening.callerPose);
+    world.onFoot = placeOnFoot(
+      strand,
+      [opening.caller],
+      opening.callerPose,
+      zoneItems(content, strand.zone),
+    );
   }
   return world;
+}
+
+/**
+ * The items lying in a zone at the start (content/onfoot.json `pickups`): the seax in the wreck's
+ * debris, and the bow with a quiver of Book 10's startingArrows by the wreck's stern.
+ */
+export function zoneItems(
+  content: Pick<Content, 'onFoot' | 'balance'>,
+  zone: Id,
+): GroundItem[] {
+  const starting = parseStartingWeapons(content.balance);
+  return (content.onFoot?.pickups ?? [])
+    .filter((p) => p.zone === zone)
+    .map((p) => ({
+      key: p.key,
+      item: p.item,
+      count: p.count,
+      x: p.x,
+      y: p.y,
+      ...(p.quiver === true ? { arrows: starting.startingArrows } : {}),
+      ...(p.after === undefined ? {} : { after: p.after }),
+      ...(p.glint === true ? { glint: true } : {}),
+    }));
 }
 
 /** The chapter currently being played, for save headers. */

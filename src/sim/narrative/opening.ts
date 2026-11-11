@@ -14,6 +14,10 @@ import type { WorldState } from '../world.ts';
 
 export const FACT_HILD_FOUND = 'ch1.hild_found';
 export const FACT_HILD_SAFE = 'ch1.hild_safe';
+/** The tick Hild was set down safe, for the line that follows. */
+export const FACT_HILD_SAFE_AT = 'ch1.hild_safe_at';
+/** Hild has named the bow in the wreck's stern (Book 10 section 21, bowFoundBy). */
+export const FACT_BOW_NAMED = 'ch1.bow_named';
 
 export type OpeningEvent =
   | {
@@ -94,8 +98,26 @@ export function onSetDown(
   if (person !== opening.caller) return;
   fireOneShot(world, opening.beat, () => {
     setFact(world, FACT_HILD_SAFE, true);
+    setFact(world, FACT_HILD_SAFE_AT, world.tick);
     if (!world.household.residents.includes(person)) world.household.residents.push(person);
     emit({ type: 'PERSON_SPOKE', person, lineKey: opening.safeLine });
     emit({ type: 'BEAT_COMPLETED', beat: opening.beat });
   });
+}
+
+/**
+ * Once Hild is safe and has caught her breath, she names the bow in the wreck's stern, once
+ * (Book 10 section 21, bowFoundBy: named by Hild after the rescue). The bow shows from then.
+ */
+export function stepOpeningAfter(
+  world: WorldState,
+  opening: OpeningDef,
+  emit: (event: OpeningEvent) => void,
+): void {
+  if (world.facts[FACT_HILD_SAFE] !== true || world.facts[FACT_BOW_NAMED] === true) return;
+  const at = world.facts[FACT_HILD_SAFE_AT];
+  const since = typeof at === 'number' ? world.tick - at : Infinity;
+  if (since < opening.bowLineSeconds * TICKS_PER_SECOND) return;
+  setFact(world, FACT_BOW_NAMED, true);
+  emit({ type: 'PERSON_SPOKE', person: opening.caller, lineKey: opening.bowLine });
 }

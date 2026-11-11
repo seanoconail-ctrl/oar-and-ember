@@ -148,6 +148,46 @@ export class OpeningBot {
     this.step();
   }
 
+  /** Steps until `done` holds, or throws after `maxTicks`. */
+  waitFor(done: () => boolean, maxTicks = 60 * 60): void {
+    const limit = this.ticks + maxTicks;
+    while (!done()) {
+      if (this.ticks > limit) throw new Error('the bot waited too long');
+      this.step();
+    }
+  }
+
+  /** Walks to an item lying in the zone and picks it up with Interact. */
+  pickUp(key: string): void {
+    const onFoot = this.#sim.state.onFoot;
+    const item = onFoot?.items.find((i) => i.key === key);
+    if (item === undefined) throw new Error(`nothing called ${key} lies here`);
+    const at = { tx: Math.floor(item.x), ty: Math.floor(item.y - 0.001) };
+    if (!this.walkTo((t) => t.tx === at.tx && t.ty === at.ty)) throw new Error(`no way to ${key}`);
+    this.interact();
+    if (this.#sim.state.onFoot?.items.some((i) => i.key === key) === true)
+      throw new Error(`${key} was not picked up`);
+  }
+
+  /** Takes the first hotbar slot holding `item` in hand. */
+  selectItem(item: string): void {
+    const slot = this.#sim.state.player.hotbar.slots.indexOf(item);
+    if (slot < 0) throw new Error(`${item} is not on the hotbar`);
+    this.#sim.submit({ type: 'SELECT_SLOT', slot });
+    this.step();
+  }
+
+  /**
+   * Draws towards aim direction `dir` (of 64, 0 east, clockwise) for `drawTicks`, aimed at a point
+   * `dist` tiles off, and looses.
+   */
+  shoot(dir: number, dist: number | null, drawTicks: number): void {
+    this.#sim.submit({ type: 'AIM', dir, dist });
+    for (let i = 0; i < drawTicks; i++) this.step();
+    this.#sim.submit({ type: 'AIM', dir: null });
+    this.step();
+  }
+
   /** Plays beat 1 the way the opening leads a new player. */
   rescue(person: string): void {
     const actor = this.#sim.state.onFoot?.actors[person];
