@@ -70,7 +70,7 @@ export interface Person {
   wounds: Wound[];
   job?: { readonly kind: string; readonly site?: Id };
   schedule: string;
-  hiddenStance?: Id;
+  secret?: Id;
   valueShifts: number;
 }
 

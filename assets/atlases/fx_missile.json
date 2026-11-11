@@ -65,6 +65,11 @@
       "frames": 8,
       "ticks": 1,
       "loop": false
+    },
+    "shadow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -422,6 +427,10 @@
     "spear_wood/-/7": [
       280,
       360
+    ],
+    "shadow/-/0": [
+      0,
+      400
     ]
   }
 }

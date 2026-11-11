@@ -412,10 +412,9 @@ export interface ZoneSceneInput {
   readonly hidePeople?: boolean;
   /** Facts the zone reads: an item lying there shows once its `after` fact holds. */
   readonly facts?: FactView;
-  /** Missiles: the hand's height they leave at (px), the shadow under them, and each item's icon. */
+  /** Missiles: the hand's height they leave at (px), and each item's icon. */
   readonly missiles?: {
     readonly releaseHeight: number;
-    readonly shadow: { readonly w: number; readonly h: number };
     readonly icons: Readonly<Record<string, string>>;
   };
 }
@@ -686,8 +685,8 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       layer: 'actor',
       sort: y + 0.7,
     });
-    const shadow = missiles?.shadow ?? { w: 3, h: 1 };
-    shadows.push({ x, y: y - height, w: shadow.w, h: shadow.h, lift: height });
+    // The soft 3 x 1 shadow (Book 10 section 21) on the ground under it, offset by its height.
+    sprites.push({ sheet: MISSILE_SHEET, frame: 'shadow/-/0', x, y, layer: 'decal' });
   }
   const detail = visual?.effects?.detail ?? 2;
   sprites.push(

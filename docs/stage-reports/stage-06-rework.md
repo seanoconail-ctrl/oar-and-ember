@@ -103,6 +103,18 @@ These hold in every facing.
   - Two new tests in `water.test.ts` walk and run the steerer through the simulation frame by frame. They require every walk and run frame to be shown, and footfalls to fire. Both failed before the fix.
   - The sheets and the report's GIFs were always right, because the GIFs are drawn from the sheets. The in-game clips were re-captured.
 
+## Part 1 changes (the user's instructions B to E, 11 November)
+- **Starting weapons:** the steerer wakes with an empty hotbar. A seax lies by the net debris, glinting, 2.3 tiles from where they wake. Thorkel's hunting bow and a quiver of 6 arrows lie by the stern at the strand's east end, and Hild names them once she is safe.
+- **Tooltips:** picking up each kind of item for the first time shows a tooltip naming its controls on the device in use. Each one is kept in the help page (H in the system menu).
+- **The bow is loosed standing still:** drawing plants the feet, and the cursor turns and aims. Movement is ignored until the arrow is loosed or the draw cancelled. A short draw cancels and spends nothing. An archer helper makes non-player characters stop, draw, loose and then move.
+- **Arrows are counted:** the count shows on the bow's slot. With no arrows, the bow does not draw. Arrows stick where they land and can be pulled free; some break.
+- **Visible arrows:** every arrow flies as a real projectile, in 16 directions, along a slight arc, with a shadow below it. It is stopped by rock, the wreck and shields, lost in water, and sticks in sand, wood and people.
+- **New sounds:** arrow flight, the thunk into wood, earth and a shield, a crack on stone, a splash, an empty quiver and a pickup. Each has an information caption.
+- **Saves:** world state version 4, with golden save 4.
+- **Tests:** 368 unit tests (23 new in `missiles.test.ts`) and 32 Chromium browser tests, including one that the arrow is drawn moving on consecutive frames and then stays stuck.
+- **Capture:** `arrows.mp4` and `arrows.gif` show three shots: into the shingle, against the rock, and into the shallows.
+- **Decisions:** DD-1 to DD-20.
+
 ## Deviations
 Decision log DB-1 and S6R-1 to S6R-11.
 

@@ -157,7 +157,7 @@ Each tier has a 16 x 16 or 24 x 16 token with eight headings, a sail-state frame
 ### Skarvholm stages
 | Stage | Appearance |
 |---|---|
-| S0 Wreck camp | A fire on the shingle, a lean-to from the torn sail, salvage in heaps above the tide line |
+| S0 Wreck camp | Inside the broch (decision DD-19): a fire in a ring of beach stones, a lean-to from the torn sail against the inner wall, salvage in heaps |
 | S1 Broch shelter | Sail roof stretched across the broch's interior, hearth smoke, drying lines, a driftwood door |
 | S2 Steading | A turf-walled longhouse with curved sides, a naust boatshed, fish racks, a small forge, a byre, the residents' shrine |
 | S3 Prosperous | Carved door posts, a smoke-house, a second house, the watch cairn on Rook Hill, coloured cloth, benches outside |

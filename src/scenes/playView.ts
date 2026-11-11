@@ -266,7 +266,6 @@ export function startPlay(
   const style = parseRenderStyle(renderJson);
   const missileLook = {
     releaseHeight: land.rules.releaseHeightPx,
-    shadow: land.missiles.shadow,
     icons: Object.fromEntries(
       Object.entries(content.onFoot?.items ?? {}).map(([id, d]) => [id, d.icon]),
     ),
@@ -838,7 +837,9 @@ export function startPlay(
     root.dataset['hildPy'] = onFoot.actors['C_HILD']?.y.toFixed(1) ?? '';
     root.dataset['tide'] = visuals.tideLevel.toFixed(4);
     // Missiles as drawn this frame (frame@x,y on screen), for the browser tests.
-    const drawnMissiles = scene.sprites.filter((sp) => sp.sheet === MISSILE_SHEET);
+    const drawnMissiles = scene.sprites.filter(
+      (sp) => sp.sheet === MISSILE_SHEET && !sp.frame.startsWith('shadow/'),
+    );
     root.dataset['missiles'] = drawnMissiles
       .filter((sp) => /^(arrow|spear)\//.test(sp.frame))
       .map((sp) => `${sp.frame}@${Math.round(sp.x)},${Math.round(sp.y)}`)

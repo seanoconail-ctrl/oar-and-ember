@@ -35,7 +35,8 @@ import type { Aim, OnFootActor, OnFootState } from '../../src/sim/land/onFoot.ts
 import { createSimulation } from '../../src/sim/simulation.ts';
 import type { SimEvent } from '../../src/sim/simulation.ts';
 import { newCampaign } from '../../src/sim/world.ts';
-import { loadLayerDefs } from '../../src/tools/art/artFiles.ts';
+import { loadLayerDefs, loadSheets } from '../../src/tools/art/artFiles.ts';
+import { NO_PIXEL } from '../../src/render/indexedImage.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 import { OpeningBot } from '../../src/tools/play/openingBot.ts';
@@ -692,6 +693,24 @@ describe('projectiles (Book 10 section 21, "Missiles")', () => {
     sim.submit({ type: 'INTERACT' });
     sim.step();
     expect(world.player.inventory['ITEM_ARROW']).toBe(3);
+  });
+
+  it('has a soft shadow of Book 10’s size, and art for 16 directions in flight', () => {
+    const sheet = loadSheets().find((x) => x.name === 'fx_missile');
+    if (sheet === undefined) throw new Error('no fx_missile');
+    expect(sheet.anims['arrow']?.frames).toBe(16);
+    expect(sheet.anims['spear']?.frames).toBe(16);
+    const img = sheet.frames.get('shadow/-/0');
+    if (img === undefined) throw new Error('no shadow frame');
+    const xs: number[] = [];
+    const ys: number[] = [];
+    img.pixels.forEach((v, i) => {
+      if (v === NO_PIXEL) return;
+      xs.push(i % img.width);
+      ys.push(Math.floor(i / img.width));
+    });
+    expect(Math.max(...xs) - Math.min(...xs) + 1).toBe(missiles.shadow.w);
+    expect(Math.max(...ys) - Math.min(...ys) + 1).toBe(missiles.shadow.h);
   });
 
   it('is drawn rotated along its flight, the arc’s rise and fall included', () => {
