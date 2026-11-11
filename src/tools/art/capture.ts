@@ -321,13 +321,24 @@ async function wadeClip(
   // Where to stand: knee or waist water just east of her (on the side the steerer comes from),
   // the nearest such point to her at her own row or a little in front.
   let spot: { x: number; y: number } | null = null;
-  // At least 10 px east of her feet so the two figures read apart; nearest first.
+  // At least 10 px east of her feet so the two figures read apart; nearest first. The water must
+  // be knee or waist deep all round the spot (the steering stops within a few pixels of it).
+  const wading = (x: number, y: number): boolean =>
+    [
+      [0, 0],
+      [4, 0],
+      [-4, 0],
+      [0, 4],
+      [0, -4],
+    ].every(([dx = 0, dy = 0]) => {
+      const at = band(x + dx, y + dy);
+      return at === 'KNEE' || at === 'WAIST';
+    });
   let best = Infinity;
-  for (let dx = 10; dx <= 26; dx += 1)
-    for (let dy = -2; dy <= 16; dy += 1) {
-      const at = band(hild.x + dx, hild.y + dy);
+  for (let dx = 10; dx <= 30; dx += 1)
+    for (let dy = -2; dy <= 24; dy += 1) {
       const d = Math.hypot(dx, dy * 1.5);
-      if ((at === 'KNEE' || at === 'WAIST') && d < best) {
+      if (d < best && wading(hild.x + dx, hild.y + dy)) {
         best = d;
         spot = { x: hild.x + dx, y: hild.y + dy };
       }

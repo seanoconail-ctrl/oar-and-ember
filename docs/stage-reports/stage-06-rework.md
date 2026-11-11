@@ -66,7 +66,7 @@ Measured from the sheets, and checked by art lint:
 These hold in every facing.
 
 ## Tests
-- `npm run lint`: clean. Content lint covers 275 strings and 402 registered IDs. Art lint is clean on 44 sheets, 4704 frames and 0 placeholders.
+- `npm run lint`: clean. Content lint covers 275 strings and 404 registered IDs. Art lint is clean on 44 sheets, 4704 frames and 0 placeholders.
 - **Art lint now checks:**
   - 32 x 48 people;
   - the 6-frame walk drop;
@@ -74,8 +74,8 @@ These hold in every facing.
   - feet on the pivot row elsewhere;
   - layers matching their body;
   - an ink outline round every composite.
-- `npm test`: **29 files, 333 tests, all passed.**
-  - New: `water.test.ts` (9), `controls.test.ts` (11), and caption tags in `strings.test.ts`.
+- `npm test`: **30 files, 341 tests, all passed.**
+  - New: `water.test.ts` (12, including Hild keeping her knee-to-waist footing as the water level changes, and a person in deep water never fully hidden), `journeys.test.ts` (4: Book 10's shortest journeys match the computed network), `controls.test.ts` (11), and caption tags in `strings.test.ts`.
   - Golden save 3 is new; golden save 2 loads through the version-3 migration.
 - `npm run build`: passes.
 - `npm run test:browser`, Chromium: **30 passed.** These include:
@@ -88,7 +88,8 @@ These hold in every facing.
   - caption styles: italic information above upright speech, with no synthesised slant.
 - **Capture** (`npm run capture -- stage-06`, `docs/art/captures/stage-06/`):
   - Motion with the camera still is **92.7%**; the reference is 89.2% with frozen clouds, and the threshold is 80%.
-  - `wade.mp4` and `wade.gif` show the steerer running along the strand to Hild and wading out beside her in the real game.
+  - `wade.mp4` and `wade.gif` (8.3 s) show the steerer running down the upper shingle, wading out beside Hild, turning to her and walking back out, in the real game; both are cut at the waterline, and Hild is visible throughout.
+  - The capture's dev server no longer watches the repository, so an edit elsewhere cannot reload the page mid-capture.
 - **Listening back:**
   - the splash peaks at 0.19, above the water footsteps (0.05) and below the parry (0.79);
   - the bow draw has 0.0155 RMS;
@@ -106,4 +107,4 @@ Decision log DB-1 and S6R-1 to S6R-11.
 - **Low:** the people are lit by the game's post pass, so their colours look a little darker at dawn than on the approval sheets.
 
 ## Next step ready
-Folding design addendum 2.3 into the books, as a change request.
+Addendum 2.3 is folded into the books (decisions DC-1 to DC-16), and the proposals are listed for the user's veto in `docs/proposals-for-veto.md`. Stage 7 waits for the user.
