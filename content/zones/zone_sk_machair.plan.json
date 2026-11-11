@@ -1,6 +1,6 @@
 {
   "zone": "ZONE_SK_MACHAIR",
-  "about": "The machair round the old broch, the steading's ground (Book 9 sections 03 and 04): blocks 12 to 23 by 18 to 22, directly north of Wreck Strand, expanded by src/tools/levels/zones.ts. The broch stands with its door on the south, about 25 tiles above the shingle as in the steading plan; the stream from the Kelda runs south on its east. Edit this plan, not the generated map, then run npm run zones.",
+  "about": "The machair round the old broch, the steading's ground (Book 9 sections 03 and 04): blocks 12 to 23 by 18 to 22, directly north of Wreck Strand, expanded by src/tools/levels/zones.ts. The broch stands with its door on the south, about 25 tiles above the shingle as in the steading plan; the stream from the Kelda runs south on its east. Stage 10 (decision S10-2): the Kelda Spring itself, at block (19, 19) of Book 9's grid, is inside this window: its pool, its stones and the outflow that becomes the stream; the west edge leads on to the Hag's Seat headland and the east edge to the cairn and the sheepfold. Edit this plan, not the generated map, then run npm run zones.",
   "seed": "zone_sk_machair",
   "terrainSeed": "zone_sk_strand",
   "blocks": {
@@ -105,6 +105,48 @@
       "frame": "small/-/3",
       "x": 30.0,
       "y": 27.0
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/0",
+      "x": 55.2,
+      "y": 10.4
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/2",
+      "x": 61.4,
+      "y": 10.0
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/3",
+      "x": 60.9,
+      "y": 13.4
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/1",
+      "x": 56.9,
+      "y": 8.9
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/2",
+      "x": 59.6,
+      "y": 8.7
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/0",
+      "x": 63.6,
+      "y": 12.2
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 66,
+      "y": 9
     }
   ],
   "cuts": [],
@@ -125,12 +167,37 @@
       [37.4, 18],
       [36.4, 9],
       [37.6, 0.02]
+    ],
+    [
+      [37.6, 6],
+      [46, 7.6],
+      [54.5, 9.6]
+    ],
+    [
+      [0.02, 22.4],
+      [12, 23.2],
+      [24, 24.6],
+      [31.2, 27.4]
+    ],
+    [
+      [41.5, 31.2],
+      [60, 33.2],
+      [80, 35.4],
+      [95.98, 36.2]
     ]
   ],
   "links": [
     {
       "edge": "s",
       "to": "ZONE_SK_STRAND"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_HAGSEAT"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_CAIRN"
     }
   ],
   "life": [
@@ -162,5 +229,27 @@
       "y": 36.6
     }
   ],
-  "sward": 0.75
+  "sward": 0.75,
+  "carve": [
+    {
+      "code": "w",
+      "ellipse": {
+        "x": 58.2,
+        "y": 11.2,
+        "rx": 3.3,
+        "ry": 2.3
+      },
+      "rough": 0.35
+    },
+    {
+      "code": "w",
+      "line": [
+        [56.2, 12.8],
+        [54.4, 14.4],
+        [52.6, 16.4]
+      ],
+      "width": 2.0,
+      "rough": 0.15
+    }
+  ]
 }

@@ -5,7 +5,7 @@
  */
 import { footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext, OnFootActor } from './onFoot.ts';
-import { blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
+import { tileBlocks, tileOf } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
 
 export interface TileXY {
@@ -19,6 +19,8 @@ export function tilePath(
   from: TileXY,
   to: TileXY,
   tidalGroundOpen: boolean,
+  /** Tiles closed to this walker besides the ground (Stage 10: the Hag's neck in her gale). */
+  closed?: (t: TileXY) => boolean,
 ): TileXY[] | null {
   const key = (t: TileXY): number => t.ty * map.width + t.tx;
   const goal = key(to);
@@ -39,7 +41,8 @@ export function tilePath(
     ] as const) {
       const n = { tx: t.tx + dx, ty: t.ty + dy };
       if (n.tx < 0 || n.ty < 0 || n.tx >= map.width || n.ty >= map.height) continue;
-      if (came.has(key(n)) || blocksMovement(terrainAt(map, n.tx, n.ty), tidalGroundOpen)) continue;
+      if (came.has(key(n)) || tileBlocks(map, n.tx, n.ty, tidalGroundOpen)) continue;
+      if (closed?.(n) === true) continue;
       came.set(key(n), key(t));
       queue.push(n);
     }
@@ -63,8 +66,15 @@ export function planWalk(
   x: number,
   y: number,
   tidalGroundOpen: boolean,
+  closed?: (t: TileXY) => boolean,
 ): WalkGoal | null {
-  const path = tilePath(map, tileOf(map, actor.x, actor.y), tileOf(map, x, y), tidalGroundOpen);
+  const path = tilePath(
+    map,
+    tileOf(map, actor.x, actor.y),
+    tileOf(map, x, y),
+    tidalGroundOpen,
+    closed,
+  );
   return path === null ? null : { x, y, path, next: 1 };
 }
 

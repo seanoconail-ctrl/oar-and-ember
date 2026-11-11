@@ -68,8 +68,21 @@ export interface ZoneMap {
   readonly decalFrames: readonly string[];
   /** [frame index, x, y] in pixels: flat decoration on the ground. */
   readonly decals: readonly (readonly [number, number, number])[];
-  /** [kind index, x, y, variant] in pixels: plants that move in the wind. */
-  readonly plants: readonly (readonly [number, number, number, number])[];
+  /**
+   * [kind index, x, y, variant] in pixels: plants that move in the wind. A fifth number, where
+   * given, is the y the plant is sorted at (Stage 10: grass on the cairn's mound sorts with it).
+   */
+  readonly plants: readonly (
+    | readonly [number, number, number, number]
+    | readonly [number, number, number, number, number]
+  )[];
+  /**
+   * Tiles that block movement and sight though their ground is drawn as it is (Stage 10): built
+   * things standing on the turf, a drystone wall, the cairn's mound, a standing stone, [x, y].
+   */
+  readonly solid?: readonly (readonly [number, number])[];
+  /** How hard the place's wind blows, against the strand's (Stage 10: the Hag's Seat, the windiest). */
+  readonly wind?: number;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -124,11 +137,15 @@ export function checkZoneMap(json: unknown): { map: ZoneMap | null; problems: st
   }
   if (!Array.isArray(decalFrames) || !decalFrames.every((f) => typeof f === 'string'))
     problems.push('decalFrames must be a list of frame names');
-  const triples = (list: unknown, n: number): boolean =>
+  const triples = (list: unknown, n: number, m = n): boolean =>
     Array.isArray(list) &&
-    list.every((e) => Array.isArray(e) && e.length === n && e.every(Number.isInteger));
+    list.every(
+      (e) => Array.isArray(e) && e.length >= n && e.length <= m && e.every(Number.isInteger),
+    );
   if (!triples(decals, 3)) problems.push('decals must be [frame, x, y] triples');
-  if (!triples(plants, 4)) problems.push('plants must be [kind, x, y, variant] entries');
+  if (!triples(plants, 4, 5)) problems.push('plants must be [kind, x, y, variant, sort?] entries');
+  const solid = (json as Record<string, unknown>)['solid'];
+  if (solid !== undefined && !triples(solid, 2)) problems.push('solid must be [x, y] tiles');
   if (!Array.isArray(life)) problems.push('life must be a list');
   return { map: problems.length === 0 ? (json as unknown as ZoneMap) : null, problems };
 }

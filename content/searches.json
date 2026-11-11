@@ -1,0 +1,261 @@
+{
+  "about": "Chapter 1 beat 3, the three searches (Book 4 section 08; Book 5 section 02; Stage 10, decisions S10-1 to S10-24). They open once Hild has led the steerer to the broch. Oddi lies hurt in the wash by the wreck with Thorkel's chest further down in the surf: lift him first and the sea takes the chest, or carry the chest up first and leave him lying. Bran keeps Thorkel's body in the sheepfold under the Hollow Cairn against the three wreck-scavengers: fight them, come round unseen and take the body away over the back wall, or walk up with open hands and buy the body with Thorkel's silver. Runa sits hurt by the Hag's Seat with her tool chest, after following a light; the stone weeps and the gale holds the neck: leave the Cailleach an offering, or take the slower cliff path. Every number is Book 10's (section 08, The three searches); positions are tiles in each zone's own map. Each search's outcome is a fact (search.oddi, search.bran, search.runa).",
+  "opensAfter": "ch1.at_broch",
+  "beat": "BEAT_1_SEARCHES",
+  "tell": "c_hild.search.tell",
+  "oddi": {
+    "beat": "BEAT_1_SEARCH_ODDI",
+    "zone": "ZONE_SK_STRAND",
+    "person": "C_ODDI",
+    "at": {
+      "x": 21.5,
+      "y": 38.3,
+      "facing": "e"
+    },
+    "wound": "arm",
+    "chest": {
+      "id": "ITEM_THORKEL_CHEST",
+      "x": 18.8,
+      "y": 40.6,
+      "facing": "e"
+    },
+    "checkpoint": "search_oddi",
+    "lines": {
+      "call": "c_oddi.search.call",
+      "liftedFirst": "c_oddi.search.lifted_first",
+      "chestSaved": "c_oddi.search.chest_saved",
+      "safeChest": "c_oddi.search.safe_chest",
+      "safeNoChest": "c_oddi.search.safe_no_chest"
+    },
+    "info": {
+      "chestLost": "caption.search.chest_lost",
+      "calling": "caption.search.oddi_calling"
+    }
+  },
+  "bran": {
+    "beat": "BEAT_1_SEARCH_BRAN",
+    "zone": "ZONE_SK_CAIRN",
+    "person": "C_BRAN",
+    "at": {
+      "x": 41.6,
+      "y": 36.2,
+      "facing": "w"
+    },
+    "body": {
+      "id": "C_THORKEL",
+      "x": 38.6,
+      "y": 35.3,
+      "facing": "e"
+    },
+    "encounter": "SCN_SK_WRECKERS",
+    "over": {
+      "x": 43.6,
+      "y": 36.2
+    },
+    "away": [
+      [46.5, 30],
+      [40, 21],
+      [18, 21],
+      [0.4, 23]
+    ],
+    "leave": [
+      [56, 40],
+      [95.6, 41]
+    ],
+    "bier": {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 41.6,
+      "y": 27.4,
+      "facing": "e"
+    },
+    "lines": {
+      "joined": "c_bran.search.joined",
+      "sneakAway": "c_bran.search.sneak_away",
+      "laid": "c_bran.search.laid"
+    }
+  },
+  "runa": {
+    "beat": "BEAT_1_SEARCH_RUNA",
+    "zone": "ZONE_SK_HAGSEAT",
+    "person": "C_RUNA",
+    "at": {
+      "x": 46.1,
+      "y": 21.1,
+      "facing": "w"
+    },
+    "wound": "ankle",
+    "tools": {
+      "id": "ITEM_RUNA_TOOLS",
+      "x": 47.6,
+      "y": 21.7,
+      "facing": "w"
+    },
+    "stone": {
+      "x": 44.5,
+      "y": 19.95
+    },
+    "neck": {
+      "x0": 54,
+      "y0": 17,
+      "x1": 65,
+      "y1": 24
+    },
+    "safe": {
+      "x0": 66,
+      "y0": 0,
+      "x1": 95,
+      "y1": 55
+    },
+    "checkpoint": "search_runa",
+    "lines": {
+      "toolsSafe": "c_runa.search.tools_safe",
+      "noNeck": "c_runa.search.no_neck",
+      "offered": "c_runa.search.offered",
+      "home": "c_runa.search.home"
+    },
+    "info": {
+      "gale": "caption.search.neck_gale",
+      "dried": "caption.search.stone_dried"
+    }
+  },
+  "talks": [
+    {
+      "id": "bran.guard",
+      "with": "C_BRAN",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "c_bran.search.guard",
+      "choices": [
+        {
+          "key": "p_steerer.search.bran.sneak",
+          "when": "UNSEEN",
+          "reply": ["c_bran.search.sneak"],
+          "do": "SNEAK"
+        },
+        {
+          "key": "p_steerer.search.bran.fight",
+          "reply": ["c_bran.search.fight"],
+          "do": "FIGHT"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "ketill.parley",
+      "with": "E_WRECKER_KETILL",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "e_wrecker_ketill.search.parley",
+      "choices": [
+        {
+          "key": "p_steerer.search.ketill.silver",
+          "when": "CHEST_SAVED",
+          "reply": ["e_wrecker_ketill.search.silver"],
+          "do": "BARGAIN"
+        },
+        {
+          "key": "p_steerer.search.ketill.threat",
+          "reply": ["e_wrecker_ketill.search.threat"],
+          "do": "FIGHT"
+        },
+        {
+          "key": "p_steerer.search.ketill.leave",
+          "reply": ["e_wrecker_ketill.search.go"],
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "runa.found",
+      "with": "C_RUNA",
+      "reachTiles": 1.5,
+      "promptKey": "ui.prompt.talk",
+      "open": "c_runa.search.found",
+      "choices": [
+        {
+          "key": "p_steerer.search.runa.light",
+          "reply": ["c_runa.search.light"],
+          "once": true
+        },
+        {
+          "key": "p_steerer.search.runa.rule",
+          "reply": ["c_runa.search.rule"],
+          "once": true
+        },
+        {
+          "key": "p_steerer.search.runa.up",
+          "reply": ["c_runa.search.chest_first"],
+          "once": true
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "stone.offer",
+      "with": "OMEN_HAGSEAT_STONE",
+      "reachTiles": 1.5,
+      "promptKey": "ui.prompt.offering",
+      "open": "caption.search.stone_weeps",
+      "choices": [
+        {
+          "key": "p_steerer.search.stone.confess",
+          "do": "OFFER_CONFESSION"
+        },
+        {
+          "key": "p_steerer.search.stone.seax",
+          "when": "HAS_SEAX",
+          "do": "OFFER_SEAX"
+        },
+        {
+          "key": "p_steerer.search.stone.bow",
+          "when": "HAS_BOW",
+          "do": "OFFER_BOW"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    }
+  ],
+  "omens": [
+    {
+      "id": "OMEN_HAGSEAT_STONE",
+      "power": "POWER_CAILLEACH",
+      "zone": "ZONE_SK_HAGSEAT",
+      "about": "The first supernatural sign (Book 4 section 07: the Cailleach; the fairness contract's four parts, each declared here and tested).",
+      "sign": {
+        "what": "The Hag's Seat stone runs with water when nothing else on the headland is wet; a pale light hangs by it; hail rattles on the stone out of a dry sky, and the gale on the neck blows harder than the wind anywhere else",
+        "seen": "On entering the headland, from the path along the neck",
+        "tell": "SFX_TELL_CAILLEACH",
+        "caption": "caption.tell.cailleach"
+      },
+      "rule": {
+        "what": "While her stone weeps, the Cailleach keeps the neck: nothing is carried across it and the hurt will not cross it. She respects endurance and plain speaking, and helps those who give her something that cost them",
+        "told": "c_runa.search.rule"
+      },
+      "response": [
+        {
+          "do": "OFFER",
+          "what": "Leave an offering at the stone: an honest confession, or a hard-won tool (the seax, Thorkel's bow). The stone dries, the gale falls and the neck opens"
+        },
+        {
+          "do": "CLIFF_PATH",
+          "what": "Withdraw from her terms: carry the chest and walk Runa round by the slower cliff path, sheltered from the gale"
+        }
+      ],
+      "consequence": {
+        "what": "The Cailleach's state is saved (powers.POWER_CAILLEACH: whether her stone was answered, with what, on which day) and the next morning's report says so; Runa remembers which it was",
+        "fact": "search.runa",
+        "power": "POWER_CAILLEACH",
+        "report": "report.search.cailleach"
+      }
+    }
+  ]
+}

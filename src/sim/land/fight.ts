@@ -48,7 +48,7 @@ import { orderShot } from './archer.ts';
 import { STEERER } from './missiles.ts';
 import { facingOf, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext, OnFootActor, OnFootState } from './onFoot.ts';
-import { terrainAt, tileOf } from './zoneMap.ts';
+import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
 import type { WorldState } from '../world.ts';
 
@@ -1223,7 +1223,7 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const solid = (x: number, y: number): boolean => {
     const t = tileOf(map, x, y);
     const ter = terrainAt(map, t.tx, t.ty);
-    return ter === 'rock';
+    return ter === 'rock' || solidAt(map, t.tx, t.ty);
   };
   let seen: [Id, { x: number; y: number }] | null = null;
   let best = Infinity;

@@ -86,7 +86,60 @@ export interface ZonePlan {
   readonly paths?: readonly (readonly (readonly [number, number])[])[];
   /** Edges where the steerer walks on into a neighbouring zone (Book 2 section 10, FootLink). */
   readonly links?: readonly ZoneLink[];
+  /**
+   * Stage 10: how this zone reads Book 9's block characters where they differ from the default
+   * (the Hag's Seat headland's cliffs, `#`, are rock).
+   */
+  readonly codes?: Readonly<Record<string, TileCode>>;
+  /**
+   * Stage 10: authored ground drawn over the expanded blocks, in order: an ellipse or a polyline
+   * of a width, of one terrain, its edge roughened by noise (a geo of sea, a rock rim, the Kelda's
+   * pool and its outflow, a shingle beach under the cliffs).
+   */
+  readonly carve?: readonly Carve[];
+  /**
+   * Stage 10: built things on the turf that block movement and sight (Book 9 section 01), the
+   * ground under them drawn as it is: a ring of drystone wall with its gaps, an ellipse (the
+   * cairn's mound), single tiles (a standing stone).
+   */
+  readonly solid?: readonly SolidShape[];
+  /**
+   * Stage 10: grass grown on a built thing, sorted with it (the turf on the cairn's mound): an
+   * ellipse of plants at the given share, each sorted at `sortY` (tiles).
+   */
+  readonly raised?: readonly {
+    readonly x: number;
+    readonly y: number;
+    readonly rx: number;
+    readonly ry: number;
+    readonly share: number;
+    readonly sortY: number;
+  }[];
+  /** Stage 10: the place's wind against the strand's (the Hag's Seat is the windiest place). */
+  readonly wind?: number;
 }
+
+export type Carve =
+  | {
+      readonly code: TileCode;
+      readonly ellipse: { readonly x: number; readonly y: number; readonly rx: number; readonly ry: number };
+      readonly rough?: number;
+    }
+  | {
+      readonly code: TileCode;
+      readonly line: readonly (readonly [number, number])[];
+      readonly width: number;
+      readonly rough?: number;
+    };
+
+export type SolidShape =
+  | {
+      /** A drystone ring: the tiles of a rectangle's edge, less its gaps. */
+      readonly ring: { readonly x0: number; readonly y0: number; readonly x1: number; readonly y1: number };
+      readonly gaps: readonly (readonly [number, number])[];
+    }
+  | { readonly ellipse: { readonly x: number; readonly y: number; readonly rx: number; readonly ry: number } }
+  | { readonly tiles: readonly (readonly [number, number])[] };
 
 /** A zone edge that leads on to the zone beyond it (the whole edge; positions by island tiles). */
 export interface ZoneLink {
@@ -105,8 +158,10 @@ export interface ZoneLife {
 
 /** Decoration placements: [frame index into `decalFrames`, x, y] in pixels. */
 export type DecalPlacement = readonly [number, number, number];
-/** Plant placements: [kind index into PLANT_KINDS, x, y, variant] in pixels. */
-export type PlantPlacement = readonly [number, number, number, number];
+/** Plant placements: [kind index into PLANT_KINDS, x, y, variant] in pixels, and a sort y. */
+export type PlantPlacement =
+  | readonly [number, number, number, number]
+  | readonly [number, number, number, number, number];
 export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
 
 export interface ZoneProp {
@@ -135,6 +190,8 @@ export interface ZoneMap {
   readonly decalFrames: readonly string[];
   readonly decals: readonly DecalPlacement[];
   readonly plants: readonly PlantPlacement[];
+  readonly solid?: readonly (readonly [number, number])[];
+  readonly wind?: number;
 }
 
 const BLOCK = 8;
@@ -160,7 +217,9 @@ export function parseBlockGrid(text: string): string[] {
     .map((line) => line.replace(/^\s*\d+ /, ''));
 }
 
-function blockToTile(ch: string): TileCode {
+function blockToTile(ch: string, codes?: Readonly<Record<string, TileCode>>): TileCode {
+  const own = codes?.[ch];
+  if (own !== undefined) return own;
   switch (ch) {
     case '~':
       return '~';
@@ -196,7 +255,7 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
       const wx = (noise(seed, x, y, 7) - 0.5) * 2 * plan.warpTiles;
       const wy = (noise(seed + 1, x, y, 7) - 0.5) * 2 * plan.warpTiles;
       const ch = block(Math.floor((x + 0.5 + wx) / BLOCK), Math.floor((y + 0.5 + wy) / BLOCK));
-      let code = blockToTile(ch);
+      let code = blockToTile(ch, plan.codes);
       // Skerries: rock only where a second noise rises, so they break up into stacks.
       if (code === 'r' && noise(seed + 2, x, y, 3) < 0.42) code = '~';
       // A stream block is grass with a channel through it.
@@ -265,6 +324,21 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
       set(Math.floor(broch.x + dx), Math.floor(broch.y + dy), ':');
   }
 
+  // Stage 10: authored ground (geos, rims, the spring's pool and outflow, beaches under cliffs).
+  for (const c of plan.carve ?? []) {
+    const rough = c.rough ?? 0.4;
+    const hit = (tx: number, ty: number): boolean => {
+      const n = (noise(seed + 11, tx, ty, 2) - 0.5) * rough;
+      if ('ellipse' in c) {
+        const e = c.ellipse;
+        return Math.hypot((tx + 0.5 - e.x) / e.rx, (ty + 0.5 - e.y) / e.ry) + n < 1;
+      }
+      return distToLine(c.line, tx + 0.5, ty + 0.5) + n * 2 < c.width / 2;
+    };
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++) if (hit(tx, ty)) set(tx, ty, c.code);
+  }
+
   // The high-tide line: shingle near the flats or the sea is foreshore, under water at high tide.
   const reach = plan.tideLineTiles;
   const wet: [number, number][] = [];
@@ -299,6 +373,8 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
   }
 
   const rows = tiles.map((r) => r.join(''));
+  const solid = solidTiles(plan, width, height);
+  const solidSet = new Set(solid.map(([x, y]) => `${x},${y}`));
   const furnished = furnish(
     rows,
     width,
@@ -307,7 +383,23 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     plan.cuts,
     plan.paths ?? [],
     plan.sward ?? 0.42,
+    solidSet,
   );
+  // Grass grown on built things, sorted with them (the turf on the cairn's mound).
+  const raised: PlantPlacement[] = [];
+  const pr = (k: number, x: number, y: number): number =>
+    (cyrb53(`r${k}:${x}:${y}`, cyrb53(plan.seed)) % 100003) / 100003;
+  for (const r of plan.raised ?? []) {
+    for (let py = Math.floor((r.y - r.ry) * 24); py <= (r.y + r.ry) * 24; py += 4)
+      for (let px = Math.floor((r.x - r.rx) * 24); px <= (r.x + r.rx) * 24; px += 4) {
+        const x = px + Math.floor(pr(1, px, py) * 4);
+        const y = py + Math.floor(pr(2, px, py) * 4);
+        if (Math.hypot((x / 24 - r.x) / r.rx, (y / 24 - r.y) / r.ry) > 1) continue;
+        if (pr(3, px, py) >= r.share) continue;
+        const kind = pr(4, px, py) < 0.12 ? 3 : pr(4, px, py) < 0.3 ? 1 : 0;
+        raised.push([kind, x, y, Math.floor(pr(5, px, py) * 4), Math.round(r.sortY * 24)]);
+      }
+  }
   return {
     zone: plan.zone,
     about: plan.about,
@@ -323,8 +415,52 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     ...(plan.broch === undefined ? {} : { broch: plan.broch }),
     decalFrames: DECAL_FRAMES,
     decals: furnished.decals,
-    plants: furnished.plants,
+    plants: [...furnished.plants, ...raised],
+    ...(solid.length === 0 ? {} : { solid }),
+    ...(plan.wind === undefined ? {} : { wind: plan.wind }),
   };
+}
+
+/** Distance from a point to a polyline, in tiles. */
+function distToLine(line: readonly (readonly [number, number])[], x: number, y: number): number {
+  let best = Infinity;
+  for (let i = 0; i + 1 < line.length; i++) {
+    const [ax = 0, ay = 0] = line[i] ?? [];
+    const [bx = 0, by = 0] = line[i + 1] ?? [];
+    const dx = bx - ax;
+    const dy = by - ay;
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy || 1)));
+    best = Math.min(best, Math.hypot(x - ax - dx * t, y - ay - dy * t));
+  }
+  return best;
+}
+
+/** The tiles a plan's built things fill, sorted. */
+function solidTiles(plan: ZonePlan, width: number, height: number): [number, number][] {
+  const out = new Set<string>();
+  for (const s of plan.solid ?? []) {
+    if ('ring' in s) {
+      const { x0, y0, x1, y1 } = s.ring;
+      for (let x = x0; x <= x1; x++) {
+        out.add(`${x},${y0}`);
+        out.add(`${x},${y1}`);
+      }
+      for (let y = y0; y <= y1; y++) {
+        out.add(`${x0},${y}`);
+        out.add(`${x1},${y}`);
+      }
+      for (const [gx, gy] of s.gaps) out.delete(`${gx},${gy}`);
+    } else if ('ellipse' in s) {
+      const e = s.ellipse;
+      for (let ty = 0; ty < height; ty++)
+        for (let tx = 0; tx < width; tx++)
+          if (Math.hypot((tx + 0.5 - e.x) / e.rx, (ty + 0.5 - e.y) / e.ry) < 1) out.add(`${tx},${ty}`);
+    } else for (const [x, y] of s.tiles) out.add(`${x},${y}`);
+  }
+  return [...out]
+    .map((k) => k.split(',').map(Number) as [number, number])
+    .filter(([x, y]) => x >= 0 && y >= 0 && x < width && y < height)
+    .sort((a, b) => a[1] - b[1] || a[0] - b[0]);
 }
 
 /** The decoration frames placed by `furnish` (sheet decal_strand). */
@@ -350,6 +486,7 @@ function furnish(
   cuts: readonly (readonly [number, number])[],
   polylines: readonly (readonly (readonly [number, number])[])[] = [],
   sward = 0.42,
+  solid: ReadonlySet<string> = new Set(),
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -440,6 +577,8 @@ function furnish(
       const py = y + Math.floor(r(21, x, y) * 5);
       const c = code(px, py);
       const v = Math.floor(r(22, x, y) * 4);
+      // Nothing grows through a wall or the mound's stones (they carry their own turf).
+      if (solid.has(`${Math.floor(px / T)},${Math.floor(py / T)}`)) continue;
       if (c === ',' && onPath(px, py, 7)) {
         // Trodden: the sward thins to the odd tuft at the path's edge.
         if (!onPath(px, py, 5) && r(29, x, y) < 0.3) plants.push([0, px, py, v]);

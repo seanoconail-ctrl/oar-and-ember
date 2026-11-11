@@ -8,7 +8,7 @@ import { tideAt } from '../../sim/calendar/calendar.ts';
 import type { TimeBalance } from '../../content/balance.ts';
 import type { LandContext } from '../../sim/land/onFoot.ts';
 import { bandAt, isDeep, stillWaterLevel } from '../../sim/land/water.ts';
-import { aboveTideLine, blocksMovement, terrainAt, tileOf } from '../../sim/land/zoneMap.ts';
+import { aboveTideLine, terrainAt, tileBlocks, tileOf } from '../../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../../sim/land/zoneMap.ts';
 import type { Simulation } from '../../sim/simulation.ts';
 
@@ -44,7 +44,7 @@ export function findPath(
     ] as const) {
       const n = { tx: t.tx + dx, ty: t.ty + dy };
       if (n.tx < 0 || n.ty < 0 || n.tx >= map.width || n.ty >= map.height) continue;
-      if (came.has(key(n)) || blocksMovement(terrainAt(map, n.tx, n.ty), tideOpen)) continue;
+      if (came.has(key(n)) || tileBlocks(map, n.tx, n.ty, tideOpen)) continue;
       if (!passable(n)) continue;
       came.set(key(n), t);
       queue.push(n);

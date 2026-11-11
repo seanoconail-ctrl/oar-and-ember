@@ -32,9 +32,33 @@ export function edgeAt(
   return null;
 }
 
-/** The zone an edge leads to, if any. */
-export function linkOf(map: ZoneMap, edge: Edge): Id | null {
-  return map.links?.find((l) => l.edge === edge)?.to ?? null;
+/**
+ * The zone an edge leads to at a point, if any. An edge may lead to more than one zone (Stage 10:
+ * the machair's west edge to the Hag's Seat, its east edge to the cairn); the point picks the one
+ * that lies beyond it on the island. Without `maps` the first link on the edge is taken.
+ */
+export function linkOf(
+  map: ZoneMap,
+  edge: Edge,
+  at?: { readonly x: number; readonly y: number },
+  maps?: ReadonlyMap<Id, ZoneMap>,
+): Id | null {
+  const links = (map.links ?? []).filter((l) => l.edge === edge);
+  if (at === undefined || maps === undefined || links.length < 2) return links[0]?.to ?? null;
+  for (const l of links) {
+    const to = maps.get(l.to);
+    if (to !== undefined && beyond(map, to, at)) return l.to;
+  }
+  return null;
+}
+
+/** Whether a point at an edge of `from` lies along the side of `to` that meets it. */
+export function beyond(from: ZoneMap, to: ZoneMap, at: { readonly x: number; readonly y: number }): boolean {
+  const p = translate(from, to, at.x, at.y);
+  const W = to.width * to.tile;
+  const H = to.height * to.tile;
+  const m = to.tile;
+  return p.x > -m && p.y > -m && p.x < W + m && p.y < H + m;
 }
 
 /** A point in one zone's pixels as the same island point in another's. */
@@ -73,6 +97,8 @@ export function entryPoint(
   ctx: Pick<LandContext, 'rules'>,
   tidalGroundOpen: boolean,
 ): { x: number; y: number } | null {
+  // Only where the next zone runs on beyond the edge (zones of different extents meet).
+  if (!beyond(from, to, { x, y })) return null;
   const p = inside(to, translate(from, to, x, y), ctx.rules.footprint);
   return footprintClear(to, ctx.rules, p.x, p.y, tidalGroundOpen) ? p : null;
 }

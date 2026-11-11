@@ -20,7 +20,7 @@ import type { Id } from '../../core/ids.ts';
 import { heightAt } from '../../content/terrain/elevation.ts';
 import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
-import { aboveTideLine, blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
+import { aboveTideLine, terrainAt, tileBlocks, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
 import { charging, feetPlanted as fightPlanted, facingLocked } from '../combat/fighter.ts';
 import type { Fighter } from '../combat/fighter.ts';
@@ -385,7 +385,7 @@ export function footprintClear(
     [right, bottom],
   ] as const) {
     const { tx, ty } = tileOf(map, cx, cy);
-    if (blocksMovement(terrainAt(map, tx, ty), tidalGroundOpen)) return false;
+    if (tileBlocks(map, tx, ty, tidalGroundOpen)) return false;
   }
   return true;
 }

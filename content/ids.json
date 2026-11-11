@@ -3356,6 +3356,86 @@
       "section": "04",
       "origin": "assigned",
       "note": "Stage 9: the steerer's death; the music stops under it."
+    },
+    {
+      "id": "BEAT_1_SEARCH_ODDI",
+      "ref": "Oddi injured near the wreck",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 10: the first of the three searches (BEAT_1_SEARCHES's parts); its outcome is the fact search.oddi."
+    },
+    {
+      "id": "BEAT_1_SEARCH_BRAN",
+      "ref": "Bran in a sheepfold by the Hollow Cairn",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 10: the second search; its outcome is the fact search.bran."
+    },
+    {
+      "id": "BEAT_1_SEARCH_RUNA",
+      "ref": "Runa at the Hag's Seat",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 10: the third search; its outcome is the fact search.runa."
+    },
+    {
+      "id": "C_THORKEL",
+      "ref": "Thorkel Ketilsson",
+      "book": 5,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 10: the drowned chief, as his body (Bran guards it in the sheepfold). Never a resident; no people record."
+    },
+    {
+      "id": "ITEM_THORKEL_CHEST",
+      "ref": "recover a chest now",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 10: Thorkel's sea chest in the wash by the wreck (his silver; Book 6 section 03's chart fragment is Oddi's)."
+    },
+    {
+      "id": "ITEM_RUNA_TOOLS",
+      "ref": "Insists on carrying her tool chest before anything else",
+      "book": 5,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 10: Runa's tool chest at the Hag's Seat."
+    },
+    {
+      "id": "OMEN_HAGSEAT_STONE",
+      "ref": "the Hag's Seat stone wet when nothing else is",
+      "book": 4,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 10: the first supernatural sign, the Cailleach's (sign, rule, response and consequence in content/searches.json)."
+    },
+    {
+      "id": "AMB_KELDA_SPRING",
+      "ref": "The spring bubbling",
+      "book": 11,
+      "section": "12",
+      "origin": "assigned",
+      "note": "Stage 10: the Kelda Spring's ambience, by the pool in ZONE_SK_MACHAIR (decision S10-2)."
+    },
+    {
+      "id": "AMB_HAGSEAT_GALE",
+      "ref": "the windiest place on the island",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 10: the Hag's Seat headland's ambience."
+    },
+    {
+      "id": "AMB_CAIRN_FOLD",
+      "ref": "Mound and sheepfold",
+      "book": 4,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 10: the cairn and sheepfold's ambience (sheep, larks, the wind in the grass)."
     }
   ],
   "families": [

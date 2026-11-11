@@ -1348,7 +1348,7 @@ export function createSimulation(
     // Walking off an edge that leads on: into the next zone (Book 2 section 10, FootLink).
     if (p.work == null && p.sleep == null) {
       const edge = edgeAt(map, p.x, p.y, land.rules.footprint, p.intent);
-      const to = edge === null ? null : linkOf(map, edge);
+      const to = edge === null ? null : linkOf(map, edge, p, land.maps);
       const toMap = to === null ? undefined : land.maps.get(to);
       if (to !== null && toMap !== undefined) {
         const at = entryPoint(map, toMap, p.x, p.y, land, tide.tidalGroundOpen);

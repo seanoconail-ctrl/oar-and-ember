@@ -2923,5 +2923,191 @@
   },
   "ui.sound.fight.sounds": {
     "text": "Blows, falls and the end (gore setting above)"
+  },
+  "c_hild.search.tell": {
+    "text": "Three of ours are still out there. Oddi went into the water by the wreck. Bran had Father, up by the old mound, and Bran won't leave Father. And Runa went after a light last night, west along the cliffs.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.search.call": {
+    "text": "Steerer! Here, by the wreck! Thorkel's chest is in the wash. The sea's taking it. Get it, quick!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.search.lifted_first": {
+    "text": "No, the chest! There it goes. Thorkel's silver, and we gave it to the sea.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.search.chest_saved": {
+    "text": "That's it, up the beach with it. I'll keep. I'm not going anywhere.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.search.safe_chest": {
+    "text": "The chest and me both. That's a good day's salvage.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.search.safe_no_chest": {
+    "text": "Thanks for the lift. I'd still rather we had the chest as well.",
+    "tags": ["VOICED"]
+  },
+  "caption.search.chest_lost": {
+    "text": "The sea takes Thorkel's chest",
+    "tags": ["INFO"]
+  },
+  "caption.search.oddi_calling": {
+    "text": "Oddi, calling from the wreck",
+    "tags": ["INFO"]
+  },
+  "c_bran.search.guard": {
+    "text": "Steerer. God be thanked. Three of them, after the chief's ring and sword. They'll not have Thorkel. Not while I stand.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.search.bran.sneak": {
+    "text": "Come away quiet. Over the back wall, the two of us with him."
+  },
+  "c_bran.search.sneak": {
+    "text": "Quiet, then. Take his feet.",
+    "tags": ["VOICED"]
+  },
+  "p_steerer.search.bran.fight": {
+    "text": "Stand with me. We'll see them off."
+  },
+  "c_bran.search.fight": {
+    "text": "Gladly. Lord forgive me, gladly.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.search.joined": {
+    "text": "He's done. Help me take him home. He'll want a fire near him tonight.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.search.sneak_away": {
+    "text": "Over. Gently. Now walk, don't run.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.search.laid": {
+    "text": "There. Rest, chief. We'll see you sent off right.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.search.parley": {
+    "text": "That's near enough, empty hands and all. The old man's ring and sword, and we're gone.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.search.ketill.silver": {
+    "text": "Thorkel's silver for his body, and you go. Take it, or fight for it."
+  },
+  "e_wrecker_ketill.search.silver": {
+    "text": "Silver. Now that's talking. Lads, we're done here.",
+    "tags": ["VOICED"]
+  },
+  "p_steerer.search.ketill.threat": {
+    "text": "Leave him, or die on this grass."
+  },
+  "e_wrecker_ketill.search.threat": {
+    "text": "Big words for empty hands. Have at them!",
+    "tags": ["VOICED"]
+  },
+  "p_steerer.search.ketill.leave": {
+    "text": "I'm going."
+  },
+  "e_wrecker_ketill.search.go": {
+    "text": "Go, then. Come back when you've silver.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.search.found": {
+    "text": "Steerer! Stop there. Look at the stone. It's weeping, and nothing else up here is wet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.search.runa.light": {
+    "text": "What brought you out here?"
+  },
+  "c_runa.search.light": {
+    "text": "A light, like a lamp in fog, along the cliffs. I went after it. Fool. It led me here, and the ground took my ankle.",
+    "tags": ["VOICED"]
+  },
+  "p_steerer.search.runa.rule": {
+    "text": "What does the stone want?"
+  },
+  "c_runa.search.rule": {
+    "text": "The Cailleach rests here. While her stone weeps, nobody carries anything over the neck, and I'm not limping over it. Give her something that cost you. Or go round by the cliff path.",
+    "tags": ["VOICED"]
+  },
+  "p_steerer.search.runa.up": {
+    "text": "Let me get you up."
+  },
+  "c_runa.search.chest_first": {
+    "text": "My chest. Then me. Then argue. Get it past the neck, out of the old woman's reach.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.search.tools_safe": {
+    "text": "That's my chest safe. Now me. Slowly.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.search.no_neck": {
+    "text": "Not that way. Not while she weeps. The cliff path.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.search.offered": {
+    "text": "She's taken it. Feel that? The wind's dropped. Now my chest.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.search.home": {
+    "text": "I'll get myself to your fire. Go on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.search.stone_weeps": {
+    "text": "The stone weeps; the turf is dry",
+    "tags": ["INFO"]
+  },
+  "p_steerer.search.stone.confess": {
+    "text": "Say it to the stone: \"I had the steering oar when she struck.\""
+  },
+  "p_steerer.search.stone.seax": {
+    "text": "Lay the seax on the stone."
+  },
+  "p_steerer.search.stone.bow": {
+    "text": "Lay Thorkel's bow on the stone."
+  },
+  "caption.search.neck_gale": {
+    "text": "The neck's gale drives you back",
+    "tags": ["INFO"]
+  },
+  "caption.search.stone_dried": {
+    "text": "The stone dries; the wind drops",
+    "tags": ["INFO"]
+  },
+  "caption.tell.cailleach": {
+    "text": "Hail rattling on the standing stone",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.offering": {
+    "text": "{key}  Leave an offering at the stone"
+  },
+  "ui.prompt.offering_click": {
+    "text": "Right-click  Leave an offering at the stone"
+  },
+  "report.search.cailleach": {
+    "text": "Runa says the Hag's stone was dry this morning. The Cailleach took what you gave her."
+  },
+  "report.search.cailleach_unanswered": {
+    "text": "Runa says the Hag's stone was still weeping when you went round by the cliff path."
+  },
+  "person.short.item_thorkel_chest": {
+    "text": "Thorkel's chest"
+  },
+  "person.short.item_runa_tools": {
+    "text": "Runa's tool chest"
+  },
+  "person.short.c_thorkel": {
+    "text": "Thorkel"
+  },
+  "caption.amb.kelda": {
+    "text": "The spring bubbling into its stream",
+    "tags": ["INFO"]
+  },
+  "caption.amb.hagseat": {
+    "text": "Wind roaring over the headland",
+    "tags": ["INFO"]
+  },
+  "caption.amb.cairn": {
+    "text": "Sheep and larks about the cairn",
+    "tags": ["INFO"]
   }
 }

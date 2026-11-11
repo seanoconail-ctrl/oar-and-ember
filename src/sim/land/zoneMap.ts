@@ -8,6 +8,24 @@ import type { Terrain, TerrainCode, ZoneMap } from '../../content/zoneMap.ts';
 export { FACINGS, TERRAIN, checkZoneMap, parseZoneMap } from '../../content/zoneMap.ts';
 export type { Facing, Terrain, TerrainCode, ZoneMap, ZoneProp } from '../../content/zoneMap.ts';
 
+const solidCache = new WeakMap<ZoneMap, Set<number>>();
+
+/** Whether a built thing on the turf (a wall, the mound, a standing stone) fills tile (tx, ty). */
+export function solidAt(map: ZoneMap, tx: number, ty: number): boolean {
+  if (map.solid === undefined) return false;
+  let set = solidCache.get(map);
+  if (set === undefined) {
+    set = new Set(map.solid.map(([x, y]) => y * map.width + x));
+    solidCache.set(map, set);
+  }
+  return set.has(ty * map.width + tx);
+}
+
+/** Whether tile (tx, ty) blocks movement under the tide: its terrain, or a built thing on it. */
+export function tileBlocks(map: ZoneMap, tx: number, ty: number, tidalGroundOpen: boolean): boolean {
+  return blocksMovement(terrainAt(map, tx, ty), tidalGroundOpen) || solidAt(map, tx, ty);
+}
+
 /** The terrain of tile (tx, ty); outside the zone is sea. */
 export function terrainAt(map: ZoneMap, tx: number, ty: number): Terrain {
   const code = map.rows[ty]?.[tx];
@@ -53,7 +71,7 @@ export function reachable(
     const [x, y] = next;
     const key = `${x},${y}`;
     if (seen.has(key) || x < 0 || y < 0 || x >= map.width || y >= map.height) continue;
-    if (blocksMovement(terrainAt(map, x, y), tidalGroundOpen)) continue;
+    if (tileBlocks(map, x, y, tidalGroundOpen)) continue;
     seen.add(key);
     queue.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
   }

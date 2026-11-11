@@ -15,7 +15,7 @@ export function generatedSheets(): Map<string, string> {
     out.set(`${SHEETS_DIR}/${name}.txt`, generateSheet(readRepo(file), file, palette));
   }
   // Skarvholm's ground follows its zone maps (generate the zones first: npm run zones).
-  const zones = ['zone_sk_strand', 'zone_sk_machair'].map(
+  const zones = ['zone_sk_strand', 'zone_sk_machair', 'zone_sk_hagseat', 'zone_sk_cairn'].map(
     (z) => (JSON.parse(readRepo(`content/zones/${z}.json`)) as { rows: string[] }).rows,
   );
   out.set(`${SHEETS_DIR}/tile_strand.txt`, strandTiles(palette, zones));

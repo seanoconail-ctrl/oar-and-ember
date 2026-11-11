@@ -33,8 +33,11 @@ export const CONTENT_FILES = {
   talk: 'content/talk.json',
   scenes: 'content/scenes.json',
   combat: 'content/combat.json',
+  searches: 'content/searches.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
+  zoneHagseat: 'content/zones/zone_sk_hagseat.json',
+  zoneCairn: 'content/zones/zone_sk_cairn.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -730,6 +733,108 @@ const sceneCheck = object({
   choices: arrayOf(sceneChoiceCheck),
 });
 
+/** Stage 10: Chapter 1's three searches and the Hag's Seat's sign (content/searches.json). */
+const FACINGS4 = ['s', 'n', 'e', 'w'] as const;
+const atFacing = object({ x: fraction(0, 512), y: fraction(0, 512), facing: oneOf(FACINGS4) });
+const atId = object({
+  id: text,
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  facing: oneOf(FACINGS4),
+});
+const tileRect = object({ x0: int(0, 512), y0: int(0, 512), x1: int(0, 512), y1: int(0, 512) });
+const point = arrayOf(fraction(0, 512));
+export const SEARCH_ACTIONS = [
+  'SNEAK',
+  'FIGHT',
+  'BARGAIN',
+  'LEAVE',
+  'OFFER_CONFESSION',
+  'OFFER_SEAX',
+  'OFFER_BOW',
+] as const;
+export const SEARCH_WHEN = ['UNSEEN', 'CHEST_SAVED', 'HAS_SEAX', 'HAS_BOW'] as const;
+const searchTalkCheck = object({
+  id: text,
+  with: text,
+  reachTiles: fraction(0.5, 4),
+  promptKey: ref('string'),
+  open: ref('string'),
+  choices: arrayOf(
+    object(
+      {
+        key: ref('string'),
+        when: oneOf(SEARCH_WHEN),
+        reply: arrayOf(ref('string')),
+        do: oneOf(SEARCH_ACTIONS),
+        once: bool,
+      },
+      ['when', 'reply', 'do', 'once'],
+    ),
+  ),
+});
+const omenCheck = object({
+  id: id(['OMEN']),
+  power: id(['POWER']),
+  zone: ref('zone'),
+  about: text,
+  sign: object({ what: text, seen: text, tell: id(['SFX']), caption: ref('string') }),
+  rule: object({ what: text, told: ref('string') }),
+  response: arrayOf(object({ do: text, what: text })),
+  consequence: object({ what: text, fact: text, power: id(['POWER']), report: ref('string') }),
+});
+const searchesCheck = object({
+  about: text,
+  opensAfter: text,
+  beat: id(['BEAT']),
+  tell: ref('string'),
+  oddi: object({
+    beat: id(['BEAT']),
+    zone: ref('zone'),
+    person: ref('person'),
+    at: atFacing,
+    wound: text,
+    chest: atId,
+    checkpoint: text,
+    lines: recordOf(text, ref('string')),
+    info: recordOf(text, ref('string')),
+  }),
+  bran: object({
+    beat: id(['BEAT']),
+    zone: ref('zone'),
+    person: ref('person'),
+    at: atFacing,
+    body: atId,
+    encounter: id(['SCN']),
+    over: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+    away: arrayOf(point),
+    leave: arrayOf(point),
+    bier: object({
+      zone: ref('zone'),
+      x: fraction(0, 512),
+      y: fraction(0, 512),
+      facing: oneOf(FACINGS4),
+    }),
+    lines: recordOf(text, ref('string')),
+  }),
+  runa: object({
+    beat: id(['BEAT']),
+    zone: ref('zone'),
+    person: ref('person'),
+    at: atFacing,
+    wound: text,
+    tools: atId,
+    stone: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+    neck: tileRect,
+    safe: tileRect,
+    checkpoint: text,
+    lines: recordOf(text, ref('string')),
+    info: recordOf(text, ref('string')),
+  }),
+  talks: arrayOf(searchTalkCheck),
+  omens: arrayOf(omenCheck),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
 export type HouseholdDef = Out<typeof householdCheck>;
 export type TalkDef = Out<typeof talkCheck>;
@@ -746,6 +851,9 @@ export type LikingDef = Out<typeof likingCheck>;
 export type TendencyDef = Out<typeof tendencyCheck>;
 export type OnFootDef = Out<typeof onFootCheck>;
 export type CombatDef = Out<typeof combatCheck>;
+export type SearchesDef = Out<typeof searchesCheck>;
+export type SearchTalkDef = SearchesDef['talks'][number];
+export type OmenDef = SearchesDef['omens'][number];
 export type FighterDef = Out<typeof fighterCheck>;
 export type EncounterDef = Out<typeof encounterCheck>;
 export type OpeningDef = Out<typeof openingCheck>;
@@ -784,6 +892,8 @@ export interface Content {
   readonly scenes: readonly SceneDef[];
   /** Stage 9: weapons, fighters, encounters, safe places and barks. */
   readonly combat: CombatDef | null;
+  /** Stage 10: Chapter 1's three searches and the Hag's Seat's sign. */
+  readonly searches: SearchesDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -920,6 +1030,19 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const talk = talkCheck(files.talk, '', ctx(CONTENT_FILES.talk));
   const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
   const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
+  const searches = searchesCheck(files.searches, '', ctx(CONTENT_FILES.searches));
+  // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
+  searches?.omens.forEach((o, i) => {
+    for (const part of ['sign', 'rule', 'response', 'consequence'] as const) {
+      const v = o[part];
+      if (v === undefined || (Array.isArray(v) && v.length === 0))
+        issues.push({
+          file: CONTENT_FILES.searches,
+          path: `omens[${i}].${part}`,
+          reason: 'every dangerous supernatural mechanic declares sign, rule, response and consequence',
+        });
+    }
+  });
   // Stage 9: an encounter's member at work works a camp task (its loop is drawn).
   combat?.encounters.forEach((enc, i) => {
     enc.members.forEach((m, j) => {
@@ -936,6 +1059,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   for (const [file, json] of [
     [CONTENT_FILES.zoneStrand, files.zoneStrand],
     [CONTENT_FILES.zoneMachair, files.zoneMachair],
+    [CONTENT_FILES.zoneHagseat, files.zoneHagseat],
+    [CONTENT_FILES.zoneCairn, files.zoneCairn],
   ] as const) {
     const checked = checkZoneMap(json);
     for (const reason of checked.problems) issues.push({ file, path: '(map)', reason });
@@ -1141,6 +1266,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       talk,
       scenes,
       combat,
+      searches,
       zoneMaps,
     },
     issues,

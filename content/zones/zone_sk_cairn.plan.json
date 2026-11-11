@@ -1,0 +1,204 @@
+{
+  "zone": "ZONE_SK_CAIRN",
+  "about": "The Hollow Cairn's ground and the sheepfold below it (Book 4 section 02; Book 9 sections 03 and 05): blocks 24 to 35 by 18 to 23, east of the machair, expanded by src/tools/levels/zones.ts. The grassed mound stands at block (31, 20) with its sealed door on the east; the drystone sheepfold at block (28, 22), its gate on the west towards the steading and a gap tumbled in its east wall. Bran keeps Thorkel's body in the fold (Book 4 Chapter 1 beat 3; decisions S10-5 and S10-6). Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_cairn",
+  "terrainSeed": "zone_sk_strand",
+  "blocks": {
+    "x": 24,
+    "y": 18,
+    "w": 12,
+    "h": 6
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 3,
+  "sward": 0.62,
+  "solid": [
+    {
+      "ring": {
+        "x0": 32,
+        "y0": 32,
+        "x1": 42,
+        "y1": 39
+      },
+      "gaps": [
+        [32, 35],
+        [32, 36],
+        [42, 36]
+      ]
+    },
+    {
+      "ellipse": {
+        "x": 62.5,
+        "y": 19.5,
+        "rx": 6.4,
+        "ry": 3.6
+      }
+    }
+  ],
+  "raised": [
+    {
+      "x": 62.5,
+      "y": 16.6,
+      "rx": 6.6,
+      "ry": 4.4,
+      "share": 0.55,
+      "sortY": 23.0
+    }
+  ],
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 3,
+      "y": 36,
+      "facing": "e"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_cairn",
+      "frame": "mound/-/0",
+      "x": 62.5,
+      "y": 23.0
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 12,
+      "y": 12
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/1",
+      "x": 48,
+      "y": 8
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 80,
+      "y": 30
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 88,
+      "y": 10
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 20,
+      "y": 42
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/1",
+      "x": 24,
+      "y": 22
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/3",
+      "x": 52,
+      "y": 36
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/0",
+      "x": 74,
+      "y": 41
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/2",
+      "x": 70,
+      "y": 12
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/0",
+      "x": 44.2,
+      "y": 37.6
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/2",
+      "x": 43.4,
+      "y": 36.0
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/1",
+      "x": 30.2,
+      "y": 39.4
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/3",
+      "x": 56.4,
+      "y": 24.2
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [0.02, 36.2],
+      [10, 35.8],
+      [20, 36.2],
+      [29, 35.9],
+      [32.5, 35.8]
+    ],
+    [
+      [29, 35.9],
+      [36, 30],
+      [46, 26.6],
+      [56, 24.6]
+    ],
+    [
+      [42.5, 36.6],
+      [50, 37.4],
+      [62, 35],
+      [70.5, 22.4]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "w",
+      "to": "ZONE_SK_MACHAIR"
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 20,
+      "r": 6
+    },
+    {
+      "kind": "gull",
+      "x": 60,
+      "y": 34,
+      "r": 5
+    },
+    {
+      "kind": "sheep",
+      "x": 47,
+      "y": 30
+    },
+    {
+      "kind": "sheep",
+      "x": 52.5,
+      "y": 31.6
+    },
+    {
+      "kind": "sheep",
+      "x": 18,
+      "y": 28
+    },
+    {
+      "kind": "sheep",
+      "x": 76,
+      "y": 26
+    }
+  ]
+}
