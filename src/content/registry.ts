@@ -921,7 +921,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
   const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
   // Stage 9: an encounter's member at work works a camp task (its loop is drawn).
-  combat?.encounters.forEach((enc, i) =>
+  combat?.encounters.forEach((enc, i) => {
     enc.members.forEach((m, j) => {
       if (m.task !== undefined && camp?.tasks[m.task] === undefined)
         issues.push({
@@ -929,8 +929,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
           path: `encounters[${i}].members[${j}].task`,
           reason: `unknown camp task "${m.task}"`,
         });
-    }),
-  );
+    });
+  });
   const zoneMaps = new Map<Id, ZoneMap>();
   const strand = checkZoneMap(files.zoneStrand);
   for (const [file, json] of [

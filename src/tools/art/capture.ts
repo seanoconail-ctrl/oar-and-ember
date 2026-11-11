@@ -34,6 +34,7 @@ import { chromium } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { createServer } from 'vite';
 import { parseTimeBalance, parseWaterBalance } from '../../content/balance.ts';
+import { parseCombatBalance } from '../../content/combatBalance.ts';
 import { bakeElevation } from '../../content/terrain/elevation.ts';
 import { tideAt } from '../../sim/calendar/calendar.ts';
 import { bandAt, stillWaterLevel } from '../../sim/land/water.ts';
@@ -900,57 +901,96 @@ interface FightCaptureResult {
   readonly clipFrames: number;
 }
 
-/** The fighters as the page reports them (id:state:vitality:x:y). */
-async function foes(page: Page): Promise<{ id: string; state: string; x: number; y: number }[]> {
+/** A wrecker as the page reports it (id:state:vitality:x:y:ticks to its strike's active frames). */
+interface Foe {
+  readonly id: string;
+  readonly state: string;
+  readonly x: number;
+  readonly y: number;
+  readonly toActive: number;
+}
+
+/** The wreckers still in the fight. */
+async function foes(page: Page): Promise<Foe[]> {
   const raw = (await page.locator('.oe-overlay').getAttribute('data-fighters')) ?? '';
   return raw
     .split(',')
     .filter((f) => f !== '')
     .map((f) => {
-      const [id = '', state = '', , x = '0', y = '0'] = f.split(':');
-      return { id, state, x: Number(x), y: Number(y) };
+      const [id = '', state = '', , x = '0', y = '0', to = '-1'] = f.split(':');
+      return { id, state, x: Number(x), y: Number(y), toActive: Number(to) };
     })
     .filter(
       (f) =>
         f.id.startsWith('E_') &&
-        !['dead', 'downed', 'surrender', 'stagger'].includes(f.state) &&
-        f.state !== '',
+        f.state !== '' &&
+        !['dead', 'downed', 'surrendered'].includes(f.state),
     );
 }
 
+const COMBAT = parseCombatBalance(
+  JSON.parse(readFileSync(join(REPO_ROOT, 'content/balance.json'), 'utf8')) as unknown,
+);
+const FACING_KEY = { e: 'KeyD', w: 'KeyA', s: 'KeyS', n: 'KeyW' } as const;
+
 /**
- * One frame of the steerer's side of a fight, as a player would play it: the cursor on the nearest
- * standing foe; run at them when out of reach, else strike (a light chain, now and then a held
- * heavy). Returns the frames to step after.
+ * One frame of the steerer's side of a fight, played as a careful player would (as the defending
+ * player of tests/unit/combat.test.ts): turn to whoever winds up a strike and parry it just before
+ * it lands (Q), strike into a foe's stagger or recovery (a click on them), close on the nearest
+ * otherwise, and never swing into a guard. Keys and the button held last frame are let go first.
  */
-async function fightBot(page: Page, held: Set<string>, n: number): Promise<void> {
+async function fightBot(page: Page, held: Set<string>): Promise<void> {
+  for (const k of held) {
+    if (k === 'mouse') await page.mouse.up();
+    else await page.keyboard.up(k);
+  }
+  held.clear();
   const over = (await page.locator('.oe-overlay').getAttribute('data-game-over')) ?? '';
   if (over !== '') return;
   const at = await where(page);
-  const list = await foes(page);
-  const near = list.sort(
-    (a, b) => Math.hypot(a.x - at.x, a.y - at.y) - Math.hypot(b.x - at.x, b.y - at.y),
-  )[0];
-  if (near === undefined) {
-    for (const k of held) await page.keyboard.up(k);
-    held.clear();
-    return;
-  }
+  const dist = (f: Foe): number => Math.hypot(f.x - at.x, f.y - at.y);
+  const list = (await foes(page)).sort((a, b) => dist(a) - dist(b));
+  const near = list[0];
+  if (near === undefined) return;
   const cam = ((await page.locator('.oe-overlay').getAttribute('data-camera')) ?? '0,0')
     .split(',')
     .map(Number);
-  await page.mouse.move(near.x - (cam[0] ?? 0), near.y - 18 - (cam[1] ?? 0));
-  const d = Math.hypot(near.x - at.x, near.y - at.y);
-  if (d > 30) {
-    await steer(page, held, { x: near.x + (near.x > at.x ? -20 : 20), y: near.y });
+  const aimAt = async (f: Foe): Promise<void> => {
+    await page.mouse.move(f.x - (cam[0] ?? 0), f.y - 18 - (cam[1] ?? 0));
+  };
+  const facingTo = (f: Foe): keyof typeof FACING_KEY => {
+    const dx = f.x - at.x;
+    const dy = f.y - at.y;
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
+  };
+  const { startup, window } = COMBAT.parry;
+  const coming = list.find((f) => f.toActive >= 0 && dist(f) < 60);
+  if (coming !== undefined) {
+    await aimAt(coming);
+    if (coming.toActive > startup + window) {
+      // Turn to it: a tap of its direction.
+      const k = FACING_KEY[facingTo(coming)];
+      await page.keyboard.down(k);
+      held.add(k);
+    } else if (coming.toActive > startup) await page.keyboard.press('KeyQ');
     return;
   }
-  for (const k of held) await page.keyboard.up(k);
-  held.clear();
-  await page.mouse.down();
-  // Every fourth swing is held to a heavy (past both tells); the rest are light.
-  await step(page, n % 4 === 3 ? 8 : 1, n % 4 === 3 ? 100 : 40);
-  await page.mouse.up();
+  const punish = list.find(
+    (f) =>
+      dist(f) < 34 &&
+      (['stagger', 'parryRecovery', 'blockStun', 'guardBroken'].includes(f.state) ||
+        (/^(light|heavyRelease|riposte)/.test(f.state) && f.toActive < 0)),
+  );
+  if (punish !== undefined) {
+    await aimAt(punish);
+    await page.mouse.down();
+    held.add('mouse');
+    return;
+  }
+  await aimAt(near);
+  if (dist(near) > 30) {
+    await steer(page, held, { x: near.x + (near.x > at.x ? -20 : 20), y: near.y });
+  }
 }
 
 /**
@@ -979,9 +1019,16 @@ async function fightCapture(
           const held = new Set<string>();
           let n = 0;
           return async (page: Page) => {
-            await fightBot(page, held, n++);
-            if (n < 30) return false;
-            for (const k of held) await page.keyboard.up(k);
+            // Fine frames, as in the clip, so the parries land on time.
+            for (let k = 0; k < 10; k++) {
+              await fightBot(page, held);
+              await step(page, 1, 1000 / FPS);
+            }
+            if (n++ < 8) return false;
+            for (const k of held) {
+              if (k === 'mouse') await page.mouse.up();
+              else await page.keyboard.up(k);
+            }
             return true;
           };
         })(),
@@ -1000,14 +1047,15 @@ async function fightCapture(
     frames++;
   };
   const held = new Set<string>();
-  for (let n = 0; frames < FPS * 10; n++) {
-    await fightBot(page, held, n);
-    await step(page);
-    await save();
+  while (frames < FPS * 10) {
+    await fightBot(page, held);
     await step(page);
     await save();
   }
-  for (const k of held) await page.keyboard.up(k);
+  for (const k of held) {
+    if (k === 'mouse') await page.mouse.up();
+    else await page.keyboard.up(k);
+  }
   await page.close();
   encodeClip(dir, out, 'fight');
   rmSync(dir, { recursive: true, force: true });

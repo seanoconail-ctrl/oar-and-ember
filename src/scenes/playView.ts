@@ -49,6 +49,7 @@ import { campUseNear, campUses, driftwoodPieces, isTimed } from '../sim/home/cam
 import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
+import { striking } from '../sim/combat/fighter.ts';
 import { parseCombatBalance } from '../content/combatBalance.ts';
 import { finisherTarget, hostilesAware } from '../sim/land/fight.ts';
 import type { FightContext } from '../sim/land/fight.ts';
@@ -1492,7 +1493,7 @@ export function startPlay(
     root.dataset['items'] = onFoot.items.map((i) => i.key).join(',');
     root.dataset['aimHeld'] = p.aim === null ? '' : String(sim.state.tick - p.aim.since);
     // Stage 9, for the browser tests and captures: the fight, each fighter
-    // (id:state:vitality:x:y, feet in world pixels), the saves.
+    // (id:state:vitality:x:y:ticks to a strike's active frames, -1 for none), the saves.
     const battle = onFoot.battle;
     root.dataset['battle'] =
       battle == null ? '' : battle.over ? 'over' : battle.engaged ? 'engaged' : 'waiting';
@@ -1501,7 +1502,7 @@ export function startPlay(
         a.fight === undefined
           ? []
           : [
-              `${id}:${a.fight.f.state}:${Math.round(a.fight.vitality)}:${Math.round(a.x)}:${Math.round(a.y)}`,
+              `${id}:${a.fight.f.state}:${Math.round(a.fight.vitality)}:${Math.round(a.x)}:${Math.round(a.y)}:${striking(a.fight.f) && sim.state.tick < a.fight.f.activeAt ? a.fight.f.activeAt - sim.state.tick : -1}`,
             ],
       )
       .join(',');
