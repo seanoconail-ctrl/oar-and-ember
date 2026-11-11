@@ -3,33 +3,44 @@
  * beat 2; Book 10 sections 03, 06, 08 and 09; Stage 7).
  *
  * - **Sites** in the zones (content/camp.json): the fire, the beds, the sail to be raised, the
- *   salvaged stores, and driftwood along the strand's weed line. What interacting with one does
- *   depends on the camp: lay and light the fire with driftwood, feed it, cook a hot meal, sleep,
- *   eat a cold meal, raise the sail shelter, gather driftwood; a wounded person can be tended.
- * - **A hands-on action** plants the feet while its work loop plays for Book 10's actionSeconds;
- *   one press of use near the mark earns up to playerTimingBonus; missing it never ruins the task.
- *   At its end the work counts at the steerer's skill, the clock advances by the task's Book 10
- *   game minutes (run minute by minute through the home step) and only its small stamina is spent.
+ *   salvaged stores, and the pieces of driftwood lying on Wreck Strand. What interacting with one
+ *   does depends on the camp: lay and light the fire with driftwood, feed it, cook a hot meal,
+ *   sleep, eat a cold meal, raise the sail shelter, pick up a piece of driftwood; a wounded person
+ *   can be tended.
+ * - **A hands-on action** plants the feet while its work loop plays for Book 10's actionSeconds.
+ *   A menial task is a plain action: no ring, no press (decision PT-1). Only a timed task (Book 10
+ *   timedTasks: fishing from the shore) takes one press of use near the mark, which earns up to
+ *   playerTimingBonus; missing it never ruins the catch. At its end the work counts at the
+ *   steerer's skill, the clock advances by the task's Book 10 game minutes (run minute by minute
+ *   through the home step) and only its small stamina is spent.
+ * - **Driftwood is found, not worked** (Book 10 section 03, "Driftwood finds"; decisions PT-2 to
+ *   PT-4): a piece lies at each DRIFTWOOD site until picked up (a short stoop, one gather loop), and
+ *   its load goes into the store at once. A spot picked bare is a resource node of the camp's
+ *   region; each dawn the sea refills the season's number of bare spots.
  * - **The home step**, once a game minute: the fire burns its fuel, a resident at work adds work by
  *   the minute, and the steerer's condition is recomputed (warmth by the fire, hunger, hard work).
- * - **The day's start**, on waking: fresh fish spoil and the day's ration is served, except that
+ * - **The day's start**, on waking: driftwood washes up, fresh fish spoil and the day's ration is
+ *   served, except that
  *   before tutorialComplete nothing spoils and the household never goes short (Book 10 section 03,
  *   tutorialGuard); wounds mend from the day they were tended; the morning report is written.
  */
 import { parseTimeBalance, SEASONS } from '../../content/balance.ts';
 import type { TimeBalance } from '../../content/balance.ts';
 import {
+  parseDriftwoodBalance,
   parseStaminaBalance,
   parseTaskBalance,
   parseWorkBalance,
 } from '../../content/homeBalance.ts';
 import type {
   ActionBalance,
+  DriftwoodBalance,
   StaminaBalance,
   TaskCost,
   WorkBalance,
 } from '../../content/homeBalance.ts';
 import type { CampDef, CampSite, Content, TaskDef } from '../../content/registry.ts';
+import { cyrb53 } from '../../core/hash.ts';
 import type { Id } from '../../core/ids.ts';
 import { clockText, minutesIntoDay, seasonOf, tideAt } from '../calendar/calendar.ts';
 import { TICKS_PER_SECOND } from '../land/onFoot.ts';
@@ -61,7 +72,15 @@ export interface CampContext {
   /** Ticks of a hands-on action, and of lying down before the night passes. */
   readonly actionTicks: number;
   readonly sleepTicks: number;
+  /** The tasks that keep a timed press (Book 10 timedTasks; decision PT-1). */
+  readonly timed: ReadonlySet<Id>;
+  /** Driftwood found on the strand (Book 10 section 03, "Driftwood finds"), and the stoop's ticks. */
+  readonly driftwood: DriftwoodBalance;
+  readonly stoopTicks: number;
 }
+
+/** The camp task a piece of driftwood is picked up with (decision PT-2). */
+export const TASK_PICK_UP_DRIFTWOOD = 'TASK_GATHER_DRIFTWOOD';
 
 function buildingWorkerDays(balance: unknown, row: string): number {
   const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
@@ -85,9 +104,17 @@ export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampCon
     if (cost === undefined) throw new Error(`Book 10 has no task row "${t.balanceRow}"`);
     tasks.set(id, { def: t, cost });
   }
+  const driftwood = parseDriftwoodBalance(content.balance);
   return {
     def,
     tasks,
+    timed: new Set(
+      [...tasks]
+        .filter(([, t]) => taskBalance.action.timed.has(t.def.balanceRow))
+        .map(([id]) => id),
+    ),
+    driftwood,
+    stoopTicks: Math.round(driftwood.stoopSeconds * TICKS_PER_SECOND),
     action: taskBalance.action,
     work: parseWorkBalance(content.balance),
     stamina: parseStaminaBalance(content.balance),
@@ -119,6 +146,73 @@ export function setupCamp(world: WorldState, ctx: CampContext): void {
   home.catch = 0;
   home.rationDay = world.calendar.day;
   home.shortDays = 0;
+}
+
+/** Whether a task keeps the timed press and its ring (Book 10 timedTasks; decision PT-1). */
+export function isTimed(ctx: CampContext, task: Id): boolean {
+  return ctx.timed.has(task);
+}
+
+/** How long a hands-on action plays, in ticks: a pick-up's stoop, or Book 10's actionSeconds. */
+export function workTicks(ctx: CampContext, task: Id): number {
+  return task === TASK_PICK_UP_DRIFTWOOD ? ctx.stoopTicks : ctx.actionTicks;
+}
+
+/** The resource nodes that keep the spots picked bare (decision PT-4). */
+function driftwoodNodes(world: WorldState, ctx: CampContext): Record<Id, { nextDay: number }> {
+  const region = (world.regions[ctx.def.region] ??= {
+    discoveredZones: [],
+    resourceNodes: {},
+    puzzles: {},
+  });
+  return region.resourceNodes;
+}
+
+/** Whether a piece of driftwood lies at a DRIFTWOOD site now. */
+export function driftwoodLies(
+  world: WorldState,
+  ctx: Pick<CampContext, 'def'>,
+  key: string,
+): boolean {
+  return world.regions[ctx.def.region]?.resourceNodes[key] === undefined;
+}
+
+/** The pieces of driftwood lying in a zone, to draw (tiles, at the foot) and pick up. */
+export function driftwoodPieces(
+  world: WorldState,
+  ctx: Pick<CampContext, 'def'>,
+  zone: Id,
+): { readonly key: string; readonly x: number; readonly y: number; readonly frame: string }[] {
+  return ctx.def.sites
+    .filter((s) => s.kind === 'DRIFTWOOD' && s.zone === zone && driftwoodLies(world, ctx, s.key))
+    .map((s) => ({ key: s.key, x: s.x, y: s.y, frame: s.frame ?? 'log/-/0' }));
+}
+
+/**
+ * Dawn on the strand (Book 10 "Driftwood finds"): the sea leaves the season's pieces (twice that
+ * after a storm) at spots picked bare before today, never more than there are. Which spots is a
+ * hash of the campaign seed, the day and the spot, so no random stream is drawn. Returns how
+ * many pieces washed up.
+ */
+export function washUpDriftwood(world: WorldState, ctx: CampContext, storm = false): number {
+  const nodes = driftwoodNodes(world, ctx);
+  const day = world.calendar.day;
+  const want = ctx.driftwood.perDawn[seasonOf(day)] * (storm ? ctx.driftwood.afterStorm : 1);
+  const bare = Object.entries(nodes)
+    .filter(([, n]) => n.nextDay <= day)
+    .map(([key]) => key)
+    .sort(
+      (a, b) =>
+        cyrb53(`${world.seed}/driftwood/${day}/${a}`) -
+          cyrb53(`${world.seed}/driftwood/${day}/${b}`) || (a < b ? -1 : 1),
+    );
+  const washed = new Set(bare.slice(0, Math.max(0, Math.floor(want))));
+  const region = world.regions[ctx.def.region];
+  if (region !== undefined && washed.size > 0)
+    region.resourceNodes = Object.fromEntries(
+      Object.entries(nodes).filter(([key]) => !washed.has(key)),
+    );
+  return washed.size;
 }
 
 /** The output multiplier for a skill level, relative to Book 10's "at skill 2" rates. */
@@ -165,7 +259,10 @@ export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): Si
   const wood = home.stores['RES_DRIFTWOOD'] ?? 0;
   switch (site.kind) {
     case 'DRIFTWOOD':
-      return { kind: 'TASK', task: 'TASK_GATHER_DRIFTWOOD', site: site.key };
+      // A piece lying there is picked up; a spot picked bare offers nothing (decision PT-2).
+      return driftwoodLies(world, ctx, site.key)
+        ? { kind: 'TASK', task: TASK_PICK_UP_DRIFTWOOD, site: site.key }
+        : null;
     case 'FIRE':
       if (!home.fire.lit)
         return wood >= ctx.work.fireLightLoads
@@ -272,7 +369,8 @@ export type CampEvent =
       readonly task: Id;
       readonly site: string;
       readonly ticks: number;
-      readonly markTick: number;
+      /** The tick the timing ring closes on its mark; null for a plain action (no ring). */
+      readonly markTick: number | null;
     }
   | { readonly type: 'WORK_PRESSED'; readonly task: Id; readonly quality: number }
   | {
@@ -296,7 +394,10 @@ export type CampEvent =
   | { readonly type: 'REASON_ADDED'; readonly reason: string }
   | { readonly type: 'REASON_LIFTED'; readonly reason: string };
 
-/** How good a timing press was, 0 to 1 (Book 10 section 09, "Hands-on action"). */
+/**
+ * How good a timing press was, 0 to 1 (Book 10 section 09, "Hands-on action"). Only a timed
+ * task's press counts (finishWork asks isTimed first).
+ */
 export function timingQuality(work: Work, action: ActionBalance): number {
   if (work.press === null) return 0;
   const t = (work.press - work.since) / TICKS_PER_SECOND;
@@ -328,15 +429,20 @@ export function finishWork(
   if (home === undefined || task === undefined) return;
   const season = seasonOf(world.calendar.day);
   const level = world.player.skills[task.def.skill] ?? 0;
-  const quality = timingQuality(work, ctx.action);
+  // A plain action has no press to count (decision PT-1): only a timed task earns the bonus.
+  const quality = isTimed(ctx, work.task) ? timingQuality(work, ctx.action) : 0;
   const bonus = quality * ctx.work.timingBonus;
   const k = skillRatio(ctx.work, level) * (1 + bonus);
   let output = 0;
   switch (work.task) {
-    case 'TASK_GATHER_DRIFTWOOD':
-      output = ctx.work.driftwoodPerSearch[season] * k;
+    case TASK_PICK_UP_DRIFTWOOD: {
+      // A piece found, not worked: its load at once, whatever the skill (decision PT-2).
+      if (!driftwoodLies(world, ctx, work.site)) break;
+      output = ctx.driftwood.loadsPerPiece;
       home.stores['RES_DRIFTWOOD'] = (home.stores['RES_DRIFTWOOD'] ?? 0) + output;
+      driftwoodNodes(world, ctx)[work.site] = { nextDay: world.calendar.day + 1 };
       break;
+    }
     case 'TASK_FISH_SHORE': {
       output = (ctx.work.fishShore[season] / ctx.work.workerDayMinutes) * task.cost.gameMinutes * k;
       landFish(world, ctx, home, output, 'P_STEERER', emit, say);
@@ -595,6 +701,8 @@ export function startDay(world: WorldState, ctx: CampContext): void {
   const day = world.calendar.day;
   const guard = world.facts[FACT_TUTORIAL_COMPLETE] !== true;
   if (home !== undefined && home.rationDay < day) {
+    // The sea leaves driftwood at spots picked bare (Book 10 "Driftwood finds"; no storms yet).
+    washUpDriftwood(world, ctx);
     // Spoilage: fresh fish keeps Book 10's days; none spoils before tutorialComplete.
     if (!guard) home.fresh = home.fresh.filter((f) => day - f.day < ctx.work.freshFish.keepsDays);
     // The day's ration for every mouth: the oldest fresh fish first, then the salt fish.
@@ -671,6 +779,12 @@ export function morningReport(
     const wood = Math.floor(home.stores['RES_DRIFTWOOD'] ?? 0);
     if (wood === 1) line('report.wood.one');
     else if (wood > 1) line('report.wood.stack', { loads: wood });
+    // Where more lies (decision PT-7): the pieces on the strand once the camp's work is open.
+    const pieces = ctx.def.sites.filter(
+      (s) => s.kind === 'DRIFTWOOD' && driftwoodLies(world, ctx, s.key),
+    ).length;
+    if (world.facts[FACT_AT_BROCH] === true && pieces > 0)
+      line(pieces === 1 ? 'report.wood.strand_one' : 'report.wood.strand', { pieces });
     if (home.stage === 'S0' && world.facts[FACT_AT_BROCH] === true) {
       if (home.building === null) line('report.shelter.none');
       else {

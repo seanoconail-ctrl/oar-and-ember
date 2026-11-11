@@ -503,7 +503,10 @@ const STAGES = ['S0', 'S1'] as const;
 const taskCheck = object(
   {
     nameKey: ref('string'),
-    /** The task's row in Book 10 section 09, "Homestead tasks: time and stamina". */
+    /**
+     * The task's row in Book 10 section 09, "Homestead tasks: time and stamina", or "Driftwood
+     * finds" for the driftwood pick-up (section 03; decision PT-2).
+     */
     balanceRow: text,
     skill: text,
     /** The work loop animation the steerer and residents play (Book 7 section 07). */
@@ -524,8 +527,10 @@ const siteCheck = object(
     x: fraction(0, 512),
     y: fraction(0, 512),
     stages: arrayOf(oneOf(STAGES)),
+    /** How the site is drawn, a frame of prop_driftwood for a piece of driftwood (decision PT-5). */
+    frame: text,
   },
-  ['stages'],
+  ['stages', 'frame'],
 );
 const campPropCheck = object(
   {
@@ -557,6 +562,8 @@ const campCheck = object({
   beat: id(['BEAT']),
   shelter: object({ building: id(['BLD']), balanceRow: text }),
   sleepSeconds: fraction(0, 10),
+  /** The region whose resource nodes keep the driftwood picked up (decision PT-4). */
+  region: ref('region'),
   tasks: recordOf(id(['TASK']), taskCheck),
   sites: arrayOf(siteCheck),
   props: object({ S0: arrayOf(campPropCheck), S1: arrayOf(campPropCheck) }),
@@ -967,6 +974,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       'homesteadTasksTimeAndStamina',
       'Task',
     );
+    // The driftwood pick-up's cost is Book 10's "Driftwood finds" (decision PT-2).
+    taskRows.add('Driftwood finds');
     for (const [task, def] of Object.entries(camp.tasks)) {
       if (!taskRows.has(def.balanceRow))
         issues.push({

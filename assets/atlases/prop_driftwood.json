@@ -1,0 +1,154 @@
+{
+  "sheet": "prop_driftwood",
+  "kind": "prop",
+  "image": "prop_driftwood.png",
+  "width": 40,
+  "height": 16,
+  "pivot": {
+    "x": 20,
+    "y": 14
+  },
+  "footprint": {
+    "w": 14,
+    "h": 3
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "branch": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "branch_r": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "log": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "log_r": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "spar": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "spar_r": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 30,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "branch/-/0": [
+      0,
+      0
+    ],
+    "branch/-/1": [
+      40,
+      0
+    ],
+    "branch/-/2": [
+      80,
+      0
+    ],
+    "branch/-/3": [
+      120,
+      0
+    ],
+    "branch_r/-/0": [
+      0,
+      16
+    ],
+    "branch_r/-/1": [
+      40,
+      16
+    ],
+    "branch_r/-/2": [
+      80,
+      16
+    ],
+    "branch_r/-/3": [
+      120,
+      16
+    ],
+    "log/-/0": [
+      0,
+      32
+    ],
+    "log/-/1": [
+      40,
+      32
+    ],
+    "log/-/2": [
+      80,
+      32
+    ],
+    "log/-/3": [
+      120,
+      32
+    ],
+    "log_r/-/0": [
+      0,
+      48
+    ],
+    "log_r/-/1": [
+      40,
+      48
+    ],
+    "log_r/-/2": [
+      80,
+      48
+    ],
+    "log_r/-/3": [
+      120,
+      48
+    ],
+    "spar/-/0": [
+      0,
+      64
+    ],
+    "spar/-/1": [
+      40,
+      64
+    ],
+    "spar/-/2": [
+      80,
+      64
+    ],
+    "spar/-/3": [
+      120,
+      64
+    ],
+    "spar_r/-/0": [
+      0,
+      80
+    ],
+    "spar_r/-/1": [
+      40,
+      80
+    ],
+    "spar_r/-/2": [
+      80,
+      80
+    ],
+    "spar_r/-/3": [
+      120,
+      80
+    ]
+  }
+}

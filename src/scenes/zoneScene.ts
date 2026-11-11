@@ -51,6 +51,8 @@ export const PICKUP_SHEET = 'prop_pickup';
 export const BROCH_SHEET = 'bld_broch';
 export const BROCH_FLOOR_SHEET = 'decal_broch';
 export const CAMP_SHEET = 'prop_camp';
+/** Pieces of driftwood lying to be picked up (decision PT-5). */
+export const DRIFTWOOD_SHEET = 'prop_driftwood';
 export const FIRE_SHEET = 'fx_fire';
 /** Seconds between glints on something lying to be picked up. */
 const GLINT_EVERY = 2.6;
@@ -578,6 +580,17 @@ export interface CampScene {
   } | null;
   /** The camp's driftwood: where it is stacked (tiles) and how many loads. */
   readonly woodpile: { readonly x: number; readonly y: number; readonly loads: number } | null;
+  /**
+   * The pieces of driftwood lying in this zone (tiles, at the foot), each with its frame of
+   * prop_driftwood (decision PT-2). A piece being picked up goes from the ground at the stoop's
+   * lowest point.
+   */
+  readonly driftwood?: readonly {
+    readonly key: string;
+    readonly x: number;
+    readonly y: number;
+    readonly frame: string;
+  }[];
   /** The work loop each task plays (Book 7 section 07): task ID to animation state. */
   readonly loops: Readonly<Record<string, string>>;
   /** The broch's bands: band height, the top band's offset from its centre, and how many. */
@@ -790,6 +803,30 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         y,
         layer: 'actor',
         tall: true,
+      };
+      sprites.push(sprite);
+      cast(sprite);
+    }
+    for (const piece of camp.driftwood ?? []) {
+      const x = piece.x * map.tile - camera.x;
+      const y = piece.y * map.tile - camera.y;
+      if (!inView(x, y)) continue;
+      // Lifted at the stoop's lowest point: the work loop's third frame (Book 7 section 07).
+      const w = p.work;
+      if (w?.site === piece.key) {
+        const loop = camp.loops[w.task] ?? 'gather';
+        const per = anims.get(look.steerer.body)?.[loop]?.ticks ?? 8;
+        if (tick - w.since >= per * 2) continue;
+      }
+      // The wrack caught on it stirs in the wind, out of step from piece to piece.
+      const [state = 'log', facing = '-'] = piece.frame.split('/');
+      const offset = Math.floor(hash01(piece.x, piece.y, 13) * 240);
+      const sprite: SceneSprite = {
+        sheet: DRIFTWOOD_SHEET,
+        frame: `${state}/${facing}/${frameIndex(anims, DRIFTWOOD_SHEET, state, reduced ? 0 : tick + offset)}`,
+        x,
+        y,
+        layer: 'actor',
       };
       sprites.push(sprite);
       cast(sprite);

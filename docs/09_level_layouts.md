@@ -90,7 +90,7 @@ A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), whi
 
 | Zone | Blocks | Layout notes |
 |---|---|---|
-| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood spawns along the high-tide line after storms; the shallows where Hild stands in the opening (below); the wreck's debris near the waking spot and the stern at the east end (below) |
+| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood lies in pieces at 12 spots (along the high-tide line at both ends, under the bank, among the rocks of both outcrops, by the stern) and washes up again at dawn, more after storms (Book 10 section 03, "Driftwood finds"; decision PT-2); the shallows where Hild stands in the opening (below); the wreck's debris near the waking spot and the stern at the east end (below) |
 | `ZONE_SK_MACHAIR` | (12 to 30, 17 to 24) | The steading plan (section 05) sits at blocks (14 to 21, 19 to 23); plots at (20 to 25, 21 to 22) |
 | `ZONE_SK_KELDA` | (17 to 21, 17 to 21) | Spring pool at (19, 19); the stream flows south to the strand, ankle deep, with foam at its stones |
 | `ZONE_SK_ROOK` | (16 to 28, 6 to 14) | Summit at (22, 9); heather slopes; the watch cairn plot |

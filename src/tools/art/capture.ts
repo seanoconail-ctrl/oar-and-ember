@@ -974,8 +974,8 @@ async function fightCapture(
     await campStill(browser, out, 'wreckers-at-work', `${fightQuery}&at=36,34.2&camera=28,34.6`)
   ).share;
   // Three on one, the steerer alone falls in a few seconds; a capture hook makes the steerer
-  // hardier (vitality 400) so the stills and the clip show the fight rather than its end.
-  const hardy = 'vitality=400';
+  // hardier (vitality 2000) so the stills and the clip show the fight rather than its end.
+  const hardy = 'vitality=2000';
   /** A still once the fight has gone on a while (the steerer fighting by the bot). */
   const midFight = async (name: string, gore: string): Promise<number> =>
     (
@@ -1035,7 +1035,7 @@ function fightReadme(label: string, strand: number, f: FightCaptureResult): stri
     '|---|---|',
     '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
     '| `wreckers-at-work.png` (and @2x, `-motion.png`) | The three wreck-scavengers by the wreck on the strand, 10:00, unaware and at work (the camera held on them) |',
-    '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. The steerer is made hardier for the fight captures (`vitality=400`, a test hook): three on one, the steerer alone falls in a few seconds |',
+    '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. The steerer is made hardier for the fight captures (`vitality=2000`, a test hook): three on one, the steerer alone falls in a few seconds |',
     '| `fight-low.png` (and @2x, `-motion.png`) | The same fight at gore low: fewer, darker stains and no pieces |',
     `| \`fight.mp4\`, \`fight.gif\` | ${(f.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer runs at them from the east, seax in hand, and fights, the camera following (the overlay shown) |`,
     '',

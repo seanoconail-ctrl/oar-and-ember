@@ -2617,6 +2617,14 @@
       "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Driftwood pulled from the wrack and knocked together."
     },
     {
+      "id": "SFX_DRIFTWOOD_PICKUP",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Playtest change (generated, Book 11 section 12; decision PT-6). A piece of driftwood picked up from the shingle."
+    },
+    {
       "id": "SFX_WORK_CAST",
       "ref": "Work sounds for every homestead task",
       "book": 11,

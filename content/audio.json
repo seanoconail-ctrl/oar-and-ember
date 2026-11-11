@@ -309,6 +309,13 @@
       "temporary": false
     },
     {
+      "id": "SFX_DRIFTWOOD_PICKUP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.driftwood_pickup",
+      "temporary": false
+    },
+    {
       "id": "SFX_WORK_CAST",
       "kind": "sfx",
       "bus": "effects",
@@ -564,6 +571,7 @@
     "QUIVER_EMPTY": "SFX_QUIVER_EMPTY",
     "ITEM_PICKED_UP": "SFX_PICKUP",
     "TASK_DRIFTWOOD": "SFX_WORK_DRIFTWOOD",
+    "DRIFTWOOD_PICKED_UP": "SFX_DRIFTWOOD_PICKUP",
     "TASK_FISH": "SFX_WORK_CAST",
     "FISH_LANDED": "SFX_WORK_CATCH",
     "TASK_TEND": "SFX_WORK_TEND",

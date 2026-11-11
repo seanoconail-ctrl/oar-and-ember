@@ -84,6 +84,40 @@ export const HOME: readonly SoundDef[] = [
     },
   },
   {
+    id: 'SFX_DRIFTWOOD_PICKUP',
+    captionKey: 'caption.sfx.driftwood_pickup',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // A piece of driftwood picked up (decision PT-6): the dry wood scrapes off the shingle, a
+      // few pebbles trickle off it, and one hollow knock as it is tucked under the arm.
+      const to = out(e, 'effects', pan);
+      noiseHit(
+        e,
+        at + 0.08,
+        to,
+        'bandpass',
+        650,
+        1.1,
+        [
+          [0, 0],
+          [0.04, 0.12],
+          [0.16, 0.07],
+          [0.26, 0],
+        ],
+        1500,
+      );
+      const r = rng(41);
+      for (let i = 0; i < 4; i++)
+        noiseHit(e, at + 0.22 + i * 0.05 + r() * 0.03, to, 'bandpass', 3000 + r() * 2200, 3, [
+          [0, 0],
+          [0.002, 0.07 + r() * 0.05],
+          [0.02, 0],
+        ]);
+      knock(e, at + 0.56, to, 205, 0.36);
+      return 0.75;
+    },
+  },
+  {
     id: 'SFX_WORK_CAST',
     captionKey: 'caption.sfx.task_cast',
     bus: 'effects',

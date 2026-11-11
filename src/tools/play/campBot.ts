@@ -1,8 +1,9 @@
 /**
  * A scripted player for Stage 7's tests and golden save: walks between zones (up the cut from
- * Wreck Strand to the broch and back), goes to the camp's sites and does their tasks with or
- * without a good timing press, casts the line into water, and sleeps. It submits commands exactly
- * as the input layer would.
+ * Wreck Strand to the broch and back), goes to the camp's sites and does their tasks (a plain
+ * action, decision PT-1), picks up the driftwood lying on the strand (PT-2), casts the line into
+ * water with or without a good timing press, and sleeps. It submits commands exactly as the input
+ * layer would.
  */
 import type { TimeBalance } from '../../content/balance.ts';
 import type { CampSite } from '../../content/registry.ts';
@@ -187,7 +188,7 @@ export class CampBot {
 
   /**
    * Plays a hands-on action already begun: a press on the mark (`press: 'good'`), a late one
-   * (`'late'`) or none, then waits for its end.
+   * (`'late'`) or none, then waits for its end. A plain action ignores the press (PT-1).
    */
   work(press: 'good' | 'late' | 'none' = 'good'): void {
     const w = this.#onFoot.player.work;
@@ -200,11 +201,18 @@ export class CampBot {
     }
   }
 
-  /** Goes to a site and does what it offers, with a timing press. */
+  /** Goes to a site and does what it offers (on a timed task, with the press given). */
   doAt(key: string, press: 'good' | 'late' | 'none' = 'good'): void {
     this.goToSite(key);
     this.interact();
     if (this.#onFoot.player.work != null) this.work(press);
+  }
+
+  /** Goes to a piece of driftwood and picks it up: a plain interact and the stoop (PT-2). */
+  pickUp(key: string): void {
+    const site = this.#camp.def.sites.find((s) => s.key === key);
+    if (site?.kind !== 'DRIFTWOOD') throw new Error(`${key} is not a piece of driftwood`);
+    this.doAt(key, 'none');
   }
 
   /** Steps until `done`, or throws after `maxTicks`. */

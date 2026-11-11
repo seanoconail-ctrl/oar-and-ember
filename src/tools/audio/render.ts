@@ -124,6 +124,7 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ...(
     [
       'SFX_WORK_DRIFTWOOD',
+      'SFX_DRIFTWOOD_PICKUP',
       'SFX_WORK_CAST',
       'SFX_WORK_CATCH',
       'SFX_WORK_TEND',

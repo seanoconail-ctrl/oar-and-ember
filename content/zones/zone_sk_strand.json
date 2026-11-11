@@ -136,24 +136,6 @@
       "y": 14
     },
     {
-      "sheet": "prop_debris",
-      "frame": "log_short/-/0",
-      "x": 68.6,
-      "y": 34.3
-    },
-    {
-      "sheet": "prop_debris",
-      "frame": "log_long/-/0",
-      "x": 91,
-      "y": 34.8
-    },
-    {
-      "sheet": "prop_debris",
-      "frame": "planks/-/0",
-      "x": 65.5,
-      "y": 34.4
-    },
-    {
       "sheet": "prop_stones",
       "frame": "small/-/2",
       "x": 41.5,

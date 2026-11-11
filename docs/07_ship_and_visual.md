@@ -316,6 +316,7 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 - **Aim line:** while drawing a bow or aiming a spear, a dotted line runs from the hand towards the cursor, its dots spaced wider as the draw grows, ending in a small cross; it never passes through solid tiles in a way that lies about the shot.
 - **Melee facing:** when a melee attack is aimed with the cursor, a small arrow at the steerer's feet shows which of the four facings it will take.
 - **Pickups and tooltips:** a thing worth picking up shows its glint, and the first pickup of each kind shows its tooltip; arrows have their own icon and count (section 18).
+- **Work:** a menial task shows only its work loop over the worker. The **timing ring**, a ring closing on a mark over the work, shows only on a timed task (Book 10 `timedTasks`: fishing from the shore, where it closes over the water the line went into); it never shows on a plain action (decision PT-1). Driftwood lying on the strand is common stuff, not an item worth a glint: it has no glint, and the interact prompt names it when it is in reach.
 
 ### Stamina bar
 - The bar's frame is as long as the current maximum. To its right, the capacity lost is shown as an empty, darker groove up to the full length, cut into one segment for each reason it is smaller, each with its drawn icon: frost for cold, an empty bowl for hunger, a bound cloth for wounds, a fevered brow for sickness, a closed eye for lack of sleep, a bent back for a hard day's work. Hovering, or the character panel, gives the plain word ("Cold", "Hungry").
@@ -444,7 +445,7 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 - **Rocks** have dark wet bases, hanging weed, barnacles, lichen on lit faces, and smaller stones round them.
 
 ### Decoration
-- A decoration layer over the ground: pebble clusters with calm sand between, shells, a wrack line of kelp and twigs along the top of the tide, driftwood and debris, worn footpaths through the grass, stones in the turf.
+- A decoration layer over the ground: pebble clusters with calm sand between, shells, a wrack line of kelp and twigs along the top of the tide, driftwood and debris (the pieces of driftwood the steerer can pick up are props of their own, `prop_driftwood`: three shapes, each also drawn the other way round, with a contact shadow and a frond of wrack caught on them that stirs in the wind; a piece picked up is gone until the sea brings another, decision PT-5), worn footpaths through the grass, stones in the turf.
 - Plants are sprites that move: grass sward, tussocks, marram on the dunes, thrift on the bank's lip, clover and trefoil in drifts. Grass carries at least 6 plants a tile on average and no two-by-two block of grass is bare (at least 3 plants or decals).
 - Open ground is broken up with paths, rocks, bushes (heather), walls and bogs where the place has them.
 

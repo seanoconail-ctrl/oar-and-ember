@@ -9,8 +9,9 @@ import { parseRenderStyle } from '../../src/render/scene.ts';
 import type { Phase } from '../../src/render/scene.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
 import { zoneScene } from '../../src/scenes/zoneScene.ts';
+import { DRIFTWOOD_SHEET } from '../../src/scenes/zoneScene.ts';
 import type { CampScene, SheetAnims } from '../../src/scenes/zoneScene.ts';
-import { campContext } from '../../src/sim/home/camp.ts';
+import { campContext, driftwoodPieces } from '../../src/sim/home/camp.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { findActor } from '../../src/sim/land/zoneLinks.ts';
 import { createSimulation } from '../../src/sim/simulation.ts';
@@ -59,6 +60,8 @@ function campScene(sim: Simulation): CampScene {
         ? null
         : { x: fire.x, y: fire.y, lit: home.fire.lit, fuel: home.fire.fuel },
     woodpile: null,
+    driftwood:
+      sim.state.onFoot === null ? [] : driftwoodPieces(sim.state, camp, sim.state.onFoot.zone),
     loops,
     building: null,
     light: style.fire ?? null,
@@ -95,15 +98,21 @@ function framesOf(sim: Simulation, body: string, ticks: number): string[] {
 }
 
 describe('work loops in the scene (Book 7 section 07; Stage 7 check 4)', () => {
-  it('draws the steerer gathering driftwood in the gather loop, its frames advancing', () => {
+  it('draws the steerer stooping for driftwood in the gather loop, its frames advancing', () => {
     const { sim, bot } = atBroch('time=10:00');
     bot.goToZone('ZONE_SK_STRAND');
-    bot.goToSite('wrack_1');
+    bot.goToSite('drift_east_rocks');
+    // The piece lies there, drawn with its shadow, until the stoop's low point (decision PT-5).
+    const piece = () => scene(sim).sprites.filter((s) => s.sheet === DRIFTWOOD_SHEET).length;
+    const before = piece();
+    expect(before).toBeGreaterThan(0);
     bot.interact();
     expect(sim.state.onFoot?.player.work?.task).toBe('TASK_GATHER_DRIFTWOOD');
-    const frames = framesOf(sim, look.steerer.body, 60);
+    expect(sim.state.onFoot?.player.work?.ticks).toBe(camp.stoopTicks);
+    const frames = framesOf(sim, look.steerer.body, camp.stoopTicks - 2);
     expect(frames.every((f) => f.startsWith('gather/'))).toBe(true);
     expect(new Set(frames).size).toBeGreaterThan(3);
+    expect(piece()).toBe(before - 1);
   });
 
   it('plays the same loop for the steerer and a resident at the same task', () => {

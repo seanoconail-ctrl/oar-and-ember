@@ -478,6 +478,38 @@
      "Notes": "tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning)"
     }
    ],
+   "driftwoodFinds": [
+    {
+     "Key": "spots",
+     "Value": "12 spots on Wreck Strand",
+     "Notes": "Along the high-tide line at both ends, under the bank, among the rocks of both outcrops and by the wreck's stern (content/camp.json, the DRIFTWOOD sites)"
+    },
+    {
+     "Key": "firstDawn",
+     "Value": "A piece at every spot",
+     "Notes": "The storm that wrecked the ship left the strand strewn: 6 loads, enough to light the first fire (fireLight) once 2 pieces are fetched up to the broch"
+    },
+    {
+     "Key": "piecesPerDawn",
+     "Value": "Spring 2, summer 2, autumn 3, winter 4",
+     "Notes": "Washed up again at dawn at spots picked bare, never more than the spots picked bare (1, 1, 1.5 and 2 loads a day against the fire's 0.5, 0.2, 0.5 and 1.0)"
+    },
+    {
+     "Key": "afterStorm",
+     "Value": "2 times the season's pieces",
+     "Notes": "At the dawn after a storm. Storms come with the weather (Stage 13); until then every dawn is a calm one"
+    },
+    {
+     "Key": "loadsPerPiece",
+     "Value": "0.5 loads",
+     "Notes": "Added to the camp's store (RES_DRIFTWOOD) as soon as it is picked up"
+    },
+    {
+     "Key": "pickUp",
+     "Value": "5 game minutes and 0 stamina; the steerer stoops for 0.8 real seconds",
+     "Notes": "No timing ring and no press: one gather loop, then the minutes pass"
+    }
+   ],
    "barleyAndKale": [
     {
      "Key": "skarvholmPlots",
@@ -1807,7 +1839,7 @@
     },
     {
      "Key": "playerTimingBonus",
-     "Value": "Up to +25% task output for good timing"
+     "Value": "Up to +25% task output for good timing, on the timed tasks only (Hands-on action, timedTasks: fishing from the shore)"
     },
     {
      "Key": "startingSkills",
@@ -2803,11 +2835,6 @@
    ],
    "homesteadTasksTimeAndStamina": [
     {
-     "Task": "Gather driftwood",
-     "Game minutes per action": "20",
-     "Stamina per action": "1"
-    },
-    {
      "Task": "Fish from the shore",
      "Game minutes per action": "30",
      "Stamina per action": "1"
@@ -2929,8 +2956,12 @@
      "Value": "2.5 real seconds while the work loop plays; the task's game minutes pass at its end"
     },
     {
+     "Key": "timedTasks",
+     "Value": "Fish from the shore only; every other task is a plain action"
+    },
+    {
      "Key": "timingMark",
-     "Value": "1.5 real seconds into the action"
+     "Value": "1.5 real seconds into a timed action"
     },
     {
      "Key": "timingWindow",

@@ -45,7 +45,7 @@ import type { TipContext } from './tips.ts';
 import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
-import { campUseNear, campUses } from '../sim/home/camp.ts';
+import { campUseNear, campUses, driftwoodPieces, isTimed } from '../sim/home/camp.ts';
 import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
@@ -615,6 +615,8 @@ export function startPlay(
       woodpile: here
         ? { ...campDef.woodpile, loads: Math.floor(home.stores['RES_DRIFTWOOD'] ?? 0) }
         : null,
+      // The pieces of driftwood lying in this zone (decision PT-2).
+      driftwood: driftwoodPieces(sim.state, { def: campDef }, map.zone),
       loops,
       building: broch ?? null,
       light: style.fire ?? null,
@@ -624,7 +626,7 @@ export function startPlay(
   let reportShown: string[] | null = null;
   /** The fade in from dark on waking and on entering a zone (frame clock, ms). */
   let fadeInFrom = -1;
-  let workCue: { since: number; ticks: number; mark: number } | null = null;
+  let workCue: { since: number; ticks: number; mark: number | null } | null = null;
   /** Stage 9: a crew order's icon over the one who took it, for a moment (frame clock). */
   const ordersShown: Record<string, { order: string; until: number }> = {};
   /** A pan for a point in the world, left or right of the steerer. */
@@ -1193,7 +1195,8 @@ export function startPlay(
       promptKind = 'finish';
     }
     const work = onFoot.player.work;
-    if (work != null) {
+    // Only a timed task asks for the press (decision PT-1); plain work just plays its loop.
+    if (work != null && campCtx !== null && isTimed(campCtx, work.task)) {
       prompt = t('ui.prompt.timing', {
         key: device === 'mouse' ? t('ui.input.mouse.0') : keys('useItem'),
       });
@@ -1343,7 +1346,7 @@ export function startPlay(
     // Stage 7: the day clock, the stamina bar with its reasons, and the work's timing ring.
     const st = staminaView(sim.state.player.stamina);
     const light = lightPhase(sim.state.calendar, b);
-    const cue = work == null || workCue === null ? null : workCue;
+    const cue = work == null || workCue?.mark == null ? null : { ...workCue, mark: workCue.mark };
     const hudFull: HudView = {
       ...hudView,
       clock: { minuteOfDay: sim.state.calendar.minuteOfDay, light },
@@ -1530,6 +1533,12 @@ export function startPlay(
     root.dataset['reasons'] = st.reasons.map((r) => `${r.reason}:${r.amount}`).join(',');
     root.dataset['work'] = work?.task ?? '';
     root.dataset['workLoop'] = work == null ? '' : (loops[work.task] ?? '');
+    // The timing ring over the work: only a timed task's (decision PT-1).
+    root.dataset['timingRing'] = String(work != null && workCue?.mark != null);
+    root.dataset['driftwood'] =
+      campDef === null
+        ? ''
+        : driftwoodPieces(sim.state, { def: campDef }, map.zone).length.toString();
     root.dataset['sleeping'] = String(sleeping != null);
     root.dataset['report'] = reportOpen ? (reportShown ?? []).join('|') : '';
     const homeNow = campDef === null ? undefined : sim.state.homes[campDef.home];

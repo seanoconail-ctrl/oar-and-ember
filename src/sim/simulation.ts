@@ -84,11 +84,13 @@ import {
   feedFire,
   finishWork,
   homeMinute,
+  isTimed,
   markTick,
   morningReport,
   sleepAllowed,
   startDay,
   timingQuality,
+  workTicks,
 } from './home/camp.ts';
 import type { CampContext, CampEvent, NightRecord, PlacedUse, SiteUse } from './home/camp.ts';
 import { clearReasons, hasReason, setReason, traversalTick, updateMax } from './home/stamina.ts';
@@ -145,7 +147,7 @@ export type Command =
   | { readonly type: 'AIM'; readonly dir: number | null; readonly dist?: number | null }
   /** Lowers a drawn bow without loosing: no arrow is spent (right-click, Escape or pad B). */
   | { readonly type: 'CANCEL_AIM' }
-  /** The timing press during a hands-on action (Book 2 section 07). */
+  /** The timing press during a timed hands-on action (Book 2 section 07); ignored on plain work. */
   | { readonly type: 'WORK_PRESS' }
   /** Stops a hands-on action before it ends: nothing is done and nothing is spent. */
   | { readonly type: 'CANCEL_WORK' }
@@ -521,6 +523,8 @@ export function createSimulation(
       case 'WORK_PRESS': {
         const work = state.onFoot?.player.work;
         if (work?.press !== null || camp === null) return;
+        // A plain action has no ring and takes no press (decision PT-1).
+        if (!isTimed(camp, work.task)) return;
         work.press = state.tick;
         events.emit({
           type: 'WORK_PRESSED',
@@ -852,6 +856,13 @@ export function createSimulation(
       land,
       map,
       tidalGroundOpen: tideAt(state.calendar, b).tidalGroundOpen,
+      wet: (x, y) => {
+        const elevation = land.elevations.get(onFoot.zone);
+        if (elevation === undefined) return false;
+        return (
+          bandAt(land.water, elevation, x, y, stillWaterLevel(tideAt(state.calendar, b))) !== null
+        );
+      },
       emit: emitFight,
       deed: (tag, victims, witnesses) => {
         if (people === null) return;
@@ -1036,11 +1047,13 @@ export function createSimulation(
     if (onFoot === null || camp === null) return;
     const p = onFoot.player;
     p.aim = null;
+    // A pick-up is a short stoop; other work plays for actionSeconds (decisions PT-1, PT-2).
+    const ticks = workTicks(camp, task);
     p.work = {
       task,
       site,
       since: state.tick,
-      ticks: camp.actionTicks,
+      ticks,
       press: null,
       at,
       ...(target === undefined ? {} : { target }),
@@ -1051,8 +1064,9 @@ export function createSimulation(
       type: 'WORK_STARTED',
       task,
       site,
-      ticks: camp.actionTicks,
-      markTick: markTick(state.tick, camp.action),
+      ticks,
+      // Only a timed task shows its ring closing on the mark (decision PT-1).
+      markTick: isTimed(camp, task) ? markTick(state.tick, camp.action) : null,
     });
   };
 

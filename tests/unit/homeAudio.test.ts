@@ -123,6 +123,7 @@ describe('home sounds (Book 11 sections 07, 09 and 12; Stage 7)', () => {
   it('has a generated, captioned sound for every task, the fire, a good stroke and sleep', () => {
     for (const event of [
       'TASK_DRIFTWOOD',
+      'DRIFTWOOD_PICKED_UP',
       'TASK_FISH',
       'FISH_LANDED',
       'TASK_TEND',
@@ -144,7 +145,7 @@ describe('home sounds (Book 11 sections 07, 09 and 12; Stage 7)', () => {
     // Every camp task's sound is an event in the table.
     for (const [task, def] of Object.entries(content.camp?.tasks ?? {}))
       expect(table.events[def.sound], task).toBeDefined();
-    expect(HOME.length).toBe(11);
+    expect(HOME.length).toBe(12);
   });
 
   it("has the steading's life for dawn, day, dusk and night, and the hearth at any hour", () => {

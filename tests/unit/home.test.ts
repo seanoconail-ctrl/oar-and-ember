@@ -4,7 +4,8 @@
  *
  * 1. No starvation or spoilage before tutorialComplete.
  * 2. Sleeping after 18:00 advances to dawn and produces a morning report in sentences.
- * 3. The player's task action adds output at their skill, and missed timing never ruins a task.
+ * 3. The player's task action adds output at their skill; only fishing from the shore is timed
+ *    (decision PT-1), and missed timing never ruins the catch.
  * 4. Each task advances the clock by its Book 10 time and costs only its Book 10 stamina, and its
  *    work loop is the same for the steerer and residents (the scene side is in workLoops.test.ts).
  * 5. The bar's length is its maximum; each condition lowers it by its Book 10 amount and is named;
@@ -27,6 +28,7 @@ import {
   FACT_AT_BROCH,
   FACT_TUTORIAL_COMPLETE,
   foodRd,
+  isTimed,
   skillRatio,
 } from '../../src/sim/home/camp.ts';
 import type { CampContext } from '../../src/sim/home/camp.ts';
@@ -112,10 +114,10 @@ describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
 
   it('completes once the fire is lit and her leg tended; she fishes from the next morning', () => {
     const { sim, events, bot } = toTheBroch('beat2');
-    // Driftwood from the weed line, then back up to light the fire.
-    bot.doAt('wrack_1');
-    bot.doAt('wrack_2');
-    expect(home(sim.state).stores['RES_DRIFTWOOD']).toBeGreaterThan(1);
+    // Driftwood picked up where it lies on the strand (PT-2), then back up to light the fire.
+    bot.pickUp('drift_east_rocks');
+    bot.pickUp('drift_east_tide');
+    expect(home(sim.state).stores['RES_DRIFTWOOD']).toBeGreaterThanOrEqual(work.fireLightLoads);
     bot.doAt('fire');
     expect(home(sim.state).fire.lit).toBe(true);
     // Tend her leg: interacting next to her.
@@ -225,34 +227,73 @@ describe('Stage 7 check 2: sleeping after 18:00 advances to dawn with a morning 
   });
 });
 
-describe('Stage 7 check 3: the action adds output at skill; missed timing never ruins it', () => {
-  it('gathers driftwood at the skill multiplier, plus up to the timing bonus', () => {
+describe('Stage 7 check 3: the action adds output at skill; only fishing is timed (PT-1)', () => {
+  /** Plays a hands-on action at a site with a press on the mark, a late one or none. */
+  const buildWith = (press: 'good' | 'late' | 'none', skill = 1) => {
+    const { sim, events, bot } = play(`build-${press}-${skill}`);
+    sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
+    sim.state.player.skills['building'] = skill as 0;
+    bot.goToSite('shelter');
+    bot.interact();
+    const started = events.filter((e) => e.type === 'WORK_STARTED').at(-1);
+    bot.work(press);
+    return { progress: home(sim.state).building?.progress ?? 0, events, started };
+  };
+
+  it('only fishing from the shore keeps the timed press (Book 10 timedTasks)', () => {
+    expect([...tasks.action.timed]).toEqual(['Fish from the shore']);
+    expect([...camp.timed]).toEqual(['TASK_FISH_SHORE']);
+    for (const id of camp.tasks.keys())
+      expect(isTimed(camp, id), id).toBe(id === 'TASK_FISH_SHORE');
+  });
+
+  it('a menial task is a plain action: no ring, a press counts for nothing, work at skill', () => {
     const results: Record<string, number> = {};
     for (const press of ['good', 'late', 'none'] as const) {
-      const { sim, bot } = play(`wood-${press}`);
-      sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
-      if (sim.state.onFoot !== null) sim.state.onFoot.items = [];
-      bot.doAt('wrack_1', press);
-      results[press] = home(sim.state).stores['RES_DRIFTWOOD'] ?? 0;
+      const run = buildWith(press);
+      results[press] = run.progress;
+      // No ring: the work starts with no mark, and a press is not taken.
+      expect(run.started).toMatchObject({
+        type: 'WORK_STARTED',
+        task: 'TASK_BUILD',
+        markTick: null,
+      });
+      expect(run.events.some((e) => e.type === 'WORK_PRESSED')).toBe(false);
+      expect(run.events.filter((e) => e.type === 'WORK_DONE').at(-1)).toMatchObject({ bonus: 0 });
     }
-    const level = 1;
-    const base = work.driftwoodPerSearch.Spring * skillRatio(work, level);
+    const minutes = tasks.costs.get('Build (hammer, raise a beam, thatch)')?.gameMinutes ?? 0;
+    const base = minutes * skillRatio(work, 1);
+    expect(results['good']).toBeCloseTo(base, 6);
+    expect(results['late']).toBeCloseTo(base, 6);
+    expect(results['none']).toBeCloseTo(base, 6);
+  });
+
+  it('fishing shows the ring: a good press adds up to the timing bonus, a miss never ruins it', () => {
+    const results: Record<string, number> = {};
+    for (const press of ['good', 'late', 'none'] as const) {
+      const { sim, events, bot } = play(`fish-${press}`);
+      sim.state.facts[FACT_AT_BROCH] = true;
+      sim.state.player.hotbar.slots[0] = 'ITEM_LINE';
+      bot.goToWater();
+      expect(bot.fish(press)).toBe(true);
+      const started = events.filter((e) => e.type === 'WORK_STARTED').at(-1);
+      expect(started).toMatchObject({ task: 'TASK_FISH_SHORE' });
+      expect(started?.type === 'WORK_STARTED' ? started.markTick : null).not.toBeNull();
+      const done = events.filter((e) => e.type === 'WORK_DONE').at(-1);
+      results[press] = done?.type === 'WORK_DONE' ? done.output : -1;
+      if (press === 'good') expect(events.some((e) => e.type === 'WORK_PRESSED')).toBe(true);
+    }
+    const cost = tasks.costs.get('Fish from the shore')?.gameMinutes ?? 0;
+    const base = (work.fishShore.Spring / work.workerDayMinutes) * cost * skillRatio(work, 1);
     expect(results['none']).toBeCloseTo(base, 6);
     expect(results['late']).toBeCloseTo(base, 6);
     expect(results['good']).toBeCloseTo(base * (1 + work.timingBonus), 6);
-    expect(results['good']).toBeGreaterThan(results['none'] ?? 0);
   });
 
   it('works faster at a higher skill', () => {
-    const at = (skill: number) => {
-      const { sim, bot } = play(`skill-${skill}`);
-      sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
-      sim.state.player.skills['gathering'] = skill as 0;
-      bot.doAt('wrack_2', 'none');
-      return home(sim.state).stores['RES_DRIFTWOOD'] ?? 0;
-    };
-    expect(at(4)).toBeGreaterThan(at(1));
-    expect(at(2)).toBeCloseTo(work.driftwoodPerSearch.Spring, 6);
+    expect(buildWith('none', 4).progress).toBeGreaterThan(buildWith('none', 1).progress);
+    const minutes = tasks.costs.get('Build (hammer, raise a beam, thatch)')?.gameMinutes ?? 0;
+    expect(buildWith('none', 2).progress).toBeCloseTo(minutes, 6);
   });
 });
 
@@ -288,7 +329,11 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
       bot.tend('C_HILD', 'none');
     } else {
       const site =
-        task === 'TASK_GATHER_DRIFTWOOD' ? 'wrack_1' : task === 'TASK_BUILD' ? 'shelter' : 'fire';
+        task === 'TASK_GATHER_DRIFTWOOD'
+          ? 'drift_east_rocks'
+          : task === 'TASK_BUILD'
+            ? 'shelter'
+            : 'fire';
       bot.goToSite(site);
       const t0 = minutesIntoDay(sim.state.calendar, b);
       // At full stamina nothing regenerates while the loop plays: what goes is the task's cost.
@@ -302,7 +347,7 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
         minutes: row(task).gameMinutes,
         stamina: row(task).stamina,
       });
-      // Minutes: the task's own, plus the few the clock ran during the 2.5 s loop.
+      // Minutes: the task's own, plus the few the clock ran during the loop (or the stoop).
       const passed = minutesIntoDay(sim.state.calendar, b) - t0;
       expect(passed).toBeGreaterThanOrEqual(row(task).gameMinutes);
       expect(passed).toBeLessThanOrEqual(row(task).gameMinutes + 4);
@@ -328,7 +373,9 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
     const { sim, bot } = play('hard');
     sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
     sim.state.player.stamina.current = 1;
-    for (let i = 0; i < 26; i++) bot.doAt('wrack_3', 'none');
+    // Seventeen half-hours raising the shelter: more than Book 10's hard day, short of the roof.
+    for (let i = 0; i < 17; i++) bot.doAt('shelter', 'none');
+    expect(home(sim.state).stage).toBe('S0');
     expect(sim.state.player.stamina.current).toBeGreaterThan(0);
     expect(sim.state.player.condition.workedMinutes).toBeGreaterThan(sb.hardWorkMinutes);
     expect(sim.state.player.stamina.reductions.map((r) => r.reason)).toContain('HARD_WORK');

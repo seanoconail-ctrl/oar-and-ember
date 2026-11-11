@@ -52,12 +52,23 @@ export interface TaskCost {
 /** Book 10 section 09, "Hands-on action". Seconds are real seconds. */
 export interface ActionBalance {
   readonly actionSeconds: number;
+  /**
+   * The tasks (their Book 10 row names) that keep a timed press (`timedTasks`: fishing from the
+   * shore); every other task is a plain action with no ring and no press (decision PT-1).
+   */
+  readonly timed: ReadonlySet<string>;
   readonly markSeconds: number;
   readonly windowSeconds: number;
 }
 
+/** The name the pick-up's cost goes by among the task costs: Book 10's table "Driftwood finds". */
+export const DRIFTWOOD_FINDS = 'Driftwood finds';
+
 export interface TaskBalance {
-  /** By the task's name in Book 10 ("Gather driftwood", "Fish from the shore", ...). */
+  /**
+   * By the task's name in Book 10 ("Fish from the shore", "Cook", ...); a driftwood pick-up's
+   * minutes and stamina go by DRIFTWOOD_FINDS (section 03, "Driftwood finds", pickUp).
+   */
   readonly costs: ReadonlyMap<string, TaskCost>;
   readonly action: ActionBalance;
 }
@@ -72,7 +83,18 @@ export function parseTaskBalance(json: unknown): TaskBalance {
     if (!/^\d+$/.test(stamina)) fail(`tasks.${name}.stamina`, stamina, 'a whole number');
     costs.set(name, { gameMinutes: Number(minutes), stamina: Number(stamina) });
   }
+  const pickUp = parseDriftwoodBalance(json);
+  costs.set(DRIFTWOOD_FINDS, { gameMinutes: pickUp.pickUpMinutes, stamina: pickUp.pickUpStamina });
   const action = keyed(json, 'buildingsToolsAndCrafting', 'handsOnAction');
+  const timedText = match(
+    'handsOnAction.timedTasks',
+    action('timedTasks'),
+    /^(.+?) only; every other task is a plain action$/,
+    '"<task>, <task> and <task> only; every other task is a plain action"',
+  )[1];
+  const timed = (timedText ?? '').split(/, | and /).map((t) => t.trim());
+  for (const t of timed)
+    if (!costs.has(t)) fail('handsOnAction.timedTasks', t, 'a task of Homestead tasks');
   return {
     costs,
     action: {
@@ -84,12 +106,13 @@ export function parseTaskBalance(json: unknown): TaskBalance {
           '"N real seconds ..."',
         )[1],
       ),
+      timed: new Set(timed),
       markSeconds: Number(
         match(
           'handsOnAction.timingMark',
           action('timingMark'),
-          new RegExp(`^${N} real seconds into the action$`),
-          '"N real seconds into the action"',
+          new RegExp(`^${N} real seconds into a timed action$`),
+          '"N real seconds into a timed action"',
         )[1],
       ),
       windowSeconds: Number(
@@ -101,6 +124,78 @@ export function parseTaskBalance(json: unknown): TaskBalance {
         )[1],
       ),
     },
+  };
+}
+
+/** Book 10 section 03, "Driftwood finds" (decisions PT-2 and PT-3). */
+export interface DriftwoodBalance {
+  /** How many spots on Wreck Strand hold a piece (content/camp.json's DRIFTWOOD sites). */
+  readonly spots: number;
+  /** Pieces the sea leaves at bare spots each dawn, by season, before a storm's factor. */
+  readonly perDawn: Readonly<Record<Season, number>>;
+  /** The factor at the dawn after a storm. */
+  readonly afterStorm: number;
+  /** Loads of driftwood in one piece. */
+  readonly loadsPerPiece: number;
+  /** A pick-up's game minutes and stamina, and the stoop's real seconds. */
+  readonly pickUpMinutes: number;
+  readonly pickUpStamina: number;
+  readonly stoopSeconds: number;
+}
+
+export function parseDriftwoodBalance(json: unknown): DriftwoodBalance {
+  const finds = keyed(json, 'foodFuelAndSeasons', 'driftwoodFinds');
+  const spots = match(
+    'driftwoodFinds.spots',
+    finds('spots'),
+    /^(\d+) spots on /,
+    '"N spots on ..."',
+  );
+  match(
+    'driftwoodFinds.firstDawn',
+    finds('firstDawn'),
+    /^A piece at every spot$/,
+    '"A piece at every spot"',
+  );
+  const dawn = match(
+    'driftwoodFinds.piecesPerDawn',
+    finds('piecesPerDawn'),
+    /^Spring (\d+), summer (\d+), autumn (\d+), winter (\d+)$/,
+    '"Spring N, summer N, autumn N, winter N"',
+  );
+  const storm = match(
+    'driftwoodFinds.afterStorm',
+    finds('afterStorm'),
+    new RegExp(`^${N} times the season's pieces$`),
+    '"N times the season\'s pieces"',
+  );
+  const loads = match(
+    'driftwoodFinds.loadsPerPiece',
+    finds('loadsPerPiece'),
+    new RegExp(`^${N} loads?$`),
+    '"N loads"',
+  );
+  const pick = match(
+    'driftwoodFinds.pickUp',
+    finds('pickUp'),
+    new RegExp(
+      `^(\\d+) game minutes and (\\d+) stamina; the steerer stoops for ${N} real seconds$`,
+    ),
+    '"N game minutes and N stamina; the steerer stoops for N real seconds"',
+  );
+  return {
+    spots: Number(spots[1]),
+    perDawn: {
+      Spring: Number(dawn[1]),
+      Summer: Number(dawn[2]),
+      Autumn: Number(dawn[3]),
+      Winter: Number(dawn[4]),
+    },
+    afterStorm: Number(storm[1]),
+    loadsPerPiece: Number(loads[1]),
+    pickUpMinutes: Number(pick[1]),
+    pickUpStamina: Number(pick[2]),
+    stoopSeconds: Number(pick[3]),
   };
 }
 

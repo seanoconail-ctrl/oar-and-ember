@@ -1091,7 +1091,7 @@
     "text": "Already done"
   },
   "task.name.driftwood": {
-    "text": "Gather driftwood"
+    "text": "Pick up the driftwood"
   },
   "task.name.fish": {
     "text": "Fish"
@@ -1145,7 +1145,7 @@
     "text": "{key} as the mark closes"
   },
   "ui.prompt.need_wood": {
-    "text": "The fire needs driftwood: gather it on the strand."
+    "text": "The fire needs driftwood: pick it up where it lies on the strand."
   },
   "ui.prompt.too_early": {
     "text": "Too early to sleep: after {time}."
@@ -1256,7 +1256,13 @@
     "text": "The fire went out in the night. It needs driftwood to light again."
   },
   "report.fire.none": {
-    "text": "There is no fire yet. Driftwood lies along the weed line on the strand."
+    "text": "There is no fire yet. Driftwood lies about the strand, below the broch."
+  },
+  "report.wood.strand": {
+    "text": "Driftwood lies about the strand: {pieces} pieces of it."
+  },
+  "report.wood.strand_one": {
+    "text": "One piece of driftwood lies on the strand."
   },
   "report.wood.stack": {
     "text": "There are {loads} loads of driftwood stacked by the fire."
@@ -1351,6 +1357,10 @@
   "c_hild.bark.evening.01": {
     "text": "Sleep when you can. I'll keep the fire in.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.sfx.driftwood_pickup": {
+    "text": "Driftwood lifted from the shingle",
+    "tags": ["INFO"]
   },
   "caption.sfx.task_driftwood": {
     "text": "Driftwood gathered",

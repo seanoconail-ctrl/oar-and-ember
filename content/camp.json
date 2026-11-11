@@ -1,5 +1,5 @@
 {
-  "about": "The first camp at home (Book 4 Chapter 1 beat 2; Book 7 section 06, S0 and S1; decision DD-19): the tasks of Stage 7's task system v0 (Book 2 section 07; each names its Book 10 section 09 row, never a number), the places in the zones where they are done, the camp's props by stage, and where Hild sits, sleeps and fishes. Positions are in tiles of their zone, at the foot.",
+  "about": "The first camp at home (Book 4 Chapter 1 beat 2; Book 7 section 06, S0 and S1; decision DD-19): the tasks of Stage 7's task system v0 (Book 2 section 07; each names its Book 10 section 09 row, never a number; the driftwood pick-up names section 03's \"Driftwood finds\"), the places in the zones where they are done (the DRIFTWOOD sites are the pieces of driftwood lying on Wreck Strand, each drawn with its prop_driftwood frame; decision PT-2), the camp's props by stage, and where Hild sits, sleeps and fishes. Positions are in tiles of their zone, at the foot.",
   "home": "ISLE_SKARV",
   "zone": "ZONE_SK_MACHAIR",
   "beat": "BEAT_1_BROCH",
@@ -8,13 +8,14 @@
     "balanceRow": "Sail shelter in the broch"
   },
   "sleepSeconds": 3,
+  "region": "REG_SK",
   "tasks": {
     "TASK_GATHER_DRIFTWOOD": {
       "nameKey": "task.name.driftwood",
-      "balanceRow": "Gather driftwood",
+      "balanceRow": "Driftwood finds",
       "skill": "gathering",
       "workLoop": "gather",
-      "sound": "TASK_DRIFTWOOD",
+      "sound": "DRIFTWOOD_PICKED_UP",
       "output": "RES_DRIFTWOOD"
     },
     "TASK_FISH_SHORE": {
@@ -95,39 +96,100 @@
       "y": 30.5
     },
     {
-      "key": "wrack_1",
+      "key": "drift_west_tide",
       "zone": "ZONE_SK_STRAND",
       "kind": "DRIFTWOOD",
-      "x": 77.0,
-      "y": 34.4
+      "x": 22.4,
+      "y": 35.2,
+      "frame": "branch/-/0"
     },
     {
-      "key": "wrack_2",
+      "key": "drift_west_bank",
       "zone": "ZONE_SK_STRAND",
       "kind": "DRIFTWOOD",
-      "x": 84.0,
-      "y": 35.3
+      "x": 28.6,
+      "y": 34.2,
+      "frame": "spar_r/-/0"
     },
     {
-      "key": "wrack_3",
+      "key": "drift_west_rocks",
       "zone": "ZONE_SK_STRAND",
       "kind": "DRIFTWOOD",
-      "x": 68.6,
-      "y": 34.3
+      "x": 36.3,
+      "y": 35.2,
+      "frame": "log/-/0"
     },
     {
-      "key": "wrack_4",
+      "key": "drift_cove_bank",
       "zone": "ZONE_SK_STRAND",
       "kind": "DRIFTWOOD",
-      "x": 91.0,
-      "y": 34.8
+      "x": 34.5,
+      "y": 27.6,
+      "frame": "log_r/-/0"
     },
     {
-      "key": "wrack_5",
+      "key": "drift_east_rocks",
       "zone": "ZONE_SK_STRAND",
       "kind": "DRIFTWOOD",
-      "x": 65.5,
-      "y": 34.4
+      "x": 65.4,
+      "y": 35.6,
+      "frame": "branch_r/-/0"
+    },
+    {
+      "key": "drift_east_tide",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 71.6,
+      "y": 37.6,
+      "frame": "spar/-/0"
+    },
+    {
+      "key": "drift_east_shingle",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 80.5,
+      "y": 38.6,
+      "frame": "log/-/0"
+    },
+    {
+      "key": "drift_east_point",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 82.5,
+      "y": 42.0,
+      "frame": "branch/-/0"
+    },
+    {
+      "key": "drift_east_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 77.5,
+      "y": 31.5,
+      "frame": "spar_r/-/0"
+    },
+    {
+      "key": "drift_bank_corner",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 86.2,
+      "y": 34.2,
+      "frame": "log_r/-/0"
+    },
+    {
+      "key": "drift_stern",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 89.2,
+      "y": 35.5,
+      "frame": "branch_r/-/0"
+    },
+    {
+      "key": "drift_stern_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 93.4,
+      "y": 31.2,
+      "frame": "spar/-/0"
     }
   ],
   "props": {

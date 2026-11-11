@@ -29,7 +29,10 @@
  * - Golden save 7 (schema 7, Stage 9): the same day played again, with Second wind turned on; on the
  *   strand after the broch the three wreck-scavengers are there by the wreck at the west end, out
  *   of sight of the steerer fishing at the east end; the steerer takes the seax in hand, strikes
- *   once at nothing, parries and dodges, and the save is made at 15:00.
+ *   once at nothing, parries and dodges, and the save is made at 15:00. Since the playtest change
+ *   (decisions PT-1 to PT-4) the driftwood is picked up where it lies at the east end (three
+ *   pieces, kept in the region's resource nodes, two of them washed up again at dawn) and the
+ *   camp's other work is a plain action; the save's shape is unchanged.
  *
  *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-07.json
  */
@@ -102,13 +105,15 @@ function goldenDay(
   opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
   opening.pickUp('stern_bow');
   const bot = new CampBot(sim, b, land, camp);
-  // Up to the broch Hild has led to, back down for driftwood from the weed line, and up again.
+  // Up to the broch Hild has led to, back down to pick up driftwood where it lies (decision PT-2:
+  // two pieces make the first fire's load, a third for the stack), and up again.
   bot.goToZone('ZONE_SK_MACHAIR');
   bot.goToSite('stores');
   bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
   bot.goToZone('ZONE_SK_STRAND');
-  bot.doAt('wrack_1');
-  bot.doAt('wrack_2', 'late');
+  bot.pickUp('drift_east_rocks');
+  bot.pickUp('drift_east_tide');
+  bot.pickUp('drift_east_bank');
   bot.goToZone('ZONE_SK_MACHAIR');
   bot.doAt('fire');
   bot.tend('C_HILD');

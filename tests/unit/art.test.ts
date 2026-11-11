@@ -119,6 +119,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'prop_boulder',
       'prop_camp',
       'prop_debris',
+      'prop_driftwood',
       'prop_greymen_stone',
       'prop_heather',
       'prop_pickup',

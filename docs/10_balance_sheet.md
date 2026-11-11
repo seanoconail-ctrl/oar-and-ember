@@ -156,6 +156,18 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | fireLight | 1 load of driftwood | Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house |
 | tutorialGuard | No starvation and no spoilage before tutorialComplete | tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning) |
 
+### Driftwood finds
+*Added from the user's playtest note (decisions PT-2 and PT-3): the steerer does not work driftwood, but finds it. Pieces lie in a variety of spots on Wreck Strand, are picked up with a plain interact and a short stoop, and the sea brings more each dawn. A dawn's pieces bring what one search did (the Driftwood row above: 1 load), more in autumn and winter, so the camp fire (houseFuelPerDay) is kept with some over. Gathering driftwood as a day's work stays a resident's job (driftwoodSearchesPerWorkerDay).*
+
+| Key | Value | Notes |
+|---|---|---|
+| spots | 12 spots on Wreck Strand | Along the high-tide line at both ends, under the bank, among the rocks of both outcrops and by the wreck's stern (content/camp.json, the DRIFTWOOD sites) |
+| firstDawn | A piece at every spot | The storm that wrecked the ship left the strand strewn: 6 loads, enough to light the first fire (fireLight) once 2 pieces are fetched up to the broch |
+| piecesPerDawn | Spring 2, summer 2, autumn 3, winter 4 | Washed up again at dawn at spots picked bare, never more than the spots picked bare (1, 1, 1.5 and 2 loads a day against the fire's 0.5, 0.2, 0.5 and 1.0) |
+| afterStorm | 2 times the season's pieces | At the dawn after a storm. Storms come with the weather (Stage 13); until then every dawn is a calm one |
+| loadsPerPiece | 0.5 loads | Added to the camp's store (RES_DRIFTWOOD) as soon as it is picked up |
+| pickUp | 5 game minutes and 0 stamina; the steerer stoops for 0.8 real seconds | No timing ring and no press: one gather loop, then the minutes pass |
+
 ### Barley and kale
 | Key | Value |
 |---|---|
@@ -540,7 +552,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | xpPerWorkerDay | 1 in the skill used |
 | xpToLevel | 10 for 2, 30 for 3, 60 for 4, 100 for 5 (cumulative) |
 | outputMultiplier | 0.6 + 0.15 x level (0.6 at 0, 1.35 at 5) |
-| playerTimingBonus | Up to +25% task output for good timing |
+| playerTimingBonus | Up to +25% task output for good timing, on the timed tasks only (Hands-on action, timedTasks: fishing from the shore) |
 | startingSkills | 2 in each skill Book 5 names for a person; the steerer 1 in every homestead task; 0 otherwise |
 
 ### Friendship deltas by deed (valence per value point)
@@ -802,11 +814,10 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Hull patch (Chapter 1) | 4 boards, 30 rivets | 2 worker-days |
 
 ### Homestead tasks: time and stamina
-*Each hands-on action takes game time and only a little stamina, so the day is the real cost of working and work stays a bonus (Book 1 section 18).*
+*Each hands-on action takes game time and only a little stamina, so the day is the real cost of working and work stays a bonus (Book 1 section 18). Driftwood is not worked by the steerer: it is picked up where the sea leaves it ("Driftwood finds", section 03; decision PT-2), and walking the weed lines for it is a resident's job.*
 
 | Task | Game minutes per action | Stamina per action |
 |---|---|---|
-| Gather driftwood | 20 | 1 |
 | Fish from the shore | 30 | 1 |
 | Fell a tree | 45 | 3 |
 | Split timber | 20 | 2 |
@@ -832,12 +843,13 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Light a fire | 10 | 0 |
 
 ### Hands-on action
-*Added for Stage 7 (decision S7-8): how a player's action plays. Book 2 section 07: a timed press adds work at the player's skill with a bonus for good timing; missing the timing never ruins the task.*
+*Added for Stage 7 (decision S7-8), changed from the user's playtest note (decision PT-1): how a player's action plays. Book 2 section 07: a menial task is a plain action, its work loop playing with no timing ring and no press, adding work at the player's skill. Only the timed tasks keep a timed press, whose good timing adds up to playerTimingBonus; missing it never ruins the catch.*
 
 | Key | Value |
 |---|---|
 | actionSeconds | 2.5 real seconds while the work loop plays; the task's game minutes pass at its end |
-| timingMark | 1.5 real seconds into the action |
+| timedTasks | Fish from the shore only; every other task is a plain action |
+| timingMark | 1.5 real seconds into a timed action |
 | timingWindow | 0.3 real seconds either side of the mark earns the full playerTimingBonus, falling to none 0.3 s further out |
 
 ### Disputes

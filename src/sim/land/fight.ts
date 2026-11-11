@@ -640,6 +640,8 @@ export interface FightWorld {
   readonly land: Pick<LandContext, 'maps' | 'movement' | 'rules' | 'missiles'>;
   readonly map: ZoneMap;
   readonly tidalGroundOpen: boolean;
+  /** Whether a point is in the water now (by the tide): no one takes a flank there. */
+  readonly wet?: (x: number, y: number) => boolean;
   /** Time balance (daylight). */
   readonly emit: FightEmit;
   /** Applies a household deed (KILLING, SURRENDERED_KILLED) through the people's measures. */
@@ -1356,7 +1358,7 @@ const SIDES: readonly (readonly [number, number])[] = [
 /**
  * Where a melee fighter stands against its target when two or more close on it (Book 2 section 13,
  * "flank"): the four sides of the target at striking distance, taken in name order, each by the
- * nearest fighter still without one; a side that is not open ground is passed over. Null for a
+ * nearest fighter still without one; a side that is not open, dry ground is passed over. Null for a
  * lone attacker (or the first to a side it already holds): it strikes from where it is.
  */
 function flankSlot(
@@ -1371,16 +1373,17 @@ function flankSlot(
   const attackers = Object.entries(onFoot.actors)
     .filter(
       ([, o]) =>
-        o.fight !== undefined &&
-        o.fight.ai.target === target &&
+        o.fight?.ai.target === target &&
         o.fight.f.weapon !== null &&
         !(o.fight.bow && o.fight.arrows > 0) &&
         fighting(o.fight),
     )
     .sort(([x], [y]) => (x < y ? -1 : 1));
   if (attackers.length < 2) return null;
-  const open = SIDES.map(([sx, sy]) => ({ x: pos.x + sx * r, y: pos.y + sy * r })).filter((p) =>
-    footprintClear(fw.map, fw.land.rules, p.x, p.y, fw.tidalGroundOpen),
+  const open = SIDES.map(([sx, sy]) => ({ x: pos.x + sx * r, y: pos.y + sy * r })).filter(
+    (p) =>
+      footprintClear(fw.map, fw.land.rules, p.x, p.y, fw.tidalGroundOpen) &&
+      fw.wet?.(p.x, p.y) !== true,
   );
   for (const [oid, o] of attackers) {
     if (open.length === 0) return null;

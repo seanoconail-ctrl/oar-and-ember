@@ -1,7 +1,8 @@
 /**
  * Stage 7 in the browser (Book 3 Stage 7): the broch at home with its day clock and stamina bar,
- * the walk down to the strand through the broch's door, a task's work loop taking game time, a
- * night's sleep to the morning report, and the fire's light at night.
+ * the walk down to the strand through the broch's door, a task's work loop taking game time (a
+ * plain action with no timing ring, decision PT-1), driftwood picked up where it lies on the strand
+ * (PT-2), a night's sleep to the morning report, and the fire's light at night.
  *
  * Every test plays stepped (`capture`: the page advances only when stepped, by `oeStep`), and starts
  * at the broch through the camp hooks (`camp=broch`, `time=HH:MM`, `fire=lit`, `at=x,y` and so on;
@@ -98,7 +99,9 @@ test.describe('Stage 7: day and night, shelter and first tasks', () => {
     await step(page, 1);
     await expect(overlay(page)).toHaveAttribute('data-work', 'TASK_LIGHT_FIRE');
     await expect(overlay(page)).toHaveAttribute('data-work-loop', 'kneel');
-    await expect(overlay(page)).toHaveAttribute('data-prompt', 'timing');
+    // A plain action (decision PT-1): no timing ring and no press asked for.
+    await expect(overlay(page)).toHaveAttribute('data-timing-ring', 'false');
+    await expect(overlay(page)).not.toHaveAttribute('data-prompt', 'timing');
     // The loop's frames advance while the work goes on.
     const frames = new Set<string>();
     for (let i = 0; i < 12; i++) {
@@ -111,6 +114,34 @@ test.describe('Stage 7: day and night, shelter and first tasks', () => {
     await expect(overlay(page)).toHaveAttribute('data-fire', 'lit');
     // Book 10 section 09: lighting a fire takes ten minutes.
     expect(minutes(await attr(page, 'clock')) - before).toBeGreaterThanOrEqual(10);
+  });
+
+  test('picks up driftwood where it lies on the strand: a stoop, no ring, its load at once', async ({
+    page,
+  }) => {
+    // Decision PT-2: a piece by the rocks at the east end, the steerer just below it.
+    const piece = site('drift_east_rocks');
+    await startPlay(
+      page,
+      'A',
+      `capture&camp=broch&time=10:00&wood=0&zone=ZONE_SK_STRAND&at=${piece.x},${piece.y + 0.8}`,
+    );
+    await step(page, 3);
+    await expect(overlay(page)).toHaveAttribute('data-zone', 'ZONE_SK_STRAND');
+    await expect(overlay(page)).toHaveAttribute('data-prompt', 'task_gather_driftwood');
+    const lying = Number(await attr(page, 'driftwood'));
+    expect(lying).toBeGreaterThan(0);
+    expect(Number(await attr(page, 'wood'))).toBe(0);
+    await page.keyboard.press('KeyE');
+    await step(page, 1);
+    await expect(overlay(page)).toHaveAttribute('data-work', 'TASK_GATHER_DRIFTWOOD');
+    await expect(overlay(page)).toHaveAttribute('data-work-loop', 'gather');
+    await expect(overlay(page)).toHaveAttribute('data-timing-ring', 'false');
+    await expect(overlay(page)).not.toHaveAttribute('data-prompt', 'timing');
+    // The stoop is short (Book 10: 0.8 s): done within a second or two of stepped play.
+    expect(await stepUntil(page, 'work', (w) => w === '', 20)).toBe('');
+    expect(Number(await attr(page, 'wood'))).toBeCloseTo(0.5, 2);
+    expect(Number(await attr(page, 'driftwood'))).toBe(lying - 1);
   });
 
   test('sleeps after 18:00 to dawn, and the morning report is written in sentences', async ({
