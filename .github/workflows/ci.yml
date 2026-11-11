@@ -64,9 +64,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install firefox
+      # For the log only: never fails the job.
       - name: What WebGL2 the browser offers
-        run: node tests/browser/webgl-probe.ts firefox
-        continue-on-error: true
+        run: node tests/browser/webgl-probe.ts firefox || true
       - run: npm run test:browser -- --project=firefox
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
@@ -91,9 +91,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install webkit
+      # For the log only: never fails the job.
       - name: What WebGL2 the browser offers
-        run: node tests/browser/webgl-probe.ts webkit
-        continue-on-error: true
+        run: node tests/browser/webgl-probe.ts webkit || true
       - run: npm run test:browser -- --project=webkit
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
