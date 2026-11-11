@@ -122,38 +122,48 @@ class Character:
         return self.body.anims.get(state, {}).get('frames', 1)
 
 
-def put_person(dst, img, ax, ay, fx, fy, mask, t, dark=0.0):
-    """Draws a person with its anchor (ax, ay in img) at screen (fx, fy), masked `mask` px up
-    from the feet by the water, with a moving waterline highlight where the water cuts it."""
+def put_person(dst, img, ax, ay, fx, fy, mask, t, dark=0.0, water=None):
+    """Draws a person with its anchor (ax, ay in img) at screen (fx, fy), masked `mask` px up from
+    the feet by the water (Book 7 section 07, people in water). Below the waterline the water in
+    front of the body covers it: the silhouette is filled with the water's colour at the feet
+    (`water`), the body faintly showing through in broken streaks, and the waterline gets a light
+    rim that moves a pixel with the small waves."""
     img = img.copy()
     if dark > 0:
         img[..., :3] = (img[..., :3].astype(np.float32) * (1 - 0.22 * dark)).astype(np.uint8)
-    cut = None
-    if mask > 0:
-        cut = ay - mask + 1  # rows from here down are under the water
-        under = img[cut:].copy()
-        img[cut:, :, 3] = 0
-        # A faint, darker body under the surface, broken by the water.
-        under[..., :3] = (under[..., :3].astype(np.float32) * 0.45 + np.array([20, 55, 70]) * 0.55).astype(np.uint8)
-        under[..., 3] = (under[..., 3] > 0) * 70
-        for r in range(under.shape[0]):
-            if (r + int(t * 6)) % 3 == 0:
-                under[r, :, 3] = 0
-    over(dst, img, int(fx - ax), int(fy - ay))
-    if mask > 0:
-        over(dst, under, int(fx - ax), int(fy - ay + cut))
-        # The waterline: a light rim one pixel wide across the body, rippling a pixel.
-        row = img[cut - 1] if cut - 1 >= 0 else None
-        cols = np.where((row[..., 3] > 0) if row is not None else [])[0] if row is not None else []
-        if len(cols):
-            y = int(fy - ay + cut)
-            for c in range(cols.min() - 2, cols.max() + 3):
-                x = int(fx - ax + c)
-                wob = int(round(math.sin(t * 5 + c * 0.9) * 0.6))
-                if 0 <= x < dst.shape[1] and 0 <= y + wob < dst.shape[0]:
-                    edge = c < cols.min() or c > cols.max()
-                    k = 0.45 if edge else 0.75
-                    dst[y + wob, x] = dst[y + wob, x] * (1 - k) + np.array([214, 236, 236]) * k
+    x0, y0 = int(fx - ax), int(fy - ay)
+    if mask <= 0:
+        over(dst, img, x0, y0)
+        return
+    cut = max(0, ay - mask + 1)
+    above = img.copy()
+    above[cut:, :, 3] = 0
+    over(dst, above, x0, y0)
+    if water is None:
+        H, W = dst.shape[:2]
+        sx, sy = min(W - 1, max(0, int(fx))), min(H - 1, max(0, int(fy) + 2))
+        water = dst[max(0, sy - 2):sy + 3, max(0, sx - 6):sx + 7].reshape(-1, 3).mean(axis=0)
+    under = img[cut:].copy()
+    body = under[..., :3].astype(np.float32)
+    fill = np.empty_like(body)
+    fill[:] = water
+    streak = np.zeros(under.shape[:2], bool)
+    for r in range(under.shape[0]):
+        if (r + int(t * 6)) % 3 != 0:
+            streak[r] = True
+    mix = np.where(streak[..., None], 0.22, 0.0)
+    under[..., :3] = (fill * (1 - mix) + body * mix).astype(np.uint8)
+    over(dst, under, x0, y0 + cut)
+    # The waterline: a light rim across the body and a pixel beyond each side, rippling.
+    cols = np.where(img[max(0, cut - 1)][..., 3] > 0)[0]
+    if len(cols):
+        y = y0 + cut
+        for c in range(cols.min() - 2, cols.max() + 3):
+            x = x0 + c
+            wob = int(round(math.sin(t * 5 + c * 0.9) * 0.6))
+            if 0 <= x < dst.shape[1] and 0 <= y + wob < dst.shape[0]:
+                k = 0.45 if (c < cols.min() or c > cols.max()) else 0.8
+                dst[y + wob, x] = dst[y + wob, x] * (1 - k) + np.array([214, 236, 236]) * k
 
 
 def load_bg(name):
@@ -165,9 +175,24 @@ def load_bg(name):
     return meta, frames, depths
 
 
-def save_gif(frames, path, scale=2, ms=80):
-    imgs = [Image.fromarray(np.clip(f, 0, 255).astype(np.uint8)).resize((640 * scale, 360 * scale), Image.NEAREST) for f in frames]
-    imgs[0].save(path, save_all=True, append_images=imgs[1:], duration=ms, loop=0, optimize=False)
+def save_gif(frames, path, scale=2, ms=80, crop=None):
+    """Writes a GIF through ffmpeg with one palette for the clip (small files, no dither)."""
+    import subprocess, tempfile, shutil
+    tmp = tempfile.mkdtemp()
+    try:
+        for i, f in enumerate(frames):
+            im = Image.fromarray(np.clip(f, 0, 255).astype(np.uint8))
+            if crop is not None:
+                im = im.crop(crop)
+            im.resize((im.width * scale, im.height * scale), Image.NEAREST).save(f'{tmp}/f{i:04d}.png')
+        fps = 1000 / ms
+        pal = f'{tmp}/palette.png'
+        subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-framerate', str(fps), '-i', f'{tmp}/f%04d.png',
+                        '-vf', 'palettegen=max_colors=128:stats_mode=full', pal], check=True)
+        subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-framerate', str(fps), '-i', f'{tmp}/f%04d.png',
+                        '-i', pal, '-lavfi', 'paletteuse=dither=none', '-loop', '0', path], check=True)
+    finally:
+        shutil.rmtree(tmp)
 
 
 
@@ -258,10 +283,11 @@ def scene_wade(body='a'):
     st = Character(f'steerer_{body}.layers.json')
     hild = Character('hild.layers.json')
     # Hild stands in her waist band, calling, facing the shore.
-    hx, hy = 356, 119
-    # The steerer's path: down the sand, into the water beside Hild, a pause, and back out.
-    path = [(292, 64, 'walk'), (318, 104, 'walk'), (334, 120, 'walk'), (334, 120, 'idle', 22),
-            (318, 104, 'walk'), (300, 70, 'walk'), (300, 70, 'idle', 30)]
+    hx, hy = 357, 109
+    # The steerer's path (from the captured depth): down the sand, into the water beside Hild to
+    # the knee and then the waist, a pause facing her, and back out onto the sand.
+    path = [(304, 76, 'walk'), (322, 96, 'walk'), (338, 104, 'walk'), (338, 104, 'idle', 24),
+            (322, 92, 'walk'), (306, 78, 'walk'), (306, 78, 'idle', 40)]
     x, y = path[0][0], path[0][1]
     seg, wait, dist, facing = 1, 0, 0.0, 's'
     wet_until, wet_band, prints, ripples, splashes, drips = -1.0, None, [], [], [], []
@@ -274,6 +300,8 @@ def scene_wade(body='a'):
         if seg < len(path):
             target = path[seg]
             if target[2] == 'idle':
+                if seg == 3:
+                    facing = 'e'
                 wait += 1
                 if wait >= target[3]:
                     seg += 1
@@ -354,7 +382,7 @@ def scene_wade(body='a'):
             if 0 <= k < 3:
                 fx(hud, img, 'drip', k, dx_, dy_ + k * 4)
         out.append(img)
-    save_gif(out, f'{OUT}/wade-{body}.gif', scale=2, ms=80)
+    save_gif(out, f'{OUT}/wade-{body}.gif', scale=3, ms=80, crop=(220, 24, 460, 159))
     Image.fromarray(np.clip(out[60], 0, 255).astype(np.uint8)).save(f'{OUT}/wade-{body}-still.png')
     print(f'wade-{body}.gif: {len(out)} frames')
 
@@ -424,7 +452,7 @@ def scene_hotbar():
         hud.stamina(img)
         hud.hotbar(img, sel)
         out.append(img)
-    save_gif(out, f'{OUT}/hotbar.gif', scale=2, ms=80)
+    save_gif(out, f'{OUT}/hotbar.gif', scale=2, ms=80, crop=(160, 0, 480, 360))
     print('hotbar.gif')
 
 
@@ -463,7 +491,7 @@ def scene_bow():
         hud.stamina(img, 100, 80, ())
         hud.hotbar(img, 6)
         out.append(img)
-    save_gif(out, f'{OUT}/bow.gif', scale=2, ms=80)
+    save_gif(out, f'{OUT}/bow.gif', scale=2, ms=80, crop=(120, 0, 520, 360))
     print('bow.gif')
 
 

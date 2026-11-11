@@ -143,7 +143,17 @@ if (import.meta.filename === process.argv[1]) {
     const first = firstName === undefined ? undefined : byName.get(firstName);
     if (first === undefined) throw new Error(`${file}: no first layer sheet`);
     const rows = frameRows(first);
-    const img = contact(rows, first.width, first.height, (key, put) => {
+    // The cell holds every layer's canvas round the shared foot anchor (a bow's larger canvas).
+    const used = [...new Set(Object.values(def.layers).flat())].map((name) => {
+      const sheet = byName.get(name);
+      if (sheet === undefined) throw new Error(`${file}: no sheet ${name}`);
+      return sheet;
+    });
+    const left = Math.max(...used.map((s) => s.pivot.x));
+    const top = Math.max(...used.map((s) => s.pivot.y));
+    const cellW = left + Math.max(...used.map((s) => s.width - s.pivot.x));
+    const cellH = top + Math.max(...used.map((s) => s.height - s.pivot.y));
+    const img = contact(rows, cellW, cellH, (key, put) => {
       const facing = key.split('/')[1] ?? 's';
       for (const name of def.layers[facing] ?? []) {
         const sheet = byName.get(name);
@@ -152,8 +162,8 @@ if (import.meta.filename === process.argv[1]) {
         const px = rgbaOf(sheet, key);
         if (raw === undefined || px === null) continue;
         // Layers share the body's anchor; a larger layer canvas is centred on it.
-        const dx = first.pivot.x - sheet.pivot.x;
-        const dy = first.pivot.y - sheet.pivot.y;
+        const dx = left - sheet.pivot.x;
+        const dy = top - sheet.pivot.y;
         for (let i = 0; i < raw.pixels.length; i++)
           if ((raw.pixels[i] ?? NO_PIXEL) !== NO_PIXEL)
             put(

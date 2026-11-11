@@ -1,0 +1,9 @@
+{
+  "name": "hild",
+  "layers": {
+    "s": ["actor_c_hild", "layer_clothing_dress_hild", "layer_cloak_shawl_hild"],
+    "n": ["actor_c_hild", "layer_clothing_dress_hild", "layer_cloak_shawl_hild"],
+    "e": ["actor_c_hild", "layer_clothing_dress_hild", "layer_cloak_shawl_hild"],
+    "w": ["actor_c_hild", "layer_clothing_dress_hild", "layer_cloak_shawl_hild"]
+  }
+}
