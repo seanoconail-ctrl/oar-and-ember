@@ -255,7 +255,7 @@ The mainland's smaller groups are tracked through their leaders. Hrefna's salt p
 | Runa and Gunnhild | Rival shipwrights; respect under the insults | Asa's debt; a shared refit |
 | Kolbeinn and Asa | Married; in debt together | Whether both debts are settled |
 | Tófi and Ylva | Married forty years | Ylva's health through winter |
-| Ulf and Gilla Muire | Raider and victim of cattle theft | The household's choice of side |
+| Ulf and Gilla Muire | Raider, and the chief whose cattle he lifts | The household's choice of side |
 | Ulf and Oddi | Creditor and debtor | Oddi's treatment by the household |
 | Thrand and Asgrim | Former shipmates who parted badly | Proof of Heid's sacrifices |
 | Asgrim and Heid | He blames her for his brother's drowning | Evidence of the bargain |

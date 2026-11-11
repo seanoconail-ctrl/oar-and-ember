@@ -1889,11 +1889,11 @@
     },
     {
       "id": "BEAT_8_RETURN",
-      "ref": "The Return to Skarvholm (days 241 to 252)",
+      "ref": "The Return to Skarvholm (typically days 241 to 252)",
       "book": 4,
       "section": "08",
       "origin": "assigned",
-      "note": "Wraps Book 6 scenario 9."
+      "note": "Wraps Book 6 scenario 9. Chapter dates are typical dates since addendum 2.3 section 4."
     },
     {
       "id": "BEAT_8_PREPARATION",
@@ -2935,11 +2935,11 @@
     },
     {
       "id": "MAIN_BLACKWOOD_EDGE",
-      "ref": "Fiodh Dubh: the edge",
+      "ref": "The Black Wood path (Fiodh Dubh)",
       "book": 4,
       "section": "03",
       "origin": "stated",
-      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+      "note": "Now a wilderness route, the Black Wood path (addendum 2.3 section 3); the ID keeps its first name. Also written in Book 9 sections 10 and 14."
     },
     {
       "id": "MAIN_BLACKWOOD_HEART",
@@ -2951,7 +2951,7 @@
     },
     {
       "id": "MAIN_MOIN_MHOR",
-      "ref": "Móin Mhór, the Great Bog",
+      "ref": "Móin Mhór: the turf village and bog edge",
       "book": 4,
       "section": "03",
       "origin": "stated",
@@ -2987,7 +2987,7 @@
       "book": 4,
       "section": "03",
       "origin": "stated",
-      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+      "note": "Wilderness route (design addendum 2.3 section 3). Also written in Book 9 sections 10 and 14."
     },
     {
       "id": "MAIN_DUN_FIACH",
@@ -3003,15 +3003,31 @@
       "book": 4,
       "section": "03",
       "origin": "stated",
-      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+      "note": "Wilderness route (design addendum 2.3 section 3). Also written in Book 9 sections 10 and 14."
     },
     {
       "id": "MAIN_FORD",
-      "ref": "The River Ford",
+      "ref": "The river path and the Ford",
       "book": 4,
       "section": "03",
       "origin": "stated",
-      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+      "note": "Now a wilderness route (addendum 2.3 section 3). Also written in Book 9 sections 10 and 14."
+    },
+    {
+      "id": "MAIN_MOOR_ROAD",
+      "ref": "The moor road",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Wilderness route (design addendum 2.3 section 3), salt pans to Móin Mhór. Also written in Book 9 sections 10 and 14."
+    },
+    {
+      "id": "MAIN_PLANK_ROAD",
+      "ref": "The plank road across the Great Bog",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Wilderness route (design addendum 2.3 section 3), Móin Mhór to Sliabh Carn. Also written in Book 9 sections 10 and 14."
     },
     {
       "id": "MAIN_SALT_PANS",
@@ -3039,11 +3055,11 @@
     },
     {
       "id": "MAIN_MOUND_FIELD",
-      "ref": "The Mound Field and the moor",
+      "ref": "The Mound Field",
       "book": 4,
       "section": "03",
       "origin": "stated",
-      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+      "note": "Site entered from the moor road (MAIN_MOOR_ROAD); the moor itself is now that route."
     }
   ],
   "families": [
@@ -3202,6 +3218,42 @@
     {
       "tag": "SAIL_SEEN",
       "ref": "`SAIL_SEEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "KILLING_HIDDEN",
+      "ref": "`KILLING_HIDDEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "HOSPITALITY_BROKEN",
+      "ref": "`HOSPITALITY_BROKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "BLOOD_PRICE_PAID",
+      "ref": "`BLOOD_PRICE_PAID`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "BLOOD_PRICE_TAKEN",
+      "ref": "`BLOOD_PRICE_TAKEN`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "RITES_DENIED",
+      "ref": "`RITES_DENIED`",
+      "book": 6,
+      "section": "01"
+    },
+    {
+      "tag": "CHALLENGE_REFUSED",
+      "ref": "`CHALLENGE_REFUSED`",
       "book": 6,
       "section": "01"
     }

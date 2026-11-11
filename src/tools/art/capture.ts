@@ -135,7 +135,13 @@ export async function capture(label: string): Promise<string> {
     ) as unknown,
     'zone_sk_strand.json',
   );
-  const server = await createServer({ root: REPO_ROOT, server: { port: 5287 }, logLevel: 'error' });
+  // No file watching and no hot reload: an edit anywhere in the repository while the capture runs
+  // (another session at work) would otherwise reload the page and cut the capture off.
+  const server = await createServer({
+    root: REPO_ROOT,
+    server: { port: 5287, hmr: false, watch: null },
+    logLevel: 'error',
+  });
   await server.listen();
   const browser = await chromium.launch();
   try {
@@ -180,7 +186,11 @@ export async function capture(label: string): Promise<string> {
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
 
-    // The walk: up the strand from where the steerer wakes, through the cut onto the machair.
+    // The wade (design addendum 2.2 section 2): from where the steerer wakes, along the strand to
+    // Hild, into the shallows beside her, and back out onto the shingle.
+    const waded = await wadeClip(page, map, out);
+
+    // The walk: up the strand from beside Hild, through the cut onto the machair.
     const start = await where(page);
     const from = tileOf(map, start.x, start.y);
     const path =
@@ -235,9 +245,6 @@ export async function capture(label: string): Promise<string> {
     ]);
     rmSync(framesDir, { recursive: true, force: true });
 
-    // The wade (design addendum 2.2 section 2), after the walk so the walk's clip is unchanged.
-    const waded = await wadeClip(page, map, out);
-
     const pct = (v: number): string => `${(v * 100).toFixed(1)}%`;
     writeFileSync(
       join(out, 'README.md'),
@@ -250,7 +257,7 @@ export async function capture(label: string): Promise<string> {
         '| File | What it is |',
         '|---|---|',
         '| `still.png`, `still@2x.png` | Wreck Strand where the steerer wakes, at 1x and 2x |',
-        '| `walk.mp4` | 10 seconds at 2x, 25 fps: up the strand, through the cut, onto the machair |',
+        '| `walk.mp4` | 10 seconds at 2x, 25 fps: up the strand from beside Hild, through the cut, onto the machair |',
         `| \`wade.mp4\`, \`wade.gif\` | ${(waded / FPS).toFixed(1)} s: running along the strand to Hild, wading out beside her, a pause, and back out onto the shingle (mp4 at 2x; gif 320 x 180 round the action at 2x, 12.5 fps) |`,
         '| `compare.png` | The approved reference (left) beside the capture (right), both at 2x |',
         '| `motion.png` | The still view; cells without continuous motion are marked red |',
@@ -311,37 +318,43 @@ async function wadeClip(
     x: Number(await o.getAttribute('data-hild-px')),
     y: Number(await o.getAttribute('data-hild-py')),
   };
-  const hildTile = tileOf(map, hild.x, hild.y);
-  // Where to stand: knee or waist water beside her, on her shore side, 14 to 30 px away.
+  // Where to stand: knee or waist water just east of her (on the side the steerer comes from),
+  // the nearest such point to her at her own row or a little in front.
   let spot: { x: number; y: number } | null = null;
-  for (let r = 14; r <= 30 && spot === null; r += 2)
-    for (let a = 0; a < 32 && spot === null; a++) {
-      const ang = (a / 32) * 2 * Math.PI;
-      const x = hild.x + Math.cos(ang) * r;
-      const y = hild.y + Math.sin(ang) * r * 0.6;
-      const at = band(x, y);
-      if ((at === 'KNEE' || at === 'WAIST') && x > hild.x + 8) spot = { x, y };
+  // At least 10 px east of her feet so the two figures read apart; nearest first.
+  let best = Infinity;
+  for (let dx = 10; dx <= 26; dx += 1)
+    for (let dy = -2; dy <= 16; dy += 1) {
+      const at = band(hild.x + dx, hild.y + dy);
+      const d = Math.hypot(dx, dy * 1.5);
+      if ((at === 'KNEE' || at === 'WAIST') && d < best) {
+        best = d;
+        spot = { x: hild.x + dx, y: hild.y + dy };
+      }
     }
-  if (spot === null) throw new Error('no knee or waist water beside Hild');
-  // The stand-off: the nearest dry or shallow tile to the spot, reached by a path.
+  if (spot === null)
+    throw new Error(`no knee or waist water beside Hild at ${hild.x},${hild.y} (level ${level})`);
+  const wadeTo = spot;
+  // The stand-off on dry ground a little up the beach from that spot, reached by a tile path that
+  // keeps out of waist and deep water.
+  let ashorePoint = { x: wadeTo.x + 30, y: wadeTo.y - 14 };
+  for (let up = 14; up < 60 && band(ashorePoint.x, ashorePoint.y) !== null; up += 2)
+    ashorePoint = { x: wadeTo.x + 30, y: wadeTo.y - up };
+  const goal = tileOf(map, ashorePoint.x, ashorePoint.y);
   const begin = await where(page);
   const route =
     findPath(
       map,
       false,
       tileOf(map, begin.x, begin.y),
-      (t) =>
-        Math.abs(t.tx - tileOf(map, spot.x, spot.y).tx) +
-          Math.abs(t.ty - tileOf(map, spot.x, spot.y).ty) <=
-          1 &&
-        (band((t.tx + 0.5) * 24, (t.ty + 0.7) * 24) === null ||
-          band((t.tx + 0.5) * 24, (t.ty + 0.7) * 24) === 'WET'),
+      (t) => t.tx === goal.tx && t.ty === goal.ty,
       shallow,
     ) ?? [];
   if (route.length === 0) throw new Error('no path to Hild');
-  const ashore = route[route.length - 1] ?? hildTile;
-  const ashorePoint = { x: (ashore.tx + 0.5) * 24, y: (ashore.ty + 0.7) * 24 };
-  const waypoints = route.map((t) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.7) * 24 }));
+  const waypoints = [
+    ...route.slice(1, -1).map((t) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.7) * 24 })),
+    ashorePoint,
+  ];
   const wadeDir = join(out, '.wade');
   rmSync(wadeDir, { recursive: true, force: true });
   mkdirSync(wadeDir, { recursive: true });
@@ -370,7 +383,7 @@ async function wadeClip(
     const to = waypoints[k];
     if (to !== undefined && (await steer(page, keys, to))) k++;
     await step(page);
-    if (left <= 14) await save();
+    if (left <= 9) await save();
   }
   if (running) await page.keyboard.up('ShiftLeft');
   const go = async (to: { x: number; y: number }, limit: number): Promise<void> => {
@@ -382,16 +395,16 @@ async function wadeClip(
     await release();
   };
   // Out into the water beside her, a turn to face her, a pause, and back out onto the shingle.
-  await go(spot, 120);
+  await go(wadeTo, 120);
   await page.keyboard.down('KeyA');
   await step(page);
   await page.keyboard.up('KeyA');
-  for (let i = 0; i < FPS * 2; i++) {
+  for (let i = 0; i < FPS * 2.5; i++) {
     await step(page);
     await save();
   }
   await go(ashorePoint, 120);
-  await go({ x: ashorePoint.x, y: ashorePoint.y - 30 }, 80);
+  await go({ x: ashorePoint.x + 10, y: ashorePoint.y - 24 }, 80);
   for (let i = 0; i < FPS && frames < WADE_FRAMES; i++) {
     await step(page);
     await save();

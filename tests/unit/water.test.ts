@@ -315,13 +315,19 @@ describe('Hild in the opening (Book 1 section 15; Book 9)', () => {
 
   it('keeps knee to waist deep over the opening’s first 20 game minutes', () => {
     const { bands } = watch(OPENING.minuteOfDay);
-    expect([...bands].every((x) => x === 'KNEE' || x === 'WAIST'), [...bands].join()).toBe(true);
+    expect(
+      [...bands].every((x) => x === 'KNEE' || x === 'WAIST'),
+      [...bands].join(),
+    ).toBe(true);
   });
 
   it('keeps her footing as the tide falls: steps seaward to stay knee to waist deep', () => {
     // Mid-ebb, when the level drops fastest.
     const { bands, moved } = watch(15 * 60);
-    expect([...bands].every((x) => x === 'KNEE' || x === 'WAIST'), [...bands].join()).toBe(true);
+    expect(
+      [...bands].every((x) => x === 'KNEE' || x === 'WAIST'),
+      [...bands].join(),
+    ).toBe(true);
     expect(moved).toBeGreaterThan(0);
   });
 });

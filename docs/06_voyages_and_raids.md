@@ -322,7 +322,7 @@ At the Gathering, Brónach tells the council that the old compact was sworn over
 |---|---|
 | Garrison | About 40 fighters under Kolgrím the Burner, placed as in Book 9 section 08; three dogs; a horn on Rook Hill |
 | Ships | Two of Orm's ships at Naust Cove; a reinforcement ship at Kaldness, called by the horn |
-| The dig | Gróa, four guards and six conscripted diggers (civilians from a taken harbour) at the cairn; her shaft has broken into the central chamber |
+| The dig | Gróa, four guards and six conscripted diggers (farmers and fishers from a taken harbour, who bore no weapon) at the cairn; her shaft has broken into the central chamber |
 | The cairn | The cairn's keepers are awake and angry; two diggers drowned in the broken chamber and walk as draugr |
 | Captives | Any residents left as an outpost are held in the broch fort, with any of the household left downed in an earlier fight with Orm's men |
 | The Cup | On its stone in the inner chamber. It leaves the stone only after three truths are spoken at the Door. Lifting it makes Rán's tide surge across the island |

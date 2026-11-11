@@ -206,7 +206,7 @@ Doorways, eaves, beds, benches and workstations follow the people scale of secti
 - Body, clothing, cloak, helmet, armour, shield and weapon are separate layered sheets that share the body's frames and foot anchor, so whatever a person wears or carries is visible and changes when it changes. Book 2 section 19 owns the format and the draw order per facing.
 - Weapon and shield layers may use a larger canvas round the same anchor for long weapons (spears, Dane axes, bows), so nothing is cut off. Weapons are carried distinctly: spears upright or sloped, axes at the belt or shoulder, swords at the hip, seaxes across the front, bows on the back or in hand.
 - **Iron helmets are rare.** Leaders and veterans wear them; most people do not; Orm's men have the most. The steerer starts with none.
-- Every layer the steerer can wear is drawn for both body models.
+- Every layer the steerer can wear is drawn for both body models, and every layer a heavy person wears is drawn for the heavy build (section 16).
 
 ### Readability
 - **The steerer** carries a madder-red accent from the `madder` ramp (the palette's Madder red), so they stand out against sand and grass at 1x. The approved colours (decision DB-1) are a brown tunic, a dark wool cloak, and a madder sash and hem. Every clothing and cloak layer the steerer can wear keeps the accent. **Green stays away from the steerer**: no green clothing, cloak or trim on either body model.

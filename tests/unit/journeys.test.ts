@@ -3,7 +3,7 @@
  * times are what the network gives, so the table can never drift from the network it is built on.
  */
 import { describe, expect, it } from 'vitest';
-import { parseNetwork, shortestJourney } from '../../src/sim/travel/journeys.ts';
+import { parseNetwork, shortestJourney } from '../../src/sim/land/journeys.ts';
 import { repoFile } from './books.ts';
 
 const tables = (

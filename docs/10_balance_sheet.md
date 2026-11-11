@@ -457,7 +457,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 |---|---|---|
 | Broch fort | Kolgrím the Burner and 9 huscarls, 3 dogs | Captives held inside; dogs hear with three times the normal noise radius |
 | Barracks (old longhouse) | 12 raiders | Asleep at night unless the horn sounds |
-| Watch cairn on Rook Hill | 2, a horn and a beacon | If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early |
+| Watch cairn on Rook Hill | 2, a horn and a beacon | If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early (its typical date moves 5 days earlier and pressure builds faster; the final battle still waits at its story gate, section 22) |
 | Hermit's cell | 1 sentry at night | Sees down into Gull Geo |
 | Naust Cove ships | 2 ships, 6 on watch | Crews join a fight 120 s after the horn; ships can be burned |
 | The dig at the cairn | Gróa, 4 guards, 6 conscripted diggers | Diggers are civilians |
@@ -505,6 +505,12 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | `HOSTAGE_TAKEN` | +1 | 0 | 0 | 0 | 0 | 0 |
 | Captive harmed | 0 | -3 | -1 | 0 | -1 | -2 |
 | Theft from the household's own stores | -2 | 0 | -1 | -3 | 0 | -3 |
+| `KILLING_HIDDEN` (proposal) | 0 | -2 | -2 | 0 | 0 | -3 |
+| `HOSPITALITY_BROKEN` (proposal) | 0 | -1 | -1 | -1 | -1 | -4 |
+| `BLOOD_PRICE_PAID` (proposal) | -1 | +1 | -1 | +1 | 0 | +2 |
+| `BLOOD_PRICE_TAKEN` (proposal) | +1 | +1 | -1 | +1 | 0 | +2 |
+| `RITES_DENIED` (proposal) | 0 | -1 | 0 | -2 | -3 | 0 |
+| `CHALLENGE_REFUSED` (proposal) | 0 | +1 | -3 | 0 | 0 | 0 |
 | `PROMISE_KEPT` | 0 | 0 | 0 | 0 | 0 | +3 |
 | `PROMISE_BROKEN` | 0 | 0 | 0 | 0 | 0 | -4 |
 | Resident left behind | 0 | -1 | 0 | -4 | 0 | -1 |
@@ -807,7 +813,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | About 220 | Ulf's attack on the mainland home | Ulf hostile | His raven sail | 25 | Defences, allies |
 | About 228 | Orm takes Skarvholm as a forward base | Always; outpost residents are taken captive | Smoke over the island, seen from the mainland | 2 ships, about 40 | Abandon, reinforce, or accept; rescue in the Return |
 | 241 to 252 | The Return to Skarvholm (required) | Always | The Keepers' revelation and scouting reports | Garrison in section 07 | Book 6 scenario 9; section 13; checkpoint before landing; one retry before the household sets out for the final battle |
-| 256 to 270 | Orm's fleet and the finale | Always | The washer at the ford | 6 to 10 ships; two fewer if the Naust ships were burned; 5 days earlier if the beacon was lit | Everything prepared |
+| 256 to 270 | Orm's fleet and the finale | Always | The washer at the ford | 6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier if the beacon was lit (still a gate) | Everything prepared |
 
 ## 12 / Guard rails
 *Rules that must stay true whatever the numbers become.*
@@ -945,10 +951,11 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | hostileFaction | Hostile chance x2 on a route held by a faction hostile to the household |
 | cargo | Hostile chance x1.5 when carrying cargo or driving cattle |
 | cleared | Hostile chance x0.5 once the household has driven out the route's outlaws |
+| waymarked | A waymarked route keeps a party on its path in fog and at night (no getting turned round); hostile chance x0.9 |
 | ambushSign | Every ambush shows a sign (a fallen tree, crows rising, a stretch gone quiet, fresh tracks) at least 6 tiles ahead; a keen-eyed companion sees it 3 tiles sooner |
 
 ### Shortest journeys
-*Computed from the Network by `src/sim/travel/journeys.ts` (a test checks every row). Hours by land, the fastest chain of road legs and routes, without modifiers.*
+*Computed from the Network by `src/sim/land/journeys.ts` (a test checks every row). Hours by land, the fastest chain of road legs and routes, without modifiers.*
 
 | From | To | Hours |
 |---|---|---|
@@ -1191,6 +1198,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 |---|---|
 | stopInterval | Something worth stopping for every 20 to 30 s of walking |
 | secrets | At least one real secret or small puzzle in every area |
+| pointsOfInterest | One or two major points of interest per site, one per route; 4 to 8 minor ones per site or route, the best off the beaten track |
 | wildernessArea | At least one secret, one resource worth the trip, one story and one danger |
 | change | Every area changes with season and tide |
 | objective | The current goal is always shown |

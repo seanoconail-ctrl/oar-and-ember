@@ -1559,7 +1559,7 @@
     {
      "Post": "Watch cairn on Rook Hill",
      "Strength": "2, a horn and a beacon",
-     "Notes": "If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early"
+     "Notes": "If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early (its typical date moves 5 days earlier and pressure builds faster; the final battle still waits at its story gate, section 22)"
     },
     {
      "Post": "Hermit's cell",
@@ -1794,6 +1794,60 @@
      "Kin": "-3",
      "Faith": "0",
      "Word": "-3"
+    },
+    {
+     "Deed": "KILLING_HIDDEN (proposal)",
+     "Gain": "0",
+     "Mercy": "-2",
+     "Glory": "-2",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "-3"
+    },
+    {
+     "Deed": "HOSPITALITY_BROKEN (proposal)",
+     "Gain": "0",
+     "Mercy": "-1",
+     "Glory": "-1",
+     "Kin": "-1",
+     "Faith": "-1",
+     "Word": "-4"
+    },
+    {
+     "Deed": "BLOOD_PRICE_PAID (proposal)",
+     "Gain": "-1",
+     "Mercy": "+1",
+     "Glory": "-1",
+     "Kin": "+1",
+     "Faith": "0",
+     "Word": "+2"
+    },
+    {
+     "Deed": "BLOOD_PRICE_TAKEN (proposal)",
+     "Gain": "+1",
+     "Mercy": "+1",
+     "Glory": "-1",
+     "Kin": "+1",
+     "Faith": "0",
+     "Word": "+2"
+    },
+    {
+     "Deed": "RITES_DENIED (proposal)",
+     "Gain": "0",
+     "Mercy": "-1",
+     "Glory": "0",
+     "Kin": "-2",
+     "Faith": "-3",
+     "Word": "0"
+    },
+    {
+     "Deed": "CHALLENGE_REFUSED (proposal)",
+     "Gain": "0",
+     "Mercy": "+1",
+     "Glory": "-3",
+     "Kin": "0",
+     "Faith": "0",
+     "Word": "0"
     },
     {
      "Deed": "PROMISE_KEPT",
@@ -2951,7 +3005,7 @@
      "Threat": "Orm's fleet and the finale",
      "Condition": "Always",
      "Warning": "The washer at the ford",
-     "Scale": "6 to 10 ships; two fewer if the Naust ships were burned; 5 days earlier if the beacon was lit",
+     "Scale": "6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier if the beacon was lit (still a gate)",
      "Counter": "Everything prepared"
     }
    ]
@@ -3464,6 +3518,10 @@
     {
      "Key": "cleared",
      "Value": "Hostile chance x0.5 once the household has driven out the route's outlaws"
+    },
+    {
+     "Key": "waymarked",
+     "Value": "A waymarked route keeps a party on its path in fog and at night (no getting turned round); hostile chance x0.9"
     },
     {
      "Key": "ambushSign",
@@ -4410,6 +4468,10 @@
     {
      "Key": "secrets",
      "Value": "At least one real secret or small puzzle in every area"
+    },
+    {
+     "Key": "pointsOfInterest",
+     "Value": "One or two major points of interest per site, one per route; 4 to 8 minor ones per site or route, the best off the beaten track"
     },
     {
      "Key": "wildernessArea",

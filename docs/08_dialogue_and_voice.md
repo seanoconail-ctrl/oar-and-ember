@@ -124,7 +124,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Nessa | Gentle, observant, oddly calm about the sea; deflects personal questions with questions | "The swell's changing. Can you feel it?" / "Why do you want to know where I came from?" / "Keep him warm tonight. The sea likes the cold ones." |
 | Gudrun | The voice of the family's memory; tart, unafraid of the steerer | "Thorkel raided too. He also buried his dead properly." / "Feed them before you count them." |
 | Arnbjörn | Mild, careful, kind; apologises too much | "Sorry. The cow got out. Sorry." / "I'm not much in a fight. I'm good with fences." |
-| Kári | Loud, hungry for fame; admires cruelty; brave | "They ran! Did you see them run?" / "Burn it. Let them see the smoke at Dún Fiach." |
+| Kári | Loud, hungry for fame; admires cruelty; brave; scorns stealth raids and blood-price as unworthy of a drengr | "They ran! Did you see them run?" / "Burn it. Let them see the smoke at Dún Fiach." / "Creeping about at night. That's thieves' work." |
 | Kolla | Dry, protective of her twin, practical | "He's an idiot. He's my idiot. I'll handle it." |
 | Tófi One-Eye | Hard old truth-teller; tender only with Ylva | "That's not glory. That's butchery with a good song." / "Eat, love. Eat a bit more." |
 | Ylva | Frail, uncanny, matter-of-fact about omens | "Bran's other self was at the door again. Tell him to rest." |
@@ -399,3 +399,95 @@ One or two lines each, about their road and their reason, drawn from the minor c
 - The speaker says what they know and how: **"I saw"** for certain, **"I had it from"** for likely, **"they say"** for rumour, matching the confidence words of Book 6 section 01.
 - News of the household's own deeds names the sail and the place, never the steerer's gender.
 - Samples: Cuán: "Riders crossed at noon. Fergal's. Going your way." / A Saltvik trader: "I saw Orm's ships at the Sound. Four. Maybe five." / The pedlar: "They say Carrick's keeper has two dogs now. Big ones." / A pilgrim: "Ardcarn's sowing failed. I had it from a carter. A black ship took the seed, he said."
+
+## 16 / Period ethics in speech
+*People judge by their own culture's code around AD 900, and say so in its words. Compassion is real; it speaks in period terms.*
+
+### How each people speaks of right and wrong
+Book 5 section 16 holds the codes and stances, and Book 6 section 01 how each people reads each deed. In speech:
+| People | They speak of | Compassion sounds like | Sample lines |
+|---|---|---|---|
+| The Norse household, Orm's men, Ulf's | Honour and shame, luck, a good name, oaths, kin and vengeance, what the gods will do | "No need of that." "That brings bad luck." "His kin will come." "It shamed us." | Kolla: "No need of that. Now his brothers know our sail." / Gudrun: "We'll not have it said at Saltvik we kill men on their knees." |
+| The Gaels | Honour-price and rank, éraic, hospitality, sureties, satire, geasa | "His honour-price is owed." "You ate at our fire." | Muiredach: "He was a free man of Ardcarn. His honour-price will be paid." / Órlaith: "Every feud my father starts, I inherit." |
+| The Church | Sin and penance, the saints, God's judgement, sanctuary | "It is a sin." "Pray for him, and for yourself." | Senán: "It is a sin. I'll pray for you. I can't pray it away." / Muirenn: "Three dead. One of them innocent of any sword." |
+| The Keepers | Give and take with the sea, oaths, what happens on their shore | "The sea will want something back." | Brónach: "You put blood on our stones. The sea keeps count." |
+| Saltvik | The bargain, the scale, a debt paid | "Bad for trade." | Ottar: "Kill whom you like. Short my scales and you'll not sell here again." |
+
+People of mixed birth (Bran, Senán, Áine) reach for either code, and sometimes argue with themselves: Bran: "A Gael would want silver for him. A priest would want my soul."
+
+### The cruelty of each tradition, voiced
+Each tradition's cruelty is spoken by those who practise it as ordinary, owed or necessary, and the writing never cheers it. A kind, doubtful or ashamed believer of the same faith is always within earshot (Book 5 section 15).
+| Tradition | Its cruelty, said plainly | Its doubt or shame |
+|---|---|---|
+| Norse belief | Heid: "Rán is owed. I pay what is owed." / Orm: "Their families did not pay. The sea did not argue." | Thrand: "I held the rope. I'll carry that." / Tófi: "We called it glory. The widows called it something else." |
+| The Church at Kilbrecc | Colmán: "The bondmen eat. Freedom never fed anyone." / Colmán: "We will fast against your house until God answers." | Senán: "They cannot leave. I tell myself the saint wants it so." / Muirenn: "I write our sins in the same ink as theirs." |
+| Gaelic custom | The poet: "One verse, and no hall on this coast will feed you." | Órlaith: "The rich pay éraic. The poor pay in sons." |
+| The Keepers and the old powers | Brónach: "The skin is the bond. Whoever holds it, she follows." | Nessa: "They leave the sick on the skerry. I hated the sea for that once." |
+
+The hard limits hold in speech as everywhere: no line describes sexual violence, no child is on stage, and no line invites the player to torture. A seal-kin binding is spoken of as a hold over where she lives and whom she serves, and nothing more.
+
+### Stance shapes what people say
+| Stance | How they justify themselves | Sample |
+|---|---|---|
+| Conventional | Cites the code as plain fact | Runa: "You don't whistle on a boat. Everyone knows that." |
+| Sceptical | Keeps the code, doubts it aloud | Tófi: "The gods won't mind. They never seem to." |
+| Cynical | Uses the code's words for gain | Ottar: "Hospitality is sacred. So is my fee." |
+| Transgressive | Owns the broken rule | Thrand: "I broke my oath to Orm. I'd break it again." |
+
+### The steerer's choices are period voices
+The steerer's dialogue options cover the range a person of the time might take, each with a period reason, never a modern one. The player can act against the household's code; the household reacts by that code (Book 5 section 16). A sample, when a guard at Carrick kneels and asks for quarter:
+| Voice | Option |
+|---|---|
+| Conventional | "Quarter given. We don't kill men on their knees." |
+| Pragmatic | "Dead men pay no silver. Bind him." |
+| Merciful | "Let him go home. We are not Orm." |
+| Cruel | "He saw our sail. He stays on the beach." |
+| Transgressive | "Kill him and sink him. No one need know." |
+
+Other period reasons to draw on: "Let their God judge them." / "His kin would come for us." / "The gods are watching this one." / "We ate at his fire." Option text never uses a gendered word for the steerer, and an option that speaks of the steerer carries the `ABOUT_STEERER` tag (section 03).
+
+### Period views are spoken, never applied to the steerer
+Characters may speak of thralls, the slave market, arranged marriages, blood-feud and harsh penance as ordinary, and some will urge the steerer to take captives for sale: Ulf: "Take the strong ones. Someone in the north will pay for them." The steerer's answers to such a line never lead to a sale; there is no market to take captives to, and captives are never currency (Book 5 section 01). Period attitudes to women and men are spoken in the world (Eithne's marriage, Órlaith's), but no line applies them to the steerer or reveals the steerer's gender (section 03).
+
+## 17 / Conversation depth and line pools
+*Major characters have branching, reactive conversation; minor characters have one or two lines that fit the moment.*
+
+### Major characters
+Leaders, antagonists, residents and quest characters are major (Book 5 section 18). Each has at least (Book 10 section 23, "Conversation depth"):
+| Part | What it is | Sample |
+|---|---|---|
+| **Greetings by season and time of day** | One greeting for each season at morning, day, evening and night, and one for each feast day | Gudrun, a spring morning: "Light's early. So are you. Eat." / Gudrun, a winter night: "Shut the door. The dead are out walking tonight." / Gudrun at Yule: "Sit by me. I'll tell you who's missing this year." |
+| **At least three topic trees** | Subjects the character returns to, each with branches that open by state and choice | Bran's trees: Kilbrecc and his old raid; the household's food and fire; the raiding life and what it costs |
+| **Reactions to at least ten deed types** | A line for each deed in Book 6 section 01 they might see or hear of, in their culture's terms | Bran, below |
+| **Callbacks** | Remembered events from the memory list (Book 5 section 01), named plainly | Hild: "You went back for Oddi at Carrick. I've not forgotten." |
+| **A change of voice at thresholds** | Warmer and more open as a friend; short and cold when resentful; quick and quiet when afraid | Kári as a friend: "Point me at them." / resentful: "Ask someone else." / afraid: "Yes. Going." |
+
+Branches change with time of day and season, the household's deeds and reputation, the speaker's happiness, friendship and fear, quest and story state, and recent events (a death, a raid, a storm).
+
+Bran's reactions to ten deed types:
+| Deed | Bran |
+|---|---|
+| `KILLING` | "They had spears. They chose it. Still." |
+| `THEFT` | "Quiet work. Better than the other kind." |
+| `CIVILIAN_KILLED` | "He had a hoe, not a sword. God saw it." |
+| `SURRENDERED_KILLED` | "He was on his knees. That's murder in any tongue." |
+| `SPARED` | "Good. Let him tell his kin who spared him." |
+| `BURNING` | "That was someone's winter. Now it's smoke." |
+| `SACRILEGE` | "I did this once. I'm still paying for it." |
+| `HOSTAGE_TAKEN` | "Feed him at our fire. Then he's a guest, not a grudge." |
+| `PROMISE_BROKEN` | "You gave your word. Now they know what it weighs." |
+| `RITES_DENIED` | "Bury them. Theirs too. I'll dig." |
+
+### Minor characters' line pools
+Farmers, traders, guards, travellers and the people of a site have one or two lines each, drawn from pools keyed by **culture, season, time of day, weather and what the household has done**. Their motives are simple, and their lines are about what is in front of them. No identical line from the same speaker within ten minutes (section 08).
+| Pool key | Sample |
+|---|---|
+| Gaelic farmer, spring, morning | "Seed's in. God and Brigid send rain." |
+| Gaelic farmer, after `SEED_TAKEN` | "Nothing to sow. Thank your black ship for that." |
+| Saltvik trader, rain | "Wet silver weighs the same. Buy something." |
+| Kilbrecc lay brother, winter, evening | "Vespers soon. Shut the door behind you." |
+| Ardcarn guard, after a fair bargain | "Colla says you paid fair. Go on, then." |
+| Pilgrim on the Ridge Road, summer | "Fair at the cairns. Half the coast is walking." |
+| Herder on Sliabh Carn, mist | "Mist on the tops. The cattle knew first." |
+| Peat-cutter, after the household cleared a route of outlaws | "Road's quieter since you came through." |
+| Saltvik fisher, after a raid on Carrick is known | "Carrick's grain, was it? Sell it somewhere else." |
