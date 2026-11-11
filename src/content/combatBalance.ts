@@ -528,6 +528,10 @@ export interface AiBalance {
     readonly crewProtect: number;
     readonly fallBackFrom: number;
     readonly orderLapseTicks: number;
+    /** How many of one group may be in an attack on one target at once (S9-29). */
+    readonly attackTokens: number;
+    /** Ticks a side waits after the last attack on a target ends before the next starts. */
+    readonly tokenRestTicks: number;
     /** The share of its reach a fighter closes to before it strikes. */
     readonly closeIn: number;
     readonly runAt: number;
@@ -629,6 +633,8 @@ export function parseAiBalance(json: unknown): AiBalance {
       crewProtect: g('crewProtect', `^${N} tiles:`)[0] ?? 0,
       fallBackFrom: g('fallBackFrom', `^${N} tiles:`)[0] ?? 0,
       orderLapseTicks: (g('orderLapse', '^(\\d+) s:')[0] ?? 0) * HZ,
+      attackTokens: g('attackTokens', '^(\\d+): at most')[0] ?? 0,
+      tokenRestTicks: Math.round((g('tokenRest', `^${N} s:`)[0] ?? 0) * HZ),
       closeIn: g('closeIn', `^${N}:`)[0] ?? 0,
       runAt: g('runAt', `^${N} tiles:`)[0] ?? 0,
       crewRunAt: g('crewRunAt', `^${N} tiles:`)[0] ?? 0,

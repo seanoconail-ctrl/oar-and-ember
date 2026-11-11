@@ -79,6 +79,8 @@ export interface FighterAi {
   /** The walk wanted this tick: a point, at a run or not (null: stand). */
   goal: { x: number; y: number; run: boolean; away?: boolean } | null;
   shouted: boolean;
+  /** The tick it last started an attack (Book 10 attackTokens: the longest waiting goes next). */
+  lastStruck?: number;
 }
 
 /** A person's part in a fight: their state machine, vitality, stamina, side and mind. */
@@ -146,6 +148,8 @@ export interface Battle {
   over: boolean;
   /** The last tick anyone struck or shot in it. */
   lastBlow: number;
+  /** Book 10 attackTokens: the last tick each side was in an attack on each target ("side:target"). */
+  lastAttack?: Record<string, number>;
 }
 
 export interface FightContext {
@@ -698,6 +702,14 @@ export function stepFight(fw: FightWorld): void {
     if (fa.f.state !== 'idle' || fa.dead !== null) a.facing = fa.f.facing;
     walk(fw, id, a, fa);
   }
+  // Who is in an attack on whom this tick (Book 10 attackTokens, S9-29).
+  if (battle !== null)
+    for (const [, a] of actors) {
+      const fa = a.fight;
+      if (fa?.ai.target == null || !inAttack(a, tick)) continue;
+      battle.lastAttack ??= {};
+      battle.lastAttack[`${fa.side}:${fa.ai.target}`] = tick;
+    }
   // The steerer's dodge moves them (stepMovement plants the feet otherwise).
   // Blows: every strike in its first active tick that has not yet met anyone.
   const strikers: [Id, Fighter, { x: number; y: number }][] = [];
@@ -886,7 +898,7 @@ function shoveLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: numb
   }
 }
 
-function inDodge(f: Fighter, tick: number, ctx: FightContext): boolean {
+export function inDodge(f: Fighter, tick: number, ctx: FightContext): boolean {
   const t = tick - f.since;
   return f.state === 'dodge' && t >= ctx.cb.dodge.invulnFrom && t <= ctx.cb.dodge.invulnTo;
 }
@@ -1311,11 +1323,13 @@ function engage(
       ai.goal = { x: pos.x, y: pos.y, run: false };
       return;
     }
-    if (!free(fa.f)) return;
+    if (!free(fa.f) || tick < ai.nextAttack || !tokenFree(fw, id, target)) return;
     // Stop, draw, loose, then stand (Book 2 section 13; the archer helper).
     ai.goal = null;
     orderShot(a, { x: pos.x, y: pos.y - 1 }, { x: 0, y: 0, run: false, sneak: false });
     fa.arrows--;
+    ai.nextAttack = tick + attackGap(fw);
+    ai.lastStruck = tick;
     say(ctx, id, 'taunt', fw.emit, tick + id.length);
     return;
   }
@@ -1324,18 +1338,27 @@ function engage(
   const reach = (ctx.cb.weapons[w].reachTiles + ctx.cb.bodyRadiusTiles) * tile;
   // Two or more on one flank it (Book 2 section 13): each takes its own side of the target.
   const side = flankSlot(fw, id, target, pos, reach * h.closeIn);
-  if (d > reach * h.closeIn) {
-    ai.goal = { x: side?.x ?? pos.x, y: side?.y ?? pos.y, run: d > h.runAt * tile };
+  const approach = { x: side?.x ?? pos.x, y: side?.y ?? pos.y, run: d > h.runAt * tile };
+  if (d > reach) {
+    ai.goal = approach;
     return;
   }
-  if (side !== null && Math.hypot(side.x - a.x, side.y - a.y) > ctx.cb.bodyRadiusTiles * tile) {
-    ai.goal = { x: side.x, y: side.y, run: false };
+  // In reach: strike when the side's token is free (S9-29); else close to its flank side and
+  // threaten until it is.
+  if (!free(fa.f) || tick < ai.nextAttack || !tokenFree(fw, id, target)) {
+    ai.goal =
+      d > reach * h.closeIn
+        ? approach
+        : side !== null && Math.hypot(side.x - a.x, side.y - a.y) > ctx.cb.bodyRadiusTiles * tile
+          ? { x: side.x, y: side.y, run: false }
+          : null;
+    if (ai.goal === null) a.facing = facingOf(pos.x - a.x, pos.y - a.y, a.facing);
     return;
   }
   ai.goal = null;
-  if (!free(fa.f) || tick < ai.nextAttack) return;
   const facing = facingOf(pos.x - a.x, pos.y - a.y, a.facing);
   if (pressAttack(fa.f, tick, ctx.cb, facing, fa.stamina) !== 'STARTED') return;
+  ai.lastStruck = tick;
   a.facing = facing;
   fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: false });
   const tf = world.onFoot === null ? null : fighterOf(world.onFoot, target);
@@ -1344,8 +1367,65 @@ function engage(
   ai.releaseAt = heavy
     ? tick + (shieldUp ? ctx.cb.charge.level2At : ctx.cb.charge.level1At)
     : tick + 1;
-  const gap = h.attackGap.min + nextFloat(world.rng.ai) * (h.attackGap.max - h.attackGap.min);
-  ai.nextAttack = tick + Math.round(gap);
+  ai.nextAttack = tick + attackGap(fw);
+}
+
+/** The time between one fighter's attacks, drawn on the `ai` stream (Book 10 attackGap). */
+function attackGap(fw: FightWorld): number {
+  const g = fw.ctx.ai.habits.attackGap;
+  return Math.round(g.min + nextFloat(fw.world.rng.ai) * (g.max - g.min));
+}
+
+/**
+ * Whether a person is in an attack (Book 10 attackTokens): a charge, a strike's windup and active
+ * frames, a bow being drawn or held.
+ */
+export function inAttack(a: OnFootActor, tick: number): boolean {
+  const f = a.fight?.f;
+  if (f === undefined) return false;
+  if (charging(f) || (striking(f) && tick < f.activeEnd)) return true;
+  return (a.archer !== undefined && a.archer.phase !== 'moving') || a.aim != null;
+}
+
+/**
+ * Whether a fighter may start an attack on its target (Book 10 attackTokens, decision S9-29): fewer
+ * than the tokens of its group are already in an attack on that target. The others close, flank
+ * and threaten, so a fight against several reads one blow at a time.
+ */
+function tokenFree(fw: FightWorld, id: Id, target: Id): boolean {
+  const onFoot = fw.world.onFoot;
+  const me = onFoot?.actors[id]?.fight;
+  if (onFoot === null || me === undefined) return true;
+  const tick = fw.world.tick;
+  let busy = 0;
+  for (const [oid, o] of Object.entries(onFoot.actors)) {
+    if (oid === id || o.fight?.side !== me.side) continue;
+    if (o.fight.ai.target === target && inAttack(o, tick)) busy++;
+  }
+  const h = fw.ctx.ai.habits;
+  if (busy >= h.attackTokens) return false;
+  // With no one attacking, the side rests a moment after its last attack ended.
+  const last = onFoot.battle?.lastAttack?.[`${me.side}:${target}`];
+  if (busy === 0 && last !== undefined && tick - last < h.tokenRestTicks) return false;
+  // The token goes to whoever of the side, ready to attack, has waited longest.
+  const pos = whereIs(onFoot, target);
+  if (pos === null) return true;
+  const tile = fw.map.tile;
+  const mine = me.ai.lastStruck ?? -1;
+  for (const [oid, o] of Object.entries(onFoot.actors)) {
+    const of = o.fight;
+    if (oid === id || of?.side !== me.side || of.ai.target !== target) continue;
+    if (!fighting(of) || !free(of.f) || tick < of.ai.nextAttack) continue;
+    if ((of.ai.lastStruck ?? -1) >= mine) continue;
+    const d = Math.hypot(pos.x - o.x, pos.y - o.y);
+    const ready =
+      of.bow && of.arrows > 0
+        ? d >= h.fallBackFrom * tile && d <= h.archerRange.max * tile
+        : of.f.weapon !== null &&
+          d <= (fw.ctx.cb.weapons[of.f.weapon].reachTiles + fw.ctx.cb.bodyRadiusTiles) * tile;
+    if (ready) return false;
+  }
+  return true;
 }
 
 const SIDES: readonly (readonly [number, number])[] = [

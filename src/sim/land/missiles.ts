@@ -44,6 +44,8 @@ export interface MissileContext {
   readonly arrows: ArrowBalance;
   readonly water: WaterBalance;
   readonly elevations: ReadonlyMap<Id, Elevation>;
+  /** Stage 9: a person a missile passes through (a dodge's invulnerable ticks, Book 10). */
+  readonly passes?: (id: Id) => boolean;
 }
 
 /** The nearest of the 16 directions to a vector. */
@@ -222,6 +224,7 @@ function strikeAt(
       people.push([id, a]);
   for (const [id, who] of people) {
     if (Math.abs(x - who.x) > box.w / 2 || y > who.y + 0.5 || y < who.y - box.h) continue;
+    if (ctx.passes?.(id) === true) continue;
     const blocked =
       who.blocking === true && shieldStops(who.facing, p.ux, p.uy, ctx.missiles.shieldArcDegrees);
     const at = Math.max(6, Math.min(34, h));

@@ -502,7 +502,7 @@
     {
      "Key": "loadsPerPiece",
      "Value": "0.5 loads",
-     "Notes": "Added to the camp's store (RES_DRIFTWOOD) as soon as it is picked up"
+     "Notes": "Added to the camp's store of driftwood as soon as it is picked up"
     },
     {
      "Key": "pickUp",
@@ -1724,6 +1724,14 @@
     {
      "Key": "orderLapse",
      "Value": "60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day"
+    },
+    {
+     "Key": "attackTokens",
+     "Value": "1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29)"
+    },
+    {
+     "Key": "tokenRest",
+     "Value": "2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29)"
     },
     {
      "Key": "closeIn",

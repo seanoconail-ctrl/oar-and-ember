@@ -19,10 +19,10 @@ section 14).
 
 | View | Continuous motion |
 |---|---|
-| Wreck Strand (41 frames over 6.4 s) | 93.8% |
-| The broch by day, S0 | 82.8% |
-| The broch by night, S0, fire lit | 85.9% |
-| The broch by day, S1 | 80.6% |
+| Wreck Strand (41 frames over 6.4 s) | 93.9% |
+| The broch by day, S0 | 83.2% |
+| The broch by night, S0, fire lit | 85.4% |
+| The broch by day, S1 | 80.9% |
 | Mockup: S0 day (clouds moving / frozen) | 99.8% / 92.7% |
 | Mockup: S0 night (clouds moving / frozen) | 100.0% / 94.1% |
 | Book 7 threshold | 80.0% |

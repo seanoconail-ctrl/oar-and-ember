@@ -165,7 +165,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | firstDawn | A piece at every spot | The storm that wrecked the ship left the strand strewn: 6 loads, enough to light the first fire (fireLight) once 2 pieces are fetched up to the broch |
 | piecesPerDawn | Spring 2, summer 2, autumn 3, winter 4 | Washed up again at dawn at spots picked bare, never more than the spots picked bare (1, 1, 1.5 and 2 loads a day against the fire's 0.5, 0.2, 0.5 and 1.0) |
 | afterStorm | 2 times the season's pieces | At the dawn after a storm. Storms come with the weather (Stage 13); until then every dawn is a calm one |
-| loadsPerPiece | 0.5 loads | Added to the camp's store (RES_DRIFTWOOD) as soon as it is picked up |
+| loadsPerPiece | 0.5 loads | Added to the camp's store of driftwood as soon as it is picked up |
 | pickUp | 5 game minutes and 0 stamina; the steerer stoops for 0.8 real seconds | No timing ring and no press: one gather loop, then the minutes pass |
 
 ### Barley and kale
@@ -515,6 +515,8 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | crewProtect | 4 tiles: a protector fights anyone who comes this near the one it protects |
 | fallBackFrom | 3 tiles: an archer whose target comes nearer than this backs away before it shoots again |
 | orderLapse | 60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day |
+| attackTokens | 1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29) |
+| tokenRest | 2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29) |
 | closeIn | 0.85: a fighter closes to this share of its reach before it strikes |
 | runAt | 3 tiles: a fighter further than this from its target runs to it |
 | crewRunAt | 5 tiles: a follower further than this behind the steerer runs |

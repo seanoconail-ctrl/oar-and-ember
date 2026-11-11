@@ -21,6 +21,7 @@ import { MemoryStore, SaveManager } from '../../src/persist/manager.ts';
 import { hears, lightAt, sees, sightRange, stepNoise } from '../../src/sim/ai/perception.ts';
 import {
   blowOf,
+  charging,
   frameData,
   newFighter,
   pressAttack,
@@ -33,11 +34,12 @@ import {
   staggerOnHit,
   stepFighter,
   strikePhase,
+  striking,
 } from '../../src/sim/combat/fighter.ts';
 import type { Fighter, StaminaPool } from '../../src/sim/combat/fighter.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { orderShot } from '../../src/sim/land/archer.ts';
-import { crewFight, hurt } from '../../src/sim/land/fight.ts';
+import { crewFight, hurt, inAttack } from '../../src/sim/land/fight.ts';
 import type { FightWorld } from '../../src/sim/land/fight.ts';
 import { findActor, switchZone } from '../../src/sim/land/zoneLinks.ts';
 import { createSimulation, stateHash } from '../../src/sim/simulation.ts';
@@ -513,6 +515,153 @@ describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decision S9-11)', () =>
       if ((f.world.onFoot?.player.x ?? 0) < 34 * TILE) break;
     }
     expect(f.events.some((e) => e.type === 'ENEMY_AWARE')).toBe(false);
+  });
+});
+
+/** The wreckers still in the fight (not dead, downed, surrendered or fled). */
+const foesOf = (f: Fight) =>
+  Object.entries(f.world.onFoot?.actors ?? {})
+    .filter(
+      ([, a]) =>
+        a.fight?.side === 'ENEMY' &&
+        a.fight.dead === null &&
+        a.fight.f.state !== 'surrendered' &&
+        a.fight.f.state !== 'downed' &&
+        a.fight.ai.mode !== 'FLEE',
+    )
+    .map(([id, a]) => ({ id, a }));
+
+/**
+ * A steerer who defends, as a careful player would (S9-29): faces whoever is coming, parries a
+ * strike just before its active frames, ripostes the one staggered, dodges an arrow about to land,
+ * and strikes only into a foe's recovery or stagger, never into a guard.
+ */
+function defend(f: Fight): void {
+  const onFoot = f.world.onFoot;
+  if (onFoot === null) return;
+  const p = onFoot.player;
+  const pf = p.fight;
+  const t = f.world.tick + 1;
+  const facingTo = (a: { x: number; y: number }): 's' | 'n' | 'e' | 'w' => {
+    const dx = a.x - p.x;
+    const dy = a.y - p.y;
+    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
+  };
+  const ranked = foesOf(f)
+    .map((o) => ({ ...o, d: Math.hypot(o.a.x - p.x, o.a.y - p.y) }))
+    .sort((x, y) => x.d - y.d);
+  const ready = pf == null || pf.state === 'idle';
+  const stamina = f.world.player.stamina.current;
+  const still = { type: 'MOVE', x: 0, y: 0, run: false, sneak: false } as const;
+  const arrow = onFoot.projectiles.find(
+    (q) =>
+      q.shooter !== 'P_STEERER' && Math.hypot(q.x - p.x, q.y - p.y) < (q.length / q.ticks) * 10,
+  );
+  const coming = ranked.find(
+    ({ a, d }) =>
+      a.fight?.ai.target === 'P_STEERER' &&
+      d < 60 &&
+      (charging(a.fight.f) || (striking(a.fight.f) && t < a.fight.f.activeAt)),
+  );
+  if (pf?.state === 'chargeL0' && f.world.tick - pf.since > 2)
+    f.sim.submit({ type: 'MELEE_RELEASE' });
+  if (arrow !== undefined && stamina >= cb.dodge.stamina && ready) {
+    f.sim.submit({ type: 'DODGE', x: -arrow.uy, y: arrow.ux });
+    return;
+  }
+  if (coming !== undefined) {
+    const cf = coming.a.fight?.f;
+    const want = facingTo(coming.a);
+    if (p.facing !== want && ready) {
+      const [x, y] = ({ e: [1, 0], w: [-1, 0], s: [0, 1], n: [0, -1] } as const)[want];
+      f.sim.submit({ type: 'MOVE', x, y, run: false, sneak: false });
+    } else f.sim.submit(still);
+    if (cf !== undefined && striking(cf) && cf.activeAt - t === cb.parry.startup + 2)
+      f.sim.submit({ type: 'PARRY' });
+    return;
+  }
+  f.sim.submit(still);
+  const staggered = ranked.find(({ a, d }) => a.fight?.f.state === 'stagger' && d < 40);
+  const punish = ranked.find(
+    ({ a, d }) =>
+      d < 34 &&
+      a.fight !== undefined &&
+      (['stagger', 'parryRecovery', 'blockStun', 'guardBroken'].includes(a.fight.f.state) ||
+        (striking(a.fight.f) && t >= a.fight.f.activeEnd)),
+  );
+  if (
+    pf != null &&
+    pf.riposteUntil > t &&
+    staggered !== undefined &&
+    !charging(pf) &&
+    !striking(pf)
+  )
+    f.sim.submit({ type: 'MELEE', facing: facingTo(staggered.a) });
+  else if (punish !== undefined && stamina >= 30 && ready)
+    f.sim.submit({ type: 'MELEE', facing: facingTo(punish.a) });
+}
+
+describe('a fight against several, one blow at a time (Book 10 attackTokens; decision S9-29)', () => {
+  it('an undefended steerer facing all three lives at least 8 s; never more than the tokens attack at once', () => {
+    for (const seed of ['token-a', 'token-b', 'token-c']) {
+      const f = strandFight(seed, '31.5,34.6');
+      const onFoot = f.world.onFoot;
+      if (onFoot === null) throw new Error('no zone');
+      // Run in among them for a second, then stand and take it.
+      for (let i = 0; i < 50; i++) {
+        f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: true, sneak: false });
+        f.sim.step();
+      }
+      f.sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+      let first: number | null = null;
+      for (let i = 0; i < 60 * 60 && f.world.gameOver === null; i++) {
+        f.sim.step();
+        first ??= f.events.some((e) => e.type === 'BLOW' && e.defender === 'P_STEERER')
+          ? f.world.tick
+          : null;
+        const attacking = Object.values(onFoot.actors).filter(
+          (a) =>
+            a.fight?.side === 'ENEMY' &&
+            a.fight.ai.target === 'P_STEERER' &&
+            inAttack(a, f.world.tick),
+        ).length;
+        expect(attacking, `${seed} at ${f.world.tick}`).toBeLessThanOrEqual(ai.habits.attackTokens);
+      }
+      expect(first, seed).not.toBeNull();
+      expect(f.world.gameOver, seed).not.toBeNull();
+      const seconds = ((f.world.gameOver?.tick ?? 0) - (first ?? 0)) / 60;
+      expect(seconds, seed).toBeGreaterThanOrEqual(8);
+      // More than one of them strikes: the token passes round.
+      const hitters = new Set(
+        f.events.flatMap((e) =>
+          e.type === 'BLOW' && e.defender === 'P_STEERER' ? [e.attacker] : [],
+        ),
+      );
+      expect(hitters.size, seed).toBeGreaterThan(1);
+    }
+  });
+
+  it('a steerer who parries, ripostes and dodges can beat all three', () => {
+    // Ten seeded fights played by a careful scripted player (no help, no option). A script is a
+    // poorer player than a person (it never retreats, uses the ground or picks its moment), yet it
+    // wins some: 4 of these 10 when written.
+    let won = 0;
+    let parried = 0;
+    for (let n = 1; n <= 10; n++) {
+      const f = strandFight(`defend-${n}`, '31.5,34.6');
+      for (let i = 0; i < 50; i++) {
+        f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: true, sneak: false });
+        f.sim.step();
+      }
+      for (let i = 0; i < 60 * 120 && f.world.gameOver === null && foesOf(f).length > 0; i++) {
+        defend(f);
+        f.sim.step();
+      }
+      if (f.world.gameOver === null && foesOf(f).length === 0) won++;
+      parried += f.events.filter((e) => e.type === 'BLOW' && e.outcome === 'PARRIED').length;
+    }
+    expect(won).toBeGreaterThanOrEqual(3);
+    expect(parried).toBeGreaterThan(30);
   });
 });
 

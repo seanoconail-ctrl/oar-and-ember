@@ -59,6 +59,7 @@ import {
   finisherTarget,
   hostilesAware,
   hurt,
+  inDodge,
   leaveZone,
   meleePress,
   meleeRelease,
@@ -1296,7 +1297,12 @@ export function createSimulation(
       stepActor(actor, map, land, tide.tidalGroundOpen);
     }
     const now = gameMinute(state.calendar);
-    stepProjectiles(onFoot, state.rng.combat, map, land, level, now, (e) => {
+    // A dodge's invulnerable ticks let a missile pass (Book 10 dodge; decision S9-29).
+    const passes = (id: Id): boolean => {
+      const f = id === STEERER ? onFoot.player.fight : onFoot.actors[id]?.fight?.f;
+      return fightCtx !== null && f != null && inDodge(f, state.tick, fightCtx);
+    };
+    stepProjectiles(onFoot, state.rng.combat, map, { ...land, passes }, level, now, (e) => {
       emit(e);
       // Stage 9: a missile in a body hurts; on a shield it costs the block (Book 10 "Fight rules").
       if (fw === null || e.target === undefined) return;

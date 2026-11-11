@@ -22,7 +22,7 @@
  *   broch-*-motion.png, compare-day.png, compare-night.png   motion maps, and the approved mockup
  *                    (docs/art/mockups/stage-07/) beside the capture at 2x
  *   broch.mp4/.gif   10 seconds: the steerer walks to the fire ring and lights it (the kneel work
- *                    loop, a timing press on the mark), the flames and smoke rise, Hild at the fire
+ *                    loop, a plain action with no timing ring), the flames and smoke rise, Hild at the fire
  *   sleep.mp4/.gif   a night's sleep after 18:00: lying down in the lean-to, the night passing, and
  *                    the morning report (the overlay shown)
  * Needs ffmpeg for the clip.
@@ -749,21 +749,15 @@ async function campCapture(
       await save();
     }
     for (const k of held) await page.keyboard.up(k);
-    // Face the ring, then light it, pressing on the mark (1.5 s in) for a sure stroke.
+    // Face the ring, then light it: a plain action, no ring and no press (decision PT-1).
     await page.keyboard.down('KeyW');
     await step(page);
     await page.keyboard.up('KeyW');
     await save();
     await page.keyboard.press('KeyE');
-    let pressed = false;
     for (let i = 0; i < FPS * 8; i++) {
       await step(page);
       await save();
-      const work = await attr(page, 'work');
-      if (!pressed && work !== '' && i >= Math.round(FPS * 1.5) - 1) {
-        await page.keyboard.press('KeyE');
-        pressed = true;
-      }
     }
   });
   await page.close();
@@ -973,9 +967,6 @@ async function fightCapture(
   const work = (
     await campStill(browser, out, 'wreckers-at-work', `${fightQuery}&at=36,34.2&camera=28,34.6`)
   ).share;
-  // Three on one, the steerer alone falls in a few seconds; a capture hook makes the steerer
-  // hardier (vitality 2000) so the stills and the clip show the fight rather than its end.
-  const hardy = 'vitality=2000';
   /** A still once the fight has gone on a while (the steerer fighting by the bot). */
   const midFight = async (name: string, gore: string): Promise<number> =>
     (
@@ -983,7 +974,7 @@ async function fightCapture(
         browser,
         out,
         name,
-        `${fightQuery}&${hardy}&at=31.5,34.6&camera=27.5,34.8&gore=${gore}`,
+        `${fightQuery}&at=31.5,34.6&camera=27.5,34.8&gore=${gore}`,
         (() => {
           const held = new Set<string>();
           let n = 0;
@@ -1002,7 +993,7 @@ async function fightCapture(
   const dir = join(out, '.fight');
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
-  const page = await openCamp(browser, `${fightQuery}&${hardy}&at=33.5,34.6`, true);
+  const page = await openCamp(browser, `${fightQuery}&at=33.5,34.6`, true);
   let frames = 0;
   const save = async (): Promise<void> => {
     writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
@@ -1035,7 +1026,7 @@ function fightReadme(label: string, strand: number, f: FightCaptureResult): stri
     '|---|---|',
     '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
     '| `wreckers-at-work.png` (and @2x, `-motion.png`) | The three wreck-scavengers by the wreck on the strand, 10:00, unaware and at work (the camera held on them) |',
-    '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. The steerer is made hardier for the fight captures (`vitality=2000`, a test hook): three on one, the steerer alone falls in a few seconds |',
+    '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. Three on one, the wreckers strike one at a time (S9-29) |',
     '| `fight-low.png` (and @2x, `-motion.png`) | The same fight at gore low: fewer, darker stains and no pieces |',
     `| \`fight.mp4\`, \`fight.gif\` | ${(f.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer runs at them from the east, seax in hand, and fights, the camera following (the overlay shown) |`,
     '',
