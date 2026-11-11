@@ -79,7 +79,11 @@ user's review is listed under **Flagged for the user's review**.
   `tests/browser/stage08.spec.ts` (4 tests, stepped with `oeStep` from the camp hooks). No existing
   browser spec was edited.
 - `npm run audio:render`: 85 items rendered, the loudest peak 0.81, nothing clips.
-- CI results: see the run for this commit.
+- CI results: the work-in-progress commits that followed the Stage 8 commit were checked together with Stage 9. Run 43113361613 (commit a215ad9, which contains all of Stage 8):
+  - Chromium: passed.
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed. The published-address checks passed in all three browsers.
 
 ## Gate checks
 1. **Hild starts useful work immediately after her rescue and is always visibly doing something:

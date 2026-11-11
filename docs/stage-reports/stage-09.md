@@ -80,7 +80,11 @@ the user's review is listed under **Flagged for the user's review**.
   the new `tests/browser/stage09.spec.ts` (4 tests, stepped with `oeStep`), rerun alone after the
   attack tokens (S9-29): 4 passed. No existing browser spec was edited.
 - `npm run audio:render`: 115 items rendered, nothing clips (loudest peak 0.81, the guard break).
-- CI results: see the run for this commit.
+- CI results (run 43113361613 for commit a215ad9):
+  - Chromium: passed (lint, test, build, browser tests).
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed only after all three. The published-address checks passed in all three browsers.
 
 ## Gate checks
 1. **Frame data matches Book 10; every tell at least 6 ticks before its active frames: PASS.**
