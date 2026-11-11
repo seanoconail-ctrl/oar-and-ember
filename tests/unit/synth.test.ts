@@ -167,7 +167,9 @@ describe('sounds, tells and voices', () => {
 
   it('gives each speaker a voice of their own, and the steerer none', () => {
     const ids = Object.keys(VOICES);
-    expect(ids).toEqual(['C_HILD', 'C_BRAN', 'C_RUNA', 'C_ODDI']);
+    // Stage 8: every resident of Book 5 section 17 (the first four as the sound test first had them).
+    expect(ids.slice(0, 4)).toEqual(['C_HILD', 'C_BRAN', 'C_RUNA', 'C_ODDI']);
+    expect(ids).toHaveLength(17);
     expect(ids.some((id) => id.includes('STEERER'))).toBe(false);
     const pitches = new Set(Object.values(VOICES).map((v) => v.pitch));
     expect(pitches.size).toBe(ids.length);

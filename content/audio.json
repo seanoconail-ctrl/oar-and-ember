@@ -368,6 +368,20 @@
       "zones": ["ZONE_SK_MACHAIR"],
       "phases": ["night"],
       "temporary": false
+    },
+    {
+      "id": "MUS_STINGER_DISPUTE",
+      "kind": "stinger",
+      "lengthBeats": 3,
+      "captionKey": "caption.stinger.dispute",
+      "temporary": false
+    },
+    {
+      "id": "MUS_STINGER_JUDGEMENT",
+      "kind": "stinger",
+      "lengthBeats": 3,
+      "captionKey": "caption.stinger.judgement",
+      "temporary": false
     }
   ],
   "events": {
@@ -399,7 +413,9 @@
     "FIRE_FED": "SFX_FIRE_FED",
     "FIRE_OUT": "SFX_FIRE_OUT",
     "TIMING_GOOD": "SFX_TIMING_GOOD",
-    "SLEEP": "SFX_SLEEP"
+    "SLEEP": "SFX_SLEEP",
+    "DISPUTE_RAISED": "MUS_STINGER_DISPUTE",
+    "JUDGEMENT_GIVEN": "MUS_STINGER_JUDGEMENT"
   },
   "home": {
     "restSeconds": 90,

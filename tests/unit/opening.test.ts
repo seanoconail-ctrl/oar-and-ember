@@ -249,6 +249,8 @@ describe('check 2: the rescue teaches by doing', () => {
       'PERSON_SET_DOWN',
       'PERSON_SPOKE',
       'BEAT_COMPLETED',
+      // Stage 8: safe, Hild joins the household's day.
+      'RESIDENT_JOINED',
     ]);
     expect(events.find((e) => e.type === 'COMMAND_REFUSED')).toMatchObject({
       reason: 'BELOW_TIDE_LINE',

@@ -8,7 +8,7 @@
  * `npm run audio:render` use it to check every sound without a speaker.
  */
 import { StrandAmbience } from '../audio/synth/ambience.ts';
-import { CALLS, HearthAmbience, PIECES } from '../audio/synth/cues.ts';
+import { CALLS, DISPUTES, HearthAmbience, PIECES } from '../audio/synth/cues.ts';
 import { BUSES, MUSIC_VOICES, SynthEngine } from '../audio/synth/engine.ts';
 import {
   footstep,
@@ -147,7 +147,7 @@ export function startItem(
     return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'call') {
-    const def = [...CALLS, ...PEOPLE, ...MISSILES].find((d) => d.id === id);
+    const def = [...CALLS, ...PEOPLE, ...MISSILES, ...DISPUTES].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no call ${id}`);
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
@@ -191,6 +191,12 @@ export function startItem(
     const line = BLIP_LINES.find((l) => l.speaker === id);
     if (line === undefined) throw new Error(`no voice ${id}`);
     speak(e, at, id, formatString(strings, line.key));
+    return { schedule: () => undefined, stop: () => undefined };
+  }
+  if (kind === 'resident') {
+    // Stage 8: every resident's voice, speaking the sound test's own line (decision S8-25).
+    if (VOICES[id] === undefined) throw new Error(`no voice ${id}`);
+    speak(e, at, id, formatString(strings, 'soundtest.line.resident'));
     return { schedule: () => undefined, stop: () => undefined };
   }
   throw new Error(`unknown item ${item}`);
@@ -747,6 +753,11 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...PEOPLE.map((d) => `call:${d.id}`),
       ...MISSILES.map((d) => `call:${d.id}`),
       'ambience:hearth',
+    ],
+    /** Stage 8's items: every resident's voice and the dispute stingers, listed apart likewise. */
+    peopleItems: [
+      ...Object.keys(VOICES).map((id) => `resident:${id}`),
+      ...DISPUTES.map((d) => `call:${d.id}`),
     ],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [

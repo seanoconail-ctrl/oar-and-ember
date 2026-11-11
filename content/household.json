@@ -1,0 +1,232 @@
+{
+  "about": "The household's day (Book 2 section 06; Book 5 sections 01 and 17; Stage 8): the daily schedule every resident follows (wake, eat, work shift, meal, evening, sleep), the jobs the steerer can give them (Book 1 section 10: assign outcomes, not actions) and where each is done, the places their tendencies run at, and each resident's first job. Times are the household's habits, written like the opening's (decisions S6-5, S7-11 and S8-6); numbers that tune play are in Book 10. Positions are in tiles of their zone, at the foot.",
+  "home": "ISLE_SKARV",
+  "schedule": [
+    {
+      "block": "SLEEP",
+      "from": "22:00"
+    },
+    {
+      "block": "MEAL",
+      "from": "06:00"
+    },
+    {
+      "block": "WORK",
+      "from": "06:30"
+    },
+    {
+      "block": "MEAL",
+      "from": "17:30"
+    },
+    {
+      "block": "EVENING",
+      "from": "18:15"
+    }
+  ],
+  "tendencyMinutes": 60,
+  "jobs": {
+    "FISHER": {
+      "nameKey": "job.name.fisher",
+      "task": "TASK_FISH_SHORE",
+      "spots": [
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 66.4,
+          "y": 34.6,
+          "facing": "s"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 63.2,
+          "y": 35.1,
+          "facing": "s"
+        }
+      ]
+    },
+    "CAMP": {
+      "nameKey": "job.name.camp",
+      "task": "TASK_COOK",
+      "spots": [
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 36.7,
+          "y": 32.3,
+          "facing": "w"
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 34.2,
+          "y": 30.6,
+          "facing": "e"
+        }
+      ]
+    },
+    "BUILDER": {
+      "nameKey": "job.name.builder",
+      "task": "TASK_BUILD",
+      "stages": ["S0"],
+      "spots": [
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 32.6,
+          "y": 31.4,
+          "facing": "n"
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 33.8,
+          "y": 30.9,
+          "facing": "n"
+        }
+      ]
+    },
+    "REST": {
+      "nameKey": "job.name.rest"
+    }
+  },
+  "places": {
+    "SHORE": {
+      "zone": "ZONE_SK_STRAND",
+      "x": 25.5,
+      "y": 34.4,
+      "facing": "s"
+    },
+    "DOOR": {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 35.5,
+      "y": 35.6,
+      "facing": "s"
+    },
+    "STORES": {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 38.0,
+      "y": 31.3,
+      "facing": "e"
+    }
+  },
+  "seats": [
+    {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 36.8,
+      "y": 31.0,
+      "facing": "w"
+    },
+    {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 35.6,
+      "y": 33.0,
+      "facing": "n"
+    },
+    {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 34.0,
+      "y": 32.8,
+      "facing": "e"
+    }
+  ],
+  "beds": {
+    "S0": [
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 37.2,
+        "y": 32.9,
+        "facing": "w"
+      },
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 34.1,
+        "y": 33.6,
+        "facing": "e"
+      },
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 37.4,
+        "y": 30.2,
+        "facing": "w"
+      }
+    ],
+    "S1": [
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 35.1,
+        "y": 28.7,
+        "facing": "e"
+      },
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 36.6,
+        "y": 28.85,
+        "facing": "w"
+      },
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 37.6,
+        "y": 30.6,
+        "facing": "w"
+      }
+    ]
+  },
+  "people": {
+    "C_HILD": {
+      "job": "FISHER",
+      "memories": [
+        {
+          "kind": "EVENT",
+          "about": "WRECK",
+          "day": 1
+        },
+        {
+          "kind": "DEATH",
+          "about": "THORKEL",
+          "day": 1,
+          "tie": true
+        }
+      ]
+    },
+    "C_ODDI": {
+      "job": "CAMP",
+      "memories": [
+        {
+          "kind": "EVENT",
+          "about": "WRECK",
+          "day": 1
+        },
+        {
+          "kind": "DEATH",
+          "about": "THORKEL",
+          "day": 1
+        }
+      ]
+    },
+    "C_BRAN": {
+      "job": "CAMP",
+      "memories": [
+        {
+          "kind": "EVENT",
+          "about": "WRECK",
+          "day": 1
+        },
+        {
+          "kind": "DEATH",
+          "about": "THORKEL",
+          "day": 1
+        }
+      ]
+    },
+    "C_RUNA": {
+      "job": "BUILDER",
+      "memories": [
+        {
+          "kind": "EVENT",
+          "about": "WRECK",
+          "day": 1
+        },
+        {
+          "kind": "DEATH",
+          "about": "THORKEL",
+          "day": 1
+        }
+      ]
+    }
+  }
+}

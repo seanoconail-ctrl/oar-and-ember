@@ -15,13 +15,17 @@
  *   empty-handed, picks up the seax, rescues Hild, fetches the bow and quiver she names, looses
  *   one arrow into the stern's timber, and then the same two days. It must load through the
  *   migration chain.
- * - Golden save 5 (schema 5, Stage 7): the opening as golden 4 played it to the bow, then Hild leads
- *   to the broch; driftwood is gathered on the strand, the fire lit, her leg tended, a hot meal
- *   cooked, the hand line picked up and a start made on the sail shelter; the steerer sleeps by the
- *   fire and wakes to the morning report, then fishes from the shore on day 2 while Hild fishes from
- *   the rocks, and the save is made at 15:00.
+ * - Golden save 5 (schema 5, Stage 7) is frozen: the opening as golden 4 played it to the bow, then
+ *   Hild leads to the broch; driftwood is gathered on the strand, the fire lit, her leg tended, a
+ *   hot meal cooked, the hand line picked up and a start made on the sail shelter; the steerer
+ *   sleeps by the fire and wakes to the morning report, then fishes from the shore on day 2 while
+ *   Hild fishes from the rocks, and the save is made at 15:00. It must load through the migration.
+ * - Golden save 6 (schema 6, Stage 8): the same day, played with Stage 8's people: Hild goes to her
+ *   work from the camp at once; her leg is tended through the talk about it; at dawn on day 2 the
+ *   steerer talks with her by the fire about her father and asks her to keep the camp instead of
+ *   fishing, then fishes from the shore; the save is made at 15:00.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-05.json
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-06.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -44,14 +48,15 @@ export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
 export const GOLDEN_03 = 'tests/golden-saves/golden-03.json';
 export const GOLDEN_04 = 'tests/golden-saves/golden-04.json';
 export const GOLDEN_05 = 'tests/golden-saves/golden-05.json';
+export const GOLDEN_06 = 'tests/golden-saves/golden-06.json';
 
-export function goldenWorld05(): WorldState {
+export function goldenWorld06(): WorldState {
   const balance = loadBalanceJson();
   const b = parseTimeBalance(balance);
   const { content, issues } = loadContentFromDisk();
   if (issues.length > 0)
     throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
-  const world = newCampaign('golden-05', b, parsePeopleBasics(balance), content, {
+  const world = newCampaign('golden-06', b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'B',
   });
@@ -91,7 +96,15 @@ export function goldenWorld05(): WorldState {
   bot.goToSite('bed_s0');
   sim.submit({ type: 'SLEEP' });
   bot.waitFor(() => sim.state.calendar.day === 2);
-  // Day 2: down to the shore to fish while Hild fishes from the rocks.
+  // Day 2, at dawn by the fire (Stage 8): a word with Hild about her father over the morning
+  // meal, and her work changed from fishing to keeping the camp.
+  bot.talkTo('C_HILD');
+  bot.choose('ui.talk.topic.father');
+  bot.choose('p_steerer.talk.what_like');
+  bot.choose('p_steerer.talk.we_look');
+  bot.choose('ui.talk.topic.job');
+  bot.choose('p_steerer.talk.job.camp');
+  // Down to the shore to fish while Hild keeps the camp.
   bot.goToZone('ZONE_SK_STRAND');
   bot.goToWater();
   bot.fish();
@@ -100,18 +113,18 @@ export function goldenWorld05(): WorldState {
   return sim.state;
 }
 
-export function goldenSave05(): SaveFile {
-  return writeSave(goldenWorld05(), {
+export function goldenSave06(): SaveFile {
+  return writeSave(goldenWorld06(), {
     build: 'golden',
     kind: 'checkpoint',
-    slot: 'checkpoint:golden-05',
-    label: 'golden-05',
+    slot: 'checkpoint:golden-06',
+    label: 'golden-06',
     sequence: 1,
     savedAt: '2026-11-11T00:00:00.000Z',
   });
 }
 
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_05), `${JSON.stringify(goldenSave05(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_05}`);
+  writeFileSync(join(REPO_ROOT, GOLDEN_06), `${JSON.stringify(goldenSave06(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_06}`);
 }

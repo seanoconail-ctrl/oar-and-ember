@@ -31,7 +31,7 @@ export function reportSentences(
     const vars: Record<string, string> = {};
     for (const [k, v] of Object.entries(line.vars)) {
       if (k === 'name' && typeof v === 'string') vars[k] = nameOf(v);
-      else if (typeof v === 'string' && v.startsWith('report.')) vars[k] = t(v);
+      else if (typeof v === 'string' && /^(report|trait|job)\./.test(v)) vars[k] = t(v);
       else vars[k] = String(v);
     }
     return t(line.key, vars);
@@ -63,6 +63,8 @@ export function campUseLabel(
       return { text: click('ui.prompt.sleep'), kind: 'sleep' };
     case 'EAT':
       return { text: click('ui.prompt.eat'), kind: 'eat' };
+    case 'TALK':
+      return { text: click('ui.prompt.talk', { name: nameOf(use.target) }), kind: 'talk' };
     case 'REFUSE':
       if (use.reason === 'TOO_EARLY_TO_SLEEP')
         return { text: t('ui.prompt.too_early', { time: '18:00' }), kind: 'too_early' };
@@ -75,8 +77,9 @@ export function campUseLabel(
 /**
  * Tests and captures only: start at the broch after beat 2's lead (`?camp=broch`), and set the
  * hour (`time=HH:MM`), the day (`day=N`), the fire (`fire=lit`), Hild's leg tended (`tended=1`),
- * the camp's stage (`stage=S1`), its driftwood (`wood=N`), the hand line in hand (`line=1`) and
- * where the steerer stands in the zone (`at=x,y` in tiles).
+ * the camp's stage (`stage=S1`), its driftwood (`wood=N`), the hand line in hand (`line=1`), Oddi
+ * in the household (`oddi=1`, or `oddi=theft`: his theft due that evening; Stage 8) and where the
+ * steerer stands in the zone (`at=x,y` in tiles).
  */
 export function campHooks(
   world: WorldState,
@@ -152,6 +155,30 @@ export function campHooks(
     onFoot.items = onFoot.items.filter((i) => i.item !== 'ITEM_LINE');
     for (const rest of Object.values(onFoot.elsewhere ?? {}))
       rest.items = rest.items.filter((i) => i.item !== 'ITEM_LINE');
+  }
+  // Stage 8, a seeded world (`oddi=1`): Oddi in the household at the fire, as Stage 10's search
+  // will bring him; `oddi=theft` with food already hidden in his bedding and his first night slept,
+  // so his theft is found that evening (Book 5 section 02).
+  const oddi = params.get('oddi');
+  if ((oddi === '1' || oddi === 'theft') && world.people['C_ODDI'] !== undefined) {
+    const person = world.people['C_ODDI'];
+    person.status = 'alive';
+    if (!world.household.residents.includes('C_ODDI')) world.household.residents.push('C_ODDI');
+    const seat = content.household?.seats[0];
+    const zoneMap = land.maps.get(camp.zone);
+    if (seat !== undefined && zoneMap !== undefined)
+      placeActor(onFoot, 'C_ODDI', seat.zone, {
+        x: seat.x * zoneMap.tile,
+        y: seat.y * zoneMap.tile,
+        facing: seat.facing,
+        pose: 'sit',
+      });
+    if (oddi === 'theft') {
+      person.life.nights = 1;
+      person.life.stash = 1;
+      person.life.lastTheftDay = world.calendar.day;
+      home.stores['RES_SALTED_FISH'] = Math.max(0, (home.stores['RES_SALTED_FISH'] ?? 0) - 1);
+    }
   }
   const at = /^(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)$/.exec(params.get('at') ?? '');
   const map = land.maps.get(onFoot.zone);

@@ -28,6 +28,7 @@ export interface Overlay {
       | 'clock'
       | 'stamina'
       | 'report'
+      | 'talk'
       | 'fade',
   ): HTMLElement;
 }
@@ -69,6 +70,17 @@ const STYLE = `
   padding: 0.7em 1em; }
 .oe-overlay [data-region=report] h2 { margin: 0 0 0.4em; font-size: 1.2em; color: #f0ad4c; }
 .oe-overlay [data-region=report] p { margin: 0.25em 0; }
+.oe-overlay [data-region=talk] { top: 36%; left: auto; right: 3%; width: 44%; font-size: 0.88em;
+  line-height: 1.4; }
+.oe-overlay [data-region=talk]:not(:empty) { background: rgba(34, 49, 58, 0.9); border: 2px solid #7b5434;
+  padding: 0.5em 0.8em; }
+.oe-overlay [data-region=talk] h2 { margin: 0 0 0.3em; font-size: 1em; color: #f0ad4c; }
+.oe-overlay [data-region=talk] p { margin: 0.2em 0; }
+.oe-overlay [data-region=talk] p.line { font-style: normal; margin-bottom: 0.45em; }
+.oe-overlay [data-region=talk] p.info { font-style: italic; margin-bottom: 0.45em; }
+.oe-overlay [data-region=talk] ol { margin: 0; padding-left: 1.4em; }
+.oe-overlay [data-region=talk] li.chosen { color: #f0ad4c; }
+.oe-overlay [data-region=talk] p.hint { font-size: 0.85em; color: #e9d7b8; }
 .oe-overlay [data-region=fade] { top: 0; bottom: 0; left: 0; right: 0; background: #0b0e16; opacity: 0; }
 `;
 

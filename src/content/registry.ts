@@ -29,6 +29,9 @@ export const CONTENT_FILES = {
   onFoot: 'content/onfoot.json',
   opening: 'content/opening.json',
   camp: 'content/camp.json',
+  household: 'content/household.json',
+  talk: 'content/talk.json',
+  scenes: 'content/scenes.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
 } as const;
@@ -59,6 +62,75 @@ export const TIE_KINDS = [
   'GRIEVANCE',
   'OATH',
   'MENTOR',
+] as const;
+/** Book 2 section 06: the codes people judge by, stances, traits and the kinds of liking. */
+export const CODES = ['NORSE', 'GAELIC', 'CHURCH', 'KEEPERS', 'SALTVIK'] as const;
+export const CODE_STANCES = ['CONVENTIONAL', 'SCEPTICAL', 'CYNICAL', 'TRANSGRESSIVE'] as const;
+export const TRAITS = [
+  'BERSERK',
+  'COWARDLY',
+  'SUPERSTITIOUS',
+  'BRAVE',
+  'GREEDY',
+  'PIOUS',
+  'HOT_TEMPERED',
+  'GENTLE',
+  'DRINKER',
+  'LIGHT_FINGERED',
+  'KEEN_EYED',
+  'SEA_SICK',
+  'STORYTELLER',
+  'GRUDGE_HOLDER',
+  'DILIGENT',
+  'LAZY',
+] as const;
+export const FAITHS = ['OLD_GODS', 'CHRIST', 'LAND_SPIRITS', 'NONE'] as const;
+export const LIKING_KINDS = ['FOOD', 'ACTIVITY', 'PLACE', 'WEATHER', 'PERSON', 'GIFT'] as const;
+export const ORIGINS = ['NORSE', 'GAELIC', 'NORSE_GAELIC', 'KEEPERS', 'UNSTATED'] as const;
+/** When a tendency runs in the day (Book 5 section 17), and where. */
+export const TENDENCY_TIMES = ['DAWN', 'DUSK', 'EVENING', 'NIGHT', 'WORK', 'SEA'] as const;
+export const TENDENCY_PLACES = ['SHORE', 'FIRE', 'DOOR', 'STORES', 'BOAT', 'HIGH', 'YARD'] as const;
+export const TENDENCY_POSES = ['watch', 'sit', 'kneel', 'work'] as const;
+/** Book 2 section 06: the schedule's blocks; a job's work fills WORK. */
+export const SCHEDULE_BLOCKS = ['SLEEP', 'MEAL', 'WORK', 'EVENING'] as const;
+export const JOBS = ['FISHER', 'CAMP', 'BUILDER', 'REST'] as const;
+/** Book 10 section 08, "Conversation replies". */
+export const REPLIES = ['Talk', 'Warm', 'Glad', 'Cold', 'Punished', 'Shamed', 'Threat'] as const;
+export const VOICES = ['NEUTRAL', 'WARM', 'COLD', 'AFRAID', 'DEVOTED'] as const;
+export const WATCH_NAMES = ['MORNING', 'DAY', 'EVENING', 'NIGHT'] as const;
+export const ACTIVITY_KINDS = [
+  'SLEEP',
+  'MEAL',
+  'WORK',
+  'EVENING',
+  'TENDENCY',
+  'LEAD',
+  'SIT',
+  'REST',
+  'BED',
+  'TALK',
+  'SCENE',
+  'REFUSE',
+  'DARK',
+] as const;
+export const BARK_CATEGORIES = [
+  'DANGER',
+  'ORDER',
+  'WOUND',
+  'DISCOVERY',
+  'REACTION',
+  'WORK',
+  'WEATHER',
+  'IDLE',
+] as const;
+export const MEMORY_KINDS = ['WOUND', 'DEATH', 'DEED', 'EVENT', 'JOB', 'SEASON', 'CARE'] as const;
+export const JUDGEMENTS = [
+  'TAKE_SIDE',
+  'COMPROMISE',
+  'PUNISH',
+  'COMPENSATE',
+  'HOUSEHOLD_THING',
+  'IGNORE',
 ] as const;
 const PERSON_KINDS = ['PLAYER', 'RESIDENT', 'LEADER', 'RIVAL_CAPTAIN', 'ENEMY', 'HOSTAGE'] as const;
 const ATTITUDES = ['NEUTRAL', 'WARY', 'UNKNOWN', 'RIVAL', 'DEMANDING'] as const;
@@ -104,6 +176,25 @@ const regionCheck = object(
   ['homeSites'],
 );
 const tieCheck = object({ to: ref('person'), kind: oneOf(TIE_KINDS) });
+const traitCheck = object(
+  {
+    trait: oneOf(TRAITS),
+    /** Shown at once, or discovered over time (Book 10 section 08, traitsPerPerson). */
+    known: bool,
+    /** Pious names its faith. */
+    faith: oneOf(FAITHS),
+    /** Revealed only by this event (Oddi's light-fingers, by the theft found). */
+    revealedBy: oneOf(['THEFT_FOUND'] as const),
+  },
+  ['faith', 'revealedBy'],
+);
+/** Book 2 section 06, Liking: a ref is an ID (RES_, TASK_, C_ ...) or a tag for a later system. */
+const likingCheck = object({ kind: oneOf(LIKING_KINDS), ref: text, known: bool });
+const tendencyCheck = object({
+  at: oneOf(TENDENCY_TIMES),
+  place: oneOf(TENDENCY_PLACES),
+  pose: oneOf(TENDENCY_POSES),
+});
 const personCheck = object(
   {
     id: id(['P', 'C', 'L', 'R', 'E', 'H']),
@@ -115,8 +206,34 @@ const personCheck = object(
     ties: arrayOf(tieCheck),
     /** The skills Book 5 names for the person (Book 10 section 08, startingSkills). */
     skills: arrayOf(text),
+    /** Stage 8 (Book 2 section 06; Book 5 sections 02, 16 and 17). */
+    origin: oneOf(ORIGINS),
+    codes: arrayOf(oneOf(CODES)),
+    codeStance: oneOf(CODE_STANCES),
+    faithTarget: oneOf(FAITHS),
+    /** A tie to the steerer (Book 10 section 08: friendship starts at 20). */
+    steererTie: oneOf(TIE_KINDS),
+    traits: arrayOf(traitCheck),
+    likes: arrayOf(likingCheck),
+    dislikes: arrayOf(likingCheck),
+    tendency: tendencyCheck,
   },
-  ['values', 'home', 'faction', 'ties', 'skills'],
+  [
+    'values',
+    'home',
+    'faction',
+    'ties',
+    'skills',
+    'origin',
+    'codes',
+    'codeStance',
+    'faithTarget',
+    'steererTie',
+    'traits',
+    'likes',
+    'dislikes',
+    'tendency',
+  ],
 );
 const factionCheck = object({
   id: id(['FAC']),
@@ -348,8 +465,6 @@ const campPersonCheck = object({
     y: fraction(0, 512),
     facing: oneOf(['s', 'n', 'e', 'w'] as const),
   }),
-  workFrom: text,
-  workUntil: text,
   leadWaitTiles: fraction(1, 20),
 });
 const campCheck = object({
@@ -368,7 +483,177 @@ const campCheck = object({
   leadAfterSeconds: int(0, 60),
 });
 
+const spotCheck = object({
+  zone: ref('zone'),
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  facing: oneOf(['s', 'n', 'e', 'w'] as const),
+});
+const clock: Check<string> = (v, path, ctx) =>
+  typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v)
+    ? v
+    : (ctx.issues.push({ file: ctx.file, path, reason: 'expected a time, HH:MM' }), null);
+const jobCheck = object(
+  {
+    nameKey: ref('string'),
+    /** The task worked (Book 2 section 07); REST has none. */
+    task: id(['TASK']),
+    /** The camp stages it can be done at (raising the shelter: S0 only). */
+    stages: arrayOf(oneOf(STAGES)),
+    spots: arrayOf(spotCheck),
+  },
+  ['task', 'stages', 'spots'],
+);
+const householdCheck = object({
+  about: text,
+  home: ref('place'),
+  schedule: arrayOf(object({ block: oneOf(SCHEDULE_BLOCKS), from: clock })),
+  /** How long a tendency takes, in game minutes. */
+  tendencyMinutes: int(5, 240),
+  jobs: recordOf(oneOf(JOBS), jobCheck),
+  places: recordOf(oneOf(TENDENCY_PLACES), spotCheck),
+  seats: arrayOf(spotCheck),
+  beds: object({ S0: arrayOf(spotCheck), S1: arrayOf(spotCheck) }),
+  /** Each resident's first job, and the memories they join with (the wreck, Thorkel's death). */
+  people: recordOf(
+    id(['C']),
+    object(
+      {
+        job: oneOf(JOBS),
+        memories: arrayOf(
+          object({ kind: oneOf(MEMORY_KINDS), about: text, day: int(1, 999), tie: bool }, [
+            'day',
+            'tie',
+          ]),
+        ),
+      },
+      ['memories'],
+    ),
+  ),
+});
+const lineWhen = {
+  watch: oneOf(WATCH_NAMES),
+  activity: oneOf(ACTIVITY_KINDS),
+  voice: oneOf(VOICES),
+  wounded: bool,
+  grief: bool,
+  season: oneOf(['Spring', 'Summer', 'Autumn', 'Winter'] as const),
+};
+const WHEN_KEYS = ['watch', 'activity', 'voice', 'wounded', 'grief', 'season'] as const;
+const greetingCheck = object({ key: ref('string'), ...lineWhen }, WHEN_KEYS);
+const barkCheck = object(
+  { key: ref('string'), category: oneOf(BARK_CATEGORIES), ...lineWhen },
+  WHEN_KEYS,
+);
+const speakerCheck = object({
+  greetings: arrayOf(greetingCheck),
+  barks: arrayOf(barkCheck),
+  /** Book 8 section 11: each step of the warning flow, in order, and the other turns of feeling. */
+  warnings: object({
+    FRIENDSHIP: arrayOf(ref('string')),
+    HAPPINESS: arrayOf(ref('string')),
+    FEAR: ref('string'),
+    DEVOTION: ref('string'),
+    RISING: arrayOf(ref('string')),
+  }),
+  jobs: object({
+    ACCEPT: ref('string'),
+    REFUSE: ref('string'),
+    REST: ref('string'),
+    UNABLE: ref('string'),
+  }),
+  exit: ref('string'),
+});
+const choiceCheck = object(
+  {
+    key: ref('string'),
+    reply: oneOf(REPLIES),
+    /** TEND starts tending the speaker's wound; JOB:<job> gives them that job. */
+    act: text,
+    next: text,
+    end: bool,
+  },
+  ['act', 'next', 'end'],
+);
+const topicCheck = object(
+  {
+    id: text,
+    speaker: ref('person'),
+    memory: oneOf(MEMORY_KINDS),
+    /** WOUND: untended or tended. */
+    state: oneOf(['UNTENDED', 'TENDED'] as const),
+    /** DEED, DEATH and EVENT: what the memory is about. */
+    about: text,
+    season: oneOf(['Spring', 'Summer', 'Autumn', 'Winter'] as const),
+    /** Offered only while this person is still missing (a worry). */
+    missing: ref('person'),
+    priority: int(0, 9),
+    /** Pressing: the speaker comes to the steerer to raise it (Book 10 approachTiles). */
+    pressing: bool,
+    /** Offered whenever its other conditions hold, without resting (work, the season). */
+    always: bool,
+    labelKey: ref('string'),
+    root: text,
+  },
+  ['state', 'about', 'season', 'missing', 'pressing', 'always'],
+);
+const nodeCheck = object({ line: ref('string'), choices: arrayOf(choiceCheck) });
+const talkCheck = object({
+  about: text,
+  people: recordOf(id(['C']), speakerCheck),
+  topics: arrayOf(topicCheck),
+  nodes: recordOf(text, nodeCheck),
+});
+const sceneChoiceCheck = object(
+  {
+    key: ref('string'),
+    judgement: oneOf(JUDGEMENTS),
+    /** The fact the outcome is remembered by. */
+    outcome: text,
+    /** The food goes back to the stores. */
+    returned: bool,
+    /** A reply kind for the thief (Book 10 "Conversation replies"). */
+    reply: oneOf(REPLIES),
+    /** A like of the thief this meets (being trusted with a job). */
+    like: text,
+    /** Take a side: whose. */
+    favour: oneOf(['THIEF', 'FINDER'] as const),
+    thief: (v, path, ctx) => (v === null ? '' : ref('string')(v, path, ctx)),
+    reaction: recordOf(id(['C']), ref('string')),
+  },
+  ['reply', 'like', 'favour'],
+);
+const sceneCheck = object({
+  id: id(['BEAT']),
+  about: text,
+  kind: oneOf(['THEFT'] as const),
+  thief: ref('person'),
+  trait: oneOf(TRAITS),
+  /** Fires from this night in the household (Book 5: "on the second night"). */
+  nightsInHousehold: int(1, 30),
+  from: clock,
+  until: clock,
+  finders: arrayOf(ref('person')),
+  open: recordOf(text, ref('string')),
+  excuse: ref('string'),
+  witness: recordOf(id(['C']), ref('string')),
+  choices: arrayOf(sceneChoiceCheck),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
+export type HouseholdDef = Out<typeof householdCheck>;
+export type TalkDef = Out<typeof talkCheck>;
+export type SpeakerDef = Out<typeof speakerCheck>;
+export type TopicDef = Out<typeof topicCheck>;
+export type TalkNode = Out<typeof nodeCheck>;
+export type ChoiceDef = Out<typeof choiceCheck>;
+export type SceneDef = Out<typeof sceneCheck>;
+export type SceneChoiceDef = Out<typeof sceneChoiceCheck>;
+export type JobDef = Out<typeof jobCheck>;
+export type Spot = Out<typeof spotCheck>;
+export type TraitDef = Out<typeof traitCheck>;
+export type LikingDef = Out<typeof likingCheck>;
+export type TendencyDef = Out<typeof tendencyCheck>;
 export type OnFootDef = Out<typeof onFootCheck>;
 export type OpeningDef = Out<typeof openingCheck>;
 export type CampDef = Out<typeof campCheck>;
@@ -401,6 +686,9 @@ export interface Content {
   readonly onFoot: OnFootDef | null;
   readonly opening: OpeningDef | null;
   readonly camp: CampDef | null;
+  readonly household: HouseholdDef | null;
+  readonly talk: TalkDef | null;
+  readonly scenes: readonly SceneDef[];
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -533,6 +821,9 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const onFoot = onFootCheck(files.onFoot, '', ctx(CONTENT_FILES.onFoot));
   const opening = openingCheck(files.opening, '', ctx(CONTENT_FILES.opening));
   const camp = campCheck(files.camp, '', ctx(CONTENT_FILES.camp));
+  const household = householdCheck(files.household, '', ctx(CONTENT_FILES.household));
+  const talk = talkCheck(files.talk, '', ctx(CONTENT_FILES.talk));
+  const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
   const zoneMaps = new Map<Id, ZoneMap>();
   const strand = checkZoneMap(files.zoneStrand);
   for (const [file, json] of [
@@ -638,6 +929,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       reason: `${opening.caller} has no spawn in ${opening.zone}`,
     });
 
+  issues.push(...peopleProblems(people, ids, camp, household, talk, scenes));
+
   const hullRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'hulls', 'Hull');
   const fittingRows = balanceRows(files.balance, 'shipStatisticsAndCosts', 'fittings', 'Fitting');
   const known: Record<RefKind, (id: string) => boolean> = {
@@ -735,6 +1028,9 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       onFoot,
       opening,
       camp,
+      household,
+      talk,
+      scenes,
       zoneMaps,
     },
     issues,
@@ -755,4 +1051,109 @@ export function parseAudioTable(json: unknown): AudioTable {
     );
   }
   return audio;
+}
+
+/** The people's content (Stage 8): every reference between people, jobs, talk and scenes. */
+function peopleProblems(
+  people: ReadonlyMap<Id, PersonDef>,
+  ids: IdRegistry,
+  camp: CampDef | null,
+  household: HouseholdDef | null,
+  talk: TalkDef | null,
+  scenes: readonly SceneDef[],
+): Issue[] {
+  const out: Issue[] = [];
+  const PEOPLE_FILE = CONTENT_FILES.people;
+  [...people.values()].forEach((p, i) => {
+    const traits = p.traits ?? [];
+    if (p.kind === 'RESIDENT' && (traits.length < 2 || traits.length > 4))
+      out.push({
+        file: PEOPLE_FILE,
+        path: `[${i}].traits`,
+        reason: `a resident has two to four traits (Book 5 section 17), not ${traits.length}`,
+      });
+    traits.forEach((t, k) => {
+      if ((t.trait === 'PIOUS') !== (t.faith !== undefined))
+        out.push({
+          file: PEOPLE_FILE,
+          path: `[${i}].traits[${k}]`,
+          reason: 'PIOUS names its faith, and only PIOUS does',
+        });
+    });
+    if ((p.codes?.length ?? 1) > 2 || p.codes?.length === 0)
+      out.push({ file: PEOPLE_FILE, path: `[${i}].codes`, reason: 'one code, or two' });
+    for (const [which, list] of [
+      ['likes', p.likes ?? []],
+      ['dislikes', p.dislikes ?? []],
+    ] as const)
+      list.forEach((l, k) => {
+        const looksLikeId = /^(RES|TASK|ITEM|C|L|R|E|H|ZONE|SK|MAIN)_/.test(l.ref);
+        if (looksLikeId && !ids.byId.has(l.ref) && !people.has(l.ref))
+          out.push({
+            file: PEOPLE_FILE,
+            path: `[${i}].${which}[${k}].ref`,
+            reason: `"${l.ref}" is not in the ID registry`,
+          });
+      });
+  });
+  if (household !== null) {
+    for (const [job, def] of Object.entries(household.jobs))
+      if (def.task !== undefined && camp !== null && camp.tasks[def.task] === undefined)
+        out.push({
+          file: CONTENT_FILES.household,
+          path: `jobs.${job}.task`,
+          reason: `"${def.task}" is not a task of ${CONTENT_FILES.camp}`,
+        });
+    for (const id of Object.keys(household.people))
+      if (!people.has(id))
+        out.push({ file: CONTENT_FILES.household, path: `people.${id}`, reason: 'no such person' });
+  }
+  if (talk !== null) {
+    const nodes = new Set(Object.keys(talk.nodes));
+    talk.topics.forEach((t, i) => {
+      if (!nodes.has(t.root))
+        out.push({
+          file: CONTENT_FILES.talk,
+          path: `topics[${i}].root`,
+          reason: `no node "${t.root}"`,
+        });
+    });
+    for (const [nid, node] of Object.entries(talk.nodes))
+      node.choices.forEach((c, k) => {
+        const at = `nodes.${nid}.choices[${k}]`;
+        if (c.next !== undefined && !nodes.has(c.next))
+          out.push({ file: CONTENT_FILES.talk, path: `${at}.next`, reason: `no node "${c.next}"` });
+        const act = c.act;
+        if (act !== undefined && act !== 'TEND') {
+          const job = /^JOB:([A-Z]+)$/.exec(act)?.[1];
+          if (job === undefined || household?.jobs[job as (typeof JOBS)[number]] === undefined)
+            out.push({
+              file: CONTENT_FILES.talk,
+              path: `${at}.act`,
+              reason: `unknown act "${act}"`,
+            });
+        }
+      });
+    for (const id of Object.keys(talk.people))
+      if (!people.has(id))
+        out.push({ file: CONTENT_FILES.talk, path: `people.${id}`, reason: 'no such person' });
+  }
+  scenes.forEach((sc, i) => {
+    if (!ids.byId.has(sc.id))
+      out.push({
+        file: CONTENT_FILES.scenes,
+        path: `[${i}].id`,
+        reason: `"${sc.id}" is not in the ID registry (${CONTENT_FILES.ids})`,
+      });
+    if (sc.open['none'] === undefined)
+      out.push({ file: CONTENT_FILES.scenes, path: `[${i}].open.none`, reason: 'missing' });
+    for (const f of sc.finders)
+      if (sc.open[f] === undefined || sc.witness[f] === undefined)
+        out.push({
+          file: CONTENT_FILES.scenes,
+          path: `[${i}].finders`,
+          reason: `${f} has no opening and witness line`,
+        });
+  });
+  return out;
 }

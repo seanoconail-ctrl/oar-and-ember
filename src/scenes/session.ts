@@ -26,6 +26,8 @@ import type { ItemUse, OnFootRules } from '../sim/land/onFoot.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
 import type { Simulation } from '../sim/simulation.ts';
+import type { PeopleContext } from '../sim/people/context.ts';
+import { talkOptions } from '../sim/people/talk.ts';
 import { MenuController } from '../ui/menus.ts';
 import type { MenuId, OpenResult, ThreatView } from '../ui/menus.ts';
 
@@ -103,6 +105,10 @@ export class Session {
   #wantSlot: number | null = null;
   /** USE_AT and INTERACT_AT commands sent (the tests check a refused click sends none). */
   tileCommands = 0;
+  /** The household's people (Stage 8), for the conversation's options; null without them. */
+  people: PeopleContext | null = null;
+  /** The option highlighted in a conversation (the wheel and the pad move it). */
+  talkCursor = 0;
 
   constructor(
     sim: Simulation,
@@ -157,7 +163,36 @@ export class Session {
     const onFoot = this.sim.state.onFoot;
     let target: TargetView | null = null;
     const p = onFoot?.player;
-    if (p?.work != null && !this.menus.timeStopped && this.menus.open === null) {
+    const talk = this.sim.state.talk;
+    if (talk !== null && this.people !== null && !this.menus.timeStopped) {
+      // A conversation or scene (Book 8 section 09): a number chooses, the wheel or the pad moves
+      // the highlight and use or interact takes it; Escape or dodge leaves a conversation (a
+      // scene waits for its judgement). Time goes on; walking away ends a conversation.
+      const options = talkOptions(this.sim.state, this.people);
+      const n = options.length;
+      if (n > 0) {
+        this.talkCursor = Math.min(this.talkCursor, n - 1);
+        if (input.pressed.has('slotNext')) this.talkCursor = (this.talkCursor + 1) % n;
+        if (input.pressed.has('slotPrev')) this.talkCursor = (this.talkCursor - 1 + n) % n;
+        let chosen: number | null = null;
+        SLOT_ACTIONS.forEach((action, i) => {
+          if (input.pressed.has(action) && i < n) chosen = i;
+        });
+        if (input.pressed.has('useItem') || input.pressed.has('interact')) chosen = this.talkCursor;
+        if (chosen !== null) {
+          this.sim.submit({ type: 'TALK_CHOOSE', index: chosen });
+          this.talkCursor = 0;
+        }
+      }
+      if (talk.kind === 'TALK' && (input.pressed.has('dodge') || menuResults.length > 0))
+        this.sim.submit({ type: 'TALK_END' });
+      const walk = talk.kind === 'TALK' ? input.move : { x: 0, y: 0 };
+      const key = `${walk.x},${walk.y},false,false`;
+      if (key !== this.#lastMove) {
+        this.sim.submit({ type: 'MOVE', x: walk.x, y: walk.y, run: false, sneak: false });
+        this.#lastMove = key;
+      }
+    } else if (p?.work != null && !this.menus.timeStopped && this.menus.open === null) {
       // A hands-on action plays (Book 2 section 07): use or interact is the timing press; the
       // system key and dodge stop it. Movement waits until it ends.
       if (input.pressed.has('useItem') || input.pressed.has('interact'))

@@ -28,7 +28,19 @@ export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
  * How a person in the zone is placed: lying down, standing calling for help (Hild in the
  * shallows, too hurt to wade out alone), standing, sitting, or carried.
  */
-export type Pose = 'down' | 'call' | 'idle' | 'sit' | 'carried' | 'sleep' | 'work';
+export type Pose =
+  | 'down'
+  | 'call'
+  | 'idle'
+  | 'sit'
+  | 'carried'
+  | 'sleep'
+  | 'work'
+  /** Stage 8: eating at the fire, and standing still watching (a tendency). */
+  | 'eat'
+  | 'watch'
+  /** Kneeling at a habit (praying at dawn): the kneel work loop. */
+  | 'kneel';
 /** Poses of someone who needs lifting. */
 export const NEEDS_LIFT: readonly Pose[] = ['down', 'call'];
 

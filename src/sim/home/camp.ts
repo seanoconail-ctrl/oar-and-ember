@@ -45,6 +45,8 @@ export const FACT_TUTORIAL_COMPLETE = 'tutorialComplete';
 export const FACT_AT_BROCH = 'ch1.at_broch';
 export const FACT_FIRE_LIT = 'ch1.fire_lit';
 export const FACT_HILD_TENDED = 'ch1.hild_tended';
+/** Hild has shown the steerer the camp at the broch (beat 2's arrival line). */
+export const FACT_ARRIVED_SAID = 'ch1.arrived_said';
 
 /** Everything the camp reads: its content and Book 10's numbers. */
 export interface CampContext {
@@ -135,6 +137,7 @@ export type SiteUse =
   | { readonly kind: 'FEED_FIRE'; readonly site: string }
   | { readonly kind: 'SLEEP'; readonly site: string }
   | { readonly kind: 'EAT'; readonly site: string }
+  | { readonly kind: 'TALK'; readonly site: string; readonly target: Id }
   | {
       readonly kind: 'REFUSE';
       readonly site: string;
@@ -188,12 +191,15 @@ export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): Si
   }
 }
 
-/** A wounded resident whose wound is not yet tended can be tended (TASK_CARE). */
+/**
+ * A resident can be talked to (Stage 8, Book 8 section 09); a wound is tended through the talk
+ * (its topic's "Let me see to it"). Asleep, they cannot.
+ */
 export function personUse(world: WorldState, id: Id): SiteUse | null {
   const person = world.people[id];
   if (person === undefined || !world.household.residents.includes(id)) return null;
-  const untended = person.wounds.some((w) => w.tendedDay === undefined);
-  return untended ? { kind: 'TASK', task: 'TASK_CARE', site: `person:${id}`, target: id } : null;
+  if (world.talk !== null) return null;
+  return { kind: 'TALK', site: `person:${id}`, target: id };
 }
 
 /** A use with where it is, for choosing the nearest. */
@@ -220,6 +226,7 @@ export function campUses(
   }
   for (const [id, actor] of Object.entries(actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
     if (actor.pose === 'carried' || actor.pose === 'down' || actor.pose === 'call') continue;
+    if (actor.pose === 'sleep') continue;
     const use = personUse(world, id);
     if (use !== null) out.push({ use, x: actor.x, y: actor.y });
   }
@@ -332,7 +339,7 @@ export function finishWork(
       break;
     case 'TASK_FISH_SHORE': {
       output = (ctx.work.fishShore[season] / ctx.work.workerDayMinutes) * task.cost.gameMinutes * k;
-      land(world, ctx, home, output, 'P_STEERER', emit, say);
+      landFish(world, ctx, home, output, 'P_STEERER', emit, say);
       break;
     }
     case 'TASK_CARE': {
@@ -369,22 +376,8 @@ export function finishWork(
       break;
     }
     case 'TASK_BUILD': {
-      const building = home.building ?? { id: ctx.def.shelter.building, progress: 0 };
       output = task.cost.gameMinutes * k;
-      building.progress += output;
-      const need = ctx.shelterWorkerDays * ctx.work.workerDayMinutes;
-      if (building.progress >= need) {
-        home.building = null;
-        home.stage = 'S1';
-        if (!home.buildings.includes(building.id)) home.buildings.push(building.id);
-        emit({ type: 'BUILDING_RAISED', building: building.id, share: 1 });
-        emit({ type: 'CAMP_STAGE', stage: 'S1' });
-        const line = ctx.def.lines['shelter'];
-        if (line !== undefined) say(line);
-      } else {
-        home.building = building;
-        emit({ type: 'BUILDING_RAISED', building: building.id, share: building.progress / need });
-      }
+      addShelterWork(ctx, home, output, emit, say, true);
       break;
     }
   }
@@ -403,8 +396,39 @@ export function finishWork(
   advance(minutes);
 }
 
+/**
+ * Adds worker-minutes to the sail shelter going up; once Book 10's worker-days are done the camp is
+ * at S1. `report` says each share (the steerer's own work does; a resident's does not, each minute).
+ */
+export function addShelterWork(
+  ctx: CampContext,
+  home: HomeState,
+  workerMinutes: number,
+  emit: (e: CampEvent) => void,
+  say: (lineKey: string) => void,
+  report = false,
+): void {
+  if (home.stage !== 'S0') return;
+  const building = home.building ?? { id: ctx.def.shelter.building, progress: 0 };
+  building.progress += workerMinutes;
+  const need = ctx.shelterWorkerDays * ctx.work.workerDayMinutes;
+  if (building.progress >= need) {
+    home.building = null;
+    home.stage = 'S1';
+    if (!home.buildings.includes(building.id)) home.buildings.push(building.id);
+    emit({ type: 'BUILDING_RAISED', building: building.id, share: 1 });
+    emit({ type: 'CAMP_STAGE', stage: 'S1' });
+    const line = ctx.def.lines['shelter'];
+    if (line !== undefined) say(line);
+  } else {
+    home.building = building;
+    if (report)
+      emit({ type: 'BUILDING_RAISED', building: building.id, share: building.progress / need });
+  }
+}
+
 /** Adds fish to a catch in progress; whole fish go to the stores, fresh, by today. */
-function land(
+export function landFish(
   world: WorldState,
   ctx: CampContext,
   home: HomeState,
@@ -486,64 +510,15 @@ export function byTheFire(world: WorldState, ctx: CampContext, at: SteererAt | n
   );
 }
 
-/** Whether a resident is at their work now (Hild fishes from the morning after she is tended). */
-export function residentWorking(world: WorldState, ctx: CampContext, id: Id): boolean {
-  const plan = ctx.def.people[id];
-  const person = world.people[id];
-  if (plan === undefined || person === undefined || !world.household.residents.includes(id))
-    return false;
-  if (world.facts[FACT_AT_BROCH] !== true) return false;
-  const tended = person.wounds.every((w) => w.tendedDay !== undefined);
-  const since = Math.max(0, ...person.wounds.map((w) => w.tendedDay ?? 0));
-  if (!tended || since >= world.calendar.day) return false;
-  const m = world.calendar.minuteOfDay;
-  const [fh = 0, fm = 0] = plan.workFrom.split(':').map(Number);
-  const [uh = 0, um = 0] = plan.workUntil.split(':').map(Number);
-  return m >= fh * 60 + fm && m < uh * 60 + um;
-}
-
-/** A resident's work for a minute: by Book 10's rate a worker-day, at skill, half if badly hurt. */
-export function residentMinute(
-  world: WorldState,
-  ctx: CampContext,
-  id: Id,
-  emit: (e: CampEvent) => void,
-  say: (lineKey: string) => void,
-): void {
-  const plan = ctx.def.people[id];
-  const home = homeOf(world, ctx);
-  const person = world.people[id];
-  if (plan === undefined || home === undefined || person === undefined) return;
-  const task = ctx.tasks.get(plan.work.task);
-  if (task === undefined) return;
-  const season = seasonOf(world.calendar.day);
-  const serious = person.wounds.some((w) => w.severity !== 'LIGHT');
-  const k =
-    skillRatio(ctx.work, person.skills[task.def.skill] ?? 0) *
-    (serious ? ctx.work.seriousWorkFactor : 1);
-  // Fishing from the shore is the one resident task of Stage 7 (content/camp.json).
-  if (plan.work.task === 'TASK_FISH_SHORE')
-    land(
-      world,
-      ctx,
-      home,
-      (ctx.work.fishShore[season] / ctx.work.workerDayMinutes) * k,
-      id,
-      emit,
-      say,
-    );
-}
-
 /**
- * One game minute at home: the fire burns, residents at work add their work, and the steerer's
- * condition is brought up to date (warmth, hunger, hard work, wounds).
+ * One game minute at home: the fire burns and the steerer's condition is brought up to date
+ * (warmth, hunger, hard work, wounds). Residents' work is the household's day (src/sim/people).
  */
 export function homeMinute(
   world: WorldState,
   ctx: CampContext,
   at: SteererAt | null,
   emit: (e: CampEvent) => void,
-  say: (lineKey: string) => void,
 ): void {
   const home = homeOf(world, ctx);
   if (home === undefined) return;
@@ -555,8 +530,6 @@ export function homeMinute(
       emit({ type: 'FIRE_OUT' });
     }
   }
-  for (const id of world.household.residents)
-    if (residentWorking(world, ctx, id)) residentMinute(world, ctx, id, emit, say);
   conditionMinute(world, ctx, at, emit);
 }
 
@@ -667,6 +640,7 @@ export function morningReport(
   ctx: CampContext,
   night: NightRecord,
   nameOf: (id: Id) => string,
+  plans: readonly ReportLine[] = [],
 ): MorningReport {
   const lines: ReportLine[] = [];
   const line = (key: string, vars: Record<string, string | number> = {}): void => {
@@ -727,24 +701,14 @@ export function morningReport(
           ctx.work.woundDays[wound.severity] - (world.calendar.day - wound.tendedDay),
         ),
       });
-    if (residentWorkToday(world, ctx, id)) line('report.work.hild', { name });
   }
+  // The household's plans for the day, and how they are (src/sim/people/day.ts).
+  lines.push(...plans);
   const tide = tideAt(world.calendar, ctx.time);
   const low = (world.calendar.minuteOfDay + tide.minutesToLowWater) % 1440;
   line('report.tide.low', { time: clockText(low) });
   line('report.threats.none');
   return { day: world.calendar.day, lines };
-}
-
-/** Whether a resident will work today (for the report): tended before today. */
-function residentWorkToday(world: WorldState, ctx: CampContext, id: Id): boolean {
-  const person = world.people[id];
-  if (person === undefined || ctx.def.people[id] === undefined) return false;
-  if (world.facts[FACT_AT_BROCH] !== true) return false;
-  return (
-    person.wounds.every((w) => w.tendedDay !== undefined) &&
-    person.wounds.every((w) => (w.tendedDay ?? 0) < world.calendar.day)
-  );
 }
 
 /** The seasons, for report wording. */

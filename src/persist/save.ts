@@ -8,7 +8,10 @@ import { parsePeopleBasics, parseStartingWeapons, parseTimeBalance } from '../co
 import { parseWorkBalance } from '../content/homeBalance.ts';
 import { hashValue } from '../core/hash.ts';
 import { activeChapter, WORLD_STATE_VERSION } from '../sim/world.ts';
-import type { WorldState } from '../sim/world.ts';
+import type { Person, WorldState } from '../sim/world.ts';
+import { joinPerson, newPerson } from '../sim/people/person.ts';
+import { parsePeopleBalance } from '../content/peopleBalance.ts';
+import type { HouseholdDef, PersonDef } from '../content/registry.ts';
 
 export const SAVE_FORMAT = 'oar-and-ember-save';
 
@@ -116,6 +119,9 @@ export function writeSave(world: WorldState, meta: SaveMeta): SaveFile {
 /** What a migration may read besides the save: balance.json (a step that needs a Book 10 number). */
 export interface MigrationContext {
   readonly balance: unknown;
+  /** content/people.json and content/household.json, for the people of schema 6 (Stage 8). */
+  readonly people?: unknown;
+  readonly household?: unknown;
 }
 
 /** One step of the migration chain: a save at `from` becomes a save at `from + 1`. */
@@ -276,6 +282,63 @@ export const MIGRATIONS: readonly Migration[] = [
         onFoot: onFoot === null ? null : { ...onFoot, elsewhere: {} },
         report: null,
       };
+    },
+  },
+  {
+    from: 5,
+    describe:
+      'people with happiness, friendship and fear, traits, likes, tendencies and their day; talk, barks and disputes (Stage 8)',
+    // Each person takes their Book 5 content (codes, stance, traits, likes and dislikes, a
+    // tendency) and Book 10's starting measures; the single regard becomes friendship where it had
+    // moved. What a version 5 save knew is kept: status, skills, values, ties, wounds; memories gain
+    // a kind (an event) and a source (seen). Residents join the household's day as of the save's day.
+    up: (state, ctx) => {
+      if (ctx?.people === undefined || ctx.household === undefined)
+        throw new SaveError(
+          'NO_MIGRATION',
+          'Migrating a schema 5 save needs balance.json, content/people.json and content/household.json',
+        );
+      const defs = new Map((ctx.people as PersonDef[]).map((d) => [d.id, d]));
+      const old = state['people'] as Record<string, Record<string, unknown>>;
+      const people: Record<string, Person> = {};
+      for (const [id, person] of Object.entries(old)) {
+        const def = defs.get(id);
+        if (def === undefined) continue;
+        const fresh = newPerson(def, Number(person['vitality'] ?? 0), ctx.balance);
+        const regard = Number(person['regard'] ?? 0);
+        const memories = (person['memories'] as { day: number; about: string }[] | undefined) ?? [];
+        people[id] = {
+          ...fresh,
+          status: person['status'] as Person['status'],
+          skills: (person['skills'] as Person['skills'] | undefined) ?? {},
+          skillXp: (person['skillXp'] as Person['skillXp'] | undefined) ?? {},
+          values: (person['values'] as Person['values'] | undefined) ?? fresh.values,
+          ties: ((person['ties'] as Person['ties'] | undefined) ?? []).map((t) => ({
+            ...t,
+            since: 0,
+          })),
+          memories: memories.map((m) => ({
+            day: m.day,
+            kind: 'EVENT',
+            about: m.about,
+            source: 'SAW',
+          })),
+          wounds: (person['wounds'] as Person['wounds'] | undefined) ?? [],
+          friendship: regard === 0 ? fresh.friendship : regard,
+          valueShifts: Number(person['valueShifts'] ?? 0),
+        };
+      }
+      const next = {
+        ...state,
+        people,
+        disputes: [],
+        talk: null,
+        barks: { bySpeaker: {}, byLine: {} },
+      } as unknown as WorldState;
+      const discover = parsePeopleBalance(ctx.balance).traits.discoverDays;
+      for (const id of next.household.residents)
+        joinPerson(next, id, ctx.household as HouseholdDef, discover);
+      return next as unknown as Record<string, unknown>;
     },
   },
 ];

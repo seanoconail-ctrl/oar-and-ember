@@ -16,6 +16,9 @@ import audio from '../../content/audio.json';
 import onFoot from '../../content/onfoot.json';
 import opening from '../../content/opening.json';
 import camp from '../../content/camp.json';
+import household from '../../content/household.json';
+import talk from '../../content/talk.json';
+import scenes from '../../content/scenes.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
 import zoneMachair from '../../content/zones/zone_sk_machair.json';
 import { formatIssue, loadContent } from '../content/registry.ts';
@@ -36,6 +39,9 @@ export const BUNDLED_FILES: ContentFiles = {
   onFoot,
   opening,
   camp,
+  household,
+  talk,
+  scenes,
   zoneStrand,
   zoneMachair,
 };

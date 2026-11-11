@@ -8,7 +8,9 @@
  * picking up, the inventory with counts, the shove, and missiles loosed standing still with their
  * flight, spread, cover, shields and rest (decisions DD-6 to DD-9); the camp at home, hands-on
  * tasks with their game time and stamina, stamina and condition, sleep in a bed, the day's start
- * and the morning report, walking between zones, and Hild leading to the broch (Stage 7).
+ * and the morning report, walking between zones, and Hild leading to the broch (Stage 7); people
+ * with happiness, friendship and fear, schedules, jobs and delegation, conversation, barks, the
+ * warning flow and scenes (Stage 8).
  */
 import type { TimeBalance } from '../content/balance.ts';
 import type { StaminaBalance } from '../content/homeBalance.ts';
@@ -82,6 +84,13 @@ import {
   stepOpeningAfter,
 } from './narrative/opening.ts';
 import type { OpeningEvent } from './narrative/opening.ts';
+import type { PeopleContext } from './people/context.ts';
+import { joinNew, peopleDawn, peopleMinute, residents, stepPeopleTick } from './people/day.ts';
+import { householdDeed, remember, tended } from './people/deeds.ts';
+import type { PeopleEvent } from './people/events.ts';
+import { chooseScene, sceneMinute } from './people/scenes.ts';
+import { assignJob, barkTick, chooseTalk, endTalk, startTalk, talkTick } from './people/talk.ts';
+import type { JobKind } from './world.ts';
 
 /** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
 export type SimState = WorldState;
@@ -123,7 +132,13 @@ export type Command =
   /** Stops a hands-on action before it ends: nothing is done and nothing is spent. */
   | { readonly type: 'CANCEL_WORK' }
   /** A shove with empty hands or the shove key, towards a tile (or the facing). */
-  | { readonly type: 'SHOVE'; readonly tile?: TilePos };
+  | { readonly type: 'SHOVE'; readonly tile?: TilePos }
+  /** Stage 8: talk to a resident; choose an option in the conversation or scene; leave it. */
+  | { readonly type: 'TALK'; readonly person: Id }
+  | { readonly type: 'TALK_CHOOSE'; readonly index: number }
+  | { readonly type: 'TALK_END' }
+  /** Delegation (Book 1 section 10): give a resident a job. */
+  | { readonly type: 'ASSIGN_JOB'; readonly person: Id; readonly job: JobKind };
 
 /** Aim vectors are quantised to this many directions, so replays are exact. */
 export const AIM_DIRECTIONS = 64;
@@ -152,6 +167,9 @@ export type RefusalReason =
   | 'NO_WATER'
   /** The bar ran empty carrying: a person cannot be lifted until it recovers. */
   | 'TOO_TIRED'
+  /** Stage 8: a resident asleep cannot be talked to; one already in a conversation. */
+  | 'ASLEEP'
+  | 'BUSY'
   | OnFootRefusal;
 
 export type SimEvent =
@@ -209,6 +227,7 @@ export type SimEvent =
   | { readonly type: 'SHOVED'; readonly facing: 's' | 'n' | 'e' | 'w' }
   | OpeningEvent
   | CampEvent
+  | PeopleEvent
   /** The steerer walked on into another zone. */
   | { readonly type: 'ZONE_ENTERED'; readonly zone: Id; readonly from: Id }
   /** The steerer lay down in a bed; the night passes after the camp's sleepSeconds. */
@@ -268,6 +287,8 @@ export interface SimWorldContext extends LandContext {
   readonly stamina?: StaminaBalance;
   /** The camp at home and its tasks (Stage 7). */
   readonly camp?: CampContext | null;
+  /** The household's people: their day, talk and scenes (Stage 8). */
+  readonly people?: PeopleContext | null;
 }
 
 export function createSimulation(
@@ -282,9 +303,36 @@ export function createSimulation(
   let queue: Command[] = [];
 
   const camp = land?.camp ?? null;
+  const people = land?.people ?? null;
   const sb = land?.stamina ?? null;
-  const emitCamp = (e: CampEvent): void => {
+  const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
+    if (people === null || camp === null) return;
+    // What the household remembers of the camp's work, and the care of a tended wound.
+    const here = residents(state);
+    if (e.type === 'WOUND_TENDED') tended(state, people, e.person, emitPeople);
+    if (e.type === 'FIRE_LIT') remember(state, here, 'FIRE_LIT');
+    if (e.type === 'FISH_LANDED') remember(state, here, 'FIRST_FISH');
+    if (e.type === 'CAMP_STAGE' && e.stage === 'S1') {
+      remember(state, here, 'SHELTER');
+      // A building finished is a success (Book 10 "Happiness inputs").
+      for (const id of here)
+        state.people[id]?.life.lasting.push({
+          cause: 'SUCCESS',
+          amount: people.b.inputs.success.amount,
+          fromDay: state.calendar.day,
+          days: people.b.inputs.success.days,
+          fade: false,
+          detail: 'shelter',
+        });
+    }
+  };
+  const emitCamp = (e: CampEvent): void => {
+    emitPeople(e);
+  };
+  /** A resident speaks (a line from the camp's work, in their voice). */
+  const sayAs = (person: Id, lineKey: string): void => {
+    events.emit({ type: 'PERSON_SPOKE', person, lineKey });
   };
   /** Hild's lines at the camp (the opening's caller). */
   const sayHild = (lineKey: string): void => {
@@ -350,7 +398,8 @@ export function createSimulation(
     const day = state.calendar.day;
     if (camp !== null) {
       startDay(state, camp);
-      state.report = morningReport(state, camp, night, (id) => id);
+      const plans = people === null ? [] : peopleDawn(state, people, camp, emitPeople);
+      state.report = morningReport(state, camp, night, (id) => id, plans);
     }
     events.emit({ type: 'WOKE', day, at: clockText(state.calendar.minuteOfDay), cause });
     if (seasonDay(day) === 1) {
@@ -627,6 +676,34 @@ export function createSimulation(
         if (item !== null) events.emit({ type: 'DRAW_CANCELLED', item, reason: 'CANCELLED' });
         return;
       }
+      case 'TALK': {
+        if (people === null || camp === null) return;
+        if (busy()) return;
+        const why = startTalk(state, people, camp, command.person, emitPeople);
+        if (why !== null) refuse(command, why, command.person);
+        return;
+      }
+      case 'TALK_CHOOSE': {
+        if (people === null || camp === null || state.talk === null) return;
+        if (state.talk.kind === 'SCENE')
+          chooseScene(state, people, camp, command.index, tileSize(), emitPeople);
+        else
+          chooseTalk(state, people, camp, command.index, emitPeople, (id) => {
+            tendPerson(id);
+          });
+        return;
+      }
+      case 'TALK_END': {
+        // A scene waits for its judgement; a conversation can be left at any time.
+        if (people === null || state.talk?.kind !== 'TALK') return;
+        endTalk(state, people, emitPeople);
+        return;
+      }
+      case 'ASSIGN_JOB': {
+        if (people === null || camp === null) return;
+        assignJob(state, people, camp, command.person, command.job, emitPeople);
+        return;
+      }
       case 'SHOVE': {
         const onFoot = state.onFoot;
         const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
@@ -650,6 +727,19 @@ export function createSimulation(
         return;
       }
     }
+  };
+
+  /** The zone's tile size in pixels. */
+  const tileSize = (): number => {
+    const onFoot = state.onFoot;
+    return (onFoot === null ? undefined : land?.maps.get(onFoot.zone)?.tile) ?? 24;
+  };
+
+  /** Starts tending a resident's wound where they are (the wound topic's "Let me see to it"). */
+  const tendPerson = (id: Id): void => {
+    const actor = state.onFoot?.actors[id];
+    if (actor === undefined) return;
+    startWork('TASK_CARE', `person:${id}`, { x: actor.x, y: actor.y }, id);
   };
 
   /** How many of an inventory item the steerer carries. */
@@ -798,7 +888,7 @@ export function createSimulation(
   /** Hands busy with a task or lying down: other actions wait (the press is WORK_PRESS). */
   const busy = (): boolean => {
     const p = state.onFoot?.player;
-    return p?.work != null || p?.sleep != null;
+    return p?.work != null || p?.sleep != null || state.talk !== null;
   };
 
   /** Begins a hands-on action: the feet planted, the work loop playing (Book 2 section 07). */
@@ -858,6 +948,12 @@ export function createSimulation(
       case 'TASK':
         startWork(use.task, use.site, at, use.target);
         return;
+      case 'TALK': {
+        if (people === null) return;
+        const why = startTalk(state, people, camp, use.target, emitPeople);
+        if (why !== null) refuse(command, why, use.target);
+        return;
+      }
     }
   };
 
@@ -894,6 +990,21 @@ export function createSimulation(
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
       if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
+      // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
+      if (
+        people !== null &&
+        state.household.residents.includes(interaction.target) &&
+        !state.ledger.some((d) => d.tag === 'RESCUE' && d.victims.includes(interaction.target))
+      ) {
+        joinNew(state, people, state.tick, emitPeople);
+        householdDeed(
+          state,
+          people,
+          { tag: 'RESCUE', placeId: onFoot.zone, victims: [interaction.target] },
+          [interaction.target],
+          emitPeople,
+        );
+      }
     }
   };
 
@@ -970,6 +1081,14 @@ export function createSimulation(
       stepOpeningAfter(state, land.opening, emit);
       if (camp !== null) stepBroch(state, camp, land.opening, land, tide.tidalGroundOpen, emit);
     }
+    // The household's day (Stage 8): new residents join it; each walks to what they are doing;
+    // a conversation's lines play; residents in earshot bark.
+    if (people !== null && camp !== null) {
+      joinNew(state, people, state.tick, emitPeople);
+      stepPeopleTick(state, people, camp, land, tide.tidalGroundOpen, land.opening?.caller ?? null);
+      talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
+      barkTick(state, people, camp, map.tile, residents(state), emitPeople);
+    }
     // Other people: an archer's stop, draw, loose and move, then their own walk.
     for (const [id, actor] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
       if (actor.archer !== undefined)
@@ -1022,7 +1141,12 @@ export function createSimulation(
       if (tide !== tideAt(before, b).phase)
         events.emit({ type: 'TIDE_TURNED', day: after.day, phase: tide });
     }
-    if (camp !== null) homeMinute(state, camp, steererAt(), emitCamp, sayHild);
+    if (camp !== null) homeMinute(state, camp, steererAt(), emitCamp);
+    if (camp !== null && people !== null) {
+      const at = steererAt();
+      peopleMinute(state, people, camp, at, land?.opening?.caller ?? null, emitPeople, sayAs);
+      sceneMinute(state, people, camp, at?.tile ?? 24, emitPeople);
+    }
     if (state.player.awake && minutesIntoDay(after, b) === collapseAt) {
       events.emit({ type: 'COLLAPSED', day: after.day, at: clockText(after.minuteOfDay) });
       // Asleep where they stood until Book 10's wake time, through the home step.

@@ -75,6 +75,19 @@ describe('audio coverage (Book 11 section 12; every stage, Book 3)', () => {
     for (const s of named) expect(SURFACES as readonly string[], s).toContain(s);
   });
 
+  it('gives every resident a voice blip of their own, and every speaker in the talk (Stage 8)', () => {
+    const residents = [...content.people.values()].filter((p) => p.kind === 'RESIDENT');
+    for (const p of residents) expect(VOICES[p.id], p.id).toBeDefined();
+    for (const id of Object.keys(content.talk?.people ?? {})) expect(VOICES[id], id).toBeDefined();
+    for (const scene of content.scenes)
+      for (const id of [scene.thief, ...scene.finders]) expect(VOICES[id], id).toBeDefined();
+    // Each voice is its own: no two residents share a pitch.
+    const pitches = residents.map((p) => VOICES[p.id]?.pitch);
+    expect(new Set(pitches).size).toBe(residents.length);
+    // The steerer has none (Book 8 section 03).
+    expect(Object.keys(VOICES).some((id) => id.startsWith('P_'))).toBe(false);
+  });
+
   it('gives every person who speaks in the opening a voice', () => {
     const caller = content.opening?.caller ?? '';
     expect(VOICES[caller], caller).toBeDefined();

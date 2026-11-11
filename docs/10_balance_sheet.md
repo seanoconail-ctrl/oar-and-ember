@@ -532,6 +532,17 @@ food 563 rd   fuel 75 loads   hay 25 loads
 
 Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Mercy objects to cruelty towards captives, not to capture); theft from the household's own stores is judged more harshly than open plunder abroad. `delta = sum(weight x valence x witness x culture)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat the Glory valence of `CIVILIAN_KILLED` as 0: there is no glory in killing farmers, and no shame to a drengr either (decision DD-2). (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
 
+### Deed weighing
+*The numbers of the formula above, as a table so the game reads them (decision S8-2).*
+
+| Key | Value |
+|---|---|
+| deedClamp | -15 to +15 friendship per deed |
+| witnessPresent | 1.0 |
+| witnessToldByTie | 0.6 |
+| witnessRumour | 0.3 |
+| drengr | Glory 3 and no Mercy: the Glory valence of CIVILIAN_KILLED is 0 |
+
 ### Deed reactions by culture
 *The witness's culture weighs a deed first (the `culture` factor in the delta above, and a fear or shame response), then their values, traits and stance (design addendum 2.3 section 2; Book 6 section 01). Positive is approval; the words are how they say it.*
 
@@ -571,6 +582,9 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Storyteller or singer | Happiness +5 for everyone at the fire |
 | Grudge-holder | Grudges never fade; friendship lost to a slight x1.5 |
 | Diligent / Lazy | Unsupervised work x1.1 / x0.85 |
+
+### Traits per person
+*A heading of its own since Stage 8, so both tables reach balance.json (decision S8-2).*
 
 | Key | Value |
 |---|---|
@@ -671,6 +685,37 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Grave | 14 days | Bed-bound; needs care; 10% death risk without care |
 | Maimed | Permanent | A trait (lost eye, stiff hand) with a skill penalty |
 | Untended | No recovery | A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day |
+
+### The household day and talk
+*Added for Stage 8 (decisions S8-1 to S8-30): barks, conversation, schedules and the warning flow. Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| barkEarshot | 10 tiles | A resident barks only when the steerer is in the same zone within this distance |
+| idleBarkEvery | 75 to 150 real seconds | Between one resident's barks, drawn on the people stream; a bark with a cause (a wound, the work, the weather) waits the same |
+| barkSameSpeaker | 10 real minutes | No identical bark from the same speaker within this time (Book 8 section 08) |
+| barkSameLine | 1 real minute | No two speakers repeat the same line within this time (Book 8 section 08) |
+| topicsPerTalk | 3 | Up to three topics in a conversation (Book 8 section 09) |
+| topicRest | 2 days | A topic talked through is not offered again for this long; a wound's topic comes back when the wound changes (tended, healed) |
+| approachTiles | 5 tiles | A resident with a pressing topic (an untended wound, a fresh grief, a scene) comes to the steerer to raise it when this close, once per topic |
+| lowHappiness | Below 25 for a whole day | Starts the happiness steps of the warning flow (Book 8 section 11, "Happiness low") |
+| supervised | The steerer in the same zone within 12 tiles | Diligent and lazy change work only without supervision (Traits) |
+| workingBeside | Within 4 tiles, both at work | An hour of it counts as time spent (Friendship from care and time) |
+| lightFingeredTake | 1 rd of food | The small item a light-fingered resident takes from the stores (Traits); it is hidden in their bedding |
+| lightFingeredWatched | The steerer awake in the home zone | Unless watched (Traits): a theft is tried when the thief goes to bed; residents on watch arrive with the watch (Stage 19) |
+
+### Conversation replies
+*Added for Stage 8 (decision S8-12): what a reply in a conversation does, by its kind. Each uses a row above.*
+
+| Reply | Effect |
+|---|---|
+| Talk | Time spent: friendship +1, at most +3 a day (Friendship from care and time) |
+| Warm | Treated well today: happiness +5 |
+| Glad | Treated well today: happiness +10 (a kindness that suits a like) |
+| Cold | Treated badly today: happiness -10 |
+| Punished | Treated badly today: happiness -10; a punishment (Fear deltas) |
+| Shamed | Treated badly today: happiness -20; a punishment (Fear deltas) |
+| Threat | A threat to a resident (Fear deltas) |
 
 ## 09 / Buildings, tools and crafting
 ### Buildings

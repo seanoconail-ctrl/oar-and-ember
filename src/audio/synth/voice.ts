@@ -71,6 +71,151 @@ export const VOICES: Readonly<Record<string, VoiceProfile>> = {
     tilt: 0.1,
     gain: 0.72,
   },
+  // Stage 8: every resident of Book 5 section 17 has a voice of their own, from who they are
+  // (Book 8 section 05), so whoever speaks is heard as themselves when they come.
+  // Eithne: precise and counting; even, clear syllables that settle firmly.
+  C_EITHNE: {
+    pitch: 214,
+    wave: 'triangle',
+    size: 1.0,
+    syllable: 0.064,
+    gap: 0.032,
+    lilt: 0.14,
+    tilt: -0.06,
+    gain: 1.2,
+  },
+  // Nessa: gentle, oddly calm; soft and rounded, a little breathy, lines that hang.
+  C_NESSA: {
+    pitch: 236,
+    wave: 'sine',
+    size: 1.06,
+    syllable: 0.082,
+    gap: 0.04,
+    lilt: 0.22,
+    tilt: 0.02,
+    gain: 1.9,
+  },
+  // Gudrun: the family's memory; old, tart and unafraid; reedy, slower, falling.
+  C_GUDRUN: {
+    pitch: 182,
+    wave: 'sawtooth',
+    size: 0.98,
+    syllable: 0.09,
+    gap: 0.05,
+    lilt: 0.2,
+    tilt: -0.12,
+    gain: 0.85,
+  },
+  // Arnbjörn: mild and apologetic; a soft low voice that trails off.
+  C_ARNBJORN: {
+    pitch: 128,
+    wave: 'triangle',
+    size: 0.88,
+    syllable: 0.078,
+    gap: 0.045,
+    lilt: 0.16,
+    tilt: -0.1,
+    gain: 1.5,
+  },
+  // Kári: loud and hungry for fame; bright, quick, rising at the ends.
+  C_KARI: {
+    pitch: 150,
+    wave: 'square',
+    size: 0.9,
+    syllable: 0.055,
+    gap: 0.022,
+    lilt: 0.4,
+    tilt: 0.12,
+    gain: 0.78,
+  },
+  // Kolla: dry and practical; level, clipped, a little lower than her twin's swagger.
+  C_KOLLA: {
+    pitch: 205,
+    wave: 'square',
+    size: 1.0,
+    syllable: 0.06,
+    gap: 0.03,
+    lilt: 0.12,
+    tilt: -0.04,
+    gain: 0.74,
+  },
+  // Tófi One-Eye: hard old truth; the lowest voice of the household, slow and gravelled.
+  C_TOFI: {
+    pitch: 98,
+    wave: 'sawtooth',
+    size: 0.78,
+    syllable: 0.105,
+    gap: 0.055,
+    lilt: 0.1,
+    tilt: -0.14,
+    gain: 1.0,
+  },
+  // Ylva: frail and uncanny; thin, high, wavering, with long pauses.
+  C_YLVA: {
+    pitch: 262,
+    wave: 'sine',
+    size: 1.1,
+    syllable: 0.1,
+    gap: 0.07,
+    lilt: 0.3,
+    tilt: -0.05,
+    gain: 1.8,
+  },
+  // Kolbeinn: a grumbling craftsman; low, heavy, blunt syllables like hammer strokes.
+  C_KOLBEINN: {
+    pitch: 104,
+    wave: 'square',
+    size: 0.8,
+    syllable: 0.07,
+    gap: 0.04,
+    lilt: 0.08,
+    tilt: -0.1,
+    gain: 0.75,
+  },
+  // Asa: sharp with numbers; quick, exact, higher than Runa's.
+  C_ASA: {
+    pitch: 222,
+    wave: 'square',
+    size: 1.02,
+    syllable: 0.052,
+    gap: 0.026,
+    lilt: 0.18,
+    tilt: -0.08,
+    gain: 0.72,
+  },
+  // Thrand Halfhand: clipped and soldierly; short, level, falling.
+  C_THRAND: {
+    pitch: 120,
+    wave: 'sawtooth',
+    size: 0.86,
+    syllable: 0.06,
+    gap: 0.04,
+    lilt: 0.08,
+    tilt: -0.16,
+    gain: 0.95,
+  },
+  // Áine: boastful, funny, deadly; bright and lively, rising like a dare.
+  C_AINE: {
+    pitch: 244,
+    wave: 'triangle',
+    size: 1.06,
+    syllable: 0.06,
+    gap: 0.026,
+    lilt: 0.45,
+    tilt: 0.14,
+    gain: 1.35,
+  },
+  // Brother Senán: gentle, wryly devout; a warm, even chanting voice.
+  C_SENAN: {
+    pitch: 136,
+    wave: 'triangle',
+    size: 0.9,
+    syllable: 0.085,
+    gap: 0.04,
+    lilt: 0.12,
+    tilt: 0.0,
+    gain: 1.45,
+  },
 };
 
 /** Formant pairs (Hz) for each vowel. */

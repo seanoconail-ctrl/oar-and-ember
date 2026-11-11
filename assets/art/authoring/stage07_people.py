@@ -4,6 +4,8 @@ the steerer's two bodies, the heavy build and Hild, each composited from its lay
 
     python3 assets/art/authoring/people48.py && node src/tools/art/proposed.ts
     python3 assets/art/authoring/stage07_people.py [atlas dir] [out dir]
+    PEOPLE_STATES=eat PEOPLE_WHO=hild python3 assets/art/authoring/stage07_people.py \
+        assets/atlases docs/art/stage-08/people          (Stage 8: Hild eating at the fire)
 
 Reads the compiled atlases (assets/atlases by default, or the proposed ones) and writes
 docs/art/stage-07/people/: <who>_<state>@1x.png and @4x.png (rows s, n, e, w; frames across) and
@@ -21,8 +23,8 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')
 ATLAS = sys.argv[1] if len(sys.argv) > 1 else f'{REPO}/assets/atlases'
 OUT = sys.argv[2] if len(sys.argv) > 2 else f'{REPO}/docs/art/stage-07/people'
 LAYERS = f'{REPO}/assets/art/layers'
-STATES = ['gather', 'fish', 'kneel', 'build', 'sleep']
-WHO = ['steerer_a', 'steerer_b', 'heavy', 'hild']
+STATES = os.environ.get('PEOPLE_STATES', 'gather,fish,kneel,build,sleep').split(',')
+WHO = os.environ.get('PEOPLE_WHO', 'steerer_a,steerer_b,heavy,hild').split(',')
 GROUND = (128, 112, 92)       # the broch's trodden earth, mid tone
 FACINGS = ['s', 'n', 'e', 'w']
 

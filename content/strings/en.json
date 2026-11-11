@@ -1442,5 +1442,1158 @@
   },
   "report.wood.one": {
     "text": "There is one load of driftwood stacked by the fire."
+  },
+  "p_steerer.talk.later": {
+    "text": "Later."
+  },
+  "p_steerer.talk.tend": {
+    "text": "Let me see to it."
+  },
+  "p_steerer.talk.work_on_it": {
+    "text": "Can you work on it?"
+  },
+  "p_steerer.talk.rest_it": {
+    "text": "Rest it today."
+  },
+  "p_steerer.talk.carry_on": {
+    "text": "Carry on, then. Gently."
+  },
+  "p_steerer.talk.show_me": {
+    "text": "Show me."
+  },
+  "p_steerer.talk.sorry": {
+    "text": "I am sorry."
+  },
+  "p_steerer.talk.say_no_more": {
+    "text": "Say no more."
+  },
+  "p_steerer.talk.what_like": {
+    "text": "What was he like?"
+  },
+  "p_steerer.talk.we_look": {
+    "text": "We will look for him."
+  },
+  "p_steerer.talk.you_would": {
+    "text": "You would have done the same."
+  },
+  "p_steerer.talk.heavy": {
+    "text": "You were heavier than you look."
+  },
+  "p_steerer.talk.it_is": {
+    "text": "It is one."
+  },
+  "p_steerer.talk.good": {
+    "text": "Good."
+  },
+  "p_steerer.talk.enough": {
+    "text": "Enough of that."
+  },
+  "p_steerer.talk.ask_more": {
+    "text": "Tell me more."
+  },
+  "p_steerer.talk.job.fisher": {
+    "text": "Fish from the rocks."
+  },
+  "p_steerer.talk.job.camp": {
+    "text": "Keep the camp: the fire and the pot."
+  },
+  "p_steerer.talk.job.builder": {
+    "text": "Raise the shelter in the broch."
+  },
+  "p_steerer.talk.job.rest": {
+    "text": "Rest today."
+  },
+  "p_steerer.talk.job.none": {
+    "text": "Nothing. Carry on."
+  },
+  "p_steerer.talk.oddi_find": {
+    "text": "We will find Oddi."
+  },
+  "p_steerer.talk.oddi_sea": {
+    "text": "The sea may have him."
+  },
+  "c_hild.greet.morning.01": {
+    "text": "Morning. The sea's still there. I checked.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.day.01": {
+    "text": "Pull up a rock. They're biting, slowly.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.day.02": {
+    "text": "You found me. Not hard, on this island.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.evening.01": {
+    "text": "Sit. The fire's the only warm thing here.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.evening.02": {
+    "text": "Eat with me. It's fish. It's always fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.evening.03": {
+    "text": "Nothing out there. Same as yesterday.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.night.01": {
+    "text": "Can't sleep either? Sit, then. Quietly.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.wound.01": {
+    "text": "Mind the leg. It minds me enough.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.warm.01": {
+    "text": "There you are. I was hoping you'd come by.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.cold.01": {
+    "text": "What is it now?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.afraid.01": {
+    "text": "Steerer. Yes. What do you need?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.greet.devoted.01": {
+    "text": "Say the word. I'm already up.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.work.01": {
+    "text": "One more. Then one more after that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.work.02": {
+    "text": "Bite, you cold beast.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.work.03": {
+    "text": "Fish for supper, again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.idle.01": {
+    "text": "Dry feet. I'd forgotten.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.idle.02": {
+    "text": "Sing the one about the goat. No? Nobody?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.supper.01": {
+    "text": "Hot or cold, it's fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.wound.01": {
+    "text": "Leg's stiff. It'll pass.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.wound.02": {
+    "text": "Not my casting arm. Lucky.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.weather.01": {
+    "text": "Gulls inland. Weather tomorrow.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.weather.02": {
+    "text": "Long light coming. Too long to sleep.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.shore.01": {
+    "text": "Nothing. Same as yesterday.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.shore.02": {
+    "text": "Still looking, Father.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.grief.01": {
+    "text": "Don't. Not yet. I'll say when.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.friendship.01": {
+    "text": "You could have asked me first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.friendship.02": {
+    "text": "I said nothing on the strand. I'm saying it now.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.friendship.03": {
+    "text": "Not that. Ask someone else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.friendship.04": {
+    "text": "Put me ashore with kin somewhere. I'll not ask a share.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.happiness.01": {
+    "text": "Cold again. Fish again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.happiness.02": {
+    "text": "Three nights cold. People notice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.happiness.03": {
+    "text": "Not the rocks. Not in this. Ask me tomorrow.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.happiness.04": {
+    "text": "There's work in Saltvik with a roof over it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.fear.01": {
+    "text": "As you say.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.devoted.01": {
+    "text": "Where you go. Don't ask me twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.rising.01": {
+    "text": "You came into the water for me. Father couldn't always say that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.rising.02": {
+    "text": "If it's the north channel, take me. I know it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.warn.rising.03": {
+    "text": "I mended your cloak. Don't thank me. It was ugly.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.job.accept.01": {
+    "text": "With you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.job.refuse.01": {
+    "text": "Not that. Ask someone else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.job.rest.01": {
+    "text": "Rest. Fine. I'll rest angrily.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.job.unable.01": {
+    "text": "I can't stand on it, let alone that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.exit.01": {
+    "text": "Back to it, then.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.wound.01": {
+    "text": "The leg's swelling. I've seen worse. On other people.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.wound.02": {
+    "text": "Sitting down, I can fish. Walking, I can swear.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.wound.03": {
+    "text": "It's knitting. A few more days and I'll run on it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.wound.04": {
+    "text": "Clean. You bind a good leg, Steerer.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.job.01": {
+    "text": "What do you want of me?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.season.spring": {
+    "text": "Spring gales. Good for drying sails and nothing else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.season.summer": {
+    "text": "Long days. The fish come in close.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.season.autumn": {
+    "text": "Storms soon. The boat wants hauling up.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.season.winter": {
+    "text": "Dark at noon. Keep the fire fed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.father.01": {
+    "text": "We never found Father. The sea keeps what it takes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.father.02": {
+    "text": "Loud. Fair. He'd have hated this broch. He'd have mended it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.rescue.01": {
+    "text": "You came into the water for me. I'll not forget it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.fire.01": {
+    "text": "First fire on this island. Feels like a claim.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.shelter.01": {
+    "text": "A roof. Of a sort. Father would have laughed at it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.fish.01": {
+    "text": "Fish, and more fish. I'm not complaining. Yet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.oddi.01": {
+    "text": "Oddi was in the bow when we struck. If anyone floated, Oddi did.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.morning.01": {
+    "text": "Up already? Me too. Always.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.day.01": {
+    "text": "Working. Look. Working.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.evening.01": {
+    "text": "Is there more? There's never more.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.night.01": {
+    "text": "I wasn't doing anything.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.meal.01": {
+    "text": "Don't stand over me while I eat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.warm.01": {
+    "text": "Steerer! Need something found?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.cold.01": {
+    "text": "What. I've done my share.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.afraid.01": {
+    "text": "Yes. Whatever it is. Yes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.greet.devoted.01": {
+    "text": "Name it. I'll fetch it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.idle.01": {
+    "text": "How much is a share? Exactly how much?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.idle.02": {
+    "text": "I found it. Finding isn't stealing.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.work.01": {
+    "text": "Next time, give me the job nobody wants.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.idle.03": {
+    "text": "Fish again. Not complaining. Counting.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.wound.01": {
+    "text": "It's nothing. Fell off the wreck. Twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.bark.weather.01": {
+    "text": "Rain coming. Course it is.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.friendship.01": {
+    "text": "You watch me like I'm a thief.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.friendship.02": {
+    "text": "I said nothing. I'm saying it now. I'm not a dog.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.friendship.03": {
+    "text": "Not that. Get someone you trust.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.friendship.04": {
+    "text": "Drop me at Saltvik. I'll find my own way.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.happiness.01": {
+    "text": "Hungry again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.happiness.02": {
+    "text": "Three days of this. People talk.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.happiness.03": {
+    "text": "Not today. Tomorrow. Maybe.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.happiness.04": {
+    "text": "Saltvik's got roofs. And dice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.fear.01": {
+    "text": "Yes. Now. Going.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.devoted.01": {
+    "text": "Point. I'll go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.rising.01": {
+    "text": "You didn't have to keep me. You did.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.rising.02": {
+    "text": "Need something climbed? Ask me first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.warn.rising.03": {
+    "text": "I fixed your strap. Don't ask where the leather came from.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.job.accept.01": {
+    "text": "That one? Done.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.job.refuse.01": {
+    "text": "Not that. Get someone you trust.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.job.rest.01": {
+    "text": "Rest? Me? All right.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.job.unable.01": {
+    "text": "Can't. Legs won't.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.exit.01": {
+    "text": "Right. Going. Working.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.wound.01": {
+    "text": "It's nothing. Fell off the wreck. Twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.wound.02": {
+    "text": "With my hands, yes. With my legs, ask tomorrow.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.wound.03": {
+    "text": "Stiff. I'll be climbing in a day or two. Probably.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.wound.04": {
+    "text": "See? Nothing. Told you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.job.01": {
+    "text": "Job? I'll do any job. What job?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.season.spring": {
+    "text": "Spring. Eggs on the cliffs soon. I can climb.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.season.summer": {
+    "text": "Summer. Ships about. Traders. Dice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.season.autumn": {
+    "text": "Autumn. Everyone counting stores. Me too.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.talk.season.winter": {
+    "text": "Winter. Long nights. Short rations.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.morning.01": {
+    "text": "Dia duit. God be with you. Eat first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.day.01": {
+    "text": "Hold this. Gently.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.evening.01": {
+    "text": "Sit. There's broth, or there will be.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.night.01": {
+    "text": "The night's long. Sit a while.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.warm.01": {
+    "text": "Ah. Good. I'd hoped it was you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.cold.01": {
+    "text": "Say what you came to say.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.afraid.01": {
+    "text": "Yes. I'll see to it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.greet.devoted.01": {
+    "text": "I'll follow. God help us both.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.bark.idle.01": {
+    "text": "Eat first. Then decide who we are.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.bark.idle.02": {
+    "text": "Grace, then food. In that order.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.bark.work.01": {
+    "text": "Broth tonight, if the sea allows.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.bark.wound.01": {
+    "text": "A cut. I've had worse from a cooking knife.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.bark.weather.01": {
+    "text": "Quiet morning. A gift. Don't waste it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.friendship.01": {
+    "text": "You could have let that one go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.friendship.02": {
+    "text": "I said nothing at the time. I'm saying it now.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.friendship.03": {
+    "text": "I will not do that. Find someone else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.friendship.04": {
+    "text": "Put me ashore. I'll not ask for a share.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.happiness.01": {
+    "text": "Cold again. Fish again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.happiness.02": {
+    "text": "Three nights without a fire. People notice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.happiness.03": {
+    "text": "Not today. Ask me tomorrow.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.happiness.04": {
+    "text": "There's work in Saltvik with a roof over it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.fear.01": {
+    "text": "As you say.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.devoted.01": {
+    "text": "I'll follow. God help us both.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.rising.01": {
+    "text": "You fed them first. Thorkel would have.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.rising.02": {
+    "text": "If there's cooking, give it to me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.warn.rising.03": {
+    "text": "I kept you a bowl back. Eat it while it's hot.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.job.accept.01": {
+    "text": "I'll see to it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.job.refuse.01": {
+    "text": "No. Not that. Find someone else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.job.rest.01": {
+    "text": "Rest. If you say so.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.job.unable.01": {
+    "text": "I can't stand to it. Not today.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.exit.01": {
+    "text": "Go on. God keep you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.wound.01": {
+    "text": "A cut. I've had worse from a cooking knife.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.wound.02": {
+    "text": "I can stir a pot with one hand.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.wound.03": {
+    "text": "Stitches are pulling. Three days, it'll be.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.wound.04": {
+    "text": "Clean. Thank you. God sees it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.job.01": {
+    "text": "What would you have me do?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.season.spring": {
+    "text": "Lent's over somewhere. Here we just go hungry.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.season.summer": {
+    "text": "Long light. Good for drying fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.season.autumn": {
+    "text": "Fill the stores now. Winter does not bargain.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.talk.season.winter": {
+    "text": "Winter. Broth every night, if I have my way.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.morning.01": {
+    "text": "Tide's wrong for work. Work anyway.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.day.01": {
+    "text": "Mind the chest.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.evening.01": {
+    "text": "Sit there. Not on the chest.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.night.01": {
+    "text": "Sleep's for people with boats.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.warm.01": {
+    "text": "Good. You. Hold this end.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.cold.01": {
+    "text": "Busy.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.afraid.01": {
+    "text": "Yes. Done. Going.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.greet.devoted.01": {
+    "text": "Say the plank and I'll fit it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.bark.idle.01": {
+    "text": "My chest. Then me. Then argue.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.bark.work.01": {
+    "text": "That plank will hold. I don't care what the sea thinks.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.bark.work.02": {
+    "text": "Green wood. Useless.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.bark.idle.02": {
+    "text": "Don't whistle. Not here.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.bark.wound.01": {
+    "text": "Cut my hand on my own adze. Don't tell the sea.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.friendship.01": {
+    "text": "You don't ask. You just do.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.friendship.02": {
+    "text": "I kept quiet. Not any more.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.friendship.03": {
+    "text": "Not that. Not with my hands.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.friendship.04": {
+    "text": "Take me to Saltvik. My sister's there.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.happiness.01": {
+    "text": "Wet tools, wet bed, wet everything.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.happiness.02": {
+    "text": "Three nights cold. The wood's not all that's warping.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.happiness.03": {
+    "text": "Not today. The work'll keep.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.happiness.04": {
+    "text": "Saltvik has a dry naust and a roof.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.fear.01": {
+    "text": "Yes. Done.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.devoted.01": {
+    "text": "Say the plank and I'll fit it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.rising.01": {
+    "text": "You kept the rites. Good. The sea noticed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.rising.02": {
+    "text": "If it's timber, take me. I'll know it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.warn.rising.03": {
+    "text": "I've sharpened your knife. It was a disgrace.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.job.accept.01": {
+    "text": "Fine. Out of my light.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.job.refuse.01": {
+    "text": "Not that. Not with my hands.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.job.rest.01": {
+    "text": "Rest. Fine. My tools won't.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.job.unable.01": {
+    "text": "Can't hold an adze like this.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.exit.01": {
+    "text": "Off you go. I've work.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.wound.01": {
+    "text": "Cut my hand on my own adze. Don't tell the sea.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.wound.02": {
+    "text": "The other hand works. That's half a boatwright.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.wound.03": {
+    "text": "It's closing. My hands work. That's what matters.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.wound.04": {
+    "text": "Hm. Clean. You'd do for a shipwright's mate.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.job.01": {
+    "text": "What needs building? Tell me it's a boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.season.spring": {
+    "text": "Spring. Caulk everything twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.season.summer": {
+    "text": "Summer. Timber dries true now. Cut it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.season.autumn": {
+    "text": "Autumn. Boats up the beach before the gales.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.talk.season.winter": {
+    "text": "Winter. Carving weather.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.talk.topic.wound": {
+    "text": "Your wound"
+  },
+  "ui.talk.topic.father": {
+    "text": "Your father"
+  },
+  "ui.talk.topic.rescue": {
+    "text": "The rescue"
+  },
+  "ui.talk.topic.fire": {
+    "text": "The fire"
+  },
+  "ui.talk.topic.shelter": {
+    "text": "The shelter"
+  },
+  "ui.talk.topic.fish": {
+    "text": "The fishing"
+  },
+  "ui.talk.topic.job": {
+    "text": "Work"
+  },
+  "ui.talk.topic.season": {
+    "text": "The season"
+  },
+  "ui.talk.topic.oddi": {
+    "text": "Oddi"
+  },
+  "ui.talk.leave": {
+    "text": "Leave"
+  },
+  "ui.talk.title": {
+    "text": "Talking with {name}"
+  },
+  "ui.talk.scene": {
+    "text": "At the fire"
+  },
+  "ui.talk.choose": {
+    "text": "{keys} to choose · {key} to leave"
+  },
+  "ui.talk.choose_click": {
+    "text": "Wheel to pick, click to choose · {key} to leave"
+  },
+  "ui.prompt.talk": {
+    "text": "{key}  Talk to {name}"
+  },
+  "ui.prompt.talk_click": {
+    "text": "Right-click  Talk to {name}"
+  },
+  "ui.refusal.asleep": {
+    "text": "Asleep"
+  },
+  "ui.refusal.busy": {
+    "text": "Busy"
+  },
+  "job.name.fisher": {
+    "text": "fishing from the rocks"
+  },
+  "job.name.camp": {
+    "text": "keeping the camp"
+  },
+  "job.name.builder": {
+    "text": "raising the shelter"
+  },
+  "job.name.rest": {
+    "text": "resting"
+  },
+  "ui.activity.work": {
+    "text": "{name}: {job}"
+  },
+  "ui.activity.work_half": {
+    "text": "{name}: {job}, at half pace for the wound"
+  },
+  "ui.activity.meal": {
+    "text": "{name}: eating"
+  },
+  "ui.activity.evening": {
+    "text": "{name}: by the fire"
+  },
+  "ui.activity.sleep": {
+    "text": "{name}: asleep"
+  },
+  "ui.activity.tendency": {
+    "text": "{name}: a habit of the evening"
+  },
+  "ui.activity.lead": {
+    "text": "{name}: leading the way"
+  },
+  "ui.activity.rest": {
+    "text": "{name}: resting, as told"
+  },
+  "ui.activity.bed": {
+    "text": "{name}: in bed, too hurt to work"
+  },
+  "ui.activity.talk": {
+    "text": "{name}: talking"
+  },
+  "ui.activity.refused": {
+    "text": "{name}: refusing the work"
+  },
+  "ui.activity.sit": {
+    "text": "{name}: getting their breath"
+  },
+  "ui.activity.scene": {
+    "text": "{name}: at the fire"
+  },
+  "ui.reason.bed_bound": {
+    "text": "{name} is too badly hurt for that."
+  },
+  "ui.reason.refuses": {
+    "text": "{name} will not do that work."
+  },
+  "ui.reason.no_such_job": {
+    "text": "There is no such work here now."
+  },
+  "ui.reason.already": {
+    "text": "{name} is at that work already."
+  },
+  "report.work.job": {
+    "text": "{name} means to be {job} today."
+  },
+  "report.work.half": {
+    "text": "{name} works at half pace for the wound."
+  },
+  "report.mood.low": {
+    "text": "{name} is low: {reason}."
+  },
+  "report.mood.reason.hungry": {
+    "text": "short of food"
+  },
+  "report.mood.reason.cold": {
+    "text": "a cold night"
+  },
+  "report.mood.reason.grief": {
+    "text": "grieving"
+  },
+  "report.mood.reason.treated": {
+    "text": "how things went today"
+  },
+  "report.theft.none": {
+    "text": "Nothing is missing from the stores."
+  },
+  "caption.scene.theft_found": {
+    "text": "Food hidden in Oddi's bedding",
+    "tags": ["INFO"]
+  },
+  "caption.voice.approach": {
+    "text": "{name}, coming over",
+    "tags": ["INFO"]
+  },
+  "c_hild.scene.theft.found": {
+    "text": "Steerer. Oddi's bedding. Salt fish, from the cask.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.found": {
+    "text": "Steerer. A word. There's fish in Oddi's blanket.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.scene.theft.found": {
+    "text": "Steerer. Look. Oddi's bed. Our fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.scene.theft.excuse": {
+    "text": "I found it. Finding isn't stealing.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.scene.theft.witness": {
+    "text": "From the cask, Oddi. From us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.witness": {
+    "text": "From your own, lad. That's the worst kind.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.witness": {
+    "text": "From the shared cask. You know what that's called.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.scene.theft.fair": {
+    "text": "Put it back before everyone. Then you keep the tally."
+  },
+  "c_oddi.scene.theft.fair": {
+    "text": "The tally. Me. Right. I'll count it twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.scene.theft.fair": {
+    "text": "Fair. Shame for a night, then work. Father's way.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.fair": {
+    "text": "Good. Give a thief a trust and watch what grows.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.fair": {
+    "text": "Hm. Soft. Might work.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.scene.theft.punish": {
+    "text": "Punish Oddi: the share goes to the store."
+  },
+  "c_oddi.scene.theft.punish": {
+    "text": "My share. Fine. It's always my share.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.scene.theft.punish": {
+    "text": "Hard. But it was our fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.punish": {
+    "text": "Hard. I was harder at that age.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.punish": {
+    "text": "Good. Thieves eat last.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.scene.theft.shame": {
+    "text": "Shame Oddi at the fire, before everyone."
+  },
+  "c_oddi.scene.theft.shame": {
+    "text": "Fine. Everyone's seen. Happy?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.scene.theft.shame": {
+    "text": "That'll stay with Oddi a long while.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.shame": {
+    "text": "Shame breaks some. It made a thief of me once.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.shame": {
+    "text": "Hard words. Deserved ones.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.scene.theft.side": {
+    "text": "Finding isn't stealing. Oddi keeps it."
+  },
+  "c_oddi.scene.theft.side": {
+    "text": "See? Finding.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.scene.theft.side": {
+    "text": "From us, and you let it go. I'll remember that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.side": {
+    "text": "Mercy. Or blindness. We'll see which.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.side": {
+    "text": "So the cask's anyone's now.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.scene.theft.ignore": {
+    "text": "Let it lie."
+  },
+  "c_hild.scene.theft.ignore": {
+    "text": "So that's how it is.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.scene.theft.ignore": {
+    "text": "Silence is an answer too.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.scene.theft.ignore": {
+    "text": "Nothing? Right.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.stinger.dispute": {
+    "text": "Trouble at the fire",
+    "tags": ["INFO"]
+  },
+  "caption.stinger.judgement": {
+    "text": "The judgement is given",
+    "tags": ["INFO"]
+  },
+  "report.trait.found": {
+    "text": "{name} shows a side not seen before: {trait}."
+  },
+  "trait.name.berserk": {
+    "text": "given to battle-rage"
+  },
+  "trait.name.cowardly": {
+    "text": "quick to fear"
+  },
+  "trait.name.superstitious": {
+    "text": "superstitious"
+  },
+  "trait.name.brave": {
+    "text": "brave"
+  },
+  "trait.name.greedy": {
+    "text": "greedy"
+  },
+  "trait.name.pious": {
+    "text": "pious"
+  },
+  "trait.name.hot_tempered": {
+    "text": "hot-tempered"
+  },
+  "trait.name.gentle": {
+    "text": "gentle"
+  },
+  "trait.name.drinker": {
+    "text": "a drinker"
+  },
+  "trait.name.light_fingered": {
+    "text": "light-fingered"
+  },
+  "trait.name.keen_eyed": {
+    "text": "keen-eyed"
+  },
+  "trait.name.sea_sick": {
+    "text": "sea-sick"
+  },
+  "trait.name.storyteller": {
+    "text": "a teller of stories"
+  },
+  "trait.name.grudge_holder": {
+    "text": "one who holds a grudge"
+  },
+  "trait.name.diligent": {
+    "text": "diligent"
+  },
+  "trait.name.lazy": {
+    "text": "idle"
+  },
+  "person.short.c_oddi": {
+    "text": "Oddi"
+  },
+  "person.short.c_bran": {
+    "text": "Bran"
+  },
+  "person.short.c_runa": {
+    "text": "Runa"
+  },
+  "person.short.c_eithne": {
+    "text": "Eithne"
+  },
+  "person.short.c_nessa": {
+    "text": "Nessa"
+  },
+  "person.short.c_kolbeinn": {
+    "text": "Kolbeinn"
+  },
+  "person.short.c_thrand": {
+    "text": "Thrand"
+  },
+  "person.short.c_aine": {
+    "text": "Áine"
+  },
+  "person.short.c_senan": {
+    "text": "Senán"
+  },
+  "person.short.c_tofi": {
+    "text": "Tófi"
+  },
+  "soundtest.line.resident": {
+    "text": "Steerer. The fire's lit, and the tide is turning. Will you eat?"
   }
 }

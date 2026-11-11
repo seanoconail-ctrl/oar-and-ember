@@ -9,6 +9,7 @@ import {
 import { parseStaminaBalance } from '../../content/homeBalance.ts';
 import type { Content } from '../../content/registry.ts';
 import { campContext } from '../home/camp.ts';
+import { peopleContext } from '../people/context.ts';
 import { bakeElevation } from '../../content/terrain/elevation.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
@@ -16,7 +17,7 @@ import type { SimWorldContext } from '../simulation.ts';
 
 export function landContext(
   content: Pick<Content, 'onFoot' | 'opening' | 'zoneMaps'> &
-    Partial<Pick<Content, 'camp' | 'balance'>>,
+    Partial<Pick<Content, 'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people'>>,
   balance: unknown,
 ): SimWorldContext {
   if (content.onFoot === null) throw new Error('content/onfoot.json did not load');
@@ -34,5 +35,15 @@ export function landContext(
     opening: content.opening,
     stamina: parseStaminaBalance(balance),
     camp: content.camp === undefined ? null : campContext({ camp: content.camp, balance }),
+    people:
+      content.household == null || content.people === undefined
+        ? null
+        : peopleContext({
+            household: content.household,
+            talk: content.talk ?? null,
+            scenes: content.scenes ?? [],
+            people: content.people,
+            balance,
+          }),
   };
 }

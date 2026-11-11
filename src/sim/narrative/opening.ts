@@ -27,7 +27,13 @@ export type OpeningEvent =
       readonly direction: ReturnType<typeof compass>;
       readonly distanceTiles: number;
     }
-  | { readonly type: 'PERSON_SPOKE'; readonly person: Id; readonly lineKey: string }
+  | {
+      readonly type: 'PERSON_SPOKE';
+      readonly person: Id;
+      readonly lineKey: string;
+      /** A bark's category (Stage 8): barks are short and never block (Book 8 section 08). */
+      readonly bark?: string;
+    }
   | { readonly type: 'BEAT_COMPLETED'; readonly beat: Id };
 
 /**

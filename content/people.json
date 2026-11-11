@@ -12,7 +12,69 @@
       "KIN": 3,
       "GLORY": 2
     },
-    "skills": ["sailing", "fishing", "spear"]
+    "skills": ["sailing", "fishing", "spear"],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "steererTie": "KIN",
+    "traits": [
+      {
+        "trait": "BRAVE",
+        "known": true
+      },
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "FOOD",
+        "ref": "RES_SALTED_FISH",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "TASK_FISH_SHORE",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "RISING_WIND",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "FIRESIDE",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "TOLD_TO_REST",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "FLAT_CALM",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "KALE",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DUSK",
+      "place": "SHORE",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_ODDI",
@@ -21,6 +83,69 @@
     "values": {
       "GAIN": 3,
       "KIN": 1
+    },
+    "skills": ["climbing", "stealth", "ropeWork"],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "TRANSGRESSIVE",
+    "traits": [
+      {
+        "trait": "LIGHT_FINGERED",
+        "known": false,
+        "revealedBy": "THEFT_FOUND"
+      },
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "COWARDLY",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "FOOD",
+        "ref": "HONEY",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "DICE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "CLIMBING",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "TRUSTED",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "WATCHED_EATING",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "RAIN",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "R_ULF",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "EVENING",
+      "place": "FIRE",
+      "pose": "sit"
     }
   },
   {
@@ -30,6 +155,70 @@
     "values": {
       "MERCY": 3,
       "WORD": 2
+    },
+    "skills": ["axe", "shield", "irishSpeech", "cooking"],
+    "origin": "NORSE_GAELIC",
+    "codes": ["NORSE", "CHURCH"],
+    "codeStance": "CONVENTIONAL",
+    "faithTarget": "CHRIST",
+    "traits": [
+      {
+        "trait": "GENTLE",
+        "known": true
+      },
+      {
+        "trait": "PIOUS",
+        "known": true,
+        "faith": "CHRIST"
+      },
+      {
+        "trait": "DILIGENT",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "TASK_COOK",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "KALE_BROTH",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "IRISH_SONGS",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "QUIET_MORNING",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "BOASTING",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "BURNED_FARMS",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "KILBRECC_ROAD",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DAWN",
+      "place": "FIRE",
+      "pose": "kneel"
     }
   },
   {
@@ -46,7 +235,70 @@
         "to": "C_ASA",
         "kind": "KIN"
       }
-    ]
+    ],
+    "skills": ["carpentry", "shipRepair", "pilotage"],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "faithTarget": "OLD_GODS",
+    "traits": [
+      {
+        "trait": "SUPERSTITIOUS",
+        "known": true
+      },
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "GOOD_OAK",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "CARVING",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "DRY_NAUST",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "RITES_KEPT",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "GREEN_TIMBER",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WHISTLING_AT_SEA",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "HANDS_ON_CHEST",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "WORK",
+      "place": "BOAT",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_EITHNE",
@@ -56,12 +308,138 @@
       "WORD": 3,
       "MERCY": 2,
       "KIN": 1
+    },
+    "skills": ["stewardship", "accounts", "herding"],
+    "origin": "GAELIC",
+    "codes": ["GAELIC"],
+    "codeStance": "TRANSGRESSIVE",
+    "faithTarget": "CHRIST",
+    "traits": [
+      {
+        "trait": "PIOUS",
+        "known": true,
+        "faith": "CHRIST"
+      },
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "HONEST_TALLY",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "HERDING",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "KALE",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "CROSS_BY_WELL",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "LIES",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WASTE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "MARRIAGE_TALK",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DUSK",
+      "place": "STORES",
+      "pose": "watch"
     }
   },
   {
     "id": "C_NESSA",
     "kind": "RESIDENT",
-    "nameKey": "person.name.c_nessa"
+    "nameKey": "person.name.c_nessa",
+    "origin": "KEEPERS",
+    "codes": ["KEEPERS"],
+    "codeStance": "CONVENTIONAL",
+    "faithTarget": "OLD_GODS",
+    "traits": [
+      {
+        "trait": "GENTLE",
+        "known": true
+      },
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "STORYTELLER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "FOOD",
+        "ref": "RES_FRESH_FISH",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "ANY_SEA",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "MENDING_NETS",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "C_YLVA",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "FOOD",
+        "ref": "SEAL_MEAT",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "QUESTIONS_OF_HOME",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "PEAT_SMOKE",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DAWN",
+      "place": "SHORE",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_KOLBEINN",
@@ -76,7 +454,68 @@
         "to": "C_ASA",
         "kind": "SPOUSE"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["SALTVIK", "NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "traits": [
+      {
+        "trait": "HOT_TEMPERED",
+        "known": true
+      },
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "DRINKER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "GOOD_IRON",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "ALE",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "PROPER_FORGE",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "C_ASA",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "PLACE",
+        "ref": "COLD_FORGE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "DEBT",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "L_OTTAR",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "WORK",
+      "place": "FIRE",
+      "pose": "work"
+    }
   },
   {
     "id": "C_THRAND",
@@ -86,6 +525,62 @@
       "WORD": 3,
       "MERCY": 1,
       "GLORY": 2
+    },
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "TRANSGRESSIVE",
+    "traits": [
+      {
+        "trait": "BRAVE",
+        "known": true
+      },
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "PLAIN_TALK",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "RES_SALTED_FISH",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "SOUND_WATCH",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "PERSON",
+        "ref": "E_HEID",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "BOASTING",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "DEEP_WATER_AT_NIGHT",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "NIGHT",
+      "place": "SHORE",
+      "pose": "watch"
     }
   },
   {
@@ -95,6 +590,71 @@
     "values": {
       "KIN": 2,
       "GLORY": 2
+    },
+    "origin": "NORSE_GAELIC",
+    "codes": ["GAELIC", "NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "traits": [
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "BRAVE",
+        "known": true
+      },
+      {
+        "trait": "SEA_SICK",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "HUNTING",
+        "known": false
+      },
+      {
+        "kind": "PLACE",
+        "ref": "HIGH_GROUND",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "PRAISE",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "HONEY",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "PERSON",
+        "ref": "R_ULF",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "DOUBTED",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "LONG_VOYAGES",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DAWN",
+      "place": "HIGH",
+      "pose": "watch"
     }
   },
   {
@@ -105,6 +665,69 @@
       "FAITH": 3,
       "MERCY": 2,
       "WORD": 2
+    },
+    "origin": "NORSE_GAELIC",
+    "codes": ["CHURCH", "NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "faithTarget": "CHRIST",
+    "traits": [
+      {
+        "trait": "PIOUS",
+        "known": true,
+        "faith": "CHRIST"
+      },
+      {
+        "trait": "GENTLE",
+        "known": true
+      },
+      {
+        "trait": "DILIGENT",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "INK_AND_VELLUM",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "QUIET",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "HONEY",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "CARVED_STONES",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "BURNED_BOOKS",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "COLD_HANDS",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "HIRED_SWORDS",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "NIGHT",
+      "place": "FIRE",
+      "pose": "sit"
     }
   },
   {
@@ -124,7 +747,71 @@
         "to": "C_YLVA",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "faithTarget": "OLD_GODS",
+    "steererTie": "KIN",
+    "traits": [
+      {
+        "trait": "PIOUS",
+        "known": true,
+        "faith": "OLD_GODS"
+      },
+      {
+        "trait": "STORYTELLER",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "RITES_KEPT",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "HONEY",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "OLD_STORIES",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "FIRESIDE",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "RECKLESS_RAIDING",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "SLACK_RITES",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "HURRIED",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "EVENING",
+      "place": "DOOR",
+      "pose": "kneel"
+    }
   },
   {
     "id": "C_ARNBJORN",
@@ -139,7 +826,69 @@
         "to": "C_GUDRUN",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "steererTie": "KIN",
+    "traits": [
+      {
+        "trait": "GENTLE",
+        "known": true
+      },
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "COWARDLY",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "CATTLE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "MENDING_FENCES",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "QUIET",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "KALE",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "FIGHTING",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "NIGHT_RAIDS",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "LOUD_FEASTS",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DUSK",
+      "place": "DOOR",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_KARI",
@@ -153,7 +902,68 @@
         "to": "C_KOLLA",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "traits": [
+      {
+        "trait": "BRAVE",
+        "known": true
+      },
+      {
+        "trait": "HOT_TEMPERED",
+        "known": true
+      },
+      {
+        "trait": "BERSERK",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "FIGHTING",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "ALE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "PRAISE_POEMS",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "CROWD",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "STEALTH_RAIDS",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "BLOOD_PRICE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WAITING",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DAWN",
+      "place": "YARD",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_KOLLA",
@@ -168,7 +978,68 @@
         "to": "C_KARI",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "traits": [
+      {
+        "trait": "KEEN_EYED",
+        "known": true
+      },
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "STORYTELLER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "TASK_FISH_SHORE",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "RES_SALTED_FISH",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "FAIR_SHARE",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "QUIET_SEA",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "PERSON",
+        "ref": "C_KARI",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "R_ULF",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WASTE",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "SEA",
+      "place": "BOAT",
+      "pose": "watch"
+    }
   },
   {
     "id": "C_TOFI",
@@ -183,7 +1054,68 @@
         "to": "C_YLVA",
         "kind": "SPOUSE"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "SCEPTICAL",
+    "traits": [
+      {
+        "trait": "BRAVE",
+        "known": true
+      },
+      {
+        "trait": "STORYTELLER",
+        "known": true
+      },
+      {
+        "trait": "DRINKER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "PERSON",
+        "ref": "C_YLVA",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "ALE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "TEACHING_FIGHT",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "OLD_SONGS",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "GLORY_TALK",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "BOASTING",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "COLD",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "EVENING",
+      "place": "FIRE",
+      "pose": "sit"
+    }
   },
   {
     "id": "C_YLVA",
@@ -198,7 +1130,65 @@
         "to": "C_GUDRUN",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "steererTie": "KIN",
+    "traits": [
+      {
+        "trait": "SUPERSTITIOUS",
+        "known": true
+      },
+      {
+        "trait": "GENTLE",
+        "known": true
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "WARMTH",
+        "known": false
+      },
+      {
+        "kind": "FOOD",
+        "ref": "HONEY",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "C_NESSA",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "TOFI_STORIES",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "WEATHER",
+        "ref": "COLD",
+        "known": false
+      },
+      {
+        "kind": "WEATHER",
+        "ref": "WIND_AT_DOOR",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "MOCKED_OMENS",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DUSK",
+      "place": "DOOR",
+      "pose": "sit"
+    }
   },
   {
     "id": "C_ASA",
@@ -213,7 +1203,59 @@
         "to": "C_RUNA",
         "kind": "KIN"
       }
-    ]
+    ],
+    "origin": "NORSE",
+    "codes": ["SALTVIK", "NORSE"],
+    "codeStance": "CONVENTIONAL",
+    "traits": [
+      {
+        "trait": "DILIGENT",
+        "known": true
+      },
+      {
+        "trait": "GRUDGE_HOLDER",
+        "known": false
+      }
+    ],
+    "likes": [
+      {
+        "kind": "ACTIVITY",
+        "ref": "PROPER_LOOM",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "HONEST_ACCOUNTS",
+        "known": false
+      },
+      {
+        "kind": "PERSON",
+        "ref": "C_RUNA",
+        "known": false
+      }
+    ],
+    "dislikes": [
+      {
+        "kind": "PERSON",
+        "ref": "L_OTTAR",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WASTE",
+        "known": false
+      },
+      {
+        "kind": "ACTIVITY",
+        "ref": "WEAVING_ON_A_DOOR",
+        "known": false
+      }
+    ],
+    "tendency": {
+      "at": "DUSK",
+      "place": "SHORE",
+      "pose": "watch"
+    }
   },
   {
     "id": "L_FIACHRA",

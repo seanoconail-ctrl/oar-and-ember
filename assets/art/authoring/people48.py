@@ -2072,6 +2072,70 @@ def hild_sit(facing, i):
     return d.parts
 
 
+def hild_eat(facing, i):
+    """Eating at the fire (Stage 8): seated as she sits, a wooden bowl in her lap and the spoon
+    taken up to her mouth and down again: in the bowl, rising, at the mouth, lowering (pose seated).
+    From behind the bowl is hidden; her elbow lifts with each mouthful."""
+    base = 'e' if facing == 'w' else facing
+    parts = hild_sit(base, i)
+    br = (0, -1, -1, 0)[i]
+    X, Y = W_, H_
+    d = Doll()
+    if base == 'n':
+        # From behind: the near elbow lifts out past her side as the spoon goes up.
+        d.parts = parts
+        lift = (0, 1, 2, 1)[i]
+        def elbow(p, m):
+            p.seg((X(20), Y(33 + br)), (X(21), Y(37 - lift)), 2, m('dress'))
+        d.cloth('elbow', elbow, z=1.5)
+        return d.parts
+    drop = {'arm', 'arms', 'hand', 'hands'}
+    d.parts = [p for p in parts if p.name not in drop]
+    if base == 'e':
+        hand = [(21, 38.5), (20.5, 34.5), (18.5, 29.5), (20.5, 34.5)][i]
+        elbow = [(17.5, 37), (19, 37), (19, 34.5), (19, 37)][i]
+
+        def arm(p, m):
+            p.seg((X(15), Y(32 + br)), (X(elbow[0]), Y(elbow[1])), 2, m('dress'))
+            p.seg((X(elbow[0]), Y(elbow[1])), (X(hand[0] - 0.5), Y(hand[1])), 2, m('dress'))
+        d.cloth('arm', arm, z=2.0)
+        bowl = d.part('body', 'bowl', side=0)
+        bowl.z = 3.2
+        bowl.row(Y(39), X(17), X(21), 'wood')
+        bowl.row(Y(40), X(18), X(20), 'wood')
+        bowl.put(X(18), Y(39), 'shoe')
+        bowl.put(X(19), Y(39), 'shoe')
+        hn = d.part('body', 'hand')
+        hn.z = 3.6
+        hn.fill(X(hand[0]), Y(hand[1]), X(hand[0] + 1), Y(hand[1] + 1), 'skin')
+        if i != 2:
+            # The spoon's bowl below the fist.
+            hn.put(X(hand[0] - 1), Y(hand[1] + 1), 'wood')
+        parts = d.parts
+        return mirror_parts(parts) if facing == 'w' else parts
+    # Front: the bowl held in both hands at her lap, the spoon hand going to the mouth.
+    hand = [(17.5, 38.5), (19, 35), (16, 29.5), (19, 35)][i]
+
+    def arms(p, m):
+        p.seg((X(11), Y(33 + br)), (X(12.5), Y(38)), 2, m('dress'))
+        p.seg((X(20), Y(33 + br)), (X(20), Y(36.5)), 2, m('dress'))
+        p.seg((X(20), Y(36.5)), (X(hand[0] + 0.5), Y(hand[1] + 0.5)), 2, m('dress'))
+    d.cloth('arms', arms, z=1.5)
+    bowl = d.part('body', 'bowl', side=0)
+    bowl.z = 3.2
+    bowl.row(Y(39), X(13), X(17), 'wood')
+    bowl.row(Y(40), X(14), X(16), 'wood')
+    bowl.put(X(14), Y(39), 'shoe')
+    bowl.put(X(15), Y(39), 'shoe')
+    hn = d.part('body', 'hands')
+    hn.z = 3.6
+    hn.fill(X(12), Y(39), X(13), Y(40), 'skin')
+    hn.fill(X(hand[0]), Y(hand[1]), X(hand[0] + 1), Y(hand[1] + 1), 'skin')
+    if i != 2:
+        hn.put(X(hand[0]), Y(hand[1] + 2), 'wood')
+    return d.parts
+
+
 # The steerer's carry bob (anim_carry pelvis), so Hild rides in step on the shoulders.
 CARRY_BOB = [-1, -2, -1, -1, -2, -1]
 
@@ -2214,9 +2278,11 @@ HILD_STATES = [
     ('down', None, 24, True),
     ('carried', None, 5, True),
     ('sit', None, 18, True),
+    # Stage 8: eating at the fire (4 frames, a mouthful about every 2.4 seconds).
+    ('eat', None, 36, True),
 ] + WORK_STATES
 HILD_EVENTS = 'walk 0, walk 3, run 0, run 4'
-HILD_POSES = {'down': 'lying', 'carried': 'carried', 'sit': 'seated', **WORK_POSES}
+HILD_POSES = {'down': 'lying', 'carried': 'carried', 'sit': 'seated', 'eat': 'seated', **WORK_POSES}
 
 INTRO = {
     'a': """# The steerer, body model {L} (Book 5 section 02, Book 7 section 07), on the 32 x 48 canvas
@@ -2259,10 +2325,12 @@ def render_character(ch, states, mats, order, names, sizes, soft):
                     for L in names:
                         sheets[L].add(state, f, i, sep.get(L, {}))
         else:
-            n = {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2}[state]
+            n = {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2, 'eat': 4}[state]
             for f in FACINGS:
                 for i in range(n):
-                    if state == 'sleep':
+                    if state == 'eat':
+                        parts = hild_eat(f, i)
+                    elif state == 'sleep':
                         parts = sleeper(ch, i)
                         if f in 'n w':
                             parts = mirror_parts(parts)
@@ -2306,7 +2374,7 @@ def write_character(key):
     sheets = render_character(ch, states, mats, order, names, sizes, getattr(ch, 'soft', SOFT))
     anims = {}
     for state, fn, ticks, loop in states:
-        n = len(fn()) if fn else {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2}[state]
+        n = len(fn()) if fn else {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2, 'eat': 4}[state]
         anims[state] = (n, ticks, loop)
     os.makedirs(OUT, exist_ok=True)
     for L, sh in sheets.items():

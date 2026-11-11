@@ -66,6 +66,8 @@ import { campHooks, campUseLabel, interactionPoint, reportSentences } from './ca
 import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
 import type { CameraLead } from './zoneVisuals.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
+import { talkOptions } from '../sim/people/talk.ts';
+import { activityOf } from '../sim/people/schedule.ts';
 import type { BodyModel } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
@@ -275,6 +277,7 @@ export function startPlay(
     { awareHostiles: () => 0 },
     { map, controls: land.controls, rules: land.rules },
   );
+  session.people = land.people ?? null;
   const style = parseRenderStyle(renderJson);
   const missileLook = {
     releaseHeight: land.rules.releaseHeightPx,
@@ -453,6 +456,8 @@ export function startPlay(
     if (subtitles.length > 3) subtitles.shift();
   };
   let notice: { text: string; until: number } | null = null;
+  /** Barks heard this session (Stage 8; the browser tests read it). */
+  let barksHeard = 0;
   let beat = '';
   /** Where a person is, left or right of the steerer, as a stereo pan. */
   const panOf = (person: string): number => {
@@ -569,6 +574,23 @@ export function startPlay(
           now,
         );
         engine.voice(e.person, line(e.lineKey), panOf(e.person));
+        if (e.bark !== undefined) barksHeard++;
+        return;
+      case 'TALK_INFO':
+        say(t(e.key), now, 'info');
+        return;
+      case 'RESIDENT_APPROACHED':
+        say(t('caption.voice.approach', { name: nameOf(e.person) }), now, 'info');
+        return;
+      case 'DISPUTE_RAISED':
+      case 'JUDGEMENT_GIVEN':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      case 'JOB_REFUSED':
+        notice = {
+          text: t(`ui.reason.${e.reason.toLowerCase()}`, { name: nameOf(e.person) }),
+          until: now + captionMs,
+        };
         return;
       case 'COMMAND_REFUSED':
         if (e.reason === 'NO_ARROWS') {
@@ -682,6 +704,72 @@ export function startPlay(
     }
   };
   sim.events.onAny(onEvent);
+
+  /**
+   * The conversation panel (Book 8 section 09): who it is with, the line on screen, and the
+   * steerer's options, numbered; a scene's lines and judgement the same way. Rebuilt only when it
+   * changes. Time goes on while it is open.
+   */
+  const renderTalk = (mouse: boolean): void => {
+    const region = overlay.region('talk');
+    const talk = sim.state.talk;
+    const peopleCtx = land.people ?? null;
+    if (talk === null || peopleCtx === null) {
+      if (region.childElementCount > 0) region.replaceChildren();
+      root.dataset['talk'] = '';
+      root.dataset['talkKind'] = '';
+      root.dataset['talkLine'] = '';
+      root.dataset['talkOptions'] = '';
+      return;
+    }
+    const options = talkOptions(sim.state, peopleCtx);
+    const cursor = Math.min(session.talkCursor, Math.max(0, options.length - 1));
+    const lineKey = talk.line?.key ?? '';
+    const shown = [talk.with, lineKey, options.map((o) => o.key).join('|'), cursor, mouse].join(
+      '#',
+    );
+    root.dataset['talk'] = talk.with;
+    root.dataset['talkKind'] = talk.kind;
+    root.dataset['talkLine'] = lineKey;
+    root.dataset['talkOptions'] = options.map((o) => o.key).join('|');
+    if (region.dataset['shown'] === shown) return;
+    region.dataset['shown'] = shown;
+    const title = document.createElement('h2');
+    title.textContent =
+      talk.kind === 'SCENE' ? t('ui.talk.scene') : t('ui.talk.title', { name: nameOf(talk.with) });
+    const parts: HTMLElement[] = [title];
+    if (talk.line !== null) {
+      const p = document.createElement('p');
+      if (talk.line.speaker === null) {
+        p.className = 'info';
+        p.textContent = t(talk.line.key);
+      } else {
+        p.className = 'line';
+        p.textContent = t('caption.format.subtitle', {
+          speaker: nameOf(talk.line.speaker),
+          line: line(talk.line.key),
+        });
+      }
+      parts.push(p);
+    }
+    if (options.length > 0) {
+      const list = document.createElement('ol');
+      options.forEach((o, i) => {
+        const li = document.createElement('li');
+        li.textContent = t(o.key);
+        if (i === cursor) li.className = 'chosen';
+        list.append(li);
+      });
+      parts.push(list);
+      const hint = document.createElement('p');
+      hint.className = 'hint';
+      hint.textContent = mouse
+        ? t('ui.talk.choose_click', { key: keys('dodge') })
+        : t('ui.talk.choose', { keys: `1–${options.length}`, key: keys('dodge') });
+      parts.push(hint);
+    }
+    region.replaceChildren(...parts);
+  };
 
   const browser = attachBrowserInput(window, canvas, input, {
     firstInput: () => {
@@ -1181,6 +1269,22 @@ export function startPlay(
     root.dataset['motion'] = display.reducedMotion ? 'reduced' : 'full';
     root.dataset['detail'] = String(visuals.detail);
     root.dataset['seconds'] = visuals.seconds.toFixed(2);
+    // Stage 8: the conversation or scene under way, and the household at a glance.
+    renderTalk(device === 'mouse');
+    const peopleCtx = land.people ?? null;
+    const hildAct =
+      peopleCtx === null || campCtx === null || sim.state.people['C_HILD']?.life.joinedDay == null
+        ? ''
+        : activityOf(sim.state, campCtx, peopleCtx, 'C_HILD').kind;
+    root.dataset['hildActivity'] = hildAct;
+    const hildP = sim.state.people['C_HILD'];
+    root.dataset['hildFeel'] =
+      hildP === undefined
+        ? ''
+        : `${hildP.happiness.toFixed(1)},${hildP.friendship.toFixed(1)},${hildP.fear.toFixed(1)}`;
+    root.dataset['residents'] = sim.state.household.residents.join(',');
+    root.dataset['barks'] = String(barksHeard);
+    root.dataset['scene'] = String(sim.state.facts['scene.beat_1_oddi_theft'] ?? '');
     canvas.setAttribute(
       'aria-label',
       t('ui.play.label', { time: clockText(sim.state.calendar.minuteOfDay) }),

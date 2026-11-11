@@ -1931,6 +1931,28 @@
      "Word": "0"
     }
    ],
+   "deedWeighing": [
+    {
+     "Key": "deedClamp",
+     "Value": "-15 to +15 friendship per deed"
+    },
+    {
+     "Key": "witnessPresent",
+     "Value": "1.0"
+    },
+    {
+     "Key": "witnessToldByTie",
+     "Value": "0.6"
+    },
+    {
+     "Key": "witnessRumour",
+     "Value": "0.3"
+    },
+    {
+     "Key": "drengr",
+     "Value": "Glory 3 and no Mercy: the Glory valence of CIVILIAN_KILLED is 0"
+    }
+   ],
    "deedReactionsByCulture": [
     {
      "Deed": "KILLING in open fight",
@@ -2038,6 +2060,68 @@
     }
    ],
    "traits": [
+    {
+     "Trait": "Berserk",
+     "Effect": "When wounded (30%) or when a friend falls (50%), goes berserk for 20 s: ignores orders, attacks the nearest enemy (including the surrendering, and farmers in reach), damage x1.3, defence x0.7; the deeds count against the household"
+    },
+    {
+     "Trait": "Cowardly",
+     "Effect": "Breaks when cohesion falls below 40 (others at 25); 25% to flee a losing fight; happiness -10 on night raids"
+    },
+    {
+     "Trait": "Superstitious",
+     "Effect": "50% to refuse a task or voyage after a bad omen; panics at supernatural signs (cohesion -20); insists on rites"
+    },
+    {
+     "Trait": "Brave",
+     "Effect": "Cohesion +20; volunteers for danger"
+    },
+    {
+     "Trait": "Greedy",
+     "Effect": "Pockets 5% of loot; plunder-share disputes x2"
+    },
+    {
+     "Trait": "Pious (a faith)",
+     "Effect": "Prays 15 game minutes a day; reactions to sacrilege x2, and to its own faith's cruelty x1.5"
+    },
+    {
+     "Trait": "Hot-tempered",
+     "Effect": "Starts disputes x1.5; 20% to come to blows"
+    },
+    {
+     "Trait": "Gentle",
+     "Effect": "Disputes among those watching x0.5; friendship lost over a killing x1.5"
+    },
+    {
+     "Trait": "Drinker",
+     "Effect": "Drinks at feasts and in hard times; work x0.7 the morning after"
+    },
+    {
+     "Trait": "Light-fingered",
+     "Effect": "Takes one small item from the stores every 6 days, unless watched"
+    },
+    {
+     "Trait": "Keen-eyed",
+     "Effect": "Sight +2 tiles at sea and on watch; spots ambush signs 3 tiles sooner; remarks on a secret entrance within 4 tiles (section 20)"
+    },
+    {
+     "Trait": "Sea-sick",
+     "Effect": "Work x0.8 at sea; x1.05 on land"
+    },
+    {
+     "Trait": "Storyteller or singer",
+     "Effect": "Happiness +5 for everyone at the fire"
+    },
+    {
+     "Trait": "Grudge-holder",
+     "Effect": "Grudges never fade; friendship lost to a slight x1.5"
+    },
+    {
+     "Trait": "Diligent / Lazy",
+     "Effect": "Unsupervised work x1.1 / x0.85"
+    }
+   ],
+   "traitsPerPerson": [
     {
      "Key": "traitsPerPerson",
      "Value": "2 to 4; one or two shown at once, the rest discovered over 5 to 20 days"
@@ -2311,6 +2395,98 @@
      "Severity": "Untended",
      "Recovery": "No recovery",
      "Effect": "A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day"
+    }
+   ],
+   "theHouseholdDayAndTalk": [
+    {
+     "Key": "barkEarshot",
+     "Value": "10 tiles",
+     "Notes": "A resident barks only when the steerer is in the same zone within this distance"
+    },
+    {
+     "Key": "idleBarkEvery",
+     "Value": "75 to 150 real seconds",
+     "Notes": "Between one resident's barks, drawn on the people stream; a bark with a cause (a wound, the work, the weather) waits the same"
+    },
+    {
+     "Key": "barkSameSpeaker",
+     "Value": "10 real minutes",
+     "Notes": "No identical bark from the same speaker within this time (Book 8 section 08)"
+    },
+    {
+     "Key": "barkSameLine",
+     "Value": "1 real minute",
+     "Notes": "No two speakers repeat the same line within this time (Book 8 section 08)"
+    },
+    {
+     "Key": "topicsPerTalk",
+     "Value": "3",
+     "Notes": "Up to three topics in a conversation (Book 8 section 09)"
+    },
+    {
+     "Key": "topicRest",
+     "Value": "2 days",
+     "Notes": "A topic talked through is not offered again for this long; a wound's topic comes back when the wound changes (tended, healed)"
+    },
+    {
+     "Key": "approachTiles",
+     "Value": "5 tiles",
+     "Notes": "A resident with a pressing topic (an untended wound, a fresh grief, a scene) comes to the steerer to raise it when this close, once per topic"
+    },
+    {
+     "Key": "lowHappiness",
+     "Value": "Below 25 for a whole day",
+     "Notes": "Starts the happiness steps of the warning flow (Book 8 section 11, \"Happiness low\")"
+    },
+    {
+     "Key": "supervised",
+     "Value": "The steerer in the same zone within 12 tiles",
+     "Notes": "Diligent and lazy change work only without supervision (Traits)"
+    },
+    {
+     "Key": "workingBeside",
+     "Value": "Within 4 tiles, both at work",
+     "Notes": "An hour of it counts as time spent (Friendship from care and time)"
+    },
+    {
+     "Key": "lightFingeredTake",
+     "Value": "1 rd of food",
+     "Notes": "The small item a light-fingered resident takes from the stores (Traits); it is hidden in their bedding"
+    },
+    {
+     "Key": "lightFingeredWatched",
+     "Value": "The steerer awake in the home zone",
+     "Notes": "Unless watched (Traits): a theft is tried when the thief goes to bed; residents on watch arrive with the watch (Stage 19)"
+    }
+   ],
+   "conversationReplies": [
+    {
+     "Reply": "Talk",
+     "Effect": "Time spent: friendship +1, at most +3 a day (Friendship from care and time)"
+    },
+    {
+     "Reply": "Warm",
+     "Effect": "Treated well today: happiness +5"
+    },
+    {
+     "Reply": "Glad",
+     "Effect": "Treated well today: happiness +10 (a kindness that suits a like)"
+    },
+    {
+     "Reply": "Cold",
+     "Effect": "Treated badly today: happiness -10"
+    },
+    {
+     "Reply": "Punished",
+     "Effect": "Treated badly today: happiness -10; a punishment (Fear deltas)"
+    },
+    {
+     "Reply": "Shamed",
+     "Effect": "Treated badly today: happiness -20; a punishment (Fear deltas)"
+    },
+    {
+     "Reply": "Threat",
+     "Effect": "A threat to a resident (Fear deltas)"
     }
    ]
   },

@@ -44,6 +44,35 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['voice:C_BRAN', 5, {}, 'voice-bran'],
   ['voice:C_RUNA', 5, {}, 'voice-runa'],
   ['voice:C_ODDI', 5, {}, 'voice-oddi'],
+  // Stage 8: every resident's voice blip (Book 11 section 08), and the first dispute's stingers.
+  ...(
+    [
+      'C_HILD',
+      'C_ODDI',
+      'C_BRAN',
+      'C_RUNA',
+      'C_EITHNE',
+      'C_NESSA',
+      'C_GUDRUN',
+      'C_ARNBJORN',
+      'C_KARI',
+      'C_KOLLA',
+      'C_TOFI',
+      'C_YLVA',
+      'C_KOLBEINN',
+      'C_ASA',
+      'C_THRAND',
+      'C_AINE',
+      'C_SENAN',
+    ] as const
+  ).map((id): [string, number, Record<string, unknown>, string] => [
+    `resident:${id}`,
+    5,
+    {},
+    `resident-${id.slice(2).toLowerCase()}`,
+  ]),
+  ['call:MUS_STINGER_DISPUTE', 3, {}, 'stinger-dispute'],
+  ['call:MUS_STINGER_JUDGEMENT', 3, {}, 'stinger-judgement'],
   // Decision AU-10: footsteps by surface, walking and running.
   ...(['grass', 'shingle', 'sand', 'wet_sand', 'water', 'rock'] as const).flatMap(
     (s): [string, number, Record<string, unknown>, string][] => [

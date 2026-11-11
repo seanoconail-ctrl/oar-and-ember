@@ -542,6 +542,9 @@ const MARKER_OVER: Record<OnFootActor['pose'], { x: number; y: number }> = {
   carried: { x: 0, y: 0 },
   sleep: { x: 12, y: 22 },
   work: { x: 0, y: 6 },
+  eat: { x: 0, y: 14 },
+  watch: { x: 0, y: 0 },
+  kneel: { x: 0, y: 6 },
 };
 
 /** The animation state a pose is drawn with (a person calling waves and shouts: `call`). */
@@ -558,6 +561,11 @@ function poseState(
     return loop !== undefined && anims[loop] !== undefined ? loop : 'idle';
   }
   if (pose === 'sleep' && anims['sleep'] === undefined) return 'down';
+  // Stage 8: eating at the fire (sitting, if the sheet has no eating), watching from where they
+  // stand braced in the wind, and kneeling at a habit.
+  if (pose === 'eat') return anims['eat'] !== undefined ? 'eat' : 'sit';
+  if (pose === 'watch') return anims['idlewind'] !== undefined ? 'idlewind' : 'idle';
+  if (pose === 'kneel') return anims['kneel'] !== undefined ? 'kneel' : 'sit';
   return pose;
 }
 

@@ -9,22 +9,23 @@ import type { CampSite } from '../../content/registry.ts';
 import { tideAt } from '../../sim/calendar/calendar.ts';
 import type { CampContext } from '../../sim/home/camp.ts';
 import { markTick } from '../../sim/home/camp.ts';
-import type { LandContext } from '../../sim/land/onFoot.ts';
 import { bandAt, isDeep, stillWaterLevel } from '../../sim/land/water.ts';
 import { tileOf } from '../../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../../sim/land/zoneMap.ts';
-import type { Simulation } from '../../sim/simulation.ts';
+import type { Simulation, SimWorldContext } from '../../sim/simulation.ts';
+import { findActor } from '../../sim/land/zoneLinks.ts';
+import { talkOptions } from '../../sim/people/talk.ts';
 import { findPath } from './openingBot.ts';
 import type { Tile } from './openingBot.ts';
 
 export class CampBot {
   readonly #sim: Simulation;
   readonly #b: TimeBalance;
-  readonly #land: LandContext;
+  readonly #land: SimWorldContext;
   readonly #camp: CampContext;
   ticks = 0;
 
-  constructor(sim: Simulation, b: TimeBalance, land: LandContext, camp: CampContext) {
+  constructor(sim: Simulation, b: TimeBalance, land: SimWorldContext, camp: CampContext) {
     this.#sim = sim;
     this.#b = b;
     this.#land = land;
@@ -119,17 +120,63 @@ export class CampBot {
     return site;
   }
 
-  /** Walks next to a person and tends them with a click on them (INTERACT_AT their tile). */
-  tend(id: string, press: 'good' | 'late' | 'none' = 'good'): void {
-    const actor = this.#onFoot.actors[id];
-    if (actor === undefined) throw new Error(`${id} is not here`);
-    const at = tileOf(this.map, actor.x, actor.y);
-    if (!this.walkTo((t) => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) === 1))
-      throw new Error(`no way to ${id}`);
-    this.#sim.submit({ type: 'INTERACT_AT', tile: at });
+  /**
+   * Walks to a person (into their zone if need be) and talks to them with a click on them
+   * (INTERACT_AT their tile). Returns once the conversation is open.
+   */
+  talkTo(id: string): void {
+    for (let tries = 0; tries < 4; tries++) {
+      const found = findActor(this.#onFoot, id);
+      if (found === null) throw new Error(`${id} is nowhere`);
+      if (found.zone !== this.#onFoot.zone) this.goToZone(found.zone);
+      // Someone walking to their work is caught once they are there.
+      this.waitFor(() => this.#onFoot.actors[id]?.walk === undefined, 60 * 120);
+      const actor = this.#onFoot.actors[id];
+      if (actor === undefined) continue;
+      const at = tileOf(this.map, actor.x, actor.y);
+      // Beside them, or on a corner of their tile: within reach (Book 10 section 21).
+      const beside = (t: Tile): boolean =>
+        Math.max(Math.abs(t.tx - at.tx), Math.abs(t.ty - at.ty)) === 1;
+      if (!this.walkTo(beside)) throw new Error(`no way to ${id}`);
+      const now = this.#onFoot.actors[id];
+      if (now === undefined) continue;
+      this.#sim.submit({ type: 'INTERACT_AT', tile: tileOf(this.map, now.x, now.y) });
+      this.step();
+      if (this.#sim.state.talk?.with === id) return;
+    }
+    throw new Error(`could not talk to ${id}`);
+  }
+
+  /** The options of the conversation open, as string keys. */
+  options(): string[] {
+    const people = this.#land.people ?? null;
+    return people === null ? [] : talkOptions(this.#sim.state, people).map((o) => o.key);
+  }
+
+  /** Chooses the option whose string key is `key` in the conversation open. */
+  choose(key: string): void {
+    const i = this.options().indexOf(key);
+    if (i < 0) throw new Error(`no option ${key} among ${this.options().join(', ')}`);
+    this.#sim.submit({ type: 'TALK_CHOOSE', index: i });
     this.step();
+  }
+
+  /**
+   * Tends a person's wound: talks to them, takes up the wound and says "Let me see to it" (Stage
+   * 8: tending is offered through the wound's topic), then plays the hands-on action.
+   */
+  tend(id: string, press: 'good' | 'late' | 'none' = 'good'): void {
+    this.talkTo(id);
+    this.choose('ui.talk.topic.wound');
+    this.choose('p_steerer.talk.tend');
     if (this.#onFoot.player.work == null) throw new Error(`could not tend ${id}`);
     this.work(press);
+  }
+
+  /** Holds a direction for `ticks` ticks (up the beach off ground the tide has closed). */
+  walkFor(x: number, y: number, ticks: number): void {
+    for (let i = 0; i < ticks; i++) this.#move(x, y);
+    this.stop();
   }
 
   /** Interact (the key), then step once. */

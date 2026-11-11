@@ -1,0 +1,227 @@
+/**
+ * Schedules (Book 2 section 06; Book 5 section 01): every resident follows the household's day
+ * (wake, eat, work shift, meal, evening, sleep), adjusted by their job, the season's light, their
+ * wounds, their tendency, the warning flow and events, so they are always visibly doing something.
+ * What they are doing is an `Activity` with a reason (a reason code the interface words) and the
+ * place and pose it is done in.
+ *
+ * - Asleep while the steerer sleeps, and through the SLEEP block, in their bed or by the fire.
+ * - A grave wound keeps them in bed (Book 10 section 08: bed-bound).
+ * - A meal is eaten at the fire when there is one: the dawn ration (served only to those who woke
+ *   at home) and supper while the stores hold food.
+ * - The tendency at its hour and place (Book 5 section 17): Hild walks the shore at dusk.
+ * - Work: their job at its spot, at half pace with a serious wound; an outdoor job waits for light;
+ *   a job they refuse (the warning flow), or rest when told, keeps them by the fire.
+ * - The evening by the fire.
+ */
+import type { JobDef, Spot } from '../../content/registry.ts';
+import type { Id } from '../../core/ids.ts';
+import { TILE } from '../../content/terrain/autotile.ts';
+import { seasonOf } from '../calendar/calendar.ts';
+import type { CampContext } from '../home/camp.ts';
+import { FACT_ARRIVED_SAID, FACT_AT_BROCH, foodRd, homeOf } from '../home/camp.ts';
+import type { ResidentPlace } from './residents.ts';
+import type { ActivityKind, JobKind, Person, WorldState } from '../world.ts';
+import { blockAt } from './context.ts';
+import type { PeopleContext } from './context.ts';
+
+export interface Activity {
+  readonly kind: ActivityKind;
+  /** Where it is done, and the pose there (null: where they stand, as when talking). */
+  readonly place: ResidentPlace | null;
+  readonly job?: JobKind;
+  readonly task?: Id;
+  /** Working at half pace for a serious wound (Book 10 section 08). */
+  readonly half?: boolean;
+  /** Which meal: dawn or supper. */
+  readonly meal?: 'DAWN' | 'SUPPER';
+}
+
+/** Jobs done out of doors stop at dark (the season's light, Book 10 section 02). */
+const NEEDS_LIGHT: ReadonlySet<JobKind> = new Set(['FISHER']);
+
+const at = (s: Spot, pose: ResidentPlace['pose'], task?: Id): ResidentPlace => ({
+  zone: s.zone,
+  x: s.x * TILE,
+  y: s.y * TILE,
+  facing: s.facing,
+  pose,
+  ...(task === undefined ? {} : { task }),
+});
+
+/** The residents without a place of their own in the camp's content, in household order. */
+function others(world: WorldState, camp: CampContext, id: Id): number {
+  const list = world.household.residents.filter((r) => camp.def.people[r] === undefined);
+  return Math.max(0, list.indexOf(id));
+}
+
+/** Where a resident sits by the fire. */
+export function seatOf(world: WorldState, camp: CampContext, ctx: PeopleContext, id: Id): Spot {
+  const own = camp.def.people[id]?.camp;
+  if (own !== undefined) return { zone: camp.def.zone, ...own };
+  const seats = ctx.household.seats;
+  return (
+    seats[others(world, camp, id) % seats.length] ?? {
+      zone: camp.def.zone,
+      x: 35,
+      y: 32,
+      facing: 's',
+    }
+  );
+}
+
+/** Where a resident sleeps at the camp's stage. */
+export function bedOf(world: WorldState, camp: CampContext, ctx: PeopleContext, id: Id): Spot {
+  const stage = homeOf(world, camp)?.stage === 'S1' ? 'S1' : 'S0';
+  const own = camp.def.people[id]?.sleep[stage];
+  if (own !== undefined) return { zone: camp.def.zone, ...own };
+  const beds = ctx.household.beds[stage];
+  return beds[others(world, camp, id) % beds.length] ?? seatOf(world, camp, ctx, id);
+}
+
+/** The job a resident works today: REST lasts the day it was given; a job not open falls back. */
+export function jobToday(
+  world: WorldState,
+  camp: CampContext,
+  ctx: PeopleContext,
+  p: Person,
+): JobKind {
+  const job = p.job;
+  if (job === undefined) return 'CAMP';
+  if (job.kind === 'REST' && job.since < world.calendar.day) {
+    // Rest was for that day: back to the work they had before, or the household's first job.
+    return ctx.household.people[p.id]?.job ?? 'CAMP';
+  }
+  return jobOpen(world, camp, ctx.household.jobs[job.kind]) ? job.kind : 'CAMP';
+}
+
+/** Whether a job can be worked now (raising the shelter: only while the camp is at S0). */
+export function jobOpen(world: WorldState, camp: CampContext, def: JobDef | undefined): boolean {
+  if (def === undefined) return false;
+  const stage = homeOf(world, camp)?.stage ?? 'S0';
+  return def.stages === undefined || (def.stages as string[]).includes(stage);
+}
+
+/** Where a job is worked by this resident: their own spot, or the job's in turn. */
+export function jobSpot(
+  world: WorldState,
+  camp: CampContext,
+  ctx: PeopleContext,
+  id: Id,
+  job: JobKind,
+): Spot | null {
+  const def = ctx.household.jobs[job];
+  const own = camp.def.people[id]?.work;
+  if (own !== undefined && def?.task === own.task) return own;
+  const spots = def?.spots ?? [];
+  if (spots.length === 0) return null;
+  const same = world.household.residents.filter((r) => {
+    const q = world.people[r];
+    return q !== undefined && q.job?.kind === job && camp.def.people[r]?.work.task !== def?.task;
+  });
+  return spots[Math.max(0, same.indexOf(id)) % spots.length] ?? null;
+}
+
+/** The tendency's window today, in minutes after midnight (Book 5 section 17). */
+function tendencyWindow(
+  ctx: PeopleContext,
+  day: number,
+  when: string,
+): readonly [number, number] | null {
+  const light = ctx.time.daylight[seasonOf(day)];
+  const tm = ctx.household.tendencyMinutes;
+  const start = (b: string): number => ctx.blocks.find((x) => x.block === b)?.from ?? 0;
+  switch (when) {
+    case 'DAWN':
+      return [light.lightFrom, light.lightFrom + tm];
+    case 'DUSK':
+      return [light.darkFrom - tm, light.darkFrom];
+    case 'EVENING':
+      return [start('EVENING'), start('EVENING') + tm];
+    case 'NIGHT':
+      return [start('SLEEP'), start('SLEEP') + tm];
+    case 'WORK':
+      return [start('WORK'), start('WORK') + tm];
+    default:
+      return null;
+  }
+}
+
+function within(m: number, w: readonly [number, number]): boolean {
+  const [a, b] = w;
+  return b <= 1440 ? m >= a && m < b : m >= a || m < b - 1440;
+}
+
+/** Whether the dawn ration was served to them today (they woke at home). */
+export function servedToday(p: Person, day: number): boolean {
+  return p.life.meals.day === day && p.life.meals.count > 0;
+}
+
+/**
+ * What a resident at home is doing now and where. Before beat 2 (Hild leading to the broch) the
+ * opening decides; this is the household's day once the camp is reached.
+ */
+export function activityOf(
+  world: WorldState,
+  camp: CampContext,
+  ctx: PeopleContext,
+  id: Id,
+): Activity {
+  const p = world.people[id];
+  const seat = seatOf(world, camp, ctx, id);
+  if (p === undefined) return { kind: 'SIT', place: at(seat, 'sit') };
+  const talk = world.talk;
+  if (talk !== null && (talk.with === id || talk.finder === id))
+    return { kind: talk.kind === 'SCENE' ? 'SCENE' : 'TALK', place: null };
+  const asleep = world.onFoot?.player.sleep != null || !world.player.awake;
+  const bed = bedOf(world, camp, ctx, id);
+  if (asleep) return { kind: 'SLEEP', place: at(bed, 'sleep') };
+  if (p.wounds.some((w) => w.severity === 'GRAVE')) return { kind: 'BED', place: at(bed, 'sleep') };
+  const minute = world.calendar.minuteOfDay;
+  const { block } = blockAt(ctx, minute);
+  // The tendency at its hour (not at work, unless it is a work habit or dusk ends the day).
+  const def = ctx.defs.get(id)?.tendency;
+  const window = def === undefined ? null : tendencyWindow(ctx, world.calendar.day, def.at);
+  if (def !== undefined && window !== null && within(minute, window)) {
+    const workHabit = def.at === 'WORK' || def.at === 'DUSK';
+    if (block !== 'WORK' || workHabit) {
+      const place = ctx.household.places[def.place];
+      const spot = place ?? seat;
+      const pose = def.pose === 'work' ? 'work' : def.pose === 'watch' ? 'watch' : def.pose;
+      return { kind: 'TENDENCY', place: at(spot, pose) };
+    }
+  }
+  if (block === 'SLEEP') return { kind: 'SLEEP', place: at(bed, 'sleep') };
+  const home = homeOf(world, camp);
+  if (block === 'MEAL') {
+    const supper = minute >= 12 * 60;
+    const meal = supper
+      ? home !== undefined && foodRd(home) > 0
+      : servedToday(p, world.calendar.day);
+    if (meal) return { kind: 'MEAL', place: at(seat, 'eat'), meal: supper ? 'SUPPER' : 'DAWN' };
+    if (supper) return { kind: 'EVENING', place: at(seat, 'sit') };
+  }
+  if (block === 'WORK' || block === 'MEAL') {
+    // Beat 2: Hild shows the steerer the camp before she goes off to work.
+    if (world.facts[FACT_AT_BROCH] === true && world.facts[FACT_ARRIVED_SAID] !== true)
+      return { kind: 'SIT', place: at(seat, 'sit') };
+    const job = jobToday(world, camp, ctx, p);
+    if (p.life.refuses.includes(job)) return { kind: 'REFUSE', place: at(seat, 'sit'), job };
+    if (job === 'REST') return { kind: 'REST', place: at(seat, 'sit'), job };
+    const light = ctx.time.daylight[seasonOf(world.calendar.day)];
+    if (NEEDS_LIGHT.has(job) && (minute < light.lightFrom || minute >= light.darkFrom))
+      return { kind: 'DARK', place: at(seat, 'sit'), job };
+    const jdef = ctx.household.jobs[job];
+    const spot = jobSpot(world, camp, ctx, id, job);
+    if (jdef?.task !== undefined && spot !== null)
+      return {
+        kind: 'WORK',
+        place: at(spot, 'work', jdef.task),
+        job,
+        task: jdef.task,
+        half: p.wounds.some((w) => w.severity === 'SERIOUS'),
+      };
+    return { kind: 'REST', place: at(seat, 'sit'), job };
+  }
+  return { kind: 'EVENING', place: at(seat, 'sit') };
+}

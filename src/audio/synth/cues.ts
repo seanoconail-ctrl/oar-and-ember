@@ -71,9 +71,47 @@ export const CALLS: readonly SoundDef[] = [
   },
 ];
 
+/**
+ * Stage 8: the first dispute's stingers (Book 3 Stage 23 brought forward for Oddi's theft,
+ * decision S8-24), listed apart from the calls so the sound test's earlier item count stands.
+ */
+export const DISPUTES: readonly SoundDef[] = [
+  {
+    id: 'MUS_STINGER_DISPUTE',
+    captionKey: 'caption.stinger.dispute',
+    bus: 'music',
+    play: (e, at, pan) => {
+      // Trouble at the fire (Stage 8, the first dispute): two low lyre notes a semitone apart
+      // over a muffled drum, left hanging on the upper one; D Dorian's E against F.
+      const to = out(e, 'music', pan, 0.3);
+      e.playNote('drum', 38, at, 0.25, 0.7, to);
+      e.playNote('lyre', 52, at + 0.05, 0.6, 0.75, to);
+      e.playNote('lyre', 53, at + 0.5, 0.7, 0.7, to);
+      const end = e.playNote('drone', 38, at, 1.4, 0.35, to);
+      return end - at;
+    },
+  },
+  {
+    id: 'MUS_STINGER_JUDGEMENT',
+    captionKey: 'caption.stinger.judgement',
+    bus: 'music',
+    play: (e, at, pan) => {
+      // The judgement given: one drum stroke, then the harp settles down a fifth to the home note.
+      const to = out(e, 'music', pan, 0.3);
+      e.playNote('drum', 38, at, 0.3, 0.85, to);
+      e.playNote('harp', 69, at + 0.18, 0.5, 0.65, to);
+      const end = e.playNote('harp', 62, at + 0.46, 1.1, 0.7, to);
+      return end - at;
+    },
+  },
+];
+
 /** Every generated one-shot by its cue ID. */
 export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
-  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES, ...HOME].map((d) => [d.id, d]),
+  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES, ...HOME, ...DISPUTES].map((d) => [
+    d.id,
+    d,
+  ]),
 );
 
 /**

@@ -11,7 +11,21 @@ import { parseStaminaBalance, parseWorkBalance } from '../content/homeBalance.ts
 import { campContext, setupCamp } from './home/camp.ts';
 import { setReason } from './home/stamina.ts';
 import type { PeopleBasics, TimeBalance } from '../content/balance.ts';
-import type { Content, VALUES, TIE_KINDS } from '../content/registry.ts';
+import type {
+  ACTIVITY_KINDS,
+  CODE_STANCES,
+  CODES,
+  Content,
+  FAITHS,
+  JOBS,
+  JUDGEMENTS,
+  LIKING_KINDS,
+  MEMORY_KINDS,
+  TIE_KINDS,
+  TRAITS,
+  VALUES,
+} from '../content/registry.ts';
+import { newPerson } from './people/person.ts';
 import type { Id } from '../core/ids.ts';
 import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
@@ -33,8 +47,14 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * warmth, hours worked, wounds), the camp at home (stores with fresh fish by the day caught, the
  * fire, a building going up, the day's ration), a tended day on wounds, people's skills, the
  * zones out of view (`onFoot.elsewhere`) and the latest morning report.
+ * Version 6 (Stage 8: crew agents, schedules and conversation) makes people Book 2 section 06's
+ * shape: happiness, friendship and fear replace the single `regard`; codes, stance, traits (known or
+ * still to discover), likes and dislikes, tendencies, the reasons for today's mood, a job, and their
+ * day's bookkeeping (`life`: meals, the warning flow, talk, barks, a light-fingered stash); memories
+ * gain a kind and a source; the world gains the conversation or scene under way (`talk`), the barks
+ * heard (`barks`) and Book 2's disputes.
  */
-export const WORLD_STATE_VERSION = 5;
+export const WORLD_STATE_VERSION = 6;
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -42,15 +62,38 @@ export type Origin = 'NORSE' | 'GAELIC' | 'NORSE_GAELIC' | 'KEEPERS' | 'UNSTATED
 export type BodyModel = 'A' | 'B';
 export type FactValue = string | number | boolean;
 
+export type Code = (typeof CODES)[number];
+export type CodeStance = (typeof CODE_STANCES)[number];
+export type Trait = (typeof TRAITS)[number];
+export type Faith = (typeof FAITHS)[number];
+export type JobKind = (typeof JOBS)[number];
+export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
+export type MemoryKind = (typeof MEMORY_KINDS)[number];
+export type Judgement = (typeof JUDGEMENTS)[number];
+
 export interface Tie {
   readonly to: Id;
   readonly kind: TieKind;
+  /** Day it formed (0: before the campaign) and the shared event it grew from. */
+  readonly since?: number;
+  readonly cause?: string;
 }
 
+/**
+ * A memory (Book 5 section 01): a significant event the person witnessed or was told of, with the
+ * source. Memories drive conversation topics and are never deleted.
+ */
 export interface Memory {
   readonly day: number;
+  readonly kind: MemoryKind;
+  /** What it is about: a deed tag (RESCUE), an event (FIRE_LIT, WRECK), a death (THORKEL). */
   readonly about: string;
+  readonly source: 'SAW' | 'TOLD';
   readonly deedId?: Id;
+  /** A death or loss of someone tied to them (grief). */
+  readonly tie?: boolean;
+  /** An outcome remembered with it (a judgement's). */
+  readonly detail?: string;
 }
 
 export interface Wound {
@@ -59,6 +102,117 @@ export interface Wound {
   readonly where: string;
   /** The day it was first tended (Book 10 section 08: an untended wound does not heal). */
   tendedDay?: number;
+}
+
+/** Book 2 section 06: a trait, known at once or discovered over time. */
+export interface PersonTrait {
+  readonly trait: Trait;
+  known: boolean;
+  readonly faith?: Faith;
+  /** Revealed only by this event (Oddi's light-fingers by the theft found). */
+  readonly revealedBy?: 'THEFT_FOUND';
+  /** The day a hidden trait shows (Book 10 section 08: 5 to 20 days), drawn on joining. */
+  discoverDay?: number;
+}
+
+export interface Liking {
+  readonly kind: (typeof LIKING_KINDS)[number];
+  readonly ref: string;
+  known: boolean;
+}
+
+export interface MoodFactor {
+  readonly cause:
+    | 'FOOD'
+    | 'WARMTH'
+    | 'REST'
+    | 'SAFETY'
+    | 'SUCCESS'
+    | 'GRIEF'
+    | 'FESTIVAL'
+    | 'TREATMENT'
+    | 'LIKE'
+    | 'DISLIKE'
+    | 'TIE';
+  readonly amount: number;
+  /** A string key or tag: what it was ("hungry", "salt fish", "a cold night"). */
+  readonly detail?: string;
+}
+
+/** Book 2 section 06, JobAssignment: the outcome the steerer asked for. */
+export interface JobAssignment {
+  readonly kind: JobKind;
+  /** Day it was given (REST lasts the day it was given). */
+  readonly since: number;
+  readonly byOrder: boolean;
+}
+
+/** One track of the warning flow (Book 2 section 06): its steps, and when the last was taken. */
+export interface WarningTrack {
+  /** Steps taken: 0 none, 1 remark, 2 complaint, 3 refusal, 4 request to leave. */
+  step: number;
+  /** Steps due (each downward band crossing, or leaving's effect, adds them). */
+  pending: number;
+  lastDay: number | null;
+}
+
+/**
+ * A person's day (Stage 8): what the three measures and the household day are computed from. Kept
+ * in the world so a save resumes the day exactly.
+ */
+export interface PersonLife {
+  /** The day they joined the household (null: not a resident yet). */
+  joinedDay: number | null;
+  /** Nights spent in the household (counted at each dawn). */
+  nights: number;
+  /** Meals today: how many, whether one was hot, and what was eaten. */
+  meals: { day: number; count: number; hot: boolean; foods: string[] };
+  /** The night just slept: by a fire that stayed lit, and in a bed. */
+  night: { day: number; warm: boolean; bed: boolean } | null;
+  /** The fire went out while they slept tonight. */
+  coldTonight: boolean;
+  /** Told a story at the fire, or heard one, today (Book 10 Storyteller). */
+  storyDay: number;
+  /** Mood that lasts days: success, grief, festival (Book 10 "Happiness inputs"). */
+  lasting: {
+    cause: 'SUCCESS' | 'GRIEF' | 'FESTIVAL';
+    amount: number;
+    fromDay: number;
+    days: number;
+    fade: boolean;
+    detail: string;
+  }[];
+  /** Today's treatment and likes and dislikes met. */
+  today: { day: number; treated: number; likes: string[]; dislikes: string[] };
+  /** Campaign minute happiness fell below Book 10's lowHappiness (null: not low). */
+  lowSince: number | null;
+  /** The last day fear rose (fear decays on days without it). */
+  fearDay: number;
+  warning: { friendship: WarningTrack; happiness: WarningTrack };
+  /** The friendship band last seen, and the rising steps already spoken (praise, offer, favour). */
+  band: string;
+  rising: number;
+  /** Fear past the threshold (the fear line said), devotion reached. */
+  feared: boolean;
+  devoted: boolean;
+  /** The work they refuse (the warning flow's refusal step). */
+  refuses: JobKind[];
+  /** A request to leave has been made (the departure itself is Stage 23's). */
+  wantsToLeave: boolean;
+  /** Lines owed to the steerer, said when next in earshot (warning steps, rising steps). */
+  owed: string[];
+  /** Friendship from time spent today (capped), and minutes worked beside the steerer. */
+  time: { day: number; friendship: number; besideMinutes: number };
+  /** Topics talked through, by topic id, with the day; pressing topics already raised. */
+  topics: Record<string, number>;
+  raised: string[];
+  /** The tick of their next bark. */
+  nextBark: number;
+  /** The activity last minute (a light-fingered theft is tried on going to bed). */
+  activity: ActivityKind | null;
+  /** Food hidden in their bedding, in ration-days, and the day they last took any. */
+  stash: number;
+  lastTheftDay: number | null;
 }
 
 /** Book 2 section 06. */
@@ -73,16 +227,85 @@ export interface Person {
   skills: Partial<Record<string, 0 | 1 | 2 | 3 | 4 | 5>>;
   skillXp: Partial<Record<string, number>>;
   values: Partial<Record<Value, 1 | 2 | 3>>;
-  faithTarget?: 'OLD_GODS' | 'CHRIST' | 'LAND_SPIRITS' | 'NONE';
-  /** -100 to 100, towards the player. */
-  regard: number;
+  faithTarget?: Faith;
+  /** One code, or two for people of mixed birth (Book 5 section 16). */
+  codes: Code[];
+  codeStance: CodeStance;
+  traits: PersonTrait[];
+  likes: Liking[];
+  dislikes: Liking[];
+  /** Small daily behaviours, by schedule: the household's tendency keys. */
+  tendencies: string[];
+  /** 0..100: mood now. */
+  happiness: number;
+  /** -100..100: how they feel about the steerer over time. */
+  friendship: number;
+  /** 0..100: how much they fear the steerer. */
+  fear: number;
+  /** The reasons for today's happiness, each with its share. */
+  moodToday: MoodFactor[];
   ties: Tie[];
   memories: Memory[];
   wounds: Wound[];
-  job?: { readonly kind: string; readonly site?: Id };
+  job?: JobAssignment;
   schedule: string;
+  requests: Id[];
   secret?: Id;
   valueShifts: number;
+  /** The day's bookkeeping (Stage 8). */
+  life: PersonLife;
+}
+
+/** The conversation or scene under way (Book 8 section 09; Book 2 section 16). */
+export interface TalkState {
+  readonly kind: 'TALK' | 'SCENE';
+  /** The resident spoken with (in a scene, the one it is about). */
+  readonly with: Id;
+  /** A scene: its beat, and who found it (null: the steerer). */
+  readonly scene?: Id;
+  readonly finder?: Id | null;
+  /** The node shown (null: the topics). */
+  node: string | null;
+  /** The topics offered, by id. */
+  topics: string[];
+  /** The topic being talked through. */
+  topic: string | null;
+  /** Lines still to come, and the tick the next is due. */
+  queue: { readonly speaker: Id; readonly key: string }[];
+  nextLineTick: number;
+  /** The line on screen. */
+  line: { readonly speaker: Id | null; readonly key: string } | null;
+  /** The scene's choice taken (its lines then play and it ends). */
+  chosen: number | null;
+  /** Ends once its lines have been said. */
+  ending: boolean;
+  readonly since: number;
+}
+
+/** Book 2 section 06. */
+export interface Dispute {
+  readonly id: Id;
+  readonly kind:
+    | 'THEFT'
+    | 'INSULT'
+    | 'FIGHT'
+    | 'SHIRKING'
+    | 'PLUNDER_SHARE'
+    | 'BELIEF'
+    | 'GRUDGE'
+    | 'DEBT'
+    | 'BROKEN_PROMISE';
+  readonly day: number;
+  readonly parties: readonly Id[];
+  readonly cause: string;
+  readonly watchers: readonly Id[];
+  status: 'OPEN' | 'JUDGED' | 'IGNORED' | 'BOILED_OVER';
+  judgement?: {
+    readonly kind: Judgement;
+    readonly favoured?: Id;
+    readonly punished?: Id[];
+    readonly day: number;
+  };
 }
 
 export interface PlayerState {
@@ -286,6 +509,12 @@ export interface WorldState {
   onFoot: OnFootState | null;
   /** The latest morning report (version 5), shown on waking. */
   report: MorningReport | null;
+  /** Book 2 section 06 (version 6). */
+  disputes: Dispute[];
+  /** The conversation or scene under way (version 6). */
+  talk: TalkState | null;
+  /** Barks heard: by speaker and line, the tick each was last said (Book 8 section 08). */
+  barks: { bySpeaker: Record<Id, Record<string, number>>; byLine: Record<string, number> };
 }
 
 /** A new steerer's stamina: full, at Book 10's base. */
@@ -339,6 +568,9 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     oneShots: {},
     onFoot: null,
     report: null,
+    disputes: [],
+    talk: null,
+    barks: { bySpeaker: {}, byLine: {} },
   };
 }
 
@@ -362,7 +594,7 @@ export function newCampaign(
     Content,
     'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps' | 'onFoot' | 'balance'
   > &
-    Partial<Pick<Content, 'camp'>>,
+    Partial<Pick<Content, 'camp' | 'household'>>,
   steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
     name: '',
     bodyModel: null,
@@ -384,24 +616,7 @@ export function newCampaign(
   }
   for (const def of content.people.values()) {
     if (def.kind === 'PLAYER') continue;
-    world.people[def.id] = {
-      id: def.id,
-      nameKey: def.nameKey,
-      origin: 'UNSTATED',
-      appearance: `actor_${def.id.toLowerCase()}`,
-      // Chapter 1: the starting crew are lost in the wreck until found (Book 4 section 08).
-      status: def.kind === 'RESIDENT' ? 'missing' : 'alive',
-      vitality: basics.vitality,
-      skills: {},
-      skillXp: {},
-      values: { ...(def.values ?? {}) },
-      regard: 0,
-      ties: (def.ties ?? []).map((t) => ({ to: t.to, kind: t.kind })),
-      memories: [],
-      wounds: [],
-      schedule: 'default',
-      valueShifts: 0,
-    };
+    world.people[def.id] = newPerson(def, basics.vitality, content.balance);
   }
   // Starting skills (Book 10 section 08): the skills Book 5 names at their level, and the
   // steerer's level in every homestead task.

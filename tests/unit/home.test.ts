@@ -93,11 +93,15 @@ describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
     expect(campUses(sim.state, camp, strand, onFoot.actors).length).toBeGreaterThan(0);
   });
 
-  it('leads up from the strand, sits by the fire ring and says what is needed', () => {
+  it('leads up from the strand, says what is needed at the fire ring, and goes to work (Stage 8)', () => {
     const { sim, events } = toTheBroch();
-    const hild = sim.state.onFoot?.actors['C_HILD'];
     expect(sim.state.onFoot?.zone).toBe('ZONE_SK_MACHAIR');
-    expect(hild?.pose).toBe('sit');
+    // Stage 8 check 1: from the camp she goes straight to useful work, her wound or no.
+    const said = (key: string) =>
+      events.some((e) => e.type === 'PERSON_SPOKE' && e.lineKey === key);
+    while (!said('c_hild.bark.broch.03')) sim.step();
+    for (let i = 0; i < 60 * 3; i++) sim.step();
+    expect(sim.state.people['C_HILD']?.life.activity).toBe('WORK');
     const lines = events.flatMap((e) => (e.type === 'PERSON_SPOKE' ? [e.lineKey] : []));
     expect(lines).toContain('c_hild.bark.broch.01');
     expect(home(sim.state).stage).toBe('S0');

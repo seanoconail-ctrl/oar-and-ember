@@ -3244,6 +3244,30 @@
       "section": "03",
       "origin": "stated",
       "note": "Site entered from the moor road (MAIN_MOOR_ROAD); the moor itself is now that route."
+    },
+    {
+      "id": "BEAT_1_ODDI_THEFT",
+      "ref": "it is found in his bedding on the second night",
+      "book": 5,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 8 (decision S8-21): Oddi's food-theft scene, the household's first theft dispute (Book 5 section 10). Content: content/scenes.json."
+    },
+    {
+      "id": "MUS_STINGER_DISPUTE",
+      "ref": "the dispute and judgement stingers",
+      "book": 3,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 8 (decision S8-24): brought forward from Stage 23 for the first dispute, Oddi's theft."
+    },
+    {
+      "id": "MUS_STINGER_JUDGEMENT",
+      "ref": "the dispute and judgement stingers",
+      "book": 3,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 8 (decision S8-24): see MUS_STINGER_DISPUTE."
     }
   ],
   "families": [
