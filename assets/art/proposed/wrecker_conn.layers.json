@@ -4,28 +4,28 @@
     "s": [
       "actor_e_wrecker_conn",
       "layer_clothing_wrecker_conn",
-      "layer_gore_blood_conn",
+      "layer_blood_wound_conn",
       "layer_weapon_bow_conn",
       "layer_weapon_seax_conn"
     ],
     "n": [
       "actor_e_wrecker_conn",
       "layer_clothing_wrecker_conn",
-      "layer_gore_blood_conn",
+      "layer_blood_wound_conn",
       "layer_weapon_bow_conn",
       "layer_weapon_seax_conn"
     ],
     "e": [
       "actor_e_wrecker_conn",
       "layer_clothing_wrecker_conn",
-      "layer_gore_blood_conn",
+      "layer_blood_wound_conn",
       "layer_weapon_bow_conn",
       "layer_weapon_seax_conn"
     ],
     "w": [
       "actor_e_wrecker_conn",
       "layer_clothing_wrecker_conn",
-      "layer_gore_blood_conn",
+      "layer_blood_wound_conn",
       "layer_weapon_bow_conn",
       "layer_weapon_seax_conn"
     ]
