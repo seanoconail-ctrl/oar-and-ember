@@ -51,7 +51,7 @@ test('the sound test page offers every item, with captions and sliders', async (
   await expect(page.locator('[data-layer]')).toHaveCount(6 + 6);
   await expect(page.locator('[data-variant]')).toHaveCount(2);
   await expect(page.locator('[data-alarm]')).toHaveCount(1);
-  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3);
+  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3);
   await expect(page.locator('[data-voice]')).toHaveCount(4);
   await expect(page.locator('[data-step]')).toHaveCount(6);
   await expect(page.locator('[data-step-all]')).toHaveCount(1);
@@ -74,7 +74,8 @@ test.describe('rendered offline', () => {
     const items = await page.evaluate(
       () => (window as unknown as { oeSound: { items: string[] } }).oeSound.items,
     );
-    expect(items.length).toBe(17 + 6 + 3 + 1);
+    // The Stage 6 rework adds three: the wading splash, the bow's draw and its loose.
+    expect(items.length).toBe(17 + 6 + 3 + 3 + 1);
     for (const item of items) {
       const seconds = item.startsWith('music') || item.startsWith('ambience') ? 12 : 6;
       const r = await render(page, item, seconds);

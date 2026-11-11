@@ -208,7 +208,7 @@ Doorways, eaves, beds, benches and workstations follow the people scale of secti
 
 ### Readability
 - **The steerer** carries a madder-red accent (a sash, a cloak lining or a pin) from the `madder` ramp (the palette's Madder red), so they stand out against sand and grass at 1x. Every clothing and cloak layer the steerer can wear keeps the accent.
-- **Each resident** has one signature colour and one silhouette detail, so they read at a glance and in greyscale: Hild's blond braid and weld-green shawl, Bran's ladle, Runa's adze, Áine's bow. A resident's signature colour comes from the dye, wool and hair ramps, is unlike every other resident's, and is never madder.
+- **Each resident** has one signature colour and one silhouette detail, so they read at a glance and in greyscale: Hild's blond braid and woad-blue dress (her signature colour is woad blue, Book 5; decision DB-1), Bran's ladle, Runa's adze, Áine's bow. A resident's signature colour comes from the dye, wool and hair ramps, is unlike every other resident's, and is never madder.
 
 ### Cultural detail
 Where it fits: braids, beards, fur mantles in winter (a seasonal cloak layer), and distinct weapon carriage. No horned helmets and no costume-Viking excess.
