@@ -103,20 +103,20 @@ jobs:
           path: test-results
           retention-days: 7
 
-  # EXPERIMENT (temporary): where can WebKit run the game? On macOS (headless) its WebGL context is
-  # lost at the first shader. Tried here: Linux headless, Linux headed under a virtual display, and
-  # macOS headed. Never blocks anything.
+  # EXPERIMENT (temporary): where can WebKit run the game? On the macOS runners its WebGL context is
+  # lost as soon as it is made (the probe reads renderer "null", lost: true). Tried here: Linux in
+  # Playwright's own image, which carries every library WebKit needs (Ubuntu's mirrors have been
+  # unreachable from the runners), headless and headed under a virtual display. Never blocks.
   browsers-webkit-probe:
-    name: Experiment - WebKit on ${{ matrix.os }} (${{ matrix.mode }})
-    runs-on: ${{ matrix.os }}
+    name: Experiment - WebKit on Linux in Playwright's image (${{ matrix.mode }})
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { os: ubuntu-latest, mode: headless }
-          - { os: ubuntu-latest, mode: headed }
-          - { os: macos-15-intel, mode: headed }
+        mode: [headless, headed]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -125,26 +125,17 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Install WebKit
-        run: |
-          if [ "$RUNNER_OS" = Linux ]; then
-            timeout 600 npx playwright install --with-deps webkit || npx playwright install webkit
-          else
-            npx playwright install webkit
-          fi
       - name: What WebGL2 the browser offers
         run: |
-          if [ "$RUNNER_OS" = Linux ] && [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed
+          if [ "${{ matrix.mode }}" = headed ]; then
+            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed || true
           else
-            node tests/browser/webgl-probe.ts webkit ${{ matrix.mode }}
+            node tests/browser/webgl-probe.ts webkit || true
           fi
       - name: Browser tests
         run: |
-          if [ "$RUNNER_OS" = Linux ] && [ "${{ matrix.mode }}" = headed ]; then
+          if [ "${{ matrix.mode }}" = headed ]; then
             xvfb-run -a npm run test:browser -- --project=webkit --headed
-          elif [ "${{ matrix.mode }}" = headed ]; then
-            npm run test:browser -- --project=webkit --headed
           else
             npm run test:browser -- --project=webkit
           fi
@@ -152,7 +143,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-webkit-${{ matrix.os }}-${{ matrix.mode }}
+          name: test-results-webkit-linux-${{ matrix.mode }}
           path: test-results
           retention-days: 7
 
