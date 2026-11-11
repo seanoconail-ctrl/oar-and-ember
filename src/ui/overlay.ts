@@ -29,6 +29,7 @@ export interface Overlay {
       | 'stamina'
       | 'report'
       | 'talk'
+      | 'gameover'
       | 'fade',
   ): HTMLElement;
 }
@@ -70,6 +71,13 @@ const STYLE = `
   padding: 0.7em 1em; }
 .oe-overlay [data-region=report] h2 { margin: 0 0 0.4em; font-size: 1.2em; color: #f0ad4c; }
 .oe-overlay [data-region=report] p { margin: 0.25em 0; }
+.oe-overlay [data-region=gameover] { top: 28%; left: 22%; right: 22%; text-align: center; font-size: 1.05em;
+  line-height: 1.5; }
+.oe-overlay [data-region=gameover]:not(:empty) { background: rgba(40, 20, 16, 0.94); border: 2px solid #7b5434;
+  padding: 0.9em 1.2em; pointer-events: auto; z-index: 2; }
+.oe-overlay [data-region=gameover] p.choice { cursor: pointer; color: #f0ad4c; }
+.oe-overlay [data-region=gameover] h2 { margin: 0 0 0.4em; font-size: 1.4em; color: #f0ad4c; }
+.oe-overlay [data-region=gameover] p { margin: 0.3em 0; }
 .oe-overlay [data-region=talk] { top: 36%; left: auto; right: 3%; width: 44%; font-size: 0.88em;
   line-height: 1.4; }
 .oe-overlay [data-region=talk]:not(:empty) { background: rgba(34, 49, 58, 0.9); border: 2px solid #7b5434;

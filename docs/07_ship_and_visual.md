@@ -478,7 +478,7 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 - Cloud shadows drift across land and sea with the wind; shafts of light fall through broken cloud when the sun is low; fire and lanterns flicker and throw light pools; lightning flashes in storms; fog and mist drift in layers.
 
 ### Camera feel
-- The camera follows smoothly with a look-ahead towards the mouse cursor (capped at about 3 tiles, more while aiming a bow or spear; Book 10 section 21 "Controls and camera"), or in the direction of travel without a pointer. It is smoothed below the pixel and only its final offset snaps to whole logical pixels, with a dead zone and hysteresis, so nothing jitters and the view never steps one pixel back and forth. Hits shake it briefly.
+- The camera follows smoothly with a look-ahead towards the mouse cursor (capped at about 3 tiles, more while aiming a bow or spear; Book 10 section 21 "Controls and camera"), or in the direction of travel without a pointer. It is smoothed below the pixel, springing its point in the world rather than its offset from the steerer, so a turn or a stop eases out and back in rather than jolting (decision PT-0); without a pointer, the lead in the direction of travel swings round and fades smoothly. Only the final view snaps to whole logical pixels, with a dead zone and hysteresis, so nothing jitters, the steerer holds still on screen on a steady walk, and the view never steps one pixel back and forth. Hits shake it briefly.
 
 ### Accessibility
 - **Reduced motion** (from the system's preference, `?motion=reduced`, or the system menu): no camera shake or flashes, calmer plant sway, half the blown sand and insects. The world still moves (at least 50% of cells with the camera still).

@@ -141,6 +141,55 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     `sfx-${id.slice(4).toLowerCase().replaceAll('_', '-')}`,
   ]),
+  // Stage 9: the combat music at its three strengths, the fight's sounds at each gore setting
+  // where the setting changes them, and game over's stinger.
+  ...(
+    [
+      [1, { rhythm: true, melody: false, voice: false, danger: false }],
+      [2, { rhythm: true, melody: true, voice: false, danger: false }],
+      [3, { rhythm: true, melody: true, voice: true, danger: true }],
+    ] as const
+  ).map(([n, layers]): [string, number, Record<string, unknown>, string] => [
+    'music:combat',
+    18,
+    { layers },
+    `combat-music-${n}`,
+  ]),
+  ...(
+    [
+      'SFX_LIGHT_ATTACK',
+      'SFX_HEAVY_SWING',
+      'SFX_HIT_MAIL',
+      'SFX_HIT_SHIELD',
+      'SFX_DODGE',
+      'SFX_SHOVE',
+      'SFX_WEAPON_DROP',
+      'SFX_SPEAR_THROW',
+    ] as const
+  ).map((id): [string, number, Record<string, unknown>, string] => [
+    `fight:${id}`,
+    1.5,
+    {},
+    `sfx-${id.slice(4).toLowerCase().replaceAll('_', '-')}`,
+  ]),
+  ...(
+    [
+      'SFX_HIT_FLESH',
+      'SFX_GORE_WET_IMPACT',
+      'SFX_GORE_BONE_CRACK',
+      'SFX_GORE_DISMEMBERMENT',
+      'SFX_DOWNED',
+      'SFX_BODY_FALL',
+    ] as const
+  ).flatMap((id): [string, number, Record<string, unknown>, string][] =>
+    ([2, 1, 0] as const).map((gore) => [
+      `fight:${id}`,
+      1.5,
+      { gore },
+      `sfx-${id.slice(4).toLowerCase().replaceAll('_', '-')}-gore-${['off', 'low', 'full'][gore] ?? ''}`,
+    ]),
+  ),
+  ['call:MUS_STINGER_GAME_OVER', 5, {}, 'stinger-game-over'],
 ];
 
 if (import.meta.filename === process.argv[1]) {

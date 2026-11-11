@@ -39,6 +39,8 @@ export class WebAudioEngine implements AudioSink {
   #home: HomeAmbience | null = null;
   #steps = 0;
   #winter = false;
+  /** The gore setting (0 off, 1 low, 2 full) scales the wet layers of the fight sounds. */
+  #gore: 0 | 1 | 2 = 2;
   #wind = { strength: 0.55, gust: 0, from: 0 };
   #tide = 0.5;
   #timer: ReturnType<typeof setInterval> | null = null;
@@ -118,6 +120,11 @@ export class WebAudioEngine implements AudioSink {
   }
 
   /** Winter switches the island theme to its winter variant from the next bar line. */
+  /** Book 11 section 07: the gore setting scales the wet layers of the combat sounds. */
+  setGore(level: 0 | 1 | 2): void {
+    this.#gore = level;
+  }
+
   setSeason(winter: boolean): void {
     this.#winter = winter;
     for (const p of this.#players.values())
@@ -168,11 +175,20 @@ export class WebAudioEngine implements AudioSink {
       case 'gains': {
         // The danger stem's gain raises the alarm layers of a raid piece on the next bar line.
         const player = this.#players.get(action.cue);
+        if (player === undefined) return;
         const danger = action.gains[action.gains.length - 1] ?? 0;
-        if (player?.piece.layers.some((l) => l.group === 'alarm') === true) {
+        if (player.piece.layers.some((l) => l.group === 'alarm')) {
           player.setLayer('alarm', danger > 0.5);
           player.setLayer('calm', danger <= 0.5);
+          return;
         }
+        // A piece whose layer groups are named after the cue's stems (the combat music) brings
+        // each group in when its stem is more than half up, on the next bar line.
+        const stems = this.#cueOf(action.cue)?.stems ?? [];
+        stems.forEach((stem, i) => {
+          if (i === 0 || !player.piece.layers.some((l) => l.group === stem)) return;
+          player.setLayer(stem, (action.gains[i] ?? 0) > 0.5);
+        });
         return;
       }
       case 'duck': {
@@ -191,7 +207,7 @@ export class WebAudioEngine implements AudioSink {
   oneShot(cue: CueDef, at: number, pan: number): void {
     const e = this.#e;
     if (e === null) return;
-    SOUNDS.get(cue.id)?.play(e, Math.max(at, e.ctx.currentTime), pan, { gore: 2 });
+    SOUNDS.get(cue.id)?.play(e, Math.max(at, e.ctx.currentTime), pan, { gore: this.#gore });
   }
 
   ambience(cues: readonly CueDef[], at: number): void {

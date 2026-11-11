@@ -315,6 +315,8 @@ export interface ControlsBalance {
   readonly lookAheadAiming: number;
   readonly lookAheadDeadZone: number;
   readonly cameraHalfLife: number;
+  /** Seconds for the keyboard's direction-of-travel lead to swing halfway to a new heading. */
+  readonly keyboardLeadHalfLife: number;
   /** Logical pixels the smoothed offset must move past the drawn one before it changes. */
   readonly cameraSnap: number;
 }
@@ -348,6 +350,7 @@ export function parseControlsBalance(json: unknown): ControlsBalance {
     lookAheadAiming: tiles('lookAheadAiming'),
     lookAheadDeadZone: tiles('lookAheadDeadZone'),
     cameraHalfLife: lead('cameraHalfLife', new RegExp(`^${N} s\\b`), '"N s, ..."'),
+    keyboardLeadHalfLife: lead('keyboardLeadHalfLife', new RegExp(`^${N} s\\b`), '"N s: ..."'),
     cameraSnap: lead(
       'cameraSnap',
       new RegExp(`moves ${N} px past it`),

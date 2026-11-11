@@ -49,6 +49,16 @@ import { campUseNear, campUses } from '../sim/home/camp.ts';
 import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
+import { parseCombatBalance } from '../content/combatBalance.ts';
+import { finisherTarget, hostilesAware } from '../sim/land/fight.ts';
+import type { FightContext } from '../sim/land/fight.ts';
+import {
+  attachWakingAutosave,
+  LocalStorageStore,
+  MemoryStore,
+  SaveManager,
+} from '../persist/manager.ts';
+import type { SaveStore } from '../persist/manager.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
 import { createOverlay, showCaptions } from '../ui/overlay.ts';
@@ -268,13 +278,33 @@ export function startPlay(
   // broch after beat 2's lead, at a time, with the camp as given.
   campHooks(world, content, land, new URLSearchParams(window.location.search));
   const sim = createSimulation(b, world, land);
+  // Saves (Book 2 section 20; Stage 9): the rotating autosaves and the checkpoints game over
+  // reloads, kept under this campaign's own name. The first is written as the steerer wakes on
+  // the strand (decision S9-20); storage that is blocked falls back to memory for the session.
+  const saveStore = ((): SaveStore => {
+    try {
+      localStorage.setItem('oar-and-ember:probe', '1');
+      localStorage.removeItem('oar-and-ember:probe');
+      return new LocalStorageStore(`oar-and-ember:save:${options.seed}:`);
+    } catch {
+      return new MemoryStore();
+    }
+  })();
+  const saves = new SaveManager(saveStore, canvas.dataset['build'] ?? 'dev');
+  saves.autosave(sim.state, 'WAKING');
+  attachWakingAutosave(sim, saves);
+  /** A checkpoint asked for while the simulation stepped, written once the frame's steps end. */
+  let checkpointDue: string | null = null;
+  const fightCtx: FightContext | null = land.fight ?? null;
+  const combatB = parseCombatBalance(content.balance);
+  const steererVitality = parsePeopleBasics(content.balance).vitality;
 
   const settings = loadSettings(browserStorage());
   const input = new InputMapper(settings.bindings, settings.toggle);
   const session = new Session(
     sim,
     input,
-    { awareHostiles: () => 0 },
+    { awareHostiles: () => hostilesAware(sim.state.onFoot) },
     { map, controls: land.controls, rules: land.rules },
   );
   session.people = land.people ?? null;
@@ -320,7 +350,26 @@ export function startPlay(
   let visuals = new ZoneVisuals(map, elevation, display.reducedMotion, tuning);
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
+    // Game over (Stage 9): reload the latest save, or begin again.
+    if (sim.state.gameOver !== null) {
+      if (e.code === 'Enter' || keyCodes('interact').includes(e.code)) reloadLatest();
+      else if (e.code === 'KeyN') window.location.reload();
+      return;
+    }
     if (session.menus.open !== 'system') return;
+    if (e.code === 'KeyG') {
+      // The gore setting (Book 7 section 12): full, low, off, and round again.
+      const gore = display.gore === 2 ? 1 : display.gore === 1 ? 0 : 2;
+      display = { ...display, gore };
+      visuals.gore = gore;
+      engine.setGore(gore);
+      saveDisplaySettings(store, display);
+      return;
+    }
+    if (e.code === 'KeyK') {
+      sim.submit({ type: 'SET_OPTIONS', secondWind: !sim.state.options.secondWind });
+      return;
+    }
     if (e.code === 'KeyH') {
       helpOpen = !helpOpen;
       return;
@@ -336,13 +385,15 @@ export function startPlay(
     saveDisplaySettings(store, display);
   });
   const fullLook = peopleLook(bundledLayerFiles(), choice.bodyModel);
-  // The steerer's bow is drawn only once it has been picked up (decision DD-6).
-  let lookOwnsBow: boolean | null = null;
+  // The steerer's bow and seax are drawn only once picked up (decisions DD-6 and S9-19).
+  let lookOwns: string | null = null;
   let look: PeopleLook = fullLook;
   const currentLook = (): PeopleLook => {
-    const owns = steererOwns(sim.state.player, 'ITEM_BOW');
-    if (owns !== lookOwnsBow) {
-      lookOwnsBow = owns;
+    const owns = ['ITEM_BOW', 'ITEM_SEAX']
+      .map((item) => (steererOwns(sim.state.player, item) ? '1' : '0'))
+      .join('');
+    if (owns !== lookOwns) {
+      lookOwns = owns;
       look = {
         ...fullLook,
         steerer: withOwned(fullLook.steerer, (item) => steererOwns(sim.state.player, item)),
@@ -367,9 +418,13 @@ export function startPlay(
   const audioTable = content.audio;
   WebAudioEngine.prepare();
   const engine = new WebAudioEngine(audioTable?.cues ?? []);
+  engine.setGore(display.gore);
   const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
   const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
   const wireVisuals = (v: ZoneVisuals): void => {
+    // Stage 9: the gore setting and how long stains last (content/combat.json gore).
+    v.gore = display.gore;
+    if (content.combat !== null) v.stainSeconds = content.combat.gore.stainSeconds;
     v.onStep = (surface, x) => {
       if (engine.unlocked)
         engine.footstep(
@@ -471,17 +526,38 @@ export function startPlay(
   // near a lit fire the steerer is.
   const homeAudio = audioTable?.home;
   const placeMusic = homeAudio === undefined ? null : new PlaceMusic(homeAudio);
+  /**
+   * How hard the fight is, for the combat music's layers (Book 11 section 03): the rhythm with
+   * the first foe aware, the melody with a second or a wound, the voice and the horn when the
+   * steerer is outnumbered, bloodied or down (decision S9-21).
+   */
+  const fightIntensity = (): number => {
+    const aware = hostilesAware(sim.state.onFoot);
+    const p = sim.state.onFoot?.player;
+    const down = p?.fight?.state === 'downed';
+    return Math.min(1, 0.15 + 0.25 * aware + (steererBloodied() ? 0.25 : 0) + (down ? 0.4 : 0));
+  };
+  const steererBloodied = (): boolean =>
+    sim.state.player.vitality < steererVitality * combatB.bloodiedBelow;
   const placeAudio = (): void => {
     if (audio === null) return;
     const phase = homePhase(sim.state.calendar, b);
     audio.setPlace(map.zone, phase, engine.now);
     const atHome = campDef !== null && map.zone === campDef.zone;
+    // Stage 9: a fight under way has the combat music, its layers by how hard the fight is.
+    const battle = sim.state.onFoot?.battle;
+    const inFight = battle != null && battle.engaged && !battle.over && sim.state.gameOver === null;
+    audio.director.setIntensity(inFight ? fightIntensity() : 0);
     const want =
-      placeMusic?.want(engine.now, {
-        allowed: sim.state.facts[FACT_HILD_SAFE] === true,
-        home: atHome,
-        phase,
-      }) ?? null;
+      sim.state.gameOver !== null
+        ? null
+        : inFight
+          ? 'MUS_COMBAT_1'
+          : (placeMusic?.want(engine.now, {
+              allowed: sim.state.facts[FACT_HILD_SAFE] === true,
+              home: atHome,
+              phase,
+            }) ?? null);
     if (want === null) {
       if (audio.director.state !== null) audio.silence(engine.now);
     } else if (audio.director.state !== want) audio.play(want, engine.now);
@@ -549,6 +625,18 @@ export function startPlay(
   /** The fade in from dark on waking and on entering a zone (frame clock, ms). */
   let fadeInFrom = -1;
   let workCue: { since: number; ticks: number; mark: number } | null = null;
+  /** Stage 9: a crew order's icon over the one who took it, for a moment (frame clock). */
+  const ordersShown: Record<string, { order: string; until: number }> = {};
+  /** A pan for a point in the world, left or right of the steerer. */
+  const panAt = (x: number): number =>
+    Math.max(-1, Math.min(1, (x - (sim.state.onFoot?.player.x ?? x)) / 200));
+  /** A fight sound by its event, from where the person is (Book 11 section 07). */
+  const fightSound = (event: string, person: string | undefined, delay = 0): void => {
+    if (audio === null || !engine.unlocked) return;
+    audio.event(event, engine.now + delay, {
+      pan: person === undefined || person === 'P_STEERER' ? 0 : panOf(person),
+    });
+  };
   const onEvent = (e: SimEvent): void => {
     const now = frameNow;
     switch (e.type) {
@@ -626,7 +714,9 @@ export function startPlay(
         return;
       case 'MISSILE_LOOSED':
         if (audio !== null && engine.unlocked)
-          audio.event('ARROW_FLIGHT', engine.now + 0.05, { pan: 0 });
+          audio.event(e.kind === 'spear' ? 'SPEAR_THROWN' : 'ARROW_FLIGHT', engine.now + 0.05, {
+            pan: panOf(e.shooter),
+          });
         return;
       case 'MISSILE_STRUCK': {
         visuals.missileStruck(e.strike, e.x, e.y);
@@ -638,8 +728,17 @@ export function startPlay(
           body: 'ARROW_BODY',
           water: 'ARROW_WATER',
         }[e.strike];
-        const pan = Math.max(-1, Math.min(1, (e.x - (sim.state.onFoot?.player.x ?? e.x)) / 200));
-        if (audio !== null && engine.unlocked) audio.event(cue, engine.now, { pan });
+        const pan = panAt(e.x);
+        if (audio !== null && engine.unlocked) {
+          audio.event(cue, engine.now, { pan });
+          // Stage 9: a body struck is wet under the thud, by the gore setting (Book 11 section 07).
+          if (e.strike === 'body' && display.gore > 0)
+            audio.event('GORE_WET', engine.now + 0.02, { pan });
+        }
+        if (e.strike === 'body' && e.target !== undefined) {
+          const t = sim.state.onFoot?.actors[e.target];
+          visuals.blood(e.x, e.y - 20, t === undefined ? 1 : t.x - e.x, 0, false);
+        }
         return;
       }
       case 'ITEM_PICKED_UP':
@@ -698,6 +797,92 @@ export function startPlay(
       case 'FIRE_LIT':
         // The hearth theme starts at the first fire (Book 11 section 04).
         placeMusic?.begin(engine.now);
+        return;
+      // ---- Stage 9: the fight's sounds, sprays and words (Book 11 section 07, Book 7 section 12).
+      case 'ENCOUNTER_STARTED':
+        checkpointDue = e.checkpoint;
+        return;
+      case 'CHARGE_LEVEL':
+        fightSound(e.level === 1 ? 'CHARGE_LEVEL_1' : 'HEAVY_CHARGE_LEVEL_2', e.who);
+        return;
+      case 'SWING':
+        fightSound(e.heavy ? 'SWING_HEAVY' : 'SWING_LIGHT', e.who);
+        return;
+      case 'BLOW': {
+        const who = e.defender;
+        if (e.outcome === 'PARRIED') {
+          fightSound('PARRY', who);
+          visuals.shake(1);
+        } else if (e.outcome === 'BLOCKED') fightSound('BLOCKED', who);
+        else if (e.outcome === 'GUARD_BROKEN') {
+          fightSound('GUARD_BROKEN', who);
+          visuals.shake(2);
+        } else if (e.outcome === 'DODGED') fightSound('DODGED', who);
+        else {
+          fightSound(
+            e.material === 'MAIL'
+              ? 'HIT_MAIL'
+              : e.material === 'SHIELD'
+                ? 'HIT_SHIELD'
+                : 'HIT_FLESH',
+            who,
+          );
+          if (e.material === 'FLESH' || e.material === 'MAIL') {
+            if (display.gore > 0) fightSound(e.heavy ? 'GORE_BONE' : 'GORE_WET', who, 0.03);
+            visuals.blood(e.x, e.y, e.dx, e.dy, e.heavy);
+          }
+        }
+        return;
+      }
+      case 'DODGED':
+        fightSound('DODGED', e.who);
+        return;
+      case 'SHOVE_LANDED':
+        fightSound('SHOVED', e.target);
+        return;
+      case 'PERSON_DOWNED':
+        fightSound('PERSON_DOWNED', e.person);
+        return;
+      case 'PERSON_KILLED':
+        fightSound('BODY_FALL', e.person, 0.15);
+        fightSound('WEAPON_DROPPED', e.person, 0.3);
+        if (e.piece !== null && display.gore === 2) fightSound('GORE_DISMEMBER', e.person);
+        return;
+      case 'PERSON_SURRENDERED':
+        say(t('caption.info.surrender', { name: nameOf(e.person) }), now, 'info');
+        return;
+      case 'PERSON_FLED':
+        say(t('caption.info.flee', { name: nameOf(e.person) }), now, 'info');
+        return;
+      case 'PERSON_BROUGHT_HOME':
+        say(t('caption.info.brought_home', { name: nameOf(e.person) }), now, 'info');
+        return;
+      case 'LEFT_BEHIND':
+        say(t('caption.info.left_behind', { name: nameOf(e.person) }), now, 'info');
+        return;
+      case 'STEERER_DOWNED':
+        if (e.secondWind) say(t('caption.info.second_wind'), now, 'info');
+        fightSound('PERSON_DOWNED', 'P_STEERER');
+        return;
+      case 'STEERER_DIED':
+        if (audio !== null && engine.unlocked) audio.event('GAME_OVER', engine.now, { pan: 0 });
+        return;
+      case 'FINISH_WARNING':
+        say(t('caption.info.finish_warning', { target: nameOf(e.target) }), now, 'info');
+        return;
+      case 'CREW_ORDER_ACK':
+        ordersShown[e.person] = { order: e.order.toLowerCase(), until: now + 1500 };
+        return;
+      case 'CREW_ORDER_REFUSED':
+        if (e.reason === 'CANNOT_FIGHT')
+          notice = {
+            text: `${nameOf(e.person)}: ${t('ui.refusal.cannot_fight')}`,
+            until: now + captionMs,
+          };
+        return;
+      case 'FIGHT_REFUSED':
+        if (e.reason === 'NO_SHIELD') refuseHere('no_shield', t('ui.refusal.no_shield'), now);
+        else refuseHere('too_tired', t('ui.refusal.too_tired'), now);
         return;
       default:
         return;
@@ -788,6 +973,23 @@ export function startPlay(
       .map(bindingLabel)
       .join('');
   const moveKeys = (['moveUp', 'moveLeft', 'moveDown', 'moveRight'] as const).map(keys).join(' ');
+  const keyCodes = (action: Action): string[] =>
+    settings.bindings[action].flatMap((x) => (x.device === 'key' ? [x.code] : []));
+  /** Game over's reload (Book 2 section 20): the latest autosave or checkpoint, into this sim. */
+  let restored = false;
+  const reloadLatest = (): void => {
+    const point = saves.latestRestorePoint();
+    if (point === null) {
+      window.location.reload();
+      return;
+    }
+    sim.restore(saves.load(point.slot).state);
+    restored = true;
+    lookOwns = null;
+    subtitles = [];
+    notice = null;
+    fadeInFrom = frameNow;
+  };
 
   const started = performance.now();
   let moved = false;
@@ -842,9 +1044,15 @@ export function startPlay(
     const deviceChanged = device !== lastDevice;
     lastDevice = device;
     const result = session.frame(now - last, browser.aim(), { device, pointer });
+    // A checkpoint before major danger (Book 2 section 20), written between ticks.
+    if (checkpointDue !== null) {
+      saves.checkpoint(sim.state, checkpointDue);
+      checkpointDue = null;
+    }
     // Walked on into another zone (Book 2 section 10): its map, height field and visuals.
     const zoneNow = sim.state.onFoot?.zone;
-    if (zoneNow !== undefined && zoneNow !== map.zone) {
+    if (zoneNow !== undefined && (zoneNow !== map.zone || restored)) {
+      restored = false;
       const next = land.maps.get(zoneNow);
       if (next !== undefined) {
         map = next;
@@ -975,6 +1183,15 @@ export function startPlay(
       prompt = label.text;
       promptKind = label.kind;
     }
+    // Stage 9: a downed foe within reach can be finished (Book 2 section 12), held.
+    const finishable = fightCtx === null ? null : finisherTarget(sim.state, fightCtx, map.tile);
+    if (finishable !== null) {
+      prompt = t(device === 'mouse' ? 'ui.prompt.finish_click' : 'ui.prompt.finish', {
+        key: keys('finisher'),
+        name: nameOf(finishable),
+      });
+      promptKind = 'finish';
+    }
     const work = onFoot.player.work;
     if (work != null) {
       prompt = t('ui.prompt.timing', {
@@ -1033,7 +1250,7 @@ export function startPlay(
         ? ''
         : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
             open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })}`
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })}`
               : ''
           }`;
 
@@ -1054,6 +1271,21 @@ export function startPlay(
       facts: sim.state.facts,
       missiles: missileLook,
       ...(camp === undefined ? {} : { camp }),
+      gore: display.gore,
+      orders: Object.fromEntries(
+        Object.entries(ordersShown)
+          .filter(([, o]) => o.until > now)
+          .map(([id, o]) => [id, o.order]),
+      ),
+      steererBloodied: steererBloodied(),
+      ...(content.combat === null
+        ? {}
+        : {
+            corpseFade: {
+              low: content.combat.gore.corpseFadeSeconds.low * 60,
+              off: content.combat.gore.corpseFadeSeconds.off * 60,
+            },
+          }),
     });
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
     viewCamera = view.camera;
@@ -1085,7 +1317,8 @@ export function startPlay(
         selected: target?.slot ?? hotbar.selected,
       },
       cursor:
-        target === null || p.aim !== null || hidePeople
+        // A blade has no target tile (it swings at the cursor's facing, S9-22): its arrow shows.
+        target === null || p.aim !== null || hidePeople || target.use === 'MELEE'
           ? null
           : {
               tx: target.tile.tx,
@@ -1145,6 +1378,41 @@ export function startPlay(
     const reasonText = st.reasons.map((r) => t(r.labelKey)).join('  ·  ');
     const staminaRegion = overlay.region('stamina');
     if (staminaRegion.textContent !== reasonText) staminaRegion.textContent = reasonText;
+    // Game over (Stage 9; Book 2 section 20): the steerer has fallen; reload the latest save.
+    const over = sim.state.gameOver;
+    const goRegion = overlay.region('gameover');
+    const point = over === null ? null : saves.latestRestorePoint();
+    const goShown = over === null ? '' : `${over.tick}|${point?.sequence ?? 0}|${device}`;
+    if (goRegion.dataset['shown'] !== goShown) {
+      goRegion.dataset['shown'] = goShown;
+      if (over === null) goRegion.replaceChildren();
+      else {
+        const title = document.createElement('h2');
+        title.textContent = t('ui.gameover.title', { steerer: sim.state.player.name });
+        const body = document.createElement('p');
+        body.textContent = t('ui.gameover.line');
+        const parts: HTMLElement[] = [title, body];
+        if (point !== null) {
+          const reload = document.createElement('p');
+          reload.className = 'choice';
+          reload.textContent = t('ui.gameover.reload', {
+            key: keys('interact'),
+            day: String(point.day),
+          });
+          reload.addEventListener('click', reloadLatest);
+          parts.push(reload);
+        }
+        const again = document.createElement('p');
+        again.className = 'choice';
+        again.textContent = t('ui.gameover.restart', { key: 'N' });
+        again.addEventListener('click', () => {
+          window.location.reload();
+        });
+        parts.push(again);
+        goRegion.replaceChildren(...parts);
+      }
+    }
+    root.dataset['gameOver'] = over === null ? '' : over.cause;
     // The morning report in Report mode (time stopped until it is closed).
     const reportRegion = overlay.region('report');
     const reportOpen = session.menus.open === 'report' && reportShown !== null;
@@ -1220,6 +1488,28 @@ export function startPlay(
     root.dataset['hotbar'] = hotbar.slots.map((x) => x ?? '').join(',');
     root.dataset['items'] = onFoot.items.map((i) => i.key).join(',');
     root.dataset['aimHeld'] = p.aim === null ? '' : String(sim.state.tick - p.aim.since);
+    // Stage 9, for the browser tests and captures: the fight, each fighter
+    // (id:state:vitality:x:y, feet in world pixels), the saves.
+    const battle = onFoot.battle;
+    root.dataset['battle'] =
+      battle == null ? '' : battle.over ? 'over' : battle.engaged ? 'engaged' : 'waiting';
+    root.dataset['fighters'] = Object.entries(onFoot.actors)
+      .flatMap(([id, a]) =>
+        a.fight === undefined
+          ? []
+          : [
+              `${id}:${a.fight.f.state}:${Math.round(a.fight.vitality)}:${Math.round(a.x)}:${Math.round(a.y)}`,
+            ],
+      )
+      .join(',');
+    root.dataset['steererFight'] = p.fight?.state ?? '';
+    root.dataset['vitality'] = String(Math.round(sim.state.player.vitality));
+    root.dataset['saves'] = saves
+      .headers()
+      .map((h) => `${h.kind}:${h.label ?? h.reason ?? ''}:${h.day}`)
+      .join(',');
+    root.dataset['gore'] = String(display.gore);
+    root.dataset['music'] = audio?.director.state ?? '';
     if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
     if (frames < 3) {

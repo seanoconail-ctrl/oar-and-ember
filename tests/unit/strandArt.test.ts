@@ -57,6 +57,29 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       kneel: 6,
       build: 6,
       sleep: 2,
+      // Stage 9: the fighting states (Book 10 sections 06 and 21 frame data; Book 7 section 12).
+      windup: 2,
+      light1: 3,
+      light2: 3,
+      light3: 3,
+      charge: 2,
+      chargewalk: 6,
+      heavy: 3,
+      block: 2,
+      parry: 2,
+      dodge: 3,
+      shove: 3,
+      stagger: 2,
+      finish: 1,
+      surrender: 2,
+      downed: 2,
+      dead: 1,
+      dead_head: 1,
+      dead_arm: 1,
+      dead_leg: 1,
+      piece_head: 1,
+      piece_arm: 1,
+      piece_leg: 1,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);
@@ -69,16 +92,20 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       const suffix = body.toLowerCase();
       expect(look.steerer.body).toBe(`actor_p_steerer_${suffix}`);
       for (const f of FACINGS) {
+        // Stage 9: the blood layer (drawn only when bloodied) and the seax (only once owned).
         expect([...(look.steerer.layers[f] ?? [])].sort()).toEqual([
           `actor_p_steerer_${suffix}`,
+          `layer_blood_wound_${suffix}`,
           `layer_cloak_wool_${suffix}`,
           `layer_clothing_tunic_${suffix}`,
           `layer_weapon_bow_${suffix}`,
+          `layer_weapon_seax_${suffix}`,
         ]);
       }
       expect(look.people['C_HILD']?.layers['s']).toEqual([
         'actor_c_hild',
         'layer_clothing_dress_hild',
+        'layer_blood_wound_hild',
       ]);
     }
   });

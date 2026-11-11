@@ -4,7 +4,7 @@
     "s": [
       "actor_e_wrecker_svart",
       "layer_clothing_wrecker_svart",
-      "layer_gore_blood_svart",
+      "layer_blood_wound_svart",
       "layer_cloak_wrecker_svart",
       "layer_weapon_spear_svart",
       "layer_shield_round_svart"
@@ -12,7 +12,7 @@
     "n": [
       "actor_e_wrecker_svart",
       "layer_clothing_wrecker_svart",
-      "layer_gore_blood_svart",
+      "layer_blood_wound_svart",
       "layer_cloak_wrecker_svart",
       "layer_weapon_spear_svart",
       "layer_shield_round_svart"
@@ -20,7 +20,7 @@
     "e": [
       "actor_e_wrecker_svart",
       "layer_clothing_wrecker_svart",
-      "layer_gore_blood_svart",
+      "layer_blood_wound_svart",
       "layer_cloak_wrecker_svart",
       "layer_weapon_spear_svart",
       "layer_shield_round_svart"
@@ -28,7 +28,7 @@
     "w": [
       "actor_e_wrecker_svart",
       "layer_clothing_wrecker_svart",
-      "layer_gore_blood_svart",
+      "layer_blood_wound_svart",
       "layer_cloak_wrecker_svart",
       "layer_weapon_spear_svart",
       "layer_shield_round_svart"

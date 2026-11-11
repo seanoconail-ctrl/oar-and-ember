@@ -116,15 +116,49 @@
     {
       "id": "MUS_COMBAT_1",
       "kind": "music",
-      "bpm": 84,
+      "bpm": 112,
       "beatsPerBar": 4,
       "stems": ["bed", "rhythm", "melody", "voice", "danger"],
       "captionKey": "caption.music.combat_1",
-      "temporary": true,
-      "piece": "raid",
+      "temporary": false,
+      "piece": "combat",
       "layers": {
-        "alarm": true,
-        "calm": false
+        "rhythm": true,
+        "melody": false,
+        "voice": false,
+        "danger": false
+      }
+    },
+    {
+      "id": "MUS_COMBAT_2",
+      "kind": "music",
+      "bpm": 112,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "melody", "voice", "danger"],
+      "captionKey": "caption.music.combat_2",
+      "temporary": false,
+      "piece": "combat",
+      "layers": {
+        "rhythm": true,
+        "melody": true,
+        "voice": false,
+        "danger": false
+      }
+    },
+    {
+      "id": "MUS_COMBAT_3",
+      "kind": "music",
+      "bpm": 112,
+      "beatsPerBar": 4,
+      "stems": ["bed", "rhythm", "melody", "voice", "danger"],
+      "captionKey": "caption.music.combat_3",
+      "temporary": false,
+      "piece": "combat",
+      "layers": {
+        "rhythm": true,
+        "melody": true,
+        "voice": true,
+        "danger": true
       }
     },
     {
@@ -160,6 +194,27 @@
       "kind": "sfx",
       "bus": "effects",
       "captionKey": "caption.sfx.parry",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CHARGE_LEVEL_1",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.charge_level_1",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BLOCK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.block",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GUARD_BREAK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.guard_break",
       "temporary": false
     },
     {
@@ -382,6 +437,111 @@
       "lengthBeats": 3,
       "captionKey": "caption.stinger.judgement",
       "temporary": false
+    },
+    {
+      "id": "SFX_LIGHT_ATTACK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.light_attack",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HEAVY_SWING",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.heavy_swing",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HIT_FLESH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.hit_flesh",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HIT_MAIL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.hit_mail",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HIT_SHIELD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.hit_shield",
+      "temporary": false
+    },
+    {
+      "id": "SFX_DODGE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.dodge",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SHOVE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.shove",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GORE_WET_IMPACT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gore_wet",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GORE_BONE_CRACK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gore_bone",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GORE_DISMEMBERMENT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gore_dismember",
+      "temporary": false
+    },
+    {
+      "id": "SFX_DOWNED",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.downed",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BODY_FALL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.body_fall",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WEAPON_DROP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.weapon_drop",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SPEAR_THROW",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.spear_throw",
+      "temporary": false
+    },
+    {
+      "id": "MUS_STINGER_GAME_OVER",
+      "kind": "stinger",
+      "captionKey": "caption.stinger.game_over",
+      "temporary": false,
+      "lengthBeats": 8
     }
   ],
   "events": {
@@ -397,7 +557,7 @@
     "ARROW_FLIGHT": "SFX_ARROW_FLIGHT",
     "ARROW_WOOD": "SFX_ARROW_WOOD",
     "ARROW_SHIELD": "SFX_ARROW_SHIELD",
-    "ARROW_BODY": "SFX_ARROW_SHIELD",
+    "ARROW_BODY": "SFX_GORE_WET_IMPACT",
     "ARROW_EARTH": "SFX_ARROW_EARTH",
     "ARROW_STONE": "SFX_ARROW_STONE",
     "ARROW_WATER": "SFX_ARROW_WATER",
@@ -415,7 +575,25 @@
     "TIMING_GOOD": "SFX_TIMING_GOOD",
     "SLEEP": "SFX_SLEEP",
     "DISPUTE_RAISED": "MUS_STINGER_DISPUTE",
-    "JUDGEMENT_GIVEN": "MUS_STINGER_JUDGEMENT"
+    "JUDGEMENT_GIVEN": "MUS_STINGER_JUDGEMENT",
+    "SWING_LIGHT": "SFX_LIGHT_ATTACK",
+    "SWING_HEAVY": "SFX_HEAVY_SWING",
+    "CHARGE_LEVEL_1": "SFX_CHARGE_LEVEL_1",
+    "BLOCKED": "SFX_BLOCK",
+    "GUARD_BROKEN": "SFX_GUARD_BREAK",
+    "HIT_FLESH": "SFX_HIT_FLESH",
+    "HIT_MAIL": "SFX_HIT_MAIL",
+    "HIT_SHIELD": "SFX_HIT_SHIELD",
+    "DODGED": "SFX_DODGE",
+    "SHOVED": "SFX_SHOVE",
+    "GORE_WET": "SFX_GORE_WET_IMPACT",
+    "GORE_BONE": "SFX_GORE_BONE_CRACK",
+    "GORE_DISMEMBER": "SFX_GORE_DISMEMBERMENT",
+    "PERSON_DOWNED": "SFX_DOWNED",
+    "BODY_FALL": "SFX_BODY_FALL",
+    "WEAPON_DROPPED": "SFX_WEAPON_DROP",
+    "SPEAR_THROWN": "SFX_SPEAR_THROW",
+    "GAME_OVER": "MUS_STINGER_GAME_OVER"
   },
   "home": {
     "restSeconds": 90,

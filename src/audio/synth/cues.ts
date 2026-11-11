@@ -8,6 +8,7 @@
  * - Ambience cues name a generated ambience.
  */
 import hearthJson from '../../../content/music/hearth.json';
+import combatJson from '../../../content/music/combat.json';
 import raidJson from '../../../content/music/raid.json';
 import skarvholmJson from '../../../content/music/skarvholm.json';
 import { envelope } from './engine.ts';
@@ -16,13 +17,14 @@ import type { Piece } from './notation.ts';
 import { rng } from './samples.ts';
 import { HOME } from './home.ts';
 import type { HomePhase } from './home.ts';
-import { COMBAT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
+import { COMBAT, FIGHT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
   hearth: hearthJson,
   skarvholm: skarvholmJson,
   raid: raidJson,
+  combat: combatJson,
 };
 
 /** The horn and the two stingers, generated from the instruments' samples. */
@@ -106,12 +108,37 @@ export const DISPUTES: readonly SoundDef[] = [
   },
 ];
 
+/** Stage 9: the steerer's death (game over): a slow, low drum, the drone falling away. */
+export const ENDINGS: readonly SoundDef[] = [
+  {
+    id: 'MUS_STINGER_GAME_OVER',
+    captionKey: 'caption.stinger.game_over',
+    bus: 'music',
+    play: (e, at, pan) => {
+      const to = out(e, 'music', pan, 0.4);
+      e.playNote('drum', 38, at, 0.5, 0.8, to);
+      e.playNote('drum', 38, at + 1.1, 0.5, 0.6, to);
+      e.playNote('lyre', 50, at + 0.2, 1.4, 0.55, to);
+      e.playNote('lyre', 45, at + 1.3, 2.0, 0.5, to);
+      const end = e.playNote('drone', 38, at, 3.4, 0.35, to);
+      return end - at;
+    },
+  },
+];
+
 /** Every generated one-shot by its cue ID. */
 export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
-  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES, ...HOME, ...DISPUTES].map((d) => [
-    d.id,
-    d,
-  ]),
+  [
+    ...COMBAT,
+    ...TELLS,
+    ...CALLS,
+    ...PEOPLE,
+    ...MISSILES,
+    ...HOME,
+    ...DISPUTES,
+    ...FIGHT,
+    ...ENDINGS,
+  ].map((d) => [d.id, d]),
 );
 
 /**

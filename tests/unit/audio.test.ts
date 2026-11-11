@@ -149,7 +149,7 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
     if (sfx !== undefined) delete sfx['captionKey'];
     const { issues } = loadContent(broken as typeof files);
     expect(issues.map((i) => i.reason)).toContain('sfx cues need a caption (Book 11 section 09)');
-    // Decision AU-11: every cue is generated; only the combat music still stands in (Stage 9).
-    expect(table.cues.filter((c) => c.temporary).map((c) => c.id)).toEqual(['MUS_COMBAT_1']);
+    // Decision AU-11: every cue is generated; the combat music was the last stand-in (Stage 9).
+    expect(table.cues.filter((c) => c.temporary).map((c) => c.id)).toEqual([]);
   });
 });

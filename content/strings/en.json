@@ -2808,10 +2808,6 @@
     "text": "A spear thrown",
     "tags": ["INFO"]
   },
-  "caption.sfx.arrow_body": {
-    "text": "An arrow strikes flesh",
-    "tags": ["INFO"]
-  },
   "caption.stinger.game_over": {
     "text": "A slow drum, then silence",
     "tags": ["INFO"]
@@ -2908,5 +2904,14 @@
   },
   "ui.order.withdraw": {
     "text": "Withdraw to the camp"
+  },
+  "ui.sound.fight": {
+    "text": "The fight (Stage 9)"
+  },
+  "ui.sound.fight.music": {
+    "text": "Fighting music, by how hard the fight is"
+  },
+  "ui.sound.fight.sounds": {
+    "text": "Blows, falls and the end (gore setting above)"
   }
 }

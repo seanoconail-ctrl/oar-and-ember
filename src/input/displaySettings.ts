@@ -13,22 +13,35 @@ export interface DisplaySettings {
   readonly reducedMotion: boolean;
   /** Information captions (sounds, directions) shown, apart from speech subtitles (addendum 2.3). */
   readonly infoCaptions: boolean;
+  /**
+   * The gore setting (Book 7 section 12; Stage 9): 2 full, 1 low (no dismemberment, fewer and
+   * darker decals, corpses fade after a minute), 0 off (no blood, hit flashes only, corpses fade).
+   * Presentation only: the simulation never reads it.
+   */
+  readonly gore: 0 | 1 | 2;
 }
+
+const GORE_WORDS: Readonly<Record<string, 0 | 1 | 2>> = { off: 0, low: 1, full: 2 };
 
 export function parseDisplaySettings(text: string | null, systemPrefers: boolean): DisplaySettings {
   if (text !== null) {
     try {
-      const raw = JSON.parse(text) as { reducedMotion?: unknown; infoCaptions?: unknown } | null;
+      const raw = JSON.parse(text) as {
+        reducedMotion?: unknown;
+        infoCaptions?: unknown;
+        gore?: unknown;
+      } | null;
       if (typeof raw?.reducedMotion === 'boolean')
         return {
           reducedMotion: raw.reducedMotion,
           infoCaptions: typeof raw.infoCaptions === 'boolean' ? raw.infoCaptions : true,
+          gore: raw.gore === 0 || raw.gore === 1 || raw.gore === 2 ? raw.gore : 2,
         };
     } catch {
       // A damaged setting falls back to the system preference.
     }
   }
-  return { reducedMotion: systemPrefers, infoCaptions: true };
+  return { reducedMotion: systemPrefers, infoCaptions: true, gore: 2 };
 }
 
 /** The setting in force: the address first, then the saved choice, then the system preference. */
@@ -41,9 +54,12 @@ export function resolveDisplaySettings(
   try {
     saved = parseDisplaySettings(store.getItem(DISPLAY_KEY), systemPrefers);
   } catch {
-    saved = { reducedMotion: systemPrefers, infoCaptions: true };
+    saved = { reducedMotion: systemPrefers, infoCaptions: true, gore: 2 };
   }
-  const motion = new URLSearchParams(query).get('motion');
+  const params = new URLSearchParams(query);
+  const gore = GORE_WORDS[params.get('gore') ?? ''];
+  if (gore !== undefined) saved = { ...saved, gore };
+  const motion = params.get('motion');
   if (motion === 'reduced') return { ...saved, reducedMotion: true };
   if (motion === 'full') return { ...saved, reducedMotion: false };
   return saved;

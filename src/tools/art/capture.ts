@@ -197,6 +197,12 @@ export async function capture(label: string): Promise<string> {
     writeFileSync(join(out, 'motion.png'), encodePng(marked));
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
+    if (FIGHT_LABELS.has(label)) {
+      await page.close();
+      const fight = await fightCapture(browser, out);
+      writeFileSync(join(out, 'README.md'), fightReadme(label, motion.share, fight));
+      return `${out}: strand motion ${pct(motion.share)}, wreckers at work ${pct(fight.work)}, mid-fight ${pct(fight.fight)}, gore low ${pct(fight.low)}; fight clip ${(fight.clipFrames / FPS).toFixed(1)} s`;
+    }
     if (CAMP_LABELS.has(label)) {
       await page.close();
       const camp = await campCapture(browser, out);
@@ -888,6 +894,166 @@ async function peopleCapture(
   encodeClip(dir, out, 'talk');
   rmSync(dir, { recursive: true, force: true });
   return { fishing, supper, dusk, talkFrames: frames };
+}
+
+/** Captures that show a fight on Wreck Strand with the wreck-scavengers (Stage 9). */
+const FIGHT_LABELS = new Set(['stage-09']);
+
+interface FightCaptureResult {
+  readonly work: number;
+  readonly fight: number;
+  readonly low: number;
+  readonly clipFrames: number;
+}
+
+/** The fighters as the page reports them (id:state:vitality:x:y). */
+async function foes(page: Page): Promise<{ id: string; state: string; x: number; y: number }[]> {
+  const raw = (await page.locator('.oe-overlay').getAttribute('data-fighters')) ?? '';
+  return raw
+    .split(',')
+    .filter((f) => f !== '')
+    .map((f) => {
+      const [id = '', state = '', , x = '0', y = '0'] = f.split(':');
+      return { id, state, x: Number(x), y: Number(y) };
+    })
+    .filter(
+      (f) =>
+        f.id.startsWith('E_') &&
+        !['dead', 'downed', 'surrender', 'stagger'].includes(f.state) &&
+        f.state !== '',
+    );
+}
+
+/**
+ * One frame of the steerer's side of a fight, as a player would play it: the cursor on the nearest
+ * standing foe; run at them when out of reach, else strike (a light chain, now and then a held
+ * heavy). Returns the frames to step after.
+ */
+async function fightBot(page: Page, held: Set<string>, n: number): Promise<void> {
+  const over = (await page.locator('.oe-overlay').getAttribute('data-game-over')) ?? '';
+  if (over !== '') return;
+  const at = await where(page);
+  const list = await foes(page);
+  const near = list.sort(
+    (a, b) => Math.hypot(a.x - at.x, a.y - at.y) - Math.hypot(b.x - at.x, b.y - at.y),
+  )[0];
+  if (near === undefined) {
+    for (const k of held) await page.keyboard.up(k);
+    held.clear();
+    return;
+  }
+  const cam = ((await page.locator('.oe-overlay').getAttribute('data-camera')) ?? '0,0')
+    .split(',')
+    .map(Number);
+  await page.mouse.move(near.x - (cam[0] ?? 0), near.y - 18 - (cam[1] ?? 0));
+  const d = Math.hypot(near.x - at.x, near.y - at.y);
+  if (d > 30) {
+    await steer(page, held, { x: near.x + (near.x > at.x ? -20 : 20), y: near.y });
+    return;
+  }
+  for (const k of held) await page.keyboard.up(k);
+  held.clear();
+  await page.mouse.down();
+  // Every fourth swing is held to a heavy (past both tells); the rest are light.
+  await step(page, n % 4 === 3 ? 8 : 1, n % 4 === 3 ? 100 : 40);
+  await page.mouse.up();
+}
+
+/**
+ * Stage 9: the wreck-scavengers on Wreck Strand. A still of them at work by the wreck (the camera
+ * held on them), a still in the thick of the fight with the camera held, the same at gore low, each
+ * with its motion and motion map; and a 10-second clip of the steerer, seax in hand, running at
+ * them and fighting (the overlay shown).
+ */
+async function fightCapture(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<FightCaptureResult> {
+  const fightQuery = 'kit=seax&time=10:00&zone=ZONE_SK_STRAND&secondwind=1';
+  const work = (
+    await campStill(browser, out, 'wreckers-at-work', `${fightQuery}&at=36,34.2&camera=28,34.6`)
+  ).share;
+  // Three on one, the steerer alone falls in a few seconds; a capture hook makes the steerer
+  // hardier (vitality 400) so the stills and the clip show the fight rather than its end.
+  const hardy = 'vitality=400';
+  /** A still once the fight has gone on a while (the steerer fighting by the bot). */
+  const midFight = async (name: string, gore: string): Promise<number> =>
+    (
+      await campStill(
+        browser,
+        out,
+        name,
+        `${fightQuery}&${hardy}&at=31.5,34.6&camera=27.5,34.8&gore=${gore}`,
+        (() => {
+          const held = new Set<string>();
+          let n = 0;
+          return async (page: Page) => {
+            await fightBot(page, held, n++);
+            if (n < 30) return false;
+            for (const k of held) await page.keyboard.up(k);
+            return true;
+          };
+        })(),
+      )
+    ).share;
+  const fight = await midFight('fight', 'full');
+  const low = await midFight('fight-low', 'low');
+  // The clip: from east of them, the steerer runs in and fights, the camera following.
+  const dir = join(out, '.fight');
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const page = await openCamp(browser, `${fightQuery}&${hardy}&at=33.5,34.6`, true);
+  let frames = 0;
+  const save = async (): Promise<void> => {
+    writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  };
+  const held = new Set<string>();
+  for (let n = 0; frames < FPS * 10; n++) {
+    await fightBot(page, held, n);
+    await step(page);
+    await save();
+    await step(page);
+    await save();
+  }
+  for (const k of held) await page.keyboard.up(k);
+  await page.close();
+  encodeClip(dir, out, 'fight');
+  rmSync(dir, { recursive: true, force: true });
+  return { work, fight, low, clipFrames: frames };
+}
+
+function fightReadme(label: string, strand: number, f: FightCaptureResult): string {
+  const all = [strand, f.work, f.fight, f.low];
+  return [
+    `# Capture: ${label}`,
+    '',
+    'Made by `npm run capture -- ' + label + '` (src/tools/art/capture.ts). Compare with',
+    '`docs/art/reference/` (Book 7 section 14) and the people sheets in `docs/art/stage-09/`.',
+    '',
+    '| File | What it is |',
+    '|---|---|',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `wreckers-at-work.png` (and @2x, `-motion.png`) | The three wreck-scavengers by the wreck on the strand, 10:00, unaware and at work (the camera held on them) |',
+    '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. The steerer is made hardier for the fight captures (`vitality=400`, a test hook): three on one, the steerer alone falls in a few seconds |',
+    '| `fight-low.png` (and @2x, `-motion.png`) | The same fight at gore low: fewer, darker stains and no pieces |',
+    `| \`fight.mp4\`, \`fight.gif\` | ${(f.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer runs at them from the east, seax in hand, and fights, the camera following (the overlay shown) |`,
+    '',
+    '## Motion with the camera still',
+    '',
+    '| View | Continuous motion |',
+    '|---|---|',
+    `| Wreck Strand (41 frames over 6.4 s) | ${pct(strand)} |`,
+    `| The wreckers at work | ${pct(f.work)} |`,
+    `| The fight, gore full | ${pct(f.fight)} |`,
+    `| The fight, gore low | ${pct(f.low)} |`,
+    `| Book 7 threshold | ${pct(MOTION_THRESHOLD)} |`,
+    '',
+    all.every((v) => v >= MOTION_THRESHOLD)
+      ? 'Every view meets the threshold.'
+      : '**A view is below the threshold: the stage is not done.**',
+    '',
+  ].join('\n');
 }
 
 function campReadme(

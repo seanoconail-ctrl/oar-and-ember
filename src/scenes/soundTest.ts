@@ -8,7 +8,7 @@
  * `npm run audio:render` use it to check every sound without a speaker.
  */
 import { StrandAmbience } from '../audio/synth/ambience.ts';
-import { CALLS, DISPUTES, HearthAmbience, PIECES } from '../audio/synth/cues.ts';
+import { CALLS, DISPUTES, ENDINGS, HearthAmbience, PIECES } from '../audio/synth/cues.ts';
 import { BUSES, MUSIC_VOICES, SynthEngine } from '../audio/synth/engine.ts';
 import {
   footstep,
@@ -23,7 +23,7 @@ import type { Bus } from '../audio/synth/engine.ts';
 import { HOME, HomeAmbience } from '../audio/synth/home.ts';
 import type { HomePhase } from '../audio/synth/home.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
-import { COMBAT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
+import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -146,8 +146,17 @@ export function startItem(
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
   }
+  if (kind === 'fight') {
+    // Stage 9: the fight's sounds (Book 11 section 07), the wet layers by the gore setting.
+    const def = FIGHT.find((d) => d.id === id);
+    if (def === undefined) throw new Error(`no fight sound ${id}`);
+    def.play(e, at, 0, { gore: s.gore ?? 2 });
+    return { schedule: () => undefined, stop: () => undefined };
+  }
   if (kind === 'call') {
-    const def = [...CALLS, ...PEOPLE, ...MISSILES, ...DISPUTES].find((d) => d.id === id);
+    const def = [...CALLS, ...PEOPLE, ...MISSILES, ...DISPUTES, ...ENDINGS].find(
+      (d) => d.id === id,
+    );
     if (def === undefined) throw new Error(`no call ${id}`);
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
@@ -201,6 +210,13 @@ export function startItem(
   }
   throw new Error(`unknown item ${item}`);
 }
+
+/** The combat music's three strengths: the layers MUS_COMBAT_1, 2 and 3 start with. */
+export const COMBAT_LEVELS: readonly (readonly [1 | 2 | 3, Readonly<Record<string, boolean>>])[] = [
+  [1, { rhythm: true, melody: false, voice: false, danger: false }],
+  [2, { rhythm: true, melody: true, voice: false, danger: false }],
+  [3, { rhythm: true, melody: true, voice: true, danger: true }],
+];
 
 export interface RenderResult {
   readonly seconds: number;
@@ -624,6 +640,37 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   }
   root.append(home);
 
+  // The fight (Stage 9): the combat music at its three strengths (the layers of MUS_COMBAT_1/2/3
+  // in content/audio.json), the fight's sounds by the gore setting above, and game over's stinger.
+  // Its buttons carry their own data attributes, so the counts of the sections above stay as they are.
+  const fight = el('section');
+  fight.append(el('h2', {}, t('ui.sound.fight')), el('h3', {}, t('ui.sound.fight.music')));
+  for (const [n, layers] of COMBAT_LEVELS) {
+    const b = el('button', { 'data-fight-play': `combat:${n}` }, t(`caption.music.combat_${n}`));
+    b.addEventListener('click', () => {
+      play('music:combat', { layers }, `caption.music.combat_${n}`);
+    });
+    fight.append(b);
+  }
+  const fightStop = el('button', { 'data-fight-stop': '' }, t('ui.sound.stop'));
+  fightStop.addEventListener('click', stopRunning);
+  fight.append(fightStop, el('h3', {}, t('ui.sound.fight.sounds')));
+  for (const def of FIGHT) {
+    const b = el('button', { 'data-fight-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`fight:${def.id}`, def.captionKey);
+    });
+    fight.append(b);
+  }
+  for (const def of ENDINGS) {
+    const b = el('button', { 'data-fight-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`call:${def.id}`, def.captionKey);
+    });
+    fight.append(b);
+  }
+  root.append(fight);
+
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
   feet.append(
@@ -758,6 +805,12 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     peopleItems: [
       ...Object.keys(VOICES).map((id) => `resident:${id}`),
       ...DISPUTES.map((d) => `call:${d.id}`),
+    ],
+    /** Stage 9's fight items: the combat music, the fight's sounds and game over, listed apart. */
+    fightItems: [
+      ...COMBAT_LEVELS.map(([n]) => `combat:${n}`),
+      ...FIGHT.map((d) => `fight:${d.id}`),
+      ...ENDINGS.map((d) => `call:${d.id}`),
     ],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [

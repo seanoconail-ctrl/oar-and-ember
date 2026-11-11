@@ -2849,11 +2849,11 @@ def narrow(poses, ch):
     if ch is None or not ch.model.heavy:
         return poses
     for p in poses:
-        p.hands = {k: (None if v is None else (max(-0.5, min(0.5, v[0])), v[1], v[2]))
+        p.hands = {k: (None if v is None else (max(-1.5, min(-0.5, v[0])), v[1], v[2]))
                    for k, v in p.hands.items()}
         p.lean = (0.0, p.lean[1])
         p.pel = (0.0, p.pel[1], p.pel[2])
-        p.elbow = {k: (min(0.4, e[0]), e[1], e[2]) for k, e in p.elbow.items()}
+        p.elbow = {k: (min(0.0, e[0]), e[1], e[2]) for k, e in p.elbow.items()}
     return poses
 
 
@@ -2912,14 +2912,7 @@ HEAD_SVART = {
           'hFFFFFFh',
           '.hhhhhh.'],
     'n': HEAD_A['n'],
-    'e': ['..HHHH..',
-          '.HHHHHH.',
-          'HHHHHHHH',
-          'HHHHFFF.',
-          'HHFFFeFF',
-          'HHFFFFFF',
-          '.hFFFFhh',
-          '.hhhhhh.'],
+    'e': HEAD_A['e'],
 }
 
 

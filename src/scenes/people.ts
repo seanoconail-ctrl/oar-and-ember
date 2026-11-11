@@ -33,7 +33,13 @@ export const STEERER_LOOKS: Readonly<Record<BodyModel, string>> = {
   A: 'steerer_a',
   B: 'steerer_b',
 };
-export const PERSON_LOOKS: Readonly<Record<Id, string>> = { C_HILD: 'hild' };
+export const PERSON_LOOKS: Readonly<Record<Id, string>> = {
+  C_HILD: 'hild',
+  // Stage 9: the three wreck-scavengers.
+  E_WRECKER_KETILL: 'wrecker_ketill',
+  E_WRECKER_SVART: 'wrecker_svart',
+  E_WRECKER_CONN: 'wrecker_conn',
+};
 
 export function personLook(file: LayerFile): PersonLook {
   const body = Object.values(file.layers)
@@ -61,6 +67,7 @@ export function peopleLook(
 /** Weapon layers drawn only while the steerer owns the item (decision DD-6: no starting bow). */
 export const OWNED_LAYERS: readonly { readonly layer: RegExp; readonly item: Id }[] = [
   { layer: /^layer_weapon_bow_/, item: 'ITEM_BOW' },
+  { layer: /^layer_weapon_seax_/, item: 'ITEM_SEAX' },
 ];
 
 /**

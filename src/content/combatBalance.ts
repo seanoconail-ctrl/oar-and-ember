@@ -126,6 +126,8 @@ export interface CombatBalance {
     readonly active: number;
     readonly recovery: number;
     readonly reachTiles: number;
+    /** How far the one shoved is pushed back. */
+    readonly pushTiles: number;
   };
   readonly strikeArcDegrees: number;
   readonly bodyRadiusTiles: number;
@@ -304,12 +306,12 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   const [body] = grab(f, 'fightRules', 'bodyRadius', `^${N} tiles:`, '"N tiles: ..."');
   const [hitStagger] = grab(f, 'fightRules', 'hitStagger', '^(\\d+) ticks:', '"N ticks: ..."');
   const [blockStun] = grab(f, 'fightRules', 'blockStun', '^(\\d+) ticks:', '"N ticks: ..."');
-  const [sw, sa, sr, sreach] = grab(
+  const [sw, sa, sr, sreach, spush] = grab(
     f,
     'fightRules',
     'shoveTiming',
-    `^Windup (\\d+) ticks, active (\\d+), recovery (\\d+); reach ${N} tiles?$`,
-    '"Windup N ticks, active N, recovery N; reach N tile"',
+    `^Windup (\\d+) ticks, active (\\d+), recovery (\\d+); reach ${N} tiles?; pushes the one shoved ${N} tiles$`,
+    '"Windup N ticks, active N, recovery N; reach N tile; pushes the one shoved N tiles"',
   );
 
   const v = keyed(json, 'combatTimings', 'vitalityStaminaAndArmour');
@@ -433,6 +435,7 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       active: sa ?? 0,
       recovery: sr ?? 0,
       reachTiles: sreach ?? 0,
+      pushTiles: spush ?? 0,
     },
     strikeArcDegrees: strikeArc ?? 0,
     bodyRadiusTiles: body ?? 0,
@@ -481,6 +484,8 @@ export interface AiBalance {
   readonly sight: {
     readonly day: number;
     readonly dusk: number;
+    /** Minutes either side of first light and of dark that count as dusk. */
+    readonly duskMinutes: number;
     readonly night: number;
     readonly fogFactor: number;
     readonly heightBonus: number;
@@ -523,6 +528,12 @@ export interface AiBalance {
     readonly crewProtect: number;
     readonly fallBackFrom: number;
     readonly orderLapseTicks: number;
+    /** The share of its reach a fighter closes to before it strikes. */
+    readonly closeIn: number;
+    readonly runAt: number;
+    readonly crewRunAt: number;
+    readonly guardHeld: number;
+    readonly fledAt: number;
   };
   /** Book 10 section 08 Cowardly: breaks when cohesion falls below this. */
   readonly cowardBreak: number;
@@ -538,7 +549,7 @@ export function parseAiBalance(json: unknown): AiBalance {
     const a = r['Armour'] ?? '';
     archetypes[name] = {
       vitality,
-      armour: a.startsWith("Mail") ? 'MAIL' : a.startsWith("Padded") ? 'PADDED' : 'NONE',
+      armour: a.startsWith('Mail') ? 'MAIL' : a.startsWith('Padded') ? 'PADDED' : 'NONE',
     };
   }
   const p = keyed(json, 'enemiesWildlifeAndPerception', 'perception');
@@ -571,6 +582,7 @@ export function parseAiBalance(json: unknown): AiBalance {
     sight: {
       day: n1('sightDay'),
       dusk: n1('sightDusk'),
+      duskMinutes: n1('duskSpan', `^(\\d+) minutes either side`),
       night: n1('sightNightUnlit'),
       fogFactor: n1('fogFactor'),
       heightBonus: n1('heightBonus', `^x${N}`),
@@ -617,6 +629,11 @@ export function parseAiBalance(json: unknown): AiBalance {
       crewProtect: g('crewProtect', `^${N} tiles:`)[0] ?? 0,
       fallBackFrom: g('fallBackFrom', `^${N} tiles:`)[0] ?? 0,
       orderLapseTicks: (g('orderLapse', '^(\\d+) s:')[0] ?? 0) * HZ,
+      closeIn: g('closeIn', `^${N}:`)[0] ?? 0,
+      runAt: g('runAt', `^${N} tiles:`)[0] ?? 0,
+      crewRunAt: g('crewRunAt', `^${N} tiles:`)[0] ?? 0,
+      guardHeld: g('guardHeld', '^(\\d+) ticks:')[0] ?? 0,
+      fledAt: g('fledAt', `^${N} tiles:`)[0] ?? 0,
     },
     cowardBreak: Number(coward[1]),
     braveCohesion: Number(brave[1]),

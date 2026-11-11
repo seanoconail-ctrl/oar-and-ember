@@ -32,6 +32,7 @@ import type { DepthBand } from '../content/balance.ts';
 import type { ZoneLife } from '../content/zoneMap.ts';
 import { PLANT_KINDS } from '../content/zoneMap.ts';
 import type { PeopleLook, PersonLook } from './people.ts';
+import type { Fighter } from '../sim/combat/fighter.ts';
 
 export type { PeopleLook, PersonLook } from './people.ts';
 
@@ -451,6 +452,110 @@ export interface ZoneSceneInput {
   };
   /** The camp at home, where this zone has it (Stage 7). */
   readonly camp?: CampScene;
+  /** Stage 9: the gore setting (Book 7 section 12; presentation only): 0 off, 1 low, 2 full. */
+  readonly gore?: 0 | 1 | 2;
+  /** Stage 9: crew orders just taken, shown as an icon over each (person to order). */
+  readonly orders?: Readonly<Record<string, string>>;
+  /** Stage 9: the steerer below Book 10's bloodiedBelow (drawn with the blood layer). */
+  readonly steererBloodied?: boolean;
+  /** Stage 9: ticks a corpse takes to fade with the gore setting low (and off). */
+  readonly corpseFade?: { readonly low: number; readonly off: number };
+}
+
+/** Stage 9: the gore sheet (Book 7 section 12) and the crew's order icons. */
+export const GORE_SHEET = 'fx_gore';
+export const ORDER_SHEET = 'ui_order';
+
+/**
+ * The animation state and frame a fighter is drawn with (Book 2 section 12's states on the Stage 9
+ * sheets): the raised weapon (the tell) while the charge begins, the charge held (or walked),
+ * each strike's three frames by its phase, the defences, the stagger, the surrendered, the downed
+ * and the dead (with its dismemberment); null when the fighter is at ease (walk, run and idle as
+ * before).
+ */
+export function fightAnim(
+  f: Fighter,
+  tick: number,
+  moving: boolean,
+  own: Readonly<Record<string, Anim>>,
+  extra: { readonly piece?: string | null; readonly finishing?: boolean } = {},
+): PersonAnim | null {
+  const has = (s: string): boolean => own[s] !== undefined;
+  const loop = (s: string): number => {
+    const a = own[s];
+    return a === undefined ? 0 : Math.floor(tick / a.ticks) % a.frames;
+  };
+  if (extra.finishing === true && has('finish')) return { state: 'finish', frame: 0 };
+  const phase3 = (): number => (tick < f.activeAt ? 0 : tick < f.activeEnd ? 1 : 2);
+  switch (f.state) {
+    case 'chargeL0':
+      if (tick - f.since < 6 && has('windup'))
+        return { state: 'windup', frame: tick - f.since < 3 ? 0 : 1 };
+      return has('charge')
+        ? {
+            state: moving && has('chargewalk') ? 'chargewalk' : 'charge',
+            frame: loop(moving ? 'chargewalk' : 'charge'),
+          }
+        : null;
+    case 'chargeL1':
+    case 'chargeL2':
+      return has('charge')
+        ? {
+            state: moving && has('chargewalk') ? 'chargewalk' : 'charge',
+            frame: loop(moving ? 'chargewalk' : 'charge'),
+          }
+        : null;
+    case 'light1':
+    case 'light2':
+    case 'light3':
+    case 'riposte': {
+      const s = f.state === 'riposte' ? 'light1' : f.state;
+      return has(s) ? { state: s, frame: phase3() } : null;
+    }
+    case 'heavyRelease':
+      return has('heavy') ? { state: 'heavy', frame: phase3() } : null;
+    case 'shove':
+      return has('shove') ? { state: 'shove', frame: phase3() } : null;
+    case 'parry':
+      return has('parry') ? { state: 'parry', frame: 0 } : null;
+    case 'parryRecovery':
+      return has('parry') ? { state: 'parry', frame: 1 } : null;
+    case 'block':
+      return has('block') ? { state: 'block', frame: 0 } : null;
+    case 'blockStun':
+      return has('block') ? { state: 'block', frame: 1 } : null;
+    case 'dodge': {
+      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
+      return has('dodge') ? { state: 'dodge', frame: t < 0.25 ? 0 : t < 0.7 ? 1 : 2 } : null;
+    }
+    case 'stagger':
+    case 'guardBroken': {
+      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
+      return has('stagger') ? { state: 'stagger', frame: t < 0.5 ? 0 : 1 } : null;
+    }
+    case 'surrendered':
+      return has('surrender') ? { state: 'surrender', frame: loop('surrender') } : null;
+    case 'downed':
+      return has('downed')
+        ? { state: 'downed', frame: loop('downed') }
+        : has('down')
+          ? { state: 'down', frame: loop('down') }
+          : null;
+    case 'dead': {
+      const s = extra.piece == null ? 'dead' : `dead_${extra.piece}`;
+      return has(s) ? { state: s, frame: 0 } : has('dead') ? { state: 'dead', frame: 0 } : null;
+    }
+    default:
+      return null;
+  }
+}
+
+/** Whether a person is bloodied (Book 10 bloodiedBelow), and so drawn with their blood layer. */
+function withoutBlood(look: PersonLook): PersonLook {
+  const layers: Record<string, readonly string[]> = {};
+  for (const [facing, sheets] of Object.entries(look.layers))
+    layers[facing] = sheets.filter((n) => !n.startsWith('layer_blood_'));
+  return { body: look.body, layers };
 }
 
 /** What the scene draws of the camp: the broch, the stage's props, the fire and its light. */
@@ -815,9 +920,21 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       layer: 'decal',
     });
   }
+  // Stage 9: the steerer's fight (a blow, a defence, the downed and the dead) over the gait.
+  const gore = input.gore ?? 2;
+  const steererFight = p.fight ?? null;
+  if (steererFight !== null && work == null && p.sleep == null) {
+    const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {});
+    if (fa !== null) {
+      state = fa.state;
+      stepFrame = fa.frame;
+    }
+  }
+  const steererLook =
+    gore > 0 && input.steererBloodied === true ? look.steerer : withoutBlood(look.steerer);
   if (input.hidePeople !== true)
     person(
-      look.steerer,
+      steererLook,
       `${state}/${p.facing}/${stepFrame}`,
       p.facing,
       p.x - camera.x,
@@ -825,14 +942,116 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       visual?.water['P_STEERER'],
       { focus: true },
     );
+  /** The charged heavy's two tells over the raised weapon (Book 2 section 12). */
+  const chargeTell = (f: Fighter, x: number, y: number): void => {
+    if (f.state !== 'chargeL1' && f.state !== 'chargeL2') return;
+    const level2 = f.state === 'chargeL2';
+    const i = Math.floor((tick - f.since) / 4);
+    const sheet = level2 ? GORE_SHEET : GLINT_SHEET;
+    const frames = level2 ? 4 : 5;
+    const k = level2 ? i % frames : Math.min(frames - 1, i % (frames + 3));
+    if (k >= frames) return;
+    const side = f.facing === 'w' ? -6 : f.facing === 'e' ? 6 : f.facing === 'n' ? 5 : -5;
+    sprites.push({
+      sheet,
+      frame: `${level2 ? 'tell' : 'glint'}/-/${k}`,
+      x: x + side,
+      y: y - 34,
+      layer: 'actor',
+      sort: y + 0.9,
+    });
+  };
+  if (steererFight !== null && input.hidePeople !== true)
+    chargeTell(steererFight, p.x - camera.x, p.y - camera.y);
   const walkers: Walker[] = [{ x: p.x, y: p.y }];
   for (const [id, actor] of Object.entries(onFoot.actors)) {
     const who = look.people[id];
     const x = actor.x - camera.x;
     const y = actor.y - camera.y;
-    if (who !== undefined && inView(x, y) && input.hidePeople !== true) {
+    const fa = actor.fight;
+    // A corpse fades with the gore setting low (after a minute) or off (Book 7 section 12).
+    const faded =
+      fa?.dead != null &&
+      gore < 2 &&
+      input.corpseFade !== undefined &&
+      tick - fa.dead.tick >= (gore === 1 ? input.corpseFade.low : input.corpseFade.off);
+    if (who !== undefined && inView(x, y) && input.hidePeople !== true && !faded) {
       const own = anims.get(who.body) ?? {};
-      if (actor.pose === 'carried') {
+      const bloodied = gore > 0 && fa !== undefined && (fa.bloodied || fa.dead !== null);
+      const drawn = bloodied ? who : withoutBlood(who);
+      const fightPose =
+        fa === undefined
+          ? null
+          : fightAnim(fa.f, tick, actor.moving === true, own, {
+              piece: gore === 2 ? (fa.dead?.piece?.toLowerCase() ?? null) : null,
+              finishing: fa.finishing !== null,
+            });
+      if (fa?.dead != null && gore > 0) {
+        // The pool under the dead grows (Book 7 section 12): fewer and darker with gore low.
+        const age = tick - fa.dead.tick;
+        const pool = gore === 2 ? 'pool' : 'pool_low';
+        sprites.push({
+          sheet: GORE_SHEET,
+          frame: `${pool}/-/${Math.min(4, Math.floor(age / 50))}`,
+          x: x + (actor.facing === 'w' || actor.facing === 'n' ? -3 : 3),
+          y: y - 2,
+          layer: 'decal',
+        });
+        // The piece a dismembering blow took: thrown, a bounce, then still.
+        const piece = fa.dead.piece;
+        if (piece !== null && gore === 2) {
+          const a = (fa.dead.dir / 16) * 2 * Math.PI;
+          const t = Math.min(1, age / 24);
+          const lift =
+            age < 24
+              ? Math.sin(t * Math.PI) * 6
+              : age < 36
+                ? Math.sin(((age - 24) / 12) * Math.PI) * 2
+                : 0;
+          person(
+            who,
+            `piece_${piece.toLowerCase()}/${actor.facing}/0`,
+            actor.facing,
+            x + Math.cos(a) * 16 * t,
+            y + Math.sin(a) * 8 * t - lift,
+            undefined,
+            { shadow: false },
+          );
+        }
+      } else if (fa?.f.state === 'downed' && gore > 0) {
+        sprites.push({
+          sheet: GORE_SHEET,
+          frame: `${gore === 2 ? 'pool' : 'pool_low'}/-/1`,
+          x,
+          y: y - 2,
+          layer: 'decal',
+        });
+      }
+      if (fightPose !== null && actor.pose !== 'carried') {
+        person(
+          drawn,
+          `${fightPose.state}/${actor.facing}/${fightPose.frame}`,
+          actor.facing,
+          x,
+          y,
+          visual?.water[id],
+          {},
+        );
+        walkers.push({ x: actor.x, y: actor.y });
+      } else if (actor.pose === 'carried' && onFoot.carrying !== id) {
+        // Carried by someone else (a crew order to carry): over their shoulders.
+        const carrier = Object.values(onFoot.actors).find((o) => o.carries === id);
+        const f = carrier?.facing ?? actor.facing;
+        person(
+          drawn,
+          `carried/${f}/${Math.min(frameIndex(anims, who.body, 'carried', tick), (own['carried']?.frames ?? 1) - 1)}`,
+          f,
+          x,
+          y + 0.5,
+          undefined,
+          { shadow: false },
+        );
+      } else if (actor.pose === 'carried') {
         // Carried across the shoulders, in step with the carry walk; drawn just in front.
         const carriedFrame = Math.min(stepFrame, (own['carried']?.frames ?? 1) - 1);
         person(
@@ -851,9 +1070,22 @@ export function zoneScene(input: ZoneSceneInput): Scene {
             ? 'walk'
             : poseState(actor, own, input.camp?.loops ?? {});
         const frame = frameIndex(anims, who.body, st, tick);
-        person(who, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
+        person(drawn, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
         walkers.push({ x: actor.x, y: actor.y });
       }
+      // A crew order taken: its icon a moment over the head.
+      const order = input.orders?.[id];
+      if (order !== undefined)
+        sprites.push({
+          sheet: ORDER_SHEET,
+          frame: `${order}/-/0`,
+          x,
+          y: y - 10,
+          layer: 'actor',
+          sort: y + 0.8,
+        });
+      // The charge's tells (Book 10: a glint at level 1, a flash at level 2) on the weapon.
+      if (fa !== undefined) chargeTell(fa.f, x, y);
     }
     if (input.highlight === id && actor.pose !== 'carried') {
       const bob = frameIndex(anims, MARKER_SHEET, 'bob', tick);

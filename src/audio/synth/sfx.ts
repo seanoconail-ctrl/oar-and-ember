@@ -997,3 +997,410 @@ export const MISSILES: readonly SoundDef[] = [
     },
   },
 ];
+
+/** The output with a fixed gain before it: a quiet sound brought up to its place in the mix. */
+function boosted(
+  e: SynthEngine,
+  k: number,
+  bus: 'effects' | 'tells' | 'music',
+  pan: number,
+  echo = 0,
+): AudioNode {
+  const g = e.ctx.createGain();
+  g.gain.value = k;
+  g.connect(out(e, bus, pan, echo));
+  return g;
+}
+
+/**
+ * Stage 9: the rest of the combat set (Book 11 section 07): the swing of a light blow and of a heavy
+ * one, a hit by its material (flesh, mail, a shield), the dodge's cloth and footwork, the shove,
+ * gore (a wet impact, a bone crack on heavy blows, the short detail of a limb taken) scaled by the
+ * gore setting and silent at off, the downed (a fall, breath and a heartbeat), a body falling, a
+ * weapon thrown down, and a thrown spear's grunt and rush. Listed apart, so the sound test's
+ * earlier counts stand.
+ */
+export const FIGHT: readonly SoundDef[] = [
+  {
+    id: 'SFX_LIGHT_ATTACK',
+    captionKey: 'caption.sfx.light_attack',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // A short whoosh: band noise sweeping up and away.
+      noiseHit(
+        e,
+        at,
+        boosted(e, 4, 'effects', pan),
+        'bandpass',
+        650,
+        1.6,
+        [
+          [0, 0],
+          [0.05, 0.32],
+          [0.13, 0],
+        ],
+        2400,
+      );
+      return 0.18;
+    },
+  },
+  {
+    id: 'SFX_HEAVY_SWING',
+    captionKey: 'caption.sfx.heavy_swing',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 3, 'effects', pan);
+      // A deep, longer rush and a breath driven out with it.
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        320,
+        1.2,
+        [
+          [0, 0],
+          [0.12, 0.45],
+          [0.3, 0],
+        ],
+        1300,
+      );
+      breath(e, at, to, 0.3, 0.22, 700);
+      return 0.35;
+    },
+  },
+  {
+    id: 'SFX_HIT_FLESH',
+    captionKey: 'caption.sfx.hit_flesh',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // A dull thump and a short slap: the blow itself (the wetness is gore's, below).
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 110],
+          [0.09, 55],
+        ],
+        [
+          [0, 0],
+          [0.003, 0.85],
+          [0.12, 0],
+        ],
+      );
+      noiseHit(e, at, to, 'lowpass', 1600, 0.7, [
+        [0, 0.55],
+        [0.05, 0],
+      ]);
+      return 0.15;
+    },
+  },
+  {
+    id: 'SFX_HIT_MAIL',
+    captionKey: 'caption.sfx.hit_mail',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // Rings rattling: many small metallic ticks over a muffled thump.
+      const r = rng(47);
+      for (let i = 0; i < 9; i++)
+        metal(e, at + r() * 0.05, to, 2600 + r() * 1800, [1, 1.7], 0.06, 0.08);
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 140],
+          [0.08, 70],
+        ],
+        [
+          [0, 0],
+          [0.003, 0.6],
+          [0.1, 0],
+        ],
+      );
+      return 0.2;
+    },
+  },
+  {
+    id: 'SFX_HIT_SHIELD',
+    captionKey: 'caption.sfx.hit_shield',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // Linden boards struck: a hollow knock with a little of the boss's ring.
+      tone(
+        e,
+        at,
+        to,
+        'triangle',
+        [
+          [0, 240],
+          [0.1, 150],
+        ],
+        [
+          [0, 0],
+          [0.002, 0.8],
+          [0.14, 0],
+        ],
+      );
+      noiseHit(e, at, to, 'bandpass', 700, 2.0, [
+        [0, 0.7],
+        [0.07, 0],
+      ]);
+      metal(e, at, to, 900, [1, 2.4], 0.12, 0.06);
+      return 0.2;
+    },
+  },
+  {
+    id: 'SFX_DODGE',
+    captionKey: 'caption.sfx.dodge',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2, 'effects', pan);
+      // Cloth flicked and two quick scuffs of the feet.
+      noiseHit(e, at, to, 'highpass', 2500, 0.6, [
+        [0, 0],
+        [0.03, 0.2],
+        [0.12, 0],
+      ]);
+      for (const t of [0.04, 0.17])
+        noiseHit(e, at + t, to, 'lowpass', 900, 0.8, [
+          [0, 0],
+          [0.004, 0.35],
+          [0.06, 0],
+        ]);
+      return 0.25;
+    },
+  },
+  {
+    id: 'SFX_SHOVE',
+    captionKey: 'caption.sfx.shove',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2, 'effects', pan);
+      // A body pushed: a dull thud on cloth and a grunt.
+      noiseHit(e, at, to, 'lowpass', 500, 0.7, [
+        [0, 0],
+        [0.005, 0.7],
+        [0.1, 0],
+      ]);
+      grunt(e, at + 0.02, to, 130, 0.2, 0.35);
+      return 0.25;
+    },
+  },
+  {
+    id: 'SFX_GORE_WET_IMPACT',
+    captionKey: 'caption.sfx.gore_wet',
+    bus: 'effects',
+    play: (e, at, pan, o) => {
+      if (o.gore <= 0) return 0;
+      const to = boosted(e, 3, 'effects', pan);
+      // A wet, low smack and a short spatter, quieter at gore low.
+      const k = o.gore >= 2 ? 1 : 0.5;
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        520,
+        2.4,
+        [
+          [0, 0],
+          [0.008, 0.5 * k],
+          [0.16, 0],
+        ],
+        260,
+      );
+      const r = rng(83);
+      for (let i = 0; i < (o.gore >= 2 ? 4 : 2); i++)
+        noiseHit(e, at + 0.05 + r() * 0.12, to, 'bandpass', 1400 + r() * 900, 3, [
+          [0, 0.12 * k],
+          [0.02, 0],
+        ]);
+      return 0.3;
+    },
+  },
+  {
+    id: 'SFX_GORE_BONE_CRACK',
+    captionKey: 'caption.sfx.gore_bone',
+    bus: 'effects',
+    play: (e, at, pan, o) => {
+      if (o.gore <= 0) return 0;
+      const to = out(e, 'effects', pan);
+      const k = o.gore >= 2 ? 1 : 0.5;
+      // A dry, close crack with a short splintering after.
+      noiseHit(e, at, to, 'highpass', 1800, 0.9, [
+        [0, 0.6 * k],
+        [0.015, 0],
+      ]);
+      tone(
+        e,
+        at,
+        to,
+        'square',
+        [
+          [0, 320],
+          [0.03, 120],
+        ],
+        [
+          [0, 0.18 * k],
+          [0.04, 0],
+        ],
+      );
+      noiseHit(e, at + 0.02, to, 'bandpass', 2600, 2, [
+        [0, 0.2 * k],
+        [0.05, 0],
+      ]);
+      return 0.12;
+    },
+  },
+  {
+    id: 'SFX_GORE_DISMEMBERMENT',
+    captionKey: 'caption.sfx.gore_dismember',
+    bus: 'effects',
+    play: (e, at, pan, o) => {
+      // Full gore only: a heavy chop through, a wet tear, and the thud of what fell.
+      if (o.gore < 2) return 0;
+      const to = out(e, 'effects', pan);
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 95],
+          [0.12, 45],
+        ],
+        [
+          [0, 0],
+          [0.003, 0.9],
+          [0.18, 0],
+        ],
+      );
+      noiseHit(
+        e,
+        at + 0.01,
+        to,
+        'bandpass',
+        800,
+        1.8,
+        [
+          [0, 0],
+          [0.02, 0.45],
+          [0.22, 0],
+        ],
+        250,
+      );
+      noiseHit(e, at + 0.42, to, 'lowpass', 400, 0.7, [
+        [0, 0],
+        [0.005, 0.4],
+        [0.09, 0],
+      ]);
+      return 0.55;
+    },
+  },
+  {
+    id: 'SFX_DOWNED',
+    captionKey: 'caption.sfx.downed',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // A fall to the ground, a rough breath, and a slow heartbeat for a moment.
+      noiseHit(e, at, to, 'lowpass', 380, 0.7, [
+        [0, 0],
+        [0.01, 0.8],
+        [0.2, 0],
+      ]);
+      breath(e, at + 0.3, to, 0.6, 0.25, 800);
+      for (let i = 0; i < 3; i++) {
+        const t = at + 1.0 + i * 0.85;
+        for (const [d, lv] of [
+          [0, 0.55],
+          [0.18, 0.35],
+        ] as const)
+          tone(
+            e,
+            t + d,
+            to,
+            'sine',
+            [
+              [0, 62],
+              [0.08, 48],
+            ],
+            [
+              [0, 0],
+              [0.01, lv],
+              [0.12, 0],
+            ],
+          );
+      }
+      return 3.4;
+    },
+  },
+  {
+    id: 'SFX_BODY_FALL',
+    captionKey: 'caption.sfx.body_fall',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2.2, 'effects', pan);
+      // A heavy, slack fall: two thuds as the body and then the shoulders meet the ground.
+      for (const [t, lv] of [
+        [0, 0.8],
+        [0.14, 0.55],
+      ] as const)
+        noiseHit(e, at + t, to, 'lowpass', 300, 0.7, [
+          [0, 0],
+          [0.008, lv],
+          [0.18, 0],
+        ]);
+      return 0.4;
+    },
+  },
+  {
+    id: 'SFX_WEAPON_DROP',
+    captionKey: 'caption.sfx.weapon_drop',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2, 'effects', pan);
+      // Iron and wood on shingle: a clatter and a short rattle of stones.
+      metal(e, at, to, 1200, [1, 1.6, 2.3], 0.12, 0.12);
+      const r = rng(59);
+      for (let i = 0; i < 5; i++)
+        noiseHit(e, at + 0.03 + r() * 0.15, to, 'bandpass', 2000 + r() * 1500, 2, [
+          [0, 0.18],
+          [0.025, 0],
+        ]);
+      return 0.3;
+    },
+  },
+  {
+    id: 'SFX_SPEAR_THROW',
+    captionKey: 'caption.sfx.spear_throw',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2.5, 'effects', pan);
+      // The thrower's grunt, then the spear's low rush away.
+      grunt(e, at, to, 140, 0.18, 0.35);
+      noiseHit(
+        e,
+        at + 0.12,
+        to,
+        'bandpass',
+        420,
+        1.4,
+        [
+          [0, 0],
+          [0.1, 0.35],
+          [0.45, 0],
+        ],
+        220,
+      );
+      return 0.6;
+    },
+  },
+];

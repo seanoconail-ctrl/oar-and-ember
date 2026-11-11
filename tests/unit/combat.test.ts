@@ -346,9 +346,11 @@ describe('perception basics (Book 10 section 07)', () => {
     expect(stepNoise(ai, 'run', 'shingle')).toBeCloseTo(7.5);
     expect(stepNoise(ai, 'sneak', 'sand')).toBeCloseTo(0.35);
     expect(hears({ x: 0, y: 0 }, { x: 7 * TILE, y: 0 }, 7.5, TILE)).toBe(true);
-    expect(lightAt(12 * 60, 390, 1200)).toBe('day');
-    expect(lightAt(1230, 390, 1200)).toBe('dusk');
-    expect(lightAt(60, 390, 1200)).toBe('night');
+    const dusk = ai.sight.duskMinutes;
+    expect(dusk).toBe(60);
+    expect(lightAt(12 * 60, 390, 1200, dusk)).toBe('day');
+    expect(lightAt(1230, 390, 1200, dusk)).toBe('dusk');
+    expect(lightAt(60, 390, 1200, dusk)).toBe('night');
   });
 });
 
@@ -477,6 +479,30 @@ describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decision S9-11)', () =>
       ),
     ).toBe(true);
     expect(actor(f, 'E_WRECKER_KETILL').fight?.ai.aware).toBe(true);
+  });
+
+  it('two or more close on one from different sides (Book 2 section 13, flank)', () => {
+    const f = strandFight('flank', '36.5,34.2');
+    walkTo(f, 33 * TILE, 34.7 * TILE, true, 6, 600);
+    // The steerer stands and takes it (made hardy, so the test sees them come round).
+    f.world.player.vitality = 10_000;
+    const p = f.world.onFoot?.player;
+    if (p === undefined) throw new Error('no player');
+    const sideOf = (id: string): number => {
+      const a = actor(f, id);
+      return Math.atan2(a.y - p.y, a.x - p.x);
+    };
+    let apart = 0;
+    for (let i = 0; i < 900 && apart < Math.PI / 3; i++) {
+      f.sim.step();
+      const k = actor(f, 'E_WRECKER_KETILL');
+      const s = actor(f, 'E_WRECKER_SVART');
+      const near = (a: typeof k): boolean => Math.hypot(a.x - p.x, a.y - p.y) < 2.5 * TILE;
+      if (!near(k) || !near(s)) continue;
+      const d = Math.abs(sideOf('E_WRECKER_KETILL') - sideOf('E_WRECKER_SVART'));
+      apart = Math.min(d, 2 * Math.PI - d);
+    }
+    expect(apart).toBeGreaterThanOrEqual(Math.PI / 3);
   });
 
   it('a sneaking steerer behind them is not heard until close', () => {
@@ -679,6 +705,12 @@ describe('missiles in a fight (Book 10 section 21; Stage 9 check 3)', () => {
     const f = strandFight('arrow-body', '36,34.2');
     const svart = actor(f, 'E_WRECKER_SVART');
     const before = svart.fight?.vitality ?? 0;
+    // A target that stands where it is for the shot: the three make no decisions (heard, they
+    // would close on the steerer from three sides, off the arrow's line).
+    for (const id of ['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN']) {
+      const ai = actor(f, id).fight?.ai;
+      if (ai !== undefined) ai.next = Number.MAX_SAFE_INTEGER;
+    }
     f.world.player.hotbar.slots[1] = 'ITEM_BOW';
     f.world.player.inventory['ITEM_ARROW'] = 6;
     f.sim.submit({ type: 'SELECT_SLOT', slot: 1 });

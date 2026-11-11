@@ -11,15 +11,20 @@ import type { AiBalance } from '../../content/combatBalance.ts';
 export type Light = 'day' | 'dusk' | 'night';
 export type Facing = 's' | 'n' | 'e' | 'w';
 
-/** The minutes either side of first light and of dark that count as dusk (as the scenes draw). */
-export const TWILIGHT_MINUTES = 60;
-
-/** The light at a minute of the day, for daylight from `lightFrom` until `darkFrom`. */
-export function lightAt(minuteOfDay: number, lightFrom: number, darkFrom: number): Light {
+/**
+ * The light at a minute of the day, for daylight from `lightFrom` until `darkFrom`; dusk for
+ * Book 10's duskSpan either side of first light and of dark (as the scenes draw it).
+ */
+export function lightAt(
+  minuteOfDay: number,
+  lightFrom: number,
+  darkFrom: number,
+  duskMinutes: number,
+): Light {
   const m = minuteOfDay;
   if (m >= lightFrom && m < darkFrom) return 'day';
   const near = (edge: number): boolean =>
-    Math.min(Math.abs(m - edge), 1440 - Math.abs(m - edge)) <= TWILIGHT_MINUTES;
+    Math.min(Math.abs(m - edge), 1440 - Math.abs(m - edge)) <= duskMinutes;
   return near(lightFrom) || near(darkFrom) ? 'dusk' : 'night';
 }
 

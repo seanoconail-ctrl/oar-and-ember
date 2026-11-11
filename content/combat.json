@@ -1,11 +1,29 @@
 {
   "about": "Combat content (Stage 9; Book 2 sections 12 and 13). Numbers come from balance.json (Book 10 sections 06 and 07), never from here: this file says which Book 10 weapon row each item is, who fights with what, where the three wreck-scavengers stand (decision S9-11), which places are safe for a downed ally, and the lines people shout.",
   "weapons": {
-    "ITEM_SEAX": { "row": "Seax", "layer": "seax" },
-    "ITEM_AXE": { "row": "Axe", "layer": "axe", "dismember": "HEAVY" },
-    "ITEM_SPEAR": { "row": "Spear", "layer": "spear" },
-    "ITEM_SWORD": { "row": "Sword", "layer": "sword", "dismember": "ANY" },
-    "ITEM_DANE_AXE": { "row": "Dane axe", "layer": "dane_axe", "dismember": "ANY" }
+    "ITEM_SEAX": {
+      "row": "Seax",
+      "layer": "seax"
+    },
+    "ITEM_AXE": {
+      "row": "Axe",
+      "layer": "axe",
+      "dismember": "HEAVY"
+    },
+    "ITEM_SPEAR": {
+      "row": "Spear",
+      "layer": "spear"
+    },
+    "ITEM_SWORD": {
+      "row": "Sword",
+      "layer": "sword",
+      "dismember": "ANY"
+    },
+    "ITEM_DANE_AXE": {
+      "row": "Dane axe",
+      "layer": "dane_axe",
+      "dismember": "ANY"
+    }
   },
   "fighters": [
     {
@@ -34,11 +52,25 @@
   ],
   "crew": {
     "C_HILD": {},
-    "C_ODDI": { "weapon": "ITEM_SEAX" },
-    "C_BRAN": { "weapon": "ITEM_AXE", "shield": true, "heavy": true },
-    "C_RUNA": { "weapon": "ITEM_SEAX" },
-    "C_KARI": { "weapon": "ITEM_AXE", "shield": true },
-    "C_AINE": { "weapon": "ITEM_SEAX", "bow": true }
+    "C_ODDI": {
+      "weapon": "ITEM_SEAX"
+    },
+    "C_BRAN": {
+      "weapon": "ITEM_AXE",
+      "shield": true,
+      "heavy": true
+    },
+    "C_RUNA": {
+      "weapon": "ITEM_SEAX"
+    },
+    "C_KARI": {
+      "weapon": "ITEM_AXE",
+      "shield": true
+    },
+    "C_AINE": {
+      "weapon": "ITEM_SEAX",
+      "bow": true
+    }
   },
   "encounters": [
     {
@@ -53,16 +85,21 @@
           "x": 25.5,
           "y": 34.7,
           "facing": "w",
-          "task": "TASK_DRIFTWOOD"
+          "task": "TASK_GATHER_DRIFTWOOD"
         },
         {
           "person": "E_WRECKER_SVART",
           "x": 23.4,
           "y": 35.8,
           "facing": "s",
-          "task": "TASK_DRIFTWOOD"
+          "task": "TASK_GATHER_DRIFTWOOD"
         },
-        { "person": "E_WRECKER_CONN", "x": 30.6, "y": 34.6, "facing": "w" }
+        {
+          "person": "E_WRECKER_CONN",
+          "x": 30.6,
+          "y": 34.6,
+          "facing": "w"
+        }
       ]
     }
   ],
@@ -113,6 +150,17 @@
       "CARRY": ["c_hild.bark.order.carry.01"],
       "refuse": ["c_hild.bark.order.refuse.01"],
       "lift": ["c_hild.bark.combat.lift.01"]
+    }
+  },
+  "gore": {
+    "about": "Presentation only (Book 7 section 12, the gore setting): how long a corpse stays drawn with the setting low (Book 7: a minute) and off, and how long blood stains last on the ground at low and full. The simulation never reads these.",
+    "corpseFadeSeconds": {
+      "low": 60,
+      "off": 2
+    },
+    "stainSeconds": {
+      "low": 60,
+      "full": 600
     }
   }
 }

@@ -20,7 +20,9 @@ import type { SimWorldContext } from '../simulation.ts';
 
 export function landContext(
   content: Pick<Content, 'onFoot' | 'opening' | 'zoneMaps'> &
-    Partial<Pick<Content, 'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people' | 'combat'>>,
+    Partial<
+      Pick<Content, 'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people' | 'combat'>
+    >,
   balance: unknown,
 ): SimWorldContext {
   if (content.onFoot === null) throw new Error('content/onfoot.json did not load');

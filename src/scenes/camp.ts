@@ -185,6 +185,9 @@ export function campHooks(
   // `zone=ZONE_SK_STRAND&at=x,y` starts by the fight.
   if (params.get('secondwind') === '1') world.options.secondWind = true;
   if (params.get('ransmercy') === '1') world.options.ransMercy = true;
+  // Stage 9 (tests only): the steerer starts this hurt (`vitality=N`), for a quick game over.
+  const vitality = Number(params.get('vitality') ?? '');
+  if (Number.isFinite(vitality) && vitality > 0) world.player.vitality = vitality;
   // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
   const zone = params.get('zone');
   const zoneTo = zone === null ? undefined : land.maps.get(zone);

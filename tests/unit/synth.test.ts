@@ -17,7 +17,7 @@ import { REPO_ROOT } from '../../src/tools/art/loadTitleArt.ts';
 
 const piece = (name: string): Piece =>
   JSON.parse(readFileSync(join(REPO_ROOT, 'content/music', `${name}.json`), 'utf8')) as Piece;
-const PIECES = ['hearth', 'skarvholm', 'raid'].map(piece);
+const PIECES = ['hearth', 'skarvholm', 'raid', 'combat'].map(piece);
 const UNPITCHED = new Set(['drum', 'knock', 'gull']);
 const strings = parseStringTable(
   JSON.parse(readFileSync(join(REPO_ROOT, 'content/strings/en.json'), 'utf8')) as unknown,
@@ -59,7 +59,7 @@ describe('the music as note data', () => {
   });
 
   it('uses Dorian and Aeolian, as the standard asks', () => {
-    expect(PIECES.map((p) => p.mode)).toEqual(['D dorian', 'A dorian', 'E aeolian']);
+    expect(PIECES.map((p) => p.mode)).toEqual(['D dorian', 'A dorian', 'E aeolian', 'D aeolian']);
     expect(piece('skarvholm').variants?.find((v) => v.id === 'winter')?.mode).toBe('A aeolian');
   });
 

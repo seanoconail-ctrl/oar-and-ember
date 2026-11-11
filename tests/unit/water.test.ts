@@ -182,7 +182,8 @@ describe('people in water (Book 7 section 07)', () => {
         visual: view,
       });
       const steerer = scene.sprites.filter((s) => s.sheet.endsWith('_a') && s.layer === 'actor');
-      expect(steerer.length).toBe(4);
+      // The full look: body, cloak, tunic, bow and (Stage 9) seax; the blood layer only when bloodied.
+      expect(steerer.length).toBe(5);
       for (const s of steerer) expect(s.wade?.mask ?? 0, `${name} ${s.sheet}`).toBe(mask);
     }
   });

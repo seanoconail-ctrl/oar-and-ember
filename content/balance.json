@@ -1196,7 +1196,7 @@
     },
     {
      "Key": "shoveTiming",
-     "Value": "Windup 6 ticks, active 3, recovery 12; reach 1 tile"
+     "Value": "Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles"
     },
     {
      "Key": "dodgeWay",
@@ -1534,6 +1534,10 @@
      "Value": "9"
     },
     {
+     "Key": "duskSpan",
+     "Value": "60 minutes either side of first light and of dark count as dusk (Stage 9, decision S9-23)"
+    },
+    {
      "Key": "sightNightUnlit",
      "Value": "5"
     },
@@ -1688,6 +1692,26 @@
     {
      "Key": "orderLapse",
      "Value": "60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day"
+    },
+    {
+     "Key": "closeIn",
+     "Value": "0.85: a fighter closes to this share of its reach before it strikes"
+    },
+    {
+     "Key": "runAt",
+     "Value": "3 tiles: a fighter further than this from its target runs to it"
+    },
+    {
+     "Key": "crewRunAt",
+     "Value": "5 tiles: a follower further than this behind the steerer runs"
+    },
+    {
+     "Key": "guardHeld",
+     "Value": "40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold"
+    },
+    {
+     "Key": "fledAt",
+     "Value": "9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is"
     }
    ],
    "occupiedSkarvholmGarrison": [
@@ -4935,7 +4959,11 @@
     },
     {
      "Key": "cameraHalfLife",
-     "Value": "0.18 s, critically damped, in sub-pixel space"
+     "Value": "0.18 s, critically damped, in sub-pixel space; the spring moves the camera's point in the world, not its offset from the steerer, so a turn or a stop eases out and back in rather than jerking (decision PT-0)"
+    },
+    {
+     "Key": "keyboardLeadHalfLife",
+     "Value": "0.3 s: without a pointer, the lead in the direction of travel swings round and fades out over this half-life when the steerer turns or stops (decision PT-0)"
     },
     {
      "Key": "cameraSnap",

@@ -2,36 +2,36 @@
   "name": "wrecker_ketill",
   "layers": {
     "s": [
-      "actor_e_wrecker_ketill",
-      "layer_clothing_wrecker_ketill",
-      "layer_gore_blood_ketill",
-      "layer_cloak_wrecker_ketill",
-      "layer_weapon_axe_ketill",
-      "layer_shield_round_ketill"
+      "actor_e_wrecker_ketill_heavy",
+      "layer_clothing_wrecker_ketill_heavy",
+      "layer_blood_wound_ketill_heavy",
+      "layer_cloak_wrecker_ketill_heavy",
+      "layer_weapon_axe_ketill_heavy",
+      "layer_shield_round_ketill_heavy"
     ],
     "n": [
-      "actor_e_wrecker_ketill",
-      "layer_clothing_wrecker_ketill",
-      "layer_gore_blood_ketill",
-      "layer_cloak_wrecker_ketill",
-      "layer_weapon_axe_ketill",
-      "layer_shield_round_ketill"
+      "actor_e_wrecker_ketill_heavy",
+      "layer_clothing_wrecker_ketill_heavy",
+      "layer_blood_wound_ketill_heavy",
+      "layer_cloak_wrecker_ketill_heavy",
+      "layer_weapon_axe_ketill_heavy",
+      "layer_shield_round_ketill_heavy"
     ],
     "e": [
-      "actor_e_wrecker_ketill",
-      "layer_clothing_wrecker_ketill",
-      "layer_gore_blood_ketill",
-      "layer_cloak_wrecker_ketill",
-      "layer_weapon_axe_ketill",
-      "layer_shield_round_ketill"
+      "actor_e_wrecker_ketill_heavy",
+      "layer_clothing_wrecker_ketill_heavy",
+      "layer_blood_wound_ketill_heavy",
+      "layer_cloak_wrecker_ketill_heavy",
+      "layer_weapon_axe_ketill_heavy",
+      "layer_shield_round_ketill_heavy"
     ],
     "w": [
-      "actor_e_wrecker_ketill",
-      "layer_clothing_wrecker_ketill",
-      "layer_gore_blood_ketill",
-      "layer_cloak_wrecker_ketill",
-      "layer_weapon_axe_ketill",
-      "layer_shield_round_ketill"
+      "actor_e_wrecker_ketill_heavy",
+      "layer_clothing_wrecker_ketill_heavy",
+      "layer_blood_wound_ketill_heavy",
+      "layer_cloak_wrecker_ketill_heavy",
+      "layer_weapon_axe_ketill_heavy",
+      "layer_shield_round_ketill_heavy"
     ]
   }
 }

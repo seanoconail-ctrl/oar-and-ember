@@ -43,6 +43,7 @@ function play(seed = 'controls', armed = false) {
   if (armed) {
     world.player.hotbar.slots[0] = 'ITEM_BOW';
     world.player.hotbar.slots[1] = 'ITEM_SEAX';
+    world.player.hotbar.slots[2] = 'ITEM_LINE';
     world.player.inventory['ITEM_ARROW'] = parseStartingWeapons(balance).startingArrows;
   }
   const sim = createSimulation(b, world, land);
@@ -182,9 +183,10 @@ describe('use and interact at a tile', () => {
     input.mouseUp(2);
     expect(right.target?.refused).toBe('TOO_FAR');
     expect(right.target?.inReach).toBe(false);
-    input.keyDown('Digit2');
+    // A tool in hand (the fishing line; Stage 9 made the seax a blade swung at the cursor).
+    input.keyDown('Digit3');
     session.frame(0, undefined, far);
-    input.keyUp('Digit2');
+    input.keyUp('Digit3');
     input.mouseDown(0);
     const left = session.frame(0, undefined, far);
     input.mouseUp(0);
@@ -194,6 +196,24 @@ describe('use and interact at a tile', () => {
     // Only the slot choice changed; nothing else in the world.
     sim.state.player.hotbar.selected = 0;
     expect(hash()).toBe(before.hash);
+  });
+
+  it('swings a blade towards a click beyond reach, never refusing it (Stage 9, decision S9-22)', () => {
+    const { sim, input, session, onFoot } = play('controls', true);
+    const own = tileOf(strand, onFoot.player.x, onFoot.player.y);
+    const far = over(own.tx - 6, own.ty);
+    input.keyDown('Digit2');
+    session.frame(FRAME, undefined, far);
+    input.keyUp('Digit2');
+    input.mouseDown(0);
+    const left = session.frame(FRAME, undefined, far);
+    expect(left.target?.refused).toBeNull();
+    expect(onFoot.player.fight?.state).toBe('chargeL0');
+    expect(onFoot.player.fight?.facing).toBe('w');
+    input.mouseUp(0);
+    session.frame(FRAME, undefined, far);
+    expect(session.tileCommands).toBe(0);
+    expect(sim.state.player.hotbar.selected).toBe(1);
   });
 
   it('refuses out-of-reach commands in the simulation too, changing nothing', () => {

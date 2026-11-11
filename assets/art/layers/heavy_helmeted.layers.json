@@ -4,7 +4,7 @@
     "s": [
       "actor_heavy",
       "layer_clothing_tunic_heavy",
-      "layer_gore_blood_heavy",
+      "layer_blood_wound_heavy",
       "layer_weapon_bow_heavy",
       "layer_cloak_wool_heavy",
       "layer_helmet_iron_heavy"
@@ -12,7 +12,7 @@
     "n": [
       "actor_heavy",
       "layer_clothing_tunic_heavy",
-      "layer_gore_blood_heavy",
+      "layer_blood_wound_heavy",
       "layer_cloak_wool_heavy",
       "layer_weapon_bow_heavy",
       "layer_helmet_iron_heavy"
@@ -20,7 +20,7 @@
     "e": [
       "actor_heavy",
       "layer_clothing_tunic_heavy",
-      "layer_gore_blood_heavy",
+      "layer_blood_wound_heavy",
       "layer_cloak_wool_heavy",
       "layer_weapon_bow_heavy",
       "layer_helmet_iron_heavy"
@@ -28,7 +28,7 @@
     "w": [
       "actor_heavy",
       "layer_clothing_tunic_heavy",
-      "layer_gore_blood_heavy",
+      "layer_blood_wound_heavy",
       "layer_cloak_wool_heavy",
       "layer_weapon_bow_heavy",
       "layer_helmet_iron_heavy"

@@ -873,8 +873,8 @@ function shoveLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: numb
         number,
         number,
       ];
-      const nx = pos.x + fx * map.tile * 0.4;
-      const ny = pos.y + fy * map.tile * 0.4;
+      const nx = pos.x + fx * map.tile * ctx.cb.shove.pushTiles;
+      const ny = pos.y + fy * map.tile * ctx.cb.shove.pushTiles;
       if (footprintClear(map, fw.land.rules, nx, ny, fw.tidalGroundOpen)) {
         pos.x = nx;
         pos.y = ny;
@@ -1173,7 +1173,7 @@ function foes(onFoot: OnFootState, side: Side): [Id, { x: number; y: number; fac
 /** Book 7: the light at the moment, and whether a point is inside a light pool (none yet). */
 function lightNow(world: WorldState, ctx: FightContext): ReturnType<typeof lightAt> {
   const d = ctx.daylight[seasonOf(world.calendar.day)];
-  return lightAt(world.calendar.minuteOfDay, d.lightFrom, d.darkFrom);
+  return lightAt(world.calendar.minuteOfDay, d.lightFrom, d.darkFrom, ctx.ai.sight.duskMinutes);
 }
 
 /** One fighter's choice (Book 2 section 13 at 10 Hz on the `ai` stream). */
@@ -1320,8 +1320,14 @@ function engage(
   const w = fa.f.weapon;
   if (w === null) return;
   const reach = (ctx.cb.weapons[w].reachTiles + ctx.cb.bodyRadiusTiles) * tile;
-  if (d > reach * 0.85) {
-    ai.goal = { x: pos.x, y: pos.y, run: d > 3 * tile };
+  // Two or more on one flank it (Book 2 section 13): each takes its own side of the target.
+  const side = flankSlot(fw, id, target, pos, reach * h.closeIn);
+  if (d > reach * h.closeIn) {
+    ai.goal = { x: side?.x ?? pos.x, y: side?.y ?? pos.y, run: d > h.runAt * tile };
+    return;
+  }
+  if (side !== null && Math.hypot(side.x - a.x, side.y - a.y) > ctx.cb.bodyRadiusTiles * tile) {
+    ai.goal = { x: side.x, y: side.y, run: false };
     return;
   }
   ai.goal = null;
@@ -1338,6 +1344,56 @@ function engage(
     : tick + 1;
   const gap = h.attackGap.min + nextFloat(world.rng.ai) * (h.attackGap.max - h.attackGap.min);
   ai.nextAttack = tick + Math.round(gap);
+}
+
+const SIDES: readonly (readonly [number, number])[] = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1],
+];
+
+/**
+ * Where a melee fighter stands against its target when two or more close on it (Book 2 section 13,
+ * "flank"): the four sides of the target at striking distance, taken in name order, each by the
+ * nearest fighter still without one; a side that is not open ground is passed over. Null for a
+ * lone attacker (or the first to a side it already holds): it strikes from where it is.
+ */
+function flankSlot(
+  fw: FightWorld,
+  id: Id,
+  target: Id,
+  pos: { x: number; y: number },
+  r: number,
+): { x: number; y: number } | null {
+  const onFoot = fw.world.onFoot;
+  if (onFoot === null) return null;
+  const attackers = Object.entries(onFoot.actors)
+    .filter(
+      ([, o]) =>
+        o.fight !== undefined &&
+        o.fight.ai.target === target &&
+        o.fight.f.weapon !== null &&
+        !(o.fight.bow && o.fight.arrows > 0) &&
+        fighting(o.fight),
+    )
+    .sort(([x], [y]) => (x < y ? -1 : 1));
+  if (attackers.length < 2) return null;
+  const open = SIDES.map(([sx, sy]) => ({ x: pos.x + sx * r, y: pos.y + sy * r })).filter((p) =>
+    footprintClear(fw.map, fw.land.rules, p.x, p.y, fw.tidalGroundOpen),
+  );
+  for (const [oid, o] of attackers) {
+    if (open.length === 0) return null;
+    let best = 0;
+    open.forEach((p, k) => {
+      const q = open[best];
+      if (q !== undefined && Math.hypot(p.x - o.x, p.y - o.y) < Math.hypot(q.x - o.x, q.y - o.y))
+        best = k;
+    });
+    const [slot] = open.splice(best, 1);
+    if (oid === id) return slot ?? null;
+  }
+  return null;
 }
 
 /**
@@ -1393,7 +1449,9 @@ function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
       );
       ai.react = { kind: 'PARRY', at, until: at + 1 };
     } else {
-      const until = striking(of) ? of.recoveryEnd : of.since + ctx.cb.charge.maxHold + 40;
+      const until = striking(of)
+        ? of.recoveryEnd
+        : of.since + ctx.cb.charge.maxHold + ctx.ai.habits.guardHeld;
       ai.react = { kind: 'BLOCK', at: Math.max(tick, soonest), until };
     }
     a.facing = facingOf(pos.x - a.x, pos.y - a.y, a.facing);
@@ -1447,7 +1505,7 @@ function crewThink(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void
   }
   const follow = (): void => {
     const d = Math.hypot(p.x - a.x, p.y - a.y);
-    ai.goal = d > h.crewFollow * tile ? { x: p.x, y: p.y, run: d > 5 * tile } : null;
+    ai.goal = d > h.crewFollow * tile ? { x: p.x, y: p.y, run: d > h.crewRunAt * tile } : null;
   };
   const safe = ctx.def.safePlaces.find((s) => s.zone === onFoot.zone) ?? null;
   switch (order?.kind) {
@@ -1678,7 +1736,7 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     const p = onFoot.player;
     if (
       Math.hypot(a.x - p.x, a.y - p.y) > ctx.ai.sight.day * tile ||
-      (!a.moving && Math.hypot(a.x - p.x, a.y - p.y) > 9 * tile)
+      (!a.moving && Math.hypot(a.x - p.x, a.y - p.y) > ctx.ai.habits.fledAt * tile)
     ) {
       Reflect.deleteProperty(onFoot.actors, id);
       const person = world.people[id];

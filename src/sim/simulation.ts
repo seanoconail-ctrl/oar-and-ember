@@ -162,6 +162,8 @@ export type Command =
   | { readonly type: 'BLOCK'; readonly on: boolean }
   | { readonly type: 'DODGE'; readonly x: number; readonly y: number }
   | { readonly type: 'FINISHER'; readonly on: boolean }
+  /** The difficulty options that change the simulation (Book 1 section 15), from the menu. */
+  | { readonly type: 'SET_OPTIONS'; readonly secondWind?: boolean; readonly ransMercy?: boolean }
   /** Stage 8: talk to a resident; choose an option in the conversation or scene; leave it. */
   | { readonly type: 'TALK'; readonly person: Id }
   | { readonly type: 'TALK_CHOOSE'; readonly index: number }
@@ -310,6 +312,11 @@ export interface Simulation {
   submit(command: Command): void;
   /** Runs one 60 Hz tick. */
   step(): void;
+  /**
+   * Replaces the whole world with a loaded one (game over's reload, Book 2 section 20): the same
+   * state object takes the loaded world's fields, so everything holding it sees the new world.
+   */
+  restore(world: SimState): void;
 }
 
 /** What the on-foot systems need: zone maps, Book 10 speeds and the controller rules. */
@@ -550,6 +557,10 @@ export function createSimulation(
       case 'CREW_ORDER':
         events.emit({ type: 'CREW_ORDER_GIVEN', order: command.order, tick: state.tick });
         if (fightCtx !== null && !fallen()) crewOrder(state, fightCtx, command.order, emitFight);
+        return;
+      case 'SET_OPTIONS':
+        if (command.secondWind !== undefined) state.options.secondWind = command.secondWind;
+        if (command.ransMercy !== undefined) state.options.ransMercy = command.ransMercy;
         return;
       case 'MELEE':
         if (fightCtx === null || fallen() || busy()) return;
@@ -1371,6 +1382,15 @@ export function createSimulation(
     events,
     submit(command) {
       queue.push(command);
+    },
+    restore(world) {
+      if (world.version !== SIM_STATE_VERSION)
+        throw new Error(`Simulation state version ${world.version} is not ${SIM_STATE_VERSION}`);
+      const target = state as unknown as Record<string, unknown>;
+      for (const key of Object.keys(target)) Reflect.deleteProperty(target, key);
+      Object.assign(target, world);
+      queue = [];
+      finishing = null;
     },
     step() {
       const pending = queue;

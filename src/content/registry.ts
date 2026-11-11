@@ -269,7 +269,7 @@ const cueCheck = object(
     phases: arrayOf(oneOf(['dawn', 'day', 'dusk', 'night'] as const)),
     captionKey: ref('string'),
     temporary: bool,
-    piece: oneOf(['hearth', 'skarvholm', 'raid'] as const),
+    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat'] as const),
     layers: recordOf(text, bool),
   },
   [
@@ -419,10 +419,12 @@ const fighterCheck = object(
   },
   ['shield', 'bow', 'heavy', 'leader', 'finishesDowned'],
 );
-const crewArmsCheck = object(
-  { weapon: id(['ITEM']), shield: bool, bow: bool, heavy: bool },
-  ['weapon', 'shield', 'bow', 'heavy'],
-);
+const crewArmsCheck = object({ weapon: id(['ITEM']), shield: bool, bow: bool, heavy: bool }, [
+  'weapon',
+  'shield',
+  'bow',
+  'heavy',
+]);
 const encounterCheck = object(
   {
     id: id(['SCN']),
@@ -464,6 +466,12 @@ const combatCheck = object({
   encounters: arrayOf(encounterCheck),
   safePlaces: arrayOf(safePlaceCheck),
   barks: recordOf(ref('person'), recordOf(text, arrayOf(ref('string')))),
+  /** Presentation only (Book 7 section 12): corpse fading and stains by the gore setting. */
+  gore: object({
+    about: text,
+    corpseFadeSeconds: object({ low: int(0, 3600), off: int(0, 3600) }),
+    stainSeconds: object({ low: int(0, 3600), full: int(0, 36000) }),
+  }),
 });
 
 const openingCheck = object({
@@ -905,6 +913,17 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const talk = talkCheck(files.talk, '', ctx(CONTENT_FILES.talk));
   const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
   const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
+  // Stage 9: an encounter's member at work works a camp task (its loop is drawn).
+  combat?.encounters.forEach((enc, i) =>
+    enc.members.forEach((m, j) => {
+      if (m.task !== undefined && camp?.tasks[m.task] === undefined)
+        issues.push({
+          file: CONTENT_FILES.combat,
+          path: `encounters[${i}].members[${j}].task`,
+          reason: `unknown camp task "${m.task}"`,
+        });
+    }),
+  );
   const zoneMaps = new Map<Id, ZoneMap>();
   const strand = checkZoneMap(files.zoneStrand);
   for (const [file, json] of [

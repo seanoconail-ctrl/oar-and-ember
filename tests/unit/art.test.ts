@@ -1,6 +1,6 @@
 /** Stage 4: the sheet compiler, art lint, the generator, the atlas, the draw list and lighting. */
 import { describe, expect, it } from 'vitest';
-import { packSheet } from '../../src/render/atlas.ts';
+import { MAX_ATLAS, packSheet } from '../../src/render/atlas.ts';
 import { renderSceneCpu } from '../../src/render/cpuRenderer.ts';
 import { NO_PIXEL } from '../../src/render/indexedImage.ts';
 import { buildDrawList, fadeDrops, lightAt, lit } from '../../src/render/scene.ts';
@@ -63,6 +63,9 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'actor_c_hild',
       'actor_cormorant',
       'actor_crab',
+      'actor_e_wrecker_conn',
+      'actor_e_wrecker_ketill_heavy',
+      'actor_e_wrecker_svart',
       'actor_gull',
       'actor_heavy',
       'actor_p_steerer_a',
@@ -75,22 +78,43 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'decal_strand',
       'fx_fire',
       'fx_glint',
+      'fx_gore',
       'fx_missile',
       'fx_people',
       'fx_strand',
+      'layer_blood_wound_a',
+      'layer_blood_wound_b',
+      'layer_blood_wound_conn',
+      'layer_blood_wound_heavy',
+      'layer_blood_wound_hild',
+      'layer_blood_wound_ketill_heavy',
+      'layer_blood_wound_svart',
       'layer_cloak_wool_a',
       'layer_cloak_wool_b',
       'layer_cloak_wool_heavy',
+      'layer_cloak_wrecker_ketill_heavy',
+      'layer_cloak_wrecker_svart',
       'layer_clothing_dress_hild',
       'layer_clothing_tunic_a',
       'layer_clothing_tunic_b',
       'layer_clothing_tunic_heavy',
+      'layer_clothing_wrecker_conn',
+      'layer_clothing_wrecker_ketill_heavy',
+      'layer_clothing_wrecker_svart',
       'layer_helmet_iron_a',
       'layer_helmet_iron_b',
       'layer_helmet_iron_heavy',
+      'layer_shield_round_ketill_heavy',
+      'layer_shield_round_svart',
+      'layer_weapon_axe_ketill_heavy',
       'layer_weapon_bow_a',
       'layer_weapon_bow_b',
+      'layer_weapon_bow_conn',
       'layer_weapon_bow_heavy',
+      'layer_weapon_seax_a',
+      'layer_weapon_seax_b',
+      'layer_weapon_seax_conn',
+      'layer_weapon_spear_svart',
       'plant_strand',
       'prop_boulder',
       'prop_camp',
@@ -114,6 +138,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'ui_hotbar',
       'ui_icons',
       'ui_marker',
+      'ui_order',
       'ui_stamina',
       'ui_stamina_reason',
       'ui_timing',
@@ -205,18 +230,50 @@ describe('the material-map generator', () => {
 
 describe('atlases', () => {
   it('pack every frame once, one row per state and facing', () => {
-    const steerer = byName.get('actor_p_steerer_a');
-    if (steerer === undefined) throw new Error('missing');
-    const { image, manifest } = packSheet(steerer);
-    // Sixteen states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 1, runstop 2,
-    // sneak 6, carry 6, draw 4; and from Stage 7 the work loops gather, fish, kneel and build 6
-    // each, and sleep 2) in four facings: 64 rows of up to 8.
-    expect([image.width, image.height]).toEqual([8 * 32, 64 * 48]);
-    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 1 + 2 + 6 + 6 + 4 + 6 + 6 + 6 + 6 + 2;
+    const hild = byName.get('actor_c_hild');
+    if (hild === undefined) throw new Error('missing');
+    const { image, manifest } = packSheet(hild);
+    // Nineteen states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 1, runstop 2,
+    // call 6, down 2, carried 6, sit 4, eat 4; from Stage 7 the work loops gather, fish, kneel and
+    // build 6 each, and sleep 2; from Stage 9 stagger 2) in four facings: 76 rows of up to 8.
+    expect([image.width, image.height]).toEqual([8 * 32, 76 * 48]);
+    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 1 + 2 + 6 + 2 + 6 + 4 + 4 + 6 + 6 + 6 + 6 + 2 + 2;
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
     expect(manifest.frames['idle/w/3']).toEqual([96, 3 * 48]);
     expect(manifest.frames['run/s/7']).toEqual([224, 20 * 48]);
+  });
+
+  it('pack a sheet too tall for one row a state into a square-ish grid, every frame once', () => {
+    const steerer = byName.get('actor_p_steerer_a');
+    if (steerer === undefined) throw new Error('missing');
+    const { image, manifest } = packSheet(steerer);
+    // Stage 9's fighting states (Book 10 frame data) take the steerer to 38 states, 152 rows of
+    // 48 px: past MAX_ATLAS, so its 484 frames pack in reading order, 22 across.
+    const perFacing =
+      4 +
+      4 +
+      4 +
+      4 +
+      6 +
+      8 +
+      1 +
+      2 +
+      6 +
+      6 +
+      4 +
+      6 +
+      6 +
+      6 +
+      6 +
+      2 + // Stages 4 to 7
+      (2 + 3 + 3 + 3 + 2 + 6 + 3 + 2 + 2 + 3 + 3 + 2 + 1 + 2 + 2 + 1 + 3 + 3); // Stage 9
+    expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
+    expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
+    expect([image.width, image.height]).toEqual([22 * 32, 22 * 48]);
+    expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
+    expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
+    expect(manifest.frames['run/s/7']).toEqual([7 * 32, 4 * 48]);
   });
 });
 

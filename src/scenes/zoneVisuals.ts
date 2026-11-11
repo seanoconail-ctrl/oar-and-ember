@@ -62,11 +62,24 @@ type Kind =
   | 'surf'
   | 'smoke'
   | 'spark'
-  | 'moth';
+  | 'moth'
+  /** Stage 9: a drop of blood in flight (fx_gore spray), and a hit's flash. */
+  | 'blood'
+  | 'flash';
 /** The camp fire's particles, drawn from fx_fire (Stage 7). */
 const FIRE_FX: ReadonlySet<Kind> = new Set(['smoke', 'spark', 'moth']);
 /** Particles drawn from fx_people (the people's own effects); the rest are the place's (fx_strand). */
 const PEOPLE_FX: ReadonlySet<Kind> = new Set(['dust', 'splash', 'ripple', 'drip', 'surf']);
+
+/** A blood stain on the ground (Book 7 section 12): drops, or a drag smear. */
+interface Stain {
+  readonly frame: string;
+  readonly x: number;
+  readonly y: number;
+  age: number;
+}
+/** Stains kept at once; the oldest fade first. */
+const MAX_STAINS = 60;
 
 interface Particle {
   kind: Kind;
@@ -186,7 +199,15 @@ export class ZoneVisuals {
   seconds = 0;
   /** The smoothed camera offset from the steerer's feet (sub-pixel), its velocity, and the drawn one. */
   #off = { x: 0, y: 0 };
-  #offV = { x: 0, y: 0 };
+  /** The camera's smoothed point in the world (sub-pixel) and its velocity. */
+  #cam = { x: 0, y: 0 };
+  #camV = { x: 0, y: 0 };
+  /** The keyboard's direction-of-travel lead, eased towards the heading. */
+  #kbLead = { x: 0, y: 0 };
+  /** The view's corner last drawn, in world pixels, so a change never steps against its motion. */
+  #view = { x: 0, y: 0 };
+  /** The direction the view last stepped on each axis (-1, 0 or 1). */
+  #viewStep = { x: 0, y: 0 };
   #drawn = { x: Math.round(BASE.x), y: Math.round(BASE.y) };
   #started = false;
   #shake = 0;
@@ -203,6 +224,11 @@ export class ZoneVisuals {
   #wetTo = 0;
   #prints: Print[] = [];
   #particles: Particle[] = [];
+  #stains: Stain[] = [];
+  /** Stage 9: the gore setting (Book 7 section 12): 0 off, 1 low, 2 full. Presentation only. */
+  gore: 0 | 1 | 2 = 2;
+  /** How long stains last at gore low and full, in seconds (assets/art/render.json). */
+  stainSeconds = { low: 60, full: 600 };
   #last = { x: 0, y: 0 };
   #idleSince = 0;
   #spawnN = 0;
@@ -275,6 +301,49 @@ export class ZoneVisuals {
           life: 0.35,
         });
     }
+  }
+
+  /**
+   * A blow landed (Book 7 section 12): 4 to 10 drops of blood fly from it in the blow's direction
+   * (more for a heavy blow), falling to leave drops on the ground; with the gore setting low fewer
+   * and darker, off only a flash; the camera shakes briefly.
+   */
+  blood(x: number, y: number, dx: number, dy: number, heavy: boolean): void {
+    const l = Math.hypot(dx, dy) || 1;
+    const ux = dx / l;
+    const uy = dy / l;
+    this.shake(heavy ? 2 : 1);
+    if (this.gore === 0) {
+      this.#emit({ kind: 'flash', x, y, vx: 0, vy: 0, z: 22, vz: 0, life: 0.15 });
+      return;
+    }
+    const n = this.gore === 1 ? (heavy ? 4 : 2) : heavy ? 10 : 4 + Math.floor(this.#rand() * 3);
+    for (let k = 0; k < n; k++) {
+      const spread = (this.#rand() - 0.5) * 1.2;
+      const speed = 30 + this.#rand() * (heavy ? 60 : 35);
+      this.#emit({
+        kind: 'blood',
+        x,
+        y: y + (this.#rand() - 0.5) * 3,
+        vx: (ux - uy * spread) * speed,
+        vy: (uy + ux * spread) * speed * 0.6,
+        z: 18 + this.#rand() * 10,
+        vz: 10 + this.#rand() * 20,
+        life: 0.5,
+      });
+    }
+  }
+
+  /** A drag trail behind someone carried (Book 7 section 12: smears and drag trails). */
+  smear(x: number, y: number): void {
+    if (this.gore === 0) return;
+    if (this.#stains.some((s) => Math.hypot(s.x - x, s.y - y) < 10)) return;
+    this.#stain(`smear/-/${Math.floor(this.#rand() * 2)}`, x, y);
+  }
+
+  #stain(frame: string, x: number, y: number): void {
+    if (this.#stains.length >= MAX_STAINS) this.#stains.shift();
+    this.#stains.push({ frame, x, y, age: 0 });
   }
 
   /** A camera shake, e.g. on a hit (Book 7 section 14, camera feel). Ignored with reduced motion. */
@@ -564,9 +633,20 @@ export class ZoneVisuals {
       q.y += q.vy * dt;
       q.z += q.vz * dt;
       if (q.kind === 'spray') q.vz -= 70 * dt;
+      if (q.kind === 'blood') {
+        q.vz -= 160 * dt;
+        if (q.z <= 0 && q.age < q.life) {
+          // Fallen: a few drops on the ground where it landed.
+          q.age = q.life;
+          if (this.#rand() < 0.45) this.#stain(`drops/-/${Math.floor(this.#rand() * 4)}`, q.x, q.y);
+        }
+      }
       if (q.z < 0) q.z = 0;
     }
     this.#particles = this.#particles.filter((q) => q.age < q.life);
+    const stainLife = this.gore === 2 ? this.stainSeconds.full : this.stainSeconds.low;
+    for (const st of this.#stains) st.age += dt;
+    this.#stains = this.#stains.filter((st) => st.age < stainLife && this.gore > 0);
     for (const pr of this.#prints) pr.age += dt;
     // Prints fade; wet prints go when the water reaches them.
     this.#prints = this.#prints.filter(
@@ -590,6 +670,23 @@ export class ZoneVisuals {
     let lx = 0;
     let ly = 0;
     const lead = input.lead ?? { kind: 'travel' };
+    // The keyboard's lead in the direction of travel, eased so a turn swings it round and a stop
+    // lets it fade, rather than flipping the goal from one side to the other in a frame.
+    let kx = 0;
+    let ky = 0;
+    if (lead.kind === 'travel' && p.moving && this.#started && dt > 0) {
+      const vx = (p.x - this.#last.x) / dt;
+      const vy = (p.y - this.#last.y) / dt;
+      const d = Math.hypot(vx, vy);
+      if (d > 1) {
+        const k = Math.min(cap, c.lookAheadScale * d) / d;
+        kx = vx * k;
+        ky = vy * k;
+      }
+    }
+    const ease = 1 - Math.pow(0.5, dt / Math.max(1e-3, c.keyboardLeadHalfLife));
+    this.#kbLead.x += (kx - this.#kbLead.x) * ease;
+    this.#kbLead.y += (ky - this.#kbLead.y) * ease;
     if (lead.kind === 'cursor') {
       // From the steerer's body, not the feet (the cursor rests on what it points at).
       const dx = lead.x - p.x;
@@ -607,36 +704,59 @@ export class ZoneVisuals {
         lx = (lead.x / Math.max(1, d)) * cap;
         ly = (lead.y / Math.max(1, d)) * cap;
       }
-    } else if (p.moving && this.#started && dt > 0) {
-      // Keyboard only: lead in the direction of travel, as far as a second's travel scaled.
-      const vx = (p.x - this.#last.x) / dt;
-      const vy = (p.y - this.#last.y) / dt;
-      const d = Math.hypot(vx, vy);
-      if (d > 1) {
-        const k = Math.min(cap, c.lookAheadScale * d) / d;
-        lx = vx * k;
-        ly = vy * k;
-      }
+    } else {
+      lx = this.#kbLead.x;
+      ly = this.#kbLead.y;
     }
-    const goal = { x: BASE.x + lx, y: BASE.y + ly };
-    if (!this.#started) {
-      this.#off = { ...goal };
-      this.#offV = { x: 0, y: 0 };
-      this.#drawn = { x: Math.round(goal.x), y: Math.round(goal.y) };
+    // The point the camera wants, in the world: the steerer plus the framing and the lead.
+    const goal = { x: p.x + BASE.x + lx, y: p.y + BASE.y + ly };
+    // A jump of more than half a screen in one frame is a new zone or a placement: cut to it.
+    const jumped =
+      Math.abs(p.x - this.#last.x) > LOGICAL_WIDTH / 2 ||
+      Math.abs(p.y - this.#last.y) > LOGICAL_HEIGHT / 2;
+    if (!this.#started || jumped) {
+      this.#kbLead = { x: 0, y: 0 };
+      this.#cam = { ...goal };
+      this.#camV = { x: 0, y: 0 };
+      this.#off = { x: goal.x - p.x, y: goal.y - p.y };
+      this.#drawn = { x: Math.round(this.#off.x), y: Math.round(this.#off.y) };
+      this.#view = this.#viewCorner(p);
       this.#started = true;
       return;
     }
-    // A critically damped spring towards the goal, integrated exactly over dt.
     const omega = HALF_LIFE_OMEGA / Math.max(1e-3, c.cameraHalfLife);
+    // A critically damped spring moves the camera's point in the world towards the goal,
+    // integrated exactly over dt. Springing the world point (not the offset from the steerer)
+    // means a turn decelerates the view and carries it round, with no jolt when the feet reverse.
     const decay = Math.exp(-omega * dt);
     for (const axis of ['x', 'y'] as const) {
-      const e = this.#off[axis] - goal[axis];
-      const temp = (this.#offV[axis] + omega * e) * dt;
-      this.#offV[axis] = (this.#offV[axis] - omega * temp) * decay;
-      this.#off[axis] = goal[axis] + (e + temp) * decay;
-      if (Math.abs(this.#off[axis] - this.#drawn[axis]) > 0.5 + c.cameraSnap)
-        this.#drawn[axis] = Math.round(this.#off[axis]);
+      const e = this.#cam[axis] - goal[axis];
+      const temp = (this.#camV[axis] + omega * e) * dt;
+      this.#camV[axis] = (this.#camV[axis] - omega * temp) * decay;
+      this.#cam[axis] = goal[axis] + (e + temp) * decay;
+      const feet = Math.round(axis === 'x' ? p.x : p.y);
+      this.#off[axis] = this.#cam[axis] - feet;
+      // Drawn in whole pixels. While the view is within the snap of where the camera wants it, it
+      // keeps its offset from the steerer's pixel, so a steady walk never jitters the steerer; past
+      // that, it is the camera's own pixel, which moves the way the camera moves. A step against
+      // the camera's motion (or back the way the view last stepped) waits while it is within a
+      // pixel and a half, so a turn eases round without wobbling.
+      const want = this.#cam[axis];
+      const locked = feet + this.#drawn[axis];
+      let view = Math.abs(locked - want) <= 0.5 + c.cameraSnap ? locked : Math.round(want);
+      const step = Math.sign(view - this.#view[axis]);
+      const against =
+        step !== 0 && (step !== Math.sign(this.#camV[axis]) || step === -this.#viewStep[axis]);
+      if (against && Math.abs(this.#view[axis] - want) <= 1.5 + c.cameraSnap)
+        view = this.#view[axis];
+      this.#drawn[axis] = view - feet;
     }
+    const view = this.#viewCorner(p);
+    for (const axis of ['x', 'y'] as const) {
+      const moved = Math.sign(view[axis] - this.#view[axis]);
+      if (moved !== 0) this.#viewStep[axis] = moved;
+    }
+    this.#view = view;
   }
 
   #viewCorner(p: { x: number; y: number }): { x: number; y: number } {
@@ -843,7 +963,22 @@ export class ZoneVisuals {
         layer: 'decal',
       });
     }
+    for (const st of this.#stains)
+      marks.push({ sheet: 'fx_gore', frame: st.frame, x: st.x, y: st.y, layer: 'decal' });
     for (const q of this.#particles) {
+      if (q.kind === 'blood' || q.kind === 'flash') {
+        const frames = q.kind === 'blood' ? 3 : 3;
+        const i = Math.min(frames - 1, Math.floor((q.age / q.life) * frames));
+        marks.push({
+          sheet: 'fx_gore',
+          frame: `${q.kind === 'blood' ? 'spray' : 'flash'}/-/${i}`,
+          x: q.x,
+          y: q.y - q.z,
+          layer: 'actor',
+          sort: q.y + 0.6,
+        });
+        continue;
+      }
       const people = PEOPLE_FX.has(q.kind);
       const fireFx = FIRE_FX.has(q.kind);
       const frames = people

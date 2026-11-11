@@ -360,7 +360,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |
 | heavySwing | A released charge swings with the weapon's windup before its active ticks |
 | chainWindow | A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped |
-| shoveTiming | Windup 6 ticks, active 3, recovery 12; reach 1 tile |
+| shoveTiming | Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles |
 | dodgeWay | With no direction held, a dodge goes straight back from the facing |
 | guardBreakHit | A level-2 charge that meets a raised shield breaks the guard and lands |
 | blockNeedsShield | Only a shield blocks; without one the block key does nothing and says so |
@@ -454,6 +454,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 |---|---|
 | sightDay | 15 |
 | sightDusk | 9 |
+| duskSpan | 60 minutes either side of first light and of dark count as dusk (Stage 9, decision S9-23) |
 | sightNightUnlit | 5 |
 | sightInLight | Full day range inside a light radius |
 | fogFactor | 0.5 |
@@ -502,6 +503,11 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | crewProtect | 4 tiles: a protector fights anyone who comes this near the one it protects |
 | fallBackFrom | 3 tiles: an archer whose target comes nearer than this backs away before it shoots again |
 | orderLapse | 60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day |
+| closeIn | 0.85: a fighter closes to this share of its reach before it strikes |
+| runAt | 3 tiles: a fighter further than this from its target runs to it |
+| crewRunAt | 5 tiles: a follower further than this behind the steerer runs |
+| guardHeld | 40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold |
+| fledAt | 9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is |
 
 ### Occupied Skarvholm garrison (late game)
 | Post | Strength | Notes |
@@ -1354,7 +1360,8 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | lookAheadMax | 3 tiles |
 | lookAheadAiming | 5 tiles while aiming a bow or thrown spear |
 | lookAheadDeadZone | 0.5 tiles: no look-ahead while the cursor is this close |
-| cameraHalfLife | 0.18 s, critically damped, in sub-pixel space |
+| cameraHalfLife | 0.18 s, critically damped, in sub-pixel space; the spring moves the camera's point in the world, not its offset from the steerer, so a turn or a stop eases out and back in rather than jerking (decision PT-0) |
+| keyboardLeadHalfLife | 0.3 s: without a pointer, the lead in the direction of travel swings round and fades out over this half-life when the steerer turns or stops (decision PT-0) |
 | cameraSnap | The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels |
 
 ### Starting weapons
