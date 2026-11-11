@@ -73,7 +73,7 @@ export function captionProblems(key: string, entry: StringEntry): string[] {
   const info = entry.tags.includes('INFO');
   if (speech === info) return ['a caption string must be tagged SPEECH or INFO (not both)'];
   const problems: string[] = [];
-  if (speech && !entry.text.startsWith("{speaker}: "))
+  if (speech && !entry.text.startsWith('{speaker}: '))
     problems.push('a SPEECH caption must start with "{speaker}: "');
   if (info) {
     if (entry.text.includes('{speaker}')) problems.push('an INFO caption has no speaker');
