@@ -29,7 +29,7 @@ DOOR_H = 48              # clear height 48 px under the lintel (at least 46)
 SUN = (1.3, -0.35)       # cast shadow per pixel of height: long and low towards the east-north-east
 WIND = 1.0               # from the west
 GUST_PERIOD = 320
-FIRE_S0 = (232, 196)
+FIRE_S0 = (214, 194)
 HEARTH_S1 = (238, 204)
 
 # The ruined wall head: height above the ground by bearing (degrees, screen: 90 is south).
@@ -95,24 +95,38 @@ def solid(x, y, z, sail=None):
 
 
 # ------------------------------------------------------------------ the sail sheets
+LEAN_X0, LEAN_X1, LEAN_Y = 146.0, 210.0, 152.0
+
+
 def leanto_s0(x, y, z):
-    """S0: the torn sail as a lean-to facing the fire: its foot weighted with stones at the
-    west wall's foot, its front edge tied along a broken oar on two forked sticks."""
-    x0, x1 = 134.0, 180.0
-    zs = 30 * (x - x0) / (x1 - x0)
-    ragged = 1.5 * np.sin(x / 3.1) + 1.2 * np.sin(x / 1.7 + 1)
-    inside = (x > x0) & (x < x1 + 0.5 * np.sin(y / 2.3)) & (y > 116 + np.sin(x / 5) * 1.5) & (y < 168 + ragged)
+    """S0: the torn sail as a lean-to against the north-west inner wall, facing the fire: tied
+    to the wall face 34 px up, sloping down to a broken oar laid as a ridge on two forked sticks
+    26 px up, open at the front."""
+    back = CY - np.sqrt(np.maximum(0, RIN ** 2 - (x - CX) ** 2)) + 1
+    f = np.clip((y - back) / np.maximum(LEAN_Y - back, 1), 0, 1)
+    zs = 34 - 8 * f - 1.8 * np.sin(np.pi * np.clip((x - LEAN_X0) / (LEAN_X1 - LEAN_X0), 0, 1)) * np.sin(np.pi * f)
+    ragged = 1.4 * np.sin(x / 2.9) + 1.0 * np.sin(x / 1.6 + 1)
+    torn = (x > 192) & (y > LEAN_Y - 9 + 3 * np.sin(x / 4))          # a corner torn away
+    inside = (x > LEAN_X0 + np.sin(y / 3) * 1.2) & (x < LEAN_X1) & (y > back - 1) & \
+        (y < LEAN_Y + ragged) & ~torn
     return inside & (np.abs(z - zs) < 1.2)
 
 
 def roof_s1(x, y, z):
-    """S1: the sail stretched across the north of the court from the wall head to a ridge pole
-    on two driftwood posts; its front eave stands 46 px up (Book 7: eaves clear heads)."""
-    y0, y1 = 98.0, 168.0
-    f = np.clip((y - y0) / (y1 - y0), 0, 1)
-    sag = 3.5 * np.sin(np.pi * np.clip((x - 152) / 172, 0, 1))
-    zs = 60 - 14 * f - sag * (1 - abs(2 * f - 1))
-    inside = (x > 150) & (x < 324) & (y > y0 - 6) & (y < y1 + 1.5 * np.sin(x / 4.3))
+    """S1: the sail stretched across the north of the court, lapped over the wall head and tied
+    down there, its front edge on a ridge pole between two driftwood posts and sagging between
+    the ties; the eave stands 46 px up (Book 7: eaves clear heads)."""
+    y1 = 166.0
+    r = np.hypot(x - CX, y - CY)
+    # The front edge scallops between the posts and the tie points.
+    xf = np.clip((x - 166) / 142, 0, 1)
+    scallop = 3.0 * np.abs(np.sin(np.pi * xf * 3))
+    front = y1 - scallop + 1.2 * np.sin(x / 3.7)
+    back = CY - np.sqrt(np.maximum(0, (RIN + 7) ** 2 - (x - CX) ** 2))
+    f = np.clip((y - (CY - RIN)) / (y1 - (CY - RIN)), 0, 1)
+    sag = 3.0 * np.sin(np.pi * np.clip((x - 150) / 172, 0, 1)) * np.sin(np.pi * f)
+    zs = 61 - 15 * f - sag
+    inside = (y > back) & (y < front) & (r < RIN + 9)
     return inside & (np.abs(z - zs) < 1.3)
 
 
@@ -163,7 +177,7 @@ def surface(stage, hz):
     n[ps] = np.stack([-np.sign(sx[ps] - CX), np.zeros(ps.sum()), np.zeros(ps.sum())], -1)
     if stage == 's0':
         sl = kind == 5
-        n[sl] = np.array([-0.55, 0.0, 0.84])       # the lean-to's sheet slopes down to the west wall
+        n[sl] = np.array([0.0, 0.2, 0.98])         # the lean-to's sheet slopes down to the south
     else:
         sl = kind == 5
         n[sl] = np.array([0.0, 0.2, 0.98])
@@ -337,16 +351,25 @@ def paint_static(S, stage, ground, sunlit, night=False):
     if m.any():
         x, y = S['x'][m], S['y'][m]
         if stage == 's0':
-            seam = (np.abs(((y - 116) % 11)) < 1.0)
-            fold = 0.9 * np.sin(y / 3.4 + np.sin(x / 9)) + 0.5 * np.sin(y / 1.9)
-            base = 2.7 + fold * 0.6 + (value_noise(H, W, 6, 404)[m] - 0.5) * 0.9 - (x < 142) * 0.8
+            seam = (np.abs(((x - LEAN_X0) % 13)) < 1.0) & (np.sin(y / 2.1) > -0.7)
+            fold = 0.9 * np.sin(x / 3.6 + np.sin(y / 7)) + 0.5 * np.sin(x / 1.9 + y / 9)
+            back = CY - np.sqrt(np.maximum(0, RIN ** 2 - (x - CX) ** 2)) + 1
+            stain = (y - back) < 4
+            base = 2.1 + fold * 0.75 + (value_noise(H, W, 6, 404)[m] - 0.5) * 1.0 - stain * 1.0
         else:
-            seam = (np.abs(((y - 98) % 12)) < 1.0)
-            fold = 0.7 * np.sin(x / 5.5 + np.sin(y / 11) * 2)
-            base = 3.3 + fold * 0.6 + (value_noise(H, W, 6, 404)[m] - 0.5) * 0.8
+            seam = (np.abs(((y - 98) % 14)) < 1.0) & (np.sin(x / 2.3) > -0.6)
+            # Creases run from the posts and the ties towards the slack middle.
+            cre = np.sin(np.arctan2(y - 166, x - 166) * 9) * np.exp(-np.hypot(x - 166, y - 166) / 60) + \
+                np.sin(np.arctan2(y - 166, x - 308) * 9) * np.exp(-np.hypot(x - 308, y - 166) / 60)
+            fold = 0.6 * np.sin(x / 5.5 + np.sin(y / 11) * 2) + cre * 0.9
+            back = CY - np.sqrt(np.maximum(0, (RIN + 7) ** 2 - (x - CX) ** 2))
+            hem = (y - back) < 3
+            tie = ((y - back) < 6) & (((x - CX) % 17) < 1.5)
+            base = 3.0 + fold * 0.6 + (value_noise(H, W, 6, 404)[m] - 0.5) * 0.8 - hem * 1.0
+            base = np.where(tie, 1.2, base)
         if not night:
             base += shade_steps(S['n'][m], Ld, 1.6, 0.2)
-        base -= seam * 1.2
+        base -= seam * (0.7 if stage == 's1' else 1.2)
         col = ramp_lookup('wool', base)
         patch = (np.abs(x - (198 if stage == 's1' else 152)) < 11) & (np.abs(y - (124 if stage == 's1' else 140)) < 7)
         col[patch] = ramp_lookup('wool', base[patch] - 1.6) * 0.9 + C('madder', 2) * 0.1
@@ -429,7 +452,7 @@ class Broch:
         wobble = (fbm(H, W, 14, 303) - 0.5) * 18
         if stage == 's0':
             fx_, fy_ = FIRE_S0
-            clear = (np.hypot(xs - fx_ + 10, (ys - fy_ + 12) * 1.3) + wobble < 50) & court
+            clear = (np.hypot(xs - fx_ + 2, (ys - fy_ + 18) * 1.25) + wobble < 52) & court
         else:
             fx_, fy_ = HEARTH_S1
             clear = (np.hypot((xs - CX) * 0.95, (ys - CY + 30) * 1.1) + wobble < 98) & court
@@ -439,6 +462,18 @@ class Broch:
         earth = ramp_lookup('earth', 3.3 + np.floor((clump - 0.5) * 3.2) * 0.5 + (tone - 0.5) * 0.6)
         sandy = ramp_lookup('earth', 4.4 + 0 * clump)
         tread = np.where(((value_noise(H, W, 4, 304) > 0.8) & (clump > 0.55))[..., None], sandy, earth)
+        if stage == 's1':
+            # The old broch's flagged floor, uncovered in places where the turf was cleared.
+            vn = value_noise(H, W, 7, 320)
+            vn2 = value_noise(H, W, 9, 321)
+            cell = np.floor(xs / 9 + np.sin(ys / 7) * 0.6) + np.floor(ys / 7 + np.sin(xs / 9) * 0.5) * 57
+            ctone = np.array([hash01(int(c), 3) for c in cell.ravel()], np.float32).reshape(H, W)
+            seam = ((xs / 9 + np.sin(ys / 7) * 0.6) % 1 < 0.13) | ((ys / 7 + np.sin(xs / 9) * 0.5) % 1 < 0.16)
+            flags = (fbm(H, W, 18, 322) > 0.56)
+            flag_col = ramp_lookup('stone', 3.6 + ctone * 1.6 - seam * 1.8)
+            tread = np.where(flags[..., None], flag_col, tread)
+            mott = (vn > 0.62)[..., None]
+            tread = np.where(mott & ~flags[..., None], ramp_lookup('earth', 2.6 + vn2), tread)
         edge_mix = np.clip((fbm(H, W, 6, 307) - 0.3) * 2.2, 0, 1)[..., None]
         tread = tread * (0.78 + 0.22 * edge_mix) + rough * (0.22 - 0.22 * edge_mix)
         g[clear] = tread[clear]
@@ -479,7 +514,8 @@ class Broch:
             hx, hy = HEARTH_S1
             ash = (np.hypot(xs - hx, (ys - hy) * 1.5) < 26 + wobble * 0.4) & court
             g[ash] = g[ash] * 0.55 + ramp_lookup('smoke', 2 + detail[ash] * 2) * 0.45
-            bed = (ys > 116) & (ys < 160) & (xs > 162) & (xs < 312) & court
+            bedn = (fbm(H, W, 8, 323) - 0.5) * 16
+            bed = (np.hypot((xs - 236) / 1.0, (ys - 128) * 2.6) + bedn < 82) & court
             g[bed] = ramp_lookup('bracken', 2.3 + (value_noise(H, W, 2, 305)[bed] - 0.5) * 2.4)
         else:
             fx_, fy_ = FIRE_S0
@@ -498,8 +534,9 @@ class Broch:
         self.mound = mound
         if stage == 's0':
             # The floor under the lean-to's sheet: deep shade, the mouth reads as an opening.
-            under = (xs > 134) & (xs < 181) & (ys > 116) & (ys < 169)
-            k = np.clip((181 - xs) / 47, 0, 1) * 0.35 + 0.3
+            backy = CY - np.sqrt(np.maximum(0, RIN ** 2 - (xs - CX) ** 2))
+            under = (xs > LEAN_X0) & (xs < LEAN_X1) & (ys > backy) & (ys < LEAN_Y + 1)
+            k = np.clip((LEAN_Y - ys) / 40, 0, 1) * 0.35 + 0.25
             g[under] = g[under] * (1 - k[under][:, None])
         # The passage floor under the lintel: worn earth and a threshold slab, in deep shade.
         pas = (np.abs(xs - CX) < DOOR_HALF) & (ys > CY + RIN - 3) & (ys < CY + ROUT + 2)
@@ -569,24 +606,25 @@ class Broch:
             blob(s, 4.5, 3.5, 3.4 + hash01(k, 3) * 0.8, 2.5, 'stone', 5 + (k % 3 == 0))
             s.outline()
             self.add(s, fx_ + math.cos(a) * 11, fy_ + math.sin(a) * 6 + 2, 2, 'stone')
-        # The broken oar that holds up the lean-to, and stones weighting the sheet's foot.
-        for (px, py) in ((180, 117), (180, 168)):
-            self.add(_post(30, fork=True), px, py, 30, 'post')
-        self.ridge = ((180, 117, 31), (180, 168, 31))
-        for k in range(5):
-            self.add(_rock(136, 121 + k * 11, 3), 137 + (k % 2), 121 + k * 11, 3, 'rock')
-        # Salvage in heaps against the north wall: a sea chest, a cask, rope, planks, net.
-        self.add(_chest(), 214, 128, 10, 'wood')
-        self.add(st.barrel(), 236, 124, 8, 'wood')
-        self.add(st.rope_coil(), 252, 131, 2, 'wood')
-        self.add(st.planks(r), 270, 126, 2, 'wood')
-        self.add(st.net_scrap(), 290, 134, 1, 'wood')
-        self.add(_oar(40), 300, 118, 2, 'wood')
+        # The forked sticks that hold the broken oar along the lean-to's front, stones on the
+        # sheet's skirts.
+        for px in (LEAN_X0 + 6, LEAN_X1 - 4):
+            self.add(_post(26, fork=True), px, LEAN_Y + 1, 26, 'post')
+        self.ridge = ((LEAN_X0 + 2, LEAN_Y + 1, 27), (LEAN_X1 + 2, LEAN_Y + 1, 27))
+        for k in range(3):
+            self.add(_rock(LEAN_X0 - 2, 128 + k * 10, 3), LEAN_X0 - 1, 128 + k * 10, 3, 'rock')
+        # Salvage in heaps against the east wall: a sea chest, a cask, rope, planks, net, an oar.
+        self.add(st.planks(r), 290, 136, 2, 'wood')
+        self.add(_oar(40), 262, 126, 2, 'wood')
+        self.add(_chest(), 300, 156, 10, 'wood')
+        self.add(st.barrel(), 320, 174, 8, 'wood')
+        self.add(st.rope_coil(), 304, 180, 2, 'wood')
+        self.add(st.net_scrap(), 326, 196, 1, 'wood')
         # The driftwood gathered for the fire, in a loose heap.
-        self.add(_wood_heap(r, 26, 3), 272, 206, 4, 'wood')
-        self.add(st.driftwood_log(r, 30), 192, 226, 4, 'wood')
-        self.add(_bag(), 186, 196, 6, 'wood')
-        self.bedroll = (160, 163)        # the steerer sleeps under the lean-to, feet to the fire
+        self.add(_wood_heap(r, 26, 3), 264, 224, 4, 'wood')
+        self.add(st.driftwood_log(r, 30), 176, 228, 4, 'wood')
+        self.add(_bag(), 222, 156, 6, 'wood')
+        self.bedroll = (182, 148)        # the steerer sleeps in the lean-to's mouth, by the fire
 
     def _camp_s1(self):
         r = self.r
@@ -603,7 +641,7 @@ class Broch:
         # The roof's posts and ridge pole, and the drying lines with fish.
         for (px, py) in POSTS_S1:
             self.add(_post(48), px, py, 48, 'post')
-        self.lines = [((166, 168, 40), (308, 168, 40)), ((308, 168, 38), (342, 196, 30))]
+        self.lines = [((308, 168, 38), (342, 198, 30)), ((166, 168, 38), (132, 196, 30))]
         self.fish = []
         for (a, b) in self.lines:
             n = int(math.hypot(b[0] - a[0], b[1] - a[1]) / 13)
@@ -635,7 +673,7 @@ class Broch:
         tussock = fbm(H, W, 20, 311)
         drift = fbm(H, W, 34, 312)
         rr = np.hypot(self.xs - CX, self.ys - CY)
-        for _ in range(16000):
+        for _ in range(26000):
             x, y = r.uniform(0, W), r.uniform(0, H + 30)
             xi, yi = int(x), min(H - 1, int(y))
             rad = math.hypot(x - CX, y - CY)
@@ -659,8 +697,8 @@ class Broch:
             elif d > 0.62 and r.random() < (d - 0.62) * 3.5 and not inside:
                 k = ('thrift', 'clover', 'trefoil')[int(hash01(xi // 40, yi // 40, 9) * 3)]
                 self.tufts.append((k, x, y, r.uniform(3, 5), r.random(), shelter, 0))
-            elif r.random() < 0.2:
-                self.tufts.append(('grass', x, y, r.uniform(3, 5), r.random(), shelter, 0))
+            elif r.random() < 0.34:
+                self.tufts.append(('grass', x, y, r.uniform(3, 6), r.random(), shelter, 0))
         # Grass and thrift on the wall head, in the full wind.
         top = np.argwhere(S['kind'] == 1)
         for (sy, sx) in top[r.choice(len(top), 420, replace=False)]:
@@ -689,9 +727,10 @@ class Broch:
 
 
 # ------------------------------------------------------------------ prop builders
-def _rock(x, y, sz, mossy=0.1):
+def _rock(x, y, sz, mossy=0.22):
     spr = Sprite(int(sz * 2.8) + 4, int(sz * 2.2) + 4)
-    stone(spr, spr.w / 2, spr.h / 2, sz, sz * 0.72, 'stone', 5, seed=int(x * 13 + y * 7))
+    flat = 0.5 + 0.25 * hash01(int(x), int(y), 1)
+    stone(spr, spr.w / 2, spr.h / 2, sz, sz * flat, 'stone', 4 + (hash01(int(x), 2) < 0.5), seed=int(x * 13 + y * 7))
     for yy, xx in zip(*np.nonzero(spr.mask)):
         if yy < spr.h * 0.42 and hash01(xx, yy, int(x)) < mossy:
             spr.rgb[yy, xx] = C('moss', 5)
@@ -735,10 +774,17 @@ def _chest():
 
 
 def _bag():
-    spr = Sprite(12, 12, 6, 10)
-    blob(spr, 6, 6.5, 4.2, 4.0, 'wool', 3)
-    spr.px(6, 2, C('earth', 3))
-    spr.px(5, 2, C('earth', 2))
+    """A wet sack of salvage, tied at the neck, slumped."""
+    spr = Sprite(14, 13, 7, 11)
+    for y in range(4, 12):
+        for x in range(1, 13):
+            dx, dy = (x - 6.5) / (5.6 - (11 - y) * 0.22), (y - 8) / 3.6
+            if dx * dx + dy * dy < 1:
+                spr.px(x, y, C('earth', 4 - dy * 1.2 - dx * 0.8 + (hash01(x, y, 4) < 0.15)))
+    for (x, y) in [(6, 3), (7, 3), (6, 2), (8, 2), (5, 2)]:
+        spr.px(x, y, C('earth', 3 + (y == 2)))
+    spr.px(6, 4, C('wool', 2))
+    spr.px(7, 4, C('wool', 2))
     return spr.outline()
 
 
@@ -820,18 +866,23 @@ def _wood_heap(r, n, seed):
 
 
 def _woodpile(r):
-    """Driftwood split and stacked in rows against the wall, the cut ends showing."""
-    spr = Sprite(36, 30, 18, 27)
-    for row in range(5):
-        y = 24 - row * 4
-        for k in range(7 - row // 2):
-            x = 4 + k * 4 + (row % 2) * 2
-            for dy in range(3):
-                for dx in range(4):
-                    end = dx == 0
-                    col = C('driftwood', 6 - dy) if not end else C('bracken', 3 - dy * 0.5)
-                    spr.px(x + dx, y + dy, col)
-            spr.px(x + 1, y + 1, C('bracken', 4) if hash01(row, k, 5) < 0.5 else C('driftwood', 6))
+    """Driftwood laid up against the wall in a long pile: silvered poles of uneven length seen
+    side-on, crooked, the lit ends showing paler wood where they were broken to length."""
+    rr = np.random.default_rng(41)
+    spr = Sprite(40, 26, 20, 23)
+    for row in range(6):
+        y = 21 - row * 3 - (row > 3)
+        for k in range(2 if row < 4 else 1):
+            x0 = 3 + rr.integers(0, 6) + k * 16 + row
+            ln = rr.integers(12, 20) - row
+            th = 2 + (rr.random() < 0.4)
+            bend = rr.uniform(-1, 1)
+            for j in range(ln):
+                yy = y + int(round(bend * math.sin(math.pi * j / ln)))
+                for d in range(th):
+                    step = 5 - d * 1.5 + (j == 0) * 1.5 - (hash01(j // 3, row, k) < 0.2)
+                    spr.px(x0 + j, yy + d, C('driftwood', step))
+            spr.px(x0, y, C('wool', 5))            # the broken, paler end
     return spr.outline()
 
 

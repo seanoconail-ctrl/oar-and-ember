@@ -90,39 +90,54 @@ def sheep_lying(t, phase):
     return s.outline()
 
 
-def sleeper(cloak_rgb, hem_rgb, head, breath):
-    """The steerer asleep on their side, rolled in the dark wool cloak with its madder hem,
-    the head on a fold of sail: the approved head and colours laid down (a mockup pose)."""
-    s = Sprite(40, 14, 20, 12)
+def sleeper(breath):
+    """The steerer asleep on their side, rolled in the dark wool cloak with its madder hem and
+    brooch, head on a roll of sailcloth, face to the fire. Drawn from the approved sprite's own
+    colours (hair_brown, skin_light, the cloak's driftwood ramp and madder): a mockup pose; the
+    game's sleep state is drawn with the Stage 7 work."""
+    s = Sprite(40, 15, 20, 13)
     lift = 1 if breath else 0
-    for x in range(10, 36):
-        f = (x - 10) / 26
-        top = 5 - lift * (x < 26) + (f > 0.8) * (f - 0.8) * 10
-        for y in range(int(top), 12):
-            shade = 4 - (y - top) * 0.45 + (y == int(top)) * 0.6
-            s.px(x, y, cloak_rgb[int(max(0, min(len(cloak_rgb) - 1, shade)))])
-        s.px(x, 11, hem_rgb[1] if x % 7 else hem_rgb[0])
-    for x in range(12, 34, 5):
-        s.px(x, int(5 - lift) + 2, cloak_rgb[1])
-    # The head, from the steerer's own sprite, turned to lie on its side.
-    hh, hw = head.shape[:2]
-    for y in range(hh):
-        for x in range(hw):
-            if head[y, x, 3] > 0:
-                s.px(2 + y, 2 + (hw - 1 - x) // 1 + 0, head[y, x, :3])
+    # The roll of sailcloth under the head.
+    for x in range(1, 10):
+        for y in range(8, 13):
+            if ((x - 5) / 4.5) ** 2 + ((y - 10.5) / 2.6) ** 2 < 1:
+                s.px(x, y, C('wool', 4 - (y > 10) + (y == 8)))
+    # The body under the cloak: shoulder, waist, hip and the legs drawn up a little.
+    prof = []
+    for x in range(10, 38):
+        f = (x - 10) / 28
+        hgt = 7.2 - 1.6 * math.sin(f * 7.5) * (f < 0.5) - f * 2.2 + 1.2 * math.exp(-((f - 0.48) / 0.12) ** 2)
+        if f > 0.9:
+            hgt -= (f - 0.9) * 26
+        prof.append((x, hgt + lift * (f < 0.6)))
+    for x, hgt in prof:
+        top = 12 - hgt
+        for y in range(int(round(top)), 13):
+            d = (y - top) / max(1, hgt)
+            step = 4 - d * 3.2 + (y == int(round(top))) * 0.6 - (x > 33) * 0.6
+            s.px(x, y, C('driftwood', step))
+        s.px(x, 12, C('madder', 2 + (x % 6 == 0)))
+        if x % 9 == 4:
+            s.px(x, int(round(top)) + 2, C('driftwood', 1))       # folds
+    s.px(13, 7 - lift, C('trefoil', 4))                             # the cloak's brooch
+    s.px(14, 7 - lift, C('trefoil', 3))
+    # The head: brown hair, the face turned to the fire with closed eyes.
+    head = [
+        '..hhhh..',
+        '.hhHHhh.',
+        'hhHHsSSh',
+        'hhHsSSSs',
+        'hhssSeSs',
+        '.hssSSs.',
+        '..ssss..',
+    ]
+    for y, row in enumerate(head):
+        for x, ch in enumerate(row):
+            col = {'h': C('hair_brown', 2), 'H': C('hair_brown', 3), 's': C('skin_light', 2),
+                   'S': C('skin_light', 4), 'e': C('ink', 1)}.get(ch)
+            if col is not None:
+                s.px(4 + x, 2 + y - lift * 0, col)
     return s.outline()
-
-
-def head_of(who='steerer_a'):
-    spr = P48.sprite(who, 'idle', 'e', 0)
-    rows = range(8, 19)
-    out = np.zeros((len(rows), 10, 4), np.float32)
-    for i, y in enumerate(rows):
-        for j, x in enumerate(range(20, 30)):
-            if spr.mask[y, x]:
-                out[i, j, :3] = spr.rgb[y, x]
-                out[i, j, 3] = 1
-    return out
 
 
 def bandage(spr):
@@ -147,18 +162,18 @@ def draw_fire(f, x, y, t, size=1.0, logs=True):
             fx._px(f, x + k * 0.8, y - k * 0.25, C('driftwood', 2 + (k > 0)))
             fx._px(f, x + k * 0.8, y + k * 0.25 - 1, C('driftwood', 1 + (k < 0)))
         for k in range(-5, 6):
-            glow = 0.5 + 0.5 * math.sin(t * 5 + k * 1.9)
+            glow = 0.5 + 0.5 * lsin(t, 5, k * 1.9)
             fx._px(f, x + k, y + 2, C('fire', 1 + glow * 3))
     for col in range(-5, 6):
-        hgt = (9 - abs(col) * 1.35) * size * (0.62 + 0.3 * abs(math.sin(t * 8.7 + col * 1.7)) +
-                                                0.2 * math.sin(t * 21 + col * 2.3))
+        hgt = (9 - abs(col) * 1.35) * size * (0.62 + 0.3 * abs(lsin(t, 9, col * 1.7)) +
+                                                0.2 * lsin(t, 21, col * 2.3))
         for k in range(int(max(1, hgt))):
             fr = k / max(1, hgt)
             lean = fr * fr * 1.5 * size
             fx._px(f, x + col + lean, y - k, C('fire', 7 - fr * 6.2 - (abs(col) > 3)))
     for e in range(6):
-        age = (t * 1.1 + e / 6) % 1
-        ex = x + math.sin(e * 3 + t * 4) * 3 + age * 4
+        age = (t / LOOP * 7 + e / 6) % 1
+        ex = x + math.sin(e * 3 + TAU * t / LOOP * 4) * 3 + age * 4
         ey = y - 8 * size - age * 14
         if age < 0.7:
             fx._px(f, ex, ey, C('fire', 6 if age < 0.35 else 4))
@@ -202,9 +217,18 @@ def sparks(fire, t, n=10):
         over = max(0.0, h - 50)
         x = x0 + math.sin(e * 2.3 + age * 9) * (2 + age * 6) + over ** 1.3 * 0.9
         y = y0 - h
-        if age < 0.85 and hash01(e, int(t * 12.5)) < 0.85:
+        if age < 0.85 and hash01(e, int(round(t * 12.5)) % 80) < 0.85:
             pts.append((x, y, age))
     return pts
+
+
+def day_pool(cx, cy, radius, t, bands=4):
+    """The fire's light pool by day, flickering on whole cycles of the loop."""
+    flick = 0.88 + 0.08 * lsin(t, 11) + 0.05 * lsin(t, 27, 1)
+    ys, xs = np.mgrid[0:H, 0:W]
+    d = np.hypot(xs - cx, (ys - cy) * 1.25) / (radius * flick)
+    f = np.clip(1 - d, 0, 1) ** 1.4
+    return np.ceil(f * bands) / bands * (f > 0)
 
 
 # ------------------------------------------------------------------ the renderer
@@ -242,6 +266,9 @@ class BrochRenderer:
         pshadow *= self.sun                 # already in the tower's shadow: no double darkening
         k = np.maximum(pshadow * 0.75, np.clip(ao, 0, 1) * 0.42)[..., None] * g[..., None]
         base = base * (1 - k) + base * SHADE * k
+        # What shades the grass blades drawn over the ground later: the tower's shadow and the
+        # props' shadows (by day).
+        self.blade_k = np.maximum(k[..., 0], (~self.sun) * 1.0 * g) if not night else k[..., 0] * 0
         self.base = base
         # The wall's rows, for drawing it in the same sort as everything standing on the ground.
         wy = S['y'].astype(int)
@@ -275,7 +302,7 @@ class BrochRenderer:
             facing = 'w' if look < 0.35 else ('s' if look < 0.8 else 'n')
             state = 'glance' if facing == 's' else ('shift' if lsin(t, 2, 1) > 0.4 else 'idle')
             n = P48.frames_of('steerer_a', state)
-            spr = P48.sprite('steerer_a', state, facing, int(t * 4) % n)
+            spr = P48.sprite('steerer_a', state, facing, int(t * 3.75 + 1e-6) % n)
             if stage == 's0':
                 pos = (fx_ + 28, fy_ + 8)
                 hild_pos = (fx_ - 24, fy_ + 4)
@@ -283,31 +310,20 @@ class BrochRenderer:
                 pos = (fx_ + 34, fy_ + 14)
                 hild_pos = (fx_ - 24, fy_ + 9)
             gust = w.gust(pos[0], pos[1], t) * 0.4
-            spr = _flutter(spr, gust, int(t * 8))
+            spr = _flutter(spr, gust, int(t * 7.5 + 1e-6))
             out.append({'x': pos[0], 'y': pos[1], 'sprite': spr, 'who': 'steerer'})
-            hild = bandage(P48.sprite('hild', 'sit', 'e', int(t * 3.1) % 4))
+            hild = bandage(P48.sprite('hild', 'sit', 'e', int(t * 3.125 + 1e-6) % 4))
             out.append({'x': hild_pos[0], 'y': hild_pos[1], 'sprite': hild, 'who': 'hild'})
         else:
             hild_pos = (fx_ - 22, fy_ + 5) if stage == 's0' else (fx_ - 26, fy_ + 9)
-            hild = bandage(P48.sprite('hild', 'sit', 'e', int(t * 3.1) % 4))
+            hild = bandage(P48.sprite('hild', 'sit', 'e', int(t * 3.125 + 1e-6) % 4))
             out.append({'x': hild_pos[0], 'y': hild_pos[1], 'sprite': hild, 'who': 'hild'})
         self.hild_pos = hild_pos
         return out
 
     def _sleeper(self, breath):
         if breath not in self._sleeper_cache:
-            idle = P48.sprite('steerer_a', 'idle', 'n', 0)
-            # The cloak's own ramp, read from the approved cloak layer's pixels.
-            cols = idle.rgb[idle.cloth]
-            lum = cols.mean(axis=1)
-            order = np.argsort(lum)
-            uniq = []
-            for c in cols[order]:
-                if not any(np.allclose(c, u) for u in uniq):
-                    uniq.append(c)
-            cloak = [u for u in uniq if u[0] < u[1] * 1.25 + 8][:5] or uniq[:5]
-            hem = [C('madder', 2), C('madder', 3)]
-            self._sleeper_cache[breath] = sleeper(cloak, hem, head_of(), breath)
+            self._sleeper_cache[breath] = sleeper(breath)
         return self._sleeper_cache[breath]
 
     # -------------------------------------------------------------- one frame
@@ -341,6 +357,8 @@ class BrochRenderer:
         shadow = np.maximum(shadow, occ) * g
         k = (shadow * 0.75)[..., None]
         f = f * (1 - k) + f * SHADE * k
+        blade_k = np.maximum(self.blade_k, k[..., 0])
+        self.smask = np.zeros((H, W), bool)
         if night:
             self._fire_shadows(fire_k, actors)
         base = f.copy()
@@ -351,7 +369,7 @@ class BrochRenderer:
         for (_, spr, x, y, hgt, kind) in w.props:
             if kind == 'skin':
                 continue
-            items.append((y, 1, 'sprite', spr, x))
+            items.append((y, 1, 'prop', spr, x))
         for a in actors:
             items.append((a['y'], 1, 'actor', a['sprite'], a['x']))
         for tf in w.tufts:
@@ -378,7 +396,11 @@ class BrochRenderer:
             elif kind == 'fn':
                 obj(f)
             else:
-                self._stamp(f, obj, x, y, PX, PY, PZ, fire_k, fire_d)
+                self._stamp(f, obj, x, y, PX, PY, PZ, fire_k, fire_d, kind)
+        # Grass and ferns drawn over shaded ground take its shade too.
+        blades = g & ~self.smask & (np.abs(f - base).sum(-1) > 0.5) & (blade_k > 0)
+        kb = blade_k[blades][:, None]
+        f[blades] = f[blades] * (1 - kb) + f[blades] * SHADE * kb
         fire = w.fire
         f = self._sheen(f, t)
         if not night:
@@ -392,7 +414,7 @@ class BrochRenderer:
             view = f
             cloud = fx.cloud_shadow(H, W, t, 0, 0, 1280)
             out = fx.grade(view, cloud, warm_sun=1.0)
-            pool = fx.light_pool(H, W, fire[0], fire[1] - 4, 56, t)[..., None]
+            pool = day_pool(fire[0], fire[1] - 4, 56, t)[..., None]
             out = out * (1 + pool * np.array([0.42, 0.2, 0.0])) + pool * np.array([18, 7, 0])
             return out
         # Night: a blue-grey moonlit grade, then the firelight in flickering bands.
@@ -400,14 +422,25 @@ class BrochRenderer:
         grey = f.mean(axis=2, keepdims=True)
         out = (f * 0.72 + grey * 0.28) * np.array([0.30, 0.355, 0.50]) + np.array([6, 9, 17])
         out *= (1 - 0.2 * cloud)[..., None]
-        flick = 0.93 + 0.04 * math.sin(t * 11.3) + 0.03 * math.sin(t * 26.9 + 1.3) + \
-            0.02 * math.sin(t * 4.1)
-        R = 150 * flick
-        L = fire_k * np.clip(1 - fire_d / R, 0, 1) ** 1.45
-        Lb = banded(np.clip(L * 1.15, 0, 1), 6)
-        out = out + f * Lb[..., None] * np.array([1.30, 0.74, 0.30]) * flick + \
-            Lb[..., None] * np.array([22, 8, 0])
-        # Light through the gaps of the driftwood door and its open edge, from the court.
+        flick = 0.93 + 0.04 * lsin(t, 12) + 0.03 * lsin(t, 27, 1.3) + 0.02 * lsin(t, 4)
+        R = (145 if self.stage == 's0' else 132) * flick
+        # The floor takes the light at a glancing angle and falls off fast; the inner faces
+        # of the wall turn square to the fire and catch it much further out.
+        face = (S['kind'] >= 2)
+        L = fire_k * np.where(face, 1.1 * np.clip(1 - fire_d / (R * 1.4), 0, 1) ** 1.25,
+                              np.clip(1 - fire_d / R, 0, 1) ** 1.9)
+        Lb = banded(np.clip(L * 1.25, 0, 1), 6)
+        out = out + f * Lb[..., None] * np.array([1.38, 0.70, 0.24]) * flick + \
+            Lb[..., None] * np.array([26, 8, 0])
+        # Light through the open edge of the driftwood door, from the court behind it.
+        if stage == 's1':
+            gx0 = CX - 3 + 9
+            for yy in range(CY + RIN + 6 - 44, CY + RIN + 6):
+                for xx in (gx0 + 1,):
+                    if 0 <= yy < H and xx < CX + DOOR_HALF - (CY + RIN + 6 - yy) / DOOR_H and \
+                            yy > CY + ROUT - DOOR_H + 1:
+                        k = 0.42 * flick * (0.6 + 0.4 * hash01(yy // 3, 5))
+                        out[yy, xx] = out[yy, xx] * (1 - k) + C('fire', 4) * k
         # Smoke, lit warm from below near the fire.
         def smoke_col(age, yy):
             warm = max(0.0, 1 - age * 3.5)
@@ -425,12 +458,12 @@ class BrochRenderer:
         if self.gx_field is None:
             w = self.w
             self.grassy = (self.ground_px & ~w.court & ~w.path & ~w.stream & ~w.bank).astype(np.float32)
-        gx = ((np.arange(W)[None, :] - t / LOOP * 320) % 320).astype(int)
+        gx = ((np.arange(W)[None, :] - t / LOOP * 320) % 320).astype(int) % 320
         field = _s._GUST[np.arange(H)[:, None] % _s.H, gx]
         self.gx_field = True
-        return fx.gust_sheen(f, self.grassy, np.clip((field - 0.42) * 2.4, 0, 1), 0.12 if not self.night else 0.06)
+        return fx.gust_sheen(f, self.grassy, np.clip((field - 0.42) * 2.4, 0, 1), 0.13 if not self.night else 0.2)
 
-    def _stamp(self, f, spr, x, y, PX, PY, PZ, fire_k, fire_d):
+    def _stamp(self, f, spr, x, y, PX, PY, PZ, fire_k, fire_d, kind='sprite'):
         """Stamps a sprite and records its position for the light pass."""
         x0 = int(round(x)) - spr.ax
         y0 = int(round(y)) - spr.ay
@@ -442,6 +475,7 @@ class BrochRenderer:
         ys_ = slice(y0 + sy0, y0 + ey)
         xs_ = slice(x0 + sx0, x0 + ex)
         f[ys_, xs_][m] = spr.rgb[sy0:ey, sx0:ex][m]
+        self.smask[ys_, xs_] |= m
         if self.night:
             fxp, fyp, fzp = self.F
             hh = (y - np.arange(y0 + sy0, y0 + ey, dtype=np.float32))[:, None] * np.ones((1, ex - sx0))
@@ -450,7 +484,12 @@ class BrochRenderer:
             xi, yi = int(min(W - 1, max(0, x))), int(min(H - 1, max(0, y)))
             v = 1.0 if self.w.court[yi, xi] else float(self.fire_static[yi, xi])
             # The side of a figure away from the fire takes less of its light.
-            side = np.clip(0.55 + 0.45 * np.sign(fxp - x) * (xx - x) / 8, 0.35, 1.0)
+            if kind == 'actor':
+                side = np.clip(0.55 + 0.45 * np.sign(fxp - x) * (xx - x) / 8, 0.35, 1.0)
+            elif kind == 'door':
+                side = np.full(xx.shape, 0.08)       # its face is turned away from the fire
+            else:
+                side = np.full(xx.shape, 0.9)
             fd = fire_d[ys_, xs_]
             fk = fire_k[ys_, xs_]
             fd[m] = d[m]
@@ -485,30 +524,28 @@ class BrochRenderer:
         if self.stage == 's0':
             (x0, y0, z0), (x1, y1, z1) = w.ridge
             def ridge(f):
-                n = int(y1 - y0)
+                n = int(x1 - x0)
+                gust = w.gust(x0 + 30, y0, t) * 0.5
                 for k in range(n + 1):
-                    yy = y0 + k
-                    sag = 2.5 * math.sin(math.pi * k / n)
-                    zz = z0 - sag
-                    fx._px(f, x0 - 1, yy - zz - 1, C('ink', 1))
-                    fx._px(f, x0, yy - zz, C('driftwood', 5 - (k % 9 == 0)))
-                    fx._px(f, x0 + 1, yy - zz, C('driftwood', 3))
-                    fx._px(f, x0 + 2, yy - zz, C('ink', 1))
-                # The torn edge of the sail hangs off the ridge and lifts in the gusts.
-                gust = w.gust(x0, y0 + 30, t) * 0.6
-                for k in range(0, n, 2):
-                    yy = y0 + k
-                    sag = 2.5 * math.sin(math.pi * k / n)
-                    ln = 2 + int(3 * hash01(k, 3)) - int(round(gust * 2 + 0.8 * lsin(t, 5, k * 0.7)))
-                    for j in range(max(1, ln)):
-                        fx._px(f, x0 + 2, yy - z0 + sag + 1 + j, C('wool', 3 - j * 0.5))
-                # Guy lines from the ridge's ends down to stones on the floor.
-                for (ax, ay, gx, gy) in ((x0, y0, x0 + 14, y0 - 6), (x0, y1, x0 + 14, y1 + 6)):
-                    m = 24
+                    xx = x0 + k
+                    sag = 2.0 * math.sin(math.pi * k / n)
+                    sy = y0 - z0 + sag
+                    fx._px(f, xx, sy - 1, C('ink', 1))
+                    fx._px(f, xx, sy, C('driftwood', 5 - (k % 11 == 0)))
+                    fx._px(f, xx, sy + 1, C('driftwood', 3))
+                    fx._px(f, xx, sy + 2, C('ink', 1))
+                    # The torn hem hangs off the oar in tatters that lift in the gusts.
+                    if k % 2 == 0 and k < n - 12:
+                        ln = 2 + int(3 * hash01(k, 3)) - int(round(gust * 2 + 0.8 * lsin(t, 5, k * 0.7)))
+                        for j in range(max(1, ln)):
+                            fx._px(f, xx + j * 0.3 * (gust + 0.3), sy + 3 + j, C('wool', 3 - j * 0.5))
+                # Guy lines from the oar's ends down to stones on the floor.
+                for (ax, gx, gy) in ((x0, x0 - 8, y0 + 10), (x1, x1 + 8, y0 + 10)):
+                    m = 26
                     for j in range(m + 1):
                         fr = j / m
                         xx = ax + (gx - ax) * fr
-                        yy = ay + (gy - ay) * fr - z0 * (1 - fr) + 2 * math.sin(math.pi * fr)
+                        yy = y0 + (gy - y0) * fr - z0 * (1 - fr) + 2 * math.sin(math.pi * fr)
                         fx._px(f, xx, yy, C('wool', 2))
             items.append((y1 + 0.4, 1, 'fn', ridge, None))
             bx, by = w.bedroll
@@ -540,7 +577,7 @@ class BrochRenderer:
             if self.night:
                 items.append((by + 0.5, 1, 'sprite', self._sleeper(lsin(t, 2) > 0.2), bx))
             # The driftwood door in the doorway, at the passage's inner end, standing ajar.
-            items.append((CY + RIN + 6, 1, 'sprite', w.door, CX - 3))
+            items.append((CY + RIN + 6, 1, 'door', w.door, CX - 3))
         # Hild's work: by night she tends the fire with a stick; by day, S0, she rests her
         # bound leg and feeds the fire; S1, she cooks a fish on a stick over the hearth.
         hx, hy = self.hild_pos
@@ -580,10 +617,10 @@ class BrochRenderer:
         edge = s & (w.stream_d > w.stream_w - 1.3)
         col[edge] = col[edge] * 0.55 + f[edge] * 0.45
         if not self.night:
-            gl = s & (flow2 > 0.97) & (np.sin(w.xs * 1.7 + t * 9) > 0.6)
+            gl = s & (flow2 > 0.97) & (np.sin(w.xs * 1.7 + TAU * t / LOOP * 9) > 0.6)
             col[gl] = C('sea', 10)
         else:
-            gl = s & (flow > 0.96) & (np.sin(w.xs * 2.3 + w.ys + t * 7) > 0.75)
+            gl = s & (flow > 0.96) & (np.sin(w.xs * 2.3 + w.ys + TAU * t / LOOP * 7) > 0.75)
             col[gl] = C('sea', 9)
         f[s] = col[s]
 
@@ -594,11 +631,11 @@ class BrochRenderer:
         if not m.any():
             return
         x, y = S['x'][m], S['y'][m]
-        amp = 0.6 if self.stage == 's0' else 1.0
+        amp = (0.6 if self.stage == 's0' else 1.0) * (1.6 if self.night else 1.0)
         wave = np.sin(x / 6.5 - TAU * t / LOOP * 4 + np.sin(y / 9) * 1.5) * amp + \
             0.5 * np.sin(x / 3.1 + y / 4 - TAU * t / LOOP * 7)
         q = np.rint(wave)
-        f[m] = f[m] * (1 + 0.075 * q[:, None])
+        f[m] = f[m] * (1 + (0.11 if self.night else 0.075) * q[:, None])
 
     def _creatures(self, t, dyn, occ):
         w = self.w
@@ -623,7 +660,7 @@ class BrochRenderer:
                 sy_ = col[len(col) // 2]
                 bz = S['z'][sy_, bx]
                 by_world = S['y'][sy_, bx]
-                spr = wheatear(lsin(t, 3) > 0.3, int(t * 6) % 3 == 0)
+                spr = wheatear(lsin(t, 3) > 0.3, int(t * 5.625 + 1e-6) % 3 == 0)
                 hop = 2 * max(0.0, lsin(t, 2, 2.0)) ** 8
                 items.append((by_world + 0.1, 1, 'sprite', _lift(spr, bz + hop), bx + (lsin(t, 1, 1) > 0.6) * 3))
         return items
@@ -634,8 +671,8 @@ class BrochRenderer:
             a = TAU * t / LOOP * cyc + i * 2.1
             x = cx + math.cos(a) * rad
             y = cy + math.sin(a) * rad * 0.5 - 30
-            fx.draw_gull(np.zeros((1, 1, 3), np.float32), shadow_buf, x, y, 1.0 + i * 0.15, t + i)
-            calls.append(lambda fr, x=x, y=y, i=i: fx.draw_gull(fr, np.zeros((1, 1), np.float32), x, y, 1.0, t + i))
+            fx.draw_gull(np.zeros((1, 1, 3), np.float32), shadow_buf, x, y, 1.0 + i * 0.15, t + i * 0.32, 6.25)
+            calls.append(lambda fr, x=x, y=y, i=i: fx.draw_gull(fr, np.zeros((1, 1), np.float32), x, y, 1.0, t + i * 0.32, 6.25))
         return calls
 
     def _moths(self, out, t):
@@ -644,15 +681,15 @@ class BrochRenderer:
             a = TAU * t / LOOP * (2 + i % 2) + i * 1.7
             x = fxp + math.cos(a) * (14 + i * 4) + math.sin(a * 3 + i) * 3
             y = fyp - 22 - i * 5 + math.sin(a * 2) * 6
-            open_ = int(t * 14 + i) % 2
+            open_ = (int(t * 12.5 + 1e-6) + i) % 2
             fx._px(out, x, y, C('wool', 6) * 0.9 + np.array([20, 8, 0]))
             fx._px(out, x - 1, y - open_, C('wool', 5) * 0.8)
             fx._px(out, x + 1, y - open_, C('wool', 5) * 0.8)
 
 
 def _hang(spr, z):
-    """Re-anchors a hanging sprite so it draws `z` pixels above its foot point."""
-    s = Sprite(spr.w, spr.h, spr.ax, int(round(-z)))
+    """Re-anchors a hanging sprite so its top hangs `z` pixels above its foot point."""
+    s = Sprite(spr.w, spr.h, spr.ax, int(round(z)))
     s.rgb[:] = spr.rgb
     s.mask[:] = spr.mask
     return s
@@ -705,6 +742,33 @@ def _flutter(spr, gust, tick):
 NAMES = {('s0', False): 's0-day', ('s0', True): 's0-night', ('s1', False): 's1-day', ('s1', True): 's1-night'}
 
 
+def save_gif(imgs, path):
+    """One palette for the whole loop (from a sample of its frames), and each frame stores only
+    the pixels that changed, so the loop stays small without losing its look."""
+    sample = Image.fromarray(np.concatenate([np.asarray(imgs[i]) for i in range(0, len(imgs), 8)], 0))
+    pal_img = sample.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    idx = [np.asarray(im.quantize(palette=pal_img, dither=Image.Dither.NONE)) for im in imgs]
+    palette = pal_img.getpalette()[:255 * 3] + [0, 0, 0]
+    prgb = np.array(palette, np.int16).reshape(-1, 3)
+    frames = []
+    shown = None
+    for i, a in enumerate(idx):
+        if shown is None:
+            b = a.copy()
+            shown = a.copy()
+        else:
+            # A pixel is sent again only when its colour moved visibly from what is on screen
+            # (a sum of more than 18 over R, G and B; the motion measure counts 24 and up).
+            moved = np.abs(prgb[a] - prgb[shown]).sum(-1) > 18
+            b = np.where(moved, a, 255).astype(np.uint8)
+            shown = np.where(moved, a, shown)
+        im = Image.fromarray(b.astype(np.uint8), 'P')
+        im.putpalette(palette)
+        frames.append(im)
+    frames[0].save(path, save_all=True, append_images=frames[1:], duration=int(1000 / FPS), loop=0,
+                   disposal=1, transparency=255, optimize=False)
+
+
 def render(stage, night, frames=FRAMES, still_at=0.3):
     R = BrochRenderer(stage, night)
     name = NAMES[(stage, night)]
@@ -719,9 +783,7 @@ def render(stage, night, frames=FRAMES, still_at=0.3):
     # The 4x crop of the broch's court, fire and doorway.
     crop = still.crop((116, 80, 356, 350)).resize((960, 1080), Image.NEAREST)
     crop.save(os.path.join(OUT, f'{name}-broch-4x.png'))
-    pal = [im.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE) for im in imgs]
-    pal[0].save(os.path.join(OUT, f'{name}.gif'), save_all=True, append_images=pal[1:],
-                duration=int(1000 / FPS), loop=0, disposal=1)
+    save_gif(imgs, os.path.join(OUT, f'{name}.gif'))
     return imgs
 
 
