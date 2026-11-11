@@ -70,6 +70,14 @@ export async function showArtView(
     scene = artTestScene(known satisfies ArtTestCase);
     label = `art test ${known}`;
   }
-  renderer.render(scene, buildDrawList(scene, byName, parseRenderStyle(renderJson).cutawayFade));
+  const list = buildDrawList(scene, byName, parseRenderStyle(renderJson).cutawayFade);
+  renderer.render(scene, list);
+  // Drawn again every frame, as play is: the canvas keeps no drawing buffer between frames, and a
+  // compositor may read it again later (WebKit's screenshots of a frame drawn once came out black).
+  const again = (): void => {
+    renderer.render(scene, list);
+    requestAnimationFrame(again);
+  };
+  requestAnimationFrame(again);
   return label;
 }

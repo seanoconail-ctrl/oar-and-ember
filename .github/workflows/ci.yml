@@ -76,11 +76,15 @@ jobs:
           path: test-results
           retention-days: 7
 
-  # WebKit does not block publishing (decision S1-18): it stalls on CI for reasons not yet found,
-  # and the user checks real Safari at the published link. Its result stays visible on every run.
+  # WebKit runs on Linux inside Playwright's own image (pinned to the Playwright version in
+  # package.json), which carries every library WebKit needs. On the macOS runners WebKit's WebGL
+  # context was lost as soon as it was made (renderer "null"), headless or headed.
+  # Not yet blocking (decision S1-18) until it has passed twice in a row.
   browsers-webkit:
-    name: WebKit smoke test (macOS, does not block publishing)
-    runs-on: macos-15-intel
+    name: WebKit smoke test (Linux, does not block publishing yet)
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
     continue-on-error: true
     steps:
       - uses: actions/checkout@v6
@@ -90,62 +94,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: npx playwright install webkit
       # For the log only: never fails the job.
-      - name: What WebGL2 the browser offers
-        run: node tests/browser/webgl-probe.ts webkit || true
+      - name: What WebGL2 the browser offers, and how much of the game it draws
+        run: |
+          npx vite preview --port 4174 --strictPort > /dev/null 2>&1 &
+          sleep 3
+          node tests/browser/webgl-probe.ts webkit headless http://localhost:4174/ || true
       - run: npm run test:browser -- --project=webkit
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-webkit-macos
-          path: test-results
-          retention-days: 7
-
-  # EXPERIMENT (temporary): where can WebKit run the game? On the macOS runners its WebGL context is
-  # lost as soon as it is made (the probe reads renderer "null", lost: true). Tried here: Linux in
-  # Playwright's own image, which carries every library WebKit needs (Ubuntu's mirrors have been
-  # unreachable from the runners), headless and headed under a virtual display. Never blocks.
-  browsers-webkit-probe:
-    name: Experiment - WebKit on Linux in Playwright's image (${{ matrix.mode }})
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        mode: [headless, headed]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - name: What WebGL2 the browser offers, and how much of the game it draws
-        run: |
-          npx vite preview --port 4173 --strictPort > /dev/null 2>&1 &
-          sleep 3
-          if [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed http://localhost:4173/ || true
-          else
-            node tests/browser/webgl-probe.ts webkit headless http://localhost:4173/ || true
-          fi
-      - name: Browser tests
-        run: |
-          if [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a npm run test:browser -- --project=webkit --headed
-          else
-            npm run test:browser -- --project=webkit
-          fi
-      - name: Keep the failed tests' screenshots and page snapshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-webkit-linux-${{ matrix.mode }}
+          name: test-results-webkit
           path: test-results
           retention-days: 7
 
@@ -200,9 +160,11 @@ jobs:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}
 
   published-webkit:
-    name: Smoke-test the published address (WebKit, macOS, does not block)
+    name: Smoke-test the published address (WebKit, Linux, does not block yet)
     needs: deploy
-    runs-on: macos-15-intel
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
     continue-on-error: true
     steps:
       - uses: actions/checkout@v6
@@ -211,7 +173,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install webkit
       - run: npm run test:browser -- --project=webkit
         env:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}
