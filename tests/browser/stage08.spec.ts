@@ -50,7 +50,7 @@ test.describe('Stage 8: crew agents, schedules and conversation', () => {
     page,
   }) => {
     // Just after she has shown the camp (the hooks): it is work time, and her leg is not yet tended.
-    await startPlay(page, 'A', 'capture&camp=broch&time=08:00');
+    await startPlay(page, 'A', 'capture&camp=broch&time=08:00&at=35.5,33.6');
     await step(page, 3);
     expect(await attr(page, 'hild-activity')).toBe('WORK');
     // She walks down to the rocks below the path, and works there with the fishing loop.
@@ -69,9 +69,7 @@ test.describe('Stage 8: crew agents, schedules and conversation', () => {
     }
   });
 
-  test('talking to wounded Hild offers her wound, and tends it from the talk', async ({
-    page,
-  }) => {
+  test('talking to wounded Hild offers her wound, and tends it from the talk', async ({ page }) => {
     await startPlay(page, 'A', `capture&camp=broch&time=18:40&at=${seat.x + 0.9},${seat.y}`);
     await step(page, 3);
     await expect(overlay(page)).toHaveAttribute('data-prompt', 'talk');
@@ -103,8 +101,13 @@ test.describe('Stage 8: crew agents, schedules and conversation', () => {
       `capture&camp=broch&time=18:30&fire=lit&tended=1&at=${fire.x + 1.5},${fire.y + 0.8}`,
     );
     await step(page, 3);
-    const heard = await stepUntil(page, 'barks', (n) => Number(n) > 0, 60 * 10 * 2, 100);
-    expect(Number(heard)).toBeGreaterThan(0);
+    // Book 10 idleBarkEvery: within 150 real seconds of play, a bark, shown as she speaks it.
+    let heard = 0;
+    for (let i = 0; i < 160 && heard === 0; i++) {
+      await step(page, 4, 250);
+      heard = Number(await attr(page, 'barks'));
+    }
+    expect(heard).toBeGreaterThan(0);
     await expect(page.locator('[data-region=captions]')).toContainText('Hild:');
   });
 

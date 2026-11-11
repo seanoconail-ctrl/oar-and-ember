@@ -2,41 +2,26 @@
   "sheet": "ui_stamina",
   "kind": "decal",
   "image": "ui_stamina.png",
-  "width": 8,
-  "height": 9,
+  "width": 12,
+  "height": 12,
   "pivot": {
     "x": 0,
     "y": 0
   },
   "footprint": {
-    "w": 8,
-    "h": 9
+    "w": 12,
+    "h": 12
   },
   "facings": [
     "-"
   ],
   "anims": {
-    "cap_left": {
-      "frames": 1,
-      "ticks": 1,
-      "loop": false
-    },
-    "frame": {
-      "frames": 1,
-      "ticks": 1,
-      "loop": false
-    },
-    "cap_right": {
-      "frames": 1,
-      "ticks": 1,
-      "loop": false
-    },
     "fill": {
       "frames": 1,
       "ticks": 1,
       "loop": false
     },
-    "fill_end": {
+    "spent": {
       "frames": 1,
       "ticks": 1,
       "loop": false
@@ -46,23 +31,73 @@
       "ticks": 1,
       "loop": false
     },
-    "groove_cut": {
-      "frames": 1,
-      "ticks": 1,
-      "loop": false
-    },
-    "groove_end": {
-      "frames": 1,
-      "ticks": 1,
-      "loop": false
-    },
     "glow": {
-      "frames": 2,
-      "ticks": 10,
-      "loop": true
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     },
-    "flash": {
-      "frames": 3,
+    "notch": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_left": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_right": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_cold": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_hungry": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_starving": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_wounded": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_badly_wounded": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_sick": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_tired": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_exhausted": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_hard_work": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "icon_feast": {
+      "frames": 1,
       "ticks": 1,
       "loop": false
     }
@@ -71,57 +106,73 @@
   "shadow": null,
   "placeholder": false,
   "frames": {
-    "cap_left/-/0": [
+    "fill/-/0": [
       0,
       0
     ],
-    "frame/-/0": [
+    "spent/-/0": [
       0,
-      9
-    ],
-    "cap_right/-/0": [
-      0,
-      18
-    ],
-    "fill/-/0": [
-      0,
-      27
-    ],
-    "fill_end/-/0": [
-      0,
-      36
+      12
     ],
     "groove/-/0": [
       0,
-      45
-    ],
-    "groove_cut/-/0": [
-      0,
-      54
-    ],
-    "groove_end/-/0": [
-      0,
-      63
+      24
     ],
     "glow/-/0": [
       0,
-      72
+      36
     ],
-    "glow/-/1": [
-      8,
-      72
-    ],
-    "flash/-/0": [
+    "notch/-/0": [
       0,
-      81
+      48
     ],
-    "flash/-/1": [
-      8,
-      81
+    "cap_left/-/0": [
+      0,
+      60
     ],
-    "flash/-/2": [
-      16,
-      81
+    "cap_right/-/0": [
+      0,
+      72
+    ],
+    "icon_cold/-/0": [
+      0,
+      84
+    ],
+    "icon_hungry/-/0": [
+      0,
+      96
+    ],
+    "icon_starving/-/0": [
+      0,
+      108
+    ],
+    "icon_wounded/-/0": [
+      0,
+      120
+    ],
+    "icon_badly_wounded/-/0": [
+      0,
+      132
+    ],
+    "icon_sick/-/0": [
+      0,
+      144
+    ],
+    "icon_tired/-/0": [
+      0,
+      156
+    ],
+    "icon_exhausted/-/0": [
+      0,
+      168
+    ],
+    "icon_hard_work/-/0": [
+      0,
+      180
+    ],
+    "icon_feast/-/0": [
+      0,
+      192
     ]
   }
 }

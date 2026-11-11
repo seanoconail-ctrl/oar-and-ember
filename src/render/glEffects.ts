@@ -251,6 +251,12 @@ void main() {
     // and dry sand drifts along the beach in streamers.
     vec4 E = texelFetch(u_elev, ivec2(w / ${ELEVATION_CELL.toFixed(1)}), 0);
     int layer = int(E.a * 255.0) / 16;
+    // Stage 8: the foreshore below the tide line, wet shingle and weed, glistens: stones catch the
+    // light in brief glints that come and go (Book 7 section 14: water, light), more in sun.
+    if (layer == 2 && u_detail >= 2) {
+      float glint = hash2(floor(w / 2.0) + floor(u_t * 4.0 + hash2(floor(w / 2.0)) * 4.0) * vec2(13.0, 7.0));
+      if (glint > 0.965) k *= 1.32;
+    }
     if (layer == 2 && E.r * 3.0 - 1.0 < u_dryAbove) layer = -1;
     float g = gust(w, u_wind.xy, u_t) * u_wind.z;
     if (layer == 6) k *= 1.0 + 0.05 * g;

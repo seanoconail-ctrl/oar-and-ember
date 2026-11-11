@@ -87,7 +87,7 @@
   "places": {
     "SHORE": {
       "zone": "ZONE_SK_STRAND",
-      "x": 25.5,
+      "x": 35.5,
       "y": 34.4,
       "facing": "s"
     },

@@ -151,7 +151,7 @@ interface WorldState {
 ```
 The ledger is append-only; facts are superseded, never deleted; the dead stay in `people` with their memories; one-shots are recorded before their effects apply.
 
-**Versions.** The state carries its schema version, and every change to its shape adds a migration (section 20). Version 2 (Stage 6) added `onFoot`; version 3 (the Stage 6 rework, decision S6R-7) added `player.hotbar` and `onFoot.player.aim`. The fields above that are not yet built (among them `journey`, `gates` and the people data of section 06) arrive with their stages, each with its own version step.
+**Versions.** The state carries its schema version, and every change to its shape adds a migration (section 20). Version 2 (Stage 6) added `onFoot`; version 3 (the Stage 6 rework, decision S6R-7) added `player.hotbar` and `onFoot.player.aim`; version 6 (Stage 8, decision S8-23) gave people section 06's shape (happiness, friendship and fear in place of `regard`, traits, likes, tendencies, their day's bookkeeping in `Person.life`) and added `disputes`, the conversation under way (`talk`) and the barks heard (`barks`). The fields above that are not yet built (among them `journey`, `gates` and the people data of section 06) arrive with their stages, each with its own version step.
 
 ## 06 / People
 *Residents and leaders are people with values, traits, likes, ties and memories, judging by the code of their own culture. Three measures (happiness, friendship and fear) are computed from how they live and from witnessed deeds, and shown in readable steps with the reason for each.*

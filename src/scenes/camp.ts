@@ -78,8 +78,8 @@ export function campUseLabel(
  * Tests and captures only: start at the broch after beat 2's lead (`?camp=broch`), and set the
  * hour (`time=HH:MM`), the day (`day=N`), the fire (`fire=lit`), Hild's leg tended (`tended=1`),
  * the camp's stage (`stage=S1`), its driftwood (`wood=N`), the hand line in hand (`line=1`), Oddi
- * in the household (`oddi=1`, or `oddi=theft`: his theft due that evening; Stage 8) and where the
- * steerer stands in the zone (`at=x,y` in tiles).
+ * in the household (`oddi=1`, or `oddi=theft`: his theft due that evening; Stage 8), the zone to
+ * start in (`zone=ZONE_SK_STRAND`) and where the steerer stands in it (`at=x,y` in tiles).
  */
 export function campHooks(
   world: WorldState,
@@ -180,6 +180,11 @@ export function campHooks(
       home.stores['RES_SALTED_FISH'] = Math.max(0, (home.stores['RES_SALTED_FISH'] ?? 0) - 1);
     }
   }
+  // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
+  const zone = params.get('zone');
+  const zoneTo = zone === null ? undefined : land.maps.get(zone);
+  if (zoneTo !== undefined && zoneTo.zone !== onFoot.zone)
+    switchZone(onFoot, zoneTo.zone, { x: onFoot.player.x, y: onFoot.player.y });
   const at = /^(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)$/.exec(params.get('at') ?? '');
   const map = land.maps.get(onFoot.zone);
   if (at !== null && map !== undefined) {

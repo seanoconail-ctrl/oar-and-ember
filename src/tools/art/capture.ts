@@ -200,8 +200,13 @@ export async function capture(label: string): Promise<string> {
     if (CAMP_LABELS.has(label)) {
       await page.close();
       const camp = await campCapture(browser, out);
-      writeFileSync(join(out, 'README.md'), campReadme(label, motion.share, camp));
-      return `${out}: strand motion ${pct(motion.share)}, broch by day ${pct(camp.day)}, by night ${pct(camp.night)}`;
+      const people = PEOPLE_LABELS.has(label) ? await peopleCapture(browser, out) : null;
+      writeFileSync(join(out, 'README.md'), campReadme(label, motion.share, camp, people));
+      return `${out}: strand motion ${pct(motion.share)}, broch by day ${pct(camp.day)}, by night ${pct(camp.night)}, S1 ${pct(camp.s1)}${
+        people === null
+          ? ''
+          : `; Hild fishing ${pct(people.fishing)}, at supper ${pct(people.supper)}, at dusk ${pct(people.dusk)}`
+      }`;
     }
 
     // The wade (design addendum 2.2 section 2): from where the steerer wakes, along the strand to
@@ -559,7 +564,9 @@ async function wadeClip(
 }
 
 /** Captures that show the broch at home instead of the strand's clips (Stage 7 onwards). */
-const CAMP_LABELS = new Set(['stage-07']);
+const CAMP_LABELS = new Set(['stage-07', 'stage-08']);
+/** Captures that add the household's day: Hild at her work, at supper and at dusk (Stage 8). */
+const PEOPLE_LABELS = new Set(['stage-08']);
 /** The approved Stage 7 mockup's figures (docs/art/mockups/stage-07/README.md). */
 const CAMP_MOCKUP = {
   day: 'docs/art/mockups/stage-07/s0-day.png',
@@ -619,8 +626,12 @@ async function campStill(
   out: string,
   name: string,
   query: string,
+  ready?: (page: Page) => Promise<boolean>,
 ): Promise<{ share: number; still2: RgbaImage }> {
   const page = await openCamp(browser, query, false);
+  // Stage 8: wait for the people to be at what they are doing before the still.
+  if (ready !== undefined)
+    for (let i = 0; i < 600 && !(await ready(page)); i++) await step(page, 2);
   const still2 = await shot(page);
   writeFileSync(join(out, `${name}@2x.png`), encodePng(still2));
   const still1 = half(still2);
@@ -778,8 +789,136 @@ async function campCapture(
   return { day: day.share, night: night.share, s1: s1.share, brochFrames, sleepFrames };
 }
 
-function campReadme(label: string, strand: number, c: CampCaptureResult): string {
+interface PeopleCaptureResult {
+  readonly fishing: number;
+  readonly supper: number;
+  readonly dusk: number;
+  readonly talkFrames: number;
+}
+
+/**
+ * Stage 8: the household's day. Stills of Hild at her work on the rocks below the path, at supper
+ * by the fire (the eat loop) and walking the shore at dusk (her tendency), each with its motion and
+ * motion map; and a 10-second clip of the steerer going up to her at the fire, the conversation
+ * opening, her wound taken up and tended from the talk.
+ */
+async function peopleCapture(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<PeopleCaptureResult> {
+  const camp = JSON.parse(readFileSync(join(REPO_ROOT, 'content/camp.json'), 'utf8')) as {
+    people: { C_HILD: { camp: { x: number; y: number }; work: { x: number; y: number } } };
+  };
+  const household = JSON.parse(readFileSync(join(REPO_ROOT, 'content/household.json'), 'utf8')) as {
+    places: { SHORE: { x: number; y: number } };
+  };
+  const hild = camp.people.C_HILD;
+  const attr = async (page: Page, name: string): Promise<string> =>
+    (await page.locator('.oe-overlay').getAttribute(`data-${name}`)) ?? '';
+  /** A still once Hild is at what she is doing (walked there, settled). */
+  const settled = async (name: string, query: string, state: string): Promise<number> =>
+    (
+      await campStill(
+        browser,
+        out,
+        name,
+        query,
+        async (page) => (await attr(page, 'hild-state')) === state,
+      )
+    ).share;
+  const fishing = await settled(
+    'hild-fishing',
+    `day=2&time=09:30&tended=1&fire=lit&wood=3&zone=ZONE_SK_STRAND&at=${hild.work.x + 1.6},${hild.work.y - 0.6}`,
+    'work:fish',
+  );
+  const supper = await settled(
+    'hild-supper',
+    `day=2&time=17:40&tended=1&fire=lit&wood=3&at=${hild.camp.x + 1.4},${hild.camp.y + 1.2}`,
+    'eat',
+  );
+  const shore = household.places.SHORE;
+  const dusk = await settled(
+    'hild-dusk',
+    `day=2&time=19:25&tended=1&fire=lit&wood=3&zone=ZONE_SK_STRAND&at=${shore.x + 2},${shore.y - 0.8}`,
+    'watch',
+  );
+  // The talk: up to Hild at the fire, E, her wound, "Let me see to it", and the tending.
+  const dir = join(out, '.talk');
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const page = await openCamp(
+    browser,
+    `time=18:45&fire=lit&wood=3&at=${hild.camp.x - 0.5},${hild.camp.y + 1.7}`,
+    true,
+  );
+  let frames = 0;
+  const save = async (): Promise<void> => {
+    writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  };
+  const held = new Set<string>();
+  // Beside her on the side away from the fire, so the nearest thing to do is to talk to her.
+  const to = { x: (hild.camp.x - 0.6) * 24, y: (hild.camp.y + 0.9) * 24 };
+  for (let i = 0; i < FPS; i++) {
+    await step(page);
+    await save();
+  }
+  for (let guard = 0; guard < FPS * 3; guard++) {
+    if (await steer(page, held, to)) break;
+    await step(page);
+    await save();
+  }
+  for (const k of held) await page.keyboard.up(k);
+  await page.keyboard.press('KeyE');
+  for (let i = 0; i < FPS * 1.6; i++) {
+    await step(page);
+    await save();
+  }
+  await page.keyboard.press('Digit1');
+  for (let i = 0; i < FPS * 2.2; i++) {
+    await step(page);
+    await save();
+  }
+  await page.keyboard.press('Digit1');
+  for (let i = 0; i < FPS * 3.6; i++) {
+    await step(page);
+    await save();
+  }
+  await page.close();
+  encodeClip(dir, out, 'talk');
+  rmSync(dir, { recursive: true, force: true });
+  return { fishing, supper, dusk, talkFrames: frames };
+}
+
+function campReadme(
+  label: string,
+  strand: number,
+  c: CampCaptureResult,
+  people: PeopleCaptureResult | null = null,
+): string {
   const m = CAMP_MOCKUP.motion;
+  const peopleRows =
+    people === null
+      ? []
+      : [
+          '| `hild-fishing.png`, `hild-supper.png`, `hild-dusk.png` (and @2x, `-motion.png`) | Stage 8: Hild at her work on the rocks below the path (the fish loop), at supper by the fire (the eat loop) and at dusk on the shore, watching the water (her tendency) |',
+          `| \`talk.mp4\`, \`talk.gif\` | ${(people.talkFrames / FPS).toFixed(1)} s: the steerer goes up to Hild by the fire at evening; the conversation opens with her greeting, her wound is taken up and "Let me see to it" tends it in the kneel loop (the overlay shown) |`,
+        ];
+  const peopleMotion =
+    people === null
+      ? []
+      : [
+          `| Hild fishing on the rocks, day 2 09:30 | ${pct(people.fishing)} |`,
+          `| Hild at supper by the fire, 17:40 | ${pct(people.supper)} |`,
+          `| Hild on the shore at dusk, 19:25 | ${pct(people.dusk)} |`,
+        ];
+  const all = [
+    strand,
+    c.day,
+    c.night,
+    c.s1,
+    ...(people === null ? [] : [people.fishing, people.supper, people.dusk]),
+  ];
   return [
     `# Capture: ${label}`,
     '',
@@ -797,6 +936,7 @@ function campReadme(label: string, strand: number, c: CampCaptureResult): string
     '| `compare-day.png`, `compare-night.png` | The approved mockup (left, S0 day and night) beside the capture (right), both at 2x |',
     `| \`broch.mp4\`, \`broch.gif\` | ${(c.brochFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer walks to the fire ring, kneels and lights it in the kneel work loop, pressing on the mark; the flames take and the smoke rises |`,
     `| \`sleep.mp4\`, \`sleep.gif\` | ${(c.sleepFrames / FPS).toFixed(1)} s: at 21:00 the steerer lies down in the lean-to (the sleep loop), the night passes under a fade, and the morning report opens (the overlay shown) |`,
+    ...peopleRows,
     '',
     '## Motion with the camera still',
     '',
@@ -806,11 +946,12 @@ function campReadme(label: string, strand: number, c: CampCaptureResult): string
     `| The broch by day, S0 | ${pct(c.day)} |`,
     `| The broch by night, S0, fire lit | ${pct(c.night)} |`,
     `| The broch by day, S1 | ${pct(c.s1)} |`,
+    ...peopleMotion,
     `| Mockup: S0 day (clouds moving / frozen) | ${pct(m.day)} / ${pct(m.dayFrozen)} |`,
     `| Mockup: S0 night (clouds moving / frozen) | ${pct(m.night)} / ${pct(m.nightFrozen)} |`,
     `| Book 7 threshold | ${pct(MOTION_THRESHOLD)} |`,
     '',
-    [strand, c.day, c.night, c.s1].every((v) => v >= MOTION_THRESHOLD)
+    all.every((v) => v >= MOTION_THRESHOLD)
       ? 'Every view meets the threshold.'
       : '**A view is below the threshold: the stage is not done.**',
     '',

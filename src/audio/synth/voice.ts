@@ -93,7 +93,7 @@ export const VOICES: Readonly<Record<string, VoiceProfile>> = {
     gap: 0.04,
     lilt: 0.22,
     tilt: 0.02,
-    gain: 1.9,
+    gain: 0.85,
   },
   // Gudrun: the family's memory; old, tart and unafraid; reedy, slower, falling.
   C_GUDRUN: {
@@ -159,7 +159,7 @@ export const VOICES: Readonly<Record<string, VoiceProfile>> = {
     gap: 0.07,
     lilt: 0.3,
     tilt: -0.05,
-    gain: 1.8,
+    gain: 0.7,
   },
   // Kolbeinn: a grumbling craftsman; low, heavy, blunt syllables like hammer strokes.
   C_KOLBEINN: {
@@ -203,7 +203,7 @@ export const VOICES: Readonly<Record<string, VoiceProfile>> = {
     gap: 0.026,
     lilt: 0.45,
     tilt: 0.14,
-    gain: 1.35,
+    gain: 0.95,
   },
   // Brother Senán: gentle, wryly devout; a warm, even chanting voice.
   C_SENAN: {
