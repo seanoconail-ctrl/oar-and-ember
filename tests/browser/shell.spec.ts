@@ -62,9 +62,11 @@ test('the command ring never stops time', async ({ page }) => {
 test('music states, stingers and effects each produce a caption', async ({ page }) => {
   await openShell(page);
   await page.keyboard.press('KeyK');
-  await expect(overlay(page).locator('[data-region=captions]')).toContainText('Horn, north');
+  await expect(overlay(page).locator('[data-region=captions]')).toContainText(
+    'Horn from the north',
+  );
   await page.keyboard.press('KeyP');
-  await expect(overlay(page).locator('[data-region=captions]')).toContainText('Music:');
+  await expect(overlay(page).locator('[data-region=captions]')).toContainText('theme');
   await page.keyboard.press('KeyO');
   await expect(overlay(page).locator('[data-region=captions]')).toContainText('A horn call');
 });

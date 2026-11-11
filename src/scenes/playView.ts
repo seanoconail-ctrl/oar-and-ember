@@ -36,7 +36,7 @@ import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
-import { createOverlay } from '../ui/overlay.ts';
+import { createOverlay, showCaptions } from '../ui/overlay.ts';
 import type { LoadedAtlas } from './atlases.ts';
 import { lightPhase } from './lightPhase.ts';
 import type { NamingChoice } from './namingView.ts';
@@ -224,8 +224,14 @@ export function startPlay(
   const visuals = new ZoneVisuals(map, elevation, display.reducedMotion);
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
-    if (e.code !== 'KeyM' || session.menus.open !== 'system') return;
-    display = { reducedMotion: !display.reducedMotion };
+    if (session.menus.open !== 'system') return;
+    if (e.code === 'KeyI') {
+      display = { ...display, infoCaptions: !display.infoCaptions };
+      saveDisplaySettings(store, display);
+      return;
+    }
+    if (e.code !== 'KeyM') return;
+    display = { ...display, reducedMotion: !display.reducedMotion };
     visuals.reducedMotion = display.reducedMotion;
     saveDisplaySettings(store, display);
   });
@@ -267,10 +273,10 @@ export function startPlay(
     return key === undefined ? id : t(key);
   };
   const line = (key: string): string => t(key, { steerer: world.player.name });
-  let subtitles: { text: string; until: number }[] = [];
-  const say = (text: string, now: number): void => {
+  let subtitles: { text: string; kind: 'speech' | 'info'; until: number }[] = [];
+  const say = (text: string, now: number, kind: 'speech' | 'info' = 'speech'): void => {
     subtitles = subtitles.filter((s) => s.text !== text);
-    subtitles.push({ text, until: now + captionMs });
+    subtitles.push({ text, kind, until: now + captionMs });
     if (subtitles.length > 3) subtitles.shift();
   };
   let notice: { text: string; until: number } | null = null;
@@ -293,6 +299,7 @@ export function startPlay(
             direction: t(`caption.direction.${e.direction}`),
           }),
           now,
+          'info',
         );
         say(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
@@ -451,13 +458,11 @@ export function startPlay(
       );
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
     }
-    const soundCaptions = audio === null ? [] : audio.update(engine.now).map((c) => c.text);
-    overlay.region('captions').replaceChildren(
-      ...[...subtitles.map((s) => s.text), ...soundCaptions].map((text) => {
-        const p = document.createElement('p');
-        p.textContent = text;
-        return p;
-      }),
+    const soundCaptions = audio === null ? [] : audio.update(engine.now);
+    showCaptions(
+      overlay.region('captions'),
+      [...subtitles, ...soundCaptions],
+      display.infoCaptions,
     );
     const open = session.menus.open;
     overlay.region('menu').textContent =
@@ -465,7 +470,7 @@ export function startPlay(
         ? ''
         : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
             open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })}`
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })}`
               : ''
           }`;
 

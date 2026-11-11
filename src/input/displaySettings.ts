@@ -11,18 +11,24 @@ export const DISPLAY_KEY = 'oar-and-ember:display';
 
 export interface DisplaySettings {
   readonly reducedMotion: boolean;
+  /** Information captions (sounds, directions) shown, apart from speech subtitles (addendum 2.3). */
+  readonly infoCaptions: boolean;
 }
 
 export function parseDisplaySettings(text: string | null, systemPrefers: boolean): DisplaySettings {
   if (text !== null) {
     try {
-      const raw = JSON.parse(text) as { reducedMotion?: unknown } | null;
-      if (typeof raw?.reducedMotion === 'boolean') return { reducedMotion: raw.reducedMotion };
+      const raw = JSON.parse(text) as { reducedMotion?: unknown; infoCaptions?: unknown } | null;
+      if (typeof raw?.reducedMotion === 'boolean')
+        return {
+          reducedMotion: raw.reducedMotion,
+          infoCaptions: typeof raw.infoCaptions === 'boolean' ? raw.infoCaptions : true,
+        };
     } catch {
       // A damaged setting falls back to the system preference.
     }
   }
-  return { reducedMotion: systemPrefers };
+  return { reducedMotion: systemPrefers, infoCaptions: true };
 }
 
 /** The setting in force: the address first, then the saved choice, then the system preference. */
@@ -31,14 +37,16 @@ export function resolveDisplaySettings(
   query: string,
   systemPrefers: boolean,
 ): DisplaySettings {
-  const motion = new URLSearchParams(query).get('motion');
-  if (motion === 'reduced') return { reducedMotion: true };
-  if (motion === 'full') return { reducedMotion: false };
+  let saved: DisplaySettings;
   try {
-    return parseDisplaySettings(store.getItem(DISPLAY_KEY), systemPrefers);
+    saved = parseDisplaySettings(store.getItem(DISPLAY_KEY), systemPrefers);
   } catch {
-    return { reducedMotion: systemPrefers };
+    saved = { reducedMotion: systemPrefers, infoCaptions: true };
   }
+  const motion = new URLSearchParams(query).get('motion');
+  if (motion === 'reduced') return { ...saved, reducedMotion: true };
+  if (motion === 'full') return { ...saved, reducedMotion: false };
+  return saved;
 }
 
 export function saveDisplaySettings(store: KeyValueStore, settings: DisplaySettings): boolean {

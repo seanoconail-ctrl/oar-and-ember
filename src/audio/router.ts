@@ -22,6 +22,8 @@ export interface AudioSink {
 
 export interface Caption {
   readonly text: string;
+  /** Sound captions are information, never speech (design addendum 2.3 section 10). */
+  readonly kind: 'info';
   readonly cue: string;
   readonly until: number;
 }
@@ -53,7 +55,12 @@ export class AudioRouter {
       });
     }
     this.#captions = this.#captions.filter((c) => c.cue !== cue.id || c.text !== text);
-    this.#captions.push({ text, cue: cue.id, until: now + this.#table.captionSeconds });
+    this.#captions.push({
+      text,
+      kind: 'info',
+      cue: cue.id,
+      until: now + this.#table.captionSeconds,
+    });
   }
 
   #cue(id: string): CueDef {

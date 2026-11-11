@@ -96,7 +96,7 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
     const sink = new RecordingSink();
     const router = new AudioRouter(table, content.strings, sink);
     expect(router.event('HORN_BLOWN', 2, { direction: 'n' })).toBe('SFX_HORN');
-    expect(router.update(2).map((c) => c.text)).toContain('Horn, north');
+    expect(router.update(2).map((c) => c.text)).toContain('Horn from the north');
     expect(router.event('NOT_AN_EVENT', 2)).toBeNull();
     expect(sink.calls).toContainEqual({
       kind: 'oneShot',

@@ -27,7 +27,7 @@ import type { Presenter } from '../render/presenter.ts';
 import { clockText } from '../sim/calendar/calendar.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import { emptyWorld } from '../sim/world.ts';
-import { createOverlay } from '../ui/overlay.ts';
+import { createOverlay, showCaptions } from '../ui/overlay.ts';
 import type { MenuId } from '../ui/menus.ts';
 import { Session } from './session.ts';
 
@@ -189,13 +189,8 @@ export function showShellView(
       : lastOrder === null
         ? ''
         : t('ui.ring.issued', { order: orderName(lastOrder) });
-    overlay.region('captions').replaceChildren(
-      ...captions.map((c) => {
-        const p = document.createElement('p');
-        p.textContent = c.text;
-        return p;
-      }),
-    );
+    showCaptions(overlay.region('captions'), captions, true);
+
     const state = session.sim.state;
     overlay.region('panel').textContent = [
       t('ui.shell.title'),

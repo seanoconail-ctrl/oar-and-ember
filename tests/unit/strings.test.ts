@@ -44,3 +44,24 @@ describe('the string table (Book 8 section 10)', () => {
     );
   });
 });
+
+describe('captions (design addendum 2.3 section 10)', () => {
+  it('tags every caption string SPEECH or INFO, and checks each kind', async () => {
+    const { captionProblems } = await import('../../src/content/strings.ts');
+    const entry = (text: string, tags: string[]) => ({ text, tags });
+    expect(
+      captionProblems('caption.format.subtitle', entry('{speaker}: {line}', ['SPEECH'])),
+    ).toEqual([]);
+    expect(captionProblems('caption.x.y', entry('Hild, calling', ['INFO']))).toEqual([]);
+    expect(captionProblems('caption.x.y', entry('Surf breaking', []))).toHaveLength(1);
+    expect(captionProblems('caption.x.y', entry('{line}', ['SPEECH']))).toHaveLength(1);
+    expect(captionProblems('caption.x.y', entry('Music: drums', ['INFO']))).toHaveLength(1);
+    expect(
+      captionProblems(
+        'caption.x.y',
+        entry('A horn, far off to the north, again and again', ['INFO']),
+      ),
+    ).toHaveLength(1);
+    expect(captionProblems('ui.x.y', entry('Anything: at all', []))).toEqual([]);
+  });
+});

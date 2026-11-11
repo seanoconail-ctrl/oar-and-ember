@@ -282,70 +282,92 @@
     "text": "Gilt weather-vane"
   },
   "caption.music.home_dawn": {
-    "text": "Music: the hearth at dawn"
+    "text": "The hearth theme at dawn",
+    "tags": ["INFO"]
   },
   "caption.music.home_day": {
-    "text": "Music: the hearth by day"
+    "text": "The island theme by day",
+    "tags": ["INFO"]
   },
   "caption.music.home_dusk": {
-    "text": "Music: the hearth at dusk"
+    "text": "The hearth theme at dusk",
+    "tags": ["INFO"]
   },
   "caption.music.home_night": {
-    "text": "Music: the hearth at night, sparse"
+    "text": "The hearth theme at night, sparse",
+    "tags": ["INFO"]
   },
   "caption.music.raid_approach": {
-    "text": "Music: a low pulse, held breath"
+    "text": "A low pulse, held breath",
+    "tags": ["INFO"]
   },
   "caption.music.raid_alarm": {
-    "text": "Music: drums, the alarm is raised"
+    "text": "Drums, the alarm raised",
+    "tags": ["INFO"]
   },
   "caption.music.combat_1": {
-    "text": "Music: fighting"
+    "text": "Fighting music",
+    "tags": ["INFO"]
   },
   "caption.stinger.horn": {
-    "text": "A horn call"
+    "text": "A horn call",
+    "tags": ["INFO"]
   },
   "caption.stinger.discovery": {
-    "text": "Something found"
+    "text": "Something found",
+    "tags": ["INFO"]
   },
   "caption.sfx.horn": {
-    "text": "Horn"
+    "text": "Horn",
+    "tags": ["INFO"]
   },
   "caption.sfx.charge_level_2": {
-    "text": "Heavy blow fully charged"
+    "text": "Heavy blow fully charged",
+    "tags": ["INFO"]
   },
   "caption.sfx.parry": {
-    "text": "Parry"
+    "text": "Parry",
+    "tags": ["INFO"]
   },
   "caption.sfx.tell_ran": {
-    "text": "A hum under the water"
+    "text": "A hum under the water",
+    "tags": ["INFO"]
   },
   "caption.format.with_direction": {
-    "text": "{caption}, {direction}"
+    "text": "{caption} from the {direction}",
+    "tags": ["INFO"]
   },
   "caption.direction.n": {
-    "text": "north"
+    "text": "north",
+    "tags": ["INFO"]
   },
   "caption.direction.ne": {
-    "text": "north-east"
+    "text": "north-east",
+    "tags": ["INFO"]
   },
   "caption.direction.e": {
-    "text": "east"
+    "text": "east",
+    "tags": ["INFO"]
   },
   "caption.direction.se": {
-    "text": "south-east"
+    "text": "south-east",
+    "tags": ["INFO"]
   },
   "caption.direction.s": {
-    "text": "south"
+    "text": "south",
+    "tags": ["INFO"]
   },
   "caption.direction.sw": {
-    "text": "south-west"
+    "text": "south-west",
+    "tags": ["INFO"]
   },
   "caption.direction.w": {
-    "text": "west"
+    "text": "west",
+    "tags": ["INFO"]
   },
   "caption.direction.nw": {
-    "text": "north-west"
+    "text": "north-west",
+    "tags": ["INFO"]
   },
   "ui.menu.refused": {
     "text": "Not now: {count} hostile aware of you."
@@ -474,10 +496,12 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "caption.voice.hild_calling": {
-    "text": "Hild, calling"
+    "text": "Hild, calling",
+    "tags": ["INFO"]
   },
   "caption.format.subtitle": {
-    "text": "{speaker}: {line}"
+    "text": "{speaker}: {line}",
+    "tags": ["SPEECH"]
   },
   "ui.naming.title": {
     "text": "Who washed up on Wreck Strand?"
@@ -531,34 +555,44 @@
     "text": "Hild"
   },
   "caption.sfx.hit_light": {
-    "text": "A blow lands"
+    "text": "A blow lands",
+    "tags": ["INFO"]
   },
   "caption.sfx.charge_level_1": {
-    "text": "Heavy blow charging"
+    "text": "Heavy blow charging",
+    "tags": ["INFO"]
   },
   "caption.sfx.block": {
-    "text": "Blocked"
+    "text": "Blocked",
+    "tags": ["INFO"]
   },
   "caption.sfx.guard_break": {
-    "text": "Guard broken"
+    "text": "Guard broken",
+    "tags": ["INFO"]
   },
   "caption.tell.ran": {
-    "text": "A hum under the water"
+    "text": "A hum under the water",
+    "tags": ["INFO"]
   },
   "caption.tell.manannan": {
-    "text": "Hooves on the water"
+    "text": "Hooves on the water",
+    "tags": ["INFO"]
   },
   "caption.tell.draugr": {
-    "text": "Dripping, coming closer"
+    "text": "Dripping, coming closer",
+    "tags": ["INFO"]
   },
   "caption.music.hearth": {
-    "text": "Music: the hearth theme"
+    "text": "The hearth theme",
+    "tags": ["INFO"]
   },
   "caption.music.skarvholm": {
-    "text": "Music: the Skarvholm theme"
+    "text": "The Skarvholm theme",
+    "tags": ["INFO"]
   },
   "caption.amb.strand": {
-    "text": "Wind and surf on the strand"
+    "text": "Wind and surf on the strand",
+    "tags": ["INFO"]
   },
   "ui.sound.title": {
     "text": "Oar and Ember: sound test"
@@ -744,22 +778,28 @@
     "text": "Walk across every surface"
   },
   "caption.sfx.footsteps.grass": {
-    "text": "Footsteps on grass"
+    "text": "Footsteps on grass",
+    "tags": ["INFO"]
   },
   "caption.sfx.footsteps.shingle": {
-    "text": "Footsteps on shingle"
+    "text": "Footsteps on shingle",
+    "tags": ["INFO"]
   },
   "caption.sfx.footsteps.sand": {
-    "text": "Footsteps on sand"
+    "text": "Footsteps on sand",
+    "tags": ["INFO"]
   },
   "caption.sfx.footsteps.wet_sand": {
-    "text": "Footsteps on wet sand"
+    "text": "Footsteps on wet sand",
+    "tags": ["INFO"]
   },
   "caption.sfx.footsteps.water": {
-    "text": "Splashing through the shallows"
+    "text": "Splashing through the shallows",
+    "tags": ["INFO"]
   },
   "caption.sfx.footsteps.rock": {
-    "text": "Footsteps on rock"
+    "text": "Footsteps on rock",
+    "tags": ["INFO"]
   },
   "region.name.reg_mainland": {
     "text": "The mainland"
@@ -783,6 +823,13 @@
     "text": "The hearth fire"
   },
   "caption.amb.hearth": {
-    "text": "The hearth fire crackling"
+    "text": "The hearth fire crackling",
+    "tags": ["INFO"]
+  },
+  "ui.system.info_on": {
+    "text": "Information captions: on. Press {key} to change."
+  },
+  "ui.system.info_off": {
+    "text": "Information captions: off. Press {key} to change."
   }
 }

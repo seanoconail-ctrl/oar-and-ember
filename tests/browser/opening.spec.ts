@@ -139,8 +139,32 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
 
   // Hild calls, and says where from.
   const captions = page.locator('[data-region=captions]');
-  await expect(captions).toContainText('Hild, calling, west', { timeout: 5000 });
-  await expect(captions).toContainText('past the rocks');
+  // Design addendum 2.3 section 10: the cue in italic, with no speaker, above Hild's words, which
+  // are upright and named; the italic is a real face, never a synthesised slant.
+  const info = captions.locator('p.info', { hasText: 'Hild, calling from the west' });
+  await expect(info).toHaveCount(1, { timeout: 5000 });
+  const speech = captions.locator('p.speech', { hasText: 'past the rocks' });
+  await expect(speech).toContainText('Hild: ');
+  // The captions are rebuilt every frame, so their styles are read in one step from the live page.
+  const looks = await page.evaluate(() => {
+    const ps = [...document.querySelectorAll('.oe-overlay [data-region=captions] p')];
+    const info = ps.find((p) => p.className === 'info');
+    const speech = ps.find((p) => p.className === 'speech');
+    if (info === undefined || speech === undefined) return null;
+    const i = getComputedStyle(info);
+    return {
+      infoStyle: i.fontStyle,
+      synthesis: i.getPropertyValue('font-synthesis'),
+      speechStyle: getComputedStyle(speech).fontStyle,
+      infoAbove: ps.indexOf(info) < ps.indexOf(speech),
+    };
+  });
+  expect(looks).toEqual({
+    infoStyle: 'italic',
+    synthesis: expect.stringContaining('none') as unknown,
+    speechStyle: 'normal',
+    infoAbove: true,
+  });
 
   // Walk to the voice.
   const hildAt = tileOf(map, 31.5 * 24, 37.6 * 24);

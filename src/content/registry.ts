@@ -9,7 +9,7 @@ import type { IdRegistry } from './idRegistry.ts';
 import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
 import { steererWordingProblems } from './steererWords.ts';
-import { parseStringTable } from './strings.ts';
+import { captionProblems, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
 import type { StringTable } from './strings.ts';
@@ -351,6 +351,9 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   // Book 8 section 03: no gendered word to or about the steerer.
   for (const [key, entry] of strings) {
     for (const reason of steererWordingProblems(entry.text, entry.tags))
+      issues.push({ file: CONTENT_FILES.strings, path: key, reason });
+    // Design addendum 2.3 section 10: speech and information captions.
+    for (const reason of captionProblems(key, entry))
       issues.push({ file: CONTENT_FILES.strings, path: key, reason });
   }
 

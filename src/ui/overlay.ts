@@ -18,12 +18,15 @@ export interface Overlay {
 }
 
 const STYLE = `
-.oe-overlay { position: fixed; pointer-events: none; color: #f4efe4; font-family: system-ui, sans-serif;
+.oe-overlay { position: fixed; pointer-events: none; color: #f4efe4;
+  font-family: system-ui, 'Segoe UI', Roboto, 'Noto Sans', 'DejaVu Sans', sans-serif; font-synthesis: none;
   text-shadow: 0 1px 0 #22313a, 1px 0 0 #22313a, 0 -1px 0 #22313a, -1px 0 0 #22313a; }
 .oe-overlay [data-region] { position: absolute; left: 4%; right: 4%; }
 .oe-overlay [data-region=captions] { bottom: 4%; text-align: center; font-size: 1.1em; }
 .oe-overlay [data-region=captions] p { margin: 0.15em auto; display: table; padding: 0.1em 0.5em;
   background: rgba(34, 49, 58, 0.85); border-radius: 2px; }
+.oe-overlay [data-region=captions] p.info { font-style: italic; background: rgba(34, 49, 58, 0.7); }
+.oe-overlay [data-region=captions] p.speech { font-style: normal; }
 .oe-overlay [data-region=prompt] { bottom: 16%; text-align: center; }
 .oe-overlay [data-region=menu] { top: 30%; text-align: center; font-size: 1.3em; }
 .oe-overlay [data-region=menu]:not(:empty) { background: rgba(58, 38, 22, 0.88); border: 2px solid #7b5434;
@@ -72,4 +75,35 @@ export function createOverlay(doc: Document): Overlay {
       return el;
     },
   };
+}
+
+/** A line of subtitles (design addendum 2.3 section 10): speech, or information about a sound. */
+export interface CaptionLine {
+  readonly text: string;
+  readonly kind: 'speech' | 'info';
+}
+
+/**
+ * Fills the captions region: information lines (italic, a real italic face with no synthesised
+ * slant, `font-synthesis: none`) above speech lines (upright, "Name: words"). Information lines
+ * are left out when the player has turned them off.
+ */
+export function showCaptions(
+  region: HTMLElement,
+  lines: readonly CaptionLine[],
+  showInfo: boolean,
+): void {
+  const doc = region.ownerDocument;
+  const ordered = [
+    ...(showInfo ? lines.filter((l) => l.kind === 'info') : []),
+    ...lines.filter((l) => l.kind === 'speech'),
+  ];
+  region.replaceChildren(
+    ...ordered.map((line) => {
+      const p = doc.createElement('p');
+      p.className = line.kind;
+      p.textContent = line.text;
+      return p;
+    }),
+  );
 }
