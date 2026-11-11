@@ -19,6 +19,11 @@
       "layer_cloak_wool_b",
       "layer_weapon_bow_b"
     ],
-    "w": ["actor_p_steerer_b", "layer_clothing_tunic_b", "layer_cloak_wool_b", "layer_weapon_bow_b"]
+    "w": [
+      "actor_p_steerer_b",
+      "layer_clothing_tunic_b",
+      "layer_cloak_wool_b",
+      "layer_weapon_bow_b"
+    ]
   }
 }

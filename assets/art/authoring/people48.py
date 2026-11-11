@@ -25,7 +25,7 @@ itself takes the line (ink between separate things; the cloth's deepest tone whe
 meets skin, so a collar or a cuff is not a black ring). So every layer has a clean edge alone,
 and the composite has one outline, never a doubled one.
 
-Loose things lag a frame (Book 7 section 07): hair tails, Hild's braid, cloaks and the shawl are
+Loose things lag a frame (Book 7 section 07): hair tails, Hild's braid, cloaks, hems and sashes are
 posed from the previous frame's motion and settle after it.
 """
 import math
@@ -451,8 +451,10 @@ class Pose:
 
 
 class Model:
-    def __init__(self, key, shw, upper, lower, upper_e, lower_e, heads, hipw=2.5):
+    def __init__(self, key, shw, upper, lower, upper_e, lower_e, heads, hipw=2.5,
+                 limb=3, forearm=3, big=False, neck=4, heavy=False):
         self.key = key
+        self.limb, self.forearm, self.big, self.neck, self.heavy = limb, forearm, big, neck, heavy
         self.shw = shw            # shoulder joint offset (arms' centre line)
         self.hipw = hipw
         self.upper, self.lower = upper, lower            # half widths, front and back views
@@ -554,13 +556,13 @@ MODEL_A = Model('a', 6.5,
                 lower_e=[(-3, 3), (-3, 3), (-3, 3), (-4, 3), (-4, 3), (-4, 3), (-4, 4), (-4, 4),
                          (-4, 4), (-5, 4), (-5, 4), (-5, 5)],
                 heads=HEAD_A)
-MODEL_B = Model('b', 5.5,
+MODEL_B = Model('b', 5.5, forearm=2,
                 upper=[3, 4, 4, 4, 4, 4], lower=[4, 4, 4, 4.5, 5, 5, 5, 5, 5, 5.5, 5.5, 6],
                 upper_e=[(-3, 2), (-3, 3), (-3, 3), (-3, 3), (-3, 3), (-3, 3)],
                 lower_e=[(-3, 3), (-3, 3), (-3, 3), (-4, 3), (-4, 3), (-4, 3), (-4, 4), (-4, 4),
                          (-4, 4), (-5, 4), (-5, 4), (-5, 5)],
                 heads=HEAD_B)
-MODEL_HILD = Model('hild', 5.5,
+MODEL_HILD = Model('hild', 5.5, forearm=2,
                    upper=[3, 4, 4, 4, 4, 4],
                    lower=[4, 4, 4, 4.5, 5, 5, 5, 5.5, 5.5, 6, 6, 6, 6.5, 6.5],
                    upper_e=[(-3, 2), (-3, 3), (-3, 3), (-3, 3), (-3, 3), (-3, 3)],
@@ -623,13 +625,13 @@ def zseg(part, facing, a, b, w, mat, bias, scale=1.0):
         part.put(x, y, m, lerp(pa[2], pb[2], t) * scale + bias)
 
 
-def foot(part, facing, ankle, toe, mat, z, sg, raise_ok=True):
+def foot(part, facing, ankle, toe, mat, z, sg, raise_ok=True, w=3):
     """The shoe (or bare foot) under an ankle: 'toe' is the heel raised."""
     x, y, _ = P2g(facing, ankle, raise_ok)
     a, r = int(math.floor(x)), int(math.floor(y))   # r: the ankle's row
     if facing in 's n':
         out = -1 if (sg == 1) == (facing == 's') else 1   # the toes turn a little outward
-        cols = [a - 1, a, a + 1]
+        cols = list(range(a - (w - 1) // 2 - (1 if w == 4 else 0), a - (w - 1) // 2 - (1 if w == 4 else 0) + w))
         if toe:
             for c in cols:
                 part.put(c, r + 1, mat, z)
@@ -641,8 +643,11 @@ def foot(part, facing, ankle, toe, mat, z, sg, raise_ok=True):
                 part.put(c, r + 2, mat, z)
     else:
         fw = 1 if facing == 'e' else -1
+
         def P(dx, dy):
             part.put(a + dx * fw, r + dy, mat, z)
+            if w > 3 and dx == -1:
+                part.put(a - 2 * fw, r + dy, mat, z)
         if toe == 1:            # heel up, pushing off the toe
             for dx in (-1, 0, 1, 2):
                 P(dx, 1)
@@ -666,14 +671,20 @@ HAND = {
     ('e', 'open'): ['FF', 'FF', 'F.'],
     ('s', 'fist'): ['FF', 'FF'],
     ('e', 'fist'): ['FF', 'FF'],
+    # Big hands for the heavy build.
+    ('S', 'open'): ['FFF', 'FFF', '.FF'],
+    ('E', 'open'): ['FFF', 'FFF', 'FF.'],
+    ('S', 'fist'): ['FFF', 'FFF'],
+    ('E', 'fist'): ['FFF', 'FFF'],
 }
 
 
-def hand(part, facing, wrist, elbow, grip, z, sg, mat='skin'):
+def hand(part, facing, wrist, elbow, grip, z, sg, mat='skin', big=False):
     x, y, _ = P2(facing, wrist)
     ex, ey, _ = P2(facing, elbow)
     view = 's' if facing in 's n' else 'e'
-    rows = HAND.get((view, grip), HAND[(view, 'open')])
+    key = view.upper() if big else view
+    rows = HAND.get((key, grip), HAND[(key, 'open')])
     # Hands point along the forearm; a raised hand is drawn above the wrist.
     up = ey > y + 1
     flip = (sg == 1) == (facing in 's') if view == 's' else facing == 'w'
@@ -742,6 +753,15 @@ def fig(ch, facing, pose, prev):
     lag_f = (prev.pel[1] - pose.pel[1]) + pose.cloth[0]
     lag_u += pose.cloth[1]
     rows = torso_rows(m, facing, j)
+    trail = -pose.cloth[0]
+    if prof and abs(trail) > 1.2:
+        # The hem drags a frame behind: the skirt's last rows trail (or swing on, stopping).
+        last = UPPER_ROWS + len(m.lower) - 1
+        shifted = []
+        for row, k, c in rows:
+            t = max(0, k - (last - 4)) / 4
+            shifted.append((row, k, c - fw * round(clamp(trail, -2, 2) * 0.6 * t)))
+        rows = shifted
     lowz = 3.0 if prof else 0.3
 
     # ---- torso: the body's linen shirt and the clothing over it
@@ -792,7 +812,7 @@ def fig(ch, facing, pose, prev):
             neck.put(x, chin + 1, 'skin')
             neck.put(x, chin + 2, 'skin')
     else:
-        for x in range(ncx - 2, ncx + 2):
+        for x in range(ncx - m.neck // 2, ncx + m.neck // 2):
             neck.put(x, chin + 1, 'skin')
             neck.put(x, chin + 2, 'skin')
     parts.append(neck)
@@ -831,12 +851,12 @@ def fig(ch, facing, pose, prev):
         sleeve_b = Part('body', 0, 'arm' + side)
         sleeve_c = Part('clothing', 0, 'sleeve' + side)
         for part, mat in ((sleeve_b, 'linen' + fs), (sleeve_c, ch.sleeve + fs)):
-            zseg(part, facing, J['sh'], J['elbow'], 3, mat, bias)
-            zseg(part, facing, J['elbow'], J['wrist'], ch.forearm_w, mat, bias)
+            zseg(part, facing, J['sh'], J['elbow'], m.limb, mat, bias)
+            zseg(part, facing, J['elbow'], J['wrist'], m.forearm, mat, bias)
         # The shoulder cap rounds the top of the arm into the torso.
         hd = Part('body', 0, 'hand' + side)
         wz = P2(facing, J['wrist'])[2] + bias + 0.05
-        hand(hd, facing, J['wrist'], J['elbow'], pose.grip[side], wz, sg, 'skin' + fs)
+        hand(hd, facing, J['wrist'], J['elbow'], pose.grip[side], wz, sg, 'skin' + fs, m.big)
         parts += [sleeve_b, sleeve_c, hd]
 
     # ---- legs
@@ -852,10 +872,17 @@ def fig(ch, facing, pose, prev):
         raise_ok = pose.feet[other][1] == 0
         for part, thigh, shin, ft in ((lb, 'linen' + fs, 'skin' + fs, 'skin' + fs),
                                       (lc, ch.trouser + fs, 'wrap' + fs, 'shoe' + fs)):
-            part.seg(P2(facing, J['hip'])[:2], (kx, ky), 3, thigh)
-            part.seg((kx, ky + 1), P2g(facing, J['ankle'], raise_ok)[:2], 3, shin)
-            foot(part, facing, J['ankle'], pose.toe[side], ft, z, sg, raise_ok)
+            part.seg(P2(facing, J['hip'])[:2], (kx, ky), m.limb, thigh)
+            part.seg((kx, ky + 1), P2g(facing, J['ankle'], raise_ok)[:2], m.limb, shin)
+            foot(part, facing, J['ankle'], pose.toe[side], ft, z, sg, raise_ok, m.limb)
         # The wraps spiral round the shin.
+        ad = P2(facing, J['ankle'])[2]
+        if facing == 'n' and ad > 3:
+            # Seen from behind, a heel kicked up behind swings out past the cloak's hem.
+            for part in (lb, lc):
+                for (x, y), (mt, zz) in list(part.px.items()):
+                    if y > ky:
+                        part.px[(x, y)] = (mt, 3.5)
         for (x, y), (mt, zz) in list(lc.px.items()):
             if mt.startswith('wrap') and (x + y) % 3 == 0 and (x - 1, y) in lc.px and lc.px[(x - 1, y)][0] == mt:
                 lc.put(x, y, 'wrapd')
@@ -920,9 +947,10 @@ class Steerer:
     sleeve, trouser = 'tunic', 'trouser'
     skirt_from = 9
 
+    sash = True
+
     def __init__(self, model):
         self.model = model
-        self.forearm_w = 3 if model.key == 'a' else 2
         self.helmet = False
 
     def torso_mat(self, k):
@@ -987,7 +1015,8 @@ class Steerer:
                     trail = -pose.cloth[0] * t * 1.5
                     y = kr + 2 + i + round(lag_u * t) - side
                     tails.put(kx - 1 + side + round(sway + trail + spread * t), y, 'sash')
-        parts.append(tails)
+        if self.sash:
+            parts.append(tails)
         cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch=True)
         if self.helmet:
             helmet(parts, facing, j, pose)
@@ -1006,6 +1035,8 @@ def cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch):
     sw = m.shw + 1.5                # half width over the shoulders
     torso_hw = m.upper[2]
     if facing in 's n':
+        # Running, the cloak streams out behind and its hem lifts off the legs.
+        hem -= round(max(0.0, trail - 1.0) * 2.0)
         if facing == 's':
             # Seen from the front: the inside of the cloak hangs behind, in shadow.
             panel = Part('cloak', -3.0, 'panel', side=1, rim=False)
@@ -1025,8 +1056,8 @@ def cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch):
                 hw = sw - 0.5 + 2.4 * t
             wr = wind * (0.5 + 4.5 * t ** 1.4) + ripple(row, flap, 0.8 * wind * t)
             wl = -wind * 1.6 * t
-            x0 = math.floor(c - hw + 0.5) + round(wl)
-            x1 = math.floor(c + hw - 0.5) + round(wr)
+            x0 = max(OX + 1, math.floor(c - hw + 0.5) + round(wl))
+            x1 = min(OX + W - 2, math.floor(c + hw - 0.5) + round(wr))
             band = row >= hem - (1 if facing == 's' else 1)
             for x in range(x0, x1 + 1):
                 mat = 'lining' if band else ('cloakin' if facing == 's' else 'cloak')
@@ -1104,7 +1135,7 @@ def cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch):
                     outward += wind * (1.0 + 5.0 * t ** 1.3) + ripple(row, flap, wind * 0.9 * t)
             outer = backx - fw * round(outward)
             inner = backx + fw * (cover - 1) + fw * round(front_extra)
-            lo, hi = min(outer, inner), max(outer, inner)
+            lo, hi = max(OX + 1, min(outer, inner)), min(OX + W - 2, max(outer, inner))
             band = row >= hem - 1
             for x in range(lo, hi + 1):
                 panel.put(x, row, 'lining' if band else 'cloak', z)
@@ -1274,43 +1305,105 @@ def gait(steps, pel_u, arms, toe_seq, lift_seq, cloth, lean=(0, 0), extra=None):
     return out
 
 
-def anim_walk():
+def anim_walk(heavy=False):
     """Right contact, right down, passing, left contact, left down, passing. The planted foot moves
     back 4 px a frame: at 5 ticks a frame, 48 px a second, the walk speed (Book 10: 2.0 tiles a
-    second), so the feet do not slide. The torso and head drop exactly 1 px on the down frames."""
+    second), so the feet do not slide. The torso and head drop exactly 1 px on the down frames
+    (2 px for the heavy build, which also swings its arms a little less)."""
     R = [6, 2, -2, -6, -3, 1]          # the right sole: planted 0 to 3, swinging 3 to 0
     L = [-6, -3, 1, 6, 2, -2]
     lift = [(0, 0), (0, 2), (0, 3), (0, 0), (2, 0), (3, 0)]
     toe = [(-1, 1), (0, 1), (0, 0), (1, -1), (1, 0), (0, 0)]
-    pel = [0, -1, 0, 0, -1, 0]
-    sw = [5, 4, 0, -5, -4, 0]          # the left hand swings with the right foot
+    drop = 2 if heavy else 1
+    pel = [0, -drop, 0, 0, -drop, 0]
+    k = 0.85 if heavy else 1.0
+    sw = [5 * k, 4 * k, 0, -5 * k, -4 * k, 0]          # the left hand swings with the right foot
     arms = [(swing(-a), swing(a)) for a in sw]
     cloth = [(-1.0 + 0.5 * math.cos(i * math.pi / 3), 0) for i in range(6)]
-    return gait(list(zip(R, L)), pel, arms, toe, lift, cloth, lean=(0, 0.6))
-
-
-def anim_run():
-    """Contact, down, push, float for each foot: a bounce, a longer stride, a forward lean and
-    pumping arms. A toe is always on the ground (the feet stay on the pivot row)."""
-    R = [7, 0, -7, -11, -4, 3, 7, 9]
-    L = [-11, -4, 3, 7, 7, 0, -7, -11]
-    lift = [(0, 1), (0, 5), (0, 6), (2, 4), (1, 0), (5, 0), (6, 0), (4, 2)]
-    lift = [(0, 1), (0, 5), (0, 6), (0, 3), (1, 0), (5, 0), (6, 0), (3, 0)]
-    toe = [(-1, 1), (0, 0), (1, 0), (1, 0), (1, -1), (0, 0), (0, 1), (0, 1)]
-    pel = [-1, -2, 0, 1, -1, -2, 0, 1]
-    sw = [6, 5, 0, -5, -6, -5, 0, 5]
-
-    def pump(f):
-        # Elbows bent near a right angle: the hand rides high and swings fore and aft.
-        return (0.6, f * 0.9, -5.8 + 0.25 * max(0, f))
-    arms = [(pump(-a), pump(a)) for a in sw]
-    cloth = [(-2.4 + 0.6 * math.cos(i * math.pi / 2), 0) for i in range(8)]
 
     def extra(i, p):
-        p.elbow = {'R': (0.2, -1.0, -0.2), 'L': (0.2, -1.0, -0.2)}
+        p.hair = p.cloth
+    return gait(list(zip(R, L)), pel, arms, toe, lift, cloth, lean=(0, 0.6), extra=extra)
+
+
+# The run (addendum 2.3 section 12): contact, down, passing, suspension for each foot. At 3 ticks a
+# frame the run's 144 px a second is 7.2 px a frame, so the planted foot moves back 7 px a frame
+# through contact, down and passing (+7, 0, -7), and a stride is about 29 px.
+RUN_LEG = {
+    # The right sole (f, lift, toe) through the cycle; the left runs half a cycle behind.
+    False: [(7, 0, -1), (0, 0, 0), (-7, 0, 1), (-9, 5, 0), (-6, 9, 0), (-1, 8, 0), (3, 6, 0), (6, 2, 0)],
+    # Heavy: a deeper down, a lower knee and heel, and a flight of exactly 1 px.
+    True: [(6.5, 0, -1), (0, 0, 0), (-6.5, 0, 1), (-8, 3, 0), (-5.5, 6, 0), (-1, 6, 0), (3, 4, 0), (5.5, 1, 0)],
+}
+RUN_PEL = {False: [-1, -2, -1, 0, -1, -2, -1, 0], True: [-1, -3, -1, -1, -1, -3, -1, -1]}
+
+
+def run_arm(a, heavy):
+    """A pumping arm, elbow near a right angle: a = 1 fist forward at chest height, -1 elbow driven
+    far back."""
+    if heavy:
+        F, B = (-2.2, 3.6, -4.6), (0.8, -3.2, -8.4)
+    else:
+        F, B = (-2.6, 4.5, -4.0), (0.8, -4.2, -8.4)
+    t = (a + 1) / 2
+    return tuple(lerp(B[k], F[k], t) for k in range(3))
+
+
+def anim_run(heavy=False):
+    """A forward tilt for the whole run (shoulders 2 px and the head 3 px ahead of the hips), one
+    suspension frame per stride with both feet off the ground, the leading knee bending deep on the
+    down frames as the torso drops, the knee driving high on the forward swing, the heel kicking up
+    behind after push-off, and the elbows pumping opposite the legs. Hair, hem, cloak and sash trail
+    a frame behind."""
+    legR = RUN_LEG[heavy]
+    pel = RUN_PEL[heavy]
+    phase = [-1, -0.7, 0, 0.7, 1, 0.7, 0, -0.7]
+    if heavy:   # a slightly slower swing: it lags half a frame and reaches less far
+        phase = [-0.85, -0.85, -0.3, 0.4, 0.85, 0.85, 0.3, -0.4]
+    out = []
+    for i in range(8):
+        r, l = legR[i], legR[(i + 4) % 8]
+        p = Pose(pel=(0, 0, pel[i]), lean=(0, 2.0), head=(0, 1.0, 0))
+        p.feet = {'R': (r[0], r[1]), 'L': (l[0], l[1])}
+        p.toe = {'R': r[2], 'L': l[2]}
+        p.hands = {'R': run_arm(phase[i], heavy), 'L': run_arm(-phase[i], heavy)}
+        p.elbow = {'R': (0.3, -1.0, 0.4), 'L': (0.3, -1.0, 0.4)}
         p.grip = {'R': 'fist', 'L': 'fist'}
-        p.head = (0, 0.8, 0)
-    return gait(list(zip(R, L)), pel, arms, toe, lift, cloth, lean=(0, 2.6), extra=extra)
+        p.cloth = (-2.4 + 0.6 * math.cos(i * math.pi / 2), 0)
+        p.hair = p.cloth
+        out.append(p)
+    return out
+
+
+def anim_runstart(heavy=False):
+    """One frame leaning into the start: low, tipped forward, the back foot pushing off."""
+    p = Pose(pel=(0, 0, -3 if heavy else -2), lean=(0, 3.0), head=(0, 1.0, 0))
+    p.feet = {'R': (-6, 0), 'L': (3, 0)}
+    p.toe = {'R': 1, 'L': 0}
+    p.hands = {'R': run_arm(0.8, heavy), 'L': run_arm(-0.8, heavy)}
+    p.elbow = {'R': (0.3, -1.0, 0.4), 'L': (0.3, -1.0, 0.4)}
+    p.grip = {'R': 'fist', 'L': 'fist'}
+    p.cloth = (-1.4, 0)
+    p.hair = p.cloth
+    return [p]
+
+
+def anim_runstop(heavy=False):
+    """A short skid on the front heel, leaning back with the arms out, then settling; the cloak and
+    hair swing on forward past the body and come back."""
+    a = Pose(pel=(0, 0, -3 if heavy else -2), lean=(0, -1.5), head=(0, -0.5, 0))
+    a.feet = {'R': (-4, 0), 'L': (7, 0)}
+    a.toe = {'R': 1, 'L': -1}
+    a.hands = {'R': (1.2, 3.5, -6.5), 'L': (1.2, 3.0, -7.0)}
+    a.elbow = {'R': (0.6, -1.0, 0.0), 'L': (0.6, -1.0, 0.0)}
+    a.cloth = (2.0, 0)
+    a.hair = a.cloth
+    b = Pose(pel=(0, 0, -1), lean=(0, 0.3))
+    b.feet = {'R': (-1.5, 0), 'L': (2, 0)}
+    b.hands = {'R': (0.2, 1.2, -11.0), 'L': (0.2, 1.0, -11.0)}
+    b.cloth = (0.8, 0)
+    b.hair = b.cloth
+    return [a, b]
 
 
 def anim_sneak():
@@ -1368,18 +1461,29 @@ def anim_draw():
     return out
 
 
-STEERER_STATES = [
-    # state, poses, ticks, loop
-    ('idle', anim_idle, 15, True),
-    ('shift', anim_shift, 20, True),
-    ('glance', anim_glance, 24, True),
-    ('idlewind', anim_idlewind, 9, True),
-    ('walk', anim_walk, 5, True),
-    ('run', anim_run, 3, True),
-    ('sneak', anim_sneak, 6, True),
-    ('carry', anim_carry, 5, True),
-    ('draw', anim_draw, 8, False),
-]
+def states_for(heavy=False, bow=True):
+    """The steerer's state list, shared by the heavy build (the same counts and timing)."""
+    h = heavy
+    out = [
+        # state, poses, ticks, loop
+        ('idle', anim_idle, 15, True),
+        ('shift', anim_shift, 20, True),
+        ('glance', anim_glance, 24, True),
+        ('idlewind', anim_idlewind, 9, True),
+        ('walk', lambda: anim_walk(h), 5, True),
+        ('run', lambda: anim_run(h), 3, True),
+        ('runstart', lambda: anim_runstart(h), 4, False),
+        ('runstop', lambda: anim_runstop(h), 6, False),
+        ('sneak', anim_sneak, 6, True),
+        ('carry', anim_carry, 5, True),
+    ]
+    if bow:
+        out.append(('draw', anim_draw, 8, False))
+    return out
+
+
+STEERER_STATES = states_for(False)
+HEAVY_STATES = states_for(True)
 STEERER_EVENTS = 'walk 0, walk 3, run 0, run 4, sneak 0, sneak 3, carry 0, carry 3'
 
 
@@ -1444,8 +1548,8 @@ def bow_drawn(parts, facing, j, pose):
 
 class Hild:
     """Hild Thorkelsdottir (C_HILD, Book 5 section 02): a woad dress over brown trousers and wrapped
-    legs, the weld-green shawl and the long blond braid that are her signature (Book 7 section 07),
-    her left shin bound where the wreck hurt it (decision S6-12)."""
+    legs; her signature is the woad blue of her dress (Book 5; addendum 2.3 section 9, which drops the
+    weld-green shawl) and her long blond braid; her left shin is bound where the wreck hurt it."""
 
     sleeve, trouser = 'dress', 'trouser'
     skirt_from = 9
@@ -1460,7 +1564,7 @@ class Hild:
     def torso_mat(self, k):
         if k == 8:
             return 'belt'
-        if k == UPPER_ROWS + len(self.model.lower) - 1:
+        if k == UPPER_ROWS + len(self.model.lower) - 1 or k == 0:
             return 'trim'
         return 'dress'
 
@@ -1517,91 +1621,7 @@ class Hild:
         parts.append(br)
 
     def extras(self, parts, facing, j, pose, prev, rows, lag_u, lag_f):
-        shawl(parts, facing, j, pose, rows, lag_u, self.model)
-
-
-def shawl(parts, facing, j, pose, rows, lag_u, m):
-    """Hild's weld-green wool shawl: round her shoulders, crossed and knotted at the breast, a point
-    down her back; fringed; it lags and streams in a gust."""
-    top_row = rows[0][0]
-    Sx, Sy, _ = P2(facing, j['S'])
-    c = math.floor(Sx)
-    wind, flap = pose.wind, pose.flap
-    sw = m.shw + 1.5
-    L = math.floor(c - sw + 0.5)
-    R = math.floor(c + sw - 0.5)
-    lagd = round(lag_u)
-    if facing in 's n':
-        sh = Part('cloak', 1.2 if facing == 's' else 3.0, 'shawl', side=1)
-        sh.row(top_row - 1, c - 3, c + 2, 'shawl')
-        sh.row(top_row, L + 1, R - 1, 'shawl')
-        for k in (1, 2, 3):
-            sh.row(top_row + k, L, R, 'shawl')
-        if facing == 's':
-            # The V where the ends cross over the breast.
-            for k, (a, b) in ((0, (c - 1, c)), (1, (c - 1, c)), (2, (c - 2, c + 1)), (3, (c - 2, c + 1))):
-                for x in range(a, b + 1):
-                    sh.erase(x, top_row + k)
-            sh.row(top_row + 4, c - 3, c + 2, 'shawl')
-            sh.fill(c - 1, top_row + 4, c, top_row + 5, 'shawlk')
-            for side, dx in ((0, -1), (1, 1)):
-                for i in range(3):
-                    t = (i + 1) / 3
-                    x = c - 1 + side + round(dx * 0.6 * t + wind * (0.5 + 2 * t)) + round(ripple(i + side, flap, 0.5 * wind))
-                    sh.put(x, top_row + 6 + i + (lagd if i == 2 else 0), 'shawl')
-            for x in range(L, R + 1):
-                if sh.has(x, top_row + 3) and not sh.has(x, top_row + 4) and (x % 2 == 0):
-                    sh.put(x, top_row + 4, 'fringe')
-        else:
-            # The point down her back, swinging with the walk and streaming in a gust.
-            n = 9
-            for k in range(4, 4 + n):
-                t = (k - 3) / n
-                hw = (sw + 0.5) * (1 - t)
-                cx = c + wind * (0.5 + 3.0 * t ** 1.2) + ripple(k, flap, 0.7 * wind * t)
-                y = top_row + k + (lagd if t > 0.5 else 0)
-                x0 = math.floor(cx - hw + 0.5)
-                x1 = max(x0, math.floor(cx + hw - 0.5))
-                sh.row(y, x0, x1, 'shawl')
-                if (k % 2) == 0:
-                    sh.put(x0 - 1, y, 'fringe')
-                    sh.put(x1 + 1, y, 'fringe')
-            sh.put(math.floor(c + wind * 3.5), top_row + 4 + n + lagd, 'fringe')
-        parts.append(sh)
-    else:
-        fw = 1 if facing == 'e' else -1
-        tr = {r: (k, cc) for r, k, cc in rows}
-        sh = Part('cloak', 0, 'shawl', side=0)
-        for k in range(-1, 4):
-            row = top_row + k
-            kk, cc = tr.get(row, (0, rows[0][2]))
-            x0, x1 = ext(m, facing, max(0, kk), cc)
-            a, b = x0 - 1, x1 + 1
-            if k == -1:
-                a, b = (x0 + 1, x1 - 1)
-            for x in range(a, b + 1):
-                sh.put(x, row, 'shawl', 7.0)
-        backx = lambda row: ext(m, facing, tr.get(row, (5, 0))[0], tr.get(row, (5, rows[0][2]))[1])
-        # The point down the back.
-        for k in range(4, 12):
-            row = top_row + k
-            t = (k - 3) / 8
-            x0, x1 = backx(row)
-            bx = x0 if fw > 0 else x1
-            stream = wind * (1.0 + 4.0 * t) * (1 if facing == 'w' else -0.6) + ripple(k, flap, 0.6 * wind * t)
-            w = max(1, round(3 * (1 - t)) + 1)
-            xs = [bx - fw * 1 + fw * i for i in range(w)]
-            for x in xs:
-                sh.put(x + round(stream) * (1 if facing == 'w' else 1), row + (lagd if t > 0.5 else 0), 'shawl', 4.0)
-        # The front end over the breast.
-        for k in range(4, 8):
-            row = top_row + k
-            x0, x1 = backx(row)
-            fx = x1 if fw > 0 else x0
-            sh.put(fx, row, 'shawl', 7.0)
-            sh.put(fx - fw, row, 'shawl', 7.0)
-        sh.put((backx(top_row + 8)[1] if fw > 0 else backx(top_row + 8)[0]), top_row + 8, 'fringe', 7.0)
-        parts.append(sh)
+        pass
 
 
 HILD_MATS = {
@@ -1614,11 +1634,9 @@ HILD_MATS = {
     'trouser': ('earth', 2, 3, 4), 'wrap': ('wool', 2, 3, 4), 'wrapd': ('wool', 1),
     'shoe': ('tar', 1, 2, 3),
     'bind': ('wool', 4, 5, 6), 'blood': ('code', '7'),
-    'shawl': ('weld', 2, 3, 5), 'shawlk': ('weld', 1, 2, 3), 'fringe': ('weld', 1, 2, 2),
 }
-HILD_ORDER = {f: ['body', 'clothing', 'cloak'] for f in FACINGS}
-# The shawl lies on the dress: its edge takes the wool's deepest tone, not an ink line.
-HILD_SOFT = {('clothing', 'body'), ('cloak', 'clothing'), ('cloak', 'body')}
+HILD_ORDER = {f: ['body', 'clothing'] for f in FACINGS}
+HILD_SOFT = {('clothing', 'body')}
 
 
 def anim_call():
@@ -1731,15 +1749,6 @@ def hild_down(i):
     hd = d.part('body', 'head', bottom=False)
     hd.stamp(HEAD_HILD['e'], X(21), Y(30), HEAD_LETTERS)
     hd.fill(X(23), Y(38), X(25), Y(38), 'skin')
-    # The shawl round her shoulders, its fringed point down her back.
-    sh = d.part('cloak', 'shawl', side=1)
-    for y, (a, b) in zip(range(37, 42), ((20, 25), (18, 26), (17, 26), (16, 25), (16, 23))):
-        sh.row(Y(y), X(a), X(b), 'shawl')
-    sh.seg((X(16), Y(42)), (X(14), Y(44)), 2, 'shawl')
-    for x in (15, 17, 19, 21, 23):
-        if not sh.has(X(x), Y(42)):
-            sh.put(X(x), Y(42), 'fringe')
-    sh.put(X(13), Y(45), 'fringe')
     br = d.part('body', 'braid', side=0)
     br.z = 3.0
     br.seg((X(22.5), Y(36)), (X(20.5), Y(41)), 2, 'hair')
@@ -1809,12 +1818,6 @@ def hild_sit(facing, i):
         b.seg((X(18), Y(29 + br)), (X(18.5), Y(37 + br)), 2, 'hair')
         plait(b)
         b.put(X(18), Y(38 + br), 'tie')
-        sh = d.part('cloak', 'shawl', side=1)
-        sh.z = 2.5
-        for y in range(30 + br, 34 + br):
-            sh.row(Y(y), X(10), X(17), 'shawl')
-        sh.seg((X(10.5), Y(34 + br)), (X(10.5), Y(38 + br)), 2, 'shawl')
-        sh.put(X(10), Y(39 + br), 'fringe')
         parts = d.parts
         return mirror_parts(parts) if facing == 'w' else parts
     # Front and back: seated square to the view, legs towards the camera.
@@ -1846,16 +1849,7 @@ def hild_sit(facing, i):
     hd = d.part('body', 'head', bottom=False)
     hd.stamp(HEAD_HILD[facing], X(12), Y(22 + br), HEAD_LETTERS)
     hd.fill(X(14), Y(30 + br), X(17), Y(30 + br), 'skin')
-    sh = d.part('cloak', 'shawl', side=1)
-    sh.z = 2.5
-    sh.row(Y(30 + br), X(13), X(18), 'shawl')
-    for y in range(31 + br, 34 + br):
-        sh.row(Y(y), X(10), X(21), 'shawl')
     if front:
-        for x in (15, 16):
-            sh.erase(X(x), Y(31 + br))
-        sh.fill(X(15), Y(34 + br), X(16), Y(35 + br), 'shawlk')
-
         def arms(p, m):
             p.seg((X(11), Y(33 + br)), (X(11), Y(38)), 2, m('dress'))
             p.seg((X(20), Y(33 + br)), (X(19), Y(38)), 2, m('dress'))
@@ -1869,12 +1863,6 @@ def hild_sit(facing, i):
         b.seg((X(19), Y(29 + br)), (X(19.5), Y(36 + br)), 2, 'hair')
         plait(b)
         b.put(X(19), Y(37 + br), 'tie')
-    else:
-        for k in range(1, 7):
-            hw = 5 - k * 0.8
-            y = Y(33 + br + k)
-            sh.row(y, X(math.floor(15.5 - hw + 0.5)), X(math.floor(15.5 + hw + 0.5)), 'shawl')
-        sh.put(X(16), Y(40 + br), 'fringe')
     return d.parts
 
 
@@ -1917,10 +1905,6 @@ def hild_carried(facing, i):
         br.seg((X(3), Yl(24)), (X(3.5), Yl(31)), 2, 'hair')
         plait(br)
         br.put(X(3), Yl(32), 'tie')
-        sh = d.part('cloak', 'shawl', side=1)
-        sh.seg((X(8), Y(14)), (X(19), Y(14)), 2, 'shawl')
-        sh.seg((X(9), Y(16)), (X(11), Y(19)), 2, 'shawl')
-        sh.put(X(11), Y(20), 'fringe')
     else:
         # Seen from the side: her body end-on behind the head, her legs hanging in front.
         def body(p, m):
@@ -1940,10 +1924,6 @@ def hild_carried(facing, i):
         br = d.part('body', 'braid', side=0)
         br.seg((X(10), Y(19)), (X(10.5), Yl(27)), 2, 'hair')
         plait(br)
-        sh = d.part('cloak', 'shawl', side=1)
-        sh.row(Y(12), X(9), X(14), 'shawl')
-        sh.row(Y(13), X(8), X(14), 'shawl')
-        sh.seg((X(8), Y(14)), (X(8), Y(17)), 1, 'shawl')
     # The steerer's face stays clear.
     for p in d.parts:
         for (x, y) in list(p.px):
@@ -1957,18 +1937,79 @@ def hild_carried(facing, i):
 
 
 # ------------------------------------------------------------------------------------- output
+HEAD_HEAVY = {
+    's': ['..HHHH..',
+          '.HHHHHH.',
+          'HHHHHHHH',
+          'HhFFFFhH',
+          'FFeFFeFF',
+          'FFFFFFFF',
+          'FFFFFFFF',
+          '.FFFFFF.'],
+    'n': ['..HHHH..',
+          '.HHHHHH.',
+          'HHHHHHHH',
+          'HHHHHHHH',
+          'FHHHHHHF',
+          'FHHHHHHF',
+          '.hhhhhh.',
+          '.FFFFFF.'],
+    'e': ['..HHHH...',
+          '.HHHHHH..',
+          'HHHHHHHH.',
+          'HHHHHFFF.',
+          'HHFHFFeF.',
+          'HHFHFFFFF',
+          '.HFFFFFF.',
+          '.hFFFFFF.'],
+}
+# Arms 4 px thick on shoulders 8 px out: 20 px across plus the outline (about 4 more than model A).
+MODEL_HEAVY = Model('heavy', 8.0, limb=4, forearm=4, big=True, neck=6, heavy=True, hipw=3.0,
+                    upper=[5, 6, 6, 6, 6, 6],
+                    lower=[6, 6, 6, 6, 6.5, 6.5, 6.5, 6.5, 6.5, 7, 7, 7],
+                    upper_e=[(-4, 3), (-5, 4), (-5, 5), (-5, 5), (-5, 5), (-5, 5)],
+                    lower_e=[(-4, 5), (-4, 5), (-4, 5), (-5, 4), (-5, 4), (-5, 4), (-5, 5), (-5, 5),
+                             (-5, 5), (-6, 5), (-6, 5), (-6, 6)],
+                    heads=HEAD_HEAVY)
+HEAVY_MATS = dict(STEERER_MATS)
+HEAVY_MATS.update({
+    'hair': ('hair_brown', 0, 1, 3),
+    'tunic': ('stone_warm', 2, 3, 4), 'fold': ('stone_warm', 2),
+    'trouser': ('earth', 1, 2, 3),
+    # A plain dark wool cloak: its hem is the same wool, a shade deeper; no madder (the steerer's).
+    'cloak': ('earth', 1, 2, 3), 'cloakin': ('earth', 0, 1, 2), 'cloakf': ('earth', 1),
+    'lining': ('earth', 0, 1, 1),
+    'brooch': ('stone', 4, 5, 7), 'bglint': ('stone', 8),
+})
+
+
+class Heavy(Steerer):
+    """The heavy build: a working person's dress, a plain dark cloak, no sash."""
+
+    sash = False
+
+    def __init__(self):
+        super().__init__(MODEL_HEAVY)
+
+    def torso_mat(self, k):
+        return 'belt' if k == 8 else 'tunic'
+
+
 HILD_STATES = [
     ('idle', anim_idle, 15, True),
     ('shift', anim_shift, 20, True),
     ('glance', anim_glance, 24, True),
     ('idlewind', anim_idlewind, 9, True),
     ('walk', anim_walk, 5, True),
+    ('run', anim_run, 3, True),
+    ('runstart', anim_runstart, 4, False),
+    ('runstop', anim_runstop, 6, False),
     ('call', anim_call, 10, True),
     ('down', None, 24, True),
     ('carried', None, 5, True),
     ('sit', None, 18, True),
 ]
-HILD_EVENTS = 'walk 0, walk 3'
+HILD_EVENTS = 'walk 0, walk 3, run 0, run 4'
 HILD_POSES = {'down': 'lying', 'carried': 'carried', 'sit': 'seated'}
 
 INTRO = {
@@ -1976,6 +2017,11 @@ INTRO = {
 # (decision DA-1): proposed, staged for the user's approval; nothing here is read by the game.
 # The two body models are offered side by side without labels. Generated by
 # assets/art/authoring/people48.py; edit that script, not this map.""",
+    'heavy': """# The heavy build (addendum 2.3 section 11): broad shoulders, a thick torso and limbs, big hands,
+# for residents and enemies, never the steerer; an ordinary working person, neither labelled nor
+# gendered. The same 32 x 48 cell (about 4 px wider), frame counts, facings and timing as the
+# steerer, moving heavier. Proposed, staged for the user's approval; nothing here is read by the
+# game. Generated by assets/art/authoring/people48.py; edit that script, not this map.""",
     'hild': """# Hild Thorkelsdottir (C_HILD, Book 5 section 02) on the 32 x 48 canvas (decision DA-1): proposed,
 # staged for the user's approval; nothing here is read by the game. Generated by
 # assets/art/authoring/people48.py; edit that script, not this map.""",
@@ -2022,7 +2068,15 @@ def render_character(ch, states, mats, order, names, sizes, soft):
 
 
 def write_character(key):
-    if key in ('a', 'b'):
+    if key == 'heavy':
+        ch = Heavy()
+        ch.helmet = True
+        names = {'body': 'actor_heavy', 'clothing': 'layer_clothing_tunic_heavy',
+                 'cloak': 'layer_cloak_wool_heavy', 'helmet': 'layer_helmet_iron_heavy',
+                 'bow': 'layer_weapon_bow_heavy'}
+        states, mats, order, events, poses = HEAVY_STATES, HEAVY_MATS, STEERER_ORDER, STEERER_EVENTS, {}
+        intro = INTRO['heavy']
+    elif key in ('a', 'b'):
         ch = Steerer(MODEL_A if key == 'a' else MODEL_B)
         ch.helmet = True
         names = {'body': f'actor_p_steerer_{key}', 'clothing': f'layer_clothing_tunic_{key}',
@@ -2032,7 +2086,7 @@ def write_character(key):
         intro = INTRO['a'].format(L=key.upper())
     else:
         ch = Hild()
-        names = {'body': 'actor_c_hild', 'clothing': 'layer_clothing_dress_hild', 'cloak': 'layer_cloak_shawl_hild'}
+        names = {'body': 'actor_c_hild', 'clothing': 'layer_clothing_dress_hild'}
         states, mats, order, events, poses = HILD_STATES, HILD_MATS, HILD_ORDER, HILD_EVENTS, HILD_POSES
         intro = INTRO['hild']
     sizes = {'bow': ((48, 56), (24, 51))}
@@ -2045,7 +2099,7 @@ def write_character(key):
     for L, sh in sheets.items():
         sh.intro = intro + f'\n# {LAYER_NOTE[L]}'
         if L == 'body':
-            sh.shadow = '16x5'
+            sh.shadow = '18x5' if key == 'heavy' else '16x5'
         with open(f'{OUT}/{sh.name}.map.txt', 'w') as fh:
             fh.write(sh.text(anims, events, poses))
     return sheets, names
@@ -2066,6 +2120,9 @@ def main():
             layers_json('steerer_a_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
         else:
             layers_json('steerer_b_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
+    _, n = write_character('heavy')
+    layers_json('heavy', {f: [n[L] for L in STEERER_ORDER[f] if L != 'helmet'] for f in FACINGS})
+    layers_json('heavy_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
     _, n = write_character('hild')
     layers_json('hild', {f: [n[L] for L in HILD_ORDER[f]] for f in FACINGS})
     print('wrote the proposed people maps')

@@ -1,7 +1,7 @@
 {
-  "sheet": "layer_cloak_shawl_hild",
+  "sheet": "actor_heavy",
   "kind": "sprite",
-  "image": "layer_cloak_shawl_hild.png",
+  "image": "actor_heavy.png",
   "width": 32,
   "height": 48,
   "pivot": {
@@ -44,31 +44,44 @@
       "ticks": 5,
       "loop": true
     },
-    "call": {
-      "frames": 6,
-      "ticks": 10,
+    "run": {
+      "frames": 8,
+      "ticks": 3,
       "loop": true
     },
-    "down": {
+    "runstart": {
+      "frames": 1,
+      "ticks": 4,
+      "loop": false
+    },
+    "runstop": {
       "frames": 2,
-      "ticks": 24,
+      "ticks": 6,
+      "loop": false
+    },
+    "sneak": {
+      "frames": 6,
+      "ticks": 6,
       "loop": true
     },
-    "carried": {
+    "carry": {
       "frames": 6,
       "ticks": 5,
       "loop": true
     },
-    "sit": {
+    "draw": {
       "frames": 4,
-      "ticks": 18,
-      "loop": true
+      "ticks": 8,
+      "loop": false
     }
   },
   "events": {
-    "footstep": "walk 0, walk 3"
+    "footstep": "walk 0, walk 3, run 0, run 4, sneak 0, sneak 3, carry 0, carry 3"
   },
-  "shadow": null,
+  "shadow": {
+    "w": 18,
+    "h": 5
+  },
   "placeholder": false,
   "frames": {
     "idle/s/0": [
@@ -423,293 +436,437 @@
       160,
       912
     ],
-    "call/s/0": [
+    "run/s/0": [
       0,
       960
     ],
-    "call/s/1": [
+    "run/s/1": [
       32,
       960
     ],
-    "call/s/2": [
+    "run/s/2": [
       64,
       960
     ],
-    "call/s/3": [
+    "run/s/3": [
       96,
       960
     ],
-    "call/s/4": [
+    "run/s/4": [
       128,
       960
     ],
-    "call/s/5": [
+    "run/s/5": [
       160,
       960
     ],
-    "call/n/0": [
+    "run/s/6": [
+      192,
+      960
+    ],
+    "run/s/7": [
+      224,
+      960
+    ],
+    "run/n/0": [
       0,
       1008
     ],
-    "call/n/1": [
+    "run/n/1": [
       32,
       1008
     ],
-    "call/n/2": [
+    "run/n/2": [
       64,
       1008
     ],
-    "call/n/3": [
+    "run/n/3": [
       96,
       1008
     ],
-    "call/n/4": [
+    "run/n/4": [
       128,
       1008
     ],
-    "call/n/5": [
+    "run/n/5": [
       160,
       1008
     ],
-    "call/e/0": [
+    "run/n/6": [
+      192,
+      1008
+    ],
+    "run/n/7": [
+      224,
+      1008
+    ],
+    "run/e/0": [
       0,
       1056
     ],
-    "call/e/1": [
+    "run/e/1": [
       32,
       1056
     ],
-    "call/e/2": [
+    "run/e/2": [
       64,
       1056
     ],
-    "call/e/3": [
+    "run/e/3": [
       96,
       1056
     ],
-    "call/e/4": [
+    "run/e/4": [
       128,
       1056
     ],
-    "call/e/5": [
+    "run/e/5": [
       160,
       1056
     ],
-    "call/w/0": [
+    "run/e/6": [
+      192,
+      1056
+    ],
+    "run/e/7": [
+      224,
+      1056
+    ],
+    "run/w/0": [
       0,
       1104
     ],
-    "call/w/1": [
+    "run/w/1": [
       32,
       1104
     ],
-    "call/w/2": [
+    "run/w/2": [
       64,
       1104
     ],
-    "call/w/3": [
+    "run/w/3": [
       96,
       1104
     ],
-    "call/w/4": [
+    "run/w/4": [
       128,
       1104
     ],
-    "call/w/5": [
+    "run/w/5": [
       160,
       1104
     ],
-    "down/s/0": [
+    "run/w/6": [
+      192,
+      1104
+    ],
+    "run/w/7": [
+      224,
+      1104
+    ],
+    "runstart/s/0": [
       0,
       1152
     ],
-    "down/s/1": [
-      32,
-      1152
-    ],
-    "down/n/0": [
+    "runstart/n/0": [
       0,
       1200
     ],
-    "down/n/1": [
-      32,
-      1200
-    ],
-    "down/e/0": [
+    "runstart/e/0": [
       0,
       1248
     ],
-    "down/e/1": [
-      32,
-      1248
-    ],
-    "down/w/0": [
+    "runstart/w/0": [
       0,
       1296
     ],
-    "down/w/1": [
-      32,
-      1296
-    ],
-    "carried/s/0": [
+    "runstop/s/0": [
       0,
       1344
     ],
-    "carried/s/1": [
+    "runstop/s/1": [
       32,
       1344
     ],
-    "carried/s/2": [
-      64,
-      1344
-    ],
-    "carried/s/3": [
-      96,
-      1344
-    ],
-    "carried/s/4": [
-      128,
-      1344
-    ],
-    "carried/s/5": [
-      160,
-      1344
-    ],
-    "carried/n/0": [
+    "runstop/n/0": [
       0,
       1392
     ],
-    "carried/n/1": [
+    "runstop/n/1": [
       32,
       1392
     ],
-    "carried/n/2": [
-      64,
-      1392
-    ],
-    "carried/n/3": [
-      96,
-      1392
-    ],
-    "carried/n/4": [
-      128,
-      1392
-    ],
-    "carried/n/5": [
-      160,
-      1392
-    ],
-    "carried/e/0": [
+    "runstop/e/0": [
       0,
       1440
     ],
-    "carried/e/1": [
+    "runstop/e/1": [
       32,
       1440
     ],
-    "carried/e/2": [
-      64,
-      1440
-    ],
-    "carried/e/3": [
-      96,
-      1440
-    ],
-    "carried/e/4": [
-      128,
-      1440
-    ],
-    "carried/e/5": [
-      160,
-      1440
-    ],
-    "carried/w/0": [
+    "runstop/w/0": [
       0,
       1488
     ],
-    "carried/w/1": [
+    "runstop/w/1": [
       32,
       1488
     ],
-    "carried/w/2": [
-      64,
-      1488
-    ],
-    "carried/w/3": [
-      96,
-      1488
-    ],
-    "carried/w/4": [
-      128,
-      1488
-    ],
-    "carried/w/5": [
-      160,
-      1488
-    ],
-    "sit/s/0": [
+    "sneak/s/0": [
       0,
       1536
     ],
-    "sit/s/1": [
+    "sneak/s/1": [
       32,
       1536
     ],
-    "sit/s/2": [
+    "sneak/s/2": [
       64,
       1536
     ],
-    "sit/s/3": [
+    "sneak/s/3": [
       96,
       1536
     ],
-    "sit/n/0": [
+    "sneak/s/4": [
+      128,
+      1536
+    ],
+    "sneak/s/5": [
+      160,
+      1536
+    ],
+    "sneak/n/0": [
       0,
       1584
     ],
-    "sit/n/1": [
+    "sneak/n/1": [
       32,
       1584
     ],
-    "sit/n/2": [
+    "sneak/n/2": [
       64,
       1584
     ],
-    "sit/n/3": [
+    "sneak/n/3": [
       96,
       1584
     ],
-    "sit/e/0": [
+    "sneak/n/4": [
+      128,
+      1584
+    ],
+    "sneak/n/5": [
+      160,
+      1584
+    ],
+    "sneak/e/0": [
       0,
       1632
     ],
-    "sit/e/1": [
+    "sneak/e/1": [
       32,
       1632
     ],
-    "sit/e/2": [
+    "sneak/e/2": [
       64,
       1632
     ],
-    "sit/e/3": [
+    "sneak/e/3": [
       96,
       1632
     ],
-    "sit/w/0": [
+    "sneak/e/4": [
+      128,
+      1632
+    ],
+    "sneak/e/5": [
+      160,
+      1632
+    ],
+    "sneak/w/0": [
       0,
       1680
     ],
-    "sit/w/1": [
+    "sneak/w/1": [
       32,
       1680
     ],
-    "sit/w/2": [
+    "sneak/w/2": [
       64,
       1680
     ],
-    "sit/w/3": [
+    "sneak/w/3": [
       96,
       1680
+    ],
+    "sneak/w/4": [
+      128,
+      1680
+    ],
+    "sneak/w/5": [
+      160,
+      1680
+    ],
+    "carry/s/0": [
+      0,
+      1728
+    ],
+    "carry/s/1": [
+      32,
+      1728
+    ],
+    "carry/s/2": [
+      64,
+      1728
+    ],
+    "carry/s/3": [
+      96,
+      1728
+    ],
+    "carry/s/4": [
+      128,
+      1728
+    ],
+    "carry/s/5": [
+      160,
+      1728
+    ],
+    "carry/n/0": [
+      0,
+      1776
+    ],
+    "carry/n/1": [
+      32,
+      1776
+    ],
+    "carry/n/2": [
+      64,
+      1776
+    ],
+    "carry/n/3": [
+      96,
+      1776
+    ],
+    "carry/n/4": [
+      128,
+      1776
+    ],
+    "carry/n/5": [
+      160,
+      1776
+    ],
+    "carry/e/0": [
+      0,
+      1824
+    ],
+    "carry/e/1": [
+      32,
+      1824
+    ],
+    "carry/e/2": [
+      64,
+      1824
+    ],
+    "carry/e/3": [
+      96,
+      1824
+    ],
+    "carry/e/4": [
+      128,
+      1824
+    ],
+    "carry/e/5": [
+      160,
+      1824
+    ],
+    "carry/w/0": [
+      0,
+      1872
+    ],
+    "carry/w/1": [
+      32,
+      1872
+    ],
+    "carry/w/2": [
+      64,
+      1872
+    ],
+    "carry/w/3": [
+      96,
+      1872
+    ],
+    "carry/w/4": [
+      128,
+      1872
+    ],
+    "carry/w/5": [
+      160,
+      1872
+    ],
+    "draw/s/0": [
+      0,
+      1920
+    ],
+    "draw/s/1": [
+      32,
+      1920
+    ],
+    "draw/s/2": [
+      64,
+      1920
+    ],
+    "draw/s/3": [
+      96,
+      1920
+    ],
+    "draw/n/0": [
+      0,
+      1968
+    ],
+    "draw/n/1": [
+      32,
+      1968
+    ],
+    "draw/n/2": [
+      64,
+      1968
+    ],
+    "draw/n/3": [
+      96,
+      1968
+    ],
+    "draw/e/0": [
+      0,
+      2016
+    ],
+    "draw/e/1": [
+      32,
+      2016
+    ],
+    "draw/e/2": [
+      64,
+      2016
+    ],
+    "draw/e/3": [
+      96,
+      2016
+    ],
+    "draw/w/0": [
+      0,
+      2064
+    ],
+    "draw/w/1": [
+      32,
+      2064
+    ],
+    "draw/w/2": [
+      64,
+      2064
+    ],
+    "draw/w/3": [
+      96,
+      2064
     ]
   }
 }
