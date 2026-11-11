@@ -710,6 +710,11 @@
      "Notes": ""
     },
     {
+     "Item": "Arrows (a dozen)",
+     "Price": "1",
+     "Notes": "Sold by the dozen; the bow is sold with a quiver of 6"
+    },
+    {
      "Item": "Helmet",
      "Price": "10",
      "Notes": ""
@@ -4552,6 +4557,116 @@
     {
      "Key": "cameraSnap",
      "Value": "The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels"
+    }
+   ],
+   "startingWeapons": [
+    {
+     "Key": "startingHotbar",
+     "Value": "Empty"
+    },
+    {
+     "Key": "seaxFoundBy",
+     "Value": "5 minutes of play: a seax in the wreck's debris on Wreck Strand, a few tiles from where the steerer wakes, marked by a glint"
+    },
+    {
+     "Key": "bowFoundBy",
+     "Value": "15 minutes of play: a hunting bow and a quiver with the starting arrows, in the wreck's stern washed up at the east end of Wreck Strand, named by Hild after the rescue"
+    },
+    {
+     "Key": "startingArrows",
+     "Value": "6"
+    },
+    {
+     "Key": "pickupTooltip",
+     "Value": "Shown once per item kind when first picked up, naming its controls for the current input (mouse and keyboard, keyboard only, or gamepad); kept afterwards in the help pages"
+    }
+   ],
+   "missiles": [
+    {
+     "Key": "drawPlantsFeet",
+     "Value": "While a bow is drawn or a spear is held to throw, movement input is ignored; the steerer turns to the cursor and can only loose or cancel (right-click, Escape or pad B)"
+    },
+    {
+     "Key": "npcArcher",
+     "Value": "Stops, draws (the Book 10 section 06 draw time), looses, then moves; never moves with a drawn bow"
+    },
+    {
+     "Key": "minDraw",
+     "Value": "12 ticks: released sooner, the draw is cancelled and no arrow is spent"
+    },
+    {
+     "Key": "arrowSpeed",
+     "Value": "16 tiles per second"
+    },
+    {
+     "Key": "spearSpeed",
+     "Value": "11 tiles per second"
+    },
+    {
+     "Key": "arcApex",
+     "Value": "0.35 tiles of height at the weapon's full range (the Book 10 section 06 reach), in proportion for shorter shots; the shot lands where it was aimed, or flies on to its full range and falls"
+    },
+    {
+     "Key": "spreadFullDraw",
+     "Value": "2 degrees either side for a bow at full draw (30 ticks); 3 for a thrown spear"
+    },
+    {
+     "Key": "spreadQuickDraw",
+     "Value": "9 degrees either side at the minimum draw, narrowing evenly to the full-draw spread"
+    },
+    {
+     "Key": "shieldBlock",
+     "Value": "A shield held up (blocking, or a shield wall) stops a missile from the front 120 degrees; the missile sticks in the shield"
+    },
+    {
+     "Key": "coverBlock",
+     "Value": "Solid cover stops a missile below its height: rock, walls, the wreck's hull, standing stones and buildings stop every missile; low walls and stakes stop it only at the start and end of its arc (below 0.25 tiles of height)"
+    },
+    {
+     "Key": "stuckArrows",
+     "Value": "Stay where they stuck: in the ground for 1 game day, in props and bodies until the zone is left; at most 40 in a zone (the oldest goes first)"
+    },
+    {
+     "Key": "shadow",
+     "Value": "A soft 3 x 1 shadow on the ground under the missile, offset from it by its height"
+    }
+   ],
+   "arrows": [
+    {
+     "Key": "quiverMax",
+     "Value": "30"
+    },
+    {
+     "Key": "recoverGround",
+     "Value": "60% recoverable from sand, turf and earth; 40% break"
+    },
+    {
+     "Key": "recoverStone",
+     "Value": "20% recoverable from rock and walls; 80% break"
+    },
+    {
+     "Key": "recoverBody",
+     "Value": "50% recoverable from a person or animal hit (after the fight); 50% break"
+    },
+    {
+     "Key": "recoverShield",
+     "Value": "40% recoverable from a shield; 60% break"
+    },
+    {
+     "Key": "recoverWater",
+     "Value": "0%: an arrow into water is lost"
+    },
+    {
+     "Key": "fletching",
+     "Value": "1 driftwood or timber shaft-blank, 2 feathers and 1 head (bone or iron) make 4 arrows in 0.5 game hours, fletching skill 1 or more"
+    },
+    {
+     "Key": "headDamage",
+     "Value": "Bone heads: damage x0.85 and vs shield x0.7; iron heads: as the bow in section 06"
+    },
+    {
+     "Key": "finds",
+     "Value": "1 to 4 arrows in a cache, a dead archer's quiver or a hunter's camp; traders sell them by the dozen (section 04)"
     }
    ]
   },

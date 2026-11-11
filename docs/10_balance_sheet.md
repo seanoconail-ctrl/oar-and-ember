@@ -235,6 +235,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Axe | 3 | |
 | Seax | 2 | |
 | Bow and arrows | 3 | |
+| Arrows (a dozen) | 1 | Sold by the dozen; the bow is sold with a quiver of 6 |
 | Helmet | 10 | |
 | Mail shirt | 40 | |
 | Sword | 24 | Not forgeable on Skarvholm |
@@ -1224,6 +1225,50 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | lookAheadDeadZone | 0.5 tiles: no look-ahead while the cursor is this close |
 | cameraHalfLife | 0.18 s, critically damped, in sub-pixel space |
 | cameraSnap | The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels |
+
+### Starting weapons
+*The steerer wakes with nothing in hand (decision DD-6). Unarmed, they can only shove and dodge.*
+
+| Key | Value |
+|---|---|
+| startingHotbar | Empty |
+| seaxFoundBy | 5 minutes of play: a seax in the wreck's debris on Wreck Strand, a few tiles from where the steerer wakes, marked by a glint |
+| bowFoundBy | 15 minutes of play: a hunting bow and a quiver with the starting arrows, in the wreck's stern washed up at the east end of Wreck Strand, named by Hild after the rescue |
+| startingArrows | 6 |
+| pickupTooltip | Shown once per item kind when first picked up, naming its controls for the current input (mouse and keyboard, keyboard only, or gamepad); kept afterwards in the help pages |
+
+### Missiles
+*Bows and thrown spears are loosed standing still, by everyone: the steerer, crew and enemies (decision DD-7). Every shot is a visible projectile with travel time, a slight arc and a shadow; it can miss, is stopped by shields and cover, and sticks in what it hits (decision DD-9).*
+
+| Key | Value |
+|---|---|
+| drawPlantsFeet | While a bow is drawn or a spear is held to throw, movement input is ignored; the steerer turns to the cursor and can only loose or cancel (right-click, Escape or pad B) |
+| npcArcher | Stops, draws (the Book 10 section 06 draw time), looses, then moves; never moves with a drawn bow |
+| minDraw | 12 ticks: released sooner, the draw is cancelled and no arrow is spent |
+| arrowSpeed | 16 tiles per second |
+| spearSpeed | 11 tiles per second |
+| arcApex | 0.35 tiles of height at the weapon's full range (the Book 10 section 06 reach), in proportion for shorter shots; the shot lands where it was aimed, or flies on to its full range and falls |
+| spreadFullDraw | 2 degrees either side for a bow at full draw (30 ticks); 3 for a thrown spear |
+| spreadQuickDraw | 9 degrees either side at the minimum draw, narrowing evenly to the full-draw spread |
+| shieldBlock | A shield held up (blocking, or a shield wall) stops a missile from the front 120 degrees; the missile sticks in the shield |
+| coverBlock | Solid cover stops a missile below its height: rock, walls, the wreck's hull, standing stones and buildings stop every missile; low walls and stakes stop it only at the start and end of its arc (below 0.25 tiles of height) |
+| stuckArrows | Stay where they stuck: in the ground for 1 game day, in props and bodies until the zone is left; at most 40 in a zone (the oldest goes first) |
+| shadow | A soft 3 x 1 shadow on the ground under the missile, offset from it by its height |
+
+### Arrows
+*Arrows are an item with a count, separate from the bow (decision DD-8). No arrows, no shot.*
+
+| Key | Value |
+|---|---|
+| quiverMax | 30 |
+| recoverGround | 60% recoverable from sand, turf and earth; 40% break |
+| recoverStone | 20% recoverable from rock and walls; 80% break |
+| recoverBody | 50% recoverable from a person or animal hit (after the fight); 50% break |
+| recoverShield | 40% recoverable from a shield; 60% break |
+| recoverWater | 0%: an arrow into water is lost |
+| fletching | 1 driftwood or timber shaft-blank, 2 feathers and 1 head (bone or iron) make 4 arrows in 0.5 game hours, fletching skill 1 or more |
+| headDamage | Bone heads: damage x0.85 and vs shield x0.7; iron heads: as the bow in section 06 |
+| finds | 1 to 4 arrows in a cache, a dead archer's quiver or a hunter's camp; traders sell them by the dozen (section 04) |
 
 ## 22 / Story gates
 *The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline.*
