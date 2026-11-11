@@ -429,7 +429,7 @@ class Broch:
         wobble = (fbm(H, W, 14, 303) - 0.5) * 18
         if stage == 's0':
             fx_, fy_ = FIRE_S0
-            clear = (np.hypot(xs - fx_ + 8, (ys - fy_ + 10) * 1.25) + wobble < 58) & court
+            clear = (np.hypot(xs - fx_ + 10, (ys - fy_ + 12) * 1.3) + wobble < 50) & court
         else:
             fx_, fy_ = HEARTH_S1
             clear = (np.hypot((xs - CX) * 0.95, (ys - CY + 30) * 1.1) + wobble < 98) & court
@@ -439,6 +439,8 @@ class Broch:
         earth = ramp_lookup('earth', 3.3 + np.floor((clump - 0.5) * 3.2) * 0.5 + (tone - 0.5) * 0.6)
         sandy = ramp_lookup('earth', 4.4 + 0 * clump)
         tread = np.where(((value_noise(H, W, 4, 304) > 0.8) & (clump > 0.55))[..., None], sandy, earth)
+        edge_mix = np.clip((fbm(H, W, 6, 307) - 0.3) * 2.2, 0, 1)[..., None]
+        tread = tread * (0.78 + 0.22 * edge_mix) + rough * (0.22 - 0.22 * edge_mix)
         g[clear] = tread[clear]
         self.clear = clear
         # Paths: north through the breach, south from the door to the shore; in S1 a track
@@ -483,6 +485,22 @@ class Broch:
             fx_, fy_ = FIRE_S0
             ash = (np.hypot(xs - fx_, (ys - fy_) * 1.4) < 15 + wobble * 0.2)
             g[ash] = g[ash] * 0.5 + ramp_lookup('smoke', 1.5 + detail[ash] * 2) * 0.5
+        # The fallen south-east wall: a hummock of turfed rubble spilling out and in.
+        bear = np.degrees(np.arctan2(ys - CY, xs - CX))
+        win = np.clip(1 - np.abs(bear - 42) / 34, 0, 1)
+        dist = np.abs(r - (ROUT + RIN) / 2)
+        mound = win * np.clip(1 - dist / 46, 0, 1) * (0.7 + 0.6 * fbm(H, W, 10, 308))
+        mz = np.gradient(mound, axis=1) * -1.0 + np.gradient(mound, axis=0) * -0.6
+        hum = (mound > 0.08) & ~((r > RIN) & (r < ROUT))
+        g[hum] = ramp_lookup('grass', 4.6 + np.clip(mz[hum] * 60, -1.4, 1.4) + (detail[hum] - 0.5))
+        stones = hum & (value_noise(H, W, 3, 309) > 0.74) & (mound > 0.25)
+        g[stones] = ramp_lookup('stone', 4.5 + np.clip(mz[stones] * 60, -1, 1.5))
+        self.mound = mound
+        if stage == 's0':
+            # The floor under the lean-to's sheet: deep shade, the mouth reads as an opening.
+            under = (xs > 134) & (xs < 181) & (ys > 116) & (ys < 169)
+            k = np.clip((181 - xs) / 47, 0, 1) * 0.35 + 0.3
+            g[under] = g[under] * (1 - k[under][:, None])
         # The passage floor under the lintel: worn earth and a threshold slab, in deep shade.
         pas = (np.abs(xs - CX) < DOOR_HALF) & (ys > CY + RIN - 3) & (ys < CY + ROUT + 2)
         depth = np.clip((ys - (CY + RIN)) / (ROUT - RIN), 0, 1)
@@ -502,14 +520,14 @@ class Broch:
         r = self.r
         stage = self.stage
         # Tumbled stones: a spill where the south-east wall fell, and some at the foot all round.
-        for k in range(46):
+        for k in range(30):
             a = math.radians(r.uniform(18, 72))
             d = r.uniform(-30, 30) if k < 20 else r.uniform(0, 34)
             rad = (ROUT + 4 + abs(d)) if k >= 20 or d > 0 else (RIN - 6 + d * 0.5)
             if k < 20 and d <= 0:
                 rad = RIN - 4 - abs(d) * 0.6
             x, y = CX + math.cos(a) * rad, CY + math.sin(a) * rad
-            sz = r.uniform(3, 7.5) * (1.0 if abs(d) < 20 else 0.7)
+            sz = r.uniform(2.5, 6.0) * (1.0 if abs(d) < 20 else 0.7)
             self.add(_rock(x, y, sz), x, y, sz * 1.1, 'rock')
         for k in range(30):
             a = r.uniform(-math.pi, math.pi)

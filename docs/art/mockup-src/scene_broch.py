@@ -332,6 +332,7 @@ class BrochRenderer:
                 cast(dyn, a['sprite'], a['x'], a['y'], 0.9)
             contact(occ, a['x'], a['y'] - 1, 7, 2.5, 0.8)
         creatures = self._creatures(t, dyn, occ)
+        birds = self._birds(t, dyn) if not night else []
         if not night:
             soft = blur(dyn, 1) * 1.2
             shadow = np.where(soft > 0.6, 1.0, np.where(soft > 0.15, 0.5, 0.0)) * self.sun
@@ -379,13 +380,14 @@ class BrochRenderer:
             else:
                 self._stamp(f, obj, x, y, PX, PY, PZ, fire_k, fire_d)
         fire = w.fire
+        f = self._sheen(f, t)
         if not night:
             # Day: the fire burns low; smoke bends away east over the wall head.
             draw_fire(f, fire[0], fire[1], t, 0.75)
             draw_smoke(f, smoke_particles(fire, t), lambda a, yy: C('smoke', 4.4 - a * 2.6))
             for (sx, sy, age) in sparks(fire, t, 4):
                 fx._px(f, sx, sy, C('fire', 6 - age * 3))
-            for b in self._birds(t):
+            for b in birds:
                 b(f)
             view = f
             cloud = fx.cloud_shadow(H, W, t, 0, 0, 1280)
@@ -416,6 +418,17 @@ class BrochRenderer:
             fx._px(out, sx, sy, C('fire', 7 - age * 4))
         self._moths(out, t)
         return out
+
+    def _sheen(self, f, t):
+        import strand as _s
+        _s.gust_at(0, 0)
+        if self.gx_field is None:
+            w = self.w
+            self.grassy = (self.ground_px & ~w.court & ~w.path & ~w.stream & ~w.bank).astype(np.float32)
+        gx = ((np.arange(W)[None, :] - t / LOOP * 320) % 320).astype(int)
+        field = _s._GUST[np.arange(H)[:, None] % _s.H, gx]
+        self.gx_field = True
+        return fx.gust_sheen(f, self.grassy, np.clip((field - 0.42) * 2.4, 0, 1), 0.12 if not self.night else 0.06)
 
     def _stamp(self, f, spr, x, y, PX, PY, PZ, fire_k, fire_d):
         """Stamps a sprite and records its position for the light pass."""
@@ -472,19 +485,31 @@ class BrochRenderer:
         if self.stage == 's0':
             (x0, y0, z0), (x1, y1, z1) = w.ridge
             def ridge(f):
-                for k in range(int(y1 - y0) + 1):
+                n = int(y1 - y0)
+                for k in range(n + 1):
                     yy = y0 + k
-                    fx._px(f, x0, yy - z0, C('driftwood', 5 - (k % 9 == 0)))
-                    fx._px(f, x0 + 1, yy - z0, C('driftwood', 3))
-                    fx._px(f, x0 - 1, yy - z0, C('ink', 1))
-                    fx._px(f, x0 + 2, yy - z0, C('ink', 1))
+                    sag = 2.5 * math.sin(math.pi * k / n)
+                    zz = z0 - sag
+                    fx._px(f, x0 - 1, yy - zz - 1, C('ink', 1))
+                    fx._px(f, x0, yy - zz, C('driftwood', 5 - (k % 9 == 0)))
+                    fx._px(f, x0 + 1, yy - zz, C('driftwood', 3))
+                    fx._px(f, x0 + 2, yy - zz, C('ink', 1))
                 # The torn edge of the sail hangs off the ridge and lifts in the gusts.
-                gust = w.gust(x0, y0 + 30, t)
-                for k in range(0, int(y1 - y0), 2):
+                gust = w.gust(x0, y0 + 30, t) * 0.6
+                for k in range(0, n, 2):
                     yy = y0 + k
-                    ln = 2 + int(2 * hash01(k, 3)) + int(round(gust * 2 + 0.8 * lsin(t, 5, k * 0.7)))
-                    for j in range(ln):
-                        fx._px(f, x0 + 2 + j * 0.6, yy - z0 + 1 + j, C('wool', 3 - j * 0.4))
+                    sag = 2.5 * math.sin(math.pi * k / n)
+                    ln = 2 + int(3 * hash01(k, 3)) - int(round(gust * 2 + 0.8 * lsin(t, 5, k * 0.7)))
+                    for j in range(max(1, ln)):
+                        fx._px(f, x0 + 2, yy - z0 + sag + 1 + j, C('wool', 3 - j * 0.5))
+                # Guy lines from the ridge's ends down to stones on the floor.
+                for (ax, ay, gx, gy) in ((x0, y0, x0 + 14, y0 - 6), (x0, y1, x0 + 14, y1 + 6)):
+                    m = 24
+                    for j in range(m + 1):
+                        fr = j / m
+                        xx = ax + (gx - ax) * fr
+                        yy = ay + (gy - ay) * fr - z0 * (1 - fr) + 2 * math.sin(math.pi * fr)
+                        fx._px(f, xx, yy, C('wool', 2))
             items.append((y1 + 0.4, 1, 'fn', ridge, None))
             bx, by = w.bedroll
             breath = lsin(t, 2) > 0.2
@@ -603,13 +628,14 @@ class BrochRenderer:
                 items.append((by_world + 0.1, 1, 'sprite', _lift(spr, bz + hop), bx + (lsin(t, 1, 1) > 0.6) * 3))
         return items
 
-    def _birds(self, t):
+    def _birds(self, t, shadow_buf):
         calls = []
-        for i, (cx, cy, rad, cyc) in enumerate([(420, 120, 80, 1), (300, 90, 60, -1), (120, 240, 70, 1)]):
+        for i, (cx, cy, rad, cyc) in enumerate([(430, 130, 80, 1), (300, 96, 60, -1), (110, 250, 64, 1)]):
             a = TAU * t / LOOP * cyc + i * 2.1
             x = cx + math.cos(a) * rad
             y = cy + math.sin(a) * rad * 0.5 - 30
-            calls.append(lambda fr, x=x, y=y, i=i: fx.draw_gull(fr, np.zeros((H, W), np.float32), x, y, 1.0, t + i))
+            fx.draw_gull(np.zeros((1, 1, 3), np.float32), shadow_buf, x, y, 1.0 + i * 0.15, t + i)
+            calls.append(lambda fr, x=x, y=y, i=i: fx.draw_gull(fr, np.zeros((1, 1), np.float32), x, y, 1.0, t + i))
         return calls
 
     def _moths(self, out, t):
