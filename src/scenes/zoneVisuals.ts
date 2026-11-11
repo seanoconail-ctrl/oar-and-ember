@@ -111,6 +111,9 @@ export class ZoneVisuals {
     }
   }
 
+  /** Capture only (`?camera=`): the view's top-left in world pixels, held still. */
+  cameraAt: { x: number; y: number } | null = null;
+
   /** A camera shake, e.g. on a hit (Book 7 section 14, camera feel). Ignored with reduced motion. */
   shake(amount: number): void {
     if (!this.reducedMotion) this.#shake = Math.max(this.#shake, amount);
@@ -379,11 +382,14 @@ export class ZoneVisuals {
     const p = input.onFoot.player;
     const shakeX = Math.round(Math.sin(this.#shakeT * 61) * this.#shake);
     const shakeY = Math.round(Math.cos(this.#shakeT * 47) * this.#shake);
-    const cam = clampCamera(
-      this.map,
-      Math.round(p.x) + this.#camOffset.x + shakeX,
-      Math.round(p.y) + this.#camOffset.y + shakeY,
-    );
+    const cam =
+      this.cameraAt === null
+        ? clampCamera(
+            this.map,
+            Math.round(p.x) + this.#camOffset.x + shakeX,
+            Math.round(p.y) + this.#camOffset.y + shakeY,
+          )
+        : clampCamera(this.map, this.cameraAt.x, this.cameraAt.y);
     const marks: VisualMark[] = [];
     for (const pr of this.#prints) {
       // Old dry prints soften: drawn on alternate frames of a dither as they fade.

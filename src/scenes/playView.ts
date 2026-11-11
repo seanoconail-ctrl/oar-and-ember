@@ -230,6 +230,18 @@ export function startPlay(
     saveDisplaySettings(store, display);
   });
   const look = { steerer: BODY_SHEETS[choice.bodyModel], people: { C_HILD: 'actor_c_hild' } };
+  // Capture only: `?actors=none` leaves people out and `?camera=tx,ty` holds the view centred on a
+  // tile, for preview backgrounds (src/tools/art/preview48.ts).
+  const captureParams = new URLSearchParams(window.location.search);
+  const hidePeople = captureParams.get('actors') === 'none';
+  const cameraParam = /^(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)$/.exec(
+    captureParams.get('camera') ?? '',
+  );
+  if (cameraParam !== null)
+    visuals.cameraAt = {
+      x: Math.round(Number(cameraParam[1]) * map.tile - 320),
+      y: Math.round(Number(cameraParam[2]) * map.tile - 180),
+    };
 
   const audioTable = content.audio;
   WebAudioEngine.prepare();
@@ -457,6 +469,7 @@ export function startPlay(
               : ''
           }`;
 
+    const view = visuals.view(frameInput);
     const scene = zoneScene({
       map,
       onFoot,
@@ -467,8 +480,11 @@ export function startPlay(
       anims,
       shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
-      visual: visuals.view(frameInput),
+      visual: view,
+      hidePeople,
     });
+    root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
+    root.dataset['tide'] = visuals.tideLevel.toFixed(4);
     if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
     if (frames < 3) {

@@ -377,6 +377,8 @@ export interface ZoneSceneInput {
   /** The interaction target to mark, if any. */
   readonly highlight: Id | null;
   readonly visual?: ZoneVisualView;
+  /** Capture only (`?actors=none`): leave people out, for preview backgrounds of the place. */
+  readonly hidePeople?: boolean;
 }
 
 function steererState(onFoot: OnFootState): string {
@@ -463,8 +465,10 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     layer: 'actor',
     focus: true,
   };
-  sprites.push(steerer);
-  cast(steerer);
+  if (input.hidePeople !== true) {
+    sprites.push(steerer);
+    cast(steerer);
+  }
   const walkers: Walker[] = [{ x: p.x, y: p.y }];
   const actorFrame = (id: Id, actor: OnFootActor): SceneSprite | null => {
     const sheet = look.people[id];
@@ -480,7 +484,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   };
   for (const [id, actor] of Object.entries(onFoot.actors)) {
     const sprite = actorFrame(id, actor);
-    if (sprite !== null) {
+    if (sprite !== null && input.hidePeople !== true) {
       sprites.push(sprite);
       // A carried person's shadow is part of the carrier's.
       if (actor.pose !== 'carried') {
