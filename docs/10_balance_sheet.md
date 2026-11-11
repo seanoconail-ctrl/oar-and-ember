@@ -1,6 +1,6 @@
 # Oar and Ember, Book 10: Balance Sheet
 
-*Every tuning number in one place: time, food, fuel, cargo, ships, combat, perception, people, buildings, the ideal progression and the homestead threat schedule.*
+*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer and exploration density.*
 
 Numbers drift when they live in seven books. This book is the single source. The tables here are exported as `balance.json`, which the game reads; nothing is hard-coded.
 
@@ -53,10 +53,32 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 |---|---|---|
 | Sneak | 1.75 | Noise x0.25 |
 | Walk | 2.0 | Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people) |
-| Run | 6.0 | Drains 5 stamina per second only while in combat |
+| Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal) |
 | Carry | 1.8 | Lot or person; attacks disabled |
 | Charge (heavy) | 1.5 | While holding a heavy |
-| Climb | 1.0 | On marked climbing routes |
+| Climb | 1.0 | On marked climbing routes; drains stamina |
+| Wade | 2.0 | Walking speed in water before the depth band's speed factor (Water depth bands) |
+| Swim | 1.2 | Deep water where swimming is allowed; drains stamina |
+
+### Water depth bands
+| Band | Sprite masked (px) | Speed factor | Stamina per second | Notes |
+|---|---|---|---|---|
+| Wet | 0 | 1.0 | 0 | Wet sand and swash; no change but footprints fill with water |
+| Ankle | 3 | 0.9 | 0 | Feet hidden; a ripple ring on every step |
+| Knee | 12 | 0.7 | 0 | Splashes on entering and on every running step |
+| Waist | 22 | 0.5 | 4 | Carrying and fighting are harder: carry speed x0.6, attack recovery x1.3 |
+| Deep | Swimming | Swim speed | 8 | Swimming only where allowed; elsewhere deep water is the edge of the walkable ground |
+
+### Water effects
+| Key | Value |
+|---|---|
+| rippleOnStep | One ring per step in ankle, knee and waist water |
+| rippleStanding | One ring every 1.2 s while standing in water |
+| rippleLife | 0.9 s, growing to 10 px across |
+| splash | On entering knee or waist water, and on every running step in it |
+| dripAfterKnee | 4 s of dripping and a sprite one ramp step darker after leaving knee water |
+| dripAfterWaist | 8 s after leaving waist or deep water |
+| sprayAroundWader | One spray burst every 2.5 s round a person standing in the surf line |
 
 ### Sea travel
 | Key | Value |
@@ -325,6 +347,46 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | finisherHold | 24 ticks |
 | hitStop | 3 ticks |
 
+### Stamina in traversal
+| Activity | Drain per second | Notes |
+|---|---|---|
+| Walk, sneak, ordinary carry | 0 | Ordinary carrying is one lot or a light load |
+| Run (sprint) | 3 | 5 while in combat |
+| Heavy carry | 2 | A person or a heavy lot (iron, a quern stone, a chest) |
+| Waist-deep wading | 4 | Water depth bands |
+| Climb | 6 | Marked routes only |
+| Swim | 8 | Deep water where allowed |
+| Regeneration | 0 while climbing or swimming | Elsewhere as the stamina row (half while waist deep) |
+
+### Running out of stamina
+| Key | Value |
+|---|---|
+| sprintEmpty | Drops to a walk until 25 stamina is regained |
+| heavyCarryEmpty | Sets the load down; can lift again at 25 stamina |
+| climbEmpty | Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2 |
+| swimEmpty | Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it |
+| waistWadeEmpty | Speed factor x0.5 again until 25 stamina is regained |
+
+### Stamina capacity
+*The bar's maximum, shown as its length, with each reason named on screen (Book 8 section 10 wording).*
+
+| Condition | Max change | Reason shown | Ends when |
+|---|---|---|---|
+| Cold | -20 | Cold | 1 game hour by a fire or in a heated house, or a hot meal |
+| Hungry | -15 | Hungry | A meal; applies when no meal has been eaten since waking by 14:00 |
+| Starving | -35 | Starving | Two meals; applies after a whole day without food (replaces Hungry) |
+| Light wound | -10 | Wounded | The wound heals (section 08, Wounds) |
+| Serious wound | -30 | Badly wounded | The wound heals |
+| Sick | -25 | Sick | Recovery (section 03, Sickness) |
+| Short sleep | -15 | Tired | A full rest; applies after less than 6 game hours of sleep |
+| No sleep | -30 | Exhausted | A full rest (the clock's collapse penalty) |
+| A hard day's work | -10 | Worn out from work | Sleep; applies after more than 8 game hours of tasks in a day |
+| Feast | +10 | Well fed (shown as a gain) | The next day ends |
+| minimumMax | 40 | | The maximum never falls below 40 |
+| fullRest | 8 game hours of sleep in a bed, or 7 at a good camp | | |
+| hotMeal | Removes Hungry and Cold | | |
+| warmFire | Removes Cold after 1 game hour within 3 tiles | | |
+
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
 | Archetype | Vitality | Armour | Weapons | Behaviour |
@@ -409,7 +471,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | outputMultiplier | 0.6 + 0.15 x level (0.6 at 0, 1.35 at 5) |
 | playerTimingBonus | Up to +25% task output for good timing |
 
-### Regard deltas by deed (valence per value point)
+### Friendship deltas by deed (valence per value point)
 | Deed | Gain | Mercy | Glory | Kin | Faith | Word |
 |---|---|---|---|---|---|---|
 | `THEFT` | +2 | +1 | -1 | 0 | 0 | 0 |
@@ -433,9 +495,61 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Crew member died | 0 | 0 | 0 | -2 | 0 | 0 |
 | Retreat with everyone alive | 0 | +1 | -2 | +2 | 0 | 0 |
 
-`delta = sum(weight x valence x witness)`, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat `CIVILIAN_KILLED` Glory as +1.
+`delta = sum(weight x valence x witness)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat `CIVILIAN_KILLED` Glory as +1. (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
 
-### Regard bands
+### Happiness, friendship and fear
+| Key | Value |
+|---|---|
+| happiness | 0 to 100; starts at 60 |
+| friendship | -100 to 100; starts at 0, or 20 for a resident with a tie to the steerer |
+| fear | 0 to 100; starts at 0 |
+| workOutput | Output x (0.8 + 0.4 x happiness / 100) |
+| unhappyDisputes | Below 25 happiness, disputes are twice as likely |
+| loyal | Friendship 40 or more: volunteers for danger, defends the steerer, stays in hard times |
+| leaves | Friendship -40 or less with fear below 30: starts the request to leave |
+| fearfulObedience | Fear 60 or more with friendship below 0: obeys any order with 15% worse quality; 5% a day of deserting or betraying while the steerer is away or wounded |
+| devotion | Fear 60 or more with friendship 40 or more: fierce devotion (never deserts; Glory deeds x1.5) |
+| happinessDrift | Moves 10% of the way to the day's target each game hour, from a base of 50 |
+| fearDecay | -1 a day with no new fear |
+| friendshipDecay | None |
+| warningSpacing | Two days between steps of the warning flow (remark, complaint, refusal, request to leave) |
+
+### Happiness inputs
+| Input | Effect on the day's target |
+|---|---|
+| Fed (a meal and a hot meal) | +15 |
+| Hungry | -20 |
+| Warm at night | +10 |
+| Cold at night | -15 |
+| Slept in a bed | +5 |
+| Safe (no threat today) | +5 |
+| Success (a raid home, a harvest in, a building finished) | +10 for 3 days |
+| Grief (a tie died) | -25, fading over 7 days |
+| Festival or feast | +20 for 2 days |
+| Treated well today (praise, help, a gift) | +5 to +10 |
+| Treated badly today (punished, shamed, overworked) | -10 to -20 |
+
+### Friendship from care and time
+| Source | Friendship |
+|---|---|
+| A gift that suits them | +3, at most once per 5 days |
+| Time spent (a real conversation, an hour working beside them) | +1, at most +3 a day |
+| Tending their wound | +4 |
+| A request fulfilled | +5 small, +10 personal, +15 dangerous |
+| A request refused | -2 small, -5 personal or dangerous |
+
+### Fear deltas
+| Deed or act | Fear (x witness) | Notes |
+|---|---|---|
+| `KILLING` seen | +2 | |
+| `CIVILIAN_KILLED` | +8 | |
+| `SURRENDERED_KILLED` | +10 | |
+| A punishment | +6 to the punished, +3 to those watching | Disputes |
+| A threat to a resident | +8 | Friendship -5 |
+| A display of strength (a duel won, a champion killed) | +4 | |
+| Harming a resident | +15 | Friendship -20 |
+
+### Friendship bands
 | Band | From |
 |---|---|
 | Devoted | 70 |
@@ -492,6 +606,61 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Fishing net | 1 wool lot per 2 | 1 worker-day |
 | Hull patch (Chapter 1) | 4 boards, 30 rivets | 2 worker-days |
 
+### Homestead tasks: time and stamina
+*Each hands-on action takes game time and only a little stamina, so the day is the real cost of working and work stays a bonus (Book 1 section 18).*
+
+| Task | Game minutes per action | Stamina per action |
+|---|---|---|
+| Gather driftwood | 20 | 1 |
+| Fish from the shore | 30 | 1 |
+| Fell a tree | 45 | 3 |
+| Split timber | 20 | 2 |
+| Cut peat | 30 | 2 |
+| Sow a strip | 30 | 1 |
+| Weed | 20 | 1 |
+| Water the kale garden | 15 | 1 |
+| Harvest a strip | 30 | 2 |
+| Thresh | 30 | 2 |
+| Build (hammer, raise a beam, thatch) | 30 | 2 |
+| Smith | 30 | 2 |
+| Carpentry | 30 | 1 |
+| Mend nets | 20 | 0 |
+| Herd | 30 | 1 |
+| Milk | 15 | 0 |
+| Shear | 20 | 1 |
+| Cook | 30 | 0 |
+| Tend wounds | 20 | 0 |
+| Repair the ship | 30 | 2 |
+| Gather shellfish, seaweed or eggs | 20 | 1 |
+| Train | 30 | 3 |
+
+### Disputes
+| Key | Value |
+|---|---|
+| minimumResidents | 10 |
+| interval | Every 5 to 8 days; twice as often while average happiness is below 25 |
+| kinds | Theft, insults, a fight, shirking, a share of plunder, belief (whose shrine), an old grudge, a debt, a broken promise |
+| ignoredFor | 2 days: both parties' happiness -5 a day and 20% a day of a fight |
+
+### Dispute judgements
+| Judgement | Favoured party | Other party | Those watching | Cost |
+|---|---|---|---|---|
+| Take a side | Friendship +6, happiness +5 | Friendship -8, happiness -10 | Friendship +2 or -2 by whether the side fits their values | None |
+| Compromise | Friendship +2, happiness +2 | Friendship +2, happiness +2 | Word +1 | None |
+| Punish | | Fear +6, friendship -10 | Fear +3 | None |
+| Pay compensation | Friendship +4 | Friendship +4 | Gain-minded -1 | 1 to 3 oz |
+| Call a household thing | Follows the vote | Follows the vote | Friendship +3 for Word and Kin | 1 game hour of every resident's time |
+| Ignore | Happiness -5 | Happiness -5 | | The dispute may return within 3 days |
+
+### Requests and quests
+| Key | Value |
+|---|---|
+| requestInterval | About every 12 days from a resident with friendship 10 or more; leaders at friendship 20 or more |
+| sizes | Small (a day or two at home), personal (a voyage or a mainland trip), dangerous (a fight or a killing) |
+| expires | Small after 10 days, personal after 30; dangerous never, but friendship -1 a week while open after 30 days |
+| revengeKilling | A killing in a town is a deed: its guards turn hostile, the victim's kin start a feud, and the blood-price is 12 oz |
+| otherWaysOut | A blood-price of 12 oz, a duel (hólmganga rules, section 13), exile (the target leaves the coast), or the truth (the quest ends with no deed) |
+
 ## 10 / Target progression for a good player
 *An idealised path for a capable player who plans well. It sets balance targets; it is not a script. Most players will be behind it in places and ahead in others.*
 
@@ -507,14 +676,14 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | 120 | Winter survived | 14 to 15 | 9 | | Karvi launched if built | Repairs done | No deaths from cold or hunger; Yule feast held |
 | 150 | First answer settled or beaten | 15 to 16 | 12 (8) | All fighters helmeted; 3 mail | Second hull planned | Defences on Skarvholm | 30 days runway |
 | 180 | Council commits to a site | 16 | 14 | | Consort acquired | Mainland site scouted on foot | Island failing: water hauled |
-| 210 | Mainland home defensible | 16 | 17 | Mainland forge: swords possible | Two ships | M2: hall, palisade, gate, boatshed | 4 hinterland places known |
+| 210 | Mainland home defensible | 16 | 17 | Mainland forge: swords possible | Two ships | M2: hall, palisade, gate, boatshed | 16 of the 20 mainland areas known |
 | 240 | Council ends; Orm holds Skarvholm | 16 | 19 | | T3 hull | M2 complete | 4 allies committed, 1 conditional; 2 of 3 keys in hand or in reach |
 | 250 | The Return: the Cup recovered | 16 | 20 (the Return) | | Flagship, consort, an allied ship | Beacon unlit; Orm's two ships burned | Compact renewed at Inis Rón |
 | 270 | Finale | 16 plus allies | 21 | | | | |
 
 ### Gate checks against this table
 - Build 2 (Stage 20): a scripted good-player run reaches the day-30 row within 10%.
-- Stage 25: a household at the day-90 row survives winter with no deaths from cold or hunger; at half the stores it fails visibly, with warnings from day 70.
+- Stage 26: a household at the day-90 row survives winter with no deaths from cold or hunger; at half the stores it fails visibly, with warnings from day 70.
 - Autoplay: the merciful policy reaches day 90 within 15% of the brutal policy's wealth and ahead of it on allies.
 
 ## 11 / Homestead threat schedule
@@ -598,3 +767,202 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Gróa | 70 | None | Sea-light | Pulls targets within 6 tiles towards water at 1 tile per second; flees when hurt |
 | Drowned digger | 90 | Resists stagger | Grip | Slow; banished by daylight or rites, not killed |
 | Cairn warden | 200 | Cannot be killed | Blows that knock down | Driven back for 20 s by heavy blows; leaves when the truths are complete or the party leaves |
+
+## 14 / The mainland
+*One shared region of twenty areas (Book 4 section 03, Book 9). Walking times are real time at walking speed.*
+
+### Areas
+| ID | Area | Type | Known at start | Reached by ship | Opens |
+|---|---|---|---|---|---|
+| `MAIN_CARRICK_STRAND` | Carrick Strand | Coast, home site A | Yes (by sea) | From Chapter 3 | Open |
+| `MAIN_CARRICK_LANDING` | Carrick Landing | Coast | Yes | From Chapter 3 | Open |
+| `MAIN_ARDCARN` | Ardcarn | Village | Yes | No | Open |
+| `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Lake | No | No | Open |
+| `MAIN_KILBRECC` | Kilbrecc | Monastery, coast | Yes | From Chapter 3 | Open |
+| `MAIN_KILBRECC_FARMS` | The tenant farms | Farmland | No | No | Open |
+| `MAIN_BLACKWOOD_EDGE` | Fiodh Dubh: the edge | Oakwood | No | No | Open |
+| `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Old forest, dungeon | No | No | The hill-folk's leave |
+| `MAIN_MOIN_MHOR` | Móin Mhór, the Great Bog | Bog | No | No | Open |
+| `MAIN_TRACKWAY` | The Drowned Trackway | Bog, dungeon | No | No | Summer and autumn, or a winter cold snap |
+| `MAIN_SLIABH_CARN` | Sliabh Carn | Mountain | No | No | Open |
+| `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Mountain cave, dungeon | No | No | Closed by snow in winter |
+| `MAIN_HIGH_PASS` | The High Pass | Pass | No | No | Landslide until cleared |
+| `MAIN_DUN_FIACH` | Dún Fiach | Royal fort | Yes (by sea) | From Chapter 3 | Open |
+| `MAIN_RIDGE_ROAD` | The Ridge Road | Road | Yes | No | Open |
+| `MAIN_FORD` | The River Ford | River crossing | Yes | No | Closed in spate unless bridged |
+| `MAIN_SALT_PANS` | Ottar's farms and salt pans | Farmland, coast | Yes | From Chapter 3 | Open |
+| `MAIN_SALTVIK` | Saltvik | Town, coast | Yes | From Chapter 3 | Open |
+| `MAIN_SALTNESS` | Saltness headland | Coast, home site B | Yes | From Chapter 3 | Open |
+| `MAIN_MOUND_FIELD` | The Mound Field and the moor | Burial ground, moor, dungeon | No | No | Open |
+
+### Connections
+| From | To | Minutes | Condition |
+|---|---|---|---|
+| Carrick Strand | Carrick Landing | 1 | |
+| Carrick Landing | Ardcarn | 1.5 | |
+| Ardcarn | Loch Carn | 2 | |
+| Ardcarn | Kilbrecc farms | 2 | |
+| Kilbrecc farms | Kilbrecc | 1 | |
+| Ardcarn | Black Wood edge | 2.5 | |
+| Black Wood edge | Black Wood heart | 3 | Opens with the hill-folk's leave (an offering, a kept promise or the right words) |
+| Black Wood edge | Móin Mhór | 2.5 | |
+| Móin Mhór | Drowned Trackway | 2 | Summer and autumn only, or frozen in a winter cold snap |
+| Móin Mhór | Sliabh Carn | 3 | |
+| Sliabh Carn | Cailleach's Cave | 2 | Closed by snow in winter |
+| Sliabh Carn | High Pass | 2 | |
+| High Pass | Dún Fiach | 2.5 | Landslide until cleared |
+| Kilbrecc | Ridge Road | 2 | |
+| Ridge Road | Dún Fiach | 2 | Guards attack if Dún Fiach is hostile |
+| Ridge Road | River Ford | 2.5 | |
+| River Ford | Salt pans | 2 | Impassable in spate (spring days 1 to 20; autumn storms) unless bridged |
+| Salt pans | Saltvik | 1 | |
+| Saltvik | Saltness | 1 | |
+| Salt pans | Mound Field and moor | 2.5 | |
+| Mound Field and moor | Móin Mhór | 3 | Wolves in winter |
+
+### Travel and the opening map
+| Key | Value |
+|---|---|
+| quickTravel | Along known roads between waymarks, when no enemy is aware and the ground is not hostile |
+| quickTravelCost | 1 game hour per real minute of the walk |
+| highPassClearing | A work party with axes and levers, 6 worker-days; or Fiachra's men after an alliance; or the Cailleach's maul |
+| fordBridge | A homestead build at the ford: 8 timber, 6 worker-days; ends the spate closure for everyone |
+| fordSpate | Spring days 1 to 20, and 2 days after each autumn storm |
+| coldSnap | 15% a winter day, lasting 2 to 4 days; freezes the bog |
+| travelTimeTolerance | Within 10% of the table (Book 3 Stage 28) |
+
+## 15 / Wilderness, hazards and camping
+### Hazards
+| Hazard | Sign | Numbers |
+|---|---|---|
+| Bog hole | Bright moss, bubbles | Speed x0.3; sinks after 8 s unless pulled out by a companion or a rope; 4 s to free |
+| Spate river | Brown water, a roar | Swept downstream 2 tiles per second; 10 vitality every 4 s; swim drain x1.5 |
+| Cliff and scree | Loose stones | A fall of more than 2 tiles costs 10 vitality per tile beyond 2; scree slides 1.5 tiles per second |
+| Cold at night | Breath shows; shivering | Cold (stamina max -20) after 1 game hour outdoors without a fire on autumn and winter nights; 2 vitality a game hour after 3 hours in winter |
+| Fog | Muffled sound | Sight 4 tiles; 30% a game hour of being turned round off a road without a guide |
+| Wolves | Howls, tracks | Packs of 3 to 5 at night; by day too in winter |
+| Boar | Rooted ground | 1 or 2; charge at 6 tiles per second |
+| Outlaws | Signs of a camp | Ambushes of 4 to 8; roadblock toll 2 oz |
+| Landslide | Cracks, trickling stones | 10% on a rainy day on scree routes; blocks the route for 3 days |
+| Lightning | Thunder, hair on end | High ground in a storm: a strike within 6 tiles every 60 s; 40 vitality |
+| The hill-folk's rules | Offerings, rings of stones | Breaking one: ill luck for 3 days (tasks -20%) |
+
+### Camping
+| Key | Value |
+|---|---|
+| needs | A bedroll and a fire, on ground that is not hostile |
+| ends | The day; sleep until 06:00 |
+| heals | One day's recovery for wounds; counts as a full rest at a good camp (section 06) |
+| saves | When no enemy is aware and the ground is not hostile |
+| nightRisk | A night event: 5% on a road, 15% in the wilderness, 25% deep in the wilderness; x1.5 in winter |
+| riskReduction | A good fire x0.67, a companion on watch x0.67, a sheltered spot x0.75 (multiplied) |
+| companionsOnFoot | Up to 2 residents |
+
+## 16 / Dungeons and equipment
+| Reward | Dungeon | Effect | Cost |
+|---|---|---|---|
+| Ceo, the mist-spear | Black Wood souterrain | In fog and at night, thrusts pass through shields; otherwise a spear | Each Samhain the hill-folk call for a service; Christian residents' happiness -5 while it is kept at home |
+| Barrow mail | The Barrow-King's mound | -40% cut, -25% thrust and missiles; immune to stagger | 20% a night of a draugr drawn near the steerer; Ottar's family claim it (Saltvik friendship -20 if worn there) |
+| The bog torc | The Drowned Trackway | The dead cannot see the steerer beyond 2 tiles; flooded bog walked at walking speed | Fires warm half as fast; 10% a cold night of cold sickness |
+| A Frankish sword | Outlaws' hill-fort | Sword damage x1.25 and recovery 4 ticks shorter | Worn at Dún Fiach it is an accusation: Dún Fiach hostile until settled |
+| The Cailleach's maul | The Cailleach's Cave | The heavy attack shatters shields; water it strikes freezes (an ice bridge for 120 s; bog frozen for 10 tiles round) | Works only in autumn and winter; used in summer, a storm within 3 days |
+| The kelpie bridle | Loch Carn (quest) | Summons the water-horse to cross lochs, bogs and rivers at 7 tiles per second | Kept near water at night: 25% a night that the horse drowns its rider unless the steerer refuses it |
+
+## 17 / The living world
+### Density and travellers
+| Key | Value |
+|---|---|
+| roadEventInterval | A traveller or living event about every 60 s on a road or in a settlement |
+| wildEventInterval | A creature, sign or event every 30 to 60 s in the wilderness |
+| offScreenTick | Places and travellers off screen are simulated once a game hour |
+| newsSpeed | News moves with its carrier, at walking speed between areas |
+| travellerKinds | Pilgrims, monks, herders driving cattle, Fiachra's riders, a travelling poet, traders' carts, tinkers, fugitives, refugees |
+
+### Visiting traders
+| Trader | When | Brings |
+|---|---|---|
+| Saltvik knarr | About every 10 days in the sailing season | Iron, salt and cloth; buys hides, wool and fish; leads |
+| Gaelic pedlar | Every 6 days once the household is on the mainland | Needles, dyes, small goods and news |
+| Wandering smith | Once a season | Repairs and a weapon to order |
+| The sea-wife | 10% a calm day | Odd goods and a lead |
+| Ulf's men | Every 15 days while stolen goods are held | Buy marked goods at 60% of value |
+
+### Bandits
+| Key | Value |
+|---|---|
+| campForms | When an area has gone unchecked for 20 days |
+| ambush | 10% a day of road travel near a camp |
+| farmRaids | After 10 more days unchecked |
+| breaksUp | When its leader is killed or bought off, or after 40 days |
+
+### Delayed consequences
+| Key | Value |
+|---|---|
+| delay | 10 to 40 days after the deed, drawn per consequence from the campaign seed |
+| forgotten | At least one in three delayed consequences comes from a person the household met only once |
+| warning | A precursor 3 days before, when the steerer would know it (Book 1 section 06, Fairness) |
+
+### Event deck
+| Key | Value |
+|---|---|
+| size | About 40 events |
+| interval | One every 5 to 10 days |
+| repeats | Never: each fires at most once per campaign |
+| never | During a tutorial, or two at once |
+
+## 18 / Raid assaults
+| Key | Value |
+|---|---|
+| battleSize | 10 to 30 a side |
+| earlyAssault | Carrick in Chapter 2: the household's 5 or 6 against 4 defenders mustering to 10; later assaults on Carrick are sized as battleSize |
+| muster | Defenders at the landing; +25% at 60 s (horns); archers at 90 s; +50% at 180 s (reinforcements) |
+| shieldWall | Needs 4 or more; front arc 120 degrees; missiles -80% in the arc; moves at 0.5 tiles per second |
+| charge | Cohesion -25 to the line it hits; 10 s before the next charge |
+| hold | Defence +20%; no movement |
+| volley | Archers loose together every 6 s |
+| fallBack | The crew withdraws to the ships; pursuers at 0.8 speed |
+| witnesses | Every survivor of an assault is a witness; retaliation comes 50% sooner |
+| glory | Glory deeds count x1.5 in an assault |
+
+## 19 / The homestead away
+| Key | Value |
+|---|---|
+| awayEfficiency | 75% of the work done with the steerer home |
+| stewardEfficiency | 90% with a steward of skill 3 or more |
+| threats | Met by the watch, resolved with the residents' combat skills |
+| report | Up to 12 queued events, most important first |
+| neverStarves | The home never starves while food exists |
+| wearAway | Buildings and the ship wear 1.5 times as fast while untended |
+| disputesAway | Unjudged disputes escalate after 3 days |
+
+## 20 / Exploration density
+| Key | Value |
+|---|---|
+| stopInterval | Something worth stopping for every 20 to 30 s of walking |
+| secrets | At least one real secret or small puzzle in every area |
+| wildernessArea | At least one secret, one resource worth the trip, one story and one danger |
+| change | Every area changes with season and tide |
+| objective | The current goal is always shown |
+
+## 21 / Controls and camera
+*Mouse-first controls in the style of a farming RPG, with keyboard-only and gamepad play kept whole (Book 2 section 21; Book 7 section 14, Camera feel). The logical viewport, tiles and sight ranges are unchanged.*
+
+| Key | Value |
+|---|---|
+| hotbarSlots | 12 |
+| hotbarKeys | 1 to 9, 0, minus and equals; or the mouse wheel |
+| toolReach | 1.5 tiles: the steerer's tile and the eight around it |
+| interactReach | 2 tiles |
+| castReach | 5 tiles (casting a line, throwing an item) |
+| meleeAim | Towards the cursor, snapped to the nearest of the four facings |
+| missileAim | Free aim at the cursor with an aim line while drawing a bow or holding a thrown spear |
+| keyboardTarget | The tile in front of the steerer's facing |
+| gamepadDeadZone | 0.2 of the right stick's travel |
+| gamepadCursor | The right stick sets the target tile within reach in its direction; while aiming, it aims freely |
+| lookAheadScale | 0.35 x the cursor's distance from the steerer |
+| lookAheadMax | 3 tiles |
+| lookAheadAiming | 5 tiles while aiming a bow or thrown spear |
+| lookAheadDeadZone | 0.5 tiles: no look-ahead while the cursor is this close |
+| cameraHalfLife | 0.18 s, critically damped, in sub-pixel space |
+| cameraSnap | The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels |
+

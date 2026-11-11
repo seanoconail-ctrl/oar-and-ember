@@ -12,6 +12,8 @@ interface Result {
   peak: number;
   rms: number;
   perSecond: number[];
+  steps?: { rms: number; peak: number; centroid: number; riseMs: number }[];
+  likeness?: number[];
 }
 
 async function render(
@@ -38,13 +40,22 @@ async function open(page: Page): Promise<void> {
 
 test('the sound test page offers every item, with captions and sliders', async ({ page }) => {
   await open(page);
-  for (const item of ['music:hearth', 'music:skarvholm', 'music:raid', 'ambience:strand'])
+  for (const item of [
+    'music:hearth',
+    'music:skarvholm',
+    'music:raid',
+    'ambience:strand',
+    'ambience:hearth',
+  ])
     await expect(page.locator(`[data-play="${item}"]`)).toHaveCount(1);
   await expect(page.locator('[data-layer]')).toHaveCount(6 + 6);
   await expect(page.locator('[data-variant]')).toHaveCount(2);
   await expect(page.locator('[data-alarm]')).toHaveCount(1);
-  await expect(page.locator('[data-sound]')).toHaveCount(9);
+  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3);
   await expect(page.locator('[data-voice]')).toHaveCount(4);
+  await expect(page.locator('[data-step]')).toHaveCount(6);
+  await expect(page.locator('[data-step-all]')).toHaveCount(1);
+  await expect(page.locator('[data-gait]')).toHaveCount(1);
   await expect(page.locator('[data-bus]')).toHaveCount(6);
   await expect(page.locator('[data-mono]')).toHaveCount(1);
   await expect(page.locator('[data-wind]')).toHaveCount(1);
@@ -63,12 +74,13 @@ test.describe('rendered offline', () => {
     const items = await page.evaluate(
       () => (window as unknown as { oeSound: { items: string[] } }).oeSound.items,
     );
-    expect(items.length).toBe(17);
+    expect(items.length).toBe(17 + 6 + 3 + 1);
     for (const item of items) {
       const seconds = item.startsWith('music') || item.startsWith('ambience') ? 12 : 6;
       const r = await render(page, item, seconds);
       expect(r.peak, item).toBeLessThan(0.99);
-      expect(r.rms, item).toBeGreaterThan(0.004);
+      // Footsteps are quiet by design (decision AU-10), so they have their own floor.
+      expect(r.rms, item).toBeGreaterThan(item.startsWith('step') ? 0.001 : 0.004);
     }
   });
 
@@ -96,5 +108,45 @@ test.describe('rendered offline', () => {
     // Still calm in the half-bar after it was raised: nothing lands before the bar line.
     const raised = Math.floor(bar * 3.5);
     expect(r.perSecond[raised + 1] ?? 0).toBeLessThan(mean(after));
+  });
+
+  // Decision AU-10: footsteps soft, low and dull, no click, varied, and below the effects.
+  test('footsteps are soft, dull, varied and below the effects that matter', async ({ page }) => {
+    await open(page);
+    const hit = await render(page, 'sfx:SFX_HIT_LIGHT', 2);
+    const brightest: Record<string, number> = {
+      grass: 1300,
+      sand: 1300,
+      wet_sand: 1100,
+      rock: 1300,
+      shingle: 2300,
+      water: 1900,
+    };
+    for (const [surface, maxCentroid] of Object.entries(brightest)) {
+      for (const gait of ['walk', 'run']) {
+        const r = await render(page, `step:${surface}`, 6, { steps: 10, gait });
+        const steps = r.steps ?? [];
+        expect(steps.length).toBe(10);
+        for (const step of steps) {
+          // No sharp click: each step takes at least 2 ms to rise.
+          expect(step.riseMs, `${surface} ${gait} rise`).toBeGreaterThanOrEqual(2);
+          // Low and dull.
+          expect(step.centroid, `${surface} ${gait} centroid`).toBeLessThan(maxCentroid);
+          // Quieter than a light hit by at least 10 dB.
+          expect(20 * Math.log10(step.peak / hit.peak), `${surface} ${gait} level`).toBeLessThan(
+            -10,
+          );
+        }
+        // No two steps the same.
+        for (const l of r.likeness ?? [])
+          expect(l, `${surface} ${gait} likeness`).toBeLessThan(0.9);
+        console.log(
+          `${surface} ${gait}: centroid ${Math.round(Math.max(...steps.map((x) => x.centroid)))} Hz, ` +
+            `rise ${Math.min(...steps.map((x) => x.riseMs)).toFixed(1)} ms, ` +
+            `level ${(20 * Math.log10(Math.max(...steps.map((x) => x.peak)) / hit.peak)).toFixed(1)} dB, ` +
+            `likeness ${Math.max(...(r.likeness ?? [0])).toFixed(2)}`,
+        );
+      }
+    }
   });
 });

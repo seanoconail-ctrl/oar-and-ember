@@ -6,7 +6,7 @@ A pixel-art Viking settlement RPG set on a fictional island in the Narrow Sea, a
 
 **How to use:** Planning only. No implementation is authorised by this delivery. Book 1 owns design intent. Books 4 to 11 own setting, people, scenarios, art, dialogue, level layouts, numbers and audio within Book 1's limits. Book 2 owns data and runtime contracts. Book 3 owns build order and records the Stage 0 decisions. Implement one stage at a time and pass its gate before starting the next.
 
-_Revision 2.1 renames the game Oar and Ember and adds the playable homestead, on-foot exploration, seasons with consequences, real-time combat without pause, the steerer's death, mature violence the Stage 0 decisions and the Return to Skarvholm. Specification only: nothing here claims that systems exist or tests pass. Names, characters and supernatural rules are fictional design choices drawing on Norse and Gaelic myth._
+_Revision 2.2 (design addendum 2.2, 11 November 2026) adds people drawn on 32 x 48 canvases with equipment layers, water and wading, one shared mainland of twenty areas with two home sites, wilderness, camping and dungeons with game-changing equipment, a living world, stealth raids and all-out assaults, every homestead task by hand and a home that runs without the steerer, happiness, friendship and fear, disputes, requests and quests, twists and unexpected events, stamina in traversal and condition, and a longer stage plan. Revision 2.1 renamed the game Oar and Ember and added the playable homestead, on-foot exploration, seasons with consequences, real-time combat without pause, the steerer's death, mature violence, the Stage 0 decisions and the Return to Skarvholm. Specification only: nothing here claims that systems exist or tests pass. Names, characters and supernatural rules are fictional design choices drawing on Norse and Gaelic myth._
 
 
 ## 01 / Design authority
@@ -26,7 +26,10 @@ A fictional island, **Skarvholm**, lies in the **Narrow Sea**, a fictionalised N
 - Single-player, desktop browser first, TypeScript with WebGL.
 - **Real time, no tactical pause.** The world does not stop to give orders. Menus can be opened only when no enemy is aware of the player.
 - **The home is playable.** Skarvholm, and later the mainland home, is explored and worked on foot. The player can help with any homestead task, designate buildings, watch residents at work, and talk with them about events, wounds and plans. Combat controls stay enabled at home.
-- **On-foot exploration is diverse and extensive.** Skarvholm has its own caves, cliffs, tidal ground, ruins and puzzles. On the mainland, routes on foot lead to places that may or may not be known yet, including wilderness.
+- **On-foot exploration is diverse and extensive.** Skarvholm has its own caves, cliffs, tidal ground, ruins and puzzles. **The mainland is one shared, connected region of twenty areas** on the Irish coast, the same for every player, that opens up over time: villages, a monastery, a royal fort, a trading town, farms, wilderness and six dungeon sites. Something worth stopping for lies every 20 to 30 seconds of walking.
+- **Every homestead task can be done by hand** by the steerer, with a proper work animation, and **the home runs without the steerer**, at reduced efficiency, while they are away.
+- **Every raid can be a stealth raid or an all-out assault**; some targets can only be taken by assault.
+- **Each resident has happiness, friendship and fear**, not a single regard.
 - **A 120-day year of four 30-day seasons**, with real consequences: sowing and harvest, fishing and fuel, livestock, weather, cold and sickness. Winter must be prepared for.
 - Sailing happens on a regional **sea map** of routes. Local scenes open for landings, raids, harbours and interruptions such as sea battles, wrecks, storms and sea creatures.
 - **Raiding is the main repeatable voyage activity.** Every raid allows theft, intimidation, tribute, bargaining, rescue and withdrawal as well as fighting.
@@ -52,7 +55,7 @@ No ageing, pregnancy, playable children, multiplayer, procedural continent or fu
 |---|---|
 | 01 Game Bible | Design intent and locked requirements |
 | 02 Coding Contracts | Data shapes, runtime behaviour, saves, tests |
-| 03 30-Stage Plan | Build order, gates and the Stage 0 decisions |
+| 03 Stage Plan | Build order, gates and the Stage 0 decisions |
 | 04 Setting and Campaign | World facts, seasons, regions, supernatural rules, chapters |
 | 05 People and Factions | Characters, values, relationships, alliances |
 | 06 Voyages and Raids | Complete loop-proving scenarios |
@@ -82,7 +85,7 @@ The user's latest explicit instruction overrides everything. Book 1 overrides Bo
 | Learn the coast | Curious and opportunistic | Work the steading, short voyages, first raids and trades |
 | Become wealthy | Capable, envied, slightly reckless | Bigger raids, refits, rivals, preparing for winter |
 | Face the cost | Accountable | Defending the island, answering demands, hard conversations |
-| Move ashore | Exposed and determined | Securing land, exploring a new hinterland, moving people |
+| Move ashore | Exposed and determined | Choosing a home site on a mainland already explored, securing it, moving people |
 | Unite the coast | A leader others might follow | Councils, compensation, final preparations, battle |
 
 ### Tone
@@ -92,7 +95,9 @@ Grounded, warm and brutal. Meals, jokes and ordinary arguments sit alongside vio
 *Two loops feed each other. The home loop makes the household able to sail; the voyage loop brings home what the household cannot make.*
 
 ### The home loop (a day on foot)
-Wake at dawn. The steward's short morning report gives the food runway, work in hand, crew moods, wounds, weather and known threats. Then the day is the player's: work beside residents, explore the island, gather, train, solve something strange at the cairn, prepare the ship, or talk at the fire. Residents carry on their delegated work in real time and can be watched and joined. Evening brings a meal, conversation and sometimes trouble. Sleep ends the day. A full day lasts about seventeen real minutes.
+Wake at dawn. The steward's short morning report gives the food runway, work in hand, crew moods, wounds, weather and known threats. Then the day is the player's: work beside residents, explore the island, gather, train, solve something strange at the cairn, prepare the ship, or talk at the fire. Residents carry on their delegated work in real time and can be watched and joined. Evening brings a meal, conversation and sometimes trouble. Sleep ends the day. A full day lasts about seventeen real minutes. Tasks take game time, so a day is a real choice of what to do with it.
+
+While the steerer is away (at sea, on the mainland or camping), the home carries on without them at reduced efficiency (Book 10 section 19): the watch answers threats, and what happened is waiting in the report on return.
 
 ### The voyage loop
 Hear about an opportunity, prepare the crew and ship, take a risk, bring something home, and see what it changes.
@@ -141,7 +146,7 @@ Rewards must change what the player can do. A good day produces progress; a good
 | 3 The Open Coast | Learn the coast | Trade, explore, recruit, sow, first refit | The Followers arrive and the island needs more |
 | 4 A Name on the Water | Become wealthy | Bigger voyages, harvest, karvi, survive the first winter | Orm's tribute demand comes due |
 | 5 The Long Memory | Face the cost | Answer retaliation; the island begins to fail | The household commits to moving ashore |
-| 6 The Borrowed Shore | Move ashore | Secure a mainland site, explore its hinterland, move | The mainland home is defensible |
+| 6 The Borrowed Shore | Move ashore | Choose one of two home sites on the mainland already explored, secure it, move | The mainland home is defensible |
 | 7 The Gathering | Unite the coast | Win allies, pay what they demand | The council at Kilbrecc ends |
 | 8 The Sea King | Unite the coast | Return to Skarvholm for Manannán's Cup; defeat or outlast Orm and break his bargain | An ending is reached |
 
@@ -177,6 +182,9 @@ A lead names a place and a rumour with a source and a confidence. Scouting, trad
 | Slaughter | The player chooses to kill everyone they find | Crew horror or delight, and a hunted name if anyone escapes |
 | Withdraw | The plan has failed | Little gain, but people come home |
 
+### Stealth or assault
+Every raid can be a **stealth raid** (a small party, often by night, aiming not to be seen) or an **all-out assault**, a strandhögg in force: the full crew lands by day, defenders muster over time with horns, reinforcements and archers, and battles run 10 to 30 a side around objectives (break the gate, fire the thatch, seize the store, take or kill the leader, hold the landing). Fortified places, Crowwick and Orm's outposts can only be taken by assault. The crew fights with real-time commands for shield wall, charge, hold, archers' volley and fall back to the ships. An assault's consequences are heavier and more public: more witnesses, more deaths, faster retaliation, and more glory with the Glory-minded. Carrick supports both.
+
 ### When plans change
 Every site carries one or two complications drawn from its true state: the storehouse holds winter seed; a rival crew arrives and starts killing; the defenders offer payment; an injured companion cannot walk and the boat is full; a local offers information for protection; the place belongs to someone you promised safe passage. Never more than two on an early raid.
 
@@ -201,7 +209,15 @@ Survivors recognise your sail, shields, faces and voices. Word travels with real
 Communities change their watches, move valuables inland, hire protection, send envoys, pay rivals to strike back, raid Skarvholm, and **post guards who attack the household on sight** in their territory until the matter is settled. A reputation for killing those who surrender means enemies who recognise you stop surrendering.
 
 ### The crew's judgement
-Each resident holds two or three of six values: **Gain**, **Mercy**, **Glory**, **Kin**, **Faith** and **Word**. Strong disapproval shows as a remark, a complaint, refusal of a specific kind of order, then a request to leave, never as a hidden stat that suddenly fires. Some residents relish brutality; most do not.
+Each resident holds two or three of six values: **Gain**, **Mercy**, **Glory**, **Kin**, **Faith** and **Word**, and three measures of how they stand:
+- **Happiness**, their mood now, from food, warmth, rest, safety, success, grief, festivals and how they were treated today. Unhappy people work worse and quarrel more.
+- **Friendship**, how they feel about the steerer over time, from kept promises, care, shared deeds that fit their values, gifts and time spent with them. Friends volunteer for danger and stay in hard times; enemies who do not fear the steerer leave.
+- **Fear**, how much they fear the steerer, from brutality, punishments, displays of strength and threats. Fear buys obedience at a cost in quality and loyalty, unless it sits with friendship, which makes fierce devotion.
+
+Strong disapproval shows as a remark, a complaint, refusal of a specific kind of order, then a request to leave, never as a hidden stat that suddenly fires. Some residents relish brutality; most do not. Book 10 section 08 gives the numbers; friendship and fear apply to leaders too.
+
+### Disputes, requests and quests
+With ten or more residents, disputes arise every few days (theft, insults, a fight, shirking, a share of plunder, whose shrine, an old grudge, a debt, a broken promise), and the steerer judges: take a side, find a compromise, punish, pay compensation, call a household thing, or ignore it. Each choice moves happiness, friendship and fear for those involved and those watching. Residents and leaders make requests, small, personal and dangerous, and some become quests across the map, including revenge killings in other towns, which are deeds with all their consequences; every revenge quest also allows another way out (a blood-price, a duel, exile, or the truth).
 
 ### Fairness
 Show the likely direction of a consequence when the steerer would know it. Report what changed in plain language. No consequence the player could not have anticipated from information in the world.
@@ -240,7 +256,10 @@ Sea battles emphasise manoeuvring into an approach, an exchange of missiles and 
 - **Block**: hold to raise the shield over a frontal arc; costs stamina, and an empty stamina bar breaks the guard.
 - **Dodge**: a short committed move with brief invulnerability.
 - **Shove**: breaks a block and makes space.
-- **Stamina** gates everything except walking. **Facing** matters: shields cover the front, backs are exposed, and attacks commit to a direction.
+- **Stamina** gates everything except walking, in combat and out of it (section 18). **Facing** matters: shields cover the front, backs are exposed, and attacks commit to a direction.
+
+### Mouse, keyboard and gamepad
+The controls follow the farming-RPG pattern. A hotbar of twelve slots holds tools, seeds, items and weapons, chosen with the number keys or the mouse wheel. The cursor highlights the target tile within the steerer's reach: **left-click uses the selected item there** (chop, dig, sow, water, harvest, hammer, fish, attack) and **right-click interacts** (talk, pick up, open, harvest ripe crops, eat), with clear feedback when the tile is out of reach. Melee attacks go towards the cursor, snapping to the nearest facing; bows and thrown spears aim freely at the cursor with an aim line while drawing; parry, block and dodge stay on their own keys. On a gamepad the right stick aims and moves the same target-tile cursor. Keyboard-only play works fully, with the target tile in front of the steerer. Everything is remappable. The camera looks ahead a little towards the cursor, further while aiming, and is smoothed so it never jitters at pixel scale (Book 10 section 21).
 
 ### Feel
 Committed attacks have readable tells and recovery windows. Spears control distance; axes threaten shields; swords are flexible and rare; seaxes are fast; Dane axes are slow and devastating. Bows and thrown spears matter most at sea and at landings. Skill should overcome modest differences in equipment.
@@ -255,7 +274,10 @@ Enemies see, hear, remember and communicate by shouts, horns and runners. Groups
 *Skarvholm begins as a ruin and a beach. The player lives there on foot, works there, defends it and makes it a home.*
 
 ### Working beside the household
-The player can do or help with any homestead task: sowing, weeding and harvesting barley; fishing from the shore or boat; gathering shellfish, seaweed and eggs; cutting peat and hay; building; carpentry; smithing; cooking; tending wounds; herding; repairing the ship; training. Each task has a short hands-on action whose quality improves with skill, and the player's work counts like a resident's. Residents do the same work by themselves under the steward's plan, so the player's help speeds and improves things rather than being required.
+The steerer can do **every task residents do**, each with a proper, readable work animation for the steerer and residents alike: felling and splitting timber, cutting peat, sowing seed, weeding, watering the kale garden in dry spells, harvesting, threshing, building (hammering, raising beams, thatching), smithing, carpentry, net-mending, fishing, gathering shellfish, seaweed and eggs, herding, milking, shearing, cooking, tending wounds, repairing the ship and training. Each task has a short hands-on action whose quality improves with skill, and the player's work counts like a resident's. Tasks take game time and cost only a little stamina, so working is a bonus and a pleasure, not a chore (Book 10 section 09). Residents do the same work by themselves under the steward's plan, so the player's help speeds and improves things rather than being required.
+
+### A home that runs without you
+While the steerer is away, work continues at reduced efficiency (better with a skilled steward), threats are met by the watch, and events are queued for the report on return. The home never starves if food exists, but it does less, slips behind on repairs, and disputes can boil over. Traders visit: a Saltvik knarr in the sailing season, a Gaelic pedlar once the household is on the mainland, a wandering smith once a season, the sea-wife now and then, and Ulf's men as fences for stolen goods (Book 10 section 17).
 
 ### Designating buildings
 The player places buildings from a build menu onto valid ground: blueprint, materials, workers and build days are shown before confirming. Placement has rules (above the tide line, on firm ground, away from the forge's fire risk) and small adjacency benefits (racks near the shore, the byre near the fields). Residents build designated plots in priority order; the player can join. Buildings can be moved or taken down for part of their materials.
@@ -279,7 +301,16 @@ Combat controls stay enabled at home. Scavengers, raiders, retaliating neighbour
 A small island with a lot in it, and everything found there matters again in the late-game return: cliffs to climb for eggs, tide caves that open only at low water, a causeway to the Skerry of the Drowned at spring low tides, a hermit's ruined cell, a stone ring, a peat bog, an eagle stack, the Hollow Cairn and the Hag's Seat. Seasons change what can be found. Book 9 holds the plans.
 
 ### The mainland
-Once the household moves ashore, routes on foot lead from the new home to villages, a monastery, a royal fort, a trading town, sacred sites and wilderness: oakwoods, bog roads, moors, corries and lake shores. Some places are known from the start; many must be discovered. The wilderness holds wolves, boar, outlaws, the hill-folk and stranger things.
+The mainland is one connected region of twenty areas on the Irish coast, the same for every player (Book 4 section 03; Book 9 section 10). From Chapter 3 its coastal areas can be reached by ship; inland areas open on foot as they are discovered and as blocks are cleared: a landslide on the High Pass, the River Ford in spate, the hill-folk's leave for the heart of the Black Wood, the season for the Drowned Trackway. It is fully explorable long before Chapter 6, so the household chooses its home knowing the land. There are two home sites, Carrick Strand by Ardcarn and the Saltness headland by Saltvik. Every area changes with season and tide.
+
+### Wilderness, camping and companions
+The wilderness is big and worth exploring: every wilderness area has at least one secret, one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger. Hazards include bog holes, spate rivers, cliffs and scree, cold at night, fog, wolves, boar, outlaws, landslides after rain, lightning on high ground and the hill-folk's rules. The steerer can camp anywhere not hostile with a bedroll and a fire: a camp ends the day, heals, and saves if safe, and its risks fall with a good fire, a companion on watch and a sheltered spot. Up to two residents can travel with the steerer on foot and comment, help and fight.
+
+### Dungeons and game-changing equipment
+Six dungeon sites on the mainland (the Black Wood souterrain, the Barrow-King's mound, the Drowned Trackway, the outlaws' hill-fort, the Cailleach's Cave and Loch Carn) each have a lead, puzzles from the world, fair traps with signs, enemies, a guardian, lore and a reward that changes how the game is played, with a cost: Ceo the mist-spear, barrow mail, the bog torc, a Frankish sword, the Cailleach's maul and the kelpie bridle. Skarvholm keeps the Hollow Cairn, and the Seal Cave's deep passage is a small dungeon in its own right. Book 4 section 10 holds the sites and their terms.
+
+### Moving, finding and collecting
+Movement verbs: walk, run, sneak, carry, climb marked routes, wade, swim where allowed, jump short gaps, crawl through gaps, push and pull heavy objects, and ride the water-horse where the kelpie bridle allows. People wade through bands of water depth, slower and partly hidden as the water rises. Collectibles: shells, carved stones, the hermit's psalter pages, the names of the dead, songs learned, and lore for each power. The current goal is always shown, and side discoveries are always close by.
 
 ### Puzzles
 Puzzles come from the world: reading tides to reach a cave; aligning a stone ring at sunrise; finding the way through a cairn whose passages obey the hill-folk's rules; answering the Blue Men in verse; following a drowned man's directions to a channel. No sliding-block abstractions.
@@ -325,7 +356,7 @@ Nessa arrives in Chapter 3 as a healer and net-maker and belongs to the seal-kin
 ## 14 / Moving ashore and the alliance
 *The campaign's major turn: the island becomes untenable, and the household must earn a place on someone else's coast.*
 
-Tides rise, the Kelda spring turns brackish, the landing slumps and Orm's ships take independent harbours. The player can delay and prepare but eventually needs a mainland home: Carrick Strand by Ardcarn, the Saltness headland by Saltvik, or Arra Foot by Glen Arra, secured by purchase, service, a marriage tie between other households, a protection pact or conquest. The household moves people, livestock, stores and workshops over several voyages, then explores and holds a new hinterland on foot.
+Tides rise, the Kelda spring turns brackish, the landing slumps and Orm's ships take independent harbours. The player can delay and prepare but eventually needs a mainland home on the shared mainland the household has already explored: Carrick Strand by Ardcarn or the Saltness headland by Saltvik, secured by purchase, service, a marriage tie between other households or conquest. (Glen Arra remains a destination across the sea, not a home site.) The household moves people, livestock, stores and workshops over several voyages, then holds its new home among neighbours it knows.
 
 | Ally | Contributes | May demand |
 |---|---|---|
@@ -345,7 +376,7 @@ Before the final battle the household must go home one last time. The island is 
 ## 15 / Onboarding: the Wreck and the First Raid
 *The shipwreck gives the opening clear goals, immediate stakes and a reason to care about the crew.*
 
-Wake on the shore with control in seconds. Someone is calling beyond the rocks: carry Hild above the tide line. Shelter in the old broch, light a fire, treat the injured. Three searches teach carrying, combat and exploration with a supernatural clue. Three repairs make the boat seaworthy; one customisation is offered. The chapter ends with a launch, a name and the coast on the sea map. Chapter 2 is the Carrick raid (Book 6).
+Wake on the shore with control in seconds. Someone is calling beyond the rocks: Hild stands knee to waist deep in the shallows, partly submerged in the surf; wade out and carry her above the tide line. Shelter in the old broch, light a fire, treat the injured. Three searches teach carrying, combat and exploration with a supernatural clue. Three repairs make the boat seaworthy; one customisation is offered. The chapter ends with a launch, a name and the coast on the sea map. Chapter 2 is the Carrick raid (Book 6).
 
 ### Accessibility without a pause
 - One clear current objective, with optional discoveries alongside.
@@ -365,15 +396,46 @@ Wake on the shore with control in seconds. Someone is calling beyond the rocks: 
 | 2: The First Voyage | Whole island explorable, homestead v1 with tasks and designations, sea travel, Carrick with every approach, consequences | Different choices produce different useful outcomes; players choose to spend days at home |
 | 3: Reasons to Return | Saltvik on foot, ship upgrades, sea battle, a returning character, the first bargain | Players form their own next goal |
 
+| 4: The Mainland | All twenty mainland areas, travel, blocks, seasons, camping, wilderness hazards and the six dungeons | The mainland is worth exploring for its own sake, and the player knows where they want to live |
+
 The user playtests each build gate personally at first. The most important test of Build 2: after the first raid, does the player want another voyage because they have a plan, and a day at home because there is something to do?
 
 ## 17 / Pixel-art contract summary
 *Book 7 is the full art reference; these rules are locked here.*
 
-- Logical viewport 640 x 360; world tiles 24 x 24; adult sprite canvas 32 x 40 with a grounded foot anchor and about 18 x 30 occupied pixels.
+- Logical viewport 640 x 360; world tiles 24 x 24; adult sprite canvas **32 x 48** with a grounded foot anchor at bottom centre; adults stand about **40 px tall (about 1.7 tiles)**, about 18 x 40 occupied pixels, a little larger relative to the world than before. Everything people use is scaled to match: doors, beds, benches, workstations, tools, carried loads, ship benches and deck spacing, and buildings' door and eave heights (Book 7).
+- People are layered sheets (body, clothing, cloak, helmet, armour, shield, weapon) sharing the body's frames, so worn equipment is visible. Iron helmets are rare; the steerer starts with none. Six-frame walk with a 1 px bob, eight-frame run, breathing idles, secondary motion on hair and cloth, and a soft ground shadow under every person, animal and prop.
+- The steerer carries a madder-red accent so they stand out against sand and grass; each resident has a signature colour and silhouette detail.
 - WebGL rendering with nearest-neighbour sampling, pixel-aligned drawing and integer scaling; letterbox rather than stretch.
 - Four authored facings for people; armed sprites are never mirrored. Two body models for the steerer, chosen by the player and never labelled with a gender.
 - Final art is authored by Claude as palette-indexed pixel sources compiled to atlases, checked visually before any stage is marked done.
 - Blood, wounds and dismemberment are drawn in pixel form at the same scale, with a gore setting.
 - The supernatural begins as one wrong detail; strong luminous accents are reserved for important phenomena.
 - No horned helmets, no fantasy plate, no modern props. Never permanent circles, boxes or emoji in place of art.
+
+## 18 / Stamina and condition
+*Stamina is the body's budget in combat and out of it, and its size tells the player how the steerer is.*
+
+- **Traversal drains stamina:** climbing, swimming, waist-deep wading, sprinting and heavy carrying all drain the bar. Running out mid-climb makes the steerer slide down; running out mid-swim makes them start to sink, so they must reach the shore. Walking, ordinary carrying and shallow water do not drain it.
+- **Condition sets the bar's size:** cold, hunger, wounds, sickness, lack of sleep and a hard day's work lower the maximum; a hot meal, a warm fire, full rest and feasts restore it.
+- **Work stays a bonus:** homestead tasks cost only a little stamina, but they take game time, so the day is the real cost of working.
+- **Readable:** the bar's length shows its current maximum, and the interface shows, in plain words, each reason it is smaller ("Cold", "Hungry").
+- Book 10 section 06 gives the numbers; Book 2 section 24 holds the rules; Book 8 section 10 words the reasons.
+
+## 19 / The living world
+*The coast goes on without the player, and news of it arrives by people.*
+
+Travellers move between areas on schedules, each with an origin, a destination and a reason: pilgrims to Kilbrecc, monks, herders driving cattle, Fiachra's riders, a travelling poet, traders' carts, tinkers, fugitives and refugees from Orm's raids. They can be talked to, traded with, helped, recruited or robbed, and deeds apply. Wandering characters with small stories recur across the game (a poet who writes satires about the steerer, a pedlar who always knows a rumour, a hermit, a disgraced warrior). Outlaw camps form and break up, ambush roads and raid farms when unchecked. Places and travellers are simulated at low detail when off screen; things happen while the player is away, and news reaches them through travellers and traders. Every settlement and camp has a named leader with a relationship to the household. On a road or in a settlement, a traveller or living event comes roughly every minute; in the wilderness, a creature, sign or event every 30 to 60 seconds.
+
+## 20 / Twists and the unexpected
+*Every major quest has a reveal that changes what the right choice looks like.*
+
+- Every major quest has at least one reveal that changes what the "right" choice looks like.
+- There is no clean good option: the obvious answer has a cost; the cruel answer sometimes helps.
+- Consequences can arrive 10 to 40 days later, from people the player forgot.
+- Characters have secrets and motives that surface through play, not exposition.
+- Companions disagree, argue with each other and sometimes act on their own.
+- Side quests intersect the main story.
+- An event deck of about forty rare events, each firing at most once per campaign and only when its conditions fit the moment, brings the unexpected about every 5 to 10 days, never during a tutorial and never two at once.
+
+Book 4 section 12 holds the twist seeds (proposals for the user's review) and the event deck; Book 5 holds the people's secrets and personal quests.

@@ -54,21 +54,9 @@
     ]
   },
   {
-    "id": "REG_CARRAIG",
-    "nameKey": "region.name.reg_carraig",
-    "homeSite": "SITE_CARRICK_STRAND",
-    "zones": []
-  },
-  {
-    "id": "REG_SALTNESS",
-    "nameKey": "region.name.reg_saltness",
-    "homeSite": "SITE_SALTNESS",
-    "zones": []
-  },
-  {
-    "id": "REG_ARRA",
-    "nameKey": "region.name.reg_arra",
-    "homeSite": "SITE_ARRAFOOT",
+    "id": "REG_MAINLAND",
+    "nameKey": "region.name.reg_mainland",
+    "homeSites": ["SITE_CARRICK_STRAND", "SITE_SALTNESS"],
     "zones": []
   }
 ]

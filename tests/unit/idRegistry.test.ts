@@ -17,7 +17,7 @@ describe('ID shapes (Book 2 section 04)', () => {
     expect(isValidId(`SK_${'A'.repeat(40)}`)).toBe(false);
   });
 
-  it('knows all 38 prefixes of the Book 2 table', () => {
+  it('knows all 39 prefixes of the Book 2 table (MAIN_ since design addendum 2.2)', () => {
     const table = bookSection(2, '04') ?? '';
     const written = new Set(
       table
@@ -26,7 +26,7 @@ describe('ID shapes (Book 2 section 04)', () => {
         .match(/[A-Z]+(?=_)/g) ?? [],
     );
     expect(new Set(Object.keys(ID_PREFIXES))).toEqual(written);
-    expect(written.size).toBe(38);
+    expect(written.size).toBe(39);
   });
 });
 
@@ -87,7 +87,7 @@ describe('the registry file', () => {
       'HAZ_CAULDRON',
       'SK_WRECK_STRAND',
       'ZONE_SK_SEALCAVE',
-      'REG_CARRAIG',
+      'REG_MAINLAND',
       'P_STEERER',
       'C_HILD',
       'E_ORM',

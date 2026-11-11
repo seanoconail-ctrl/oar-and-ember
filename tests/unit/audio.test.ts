@@ -117,7 +117,8 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
       type: 'duck',
       level: table.stingerDuck,
       from: 10,
-      until: 10 + 4 * (60 / 84),
+      // The island theme is in 3/4 at 92 beats a minute (decision AU-11: cues follow their piece).
+      until: 10 + 4 * (60 / 92),
     });
     expect(router.update(10 + table.captionSeconds + 0.1)).toEqual([]);
   });
@@ -132,13 +133,14 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
     expect(router.setPlace('ZONE_SK_MACHAIR', 'day', 0)).toEqual(['AMB_WIND_HEATHER']);
   });
 
-  it('lint refuses a gameplay sound without a caption, and flags every cue as temporary', () => {
+  it('lint refuses a gameplay sound without a caption, and flags only uncomposed cues as temporary', () => {
     const broken = structuredClone(files) as Record<string, unknown>;
     const audio = broken['audio'] as { cues: Record<string, unknown>[] };
     const sfx = audio.cues.find((c) => c['kind'] === 'sfx');
     if (sfx !== undefined) delete sfx['captionKey'];
     const { issues } = loadContent(broken as typeof files);
     expect(issues.map((i) => i.reason)).toContain('sfx cues need a caption (Book 11 section 09)');
-    expect(table.cues.every((c) => c.temporary)).toBe(true);
+    // Decision AU-11: every cue is generated; only the combat music still stands in (Stage 9).
+    expect(table.cues.filter((c) => c.temporary).map((c) => c.id)).toEqual(['MUS_COMBAT_1']);
   });
 });

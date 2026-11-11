@@ -44,6 +44,18 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['voice:C_BRAN', 5, {}, 'voice-bran'],
   ['voice:C_RUNA', 5, {}, 'voice-runa'],
   ['voice:C_ODDI', 5, {}, 'voice-oddi'],
+  // Decision AU-10: footsteps by surface, walking and running.
+  ...(['grass', 'shingle', 'sand', 'wet_sand', 'water', 'rock'] as const).flatMap(
+    (s): [string, number, Record<string, unknown>, string][] => [
+      [`step:${s}`, 4.5, { gait: 'walk', steps: 8 }, `steps-${s.replace('_', '-')}-walk`],
+      [`step:${s}`, 3, { gait: 'run', steps: 8 }, `steps-${s.replace('_', '-')}-run`],
+    ],
+  ),
+  // Decision AU-11: the horn, the stingers and the hearth, now that they play in the game.
+  ['call:SFX_HORN', 3, {}, 'sfx-horn'],
+  ['call:MUS_STINGER_HORN', 3, {}, 'stinger-horn'],
+  ['call:MUS_STINGER_DISCOVERY', 3, {}, 'stinger-discovery'],
+  ['ambience:hearth', 12, {}, 'hearth-fire'],
 ];
 
 if (import.meta.filename === process.argv[1]) {

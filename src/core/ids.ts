@@ -16,6 +16,7 @@ export const ID_PREFIXES = {
   CAMP: 'sea-map place',
   SITE: 'sea-map place',
   REG: 'on-foot region',
+  MAIN: 'mainland area',
   ZONE: 'zone of a region',
   SK: 'place on Skarvholm',
   HAZ: 'sea hazard',

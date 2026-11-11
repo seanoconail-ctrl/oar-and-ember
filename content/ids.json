@@ -88,41 +88,12 @@
       "origin": "stated"
     },
     {
-      "id": "SITE_ARRAFOOT",
-      "ref": "Arra Foot, mouth of Loch Arra",
-      "book": 4,
-      "section": "03",
-      "origin": "stated"
-    },
-    {
       "id": "REG_SK",
       "ref": "Skarvholm is 384 x 256 tiles",
       "book": 4,
       "section": "02",
       "origin": "assigned",
       "note": "No book names the Skarvholm on-foot region; assigned in Stage 1 so the stated ZONE_SK_* zones have a parent region."
-    },
-    {
-      "id": "REG_CARRAIG",
-      "ref": "Carrick hinterland",
-      "book": 4,
-      "section": "03",
-      "origin": "stated",
-      "note": "Uses the Irish spelling Carraig, while the places use Carrick. The zones below use CARRAIG as their stem."
-    },
-    {
-      "id": "REG_SALTNESS",
-      "ref": "Saltness hinterland",
-      "book": 4,
-      "section": "03",
-      "origin": "stated"
-    },
-    {
-      "id": "REG_ARRA",
-      "ref": "Loch Arra hinterland",
-      "book": 4,
-      "section": "03",
-      "origin": "stated"
     },
     {
       "id": "ZONE_SK_STRAND",
@@ -213,198 +184,6 @@
       "section": "02",
       "origin": "stated",
       "note": "Holds SK_NAUST and SK_SKERRY."
-    },
-    {
-      "id": "ZONE_CARRAIG_STRAND",
-      "ref": "Carrick Strand (home site)",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The home zone on foot. Its sea-map place is SITE_CARRICK_STRAND."
-    },
-    {
-      "id": "ZONE_CARRAIG_LANDING",
-      "ref": "Carrick Landing and Ardcarn",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Split from a row that names two places. Book 9 section 06 makes Carrick Landing its own scene, with Ardcarn off the map to the east. Sea-map place: SITE_CARRICK."
-    },
-    {
-      "id": "ZONE_CARRAIG_ARDCARN",
-      "ref": "Carrick Landing and Ardcarn",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Split from the same row as ZONE_CARRAIG_LANDING; merge the two if they are one zone. Sea-map place: TOWN_ARDCARN."
-    },
-    {
-      "id": "ZONE_CARRAIG_LOCHCARN",
-      "ref": "Loch Carn and Brigid's well",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Brigid's well (the each-uisce's binding) is a feature of this zone and has no ID of its own."
-    },
-    {
-      "id": "ZONE_CARRAIG_KILBRECC",
-      "ref": "Coastal path to Kilbrecc",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Named for what the row holds (the monastery and its tenants); the coastal path itself is probably a link on foot. Sea-map place: ABBEY_KILBRECC."
-    },
-    {
-      "id": "ZONE_CARRAIG_RIDGE_ROAD",
-      "ref": "Ridge road to Dún Fiach",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The row's holding is the road itself (Fiachra's riders patrol it). Dún Fiach is not listed as a place on foot."
-    },
-    {
-      "id": "ZONE_CARRAIG_FIODHDUBH",
-      "ref": "Fiodh Dubh, the Black Wood",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. Holds a hill-folk ringfort with a souterrain."
-    },
-    {
-      "id": "ZONE_CARRAIG_MOINMHOR",
-      "ref": "Móin Mhór, the great bog",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start."
-    },
-    {
-      "id": "ZONE_CARRAIG_SLIABHCARN",
-      "ref": "Sliabh Carn",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start."
-    },
-    {
-      "id": "ZONE_SALTNESS_HEADLAND",
-      "ref": "Saltness headland (home site)",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The home zone on foot. Its sea-map place is SITE_SALTNESS."
-    },
-    {
-      "id": "ZONE_SALTNESS_SALTVIK",
-      "ref": "Saltvik",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The Saltvik row of the Saltness hinterland. Sea-map place: TOWN_SALTVIK. Saltvik on foot is built in Book 3 Stage 21, long before Chapter 6; see questions."
-    },
-    {
-      "id": "ZONE_SALTNESS_SALT_PANS",
-      "ref": "The salt pans and Ottar's farms",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "One row naming two places; Ottar's farms have no ID of their own."
-    },
-    {
-      "id": "ZONE_SALTNESS_MOUNDFIELD",
-      "ref": "The Mound Field",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start."
-    },
-    {
-      "id": "ZONE_SALTNESS_MOOR",
-      "ref": "The moor",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. Holds an old hill-fort."
-    },
-    {
-      "id": "ZONE_SALTNESS_RIVER_FORD",
-      "ref": "The river ford",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The border with Dún Fiach's land."
-    },
-    {
-      "id": "ZONE_SALTNESS_SMUGGLERS_CAVE",
-      "ref": "Smugglers' cave and the sea-wife's hut",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. One row naming two places."
-    },
-    {
-      "id": "ZONE_ARRA_FOOT",
-      "ref": "Arra Foot (home site)",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "The home zone on foot. Its sea-map place is SITE_ARRAFOOT. The region stem is not repeated, as in ZONE_SK_STRAND."
-    },
-    {
-      "id": "ZONE_ARRA_STEADINGS",
-      "ref": "Glen Arra's steadings",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Sea-map place: GLEN_ARRA."
-    },
-    {
-      "id": "ZONE_ARRA_COIREARD",
-      "ref": "Coire Ard shielings",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start."
-    },
-    {
-      "id": "ZONE_ARRA_PINEWOOD",
-      "ref": "The pinewood",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start."
-    },
-    {
-      "id": "ZONE_ARRA_BEINNNACAILLICH",
-      "ref": "Beinn na Caillich",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. The proper name is joined into one token as the rules say, which makes the token hard to read (BEINNNA...). BEINN_NA_CAILLICH is the alternative."
-    },
-    {
-      "id": "ZONE_ARRA_SHORE_PATH",
-      "ref": "Shore path to Crowwick",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Looks across the water to CAMP_CROWWICK. It may be a link on foot rather than a zone."
-    },
-    {
-      "id": "ZONE_ARRA_INISRON_CROSSING",
-      "ref": "Crossing to Inis Rón",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. A tidal crossing open only at spring low tides. It may be a link on foot with a tide condition (Book 2 FootLink) rather than a zone."
-    },
-    {
-      "id": "ZONE_ARRA_SELKIE_COVE",
-      "ref": "Selkie cove and the old broch",
-      "book": 4,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Unknown at start. This 'old broch' (Ulf's lookout) is not SK_BROCH."
     },
     {
       "id": "SK_WRECK_STRAND",
@@ -850,7 +629,7 @@
       "book": 5,
       "section": "07",
       "origin": "assigned",
-      "note": "Stem of GLEN_ARRA (the GLEN_ prefix dropped, as REG_ARRA does). Alternative FAC_GLENARRA not used; see questions."
+      "note": "Stem of GLEN_ARRA (the GLEN_ prefix dropped). Alternative FAC_GLENARRA not used; see questions."
     },
     {
       "id": "FAC_KEEPERS",
@@ -2237,7 +2016,7 @@
       "book": 4,
       "section": "07",
       "origin": "assigned",
-      "note": "Bound by Brigid's well in ZONE_CARRAIG_LOCHCARN. Book 10 also lists it as an enemy, so it may need an E_ ID as well."
+      "note": "Bound by Brigid's well at MAIN_LOCH_CARN (design addendum 2.2). Book 10 also lists it as an enemy, so it may need an E_ ID as well."
     },
     {
       "id": "POWER_LYNGBAKR",
@@ -2343,30 +2122,6 @@
       "book": 11,
       "section": "03",
       "origin": "stated"
-    },
-    {
-      "id": "MUS_REGION_CARRAIG",
-      "ref": "MUS_REGION_<id>",
-      "book": 11,
-      "section": "03",
-      "origin": "expanded",
-      "note": "Expanded from the family using REG_CARRAIG (Book 4) with the REG_ prefix dropped; see questions."
-    },
-    {
-      "id": "MUS_REGION_SALTNESS",
-      "ref": "MUS_REGION_<id>",
-      "book": 11,
-      "section": "03",
-      "origin": "expanded",
-      "note": "Expanded from the family using REG_SALTNESS (Book 4) with the REG_ prefix dropped; see questions."
-    },
-    {
-      "id": "MUS_REGION_ARRA",
-      "ref": "MUS_REGION_<id>",
-      "book": 11,
-      "section": "03",
-      "origin": "expanded",
-      "note": "Expanded from the family using REG_ARRA (Book 4) with the REG_ prefix dropped; see questions."
     },
     {
       "id": "MUS_SEA_CALM",
@@ -3047,7 +2802,224 @@
       "book": 11,
       "section": "11",
       "origin": "assigned",
-      "note": "Build 2 deliverable; may be a set of zone beds under the AMB_<zone>_<season>_<time> family. Spelling follows the book; the region id is REG_CARRAIG."
+      "note": "Build 2 deliverable; may be a set of zone beds under the AMB_<zone>_<season>_<time> family. Spelling follows the book; Carrick Landing is MAIN_CARRICK_LANDING on the mainland (design addendum 2.2)."
+    },
+    {
+      "id": "L_LASAIR",
+      "ref": "Lasair",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_DUBHTHACH",
+      "ref": "Dubhthach",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_CUAN",
+      "ref": "Cuán",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_HREFNA",
+      "ref": "Hrefna",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_NINNID",
+      "ref": "Ninnid",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_FAOLAN",
+      "ref": "Faolán Wolf-Hand",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "L_HROLF",
+      "ref": "Hrolf the Barrow-King",
+      "book": 5,
+      "section": "04",
+      "origin": "stated"
+    },
+    {
+      "id": "REG_MAINLAND",
+      "ref": "The mainland",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "The one shared mainland region of twenty MAIN_ areas (addendum 2.2 section 3); replaces REG_CARRAIG, REG_SALTNESS and REG_ARRA. Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_CARRICK_STRAND",
+      "ref": "Carrick Strand",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_CARRICK_LANDING",
+      "ref": "Carrick Landing",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_ARDCARN",
+      "ref": "Ardcarn",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_LOCH_CARN",
+      "ref": "Loch Carn and Brigid's Well",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_KILBRECC",
+      "ref": "Kilbrecc",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_KILBRECC_FARMS",
+      "ref": "The tenant farms",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_BLACKWOOD_EDGE",
+      "ref": "Fiodh Dubh: the edge",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_BLACKWOOD_HEART",
+      "ref": "Fiodh Dubh: the heart",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_MOIN_MHOR",
+      "ref": "Móin Mhór, the Great Bog",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_TRACKWAY",
+      "ref": "The Drowned Trackway",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_SLIABH_CARN",
+      "ref": "Sliabh Carn",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_CAILLEACH_CAVE",
+      "ref": "The Cailleach's Cave",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_HIGH_PASS",
+      "ref": "The High Pass",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_DUN_FIACH",
+      "ref": "Dún Fiach",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_RIDGE_ROAD",
+      "ref": "The Ridge Road",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_FORD",
+      "ref": "The River Ford",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_SALT_PANS",
+      "ref": "Ottar's farms and salt pans",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_SALTVIK",
+      "ref": "Saltvik",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_SALTNESS",
+      "ref": "Saltness headland",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
+    },
+    {
+      "id": "MAIN_MOUND_FIELD",
+      "ref": "The Mound Field and the moor",
+      "book": 4,
+      "section": "03",
+      "origin": "stated",
+      "note": "Mainland area (addendum 2.2 section 3). Also written in Book 9 section 10."
     }
   ],
   "families": [
@@ -3056,7 +3028,7 @@
       "ref": "`MUS_REGION_<id>`",
       "book": 11,
       "section": "03",
-      "note": "Mainland hinterland palettes. Members expanded as entries from the three stated REG_ ids (REG_CARRAIG, REG_SALTNESS, REG_ARRA) with the REG_ prefix dropped."
+      "note": "Mainland area palettes. Members are expanded from the MAIN_ area IDs when their music is composed (Stage 28 onwards); none yet since design addendum 2.2 removed the three hinterland regions."
     },
     {
       "pattern": "MUS_SUPERNATURAL_<power>",

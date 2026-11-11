@@ -69,7 +69,7 @@ Modal, mostly Dorian and Aeolian with drones. The Gaelic coast leans pentatonic 
 |---|---|---|
 | `MUS_HOME_DAWN/DAY/DUSK/NIGHT` | At home by time of day | Hearth theme variations; sparse at night |
 | `MUS_ISLAND_EXPLORE` | Island zones away from the steading | Flutes and wind; zone motifs |
-| `MUS_REGION_<id>` | Mainland hinterlands | Regional palettes |
+| `MUS_REGION_<id>` | Mainland areas | Regional palettes |
 | `MUS_SEA_CALM/WIND/STORM` | Sea map by weather | Rowing pulse in calm and wind; drones and drums in storm |
 | `MUS_RAID_APPROACH` | Landing, unalarmed | Low pulse, held breath |
 | `MUS_RAID_ALARM` | Alarm raised | Drums enter on the next bar |
@@ -146,7 +146,7 @@ Short cues on key events: discovery, a resident's death, a bargain accepted, the
 Layered by zone, season, weather and time: surf on shingle versus sand, wind through heather, cormorants and gulls, seals, sheep, the hearth, rain on thatch, wind in rigging, the dead quiet of fog. Every zone has a day and a night bed and seasonal variants.
 
 ### Foley
-Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber deck, plank road, snow). Carrying adds breath and strain. Sneaking is audibly quieter. Work sounds for every homestead task (adze, hammer, forge, sickle, net, spade, quern, loom).
+Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber deck, plank road, snow; and splashing through shallow water). Footsteps are **soft and natural**: low and dull, with no sharp click (every step rises over at least 2 ms), a heel and a softer roll onto the toe, and drawn afresh each step so no two sound the same (decision AU-10). Each surface has its own character: a soft thud on grass, a crunch of shifting stones on shingle, a hush on sand, a duller squelch on wet sand, a splash and drops in water, a dull knock on rock. Running is a little louder and quicker, carrying heavier, sneaking much quieter. Footsteps sit at least 10 dB below the effects that matter. Work sounds for every homestead task (adze, hammer, forge, sickle, net, spade, quern, loom).
 
 ### Combat
 | Event | Sound |
@@ -176,7 +176,7 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 - Every line has its subtitle; blips are never the only source of required information.
 
 ## 09 / Mix and accessibility
-- **Priority order:** threat tells, combat feedback, voice blips, music, ambience. Threat tells are never masked.
+- **Priority order:** threat tells, combat feedback, voice blips, music, ambience, footsteps. Threat tells are never masked; the steerer's own footsteps are the quietest thing in the mix, at least 10 dB below a light hit (tested by `tests/browser/sound.spec.ts`).
 - **Ducking:** music ducks under blips and stingers; ambience ducks under combat.
 - **Loudness:** integrated about -16 LUFS for the master on the web; true peak below -1 dBTP. Music sits about -21 to -24 dBFS RMS, ambience about -22, so effects and tells stand out.
 - **Sliders:** master, music, ambience, effects, voice blips, and a separate slider for supernatural tells.
@@ -209,8 +209,10 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 | Build 1 (Stage 12) | Audio wired into play for everything built; home music by time of day with the silence rule; the wreck opening ambience; first combat layers; Chapter 1 effects |
 | Build 2 (Stage 20) | Sea states, raid approach, alarm and extraction, Carrick ambience, home seasons |
 | Build 3 (Stage 24) | Saltvik, sea battle, first supernatural motifs, blips for the starting crew |
-| Campaign (Stages 25 to 29) | Regional palettes, festivals, all motifs, laments, the Return to Skarvholm, the finale |
-| Stage 30 | Final mix, loudness pass, captions complete |
+| The living coast (Stages 25 to 27) | Travellers, carts, herds and bandits; wandering characters' blips; festivals; winter, Samhain and Yule |
+| Build 4 (Stage 32) | The twenty mainland areas' ambiences and music by season; wilderness hazard warnings (wolves, thunder, the bog); the six dungeons and their guardians; the mainland leaders' blips |
+| Campaign (Stages 33 to 36) | Moving ashore, all motifs, laments, the Return to Skarvholm, the finale |
+| Stage 37 | Final mix, loudness pass, captions complete |
 
 Each stage that adds a place, character or system adds its sounds and music to the section 12 standard.
 

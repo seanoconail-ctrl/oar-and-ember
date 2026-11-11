@@ -11,7 +11,7 @@
  *   interpolated samples.
  */
 import type { Echo } from './notation.ts';
-import { makeSamples, rng, SAMPLE_RATE } from './samples.ts';
+import { makeSample, rng, SAMPLE_RATE } from './samples.ts';
 import type { InstrumentName, Sample } from './samples.ts';
 
 export type Bus = 'master' | 'music' | 'ambience' | 'effects' | 'voice' | 'tells';
@@ -55,11 +55,72 @@ interface Voice {
   readonly source: AudioBufferSourceNode;
 }
 
-/** The samples are generated once per page and shared by every engine. */
-let SAMPLES: Record<InstrumentName, Sample> | null = null;
-function samples(): Record<InstrumentName, Sample> {
-  SAMPLES ??= makeSamples();
-  return SAMPLES;
+/**
+ * The samples are generated once per page, each when first needed or ahead of time in the
+ * background (warmSamples), and shared by every engine.
+ */
+const SAMPLES = new Map<InstrumentName, Sample>();
+function sample(name: InstrumentName): Sample {
+  let s = SAMPLES.get(name);
+  if (s === undefined) {
+    s = makeSample(name);
+    SAMPLES.set(name, s);
+  }
+  return s;
+}
+
+/**
+ * Makes the instruments' samples in the background (a worker), so turning sound on in play never
+ * stalls the game: the drone and pad take about a tenth of a second each (decision AU-11).
+ * Resolves when every sample is ready. Without workers, they are made between frames.
+ */
+let warming: Promise<void> | null = null;
+export function warmSamples(names: readonly InstrumentName[]): Promise<void> {
+  warming ??= new Promise<void>((resolve) => {
+    const left = new Set(names.filter((n) => !SAMPLES.has(n)));
+    const oneByOne = (): void => {
+      const name = left.values().next().value;
+      if (name === undefined) {
+        resolve();
+        return;
+      }
+      left.delete(name);
+      sample(name);
+      setTimeout(oneByOne, 30);
+    };
+    if (left.size === 0) {
+      resolve();
+      return;
+    }
+    if (typeof Worker === 'undefined') {
+      setTimeout(oneByOne, 30);
+      return;
+    }
+    try {
+      const worker = new Worker(new URL('./sampleWorker.ts', import.meta.url), { type: 'module' });
+      worker.onmessage = (e: MessageEvent<{ name: InstrumentName; sample: Sample }>) => {
+        if (!SAMPLES.has(e.data.name)) SAMPLES.set(e.data.name, e.data.sample);
+        left.delete(e.data.name);
+        if (left.size === 0) {
+          worker.terminate();
+          resolve();
+        }
+      };
+      worker.onerror = () => {
+        worker.terminate();
+        setTimeout(oneByOne, 30);
+      };
+      worker.postMessage([...left]);
+    } catch {
+      setTimeout(oneByOne, 30);
+    }
+  });
+  return warming;
+}
+
+/** Every instrument sample the synthesiser plays. */
+export function allInstrumentSamples(): InstrumentName[] {
+  return [...new Set(Object.values(INSTRUMENTS).map((i) => i.sample))];
 }
 
 export class SynthEngine {
@@ -67,6 +128,8 @@ export class SynthEngine {
   readonly buses: Record<Bus, GainNode>;
   /** Send into the shared echo. */
   readonly echoIn: GainNode;
+  /** Ducks the music under stingers and voice blips (Book 11 section 09), apart from its slider. */
+  readonly duck: GainNode;
   readonly #echoDelay: DelayNode;
   readonly #echoFeedback: GainNode;
   readonly #echoTone: BiquadFilterNode;
@@ -93,7 +156,8 @@ export class SynthEngine {
     musicTone.type = 'lowpass';
     musicTone.frequency.value = 7000;
     musicTone.Q.value = 0.5;
-    this.buses.music.connect(musicTone).connect(this.buses.master);
+    this.duck = gain();
+    this.buses.music.connect(this.duck).connect(musicTone).connect(this.buses.master);
     for (const bus of ['ambience', 'effects', 'voice', 'tells'] as const)
       this.buses[bus].connect(this.buses.master);
     // The shared echo.
@@ -172,7 +236,7 @@ export class SynthEngine {
   buffer(name: InstrumentName): AudioBuffer {
     let b = this.#buffers.get(name);
     if (b === undefined) {
-      const s = samples()[name];
+      const s = sample(name);
       b = this.ctx.createBuffer(1, s.data.length, SAMPLE_RATE);
       b.getChannelData(0).set(s.data);
       this.#buffers.set(name, b);
@@ -182,7 +246,7 @@ export class SynthEngine {
 
   /** A raw sample source at a pitch (for effects and tells that use an instrument's sample). */
   sampleSource(name: InstrumentName, hz: number): AudioBufferSourceNode {
-    const s = samples()[name];
+    const s = sample(name);
     const src = this.ctx.createBufferSource();
     src.buffer = this.buffer(name);
     src.playbackRate.value = hz / s.baseHz;
@@ -204,7 +268,7 @@ export class SynthEngine {
   ): number {
     const def = INSTRUMENTS[instrument];
     if (def === undefined) throw new Error(`unknown instrument "${instrument}"`);
-    const s = samples()[def.sample];
+    const s = sample(def.sample);
     const rate = hzOf(midi) / s.baseHz;
     const sampleLen = s.data.length / SAMPLE_RATE / rate;
     const held =

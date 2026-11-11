@@ -60,11 +60,6 @@
     "nameKey": "place.name.site_saltness"
   },
   {
-    "id": "SITE_ARRAFOOT",
-    "type": "HOME_SITE",
-    "nameKey": "place.name.site_arrafoot"
-  },
-  {
     "id": "SK_WRECK_STRAND",
     "type": "SKARVHOLM_PLACE",
     "region": "REG_SK",

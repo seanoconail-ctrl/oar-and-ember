@@ -77,8 +77,10 @@ export function showShellView(
   const session = new Session(createSimulation(b, emptyWorld('shell', b)), input, {
     awareHostiles: () => (hostile ? 1 : 0),
   });
-  const engine = new WebAudioEngine();
-  const audio = new AudioRouter(parseAudioTable(audioJson), strings, engine);
+  WebAudioEngine.prepare();
+  const audioTable = parseAudioTable(audioJson);
+  const engine = new WebAudioEngine(audioTable.cues);
+  const audio = new AudioRouter(audioTable, strings, engine);
   const overlay = createOverlay(document);
   const root = overlay.root;
   let musicAt = 0;
@@ -208,7 +210,7 @@ export function showShellView(
         keys: keys('interact'),
         run: t(settings.toggle.includes('run') ? 'ui.mode.toggle' : 'ui.mode.hold'),
       }),
-      engine.unlocked ? t('ui.shell.audio_temporary') : t('ui.shell.audio_locked'),
+      engine.unlocked ? t('ui.shell.audio_on') : t('ui.shell.audio_locked'),
     ].join('\n');
     overlay.region('prompt').textContent = notice;
 

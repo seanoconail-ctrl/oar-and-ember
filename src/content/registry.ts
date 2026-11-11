@@ -93,8 +93,13 @@ const placeCheck = object(
 const hazardCheck = object({ id: id(['HAZ']), nameKey: ref('string') });
 const zoneCheck = object({ id: id(['ZONE']), terrain: text });
 const regionCheck = object(
-  { id: id(['REG']), nameKey: ref('string'), homeSite: ref('place'), zones: arrayOf(zoneCheck) },
-  ['homeSite'],
+  {
+    id: id(['REG']),
+    nameKey: ref('string'),
+    homeSites: arrayOf(ref('place')),
+    zones: arrayOf(zoneCheck),
+  },
+  ['homeSites'],
 );
 const tieCheck = object({ to: ref('person'), kind: oneOf(TIE_KINDS) });
 const personCheck = object(
@@ -142,8 +147,21 @@ const cueCheck = object(
     phases: arrayOf(oneOf(['day', 'dusk', 'night'] as const)),
     captionKey: ref('string'),
     temporary: bool,
+    piece: oneOf(['hearth', 'skarvholm', 'raid'] as const),
+    layers: recordOf(text, bool),
   },
-  ['bpm', 'beatsPerBar', 'stems', 'lengthBeats', 'bus', 'zones', 'phases', 'captionKey'],
+  [
+    'bpm',
+    'beatsPerBar',
+    'stems',
+    'lengthBeats',
+    'bus',
+    'zones',
+    'phases',
+    'captionKey',
+    'piece',
+    'layers',
+  ],
 );
 const audioCheck = object({
   about: text,

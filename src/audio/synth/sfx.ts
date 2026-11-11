@@ -13,7 +13,7 @@ import { rng } from './samples.ts';
 export interface SoundDef {
   readonly id: string;
   readonly captionKey: string;
-  readonly bus: 'effects' | 'tells';
+  readonly bus: 'effects' | 'tells' | 'music';
   /** Plays at `at`, panned -1..1; returns its length in seconds. */
   readonly play: (e: SynthEngine, at: number, pan: number, opts: SoundOptions) => number;
 }
@@ -23,7 +23,12 @@ export interface SoundOptions {
   readonly gore: number;
 }
 
-function out(e: SynthEngine, bus: 'effects' | 'tells', pan: number, echo = 0): AudioNode {
+export function out(
+  e: SynthEngine,
+  bus: 'effects' | 'tells' | 'music',
+  pan: number,
+  echo = 0,
+): AudioNode {
   const p = e.ctx.createStereoPanner();
   p.pan.value = Math.max(-1, Math.min(1, pan));
   p.connect(e.buses[bus]);

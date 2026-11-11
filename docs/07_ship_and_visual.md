@@ -16,8 +16,10 @@ _Specification. Dimensions and statistics are starting values for balancing. His
 |---|---|
 | Renderer | WebGL2, nearest-neighbour textures, no filtering or mipmaps on pixel art |
 | Logical viewport | 640 x 360 logical pixels; integer scaling to the screen; letterbox, never stretch |
-| World tile | 24 x 24 logical pixels; about 1.4 m in world terms |
-| Adult sprite | 32 x 40 canvas, about 18 x 30 occupied, foot anchor at bottom centre |
+| World tile | 24 x 24 logical pixels; about 1.4 m for ground, buildings' footprints and hulls; things people use are drawn at people scale (below) |
+| Adult sprite | 32 x 48 canvas; adults about 40 px tall (about 1.7 tiles), about 18 x 40 occupied; foot anchor at bottom centre |
+| People layers | Body, clothing, cloak, helmet, armour, shield and weapon as layered sheets sharing the body's frames (section 07) |
+| Ground shadow | A soft, semi-transparent oval under every person, animal and prop (section 14) |
 | Sampling | Nearest-neighbour; all positions snapped to whole logical pixels at draw time |
 | Depth | Sort by foot anchor Y; tall objects provide an occlusion line and a cutaway or fade |
 | Facings | Four authored facings for people; armed sprites are never mirrored |
@@ -27,7 +29,26 @@ _Specification. Dimensions and statistics are starting values for balancing. His
 > Figure: the adult sprite canvas (drawn in the PDF version of this book).
 
 ### Animation targets
-Idle 4 frames, walk 8 (a grounded cycle: contact, down, passing, up, for each foot), run 8, sneak 6, light attacks 5 to 7 each with a clear tell frame, charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2), heavy release 6, parry 3, riposte 5, block 3, guard broken 3, stagger 3, dodge 4, shove 4, hurt 2, finisher 8, carry walk 6, row 4, downed 2, surrendered 2, and a work loop of 4 to 8 frames for every homestead task. Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch) live in the manifest and must agree with collision and damage timing.
+Idle 4 frames (breathing), with weight-shift and glance idles of 4 and a gust idle of 4 (section 14); walk 6 (right contact, right down, passing, left contact, left down, passing: the torso and head drop exactly 1 px on the two down frames, and the arms swing well forward and back to show weight); run 8; sneak 6; light attacks 5 to 7 each with a clear tell frame; charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2); heavy release 6; parry 3; riposte 5; block 3; guard broken 3; stagger 3; dodge 4; shove 4; hurt 2; finisher 8; carry walk 6; row 4; downed 2; surrendered 2; and a work loop of 4 to 8 frames for every homestead task (section 07). Starting targets for the other movement verbs: draw and loose (bow, thrown spear) 4, climb 4, slide 2, swim 6, sink 2 (laboured), jump 4, crawl 4, push and pull 4; wading uses the walk with a heavier stride under the water mask. Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch, splash) live in the manifest and must agree with collision and damage timing.
+
+### Scale
+People are drawn a little larger than the ground's metres, and everything people sit on, walk through, hold or carry is drawn to the 40 px adult, not to the tile. At people scale a metre is about 23 px, close to one tile. Ground, building footprints and hull lengths keep their tile sizes (Book 10 owns the hull tiles); doors, furniture, tools, loads and ship benches follow this table.
+
+| Thing | Rule against the 40 px adult |
+|---|---|
+| Adult | 40 px from sole to crown, about 18 px across the shoulders; 8 px of canvas above the head for hair, helmets and raised arms |
+| Doorway | Clear opening at least 46 px tall (head room over the adult) and at least 20 px wide; a door leaf fills it. Only souterrain passages and the meanest huts are lower, and people duck through them in a crawl or stoop |
+| Eaves | The lowest eave edge at least 44 px above the ground at a door and along any path, so heads clear it |
+| Bed and box bed | 2 tiles long and 1 tile wide (a lying adult with room); platform top 8 to 10 px above the floor |
+| Bench and stool | Seat 10 to 12 px above the floor (knee height); a seated adult is about 30 px tall; benches 1 tile deep |
+| Table and workstation | Working surface 17 to 21 px (about the hip): workbench, quern table, cutting board, net frame |
+| Anvil and forge | Anvil face on its block 14 to 16 px; forge hearth lip 16 to 20 px |
+| Loom | Warp-weighted loom uprights 46 to 52 px, leaning against the wall |
+| Hand tools | Hammer and ladle 8 to 12 px; axe, adze and sickle 12 to 18 px; spade and peat iron 24 to 28 px; scythe and hay rake 32 to 38 px |
+| Weapons | Seax 8 to 10 px; sword 20 to 22 px; Dane axe 32 to 36 px; spear 44 to 56 px; bow 34 to 38 px; round shield 18 to 20 px across |
+| Carried loads | A sack or small barrel 12 to 16 px; a chest 18 px long; a timber or bundle on the shoulder up to 2 tiles long; a carried person across the shoulders reads as one adult |
+| Ship deck | Gunwale 14 to 16 px above the deck; rowing benches (sea chests) 9 to 10 px high, 1 tile apart along the hull with one oar each side per bench (T1 three benches, T2 eight, T3a thirteen, T3b two), the first and last at least a tile from stem and stern; a clear walkway at least 1 tile wide along the hull |
+
 
 ## 02 / Vessel progression
 *One ship that grows: a repaired coastal boat, a karvi, then a choice between a war hull and a cargo hull. A second vessel can be owned from Chapter 6 but is managed only on the sea map.*
@@ -112,7 +133,7 @@ Recognition depends on what a witness could see: sail and device from far away, 
 *Ships in local scenes are walkable places built from modular segments, drawn at true tile length.*
 
 ### Construction
-Hulls are built from segments: **bow**, a repeatable **midship** segment (one per three to four tiles of length) and **stern**. The deck is a walkable layer with benches, mast step, cargo spaces and gunwale. Each tier has its own segment set; segments are never stretched.
+Hulls are built from segments: **bow**, a repeatable **midship** segment (one per three to four tiles of length) and **stern**. The deck is a walkable layer with benches, mast step, cargo spaces and gunwale, drawn to the people scale of section 01 (gunwale height, bench height and spacing, the walkway). Each tier has its own segment set; segments are never stretched.
 
 ### States
 | System | States |
@@ -167,10 +188,30 @@ Each tier has a 16 x 16 or 24 x 16 token with eight headings, a sail-state frame
 A designated building appears as a dithered blueprint in undyed tones; cells that break a placement rule tint red with the reason shown in text. Construction has three visible stages (marked out, framed, finished) with material piles beside the plot. Residents use task-specific work animations at each station, so the player can watch a roof go on or a keel being shaped.
 
 ### Interiors
-Buildings use roof cutaways or fades when the player enters. Hearths are the warm centre of every interior. A prosperous home shows hangings, carved benches, chests and clutter; a struggling one shows bare benches and cold corners.
+Doorways, eaves, beds, benches and workstations follow the people scale of section 01: every door is taller than an adult with head room, and eaves clear heads. Buildings use roof cutaways or fades when the player enters. Hearths are the warm centre of every interior. A prosperous home shows hangings, carved benches, chests and clutter; a struggling one shows bare benches and cold corners.
 
 ## 07 / People sprites
-*People are distinguished by silhouette, clothing and carried tools, not by colour alone.*
+*People are distinguished by silhouette, clothing and carried tools, not by colour alone. They move with weight, wear what they own, and are shown at their work.*
+
+### Size and movement
+- Adults are about 40 px tall on a 32 x 48 canvas (section 01), with the foot anchor at bottom centre; the steerer's two body models and Hild are redrawn at this size before any other people are made.
+- **Walk:** 6 frames with an exact 1 px drop of torso and head on the down frames and a strong, weighted arm swing; the planted foot keeps pace with the ground (section 14). **Run:** 8 frames with a bounce. **Idles:** breathing, occasional weight shifts and glances round.
+- **Secondary motion:** hair, braids, cloaks, sashes and bags lag a frame behind the body and settle after it stops; cloaks also take the wind (section 14).
+- **Ground shadows:** every person, animal and prop has a soft, semi-transparent oval ground shadow under it, darker at its centre, with the long sun shadow of section 14 as well when the sun is up.
+- **Effort reads:** a steerer low on stamina breathes harder and moves heavily; sliding down a climb and sinking in deep water have their own frames (section 01), so the danger is visible before it is felt.
+
+### Equipment layers (paper doll)
+- Body, clothing, cloak, helmet, armour, shield and weapon are separate layered sheets that share the body's frames and foot anchor, so whatever a person wears or carries is visible and changes when it changes. Book 2 section 19 owns the format and the draw order per facing.
+- Weapon and shield layers may use a larger canvas round the same anchor for long weapons (spears, Dane axes, bows), so nothing is cut off. Weapons are carried distinctly: spears upright or sloped, axes at the belt or shoulder, swords at the hip, seaxes across the front, bows on the back or in hand.
+- **Iron helmets are rare.** Leaders and veterans wear them; most people do not; Orm's men have the most. The steerer starts with none.
+- Every layer the steerer can wear is drawn for both body models.
+
+### Readability
+- **The steerer** carries a madder-red accent (a sash, a cloak lining or a pin) from the `madder` ramp (the palette's Madder red), so they stand out against sand and grass at 1x. Every clothing and cloak layer the steerer can wear keeps the accent.
+- **Each resident** has one signature colour and one silhouette detail, so they read at a glance and in greyscale: Hild's blond braid and weld-green shawl, Bran's ladle, Runa's adze, Áine's bow. A resident's signature colour comes from the dye, wool and hair ramps, is unlike every other resident's, and is never madder.
+
+### Cultural detail
+Where it fits: braids, beards, fur mantles in winter (a seasonal cloak layer), and distinct weapon carriage. No horned helmets and no costume-Viking excess.
 
 ### Cultural silhouettes
 | Group | Typical clothing and gear |
@@ -183,11 +224,35 @@ Buildings use roof cutaways or fades when the player enters. Hearths are the war
 | Orm's men | Grey cloaks, more mail and helmets than anyone else, disciplined spacing |
 
 ### The steerer's body models
-Two body models, A and B, offered side by side without labels. Both share the full animation set, every clothing, hair and gear option, and the same collision footprint. Nothing in art or text names a gender.
+Two body models, A and B, offered side by side without labels. Both share the full animation set, every clothing, hair and equipment layer, and the same collision footprint. Nothing in art or text names a gender.
+
+### People in water
+- **Depth bands** (Book 10 section 02, "Water depth bands"): **wet**, no change; **ankle**, feet hidden; **knee**, the sprite masked below a waterline at the band's height; **waist**, masked higher, with the arms held up when carrying; **deep**, swimming only where allowed, head and shoulders above the water.
+- Where the water cuts the sprite it draws a **waterline** with a highlight that moves with the small waves. **Ripple rings** expand from the feet on every step and slowly while standing; **splashes** burst on entering the water and when running in it; movement is visibly slower.
+- After leaving the water, people are **darkened and dripping** for a few seconds, leaving wet prints.
+- **Hild in the opening** stands knee to waist deep in the shallows, partly submerged, calling, with ripples and spray round her.
+
+### Work loops and particles
+Every homestead task has a readable work loop of 4 to 8 frames, the same for the steerer and residents (Book 2 section 07), with its tool drawn to the scale of section 01:
+
+| Task | The loop reads as | Particles |
+|---|---|---|
+| Felling and splitting timber | A full overhead swing and the bite; the split halves falling | Wood chips |
+| Cutting peat | The peat iron pushed in with a foot, the turf lifted and stacked | Peat crumbs |
+| Sowing, weeding, watering the kale | A broadcast swing from the seed bag; stooping and pulling; tipping a pail along the rows | Seed, soil, water drops |
+| Harvesting and threshing | A sickle sweep and the sheaf bound; the flail swung over the floor | Chaff |
+| Building | Hammering, raising a beam with a heave, laying thatch from a ladder | Wood chips, straw |
+| Smithing | Hammer on the anvil, the bellows, quenching | Sparks, steam |
+| Carpentry and repairing the ship | Adze strokes along a plank, the auger, caulking a seam | Shavings |
+| Net-mending and fishing | The needle through the mesh; casting and hauling a line or net | Water drops |
+| Herding, milking, shearing | Walking the flock with a staff; seated at the cow with a pail; the shears along a held sheep | Wool tufts |
+| Cooking and tending wounds | Stirring at the hearth, ladling; kneeling and binding | Steam, hearth smoke |
+
+Other particles: dust kicked up when running on sand and dry earth, footprints in sand and snow, and splashes in shallows and streams.
 
 ### Rules
 - No horned helmets. No generic fantasy plate. No modern props.
-- Residents differ by silhouette, hair, clothing and the tool they carry (Runa's adze, Bran's ladle, Áine's bow).
+- Residents differ by silhouette, hair, clothing, signature colour and the tool they carry (Runa's adze, Bran's ladle, Áine's bow).
 - Faction markers use shape and clothing as well as colour.
 - Ally, enemy, surrendered and downed actors are distinguishable without relying on colour: surrendered actors kneel with empty hands; downed actors lie flat; enemies carry their weapon on the far side; allies show a small shape-coded marker when selected.
 - Readable at 1x and 2x scale.
@@ -231,7 +296,20 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 - The sea map shows coasts, known routes, wind and tide indicators, fog, known threats and the household's token. Unknown places show as coastline only until discovered.
 - Icons are shape-coded (a wave for tide, an arrow for wind, a sail for ships, a cross, hammer or stone for sacred places).
 - Text size is adjustable; all speech is subtitled; colour-blind presets swap reserved accents without changing shape cues.
-- The steward's morning report and the post-raid summary use plain sentences, not percentages.
+- The steward's morning report, the homecoming report and the post-raid summary use plain sentences, not percentages.
+
+### Hotbar, cursor and aim
+- **Hotbar:** a strip of 12 slots (Book 10 section 21, `hotbarSlots`) along the bottom edge in carved-wood frames, each showing its tool, seed, item or weapon as a drawn icon with a small count; the selected slot is raised with a bright rim and its name appears briefly above the strip. Slot numbers sit in the frame corners.
+- **Target tile:** the tile the next action will work is outlined with a one-pixel rim in the interactive highlight of section 13, with corner ticks, and a faint fill; it shows the selected tool's action as a small icon (axe, spade, seed, pail, hammer, hook, sword).
+- **Out of reach:** the cursor tile dims and its rim turns to a broken red edge, and a short refusal word appears beside it ("Too far", "Nothing to cut"); it is never shown by sound alone or by colour alone (the broken edge is a shape cue).
+- **Aim line:** while drawing a bow or aiming a spear, a dotted line runs from the hand towards the cursor, its dots spaced wider as the draw grows, ending in a small cross; it never passes through solid tiles in a way that lies about the shot.
+- **Melee facing:** when a melee attack is aimed with the cursor, a small arrow at the steerer's feet shows which of the four facings it will take.
+
+### Stamina bar
+- The bar's frame is as long as the current maximum. To its right, the capacity lost is shown as an empty, darker groove up to the full length, cut into one segment for each reason it is smaller, each with its drawn icon: frost for cold, an empty bowl for hunger, a bound cloth for wounds, a fevered brow for sickness, a closed eye for lack of sleep, a bent back for a hard day's work. Hovering, or the character panel, gives the plain word ("Cold", "Hungry").
+- When a restorer lifts a reason (a hot meal, a warm fire, full rest, a feast), its segment glows warm and the bar grows into it.
+- While climbing, swimming or wading waist deep, the bar also shows small beside the steerer; an empty bar flashes its frame once before a slide or a sink (no flash with reduced flashes).
+- Icons are shape-coded and drawn from the palette, never emoji, and readable in the colour-blind presets.
 
 ## 11 / Asset manifest, naming and art QA
 *Every asset is listed in a manifest with its frames, pivot, footprint and events. Book 2 owns the schema.*
@@ -240,6 +318,7 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 | Asset type | Pattern | Example |
 |---|---|---|
 | Person | `actor_<id>_<state>_<facing>` | `actor_c_hild_walk_s` |
+| Equipment layer | `layer_<slot>_<name>_<body>` | `layer_cloak_grey_wool_a` |
 | Ship segment | `ship_<tier>_<part>_<state>` | `ship_t2_mid_damaged2` |
 | Ship token | `token_<tier>_<heading>_<sail>` | `token_t1_ne_full` |
 | Tile | `tile_<biome>_<variant>` | `tile_machair_03` |
@@ -265,6 +344,9 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 ### Art QA checklist
 - All sprites snap to whole logical pixels at 1x, 2x and 3x scale.
 - Foot anchors and collision footprints agree; no sliding feet.
+- People are 32 x 48 canvases about 40 px tall; things they use follow the scale of section 01; every layer sheet matches its body's frames and anchor.
+- The steerer's madder accent and each resident's signature reads at 1x against sand and grass.
+- People in water are masked at their band's waterline, with a highlight, ripples and splashes.
 - Attack tells precede active frames by at least 6 ticks at normal combat speed.
 - Ally, enemy, surrendered and downed actors are distinguishable in greyscale.
 - Night, fog and rain never hide an actionable threat.
@@ -302,7 +384,7 @@ Gore serves weight, not spectacle. There are no slow-motion kill cameras and no 
 | Machair and moor | Machair grass and flowers, heather, bracken, peat banks and cuttings, bog pools, plank roads |
 | Woodland | Oakwood and pinewood floors, trunks with occlusion, undergrowth that hides sneaking actors, clearings |
 | Upland | Corrie walls, scree, high pasture, shieling huts, summit cairns |
-| Waters | Lake shore, river fords, holy well, salt pans |
+| Waters | Lake shore, river fords, streams, waterfalls with plunge pools, holy well, salt pans, depth bands from wet sand to deep water |
 | Sites | Stone rings, burial mounds, ringfort banks, souterrain and cairn interiors, the hermit's cell |
 
 ### Seasons and weather
@@ -347,9 +429,9 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 
 ### Animation and movement
 - **Motion with the camera still:** at least 80% of the screen keeps moving, measured as the mockups were (20 x 20 pixel cells; a cell counts if at least 2% of its pixels change visibly between at least a quarter of consecutive frames). The approved strand mockup measures 89.2% with its cloud shadows frozen and 100% with them. Solid things (a wall, a boulder's crown, a bank face) may be still; nothing else.
-- **People** walk at the Book 10 walk speed (2.0 tiles a second) with a grounded 8-frame cycle whose planted foot keeps pace with the ground: no sliding, no floating. Runs bounce; carrying is heavier.
-- **Idles:** a breath, a weight shift, looking round after a few seconds still, bracing and holding the cloak in a strong gust.
-- **Secondary motion** on hair, cloaks and bags (the cloak flutters in the wind).
+- **People** walk at the Book 10 walk speed (2.0 tiles a second) with a grounded 6-frame cycle (section 01: the torso and head drop exactly 1 px on the down frames) whose planted foot keeps pace with the ground: no sliding, no floating. Runs (8 frames) bounce; carrying is heavier; wading is slower at the band's speed.
+- **Idles:** a breath, a weight shift, glancing round after a few seconds still, bracing and holding the cloak in a strong gust.
+- **Secondary motion** on hair, cloaks, sashes and bags, lagging a frame behind the body (the cloak flutters in the wind).
 - **Footfalls** leave prints in sand (wet prints hold water and are taken by the tide; dry ones fade), raise dust when running on dry ground, splash and ripple in water, part the grass round the legs, and sound by surface (sand, wet sand, shingle, grass, rock, water).
 - **Residents are shown at their tasks**, never standing idle in a row (from the first stage that has residents).
 
@@ -361,19 +443,20 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 - Colour darkens from pale shallows over the sand to the deep, in ordered-dithered palette steps; broad swells lie in bands parallel to the shore and roll in, breaking into white lines in a surf zone.
 - Foam runs up the beach with each wave and back; the sand behind it is dark and sheened, then dries in steps; above the reach of the waves, sand wet from the tide dries over a few minutes.
 - The tide rises and falls as the calendar says; what is drawn never disagrees with where the simulation lets the player walk (the flats are always under water while the tidal ground is closed).
-- Kelp sways under the surface; glints flicker on crests in sunlight; spray bursts where waves meet rock; ripples ring anyone standing in water.
-- Streams flow (streaks drifting downstream), foam along their banks and at narrows; springs bubble.
+- Kelp sways under the surface; glints flicker on crests in sunlight; spray bursts where waves meet rock.
+- **People in water** (section 07): masked below a waterline at their depth band, with a moving highlight on the waterline, ripple rings expanding from the feet on every step and slowly while standing, splashes on entering and running, and darkened, dripping sprites for a few seconds after leaving. No one stands in water without ripples.
+- Streams flow visibly (streaks drifting downstream), foam gathers along their banks, at rocks and at narrows; springs bubble; waterfalls have falling sheets, spray and a churned pool.
 
 ### Life
 - Every outdoor place has animals going about their lives: here gulls wheeling with their shadows on the ground, a gull standing and turning its head, a cormorant drying its wings, a seal lifting its head, crabs scuttling; midges in still air by water. Elsewhere sheep, cattle, insects and birds as Book 7 section 13 lists. Wildlife is visual unless a stage makes it more.
 
 ### Light
 - A grade by time of day and weather: cool clear days; first and last light a grey half-light, a little warm; low sun warms the light and cools the shadows; night readable in blue shadow with lantern and hearth pools.
-- Every character, creature and prop has a soft contact shadow; when the sun is up its silhouette also casts a long shadow away from the sun, longest when it is low. Flying creatures cast their shadow on the ground below them.
+- Every character, creature and prop has a soft, semi-transparent oval ground shadow; when the sun is up its silhouette also casts a long shadow away from the sun, longest when it is low. Flying creatures cast their shadow on the ground below them.
 - Cloud shadows drift across land and sea with the wind; shafts of light fall through broken cloud when the sun is low; fire and lanterns flicker and throw light pools; lightning flashes in storms; fog and mist drift in layers.
 
 ### Camera feel
-- The camera follows smoothly with a look-ahead in the direction of travel, and moves with the steerer by whole pixels so nothing jitters. Hits shake it briefly.
+- The camera follows smoothly with a look-ahead towards the mouse cursor (capped at about 3 tiles, more while aiming a bow or spear; Book 10 section 21 "Controls and camera"), or in the direction of travel without a pointer. It is smoothed below the pixel and only its final offset snaps to whole logical pixels, with a dead zone and hysteresis, so nothing jitters and the view never steps one pixel back and forth. Hits shake it briefly.
 
 ### Accessibility
 - **Reduced motion** (from the system's preference, `?motion=reduced`, or the system menu): no camera shake or flashes, calmer plant sway, half the blown sand and insects. The world still moves (at least 50% of cells with the camera still).
@@ -381,11 +464,11 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 ### Engineering limits
 - Visual only: the renderer, shaders and visual state never change the simulation, and use no `Math.random`.
 - Within the Book 2 frame budget: building a frame's scene and draw list under 4 ms in the test runner; the script's share of a browser frame under 5.5 ms.
-- 640 x 360 logical pixels, 24-pixel tiles and 32 x 40 people are unchanged.
+- 640 x 360 logical pixels and 24-pixel tiles are unchanged; people are 32 x 48 canvases about 40 px tall (section 01; the decision log records the change from 32 x 40), and sight ranges are unchanged by it.
 - Effects fit the machine: play starts at low detail and steps up to lite and full once frames prove fast, and steps back down if frames slow below ten a second, so the game stays playable everywhere; the standard is judged at full detail, and low detail with reduced motion still keeps half the screen moving.
 
 ### How the standard is enforced
-- **Art lint** (`npm run lint`, so every build and CI) fails if an actor or prop sheet has no `shadow:` header, a zone has a terrain boundary straight for more than 16 px, a terrain has fewer than 8 plain tile variants, or grass is under-decorated (`src/tools/art/standard.ts`).
-- **Tests:** `tests/unit/standard.test.ts` checks shadows under everything drawn, transitions, variants, density and the frame budget; `tests/browser/standard.spec.ts` measures motion with the camera still, with and without reduced motion, and the script time per frame.
+- **Art lint** (`npm run lint`, so every build and CI) fails if an actor or prop sheet has no `shadow:` header, a zone has a terrain boundary straight for more than 16 px, a terrain has fewer than 8 plain tile variants, or grass is under-decorated (`src/tools/art/standard.ts`). It also fails a standing person sheet that is not a 32 x 48 canvas about 18 x 40 occupied, a walk that is not 6 frames with the 1 px drop on its down frames, or a layer sheet whose frames or anchor differ from its body's.
+- **Tests:** `tests/unit/standard.test.ts` checks shadows under everything drawn, transitions, variants, density and the frame budget, and that a person standing in each depth band is masked at that band's waterline and rings with ripples; `tests/browser/standard.spec.ts` measures motion with the camera still, with and without reduced motion, the script time per frame, and that a still cursor leaves the camera still. The thresholds above are the floor and are never lowered to pass.
 - **Captures:** `npm run capture -- stage-NN` writes `docs/art/captures/stage-NN/` (a still at 1x and 2x, a 10-second walk at 25 fps, the reference beside the capture, a motion map and the figures). Each stage report compares the capture with `docs/art/reference/`.
 - **New places** start with a mockup the user approves before they are built (Book 3).

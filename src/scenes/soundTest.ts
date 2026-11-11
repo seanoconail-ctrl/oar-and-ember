@@ -7,13 +7,19 @@
  * (an OfflineAudioContext) and returns its levels and a WAV: the browser tests and
  * `npm run audio:render` use it to check every sound without a speaker.
  */
-import hearthJson from '../../content/music/hearth.json';
-import raidJson from '../../content/music/raid.json';
-import skarvholmJson from '../../content/music/skarvholm.json';
 import { StrandAmbience } from '../audio/synth/ambience.ts';
+import { CALLS, HearthAmbience, PIECES } from '../audio/synth/cues.ts';
 import { BUSES, MUSIC_VOICES, SynthEngine } from '../audio/synth/engine.ts';
+import {
+  footstep,
+  isSurface,
+  likeness,
+  measureStep,
+  STEP_INTERVAL,
+  SURFACES,
+} from '../audio/synth/footsteps.ts';
+import type { Gait, StepMeasure } from '../audio/synth/footsteps.ts';
 import type { Bus } from '../audio/synth/engine.ts';
-import type { Piece } from '../audio/synth/notation.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
 import { COMBAT, TELLS } from '../audio/synth/sfx.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
@@ -22,11 +28,7 @@ import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
 
-export const PIECES: Readonly<Record<string, Piece>> = {
-  hearth: hearthJson,
-  skarvholm: skarvholmJson,
-  raid: raidJson,
-};
+export { PIECES };
 
 /** The lines the voice blips speak: Hild's own call, and a line each for the others. */
 export const BLIP_LINES: readonly { speaker: string; key: string }[] = [
@@ -54,6 +56,9 @@ export interface RenderSettings {
   readonly wind?: number;
   readonly tide?: number;
   readonly gore?: number;
+  /** For footsteps: the gait and how many steps to walk. */
+  readonly gait?: Gait;
+  readonly steps?: number;
 }
 
 /**
@@ -99,6 +104,24 @@ export function startItem(
       },
     };
   }
+  if (kind === 'ambience' && id === 'hearth') {
+    const fire = new HearthAmbience(e);
+    fire.start(at);
+    return {
+      schedule: (until) => {
+        fire.schedule(until);
+      },
+      stop: (t) => {
+        fire.stop(t);
+      },
+    };
+  }
+  if (kind === 'call') {
+    const def = CALLS.find((d) => d.id === id);
+    if (def === undefined) throw new Error(`no call ${id}`);
+    def.play(e, at, 0, { gore: 2 });
+    return { schedule: () => undefined, stop: () => undefined };
+  }
   if (kind === 'ambience') {
     const amb = new StrandAmbience(e);
     amb.setTide(s.tide ?? 0.5, at);
@@ -125,6 +148,15 @@ export function startItem(
     def.play(e, at, 0, { gore: s.gore ?? 2 });
     return { schedule: () => undefined, stop: () => undefined };
   }
+  if (kind === 'step') {
+    // A short walk on one surface: every step is drawn afresh, so no two are the same.
+    if (!isSurface(id)) throw new Error(`no surface ${id}`);
+    const gait = s.gait ?? 'walk';
+    const n = s.steps ?? 8;
+    for (let i = 0; i < n; i++)
+      footstep(e, at + i * STEP_INTERVAL[gait], id, i % 2 === 0 ? -0.08 : 0.08, i, gait);
+    return { schedule: () => undefined, stop: () => undefined };
+  }
   if (kind === 'voice') {
     const line = BLIP_LINES.find((l) => l.speaker === id);
     if (line === undefined) throw new Error(`no voice ${id}`);
@@ -142,6 +174,9 @@ export interface RenderResult {
   readonly perSecond: readonly number[];
   /** A 16-bit stereo WAV, base64, when asked for. */
   readonly wav?: string;
+  /** For footsteps: each step measured, and how alike each step is to the one before. */
+  readonly steps?: readonly StepMeasure[];
+  readonly likeness?: readonly number[];
 }
 
 function wavBase64(buffer: AudioBuffer): string {
@@ -209,12 +244,30 @@ export async function renderItem(
       secSum = 0;
     }
   }
+  let steps: StepMeasure[] | undefined;
+  let alike: number[] | undefined;
+  if (item.startsWith('step:')) {
+    const gait = settings.gait ?? 'walk';
+    const mono = buffer.getChannelData(0);
+    const gap = Math.round(STEP_INTERVAL[gait] * rate);
+    const first = Math.round(0.05 * rate);
+    const count = settings.steps ?? 8;
+    steps = [];
+    alike = [];
+    for (let i = 0; i < count; i++) {
+      const start = first + i * gap;
+      steps.push(measureStep(mono, start, gap, rate));
+      if (i > 0)
+        alike.push(likeness(mono.subarray(start - gap, start), mono.subarray(start, start + gap)));
+    }
+  }
   return {
     seconds,
     peak,
     rms: Math.sqrt(sum / buffer.length),
     perSecond,
     ...(withWav ? { wav: wavBase64(buffer) } : {}),
+    ...(steps === undefined || alike === undefined ? {} : { steps, likeness: alike }),
   };
 }
 
@@ -482,6 +535,70 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   for (const def of TELLS) soundButton(tells, def, tellKeys[def.id] ?? def.id, 'tell');
   root.append(tells);
 
+  // The horn, the stingers and the hearth fire, as the game plays them (decision AU-11).
+  const calls = el('section');
+  calls.append(el('h2', {}, t('ui.sound.calls')));
+  const callKeys: Readonly<Record<string, string>> = {
+    SFX_HORN: 'ui.sound.call.horn',
+    MUS_STINGER_HORN: 'ui.sound.call.stinger_horn',
+    MUS_STINGER_DISCOVERY: 'ui.sound.call.stinger_discovery',
+  };
+  for (const def of CALLS) soundButton(calls, def, callKeys[def.id] ?? def.id, 'call');
+  const firePlay = el('button', { 'data-play': 'ambience:hearth' }, t('ui.sound.call.hearth'));
+  firePlay.addEventListener('click', () => {
+    play('ambience:hearth', {}, 'caption.amb.hearth');
+  });
+  const fireStop = el('button', { 'data-stop': 'ambience:hearth' }, t('ui.sound.stop'));
+  fireStop.addEventListener('click', stopRunning);
+  calls.append(el('br'), firePlay, fireStop);
+  root.append(calls);
+
+  // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
+  const feet = el('section');
+  feet.append(
+    el('h2', {}, t('ui.sound.footsteps')),
+    el('p', { class: 'note' }, t('ui.sound.footsteps_note')),
+  );
+  let gait: Gait = 'walk';
+  const gaitLabel = el('label', {}, t('ui.sound.gait'));
+  const gaitSel = el('select', { 'data-gait': '' });
+  for (const g of ['walk', 'run', 'sneak', 'carry'] as const) {
+    const o = el('option', { value: g }, t(`ui.sound.gait.${g}`));
+    if (g === gait) o.selected = true;
+    gaitSel.append(o);
+  }
+  gaitSel.addEventListener('change', () => {
+    gait = gaitSel.value as Gait;
+  });
+  gaitLabel.append(gaitSel);
+  feet.append(gaitLabel, el('br'));
+  let stepCount = 0;
+  const walk = (surfaces: readonly (typeof SURFACES)[number][], each: number): void => {
+    const e = audio();
+    let at = e.ctx.currentTime + 0.05;
+    for (const surface of surfaces) {
+      caption(`caption.sfx.footsteps.${surface}`, (each * STEP_INTERVAL[gait]) / 1 + 1);
+      for (let i = 0; i < each; i++) {
+        footstep(e, at, surface, stepCount % 2 === 0 ? -0.08 : 0.08, stepCount, gait);
+        stepCount++;
+        at += STEP_INTERVAL[gait];
+      }
+    }
+  };
+  for (const surface of SURFACES) {
+    const b = el('button', { 'data-step': surface }, t(`ui.sound.surface.${surface}`));
+    b.addEventListener('click', () => {
+      walk([surface], 6);
+    });
+    feet.append(b);
+  }
+  const across = el('button', { 'data-step-all': '' }, t('ui.sound.walk_all'));
+  across.addEventListener('click', () => {
+    walk(SURFACES, 4);
+  });
+  feet.append(el('br'), across);
+  root.append(feet);
+
   // Voice blips.
   const voices = el('section');
   voices.append(
@@ -560,6 +677,9 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...COMBAT.map((d) => `sfx:${d.id}`),
       ...TELLS.map((d) => `tell:${d.id}`),
       ...BLIP_LINES.map((l) => `voice:${l.speaker}`),
+      ...SURFACES.map((surface) => `step:${surface}`),
+      ...CALLS.map((d) => `call:${d.id}`),
+      'ambience:hearth',
     ],
     render: (item: string, seconds: number, settings?: RenderSettings, wav?: boolean) =>
       renderItem(strings, item, seconds, settings, wav),

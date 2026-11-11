@@ -26,15 +26,17 @@ it one stage at a time, following `docs/03_stage_plan.md`.
 | 10 | docs/10_balance_sheet.md | Every tuning number (exported to content/balance.json) |
 | 11 | docs/11_audio_and_music.md | Music, sound and voice |
 
-PDF copies for people are in `docs/pdf/`. The markdown files are the source of truth.
+PDF copies for people are in `docs/pdf/`. The markdown files are the source of truth. Design
+addendum 2.2 (`docs/design-addendum-2.2.md`) is folded into the books (decision log DA-1 to DA-16);
+it is kept as a record only, and the books win over it from now on.
 
 ## Authority when books disagree
 The user's latest instruction > Book 1 > Books 4 to 11 > Book 2 > Book 3.
 Book 10 and `content/balance.json` are the only source of tuning numbers.
 
 ## Rules that never change
-- Do only the named stage. Never start the next one. Stop at the build gates (Stages 12, 20 and 24)
-  so the user can playtest.
+- Do only the named stage. Never start the next one. Stop at the build gates (Stages 12, 20, 24 and
+  32) so the user can playtest.
 - Follow Book 2. Never hard-code a tuning number; read it from `content/balance.json`.
 - Real time with no tactical pause. The steerer's death is game over.
 - Never use a gendered word for the steerer (Book 8 section 03).
@@ -49,6 +51,8 @@ Book 10 and `content/balance.json` are the only source of tuning numbers.
   not done. Art lint and `tests/*/standard.*` enforce the measurable parts; never weaken their
   thresholds to pass.
 - A new place starts with a mockup; wait for the user's approval before building it (Book 3).
+- A new or redrawn character starts with its sprite sheets rendered at 1x and 4x and a short GIF in
+  `docs/art/`; wait for the user's approval before wiring it into the game (Book 3).
 - The game generates all of its own audio (Book 11 section 12): music as note data played by the
   in-game synthesiser, effects, ambience and voice blips in code. No recordings, composer, voice
   acting, or licensed or sampled music. Any work that adds a place, character or system adds its

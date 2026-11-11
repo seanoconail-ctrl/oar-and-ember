@@ -250,13 +250,24 @@ export type InstrumentName =
 
 /** Every instrument's sample. */
 export function makeSamples(): Record<InstrumentName, Sample> {
-  return {
-    // Plucked lyre: warm, a mid pluck that rings about two seconds.
-    lyre: pluck(261.63, 2.2, 0.3, 0.9965, 11),
-    // Bright harp: brighter pluck, longer ring.
-    harp: pluck(523.25, 2.6, 0.85, 0.9982, 12),
-    // Breathy flute (bone or wooden): soft harmonics, a lot of breath, a chiff.
-    flute: tone({
+  const out = {} as Record<InstrumentName, Sample>;
+  for (const name of Object.keys(MAKERS) as InstrumentName[]) out[name] = MAKERS[name]();
+  return out;
+}
+
+/** One instrument's sample, generated on its own (so play never generates them all at once). */
+export function makeSample(name: InstrumentName): Sample {
+  return MAKERS[name]();
+}
+
+const MAKERS: Readonly<Record<InstrumentName, () => Sample>> = {
+  // Plucked lyre: warm, a mid pluck that rings about two seconds.
+  lyre: () => pluck(261.63, 2.2, 0.3, 0.9965, 11),
+  // Bright harp: brighter pluck, longer ring.
+  harp: () => pluck(523.25, 2.6, 0.85, 0.9982, 12),
+  // Breathy flute (bone or wooden): soft harmonics, a lot of breath, a chiff.
+  flute: () =>
+    tone({
       hz: 440,
       seconds: 1.4,
       attack: 0.06,
@@ -266,8 +277,9 @@ export function makeSamples(): Record<InstrumentName, Sample> {
       chiff: 0.35,
       seed: 13,
     }),
-    // Tin whistle: purer and brighter, less breath.
-    whistle: tone({
+  // Tin whistle: purer and brighter, less breath.
+  whistle: () =>
+    tone({
       hz: 880,
       seconds: 1.3,
       attack: 0.03,
@@ -277,8 +289,9 @@ export function makeSamples(): Record<InstrumentName, Sample> {
       chiff: 0.25,
       seed: 14,
     }),
-    // Low drone: a reedy fifth (root and fifth together), slowly beating.
-    drone: tone({
+  // Low drone: a reedy fifth (root and fifth together), slowly beating.
+  drone: () =>
+    tone({
       hz: 110,
       seconds: 3,
       attack: 0.3,
@@ -287,8 +300,9 @@ export function makeSamples(): Record<InstrumentName, Sample> {
       voices: [0, 1],
       seed: 15,
     }),
-    // A soft choir-like pad: an "ah" with three slightly detuned voices.
-    pad: tone({
+  // A soft choir-like pad: an "ah" with three slightly detuned voices.
+  pad: () =>
+    tone({
       hz: 220,
       seconds: 3,
       attack: 0.4,
@@ -302,9 +316,10 @@ export function makeSamples(): Record<InstrumentName, Sample> {
       breath: 0.03,
       seed: 16,
     }),
-    bells: bell(523.25, 3.2),
-    // A horn call: brassy harmonics, a slow-opening tone.
-    horn: tone({
+  bells: () => bell(523.25, 3.2),
+  // A horn call: brassy harmonics, a slow-opening tone.
+  horn: () =>
+    tone({
       hz: 220,
       seconds: 2,
       attack: 0.08,
@@ -317,8 +332,7 @@ export function makeSamples(): Record<InstrumentName, Sample> {
       voices: [0, 1],
       seed: 17,
     }),
-    drum: frameDrum(73.42, 18),
-    knock: knock(1400, 19),
-    gull: gull(20),
-  };
-}
+  drum: () => frameDrum(73.42, 18),
+  knock: () => knock(1400, 19),
+  gull: () => gull(20),
+};

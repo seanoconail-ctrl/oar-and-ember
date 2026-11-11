@@ -14,6 +14,7 @@ import { loadAtlases } from './atlases.ts';
 import { bundledContent } from './bundledContent.ts';
 import { showNaming } from './namingView.ts';
 import type { NamingChoice } from './namingView.ts';
+import { WebAudioEngine } from '../audio/webAudio.ts';
 import { preparePlay, startPlay } from './playView.ts';
 import type { PreparedPlay } from './playView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
@@ -232,6 +233,8 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     });
   });
   Promise.all([atlasesReady, painted]).then(([atlases]) => {
+    // The instruments' samples are made in the background too (decision AU-11).
+    WebAudioEngine.prepare();
     const steps = preparePlay(presenter, art.palette, contentNow(), atlases, {
       name: formatString(strings, 'ui.naming.name_default'),
       bodyModel: 'A',

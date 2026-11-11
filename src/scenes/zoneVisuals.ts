@@ -81,6 +81,10 @@ export class ZoneVisuals {
   #shake = 0;
   #shakeT = 0;
   #tide = -1;
+  /** The drawn tide's height, 0 (low) to 1 (high), for the ambience (-1 before the first frame). */
+  get tideLevel(): number {
+    return this.#tide;
+  }
   #wetTo = 0;
   #prints: Print[] = [];
   #particles: Particle[] = [];

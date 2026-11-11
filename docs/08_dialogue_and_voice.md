@@ -144,6 +144,12 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Gunnhild | Blunt, professional, contemptuous of cheats | "Pay on the day, and I'll build you a ship that outlives you." |
 | Gilla Muire | Weary, practical, wants peace for his cattle | "I don't care whose god you pray to. Keep the Crow off my grass." |
 | Brónach | Ancient, terse, dryly funny | "You smell of salt and other people's houses." |
+| Lasair | Old, sharp, impatient with fools; speaks of the bog as if it listens | "Step where I step. Not near it. Where." / "The bog takes a cow a year and a fool every second year. You're early." |
+| Dubhthach | Hospitable, proud and loud; his grievance against Fiachra is exact | "Sit. Eat. Nobody leaves my fire hungry, not even Fiachra's riders, more's the pity." / "Forty cows on that slope in my father's day. Forty. Ask the rí how many now." |
+| Cuán | Easy, nosy, mercenary; trades in who passed and when | "Toll first. News is extra." / "A monk at dawn, two riders at noon, and now you. Busy day at the ford." |
+| Hrefna | Norse, hard and fair, few words; shuts every question about the books | "Ottar's debts are paid on the day. So are the debts owed to him." / "The books are not for reading. They are for keeping." |
+| Ninnid | Anxious, kindly, counts everything; Christian | "The tithe is short, the pilgrims are early, and the poor came on time, as ever." / "God keep you. And keep your people off the barn roof." |
+| Faolán Wolf-Hand | Rough outlaw speech with a king's hall underneath; amused, then suddenly bitter | "Outlaws keep no fasts and pay no tolls. We keep our word, which surprises people." / "I was taught to pour wine for kings. Now I take it off their carts." |
 
 ## 07 / The enemy and the supernatural
 ### Rival captains and the enemy
@@ -163,6 +169,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 - **The Cailleach** sounds like a sharp old woman who has seen a thousand winters and liked few of them. "You want calm water in my season? What did it cost you to ask?"
 - **The aos sí** speak with exact, legal precision and treat words as binding. "You said 'take'. You did not say 'borrow'."
 - **The draugr** speak in fragments, the last things they cared about. "Cold. The rope. Who has my sword."
+- **Hrolf the Barrow-King**, a haugbúi, speaks in whole sentences, unlike the draugr: a dead king keeping court, proud, possessive, counting his goods, treating the living as guests or thieves and never sure how long he has lain there. "Who comes to my hall without a gift? Sit. Tell me who is king now." / "Every ring is counted. I count them each night. One is missing."
 - **The washer at the ford** answers only what she is asked, without emotion. "This one is Kolla's. This one is yours, if you sail by the north channel."
 - **The Door of Three Truths** in the Hollow Cairn does not speak. It listens. Its silence is the response.
 
@@ -189,15 +196,16 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Weather and season | "Smell that? Snow." / "Gulls inland. Storm tomorrow." / "Long light. Too long to sleep." |
 | Supernatural signs | "The water's moving wrong." / "Footprints. Wet ones." / "That fog's going against the wind." |
 | Reactions to brutality | "That wasn't a fight." (Bran) / "Now that's a story." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) |
+| Assault | "Horn! More coming." / "Lock shields!" / "Hold the beach!" / "Archers on the roof!" / "Fall back to the ships!" |
 | Return to Skarvholm | "That's our roof. Their smoke." / "They've salted the spring." / "Father's stones are still there." (Hild) |
 
 ## 09 / Conversations at home
 *Talking to a resident opens a short conversation built from topics. It should feel like catching someone at work.*
 
 ### Structure
-1. **Greeting** that reflects what they are doing and their regard ("Hand me that rope, if you're staying.").
+1. **Greeting** that reflects what they are doing, their happiness and their friendship ("Hand me that rope, if you're staying.").
 2. **Up to three topics**, chosen by priority from memories: a recent deed they saw, a wound, a death, their job, the weather and season, a tie, a worry, a request.
-3. **One player choice** per topic at most: agree, disagree, ask more, or move on. Choices can change regard.
+3. **One player choice** per topic at most: agree, disagree, ask more, or move on. Choices can change friendship, and sometimes happiness or fear.
 4. **Exit** that returns them to their work.
 
 ### Topic samples
@@ -221,6 +229,11 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 - Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`. Never a pronoun variable for the steerer.
 - Tags: `ADDRESS_STEERER`, `ABOUT_STEERER`, `VOICED`, `GLOSSARY:<word>`.
 
+### Interface wording
+- Interface words are short, plain and the same everywhere: one word for one thing.
+- **The stamina bar's reason.** The bar's length shows its current maximum (Book 1 section 18). Beside it, each reason it is smaller appears as a short plain label, most serious first: "Cold", "Hungry", "Wounded", "Sick", "Tired", "Worn out from work". No numbers in the label, no game jargon ("debuff", "penalty", "max stamina"), and no sentence about the steerer: the label names the cause, not the person, so it can never carry a gendered word.
+- Keys follow the string rules, for example `ui.stamina.reason.cold`.
+
 ### Checklist before committing a line
 1. Does it sound like this speaker and no one else?
 2. Is it concrete, short and in plain period English?
@@ -230,3 +243,135 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 6. Does it reveal or hide only what the speaker would know?
 7. Is violence described plainly, without relish (unless the speaker's values say otherwise)?
 8. No quotation or close adaptation of any copyrighted text.
+9. Interface words: short, plain, and the same word for the same thing everywhere.
+
+## 11 / Happiness, friendship and fear in speech
+*Nobody says "I am unhappy with you". People talk about the cold, the food, and what they saw the steerer do.*
+
+### Rules
+- Dialogue never names the measures or their numbers (Book 5 section 01). People speak of causes: the cold, the food, a death, a deed, a kept or broken promise.
+- **Happiness** is heard in talk about today: hunger, wet bedding, a good meal, a feast, a grief.
+- **Friendship** is heard in talk about the steerer over time: what they did, what they promised, whether they came back for someone.
+- **Fear** is heard in what people stop saying. Frightened people answer shorter, agree faster and look for someone else to speak for them.
+- Each step of the warning flow (Book 5 section 01) has its own line, in the speaker's voice, and the steps are never skipped.
+
+### The warning flow
+| Step | Friendship falling | Happiness low |
+|---|---|---|
+| **Remark** | "You could have let him go." (Bran) | "Cold again. Fish again." |
+| **Complaint at the fire** | "I said nothing at Carrick. I'm saying it now." | "Three nights without a fire in the second house. People notice." |
+| **Refusal** | "I will not burn a church. Find someone else." | "Not the peat banks. Not in this. Ask me tomorrow." |
+| **Request to leave** | "Put me ashore at Saltvik. I'll not ask for a share." | "There's work in Saltvik with a roof over it." |
+
+### Fear
+| Situation | Sample lines |
+|---|---|
+| Fear rising | "As you say." / "Yes. Now. I'm going." / "I didn't see anything." |
+| Fear without friendship: the warning, told by a friend | "Arnbjörn's been asking when the knarr sails. Not for himself, he says." / "Kári's putting fish by. For a journey, Kolla thinks." |
+| Fear with friendship: fierce devotion | "Where you go. Don't ask me twice." / "Point at them. That's all you need do." |
+
+### Friendship rising
+| Step | Sample lines |
+|---|---|
+| Praise | "You brought everyone home. Thorkel couldn't always say that." |
+| Offer of help | "If it's the north channel, take me. I know it." |
+| Personal favour | "I mended your cloak. Don't thank me. It was ugly." |
+| Loyalty in a crisis | "They want you? They'll have to come through the door first." |
+
+## 12 / Disputes
+*Two people, one grievance, and the whole household watching the steerer decide.*
+
+### How a dispute is presented
+1. **The parties bring it.** Each states their case in a line or two, in their own voice: Gaels with names, numbers and days; Norse bluntly.
+2. **A witness** may add one line, which can help either side.
+3. **The judgement** is offered as short choices that name the people. Each choice is a plain verb phrase. A choice may carry a few plain words on who it is likely to please or anger, when the steerer would know it, and never a number.
+4. **The outcome** is spoken at the fire: one line from each party, and a reaction from someone who watched.
+
+### Wording the judgement options
+| Option | Example wording |
+|---|---|
+| Take a side | "Side with Kolla." / "Side with Kári." |
+| Find a compromise | "Split it between them." |
+| Punish | "Punish Oddi: his share goes to the store." |
+| Pay compensation | "Pay Kolla from the store." |
+| Call a household thing | "Put it to the thing tonight." |
+| Ignore it | "Let it lie." |
+
+### Sample dispute: a share of plunder
+> Kári: "I took the gate. The arm-ring's mine."
+> Oddi: "He took the gate. I carried the ring to the boat. Ask anyone."
+> Kolla, watching: "Both true. Oddi did more carrying. Kári did more shouting."
+
+Choices: "Give Kári the ring." / "Give Oddi the ring." / "Sell it and split the silver." / "Pay Oddi from the store; the ring to Kári." / "Punish them both: the ring goes to the store." / "Put it to the thing tonight." / "Let it lie."
+
+### Sample dispute: whose shrine
+> Eithne: "A cross by the well. That's all I ask."
+> Runa: "That stone was by the well before your saints were born."
+
+## 13 / Requests and quests
+*A request sounds like the person asking. A quest reads like a plain instruction.*
+
+### Asking
+- **Small requests** are offhand, asked at work: Asa: "A loom. A proper one. I'm tired of weaving on a door."
+- **Personal requests** come at a quiet moment, often at night or at the fire: Kolla: "Take me to Saltvik. I want to see who Kári's been talking to."
+- **Dangerous requests** are formal. Gaels name lineage and the wrong; Norse speak it as an oath. Áine: "A man in Saltvik killed my father. I want him dead, and I want him to know why."
+- **Leaders' requests** carry their people's need: Ninnid: "The pilgrims' road isn't safe past the farms. If your people walked it once, they'd stop being afraid."
+- The steerer's answers are short choices: "I'll do it." / "No. Not that." / "After the harvest."
+
+### The quest journal
+- The current goal is one plain line, fitting one subtitle line (section 10): "Find the man Áine names in Saltvik."
+- Goals are written as instructions with no pronoun for the steerer.
+- A revenge quest words every other way out as plainly as the killing: "Kill him." / "Offer him a duel." / "Make him leave the coast." / "Ask his kin for the blood-price." / "Tell Áine who ordered it."
+- The one who asked speaks the ending by their values. Áine, after an exile: "He's gone. It's not what I wanted. It's something."
+
+## 14 / Companions on the road
+*Two residents walking with the steerer talk about what they see, to the steerer and to each other.*
+
+### Rules
+- Road comments are barks (section 08) and follow its rules: short, never blocking, never the only source of information.
+- Triggers: a new place, a person met, the weather and season, a hazard, a discovery, a deed done in front of them, and the steerer's own state.
+- Two companions talk to each other in exchanges of two or three lines. They disagree in character, and they sometimes leave the steerer out of it.
+- When the steerer sneaks, companions whisper or stay silent; in a fight they use the combat barks.
+- Comments on the steerer's state name the cause and never a gendered word: "You're shaking. Fire, now."
+
+### Samples
+| Category | Samples |
+|---|---|
+| Places | Bran near Kilbrecc: "I know this road. I wish I didn't." / Áine on Sliabh Carn: "Good height. Three valleys and a deer that doesn't know it's dead." / Eithne at Ardcarn: "That was my husband's field. Was." |
+| Blocks and hazards | Runa at the High Pass: "That's six people's work for days, and none of them me." / "Ford's up. We wait or we swim." / "Green moss. Go round it." |
+| The steerer's state | "You're blowing hard. Rest before the climb." / "Eat something. You're grey." / "Take my arm. Up." |
+| Camping | "I'll take first watch. Wake me if the wolves come closer." / "Good fire. Good wall. Sleep." |
+| Help | "Give me the end of the rope." / "Hold still. I'll cut you loose." |
+| Disagreement | Kári: "Burn their huts. They'd burn ours." Bran: "They'd also run. Let them." |
+
+## 15 / Travellers, wanderers and news
+*The roads talk. Everything the household learns from far away comes from someone who saw it or heard it.*
+
+### Travellers
+One or two lines each, about their road and their reason.
+| Traveller | Sample lines |
+|---|---|
+| Pilgrim | "Kilbrecc by the saint's day, if the ford lets us." |
+| Herder | "Thirty head for the shielings. Mind your feet." |
+| Fiachra's rider | "The rí's road. Keep to the side of it." |
+| Refugee from Orm's raids | "Grey sails. Then fire. That's all I saw." |
+| Tinker | "Pots mended, knives ground, no questions asked." |
+
+### Wandering characters
+| Speaker | Voice | Sample lines |
+|---|---|---|
+| The poet | A Gaelic file: formal, double-edged, delighted by their own words. The one speaker allowed long lines | "I have a verse about you. Would you like to hear it, or pay me not to finish it?" |
+| The pedlar | Cheerful, quick, always selling, a little ashamed underneath | "News is cheap. Good news costs more." / "Needles, salt, or what Orm's men were asking about. Pick two." |
+| The hermit | Few words, plain, unhurried | "The well is older than the saint. The saint knew it." / "Eat. Then go." |
+| The disgraced warrior | Bitter, self-mocking, proud | "I ran once. Everyone knows. Now you know." / "Put me in the front. I'd like to find out." |
+
+### Satire
+- The poet's satires and praise poems are short verses of the poet's own making, built only from deeds the poet could have heard of. Write new verses each time; never adapt a known poem.
+- A satire names the deed and the place, and calls the steerer by name, "the steerer" or "Thorkel's kin"; it never uses a gendered word.
+- Samples, a satire and then a praise poem: "Ask at Carrick who came by night: / the seed was gone by morning light." / "Thorkel's kin left the seed in the sack: / the spring at Ardcarn will pay it back."
+
+### News
+- News always comes from a person: a traveller, a trader at the homestead, the ford-keeper, a monk, a fisherman. Important news also appears in the report (section 08).
+- The speaker says what they know and how: **"I saw"** for certain, **"I had it from"** for likely, **"they say"** for rumour, matching the confidence words of Book 6 section 01.
+- News of the household's own deeds names the sail and the place, never the steerer's gender.
+- Samples: Cuán: "Riders crossed at noon. Fergal's. Going your way." / A Saltvik trader: "I saw Orm's ships at the Sound. Four. Maybe five." / The pedlar: "They say Carrick's keeper has two dogs now. Big ones." / A pilgrim: "Ardcarn's sowing failed. I had it from a carter. A black ship took the seed, he said."

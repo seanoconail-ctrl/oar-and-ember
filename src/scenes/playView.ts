@@ -27,6 +27,7 @@ import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
+import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow } from '../sim/land/onFoot.ts';
@@ -231,11 +232,17 @@ export function startPlay(
   const look = { steerer: BODY_SHEETS[choice.bodyModel], people: { C_HILD: 'actor_c_hild' } };
 
   const audioTable = content.audio;
-  const engine = new WebAudioEngine();
+  WebAudioEngine.prepare();
+  const engine = new WebAudioEngine(audioTable?.cues ?? []);
   const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
   const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
   visuals.onStep = (surface, x) => {
-    if (engine.unlocked) engine.footstep(surface, (x - (sim.state.onFoot?.player.x ?? x)) / 200);
+    if (engine.unlocked)
+      engine.footstep(
+        surface,
+        (x - (sim.state.onFoot?.player.x ?? x)) / 200,
+        sim.state.onFoot?.player.gait ?? 'walk',
+      );
   };
   const overlay = createOverlay(document);
   const root = overlay.root;
@@ -256,6 +263,14 @@ export function startPlay(
   };
   let notice: { text: string; until: number } | null = null;
   let beat = '';
+  /** Where a person is, left or right of the steerer, as a stereo pan. */
+  const panOf = (person: string): number => {
+    const onFoot = sim.state.onFoot;
+    const actor = onFoot?.actors[person];
+    if (onFoot === null || actor === undefined) return 0;
+    return Math.max(-1, Math.min(1, (actor.x - onFoot.player.x) / 200));
+  };
+  let lastAmbienceAt = -1;
   const onEvent = (e: SimEvent): void => {
     const now = performance.now();
     switch (e.type) {
@@ -271,12 +286,15 @@ export function startPlay(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
           now,
         );
+        // Her call in voice blips, from the side she calls from (Book 11 section 08).
+        engine.voice(e.person, line(e.lineKey), panOf(e.person));
         return;
       case 'PERSON_SPOKE':
         say(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
           now,
         );
+        engine.voice(e.person, line(e.lineKey), panOf(e.person));
         return;
       case 'COMMAND_REFUSED':
         if (e.reason === 'BELOW_TIDE_LINE' || e.reason === 'NO_ROOM') {
@@ -286,6 +304,12 @@ export function startPlay(
         return;
       case 'BEAT_COMPLETED':
         beat = e.beat;
+        // The island theme enters once Hild is safe: the opening itself has no music (Book 11).
+        if (audio !== null && engine.unlocked && audio.director.state === null)
+          audio.play(
+            lightPhase(sim.state.calendar, b) === 'night' ? 'MUS_HOME_NIGHT' : 'MUS_HOME_DAY',
+            engine.now,
+          );
         return;
       default:
         return;
@@ -298,6 +322,7 @@ export function startPlay(
       if (!engine.unlocked && audio !== null) {
         engine.unlock();
         // Book 11: no music in the first seconds of the opening; wind, surf and Hild's voice.
+        engine.setSeason(seasonOf(world.calendar.day) === 'Winter');
         audio.setPlace(map.zone, lightPhase(world.calendar, b), engine.now);
       }
     },
@@ -404,6 +429,16 @@ export function startPlay(
     overlay.region('prompt').textContent = notice?.text ?? prompt;
 
     subtitles = subtitles.filter((s) => s.until > now);
+    // The ambience follows the game's own wind at the steerer and the drawn tide, four times a second.
+    if (engine.unlocked && now - lastAmbienceAt > 250) {
+      lastAmbienceAt = now;
+      engine.setWind(
+        STRAND_WIND.strength,
+        gustAt(STRAND_WIND, onFoot.player.x, onFoot.player.y, visuals.seconds),
+        -STRAND_WIND.dirX,
+      );
+      if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
+    }
     const soundCaptions = audio === null ? [] : audio.update(engine.now).map((c) => c.text);
     overlay.region('captions').replaceChildren(
       ...[...subtitles.map((s) => s.text), ...soundCaptions].map((text) => {
