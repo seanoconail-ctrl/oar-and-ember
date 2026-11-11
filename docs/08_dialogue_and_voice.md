@@ -124,7 +124,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Nessa | Gentle, observant, oddly calm about the sea; deflects personal questions with questions | "The swell's changing. Can you feel it?" / "Why do you want to know where I came from?" / "Keep him warm tonight. The sea likes the cold ones." |
 | Gudrun | The voice of the family's memory; tart, unafraid of the steerer | "Thorkel raided too. He also buried his dead properly." / "Feed them before you count them." |
 | Arnbjörn | Mild, careful, kind; apologises too much | "Sorry. The cow got out. Sorry." / "I'm not much in a fight. I'm good with fences." |
-| Kári | Loud, hungry for fame; admires cruelty; brave; scorns stealth raids and blood-price as unworthy of a drengr | "They ran! Did you see them run?" / "Burn it. Let them see the smoke at Dún Fiach." / "Creeping about at night. That's thieves' work." |
+| Kári | Loud, hungry for fame; admires boldness and a hard fight; brave; lives the drengr ideal, so he finds no glory in killing farmers and scorns stealth raids and blood-price as unworthy of a drengr | "They ran! Did you see them run?" / "Burn it. Let them see the smoke at Dún Fiach." / "Creeping about at night. That's thieves' work." |
 | Kolla | Dry, protective of her twin, practical | "He's an idiot. He's my idiot. I'll handle it." |
 | Tófi One-Eye | Hard old truth-teller; tender only with Ylva | "That's not glory. That's butchery with a good song." / "Eat, love. Eat a bit more." |
 | Ylva | Frail, uncanny, matter-of-fact about omens | "Bran's other self was at the door again. Tell him to rest." |
@@ -133,6 +133,8 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Thrand | Clipped, soldierly, haunted by what he saw | "Orm's men hold their line. Break the line, not the men." / "I watched her give them to the sea. I won't again." |
 | Áine | Boastful, funny, deadly | "Name a crow. I'll put it down." / "You protect my cattle, I'll protect your neck. Fair?" |
 | Senán | Gentle, bilingual, wryly devout | "Pax vobiscum. Mind the step. The heathen broke it in my grandfather's time." |
+
+**Hild names the bow.** After the rescue, once she is sitting above the tide line, Hild tells the steerer what the wreck may still hold: `Hild: Father's hunting bow was in the stern. If it came ashore, look east.` When the steerer comes back with it: `Hild: That's his bow. He'd want it drawn, not mourned.` Her lines name the bow and the stern, never the steerer's gender (section 03).
 
 ## 06 / Voices of the coast
 | Speaker | Voice | Sample lines |
@@ -198,7 +200,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Idle and evening | "Sing the one about the goat." / "Dry feet. I'd forgotten." / "Pass the ale before Kári sees it." |
 | Weather and season | "Smell that? Snow." / "Gulls inland. Storm tomorrow." / "Long light. Too long to sleep." |
 | Supernatural signs | "The water's moving wrong." / "Footprints. Wet ones." / "That fog's going against the wind." |
-| Reactions to brutality | "That wasn't a fight." (Bran) / "Now that's a story." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) / "No need of that. Bad luck, that." (Kolla) |
+| Reactions to brutality | "That wasn't a fight." (Bran) / "Farmers. No name to be won off farmers." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) / "No need of that. Bad luck, that." (Kolla) |
 | Assault | "Horn! More coming." / "Lock shields!" / "Hold the beach!" / "Archers on the roof!" / "Fall back to the ships!" |
 | Return to Skarvholm | "That's our roof. Their smoke." / "They've salted the spring." / "Father's stones are still there." (Hild) |
 
@@ -229,7 +231,7 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 ### String rules
 - Subtitles: at most two lines of 42 characters each.
 - String keys: `<speaker>.<context>.<id>`, for example `c_hild.bark.danger.03`. Caption strings start `caption.`.
-- Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`, `{speaker}`. Never a pronoun variable for the steerer.
+- Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`, `{speaker}`, and in interface text `{control:<action>}` for a control as currently bound. Never a pronoun variable for the steerer.
 - Tags: `ADDRESS_STEERER`, `ABOUT_STEERER`, `VOICED`, `GLOSSARY:<word>`, and on every caption string `SPEECH` or `INFO`.
 
 ### Modern moral words
@@ -244,7 +246,7 @@ Subtitles show two kinds of line, and they look different:
 |---|---|
 | Information lines | Under eight words, in the present tense, with a direction when it helps the player find the source. Plain, modern-neutral English: no glossary words, no slang, no period voice |
 | Unmet speakers | A speaker the player has not met is named by what they appear to be ("Monk:", "Stranger:", "Ardcarn guard:") until introduced |
-| Hidden identities | A subtitle name never gives away a hidden identity: Nessa's hidden stance, a disguised enemy, an outlaw prince |
+| Hidden identities | A subtitle name never gives away a hidden identity: Nessa's secret, a disguised enemy, an outlaw prince |
 | Both at once | The information line sits above the speech line |
 | Italic | A real italic of the caption font, or a hand-made slanted variant if the font is a pixel font; crisp at 1x, never a blurred, synthetic skew |
 | Settings | Information captions can be turned off separately from speech subtitles (Book 2 section 21) |
@@ -254,6 +256,7 @@ Subtitles show two kinds of line, and they look different:
 - Interface words are short, plain and the same everywhere: one word for one thing.
 - **The stamina bar's reason.** The bar's length shows its current maximum (Book 1 section 18). Beside it, each reason it is smaller appears as a short plain label, most serious first: "Cold", "Hungry", "Wounded", "Sick", "Tired", "Worn out from work". No numbers in the label, no game jargon ("debuff", "penalty", "max stamina"), and no sentence about the steerer: the label names the cause, not the person, so it can never carry a gendered word.
 - Keys follow the string rules, for example `ui.stamina.reason.cold`.
+- **Pickup tooltips** (Book 2 section 21). The first time an item of a kind is picked up, its tooltip gives the item's name and then one short line per control, the control first: `{control:use}: strike`, `Hold {control:use}: heavy strike`. Controls are always variables filled from the current bindings for the input in use (mouse and keyboard, keyboard only, or gamepad), never a key written into the string, so a rebind or a new device changes the tip. At most four control lines of 32 characters each; plain, modern-neutral interface English, as for information captions: no period voice, no glossary words, no slang, no word about the steerer's body or gender, and no "you must". It says what the controls do, not why. The tips are kept, word for word, in the help pages. Keys: `ui.tip.pickup.<item>.<line>`. The seax: strike, heavy strike, and that shove and dodge work with any weapon. The bow: hold to draw and release to loose, aim with the mouse or the right stick, the feet stay planted while drawn, cancel. Arrows: the count shows on the bow's slot; no arrows, no shot.
 
 ### Checklist before committing a line
 1. Does it sound like this speaker and no one else?
@@ -491,3 +494,7 @@ Farmers, traders, guards, travellers and the people of a site have one or two li
 | Herder on Sliabh Carn, mist | "Mist on the tops. The cattle knew first." |
 | Peat-cutter, after the household cleared a route of outlaws | "Road's quieter since you came through." |
 | Saltvik fisher, after a raid on Carrick is known | "Carrick's grain, was it? Sell it somewhere else." |
+| Charcoal burner, the Black Wood path (a true rumour) | "There was a farm here before the wood. They hid under the ground when raiders came." |
+| Herder on the moor road (a wrong rumour) | "The old grave? That's the ring cairn on the ridge. Everyone knows." |
+
+**Rumours of the secret entrances** (Book 6 section 13) live in these pools. A rumour is spoken as the speaker believes it, true or not, and nothing in the wording marks the wrong ones; about one in three is wrong (Book 10 section 20).

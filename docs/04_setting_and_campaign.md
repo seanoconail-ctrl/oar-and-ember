@@ -180,7 +180,7 @@ A road leg is off screen and costs game time; a route is crossed on foot, and it
   - wandering people: travellers, pilgrims, pedlars, herders, charcoal burners, patrols, outlaws, a lost traveller, a fleeing thrall, a hunting party;
   - wildlife: deer, boar, hares, wolves, ravens, otters, eagles, by season;
   - the risk of attack: bandits, outlaws, wolves, a boar, or a patrol of a hostile faction.
-- **Encounters (proposal):** wandering people on about half of all crossings; a hostile encounter on about one crossing in five by day and one in three at night; more or fewer with the season, the factions' state, the cargo carried and whether the household has cleared the route (Book 10 section 14, "Route encounters").
+- **Encounters:** wandering people on about half of all crossings; a hostile encounter on about one crossing in five by day and one in three at night; more or fewer with the season, the factions' state, the cargo carried and whether the household has cleared the route (Book 10 section 14, "Route encounters").
 - **Ambushes are readable:** a fallen tree across the path, crows rising ahead, a stretch gone too quiet, fresh tracks. Keen-eyed companions spot them sooner (Book 5). Each ambush keeps the fairness of every danger: a sign first, then a choice to fight, pay, go round or turn back.
 - **Cargo and cattle** slow the crossing and draw raiders. Companions cross with the steerer, and so does anyone being carried.
 
@@ -201,16 +201,33 @@ Each route has its own country and must meet the terrain art standard set at Sta
 - **Drive out the outlaws** who use it: a broken camp scatters (section 11), and the route's hostile encounters fall.
 - **Waymark it:** cairns or blazes along the main path keep a party on it in fog and at night.
 - **Bridge the Ford:** a timber bridge, built like a homestead building, ends the spate closure for everyone (below).
-- **Build a waystation (proposal):** a safe camp with a small store, at one camp spot per route. It counts as a safe camp for sleeping, saving and bringing the downed to safety (section 14). Book 10 section 15 ("Waystations") gives its cost and store.
+- **Build a waystation:** a safe camp with a small store, at one camp spot per route. It counts as a safe camp for sleeping, saving and bringing the downed to safety (section 14). Book 10 section 15 ("Waystations") gives its cost and store.
 - **Hostile ground stays open:** a route held by a hostile faction is never closed, but it is dangerous.
 
 ### Points of interest in every site and route
 - **Major points of interest:** one or two in each site and one on each route: a village, dungeon, ruin, shrine or camp with people and quests.
 - **Minor points of interest:** 4 to 8 in each site and route: a cairn, a wreck, a carved stone, a hermit's hut, a hidden cache, a viewpoint, an eagle's nest, a herb patch, a grave, a burned farm.
-- **Off the beaten track:** the best minor rewards lie off the obvious paths, behind a climb, a wade, a hazard or a puzzle, and reward curiosity with food, materials, lore, collectibles or equipment. Hazards (section 09) guard many of the best finds.
+- **Off the beaten track:** the best minor rewards lie off the obvious paths, behind a climb, a wade, a hazard or a puzzle, and reward curiosity with food, materials, lore, collectibles or equipment. Hazards (section 09) guard many of the best finds. A cache, a dead archer's quiver or a hunter's camp often holds a few arrows (Book 10 section 21).
 - **Camping:** if night falls away from home, the party camps at a site, at one of a route's camp spots or at a waystation (section 09).
 
 Book 9 section 12 sets how densely they are placed.
+
+### Secret entrances
+Four of the six routes hide a secret entrance to a **small dungeon**: two to four chambers holding lore and a piece of equipment worth the detour, each with a cost (Book 6 section 13 holds what is inside; Book 9 section 14 places them; Book 10 section 20 holds the numbers). Nothing marks an entrance on the ground or on the travel map until it is found. The party finds it by exploring off the main path, helped by hints:
+- **Rumours** from travellers and minor characters, at the fire, on the road and in the sites at either end. About one in three is wrong: it sends the party to the wrong place or the wrong season, never into a trap.
+- **Carved marks** left by whoever used the place.
+- **A cold draught** from a crack: leaf litter stirring, a breath of mist on a cold morning, a torch flame leaning.
+- **Birds** flying into a cliff or a waterfall and not coming out.
+- **A keen-eyed companion** who notices it when close, and says so (Book 5 section 17).
+
+| Entrance | Route | Where | Hints | What it is |
+|---|---|---|---|---|
+| The fallen-oak souterrain | The Black Wood path | Under the root-plate of a fallen oak in the ring of old oaks, east of the main path | A cross cut in a holly where the side path leaves; a cold draught stirring the leaves at the roots; the charcoal burners' talk of a farm that stood there before the wood | An old farm's refuge, a souterrain of three low chambers where its people hid from raiders. It is a second, small souterrain, not a back way into the one in the heart: that still needs the hill-folk's leave |
+| The cave behind the falls | The High Pass | Behind the waterfall over the gorge pool; in winter, behind a curtain of ice that must be broken | Dippers flying into the falls and not coming out; the watchmen's chevron cut on the watchtower's lintel and again on a stone by the pool; in winter, a dark hollow behind the ice | The watchtower garrison's hidden store, a dry cave of two chambers |
+| The heather barrow | The moor road | A long, low hump in the heather beside the sheep trod, with one spiral-carved kerbstone showing | The spirals on the kerbstone; wheatears going in and out between the kerbstones; a cold draught from a gap at its end; the poet's verse about a grave older than the Barrow-King | A passage grave of the cairn-builders, far older than the Mound Field: a short passage and one chamber |
+| The otter-cave behind the weir | The river path and the Ford | Behind the eel weir where it meets the rock of the bank, reached along the top of the weir at low water; closed in spate | Otters slipping behind the weir and not coming out; a ship cut into an alder by the path; Cuán's story of the otters' great house | A low cave and a dry inner chamber where a raiding crew of long ago hid what it could not carry |
+
+The plank road and the Ridge Road keep secrets of other kinds (the peat-cutters' safe steps, the smugglers' way). A secret entrance is never on a route's main path and never gets round a block.
 
 ### How the map opens up
 The blocks lie on the routes and road legs. A closed way shows its reason in words on the travel map, and a detour, or the ship, goes round it.
@@ -453,13 +470,14 @@ The **Bell of Brecc** stills water around it and keeps Breccán's crew asleep. W
 - **Pressure builds gently while the player delays** (demands grow, rumours spread), but it never forces a gate. Book 10 section 22 ("Story gates") gives how fast it builds.
 - **Each gate has a readiness screen** showing the crew, the ship, the stores, the allies and the equipment, with a clear warning that it is a point of no return.
 - **The chapter dates below are typical dates** for a well-paced player, not limits. Book 10 section 10's progression is a guide for such a player, not a deadline.
+- **One exception: the defence of Skarvholm.** When the coast's answer in Chapter 5 is an attack, it comes on a fixed night, typically day 135 (Book 10 section 22), and cannot be put off or avoided. Omens, scouts and Thrand, if he is with the household, give warning at least seven days before. Once it is known, no journey or voyage may start that would keep the steerer away that night: the travel map and the sea map refuse it and say why. A steerer already away when the warning comes gets word, and is brought home by dusk on the day.
 
-| Gate (proposal) | Chapter | The player starts it by |
+| Gate | Chapter | The player starts it by |
 |---|---|---|
 | The launch | 1 | Launching the boat at the end of Chapter 1 |
 | The Carrick raid | 2 | Setting out for Carrick Landing |
 | The reply to Asgrim | 4 | Giving Orm's tribute-collector the household's answer |
-| The defence of Skarvholm | 5 | Standing to for the attack, when the Answer is an attack (Book 6 scenario 8) |
+| The defence of Skarvholm | 5 | Standing to on the attack's fixed night, when the Answer is an attack (Book 6 scenario 8); the one gate that does not wait |
 | The household council | 5 | Calling the council that decides the household's future |
 | The move ashore | 6 | Sailing the household to its mainland site |
 | The Gathering | 7 | Calling the council under sanctuary at Kilbrecc |
@@ -470,7 +488,7 @@ Optional raids, attacks and quests are never gates unless they are story events 
 
 ### Chapter 1: The Wreck
 **Typical dates:** days 1 to 6. **Session target:** 45 to 60 minutes. **Goal:** shelter, rescue four crew, make the boat seaworthy.
-1. Wake on Wreck Strand. Control in seconds. Hild is calling beyond the rocks, hurt and standing knee to waist deep in the shallows; wade out to her and carry her above the tide line.
+1. Wake on Wreck Strand with nothing in hand: no blade and no bow, so the steerer can only shove and dodge. Control in seconds. Hild is calling beyond the rocks, hurt and standing knee to waist deep in the shallows; wade out to her and carry her above the tide line. A glint in the wreck's debris a few steps from the waking place is a seax, found within the first five minutes. After the rescue Hild names Thorkel's hunting bow, stowed in the stern; the stern lies washed up at the east end of the strand, and the bow and a quiver of six arrows are found there within the first fifteen minutes. Each item's controls show once, as a tooltip, when it is first picked up.
 2. Hild leads to the old broch. Gather driftwood, light a fire, treat her injury. Warmth, food, a conversation.
 3. Three searches, any order: **Oddi** injured near the wreck (recover a chest now, or take Oddi home first); **Bran** in a sheepfold by the Hollow Cairn, guarding Thorkel's body from three wreck-scavengers (fight, sneak, or bargain with the chest); **Runa** at the Hag's Seat, injured, following a strange light (leave an offering for the Cailleach's help, or take the slower cliff path).
 4. Three repairs: patch the hull with salvaged boards; recover rigging from the wreck section on the skerry at low tide; recover the steering oar from the scavengers' skiff in Seal Cave (fight, steal, trade, or have Runa carve a new one over two days).
@@ -515,7 +533,7 @@ Back home, the first days of real work: the forge, the drying racks, the first p
 - Orm's fleet takes an independent harbour. Refugees arrive.
 - A storm-tide slumps Naust Cove. The spring fails at every spring tide.
 - **The household council:** stay and dwindle, or move ashore to Carrick Strand or Saltness, on a mainland the household already knows. Residents argue from their values and from what they have seen there.
-**Gates:** the defence of Skarvholm, if the Answer is an attack (Book 6 scenario 8): its precursors show, and the attack waits until the player stands to for it (section 15); then the household council, where the household commits to a mainland site. Choosing to stay leads to the Lonely Isle path.
+**Gates:** the defence of Skarvholm, if the Answer is an attack (Book 6 scenario 8): the attack comes on its fixed night, typically day 135, after at least seven days' warning, and it does not wait for the player (Story gates, above; section 15); then the household council, where the household commits to a mainland site. Choosing to stay leads to the Lonely Isle path.
 
 ### Chapter 6: The Borrowed Shore
 **Typical dates:** days 181 to 210 (earlier if the council commits earlier). **Goal:** secure a mainland home and move the household.
@@ -537,7 +555,7 @@ Back home, the first days of real work: the forge, the drying racks, the first p
 
 ### Chapter 8: The Sea King
 **Typical dates:** days 241 to 270. **Goal:** defeat or outlast Orm and break his bargain.
-- **The Return to Skarvholm (typically days 241 to 252):** a required expedition to the occupied island for the Cup (Book 6 scenario 9), and a gate. Checkpoint before landing; if it fails, one retry before you set out for the final battle.
+- **The Return to Skarvholm (typically days 241 to 252):** a required expedition to the occupied island for the Cup (Book 6 scenario 9), and a gate. Checkpoint before landing; if it fails, one retry before you set out for the final battle. If the watch on Rook Hill lights its beacon, Orm is warned: it brings his attack, the final battle, 5 days earlier and raises the pressure faster, while the final battle remains a gate (Book 10 section 22).
 - A last preparation window: renew the compact at Inis Rón if the Cup is in hand; assign allies, ships and defenders. Orm's fleet is at sea, and its raids on the coast grow while the household waits, but the battle begins only when the player sets out for it: the final battle gate. Checkpoint before the battle.
 - The washer at the ford names who will die. Orders can change it.
 - Battle in two linked parts: a sea engagement at the approaches (Rán's daughters against Manannán's mist, if renewed) and the defence of the mainland home.
@@ -593,6 +611,9 @@ Each dungeon has a lead, puzzles from the world, fair traps with signs, enemies,
 
 The costs are terms, not curses: each has a sign and is saved, like any supernatural consequence (section 07). The Cailleach's maul can also clear the landslide on the High Pass (section 03).
 
+### Small dungeons behind secret entrances
+Four wilderness routes hide a secret entrance to a small dungeon (section 03): the fallen-oak souterrain, the cave behind the falls, the heather barrow and the otter-cave. They are smaller than the six dungeons above, with no guardian of the same weight, and their equipment is useful rather than game-changing; each still has its lore and its cost (Book 6 section 13).
+
 ### Skarvholm's dungeons
 Skarvholm keeps the Hollow Cairn, and the Seal Cave's deep passage is a small dungeon in its own right: the tidal back passage that runs under the bog to the cairn, open only at spring low tides (Book 9 sections 03 and 09).
 
@@ -612,7 +633,7 @@ Outlaw camps form and break up, most of them off the routes. Outlaws ambush the 
 Places and travellers are simulated at low detail when off screen. Things happen while the household is away: a farm is raided, a fair is held, a leader falls ill, Orm takes a harbour. News reaches the household through travellers and traders, late and sometimes wrong, never by an all-seeing report.
 
 ### Traders at the homestead
-Traders visit the household's home and bring goods, prices and leads: a Saltvik knarr in the sailing season, a Gaelic pedlar once the household is on the mainland, a wandering smith once a season, the sea-wife now and then, and Ulf's men as fences for stolen goods. Book 10 section 17 gives how often each comes.
+Traders visit the household's home and bring goods, prices and leads (arrows by the dozen from the knarr, and iron arrowheads from the smith): a Saltvik knarr in the sailing season, a Gaelic pedlar once the household is on the mainland, a wandering smith once a season, the sea-wife now and then, and Ulf's men as fences for stolen goods. Book 10 section 17 gives how often each comes.
 
 ### How busy the world is
 In a settlement, a traveller or living event comes roughly every minute; on a wilderness route or in a wild site, a creature, sign or event every 30 to 60 seconds (Book 10 section 17). Each route crossing also draws its wandering people and its risk of attack (section 03); most road legs are quiet.
@@ -628,8 +649,8 @@ In a settlement, a traveller or living event comes roughly every minute; on a wi
 - Companions disagree, argue with each other and sometimes act on their own.
 - Side quests intersect the main story.
 
-### Twist seeds (proposal)
-These are proposals for the user's review; build them unless vetoed. Book 5 holds the people's secrets and their personal quests.
+### Twist seeds
+The user approved them (decision DD-1). Book 5 holds the people's secrets and their personal quests.
 1. **Thorkel's debt.** The household's drowned chief made his own bargain with Rán before the wreck: safe passage south for his people, at a price. The wreck was part of the price, and part of it is still owed. Revealed through Thorkel's ghost, Gudrun's memories and the Skerry of the Drowned. What is still owed comes due as Rán's debt (section 14).
 2. **The outlaw prince.** Faolán Wolf-Hand is Fiachra's eldest son, outlawed for refusing to burn Kilbrecc in an old feud. Restoring him can split Dún Fiach between him and Órlaith, and the Frankish sword in his fort is the proof of who he is.
 3. **The barrow's silver.** Hrolf the Barrow-King was Ottar's grandfather, buried with church silver stolen from Kilbrecc. Opening his mound exposes how Saltvik was founded.
@@ -671,7 +692,7 @@ Optional quests can be mounted at any time, between the story gates, and never m
 - **Left behind** at the end of a scene, a downed ally is captured or killed, according to the enemy. Captives can be rescued or ransomed back later.
 - **Where deaths come from:** crew permadeath now comes mainly from being left behind, from berserkers and cruel enemies, and from scripted deaths. The *Rán's mercy* option still prevents unscripted deaths; scripted deaths still happen.
 
-### Scripted deaths and death-choices (proposal)
+### Scripted deaths and death-choices
 | Death | When | What happens |
 |---|---|---|
 | Rán's debt | Thorkel's bargain comes due (section 12, twist 1) | Someone must go into the sea. Gudrun offers herself. The steerer can accept, choose otherwise, or refuse and pay another way: the ship, the household's luck or a later life |
@@ -695,4 +716,4 @@ Every death is consequential: grief (happiness falls across the household), lost
 | Sea-borne attacks | The household lands in force from its ships on a coastal settlement | Mainland coastal places (Carrick, Kilbrecc, Saltvik's outer harbour) as well as Crowwick and Orm's outposts |
 | Defences | Watch, warning and preparation (walls, traps, stakes, archers on platforms), then the battle | The homestead on Skarvholm, and the mainland home |
 
-Each is a gate when it is a story event (section 08: the Carrick raid, the defence of Skarvholm, the final battle), with a readiness screen and a warning that it is a point of no return, and optional otherwise. A story defence waits at its gate: its signs show, the attackers gather, and the battle comes when the player stands to for it.
+Each is a gate when it is a story event (section 08: the Carrick raid, the defence of Skarvholm, the final battle), with a readiness screen and a warning that it is a point of no return, and optional otherwise. A story defence waits at its gate: its signs show, the attackers gather, and the battle comes when the player stands to for it. The one exception is the defence of Skarvholm, which comes on its fixed night (section 08).

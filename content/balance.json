@@ -1,6 +1,6 @@
 {
  "title": "Oar and Ember balance sheet",
- "revision": "2.3",
+ "revision": "2.4",
  "source": "Book 10",
  "tables": {
   "timeAndTravel": {
@@ -1397,7 +1397,7 @@
      "Vitality": "80",
      "Armour": "None",
      "Weapons": "Bow, seax",
-     "Behaviour": "Keeps distance, falls back"
+     "Behaviour": "Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back"
     },
     {
      "Archetype": "Huscarl (Orm)",
@@ -1564,7 +1564,7 @@
     {
      "Post": "Watch cairn on Rook Hill",
      "Strength": "2, a horn and a beacon",
-     "Notes": "If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early (its typical date moves 5 days earlier and pressure builds faster; the final battle still waits at its story gate, section 22)"
+     "Notes": "If the horn sounds and they live 60 s more, they light the beacon: it brings Orm's attack, the final battle, 5 days earlier and raises the pressure faster, while the final battle remains a gate (section 22)"
     },
     {
      "Post": "Hermit's cell",
@@ -1801,7 +1801,7 @@
      "Word": "-3"
     },
     {
-     "Deed": "KILLING_HIDDEN (proposal)",
+     "Deed": "KILLING_HIDDEN",
      "Gain": "0",
      "Mercy": "-2",
      "Glory": "-2",
@@ -1810,7 +1810,7 @@
      "Word": "-3"
     },
     {
-     "Deed": "HOSPITALITY_BROKEN (proposal)",
+     "Deed": "HOSPITALITY_BROKEN",
      "Gain": "0",
      "Mercy": "-1",
      "Glory": "-1",
@@ -1819,7 +1819,7 @@
      "Word": "-4"
     },
     {
-     "Deed": "BLOOD_PRICE_PAID (proposal)",
+     "Deed": "BLOOD_PRICE_PAID",
      "Gain": "-1",
      "Mercy": "+1",
      "Glory": "-1",
@@ -1828,7 +1828,7 @@
      "Word": "+2"
     },
     {
-     "Deed": "BLOOD_PRICE_TAKEN (proposal)",
+     "Deed": "BLOOD_PRICE_TAKEN",
      "Gain": "+1",
      "Mercy": "+1",
      "Glory": "-1",
@@ -1837,7 +1837,7 @@
      "Word": "+2"
     },
     {
-     "Deed": "RITES_DENIED (proposal)",
+     "Deed": "RITES_DENIED",
      "Gain": "0",
      "Mercy": "-1",
      "Glory": "0",
@@ -1846,7 +1846,7 @@
      "Word": "0"
     },
     {
-     "Deed": "CHALLENGE_REFUSED (proposal)",
+     "Deed": "CHALLENGE_REFUSED",
      "Gain": "0",
      "Mercy": "+1",
      "Glory": "-3",
@@ -1934,7 +1934,7 @@
      "Saltvik": "x1.5 against"
     },
     {
-     "Deed": "KILLING_HIDDEN (proposal)",
+     "Deed": "KILLING_HIDDEN",
      "Norse": "x2.0 against (murder)",
      "Gaels": "x1.5 against",
      "Church": "x1.5 against",
@@ -1942,7 +1942,7 @@
      "Saltvik": "x1.0 against"
     },
     {
-     "Deed": "HOSPITALITY_BROKEN (proposal)",
+     "Deed": "HOSPITALITY_BROKEN",
      "Norse": "x2.0 against",
      "Gaels": "x2.0 against (the briugu's curse)",
      "Church": "x1.5 against",
@@ -1966,7 +1966,7 @@
      "Saltvik": "x0.5 against"
     },
     {
-     "Deed": "BLOOD_PRICE_PAID / BLOOD_PRICE_TAKEN (proposal)",
+     "Deed": "BLOOD_PRICE_PAID / BLOOD_PRICE_TAKEN",
      "Norse": "x1.0 for; Glory 2 or more against",
      "Gaels": "x1.5 for",
      "Church": "x1.0 for",
@@ -1990,7 +1990,7 @@
      "Saltvik": "x2.0 against"
     },
     {
-     "Deed": "RITES_DENIED (proposal)",
+     "Deed": "RITES_DENIED",
      "Norse": "x1.5 against (invites draugar)",
      "Gaels": "x1.0 against",
      "Church": "x2.0 against (the soul denied)",
@@ -1998,7 +1998,7 @@
      "Saltvik": "x1.0 against"
     },
     {
-     "Deed": "CHALLENGE_REFUSED (proposal)",
+     "Deed": "CHALLENGE_REFUSED",
      "Norse": "x1.5 against (cowardice; níð)",
      "Gaels": "x1.0 against",
      "Church": "x1.0 for (righteous)",
@@ -2355,7 +2355,7 @@
      "Footprint tiles": "6 x 5",
      "Materials": "3 timber",
      "Worker-days": "4",
-     "Capability": "Carpentry, tools, shields"
+     "Capability": "Carpentry, tools, shields, fletching (section 21, Arrows)"
     },
     {
      "Building": "Shrine, cross or hammer-post",
@@ -2519,6 +2519,11 @@
      "Stamina per action": "1"
     },
     {
+     "Task": "Fletch arrows",
+     "Game minutes per action": "30",
+     "Stamina per action": "1"
+    },
+    {
      "Task": "Mend nets",
      "Game minutes per action": "20",
      "Stamina per action": "0"
@@ -2656,7 +2661,7 @@
      "Milestone": "Chapter 1 done; boat launched",
      "Residents": "4",
      "Voyages (raids)": "0",
-     "Tools and weapons": "Wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line",
+     "Tools and weapons": "The steerer's seax and hunting bow (found on Wreck Strand, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line",
      "Ship": "T1, 1 fitting",
      "Buildings": "Sail shelter, fire",
      "Food and stores": "8 to 10 days runway"
@@ -2921,7 +2926,7 @@
      "Days": "121 to 150",
      "Threat": "The coast's answer (Book 6 scenario 8)",
      "Condition": "Ledger",
-     "Warning": "Precursors 5 days ahead",
+     "Warning": "Precursors 5 days ahead; an attack on Skarvholm comes on its fixed night, after at least 7 days' warning (section 22)",
      "Scale": "Raid, arson, interdict or envoy",
      "Counter": "Settle or defend"
     },
@@ -3010,7 +3015,7 @@
      "Threat": "Orm's fleet and the finale",
      "Condition": "Always",
      "Warning": "The washer at the ford",
-     "Scale": "6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier if the beacon was lit (still a gate)",
+     "Scale": "6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier, with the pressure rising twice as fast, if the beacon was lit (still a gate, section 22)",
      "Counter": "Everything prepared"
     }
    ]
@@ -4243,7 +4248,7 @@
     },
     {
      "Key": "waystation",
-     "Value": "A safe camp with a small store at one camp spot per route (proposal): 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25"
+     "Value": "A safe camp with a small store at one camp spot per route: 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25"
     }
    ]
   },
@@ -4314,7 +4319,7 @@
     {
      "Trader": "Saltvik knarr",
      "When": "About every 10 days in the sailing season",
-     "Brings": "Iron, salt and cloth; buys hides, wool and fish; leads"
+     "Brings": "Iron, salt, cloth and arrows by the dozen; buys hides, wool and fish; leads"
     },
     {
      "Trader": "Gaelic pedlar",
@@ -4324,7 +4329,7 @@
     {
      "Trader": "Wandering smith",
      "When": "Once a season",
-     "Brings": "Repairs and a weapon to order"
+     "Brings": "Repairs, a weapon to order and iron arrowheads"
     },
     {
      "Trader": "The sea-wife",
@@ -4489,6 +4494,40 @@
     {
      "Key": "objective",
      "Value": "The current goal is always shown"
+    }
+   ],
+   "secretEntrances": [
+    {
+     "Key": "routesWithEntrances",
+     "Value": "4 of the 6 routes: the Black Wood path, the High Pass, the river path and the moor road"
+    },
+    {
+     "Key": "rumoursPerEntrance",
+     "Value": "3 in the line pools of travellers and minor characters"
+    },
+    {
+     "Key": "rumourWrong",
+     "Value": "1 in 3: one of each entrance's three rumours is deliberately wrong, pointing to a harmless place"
+    },
+    {
+     "Key": "hintSeenFrom",
+     "Value": "Every hint sign is in view from a path on the approach"
+    },
+    {
+     "Key": "draughtShows",
+     "Value": "Within 3 tiles of the crack: stirring litter at any time; a breath of mist before 09:00 in autumn, winter and spring"
+    },
+    {
+     "Key": "keenEyedNotice",
+     "Value": "A keen-eyed companion within 4 tiles remarks on the entrance (section 08, Traits)"
+    },
+    {
+     "Key": "iceCurtain",
+     "Value": "The cave behind the falls in winter: 6 axe blows (90 game minutes, noise 10 tiles) or one blow of the Cailleach's maul"
+    },
+    {
+     "Key": "weirClosed",
+     "Value": "The otter-cave is closed while the Ford is in spate (section 14)"
     }
    ]
   },
@@ -4683,6 +4722,38 @@
     {
      "Key": "warning",
      "Value": "Every readiness screen says plainly that the gate is a point of no return"
+    },
+    {
+     "Key": "fixedDate",
+     "Value": "The defence of Skarvholm only, when the coast's answer is an attack: it comes on its night whatever the player does, and has no pressure because it never waits"
+    },
+    {
+     "Key": "defenceNight",
+     "Value": "Day 135; if the reply to Asgrim is given after day 125, 10 days after the reply"
+    },
+    {
+     "Key": "warningDays",
+     "Value": "7: omens, scouts and Thrand (if he is with the household) warn at least 7 days before the night"
+    },
+    {
+     "Key": "heldHome",
+     "Value": "From the warning, the travel map and the sea map refuse any journey or voyage whose return would come after dusk on the night, and say why"
+    },
+    {
+     "Key": "broughtHome",
+     "Value": "A steerer away when the warning comes gets word and is home by dusk on the day of the night; the journey or voyage is cut short"
+    },
+    {
+     "Key": "readinessOpens",
+     "Value": "At dusk on the night; the attack comes at nightfall"
+    },
+    {
+     "Key": "beaconEarlier",
+     "Value": "The beacon lit in the Return brings the final battle's typical day 5 days earlier (it is still a gate)"
+    },
+    {
+     "Key": "beaconPressure",
+     "Value": "With the beacon lit, the final battle's pressure steps come twice as often (a demand grows 10% every 5 days; a rumour every 2.5 days)"
     }
    ]
   },

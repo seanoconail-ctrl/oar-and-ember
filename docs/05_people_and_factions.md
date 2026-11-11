@@ -6,7 +6,7 @@ Sixteen residents should feel like sixteen people. The coast should feel like a 
 
 **How to use:** Use this book for named characters, faction goals, relationship ties and alliance terms. Stable IDs here are the keys for Book 2's content files. Values, traits, ties and stances are design truth; dialogue is illustrative and may be rewritten. Most people are ordinary, with simple motives: food, safety, family, money, pride, fear, a grudge, a debt. Only a few are schemers, and none are philosophers.
 
-_All characters are fictional. Ages are adult for every resident. There is no romance system; existing relationships are listed here. Hidden stances and secrets are listed here for implementation and must never be shown to the player before they are discovered._
+_All characters are fictional. Ages are adult for every resident. There is no romance system; existing relationships are listed here. Nessa's secret and the other secrets are listed here for implementation and must never be shown to the player before they are discovered._
 
 
 ## 01 / How people work
@@ -47,10 +47,10 @@ The marks below are starting values; Book 10 section 08 ("Happiness, friendship 
 Witnessed deeds move a resident's friendship and fear, as their culture, values, traits and stance read them; daily life moves their happiness, and their likes and dislikes (section 17) move it too. Friendship moves through visible bands: **devoted, loyal, content, uneasy, resentful, estranged** (Book 10 section 08, "Friendship bands"). Each step down in friendship, or happiness that stays low, appears first as a remark, then a complaint at the fire, then refusal of a specific kind of order ("I will not burn a church"), then a request to leave. Fear shows in its own way: people go quiet when the steerer comes near, work without care, and flinch at a raised voice. A resident who is afraid and not a friend shows that they may desert or betray before they do it: whispered talk a friend reports, provisions put by, a look towards the boat. Each step up appears as praise, offers of help and, at the top, personal favours and loyalty in a crisis. No resident leaves, deserts or betrays without warning, and no hidden threshold fires silently. Book 8 section 11 holds how each step is spoken.
 
 ### Living at home
-Every resident follows a daily schedule shaped by job, season, weather and wounds, so the player always finds them doing something: mending nets, arguing over the forge, nursing a hand, teaching a song. Talking to them opens topics drawn from their memories: the last raid, a death, a wound, the weather, their worries and their ties. Some residents seek the player out when something matters to them, with a request (section 11) or a grievance against someone else (section 10). Every resident also has a **tendency**, a small daily habit that makes them readable (one prays at dawn, one walks the shore at night, one hoards stones, one sings at the oars; section 17). Every resident has one **signature colour** from the Book 7 palette and one **silhouette detail** that picks them out at a glance; those chosen so far (Hild, Bran, Runa and Áine) are in their entries, and the rest are still to be chosen. Most people have one of the two ordinary builds; a few have the **heavy build** of Book 7 section 07 (broad shoulders, a thick torso and limbs, big hands; men and women both). Among the residents, Bran, Kolbeinn and Tófi One-Eye are heavy (proposal); among enemies, Kolgrím the Burner, some of Orm's grey-cloaks, Fiachra's champion and the berserkers (proposal); and about one in six generated people, farmers and smiths as well as fighters (proposal; Book 10 section 24, "Heavy build"). It is occasional, never the norm, and the steerer keeps the two existing models. Heavy residents carry loads and downed allies faster but tire sooner when running. Book 8 holds how they speak.
+Every resident follows a daily schedule shaped by job, season, weather and wounds, so the player always finds them doing something: mending nets, arguing over the forge, nursing a hand, teaching a song. Talking to them opens topics drawn from their memories: the last raid, a death, a wound, the weather, their worries and their ties. Some residents seek the player out when something matters to them, with a request (section 11) or a grievance against someone else (section 10). Every resident also has a **tendency**, a small daily habit that makes them readable (one prays at dawn, one walks the shore at night, one hoards stones, one sings at the oars; section 17). Every resident has one **signature colour** from the Book 7 palette and one **silhouette detail** that picks them out at a glance; those chosen so far (Hild, Bran, Runa and Áine) are in their entries, and the rest are still to be chosen. Most people have one of the two ordinary builds; a few have the **heavy build** of Book 7 section 07 (broad shoulders, a thick torso and limbs, big hands; men and women both). Among the residents, Bran, Kolbeinn and Tófi One-Eye are heavy; among enemies, Kolgrím the Burner, some of Orm's grey-cloaks, Fiachra's champion and the berserkers; and about one in six generated people, farmers and smiths as well as fighters (Book 10 section 24, "Heavy build"). It is occasional, never the norm, and the steerer keeps the two existing models. Heavy residents carry loads and downed allies faster but tire sooner when running. Book 8 holds how they speak.
 
 ### Brutality and the crew
-A few residents relish brutality (Kári, and Ulf's sort of raider), and call it the fear that spreads a name. Most are shaken by the killing of farmers and other people who bore no weapon, or of people who had surrendered, and say so in the terms of their own code: there was no glory in it, it brings bad luck, the dead have kin who will come, it shamed the crew, it was a sin, or an honour-price is owed (section 16). Taking captives in a fight is ordinary to most Norse residents: the Mercy-minded object to cruelty towards captives, not to their capture. Theft from the household's own stores is judged more harshly than open plunder abroad, because it robs one's own; secret theft from kin is the deepest Norse shame (Book 6 section 01). The steerer can order or commit such killings. Brutality raises the fear of everyone who sees it, and moves their friendship by their values: the crew's reactions follow Book 10 section 08 ("Friendship deltas by deed" and "Fear deltas") and never stay hidden.
+A few people relish brutality (Ulf's sort of raider), and call it the fear that spreads a name. Kári is not one of them: he lives the drengr ideal, and there is no glory in killing farmers, so he neither praises it nor is shaken by it (Book 10 section 08). Most are shaken by the killing of farmers and other people who bore no weapon, or of people who had surrendered, and say so in the terms of their own code: there was no glory in it, it brings bad luck, the dead have kin who will come, it shamed the crew, it was a sin, or an honour-price is owed (section 16). Taking captives in a fight is ordinary to most Norse residents: the Mercy-minded object to cruelty towards captives, not to their capture. Theft from the household's own stores is judged more harshly than open plunder abroad, because it robs one's own; secret theft from kin is the deepest Norse shame (Book 6 section 01). The steerer can order or commit such killings. Brutality raises the fear of everyone who sees it, and moves their friendship by their values: the crew's reactions follow Book 10 section 08 ("Friendship deltas by deed" and "Fear deltas") and never stay hidden.
 
 ### Change through experience
 Values can shift by one point after strong shared events. A Glory-minded warrior saved by a merciful bargain may gain Mercy. A Mercy-minded healer who watches the merciful choice get a friend killed may lose it. Shifts are rare (no more than two per resident per campaign) and always shown with a scene. A stance (section 16) can shift after strong events in the same way, and is shown the same way.
@@ -74,20 +74,20 @@ Thorkel's sister's child, raised in his household and trusted with his steering 
 
 ### Starting crew (Chapter 1)
 #### Hild Thorkelsdóttir (`C_HILD`)
-Fisher and sailor, Thorkel's daughter and the player's cousin. The first person rescued, calling from beyond the rocks. **Values:** Kin 3, Glory 2. **Stance:** conventional (proposal). **Skills:** sailing, fishing, spear. **Behaviour:** first to help, makes jokes when things are worst, will not stop looking for her father's body. **Arc:** her grief can harden into a demand for vengeance on Orm, or turn into fierce protection of the household. If Thorkel walks as a draugr, she is the one who can speak to him. **Wants from the player:** her father's rites; a place in the bow on the first raid. **Looks:** signature colour woad blue; silhouette detail her long braid. **Personal quest (proposal):** vengeance on the captain who burned Hvitness. It is Kolgrím the Burner, who later commands Orm's garrison on Skarvholm; her chance may come at the hólmganga in the Return (Book 6 section 10, approach E), or she may be talked into letting it go.
+Fisher and sailor, Thorkel's daughter and the player's cousin. The first person rescued, calling from beyond the rocks. **Values:** Kin 3, Glory 2. **Stance:** conventional. **Skills:** sailing, fishing, spear. **Behaviour:** first to help, makes jokes when things are worst, will not stop looking for her father's body. **Arc:** her grief can harden into a demand for vengeance on Orm, or turn into fierce protection of the household. If Thorkel walks as a draugr, she is the one who can speak to him. **Wants from the player:** her father's rites; a place in the bow on the first raid. **Looks:** signature colour woad blue; silhouette detail her long braid. **Personal quest:** vengeance on the captain who burned Hvitness. It is Kolgrím the Burner, who later commands Orm's garrison on Skarvholm; her chance may come at the hólmganga in the Return (Book 6 section 10, approach E), or she may be talked into letting it go.
 
 #### Oddi Gunnarsson (`C_ODDI`)
-A wiry young deckhand, son of a poor freedman. Found injured near the wreck. **Values:** Gain 3, Kin 1. **Stance:** transgressive (proposal): he steals from his own, the deepest Norse shame, and knows it. **Trait:** Light-fingered. **Skills:** climbing, stealth, rope work. **Behaviour:** has already stolen food from the shared supplies; it is found in his bedding on the second night. **Arc:** treated fairly (shared shame, then responsibility) he becomes the household's best scout and scrounger. Shamed or beaten, he leaves at Saltvik and later sells what he knows to Ulf. **Secret:** he owes Ulf's men a debt from a dice game before the voyage. **Personal quest (proposal):** clearing his debt to Ulf's men without becoming their spy.
+A wiry young deckhand, son of a poor freedman. Found injured near the wreck. **Values:** Gain 3, Kin 1. **Stance:** transgressive: he steals from his own, the deepest Norse shame, and knows it. **Trait:** Light-fingered. **Skills:** climbing, stealth, rope work. **Behaviour:** has already stolen food from the shared supplies; it is found in his bedding on the second night. **Arc:** treated fairly (shared shame, then responsibility) he becomes the household's best scout and scrounger. Shamed or beaten, he leaves at Saltvik and later sells what he knows to Ulf. **Secret:** he owes Ulf's men a debt from a dice game before the voyage. **Personal quest:** clearing his debt to Ulf's men without becoming their spy.
 
 #### Bran Gilla Brigte (`C_BRAN`)
-Norse-Gaelic former raider in his forties, ten years in Thorkel's household. Found in a sheepfold by the Hollow Cairn, guarding Thorkel's body from wreck-scavengers; he refuses to leave his chief. **Values:** Mercy 3, Word 2. **Stance:** between two codes (proposal): a Christian conscience inside a raider's past; he tries to keep both and keeps failing. Of mixed birth, he judges and is judged by either code. **Build:** heavy (proposal). **Skills:** axe and shield, Irish speech, cooking. **Behaviour:** hates needless killing, says grace in two languages, fights well and takes no pleasure in it. **Arc:** fifteen years ago he raided Kilbrecc; Sister Muirenn recorded his face. At Kilbrecc he can be recognised. Confession and penance make him a mediator with the Gaelic coast; concealment, if discovered, damages trust on both sides. **Looks:** signature colour bleached linen (proposal); silhouette detail the ladle at his belt. **Personal quest (proposal):** penance at Kilbrecc, and a meeting with a monk who lost a brother in Bran's raid. **Bran's reckoning (proposal; section 19):** the monk's family demand Bran's life as blood-price. He can go to his death, be exiled, or be defended at the cost of the Kilbrecc alliance.
+Norse-Gaelic former raider in his forties, ten years in Thorkel's household. Found in a sheepfold by the Hollow Cairn, guarding Thorkel's body from wreck-scavengers; he refuses to leave his chief. **Values:** Mercy 3, Word 2. **Stance:** between two codes: a Christian conscience inside a raider's past; he tries to keep both and keeps failing. Of mixed birth, he judges and is judged by either code. **Build:** heavy. **Skills:** axe and shield, Irish speech, cooking. **Behaviour:** hates needless killing, says grace in two languages, fights well and takes no pleasure in it. **Arc:** fifteen years ago he raided Kilbrecc; Sister Muirenn recorded his face. At Kilbrecc he can be recognised. Confession and penance make him a mediator with the Gaelic coast; concealment, if discovered, damages trust on both sides. **Looks:** signature colour bleached linen; silhouette detail the ladle at his belt. **Personal quest:** penance at Kilbrecc, and a meeting with a monk who lost a brother in Bran's raid. **Bran's reckoning (section 19):** the monk's family demand Bran's life as blood-price. He can go to his death, be exiled, or be defended at the cost of the Kilbrecc alliance.
 
 #### Runa Ásdísardóttir (`C_RUNA`)
-Boatwright in her thirties, found injured at the Hag's Seat after following a strange light. Insists on carrying her tool chest before anything else. **Values:** Word 2, Faith 2 (the old gods and the Cailleach), Kin 1. **Stance:** conventional (proposal): proudly superstitious; keeps every rite and judges those who don't. **Skills:** carpentry, ship repair, pilotage. **Behaviour:** blunt, practical, superstitious about the sea and proud of it. **Arc:** becomes the household's shipwright. Her sister Asa and Asa's husband Kolbeinn, a smith, are in debt to Ottar Silkbeard in Saltvik; Runa wants them out. She has a professional rivalry with Gunnhild Sea-Mare. Some quests need her as a companion: only Runa can judge a famous mast timber (section 12). **Looks:** signature colour ochre (proposal); silhouette detail the adze over her shoulder. **Personal quest (proposal):** getting Asa and Kolbeinn clear of Ottar's debt-books, which hide something; Hrefna, Ottar's steward, keeps those books (section 04).
+Boatwright in her thirties, found injured at the Hag's Seat after following a strange light. Insists on carrying her tool chest before anything else. **Values:** Word 2, Faith 2 (the old gods and the Cailleach), Kin 1. **Stance:** conventional: proudly superstitious; keeps every rite and judges those who don't. **Skills:** carpentry, ship repair, pilotage. **Behaviour:** blunt, practical, superstitious about the sea and proud of it. **Arc:** becomes the household's shipwright. Her sister Asa and Asa's husband Kolbeinn, a smith, are in debt to Ottar Silkbeard in Saltvik; Runa wants them out. She has a professional rivalry with Gunnhild Sea-Mare. Some quests need her as a companion: only Runa can judge a famous mast timber (section 12). **Looks:** signature colour ochre; silhouette detail the adze over her shoulder. **Personal quest:** getting Asa and Kolbeinn clear of Ottar's debt-books, which hide something; Hrefna, Ottar's steward, keeps those books (section 04).
 
 ### Later residents
 #### Eithne ingen Domnaill (`C_EITHNE`)
-A Gaelic widow from Ardcarn, about thirty. At Carrick Landing she asks to leave with the raiders: her late husband's kin plan to marry her off to settle a debt. **Values:** Word 3, Mercy 2, Kin 1. **Stance:** transgressive (proposal): she defied her husband's kin and their marriage plan, and holds herself to her word all the harder for it. **Skills:** stewardship, accounts, herding. **Arc:** becomes the steward. Ardcarn may call her abducted or a runaway, depending on what witnesses saw. She can carry messages to Ardcarn or be demanded back as part of a settlement. Christian; will want a cross at the steading. **Personal quest (proposal):** freeing her late husband's land at Ardcarn from a debt she suspects was forged.
+A Gaelic widow from Ardcarn, about thirty. At Carrick Landing she asks to leave with the raiders: her late husband's kin plan to marry her off to settle a debt. **Values:** Word 3, Mercy 2, Kin 1. **Stance:** transgressive: she defied her husband's kin and their marriage plan, and holds herself to her word all the harder for it. **Skills:** stewardship, accounts, herding. **Arc:** becomes the steward. Ardcarn may call her abducted or a runaway, depending on what witnesses saw. She can carry messages to Ardcarn or be demanded back as part of a settlement. Christian; will want a cross at the steading. **Personal quest:** freeing her late husband's land at Ardcarn from a debt she suspects was forged.
 
 #### Nessa of Inis Rón (`C_NESSA`)
 Healer and net-maker, late twenties, seal-kin of Inis Rón. Arrives through the fog-light event in Chapter 3. See section 03.
@@ -96,33 +96,33 @@ Healer and net-maker, late twenties, seal-kin of Inis Rón. Arrives through the 
 Six of Thorkel's household who escaped Hvitness in a second boat and find Skarvholm by the smoke. They double the mouths to feed.
 | Resident | Role | Notes |
 |---|---|---|
-| Gudrun (`C_GUDRUN`) | Matriarch, story-keeper | Thorkel's aunt. Kin 3, Word 2. Stance conventional (proposal): keeper of the rites, the household's conscience by its own code. Opposes reckless raiding; insists on rites; remembers the old compacts in fragments. **Rán's debt (proposal; section 19):** when Thorkel's debt comes due, she offers herself to the sea. |
+| Gudrun (`C_GUDRUN`) | Matriarch, story-keeper | Thorkel's aunt. Kin 3, Word 2. Stance conventional: keeper of the rites, the household's conscience by its own code. Opposes reckless raiding; insists on rites; remembers the old compacts in fragments. **Rán's debt (section 19):** when Thorkel's debt comes due, she offers herself to the sea. |
 | Arnbjörn (`C_ARNBJORN`) | Herder | Gudrun's son. Cautious, kind, a poor fighter. Kin 2, Mercy 1. Candidate for a marriage tie with Glen Arra. |
-| Kári (`C_KARI`) | Rower, fighter | Twin of Kolla. Glory 3. Stance conventional, to the hilt (proposal): lives the drengr ideal; despises stealth raids and blood-price. Wants fame, will follow Ulf if the household seems timid. May go berserk (proposal), and can die charging alone (section 19). |
+| Kári (`C_KARI`) | Rower, fighter | Twin of Kolla. Glory 3. Stance conventional, to the hilt: lives the drengr ideal; despises stealth raids and blood-price. Wants fame, will follow Ulf if the household seems timid. May go berserk, and can die charging alone (section 19). |
 | Kolla (`C_KOLLA`) | Rower, fisher | Twin of Kári. Kin 2, Gain 2. Holds her brother back, mostly. |
-| Tófi One-Eye (`C_TOFI`) | Old warrior, trainer | Ylva's husband of forty years. Glory 2, Word 2. Stance sceptical (proposal): he has seen what glory costs. Heavy build (proposal). Teaches combat; tells the ugly truth about past raids nobody wants to hear. |
-| Ylva (`C_YLVA`) | Dependant | Gudrun's elderly sister and Tófi's wife. Cannot work; needs care and warmth. Sees fetches. **Secret (proposal), her last fetch:** her sightings prove true whenever the warning is ignored. Then she sees the steerer's. |
+| Tófi One-Eye (`C_TOFI`) | Old warrior, trainer | Ylva's husband of forty years. Glory 2, Word 2. Stance sceptical: he has seen what glory costs. Heavy build. Teaches combat; tells the ugly truth about past raids nobody wants to hear. |
+| Ylva (`C_YLVA`) | Dependant | Gudrun's elderly sister and Tófi's wife. Cannot work; needs care and warmth. Sees fetches. **Secret, her last fetch:** her sightings prove true whenever the warning is ignored. Then she sees the steerer's. |
 
 #### Kolbeinn the Smith (`C_KOLBEINN`)
-A Saltvik smith, married to Runa's sister Asa; both are in debt to Ottar Silkbeard. Joins if the player pays the debt, wins it at dice, or frees him from Ulf's men who are collecting it. Asa (`C_ASA`), a weaver who keeps accounts, comes with him if her own debt is settled too. **Values:** Gain 2, Glory 2 (pride in craft). **Build:** heavy (proposal). Turns iron into tools, axe-heads and ship fittings. Grumbles about the forge until it is built properly.
+A Saltvik smith, married to Runa's sister Asa; both are in debt to Ottar Silkbeard. Joins if the player pays the debt, wins it at dice, or frees him from Ulf's men who are collecting it. Asa (`C_ASA`), a weaver who keeps accounts, comes with him if her own debt is settled too. **Values:** Gain 2, Glory 2 (pride in craft). **Build:** heavy. Turns iron into tools, axe-heads and ship fittings. Grumbles about the forge until it is built properly.
 
 #### Thrand Halfhand (`C_THRAND`)
-A veteran who deserted Orm after Heid ordered a captured crew thrown to Rán. Arrives in Chapter 4 as a castaway clinging to a spar. **Values:** Word 3, Mercy 1, Glory 2. **Stance:** transgressive (proposal): he broke his oath to Orm for conscience, and calls it the one right thing he has done. Knows Orm's tactics, ships and signals. Orm demands him back as a hostage. Keeping him is an act of defiance; giving him up is remembered by everyone. **Personal quest (proposal):** proving what Heid did, to Asgrim and to Orm's own crews. **Thrand's proof (proposal; section 19):** Thrand challenges Asgrim to prove Heid's crimes. Without the evidence, he dies in the duel.
+A veteran who deserted Orm after Heid ordered a captured crew thrown to Rán. Arrives in Chapter 4 as a castaway clinging to a spar. **Values:** Word 3, Mercy 1, Glory 2. **Stance:** transgressive: he broke his oath to Orm for conscience, and calls it the one right thing he has done. Knows Orm's tactics, ships and signals. Orm demands him back as a hostage. Keeping him is an act of defiance; giving him up is remembered by everyone. **Personal quest:** proving what Heid did, to Asgrim and to Orm's own crews. **Thrand's proof (section 19):** Thrand challenges Asgrim to prove Heid's crimes. Without the evidence, he dies in the duel.
 
 #### Áine of Glen Arra (`C_AINE`)
-A herder and archer. Joins if the player protects Glen Arra from Ulf or returns its stolen cattle. **Values:** Kin 2, Glory 2. **Stance:** conventional (proposal). Gaelic-speaking, Norse-named father: of mixed birth, she judges and is judged by either code. The best shot on the coast and the first to say so. **Looks:** signature colour weld-green (proposal); silhouette detail her bow. **Personal quest (proposal):** the man who killed her father lives in Saltvik. He is now a gentle father of three, and the killing was ordered by Gilla Muire himself. It is a revenge quest (section 11) with every other way out open.
+A herder and archer. Joins if the player protects Glen Arra from Ulf or returns its stolen cattle. **Values:** Kin 2, Glory 2. **Stance:** conventional. Gaelic-speaking, Norse-named father: of mixed birth, she judges and is judged by either code. The best shot on the coast and the first to say so. **Looks:** signature colour weld-green; silhouette detail her bow. **Personal quest:** the man who killed her father lives in Saltvik. He is now a gentle father of three, and the killing was ordered by Gilla Muire himself. It is a revenge quest (section 11) with every other way out open.
 
 #### Brother Senán (`C_SENAN`)
-A monk of Kilbrecc of Norse-Gaelic birth who speaks both languages. Joins only if Kilbrecc is spared and the abbot agrees, as scribe, healer and mediator. **Values:** Faith 3 (Christ and the saints), Mercy 2, Word 2. **Stance:** conventional, uneasy (proposal): devout, and troubled by the abbey's bondmen and hired swords. Of mixed birth, he judges and is judged by either code. Can also remain at Kilbrecc as a contact. Some quests need him as a companion: only Senán can read a carved stone (section 12). **Secret (proposal):** Senán finds that the Bell's peace was bought with an old bargain, and that Abbot Colmán knows. Whether it was a saint's prayer or a bargain stays ambiguous.
+A monk of Kilbrecc of Norse-Gaelic birth who speaks both languages. Joins only if Kilbrecc is spared and the abbot agrees, as scribe, healer and mediator. **Values:** Faith 3 (Christ and the saints), Mercy 2, Word 2. **Stance:** conventional, uneasy: devout, and troubled by the abbey's bondmen and hired swords. Of mixed birth, he judges and is judged by either code. Can also remain at Kilbrecc as a contact. Some quests need him as a companion: only Senán can read a carved stone (section 12). **Secret:** Senán finds that the Bell's peace was bought with an old bargain, and that Abbot Colmán knows. Whether it was a saint's prayer or a bargain stays ambiguous.
 
 ### Hostages and guests
-**Donnchad mac Muiredaig** (`H_DONNCHAD`), Muiredach's adult son, can be taken as a hostage at Carrick or arrive later as an envoy. He is Órlaith's foster-brother. Held well, he can become a friend; returned freely, he is a major peace lever with Ardcarn and Dún Fiach. **Secret (proposal), the hostage who will not go home:** Donnchad does not want to return, because of what waits for him at Ardcarn. Sending him home is still the peace lever, and now it has a cost to a person the household knows.
+**Donnchad mac Muiredaig** (`H_DONNCHAD`), Muiredach's adult son, can be taken as a hostage at Carrick or arrive later as an envoy. He is Órlaith's foster-brother. Held well, he can become a friend; returned freely, he is a major peace lever with Ardcarn and Dún Fiach. **Secret, the hostage who will not go home:** Donnchad does not want to return, because of what waits for him at Ardcarn. Sending him home is still the peace lever, and now it has a cost to a person the household knows.
 
 ### Generated residents
-Refugees and recruits outside the named cast use the same model. Generate varied adults across origin, appearance, build, skills and values; never let the opening depend on a rare roll. Each generated resident gets two to four traits (some hidden until discovered), a few likes and dislikes, and one tendency shown through behaviour (sings while rowing; hoards pretty stones; will not eat fish), all from section 17. About one in six generated people has the heavy build (proposal). Their motives are simple: food, safety, family, money, pride, fear, a grudge, a debt. Generated people are conventional by their culture's code unless a trait or event says otherwise.
+Refugees and recruits outside the named cast use the same model. Generate varied adults across origin, appearance, build, skills and values; never let the opening depend on a rare roll. Each generated resident gets two to four traits (some hidden until discovered), a few likes and dislikes, and one tendency shown through behaviour (sings while rowing; hoards pretty stones; will not eat fish), all from section 17. About one in six generated people has the heavy build. Their motives are simple: food, safety, family, money, pride, fear, a grudge, a debt. Generated people are conventional by their culture's code unless a trait or event says otherwise.
 
 ## 03 / Nessa
-*The friendly newcomer. Useful, trusted, and tied to an older power she has not mentioned. Her stance is fixed at campaign start and never chosen afterwards to punish trust.*
+*The friendly newcomer. Useful, trusted, and tied to an older power she has not mentioned. Nessa's secret is fixed at campaign start and never chosen afterwards to punish trust.*
 
 ### Arrival
 In Chapter 3 the fog-light event (Book 6) brings the boat to a seal skerry where Nessa is stranded, or brings Nessa to Skarvholm in a coracle. She is a skilled healer and net-maker and works by ordinary rules: she uses real supplies, needs food and rest, and does not create resources from nothing. She may improve wound care, find a better fishing ground or warn of a storm a day early.
@@ -130,8 +130,10 @@ In Chapter 3 the fog-light event (Book 6) brings the boat to a seal skerry where
 ### Clues before the reveal
 She swims in water that would kill anyone else. Seals gather where she works. She never eats seal meat and leaves the fire if it is cooked. She speaks to Ylva about fetches as if they were ordinary. She knows the old name of the Hag's Seat. None of these are labelled with an enemy icon.
 
-### Hidden stances
-| Stance | Truth | How it shows after the reveal |
+### Nessa's secret
+Nessa's secret takes one of three forms, seeded at random per campaign and hidden until the reveal.
+
+| Form | Truth | How it shows after the reveal |
 |---|---|---|
 | **Watcher** (`NESSA_WATCHER`) | Sent by Brónach to judge whether the household deserves the Keepers' help against Orm. | Reports to Inis Rón. Her judgement opens or closes the Keepers' alliance. She defends the household if it has been decent. |
 | **Bound** (`NESSA_BOUND`) | Her brother Ruairí drowned; Heid has promised to release him from Rán's hall in exchange for information about the household. | Has been sending word by seal. Can confess and become a double agent, flee, or betray the household's plans if left without a way out. |
@@ -141,10 +143,10 @@ She swims in water that would kill anyone else. Seals gather where she works. Sh
 The reveal fires once, after at least twenty days of residence and two shared significant events, through one of: her own disclosure if her friendship is loyal or higher; a visitor from Inis Rón or Kaldness; or the player finding evidence (letters by seal, the hidden skin, a sea-light message). The trigger is saved so loading never repeats it.
 
 ### Branches
-Nessa can **stay** as a trusted resident, **leave** for Inis Rón, **mediate** between the household and the Keepers, **defect** to Heid, or **turn hostile**. The branch follows her stance, her friendship and fear, her ties (especially with Ylva, Bran and Hild) and the player's choice at the reveal. Betrayal is possible only for the Bound stance and only if the player gives her no way out. Every stance contains at least one path in which she becomes the household's strongest friend.
+Nessa can **stay** as a trusted resident, **leave** for Inis Rón, **mediate** between the household and the Keepers, **defect** to Heid, or **turn hostile**. The branch follows her secret, her friendship and fear, her ties (especially with Ylva, Bran and Hild) and the player's choice at the reveal. Betrayal is possible only for the Bound form and only if the player gives her no way out. Every form of her secret contains at least one path in which she becomes the household's strongest friend.
 
 ### Her code
-Nessa's hidden stance (Watcher, Bound or Runaway) is a different thing from the stance towards one's own code in section 16, and her subtitle name and conversation never give the hidden one away (Book 8 section 10). Her stance towards the Keepers' code follows the hidden one and shows only after the reveal (proposal): as Watcher she is conventional; as Bound or Runaway she is transgressive, the Bound one dealing with Heid against her own people for her brother, the Runaway one fleeing the binding her people hold to be lawful.
+Her subtitle name and conversation never give her secret away (Book 8 section 10). Her stance towards the Keepers' code (section 16) follows her secret and shows only after the reveal: as Watcher she is conventional; as Bound or Runaway she is transgressive, the Bound one dealing with Heid against her own people for her brother, the Runaway one fleeing the binding her people hold to be lawful.
 
 ## 04 / Leaders of the coast
 *People with power, obligations and their own problems. Each wants something the player can provide and fears something the player can cause.*
@@ -178,22 +180,22 @@ The mainland's smaller places have leaders of their own (Book 4 holds the twenty
 ### Notes for play
 - **Fiachra** can be flattered, paid or shamed, but never ignored. He will grant land for service or a marriage tie, and demand hostages for either. His line has a bean sí; when she keens, someone of his blood is close to death.
 - **Órlaith** is the real negotiator. A marriage tie between households is a political alliance between willing adults of the two households (Arnbjörn is the obvious candidate), never the steerer; there is no romance system. She will not agree to one that is only her father's idea.
-- **Colmán** will mediate the final council if Kilbrecc is spared or compensated. Stance cynical (proposal): he guards his community by any bargain and calls it God's will. The Church's cruelty is his to carry (section 15): the bondmen who work Kilbrecc's tithe farms and cannot leave, floggings for penance, hired swords when prayer fails, and **the abbot's curse**, a fast and a malediction against a household, after the Gaelic custom of fasting against an enemy. **Muirenn's** annals are the human face of the deed ledger: at the council she reads out what the household did, accurately. Stance sceptical of the powerful (proposal): she records the Church's own sins as faithfully as the heathens'.
+- **Colmán** will mediate the final council if Kilbrecc is spared or compensated. Stance cynical: he guards his community by any bargain and calls it God's will. The Church's cruelty is his to carry (section 15): the bondmen who work Kilbrecc's tithe farms and cannot leave, floggings for penance, hired swords when prayer fails, and **the abbot's curse**, a fast and a malediction against a household, after the Gaelic custom of fasting against an enemy. **Muirenn's** annals are the human face of the deed ledger: at the council she reads out what the household did, accurately. Stance sceptical of the powerful: she records the Church's own sins as faithfully as the heathens'.
 - **Muiredach** is a plain farmer with a guesthouse, and a kind believer: his hospitality is a Christian duty and a briugu's honour at once. His storehouse at Carrick is the first raid. He can forgive almost anything except his people starving, and will trade almost anything for his son.
-- **Ottar** will sell to anyone and is privately considering submitting to Orm. Stance cynical (proposal): he uses any code's words to close a deal. Saltvik judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong (Book 6 section 01). **Gunnhild** respects skill and contracts above blood or belief.
+- **Ottar** will sell to anyone and is privately considering submitting to Orm. Stance cynical: he uses any code's words to close a deal. Saltvik judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong (Book 6 section 01). **Gunnhild** respects skill and contracts above blood or belief.
 - **Gilla Muire** wants someone to deal with Ulf. **Brónach** is gruff, old and Nessa's mother's sister.
 - **Lasair** guides the household across Móin Mhór, or does not; without her the bog's plank road is the only safe line. **Dubhthach** feeds any guest at the shielings and expects the same pride in return; his feud with Fiachra makes him a friend worth having and a risk to Dún Fiach's goodwill.
 - **Cuán** takes his toll from king, monk and raider alike, and what he hears at the ford he passes on, to the household or to anyone else who pays.
 - **Hrefna** runs Ottar's farms and salt pans hard and fairly. Ottar's secret books are in her keeping, which matters to Runa's sister (section 02).
 - **Ninnid** answers to Colmán for the tenant farms and is the first to suffer when the tithe barns are raided or the pilgrims' road is unsafe.
-- **Faolán Wolf-Hand** leads the outlaws who ambush the roads and holds the hill-fort beyond the Mound Field, where the Frankish sword is kept (Book 6 section 13). **Secret (proposal), the outlaw prince:** he is Fiachra's eldest son, outlawed for refusing to burn Kilbrecc in an old feud. Restoring him can split Dún Fiach between him and Órlaith, and the Frankish sword in his fort is the proof of who he is.
-- **Hrolf the Barrow-King** has been dead for two lifetimes and still behaves as a king. He keeps court in his mound with his draugar and his goods, guards the barrow mail, and can be spoken to as well as fought. **Secret (proposal), the barrow's silver:** Hrolf was Ottar's grandfather, buried with church silver stolen from Kilbrecc. Opening his mound exposes how Saltvik was founded, and Ottar's family claim the mail (Book 6 section 13).
+- **Faolán Wolf-Hand** leads the outlaws who ambush the roads and holds the hill-fort beyond the Mound Field, where the Frankish sword is kept (Book 6 section 13). **Secret, the outlaw prince:** he is Fiachra's eldest son, outlawed for refusing to burn Kilbrecc in an old feud. Restoring him can split Dún Fiach between him and Órlaith, and the Frankish sword in his fort is the proof of who he is.
+- **Hrolf the Barrow-King** has been dead for two lifetimes and still behaves as a king. He keeps court in his mound with his draugar and his goods, guards the barrow mail, and can be spoken to as well as fought. **Secret, the barrow's silver:** Hrolf was Ottar's grandfather, buried with church silver stolen from Kilbrecc. Opening his mound exposes how Saltvik was founded, and Ottar's family claim the mail (Book 6 section 13).
 
 ## 05 / Rival captains
 *Other people with ships and ambitions. They raid the same coast, want the same cargo and judge the household by sea-going standards.*
 
 #### Ulf Hrafnsson, "the Crow" (`R_ULF`)
-Captain at Crowwick with about twenty-five hungry raiders and a black sail marked with a raven. Can arrive at Carrick as the rival-crew complication. **Motives:** plunder, fame, contempt for "farmers". **Behaviour:** kills when it is quicker than talking; keeps a bargain while it pays. One of the few enemies who finish off the downed, always with a visible warning first (proposal; section 19). **Possible paths:** an ally who leads the van in the finale if given plunder rights and respect; an enemy who sells the household's plans to Orm; or a defeated rival whose camp at Crowwick is broken. Crowwick can only be taken by assault (Book 6 section 12). He sees the move ashore as betrayal of the raiding life.
+Captain at Crowwick with about twenty-five hungry raiders and a black sail marked with a raven. Can arrive at Carrick as the rival-crew complication. **Motives:** plunder, fame, contempt for "farmers". **Behaviour:** kills when it is quicker than talking; keeps a bargain while it pays. One of the few enemies who finish off the downed, always with a visible warning first (section 19). **Possible paths:** an ally who leads the van in the finale if given plunder rights and respect; an enemy who sells the household's plans to Orm; or a defeated rival whose camp at Crowwick is broken. Crowwick can only be taken by assault (Book 6 section 12). He sees the move ashore as betrayal of the raiding life.
 
 #### Gunnhild Sea-Mare (`L_GUNNHILD`, listed once as a leader)
 Saltvik's best shipwright and a trader-raider in her own right. Competes for salvage and cargo; honours contracts exactly. Ally path: ships and repairs for the finale. Rival path: undercuts the household's trade and buys its enemies' debts.
@@ -202,7 +204,7 @@ Saltvik's best shipwright and a trader-raider in her own right. Competes for sal
 Orm's tribute-collector with three ships. Disciplined, cold, never cruel for sport. Arrives in Chapter 4 with Orm's demand. **Secret:** his brother was one of the crew Heid gave to Rán. Evidence of the bargain's true price can turn him: a defected Asgrim brings ships and Orm's signals to the alliance.
 
 #### Fergal mac Cathail (`R_FERGAL`)
-Dún Fiach's ship-captain, who lost a brother to a Norse raid. Leads retaliation in Chapter 5 if the household has shamed Fiachra. Honourable: accepts surrender, keeps truces, respects a fair fight. Compensation and a shared victory can make him an ally. Seeks Órlaith's hand as a political match. Fiachra's champion, who fights at his side, has the heavy build (proposal).
+Dún Fiach's ship-captain, who lost a brother to a Norse raid. Leads retaliation in Chapter 5 if the household has shamed Fiachra. Honourable: accepts surrender, keeps truces, respects a fair fight. Compensation and a shared victory can make him an ally. Seeks Órlaith's hand as a political match. Fiachra's champion, who fights at his side, has the heavy build.
 
 #### Gilla Ciaráin (`R_GILLACIARAIN`)
 A Norse-Gaelic sellsword with one fast ship and no loyalties. Can be hired by Ardcarn or Kilbrecc to strike back, or by the player. Breaks contracts only when the other side breaks first.
@@ -211,19 +213,19 @@ A Norse-Gaelic sellsword with one fast ship and no loyalties. Can be hired by Ar
 *Orm is the external threat, but his offer is real. That is what makes him dangerous.*
 
 #### Orm Sveinsson, Sea King of Kaldness (`E_ORM`)
-About forty-five. Survived a wreck no one else survived and came out of it certain he was meant to rule the sea. He believes he is building order: one king, one tribute, safe water for everyone who pays. His fleet of six to ten ships never seems to meet a storm. **What he offers:** protection for tribute, a tenth of plunder and a hostage. **How he escalates:** demands grow until he asks for something the household cannot give, a drowning for Rán. **Ways to end him:** killed in battle, captured and held, exiled after his bargain breaks, or bargained with if he is beaten and Heid has broken her staff. **Stance:** cynical (proposal): he rules through Rán and Heid, and trusts his own luck more than the gods. He drowns hostages whose families failed to pay, and calls it the law of the sea (section 15).
+About forty-five. Survived a wreck no one else survived and came out of it certain he was meant to rule the sea. He believes he is building order: one king, one tribute, safe water for everyone who pays. His fleet of six to ten ships never seems to meet a storm. **What he offers:** protection for tribute, a tenth of plunder and a hostage. **How he escalates:** demands grow until he asks for something the household cannot give, a drowning for Rán. **Ways to end him:** killed in battle, captured and held, exiled after his bargain breaks, or bargained with if he is beaten and Heid has broken her staff. **Stance:** cynical: he rules through Rán and Heid, and trusts his own luck more than the gods. He drowns hostages whose families failed to pay, and calls it the law of the sea (section 15).
 
 #### Heid the Grey (`E_HEID`)
-Orm's seeress, a völva who works seiðr with staff and song. Her twin sons drowned; in the sea-light she can see them in Rán's hall, and serving the bargain lets her keep watching. Her grief explains her choices without excusing them. **Stance:** conventional, to the extreme (proposal): she believes every cruel rite is owed and never doubts. She gives captured crews to Rán (section 15). **She can be turned:** freeing Breccán's crew with the Bell shows her that the drowned can be released; renewing Manannán's compact offers her sons a way out. Persuaded, she breaks her staff herself. Long ago she came to Inis Rón to learn, and Brónach turned her away.
+Orm's seeress, a völva who works seiðr with staff and song. Her twin sons drowned; in the sea-light she can see them in Rán's hall, and serving the bargain lets her keep watching. Her grief explains her choices without excusing them. **Stance:** conventional, to the extreme: she believes every cruel rite is owed and never doubts. She gives captured crews to Rán (section 15). **She can be turned:** freeing Breccán's crew with the Bell shows her that the drowned can be released; renewing Manannán's compact offers her sons a way out. Persuaded, she breaks her staff herself. Long ago she came to Inis Rón to learn, and Brónach turned her away.
 
 #### Kolgrím the Burner (`E_KOLGRIM`)
-Orm's harbour-taker and the commander of the garrison on Skarvholm in the late game. Coarse, proud, fond of fire and of an audience. Heavy build (proposal). One of the few enemies who finish off the downed, always with a visible warning first (proposal; section 19). He will accept a public challenge to a hólmganga because refusing would shame him in front of his men. Killed in fair combat, his garrison loses heart; killed by stealth, they fight to the end.
+Orm's harbour-taker and the commander of the garrison on Skarvholm in the late game. Coarse, proud, fond of fire and of an audience. Heavy build. One of the few enemies who finish off the downed, always with a visible warning first (section 19). He will accept a public challenge to a hólmganga because refusing would shame him in front of his men. Killed in fair combat, his garrison loses heart; killed by stealth, they fight to the end.
 
 #### Gróa (`E_GROA`)
 Heid's apprentice, young, devout and frightened, sent to dig the Cup out of the Hollow Cairn. She has already lost diggers to the cairn and the sea. She believes the Door can be forced with enough blood. She can be fought, captured, or persuaded to stop, and if spared she knows things about Heid that matter in the finale. She is the frightened believer beside Heid's certainty: a cruel rite seen through someone who half doubts it.
 
 #### Kaldness
-Orm's hall on a northern isle. His crews are exiles, adventurers, conscripted hostages and men who saw what happens to those who refuse. Not all are loyal; defections are possible when the weather turns against him. Some of his grey-cloaks have the heavy build (proposal).
+Orm's hall on a northern isle. His crews are exiles, adventurers, conscripted hostages and men who saw what happens to those who refuse. Not all are loyal; defections are possible when the weather turns against him. Some of his grey-cloaks have the heavy build.
 
 ## 07 / Factions
 | Faction | Goal | Strength | Start attitude | Moves towards the household |
@@ -259,22 +261,22 @@ The mainland's smaller groups are tracked through their leaders. Hrefna's salt p
 | Ulf and Oddi | Creditor and debtor | Oddi's treatment by the household |
 | Thrand and Asgrim | Former shipmates who parted badly | Proof of Heid's sacrifices |
 | Asgrim and Heid | He blames her for his brother's drowning | Evidence of the bargain |
-| Heid and Brónach | Refused student and teacher | Nessa's stance; the compact's renewal |
+| Heid and Brónach | Refused student and teacher | Nessa's secret; the compact's renewal |
 | Heid and Gróa | Teacher and frightened apprentice | What happens at the cairn |
 | Kolgrím and Asgrim | Rival captains under Orm | Asgrim's defection |
-| Nessa and Brónach | Niece and aunt | Nessa's stance and branch |
+| Nessa and Brónach | Niece and aunt | Nessa's secret and branch |
 | Hild and Thorkel | Daughter and drowned father | His rites, or his walking |
 | Gudrun and the steerer | Matriarch and new leader | Rites honoured, kin protected, raids restrained |
 | Dubhthach and Fiachra | At feud over the grazing of Sliabh Carn | Who the household backs; a settlement brokered at the council |
 | Hrefna and Ottar | Steward and master; she keeps his secret books | What the books hide coming out; Runa's quest |
 | Ninnid and Colmán | Reeve and abbot | The tithe barns, the pilgrims' road |
-| Faolán and Fiachra (proposal) | Outlawed eldest son and father | The Frankish sword as proof; restoration |
-| Faolán and Órlaith (proposal) | Brother and sister, now rival claims to Dún Fiach | Whether Faolán is restored |
-| Hrolf and Ottar (proposal) | Dead grandfather and grandson | The opening of the mound; the barrow mail and the church silver |
-| Hild and Kolgrím (proposal) | The burned and the burner of Hvitness | Hild's vengeance, a duel, or letting it go |
-| Áine and Gilla Muire (proposal) | Archer and the chief who ordered her father's killing | The truth coming out in Áine's revenge quest |
-| Senán and Colmán (proposal) | Monk and the abbot who knows the Bell's secret | What Senán finds about the Bell's peace |
-| The pedlar and Orm (proposal) | Seller and buyer of news | Whether the household finds out, and what it does |
+| Faolán and Fiachra | Outlawed eldest son and father | The Frankish sword as proof; restoration |
+| Faolán and Órlaith | Brother and sister, now rival claims to Dún Fiach | Whether Faolán is restored |
+| Hrolf and Ottar | Dead grandfather and grandson | The opening of the mound; the barrow mail and the church silver |
+| Hild and Kolgrím | The burned and the burner of Hvitness | Hild's vengeance, a duel, or letting it go |
+| Áine and Gilla Muire | Archer and the chief who ordered her father's killing | The truth coming out in Áine's revenge quest |
+| Senán and Colmán | Monk and the abbot who knows the Bell's secret | What Senán finds about the Bell's peace |
+| The pedlar and Orm | Seller and buyer of news | Whether the household finds out, and what it does |
 
 ## 09 / Possible alliances
 *Allies are won by deeds and kept by terms. Each has a contribution, a demand and a condition that breaks the deal.*
@@ -353,9 +355,9 @@ Some quests are revenge, including **revenge killings in other towns**. A killin
 | Exile | The target leaves the coast and does not come back |
 | The truth | The reveal that changes the demand: who really ordered it, or what the dead did first |
 
-The one who asked judges the outcome by their culture and values: Kin and Glory want blood, Word accepts a lawful price, and Mercy is content with exile or the truth. A Gael holds a blood-price proper and expected; a Glory-minded Norse calls it carrying your kin in your purse (Book 6 section 01). A price paid or taken writes `BLOOD_PRICE_PAID` or `BLOOD_PRICE_TAKEN` (proposal; Book 6 section 01), and a challenge to a duel that is turned down writes `CHALLENGE_REFUSED` (proposal). Taking another way out can still cost their friendship, and the cost is spoken, not hidden.
+The one who asked judges the outcome by their culture and values: Kin and Glory want blood, Word accepts a lawful price, and Mercy is content with exile or the truth. A Gael holds a blood-price proper and expected; a Glory-minded Norse calls it carrying your kin in your purse (Book 6 section 01). A price paid or taken writes `BLOOD_PRICE_PAID` or `BLOOD_PRICE_TAKEN` (Book 6 section 01), and a challenge to a duel that is turned down writes `CHALLENGE_REFUSED`. Taking another way out can still cost their friendship, and the cost is spoken, not hidden.
 
-### Personal quest seeds (proposal)
+### Personal quest seeds
 Seven residents carry a personal quest in their entry in section 02: Hild, Oddi, Bran, Runa, Eithne, Thrand and Áine.
 
 ## 12 / Companions on foot
@@ -373,14 +375,14 @@ Seven residents carry a personal quest in their entry in section 02: Hild, Oddi,
 *Four people with small stories who turn up again and again across the game.*
 
 They travel the roads and the coast and are simulated like other travellers (Book 4). Each recurs, remembers what the household did when they last met, and carries news to and from it. Their details beyond the one-line descriptions are proposals.
-| Character | Who they are | Values | Their story (proposal) |
+| Character | Who they are | Values | Their story |
 |---|---|---|---|
 | **The poet** | A Gaelic file who walks between the halls of the coast and writes satires about the steerer | Glory 2, Word 2 | Makes verses from what the household is known to have done. A satire spreads with travellers and hurts the household's standing where it is sung; a praise poem has to be earned, and a poet who is paid to praise is known to have been paid |
-| **The pedlar** | A pedlar who always knows a rumour | Gain 3, Kin 1 | Sells needles, salt and news. He is the Gaelic pedlar who calls at the homestead once the household is on the mainland (Book 10 section 17). **Secret (proposal), the friendly pedlar:** he sells news to everyone, including Orm. He is not evil; he is poor |
+| **The pedlar** | A pedlar who always knows a rumour | Gain 3, Kin 1 | Sells needles, salt and news. He is the Gaelic pedlar who calls at the homestead once the household is on the mainland (Book 10 section 17). **Secret, the friendly pedlar:** he sells news to everyone, including Orm. He is not evil; he is poor |
 | **The hermit** | A hermit who walks between holy wells and lonely places | Faith 3, Mercy 2 | Speaks little and notices much. Knows the old holy places of the mainland, and asks nothing |
 | **The disgraced warrior** | A warrior who broke and ran in a battle and has not been forgiven | Glory 3, Word 1 | Hires on for food and a chance to put it right; may seek a good death, or come to want a life instead |
 
-## 14 / Secrets that surface (proposal)
+## 14 / Secrets that surface
 *The people's twists, gathered in one place. Each surfaces through play, not exposition.*
 
 | Twist | People | Where it lives |
@@ -404,7 +406,7 @@ Someone the household spared in an early raid (a guard who was let go, a keeper 
 | Norse belief | Thralls killed to follow a chieftain into death; captured crews given to Rán; blood-oaths that bind sons to their fathers' feuds; hostages drowned when their families fail to pay | Heid, who gives captured crews to Rán; Orm, who drowns hostages whose families failed to pay; Kolgrím's fires | Thrand, who deserted over Heid's rite; Tófi, who tells the ugly truth about old raids; Gróa, frightened at the cairn; Gudrun, who keeps the rites and restrains the raiding |
 | The Church at Kilbrecc | Bondmen who work the tithe farms and cannot leave; public floggings for penance; the abbot's curse, a fast and a malediction against a household (the Gaelic custom of fasting against an enemy); hired swords when prayer fails; shrines of the older faith smashed | Abbot Colmán; the hired swords he and Ardcarn can pay (Gilla Ciaráin) | Brother Senán, uneasy about the bondmen and the swords; Sister Muirenn, who records the Church's own sins; Ninnid, who worries for the poor of the tenant farms; Muiredach and Bran, whose faith is mostly kindness |
 | Gaelic custom | Satire that can ruin a person; the blood-price that lets the rich kill the poor; hostages starved when treaties break; geasa that doom people to impossible choices | The poet (section 13); Fiachra, whose honour-price is a king's; Eithne's late husband's kin, who would marry her off to settle a debt | Órlaith, who wants fewer feuds; Muiredach the hospitaller; Dubhthach, who feeds even Fiachra's riders |
-| The Keepers and the old powers | Seal-kin women bound by whoever holds their skin; the sick left on a skerry for the sea to judge; the Bog King's drowned offerings in the peat | The Keepers' law, which Brónach upholds; the Bog King (Book 6 section 13) | Nessa, who in every stance speaks of the skerry with grief, and who as the Runaway fled a binding (proposal) |
+| The Keepers and the old powers | Seal-kin women bound by whoever holds their skin; the sick left on a skerry for the sea to judge; the Bog King's drowned offerings in the peat | The Keepers' law, which Brónach upholds; the Bog King (Book 6 section 13) | Nessa, who whatever her secret speaks of the skerry with grief, and who as the Runaway fled a binding |
 
 ### Rules
 - **Shown, not glorified.** Cruelty is seen in what believers do and say, never celebrated by the game and never rewarded by a system for its own sake.
@@ -430,7 +432,7 @@ People of mixed birth (Bran, Senán, Áine, Gilla Ciaráin and much of Saltvik) 
 **Compassion is real, and speaks in period terms.** A Mercy-minded Norse rower does not say a killing was wrong because the man was innocent. She says there was no need of it, that it brings bad luck, that his kin will come, that it shamed the crew. A monk calls it a sin. A Gael says his honour-price must be paid.
 
 ### Stances
-A person's **stance** towards their own culture's code shapes how they justify themselves and what they say aloud. Values say what they care about; traits say how they behave. A stance can shift after strong events, as values do (section 01; Book 10 section 08, "Stances"). This is a different thing from Nessa's hidden stance (section 03).
+A person's **stance** towards their own culture's code shapes how they justify themselves and what they say aloud. Values say what they care about; traits say how they behave. A stance can shift after strong events, as values do (section 01; Book 10 section 08, "Stances").
 | Stance | Meaning |
 |---|---|
 | **Conventional** | Most people: keeps the code and judges by it |
@@ -438,7 +440,7 @@ A person's **stance** towards their own culture's code shapes how they justify t
 | **Cynical** | Uses the code's words for gain |
 | **Transgressive** | Openly breaks a central rule of the code, and knows it |
 
-### Who holds which stance (proposal)
+### Who holds which stance
 | Character | Stance | How it shows |
 |---|---|---|
 | Gudrun | Conventional | Keeper of the rites; the household's conscience by its own code |
@@ -455,7 +457,7 @@ A person's **stance** towards their own culture's code shapes how they justify t
 | Ottar Silkbeard | Cynical | Uses any code's words to close a deal |
 | Orm | Cynical | Rules through Rán and Heid; trusts his own luck more than the gods |
 | Heid | Conventional, to the extreme | Believes every cruel rite is owed; never doubts |
-| Nessa | Follows her hidden stance | Conventional as the Watcher; transgressive as the Bound or the Runaway (section 03) |
+| Nessa | Follows her secret | Conventional as the Watcher; transgressive as the Bound or the Runaway (section 03) |
 | Every other major character | Conventional | Until a writer or an event gives cause otherwise |
 
 ### Period views are spoken; the hard limits hold in the systems
@@ -481,7 +483,7 @@ Every resident and companion has **two to four traits**. One or two show at once
 | Gentle | Calms disputes; hates killing |
 | Drinker | Drinks at feasts and in hard times; unreliable the morning after |
 | Light-fingered | Steals small things from the stores (Oddi) |
-| Keen-eyed | Spots things first at sea and on watch, and an ambush's signs sooner |
+| Keen-eyed | Spots things first at sea and on watch, an ambush's signs sooner, and a secret entrance close by (Book 4 section 03) |
 | Sea-sick | Worse at sea; better on land |
 | Storyteller or singer | Raises happiness at the fire |
 | Grudge-holder | Remembers every slight; feuds |
@@ -491,7 +493,7 @@ Every resident and companion has **two to four traits**. One or two show at once
 Each person likes and dislikes particular foods (salt fish, honey, ale, kale), activities (fishing, carving, fighting), places, weather, people and gifts. Meeting a like raises happiness; ignoring one does not hurt, but meeting a dislike does. A gift that suits a like is the best gift (Book 10 section 08, "Likes and dislikes").
 
 ### Relationships between residents
-Residents form and break ties with each other through shared events: friends, rivals, grudges, mentors, drinking companions, and family. A shared fight or a meal together draws two people closer; a dispute lost to the other drives them apart (Book 10 section 08, "Relationships"). There is no romance system: no romance tie forms in play, and existing marriages and family ties remain (section 08). Starting relationships beyond the family ties of section 08 (proposal):
+Residents form and break ties with each other through shared events: friends, rivals, grudges, mentors, drinking companions, and family. A shared fight or a meal together draws two people closer; a dispute lost to the other drives them apart (Book 10 section 08, "Relationships"). There is no romance system: no romance tie forms in play, and existing marriages and family ties remain (section 08). Starting relationships beyond the family ties of section 08:
 | Residents | Relationship | Why |
 |---|---|---|
 | Tófi and Kári | Mentor | Tófi trains him, and tells him what glory costs |
@@ -508,8 +510,8 @@ A tendency is a small daily behaviour that makes a person readable from across t
 ### The household screen
 The household screen shows each person's known traits, likes and dislikes, relationships, happiness, friendship and fear, each with a line on why it is what it is ("Friendship: you brought her father's body home"; "Hidden traits: one still to learn"). It is interface text, so it may say things plainly that dialogue never would (Book 8 section 10); it never shows a trait that has not yet been discovered, or anyone's secret.
 
-### The residents (proposal)
-Every assignment below is a proposal except Oddi's Light-fingered trait, which is decided. Traits marked *hidden* are discovered in play.
+### The residents
+Every assignment below is decided (decision DD-1). Traits marked *hidden* are discovered in play.
 | Resident | Traits | Likes | Dislikes | Tendency |
 |---|---|---|---|---|
 | Hild | Brave, Keen-eyed; *hidden:* Grudge-holder | Salt fish; fishing; the bow in a rising wind; jokes at the fire | Being told to rest; a flat calm; kale | Walks the shore at dusk, watching the water where her father drowned |
@@ -536,7 +538,7 @@ Kári's Berserk trait fits his drengr ideal and is the one most likely to kill h
 *Major characters have branching conversation and reaction trees; minor characters have one or two lines.*
 
 ### Major characters
-Leaders, antagonists, residents and quest characters are **major**: every named character in sections 02 to 06, and the four wandering characters of section 13 (proposal). Each has **branching conversation and reaction trees** that change with:
+Leaders, antagonists, residents and quest characters are **major**: every named character in sections 02 to 06, and the four wandering characters of section 13. Each has **branching conversation and reaction trees** that change with:
 - time of day and season (a different greeting at dawn, at a winter fire, on a feast day);
 - the household's deeds and reputation, read by their culture and values;
 - their happiness, friendship and fear towards the steerer;
@@ -555,7 +557,7 @@ Farmers, traders, guards, travellers and the people of a site have one or two li
 ### Downed, not dead
 - **No bleed-out timer.** A friendly character brought down is downed and stays downed until the scene ends. Downed allies generally survive if the steerer, or anyone, carries them back to the boat or the village before the scene ends; on a journey a safe camp or a waystation counts (Book 10 section 06, "Downed and carried"). They come home with a serious wound.
 - **Carrying is slow** and leaves the carrier unable to fight. Heavy residents carry faster but tire sooner.
-- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner, proposal), and those always give a visible warning first: a raised weapon, a shout.
+- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner), and those always give a visible warning first: a raised weapon, a shout.
 
 ### Left behind
 A downed ally still lying on the field when the scene ends is captured or killed, according to the enemy: those who take captives (Norse raiders, Gaelic lords, Orm's men, the Church's hired swords) carry them off; outlaws in a hurry, wolves and the dead kill them. Captives can be rescued or ransomed later, and a captive resident's absence is felt at home. Leaving someone behind is a deed the household remembers (Book 10 section 08, "Resident left behind").
@@ -563,7 +565,7 @@ A downed ally still lying on the field when the scene ends is captured or killed
 ### Deaths
 Crew permadeath comes mainly from being left behind, from berserkers and cruel enemies, and from **scripted deaths**. The *Rán's mercy* option still prevents unscripted deaths; scripted deaths still happen.
 
-### Scripted deaths and death-choices (proposal)
+### Scripted deaths and death-choices
 | Death | Who it touches | What happens | Where |
 |---|---|---|---|
 | **Rán's debt** | Gudrun, and whoever the steerer chooses | Thorkel's debt to Rán comes due: someone must go into the sea. Gudrun offers herself; the steerer can accept, choose otherwise, or refuse and pay another way (the ship, the household's luck or a later life) | Book 4 section 12 (Thorkel's debt) |

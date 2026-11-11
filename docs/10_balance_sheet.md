@@ -411,7 +411,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Guard | 100 | Padded | Spear and shield | Holds posts, raises alarm |
 | Warrior | 110 | Padded, sometimes mail | Axe or sword and shield | Fights in line, flanks |
 | Raider (Crowwick) | 100 | Padded | Axe, spear | Aggressive, loots, rarely surrenders |
-| Archer | 80 | None | Bow, seax | Keeps distance, falls back |
+| Archer | 80 | None | Bow, seax | Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back |
 | Huscarl (Orm) | 130 | Mail, helmet | Sword or Dane axe | Disciplined, holds formation |
 | Outlaw | 90 | None | Mixed | Ambushes, flees when hurt |
 | Draugr | 160 | Resists stagger | Grip and blows | Slow, relentless at night; returns until its anchor is resolved |
@@ -458,7 +458,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 |---|---|---|
 | Broch fort | Kolgrím the Burner and 9 huscarls, 3 dogs | Captives held inside; dogs hear with three times the normal noise radius |
 | Barracks (old longhouse) | 12 raiders | Asleep at night unless the horn sounds |
-| Watch cairn on Rook Hill | 2, a horn and a beacon | If the horn sounds and they live 60 s more, they light the beacon: Orm's fleet sails 5 days early (its typical date moves 5 days earlier and pressure builds faster; the final battle still waits at its story gate, section 22) |
+| Watch cairn on Rook Hill | 2, a horn and a beacon | If the horn sounds and they live 60 s more, they light the beacon: it brings Orm's attack, the final battle, 5 days earlier and raises the pressure faster, while the final battle remains a gate (section 22) |
 | Hermit's cell | 1 sentry at night | Sees down into Gull Geo |
 | Naust Cove ships | 2 ships, 6 on watch | Crews join a fight 120 s after the horn; ships can be burned |
 | The dig at the cairn | Gróa, 4 guards, 6 conscripted diggers | Diggers are civilians |
@@ -506,19 +506,19 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | `HOSTAGE_TAKEN` | +1 | 0 | 0 | 0 | 0 | 0 |
 | Captive harmed | 0 | -3 | -1 | 0 | -1 | -2 |
 | Theft from the household's own stores | -2 | 0 | -1 | -3 | 0 | -3 |
-| `KILLING_HIDDEN` (proposal) | 0 | -2 | -2 | 0 | 0 | -3 |
-| `HOSPITALITY_BROKEN` (proposal) | 0 | -1 | -1 | -1 | -1 | -4 |
-| `BLOOD_PRICE_PAID` (proposal) | -1 | +1 | -1 | +1 | 0 | +2 |
-| `BLOOD_PRICE_TAKEN` (proposal) | +1 | +1 | -1 | +1 | 0 | +2 |
-| `RITES_DENIED` (proposal) | 0 | -1 | 0 | -2 | -3 | 0 |
-| `CHALLENGE_REFUSED` (proposal) | 0 | +1 | -3 | 0 | 0 | 0 |
+| `KILLING_HIDDEN` | 0 | -2 | -2 | 0 | 0 | -3 |
+| `HOSPITALITY_BROKEN` | 0 | -1 | -1 | -1 | -1 | -4 |
+| `BLOOD_PRICE_PAID` | -1 | +1 | -1 | +1 | 0 | +2 |
+| `BLOOD_PRICE_TAKEN` | +1 | +1 | -1 | +1 | 0 | +2 |
+| `RITES_DENIED` | 0 | -1 | 0 | -2 | -3 | 0 |
+| `CHALLENGE_REFUSED` | 0 | +1 | -3 | 0 | 0 | 0 |
 | `PROMISE_KEPT` | 0 | 0 | 0 | 0 | 0 | +3 |
 | `PROMISE_BROKEN` | 0 | 0 | 0 | 0 | 0 | -4 |
 | Resident left behind | 0 | -1 | 0 | -4 | 0 | -1 |
 | Crew member died | 0 | 0 | 0 | -2 | 0 | 0 |
 | Retreat with everyone alive | 0 | +1 | -2 | +2 | 0 | 0 |
 
-Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Mercy objects to cruelty towards captives, not to capture); theft from the household's own stores is judged more harshly than open plunder abroad. `delta = sum(weight x valence x witness x culture)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat `CIVILIAN_KILLED` Glory as +1. (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
+Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Mercy objects to cruelty towards captives, not to capture); theft from the household's own stores is judged more harshly than open plunder abroad. `delta = sum(weight x valence x witness x culture)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat the Glory valence of `CIVILIAN_KILLED` as 0: there is no glory in killing farmers, and no shame to a drengr either (decision DD-2). (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
 
 ### Deed reactions by culture
 *The witness's culture weighs a deed first (the `culture` factor in the delta above, and a fear or shame response), then their values, traits and stance (design addendum 2.3 section 2; Book 6 section 01). Positive is approval; the words are how they say it.*
@@ -529,15 +529,15 @@ Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Me
 | `THEFT` | x1.0; the Glory-minded scorn it | x0.8 against (less grave than burning) | x1.0 against (a sin) | x1.0 against (taking without giving) | x1.5 against (cheating the bargain) |
 | `CIVILIAN_KILLED` | x1.0 against (no glory, bad luck, vengeance) | x2.0 against (outrage; éraic by rank) | x2.0 against (a grave sin) | x1.5 against (blood on the shore) | x1.5 against |
 | `SURRENDERED_KILLED` | x1.5 against (níð-worthy shame) | x1.5 against | x2.0 against (murder) | x1.5 against (oath-breaking) | x1.5 against |
-| `KILLING_HIDDEN` (proposal) | x2.0 against (murder) | x1.5 against | x1.5 against | x0 | x1.0 against |
-| `HOSPITALITY_BROKEN` (proposal) | x2.0 against | x2.0 against (the briugu's curse) | x1.5 against | x1.5 against | x2.0 against |
+| `KILLING_HIDDEN` | x2.0 against (murder) | x1.5 against | x1.5 against | x0 | x1.0 against |
+| `HOSPITALITY_BROKEN` | x2.0 against | x2.0 against (the briugu's curse) | x1.5 against | x1.5 against | x2.0 against |
 | `SACRILEGE` at a church | x0.2 against (bad luck to the superstitious) | x1.5 against | x3.0 against (the worst of crimes) | x0 | x0.5 against |
 | `SACRILEGE` at an old shrine or mound | x1.5 against (the land-spirits) | x1.0 against (the aos sí remember) | x1.0 for (a good work) | x2.0 against | x0.5 against |
-| `BLOOD_PRICE_PAID` / `BLOOD_PRICE_TAKEN` (proposal) | x1.0 for; Glory 2 or more against | x1.5 for | x1.0 for | x0 | x1.5 for |
+| `BLOOD_PRICE_PAID` / `BLOOD_PRICE_TAKEN` | x1.0 for; Glory 2 or more against | x1.5 for | x1.0 for | x0 | x1.5 for |
 | `HOSTAGE_TAKEN` | x0 (ordinary dealing) | x0 | x0 | x0 | x0 |
 | `PROMISE_BROKEN` | x1.5 against | x2.0 against (sureties ruined) | x1.5 against (a sin) | x3.0 against | x2.0 against |
-| `RITES_DENIED` (proposal) | x1.5 against (invites draugar) | x1.0 against | x2.0 against (the soul denied) | x1.5 against | x1.0 against |
-| `CHALLENGE_REFUSED` (proposal) | x1.5 against (cowardice; níð) | x1.0 against | x1.0 for (righteous) | x0 | x0 |
+| `RITES_DENIED` | x1.5 against (invites draugar) | x1.0 against | x2.0 against (the soul denied) | x1.5 against | x1.0 against |
+| `CHALLENGE_REFUSED` | x1.5 against (cowardice; níð) | x1.0 against | x1.0 for (righteous) | x0 | x0 |
 
 People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger of their two cultures' factors.
 
@@ -554,7 +554,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Gentle | Disputes among those watching x0.5; friendship lost over a killing x1.5 |
 | Drinker | Drinks at feasts and in hard times; work x0.7 the morning after |
 | Light-fingered | Takes one small item from the stores every 6 days, unless watched |
-| Keen-eyed | Sight +2 tiles at sea and on watch; spots ambush signs 3 tiles sooner |
+| Keen-eyed | Sight +2 tiles at sea and on watch; spots ambush signs 3 tiles sooner; remarks on a secret entrance within 4 tiles (section 20) |
 | Sea-sick | Work x0.8 at sea; x1.05 on land |
 | Storyteller or singer | Happiness +5 for everyone at the fire |
 | Grudge-holder | Grudges never fade; friendship lost to a slight x1.5 |
@@ -673,7 +673,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Storehouse | 8 x 4 | 5 timber, 1 iron | 6 | No grain loss; capacity 40 lots |
 | Byre | 10 x 5 | 5 timber | 6 | Winter shelter for 6 cattle |
 | Watch cairn | Rook Hill | Stone | 4 | One watch of warning when manned |
-| Workshop | 6 x 5 | 3 timber | 4 | Carpentry, tools, shields |
+| Workshop | 6 x 5 | 3 timber | 4 | Carpentry, tools, shields, fletching (section 21, Arrows) |
 | Shrine, cross or hammer-post | 4 x 3 | 1 timber | 2 | Faith morale for those it suits |
 | Palisade (mainland) | Per 2 tiles | 1 timber | 1 | Defence |
 | Gate and watch platform | 4 x 2 | 3 timber, 1 iron | 4 | Defence, sight x1.5 |
@@ -716,6 +716,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Build (hammer, raise a beam, thatch) | 30 | 2 |
 | Smith | 30 | 2 |
 | Carpentry | 30 | 1 |
+| Fletch arrows | 30 | 1 |
 | Mend nets | 20 | 0 |
 | Herd | 30 | 1 |
 | Milk | 15 | 0 |
@@ -758,7 +759,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 
 | Day | Milestone | Residents | Voyages (raids) | Tools and weapons | Ship | Buildings | Food and stores |
 |---|---|---|---|---|---|---|---|
-| 6 | Chapter 1 done; boat launched | 4 | 0 | Wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line | T1, 1 fitting | Sail shelter, fire | 8 to 10 days runway |
+| 6 | Chapter 1 done; boat launched | 4 | 0 | The steerer's seax and hunting bow (found on Wreck Strand, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line | T1, 1 fitting | Sail shelter, fire | 8 to 10 days runway |
 | 15 | First raid home | 5 (Eithne) | 1 (1) | +1 to 2 iron lots | T1, 1 fitting | Forge marked out | 30 days runway |
 | 30 | Two raids and one trade; plots sown | 6 to 8 (Kolbeinn, Asa) | 3 (2) | Axes 3, adze, 2 sickles, 2 spades, 2 nets; spears for all, 5 shields, 2 axes, 1 sword, 1 helmet | T1, 2 fittings | Forge, racks, longhouse framed; 30 peat loads drying | 150 rd stored; 25 days runway |
 | 45 | The Followers arrive | 12 to 13 | 5 (3) | Spears and shields for all fighters | T1, 3 fittings | Longhouse done, smoke-house; hay cutting begins | 200 rd; runway 15 days (more mouths) |
@@ -803,7 +804,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 ### Year 2 and the mainland
 | Days | Threat | Condition | Warning | Scale | Counter |
 |---|---|---|---|---|---|
-| 121 to 150 | The coast's answer (Book 6 scenario 8) | Ledger | Precursors 5 days ahead | Raid, arson, interdict or envoy | Settle or defend |
+| 121 to 150 | The coast's answer (Book 6 scenario 8) | Ledger | Precursors 5 days ahead; an attack on Skarvholm comes on its fixed night, after at least 7 days' warning (section 22) | Raid, arson, interdict or envoy | Settle or defend |
 | 130 to 160 | Orm's scout ship probes | Always | A grey sail off Rook Hill | 1 ship | Hide strength or show it |
 | About 140 | Storm-tide slumps Naust Cove | Always | Spring tide forecast | Landing lost | Move the boat; new slip |
 | 150 to 180 | The spring fails at every spring tide; refugees | Always | Brackish water | Thirst, crowding | Haul water; shelter plans |
@@ -814,7 +815,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | About 220 | Ulf's attack on the mainland home | Ulf hostile | His raven sail | 25 | Defences, allies |
 | About 228 | Orm takes Skarvholm as a forward base | Always; outpost residents are taken captive | Smoke over the island, seen from the mainland | 2 ships, about 40 | Abandon, reinforce, or accept; rescue in the Return |
 | 241 to 252 | The Return to Skarvholm (required) | Always | The Keepers' revelation and scouting reports | Garrison in section 07 | Book 6 scenario 9; section 13; checkpoint before landing; one retry before the household sets out for the final battle |
-| 256 to 270 | Orm's fleet and the finale | Always | The washer at the ford | 6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier if the beacon was lit (still a gate) | Everything prepared |
+| 256 to 270 | Orm's fleet and the finale | Always | The washer at the ford | 6 to 10 ships; two fewer if the Naust ships were burned; typically 5 days earlier, with the pressure rising twice as fast, if the beacon was lit (still a gate, section 22) | Everything prepared |
 
 ## 12 / Guard rails
 *Rules that must stay true whatever the numbers become.*
@@ -941,7 +942,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | dayPlan | A day (06:00 to 02:00, 20 game hours) fits one or two nearby sites; far sites need a camp on the way, or the ship |
 
 ### Route encounters
-*Rolled per crossing (proposal values, for tuning after playtests).*
+*Rolled per crossing (starting values, for tuning after playtests).*
 
 | Key | Value |
 |---|---|
@@ -1115,7 +1116,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | nightRisk | A night event: 5% on a road, 15% in the wilderness, 25% deep in the wilderness; x1.5 in winter |
 | riskReduction | A good fire x0.67, a companion on watch x0.67, a sheltered spot x0.75 (multiplied) |
 | companionsOnFoot | Up to 2 friendly characters |
-| waystation | A safe camp with a small store at one camp spot per route (proposal): 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25 |
+| waystation | A safe camp with a small store at one camp spot per route: 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25 |
 
 ## 16 / Dungeons and equipment
 | Reward | Dungeon | Effect | Cost |
@@ -1126,6 +1127,8 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | A Frankish sword | Outlaws' hill-fort | Sword damage x1.25 and recovery 4 ticks shorter | Worn at Dún Fiach it is an accusation: Dún Fiach hostile until settled |
 | The Cailleach's maul | The Cailleach's Cave | The heavy attack shatters shields; water it strikes freezes (an ice bridge for 120 s; bog frozen for 10 tiles round) | Works only in autumn and winter; used in summer, a storm within 3 days |
 | The kelpie bridle | Loch Carn (quest) | Summons the water-horse to cross lochs, bogs and rivers at 7 tiles per second | Kept near water at night: 25% a night that the horse drowns its rider unless the steerer refuses it |
+
+The four small dungeons behind the routes' secret entrances, and their rewards, are in section 20 ("Secret entrances").
 
 ## 17 / The living world
 ### Density and travellers
@@ -1140,9 +1143,9 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 ### Visiting traders
 | Trader | When | Brings |
 |---|---|---|
-| Saltvik knarr | About every 10 days in the sailing season | Iron, salt and cloth; buys hides, wool and fish; leads |
+| Saltvik knarr | About every 10 days in the sailing season | Iron, salt, cloth and arrows by the dozen; buys hides, wool and fish; leads |
 | Gaelic pedlar | Every 6 days once the household is on the mainland | Needles, dyes, small goods and news |
-| Wandering smith | Once a season | Repairs and a weapon to order |
+| Wandering smith | Once a season | Repairs, a weapon to order and iron arrowheads |
 | The sea-wife | 10% a calm day | Odd goods and a lead |
 | Ulf's men | Every 15 days while stolen goods are held | Buy marked goods at 60% of value |
 
@@ -1203,6 +1206,27 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | wildernessArea | At least one secret, one resource worth the trip, one story and one danger |
 | change | Every area changes with season and tide |
 | objective | The current goal is always shown |
+
+### Secret entrances
+*Four wilderness routes hide a secret entrance to a small dungeon (decision DD-10; Book 4 section 03, Book 6 section 13, Book 9 section 14). Starting values, for tuning after playtests.*
+
+| Entrance | Route | Hints | Reward and effect |
+|---|---|---|---|
+| The fallen-oak souterrain | The Black Wood path | A cross cut in a holly; a draught and mist at the roots; a dressed lintel for a keen-eyed companion; rumours | A boar-spear: a spear (section 06) whose point holds a charging boar, wolf or person at 1.7 tiles, stopping the charge, with thrust damage x1.5 against a charger; windup +4 ticks and combo 1. Lore: one answer for the riddling doors in the heart |
+| The cave behind the falls | The High Pass | Dippers into the falls; the watchmen's chevron on the tower lintel and by the pool; a dark hollow behind the winter ice; rumours | A wolfskin cloak: the Cold reduction of the stamina bar is halved (-10 instead of -20, section 15); dogs notice the wearer at 1.5 times their range; Fiachra's riders are wary of a wearer they do not know. Lore: the brooch of Dún Fiach on the outlaws' leader |
+| The heather barrow | The moor road | Spirals on a kerbstone; wheatears in the kerb; a draught at the gap; rumours | An iron helmet (section 06, `helmet`). Taken without leaving a weapon or 1 oz of silver in its place: `SACRED_TAKEN`, and 20% a night of the barrow-dead coming to a camp on the moor road until it is returned. Lore: what the Door of Three Truths asks |
+| The otter-cave behind the weir | The river path and the Ford | Otters behind the weir; a ship cut in an alder; Cuán's story; rumours | A rune-cut yew bow: reach x1.25, damage x1.2, a 36-tick draw and stamina 14 (against the bow's 30 and 10, section 06); with 8 iron-headed arrows. Seen at Saltvik, its owner's kin claim it: returned, Saltvik regard +10; kept, Saltvik regard -10. Lore: the signs of a coming spate, which warn of the Ford's closing a day early |
+
+| Key | Value |
+|---|---|
+| routesWithEntrances | 4 of the 6 routes: the Black Wood path, the High Pass, the river path and the moor road |
+| rumoursPerEntrance | 3 in the line pools of travellers and minor characters |
+| rumourWrong | 1 in 3: one of each entrance's three rumours is deliberately wrong, pointing to a harmless place |
+| hintSeenFrom | Every hint sign is in view from a path on the approach |
+| draughtShows | Within 3 tiles of the crack: stirring litter at any time; a breath of mist before 09:00 in autumn, winter and spring |
+| keenEyedNotice | A keen-eyed companion within 4 tiles remarks on the entrance (section 08, Traits) |
+| iceCurtain | The cave behind the falls in winter: 6 axe blows (90 game minutes, noise 10 tiles) or one blow of the Cailleach's maul |
+| weirClosed | The otter-cave is closed while the Ford is in spate (section 14) |
 
 ## 21 / Controls and camera
 *Mouse-first controls in the style of a farming RPG, with keyboard-only and gamepad play kept whole (Book 2 section 21; Book 7 section 14, Camera feel). The logical viewport, tiles and sight ranges are unchanged.*
@@ -1271,14 +1295,14 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | finds | 1 to 4 arrows in a cache, a dead archer's quiver or a hunter's camp; traders sell them by the dozen (section 04) |
 
 ## 22 / Story gates
-*The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline.*
+*The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline. The one exception is the defence of Skarvholm, which comes on a fixed night (decision DD-3).*
 
-| Gate (proposal) | Typical day | Readiness screen shows |
+| Gate | Typical day | Readiness screen shows |
 |---|---|---|
 | The launch (end of Chapter 1) | 6 | The boat's repairs, crew, stores |
 | The Carrick raid | 12 to 15 | Crew, ship, plan, equipment |
 | The reply to Asgrim | 118 to 120 | Silver, allies, the household's answer |
-| The defence of Skarvholm | 121 to 150 | Watch, walls, weapons, warning |
+| The defence of Skarvholm (fixed night: the one gate that does not wait) | 135 (see defenceNight) | Watch, walls, weapons, warning |
 | The household council | About 180 | Stores, the island's state, the two sites |
 | The move ashore | 181 to 210 | Ships, cargo, the site secured |
 | The Gathering | 211 to 240 | Allies, demands, offers |
@@ -1290,6 +1314,14 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | waiting | A dated story event waits at its gate; the calendar, seasons, crops and winter go on |
 | pressure | While a gate waits past its typical day: a demand grows 10% every 10 days, and one rumour spreads every 5 days; pressure never starts a gate |
 | warning | Every readiness screen says plainly that the gate is a point of no return |
+| fixedDate | The defence of Skarvholm only, when the coast's answer is an attack: it comes on its night whatever the player does, and has no pressure because it never waits |
+| defenceNight | Day 135; if the reply to Asgrim is given after day 125, 10 days after the reply |
+| warningDays | 7: omens, scouts and Thrand (if he is with the household) warn at least 7 days before the night |
+| heldHome | From the warning, the travel map and the sea map refuse any journey or voyage whose return would come after dusk on the night, and say why |
+| broughtHome | A steerer away when the warning comes gets word and is home by dusk on the day of the night; the journey or voyage is cut short |
+| readinessOpens | At dusk on the night; the attack comes at nightfall |
+| beaconEarlier | The beacon lit in the Return brings the final battle's typical day 5 days earlier (it is still a gate) |
+| beaconPressure | With the beacon lit, the final battle's pressure steps come twice as often (a demand grows 10% every 5 days; a rumour every 2.5 days) |
 
 ## 23 / Conversation depth
 *The minimum for each major character (leaders, antagonists, residents, quest characters), checked by content lint (design addendum 2.3 section 2; Book 8).*
@@ -1304,7 +1336,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | minorLines | Minor characters: pools of 1 or 2 lines, by culture, season, time of day, weather and the household's deeds |
 
 ## 24 / Heavy build
-*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Proposal values.*
+*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Starting values, for tuning after playtests.*
 
 | Key | Value |
 |---|---|

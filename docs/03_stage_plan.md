@@ -37,6 +37,7 @@ _Planning only. No stage has been implemented or tested._
 - Every stage that adds a place, character or system has the acceptance check "its sounds and music meet the Book 11 audio standard (section 12), with captions, and were listened back with `npm run audio:render`", tested by `tests/unit/audioCoverage.test.ts` (every sound event in the content has an implementation and a caption) and reported in the stage report. If a sound is missing or uncaptioned, the stage is not done.
 - Every new place starts with a mockup to that standard, and the stage waits for the user's approval of it before the place is built (the "First step" of Stages 7, 10, 14, 16, 21, 28, 29, 30, 31, 32, 34 and 37).
 - Every new character starts with rendered sprite sheets at 1x and 4x and a short animated capture, and the stage waits for the user's approval of them before they are wired into the game.
+- **Stages 7 to 12 run without waiting (decision DD-11).** The user authorised these stages to run on: their mockups and new character sheets are still made first, reviewed against the standard, logged in the decision log and flagged in the stage report for the user's review, rather than waited on. The build gate at Stage 12 still stops for the user's playtest, and every other rule here stands.
 
 ### Gates
 Stages 12, 20, 24 and 33 are **build gates**: the user playtests the build personally and writes a short note against the Book 1 fun tests. Wider playtests can be added later.
@@ -96,7 +97,7 @@ If a prerequisite is missing or requirements conflict, stop and ask before writi
 | 12 | Rating and violence | Mature: lots of blood and gore; civilians and the surrendered can be killed, with consequences that depend on witnesses and evidence. Hard limits stay: no children as actors, no sexual violence, no player torture |
 | 13 | How literal the myths are | Ambiguous: powers appear through signs and proxies; relics' power never settled |
 | 14 | Language and names | A mix: native-form names with accents, English dialogue with a curated set of Norse and Irish words (Book 8) |
-| 15 | Nessa's stance | Seeded at random per campaign and hidden |
+| 15 | Nessa's secret | Seeded at random per campaign and hidden (called her stance until decision DD-5) |
 | 16 | Save model | Free saves when safe, rotating autosaves and checkpoints |
 | 17 | Romance | No romance system; characters may have existing relationships |
 | 18 | Authored versus procedural | Hand-authored scenarios and cast; generated residents and minor variants only |
@@ -184,7 +185,7 @@ states, stems, stingers, ambience and captions. Test the safe rule and music tra
 ### Stage 6: Player controller and the opening
 **Goal:** control within seconds and the first rescue.
 **Prerequisites:** Stage 5.
-**Deliverables:** naming and body-model choice (two models, unlabelled); walk, run, sneak, interact, carry; Wreck Strand from Book 9; Hild calling from the shallows, knee to waist deep and partly submerged, with ripples and spray round her, and carried above the tide line; final sprites for the steerer models and Hild on 32 x 48 canvases with equipment layers (body, clothing, cloak, and empty helmet, armour, shield and weapon layers), a 6-frame walk with the 1 px bob and stronger arm swing, an 8-frame run, breathing idles, secondary motion on hair and cloth, soft ground shadows and the steerer's madder-red accent (rework per design addendum 2.2); dust, footprints and splashes; water depth bands with masking, ripple rings, splashes, slower movement and dripping after leaving the water; generated footsteps that differ by surface, wading and splashing sounds, and Hild's call; the mouse-first controls (the twelve-slot hotbar chosen by number keys or wheel, the target-tile cursor within reach, left-click to use the selected item, right-click to interact, out-of-reach feedback), the gamepad target cursor on the right stick and keyboard-only play, all remappable; the camera's smoothed look-ahead towards the cursor (Book 10 section 21); people about 40 px tall, with the boat and the broch door to match.
+**Deliverables:** naming and body-model choice (two models, unlabelled); walk, run, sneak, interact, carry; Wreck Strand from Book 9; Hild calling from the shallows, knee to waist deep and partly submerged, with ripples and spray round her, and carried above the tide line; final sprites for the steerer models and Hild on 32 x 48 canvases with equipment layers (body, clothing, cloak, and empty helmet, armour, shield and weapon layers), a 6-frame walk with the 1 px bob and stronger arm swing, an 8-frame run, breathing idles, secondary motion on hair and cloth, soft ground shadows and the steerer's madder-red accent (rework per design addendum 2.2); dust, footprints and splashes; water depth bands with masking, ripple rings, splashes, slower movement and dripping after leaving the water; generated footsteps that differ by surface, wading and splashing sounds, and Hild's call; the mouse-first controls (the twelve-slot hotbar chosen by number keys or wheel, the target-tile cursor within reach, left-click to use the selected item, right-click to interact, out-of-reach feedback), the gamepad target cursor on the right stick and keyboard-only play, all remappable; the camera's smoothed look-ahead towards the cursor (Book 10 section 21); people about 40 px tall, with the boat and the broch door to match. **Added after the Stage 6 rework, as a Part 1 change (decision DD-6):** the steerer wakes with nothing in hand (shove and dodge only); a seax in the wreck's debris near the waking place and a hunting bow with a quiver of six arrows in the wreck's stern at the east end of Wreck Strand, each marked by a glint (Book 7 section 10), with Hild's line naming the bow after the rescue (Book 8); a once-only pickup tooltip naming each item's controls for the current input, kept in the help pages (Book 2 section 21); the bow drawn on the steerer's back only once it is owned.
 **Acceptance checks:**
 1. Control within five seconds of the naming screen.
 2. Movement, interaction and carrying are taught by the rescue, without a control list.
@@ -195,6 +196,7 @@ states, stems, stingers, ambience and captions. Test the safe rule and music tra
 7. Sounds meet the Book 11 audio standard (section 12), with captions: footsteps vary every step and differ on grass, shingle, sand and water, and sit below the effects that matter in the mix.
 8. The rescue can be finished with the mouse and hotbar, with the keyboard alone and with a gamepad; a click on a tile beyond reach is refused with visible feedback and never moves the simulation.
 9. The camera's look-ahead never exceeds Book 10's cap, and with the cursor held still the drawn camera offset does not change by a pixel back and forth (no jitter) over 10 seconds.
+10. The steerer starts with an empty hotbar and no weapon layer; a scripted new player picks up the seax within Book 10's `seaxFoundBy` and the bow and its arrows within `bowFoundBy`; each pickup's tooltip names the controls of the input in use, shows once per item kind, and appears afterwards in the help pages.
 ```
 PROMPT  Stage 6. Read Book 4 section 08 (Chapter 1 beats 1-2), Book 9 sections 01-03, Book 7
 sections 01, 07, 10 and 14, Book 2 sections 10 and 21, Book 8 section 03, Book 10 sections 02 and
@@ -244,13 +246,14 @@ deltas, thresholds and bands.
 ### Stage 9: Combat v1
 **Goal:** real-time fighting that reads clearly and hurts.
 **Prerequisites:** Stage 8.
-**Deliverables:** downed, not dead (design addendum 2.3 section 7): a downed ally does not bleed out, and is carried at carry speed to a safe place; enemies do not finish the downed except berserkers and named cruel enemies after a visible warning; the berserk trait in a fight; heavy-build fighters' poise, wind-up and hits (Book 10 section 24); combat aimed with the cursor (melee snapping to the nearest facing; bows and thrown spears aimed freely with an aim line while drawing, and the camera looking further ahead while aiming; Book 10 section 21), with parry, block and dodge on their own keys and the right stick aiming on a gamepad; combat states and Book 10 frame data: light combos, charged heavy with two tells, parry and riposte, block and guard break, dodge, shove, stamina and four-way facing; gore particles, decals, bloodied overlays, dismemberment and persistent corpses with the gore setting; downed and bleed-out; the steerer's death and game over with *Second wind*; surrender and finishers; morale; perception basics; three wreck-scavengers; quick commands; generated combat music and SFX (the Book 11 combat set, scaled by the gore setting).
+**Deliverables:** downed, not dead (design addendum 2.3 section 7): a downed ally does not bleed out, and is carried at carry speed to a safe place; enemies do not finish the downed except berserkers and named cruel enemies after a visible warning; the berserk trait in a fight; heavy-build fighters' poise, wind-up and hits (Book 10 section 24); combat aimed with the cursor (melee snapping to the nearest facing; bows and thrown spears aimed freely with an aim line while drawing, and the camera looking further ahead while aiming; Book 10 section 21); missiles loosed standing still by everyone, crew and enemy archers stopping to draw and loose, every shot a visible projectile with travel time, arc and shadow that can miss, is stopped by shields and cover and sticks in what it hits, and arrows counted as an item, recovered or broken (decisions DD-7 to DD-9; the steerer's own bow, arrows and projectiles were first built with the Part 1 changes after the Stage 6 rework, and this stage brings them to the crew and enemies), with parry, block and dodge on their own keys and the right stick aiming on a gamepad; combat states and Book 10 frame data: light combos, charged heavy with two tells, parry and riposte, block and guard break, dodge, shove, stamina and four-way facing; gore particles, decals, bloodied overlays, dismemberment and persistent corpses with the gore setting; the steerer's death and game over with *Second wind*; surrender and finishers; morale; perception basics; three wreck-scavengers; quick commands; generated combat music and SFX (the Book 11 combat set, scaled by the gore setting).
 **Acceptance checks:**
 1. Frame data matches Book 10; every attack's tell precedes its active frames by at least 6 ticks.
 2. A parry inside the window staggers the attacker; a full charge breaks a block but not a parry.
-3. The steerer's death shows game over and reloads the latest autosave; a downed ally never dies on a timer.
-4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-09/` against `docs/art/reference/`).
-5. Sounds meet the Book 11 audio standard (section 12), with captions: the combat set and combat music in play, scaled by the gore setting.
+3. No one moves while drawing a bow or holding a spear to throw (the steerer, crew and enemies); every missile is a simulated projectile whose flight, hits, misses, blocks by shields and cover, sticking, breaking and recovery match Book 10 section 21 and replay identically from a seed; with no arrows the bow cannot be drawn.
+4. The steerer's death shows game over and reloads the latest autosave; a downed ally never dies on a timer.
+5. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-09/` against `docs/art/reference/`).
+6. Sounds meet the Book 11 audio standard (section 12), with captions: the combat set and combat music in play, scaled by the gore setting.
 ```
 PROMPT  Stage 9. Read Book 1 section 09, Book 2 sections 12-13, Book 7 section 12, Book 10 sections
 06-07 and Book 11 section 07. Implement combat, gore, death rules, surrender, finishers, morale,
@@ -400,7 +403,7 @@ and the battle budget.
 ### Stage 18: Ledger, knowledge and hostility
 **Goal:** the coast remembers, and some of it wants you dead on sight.
 **Prerequisites:** Stage 17.
-**Deliverables:** deeds including `CIVILIAN_KILLED` and `SURRENDERED_KILLED`, and the new deed tags (proposal: `KILLING_HIDDEN`, `HOSPITALITY_BROKEN`, `BLOOD_PRICE_PAID` and `BLOOD_PRICE_TAKEN`, `RITES_DENIED`, `CHALLENGE_REFUSED`); witnesses reacting first by their culture, then values, traits and stance (Book 10 section 08, Deed reactions by culture), in period terms; identification from marks, faces and evidence; carriers and discovery; place and faction updates; hostility and territory guards; the no-quarter rule; crew judgement on return, moving friendship and fear (Book 10 section 08); consequences that arrive 10 to 40 days later; seed-grain hooks.
+**Deliverables:** deeds including `CIVILIAN_KILLED` and `SURRENDERED_KILLED`, and the new deed tags (`KILLING_HIDDEN`, `HOSPITALITY_BROKEN`, `BLOOD_PRICE_PAID` and `BLOOD_PRICE_TAKEN`, `RITES_DENIED`, `CHALLENGE_REFUSED`); witnesses reacting first by their culture, then values, traits and stance (Book 10 section 08, Deed reactions by culture), in period terms; identification from marks, faces and evidence; carriers and discovery; place and faction updates; hostility and territory guards; the no-quarter rule; crew judgement on return, moving friendship and fear (Book 10 section 08); consequences that arrive 10 to 40 days later; seed-grain hooks.
 **Acceptance checks:**
 1. The ledger is append-only and deed tags match Book 6.
 2. A massacre with no escaping witness and no linked evidence stays known only to the household.
@@ -416,12 +419,12 @@ hostility, no quarter, crew judgement and delayed consequences. Test each rule.
 ### Stage 19: The homestead v1, away simulation and visiting traders
 **Goal:** a home that runs in real time, that the player wants to work in, and that carries on when they leave.
 **Prerequisites:** Stage 18.
-**Deliverables:** every homestead task with its player action and work loop animation (felling and splitting timber, cutting peat, sowing, weeding, watering the kale garden, harvesting, threshing, building, smithing, carpentry, net-mending, fishing, herding, milking, shearing, cooking, tending wounds, repairing the ship), with wood chips, sparks, chaff and peat crumbs; building designation with placement rules, adjacency and removal; the steading plan from Book 9; S2 buildings; the seasons model (crops, spoilage, fuel, livestock, sickness); steward policy; the away simulation (Book 10 section 19: reduced efficiency, the watch resolving threats, queued events for the report on return); visiting traders on their schedules (the Saltvik knarr and, later, the others in Book 10 section 17); morning report v1; watching residents at work; building art and stages.
+**Deliverables:** every homestead task with its player action and work loop animation (felling and splitting timber, cutting peat, sowing, weeding, watering the kale garden, harvesting, threshing, building, smithing, carpentry, net-mending, fishing, herding, milking, shearing, cooking, tending wounds, repairing the ship), with wood chips, sparks, chaff and peat crumbs; crafting at the workshop, including fletching arrows from shaft-blanks, feathers and bone or iron heads (Book 10 section 21, "Arrows"; decision DD-8); building designation with placement rules, adjacency and removal; the steading plan from Book 9; S2 buildings; the seasons model (crops, spoilage, fuel, livestock, sickness); steward policy; the away simulation (Book 10 section 19: reduced efficiency, the watch resolving threats, queued events for the report on return); visiting traders on their schedules (the Saltvik knarr and, later, the others in Book 10 section 17); morning report v1; watching residents at work; building art and stages.
 **Acceptance checks:**
 1. Invalid placements show the failing rule; valid ones are built by residents and the player.
 2. A headless 120-day delegated run meets the Book 10 survival targets with no player input.
 3. A day with the player working beside residents produces noticeably more than one without.
-4. Every task has a work loop animation for the steerer and residents and takes its Book 10 time.
+4. Every task has a work loop animation for the steerer and residents and takes its Book 10 time; fletching at the workshop turns its Book 10 inputs into arrows in the store or the steerer's count.
 5. Away for ten days, the home produces at the Book 10 efficiency (higher with a skilled steward), never starves if food exists, and the return report lists what happened.
 6. Traders arrive on the Book 10 schedule and bring goods, prices and leads.
 7. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-19/` against `docs/art/reference/`).
@@ -555,17 +558,19 @@ scenarios, the karvi, harvest, winter and the Year 1 threats. Test the winter ta
 ### Stage 27: Chapter 5, The Long Memory
 **Goal:** the coast answers, and the island begins to fail.
 **Prerequisites:** Stage 26.
-**Deliverables:** the answer scheduler with precursors; the defence of Skarvholm as a gate (defences with watch, warning and preparation: walls, traps, stakes, archers on platforms) with its scripted watch-leader death (proposal) using Book 9's landing points, blind spots and the watch cairn; settlement options; island failure; the household council.
+**Deliverables:** the answer scheduler with precursors; the defence of Skarvholm as the one fixed-night gate (decision DD-3): its night set by Book 10 section 22, warning at least seven days ahead from omens, scouts and Thrand, the travel map and the sea map refusing any journey or voyage that would keep the steerer away that night, and a steerer already away brought home by dusk on the day; defences with watch, warning and preparation (walls, traps, stakes, archers on platforms) and its scripted watch-leader death, using Book 9's landing points, blind spots and the watch cairn; settlement options; island failure; the household council.
 **Acceptance checks:**
 1. The answer matches the ledger for each autoplay policy.
 2. Precursors appear at least five days before every answer.
 3. Every answer can be settled before or during the fight.
-4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-27/` against `docs/art/reference/`).
-5. Sounds meet the Book 11 audio standard (section 12), with captions.
+4. When the answer is an attack, it comes on its fixed night whatever the player does; the warning comes at least Book 10's `warningDays` ahead; from the warning, no journey or voyage that would keep the steerer away that night can start, and each refusal says why; a steerer away when the warning comes is home by dusk on the day.
+5. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-27/` against `docs/art/reference/`).
+6. Sounds meet the Book 11 audio standard (section 12), with captions.
 ```
 PROMPT  Stage 27. Read Book 6 section 09, Book 4 section 08 (Chapter 5), Book 9 sections 02-03 and
-Book 2 section 15. Implement the scheduler, precursors, the defence, settlement options, island
-failure and the council. Test ledger matching and timing.
+Book 2 sections 15-16 and Book 10 section 22. Implement the scheduler, precursors, the defence on its
+fixed night, settlement options, island failure and the council. Test ledger matching, the warning,
+the refused journeys and voyages, and timing.
 ```
 
 ## 09 / Phase F: Build 4, The Mainland
@@ -590,34 +595,38 @@ density tests.
 ### Stage 29: Wilderness routes 1: the Black Wood path and the plank road
 **Goal:** routes that must be crossed on foot, and are worth crossing.
 **Prerequisites:** Stage 28.
-**First step:** produce a mockup of the Black Wood path and the plank road, and of Móin Mhór and Sliabh Carn, to the Book 7 section 14 standard (saved to `docs/art/mockups/stage-29/`), then stop and wait for the user's approval before building them.
-**Deliverables:** the Black Wood path (old oakwood, the charcoal burners' camp, the hill-folk's gate to the heart) and the plank road (open bog, the turf-cutters' shelter, the branch to the Drowned Trackway) from Books 4, 7 and 9: a main path, side paths, pockets, camp spots, a shortcut to find, wildlife, gathering, hazards and points of interest; route encounters at the Book 10 rates (wanderers, hostile encounters by day and night, changed by season, faction, cargo and clearing), with readable ambush signs a keen-eyed companion spots sooner; camping at a route's camp spot; waystations (proposal); the sites Móin Mhór (Lasair) and Sliabh Carn (Dubhthach); the blocks on these routes.
+**First step:** produce a mockup of the Black Wood path and the plank road, the inside of the fallen-oak souterrain, and Móin Mhór and Sliabh Carn, to the Book 7 section 14 standard (saved to `docs/art/mockups/stage-29/`), then stop and wait for the user's approval before building them.
+**Deliverables:** the Black Wood path (old oakwood, the charcoal burners' camp, the hill-folk's gate to the heart) and the plank road (open bog, the turf-cutters' shelter, the branch to the Drowned Trackway) from Books 4, 7 and 9: a main path, side paths, pockets, camp spots, a shortcut to find, wildlife, gathering, hazards and points of interest; route encounters at the Book 10 rates (wanderers, hostile encounters by day and night, changed by season, faction, cargo and clearing), with readable ambush signs a keen-eyed companion spots sooner; camping at a route's camp spot; waystations; the Black Wood path's secret entrance, the fallen-oak souterrain (a small dungeon of its own, separate from the souterrain in the heart), with its hint signs, its rumours (one of them wrong), its lore and its boar-spear (Book 4 section 03; Book 6 section 13; Book 9 section 14; Book 10 section 20; decision DD-10); the sites Móin Mhór (Lasair) and Sliabh Carn (Dubhthach); the blocks on these routes.
 **Acceptance checks:**
 1. A journey through a route is always played on foot; its direct path takes about the Book 10 time, and exploring off it can double it.
 2. Route encounters fire at the Book 10 rates over 200 simulated crossings, and every ambush shows its sign first.
 3. A route cleared of outlaws, waymarked or given a waystation becomes safer as Book 10 says.
-4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-29/` against `docs/art/reference/`).
-5. Sounds meet the Book 11 audio standard (section 12), with captions: each route's ambience by season, wildlife and hazard warnings.
+4. The fallen-oak souterrain passes the reachability test: it can be found from the main path and entered under its conditions; each of its hint signs is in view from its approach and points at it, and so does every rumour except the one deliberately wrong; a keen-eyed companion remarks on it within the Book 10 distance; its reward and cost apply as Book 10 says.
+5. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-29/` against `docs/art/reference/`).
+6. Sounds meet the Book 11 audio standard (section 12), with captions: each route's ambience by season, wildlife and hazard warnings.
 ```
-PROMPT  Stage 29. Read Book 4 sections 03 and 09, Book 7 (route looks), Book 9 (route layouts) and
-Book 10 sections 14 and 15. Build the two routes, their encounters, camps, waystations and the two
-sites. Run reachability, encounter-rate and ambush-sign tests.
+PROMPT  Stage 29. Read Book 4 sections 03 and 09, Book 6 section 13, Book 7 (route looks), Book 9
+(route layouts) and Book 10 sections 14, 15 and 20. Build the two routes, their encounters, camps,
+waystations, the fallen-oak souterrain and the two sites. Run reachability (the secret entrance and
+its hints included), encounter-rate and ambush-sign tests.
 ```
 
 ### Stage 30: Wilderness routes 2: the High Pass, the Ridge Road, the river path and the moor road
 **Goal:** the rest of the mainland, and a wilderness that can kill.
 **Prerequisites:** Stage 29.
-**First step:** produce a mockup of the four routes and of Dún Fiach, the salt pans and Saltness on foot to the Book 7 section 14 standard (saved to `docs/art/mockups/stage-30/`), then stop and wait for the user's approval before building them.
-**Deliverables:** the High Pass (scree, the landslide until cleared, a ruined watchtower), the Ridge Road (Fiachra's toll post), the river path and the Ford (Cuán's ford-house; spate unless bridged) and the moor road (the standing stones, the turn to the Mound Field), each with its look, points of interest, encounters and seasons; the sites Dún Fiach, the salt pans, Saltvik's landward side and Saltness; wilderness hazards (bog holes, spate rivers, cliffs and scree, cold at night, fog, wolves, boar, outlaws' ambushes and roadblocks, landslides after rain, lightning on high ground, the hill-folk's rules), each with a sign, a rule and a response; waterfalls.
+**First step:** produce a mockup of the four routes, the insides of the cave behind the falls, the heather barrow and the otter-cave, and Dún Fiach, the salt pans and Saltness on foot to the Book 7 section 14 standard (saved to `docs/art/mockups/stage-30/`), then stop and wait for the user's approval before building them.
+**Deliverables:** the High Pass (scree, the landslide until cleared, a ruined watchtower), the Ridge Road (Fiachra's toll post), the river path and the Ford (Cuán's ford-house; spate unless bridged) and the moor road (the standing stones, the turn to the Mound Field), each with its look, points of interest, encounters and seasons; the sites Dún Fiach, the salt pans, Saltvik's landward side and Saltness; wilderness hazards (bog holes, spate rivers, cliffs and scree, cold at night, fog, wolves, boar, outlaws' ambushes and roadblocks, landslides after rain, lightning on high ground, the hill-folk's rules), each with a sign, a rule and a response; waterfalls; the secret entrances on these routes (decision DD-10): the cave behind the falls on the High Pass (behind the ice in winter), the heather barrow on the moor road and the otter-cave behind the weir on the river path, each a small dungeon with its hint signs, its rumours (one in three wrong), its lore and its equipment with a cost (Book 4 section 03; Book 6 section 13; Book 9 section 14; Book 10 section 20).
 **Acceptance checks:**
 1. Every site is reachable in every season by its Book 10 journey; the pass and the ford open only by their Book 4 conditions.
 2. Every hazard shows its sign before it can harm, and the scenario runner survives each by its response.
-3. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-30/` against `docs/art/reference/`).
-4. Sounds meet the Book 11 audio standard (section 12), with captions: every hazard's warning sound and every route's ambience.
+3. Each of the three secret entrances passes the reachability test: it can be found and entered under its season and water conditions (the falls' ice broken in winter, the weir only out of spate); each hint sign is in view from its approach and points at it, and so does every rumour except the deliberately wrong ones; a keen-eyed companion remarks on it within the Book 10 distance; each reward and its cost apply as Book 10 says.
+4. Meets the Book 7 standard (section 14); capture compared with the reference (`docs/art/captures/stage-30/` against `docs/art/reference/`).
+5. Sounds meet the Book 11 audio standard (section 12), with captions: every hazard's warning sound and every route's ambience.
 ```
-PROMPT  Stage 30. Read Book 4 sections 03 and 09, Book 5 section 04, Book 7 (route looks), Book 9
-(route layouts) and Book 10 sections 14 and 15. Build the four routes, the sites and every hazard.
-Run reachability and hazard tests.
+PROMPT  Stage 30. Read Book 4 sections 03 and 09, Book 5 section 04, Book 6 section 13, Book 7 (route
+looks), Book 9 (route layouts) and Book 10 sections 14, 15 and 20. Build the four routes, their three
+secret entrances, the sites and every hazard. Run reachability (the secret entrances and their hints
+included) and hazard tests.
 ```
 
 ### Stage 31: Dungeons 1 to 3
@@ -690,7 +699,7 @@ and outposts. Run acquisition, migration and hostility tests.
 ### Stage 35: Personal quests and twists
 **Goal:** every major quest has a reveal that changes what the right choice looks like.
 **Prerequisites:** Stage 34.
-**Deliverables:** scripted deaths and death-choices (proposal: Rán's debt, Bran's reckoning, Thrand's proof, berserk deaths), each consequential (grief, lost skills, a grave, songs, ghosts); optional quests for ship enhancements and equipment; land attacks on enemy settlements with allies; the residents' personal quests (the seeds in Book 5, unless the user vetoes them); the twists in Book 4 (unless vetoed), each surfacing through play; companions who disagree, argue and sometimes act on their own; side quests that intersect the main story; consequences that arrive 10 to 40 days later from people the player forgot.
+**Deliverables:** scripted deaths and death-choices (Rán's debt, Bran's reckoning, Thrand's proof, berserk deaths), each consequential (grief, lost skills, a grave, songs, ghosts); optional quests for ship enhancements and equipment; land attacks on enemy settlements with allies; the residents' personal quests (the seeds in Book 5, unless the user vetoes them); the twists in Book 4 (unless vetoed), each surfacing through play; companions who disagree, argue and sometimes act on their own; side quests that intersect the main story; consequences that arrive 10 to 40 days later from people the player forgot.
 **Acceptance checks:**
 1. Every major quest has at least one reveal, and no quest has an option without a cost.
 2. Every revenge quest has another way out, and a killing in a town brings guards, a feud and a blood-price.
@@ -723,7 +732,7 @@ states, conflicts and annal accuracy.
 **Goal:** a hostile return to the abandoned island, then a finale built from everything the player did. May be split into 37a (the Return) and 37b (the finale) with a decision-log entry.
 **Prerequisites:** Stage 36.
 **First step:** produce a mockup of the occupied island and the Hollow Cairn interior as Orm holds them to the Book 7 section 14 standard (a still and a loop at 640 x 360, saved to `docs/art/mockups/stage-37/`), then stop and wait for the user's approval before building it.
-**Deliverables:** the occupied island and the Hollow Cairn interior from Book 9 sections 08 and 09; the garrison, horn, beacon, stakes and patrols; approaches A to E including the hólmganga; the Door of Three Truths with ledger-truth statements; Gróa, the drowned diggers and the wardens; the Cup's surge timers and exits; captives; the retry rule; the compact renewal at Inis Rón; preparation and checkpoint; the washer at the ford; the linked battle (sea engagement and home defence, with assault formations); weather tied to the keys; Orm's fates; endings and epilogue with reasons; finale music.
+**Deliverables:** the occupied island and the Hollow Cairn interior from Book 9 sections 08 and 09; the garrison, horn, beacon (lit, it brings Orm's attack, the final battle, 5 days earlier and raises the pressure faster, while the battle stays a gate; decision DD-4), stakes and patrols; approaches A to E including the hólmganga; the Door of Three Truths with ledger-truth statements; Gróa, the drowned diggers and the wardens; the Cup's surge timers and exits; captives; the retry rule; the compact renewal at Inis Rón; preparation and checkpoint; the washer at the ford; the linked battle (sea engagement and home defence, with assault formations); weather tied to the keys; Orm's fates; endings and epilogue with reasons; finale music.
 **Acceptance checks:**
 1. Each Return approach recovers the Cup on some seed; the Door accepts exactly the ledger-true statements; surge timers match Book 10.
 2. The Return is hard: the good-player policy succeeds first time in no more than 60% of seeds, and failure leaves the campaign winnable with one retry before the household sets out for the final battle (a gate).

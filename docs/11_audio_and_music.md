@@ -143,7 +143,7 @@ Short cues on key events: discovery, a resident's death, a bargain accepted, the
 
 ## 07 / Sound design
 ### Ambience
-Layered by zone, season, weather and time: surf on shingle versus sand, wind through heather, cormorants and gulls, seals, sheep, the hearth, rain on thatch, wind in rigging, the dead quiet of fog. Every zone has a day and a night bed and seasonal variants.
+Layered by zone, season, weather and time: surf on shingle versus sand, wind through heather, cormorants and gulls, seals, sheep, the hearth, rain on thatch, wind in rigging, the dead quiet of fog. Every zone has a day and a night bed and seasonal variants. Secret entrances on the routes (Book 4 section 03) have a sound hint as well as their signs: a thin draught breathing at the crack, heard within a few tiles, with the information caption *A cold draught, close by*.
 
 ### Foley
 Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber deck, plank road, snow; and splashing through shallow water). Footsteps are **soft and natural**: low and dull, with no sharp click (every step rises over at least 2 ms), a heel and a softer roll onto the toe, and drawn afresh each step so no two sound the same (decision AU-10). Each surface has its own character: a soft thud on grass, a crunch of shifting stones on shingle, a hush on sand, a duller squelch on wet sand, a splash and drops in water, a dull knock on rock. Running is a little louder and quicker, carrying heavier, sneaking much quieter. Footsteps sit at least 10 dB below the effects that matter. Work sounds for every homestead task (adze, hammer, forge, sickle, net, spade, quern, loom).
@@ -160,9 +160,14 @@ Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber 
 | Dodge | Cloth and footwork |
 | Gore | Wet impacts, bone crack on heavy blows, dismemberment with a short, sickening detail; scaled by the gore setting |
 | Downed | A fall, breath, and a heartbeat for crew |
+| Bow string | The creak of the draw growing with it, then the snap of the string on the loose; a thrown spear's grunt and the rush of the throw |
+| Arrow in flight | A short, thin whistle that passes with the arrow, panned and fading with its distance from the listener; a spear's lower rush |
+| Missile strikes | A thunk into timber (a hull, a wall, a tree); a duller thud into earth and turf; a hard knock into a shield, with the board's ring; a crack and a skitter where it breaks on stone; a small splash into water; into a body, the gore set's wet impact |
 
 ### Ships and sea
 Oar creak and splash in time with the stroke; sail flap, fill and strain; hull groan in storms; the scrape of beaching; grapnel and boarding-plank impacts; arrows into wood and shields.
+
+Every missile sound (section 07, Combat) has an information caption with its direction where it helps: *Bowstring, to the north*; *Arrow overhead*; *Arrow into timber*; *Arrow into the ground*; *Arrow on a shield*; *Arrow breaks on stone*; *Arrow into the water*. The whistle is captioned only when an arrow passes near the steerer, so a volley does not flood the captions.
 
 ### Supernatural tells
 Each sign has a unique, learnable audio tell, so a careful player can hear danger before seeing it: Rán's sea-light hum under the water, hooves on water for Manannán, hail on stone for the Cailleach, verse from the troughs for the Blue Men, a dripping that follows for the draugr, keening for the bean sí, and the washer's rhythmic slap of cloth on stone. Each tell has a caption.
@@ -210,7 +215,7 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 | Build 2 (Stage 20) | Sea states, raid approach, alarm and extraction, Carrick ambience, home seasons |
 | Build 3 (Stage 24) | Saltvik, sea battle, first supernatural motifs, blips for the starting crew |
 | The living coast (Stages 25 to 27) | Travellers, carts, herds and bandits; wandering characters' blips; festivals; winter, Samhain and Yule |
-| Build 4 (Stage 33) | The mainland sites' and the six wilderness routes' ambiences and music by season; wilderness hazard warnings (wolves, thunder, the bog); the six dungeons and their guardians; the mainland leaders' blips |
+| Build 4 (Stage 33) | The mainland sites' and the six wilderness routes' ambiences and music by season; wilderness hazard warnings (wolves, thunder, the bog); the six dungeons and their guardians; the four small dungeons behind the secret entrances, and the draught that hints at them; the mainland leaders' blips |
 | Campaign (Stages 34 to 37) | Moving ashore, all motifs, laments, the Return to Skarvholm, the finale |
 | Stage 38 | Final mix, loudness pass, captions complete |
 
@@ -234,7 +239,7 @@ The game generates all of its own audio. No recordings, no commissioned composer
 ### Sound effects and ambience (also generated)
 - Ambience in layers by zone, season, weather and time of day: surf on shingle and sand, wind tied to the game's own wind direction and strength, rain, the hearth fire, seabirds, sheep.
 - Footsteps by surface; work sounds for every homestead task; ship sounds (oars, sail, hull).
-- Combat: distinct sounds for light hits, both charge levels of the heavy, parry (bright and unmistakable), block, guard break, dodge and gore, all scaled by the gore setting.
+- Combat: distinct sounds for light hits, both charge levels of the heavy, parry (bright and unmistakable), block, guard break, dodge and gore, all scaled by the gore setting; and for every missile, the bow string, the arrow's whistle in flight, and its strike into timber, earth, a shield, stone or water, each with an information caption.
 - Every supernatural sign has its own learnable sound tell (section 07).
 - Every gameplay-relevant sound keeps its caption.
 

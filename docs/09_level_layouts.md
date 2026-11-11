@@ -90,7 +90,7 @@ A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), whi
 
 | Zone | Blocks | Layout notes |
 |---|---|---|
-| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood spawns along the high-tide line after storms; the shallows where Hild stands in the opening (below) |
+| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood spawns along the high-tide line after storms; the shallows where Hild stands in the opening (below); the wreck's debris near the waking spot and the stern at the east end (below) |
 | `ZONE_SK_MACHAIR` | (12 to 30, 17 to 24) | The steading plan (section 05) sits at blocks (14 to 21, 19 to 23); plots at (20 to 25, 21 to 22) |
 | `ZONE_SK_KELDA` | (17 to 21, 17 to 21) | Spring pool at (19, 19); the stream flows south to the strand, ankle deep, with foam at its stones |
 | `ZONE_SK_ROOK` | (16 to 28, 6 to 14) | Summit at (22, 9); heather slopes; the watch cairn plot |
@@ -105,6 +105,11 @@ A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), whi
 
 ### Wreck Strand's shallows
 In the opening Hild stands knee to waist deep in the shallows beyond the western rock outcrop, partly submerged, calling, with ripples and spray around her (Book 4 section 08). The Wreck Strand plan lays a shelf of shallows there: from the foreshore the steerer wades through ankle and knee water to reach her where knee water meets waist water, then carries her back up to dry shingle above the tide line. Her spot can be seen from the steerer's waking place once they pass the outcrop, and deep water stays beyond her, so the walk out and back never needs a swim. Her shallows stay at that depth for as long as she waits there.
+
+### Wreck Strand's debris and the stern
+The steerer wakes with nothing in hand (Book 10 section 21, "Starting weapons"), and the strand holds the first two weapons (tiles in content):
+- **The wreck's debris** lies along the high-tide line a few tiles from the waking spot: broken planks, a split cask, tangled line and kelp, and among them a **seax** marked by a glint (Book 7 section 18). It is placed so it can be seen from the waking spot or from the first few steps towards Hild, and is reached on dry shingle at any tide, so a player finds it within Book 10's `seaxFoundBy` without being told.
+- **The stern** lies washed up at the **east end** of the strand, above the tide line on dry shingle: the curved stern-post and the last strakes, half buried, with a sea chest lashed under the steering platform. In it are a **hunting bow** and a **quiver of six arrows**, marked by a glint. Hild names the bow and points east after the rescue (Book 8 section 05). The way there is open at every tide and needs no wade deeper than the knee, so a new player reaches it within `bowFoundBy`. This is a separate piece of the wreck from the section on the skerry at (14, 29), which holds the rigging for the Chapter 1 repair.
 
 ### Exploration content
 | Puzzle or secret | Where | Rule | Reward |
@@ -294,7 +299,7 @@ Two more guards by day, and two dogs at the keeper's house that hear with three 
 |---|---|---|---|
 | Broch fort | (17, 22) | Kolgrím and 9 huscarls, 3 dogs | Captives held inside |
 | Barracks | (24, 23) | 12 raiders | Asleep at night unless the horn sounds |
-| Watch cairn | (22, 9) | 2, a horn and a beacon | Sees 14 blocks; the beacon brings Orm's fleet early (Book 10) |
+| Watch cairn | (22, 9) | 2, a horn and a beacon | Sees 14 blocks; the beacon brings Orm's attack, the final battle, 5 days earlier and raises the pressure faster, while the battle stays a gate (Book 10 sections 07 and 22) |
 | Hermit's cell | (11, 8) | 1 sentry at night | Sees down into Gull Geo |
 | Naust Cove ships | (32, 25) | 6 on watch | Their crews join a fight in 2 minutes |
 | The dig at the cairn | (31, 20) | Gróa, 4 guards, 6 conscripted diggers | Sea-light at night; the diggers are civilians |
@@ -557,6 +562,7 @@ Every site and route changes with season and tide (Book 4 section 03), so every 
 - **Fair traps with signs:** each trap shows its sign in view on the approach, before it can trigger, and can be avoided, disarmed or survived. A trap never sits on the only route without a visible way past.
 - **A guardian room:** the guardian can be seen or heard before the party enters, and the room has a way out, so withdrawal is always possible.
 - **Lore and the reward:** lore along the way explains the reward and its cost before it is taken (Book 4 section 10).
+- **The small dungeons** behind the four routes' secret entrances (the fallen-oak souterrain, the cave behind the falls, the heather barrow and the otter-cave) follow the same rules on a smaller plan, one to four chambers with one obstacle or trap and no guardian room; their places and hints are in section 14 and their insides in Book 6 section 13.
 
 ### Outlines
 | Dungeon | Lead | Layout | Puzzles | Traps and their signs | Guardian room |
@@ -616,6 +622,7 @@ Every mainland site and wilderness route places its points of interest to this r
 - Wilderness routes: each route's direct path, walked from end to end at walking speed, takes 1.5 to 2.5 real minutes and matches its Book 10 section 14 time within tolerance, and walking every side path and pocket as well takes about twice that or less; each has a main path joining all its ends, at least one shortcut that shortens the crossing, one or two camp spots, and its waystation spot on one of them; the hill-folk's gate, the Trackway branch and the Mound Field turn lie off their routes' main paths; no side path or shortcut gets round a block; every ambush place has its sign in view from the main path before the ambush point.
 - Points of interest: every site has one or two major and 4 to 8 minor points of interest, and every route one major and 4 to 8 minor; at least one minor point of interest in each sits behind a climb, a wade, a hazard or a puzzle off the obvious paths; every hazard guarding a find shows its sign from the path.
 - Dungeons: each passes reachability with its traps armed; every trap's sign is in view on the approach before its trigger; every guardian room has a way out.
+- Secret entrances: each of the four can be found from its route's paths and entered under its conditions (the falls' ice broken in winter, the weir only out of spate); each hint sign is in view from a path on the approach and points at its entrance; every true rumour's landmark leads to it, and each wrong rumour's leads to a harmless place; none lies on a main path or gets round a block.
 - Density: walking every path at walking speed, the gap between stopping points stays within Book 10 section 20; every site, route and zone has at least one secret or small puzzle; every climb and swim has a rest point within a full stamina bar (Book 10 section 06).
 
 ## 14 / Wilderness route layouts in outline
@@ -627,9 +634,10 @@ Every mainland site and wilderness route places its points of interest to this r
 - **Ends:** each end is where a road leg arrives (section 10), with a waymark and a clear view of the main path setting off. The party can leave by any end, including the one it came in by.
 - **Contents:** one major point of interest, 4 to 8 minor ones (section 12), wildlife ground, gathering spots, hazards and camp spots. The major point of interest is on the main path or plainly signposted from it; the best minor finds are off it.
 - **Shortcut:** at least one, off the main path and not obvious, that once found shortens later crossings. A shortcut may need a climb, a wade or a jump; it never needs a swim, and it never gets round a block.
-- **Camp spots and the waystation spot (proposal):** one or two sheltered camp spots by water. One of them is marked as the route's waystation spot, with room for the hut and its store, so a waystation is built where the plan expects it (Book 4 section 03).
+- **Camp spots and the waystation spot:** one or two sheltered camp spots by water. One of them is marked as the route's waystation spot, with room for the hut and its store, so a waystation is built where the plan expects it (Book 4 section 03).
 - **Ambush places:** a few stretches of the main path with cover close on both sides. Each has room for its sign (a fallen tree across the path, a crows' roost that rises, fresh tracks in soft ground) in view from the path before the ambush point.
 - **Branches:** a site entered from a route (the heart of the Black Wood, the Drowned Trackway, the Mound Field) lies at the end of a side path, never on the main path, with its threshold visible before the party commits (section 11).
+- **Secret entrances:** four routes (the Black Wood path, the High Pass, the river path and the moor road) hide a secret entrance to a small dungeon (Book 4 section 03; Book 6 section 13). It lies off the main path, never on it, and never gets round a block. It has no marker until found, but its hint signs are placed on the approach so that a curious player standing on a path sees at least one of them: a carved mark beside the path where the way to it leaves; a draught at the crack itself, seen within 3 tiles; birds flying in and not out, seen from the path; and the spot where a keen-eyed companion within 4 tiles remarks on it (Book 10 section 20). A rumour names a real landmark on the plan, so a true one leads to the entrance and a wrong one to a harmless place.
 - **Art:** every route meets the terrain art standard set at Stage 6 (Book 7 section 14): wind, moving plants, light, water and wildlife.
 - **Seasons:** each plan has a state for each season where Book 4 section 03 says the route changes.
 
@@ -646,6 +654,7 @@ Every mainland site and wilderness route places its points of interest to this r
 | Minor points of interest | An outlaw lookout platform high in an oak, with a cache, reached by a marked climb; an empty hermit's hut with a carved cross; a charcoal burner's grave by a cold hearth; a fallen oak bridging the eastern stream to a bank of honey and mushrooms; a wild bees' nest in a hollow oak; a rock outcrop above the canopy, a climb, with a view to Móin Mhór |
 | Gathering | Hazelnuts and acorns, mushrooms in autumn, herbs, deadfall timber, fish in the streams, honey |
 | Hazards | Boar ground (rooted earth, a snort in the undergrowth); fog in the hollow; getting lost off the path; wolves in winter; the hill-folk's rules near the gate |
+| Secret entrance | **The fallen-oak souterrain**, a small dungeon of its own, not a way into the heart: under the root-plate of a fallen oak on the far side of the ring of old oaks, east of the main path between the charcoal burners' camp and the hill-folk's gate. Hints on the approach: a cross cut in a holly where the side path to the ring leaves the main path; leaf litter stirring at the roots, and on cold mornings a breath of mist from the crack; a dressed lintel stone among the roots that a keen-eyed companion remarks on. The wrong rumour's place, the holly-dark hollow, holds only fog. Inside: a creep and three low chambers (Book 6 section 13) |
 
 ### The plank road (`MAIN_PLANK_ROAD`)
 | Part | Layout |
@@ -674,6 +683,7 @@ Every mainland site and wilderness route places its points of interest to this r
 | Gathering | Herbs and juniper on the crags, trout in the gorge pools |
 | Hazards | Rockfall and scree; cold, on high ground in any season; wolves; Faolán's outlaws; new slides after rain; lightning on the saddle in storms |
 | Seasons | Snow drifts on the saddle slow it in winter |
+| Secret entrance | **The cave behind the falls**, behind the waterfall over the gorge pool (the minor point of interest above): a wade across the pool's edge, knee to waist deep with a rock to rest on, then a wet ledge behind the falling water. In winter the falls freeze into a curtain of ice, broken with an axe or the Cailleach's maul. Hints on the approach: dippers flying into the falls and not coming out, seen from the gorge path; the watchmen's chevron cut on the watchtower's lintel and again on a stone by the pool; in winter, a dark hollow showing through the ice. The wrong rumour's place, the watchtower's floor, is an empty pit. Inside: a dry outer cave and an inner store (Book 6 section 13) |
 
 ### The Ridge Road (`MAIN_RIDGE_ROAD`)
 | Part | Layout |
@@ -702,6 +712,7 @@ Every mainland site and wilderness route places its points of interest to this r
 | Gathering | Fish and eels, willow withies, alder timber, watercress, herbs |
 | Hazards | Spate; the river itself, deep in its channel (section 01); smugglers |
 | Seasons | Closed at the Ford in spate unless bridged; the path either side stays open |
+| Secret entrance | **The otter-cave behind the weir**: behind the eel weir where it meets the rock of the north bank, reached along the top of the weir at low water, knee deep; closed in spate. Hints on the approach: otters slipping behind the weir and not coming out, seen from the bank path; a ship cut into an alder beside the path above the weir; Cuán's story at the ford-house. The wrong rumour's place, the stepping stones at the Ford, holds only the river. Inside: a crawl through the otters' holt to a dry inner chamber (Book 6 section 13) |
 
 ### The moor road (`MAIN_MOOR_ROAD`)
 | Part | Layout |
@@ -717,3 +728,4 @@ Every mainland site and wilderness route places its points of interest to this r
 | Gathering | Heather, peat, bilberries, grouse, trout in the burns |
 | Hazards | Wolves in winter; outlaws; the barrow-dead near the turn at night; bog holes in the burn hollows; fog |
 | Seasons | Long dark nights in winter |
+| Secret entrance | **The heather barrow**: a long, low hump in the heather beside the sheep trod shortcut, about halfway along it, with one spiral-carved kerbstone showing at its south end. Hints on the approach: the spirals, seen from the trod; wheatears going in and out between the kerbstones; a cold draught from the gap at its north end. The wrong rumour's place, the ring cairn on the low ridge, is empty. Inside: a crawl through the gap, a short passage with a sill stone and one chamber (Book 6 section 13) |

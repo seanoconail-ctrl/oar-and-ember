@@ -54,11 +54,11 @@ Outcomes write **deeds** to the coast's memory. A deed records what happened, wh
 | `HOSTAGE_TAKEN` | A named person held as a guarantee or for ransom |
 | `PROMISE_MADE` / `PROMISE_KEPT` / `PROMISE_BROKEN` | Agreements and their fate |
 | `SAIL_SEEN` | The household's sail and marks recognised |
-| `KILLING_HIDDEN` | A killing concealed rather than declared (proposal). Written with the killing when the doer neither owns it openly nor lets it be found: a body hidden or sunk, a death denied when asked, a quiet killing never declared by the next day |
-| `HOSPITALITY_BROKEN` | Harm to a host or guest, or done under truce (proposal). Written by turning on people whose food or fire the household has shared (Colla after an open bargain, Kilbrecc after a night in its guesthouse, Muiredach at Ardcarn), by harming a guest or hostage held at home, or by breaking a truce or parley |
-| `BLOOD_PRICE_PAID` / `BLOOD_PRICE_TAKEN` | A blood-price (éraic) paid by the household for a killing, or accepted by it in place of vengeance (proposal). Written when a feud is settled with silver (section 14), when an answer is settled by compensation for the dead (section 09), and in Bran's reckoning (section 17) |
-| `RITES_DENIED` | The dead left unburied or without rites (proposal). Written when the household's own dead are left without rites, when the field is held after a fight and the dead are refused to their kin, or when Thorkel's rites are never given |
-| `CHALLENGE_REFUSED` | A formal challenge turned down (proposal). Written when the steerer or the household's champion refuses a hólmganga, a duel or a public challenge such as Fergal's "meet me on the strand" |
+| `KILLING_HIDDEN` | A killing concealed rather than declared. Written with the killing when the doer neither owns it openly nor lets it be found: a body hidden or sunk, a death denied when asked, a quiet killing never declared by the next day |
+| `HOSPITALITY_BROKEN` | Harm to a host or guest, or done under truce. Written by turning on people whose food or fire the household has shared (Colla after an open bargain, Kilbrecc after a night in its guesthouse, Muiredach at Ardcarn), by harming a guest or hostage held at home, or by breaking a truce or parley |
+| `BLOOD_PRICE_PAID` / `BLOOD_PRICE_TAKEN` | A blood-price (éraic) paid by the household for a killing, or accepted by it in place of vengeance. Written when a feud is settled with silver (section 14), when an answer is settled by compensation for the dead (section 09), and in Bran's reckoning (section 17) |
+| `RITES_DENIED` | The dead left unburied or without rites. Written when the household's own dead are left without rites, when the field is held after a fight and the dead are refused to their kin, or when Thorkel's rites are never given |
+| `CHALLENGE_REFUSED` | A formal challenge turned down. Written when the steerer or the household's champion refuses a hólmganga, a duel or a public challenge such as Fergal's "meet me on the strand" |
 
 ### How each culture reads a deed
 Everyone judges by the ethics of their own culture around AD 900, the household included (Book 5 section 16). A witness's culture weighs a deed first, then their values (Book 5 section 01), traits (Book 5 section 17) and stance (Book 5 section 16). Book 10 section 08 ("Deed reactions by culture") holds the weights.
@@ -68,15 +68,15 @@ Everyone judges by the ethics of their own culture around AD 900, the household 
 | Theft by stealth (`THEFT`) | "Thieves' work" to the Glory-minded; fine to the Gain-minded. Secret theft from one's own is the deepest shame | Less grave than burning and killing, but still owed | A sin | Taking without giving |
 | Farmers and other people who bore no weapon killed (`CIVILIAN_KILLED`) | No glory in it; bad luck; invites vengeance. Some shrug | Outrage; éraic owed by the dead person's rank | A grave sin; monks killed become martyrs | Blood on the shore angers the old powers |
 | The surrendered killed (`SURRENDERED_KILLED`) | Shameful once quarter is given; a níð-worthy deed | Dishonour | Murder | Oath-breaking |
-| A killing hidden (`KILLING_HIDDEN`, proposal) | Murder: far worse than an open killing, which can be declared and paid for | Worse than an open killing | Sin compounded by a lie | No matter |
-| Hospitality broken (`HOSPITALITY_BROKEN`, proposal) | Shameful, even to Orm's men | Shameful; the briugu's curse | Shameful | Shameful |
+| A killing hidden (`KILLING_HIDDEN`) | Murder: far worse than an open killing, which can be declared and paid for | Worse than an open killing | Sin compounded by a lie | No matter |
+| Hospitality broken (`HOSPITALITY_BROKEN`) | Shameful, even to Orm's men | Shameful; the briugu's curse | Shameful | Shameful |
 | Sacrilege at a church (`SACRILEGE`) | Nothing to most; bad luck to the superstitious | Outrage (though Gaelic kings burn rivals' churches too) | The worst of crimes | Indifferent |
 | Sacrilege at an old shrine or mound (`SACRILEGE`) | A dangerous offence to the gods and land-spirits | Bad luck; the aos sí remember | A good work | Outrage |
-| A blood-price paid or taken (`BLOOD_PRICE_PAID`, `BLOOD_PRICE_TAKEN`, proposal) | The lawful end of a feud; the Glory-minded call it carrying your kin in your purse | Proper and expected | Better than vengeance | No matter |
+| A blood-price paid or taken (`BLOOD_PRICE_PAID`, `BLOOD_PRICE_TAKEN`) | The lawful end of a feud; the Glory-minded call it carrying your kin in your purse | Proper and expected | Better than vengeance | No matter |
 | A hostage or captive taken (`HOSTAGE_TAKEN`) | Ordinary dealing; harming a hostage is shameful | Ordinary dealing; harming a hostage is shameful | Acceptable | Acceptable |
 | A promise broken (`PROMISE_BROKEN`) | Shameful (cynics shrug if it was to an enemy) | Shameful; sureties are ruined | A sin | The worst of crimes |
-| Rites denied (`RITES_DENIED`, proposal) | Invites draugar; shame on the kin | Shame | The soul denied | Angers the sea |
-| A challenge refused (`CHALLENGE_REFUSED`, proposal) | Cowardice; níð | Shame, unless a king forbids it | Righteous | No matter |
+| Rites denied (`RITES_DENIED`) | Invites draugar; shame on the kin | Shame | The soul denied | Angers the sea |
+| A challenge refused (`CHALLENGE_REFUSED`) | Cowardice; níð | Shame, unless a king forbids it | Righteous | No matter |
 
 - **Saltvik** judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong.
 - **People of mixed birth** (Bran, Senán, Áine and much of Saltvik) carry both codes, and judge and are judged by either.
@@ -115,7 +115,7 @@ Choose the **mode**: a stealth raid, with up to five landing-party members and t
 | **Steal** | Stealth | Land at the far end of the beach, slip past the night guard, carry lots to the boat. Discovery turns it into a chase to the boat. | Night, high tide, scouting done |
 | **Bargain** | Open landing | Walk up openly with trade goods. Colla will trade surplus grain and one iron lot, but not seed or tithe without Muiredach's word. | Trade goods brought; Bran or Eithne speaks |
 | **Threaten** | Open landing | Arrive armed and in force by day. Colla yields stores to protect his house. The runner leaves regardless. | Extra weapons; full landing party; the feared sail |
-| **Fight** | Stealth, gone loud | Attack the guards with the landing party, or fight when a stealth raid is discovered. Colla surrenders when two guards fall or flee. Turning on Colla in the middle of an open bargain is `HOSPITALITY_BROKEN` (proposal). | Extra weapons; dawn |
+| **Fight** | Stealth, gone loud | Attack the guards with the landing party, or fight when a stealth raid is discovered. Colla surrenders when two guards fall or flee. Turning on Colla in the middle of an open bargain is `HOSPITALITY_BROKEN`. | Extra weapons; dawn |
 | **Assault** | Assault | The full crew lands on the main beach by day and fights for Carrick while Ardcarn musters (below). | Full crew; extra weapons; high tide for a short carry |
 | **Slaughter** | Either | Kill everyone found, including Colla and the herdsman. Killing the runner before he leaves the map stops the patrol. | Full landing party; night or dawn |
 | **Withdraw** | Either | Always available from the plan or at the boat. In an assault it is the "fall back to the ships" command. | Any time the plan has failed |
@@ -144,14 +144,14 @@ The coastal boat has three free berths and four or five cargo slots. Available: 
 | Hard fight | Up to full slots | `KILLING` with named dead. Ardcarn hostile, and éraic is owed for its dead; Muirenn records it; Bran calls it needless unless the guards struck first. |
 | Paid to leave | 1 silver, 1 to 2 grain | `TRIBUTE_TAKEN`. Expectation of a yearly payment; Fiachra's tribute lost. |
 | Taken by assault | Up to full slots | `KILLING`, `SAIL_SEEN`, and `BURNING` if the thatch was fired. Many witnesses: Fiachra is publicly shamed and Ardcarn hostile; the answer comes sooner than after a stealth raid (section 12). Glory-minded crew approve; Bran does not. |
-| Massacre | Up to full slots | `CIVILIAN_KILLED`, `KILLING`. If anyone escapes or the bodies are linked to the household, Ardcarn and Dún Fiach turn hostile on sight. Most of the crew are shaken, in their own terms: there was no glory in it, it will bring bad luck, Ardcarn's kin will come. Kári is not. |
+| Massacre | Up to full slots | `CIVILIAN_KILLED`, `KILLING`. If anyone escapes or the bodies are linked to the household, Ardcarn and Dún Fiach turn hostile on sight. Most of the crew are shaken, in their own terms: there was no glory in it, it will bring bad luck, Ardcarn's kin will come. Kári is not shaken, but he wins no name from it either: there is no glory in killing farmers. |
 | Withdrawal | 0 to 1 lots | Possibly `SAIL_SEEN`. Everyone comes home. A lead to try another way. |
 
 ### Consequences
 **At home.** Iron becomes nails and tools: the boat's hull patch is made permanent and a simple forge can be built. Grain becomes breathing room shown in the steward's report. Eithne at the fire, if she came. Stolen silver attracts an offer or accusation at the next harbour.
 **Regional.** Ardcarn's winter stores fall by what was taken. A taken currach means Ardcarn's fishing suffers. After any raid Carrick posts two more guards and keeps dogs. The runner's news reaches Fiachra in three days and Kilbrecc in five. Saltvik's traders hear within ten days, which shifts prices and gossip.
 **Crew.** Bran approves bargains and mercy, Hild approves bold success and everyone coming home, Oddi approves the haul, Runa approves the iron. Every approach pleases someone and troubles someone.
-**Evidence.** Bodies at Carrick are found by Ardcarn the next morning. They link the deed to the household if gear was dropped, if a body bears a recognisable wound pattern from a known weapon, or if a fisherman offshore saw the sail (a chance in Book 10). With no escaping witness and no link, Ardcarn knows only that someone did it, and blames the nearest raiders: Ulf. If the household hid the bodies or denies the killing, the ledger also holds `KILLING_HIDDEN` (proposal): the crew know, and to Norse eyes an undeclared killing is murder. An assault by day is always linked: everyone who fled saw the sail.
+**Evidence.** Bodies at Carrick are found by Ardcarn the next morning. They link the deed to the household if gear was dropped, if a body bears a recognisable wound pattern from a known weapon, or if a fisherman offshore saw the sail (a chance in Book 10). With no escaping witness and no link, Ardcarn knows only that someone did it, and blames the nearest raiders: Ulf. If the household hid the bodies or denies the killing, the ledger also holds `KILLING_HIDDEN`: the crew know, and to Norse eyes an undeclared killing is murder. An assault by day is always linked: everyone who fled saw the sail.
 **Delayed.** `SEED_TAKEN`: Ardcarn's spring sowing fails in Year 2, bringing hungry refugees, a desperate Muiredach and hired swords. `SEED_LEFT` (if anyone at Ardcarn learns of it): Muiredach remembers the mercy at the council. Taking the tithe grain makes Kilbrecc an aggrieved party. Taking the silver makes Fiachra one. A known massacre empties half of Ardcarn's fields the next spring, makes Muiredach an implacable enemy and closes the Carrick Strand site to anything but conquest.
 
 ### Leads offered on return
@@ -174,7 +174,7 @@ Saltvik (sell or trade, Runa's sister, ship fittings) and Glen Arra (cattle, and
 On any crossing in Chapter 3 after the Saltvik visit, the moving mist closes over the route. A steady light appears ahead that does not flicker like a flame.
 
 ### True state
-The light is the Ferryman's lamp. Manannán is curious about the household that his mist both hid and wrecked. Following it leads to a seal skerry where Nessa is stranded (Watcher or Bound stances) or to a quick passage home with Nessa found later in a coracle on Wreck Strand (Runaway stance).
+The light is the Ferryman's lamp. Manannán is curious about the household that his mist both hid and wrecked. Following it leads to a seal skerry where Nessa is stranded (if her secret is the Watcher or the Bound) or to a quick passage home with Nessa found later in a coracle on Wreck Strand (if it is the Runaway).
 
 ### Choices
 | Choice | Result |
@@ -201,7 +201,7 @@ Offered on return from Carrick. Runa wants to find her sister; the household nee
 | Stall or person | Offers | Wants |
 |---|---|---|
 | Gunnhild's yard | Ship fittings (cargo, rigging, shallow draft) and repairs | Silver, iron, a share of salvage rights |
-| Ottar Silkbeard | Bulk salt, cloth, buyers for anything | Profit; tells you Orm's ships were seen in the north |
+| Ottar Silkbeard | Bulk salt, cloth, arrows by the dozen, buyers for anything | Profit; tells you Orm's ships were seen in the north |
 | The sea-wife | A wind-knot cord (three knots) | Silver, or a lock of the steerer's hair |
 | Kolbeinn the smith | Himself, if his debt is cleared | His debt paid, won at dice, or his creditors driven off |
 | Asa, Runa's sister | Gratitude, a contact in Ottar's counting-house | Her own debt settled |
@@ -249,7 +249,7 @@ Rumour says the monastery is rich. Bran knows the layout from fifteen years ago 
 | Raid the farm, spare the church | Take stores and livestock from the farm buildings | `THEFT` or `THREAT`; the church records restraint |
 | Demand tribute | Arrive in force; Colmán pays in stores and some silver | `TRIBUTE_TAKEN`; Kilbrecc keeps the Bell |
 | Borrow the Bell | Offer protection for a season in exchange for carrying the Bell aboard on one named voyage | A `PROMISE_MADE` with the Church; returning it on time earns deep trust |
-| Leave | Trade at the guesthouse, or simply go | Bran's relief; Senán's respect. Raiding Kilbrecc after a night in its guesthouse is `HOSPITALITY_BROKEN` (proposal) |
+| Leave | Trade at the guesthouse, or simply go | Bran's relief; Senán's respect. Raiding Kilbrecc after a night in its guesthouse is `HOSPITALITY_BROKEN` |
 
 ### Bran at Kilbrecc
 If Bran comes ashore, Muirenn recognises him. He can confess, which changes Kilbrecc's view of the household and Bran's own arc, or deny it, which works until someone checks the annals.
@@ -271,7 +271,7 @@ One ship, eighteen crew, Asgrim aboard. Cargo: three silver lots and four hostag
 
 ### The battle
 1. **Approach.** On the sea map, choose to close with the wind, cut across from the weather gauge, or wait in the mist. Wind and tide decide who reaches the approach first.
-2. **Missiles.** In the battle scene, both ships exchange arrows, thrown spears and stones while closing. Shields up reduces losses; good archers suppress the enemy steerer.
+2. **Missiles.** In the battle scene, both ships exchange arrows, thrown spears and stones while closing; each archer stands to draw and loose, and every missile flies where it can be seen, sticks in hull and shields, and can miss (Book 1 section 09). Shields up reduces losses; good archers suppress the enemy steerer.
 3. **Grapple or break off.** Once alongside, grapple to board, or break off while you still can.
 4. **Boarding.** Ordinary melee across two decks. The hostages below can be freed during the fight. Asgrim surrenders when half his crew falls or when the hostages are freed and his ship is lost.
 
@@ -304,10 +304,10 @@ Silver (three lots), hostages freed (refugees asking for shelter: roster pressur
 | Mostly fair dealing | An envoy, not a raid: a demand for compensation, with a chance to settle |
 
 ### Defence of Skarvholm
-If an attack comes, it is a defence scene and a story gate (section 15): word of it comes first (a sail sighted, a runner, a rumour at Saltvik), and the attack waits until the player sets the night the household stands to, from a readiness screen of watch, walls, weapons and warning. While the player delays, the pressure builds (the attackers' demand grows and rumours spread), but it never forces the gate. Preparation follows section 12's defences: the watch cairn on Rook Hill gives warning in proportion to how it is staffed; stakes, traps and archers on platforms can be set; the broch is the last refuge; the boatshed and the ship are what the attackers want to burn. Attackers have aims and withdraw when they have achieved them or lost cohesion. They can be talked to under a truce, and breaking that truce is `HOSPITALITY_BROKEN` (proposal). An attack in force runs on the assault rules of section 12 from the other side: the household musters, and its crew can use the formation commands. Whoever leads the watch that night may die holding the landing, depending on preparation (section 17).
+If an attack comes, it is a defence scene and a story gate (section 15), and **the one gate that does not wait for the player**: the attack comes on a fixed night, typically day 135 (Book 4 section 08; Book 10 section 22), and cannot be put off or avoided. **Warning** comes at least seven days before it: omens (Book 4 section 07; Ylva's fetches, if she is with the household), scouts (a sail sighted from Rook Hill, a runner from a friendly harbour, a rumour at Saltvik) and Thrand, if he is with the household, who knows how a raid is readied and says when it will come. **Once warned, the household is held at home for that night:** no journey or voyage may start that would keep the steerer away, and the travel map and the sea map refuse it, saying why. A steerer already away when the warning comes gets word by a runner or a passing boat and is brought home by dusk on the day, the journey or voyage cut short. The days of warning are the time to prepare; at dusk on the night the readiness screen of watch, walls, weapons and warning opens, and the attack comes at nightfall. Preparation follows section 12's defences: the watch cairn on Rook Hill gives warning in proportion to how it is staffed; stakes, traps and archers on platforms can be set; the broch is the last refuge; the boatshed and the ship are what the attackers want to burn. Attackers have aims and withdraw when they have achieved them or lost cohesion. They can be talked to under a truce, and breaking that truce is `HOSPITALITY_BROKEN`. Settling with them before the night (below) does not move it: they still come that night, to take the settlement at the landing under truce, and the scene is a parley instead of a battle unless someone breaks the truce. An attack in force runs on the assault rules of section 12 from the other side: the household musters, and its crew can use the formation commands. Whoever leads the watch that night may die holding the landing, depending on preparation (section 17).
 
 ### Settling instead of fighting
-Every answer includes a way to settle: compensation in goods, returning what was taken, freeing a hostage, public apology at a named place, or service. Settling writes `PROMISE_MADE` (and `BLOOD_PRICE_PAID` when the compensation is for the dead; proposal) and changes the council in Chapter 7. **Proof tests:** the answer chosen matches the ledger; a player with no grievances gets an envoy; every attack can be settled before or during the fight.
+Every answer includes a way to settle: compensation in goods, returning what was taken, freeing a hostage, public apology at a named place, or service. Settling writes `PROMISE_MADE` (and `BLOOD_PRICE_PAID` when the compensation is for the dead) and changes the council in Chapter 7. **Proof tests:** the answer chosen matches the ledger; a player with no grievances gets an envoy; every attack can be settled before or during the fight.
 
 ## 10 / Scenario 9: The Return to Skarvholm
 *Chapter 8, required. Long after the household left, Orm's garrison holds the island, the beaches have drowned, and Heid's apprentice is digging into the Hollow Cairn for the one thing that can renew Manannán's compact. The household must go back.*
@@ -358,7 +358,7 @@ The broken chamber holds Gróa, the drowned diggers and the cairn's wardens. The
 Two features are always present: the drowned diggers, and the surge when the Cup is lifted.
 
 ### Extraction
-Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground first, then the Seal Cave passage, then the causeway, then the strand. **The cairn door (proposal):** as the tide rises, someone must hold the cairn door behind the party. Whoever stays dies, unless the party found the spring-room passage first, which lets the last one out behind them (section 17). Exits from the inner chamber: back through the spring room to Seal Cave, out through the east door towards Gull Geo or Naust Cove, or up Gróa's shaft into the middle of the garrison. Freeing captives costs time against the surge.
+Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground first, then the Seal Cave passage, then the causeway, then the strand. **The cairn door:** as the tide rises, someone must hold the cairn door behind the party. Whoever stays dies, unless the party found the spring-room passage first, which lets the last one out behind them (section 17). Exits from the inner chamber: back through the spring room to Seal Cave, out through the east door towards Gull Geo or Naust Cove, or up Gróa's shaft into the middle of the garrison. Freeing captives costs time against the surge.
 
 ### Outcome bands
 | Band | Result |
@@ -372,7 +372,7 @@ Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground f
 ### Consequences
 - **The Cup recovered:** the compact can be renewed at Inis Rón; Manannán's mist can cover the alliance in the finale.
 - **Ships burned:** Orm's fleet sails two ships short.
-- **Beacon lit:** if the watch on Rook Hill lights its beacon, Orm is warned and his fleet sails five days early (Book 10 section 07). The final battle is still a gate the player starts (section 15), but from then on his ships are on the coast: the pressure before the battle builds faster, and there is less quiet time to renew the compact and gather allies.
+- **Beacon lit:** if the watch on Rook Hill lights its beacon, Orm is warned. It brings his attack, the final battle against his fleet and the defence of the mainland home, 5 days earlier (its typical day moves 5 days earlier) and raises the pressure faster, while the final battle remains a gate the player starts (section 15; Book 10 section 22). From then on his ships are on the coast, and there is less quiet time to renew the compact and gather allies.
 - **Captives freed:** they return as residents with high friendship. **Diggers freed** is `RESCUE`; **diggers killed** is `CIVILIAN_KILLED`, known to Orm's conscripts and fatal to their chances of defecting.
 - **Truths spoken:** the crew's memories and friendship change; secrets one resident held become shared.
 - **Kolgrím:** killed in the hólmganga, his garrison's cohesion collapses for the night; killed later, his men fight to the end.
@@ -409,11 +409,11 @@ Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground f
 | Barrow mail worn | Hrolf's draugar; Saltvik's gossip | The dead come to the camp and the steading at night; Ottar's family claim the mail (section 13) | Wet footprints at the door; Ottar's envoy |
 | The Frankish sword worn at Dún Fiach | Fiachra's household | An accusation of theft, or the proof of who Faolán is (section 13) | Fiachra's face when he sees the hilt |
 | A revenge killing in a town | The town's guards and the dead person's kin | A feud and a blood-price demand (section 14) | Guards on sight in that town; the kin's envoy |
-| Someone spared in an early raid (proposal) | The survivor | They return at the worst moment, to help or to repay a different debt | Their name in the deed record; a face the player may remember |
+| Someone spared in an early raid | The survivor | They return at the worst moment, to help or to repay a different debt | Their name in the deed record; a face the player may remember |
 | A promise made to a traveller | The traveller, and the road | Help, or a grievance, from someone the player forgot | The promise in the bargains panel |
-| A challenge refused (proposal) | The challenger's men, and the poet | Níð spoken of the household; a satire sung where it hurts; the Glory-minded ashamed at the fire | Kári's anger; the satire at Saltvik |
-| A killing hidden, then found out (proposal) | A body found, or one of the household's own who will not keep the secret | The killing judged as murder, worse than if it had been declared, with éraic or vengeance owed | The accusation; who told |
-| A resident left behind (proposal) | The enemy who took them | A ransom demand, a rescue, or word of their death | Their empty place at the fire; the enemy's envoy |
+| A challenge refused | The challenger's men, and the poet | Níð spoken of the household; a satire sung where it hurts; the Glory-minded ashamed at the fire | Kári's anger; the satire at Saltvik |
+| A killing hidden, then found out | A body found, or one of the household's own who will not keep the secret | The killing judged as murder, worse than if it had been declared, with éraic or vengeance owed | The accusation; who told |
+| A resident left behind | The enemy who took them | A ransom demand, a rescue, or word of their death | Their empty place at the fire; the enemy's envoy |
 
 ### Propagation rules
 - News travels only with carriers: survivors, traders, monks, rival crews, seals for the Keepers, and on the mainland the travellers on its roads, the ford-keeper at the River Ford and the pedlar. Each carrier has a route and a delay. Places and travellers are simulated at low detail while off screen, so things happen while the household is away and the news reaches it the same way, by people (Book 10 section 17).
@@ -497,11 +497,30 @@ Each dungeon is built like a scenario: a lead, a true state, puzzles from the wo
 | Site and guardian | Reward and what it changes | Cost | How the cost arrives | Ways to answer |
 |---|---|---|---|---|
 | **The Black Wood souterrain**: the hill-folk's champion; riddling doors | **Ceo, the mist-spear**: in fog and at night, thrusts pass through shields | The hill-folk call on you at Samhain; Christian residents are uneasy | At Samhain the aos sí come for what is owed, held to the exact words of the bargain. Eithne and Senán remark on it, then complain, while it hangs in the house | Answer the Samhain call; refusing is `PROMISE_BROKEN` with the hill-folk. Keep it out of the Christians' sight |
-| **The Barrow-King's mound**: Hrolf the haugbúi and his draugar | **Barrow mail**: the best armour; immune to stagger | The dead are drawn to you at night; Ottar's family claim it | Taking it is `SACRED_TAKEN` (a grave good). Hrolf's draugar follow it to camps and the steading after dark. Once Saltvik hears, from a trader or from someone who sees it worn, Ottar's family demand it. **Proposal:** Hrolf was Ottar's grandfather and the mound holds church silver stolen from Kilbrecc; opening it exposes how Saltvik was founded | Give the mail to Ottar's family; keep it and carry Saltvik's grievance; take the church silver back to Kilbrecc, which honours Kilbrecc and shames Ottar |
+| **The Barrow-King's mound**: Hrolf the haugbúi and his draugar | **Barrow mail**: the best armour; immune to stagger | The dead are drawn to you at night; Ottar's family claim it | Taking it is `SACRED_TAKEN` (a grave good). Hrolf's draugar follow it to camps and the steading after dark. Once Saltvik hears, from a trader or from someone who sees it worn, Ottar's family demand it. Hrolf was Ottar's grandfather and the mound holds church silver stolen from Kilbrecc; opening it exposes how Saltvik was founded | Give the mail to Ottar's family; keep it and carry Saltvik's grievance; take the church silver back to Kilbrecc, which honours Kilbrecc and shames Ottar |
 | **The Drowned Trackway**: the Bog King, a drowned offering-priest | **The bog torc**: the dead cannot see you; you walk flooded bog | Fires warm you less; risk of cold sickness | Taking it is `SACRED_TAKEN` (an offering). While it is worn, a warm fire restores less of the stamina bar (Book 10 section 06, "Stamina capacity") and cold sickness comes more easily (Book 10 section 03) | Take it off for winter nights; give it back to the bog |
-| **The outlaws' hill-fort**: Faolán Wolf-Hand and his band | **A Frankish sword**: the finest sword on the coast | It was stolen from Dún Fiach; wearing it there is an accusation | Anyone at Dún Fiach who sees it says so, and Fiachra accuses the household of the theft. **Proposal:** the sword is the proof that Faolán is Fiachra's eldest son; bringing both to Dún Fiach can restore him and split the kingdom between him and Órlaith (Book 5 section 04) | Return it to Fiachra; keep it away from Dún Fiach; use it as proof (proposal). Taking the hill-fort by force is an assault (section 12) |
+| **The outlaws' hill-fort**: Faolán Wolf-Hand and his band | **A Frankish sword**: the finest sword on the coast | It was stolen from Dún Fiach; wearing it there is an accusation | Anyone at Dún Fiach who sees it says so, and Fiachra accuses the household of the theft. The sword is the proof that Faolán is Fiachra's eldest son; bringing both to Dún Fiach can restore him and split the kingdom between him and Órlaith (Book 5 section 04) | Return it to Fiachra; keep it away from Dún Fiach; use it as proof. Taking the hill-fort by force is an assault (section 12) |
 | **The Cailleach's Cave**: wind and ice, then the Cailleach herself | **The Cailleach's maul**: shatters shields; freezes water it strikes (ice bridges, frozen bog) | Works only in autumn and winter; using it in summer angers her | Swung in summer it does nothing and angers her, and her anger follows her rules in Book 4. Runa, who keeps faith with the Cailleach, says what she thinks of it | Use it only in her seasons; make amends at her stone |
 | **Loch Carn**, a quest: the each-uisce | **The kelpie bridle**: summon the water-horse to cross lochs, bogs and rivers fast | Never keep it near water at night, or it drowns its rider | The water-horse comes for whoever holds the bridle by water after dark, with clear signs first (Book 4's fairness rules). If it takes the steerer, the game is over. Ardcarn, which fears the lough, judges how the each-uisce was dealt with (Book 5 section 07) | Keep it from water at night; bind the each-uisce again at Brigid's well (Book 4) |
+
+### Small dungeons behind the routes' secret entrances
+Four wilderness routes hide a secret entrance to a small dungeon (Book 4 section 03; Book 9 section 14 places them; Book 10 section 20 holds the numbers). Each is built like a small scenario: a lead (its hint signs and its rumours), a threshold seen before the party commits, one obstacle or trap from the world with its sign, a few creatures or none, lore that explains the reward before it is taken, and the reward with its cost. None has a guardian of the six dungeons' weight, and none of the rewards is game-changing; each is worth the detour.
+
+| Entrance and route | Inside | Lore | Equipment and what it changes | Cost, and how it arrives | Ways to answer |
+|---|---|---|---|---|---|
+| **The fallen-oak souterrain**, the Black Wood path. A second, small souterrain, not a back way into the one in the heart | A creep under the oak's roots into three low stone chambers. A boar sow dens in the first in winter and spring (rooted earth at the creep and a snort inside first). The last chamber holds the farm's store, and the bones of the family who never came out | The family's names and tally cut on the lintel; a carving of the hill-folk's door that gives the answer to one of the riddling doors in the heart (the souterrain in the heart, above), so one fewer answer must come from the hermit's psalter | **A boar-spear**: a lugged hunting spear. A boar, wolf or charging person that runs onto its point is held at its length and takes a harder thrust | It is heavy: a slower thrust, and no second thrust in a combo. The bones ask for rites; nobody demands them, but the Kin- and Faith-minded remember whether they were given | Carry another spear for the shield wall. Give the bones rites in the souterrain or at home |
+| **The cave behind the falls**, the High Pass | A wade across the edge of the gorge pool, then a wet ledge behind the falling water (a sheen on the stone and the roar; the drain of waist water, Book 1 section 18) into a dry outer cave with the watchmen's hearth, and an inner chamber with their store. In winter the falls freeze into a curtain of ice that must be broken first: with an axe it takes time and its noise carries along the pass; the Cailleach's maul breaks it at a blow | The watchmen's tally sticks, and the account they cut of the night Faolán's band took the tower: the band's leader wore the royal brooch of Dún Fiach, a clue to the outlaw prince (Book 4 section 12) | **A wolfskin cloak**: the cold of a night outdoors lowers the stamina bar by half as much | Dogs smell wolf on it: they bark at the wearer from further off, and herds shy away, so a stealth raid on a farm with dogs is harder. Fiachra's riders take a wolfskin for an outlaw's mark and challenge a wearer they do not know | Take it off before a stealth raid or the Ridge Road; wear it on cold nights |
+| **The heather barrow**, the moor road | A crawl through the gap at the barrow's end into a short passage with a sill stone, and one chamber. The cairn-builders' grave is far older than the Mound Field; three lifetimes ago a Norse warrior was laid in it as well, with his helmet. At night the barrow-dead stir here (Book 4 section 09: their signs first) | Spirals like the Hollow Cairn's, and a carving of three figures speaking over a cup: what the Door of Three Truths asks (section 10), learned before the Return | **An iron helmet**, rare on this coast (Book 7 section 07): a helmet's protection (Book 10 section 06) | It is a grave good. Taken with nothing of worth left in its place, it is `SACRED_TAKEN`, and the barrow's dead follow the household's camps on the moor road at night until it is returned | Leave a weapon or silver of worth in its place, which both the Norse and the Gaels hold to be a fair exchange with the dead; or return it |
+| **The otter-cave behind the weir**, the river path and the Ford | Along the top of the eel weir at low water, knee deep (closed in spate), behind its fall and through a crawl into the otters' holt (they slip away into the river), then a dry inner chamber above the flood line | Runes cut in the wall by a raiding crew of long ago: the river rose in spate behind them and took their ship at the Ford. The runes name the signs that come before a spate, so the household reads the Ford's closing a day early | **A rune-cut yew bow** with a quiver of iron-headed arrows: a longer reach and harder hits than the hunting bow, with a heavier draw | The runes name its owner, and his kin at Saltvik know the bow. The first time it is seen there, a kinsman asks for it back | Return it, which Saltvik remembers well; or keep it and carry Saltvik's grudge |
+
+**Rumours.** Each entrance has three rumours in the line pools of travellers and minor characters (Book 8 section 17), and about one in three is wrong (Book 10 section 20). A wrong rumour sends the party to the wrong place or the wrong season, never into a trap:
+
+| Entrance | True rumours | The wrong one |
+|---|---|---|
+| The fallen-oak souterrain | A charcoal burner: a farm stood here before the wood, and its people hid under the ground when raiders came. The pedlar: under a fallen oak, in the ring of old oaks | A traveller: in the holly-dark hollow, where the fog lies (only fog and holly) |
+| The cave behind the falls | A herder on Sliabh Carn: the watchmen kept their store where the water falls. The hermit: the dippers know a door in the gorge | An outlaw: the watchmen's store is under the tower's floor (an empty pit) |
+| The heather barrow | A salt-pan worker: there is an old one under the heather, older than the Barrow-King. The poet's verse: the stone with the spirals is a door | A herder: the old grave is the ring cairn on the low ridge (it is empty) |
+| The otter-cave behind the weir | Cuán: the otters have a house behind the weir bigger than any otter needs. A fisher: there is a cave behind the weir, in at low water | A smuggler: the raiders' bow lies under the stepping stones at the Ford (only the river) |
 
 ### Optional quests for the ship and gear
 Optional quests can be mounted at any time, outside the story gates: for ship enhancements (a better sail, a carved prow, a sea-charm, a famous mast timber), for character equipment (the dungeon rewards above, and smaller finds), and for residents' requests (Book 5 section 11). They are built like a small scenario, with a lead, a true state and consequences. Some need a particular companion, and say so before they start: Runa to judge a mast timber, Senán to read a carved stone (Book 5 section 12).
@@ -510,6 +529,8 @@ Optional quests can be mounted at any time, outside the story gates: for ship en
 1. Each reward's cost arrives on at least one path, carried by a person or a power, and is never a silent penalty.
 2. Each cost has at least one answer the player can see before choosing.
 3. A player can finish the campaign without taking any dungeon reward.
+4. Each secret entrance can be found by exploring and entered under its conditions; each of its hint signs and both true rumours point at it, and the wrong rumour points elsewhere and leads into no trap.
+5. Each small dungeon's lore can be read before its reward is taken, and each reward's cost arrives and can be answered as the table says.
 
 ## 14 / Revenge quests
 *A death asked for by a friend, done in someone else's town. The deed is real, and so is every other way out.*
@@ -523,21 +544,21 @@ Optional quests can be mounted at any time, outside the story gates: for ship en
 | **The killing** | A deed in that town: `KILLING`, or `CIVILIAN_KILLED` if the target is no fighter, with witnesses and evidence as in a raid |
 | **The guards** | The town's guards attack the household on sight there until the matter is settled (Book 10 section 07, "Hostility and evidence") |
 | **The feud** | The dead person's kin take up the feud and look for the household's people on the roads and in that town |
-| **The blood-price** | The kin demand éraic of the household. Paying it writes `BLOOD_PRICE_PAID` (proposal), ends the feud and is remembered; refusing keeps the feud alive |
+| **The blood-price** | The kin demand éraic of the household. Paying it writes `BLOOD_PRICE_PAID`, ends the feud and is remembered; refusing keeps the feud alive |
 
 ### Other ways out
 Every revenge quest also allows:
-- **A blood-price paid** to the one who asked, by the killer or the killer's kin, in public and by the law of that people. Accepting it writes `BLOOD_PRICE_TAKEN` (proposal): proper and expected to a Gael, "carrying your kin in your purse" to a Glory-minded Norse (section 01).
-- **A duel**, a formal fight before witnesses. A death in a duel fought by its rules writes `KILLING` but brings no guards and no feud. A duel offered and refused writes `CHALLENGE_REFUSED` (proposal) against whoever refused it.
+- **A blood-price paid** to the one who asked, by the killer or the killer's kin, in public and by the law of that people. Accepting it writes `BLOOD_PRICE_TAKEN`: proper and expected to a Gael, "carrying your kin in your purse" to a Glory-minded Norse (section 01).
+- **A duel**, a formal fight before witnesses. A death in a duel fought by its rules writes `KILLING` but brings no guards and no feud. A duel offered and refused writes `CHALLENGE_REFUSED` against whoever refused it.
 - **Exile**: the target leaves the coast and does not come back.
 - **The truth**: the reveal is shown to the one who asked, and the demand changes or falls away.
 
 The one who asked judges the ending by their values (Book 5 section 11), and Book 10 section 08 ("Requests and quests") holds what each ending moves.
 
-### Áine's father (proposal)
+### Áine's father
 The man who killed Áine's father lives in Saltvik. He is now a gentle father of three; as everywhere in this book, his family is implied by his house and never appears as actors. **The truth:** the killing was ordered by Gilla Muire himself. Killing him in Saltvik brings Saltvik's guards, his kin's feud and a blood-price, and costs goodwill at the market. A duel or exile ends it more quietly. The truth turns Áine's anger on Glen Arra's own chief and strains the Glen Arra alliance (Book 5 section 09).
 
-### Hild and Kolgrím (proposal)
+### Hild and Kolgrím
 Kolgrím the Burner burned Hvitness and later commands Orm's garrison on Skarvholm. The hólmganga in the Return (section 10, approach E) is the lawful way for Hild to have her vengeance; killed by stealth, Kolgrím's men fight to the end.
 
 ### Proof tests
@@ -546,33 +567,36 @@ Kolgrím the Burner burned Hvitness and later commands Orm's garrison on Skarvho
 3. The reveal can be found before the killing on at least one path.
 
 ## 15 / Story gates
-*The story moves forward only through major events the player chooses to start. The calendar keeps running, and every dated story event waits at its gate.*
+*The story moves forward only through major events the player chooses to start. The calendar keeps running, and every dated story event waits at its gate, save the defence of Skarvholm, which comes on its fixed night.*
 
 ### How a gate works
-- **The player starts it.** A gate is a raid, an expedition, a defence or a council that moves the story on. Nothing starts one but the player's choice.
+- **The player starts it.** A gate is a raid, an expedition, a defence or a council that moves the story on. Nothing starts one but the player's choice, with one exception: the defence of Skarvholm comes on its fixed night (below).
 - **The calendar keeps running.** Seasons turn, crops grow and winter must be prepared for, but no chapter deadline passes without the player: a dated story event waits at its gate. Chapter windows in Book 4 section 08 are typical dates, not limits, and Book 10's target progression is a guide for a well-paced player, not a deadline (Book 10 sections 10 and 22).
 - **Pressure builds gently.** While the player delays past a gate's typical day, demands grow and rumours spread (Book 10 section 22), but pressure never starts a gate.
+- **The one fixed night.** The defence of Skarvholm, when the answer is an attack, comes on a fixed night with at least seven days' warning, and cannot be put off or avoided; once warned, no journey or voyage that would keep the steerer away that night may start, and a steerer already away is brought home by dusk on the day (section 09; Book 10 section 22). It has no pressure, because it does not wait.
 - **A readiness screen** opens every gate. It shows the crew, the ship, the stores, the allies and the equipment the gate calls for, with what the household knows of the danger, and a clear warning that the gate is a point of no return.
 
-### The gates (proposal)
+### The gates
 | Gate | Where it plays | Its readiness screen shows | What waits for it |
 |---|---|---|---|
 | The launch | The end of Chapter 1 (Book 4 section 08) | The boat's repairs, crew and stores | The sea map and the smoke at Carrick |
 | The Carrick raid | Scenario 1 (section 02) | Crew, ship, mode, timing, equipment and the one preparation advantage | Chapter 2's haul and its consequences |
 | The reply to Asgrim | Chapter 4's end (Book 4 section 08), when Asgrim returns for an answer | Silver, allies and the household's answer | Orm's escalation; Thrand's proof, if Thrand is ready to make it (section 17) |
-| The defence of Skarvholm | Scenario 8, the answer (section 09) | Watch, walls, weapons and warning | The attack the ledger earned |
+| The defence of Skarvholm | Scenario 8, the answer (section 09), on its fixed night: the one gate that does not wait | Watch, walls, weapons and warning | The attack the ledger earned |
 | The household council | Chapter 5 (Book 4 section 08) | Stores, the island's state and the two mainland sites | The move ashore, or the Lonely Isle path |
 | The move ashore | Chapter 6 (Book 4 section 08) | Ships, cargo, and the chosen site secured | Orm's taking of Skarvholm |
 | The Gathering | Chapter 7 (Book 4 section 08) | Allies, their demands and the household's offers | Brónach's word of the Cup |
 | The Return to Skarvholm | Scenario 9 (section 10) | Crew, equipment, keys and the checkpoint | The Cup; one retry before the household sets out for the final battle |
-| The final battle | Chapter 8 (Book 4 section 08) | Allies, ships and the Cup | The endings |
+| The final battle | Chapter 8 (Book 4 section 08); 5 days earlier, with the pressure rising faster, if the beacon was lit in the Return (section 10) | Allies, ships and the Cup | The endings |
 
 Other raids, land attacks, sea-borne attacks and defences are gates when they are story events, and optional otherwise (section 12).
 
 ### Proof tests
-1. No gate starts without the player's choice, and every gate opens with its readiness screen and a plain point-of-no-return warning.
+1. No gate but the defence of Skarvholm starts without the player's choice, and every gate opens with its readiness screen and a plain point-of-no-return warning.
 2. A dated story event (Orm's taking of Skarvholm) waits for its gate while the calendar runs on.
 3. Delay raises the pressure on its Book 10 schedule and never starts a gate.
+4. The defence of Skarvholm comes on its fixed night whatever the player does, after at least seven days' warning; from the warning, every journey and voyage that would keep the steerer away that night is refused with its reason, and a steerer away when the warning comes is home by dusk on the day.
+5. With the beacon lit, the final battle's typical day is 5 days earlier and its pressure rises at the Book 10 beacon rate, and it still starts only on the player's choice.
 
 ## 16 / Downed, carried and left behind
 *A downed ally is not dead. Carried home they live; left behind they are the enemy's.*
@@ -589,7 +613,7 @@ Other raids, land attacks, sea-borne attacks and defences are gates when they ar
 | The Church's hired swords | Taken captive and handed to whoever paid them |
 | Outlaws in a hurry, wolves, the dead | Killed |
 
-- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner, proposal; Book 5 section 19). They always give a visible warning first, a raised weapon and a shout (Book 10 section 06), so the player has a moment to answer.
+- **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner; Book 5 section 19). They always give a visible warning first, a raised weapon and a shout (Book 10 section 06), so the player has a moment to answer.
 - **The household's own finisher** on a downed enemy writes `SURRENDERED_KILLED`; taking a downed enemy captive is `HOSTAGE_TAKEN`, ordinary dealing to most of the coast (section 01).
 - *Rán's mercy* still turns unscripted crew deaths into grave wounds; scripted deaths (section 17) still happen.
 
@@ -601,7 +625,7 @@ Other raids, land attacks, sea-borne attacks and defences are gates when they ar
 ## 17 / Scripted deaths
 *A few deaths are written into the story or offered as a choice. Each one changes the household.*
 
-These are proposals (Book 5 section 19). Every one is announced by the scene before it can happen, and every death that follows is consequential (Book 5 section 19): grief, lost skills, changed ties, a grave, songs, and story branches that close.
+Every one is announced by the scene before it can happen, and every death that follows is consequential (Book 5 section 19): grief, lost skills, changed ties, a grave, songs, and story branches that close.
 
 | Death | Where | How it plays | How it can be avoided |
 |---|---|---|---|

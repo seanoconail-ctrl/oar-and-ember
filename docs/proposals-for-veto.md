@@ -1,5 +1,9 @@
 # Proposals for the user's veto (design addenda 2.2 and 2.3)
 
+All 55 approved by the user on 2026-11-11 (decision DD-1).
+
+Later decisions of the same day change three of them: item 23 is replaced by DD-3 (the defence of Skarvholm comes on a fixed night and does not wait), item 24 is restated by DD-4, and the "hidden stance" of item 43 is now called Nessa's secret (DD-5).
+
 Every item marked "proposal" while addenda 2.2 and 2.3 were folded into the books. Each goes in as
 written unless the user vetoes it. Veto by number. Decision log: DA-1 to DA-16, DC-1 to DC-16.
 
