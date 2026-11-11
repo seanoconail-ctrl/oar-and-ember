@@ -4,8 +4,8 @@
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadPalette, loadSheets } from './artFiles.ts';
-import { lintSheet, placeholders } from './artLint.ts';
+import { loadLayerDefs, loadPalette, loadSheets } from './artFiles.ts';
+import { layerProblems, lintSheet, placeholders } from './artLint.ts';
 import { compiledAtlases } from './compile.ts';
 import { generatedSheets } from './generate-sheets.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
@@ -71,7 +71,10 @@ export function staleArtFiles(): string[] {
 if (import.meta.filename === process.argv[1]) {
   const palette = loadPalette();
   const sheets = loadSheets(palette);
-  const issues = sheets.flatMap((s) => lintSheet(s, palette));
+  const issues = [
+    ...sheets.flatMap((s) => lintSheet(s, palette)),
+    ...layerProblems(sheets, loadLayerDefs(), palette),
+  ];
   for (const issue of issues)
     console.error(
       `${issue.sheet}${issue.frame === undefined ? '' : ` ${issue.frame}`}: ${issue.reason}`,

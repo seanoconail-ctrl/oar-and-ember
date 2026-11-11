@@ -10,10 +10,10 @@ import { bakeElevation } from '../../src/render/elevation.ts';
 import { buildDrawList } from '../../src/render/scene.ts';
 import { zoneScene } from '../../src/scenes/zoneScene.ts';
 import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
-import { ZoneVisuals } from '../../src/scenes/zoneVisuals.ts';
+import { visualTuning, ZoneVisuals } from '../../src/scenes/zoneVisuals.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { newCampaign } from '../../src/sim/world.ts';
-import { loadPalette, loadSheets } from '../../src/tools/art/artFiles.ts';
+import { loadPalette, loadPeopleLook, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { loadZoneMaps, standardProblems, ZONE_GROUND } from '../../src/tools/art/lint.ts';
 import { MOTION_THRESHOLD, continuousMotion } from '../../src/tools/art/motion.ts';
 import {
@@ -40,6 +40,8 @@ const b = parseTimeBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
 const zones = loadZoneMaps();
+const palette = loadPalette();
+const tuning = visualTuning(balance, palette);
 
 describe('the Book 7 terrain art standard (section 14)', () => {
   it('passes art lint’s standard checks on every sheet and zone', () => {
@@ -60,7 +62,7 @@ describe('the Book 7 terrain art standard (section 14)', () => {
     const map = land.maps.get('ZONE_SK_STRAND');
     const onFoot = world.onFoot;
     if (map === undefined || onFoot === null) throw new Error('no strand');
-    const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false);
+    const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false, tuning);
     let checked = 0;
     // Look from several places, so props, wildlife and people all come into view.
     for (const [x, y] of [
@@ -88,7 +90,7 @@ describe('the Book 7 terrain art standard (section 14)', () => {
         tick: 0,
         tideOpen: false,
         phase: 'day',
-        look: { steerer: 'actor_p_steerer_a', people: { C_HILD: 'actor_c_hild' } },
+        look: loadPeopleLook('A'),
         anims,
         shadows,
         highlight: null,
@@ -159,7 +161,7 @@ describe('the Book 7 terrain art standard (section 14)', () => {
     const map = land.maps.get('ZONE_SK_STRAND');
     const onFoot = world.onFoot;
     if (map === undefined || onFoot === null) throw new Error('no strand');
-    const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false);
+    const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false, tuning);
     // The busiest view: the machair, thick with plants.
     onFoot.player.x = 70 * 24;
     onFoot.player.y = 5 * 24;
@@ -183,7 +185,7 @@ describe('the Book 7 terrain art standard (section 14)', () => {
           tick,
           tideOpen: false,
           phase: 'day',
-          look: { steerer: 'actor_p_steerer_b', people: { C_HILD: 'actor_c_hild' } },
+          look: loadPeopleLook('B'),
           anims,
           shadows,
           highlight: null,

@@ -14,7 +14,7 @@ export interface Overlay {
   fit(viewport: Viewport, devicePixelRatio: number): void;
   setTextSize(percent: number): void;
   /** A named text region (created on first use). */
-  region(name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel'): HTMLElement;
+  region(name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel' | 'slot' | 'refusal'): HTMLElement;
 }
 
 const STYLE = `
@@ -22,12 +22,15 @@ const STYLE = `
   font-family: system-ui, 'Segoe UI', Roboto, 'Noto Sans', 'DejaVu Sans', sans-serif; font-synthesis: none;
   text-shadow: 0 1px 0 #22313a, 1px 0 0 #22313a, 0 -1px 0 #22313a, -1px 0 0 #22313a; }
 .oe-overlay [data-region] { position: absolute; left: 4%; right: 4%; }
-.oe-overlay [data-region=captions] { bottom: 4%; text-align: center; font-size: 1.1em; }
+.oe-overlay [data-region=captions] { bottom: 11%; text-align: center; font-size: 1.1em; }
 .oe-overlay [data-region=captions] p { margin: 0.15em auto; display: table; padding: 0.1em 0.5em;
   background: rgba(34, 49, 58, 0.85); border-radius: 2px; }
 .oe-overlay [data-region=captions] p.info { font-style: italic; background: rgba(34, 49, 58, 0.7); }
 .oe-overlay [data-region=captions] p.speech { font-style: normal; }
-.oe-overlay [data-region=prompt] { bottom: 16%; text-align: center; }
+.oe-overlay [data-region=prompt] { bottom: 24%; text-align: center; }
+.oe-overlay [data-region=slot] { bottom: 9%; text-align: center; font-size: 0.85em; }
+.oe-overlay [data-region=refusal] { right: auto; font-size: 0.8em; white-space: nowrap;
+  transform: translateY(-100%); color: #f2b8a0; }
 .oe-overlay [data-region=menu] { top: 30%; text-align: center; font-size: 1.3em; }
 .oe-overlay [data-region=menu]:not(:empty) { background: rgba(58, 38, 22, 0.88); border: 2px solid #7b5434;
   padding: 0.6em; }

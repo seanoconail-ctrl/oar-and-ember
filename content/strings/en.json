@@ -436,7 +436,7 @@
     "text": "Controls, menus and sound (Stage 5 check)"
   },
   "ui.shell.help": {
-    "text": "Keys: 1-6 orders, hold Tab for the order ring, M map, I inventory, B build, J report, Esc system menu. H toggles a test hostile. P next music, O stinger, K horn, L parry. F2 then a key rebinds Interact. T toggles hold-or-toggle for Run. Click once to start sound."
+    "text": "Keys: F1 to F6 orders, hold Tab for the order ring, M map, I inventory, B build, J report, Esc system menu. H toggles a test hostile. P next music, O stinger, K horn, L parry. F9 then a key rebinds Interact. T toggles hold-or-toggle for Run. Click once to start sound."
   },
   "ui.shell.status": {
     "text": "Tick {tick} · {time} · hostile aware: {hostile} · music: {music}"
@@ -550,6 +550,27 @@
   },
   "ui.prompt.hands_full": {
     "text": "Your hands are full."
+  },
+  "ui.prompt.lift_click": {
+    "text": "Right-click  Lift {name}"
+  },
+  "ui.refusal.too_far": {
+    "text": "Too far"
+  },
+  "ui.refusal.nothing_there": {
+    "text": "Nothing there"
+  },
+  "ui.refusal.nothing_to_cut": {
+    "text": "Nothing to cut"
+  },
+  "ui.refusal.nothing_to_shoot": {
+    "text": "Nothing to shoot"
+  },
+  "item.name.bow": {
+    "text": "Bow"
+  },
+  "item.name.seax": {
+    "text": "Seax"
   },
   "person.short.c_hild": {
     "text": "Hild"

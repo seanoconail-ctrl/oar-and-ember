@@ -24,6 +24,19 @@ export interface SceneSprite {
   readonly focus?: boolean;
   /** Sort line within the actor layer, if not the foot (a bird in flight sorts over everything). */
   readonly sort?: number;
+  /**
+   * A person standing in knee or waist water (Book 7 section 07): the bottom `mask` rows of the
+   * sprite, up from the foot anchor, are drawn as water (`colour`, 0 to 255) with the body faintly
+   * showing through in broken streaks, under a light waterline rim that ripples a pixel.
+   */
+  readonly wade?: Wade;
+  /** 0 to 1: darkened after leaving the water (wet clothes, Book 7 section 07). */
+  readonly dark?: number;
+}
+
+export interface Wade {
+  readonly mask: number;
+  readonly colour: readonly [number, number, number];
 }
 
 export interface LightPool {
@@ -115,6 +128,27 @@ export interface DrawItem {
   /** 0 draws every pixel; 0.5 drops half of them in an ordered-dither pattern (a cutaway). */
   readonly fade: number;
   readonly layer: Layer;
+  /** The first screen row drawn as water (a wading person), or absent. */
+  readonly cutY?: number;
+  readonly water?: readonly [number, number, number];
+  readonly dark?: number;
+}
+
+/** The waterline rim's light, 0 to 255 (the palette's lightest sea foam). */
+export const RIM_MIX = 0.8;
+/** How much darker a wet sprite is at full wetness (about one ramp step). */
+export const WET_DARKEN = 0.22;
+/** How much of the body shows through the water on a streak row. */
+export const STREAK_MIX = 0.22;
+
+/** Whether row r below the waterline (0 = the first masked row) shows the body through, at time t. */
+export function streakRow(r: number, t: number): boolean {
+  return (r + Math.floor(t * 6)) % 3 !== 0;
+}
+
+/** The waterline's ripple at screen column x and time t: -1, 0 or 1 rows. */
+export function rimWobble(x: number, t: number): number {
+  return Math.round(Math.sin(t * 5 + x * 0.9) * 0.6);
 }
 
 const LAYER_ORDER: Record<Layer, number> = { ground: 0, decal: 1, actor: 2 };
@@ -142,8 +176,9 @@ export function buildDrawList(
     const sheet = sheets.get(sprite.sheet);
     if (sheet === undefined) throw new Error(`Scene uses unknown sheet "${sprite.sheet}"`);
     const footY = Math.round(sprite.y);
-    const x = Math.round(sprite.x) - sheet.pivot.x;
-    items[i] = {
+    const anchorX = Math.round(sprite.x);
+    const x = anchorX - sheet.pivot.x;
+    const item: DrawItem = {
       sheet: sprite.sheet,
       frame: sprite.frame,
       x,
@@ -153,10 +188,23 @@ export function buildDrawList(
       fade: 0,
       layer: sprite.layer,
     };
+    const wade = sprite.wade;
+    items[i] =
+      wade === undefined && sprite.dark === undefined
+        ? item
+        : {
+            ...item,
+            ...(wade === undefined || wade.mask <= 0
+              ? {}
+              : { cutY: footY - wade.mask + 1, water: wade.colour }),
+            ...(sprite.dark === undefined ? {} : { dark: sprite.dark }),
+          };
     const actor = sprite.layer === 'actor';
     layerKey[i] = LAYER_ORDER[sprite.layer];
     sortKey[i] = actor ? (sprite.sort ?? footY) : 0;
-    xKey[i] = actor ? x : 0;
+    // By the foot anchor, not the canvas corner, so a person's layers (a bow on a larger canvas
+    // round the same anchor) keep together and in their order.
+    xKey[i] = actor ? anchorX : 0;
     order[i] = i;
     if (sprite.focus === true) focusIndex = i;
   });

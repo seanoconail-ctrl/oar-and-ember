@@ -12,6 +12,10 @@ export interface InputFrame {
   readonly released: ReadonlySet<Action>;
   /** Movement from -1 to 1 on each axis; length at most 1. */
   readonly move: { readonly x: number; readonly y: number };
+  /** The right stick, raw (-1 to 1 each axis): the gamepad's target cursor and aim. */
+  readonly stick: { readonly x: number; readonly y: number };
+  /** Actions held through a mouse button this frame (right-click interacts at the cursor). */
+  readonly byMouse: ReadonlySet<Action>;
 }
 
 /** Stick deflection below this counts as centred. */
@@ -25,6 +29,8 @@ export class InputMapper {
   /** Keys and buttons pressed since the last sample, so a tap shorter than a frame still counts. */
   readonly #tappedKeys = new Set<string>();
   readonly #tappedMouse = new Set<number>();
+  /** Wheel turns since the last sample: each is one press of its binding. */
+  readonly #wheel = new Set<number>();
   #padButtons: readonly boolean[] = [];
   #padAxes: readonly number[] = [];
   readonly #toggled = new Set<Action>();
@@ -62,6 +68,10 @@ export class InputMapper {
   mouseUp(button: number): void {
     this.#mouse.delete(button);
   }
+  /** One notch of the mouse wheel: 1 down (towards the user), -1 up. */
+  wheel(dir: -1 | 1): void {
+    this.#wheel.add(dir);
+  }
   pad(buttons: readonly boolean[], axes: readonly number[]): void {
     this.#padButtons = buttons;
     this.#padAxes = axes;
@@ -72,6 +82,7 @@ export class InputMapper {
     this.#mouse.clear();
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();
+    this.#wheel.clear();
     this.#padButtons = [];
     this.#padAxes = [];
     this.#toggled.clear();
@@ -83,6 +94,8 @@ export class InputMapper {
         return this.#keys.has(binding.code) || this.#tappedKeys.has(binding.code);
       case 'mouse':
         return this.#mouse.has(binding.button) || this.#tappedMouse.has(binding.button);
+      case 'wheel':
+        return this.#wheel.has(binding.dir);
       case 'pad':
         return this.#padButtons[binding.button] === true;
       case 'axis':
@@ -101,7 +114,8 @@ export class InputMapper {
       const retapped = this.#bindings[action].some(
         (b) =>
           (b.device === 'key' && this.#tappedKeys.has(b.code)) ||
-          (b.device === 'mouse' && this.#tappedMouse.has(b.button)),
+          (b.device === 'mouse' && this.#tappedMouse.has(b.button)) ||
+          (b.device === 'wheel' && this.#wheel.has(b.dir)),
       );
       if (retapped) fresh.add(action);
     }
@@ -117,8 +131,18 @@ export class InputMapper {
         held.add(action);
       }
     }
+    const byMouse = new Set<Action>();
+    for (const action of held)
+      if (
+        this.#bindings[action].some(
+          (b) =>
+            b.device === 'mouse' && (this.#mouse.has(b.button) || this.#tappedMouse.has(b.button)),
+        )
+      )
+        byMouse.add(action);
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();
+    this.#wheel.clear();
     const pressed = new Set(
       [...held].filter((a) => !this.#heldBefore.has(a) || (fresh.has(a) && !this.#toggle.has(a))),
     );
@@ -143,6 +167,7 @@ export class InputMapper {
       x /= length;
       y /= length;
     }
-    return { held, pressed, released, move: { x, y } };
+    const stick = { x: this.#padAxes[2] ?? 0, y: this.#padAxes[3] ?? 0 };
+    return { held, pressed, released, move: { x, y }, stick, byMouse };
   }
 }

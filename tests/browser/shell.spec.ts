@@ -55,7 +55,7 @@ test('the command ring never stops time', async ({ page }) => {
   await page.keyboard.up('Tab');
   await expect(overlay(page)).toHaveAttribute('data-ring', 'closed');
   await expect(overlay(page)).toHaveAttribute('data-order', 'FOLLOW');
-  await page.keyboard.press('Digit6');
+  await page.keyboard.press('F6');
   await expect(overlay(page)).toHaveAttribute('data-order', 'WITHDRAW');
 });
 
@@ -74,7 +74,7 @@ test('music states, stingers and effects each produce a caption', async ({ page 
 test('a remapped key persists across a reload', async ({ page }) => {
   await openShell(page);
   await expect(overlay(page)).toHaveAttribute('data-interact', 'E, Pad 0');
-  await page.keyboard.press('F2');
+  await page.keyboard.press('F9');
   await page.keyboard.press('KeyG');
   await expect(overlay(page)).toHaveAttribute('data-interact', 'G, Pad 0');
   await page.reload();

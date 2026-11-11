@@ -1,8 +1,8 @@
 /**
  * The Stage 5 check view (?view=shell): controls, menus under the safe rule, the command ring,
  * the text overlay, music states, stingers, effects and captions, around a running clock.
- * Keys: 1-6 orders, hold Tab for the ring, M I B J menus, Esc system menu, H test hostile,
- * P next music state, O stinger, K horn, L parry, F2 then a key rebinds Interact, T hold-or-toggle
+ * Keys: F1-F6 orders, hold Tab for the ring, M I B J menus, Esc system menu, H test hostile,
+ * P next music state, O stinger, K horn, L parry, F9 then a key rebinds Interact, T hold-or-toggle
  * for Run. The overlay root carries data-* attributes the browser tests read.
  */
 import audioJson from '../../content/audio.json';
@@ -122,7 +122,7 @@ export function showShellView(
         return true;
       }
       switch (code) {
-        case 'F2':
+        case 'F9':
           rebinding = true;
           notice = t('ui.shell.rebind');
           return true;

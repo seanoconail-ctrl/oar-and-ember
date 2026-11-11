@@ -1,6 +1,29 @@
 {
   "about": "On-foot controller settings that Book 10 does not give (decision S6-4, provisional until the user approves). Speeds come from balance.json, never from here.",
   "interactRadiusTiles": 1.5,
-  "footprint": { "w": 10, "h": 4 },
-  "setDownReach": 14
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "setDownReach": 14,
+  "hotbar": {
+    "about": "What the steerer wakes with on Wreck Strand (Stage 6 rework, provisional until the user approves): their own bow, slung on their back in the approved sprite, and a seax, the knife every adult carries. Nothing else came ashore with them; the wreck kit of Book 10 section 10 is salvaged during Chapter 1.",
+    "start": ["ITEM_BOW", "ITEM_SEAX"],
+    "selected": 0
+  },
+  "items": {
+    "ITEM_BOW": {
+      "nameKey": "item.name.bow",
+      "icon": "bow",
+      "use": "AIM",
+      "refusalKey": "ui.refusal.nothing_to_shoot"
+    },
+    "ITEM_SEAX": {
+      "nameKey": "item.name.seax",
+      "icon": "seax",
+      "glyph": "sword",
+      "use": "MELEE",
+      "refusalKey": "ui.refusal.nothing_to_cut"
+    }
+  }
 }

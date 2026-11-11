@@ -32,21 +32,35 @@ import type { Palette } from './palette.ts';
 import { paletteIndex } from './palette.ts';
 import { frameTexture, linkProgram } from './presenter.ts';
 import type { Presenter } from './presenter.ts';
-import { BAYER4 } from './scene.ts';
+import { rimColour } from './cpuRenderer.ts';
+import { BAYER4, RIM_MIX, STREAK_MIX, WET_DARKEN } from './scene.ts';
 import type { DrawItem, RenderStyle, Scene, SceneEffects } from './scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from './viewport.ts';
 
 export { MAX_POOLS };
 
+/** Floats a sprite vertex: x, y, u, v, fade, cut, water r g b, dark. */
+const STRIDE = 10;
+const NO_WATER = [0, 0, 0] as const;
+
 const VERTEX = `#version 300 es
 in vec2 a_pos;      // logical pixels, y down
 in vec2 a_texel;    // atlas texel at this corner
 in float a_fade;
+in float a_cut;     // first screen row drawn as water (a wading person), or -1
+in vec3 a_water;    // the water's colour, 0 to 255
+in float a_dark;    // 0 to 1: wet and darker
 out vec2 v_texel;
 flat out float v_fade;
+flat out float v_cut;
+flat out vec3 v_water;
+flat out float v_dark;
 void main() {
   v_texel = a_texel;
   v_fade = a_fade;
+  v_cut = a_cut;
+  v_water = a_water;
+  v_dark = a_dark;
   // y down maps to clip -1 at the top, so the target's row 0 is the frame's top row.
   gl_Position = vec4(a_pos.x / ${LOGICAL_WIDTH / 2}.0 - 1.0, a_pos.y / ${LOGICAL_HEIGHT / 2}.0 - 1.0, 0.0, 1.0);
 }`;
@@ -59,8 +73,13 @@ uniform bool u_solid;
 uniform vec3 u_solidColour;       // 0 to 255
 uniform float u_mask;             // > 0: write this value where the sprite is opaque (a cast shadow)
 uniform int u_bayer[16];
+uniform float u_t;                // visual clock, seconds (the waterline's ripple)
+uniform vec3 u_rim;               // the waterline's light, 0 to 255
 in vec2 v_texel;
 flat in float v_fade;
+flat in float v_cut;
+flat in vec3 v_water;
+flat in float v_dark;
 out vec4 outColour;
 void main() {
   ivec2 p = ivec2(gl_FragCoord.xy);
@@ -75,7 +94,21 @@ void main() {
     return;
   }
   if (v_fade > 0.0 && float(u_bayer[(p.y & 3) * 4 + (p.x & 3)]) < floor(v_fade * 16.0 + 0.5)) discard;
-  outColour = vec4(floor(t.rgb * 255.0 + 0.5) / 255.0, 1.0);
+  vec3 c = floor(t.rgb * 255.0 + 0.5);
+  if (v_dark > 0.0) c = c * (1.0 - ${WET_DARKEN.toFixed(2)} * v_dark);
+  if (v_cut >= 0.0) {
+    // The same arithmetic as rimWobble and streakRow (src/render/scene.ts).
+    float wob = floor(sin(u_t * 5.0 + float(p.x) * 0.9) * 0.6 + 0.5);
+    float y = float(p.y);
+    if (y == v_cut + wob) c = c * ${(1 - RIM_MIX).toFixed(2)} + u_rim * ${RIM_MIX.toFixed(2)};
+    else if (y >= v_cut) {
+      int r = int(y - v_cut) + int(floor(u_t * 6.0));
+      float k = (r % 3) != 0 ? ${STREAK_MIX.toFixed(2)} : 0.0;
+      c = v_water * (1.0 - k) + c * k;
+    }
+    c = floor(c);
+  }
+  outColour = vec4(c / 255.0, 1.0);
 }`;
 
 interface Atlas {
@@ -130,6 +163,7 @@ export function createSceneRenderer(
   const atlases = new Map<string, Atlas>();
   const elevations = new Map<string, ElevationTexture>();
   const colours = waterColours(palette);
+  const rim = rimColour(palette);
   let sprite!: WebGLProgram;
   let ellipse!: WebGLProgram;
   let shade!: WebGLProgram;
@@ -224,9 +258,12 @@ export function createSceneRenderer(
       gl.enableVertexAttribArray(at);
       gl.vertexAttribPointer(at, size, gl.FLOAT, false, stride, offset);
     };
-    attr(sprite, 'a_pos', 2, 0, 20);
-    attr(sprite, 'a_texel', 2, 8, 20);
-    attr(sprite, 'a_fade', 1, 16, 20);
+    attr(sprite, 'a_pos', 2, 0, STRIDE * 4);
+    attr(sprite, 'a_texel', 2, 8, STRIDE * 4);
+    attr(sprite, 'a_fade', 1, 16, STRIDE * 4);
+    attr(sprite, 'a_cut', 1, 20, STRIDE * 4);
+    attr(sprite, 'a_water', 3, 24, STRIDE * 4);
+    attr(sprite, 'a_dark', 1, 36, STRIDE * 4);
 
     ellipseVao = gl.createVertexArray();
     ellipseBuffer = gl.createBuffer();
@@ -270,8 +307,8 @@ export function createSceneRenderer(
   build();
   presenter.onRestore(build);
 
-  /** Vertex scratch, reused every frame: 6 corners x (x, y, u, v, fade) a sprite. */
-  let scratch = new Float32Array(30 * 1024);
+  /** Vertex scratch, reused every frame: 6 corners x STRIDE floats a sprite. */
+  let scratch = new Float32Array(6 * STRIDE * 1024);
   const quad = (
     at: number,
     x: number,
@@ -281,21 +318,30 @@ export function createSceneRenderer(
     tx: number,
     ty: number,
     fade: number,
+    item?: DrawItem,
   ): number => {
-    if (at + 30 > scratch.length) {
+    if (at + 6 * STRIDE > scratch.length) {
       const bigger = new Float32Array(scratch.length * 2);
       bigger.set(scratch);
       scratch = bigger;
     }
     const v = scratch;
     let i = at;
+    const cut = item?.cutY ?? -1;
+    const water = item?.water ?? NO_WATER;
+    const dark = item?.dark ?? 0;
     const put = (px: number, py: number, u: number, w2: number): void => {
       v[i] = px;
       v[i + 1] = py;
       v[i + 2] = u;
       v[i + 3] = w2;
       v[i + 4] = fade;
-      i += 5;
+      v[i + 5] = cut;
+      v[i + 6] = water[0];
+      v[i + 7] = water[1];
+      v[i + 8] = water[2];
+      v[i + 9] = dark;
+      i += STRIDE;
     };
     put(x, y, tx, ty);
     put(x + w, y, tx + w, ty);
@@ -310,13 +356,15 @@ export function createSceneRenderer(
     gl.getUniformLocation(p, name);
 
   /** Draws sprite items in order, batched while they share an atlas. */
-  const drawSprites = (items: readonly DrawItem[]): void => {
+  const drawSprites = (items: readonly DrawItem[], seconds = 0): void => {
     gl.useProgram(sprite);
     gl.bindVertexArray(spriteVao);
     gl.uniform1iv(uniform(sprite, 'u_bayer'), Int32Array.from(BAYER4));
     gl.uniform1i(uniform(sprite, 'u_atlas'), 0);
     gl.uniform1i(uniform(sprite, 'u_solid'), 0);
     gl.uniform1f(uniform(sprite, 'u_mask'), 0);
+    gl.uniform1f(uniform(sprite, 'u_t'), seconds);
+    gl.uniform3f(uniform(sprite, 'u_rim'), rim[0], rim[1], rim[2]);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindBuffer(gl.ARRAY_BUFFER, spriteBuffer);
     let i = 0;
@@ -331,11 +379,11 @@ export function createSceneRenderer(
         if (item === undefined) continue;
         const at = atlas.manifest.frames[item.frame];
         if (at === undefined) throw new Error(`Atlas ${sheet} has no frame ${item.frame}`);
-        n = quad(n, item.x, item.y, item.width, item.height, at[0], at[1], item.fade);
+        n = quad(n, item.x, item.y, item.width, item.height, at[0], at[1], item.fade, item);
       }
       gl.bindTexture(gl.TEXTURE_2D, atlas.texture);
       gl.bufferData(gl.ARRAY_BUFFER, scratch.subarray(0, n), gl.STREAM_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, n / 5);
+      gl.drawArrays(gl.TRIANGLES, 0, n / STRIDE);
     }
   };
 
@@ -426,7 +474,7 @@ export function createSceneRenderer(
         const v: number[] = [];
         const corner = (px: number, py: number, u: number, w: number): void => {
           const hgt = foot - py;
-          v.push(px + fx.sun.x * hgt, foot + fx.sun.y * hgt, u, w, 0);
+          v.push(px + fx.sun.x * hgt, foot + fx.sun.y * hgt, u, w, 0, -1, 0, 0, 0, 0);
         };
         const x0 = item.x;
         const y0 = item.y;
@@ -565,7 +613,7 @@ export function createSceneRenderer(
         if ((fx.detail ?? 2) > 0) drawShadows(fx);
         gl.bindFramebuffer(gl.FRAMEBUFFER, sceneFbo);
       }
-      drawSprites(upper);
+      drawSprites(upper, fx?.seconds ?? 0);
       drawPost(scene, elev);
       gl.bindVertexArray(null);
       presenter.presentTexture(outTarget);

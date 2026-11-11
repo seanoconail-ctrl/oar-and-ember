@@ -27,6 +27,8 @@ function isBinding(value: unknown): value is Binding {
     case 'mouse':
     case 'pad':
       return Number.isInteger(b['button']) && (b['button'] as number) >= 0;
+    case 'wheel':
+      return b['dir'] === 1 || b['dir'] === -1;
     case 'axis':
       return Number.isInteger(b['axis']) && (b['dir'] === 1 || b['dir'] === -1);
     default:

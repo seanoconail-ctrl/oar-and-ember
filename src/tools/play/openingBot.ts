@@ -6,6 +6,8 @@
  */
 import { tideAt } from '../../sim/calendar/calendar.ts';
 import type { TimeBalance } from '../../content/balance.ts';
+import type { LandContext } from '../../sim/land/onFoot.ts';
+import { bandAt, isDeep, stillWaterLevel } from '../../sim/land/water.ts';
 import { aboveTideLine, blocksMovement, terrainAt, tileOf } from '../../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../../sim/land/zoneMap.ts';
 import type { Simulation } from '../../sim/simulation.ts';
@@ -21,6 +23,7 @@ export function findPath(
   tideOpen: boolean,
   from: Tile,
   goal: (t: Tile) => boolean,
+  passable: (t: Tile) => boolean = () => true,
 ): Tile[] | null {
   const key = (t: Tile): number => t.ty * map.width + t.tx;
   const came = new Map<number, Tile | null>([[key(from), null]]);
@@ -42,6 +45,7 @@ export function findPath(
       const n = { tx: t.tx + dx, ty: t.ty + dy };
       if (n.tx < 0 || n.ty < 0 || n.tx >= map.width || n.ty >= map.height) continue;
       if (came.has(key(n)) || blocksMovement(terrainAt(map, n.tx, n.ty), tideOpen)) continue;
+      if (!passable(n)) continue;
       came.set(key(n), t);
       queue.push(n);
     }
@@ -53,13 +57,26 @@ export class OpeningBot {
   readonly #sim: Simulation;
   readonly #map: ZoneMap;
   readonly #b: TimeBalance;
+  readonly #land: Pick<LandContext, 'water' | 'elevations'> | null;
   /** Ticks run by this bot. */
   ticks = 0;
 
-  constructor(sim: Simulation, map: ZoneMap, b: TimeBalance) {
+  /** With the land context the bot keeps out of deep water, as a player must. */
+  constructor(
+    sim: Simulation,
+    map: ZoneMap,
+    b: TimeBalance,
+    land: Pick<LandContext, 'water' | 'elevations'> | null = null,
+  ) {
     this.#sim = sim;
     this.#map = map;
     this.#b = b;
+    this.#land = land;
+  }
+
+  /** Where the bot aims inside a tile. */
+  #spot(t: Tile): { x: number; y: number } {
+    return { x: (t.tx + 0.5) * this.#map.tile, y: (t.ty + 0.7) * this.#map.tile };
   }
 
   get #player() {
@@ -79,13 +96,20 @@ export class OpeningBot {
 
   /** Walks to the first tile matching `goal`; returns false if there is no path or it stalls. */
   walkTo(goal: (t: Tile) => boolean, opts: { run?: boolean; maxTicks?: number } = {}): boolean {
-    const tideOpen = tideAt(this.#sim.state.calendar, this.#b).tidalGroundOpen;
-    const path = findPath(this.#map, tideOpen, this.tile(), goal);
+    const tide = tideAt(this.#sim.state.calendar, this.#b);
+    const land = this.#land;
+    const elevation = land?.elevations.get(this.#map.zone);
+    const level = stillWaterLevel(tide);
+    const passable = (t: Tile): boolean => {
+      if (land === null || elevation === undefined) return true;
+      const at = this.#spot(t);
+      return !isDeep(bandAt(land.water, elevation, at.x, at.y, level));
+    };
+    const path = findPath(this.#map, tide.tidalGroundOpen, this.tile(), goal, passable);
     if (path === null) return false;
     const limit = this.ticks + (opts.maxTicks ?? 60 * 120);
     for (const waypoint of path.slice(1)) {
-      const cx = (waypoint.tx + 0.5) * this.#map.tile;
-      const cy = (waypoint.ty + 0.7) * this.#map.tile;
+      const { x: cx, y: cy } = this.#spot(waypoint);
       for (;;) {
         const p = this.#player;
         const dx = cx - p.x;

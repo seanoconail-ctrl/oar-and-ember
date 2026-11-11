@@ -6,6 +6,7 @@
  * Fields that later stages fill (ships, homes' buildings, regions' resource nodes, knowledge,
  * bargains, powers) are present with their Book 2 shape and start empty.
  */
+import { parseControlsBalance } from '../content/balance.ts';
 import type { PeopleBasics, TimeBalance } from '../content/balance.ts';
 import type { Content, VALUES, TIE_KINDS } from '../content/registry.ts';
 import type { Id } from '../core/ids.ts';
@@ -15,8 +16,12 @@ import type { CalendarState } from './calendar/calendar.ts';
 import { placeOnFoot } from './land/onFoot.ts';
 import type { OnFootState } from './land/onFoot.ts';
 
-/** Version 2 (Stage 6) adds `onFoot`: where the steerer and the people nearby stand in a zone. */
-export const WORLD_STATE_VERSION = 2;
+/**
+ * Version 2 (Stage 6) adds `onFoot`: where the steerer and the people nearby stand in a zone.
+ * Version 3 (the Stage 6 rework) adds the steerer's hotbar (`player.hotbar`) and a drawn bow's aim
+ * (`onFoot.player.aim`).
+ */
+export const WORLD_STATE_VERSION = 3;
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -76,6 +81,13 @@ export interface PlayerState {
   awake: boolean;
   /** Change to maximum stamina for the current day (the collapse penalty, Book 10). */
   staminaMaxChange: number;
+  /** Book 2 section 21: the slots (Book 10 section 21, hotbarSlots) and the one in hand. */
+  hotbar: Hotbar;
+}
+
+export interface Hotbar {
+  slots: (Id | null)[];
+  selected: number;
 }
 
 /** Book 2 section 15. */
@@ -200,6 +212,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
       gear: [],
       awake: true,
       staminaMaxChange: 0,
+      hotbar: { slots: [], selected: 0 },
     },
     household: { residents: [], hostages: [], guests: [] },
     people: {},
@@ -236,7 +249,10 @@ export function newCampaign(
   seed: string,
   b: TimeBalance,
   basics: PeopleBasics,
-  content: Pick<Content, 'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps'>,
+  content: Pick<
+    Content,
+    'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps' | 'onFoot' | 'balance'
+  >,
   steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
     name: '',
     bodyModel: null,
@@ -247,6 +263,15 @@ export function newCampaign(
   world.player.bodyModel = steerer.bodyModel;
   world.player.vitality = basics.vitality;
   world.player.stamina = basics.stamina;
+  // What the steerer has on waking (content/onfoot.json), in a hotbar of Book 10's size.
+  const start = content.onFoot?.hotbar;
+  if (start !== undefined) {
+    const size = parseControlsBalance(content.balance).hotbarSlots;
+    world.player.hotbar = {
+      slots: Array.from({ length: size }, (_, i) => start.start[i] ?? null),
+      selected: Math.min(start.selected, size - 1),
+    };
+  }
   for (const def of content.people.values()) {
     if (def.kind === 'PLAYER') continue;
     world.people[def.id] = {
@@ -297,7 +322,7 @@ export function newCampaign(
   const opening = content.opening;
   const strand = opening === null ? undefined : content.zoneMaps.get(opening.zone);
   if (opening !== null && strand !== undefined) {
-    world.onFoot = placeOnFoot(strand, [opening.caller]);
+    world.onFoot = placeOnFoot(strand, [opening.caller], opening.callerPose);
   }
   return world;
 }

@@ -186,11 +186,30 @@ const fraction =
         }),
         null);
 
+const itemCheck = object(
+  {
+    nameKey: ref('string'),
+    /**
+     * The hotbar icon (a ui_icons state) and the target-tile glyph (a ui_cursor_glyph state; none
+     * for an item aimed freely, which shows the aim line instead).
+     */
+    icon: text,
+    glyph: text,
+    use: oneOf(['AIM', 'MELEE', 'TOOL'] as const),
+    /** The refusal word when there is nothing to use it on ("Nothing to cut"). */
+    refusalKey: ref('string'),
+  },
+  ['glyph'],
+);
+
 const onFootCheck = object({
   about: text,
   interactRadiusTiles: fraction(0.5, 4),
   footprint: object({ w: int(2, 24), h: int(1, 24) }),
   setDownReach: int(1, 48),
+  /** What the steerer wakes with: hotbar slots from the first, and the one in hand. */
+  hotbar: object({ about: text, start: arrayOf(id(['ITEM'])), selected: int(0, 11) }),
+  items: recordOf(id(['ITEM']), itemCheck),
 });
 
 const openingCheck = object({
@@ -201,6 +220,8 @@ const openingCheck = object({
   firstCallSeconds: int(0, 60),
   callEverySeconds: int(1, 60),
   moveHintSeconds: int(1, 60),
+  /** How the caller waits to be rescued: lying, or standing and calling. */
+  callerPose: oneOf(['down', 'call'] as const),
   callLines: arrayOf(ref('string')),
   foundLine: ref('string'),
   safeLine: ref('string'),
@@ -379,6 +400,23 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
           reason: `unknown person "${who}"`,
         });
     }
+  }
+  if (onFoot !== null) {
+    onFoot.hotbar.start.forEach((item, i) => {
+      if (onFoot.items[item] === undefined)
+        issues.push({
+          file: CONTENT_FILES.onFoot,
+          path: `hotbar.start[${i}]`,
+          reason: `"${item}" has no entry in items`,
+        });
+    });
+    for (const item of Object.keys(onFoot.items))
+      if (!ids.byId.has(item))
+        issues.push({
+          file: CONTENT_FILES.onFoot,
+          path: `items.${item}`,
+          reason: `"${item}" is not in the ID registry (${CONTENT_FILES.ids})`,
+        });
   }
   if (opening !== null && !ids.byId.has(opening.beat))
     issues.push({

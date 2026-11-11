@@ -12,8 +12,21 @@ export const ACTIONS = [
   'run',
   'sneak',
   'interact',
-  'lightAttack',
-  'heavy',
+  'useItem',
+  'slot1',
+  'slot2',
+  'slot3',
+  'slot4',
+  'slot5',
+  'slot6',
+  'slot7',
+  'slot8',
+  'slot9',
+  'slot10',
+  'slot11',
+  'slot12',
+  'slotNext',
+  'slotPrev',
   'parry',
   'block',
   'dodge',
@@ -35,12 +48,32 @@ export const ACTIONS = [
 
 export type Action = (typeof ACTIONS)[number];
 
-/** A physical input: a keyboard key (KeyboardEvent.code), a mouse button, a pad button or axis. */
+/**
+ * A physical input: a keyboard key (KeyboardEvent.code), a mouse button, a turn of the mouse
+ * wheel, a pad button or axis.
+ */
 export type Binding =
   | { readonly device: 'key'; readonly code: string }
   | { readonly device: 'mouse'; readonly button: number }
+  | { readonly device: 'wheel'; readonly dir: -1 | 1 }
   | { readonly device: 'pad'; readonly button: number }
   | { readonly device: 'axis'; readonly axis: number; readonly dir: -1 | 1 };
+
+/** The twelve hotbar slot actions, in slot order (Book 10 section 21: 1 to 9, 0, minus, equals). */
+export const SLOT_ACTIONS = [
+  'slot1',
+  'slot2',
+  'slot3',
+  'slot4',
+  'slot5',
+  'slot6',
+  'slot7',
+  'slot8',
+  'slot9',
+  'slot10',
+  'slot11',
+  'slot12',
+] as const satisfies readonly Action[];
 
 export type Bindings = Readonly<Record<Action, readonly Binding[]>>;
 
@@ -49,6 +82,7 @@ export const TOGGLEABLE: readonly Action[] = ['run', 'sneak', 'block', 'commandR
 
 const key = (code: string): Binding => ({ device: 'key', code });
 const mouse = (button: number): Binding => ({ device: 'mouse', button });
+const wheel = (dir: -1 | 1): Binding => ({ device: 'wheel', dir });
 /** Standard gamepad layout: 0 A, 1 B, 2 X, 3 Y, 4 LB, 5 RB, 6 LT, 7 RT, 8 Back, 9 Start, 10 L3, 11 R3, 12-15 d-pad. */
 const pad = (button: number): Binding => ({ device: 'pad', button });
 const axis = (n: number, dir: -1 | 1): Binding => ({ device: 'axis', axis: n, dir });
@@ -60,21 +94,37 @@ export const DEFAULT_BINDINGS: Bindings = {
   moveRight: [key('KeyD'), key('ArrowRight'), axis(0, 1)],
   run: [key('ShiftLeft'), pad(10)],
   sneak: [key('KeyC'), pad(11)],
-  interact: [key('KeyE'), pad(0)],
-  lightAttack: [mouse(0), pad(2)],
-  heavy: [mouse(2), pad(3)],
-  parry: [key('KeyQ'), pad(5)],
-  block: [key('ControlLeft'), pad(7)],
+  // Right-click interacts at the cursor's tile; the key and the pad interact at the target tile.
+  interact: [key('KeyE'), mouse(2), pad(0)],
+  // Left-click uses the item in hand (attack with a weapon, hold to draw a bow or charge a heavy).
+  useItem: [key('KeyF'), mouse(0), pad(7)],
+  slot1: [key('Digit1')],
+  slot2: [key('Digit2')],
+  slot3: [key('Digit3')],
+  slot4: [key('Digit4')],
+  slot5: [key('Digit5')],
+  slot6: [key('Digit6')],
+  slot7: [key('Digit7')],
+  slot8: [key('Digit8')],
+  slot9: [key('Digit9')],
+  slot10: [key('Digit0')],
+  slot11: [key('Minus')],
+  slot12: [key('Equal')],
+  slotNext: [wheel(1), key('BracketRight'), pad(5)],
+  slotPrev: [wheel(-1), key('BracketLeft'), pad(4)],
+  parry: [key('KeyQ'), pad(3)],
+  block: [key('ControlLeft'), pad(6)],
   dodge: [key('Space'), pad(1)],
-  shove: [key('KeyR'), pad(6)],
-  finisher: [key('KeyV'), pad(4)],
+  shove: [key('KeyR'), pad(2)],
+  finisher: [key('KeyV')],
   commandRing: [key('Tab'), pad(12)],
-  quick1: [key('Digit1'), pad(13)],
-  quick2: [key('Digit2'), pad(14)],
-  quick3: [key('Digit3'), pad(15)],
-  quick4: [key('Digit4')],
-  quick5: [key('Digit5')],
-  quick6: [key('Digit6')],
+  // The number keys choose hotbar slots (Book 2 section 21), so quick commands are F1 to F6.
+  quick1: [key('F1'), pad(13)],
+  quick2: [key('F2'), pad(14)],
+  quick3: [key('F3'), pad(15)],
+  quick4: [key('F4')],
+  quick5: [key('F5')],
+  quick6: [key('F6')],
   map: [key('KeyM'), pad(8)],
   inventory: [key('KeyI')],
   buildMenu: [key('KeyB')],
@@ -89,6 +139,8 @@ export function sameBinding(a: Binding, b: Binding): boolean {
       return b.device === 'key' && a.code === b.code;
     case 'mouse':
       return b.device === 'mouse' && a.button === b.button;
+    case 'wheel':
+      return b.device === 'wheel' && a.dir === b.dir;
     case 'pad':
       return b.device === 'pad' && a.button === b.button;
     case 'axis':
@@ -116,7 +168,7 @@ export function rebind(
     out[a] = list;
   }
   const kind = (b: Binding): string =>
-    b.device === 'axis' ? 'pad' : b.device === 'mouse' ? 'key' : b.device;
+    b.device === 'axis' ? 'pad' : b.device === 'mouse' || b.device === 'wheel' ? 'key' : b.device;
   const own = out[action];
   const at = own.findIndex((b) => kind(b) === kind(binding));
   out[action] = at === -1 ? [...own, binding] : own.map((b, i) => (i === at ? binding : b));
@@ -133,6 +185,8 @@ export function bindingLabel(binding: Binding): string {
         .replace(/Left$/, '');
     case 'mouse':
       return `Mouse ${binding.button + 1}`;
+    case 'wheel':
+      return binding.dir < 0 ? 'Wheel up' : 'Wheel down';
     case 'pad':
       return `Pad ${binding.button}`;
     case 'axis':

@@ -8,13 +8,21 @@
  * Positions are logical pixels; an actor's (x, y) is its foot anchor. Pure and deterministic:
  * the simulation calls these once per 60 Hz tick.
  */
-import type { MovementBalance } from '../../content/balance.ts';
+import type { ControlsBalance, MovementBalance, WaterBalance } from '../../content/balance.ts';
+import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
+import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
 
 export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
-export type Pose = 'down' | 'idle' | 'sit' | 'carried';
+/**
+ * How a person in the zone is placed: lying down, standing calling for help (Hild in the
+ * shallows, too hurt to wade out alone), standing, sitting, or carried.
+ */
+export type Pose = 'down' | 'call' | 'idle' | 'sit' | 'carried';
+/** Poses of someone who needs lifting. */
+export const NEEDS_LIFT: readonly Pose[] = ['down', 'call'];
 
 export interface MoveIntent {
   /** -1 to 1 on each axis, length at most 1 (a stick can ask for less than full speed). */
@@ -24,6 +32,13 @@ export interface MoveIntent {
   sneak: boolean;
 }
 
+/** A bow or thrown spear being drawn: the aim vector (quantised) and the tick the draw began. */
+export interface Aim {
+  readonly x: number;
+  readonly y: number;
+  readonly since: number;
+}
+
 export interface OnFootPlayer {
   x: number;
   y: number;
@@ -31,6 +46,8 @@ export interface OnFootPlayer {
   gait: Gait;
   moving: boolean;
   intent: MoveIntent;
+  /** Drawing a bow, or null (Book 2 section 21, AIM). */
+  aim: Aim | null;
 }
 
 export interface OnFootActor {
@@ -55,24 +72,41 @@ export interface OnFootRules {
   readonly footprint: { readonly w: number; readonly h: number };
   /** How far ahead of the steerer a carried person is set down, in pixels. */
   readonly setDownReach: number;
+  /** How each hotbar item is used: drawn and aimed (a bow), or used at a tile within reach. */
+  readonly items: Readonly<Record<Id, { readonly use: ItemUse }>>;
 }
+
+/** AIM: drawn and aimed freely (a bow); MELEE: struck towards a facing; TOOL: used at a tile. */
+export type ItemUse = 'AIM' | 'MELEE' | 'TOOL';
 
 export interface LandContext {
   readonly maps: ReadonlyMap<Id, ZoneMap>;
   readonly movement: MovementBalance;
   readonly rules: OnFootRules;
+  /** Book 10 section 02, water depth bands and effects. */
+  readonly water: WaterBalance;
+  /** Book 10 section 21: reach and the hotbar. */
+  readonly controls: ControlsBalance;
+  /** Each zone's baked ground height (the water's depth comes from it). */
+  readonly elevations: ReadonlyMap<Id, Elevation>;
+}
+
+/** The tide as movement needs it: whether the tidal ground is open, and the still water level. */
+export interface TideNow {
+  readonly open: boolean;
+  readonly level: number;
 }
 
 export const TICKS_PER_SECOND = 60;
 
-export function placeOnFoot(map: ZoneMap, people: readonly Id[]): OnFootState {
+export function placeOnFoot(map: ZoneMap, people: readonly Id[], pose: Pose = 'down'): OnFootState {
   const steerer = map.spawns['P_STEERER'];
   if (steerer === undefined) throw new Error(`${map.zone} has no P_STEERER spawn`);
   const px = (t: number): number => t * map.tile;
   const actors: Record<Id, OnFootActor> = {};
   for (const id of people) {
     const s = map.spawns[id];
-    if (s !== undefined) actors[id] = { x: px(s.x), y: px(s.y), facing: s.facing, pose: 'down' };
+    if (s !== undefined) actors[id] = { x: px(s.x), y: px(s.y), facing: s.facing, pose };
   }
   return {
     zone: map.zone,
@@ -83,6 +117,7 @@ export function placeOnFoot(map: ZoneMap, people: readonly Id[]): OnFootState {
       gait: 'walk',
       moving: false,
       intent: { x: 0, y: 0, run: false, sneak: false },
+      aim: null,
     },
     actors,
     carrying: null,
@@ -127,29 +162,59 @@ export function footprintClear(
   return true;
 }
 
-function facingOf(x: number, y: number, current: Facing): Facing {
+/** The nearest of the four facings to a direction (melee and aim facing, Book 10 section 21). */
+export function facingOf(x: number, y: number, current: Facing): Facing {
   if (x === 0 && y === 0) return current;
   if (Math.abs(x) > Math.abs(y)) return x > 0 ? 'e' : 'w';
   return y > 0 ? 's' : 'n';
+}
+
+/** The speed in tiles a second at a point, after the water's band (Book 10 section 02). */
+export function speedAt(
+  state: OnFootState,
+  map: ZoneMap,
+  ctx: Pick<LandContext, 'movement' | 'water' | 'elevations'>,
+  level: number,
+): number {
+  const p = state.player;
+  const elevation = ctx.elevations.get(map.zone);
+  const band = elevation === undefined ? null : bandAt(ctx.water, elevation, p.x, p.y, level);
+  const inWater = band !== null && band.band !== 'WET';
+  const base = p.gait === 'walk' && inWater ? ctx.movement.wade : ctx.movement[p.gait];
+  const factor = band?.speedFactor ?? 1;
+  const carry = band?.band === 'WAIST' && p.gait === 'carry' ? ctx.water.waistCarryFactor : 1;
+  return base * factor * carry;
 }
 
 /** One tick of movement. Each axis moves on its own, so the steerer slides along walls. */
 export function stepMovement(
   state: OnFootState,
   map: ZoneMap,
-  ctx: Pick<LandContext, 'movement' | 'rules'>,
-  tidalGroundOpen: boolean,
+  ctx: Pick<LandContext, 'movement' | 'rules' | 'water' | 'elevations'>,
+  tide: TideNow,
 ): void {
   const p = state.player;
   p.gait = gaitFor(state);
   const { x: ix, y: iy } = p.intent;
-  p.facing = facingOf(ix, iy, p.facing);
-  const perTick = (speedTilesPerSecond(p.gait, ctx.movement) * map.tile) / TICKS_PER_SECOND;
+  // While drawing, the steerer faces the aim (snapped to the nearest facing).
+  p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
+  const perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;
   const dx = ix * perTick;
   const dy = iy * perTick;
   const before = { x: p.x, y: p.y };
-  if (dx !== 0 && footprintClear(map, ctx.rules, p.x + dx, p.y, tidalGroundOpen)) p.x += dx;
-  if (dy !== 0 && footprintClear(map, ctx.rules, p.x, p.y + dy, tidalGroundOpen)) p.y += dy;
+  const elevation = ctx.elevations.get(map.zone);
+  // Deep water is the edge of the walkable ground (no scene allows swimming yet); someone already
+  // in it may still move towards the shallows.
+  const depthOk = (x: number, y: number): boolean => {
+    if (elevation === undefined) return true;
+    const to = bandAt(ctx.water, elevation, x, y, tide.level);
+    if (!isDeep(to)) return true;
+    return isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level));
+  };
+  const clear = (x: number, y: number): boolean =>
+    footprintClear(map, ctx.rules, x, y, tide.open) && depthOk(x, y);
+  if (dx !== 0 && clear(p.x + dx, p.y)) p.x += dx;
+  if (dy !== 0 && clear(p.x, p.y + dy)) p.y += dy;
   p.moving = p.x !== before.x || p.y !== before.y;
   const carried = state.carrying === null ? undefined : state.actors[state.carrying];
   if (carried !== undefined) {
@@ -200,11 +265,63 @@ export function interactionNow(
   const reach = rules.interactRadiusTiles * map.tile;
   let best: { id: Id; d: number } | null = null;
   for (const [id, actor] of Object.entries(state.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
-    if (actor.pose !== 'down') continue;
+    if (!NEEDS_LIFT.includes(actor.pose)) continue;
     const d = Math.hypot(actor.x - p.x, actor.y - p.y);
     if (d <= reach && (best === null || d < best.d)) best = { id, d };
   }
   return best === null ? null : { kind: 'LIFT', target: best.id };
+}
+
+export interface TilePos {
+  readonly tx: number;
+  readonly ty: number;
+}
+
+/**
+ * How far a tile is from the steerer, in tiles: centre to centre from the steerer's own tile
+ * (Book 10 section 21: a reach of 1.5 tiles is the steerer's tile and the eight around it).
+ */
+export function tileDistance(map: ZoneMap, at: { x: number; y: number }, tile: TilePos): number {
+  const own = tileOf(map, at.x, at.y);
+  return Math.hypot(tile.tx - own.tx, tile.ty - own.ty);
+}
+
+export function inReach(
+  map: ZoneMap,
+  at: { x: number; y: number },
+  tile: TilePos,
+  reachTiles: number,
+): boolean {
+  return tileDistance(map, at, tile) <= reachTiles + 1e-9;
+}
+
+/**
+ * What interacting at a tile would do (right-click, Book 2 section 21): set the carried person
+ * down there, or lift the person standing on it (their feet on the tile, or on the tile below:
+ * a click on their body counts). Reach is checked by the caller.
+ */
+export function interactionAt(
+  state: OnFootState,
+  map: ZoneMap,
+  rules: OnFootRules,
+  tidalGroundOpen: boolean,
+  tile: TilePos,
+): Interaction | null {
+  if (state.carrying !== null) {
+    const at = { x: (tile.tx + 0.5) * map.tile, y: (tile.ty + 0.7) * map.tile };
+    const terrain = terrainAt(map, tile.tx, tile.ty);
+    let refusal: RefusalReason | null = null;
+    if (!footprintClear(map, rules, at.x, at.y, tidalGroundOpen)) refusal = 'NO_ROOM';
+    else if (!aboveTideLine(terrain)) refusal = 'BELOW_TIDE_LINE';
+    return { kind: 'SET_DOWN', target: state.carrying, at, refusal, terrain };
+  }
+  for (const [id, actor] of Object.entries(state.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
+    if (!NEEDS_LIFT.includes(actor.pose)) continue;
+    const feet = tileOf(map, actor.x, actor.y);
+    if (feet.tx === tile.tx && (feet.ty === tile.ty || feet.ty === tile.ty + 1))
+      return { kind: 'LIFT', target: id };
+  }
+  return null;
 }
 
 const OPPOSITE: Record<Facing, Facing> = { s: 'n', n: 's', e: 'w', w: 'e' };
@@ -231,7 +348,7 @@ export function applyInteraction(state: OnFootState, interaction: Interaction): 
 export function disabledActions(state: OnFootState): ReadonlyMap<string, 'CARRYING'> {
   if (state.carrying === null) return new Map();
   return new Map(
-    (['lightAttack', 'heavy', 'finisher', 'shove', 'parry', 'block'] as const).map((a) => [
+    (['useItem', 'finisher', 'shove', 'parry', 'block'] as const).map((a) => [
       a,
       'CARRYING' as const,
     ]),

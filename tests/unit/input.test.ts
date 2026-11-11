@@ -33,8 +33,9 @@ describe('the action map (Book 2 section 21)', () => {
     for (const action of [
       'moveUp',
       'interact',
-      'lightAttack',
-      'heavy',
+      'useItem',
+      'slotNext',
+      'slotPrev',
       'parry',
       'block',
       'dodge',
@@ -157,7 +158,7 @@ describe('remapping', () => {
     const partly = parseSettings(
       JSON.stringify({
         bindings: { interact: [{ device: 'teleport' }] },
-        toggle: ['heavy', 'run'],
+        toggle: ['useItem', 'run'],
       }),
     );
     expect(partly.bindings.interact).toEqual(DEFAULT_BINDINGS.interact);

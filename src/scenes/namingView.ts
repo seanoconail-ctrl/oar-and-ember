@@ -8,11 +8,11 @@ import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
 import type { BodyModel } from '../sim/world.ts';
 import type { LoadedAtlas } from './atlases.ts';
+import { bundledLayerFiles } from './bundledLayers.ts';
+import { peopleLook } from './people.ts';
 
-export const BODY_SHEETS: Readonly<Record<BodyModel, string>> = {
-  A: 'actor_p_steerer_a',
-  B: 'actor_p_steerer_b',
-};
+/** The preview canvas: room round the 32 x 48 body for the bow's larger canvas. */
+const PREVIEW = { w: 48, h: 56, anchor: { x: 24, y: 51 } } as const;
 
 const STYLE = `
 .oe-naming { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -26,7 +26,7 @@ const STYLE = `
 .oe-naming .oe-bodies { display: flex; gap: 1em; justify-content: center; }
 .oe-naming .oe-bodies button { background: #3a2616; border: 3px solid #5a3b24; padding: 0.4em; cursor: pointer; }
 .oe-naming .oe-bodies button[aria-checked=true] { border-color: #c98f3a; background: #5a3b24; }
-.oe-naming canvas { display: block; width: 128px; height: 160px; image-rendering: pixelated; }
+.oe-naming canvas { display: block; width: 144px; height: 168px; image-rendering: pixelated; }
 .oe-naming .oe-wake { margin-top: 1em; font: inherit; padding: 0.4em 1.4em; background: #c98f3a;
   color: #22313a; border: 0; cursor: pointer; font-weight: 600; }
 .oe-naming p { font-size: 0.85em; opacity: 0.85; margin: 0.6em 0 0; }
@@ -91,8 +91,8 @@ export function showNaming(
       );
       button.dataset['body'] = model;
       const canvas = doc.createElement('canvas');
-      canvas.width = 32;
-      canvas.height = 40;
+      canvas.width = PREVIEW.w;
+      canvas.height = PREVIEW.h;
       button.append(canvas);
       bodies.append(button);
       return [model, button, canvas];
@@ -120,19 +120,36 @@ export function showNaming(
   });
   select('A');
 
+  const files = bundledLayerFiles();
+  const looks = { A: peopleLook(files, 'A'), B: peopleLook(files, 'B') };
   // Each body turns slowly on the spot, so both can be seen from every side.
   let turn = 0;
   const draw = (): void => {
     const facing = FACINGS[Math.floor(turn / 2) % FACINGS.length] ?? 's';
     const frame = turn % 2 === 0 ? 0 : 1;
     for (const [model, , canvas] of buttons) {
-      const atlas = atlases.get(BODY_SHEETS[model]);
-      const at = atlas?.manifest.frames[`idle/${facing}/${frame}`];
       const ctx = canvas.getContext('2d');
-      if (atlas === undefined || at === undefined || ctx === null) continue;
+      if (ctx === null) continue;
       ctx.imageSmoothingEnabled = false;
-      ctx.clearRect(0, 0, 32, 40);
-      ctx.drawImage(atlas.image, at[0], at[1], 32, 40, 0, 0, 32, 40);
+      ctx.clearRect(0, 0, PREVIEW.w, PREVIEW.h);
+      // Every layer of the body's outfit, in the facing's order, round the same foot anchor.
+      for (const sheet of looks[model].steerer.layers[facing] ?? []) {
+        const atlas = atlases.get(sheet);
+        const at = atlas?.manifest.frames[`idle/${facing}/${frame}`];
+        if (atlas === undefined || at === undefined) continue;
+        const m = atlas.manifest;
+        ctx.drawImage(
+          atlas.image,
+          at[0],
+          at[1],
+          m.width,
+          m.height,
+          PREVIEW.anchor.x - m.pivot.x,
+          PREVIEW.anchor.y - m.pivot.y,
+          m.width,
+          m.height,
+        );
+      }
     }
     turn++;
   };

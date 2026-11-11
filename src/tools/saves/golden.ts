@@ -5,10 +5,13 @@
  * - Golden save 1 (schema 1, Stage 3) is frozen: a new campaign played through two on-foot days
  *   (a sleep after 18:00, then a collapse at 02:00) with the opening one-shot fired. It is never
  *   rewritten; it must load through the migration chain.
- * - Golden save 2 (schema 2, Stage 6): the steerer named and embodied, Hild carried above the
- *   tide line by the scripted player, then the same two days.
+ * - Golden save 2 (schema 2, Stage 6) is frozen: the steerer named and embodied, Hild carried
+ *   above the tide line by the scripted player, then the same two days. It must load through the
+ *   migration chain.
+ * - Golden save 3 (schema 3, the Stage 6 rework): the same scenario with the hotbar, Hild
+ *   standing in the shallows and the water's depth bands.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-02.json
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-03.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -26,14 +29,15 @@ import { OpeningBot } from '../play/openingBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
+export const GOLDEN_03 = 'tests/golden-saves/golden-03.json';
 
-export function goldenWorld02(): WorldState {
+export function goldenWorld03(): WorldState {
   const balance = loadBalanceJson();
   const b = parseTimeBalance(balance);
   const { content, issues } = loadContentFromDisk();
   if (issues.length > 0)
     throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
-  const world = newCampaign('golden-02', b, parsePeopleBasics(balance), content, {
+  const world = newCampaign('golden-03', b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'B',
   });
@@ -41,7 +45,7 @@ export function goldenWorld02(): WorldState {
   const sim = createSimulation(b, world, land);
   const strand = land.maps.get('ZONE_SK_STRAND');
   if (strand === undefined) throw new Error('no Wreck Strand map');
-  new OpeningBot(sim, strand, b).rescue('C_HILD');
+  new OpeningBot(sim, strand, b, land).rescue('C_HILD');
   // Day 1: play to 19:00 and sleep.
   while (sim.state.calendar.minuteOfDay !== 19 * 60) sim.step();
   sim.submit({ type: 'SLEEP' });
@@ -51,18 +55,18 @@ export function goldenWorld02(): WorldState {
   return sim.state;
 }
 
-export function goldenSave02(): SaveFile {
-  return writeSave(goldenWorld02(), {
+export function goldenSave03(): SaveFile {
+  return writeSave(goldenWorld03(), {
     build: 'golden',
     kind: 'checkpoint',
-    slot: 'checkpoint:golden-02',
-    label: 'golden-02',
+    slot: 'checkpoint:golden-03',
+    label: 'golden-03',
     sequence: 1,
     savedAt: '2026-11-10T00:00:00.000Z',
   });
 }
 
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_02), `${JSON.stringify(goldenSave02(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_02}`);
+  writeFileSync(join(REPO_ROOT, GOLDEN_03), `${JSON.stringify(goldenSave03(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_03}`);
 }

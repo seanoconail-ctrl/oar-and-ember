@@ -1,0 +1,29 @@
+{
+  "name": "steerer_b",
+  "layers": {
+    "s": [
+      "actor_p_steerer_b",
+      "layer_clothing_tunic_b",
+      "layer_weapon_bow_b",
+      "layer_cloak_wool_b"
+    ],
+    "n": [
+      "actor_p_steerer_b",
+      "layer_clothing_tunic_b",
+      "layer_cloak_wool_b",
+      "layer_weapon_bow_b"
+    ],
+    "e": [
+      "actor_p_steerer_b",
+      "layer_clothing_tunic_b",
+      "layer_cloak_wool_b",
+      "layer_weapon_bow_b"
+    ],
+    "w": [
+      "actor_p_steerer_b",
+      "layer_clothing_tunic_b",
+      "layer_cloak_wool_b",
+      "layer_weapon_bow_b"
+    ]
+  }
+}

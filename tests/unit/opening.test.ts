@@ -17,6 +17,7 @@ import { Session } from '../../src/scenes/session.ts';
 import { tideAt } from '../../src/sim/calendar/calendar.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { disabledActions, interactionNow } from '../../src/sim/land/onFoot.ts';
+import { bandAt, stillWaterLevel } from '../../src/sim/land/water.ts';
 import { aboveTideLine, reachable, terrainAt, tileOf } from '../../src/sim/land/zoneMap.ts';
 import { FACT_HILD_FOUND, FACT_HILD_SAFE } from '../../src/sim/narrative/opening.ts';
 import { record, replay } from '../../src/sim/replay.ts';
@@ -178,17 +179,17 @@ describe('Book 10 speeds and the carry rules', () => {
     if (onFoot === null) throw new Error('no on-foot state');
     expect(disabledActions(onFoot).size).toBe(0);
     onFoot.carrying = 'C_HILD';
-    expect(disabledActions(onFoot).get('lightAttack')).toBe('CARRYING');
-    expect(disabledActions(onFoot).get('heavy')).toBe('CARRYING');
+    expect(disabledActions(onFoot).get('useItem')).toBe('CARRYING');
+    expect(disabledActions(onFoot).get('shove')).toBe('CARRYING');
     const input = new InputMapper(DEFAULT_BINDINGS);
     const session = new Session(sim, input, { awareHostiles: () => 0 });
     input.mouseDown(0);
     expect(session.frame(1000 / 60).refusedActions).toEqual([
-      { action: 'lightAttack', reason: 'CARRYING' },
+      { action: 'useItem', reason: 'CARRYING' },
     ]);
   });
 
-  it('stops at the sea and the rocks, and at the flats until low tide', () => {
+  it('stops at deep water, and at the flats until low tide', () => {
     const { sim } = start();
     const onFoot = sim.state.onFoot;
     if (onFoot === null) throw new Error('no on-foot state');
@@ -196,12 +197,20 @@ describe('Book 10 speeds and the carry rules', () => {
     for (let i = 0; i < 60 * 20; i++) sim.step();
     const { tx, ty } = tileOf(map, onFoot.player.x, onFoot.player.y);
     expect(terrainAt(map, tx, ty)).toBe('foreshore');
-    // Below lie the flooded flats: the steerer stands at their edge.
-    expect(terrainAt(map, tx, ty + 1)).toBe('flats');
+    // At high water the steerer wades out until the water is deep, and stops at its edge.
+    const level = stillWaterLevel(tideAt(sim.state.calendar, b));
+    const elevation = land.elevations.get(map.zone);
+    if (elevation === undefined) throw new Error('no height field');
+    const p = onFoot.player;
+    expect(bandAt(land.water, elevation, p.x, p.y, level)?.band).not.toBe('DEEP');
+    expect(bandAt(land.water, elevation, p.x, p.y + 2, level)?.band).toBe('DEEP');
+    // At low water the sea is out: on down the foreshore to the open flats and beyond.
     sim.state.calendar = { ...LOW_WATER };
-    for (let i = 0; i < 60; i++) sim.step();
-    const now = tileOf(map, onFoot.player.x, onFoot.player.y);
-    expect(now.ty).toBeGreaterThan(ty);
+    for (let i = 0; i < 60 * 3; i++) sim.step();
+    // (The footprint lies just above the foot point, so the tile is read a pixel up.)
+    const now = tileOf(map, onFoot.player.x, onFoot.player.y - 1);
+    expect(now.ty).toBeGreaterThan(ty + 1);
+    expect(terrainAt(map, now.tx, now.ty)).toBe('flats');
   });
 });
 
@@ -225,7 +234,7 @@ describe('check 2: the rescue teaches by doing', () => {
 
   it('is played through by doing: walk to the voice, lift, the tide refuses, carry up, set down', () => {
     const { sim, events } = start();
-    const bot = new OpeningBot(sim, map, b);
+    const bot = new OpeningBot(sim, map, b, land);
     bot.rescue('C_HILD');
     const types = events.map((e) => e.type).filter((t) => t !== 'WATCH_STARTED');
     // She calls until she is reached (how many times depends on the walking pace), then the rest.
@@ -299,7 +308,7 @@ describe('check 2: the rescue teaches by doing', () => {
       inputs.push({ tick: sim.state.tick, command });
       submit(command);
     };
-    const bot = new OpeningBot(sim, map, b);
+    const bot = new OpeningBot(sim, map, b, land);
     bot.rescue('C_HILD');
     const recording = record(b, startState, inputs, bot.ticks, 60, land);
     expect(recording.final.facts[FACT_HILD_SAFE]).toBe(true);

@@ -25,8 +25,20 @@ import type { TidePhase, Watch } from './calendar/calendar.ts';
 import type { Season } from '../content/balance.ts';
 import type { OpeningDef } from '../content/registry.ts';
 import type { Id } from '../core/ids.ts';
-import { applyInteraction, interactionNow, stepMovement } from './land/onFoot.ts';
-import type { LandContext, RefusalReason as OnFootRefusal } from './land/onFoot.ts';
+import {
+  applyInteraction,
+  inReach,
+  interactionAt,
+  interactionNow,
+  stepMovement,
+} from './land/onFoot.ts';
+import type {
+  Interaction,
+  LandContext,
+  RefusalReason as OnFootRefusal,
+  TilePos,
+} from './land/onFoot.ts';
+import { stillWaterLevel } from './land/water.ts';
 import { onLifted, onSetDown, onTideRefusal, stepOpening } from './narrative/opening.ts';
 import type { OpeningEvent } from './narrative/opening.ts';
 
@@ -49,13 +61,30 @@ export type Command =
       readonly run: boolean;
       readonly sneak: boolean;
     }
-  | { readonly type: 'INTERACT' };
+  | { readonly type: 'INTERACT' }
+  /**
+   * Book 2 section 21: the input layer turns the pointer, the stick or the facing into a target
+   * tile and sends these; the simulation never sees a pointer or the screen.
+   */
+  | { readonly type: 'SELECT_SLOT'; readonly slot: number }
+  | { readonly type: 'USE_AT'; readonly slot: number; readonly tile: TilePos }
+  | { readonly type: 'INTERACT_AT'; readonly tile: TilePos }
+  /** Drawing a bow towards one of AIM_DIRECTIONS (0 east, clockwise), or null to loose. */
+  | { readonly type: 'AIM'; readonly dir: number | null };
+
+/** Aim vectors are quantised to this many directions, so replays are exact. */
+export const AIM_DIRECTIONS = 64;
 
 export type RefusalReason =
   | 'TOO_EARLY_TO_SLEEP'
   | 'DAY_LENGTH_OUT_OF_RANGE'
   | 'NOT_ON_FOOT'
   | 'NOTHING_IN_REACH'
+  | 'OUT_OF_REACH'
+  | 'NOTHING_THERE'
+  | 'NOTHING_TO_USE_ON'
+  | 'EMPTY_SLOT'
+  | 'NO_SUCH_SLOT'
   | OnFootRefusal;
 
 export type SimEvent =
@@ -80,6 +109,9 @@ export type SimEvent =
   | { readonly type: 'CREW_ORDER_GIVEN'; readonly order: CrewOrder; readonly tick: number }
   | { readonly type: 'PERSON_LIFTED'; readonly person: Id }
   | { readonly type: 'PERSON_SET_DOWN'; readonly person: Id; readonly aboveTideLine: true }
+  | { readonly type: 'SLOT_SELECTED'; readonly slot: number; readonly item: Id | null }
+  | { readonly type: 'BOW_DRAWN'; readonly item: Id }
+  | { readonly type: 'BOW_LOOSED'; readonly item: Id; readonly drawTicks: number }
   | OpeningEvent
   | {
       readonly type: 'COMMAND_REFUSED';
@@ -87,6 +119,18 @@ export type SimEvent =
       readonly reason: RefusalReason;
       readonly detail: string;
     };
+
+/**
+ * Unit vectors of the aim directions, rounded to 1/4096 so every engine stores the same numbers
+ * (y runs south: direction 16 is south).
+ */
+const AIM_UNIT: readonly (readonly [number, number])[] = Array.from(
+  { length: AIM_DIRECTIONS },
+  (_, i) => {
+    const a = (i / AIM_DIRECTIONS) * 2 * Math.PI;
+    return [Math.round(Math.cos(a) * 4096) / 4096, Math.round(Math.sin(a) * 4096) / 4096] as const;
+  },
+);
 
 /** Each tick adds this many units to clock.subMinute; integer arithmetic keeps replays exact. */
 export const TICK_UNITS = 100;
@@ -205,36 +249,122 @@ export function createSimulation(
       case 'INTERACT': {
         const onFoot = state.onFoot;
         const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
-        const refuse = (reason: RefusalReason, detail = ''): void => {
-          events.emit({ type: 'COMMAND_REFUSED', command: command.type, reason, detail });
-        };
         if (onFoot === null || map === undefined || land === null) {
-          refuse('NOT_ON_FOOT');
+          refuse(command, 'NOT_ON_FOOT');
           return;
         }
         const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
         const interaction = interactionNow(onFoot, map, land.rules, tideOpen);
         if (interaction === null) {
-          refuse('NOTHING_IN_REACH');
+          refuse(command, 'NOTHING_IN_REACH');
           return;
         }
-        if (interaction.kind === 'SET_DOWN' && interaction.refusal !== null) {
-          refuse(interaction.refusal, interaction.target);
-          if (interaction.refusal === 'BELOW_TIDE_LINE' && land.opening !== null)
-            onTideRefusal(land.opening, interaction.target, events.emit.bind(events));
-          return;
-        }
-        applyInteraction(onFoot, interaction);
-        const emit = events.emit.bind(events);
-        if (interaction.kind === 'LIFT') {
-          events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
-          if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
-        } else {
-          events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
-          if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
-        }
+        carryOut(command, interaction);
         return;
       }
+      case 'INTERACT_AT': {
+        const onFoot = state.onFoot;
+        const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+        if (onFoot === null || map === undefined || land === null) {
+          refuse(command, 'NOT_ON_FOOT');
+          return;
+        }
+        // Out of reach does nothing but say so (Book 2 section 21).
+        if (!inReach(map, onFoot.player, command.tile, land.controls.interactReach)) {
+          refuse(command, 'OUT_OF_REACH');
+          return;
+        }
+        const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
+        const interaction = interactionAt(onFoot, map, land.rules, tideOpen, command.tile);
+        if (interaction === null) {
+          refuse(command, 'NOTHING_THERE');
+          return;
+        }
+        carryOut(command, interaction);
+        return;
+      }
+      case 'SELECT_SLOT': {
+        const slots = land?.controls.hotbarSlots ?? state.player.hotbar.slots.length;
+        if (!Number.isInteger(command.slot) || command.slot < 0 || command.slot >= slots) {
+          refuse(command, 'NO_SUCH_SLOT', String(command.slot));
+          return;
+        }
+        if (state.player.hotbar.selected === command.slot) return;
+        state.player.hotbar.selected = command.slot;
+        // Changing what is in hand lets go of a drawn bow without loosing it.
+        if (state.onFoot !== null) state.onFoot.player.aim = null;
+        events.emit({
+          type: 'SLOT_SELECTED',
+          slot: command.slot,
+          item: state.player.hotbar.slots[command.slot] ?? null,
+        });
+        return;
+      }
+      case 'USE_AT': {
+        const onFoot = state.onFoot;
+        const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+        if (onFoot === null || map === undefined || land === null) {
+          refuse(command, 'NOT_ON_FOOT');
+          return;
+        }
+        const item = state.player.hotbar.slots[command.slot] ?? null;
+        if (item === null) {
+          refuse(command, 'EMPTY_SLOT', String(command.slot));
+          return;
+        }
+        if (!inReach(map, onFoot.player, command.tile, land.controls.toolReach)) {
+          refuse(command, 'OUT_OF_REACH', item);
+          return;
+        }
+        // Nothing on the strand can be cut, dug or struck yet (tasks from Stage 7, combat Stage 9).
+        refuse(command, 'NOTHING_TO_USE_ON', item);
+        return;
+      }
+      case 'AIM': {
+        const onFoot = state.onFoot;
+        if (onFoot === null) return;
+        const p = onFoot.player;
+        const item = state.player.hotbar.slots[state.player.hotbar.selected] ?? null;
+        const aims = item !== null && land?.rules.items[item]?.use === 'AIM';
+        if (command.dir === null || !aims || state.onFoot?.carrying != null) {
+          if (p.aim !== null && item !== null)
+            events.emit({ type: 'BOW_LOOSED', item, drawTicks: state.tick - p.aim.since });
+          p.aim = null;
+          return;
+        }
+        const dir = ((Math.round(command.dir) % AIM_DIRECTIONS) + AIM_DIRECTIONS) % AIM_DIRECTIONS;
+        const at = AIM_UNIT[dir] ?? [1, 0];
+        if (p.aim === null) events.emit({ type: 'BOW_DRAWN', item });
+        p.aim = { x: at[0], y: at[1], since: p.aim?.since ?? state.tick };
+        return;
+      }
+    }
+  };
+
+  const refuse = (command: Command, reason: RefusalReason, detail = ''): void => {
+    events.emit({ type: 'COMMAND_REFUSED', command: command.type, reason, detail });
+  };
+
+  /** Applies an allowed lift or set-down, or refuses a set-down below the tide line. */
+  const carryOut = (command: Command, interaction: Interaction): void => {
+    const onFoot = state.onFoot;
+    if (onFoot === null || land === null) return;
+    if (interaction.kind === 'SET_DOWN' && interaction.refusal !== null) {
+      refuse(command, interaction.refusal, interaction.target);
+      if (interaction.refusal === 'BELOW_TIDE_LINE' && land.opening !== null)
+        onTideRefusal(land.opening, interaction.target, events.emit.bind(events));
+      return;
+    }
+    // Lifting someone puts a drawn bow away.
+    onFoot.player.aim = null;
+    applyInteraction(onFoot, interaction);
+    const emit = events.emit.bind(events);
+    if (interaction.kind === 'LIFT') {
+      events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
+      if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
+    } else {
+      events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
+      if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
     }
   };
 
@@ -243,7 +373,8 @@ export function createSimulation(
     if (land === null || onFoot === null) return;
     const map = land.maps.get(onFoot.zone);
     if (map === undefined) return;
-    stepMovement(onFoot, map, land, tideAt(state.calendar, b).tidalGroundOpen);
+    const tide = tideAt(state.calendar, b);
+    stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level: stillWaterLevel(tide) });
     if (land.opening !== null) stepOpening(state, land.opening, map.tile, events.emit.bind(events));
   };
 

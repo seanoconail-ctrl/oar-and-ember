@@ -12,18 +12,31 @@ import type { Id } from '../core/ids.ts';
 import { phaseOf, TILE, tileState, visualCorners } from '../render/autotile.ts';
 import { hash01 } from '../render/noise.ts';
 import type { Anim } from '../render/sheet.ts';
-import type { Phase, Scene, SceneEffects, SceneSprite, ShadowCaster } from '../render/scene.ts';
+import type {
+  Phase,
+  Scene,
+  SceneEffects,
+  SceneSprite,
+  ShadowCaster,
+  Wade,
+} from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { gustGrid, STRAND_WIND, SWAY_PERIOD } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import type { OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
+import type { DepthBand } from '../content/balance.ts';
 import type { ZoneLife } from '../content/zoneMap.ts';
 import { PLANT_KINDS } from '../content/zoneMap.ts';
+import type { PeopleLook, PersonLook } from './people.ts';
+
+export type { PeopleLook, PersonLook } from './people.ts';
 
 export const GROUND_SHEET = 'tile_strand';
 export const PLANT_SHEET = 'plant_strand';
 export const FX_SHEET = 'fx_strand';
+/** People's own particles and prints: dust, splashes, ripple rings, drips, surf spray (Book 7 07). */
+export const PEOPLE_FX_SHEET = 'fx_people';
 export const MARKER_SHEET = 'ui_marker';
 /** The plant sheet's frames lean -3..3; frame 3 is upright. */
 const UPRIGHT = 3;
@@ -332,11 +345,17 @@ export function lifeSprites(
   return out;
 }
 
-export interface PeopleLook {
-  /** The steerer's sheet (body model A or B). */
-  readonly steerer: string;
-  /** Sheet per person id, e.g. C_HILD: actor_c_hild. */
-  readonly people: Readonly<Record<Id, string>>;
+/** A person's animation state and frame. */
+export interface PersonAnim {
+  readonly state: string;
+  readonly frame: number;
+}
+
+/** A person's water this frame: masked at a band's waterline, and how wet and dark they are. */
+export interface PersonWater {
+  readonly wade?: Wade;
+  readonly band?: DepthBand | null;
+  readonly dark: number;
 }
 
 /** A particle or footprint from the visual state, camera-independent (world pixels). */
@@ -355,10 +374,13 @@ export interface ZoneVisualView {
   readonly seconds: number;
   readonly wind: Wind;
   readonly reducedMotion: boolean;
-  /** The steerer's idle when standing: idle, look or idlewind, and its frame. */
-  readonly idle: { readonly state: string; readonly frame: number } | null;
-  /** The walk cycle frame, from distance walked, so feet stay planted. */
-  readonly stepFrame: number | null;
+  /**
+   * The steerer's animation: gait frames from distance walked (feet stay planted), the run's
+   * start and stop, the bow's draw and loose, or an idle (idle, shift, glance, idlewind).
+   */
+  readonly steerer: PersonAnim | null;
+  /** Water and wetness per person: 'P_STEERER' and each actor's id. */
+  readonly water: Readonly<Record<string, PersonWater>>;
   readonly marks: readonly VisualMark[];
   /** Effects without the parts this scene fills in (shadows, camera, clock, wind). */
   readonly effects: Omit<SceneEffects, 'shadows' | 'camera' | 'seconds' | 'wind'> | null;
@@ -384,6 +406,7 @@ export interface ZoneSceneInput {
 function steererState(onFoot: OnFootState): string {
   const p = onFoot.player;
   if (onFoot.carrying !== null || p.gait === 'carry') return 'carry';
+  if (p.aim !== null) return 'draw';
   if (!p.moving) return 'idle';
   return p.gait;
 }
@@ -391,10 +414,17 @@ function steererState(onFoot: OnFootState): string {
 /** Where the target marker sits relative to the standard head height, by pose. */
 const MARKER_OVER: Record<OnFootActor['pose'], { x: number; y: number }> = {
   idle: { x: 0, y: 0 },
+  call: { x: 0, y: 0 },
   down: { x: 12, y: 22 },
   sit: { x: 0, y: 14 },
   carried: { x: 0, y: 0 },
 };
+
+/** The animation state a pose is drawn with (a person calling waves and shouts: `call`). */
+function poseState(pose: OnFootActor['pose'], anims: Readonly<Record<string, unknown>>): string {
+  if (pose === 'call') return anims['call'] === undefined ? 'idle' : 'call';
+  return pose;
+}
 
 /** Ticks per second of the simulation (Book 2 section 06), for the plain renders' clock. */
 const TICKS_PER_SECOND = 60;
@@ -448,47 +478,80 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     cast(sprite, lift);
   }
 
-  // The steerer, and while carrying, the carried person drawn over their shoulders.
-  let state = steererState(onFoot);
-  let stepFrame = p.moving ? frameIndex(anims, look.steerer, state, tick) : 0;
-  if (state === 'idle') {
-    if (visual?.idle != null) {
-      state = visual.idle.state;
-      stepFrame = visual.idle.frame;
-    } else stepFrame = frameIndex(anims, look.steerer, 'idle', tick);
-  } else if (p.moving && visual?.stepFrame != null) stepFrame = visual.stepFrame;
-  const steerer: SceneSprite = {
-    sheet: look.steerer,
-    frame: `${state}/${p.facing}/${stepFrame}`,
-    x: p.x - camera.x,
-    y: p.y - camera.y,
-    layer: 'actor',
-    focus: true,
+  /**
+   * A person as their layers (Book 2 section 19): every sheet of the facing's order at the same
+   * anchor and frame, pushed together so the draw list's stable sort keeps them in order. The
+   * body casts the person's one shadow.
+   */
+  const person = (
+    who: PersonLook,
+    frame: string,
+    facing: string,
+    x: number,
+    y: number,
+    water: PersonWater | undefined,
+    opts: { focus?: boolean; shadow?: boolean },
+  ): SceneSprite | null => {
+    let bodySprite: SceneSprite | null = null;
+    for (const sheet of who.layers[facing] ?? [who.body]) {
+      const sprite: SceneSprite = {
+        sheet,
+        frame,
+        x,
+        y,
+        layer: 'actor',
+        ...(opts.focus === true && sheet === who.body ? { focus: true } : {}),
+        ...(water?.wade === undefined ? {} : { wade: water.wade }),
+        ...(water === undefined || water.dark <= 0 ? {} : { dark: water.dark }),
+      };
+      sprites.push(sprite);
+      if (sheet === who.body) bodySprite = sprite;
+    }
+    if (bodySprite !== null && opts.shadow !== false) cast(bodySprite);
+    return bodySprite;
   };
-  if (input.hidePeople !== true) {
-    sprites.push(steerer);
-    cast(steerer);
-  }
+
+  // The steerer, and while carrying, the carried person drawn over their shoulders.
+  const body = look.steerer.body;
+  let state = steererState(onFoot);
+  let stepFrame = p.moving ? frameIndex(anims, body, state, tick) : 0;
+  if (visual?.steerer != null) {
+    state = visual.steerer.state;
+    stepFrame = visual.steerer.frame;
+  } else if (state === 'idle' || state === 'draw') stepFrame = frameIndex(anims, body, state, tick);
+  if (input.hidePeople !== true)
+    person(
+      look.steerer,
+      `${state}/${p.facing}/${stepFrame}`,
+      p.facing,
+      p.x - camera.x,
+      p.y - camera.y,
+      visual?.water['P_STEERER'],
+      { focus: true },
+    );
   const walkers: Walker[] = [{ x: p.x, y: p.y }];
-  const actorFrame = (id: Id, actor: OnFootActor): SceneSprite | null => {
-    const sheet = look.people[id];
-    if (sheet === undefined) return null;
+  for (const [id, actor] of Object.entries(onFoot.actors)) {
+    const who = look.people[id];
     const x = actor.x - camera.x;
     const y = actor.y - camera.y;
-    if (!inView(x, y)) return null;
-    if (actor.pose === 'carried') {
-      return { sheet, frame: `carried/${p.facing}/${stepFrame}`, x, y: y + 0.5, layer: 'actor' };
-    }
-    const frame = frameIndex(anims, sheet, actor.pose, tick);
-    return { sheet, frame: `${actor.pose}/${actor.facing}/${frame}`, x, y, layer: 'actor' };
-  };
-  for (const [id, actor] of Object.entries(onFoot.actors)) {
-    const sprite = actorFrame(id, actor);
-    if (sprite !== null && input.hidePeople !== true) {
-      sprites.push(sprite);
-      // A carried person's shadow is part of the carrier's.
-      if (actor.pose !== 'carried') {
-        cast(sprite);
+    if (who !== undefined && inView(x, y) && input.hidePeople !== true) {
+      const own = anims.get(who.body) ?? {};
+      if (actor.pose === 'carried') {
+        // Carried across the shoulders, in step with the carry walk; drawn just in front.
+        const carriedFrame = Math.min(stepFrame, (own['carried']?.frames ?? 1) - 1);
+        person(
+          who,
+          `carried/${p.facing}/${carriedFrame}`,
+          p.facing,
+          x,
+          y + 0.5,
+          visual?.water['P_STEERER'],
+          { shadow: false },
+        );
+      } else {
+        const st = poseState(actor.pose, own);
+        const frame = frameIndex(anims, who.body, st, tick);
+        person(who, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
         walkers.push({ x: actor.x, y: actor.y });
       }
     }
@@ -500,7 +563,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         sheet: MARKER_SHEET,
         frame: `bob/-/${bob}`,
         x: actor.x - camera.x + over.x * (actor.facing === 'w' ? -1 : 1),
-        y: actor.y - camera.y + 1 + over.y,
+        y: actor.y - camera.y + 1 - 8 + over.y,
         layer: 'actor',
       });
     }

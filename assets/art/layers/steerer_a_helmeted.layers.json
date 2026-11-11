@@ -1,0 +1,33 @@
+{
+  "name": "steerer_a_helmeted",
+  "layers": {
+    "s": [
+      "actor_p_steerer_a",
+      "layer_clothing_tunic_a",
+      "layer_weapon_bow_a",
+      "layer_cloak_wool_a",
+      "layer_helmet_iron_a"
+    ],
+    "n": [
+      "actor_p_steerer_a",
+      "layer_clothing_tunic_a",
+      "layer_cloak_wool_a",
+      "layer_weapon_bow_a",
+      "layer_helmet_iron_a"
+    ],
+    "e": [
+      "actor_p_steerer_a",
+      "layer_clothing_tunic_a",
+      "layer_cloak_wool_a",
+      "layer_weapon_bow_a",
+      "layer_helmet_iron_a"
+    ],
+    "w": [
+      "actor_p_steerer_a",
+      "layer_clothing_tunic_a",
+      "layer_cloak_wool_a",
+      "layer_weapon_bow_a",
+      "layer_helmet_iron_a"
+    ]
+  }
+}

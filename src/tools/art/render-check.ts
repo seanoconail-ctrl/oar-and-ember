@@ -12,7 +12,7 @@ import { parseRenderStyle } from '../../render/scene.ts';
 import type { RenderStyle } from '../../render/scene.ts';
 import type { Sheet } from '../../render/sheet.ts';
 import { ART_TEST_CASES, artTestScene, sheetPreviewScene } from '../../scenes/artTest.ts';
-import { loadPalette, loadSheets, readRepo } from './artFiles.ts';
+import { loadPalette, loadPeopleLook, loadSheets, readRepo } from './artFiles.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { encodePng, scaleNearest } from './png.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../content/balance.ts';
@@ -58,10 +58,7 @@ export function openingScenes(
           tick: world.tick,
           tideOpen: false,
           phase: 'dusk',
-          look: {
-            steerer: `actor_p_steerer_${body.toLowerCase()}`,
-            people: { C_HILD: 'actor_c_hild' },
-          },
+          look: loadPeopleLook(body),
           anims: sheetAnims,
           highlight: i?.kind === 'LIFT' ? i.target : null,
         }),

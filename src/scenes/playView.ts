@@ -28,6 +28,7 @@ import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
+import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow } from '../sim/land/onFoot.ts';
@@ -40,10 +41,28 @@ import { createOverlay, showCaptions } from '../ui/overlay.ts';
 import type { LoadedAtlas } from './atlases.ts';
 import { lightPhase } from './lightPhase.ts';
 import type { NamingChoice } from './namingView.ts';
-import { BODY_SHEETS } from './namingView.ts';
+import { bundledLayerFiles } from './bundledLayers.ts';
+import { createHud } from './hud.ts';
+import type { HudView } from './hud.ts';
+import { peopleLook } from './people.ts';
 import { Session } from './session.ts';
 import { zoneScene } from './zoneScene.ts';
-import { ZoneVisuals } from './zoneVisuals.ts';
+import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
+import type { CameraLead } from './zoneVisuals.ts';
+import { AIM_DIRECTIONS } from '../sim/simulation.ts';
+import type { BodyModel } from '../sim/world.ts';
+
+/** The nearest of the four facings from the steerer towards the pointer. */
+function facingTowards(
+  p: { x: number; y: number; facing: 's' | 'n' | 'e' | 'w' },
+  pointer: { x: number; y: number } | null,
+): 's' | 'n' | 'e' | 'w' {
+  if (pointer === null) return p.facing;
+  const dx = pointer.x - p.x;
+  const dy = pointer.y - (p.y - 20);
+  if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? 'e' : 'w';
+  return dy > 0 ? 's' : 'n';
+}
 
 export interface PlayOptions {
   readonly seed: string;
@@ -125,12 +144,19 @@ export function* preparePlay(
   yield 'post';
   const anims = new Map([...prepared.geometry].map(([name, m]) => [name, m.anims]));
   const shadows = new Map([...prepared.geometry].map(([name, m]) => [name, m.shadow]));
-  const visuals = new ZoneVisuals(map, prepared.elevation, false);
+  const visuals = new ZoneVisuals(
+    map,
+    prepared.elevation,
+    false,
+    visualTuning(content.balance, palette),
+  );
   visuals.detail = detail;
   const onFoot = sim.state.onFoot;
   if (onFoot === null) return null;
   const style = parseRenderStyle(renderJson);
-  for (const [body, steerer] of Object.entries(BODY_SHEETS)) {
+  const layerFiles = bundledLayerFiles();
+  for (const body of ['A', 'B'] as BodyModel[]) {
+    const look = peopleLook(layerFiles, body);
     const tide = tideAt(sim.state.calendar, b);
     const scene = zoneScene({
       map,
@@ -138,7 +164,7 @@ export function* preparePlay(
       tick: sim.state.tick,
       tideOpen: tide.tidalGroundOpen,
       phase: lightPhase(sim.state.calendar, b),
-      look: { steerer, people: { C_HILD: 'actor_c_hild' } },
+      look,
       anims,
       shadows,
       highlight: null,
@@ -152,7 +178,7 @@ export function* preparePlay(
           ...b.daylight[seasonOf(sim.state.calendar.day)],
         },
         anims,
-        steererSheet: steerer,
+        steererSheet: look.steerer.body,
       }),
     });
     prepared.renderer.render(scene, buildDrawList(scene, prepared.geometry, style.cutawayFade));
@@ -202,7 +228,12 @@ export function startPlay(
 
   const settings = loadSettings(browserStorage());
   const input = new InputMapper(settings.bindings, settings.toggle);
-  const session = new Session(sim, input, { awareHostiles: () => 0 });
+  const session = new Session(
+    sim,
+    input,
+    { awareHostiles: () => 0 },
+    { map, controls: land.controls, rules: land.rules },
+  );
   const style = parseRenderStyle(renderJson);
   mark('world');
   const prepared =
@@ -221,7 +252,12 @@ export function startPlay(
     window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   mark('elevation');
-  const visuals = new ZoneVisuals(map, elevation, display.reducedMotion);
+  const visuals = new ZoneVisuals(
+    map,
+    elevation,
+    display.reducedMotion,
+    visualTuning(content.balance, palette),
+  );
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
     if (session.menus.open !== 'system') return;
@@ -235,7 +271,7 @@ export function startPlay(
     visuals.reducedMotion = display.reducedMotion;
     saveDisplaySettings(store, display);
   });
-  const look = { steerer: BODY_SHEETS[choice.bodyModel], people: { C_HILD: 'actor_c_hild' } };
+  const look = peopleLook(bundledLayerFiles(), choice.bodyModel);
   // Capture only: `?actors=none` leaves people out and `?camera=tx,ty` holds the view centred on a
   // tile, for preview backgrounds (src/tools/art/preview48.ts).
   const captureParams = new URLSearchParams(window.location.search);
@@ -262,8 +298,22 @@ export function startPlay(
         sim.state.onFoot?.player.gait ?? 'walk',
       );
   };
+  // The pixel HUD under the text overlay: the hotbar, the target tile and the aim line.
+  const hud = createHud(document, atlases);
   const overlay = createOverlay(document);
   const root = overlay.root;
+  const items = content.onFoot?.items ?? {};
+  const itemOf = (id: string | null) => (id === null ? undefined : items[id]);
+  /** The slot's name shows briefly above the hotbar after a change (Book 7 section 10). */
+  let slotShown = -1;
+  let slotNameUntil = 0;
+  /** A short refusal word beside the target tile: "Too far", "Nothing to cut". */
+  let refusal: { key: string; text: string; tx: number; ty: number; until: number } | null = null;
+  const refuse = (key: string, text: string, tx: number, ty: number, now: number): void => {
+    refusal = { key, text, tx, ty, until: now + 1200 };
+  };
+  let lastTarget = { tx: 0, ty: 0 };
+  let viewCamera = { x: 0, y: 0 };
 
   // Book 8 section 01: patronymics in formal speech only; barks and prompts use the short name.
   const nameOf = (id: string): string => {
@@ -316,6 +366,14 @@ export function startPlay(
         engine.voice(e.person, line(e.lineKey), panOf(e.person));
         return;
       case 'COMMAND_REFUSED':
+        if (e.reason === 'OUT_OF_REACH')
+          refuse('too_far', t('ui.refusal.too_far'), lastTarget.tx, lastTarget.ty, now);
+        if (e.reason === 'NOTHING_THERE')
+          refuse('nothing_there', t('ui.refusal.nothing_there'), lastTarget.tx, lastTarget.ty, now);
+        if (e.reason === 'NOTHING_TO_USE_ON') {
+          const key = itemOf(e.detail)?.refusalKey ?? 'ui.refusal.nothing_there';
+          refuse('nothing_to_use_on', t(key), lastTarget.tx, lastTarget.ty, now);
+        }
         if (e.reason === 'BELOW_TIDE_LINE' || e.reason === 'NO_ROOM') {
           const key = e.reason === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room';
           notice = { text: t(key, { name: nameOf(e.detail) }), until: now + captionMs };
@@ -392,8 +450,30 @@ export function startPlay(
     }
     lastFrameAt = now;
     browser.poll();
-    const result = session.frame(now - last, browser.aim());
+    // The pointer in world pixels: through the viewport's whole-number scale and the camera.
+    const surface = browser.pointer();
+    const vp = presenter.viewport;
+    const pointer =
+      surface === null
+        ? null
+        : {
+            x: viewCamera.x + (surface.x - vp.x) / vp.scale,
+            y: viewCamera.y + (surface.y - vp.y) / vp.scale,
+          };
+    const device = browser.lastDevice();
+    const result = session.frame(now - last, browser.aim(), { device, pointer });
     last = now;
+    const target = result.target;
+    if (target !== null) {
+      lastTarget = target.tile;
+      if (target.refused === 'TOO_FAR')
+        refuse('too_far', t('ui.refusal.too_far'), target.tile.tx, target.tile.ty, now);
+      if (target.slot !== slotShown) {
+        // The slot's name shows briefly above the hotbar (not on the first frame).
+        if (slotShown >= 0) slotNameUntil = now + 1500;
+        slotShown = target.slot;
+      }
+    }
     if (first) {
       root.dataset['controlMs'] = String(Math.round(now - options.wokeAt));
       first = false;
@@ -413,7 +493,13 @@ export function startPlay(
       tide,
       sky: { minuteOfDay: sim.state.calendar.minuteOfDay, ...daylight },
       anims,
-      steererSheet: look.steerer,
+      steererSheet: look.steerer.body,
+      lead: ((): CameraLead => {
+        if (device === 'mouse' && pointer !== null) return { kind: 'cursor', ...pointer };
+        if (device === 'pad') return { kind: 'stick', ...result.stick };
+        return { kind: 'travel' };
+      })(),
+      aiming: onFoot.player.aim !== null,
     };
     lastVisual = now;
     visuals.update(frameInput);
@@ -424,7 +510,10 @@ export function startPlay(
     let promptKind = '';
     const interactKey = keys('interact');
     if (interaction?.kind === 'LIFT') {
-      prompt = t('ui.prompt.lift', { key: interactKey, name: nameOf(interaction.target) });
+      prompt =
+        device === 'mouse'
+          ? t('ui.prompt.lift_click', { name: nameOf(interaction.target) })
+          : t('ui.prompt.lift', { key: interactKey, name: nameOf(interaction.target) });
       promptKind = 'lift';
     } else if (interaction?.kind === 'SET_DOWN') {
       const name = nameOf(interaction.target);
@@ -489,6 +578,77 @@ export function startPlay(
       hidePeople,
     });
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
+    viewCamera = view.camera;
+    const lead = visuals.lead;
+    root.dataset['lead'] = `${lead.x},${lead.y}`;
+    // The HUD: the hotbar, the target tile (not while drawing) and the bow's aim line.
+    const hotbar = sim.state.player.hotbar;
+    const p = onFoot.player;
+    const drawTicks = (anims.get(look.steerer.body)?.['draw']?.ticks ?? 8) * 2;
+    const aimTo = ((): { x: number; y: number } | null => {
+      if (p.aim === null) return null;
+      if (device === 'mouse' && pointer !== null) return pointer;
+      const far = land.controls.castReach * map.tile;
+      const a = ((target?.aimDir ?? 0) / AIM_DIRECTIONS) * 2 * Math.PI;
+      return { x: p.x + Math.cos(a) * far, y: p.y - 26 + Math.sin(a) * far };
+    })();
+    const hudView: HudView = {
+      camera: view.camera,
+      seconds: visuals.seconds,
+      tile: map.tile,
+      hotbar: {
+        slots: Array.from({ length: land.controls.hotbarSlots }, (_, i) => ({
+          icon: itemOf(hotbar.slots[i] ?? null)?.icon ?? null,
+        })),
+        selected: target?.slot ?? hotbar.selected,
+      },
+      cursor:
+        target === null || p.aim !== null || hidePeople
+          ? null
+          : {
+              tx: target.tile.tx,
+              ty: target.tile.ty,
+              inReach: target.inReach,
+              glyph: target.interactive ? null : (itemOf(target.item)?.glyph ?? null),
+            },
+      aim:
+        aimTo === null || p.aim === null
+          ? null
+          : {
+              from: { x: p.x, y: p.y - 26 },
+              to: aimTo,
+              draw: Math.min(1, (sim.state.tick - p.aim.since) / drawTicks),
+            },
+      // The facing an attack or a draw takes, when aimed with the cursor (Book 7 section 10).
+      facingArrow:
+        p.aim !== null || (target?.use === 'MELEE' && device === 'mouse')
+          ? { x: p.x, y: p.y, facing: p.aim !== null ? p.facing : facingTowards(p, pointer) }
+          : null,
+    };
+    hud.draw(hudView);
+    hud.fit(presenter.viewport, window.devicePixelRatio);
+    // The slot's name above the hotbar, and a refusal word beside the target tile.
+    const inHand = itemOf(hotbar.slots[target?.slot ?? hotbar.selected] ?? null);
+    overlay.region('slot').textContent =
+      now < slotNameUntil && inHand !== undefined ? t(inHand.nameKey) : '';
+    if (refusal !== null && refusal.until < now) refusal = null;
+    const word = overlay.region('refusal');
+    word.textContent = refusal?.text ?? '';
+    if (refusal !== null) {
+      word.style.left = `${(((refusal.tx + 1) * map.tile - view.camera.x) / LOGICAL_WIDTH) * 100}%`;
+      word.style.top = `${((refusal.ty * map.tile - 4 - view.camera.y) / LOGICAL_HEIGHT) * 100}%`;
+    }
+    root.dataset['refusal'] = refusal?.key ?? '';
+    root.dataset['slot'] = String(target?.slot ?? hotbar.selected);
+    root.dataset['item'] = hotbar.slots[target?.slot ?? hotbar.selected] ?? '';
+    root.dataset['target'] = target === null ? '' : `${target.tile.tx},${target.tile.ty}`;
+    root.dataset['reach'] = target === null ? '' : target.inReach ? 'in' : 'out';
+    root.dataset['tileCommands'] = String(session.tileCommands);
+    root.dataset['aim'] = p.aim === null ? '' : String(target?.aimDir ?? '');
+    root.dataset['steererState'] = view.steerer?.state ?? '';
+    root.dataset['steererMask'] = String(view.water['P_STEERER']?.wade?.mask ?? 0);
+    root.dataset['hildMask'] = String(view.water['C_HILD']?.wade?.mask ?? 0);
+    root.dataset['hildPose'] = onFoot.actors['C_HILD']?.pose ?? '';
     root.dataset['tide'] = visuals.tideLevel.toFixed(4);
     if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));

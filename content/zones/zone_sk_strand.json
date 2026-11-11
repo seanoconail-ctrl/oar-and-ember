@@ -11,13 +11,13 @@
   "spawns": {
     "P_STEERER": {
       "x": 70.5,
-      "y": 38.5,
+      "y": 37.9,
       "facing": "w"
     },
     "C_HILD": {
       "x": 31.5,
-      "y": 37.6,
-      "facing": "e"
+      "y": 35.6,
+      "facing": "s"
     }
   },
   "props": [

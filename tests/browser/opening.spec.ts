@@ -3,20 +3,10 @@
  * whole rescue played with real key presses, taught only by Hild's call, the prompt for the next
  * thing to do and the tide line's refusal, with no control list (check 2).
  */
-import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
-import { parseZoneMap, aboveTideLine, terrainAt, tileOf } from '../../src/sim/land/zoneMap.ts';
+import { aboveTideLine, terrainAt, tileOf } from '../../src/sim/land/zoneMap.ts';
 import { findPath } from '../../src/tools/play/openingBot.ts';
-import type { Tile } from '../../src/tools/play/openingBot.ts';
-
-const map = parseZoneMap(
-  JSON.parse(readFileSync('content/zones/zone_sk_strand.json', 'utf8')) as unknown,
-  'content/zones/zone_sk_strand.json',
-);
-const overlay = (page: Page) => page.locator('.oe-overlay');
-const attr = async (page: Page, name: string): Promise<string> =>
-  (await overlay(page).getAttribute(`data-${name}`)) ?? '';
+import { approach, attr, here, hildSpawn, map, overlay, wadeable, walkPath } from './strand.ts';
 
 test('control within five seconds of the naming screen, with the chosen name and body', async ({
   page,
@@ -74,46 +64,6 @@ test('control within five seconds of the naming screen, with the chosen name and
   await expect(overlay(page)).toHaveAttribute('data-body', 'B');
 });
 
-/** Holds the key for one axis until the steerer's feet reach `target` along it. */
-async function walkAxis(page: Page, axis: 'x' | 'y', target: number): Promise<void> {
-  const now = async (): Promise<number> => Number(await attr(page, axis === 'x' ? 'px' : 'py'));
-  // A player who overshoots steps back: on a slow machine the key may be released late, so
-  // correct up to a few times, each run shorter.
-  for (let attempt = 0; attempt < 4; attempt++) {
-    let at = await now();
-    if (Math.abs(target - at) < 4) return;
-    const forward = target > at;
-    const key = axis === 'x' ? (forward ? 'KeyD' : 'KeyA') : forward ? 'KeyS' : 'KeyW';
-    await page.keyboard.down(key);
-    const deadline = Date.now() + 15_000;
-    while (Date.now() < deadline) {
-      at = await now();
-      if (forward ? at >= target - 2 : at <= target + 2) break;
-    }
-    await page.keyboard.up(key);
-    // Let the last frames land before checking again.
-    await page.waitForTimeout(150);
-  }
-}
-
-/** Walks a tile path by straight runs, the way a player steers with the keys. */
-async function walkPath(page: Page, path: readonly Tile[]): Promise<void> {
-  for (let i = 1; i < path.length; i++) {
-    const a = path[i - 1];
-    const b = path[i];
-    const next = path[i + 1];
-    if (a === undefined || b === undefined) continue;
-    const axis = a.tx !== b.tx ? 'x' : 'y';
-    const turns = next === undefined || (axis === 'x' ? next.ty !== b.ty : next.tx !== b.tx);
-    if (!turns) continue;
-    await walkAxis(page, axis, axis === 'x' ? (b.tx + 0.5) * 24 : (b.ty + 0.7) * 24);
-  }
-}
-
-async function here(page: Page): Promise<Tile> {
-  return tileOf(map, Number(await attr(page, 'px')), Number(await attr(page, 'py')));
-}
-
 test('the rescue, played with the keys and taught by the moment', async ({ page }) => {
   // The walk is 2.0 tiles a second since the art pass (AP-1), and software GL is slow: allow time.
   test.setTimeout(240_000);
@@ -166,16 +116,23 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
     infoAbove: true,
   });
 
-  // Walk to the voice.
-  const hildAt = tileOf(map, 31.5 * 24, 37.6 * 24);
+  // Hild stands in the shallows, knee to waist deep and masked at her waterline (Book 9).
+  expect(['12', '22']).toContain(await attr(page, 'hild-mask'));
+  await expect(overlay(page)).toHaveAttribute('data-hild-pose', 'call');
+
+  // Walk to the voice, keeping out of deep water.
+  const hildAt = tileOf(map, hildSpawn.x * 24, hildSpawn.y * 24);
   const toHild = findPath(
     map,
     false,
     await here(page),
     (t) => Math.abs(t.tx - hildAt.tx) + Math.abs(t.ty - hildAt.ty) === 1 && t.tx > hildAt.tx,
+    wadeable,
   );
   if (toHild === null) throw new Error('no path to Hild');
   await walkPath(page, toHild);
+  // A slow machine releases keys late: close the last few pixels to stand beside her.
+  await approach(page, (hildAt.tx + 1.5) * 24, (hildAt.ty + 0.7) * 24);
   await expect(overlay(page)).toHaveAttribute('data-prompt', 'lift', { timeout: 5000 });
   await expect(page.locator('[data-region=prompt]')).toContainText('E  Lift Hild');
   await page.keyboard.press('KeyE');
@@ -199,6 +156,7 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
     await here(page),
     (t) =>
       aboveTideLine(terrainAt(map, t.tx, t.ty)) && aboveTideLine(terrainAt(map, t.tx, t.ty - 1)),
+    wadeable,
   );
   if (up === null) throw new Error('no dry ground');
   await walkPath(page, up);

@@ -1,0 +1,127 @@
+{
+  "sheet": "ui_stamina",
+  "kind": "decal",
+  "image": "ui_stamina.png",
+  "width": 8,
+  "height": 9,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 8,
+    "h": 9
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "cap_left": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "frame": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_right": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fill": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fill_end": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "groove": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "groove_cut": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "groove_end": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "glow": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "flash": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "cap_left/-/0": [
+      0,
+      0
+    ],
+    "frame/-/0": [
+      0,
+      9
+    ],
+    "cap_right/-/0": [
+      0,
+      18
+    ],
+    "fill/-/0": [
+      0,
+      27
+    ],
+    "fill_end/-/0": [
+      0,
+      36
+    ],
+    "groove/-/0": [
+      0,
+      45
+    ],
+    "groove_cut/-/0": [
+      0,
+      54
+    ],
+    "groove_end/-/0": [
+      0,
+      63
+    ],
+    "glow/-/0": [
+      0,
+      72
+    ],
+    "glow/-/1": [
+      8,
+      72
+    ],
+    "flash/-/0": [
+      0,
+      81
+    ],
+    "flash/-/1": [
+      8,
+      81
+    ],
+    "flash/-/2": [
+      16,
+      81
+    ]
+  }
+}

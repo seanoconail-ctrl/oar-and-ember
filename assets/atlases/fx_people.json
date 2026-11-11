@@ -1,0 +1,242 @@
+{
+  "sheet": "fx_people",
+  "kind": "decal",
+  "image": "fx_people.png",
+  "width": 20,
+  "height": 18,
+  "pivot": {
+    "x": 10,
+    "y": 13
+  },
+  "footprint": {
+    "w": 20,
+    "h": 18
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "dust": {
+      "frames": 4,
+      "ticks": 4,
+      "loop": false
+    },
+    "splash": {
+      "frames": 5,
+      "ticks": 3,
+      "loop": false
+    },
+    "ripple": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": false
+    },
+    "drip": {
+      "frames": 3,
+      "ticks": 3,
+      "loop": false
+    },
+    "print_dry_s": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_dry_n": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_dry_e": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_dry_w": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_wet_s": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_wet_n": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_wet_e": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "print_wet_w": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "surf": {
+      "frames": 4,
+      "ticks": 5,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "dust/-/0": [
+      0,
+      0
+    ],
+    "dust/-/1": [
+      20,
+      0
+    ],
+    "dust/-/2": [
+      40,
+      0
+    ],
+    "dust/-/3": [
+      60,
+      0
+    ],
+    "splash/-/0": [
+      0,
+      18
+    ],
+    "splash/-/1": [
+      20,
+      18
+    ],
+    "splash/-/2": [
+      40,
+      18
+    ],
+    "splash/-/3": [
+      60,
+      18
+    ],
+    "splash/-/4": [
+      80,
+      18
+    ],
+    "ripple/-/0": [
+      0,
+      36
+    ],
+    "ripple/-/1": [
+      20,
+      36
+    ],
+    "ripple/-/2": [
+      40,
+      36
+    ],
+    "ripple/-/3": [
+      60,
+      36
+    ],
+    "ripple/-/4": [
+      80,
+      36
+    ],
+    "ripple/-/5": [
+      100,
+      36
+    ],
+    "drip/-/0": [
+      0,
+      54
+    ],
+    "drip/-/1": [
+      20,
+      54
+    ],
+    "drip/-/2": [
+      40,
+      54
+    ],
+    "print_dry_s/-/0": [
+      0,
+      72
+    ],
+    "print_dry_s/-/1": [
+      20,
+      72
+    ],
+    "print_dry_n/-/0": [
+      0,
+      90
+    ],
+    "print_dry_n/-/1": [
+      20,
+      90
+    ],
+    "print_dry_e/-/0": [
+      0,
+      108
+    ],
+    "print_dry_e/-/1": [
+      20,
+      108
+    ],
+    "print_dry_w/-/0": [
+      0,
+      126
+    ],
+    "print_dry_w/-/1": [
+      20,
+      126
+    ],
+    "print_wet_s/-/0": [
+      0,
+      144
+    ],
+    "print_wet_s/-/1": [
+      20,
+      144
+    ],
+    "print_wet_n/-/0": [
+      0,
+      162
+    ],
+    "print_wet_n/-/1": [
+      20,
+      162
+    ],
+    "print_wet_e/-/0": [
+      0,
+      180
+    ],
+    "print_wet_e/-/1": [
+      20,
+      180
+    ],
+    "print_wet_w/-/0": [
+      0,
+      198
+    ],
+    "print_wet_w/-/1": [
+      20,
+      198
+    ],
+    "surf/-/0": [
+      0,
+      216
+    ],
+    "surf/-/1": [
+      20,
+      216
+    ],
+    "surf/-/2": [
+      40,
+      216
+    ],
+    "surf/-/3": [
+      60,
+      216
+    ]
+  }
+}

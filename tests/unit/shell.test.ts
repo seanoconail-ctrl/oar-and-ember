@@ -69,12 +69,12 @@ describe('the command ring (Book 2 section 12)', () => {
     expect(orderAt(0.1, 0.1)).toBeNull();
   });
 
-  it('issues quick orders on 1 to 6, and the ring order on release', () => {
+  it('issues quick orders on F1 to F6, and the ring order on release', () => {
     const input = new InputMapper(DEFAULT_BINDINGS);
     const ring = new CommandRing();
-    input.keyDown('Digit3');
+    input.keyDown('F3');
     expect(ring.update(input.sample(), { x: 0, y: 0 })).toEqual(['ATTACK']);
-    input.keyUp('Digit3');
+    input.keyUp('F3');
     input.keyDown('Tab');
     expect(ring.update(input.sample(), { x: 0, y: 1 })).toEqual([]);
     expect(ring.state).toEqual({ open: true, selected: 'PROTECT' });

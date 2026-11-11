@@ -1,24 +1,46 @@
 /**
  * The visual state of an on-foot zone (Book 7 section 14): everything that moves for the eye
- * alone and needs memory from one frame to the next. The camera's smooth follow with look-ahead
- * and shake, the drawn tide easing between the simulation's states, sand drying after the water,
- * footprints, dust, splashes and ripples, blown sand, spray on the rocks, midges, the steerer's
- * idles, and the sky (sun, cloud, grade) by the time of day.
+ * alone and needs memory from one frame to the next. The camera's smooth look-ahead towards the
+ * cursor (Book 10 section 21) and shake, the drawn tide easing between the simulation's states,
+ * sand drying after the water, footprints, dust, splashes, ripple rings, dripping and wet sprites
+ * after wading (Book 7 section 07, Book 10 section 02), blown sand, spray on the rocks and round a
+ * wader, midges, the steerer's gait frames from distance walked and idles, and the sky (sun,
+ * cloud, grade) by the time of day.
  *
  * Nothing here is simulation: it reads the simulation's view each frame and is never saved. It
  * uses its own deterministic noise, never Math.random, so a capture is repeatable.
  */
+import {
+  parseControlsBalance,
+  parseMovementBalance,
+  parseWaterBalance,
+} from '../content/balance.ts';
+import type {
+  ControlsBalance,
+  DepthBand,
+  MovementBalance,
+  WaterBalance,
+} from '../content/balance.ts';
+import type { Palette } from '../render/palette.ts';
 import { hash01 } from '../render/noise.ts';
 import { heightAt, streamAt, swashAt, tideHeight, waterDepthAt } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
 import { TILE } from '../render/autotile.ts';
+import type { Wade } from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
-import type { OnFootState } from '../sim/land/onFoot.ts';
+import type { Gait, OnFootPlayer, OnFootState } from '../sim/land/onFoot.ts';
+import { bandAt, stillWaterLevel } from '../sim/land/water.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
-import { clampCamera, FX_SHEET } from './zoneScene.ts';
-import type { SheetAnims, VisualMark, ZoneVisualView } from './zoneScene.ts';
+import { clampCamera, FX_SHEET, PEOPLE_FX_SHEET } from './zoneScene.ts';
+import type {
+  PersonAnim,
+  PersonWater,
+  SheetAnims,
+  VisualMark,
+  ZoneVisualView,
+} from './zoneScene.ts';
 
 /** The ground a foot lands on, for prints, dust and footstep sounds. */
 export type Surface = 'water' | 'wet_sand' | 'sand' | 'shingle' | 'grass' | 'rock';
@@ -29,15 +51,19 @@ export interface SkyInput {
   readonly darkFrom: number;
 }
 
+type Kind = 'spray' | 'sand' | 'midge' | 'dust' | 'splash' | 'ripple' | 'drip' | 'surf';
+/** Particles drawn from fx_people (the people's own effects); the rest are the place's (fx_strand). */
+const PEOPLE_FX: ReadonlySet<Kind> = new Set(['dust', 'splash', 'ripple', 'drip', 'surf']);
+
 interface Particle {
-  kind: 'spray' | 'sand' | 'dust' | 'ripple' | 'midge';
+  kind: Kind;
   x: number;
   y: number;
   vx: number;
   vy: number;
   age: number;
   life: number;
-  /** Height above the ground (spray), drawn above its foot line. */
+  /** Height above the ground, drawn above its foot line. */
   z: number;
   vz: number;
 }
@@ -47,7 +73,41 @@ interface Print {
   y: number;
   age: number;
   wet: boolean;
+  facing: string;
+  foot: number;
 }
+
+/** Book 10 numbers the visuals follow, and the sea's colours for water over a wading person. */
+export interface VisualTuning {
+  readonly water: WaterBalance;
+  readonly movement: MovementBalance;
+  readonly controls: ControlsBalance;
+  /** The palette's sea ramp, dark to light, 0 to 255. */
+  readonly sea: readonly (readonly [number, number, number])[];
+}
+
+/** The tuning from balance.json and the palette's sea ramp. */
+export function visualTuning(balance: unknown, palette: Palette): VisualTuning {
+  const sea = (palette.ramps.get('sea') ?? []).map((i) => {
+    const rgb = palette.entries[i]?.rgb ?? [0, 0, 0];
+    return [rgb[0], rgb[1], rgb[2]] as const;
+  });
+  return {
+    water: parseWaterBalance(balance),
+    movement: parseMovementBalance(balance),
+    controls: parseControlsBalance(balance),
+    sea,
+  };
+}
+
+/**
+ * Where the camera leads (Book 2 section 21, camera): towards the mouse cursor (world pixels),
+ * towards the right stick (-1 to 1), or in keyboard-only play in the direction of travel.
+ */
+export type CameraLead =
+  | { readonly kind: 'cursor'; readonly x: number; readonly y: number }
+  | { readonly kind: 'stick'; readonly x: number; readonly y: number }
+  | { readonly kind: 'travel' };
 
 export interface FrameInput {
   readonly dt: number;
@@ -60,24 +120,59 @@ export interface FrameInput {
   };
   readonly sky: SkyInput;
   readonly anims: SheetAnims;
+  /** The steerer's body sheet (its anims time the gait). */
   readonly steererSheet: string;
+  /** Body sheets of the people in the zone, by id. */
+  readonly peopleSheets?: Readonly<Record<string, string>>;
+  readonly lead?: CameraLead;
+  /** Drawing a bow: the camera leads further (lookAheadAiming). */
+  readonly aiming?: boolean;
 }
 
 const MAX_PRINTS = 80;
-const MAX_PARTICLES = 220;
+const MAX_PARTICLES = 260;
 const PRINT_LIFE = 24;
+/** The view's offset from the steerer's feet before any look-ahead: the body sits mid-screen. */
+const BASE = { x: -LOGICAL_WIDTH / 2, y: -20 - LOGICAL_HEIGHT / 2 };
+/** A critically damped spring from rest halves its error after this many 1/omega. */
+const HALF_LIFE_OMEGA = 1.678;
+const STEERER = 'P_STEERER';
+
+/** One person's water: their band now and before, and the dripping after they leave it. */
+interface Wetness {
+  band: DepthBand | null;
+  depth: number;
+  dripUntil: number;
+  dripFor: number;
+  nextRipple: number;
+  nextSpray: number;
+  nextDrip: number;
+}
+
+const BAND_ORDER: Readonly<Record<DepthBand, number>> = {
+  WET: 0,
+  ANKLE: 1,
+  KNEE: 2,
+  WAIST: 3,
+  DEEP: 4,
+};
+const deeper = (band: DepthBand | null, than: DepthBand): boolean =>
+  band !== null && BAND_ORDER[band] >= BAND_ORDER[than];
 
 export class ZoneVisuals {
   readonly map: ZoneMap;
   readonly elevation: Elevation;
+  readonly tuning: VisualTuning;
   readonly wind: Wind = STRAND_WIND;
   reducedMotion: boolean;
   /** Effect detail (2 full, 1 lite, 0 low): the play view steps it down on a slow machine. */
   detail: 0 | 1 | 2 = 2;
   seconds = 0;
-  #cam = { x: 0, y: 0 };
-  #look = { x: 0, y: 0 };
-  #camOffset = { x: 0, y: 0 };
+  /** The smoothed camera offset from the steerer's feet (sub-pixel), its velocity, and the drawn one. */
+  #off = { x: 0, y: 0 };
+  #offV = { x: 0, y: 0 };
+  #drawn = { x: Math.round(BASE.x), y: Math.round(BASE.y) };
+  #started = false;
   #shake = 0;
   #shakeT = 0;
   #tide = -1;
@@ -85,22 +180,37 @@ export class ZoneVisuals {
   get tideLevel(): number {
     return this.#tide;
   }
+  /** The look-ahead now drawn, in logical pixels from the centred view (for the tests' cap check). */
+  get lead(): { x: number; y: number } {
+    return { x: this.#drawn.x - Math.round(BASE.x), y: this.#drawn.y - Math.round(BASE.y) };
+  }
   #wetTo = 0;
   #prints: Print[] = [];
   #particles: Particle[] = [];
-  #lastStep = -1;
   #last = { x: 0, y: 0 };
   #idleSince = 0;
   #spawnN = 0;
+  /** Distance walked in the current gait (px), which drives the gait's frames. */
+  #dist = 0;
+  #frame = 0;
+  #gait: Gait | null = null;
+  #runStartUntil = -1;
+  #runStopUntil = -1;
+  #wasRunning = false;
+  #looseUntil = -1;
+  #wasAiming = false;
+  #anim: PersonAnim | null = null;
+  #wet = new Map<string, Wetness>();
   /** Rock edges the sea breaks on, in world pixels. */
   readonly #breakers: { x: number; y: number }[] = [];
   /** Called on each footfall with the surface it lands on (for footstep sounds). */
   onStep: ((surface: Surface, x: number) => void) | null = null;
 
-  constructor(map: ZoneMap, elevation: Elevation, reducedMotion: boolean) {
+  constructor(map: ZoneMap, elevation: Elevation, reducedMotion: boolean, tuning: VisualTuning) {
     this.map = map;
     this.elevation = elevation;
     this.reducedMotion = reducedMotion;
+    this.tuning = tuning;
     for (let ty = 0; ty < map.height; ty++) {
       const row = map.rows[ty] ?? '';
       for (let tx = 0; tx < map.width; tx++) {
@@ -145,6 +255,117 @@ export class ZoneVisuals {
     this.#particles.push({ ...p, age: 0 });
   }
 
+  #ripple(x: number, y: number): void {
+    const life = this.tuning.water.rippleLifeSeconds;
+    this.#emit({ kind: 'ripple', x, y: y + 1, vx: 0, vy: 0, life, z: 0, vz: 0 });
+  }
+
+  #splash(x: number, y: number): void {
+    this.#emit({ kind: 'splash', x, y, vx: 0, vy: 0, life: 0.25, z: 0, vz: 0 });
+    for (let k = 0; k < 2; k++)
+      this.#emit({
+        kind: 'spray',
+        x: x + (this.#rand() - 0.5) * 8,
+        y,
+        vx: (this.#rand() - 0.5) * 20,
+        vy: 0,
+        z: 1,
+        vz: 18 + this.#rand() * 14,
+        life: 0.5,
+      });
+  }
+
+  /** The band at a point under the simulation's still water level (what movement obeys). */
+  #band(x: number, y: number, level: number): { band: DepthBand | null; depth: number } {
+    const b = bandAt(this.tuning.water, this.elevation, x, y, level);
+    return { band: b?.band ?? null, depth: level - heightAt(this.elevation, x, y) };
+  }
+
+  /** Follows one person in and out of the water: splashes, ripples, spray and dripping. */
+  #water(id: string, x: number, y: number, level: number, moving: boolean): void {
+    const t = this.seconds;
+    const w = this.tuning.water;
+    const now = this.#band(x, y, level);
+    let state = this.#wet.get(id);
+    if (state === undefined) {
+      state = {
+        band: now.band,
+        depth: now.depth,
+        dripUntil: -1,
+        dripFor: 1,
+        nextRipple: t,
+        nextSpray: t + w.sprayAroundWaderSeconds * hash01(x, y, 3),
+        nextDrip: t,
+      };
+      this.#wet.set(id, state);
+    }
+    const before = state.band;
+    // Entering knee or waist water splashes (Book 10, water effects).
+    if (deeper(now.band, 'KNEE') && !deeper(before, 'KNEE')) this.#splash(x, y);
+    // Leaving knee, waist or deep water: dripping and darker for the Book 10 time.
+    if (deeper(before, 'KNEE') && !deeper(now.band, 'KNEE')) {
+      state.dripFor = deeper(before, 'WAIST') ? w.dripAfterWaistSeconds : w.dripAfterKneeSeconds;
+      state.dripUntil = t + state.dripFor;
+    }
+    state.band = now.band;
+    state.depth = now.depth;
+    // A ring every rippleStanding seconds while standing in water (steps ring on each footfall).
+    if (deeper(now.band, 'ANKLE') && !moving && t >= state.nextRipple) {
+      this.#ripple(x, y);
+      state.nextRipple = t + w.rippleStandingSeconds;
+    } else if (moving) state.nextRipple = t + w.rippleStandingSeconds;
+    // Spray round someone standing in the surf, and drips off someone who has just left it.
+    if (deeper(now.band, 'KNEE') && !moving && t >= state.nextSpray) {
+      this.#emit({ kind: 'surf', x, y, vx: 0, vy: 0, life: 0.34, z: 0, vz: 0 });
+      for (let k = 0; k < 3; k++)
+        this.#emit({
+          kind: 'spray',
+          x: x + (this.#rand() - 0.5) * 14,
+          y: y + 1,
+          vx: (this.#rand() - 0.5) * 12 + this.wind.dirX * 6,
+          vy: 0,
+          z: 2,
+          vz: 20 + this.#rand() * 16,
+          life: 0.8,
+        });
+      state.nextSpray = t + w.sprayAroundWaderSeconds;
+    }
+    if (t < state.dripUntil && t >= state.nextDrip) {
+      this.#emit({
+        kind: 'drip',
+        x: x + (this.#rand() - 0.5) * 10,
+        y: y + 0.5,
+        vx: 0,
+        vy: 0,
+        z: 6 + this.#rand() * 16,
+        vz: -30,
+        life: 0.3,
+      });
+      state.nextDrip = t + 0.18;
+    }
+  }
+
+  /** How a person is drawn for the water: masked at their band's waterline, or wet and darker. */
+  #personWater(id: string): PersonWater {
+    const state = this.#wet.get(id);
+    if (state === undefined) return { dark: 0 };
+    const band = this.tuning.water.bands.find((b) => b.band === state.band);
+    const mask = band?.maskPx ?? 0;
+    const remaining = Math.max(0, state.dripUntil - this.seconds);
+    // Darker while dripping, fading back over the last part of the time.
+    const dark = remaining > 0 ? Math.min(1, remaining / (0.3 * state.dripFor)) : 0;
+    const wade: Wade | undefined =
+      mask > 0 ? { mask, colour: this.#waterColour(state.depth) } : undefined;
+    return wade === undefined ? { dark } : { dark, wade, band: state.band };
+  }
+
+  /** The sea's colour over water this deep, as the water shader shades it (pale to deep). */
+  #waterColour(depth: number): readonly [number, number, number] {
+    const sea = this.tuning.sea;
+    const i = Math.floor(9 - 6.2 * Math.pow(Math.max(0, Math.min(1, depth / 1.2)), 0.6));
+    return sea[Math.max(0, Math.min(sea.length - 1, i))] ?? [74, 125, 136];
+  }
+
   update(input: FrameInput): void {
     const dt = Math.min(0.1, Math.max(0, input.dt));
     this.seconds += dt;
@@ -161,55 +382,24 @@ export class ZoneVisuals {
       this.#tide < 0 ? goal : this.#tide + (goal - this.#tide) * (1 - Math.exp(-dt * 0.6));
     // Sand stays wet where the water has been, drying over a couple of minutes.
     this.#wetTo = Math.max(this.#tide, this.#wetTo - dt * 0.0015);
+    const level = stillWaterLevel(input.tide);
 
-    // Camera: smooth follow with a look-ahead in the direction of travel, snapped so the steerer
-    // keeps a whole-pixel place on screen while walking (no jitter).
-    const vx = (p.x - this.#last.x) / Math.max(dt, 1e-3);
-    const vy = (p.y - this.#last.y) / Math.max(dt, 1e-3);
-    const moving = p.moving && Math.hypot(vx, vy) > 1;
-    const lookGoal = moving
-      ? { x: Math.max(-44, Math.min(44, vx * 0.7)), y: Math.max(-26, Math.min(26, vy * 0.45)) }
-      : { x: this.#look.x * 0.6, y: this.#look.y * 0.6 };
-    const lk = 1 - Math.exp(-dt * 1.6);
-    this.#look.x += (lookGoal.x - this.#look.x) * lk;
-    this.#look.y += (lookGoal.y - this.#look.y) * lk;
-    const target = {
-      x: p.x + this.#look.x - LOGICAL_WIDTH / 2,
-      y: p.y - 20 + this.#look.y - LOGICAL_HEIGHT / 2,
-    };
-    const first = this.#last.x === 0 && this.#last.y === 0;
-    const ck = first ? 1 : 1 - Math.exp(-dt * 5);
-    this.#cam.x += (target.x - this.#cam.x) * ck;
-    this.#cam.y += (target.y - this.#cam.y) * ck;
-    // The offset from the steerer is what is rounded, so both move together by whole pixels.
-    this.#camOffset = {
-      x: Math.round(this.#cam.x - p.x),
-      y: Math.round(this.#cam.y - p.y),
-    };
+    this.#camera(input, dt);
     this.#last = { x: p.x, y: p.y };
     this.#shake *= Math.exp(-dt * 9);
     this.#shakeT += dt;
 
-    // Footfalls: at each contact frame of the gait cycle.
-    const gaitState = input.onFoot.carrying !== null || p.gait === 'carry' ? 'carry' : p.gait;
-    const anim = input.anims.get(input.steererSheet)?.[gaitState];
-    if (p.moving && anim !== undefined) {
-      const frame = Math.floor(input.tick / anim.ticks) % anim.frames;
-      const contact = Math.floor(frame / (anim.frames / 2));
-      if (frame % (anim.frames / 2) === 0 && contact !== this.#lastStep) {
-        this.#lastStep = contact;
-        this.#footfall(p.x, p.y, contact, gaitState);
+    // The steerer's frames, from distance walked; footfalls on the contact frames.
+    this.#steerer(input, p, level);
+
+    // People in the water: the steerer and everyone standing in the zone.
+    this.#water(STEERER, p.x, p.y, level, p.moving);
+    for (const [id, a] of Object.entries(input.onFoot.actors)) {
+      if (a.pose === 'carried') {
+        this.#wet.delete(id);
+        continue;
       }
-      this.#idleSince = t;
-    } else {
-      this.#lastStep = -1;
-      if (p.moving) this.#idleSince = t;
-    }
-    // Ripples round anyone standing in water.
-    const people = [p, ...Object.values(input.onFoot.actors).filter((a) => a.pose !== 'carried')];
-    for (const a of people) {
-      if (this.surfaceAt(a.x, a.y) === 'water' && this.#rand() < dt * (p.moving ? 3 : 1.2))
-        this.#emit({ kind: 'ripple', x: a.x, y: a.y + 1, vx: 0, vy: 0, life: 0.9, z: 0, vz: 0 });
+      this.#water(id, a.x, a.y, level, false);
     }
 
     // Spray where the sea breaks on the rocks, at the top of each swash.
@@ -233,9 +423,10 @@ export class ZoneVisuals {
     }
     // Sand lifting off the dry beach in the gusts, and midges in the lee by the stream.
     const reduced = this.reducedMotion ? 0.4 : 1;
+    const cam = this.#viewCorner(p);
     for (let k = 0; k < 3; k++) {
-      const x = this.#cam.x + this.#rand() * LOGICAL_WIDTH;
-      const y = this.#cam.y + this.#rand() * LOGICAL_HEIGHT;
+      const x = cam.x + this.#rand() * LOGICAL_WIDTH;
+      const y = cam.y + this.#rand() * LOGICAL_HEIGHT;
       const e = heightAt(this.elevation, x, y);
       const g = gustAt(this.wind, x, y, t);
       if (e > this.#wetTo + 0.12 && e <= 1 && g > 0.45 && this.#rand() < dt * 30 * g * reduced) {
@@ -281,70 +472,209 @@ export class ZoneVisuals {
     );
   }
 
+  /**
+   * The camera (Book 10 section 21): a look-ahead towards the cursor, the stick or the direction
+   * of travel, critically damped with cameraHalfLife below the pixel; the drawn offset is whole
+   * pixels and changes only once the smoothed offset is cameraSnap past the halfway point, so a
+   * still cursor never makes the view step back and forth.
+   */
+  #camera(input: FrameInput, dt: number): void {
+    const p = input.onFoot.player;
+    const c = this.tuning.controls;
+    const cap = (input.aiming === true ? c.lookAheadAiming : c.lookAheadMax) * TILE;
+    let lx = 0;
+    let ly = 0;
+    const lead = input.lead ?? { kind: 'travel' };
+    if (lead.kind === 'cursor') {
+      // From the steerer's body, not the feet (the cursor rests on what it points at).
+      const dx = lead.x - p.x;
+      const dy = lead.y - (p.y - 20);
+      const d = Math.hypot(dx, dy);
+      const dead = c.lookAheadDeadZone * TILE;
+      if (d > dead) {
+        const k = Math.min(cap, c.lookAheadScale * (d - dead)) / d;
+        lx = dx * k;
+        ly = dy * k;
+      }
+    } else if (lead.kind === 'stick') {
+      const d = Math.hypot(lead.x, lead.y);
+      if (d > c.gamepadDeadZone) {
+        lx = (lead.x / Math.max(1, d)) * cap;
+        ly = (lead.y / Math.max(1, d)) * cap;
+      }
+    } else if (p.moving && this.#started && dt > 0) {
+      // Keyboard only: lead in the direction of travel, as far as a second's travel scaled.
+      const vx = (p.x - this.#last.x) / dt;
+      const vy = (p.y - this.#last.y) / dt;
+      const d = Math.hypot(vx, vy);
+      if (d > 1) {
+        const k = Math.min(cap, c.lookAheadScale * d) / d;
+        lx = vx * k;
+        ly = vy * k;
+      }
+    }
+    const goal = { x: BASE.x + lx, y: BASE.y + ly };
+    if (!this.#started) {
+      this.#off = { ...goal };
+      this.#offV = { x: 0, y: 0 };
+      this.#drawn = { x: Math.round(goal.x), y: Math.round(goal.y) };
+      this.#started = true;
+      return;
+    }
+    // A critically damped spring towards the goal, integrated exactly over dt.
+    const omega = HALF_LIFE_OMEGA / Math.max(1e-3, c.cameraHalfLife);
+    const decay = Math.exp(-omega * dt);
+    for (const axis of ['x', 'y'] as const) {
+      const e = this.#off[axis] - goal[axis];
+      const temp = (this.#offV[axis] + omega * e) * dt;
+      this.#offV[axis] = (this.#offV[axis] - omega * temp) * decay;
+      this.#off[axis] = goal[axis] + (e + temp) * decay;
+      if (Math.abs(this.#off[axis] - this.#drawn[axis]) > 0.5 + c.cameraSnap)
+        this.#drawn[axis] = Math.round(this.#off[axis]);
+    }
+  }
+
+  #viewCorner(p: { x: number; y: number }): { x: number; y: number } {
+    return { x: Math.round(p.x) + this.#drawn.x, y: Math.round(p.y) + this.#drawn.y };
+  }
+
   #near(x: number, y: number, margin: number): boolean {
+    const cam = this.#viewCorner(this.#last);
     return (
-      x > this.#cam.x - margin &&
-      y > this.#cam.y - margin &&
-      x < this.#cam.x + LOGICAL_WIDTH + margin &&
-      y < this.#cam.y + LOGICAL_HEIGHT + margin
+      x > cam.x - margin &&
+      y > cam.y - margin &&
+      x < cam.x + LOGICAL_WIDTH + margin &&
+      y < cam.y + LOGICAL_HEIGHT + margin
     );
   }
 
-  #footfall(x: number, y: number, foot: number, gait: string): void {
+  /**
+   * The steerer's animation: walk, run, sneak and carry frames from the distance walked, so the
+   * planted foot keeps pace with the ground at any speed (the cycle's length is the Book 10 speed
+   * times the cycle's time); a one-frame lean into a run and a short skid out of it; the bow drawn
+   * and loosed; and the idles when still.
+   */
+  #steerer(input: FrameInput, p: OnFootPlayer, level: number): void {
+    const t = this.seconds;
+    const a = input.anims.get(input.steererSheet);
+    const gait: Gait = input.onFoot.carrying !== null ? 'carry' : p.gait;
+    const moved = Math.hypot(p.x - this.#last.x, p.y - this.#last.y);
+    const running = p.moving && gait === 'run';
+    if (running && !this.#wasRunning && a?.['runstart'] !== undefined)
+      this.#runStartUntil = t + (a['runstart'].frames * a['runstart'].ticks) / 60;
+    if (!running && this.#wasRunning && !p.moving && a?.['runstop'] !== undefined)
+      this.#runStopUntil = t + (a['runstop'].frames * a['runstop'].ticks) / 60;
+    this.#wasRunning = running;
+    const aiming = p.aim !== null;
+    if (!aiming && this.#wasAiming && a?.['draw'] !== undefined)
+      this.#looseUntil = t + (a['draw'].ticks * 2) / 60;
+    this.#wasAiming = aiming;
+
+    if (aiming && a?.['draw'] !== undefined) {
+      const draw = a['draw'];
+      const held = (input.tick - (p.aim?.since ?? input.tick)) / draw.ticks;
+      // Raise, draw, then hold the full draw; the last frame is the loose.
+      this.#anim = {
+        state: 'draw',
+        frame: Math.max(0, Math.min(draw.frames - 2, Math.floor(held))),
+      };
+    } else if (t < this.#looseUntil && a?.['draw'] !== undefined && !p.moving) {
+      this.#anim = { state: 'draw', frame: a['draw'].frames - 1 };
+    } else if (p.moving) {
+      this.#idleSince = t;
+      const anim = a?.[gait];
+      if (gait !== this.#gait) {
+        this.#gait = gait;
+        this.#dist = 0;
+        this.#frame = -1;
+      }
+      const speed = this.tuning.movement[gait] * TILE;
+      if (anim !== undefined && speed > 0) {
+        const cycle = (speed * anim.frames * anim.ticks) / 60;
+        this.#dist = (this.#dist + moved) % cycle;
+        const frame = Math.floor((this.#dist / cycle) * anim.frames) % anim.frames;
+        const half = anim.frames / 2;
+        if (frame !== this.#frame && frame % half === 0)
+          this.#footfall(p, frame / half, gait, level);
+        this.#frame = frame;
+        this.#anim =
+          gait === 'run' && t < this.#runStartUntil
+            ? { state: 'runstart', frame: 0 }
+            : { state: gait, frame };
+      } else this.#anim = { state: gait, frame: 0 };
+    } else {
+      this.#gait = null;
+      this.#frame = -1;
+      if (t < this.#runStopUntil && a?.['runstop'] !== undefined) {
+        const stop = a['runstop'];
+        const left = (this.#runStopUntil - t) * 60;
+        const frame = Math.min(stop.frames - 1, stop.frames - 1 - Math.floor(left / stop.ticks));
+        this.#anim = { state: 'runstop', frame: Math.max(0, frame) };
+      } else if (input.onFoot.carrying !== null) {
+        this.#anim = { state: 'carry', frame: 0 };
+      } else this.#anim = this.#idle(p, input.anims, input.steererSheet);
+    }
+  }
+
+  #footfall(p: OnFootPlayer, foot: number, gait: Gait, level: number): void {
+    const { x, y } = p;
     const side = foot === 0 ? -3 : 3;
     const surface = this.surfaceAt(x, y);
     this.onStep?.(surface, x);
-    if (surface === 'sand' || surface === 'wet_sand') {
+    const { band } = this.#band(x, y, level);
+    const wet = this.#wet.get(STEERER);
+    const dripping = wet !== undefined && this.seconds < wet.dripUntil;
+    // A ring on every step in ankle, knee and waist water; a splash on every running step there.
+    if (deeper(band, 'ANKLE')) this.#ripple(x + side * 0.5, y);
+    if (deeper(band, 'KNEE') && gait === 'run') this.#splash(x + side, y);
+    if ((surface === 'sand' || surface === 'wet_sand') && !deeper(band, 'ANKLE')) {
       if (this.#prints.length >= MAX_PRINTS) this.#prints.shift();
       this.#prints.push({
         x: x + side * 0.6,
         y: y - 1 + (foot === 0 ? 0 : 1),
         age: 0,
-        wet: surface === 'wet_sand',
+        // Wet prints on wet sand, and on dry sand from feet just out of the water.
+        wet: surface === 'wet_sand' || dripping,
+        facing: p.facing,
+        foot,
       });
     }
-    if (surface === 'water') {
-      for (let k = 0; k < 2; k++)
-        this.#emit({
-          kind: 'spray',
-          x: x + side,
-          y,
-          vx: (this.#rand() - 0.5) * 20,
-          vy: 0,
-          z: 1,
-          vz: 18 + this.#rand() * 14,
-          life: 0.5,
-        });
-    } else if ((surface === 'sand' || surface === 'shingle') && gait === 'run') {
+    if (surface === 'sand' && gait === 'run' && band === null)
       this.#emit({
         kind: 'dust',
         x: x + side,
         y,
-        vx: -this.wind.dirX * -10,
+        vx: this.wind.dirX * 10,
         vy: 0,
-        z: 1,
-        vz: 5,
-        life: 0.45,
+        z: 0,
+        vz: 0,
+        life: 0.27,
       });
-    }
   }
 
-  /** The steerer's idle: a breath, a look round now and then, and bracing in a strong gust. */
-  #idle(p: { x: number; y: number; moving: boolean }, anims: SheetAnims, sheet: string) {
-    if (p.moving) return null;
+  /**
+   * The steerer's idles: a breath; after a few seconds still, now and then a weight shift or a
+   * glance round; bracing with the cloak held in a strong gust.
+   */
+  #idle(p: { x: number; y: number }, anims: SheetAnims, sheet: string): PersonAnim {
     const t = this.seconds;
     const g = gustAt(this.wind, p.x, p.y, t);
     const a = anims.get(sheet);
-    const pick = (state: string, rate: number): { state: string; frame: number } => {
+    const pick = (state: string): PersonAnim => {
       const anim = a?.[state];
       const n = anim?.frames ?? 1;
-      return { state, frame: Math.floor(t * rate) % n };
+      return { state, frame: Math.floor((t * 60) / (anim?.ticks ?? 15)) % n };
     };
-    if (g > 0.55 && a?.['idlewind'] !== undefined) return pick('idlewind', 60 / 9);
+    if (g > 0.55 && a?.['idlewind'] !== undefined) return pick('idlewind');
     const still = t - this.#idleSince;
-    if (still > 3 && Math.floor((still - 3) / 2.2) % 3 === 1 && a?.['look'] !== undefined)
-      return pick('look', 60 / 22);
-    return pick('idle', 60 / 15);
+    if (still > 3) {
+      // In spells of 2.4 s: mostly breathing, sometimes a shift or a glance (chosen by the spell).
+      const spell = Math.floor((still - 3) / 2.4);
+      const r = hash01(spell, 31);
+      if (r < 0.22 && a?.['shift'] !== undefined) return pick('shift');
+      if (r > 0.7 && a?.['glance'] !== undefined) return pick('glance');
+    }
+    return pick('idle');
   }
 
   /** The sky by the time of day: the sun's cast-shadow direction, cloud, light shafts and grade. */
@@ -382,50 +712,54 @@ export class ZoneVisuals {
     const p = input.onFoot.player;
     const shakeX = Math.round(Math.sin(this.#shakeT * 61) * this.#shake);
     const shakeY = Math.round(Math.cos(this.#shakeT * 47) * this.#shake);
+    const corner = this.#viewCorner(p);
     const cam =
       this.cameraAt === null
-        ? clampCamera(
-            this.map,
-            Math.round(p.x) + this.#camOffset.x + shakeX,
-            Math.round(p.y) + this.#camOffset.y + shakeY,
-          )
+        ? clampCamera(this.map, corner.x + shakeX, corner.y + shakeY)
         : clampCamera(this.map, this.cameraAt.x, this.cameraAt.y);
     const marks: VisualMark[] = [];
     for (const pr of this.#prints) {
       // Old dry prints soften: drawn on alternate frames of a dither as they fade.
       if (pr.age > PRINT_LIFE * 0.6 && (Math.floor(pr.x) + Math.floor(pr.y)) % 2 === 0) continue;
       marks.push({
-        sheet: FX_SHEET,
-        frame: `${pr.wet ? 'print_wet' : 'print_dry'}/-/0`,
+        sheet: PEOPLE_FX_SHEET,
+        frame: `${pr.wet ? 'print_wet' : 'print_dry'}_${pr.facing}/-/${pr.foot}`,
         x: pr.x,
         y: pr.y,
         layer: 'decal',
       });
     }
     for (const q of this.#particles) {
-      const frames = q.kind === 'midge' ? 2 : 3;
+      const people = PEOPLE_FX.has(q.kind);
+      const frames = people
+        ? (input.anims.get(PEOPLE_FX_SHEET)?.[q.kind]?.frames ?? 1)
+        : q.kind === 'midge'
+          ? 2
+          : 3;
       const i =
         q.kind === 'midge'
           ? Math.floor(this.seconds * 6 + q.x) % 2
           : Math.min(frames - 1, Math.floor((q.age / q.life) * frames));
       marks.push({
-        sheet: FX_SHEET,
+        sheet: people ? PEOPLE_FX_SHEET : FX_SHEET,
         frame: `${q.kind}/-/${i}`,
         x: q.x,
         y: q.y - q.z,
         layer: 'actor',
         // A ripple lies on the water just behind the feet it rings; spray sorts with its foot.
-        sort: q.kind === 'ripple' ? q.y - 1.5 : q.y + 0.5,
+        sort: q.kind === 'ripple' || q.kind === 'surf' ? q.y - 1.5 : q.y + 0.5,
       });
     }
+    const water: Record<string, PersonWater> = { [STEERER]: this.#personWater(STEERER) };
+    for (const id of Object.keys(input.onFoot.actors)) water[id] = this.#personWater(id);
     const sky = ZoneVisuals.sky(input.sky, 0.55);
     return {
       camera: cam,
       seconds: this.seconds,
       wind: this.wind,
       reducedMotion: this.reducedMotion,
-      idle: this.#idle(p, input.anims, input.steererSheet),
-      stepFrame: null,
+      steerer: this.#anim,
+      water,
       marks,
       effects: {
         ...sky,

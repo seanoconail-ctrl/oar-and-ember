@@ -4,6 +4,9 @@ CLAUDE.md
 # Generated files: their format is owned by their generators (lint checks they are up to date).
 content/balance.json
 assets/atlases/
+# People's layer files: written by assets/art/authoring/people48.py and copied by npm run art:adopt.
+assets/art/layers/
+assets/art/proposed/*.layers.json
 content/zones/*.json
 !content/zones/*.plan.json
 # Build and test output.

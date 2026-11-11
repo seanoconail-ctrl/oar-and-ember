@@ -121,12 +121,28 @@ export interface Migration {
 /**
  * The real migration chain. Version 1 to 2 (Stage 6) adds `onFoot`, empty: a version 1 save
  * holds no positions, so the game places the steerer at the zone's spawn when it loads one.
+ * Version 2 to 3 (the Stage 6 rework) adds the hotbar and the aim.
  */
 export const MIGRATIONS: readonly Migration[] = [
   {
     from: 1,
     describe: 'adds onFoot (Stage 6), empty',
     up: (state) => ({ ...state, onFoot: null }),
+  },
+  {
+    from: 2,
+    describe: "adds the hotbar and a drawn bow's aim (Stage 6 rework), empty",
+    // A version 2 save predates the hotbar: the steerer keeps their gear list, with an empty
+    // hotbar (only development builds wrote version 2 saves), and is not drawing a bow.
+    up: (state) => {
+      const player = state['player'] as Record<string, unknown>;
+      const onFoot = state['onFoot'] as { player: Record<string, unknown> } | null;
+      return {
+        ...state,
+        player: { ...player, hotbar: { slots: [], selected: 0 } },
+        onFoot: onFoot === null ? null : { ...onFoot, player: { ...onFoot.player, aim: null } },
+      };
+    },
   },
 ];
 

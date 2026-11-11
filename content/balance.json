@@ -145,6 +145,7 @@
    "waterDepthBands": [
     {
      "Band": "Wet",
+     "Depth up to": "0.012",
      "Sprite masked (px)": "0",
      "Speed factor": "1.0",
      "Stamina per second": "0",
@@ -152,6 +153,7 @@
     },
     {
      "Band": "Ankle",
+     "Depth up to": "0.05",
      "Sprite masked (px)": "3",
      "Speed factor": "0.9",
      "Stamina per second": "0",
@@ -159,6 +161,7 @@
     },
     {
      "Band": "Knee",
+     "Depth up to": "0.14",
      "Sprite masked (px)": "12",
      "Speed factor": "0.7",
      "Stamina per second": "0",
@@ -166,6 +169,7 @@
     },
     {
      "Band": "Waist",
+     "Depth up to": "0.30",
      "Sprite masked (px)": "22",
      "Speed factor": "0.5",
      "Stamina per second": "4",
@@ -173,6 +177,7 @@
     },
     {
      "Band": "Deep",
+     "Depth up to": "Deeper",
      "Sprite masked (px)": "Swimming",
      "Speed factor": "Swim speed",
      "Stamina per second": "8",
@@ -207,6 +212,10 @@
     {
      "Key": "sprayAroundWader",
      "Value": "One spray burst every 2.5 s round a person standing in the surf line"
+    },
+    {
+     "Key": "streamBand",
+     "Value": "Ankle: a stream crossing open ground is ankle deep unless the tide over it is deeper"
     }
    ],
    "seaTravel": [

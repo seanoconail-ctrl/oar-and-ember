@@ -1,6 +1,13 @@
 /** Builds what the on-foot systems need from loaded content and balance.json. */
-import { parseMovementBalance } from '../../content/balance.ts';
+import {
+  parseControlsBalance,
+  parseMovementBalance,
+  parseWaterBalance,
+} from '../../content/balance.ts';
 import type { Content } from '../../content/registry.ts';
+import { bakeElevation } from '../../content/terrain/elevation.ts';
+import type { Elevation } from '../../content/terrain/elevation.ts';
+import type { Id } from '../../core/ids.ts';
 import type { SimWorldContext } from '../simulation.ts';
 
 export function landContext(
@@ -8,9 +15,14 @@ export function landContext(
   balance: unknown,
 ): SimWorldContext {
   if (content.onFoot === null) throw new Error('content/onfoot.json did not load');
+  const elevations = new Map<Id, Elevation>();
+  for (const [zone, map] of content.zoneMaps) elevations.set(zone, bakeElevation(map.rows));
   return {
     maps: content.zoneMaps,
     movement: parseMovementBalance(balance),
+    water: parseWaterBalance(balance),
+    controls: parseControlsBalance(balance),
+    elevations,
     rules: content.onFoot,
     opening: content.opening,
   };

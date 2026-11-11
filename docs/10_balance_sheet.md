@@ -61,13 +61,15 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | Swim | 1.2 | Deep water where swimming is allowed; drains stamina |
 
 ### Water depth bands
-| Band | Sprite masked (px) | Speed factor | Stamina per second | Notes |
-|---|---|---|---|---|
-| Wet | 0 | 1.0 | 0 | Wet sand and swash; no change but footprints fill with water |
-| Ankle | 3 | 0.9 | 0 | Feet hidden; a ripple ring on every step |
-| Knee | 12 | 0.7 | 0 | Splashes on entering and on every running step |
-| Waist | 22 | 0.5 | 4 | Carrying and fighting are harder: carry speed x0.6, attack recovery x1.3 |
-| Deep | Swimming | Swim speed | 8 | Swimming only where allowed; elsewhere deep water is the edge of the walkable ground |
+*Depth is the still water level (the calendar's tide, never the drawn swash) over the zone's ground height, in the height field's units (Book 7 section 14, Water: the flats lie at 0.02 to 0.14 and the foreshore at 0.15 to 1). A band holds from the row above it up to, but not including, its "Depth up to" value; any water at all is at least wet.*
+
+| Band | Depth up to | Sprite masked (px) | Speed factor | Stamina per second | Notes |
+|---|---|---|---|---|---|
+| Wet | 0.012 | 0 | 1.0 | 0 | Wet sand and swash; no change but footprints fill with water |
+| Ankle | 0.05 | 3 | 0.9 | 0 | Feet hidden; a ripple ring on every step |
+| Knee | 0.14 | 12 | 0.7 | 0 | Splashes on entering and on every running step |
+| Waist | 0.30 | 22 | 0.5 | 4 | Carrying and fighting are harder: carry speed x0.6, attack recovery x1.3 |
+| Deep | Deeper | Swimming | Swim speed | 8 | Swimming only where allowed; elsewhere deep water is the edge of the walkable ground |
 
 ### Water effects
 | Key | Value |
@@ -79,6 +81,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | dripAfterKnee | 4 s of dripping and a sprite one ramp step darker after leaving knee water |
 | dripAfterWaist | 8 s after leaving waist or deep water |
 | sprayAroundWader | One spray burst every 2.5 s round a person standing in the surf line |
+| streamBand | Ankle: a stream crossing open ground is ankle deep unless the tide over it is deeper |
 
 ### Sea travel
 | Key | Value |

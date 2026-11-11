@@ -10,7 +10,7 @@ import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { FACINGS } from '../../src/sim/land/zoneMap.ts';
 import { newCampaign } from '../../src/sim/world.ts';
-import { loadPalette, loadSheets } from '../../src/tools/art/artFiles.ts';
+import { loadPalette, loadPeopleLook, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 
@@ -30,18 +30,51 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
     expect(bModel.anims).toEqual(a.anims);
     expect(bModel.facings).toEqual(a.facings);
     expect(bModel.footprint).toEqual(a.footprint);
-    expect([a.width, a.height]).toEqual([32, 40]);
+    expect([a.width, a.height]).toEqual([32, 48]);
     expect(a.footprint).toEqual(content.onFoot?.footprint);
     expect(sheets.get('actor_c_hild')?.footprint).toEqual(content.onFoot?.footprint);
   });
 
-  it('meets the Book 7 frame counts: idle 4, walk 8, run 8, sneak 6, carry walk 6', () => {
+  it('meets the Book 7 frame counts: idles 4, walk 6, run 8, sneak 6, carry walk 6, draw 4', () => {
     const a = sheets.get('actor_p_steerer_a');
     expect(
       Object.fromEntries(Object.entries(a?.anims ?? {}).map(([k, v]) => [k, v.frames])),
-    ).toEqual({ idle: 4, look: 4, idlewind: 4, walk: 8, run: 8, sneak: 6, carry: 6 });
+    ).toEqual({
+      idle: 4,
+      shift: 4,
+      glance: 4,
+      idlewind: 4,
+      walk: 6,
+      run: 8,
+      runstart: 1,
+      runstop: 2,
+      sneak: 6,
+      carry: 6,
+      draw: 4,
+    });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);
+    expect(sheets.get('actor_c_hild')?.anims['call']?.frames).toBe(6);
+  });
+
+  it('dresses the steerer from the body model, with no helmet; Hild in her dress', () => {
+    for (const body of ['A', 'B'] as const) {
+      const look = loadPeopleLook(body);
+      const suffix = body.toLowerCase();
+      expect(look.steerer.body).toBe(`actor_p_steerer_${suffix}`);
+      for (const f of FACINGS) {
+        expect([...(look.steerer.layers[f] ?? [])].sort()).toEqual([
+          `actor_p_steerer_${suffix}`,
+          `layer_cloak_wool_${suffix}`,
+          `layer_clothing_tunic_${suffix}`,
+          `layer_weapon_bow_${suffix}`,
+        ]);
+      }
+      expect(look.people['C_HILD']?.layers['s']).toEqual([
+        'actor_c_hild',
+        'layer_clothing_dress_hild',
+      ]);
+    }
   });
 
   it('has no placeholders among the Stage 6 sheets', () => {
@@ -78,7 +111,7 @@ describe('the strand scene', () => {
       for (const [x, y] of spots) {
         for (const gait of ['walk', 'run', 'sneak', 'carry'] as const) {
           for (const facing of FACINGS) {
-            for (const pose of ['down', 'carried', 'sit'] as const) {
+            for (const pose of ['down', 'call', 'carried', 'sit'] as const) {
               for (const tideOpen of [false, true]) {
                 for (const tick of [0, 101]) {
                   onFoot.player = { ...onFoot.player, x, y, facing, gait, moving: tick > 0 };
@@ -93,10 +126,7 @@ describe('the strand scene', () => {
                     tick,
                     tideOpen,
                     phase: 'day',
-                    look: {
-                      steerer: `actor_p_steerer_${body.toLowerCase()}`,
-                      people: { C_HILD: 'actor_c_hild' },
-                    },
+                    look: loadPeopleLook(body),
                     anims,
                     highlight: 'C_HILD',
                   });

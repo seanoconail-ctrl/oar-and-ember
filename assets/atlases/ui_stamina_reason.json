@@ -1,0 +1,79 @@
+{
+  "sheet": "ui_stamina_reason",
+  "kind": "decal",
+  "image": "ui_stamina_reason.png",
+  "width": 8,
+  "height": 8,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 8,
+    "h": 8
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "cold": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hunger": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "wounds": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "sickness": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "sleep": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "work": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "cold/-/0": [
+      0,
+      0
+    ],
+    "hunger/-/0": [
+      0,
+      8
+    ],
+    "wounds/-/0": [
+      0,
+      16
+    ],
+    "sickness/-/0": [
+      0,
+      24
+    ],
+    "sleep/-/0": [
+      0,
+      32
+    ],
+    "work/-/0": [
+      0,
+      40
+    ]
+  }
+}

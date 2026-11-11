@@ -22,6 +22,7 @@
     "golden": "node src/tools/saves/golden.ts",
     "art:sheets": "node src/tools/art/generate-sheets.ts",
     "art:compile": "node src/tools/art/compile.ts",
+    "art:adopt": "node src/tools/art/adopt.ts",
     "art:lint": "node src/tools/art/lint.ts",
     "zones": "node src/tools/levels/generate-zones.ts",
     "capture": "node src/tools/art/capture.ts",
