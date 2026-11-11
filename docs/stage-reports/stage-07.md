@@ -70,7 +70,11 @@ everything for the user's review is listed under **Flagged for review**.
   `tests/browser/stage07.spec.ts` (5 tests, all stepped with `oeStep` from the camp hooks). No
   existing browser spec was edited.
 - `npm run audio:render`: every item rendered (66), the loudest peak 0.81, nothing clips.
-- CI results: see the run for this commit.
+- CI results (run 43069031065 for commit 1cc81e4, passed twice: first run and a re-run):
+  - Chromium: passed (lint, test, build, browser tests).
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed only after all three. The published-address checks passed in all three browsers.
 
 ## Gate checks
 1. **No starvation or spoilage before tutorialComplete: PASS.** `home.test.ts` check 1: eight days on
