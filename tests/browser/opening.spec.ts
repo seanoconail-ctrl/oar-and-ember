@@ -6,7 +6,22 @@
 import { expect, test } from '@playwright/test';
 import { aboveTideLine, terrainAt, tileOf } from '../../src/sim/land/zoneMap.ts';
 import { findPath } from '../../src/tools/play/openingBot.ts';
-import { approach, attr, here, hildSpawn, map, overlay, wadeable, walkPath } from './strand.ts';
+import {
+  approach,
+  attr,
+  here,
+  hildSpawn,
+  map,
+  overlay,
+  reportPageErrors,
+  step,
+  stepUntil,
+  stepUntilText,
+  wadeable,
+  walkPath,
+} from './strand.ts';
+
+const CAPTIONS = '.oe-overlay [data-region=captions] p';
 
 test('control within five seconds of the naming screen, with the chosen name and body', async ({
   page,
@@ -14,6 +29,7 @@ test('control within five seconds of the naming screen, with the chosen name and
   // Generous for a machine without a graphics card, which prepares slowly on the title; the
   // five seconds from the naming screen are checked below.
   test.setTimeout(120_000);
+  reportPageErrors(page);
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('./');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'title', {
@@ -65,37 +81,46 @@ test('control within five seconds of the naming screen, with the chosen name and
 });
 
 test('the rescue, played with the keys and taught by the moment', async ({ page }) => {
-  // The walk is 2.0 tiles a second since the art pass (AP-1), and software GL is slow: allow time.
-  test.setTimeout(240_000);
+  // Played stepped (`capture`): the game advances a frame of fixed length at a time, so CI's slow
+  // software-rendered browsers play exactly what a fast machine does, and "within five seconds"
+  // is five seconds of game time. Each stepped frame is a full draw there: allow time.
+  test.setTimeout(300_000);
+  reportPageErrors(page);
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto('./?view=play&name=Ash&body=A');
+  await page.goto('./?view=play&name=Ash&body=A&capture');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play', {
     timeout: 15_000,
   });
   await page.locator('canvas#screen').click();
-  const prompts = new Set<string>();
-  const texts = new Set<string>();
-  const watch = setInterval(() => {
-    void overlay(page)
-      .getAttribute('data-prompt')
-      .then((p) => prompts.add(p ?? ''))
-      .catch(() => undefined);
-    void page
-      .locator('[data-region=prompt]')
-      .innerText()
-      .then((t) => texts.add(t))
-      .catch(() => undefined);
-  }, 100);
+  // Every frame's prompt, as drawn, recorded by the page after each step.
+  await page.evaluate(() => {
+    const w = window as unknown as {
+      oeStep: (ms: number) => void;
+      oeSeen: { prompts: string[]; texts: string[] };
+    };
+    const inner = w.oeStep;
+    const seen = { prompts: [] as string[], texts: [] as string[] };
+    w.oeSeen = seen;
+    w.oeStep = (ms: number) => {
+      inner(ms);
+      const o = document.querySelector<HTMLElement>('.oe-overlay');
+      const prompt = o?.dataset['prompt'] ?? '';
+      const text = o?.querySelector<HTMLElement>('[data-region=prompt]')?.innerText ?? '';
+      if (!seen.prompts.includes(prompt)) seen.prompts.push(prompt);
+      if (!seen.texts.includes(text)) seen.texts.push(text);
+    };
+  });
 
   // Hild calls, and says where from.
   const captions = page.locator('[data-region=captions]');
   // Design addendum 2.3 section 10: the cue in italic, with no speaker, above Hild's words, which
   // are upright and named; the italic is a real face, never a synthesised slant.
+  await stepUntilText(page, CAPTIONS, 'Hild, calling from the west', 5);
   const info = captions.locator('p.info', { hasText: 'Hild, calling from the west' });
-  await expect(info).toHaveCount(1, { timeout: 5000 });
+  await expect(info).toHaveCount(1);
   const speech = captions.locator('p.speech', { hasText: 'past the rocks' });
   await expect(speech).toContainText('Hild: ');
-  // The captions are rebuilt every frame, so their styles are read in one step from the live page.
+  // The captions are rebuilt every frame, so their styles are read in one step from the page.
   const looks = await page.evaluate(() => {
     const ps = [...document.querySelectorAll('.oe-overlay [data-region=captions] p')];
     const info = ps.find((p) => p.className === 'info');
@@ -131,21 +156,26 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
   );
   if (toHild === null) throw new Error('no path to Hild');
   await walkPath(page, toHild);
-  // A slow machine releases keys late: close the last few pixels to stand beside her.
+  // Close the last few pixels to stand beside her.
   await approach(page, (hildAt.tx + 1.5) * 24, (hildAt.ty + 0.7) * 24);
-  await expect(overlay(page)).toHaveAttribute('data-prompt', 'lift', { timeout: 5000 });
+  await stepUntil(page, 'prompt', 'lift', 5);
+  await expect(overlay(page)).toHaveAttribute('data-prompt', 'lift');
   await expect(page.locator('[data-region=prompt]')).toContainText('E  Lift Hild');
   await page.keyboard.press('KeyE');
+  await step(page);
   await expect(overlay(page)).toHaveAttribute('data-carrying', 'C_HILD');
   await expect(overlay(page)).toHaveAttribute('data-gait', 'carry');
+  await stepUntilText(page, CAPTIONS, 'Get me up the beach', 5);
   await expect(captions).toContainText('Get me up the beach');
 
-  // On the wet stones the tide line refuses, and says why.
+  // On the wet stones the tide line refuses, and says why: a tap of S (60 ms).
   await page.keyboard.down('KeyS');
-  await page.waitForTimeout(60);
+  await step(page, 1, 60);
   await page.keyboard.up('KeyS');
+  await stepUntil(page, 'prompt', 'below_tide', 5);
   await expect(overlay(page)).toHaveAttribute('data-prompt', 'below_tide');
   await page.keyboard.press('KeyE');
+  await step(page);
   await expect(page.locator('[data-region=prompt]')).toContainText('The tide comes this far');
   await expect(overlay(page)).toHaveAttribute('data-carrying', 'C_HILD');
 
@@ -161,18 +191,24 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
   if (up === null) throw new Error('no dry ground');
   await walkPath(page, up);
   await page.keyboard.down('KeyW');
-  await page.waitForTimeout(60);
+  await step(page, 1, 60);
   await page.keyboard.up('KeyW');
+  await stepUntil(page, 'prompt', 'set_down', 5);
   await expect(overlay(page)).toHaveAttribute('data-prompt', 'set_down');
   await page.keyboard.press('KeyE');
+  await stepUntil(page, 'hild', 'sit', 5);
   await expect(overlay(page)).toHaveAttribute('data-hild', 'sit');
   await expect(overlay(page)).toHaveAttribute('data-beat', 'BEAT_1_WAKE');
+  await stepUntilText(page, CAPTIONS, "The sea's not having either of us today", 5);
   await expect(captions).toContainText("The sea's not having either of us today");
-  clearInterval(watch);
 
-  // Nothing but the next thing to do was ever shown: no list of controls.
-  for (const p of prompts)
+  // Nothing but the next thing to do was ever shown, on any frame: no list of controls.
+  const seen = await page.evaluate(
+    () => (window as unknown as { oeSeen: { prompts: string[]; texts: string[] } }).oeSeen,
+  );
+  console.log(`prompts seen: ${seen.prompts.join(', ')}`);
+  for (const p of seen.prompts)
     expect(['', 'lift', 'set_down', 'below_tide', 'notice', 'move']).toContain(p);
-  for (const t of texts) expect(t).not.toMatch(/Shift|Ctrl|Space|Tab|Mouse/);
+  for (const t of seen.texts) expect(t).not.toMatch(/Shift|Ctrl|Space|Tab|Mouse/);
   await expect(page.locator('[data-region=panel]')).toHaveCount(0);
 });

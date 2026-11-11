@@ -39,8 +39,10 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # The system libraries come from Ubuntu's mirrors, which are sometimes unreachable from the
+      # runners; the runner image already has what Chromium needs, so fall back to the browser alone.
       - name: Install Chromium for the smoke test
-        run: npx playwright install --with-deps chromium
+        run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
       - run: npm run test:browser -- --project=chromium
       - name: Keep the built site for Pages
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
@@ -114,7 +116,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: >-
+          timeout 300 npx playwright install --with-deps ${{ matrix.browser }} ||
+          npx playwright install ${{ matrix.browser }}
       - name: What WebGL2 the browser offers
         run: |
           cat > "$RUNNER_TEMP/probe.mjs" <<'PROBE'
@@ -196,7 +200,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
       - run: npm run test:browser -- --project=chromium
         env:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}

@@ -437,8 +437,12 @@ export function startPlay(
     return Math.max(-1, Math.min(1, (actor.x - onFoot.player.x) / 200));
   };
   let lastAmbienceAt = -1;
+  // The frame's clock: events arrive while a frame steps the simulation, and their captions and
+  // notices must expire on the clock the frame tests them against (stepped play runs ahead of
+  // the wall clock).
+  let frameNow = performance.now();
   const onEvent = (e: SimEvent): void => {
-    const now = performance.now();
+    const now = frameNow;
     switch (e.type) {
       case 'PERSON_CALLED':
         say(
@@ -566,6 +570,7 @@ export function startPlay(
   let steppedDown = false;
   let lastFrameAt = -1;
   const frame = (now: number): void => {
+    frameNow = now;
     const workStart = performance.now();
     if (forced === null && lastFrameAt >= 0) {
       const gap = now - lastFrameAt;
