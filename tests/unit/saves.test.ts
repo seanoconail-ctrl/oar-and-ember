@@ -1,6 +1,14 @@
-/** Stage 3 acceptance check 2: save under 200 ms; reload reproduces the hash; a v1-to-v2 migration. */
+/**
+ * Stage 3 acceptance check 2: save under 200 ms; reload reproduces the hash; the migration chain.
+ * Golden saves 1 to 3 are frozen and load through it; golden save 4 (starting weapons and
+ * missiles) is reproduced by its scenario.
+ */
 import { describe, expect, it } from 'vitest';
-import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
+import {
+  parsePeopleBasics,
+  parseStartingWeapons,
+  parseTimeBalance,
+} from '../../src/content/balance.ts';
 import { attachWakingAutosave, MemoryStore, SaveManager } from '../../src/persist/manager.ts';
 import { fromBase64, readSave, SaveError, toBase64, writeSave } from '../../src/persist/save.ts';
 import type { Migration, SaveFile } from '../../src/persist/save.ts';
@@ -11,7 +19,13 @@ import { newCampaign } from '../../src/sim/world.ts';
 import type { WorldState } from '../../src/sim/world.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
-import { GOLDEN_01, GOLDEN_02, GOLDEN_03, goldenSave03 } from '../../src/tools/saves/golden.ts';
+import {
+  GOLDEN_01,
+  GOLDEN_02,
+  GOLDEN_03,
+  GOLDEN_04,
+  goldenSave04,
+} from '../../src/tools/saves/golden.ts';
 import { repoFile } from './books.ts';
 
 const balance = loadBalanceJson();
@@ -25,6 +39,8 @@ const meta = {
   sequence: 1,
   savedAt: 'now',
 };
+/** Migrating from schema 3 reads Book 10's starting arrows. */
+const context = { balance };
 
 function campaign(seed = 'save-test'): WorldState {
   return newCampaign(seed, b, basics, content);
@@ -87,7 +103,7 @@ describe('save files', () => {
       day: 1,
       chapter: 'CH_1_WRECK',
       seed: 'save-test',
-      schemaVersion: 3,
+      schemaVersion: 4,
     });
     const resumed = createSimulation(b, state);
     for (let i = 0; i < 50_000; i++) {
@@ -98,8 +114,8 @@ describe('save files', () => {
   });
 
   it('migrate a save through the chain', () => {
-    const v4: Migration = {
-      from: 3,
+    const v5: Migration = {
+      from: 4,
       describe: 'test: move player.name into player.identity.name',
       up: (s) => {
         const player = s['player'] as Record<string, unknown>;
@@ -110,11 +126,11 @@ describe('save files', () => {
     const world = campaign();
     world.player.name = 'Ingrid';
     const { state, migratedFrom } = readSave(writeSave(world, meta), {
-      migrations: [v4],
-      currentVersion: 4,
+      migrations: [v5],
+      currentVersion: 5,
     });
-    expect(migratedFrom).toBe(3);
-    expect(state.version).toBe(4);
+    expect(migratedFrom).toBe(4);
+    expect(state.version).toBe(5);
     expect((state.player as unknown as { identity: { name: string } }).identity.name).toBe(
       'Ingrid',
     );
@@ -136,7 +152,9 @@ describe('save files', () => {
       () => readSave({ ...file, header: { ...file.header, schemaVersion: 9 } }),
       'FUTURE_VERSION',
     );
-    expectReason(() => readSave(file, { migrations: [], currentVersion: 4 }), 'NO_MIGRATION');
+    expectReason(() => readSave(file, { migrations: [], currentVersion: 5 }), 'NO_MIGRATION');
+    // Schema 3 to 4 needs balance.json: without it the load says so rather than guessing.
+    expectReason(() => readSave(JSON.parse(repoFile(GOLDEN_03)) as SaveFile), 'NO_MIGRATION');
     expectReason(
       () => readSave({ ...file, header: { ...file.header, stateHash: '00000000000000' } }),
       'CORRUPT',
@@ -212,11 +230,13 @@ describe('golden save 1 (schema 1, frozen)', () => {
 
   it('loads through the real migration chain and still holds its scenario', () => {
     expect(golden.header.schemaVersion).toBe(1);
-    const { state, migratedFrom } = readSave(golden);
+    const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(1);
-    expect(state.version).toBe(3);
+    expect(state.version).toBe(4);
     expect(state.onFoot).toBeNull();
     expect(state.player.hotbar).toEqual({ slots: [], selected: 0 });
+    expect(state.player.inventory).toEqual({});
+    expect(state.player.tipsSeen).toEqual([]);
     expect(state.calendar).toEqual({ day: 3, minuteOfDay: 8 * 60 });
     expect(state.player.staminaMaxChange).toBe(-30);
     expect(state.oneShots).toEqual({ BEAT_1_WAKE: 1 });
@@ -228,9 +248,12 @@ describe('golden save 2 (schema 2, frozen)', () => {
 
   it('loads through the real migration chain and still holds the rescue', () => {
     expect(golden.header.schemaVersion).toBe(2);
-    const { state, migratedFrom } = readSave(golden);
+    const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(2);
-    expect(state.version).toBe(3);
+    expect(state.version).toBe(4);
+    expect(state.onFoot?.items).toEqual([]);
+    expect(state.onFoot?.projectiles).toEqual([]);
+    expect(state.onFoot?.stuck).toEqual([]);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar).toEqual({ slots: [], selected: 0 });
     expect(state.onFoot?.player.aim).toBeNull();
@@ -241,21 +264,60 @@ describe('golden save 2 (schema 2, frozen)', () => {
   });
 });
 
-describe('golden save 3 (schema 3)', () => {
+describe('golden save 3 (schema 3, frozen)', () => {
   const golden = JSON.parse(repoFile(GOLDEN_03)) as SaveFile;
 
-  it('loads, matches its hash and holds the rescue and the hotbar', () => {
-    const { state, migratedFrom } = readSave(golden);
-    expect(migratedFrom).toBeNull();
+  it('loads through the migration: the bow and seax kept, with the starting arrows', () => {
+    expect(golden.header.schemaVersion).toBe(3);
+    const { state, migratedFrom } = readSave(golden, { context });
+    expect(migratedFrom).toBe(3);
+    expect(state.version).toBe(4);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_BOW', 'ITEM_SEAX', null]);
+    expect(state.player.inventory).toEqual({
+      ITEM_ARROW: parseStartingWeapons(balance).startingArrows,
+    });
+    expect(state.player.tipsSeen).toEqual([]);
+    expect(state.onFoot).toMatchObject({ items: [], projectiles: [], nextMissile: 1, stuck: [] });
+    expect(state.onFoot?.player.aim).toBeNull();
     expect(state.household.residents).toEqual(['C_HILD']);
     expect(state.onFoot?.actors['C_HILD']?.pose).toBe('sit');
     expect(state.calendar).toEqual({ day: 3, minuteOfDay: 8 * 60 });
     expect(state.oneShots).toEqual({ BEAT_1_WAKE: 1 });
   });
 
+  it('plays on after the migration', () => {
+    const { state } = readSave(golden, { context });
+    const sim = createSimulation(b, state);
+    for (let i = 0; i < 600; i++) sim.step();
+    expect(sim.state.tick).toBe(state.tick);
+  });
+});
+
+describe('golden save 4 (schema 4)', () => {
+  const golden = JSON.parse(repoFile(GOLDEN_04)) as SaveFile;
+
+  it('loads, matches its hash and holds the weapons found and the arrow spent', () => {
+    const { state, migratedFrom } = readSave(golden);
+    expect(migratedFrom).toBeNull();
+    expect(state.version).toBe(4);
+    expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
+    expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_SEAX', 'ITEM_BOW', null]);
+    expect(state.player.inventory).toEqual({
+      ITEM_ARROW: parseStartingWeapons(balance).startingArrows - 1,
+    });
+    expect(state.player.tipsSeen).toEqual(['ITEM_SEAX', 'ITEM_BOW', 'ITEM_ARROW']);
+    expect(state.onFoot?.items).toEqual([]);
+    expect(state.onFoot?.projectiles).toEqual([]);
+    // The arrow loosed into the stern's timber stays there until the zone is left.
+    expect(state.onFoot?.stuck).toHaveLength(1);
+    expect(state.onFoot?.stuck[0]).toMatchObject({ kind: 'arrow', in: 'wood' });
+    expect(state.household.residents).toEqual(['C_HILD']);
+    expect(state.calendar).toEqual({ day: 3, minuteOfDay: 8 * 60 });
+    expect(state.facts).toMatchObject({ 'ch1.hild_safe': true, 'ch1.bow_named': true });
+  });
+
   it('is reproduced exactly by its scenario', () => {
-    expect(goldenSave03()).toEqual(golden);
+    expect(goldenSave04()).toEqual(golden);
   });
 });

@@ -9,7 +9,12 @@
  * Positions are world pixels; heights are pixels above the ground track. Pure and deterministic:
  * the simulation calls these once per 60 Hz tick.
  */
-import type { ArrowBalance, MissileBalance, MissileRest, WaterBalance } from '../../content/balance.ts';
+import type {
+  ArrowBalance,
+  MissileBalance,
+  MissileRest,
+  WaterBalance,
+} from '../../content/balance.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
 import { nextFloat } from '../../core/rng.ts';
@@ -93,8 +98,7 @@ export function launch(
   const offset = (nextFloat(rng) * 2 - 1) * spread;
   const a = Math.atan2(aim.y, aim.x) + offset;
   const full = weaponOf(kind, m).reachTiles * tile;
-  const length =
-    aim.dist === null ? full : Math.max(tile, Math.min(full, aim.dist * tile));
+  const length = aim.dist === null ? full : Math.max(tile, Math.min(full, aim.dist * tile));
   const perTick = (speedOf(kind, m) * tile) / TICKS_PER_SECOND;
   const projectile: Projectile = {
     n: onFoot.nextMissile++,
@@ -131,7 +135,7 @@ export function drawnHeight(p: Projectile, releaseHeight: number): number {
   return p.z + releaseHeight * (1 - f);
 }
 
-export type MissileEvent = {
+export interface MissileEvent {
   readonly type: 'MISSILE_STRUCK';
   readonly n: number;
   readonly kind: MissileKind;
@@ -141,7 +145,7 @@ export type MissileEvent = {
   readonly y: number;
   readonly broken: boolean;
   readonly target?: Id;
-};
+}
 
 /** Which recovery share applies where a missile came to rest (Book 10 section 21, "Arrows"). */
 export function restOf(strike: MissileStrike): MissileRest {
@@ -170,7 +174,10 @@ interface Strike {
 }
 
 /** Game minutes since the campaign began. */
-export function gameMinute(calendar: { readonly day: number; readonly minuteOfDay: number }): number {
+export function gameMinute(calendar: {
+  readonly day: number;
+  readonly minuteOfDay: number;
+}): number {
   return (calendar.day - 1) * 1440 + calendar.minuteOfDay;
 }
 
@@ -202,8 +209,10 @@ function strikeAt(
   before: { readonly x: number; readonly y: number },
 ): Strike | null {
   const box = ctx.rules.missileHitBox;
-  const people: [Id, { x: number; y: number; facing: 's' | 'n' | 'e' | 'w'; blocking?: boolean }][] =
-    [];
+  const people: [
+    Id,
+    { x: number; y: number; facing: 's' | 'n' | 'e' | 'w'; blocking?: boolean },
+  ][] = [];
   if (p.shooter !== STEERER) people.push([STEERER, onFoot.player]);
   for (const [id, a] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1)))
     if (id !== p.shooter && a.pose !== 'carried') people.push([id, a]);
@@ -297,7 +306,8 @@ function rest(
   now: number,
   emit: (event: MissileEvent) => void,
 ): void {
-  const share = p.kind === 'spear' ? (hit.strike === 'water' ? 0 : 1) : ctx.arrows.recover[restOf(hit.strike)];
+  const share =
+    p.kind === 'spear' ? (hit.strike === 'water' ? 0 : 1) : ctx.arrows.recover[restOf(hit.strike)];
   // Only a real chance draws on the stream: a sure outcome leaves it untouched.
   const broken = share <= 0 ? true : share >= 1 ? false : nextFloat(rng) >= share;
   const target = hit.target;
@@ -334,7 +344,11 @@ function personAt(onFoot: OnFootState, id: Id): { x: number; y: number } | undef
 }
 
 /** Missiles in the ground go after Book 10's day; those in props and bodies stay. */
-export function expireStuck(onFoot: OnFootState, ctx: Pick<MissileContext, 'missiles'>, now: number): void {
+export function expireStuck(
+  onFoot: OnFootState,
+  ctx: Pick<MissileContext, 'missiles'>,
+  now: number,
+): void {
   const life = ctx.missiles.stuckGroundDays * 1440;
   if (onFoot.stuck.some((s) => s.in === 'ground' && now - s.at >= life))
     onFoot.stuck = onFoot.stuck.filter((s) => s.in !== 'ground' || now - s.at < life);

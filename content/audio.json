@@ -149,6 +149,62 @@
       "temporary": false
     },
     {
+      "id": "SFX_ARROW_FLIGHT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_flight",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ARROW_WOOD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_wood",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ARROW_SHIELD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_shield",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ARROW_EARTH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_earth",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ARROW_STONE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_stone",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ARROW_WATER",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.arrow_water",
+      "temporary": false
+    },
+    {
+      "id": "SFX_QUIVER_EMPTY",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.quiver_empty",
+      "temporary": false
+    },
+    {
+      "id": "SFX_PICKUP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.pickup",
+      "temporary": false
+    },
+    {
       "id": "AMB_SURF_SHINGLE",
       "kind": "ambience",
       "zones": ["ZONE_SK_STRAND", "ZONE_SK_NAUST"],
@@ -177,6 +233,15 @@
     "ALARM_HORN": "MUS_STINGER_HORN",
     "WADE_SPLASH": "SFX_SPLASH",
     "BOW_DRAWN": "SFX_BOW_DRAW",
-    "BOW_LOOSED": "SFX_BOW_LOOSE"
+    "BOW_LOOSED": "SFX_BOW_LOOSE",
+    "ARROW_FLIGHT": "SFX_ARROW_FLIGHT",
+    "ARROW_WOOD": "SFX_ARROW_WOOD",
+    "ARROW_SHIELD": "SFX_ARROW_SHIELD",
+    "ARROW_BODY": "SFX_ARROW_SHIELD",
+    "ARROW_EARTH": "SFX_ARROW_EARTH",
+    "ARROW_STONE": "SFX_ARROW_STONE",
+    "ARROW_WATER": "SFX_ARROW_WATER",
+    "QUIVER_EMPTY": "SFX_QUIVER_EMPTY",
+    "ITEM_PICKED_UP": "SFX_PICKUP"
   }
 }

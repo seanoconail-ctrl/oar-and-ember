@@ -51,7 +51,9 @@ test('the sound test page offers every item, with captions and sliders', async (
   await expect(page.locator('[data-layer]')).toHaveCount(6 + 6);
   await expect(page.locator('[data-variant]')).toHaveCount(2);
   await expect(page.locator('[data-alarm]')).toHaveCount(1);
-  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3);
+  // Starting weapons and missiles add eight: the arrow in flight and its five strikes, the empty
+  // quiver and a pickup.
+  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3 + 8);
   await expect(page.locator('[data-voice]')).toHaveCount(4);
   await expect(page.locator('[data-step]')).toHaveCount(6);
   await expect(page.locator('[data-step-all]')).toHaveCount(1);
@@ -74,8 +76,10 @@ test.describe('rendered offline', () => {
     const items = await page.evaluate(
       () => (window as unknown as { oeSound: { items: string[] } }).oeSound.items,
     );
-    // The Stage 6 rework adds three: the wading splash, the bow's draw and its loose.
-    expect(items.length).toBe(17 + 6 + 3 + 3 + 1);
+    // The Stage 6 rework adds three: the wading splash, the bow's draw and its loose. Starting
+    // weapons and missiles add eight: the arrow's flight, its strikes into wood, a shield, earth,
+    // stone and water, the empty quiver and a pickup.
+    expect(items.length).toBe(17 + 6 + 3 + 3 + 1 + 8);
     for (const item of items) {
       const seconds = item.startsWith('music') || item.startsWith('ambience') ? 12 : 6;
       const r = await render(page, item, seconds);

@@ -534,7 +534,8 @@ export function interactionNow(
     const d = Math.hypot(spot.x - p.x, spot.y - p.y);
     if (d <= reach && (pick === null || d < pick.d)) pick = { key: spot.key, d };
   }
-  if (pick !== null && (best === null || pick.d < best.d)) return { kind: 'PICK_UP', key: pick.key };
+  if (pick !== null && (best === null || pick.d < best.d))
+    return { kind: 'PICK_UP', key: pick.key };
   return best === null ? null : { kind: 'LIFT', target: best.id };
 }
 

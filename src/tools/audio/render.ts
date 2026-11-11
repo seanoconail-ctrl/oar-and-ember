@@ -59,6 +59,15 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['call:SFX_SPLASH', 1, {}, 'sfx-splash'],
   ['call:SFX_BOW_DRAW', 1, {}, 'sfx-bow-draw'],
   ['call:SFX_BOW_LOOSE', 1, {}, 'sfx-bow-loose'],
+  // Starting weapons and missiles (decisions DD-6 to DD-9).
+  ['call:SFX_ARROW_FLIGHT', 1, {}, 'sfx-arrow-flight'],
+  ['call:SFX_ARROW_WOOD', 1, {}, 'sfx-arrow-wood'],
+  ['call:SFX_ARROW_SHIELD', 1, {}, 'sfx-arrow-shield'],
+  ['call:SFX_ARROW_EARTH', 1, {}, 'sfx-arrow-earth'],
+  ['call:SFX_ARROW_STONE', 1, {}, 'sfx-arrow-stone'],
+  ['call:SFX_ARROW_WATER', 1, {}, 'sfx-arrow-water'],
+  ['call:SFX_QUIVER_EMPTY', 1, {}, 'sfx-quiver-empty'],
+  ['call:SFX_PICKUP', 1, {}, 'sfx-pickup'],
   ['ambience:hearth', 12, {}, 'hearth-fire'],
 ];
 

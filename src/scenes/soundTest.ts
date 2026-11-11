@@ -21,7 +21,7 @@ import {
 import type { Gait, StepMeasure } from '../audio/synth/footsteps.ts';
 import type { Bus } from '../audio/synth/engine.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
-import { COMBAT, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
+import { COMBAT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -117,7 +117,7 @@ export function startItem(
     };
   }
   if (kind === 'call') {
-    const def = [...CALLS, ...PEOPLE].find((d) => d.id === id);
+    const def = [...CALLS, ...PEOPLE, ...MISSILES].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no call ${id}`);
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
@@ -545,8 +545,16 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     SFX_SPLASH: 'ui.sound.call.splash',
     SFX_BOW_DRAW: 'ui.sound.call.bow_draw',
     SFX_BOW_LOOSE: 'ui.sound.call.bow_loose',
+    SFX_ARROW_FLIGHT: 'ui.sound.call.arrow_flight',
+    SFX_ARROW_WOOD: 'ui.sound.call.arrow_wood',
+    SFX_ARROW_SHIELD: 'ui.sound.call.arrow_shield',
+    SFX_ARROW_EARTH: 'ui.sound.call.arrow_earth',
+    SFX_ARROW_STONE: 'ui.sound.call.arrow_stone',
+    SFX_ARROW_WATER: 'ui.sound.call.arrow_water',
+    SFX_QUIVER_EMPTY: 'ui.sound.call.quiver_empty',
+    SFX_PICKUP: 'ui.sound.call.pickup',
   };
-  for (const def of [...CALLS, ...PEOPLE])
+  for (const def of [...CALLS, ...PEOPLE, ...MISSILES])
     soundButton(calls, def, callKeys[def.id] ?? def.id, 'call');
   const firePlay = el('button', { 'data-play': 'ambience:hearth' }, t('ui.sound.call.hearth'));
   firePlay.addEventListener('click', () => {
@@ -684,6 +692,7 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...SURFACES.map((surface) => `step:${surface}`),
       ...CALLS.map((d) => `call:${d.id}`),
       ...PEOPLE.map((d) => `call:${d.id}`),
+      ...MISSILES.map((d) => `call:${d.id}`),
       'ambience:hearth',
     ],
     render: (item: string, seconds: number, settings?: RenderSettings, wav?: boolean) =>

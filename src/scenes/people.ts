@@ -57,3 +57,32 @@ export function peopleLook(
   for (const [id, name] of Object.entries(PERSON_LOOKS)) people[id] = look(name);
   return { steerer: look(STEERER_LOOKS[bodyModel]), people };
 }
+
+/** Weapon layers drawn only while the steerer owns the item (decision DD-6: no starting bow). */
+export const OWNED_LAYERS: readonly { readonly layer: RegExp; readonly item: Id }[] = [
+  { layer: /^layer_weapon_bow_/, item: 'ITEM_BOW' },
+];
+
+/**
+ * A person's look without the weapon layers of items they do not own: the steerer's bow is drawn
+ * on their back only once the bow has been picked up, everywhere the steerer is drawn.
+ */
+export function withOwned(look: PersonLook, owns: (item: Id) => boolean): PersonLook {
+  const hidden = OWNED_LAYERS.filter((o) => !owns(o.item));
+  if (hidden.length === 0) return look;
+  const layers: Record<string, readonly string[]> = {};
+  for (const [facing, sheets] of Object.entries(look.layers))
+    layers[facing] = sheets.filter((s) => !hidden.some((h) => h.layer.test(s)));
+  return { body: look.body, layers };
+}
+
+/** Whether the steerer has an item: in a hotbar slot or in the inventory. */
+export function steererOwns(
+  player: {
+    readonly hotbar: { readonly slots: readonly (Id | null)[] };
+    readonly inventory: Readonly<Record<Id, number>>;
+  },
+  item: Id,
+): boolean {
+  return player.hotbar.slots.includes(item) || (player.inventory[item] ?? 0) > 0;
+}

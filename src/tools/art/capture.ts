@@ -11,6 +11,8 @@
  *   still@2x.png     the same at 2x
  *   walk.mp4         10 seconds at 2x: the steerer walks up the strand and onto the machair
  *   wade.mp4/.gif    about 12 seconds: along the strand to Hild, wading beside her, and back out
+ *   arrows.mp4/.gif  about 6 seconds: the bow drawn standing still and three arrows loosed, into
+ *                    the shingle, against the rock outcrop and into the shallows
  *   compare.png      the reference mockup beside the capture, both at 2x
  *   motion.png       the still view with cells that do not keep moving marked red
  *   README.md        the figures: motion with the camera still, against the reference
@@ -190,6 +192,9 @@ export async function capture(label: string): Promise<string> {
     // Hild, into the shallows beside her, and back out onto the shingle.
     const waded = await wadeClip(page, map, out);
 
+    // The arrows: a second page, the bow already found, three shots from where the steerer wakes.
+    const arrowFrames = await arrowsClip(browser, out);
+
     // The walk: up the strand from beside Hild, through the cut onto the machair.
     const start = await where(page);
     const from = tileOf(map, start.x, start.y);
@@ -259,6 +264,7 @@ export async function capture(label: string): Promise<string> {
         '| `still.png`, `still@2x.png` | Wreck Strand where the steerer wakes, at 1x and 2x |',
         '| `walk.mp4` | 10 seconds at 2x, 25 fps: up the strand from beside Hild, through the cut, onto the machair |',
         `| \`wade.mp4\`, \`wade.gif\` | ${(waded / FPS).toFixed(1)} s: running along the strand to Hild, wading out beside her, a pause, and back out onto the shingle (mp4 at 2x; gif 320 x 180 round the action at 2x, 12.5 fps) |`,
+        `| \`arrows.mp4\`, \`arrows.gif\` | ${(arrowFrames / FPS).toFixed(1)} s: the bow drawn standing still and three arrows loosed (into the shingle, against the rock outcrop, into the shallows), each a projectile with its shadow that sticks, breaks or splashes (mp4 at 2x; gif 320 x 180 round the steerer at 2x, 12.5 fps) |`,
         '| `compare.png` | The approved reference (left) beside the capture (right), both at 2x |',
         '| `motion.png` | The still view; cells without continuous motion are marked red |',
         '',
@@ -282,6 +288,93 @@ export async function capture(label: string): Promise<string> {
     await browser.close();
     await server.close();
   }
+}
+
+/**
+ * The arrows: the steerer wakes with the bow already found (`kit=bow`, a capture and test hook),
+ * draws standing still and looses three arrows, one after another: east onto the shingle, west
+ * against the rock outcrop, and south into the shallows. Each draw is held to a full draw. Writes
+ * arrows.mp4 (2x) and arrows.gif (320 x 180 round the steerer, 2x, 12.5 fps). Returns the frames.
+ */
+async function arrowsClip(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<number> {
+  const page = await browser.newPage({
+    viewport: { width: 640, height: 360 },
+    deviceScaleFactor: 2,
+  });
+  await page.goto('http://localhost:5287/?capture&quality=full&view=play&name=Ash&body=A&kit=bow');
+  await page.waitForSelector('canvas#screen[data-state=play]', { timeout: 30_000 });
+  await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
+  await step(page, 30);
+  const dir = join(out, '.arrows');
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  let frames = 0;
+  const save = async (): Promise<void> => {
+    writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  };
+  const o = page.locator('.oe-overlay');
+  const p = {
+    x: Number(await o.getAttribute('data-px')),
+    y: Number(await o.getAttribute('data-py')),
+  };
+  const pageAt = async (wx: number, wy: number): Promise<{ x: number; y: number }> => {
+    const [cx = 0, cy = 0] = ((await o.getAttribute('data-camera')) ?? '0,0')
+      .split(',')
+      .map(Number);
+    return { x: wx - cx, y: wy - cy };
+  };
+  for (const target of [
+    { x: p.x + 5 * 24, y: p.y - 4 },
+    { x: p.x - 6.5 * 24, y: p.y - 30 },
+    { x: p.x + 1.5 * 24, y: p.y + 3.5 * 24 },
+  ]) {
+    const at = await pageAt(target.x, target.y);
+    await page.mouse.move(at.x, at.y);
+    await step(page);
+    await page.mouse.down();
+    // A full draw (30 ticks) is under a second: frames of 40 ms, 25 a second.
+    for (let i = 0; i < 22; i++) {
+      await step(page);
+      await save();
+    }
+    await page.mouse.up();
+    for (let i = 0; i < 28; i++) {
+      await step(page);
+      await save();
+    }
+  }
+  await page.close();
+  const input = [
+    '-y',
+    '-loglevel',
+    'error',
+    '-framerate',
+    String(FPS),
+    '-i',
+    join(dir, '%04d.png'),
+  ];
+  execFileSync('ffmpeg', [
+    ...input,
+    '-c:v',
+    'libx264',
+    '-crf',
+    '23',
+    '-pix_fmt',
+    'yuv420p',
+    join(out, 'arrows.mp4'),
+  ]);
+  execFileSync('ffmpeg', [
+    ...input,
+    '-vf',
+    'fps=12.5,crop=640:360:320:180,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    join(out, 'arrows.gif'),
+  ]);
+  rmSync(dir, { recursive: true, force: true });
+  return frames;
 }
 
 /** The longest the wade clip may run, in frames (about 12 s). */

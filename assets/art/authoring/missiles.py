@@ -45,10 +45,10 @@ IRON_DARK = c('stone', 5)
 ASH_LIT = c('driftwood', 7)
 ASH = c('driftwood', 6)
 ASH_DARK = c('driftwood', 4)
-FEATHER_LIT = c('gull', 4)
+FEATHER_LIT = c('gull', 5)
 FEATHER = c('gull', 3)
-FEATHER_DARK = c('gull', 2)
-THREAD = c('madder', 3)
+FEATHER_DARK = c('gull', 3)
+THREAD = c('madder', 4)
 SPLINTER = c('driftwood', 5)
 DIVOT = c('sand', 1)
 
@@ -113,7 +113,7 @@ def missile(g, cx, cy, ax, ay, length, kind, lift=1.0):
     def colour(t):
         u = t * length
         if u >= length - head:
-            return IRON_LIT if u >= length - 0.6 else IRON
+            return IRON_LIT if u >= length - 0.6 else IRON_DARK
         if kind == 'arrow' and u < feather:
             return THREAD if abs(u - feather + 0.5) < 0.6 else ASH
         return ASH if kind == 'arrow' else c('bracken', 4)
@@ -125,18 +125,21 @@ def missile(g, cx, cy, ax, ay, length, kind, lift=1.0):
         base = len(pts) - 1 - head
         if 0 <= base < len(pts):
             bx, by = pts[base + 1] if base + 1 < len(pts) else pts[base]
-            put(g, bx + nx + 0.5, by + ny + 0.5, IRON_DARK, over=False)
-            put(g, bx - nx + 0.5, by - ny + 0.5, IRON, over=False)
+            put(g, bx + nx + 0.5, by + ny + 0.5, IRON, over=False)
+            put(g, bx - nx + 0.5, by - ny + 0.5, IRON_DARK, over=False)
             if kind == 'spear':
                 mx, my = pts[base + 3] if base + 3 < len(pts) else pts[-1]
                 put(g, mx + nx + 0.5, my + ny + 0.5, IRON_DARK, over=False)
                 put(g, mx - nx + 0.5, my - ny + 0.5, IRON, over=False)
         # Fletching: two vanes along the last few pixels of the tail, swept back.
         if kind == 'arrow':
-            for k in range(0, min(3, len(pts))):
+            # Vanes either side of the shaft just ahead of the nock, never round the nock itself,
+            # so the tail reads as feathers and not as a head.
+            for k in range(1, min(3, len(pts))):
                 px, py = pts[k]
-                put(g, px + nx + 0.5, py + ny + 0.5, FEATHER_LIT if k else FEATHER, over=False)
-                put(g, px - nx + 0.5, py - ny + 0.5, FEATHER_DARK if k else FEATHER, over=False)
+                put(g, px + nx + 0.5, py + ny + 0.5, FEATHER_LIT, over=False)
+                put(g, px - nx + 0.5, py - ny + 0.5, FEATHER_DARK, over=False)
+            put(g, pts[0][0] + 0.5, pts[0][1] + 0.5, THREAD)
         else:
             # A spear's butt: a dark iron ferrule.
             px, py = pts[0]
@@ -154,7 +157,7 @@ SPEAR_LEN = 34
 def flight(kind, d):
     a = 2 * math.pi * d / 16
     g = blank(W, H)
-    missile(g, PIVOT[0] + 0.5, PIVOT[1] + 0.5, math.cos(a), math.sin(a),
+    missile(g, PIVOT[0] + 0.5, PIVOT[1] + 0.5, round(math.cos(a), 9), round(math.sin(a), 9),
             ARROW_LEN if kind == 'arrow' else SPEAR_LEN, kind)
     return outline(g)
 
@@ -164,7 +167,7 @@ def at_rest(kind, d8, where):
     leaning back towards where it came from; in wood, a shield or a body it sticks out level, less
     of it showing the deeper it went in."""
     a = 2 * math.pi * d8 / 8
-    ux, uy = math.cos(a), math.sin(a)
+    ux, uy = round(math.cos(a), 9), round(math.sin(a), 9)
     g = blank(W, H)
     length = ARROW_LEN if kind == 'arrow' else SPEAR_LEN
     if where == 'ground':
@@ -191,10 +194,11 @@ def at_rest(kind, d8, where):
     pts = stroke(g, tx, ty, hx, hy, colour)
     nx, ny = -by, bx
     if kind == 'arrow':
-        for k in range(0, min(3, len(pts))):
+        for k in range(1, min(3, len(pts))):
             px, py = pts[k]
-            put(g, px + nx + 0.5, py + ny + 0.5, FEATHER_LIT if k else FEATHER, over=False)
-            put(g, px - nx + 0.5, py - ny + 0.5, FEATHER_DARK if k else FEATHER, over=False)
+            put(g, px + nx + 0.5, py + ny + 0.5, FEATHER_LIT, over=False)
+            put(g, px - nx + 0.5, py - ny + 0.5, FEATHER_DARK, over=False)
+        put(g, pts[0][0] + 0.5, pts[0][1] + 0.5, THREAD)
     out = outline(g)
     if where == 'ground':
         # The sand thrown up where it went in.
@@ -208,7 +212,8 @@ def lying(d4):
     """An arrow lying flat where it fell at the foot of stone."""
     a = math.pi * d4 / 4
     g = blank(W, H)
-    missile(g, PIVOT[0] + 0.5, PIVOT[1] - 0.5, math.cos(a), math.sin(a) * 0.7, ARROW_LEN, 'arrow')
+    missile(g, PIVOT[0] + 0.5, PIVOT[1] - 0.5, round(math.cos(a), 9), round(math.sin(a), 9) * 0.7,
+            ARROW_LEN, 'arrow')
     return outline(g)
 
 

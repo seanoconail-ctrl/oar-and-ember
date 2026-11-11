@@ -346,10 +346,7 @@ export function newCampaign(
  * The items lying in a zone at the start (content/onfoot.json `pickups`): the seax in the wreck's
  * debris, and the bow with a quiver of Book 10's startingArrows by the wreck's stern.
  */
-export function zoneItems(
-  content: Pick<Content, 'onFoot' | 'balance'>,
-  zone: Id,
-): GroundItem[] {
+export function zoneItems(content: Pick<Content, 'onFoot' | 'balance'>, zone: Id): GroundItem[] {
   const starting = parseStartingWeapons(content.balance);
   return (content.onFoot?.pickups ?? [])
     .filter((p) => p.zone === zone)

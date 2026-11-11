@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseControlsBalance,
   parsePeopleBasics,
+  parseStartingWeapons,
   parseTimeBalance,
 } from '../../src/content/balance.ts';
 import { ACTIONS, DEFAULT_BINDINGS, sameBinding, SLOT_ACTIONS } from '../../src/input/actions.ts';
@@ -33,11 +34,17 @@ if (map === undefined) throw new Error('no strand');
 const strand = map;
 const FRAME = 1000 / 60;
 
-function play(seed = 'controls') {
+/** A new campaign; armed, with the bow (and its starting arrows) and the seax already found. */
+function play(seed = 'controls', armed = false) {
   const world = newCampaign(seed, b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'A',
   });
+  if (armed) {
+    world.player.hotbar.slots[0] = 'ITEM_BOW';
+    world.player.hotbar.slots[1] = 'ITEM_SEAX';
+    world.player.inventory['ITEM_ARROW'] = parseStartingWeapons(balance).startingArrows;
+  }
   const sim = createSimulation(b, world, land);
   const input = new InputMapper(DEFAULT_BINDINGS);
   const session = new Session(
@@ -133,11 +140,14 @@ describe('the target tile (Book 2 section 21)', () => {
 });
 
 describe('the hotbar', () => {
-  it('starts with the steerer’s own bow and seax, the bow in hand (content/onfoot.json)', () => {
+  it('starts empty-handed: no bow, no blade, no arrows (Book 10 startingHotbar: Empty)', () => {
     const { world } = play();
+    expect(parseStartingWeapons(balance).startingHotbarEmpty).toBe(true);
     expect(world.player.hotbar.slots).toHaveLength(controls.hotbarSlots);
-    expect(world.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_BOW', 'ITEM_SEAX', null]);
+    expect(world.player.hotbar.slots.every((s) => s === null)).toBe(true);
     expect(world.player.hotbar.selected).toBe(0);
+    expect(world.player.inventory).toEqual({});
+    expect(world.player.tipsSeen).toEqual([]);
   });
 
   it('is chosen by the number keys and the wheel, through the simulation', () => {
@@ -161,7 +171,7 @@ describe('the hotbar', () => {
 
 describe('use and interact at a tile', () => {
   it('refuses a click beyond reach visibly and never moves the simulation', () => {
-    const { sim, input, session, onFoot } = play();
+    const { sim, input, session, onFoot } = play('controls', true);
     const own = tileOf(strand, onFoot.player.x, onFoot.player.y);
     const far = over(own.tx - 6, own.ty - 2);
     session.frame(FRAME, undefined, far);
@@ -187,7 +197,7 @@ describe('use and interact at a tile', () => {
   });
 
   it('refuses out-of-reach commands in the simulation too, changing nothing', () => {
-    const { sim, events, onFoot } = play();
+    const { sim, events, onFoot } = play('controls', true);
     const own = tileOf(strand, onFoot.player.x, onFoot.player.y);
     /** The world without the clock, which moves on each tick whatever happens. */
     const world = (): string =>
@@ -237,7 +247,7 @@ describe('use and interact at a tile', () => {
 
 describe('the bow (Book 2 section 21: aim; combat itself is Stage 9)', () => {
   it('draws towards the cursor, turning to the nearest facing, and looses on release', () => {
-    const { input, session, events, onFoot } = play();
+    const { input, session, events, onFoot } = play('controls', true);
     const p = onFoot.player;
     const west = { device: 'mouse' as const, pointer: { x: p.x - 100, y: p.y - 30 } };
     input.mouseDown(0);

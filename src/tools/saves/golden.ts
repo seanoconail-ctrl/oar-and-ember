@@ -13,7 +13,7 @@
  *   depth bands. It must load through the migration chain.
  * - Golden save 4 (schema 4, starting weapons and missiles): the steerer wakes empty-handed, picks
  *   up the seax from the wreck's debris, rescues Hild, fetches the bow and quiver she names from
- *   the wreck's stern, looses one arrow along the shingle, and then the same two days.
+ *   the wreck's stern, looses one arrow into the stern's timber, and then the same two days.
  *
  *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-04.json
  */
@@ -56,8 +56,8 @@ export function goldenWorld04(): WorldState {
   bot.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
   bot.pickUp('stern_bow');
   bot.selectItem('ITEM_BOW');
-  // One arrow loosed west along the shingle at a full draw, to land three tiles off.
-  bot.shoot(32, 3, land.missiles.bow.drawTicks);
+  // One arrow loosed at a full draw into the stern's timber, east of the bow.
+  bot.shoot(0, 3.5, land.missiles.bow.drawTicks);
   bot.waitFor(() => sim.state.onFoot?.projectiles.length === 0);
   // Day 1: play to 19:00 and sleep.
   while (sim.state.calendar.minuteOfDay !== 19 * 60) sim.step();

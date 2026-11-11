@@ -32,9 +32,13 @@ export const overlay = (page: Page) => page.locator('.oe-overlay');
 export const attr = async (page: Page, name: string): Promise<string> =>
   (await overlay(page).getAttribute(`data-${name}`)) ?? '';
 
-export async function startPlay(page: Page, body: 'A' | 'B' = 'A'): Promise<void> {
+/**
+ * Opens play directly. `extra` adds query parameters: `kit=bow,seax` starts with those items (the
+ * bow with its starting arrows), `capture` makes the page advance only when stepped (oeStep).
+ */
+export async function startPlay(page: Page, body: 'A' | 'B' = 'A', extra = ''): Promise<void> {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(`./?view=play&name=Ash&body=${body}`);
+  await page.goto(`./?view=play&name=Ash&body=${body}${extra === '' ? '' : `&${extra}`}`);
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play', {
     timeout: 15_000,
   });

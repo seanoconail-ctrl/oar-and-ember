@@ -1,6 +1,6 @@
 /**
- * Stage 6 rework in the browser (Book 3 Stage 6 checks 5, 8 and 9): the hotbar chosen by number
- * keys and the wheel; a click beyond reach refused visibly without touching the simulation; the
+ * Stage 6 rework in the browser (Book 3 Stage 6 checks 5, 8 and 9): the hotbar (with the bow and
+ * seax already found) chosen by number keys and the wheel; a click beyond reach refused visibly without touching the simulation; the
  * rescue finished with the mouse (right-click to lift and to set down); Hild masked at her
  * waterline; and the camera's look-ahead, which never passes Book 10's cap and, with the cursor
  * held still, never steps a pixel back and forth.
@@ -47,7 +47,8 @@ test.describe('the mouse-first controls', () => {
   test('the hotbar is chosen with the number keys and the wheel, its name shown briefly', async ({
     page,
   }) => {
-    await startPlay(page);
+    // The bow and seax already found (they are picked up on the strand: tests/browser/missiles).
+    await startPlay(page, 'A', 'kit=bow,seax');
     await expect(overlay(page)).toHaveAttribute('data-slot', '0');
     await expect(overlay(page)).toHaveAttribute('data-item', 'ITEM_BOW');
     await page.keyboard.press('Digit2');
@@ -69,7 +70,7 @@ test.describe('the mouse-first controls', () => {
   test('a click beyond reach is refused in words and never moves the simulation', async ({
     page,
   }) => {
-    await startPlay(page);
+    await startPlay(page, 'A', 'kit=bow,seax');
     const px = Number(await attr(page, 'px'));
     const py = Number(await attr(page, 'py'));
     await pointAt(page, px - 6 * 24, py - 3 * 24);

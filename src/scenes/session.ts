@@ -4,6 +4,12 @@
  * advance the simulation by whole 60 Hz ticks unless an open menu has stopped time (Book 2
  * sections 02 and 03). The command ring is not a menu and never stops time. A use or interaction
  * on a tile out of reach sends nothing: the frame reports the refusal for the view to show.
+ *
+ * A drawn bow (Book 10 section 21, drawPlantsFeet): the mouse, the right stick (or the left), or
+ * the movement keys in keyboard-only play turn the aim, since the feet are planted; the aim point
+ * is the cursor's ground point (a cursor on a person aims at where they stand). Interact
+ * (right-click), the system menu (Escape) and dodge (pad B) lower it instead of their own action,
+ * and the use button must be let go before it draws again. With empty hands, use is a shove.
  */
 import type { ControlsBalance } from '../content/balance.ts';
 import { planSteps } from '../core/fixedStep.ts';
@@ -14,13 +20,17 @@ import type { Device, Tile } from '../input/targeting.ts';
 import { CommandRing } from '../input/commandRing.ts';
 import type { CrewOrder } from '../input/commandRing.ts';
 import type { InputFrame, InputMapper } from '../input/inputState.ts';
-import { disabledActions, interactionAt, NEEDS_LIFT } from '../sim/land/onFoot.ts';
+import { disabledActions, interactionAt } from '../sim/land/onFoot.ts';
+import type { Action } from '../input/actions.ts';
 import type { ItemUse, OnFootRules } from '../sim/land/onFoot.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
 import type { Simulation } from '../sim/simulation.ts';
 import { MenuController } from '../ui/menus.ts';
 import type { MenuId, OpenResult, ThreatView } from '../ui/menus.ts';
+
+/** Actions that lower a drawn bow instead of doing their own thing (Book 10 drawPlantsFeet). */
+export const CANCEL_DRAW: readonly Action[] = ['interact', 'systemMenu', 'dodge'];
 
 const MENU_ACTIONS: readonly [
   InputFrame['pressed'] extends ReadonlySet<infer A> ? A : never,
@@ -86,6 +96,9 @@ export class Session {
   #accumulator = 0;
   #lastMove = '';
   #aimDir: number | null = null;
+  #aimDist: number | null = null;
+  /** A draw was lowered: the use button must be let go before it draws again. */
+  #cancelLatch = false;
   #wantSlot: number | null = null;
   /** USE_AT and INTERACT_AT commands sent (the tests check a refused click sends none). */
   tileCommands = 0;
@@ -108,8 +121,20 @@ export class Session {
     aim: { x: number; y: number } = { x: 0, y: 0 },
     pointing: TargetInput = { device: 'key', pointer: null },
   ): FrameResult {
-    const input = this.input.sample();
+    let input = this.input.sample();
     const menuResults: OpenResult[] = [];
+    // Lowering a drawn bow comes before everything those keys would otherwise do.
+    const drawn = this.#aimDir !== null || this.sim.state.onFoot?.player.aim != null;
+    if (drawn && CANCEL_DRAW.some((a) => input.pressed.has(a))) {
+      this.sim.submit({ type: 'CANCEL_AIM' });
+      this.#aimDir = null;
+      this.#aimDist = null;
+      this.#cancelLatch = true;
+      input = {
+        ...input,
+        pressed: new Set([...input.pressed].filter((a) => !CANCEL_DRAW.includes(a))),
+      };
+    }
     // The system key comes first and closes whatever is open, so "close, then open another" works
     // even when both presses land in one frame (slow frames do this).
     if (input.pressed.has('systemMenu')) {
@@ -216,10 +241,8 @@ export class Session {
     // Reach for what a click would do: lifting or setting down is an interaction, else the tool.
     const toolTile = targetTile({ ...query, reach: c.toolReach });
     const near = targetTile({ ...query, reach: c.interactReach });
-    const interactive =
-      interactionAt(onFoot, land.map, land.rules, false, near) !== null &&
-      (onFoot.carrying !== null ||
-        Object.values(onFoot.actors).some((a) => NEEDS_LIFT.includes(a.pose)));
+    const facts = this.sim.state.facts;
+    const interactive = interactionAt(onFoot, land.map, land.rules, false, near, facts) !== null;
     const reach = interactive || item === null ? c.interactReach : c.toolReach;
     const at = interactive || item === null ? near : toolTile;
     const ok = inReach(p, at, { ...query, reach });
@@ -238,27 +261,35 @@ export class Session {
 
     // Use the item in hand: draw and loose a bow, or use it at the target tile.
     let aimDir: number | null = null;
+    if (!input.held.has('useItem')) this.#cancelLatch = false;
     if (use === 'AIM' && !handsFull) {
-      if (input.held.has('useItem')) {
-        const stick = Math.hypot(input.stick.x, input.stick.y) > c.gamepadDeadZone;
-        const hand = { x: p.x, y: p.y - 26 };
-        const v =
-          pointing.device === 'mouse' && pointing.pointer !== null
-            ? { x: pointing.pointer.x - hand.x, y: pointing.pointer.y - hand.y }
-            : pointing.device === 'pad' && stick
-              ? input.stick
-              : AHEAD_VECTOR[p.facing];
-        aimDir = aimDirection(v.x, v.y, AIM_DIRECTIONS);
-        if (aimDir !== this.#aimDir) this.sim.submit({ type: 'AIM', dir: aimDir });
+      const holding = input.held.has('useItem') && !this.#cancelLatch;
+      if (holding) {
+        const aim = this.#aimVector(input, pointing, c.gamepadDeadZone, tile);
+        aimDir = aimDirection(aim.x, aim.y, AIM_DIRECTIONS);
+        // The press always asks (a refusal, such as an empty quiver, is shown once); changes are
+        // sent only while the draw holds.
+        const changed = aimDir !== this.#aimDir || aim.dist !== this.#aimDist;
+        if (input.pressed.has('useItem') || (p.aim !== null && changed)) {
+          this.sim.submit({ type: 'AIM', dir: aimDir, dist: aim.dist });
+          this.#aimDist = aim.dist;
+        } else if (p.aim === null && this.#aimDir === null) aimDir = null;
       } else if (this.#aimDir !== null) this.sim.submit({ type: 'AIM', dir: null });
     } else if (this.#aimDir !== null) this.sim.submit({ type: 'AIM', dir: null });
     this.#aimDir = aimDir;
+    if (aimDir === null) this.#aimDist = null;
     if (use !== 'AIM' && use !== null && input.pressed.has('useItem') && !handsFull) {
       if (inReach(p, toolTile, { ...query, reach: c.toolReach })) {
         this.sim.submit({ type: 'USE_AT', slot, tile: toolTile });
         this.tileCommands++;
       } else refused = 'TOO_FAR';
     }
+    // Empty hands: use is a shove, towards the target tile; the shove key shoves too.
+    const shove = (use === null && input.pressed.has('useItem')) || input.pressed.has('shove');
+    if (shove && !handsFull && p.aim === null)
+      this.sim.submit(
+        pointing.device === 'key' ? { type: 'SHOVE' } : { type: 'SHOVE', tile: toolTile },
+      );
     return {
       device: pointing.device,
       tile: at,
@@ -272,7 +303,50 @@ export class Session {
       refused,
     };
   }
+
+  /**
+   * Where the bow is aimed, from the steerer's feet: the cursor's ground point and its distance in
+   * tiles (a cursor on a person's body aims at where they stand); the right stick, or the left
+   * stick or the movement keys while the feet are planted; else the way the steerer faces. Only
+   * the mouse gives a distance: the others fly to full range.
+   */
+  #aimVector(
+    input: InputFrame,
+    pointing: TargetInput,
+    deadZone: number,
+    tile: number,
+  ): { x: number; y: number; dist: number | null } {
+    const onFoot = this.sim.state.onFoot;
+    const p = onFoot?.player ?? { x: 0, y: 0, facing: 's' as const };
+    if (pointing.device === 'mouse' && pointing.pointer !== null) {
+      let ground = pointing.pointer;
+      for (const a of Object.values(onFoot?.actors ?? {})) {
+        if (a.pose === 'carried') continue;
+        if (Math.abs(ground.x - a.x) <= 8 && ground.y <= a.y + 2 && ground.y >= a.y - BODY_HEIGHT) {
+          ground = { x: a.x, y: a.y - 1 };
+          break;
+        }
+      }
+      const x = ground.x - p.x;
+      const y = ground.y - p.y;
+      const d = Math.hypot(x, y);
+      if (d > 0.5) return { x, y, dist: Math.round((d / tile) * 16) / 16 };
+    }
+    const stick = Math.hypot(input.stick.x, input.stick.y) > deadZone;
+    if (pointing.device === 'pad' && stick) return { ...input.stick, dist: null };
+    if (pointing.device !== 'mouse' && (input.move.x !== 0 || input.move.y !== 0))
+      return { ...input.move, dist: null };
+    if (this.#aimDir !== null) {
+      const a = (this.#aimDir / AIM_DIRECTIONS) * 2 * Math.PI;
+      return { x: Math.cos(a), y: Math.sin(a), dist: this.#aimDist };
+    }
+    const ahead = AHEAD_VECTOR[p.facing];
+    return { ...ahead, dist: null };
+  }
 }
+
+/** Body height of a person, in pixels, for aiming at someone with the cursor (Book 7: 40 px). */
+const BODY_HEIGHT = 40;
 
 const AHEAD_VECTOR: Readonly<Record<'s' | 'n' | 'e' | 'w', { x: number; y: number }>> = {
   s: { x: 0, y: 1 },

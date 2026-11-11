@@ -9,7 +9,7 @@ import type { StringTable } from '../content/strings.ts';
 import type { BodyModel } from '../sim/world.ts';
 import type { LoadedAtlas } from './atlases.ts';
 import { bundledLayerFiles } from './bundledLayers.ts';
-import { peopleLook } from './people.ts';
+import { peopleLook, withOwned } from './people.ts';
 
 /** The preview canvas: room round the 32 x 48 body for the bow's larger canvas. */
 const PREVIEW = { w: 48, h: 56, anchor: { x: 24, y: 51 } } as const;
@@ -121,7 +121,9 @@ export function showNaming(
   select('A');
 
   const files = bundledLayerFiles();
-  const looks = { A: peopleLook(files, 'A'), B: peopleLook(files, 'B') };
+  // As the steerer wakes: with nothing in hand, so no bow on the back (decision DD-6).
+  const bare = (model: BodyModel) => withOwned(peopleLook(files, model).steerer, () => false);
+  const looks = { A: { steerer: bare('A') }, B: { steerer: bare('B') } };
   // Each body turns slowly on the spot, so both can be seen from every side.
   let turn = 0;
   const draw = (): void => {

@@ -708,3 +708,292 @@ export const TELLS: readonly SoundDef[] = [
     },
   },
 ];
+
+/**
+ * Missiles and pickups (decisions DD-6 to DD-9; Book 11 section 07: arrows into wood and shields).
+ * Soft and low like the footsteps (decision AU-10), each told apart by ear: the flight a quiet,
+ * falling whistle; wood a knock with the shaft's buzz; a shield a hollow, deeper knock; earth a
+ * dull thud; stone a dry crack and splinters; water a small plop; the empty quiver a dry click of
+ * fingers on leather; a pickup a rustle and a soft knock.
+ */
+export const MISSILES: readonly SoundDef[] = [
+  {
+    id: 'SFX_ARROW_FLIGHT',
+    captionKey: 'caption.sfx.arrow_flight',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        2400,
+        2.2,
+        [
+          [0, 0],
+          [0.05, 0.32],
+          [0.35, 0.22],
+          [0.55, 0],
+        ],
+        1500,
+      );
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 1250],
+          [0.5, 980],
+        ],
+        [
+          [0, 0],
+          [0.06, 0.03],
+          [0.5, 0],
+        ],
+      );
+      return 0.6;
+    },
+  },
+  {
+    id: 'SFX_ARROW_WOOD',
+    captionKey: 'caption.sfx.arrow_wood',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'lowpass', 1400, 0.8, [
+        [0, 0],
+        [0.002, 0.5],
+        [0.05, 0],
+      ]);
+      tone(
+        e,
+        at,
+        to,
+        'triangle',
+        [
+          [0, 210],
+          [0.12, 150],
+        ],
+        [
+          [0, 0],
+          [0.003, 0.32],
+          [0.16, 0.0001],
+        ],
+      );
+      // The shaft buzzing where it stands in the timber.
+      tone(
+        e,
+        at + 0.02,
+        to,
+        'square',
+        [
+          [0, 64],
+          [0.25, 58],
+        ],
+        [
+          [0, 0],
+          [0.01, 0.025],
+          [0.28, 0],
+        ],
+      );
+      return 0.35;
+    },
+  },
+  {
+    id: 'SFX_ARROW_SHIELD',
+    captionKey: 'caption.sfx.arrow_shield',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 700, 1.2, [
+        [0, 0],
+        [0.002, 0.45],
+        [0.07, 0],
+      ]);
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 118],
+          [0.22, 92],
+        ],
+        [
+          [0, 0],
+          [0.004, 0.4],
+          [0.26, 0.0001],
+        ],
+      );
+      return 0.32;
+    },
+  },
+  {
+    id: 'SFX_ARROW_EARTH',
+    captionKey: 'caption.sfx.arrow_earth',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'lowpass', 520, 0.7, [
+        [0, 0],
+        [0.004, 0.5],
+        [0.12, 0],
+      ]);
+      // The body of the thud.
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 95],
+          [0.16, 62],
+        ],
+        [
+          [0, 0],
+          [0.004, 0.32],
+          [0.2, 0.0001],
+        ],
+      );
+      // A little sand thrown up.
+      noiseHit(e, at + 0.01, to, 'highpass', 3200, 0.6, [
+        [0, 0],
+        [0.01, 0.05],
+        [0.12, 0],
+      ]);
+      return 0.25;
+    },
+  },
+  {
+    id: 'SFX_ARROW_STONE',
+    captionKey: 'caption.sfx.arrow_stone',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 2400, 1.5, [
+        [0, 0],
+        [0.001, 0.7],
+        [0.03, 0],
+      ]);
+      tone(
+        e,
+        at,
+        to,
+        'triangle',
+        [
+          [0, 330],
+          [0.1, 260],
+        ],
+        [
+          [0, 0],
+          [0.002, 0.22],
+          [0.13, 0.0001],
+        ],
+      );
+      const r = rng(47);
+      let t = at + 0.02;
+      for (let i = 0; i < 4; i++) {
+        noiseHit(e, t, to, 'bandpass', 1400 + r() * 1600, 4, [
+          [0, 0.36 - i * 0.06],
+          [0.012 + r() * 0.01, 0],
+        ]);
+        t += 0.03 + r() * 0.05;
+      }
+      return 0.35;
+    },
+  },
+  {
+    id: 'SFX_ARROW_WATER',
+    captionKey: 'caption.sfx.arrow_water',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(
+        e,
+        at,
+        to,
+        'lowpass',
+        1500,
+        0.7,
+        [
+          [0, 0],
+          [0.006, 0.6],
+          [0.32, 0],
+        ],
+        450,
+      );
+      tone(
+        e,
+        at + 0.02,
+        to,
+        'sine',
+        [
+          [0, 700],
+          [0.08, 1300],
+        ],
+        [
+          [0, 0],
+          [0.005, 0.16],
+          [0.12, 0],
+        ],
+      );
+      return 0.4;
+    },
+  },
+  {
+    id: 'SFX_QUIVER_EMPTY',
+    captionKey: 'caption.sfx.quiver_empty',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 2100, 3, [
+        [0, 0],
+        [0.001, 0.55],
+        [0.02, 0],
+      ]);
+      // Fingers feeling round an empty leather quiver.
+      noiseHit(e, at + 0.04, to, 'bandpass', 900, 0.9, [
+        [0, 0],
+        [0.05, 0.42],
+        [0.3, 0],
+      ]);
+      noiseHit(e, at + 0.05, to, 'lowpass', 380, 0.7, [
+        [0, 0],
+        [0.006, 0.45],
+        [0.09, 0],
+      ]);
+      return 0.3;
+    },
+  },
+  {
+    id: 'SFX_PICKUP',
+    captionKey: 'caption.sfx.pickup',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 1100, 1.1, [
+        [0, 0],
+        [0.03, 0.3],
+        [0.16, 0],
+      ]);
+      tone(
+        e,
+        at + 0.1,
+        to,
+        'triangle',
+        [
+          [0, 240],
+          [0.08, 190],
+        ],
+        [
+          [0, 0],
+          [0.003, 0.2],
+          [0.1, 0.0001],
+        ],
+      );
+      return 0.25;
+    },
+  },
+];

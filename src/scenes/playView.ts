@@ -3,7 +3,9 @@
  * rocks, and the rescue. The overlay carries only what the moment needs: Hild's words as subtitles
  * with the direction of her voice, the prompt for the nearest thing to do, and a refusal's reason.
  * There is no control list (Book 3 Stage 6 check 2); the only control text is a single movement
- * hint if the steerer has not moved after a few seconds.
+ * hint if the steerer has not moved after a few seconds, and the tooltip each kind of item shows the
+ * first time it is picked up (Book 10 section 21, pickupTooltip), kept afterwards in the system
+ * menu's help page.
  *
  * The overlay root carries data-* attributes the browser tests read.
  */
@@ -32,6 +34,13 @@ import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow } from '../sim/land/onFoot.ts';
+import { parseStartingWeapons } from '../content/balance.ts';
+import type { Id } from '../core/ids.ts';
+import { steererOwns, withOwned } from './people.ts';
+import type { PeopleLook } from './people.ts';
+import { helpLines, tipText } from './tips.ts';
+import type { TipContext } from './tips.ts';
+import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { createSimulation } from '../sim/simulation.ts';
@@ -156,7 +165,11 @@ export function* preparePlay(
   const style = parseRenderStyle(renderJson);
   const layerFiles = bundledLayerFiles();
   for (const body of ['A', 'B'] as BodyModel[]) {
-    const look = peopleLook(layerFiles, body);
+    const full = peopleLook(layerFiles, body);
+    const look = {
+      ...full,
+      steerer: withOwned(full.steerer, (item) => steererOwns(sim.state.player, item)),
+    };
     const tide = tideAt(sim.state.calendar, b);
     const scene = zoneScene({
       map,
@@ -224,6 +237,22 @@ export function startPlay(
   if (opening === null || world.onFoot === null) throw new Error('No opening to play');
   const map = land.maps.get(world.onFoot.zone);
   if (map === undefined) throw new Error(`No map for ${world.onFoot.zone}`);
+  // Tests and captures only (`?kit=bow,seax`): start with these items in hand, the bow with Book
+  // 10's starting arrows, their tooltips already seen, and the items gone from the strand.
+  const kit = (new URLSearchParams(window.location.search).get('kit') ?? '')
+    .split(',')
+    .filter((k) => k !== '')
+    .map((k) => `ITEM_${k.toUpperCase()}`);
+  kit.forEach((item, i) => {
+    if (content.onFoot?.items[item] === undefined || world.onFoot === null) return;
+    world.player.hotbar.slots[i] = item;
+    world.player.tipsSeen.push(item);
+    world.onFoot.items = world.onFoot.items.filter((g) => g.item !== item);
+    if (item === 'ITEM_BOW') {
+      world.player.inventory['ITEM_ARROW'] = parseStartingWeapons(content.balance).startingArrows;
+      world.player.tipsSeen.push('ITEM_ARROW');
+    }
+  });
   const sim = createSimulation(b, world, land);
 
   const settings = loadSettings(browserStorage());
@@ -235,6 +264,13 @@ export function startPlay(
     { map, controls: land.controls, rules: land.rules },
   );
   const style = parseRenderStyle(renderJson);
+  const missileLook = {
+    releaseHeight: land.rules.releaseHeightPx,
+    shadow: land.missiles.shadow,
+    icons: Object.fromEntries(
+      Object.entries(content.onFoot?.items ?? {}).map(([id, d]) => [id, d.icon]),
+    ),
+  };
   mark('world');
   const prepared =
     options.prepared?.zone === map.zone
@@ -261,6 +297,10 @@ export function startPlay(
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
     if (session.menus.open !== 'system') return;
+    if (e.code === 'KeyH') {
+      helpOpen = !helpOpen;
+      return;
+    }
     if (e.code === 'KeyI') {
       display = { ...display, infoCaptions: !display.infoCaptions };
       saveDisplaySettings(store, display);
@@ -271,7 +311,22 @@ export function startPlay(
     visuals.reducedMotion = display.reducedMotion;
     saveDisplaySettings(store, display);
   });
-  const look = peopleLook(bundledLayerFiles(), choice.bodyModel);
+  const fullLook = peopleLook(bundledLayerFiles(), choice.bodyModel);
+  // The steerer's bow is drawn only once it has been picked up (decision DD-6).
+  let lookOwnsBow: boolean | null = null;
+  let look: PeopleLook = fullLook;
+  const currentLook = (): PeopleLook => {
+    const owns = steererOwns(sim.state.player, 'ITEM_BOW');
+    if (owns !== lookOwnsBow) {
+      lookOwnsBow = owns;
+      look = {
+        ...fullLook,
+        steerer: withOwned(fullLook.steerer, (item) => steererOwns(sim.state.player, item)),
+      };
+    }
+    return look;
+  };
+  currentLook();
   // Capture only: `?actors=none` leaves people out and `?camera=tx,ty` holds the view centred on a
   // tile, for preview backgrounds (src/tools/art/preview48.ts).
   const captureParams = new URLSearchParams(window.location.search);
@@ -320,6 +375,44 @@ export function startPlay(
   };
   let lastTarget = { tx: 0, ty: 0 };
   let viewCamera = { x: 0, y: 0 };
+  /** A refusal said over the steerer's head (no arrows, a full quiver). */
+  const refuseHere = (key: string, text: string, now: number): void => {
+    const p = sim.state.onFoot?.player;
+    if (p === undefined) return;
+    const at = tileOf(map, p.x, p.y);
+    refuse(key, text, at.tx - 1, at.ty - 1, now);
+  };
+  // Pickup tooltips: shown once per item kind, one after another; the help page keeps them.
+  const tipSeconds = content.onFoot?.tipSeconds ?? 10;
+  let tipQueue: Id[] = [];
+  let tip: { item: Id; until: number } | null = null;
+  let helpOpen = false;
+  let lastDevice: 'mouse' | 'key' | 'pad' = 'key';
+  const tipContext = (item: Id): TipContext => ({
+    bindings: settings.bindings,
+    device: lastDevice,
+    slot: ((): number | null => {
+      const i = sim.state.player.hotbar.slots.indexOf(item === 'ITEM_ARROW' ? 'ITEM_BOW' : item);
+      return i < 0 ? null : i;
+    })(),
+    arrows: sim.state.player.inventory['ITEM_ARROW'] ?? 0,
+  });
+  const has = (key: string): boolean => strings.has(key);
+  const renderTip = (): void => {
+    const region = overlay.region('tip');
+    const def = tip === null ? undefined : itemOf(tip.item);
+    if (tip === null || def?.tipKey === undefined) {
+      region.replaceChildren();
+      root.dataset['tip'] = '';
+      return;
+    }
+    const title = document.createElement('strong');
+    title.textContent = t(def.nameKey);
+    const body = document.createElement('span');
+    body.textContent = tipText(def.tipKey, tipContext(tip.item), t, has);
+    region.replaceChildren(title, body);
+    root.dataset['tip'] = tip.item;
+  };
 
   // Book 8 section 01: patronymics in formal speech only; barks and prompts use the short name.
   const nameOf = (id: string): string => {
@@ -372,6 +465,13 @@ export function startPlay(
         engine.voice(e.person, line(e.lineKey), panOf(e.person));
         return;
       case 'COMMAND_REFUSED':
+        if (e.reason === 'NO_ARROWS') {
+          refuseHere('no_arrows', t('ui.refusal.no_arrows'), now);
+          if (audio !== null && engine.unlocked)
+            audio.event('QUIVER_EMPTY', engine.now, { pan: 0 });
+        }
+        if (e.reason === 'QUIVER_FULL') refuseHere('quiver_full', t('ui.refusal.quiver_full'), now);
+        if (e.reason === 'HOTBAR_FULL') refuseHere('hotbar_full', t('ui.refusal.hotbar_full'), now);
         if (e.reason === 'OUT_OF_REACH')
           refuse('too_far', t('ui.refusal.too_far'), lastTarget.tx, lastTarget.ty, now);
         if (e.reason === 'NOTHING_THERE')
@@ -388,6 +488,31 @@ export function startPlay(
       case 'BOW_DRAWN':
       case 'BOW_LOOSED':
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      case 'MISSILE_LOOSED':
+        if (audio !== null && engine.unlocked)
+          audio.event('ARROW_FLIGHT', engine.now + 0.05, { pan: 0 });
+        return;
+      case 'MISSILE_STRUCK': {
+        visuals.missileStruck(e.strike, e.x, e.y);
+        const cue = {
+          ground: 'ARROW_EARTH',
+          wood: 'ARROW_WOOD',
+          stone: 'ARROW_STONE',
+          shield: 'ARROW_SHIELD',
+          body: 'ARROW_BODY',
+          water: 'ARROW_WATER',
+        }[e.strike];
+        const pan = Math.max(-1, Math.min(1, (e.x - (sim.state.onFoot?.player.x ?? e.x)) / 200));
+        if (audio !== null && engine.unlocked) audio.event(cue, engine.now, { pan });
+        return;
+      }
+      case 'ITEM_PICKED_UP':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        if (e.first && itemOf(e.item)?.tipKey !== undefined) tipQueue.push(e.item);
+        return;
+      case 'SHOVED':
+        visuals.shove();
         return;
       case 'BEAT_COMPLETED':
         beat = e.beat;
@@ -471,7 +596,18 @@ export function startPlay(
             y: viewCamera.y + (surface.y - vp.y) / vp.scale,
           };
     const device = browser.lastDevice();
+    const deviceChanged = device !== lastDevice;
+    lastDevice = device;
     const result = session.frame(now - last, browser.aim(), { device, pointer });
+    // The tooltip in turn: the next one when the last has had its time; named for the device in use.
+    if (tip !== null && tip.until < now) tip = null;
+    if (tip === null && tipQueue.length > 0) {
+      const next = tipQueue[0];
+      tipQueue = tipQueue.slice(1);
+      if (next !== undefined) tip = { item: next, until: now + tipSeconds * 1000 };
+      renderTip();
+    } else if (tip === null && root.dataset['tip'] !== '') renderTip();
+    else if (tip !== null && deviceChanged) renderTip();
     last = now;
     const target = result.target;
     if (target !== null) {
@@ -513,13 +649,22 @@ export function startPlay(
     };
     lastVisual = now;
     visuals.update(frameInput);
-    const interaction = interactionNow(onFoot, map, land.rules, tideOpen);
+    const interaction = interactionNow(onFoot, map, land.rules, tideOpen, sim.state.facts);
 
     // The one prompt that fits the moment.
     let prompt = '';
     let promptKind = '';
     const interactKey = keys('interact');
-    if (interaction?.kind === 'LIFT') {
+    if (interaction?.kind === 'PICK_UP') {
+      const lying = onFoot.items.find((i) => i.key === interaction.key);
+      const what = itemOf(lying?.item ?? 'ITEM_ARROW');
+      const item = what === undefined ? '' : t(what.nameKey);
+      prompt =
+        device === 'mouse'
+          ? t('ui.prompt.pick_up_click', { item })
+          : t('ui.prompt.pick_up', { key: interactKey, item });
+      promptKind = 'pick_up';
+    } else if (interaction?.kind === 'LIFT') {
       prompt =
         device === 'mouse'
           ? t('ui.prompt.lift_click', { name: nameOf(interaction.target) })
@@ -564,12 +709,36 @@ export function startPlay(
       display.infoCaptions,
     );
     const open = session.menus.open;
+    if (open !== 'system') helpOpen = false;
+    // The help page: every tooltip seen so far, for the device in use.
+    const help = overlay.region('help');
+    if (helpOpen) {
+      const lines = helpLines(sim.state.player.tipsSeen, items, tipContext, t, has);
+      const title = document.createElement('h2');
+      title.textContent = t('ui.help.title');
+      const body = (lines.length === 0 ? [t('ui.help.empty')] : lines).map((l) => {
+        const para = document.createElement('p');
+        para.textContent = l;
+        return para;
+      });
+      const back = document.createElement('p');
+      back.textContent = t('ui.help.close', { key: 'H' });
+      if (help.dataset['shown'] !== lines.join('|') + device) {
+        help.replaceChildren(title, ...body, back);
+        help.dataset['shown'] = lines.join('|') + device;
+      }
+    } else if (help.childElementCount > 0) {
+      help.replaceChildren();
+      help.dataset['shown'] = '';
+    }
+    root.dataset['help'] = helpOpen ? String(sim.state.player.tipsSeen.length) : '';
+    root.dataset['tipsSeen'] = sim.state.player.tipsSeen.join(',');
     overlay.region('menu').textContent =
       open === null
         ? ''
         : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
             open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })}`
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })}`
               : ''
           }`;
 
@@ -580,12 +749,14 @@ export function startPlay(
       tick: sim.state.tick,
       tideOpen,
       phase: lightPhase(sim.state.calendar, b),
-      look,
+      look: currentLook(),
       anims,
       shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
       visual: view,
       hidePeople,
+      facts: sim.state.facts,
+      missiles: missileLook,
     });
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
     viewCamera = view.camera;
@@ -607,9 +778,13 @@ export function startPlay(
       seconds: visuals.seconds,
       tile: map.tile,
       hotbar: {
-        slots: Array.from({ length: land.controls.hotbarSlots }, (_, i) => ({
-          icon: itemOf(hotbar.slots[i] ?? null)?.icon ?? null,
-        })),
+        slots: Array.from({ length: land.controls.hotbarSlots }, (_, i) => {
+          const def = itemOf(hotbar.slots[i] ?? null);
+          // An item that spends ammunition shows how much is carried (the bow's arrows).
+          const count =
+            def?.ammo === undefined ? null : (sim.state.player.inventory[def.ammo] ?? 0);
+          return { icon: def?.icon ?? null, count };
+        }),
         selected: target?.slot ?? hotbar.selected,
       },
       cursor:
@@ -662,6 +837,21 @@ export function startPlay(
     root.dataset['hildPx'] = onFoot.actors['C_HILD']?.x.toFixed(1) ?? '';
     root.dataset['hildPy'] = onFoot.actors['C_HILD']?.y.toFixed(1) ?? '';
     root.dataset['tide'] = visuals.tideLevel.toFixed(4);
+    // Missiles as drawn this frame (frame@x,y on screen), for the browser tests.
+    const drawnMissiles = scene.sprites.filter((sp) => sp.sheet === MISSILE_SHEET);
+    root.dataset['missiles'] = drawnMissiles
+      .filter((sp) => /^(arrow|spear)\//.test(sp.frame))
+      .map((sp) => `${sp.frame}@${Math.round(sp.x)},${Math.round(sp.y)}`)
+      .join(';');
+    root.dataset['stuck'] = String(onFoot.stuck.length);
+    root.dataset['stuckDrawn'] = String(
+      drawnMissiles.length -
+        (root.dataset['missiles'] === '' ? 0 : root.dataset['missiles'].split(';').length),
+    );
+    root.dataset['arrows'] = String(sim.state.player.inventory['ITEM_ARROW'] ?? 0);
+    root.dataset['hotbar'] = hotbar.slots.map((x) => x ?? '').join(',');
+    root.dataset['items'] = onFoot.items.map((i) => i.key).join(',');
+    root.dataset['aimHeld'] = p.aim === null ? '' : String(sim.state.tick - p.aim.since);
     if (frames < 3) mark(`scene${frames}`);
     renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
     if (frames < 3) {

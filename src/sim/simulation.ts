@@ -48,13 +48,7 @@ import type {
   TilePos,
 } from './land/onFoot.ts';
 import { stepArcher } from './land/archer.ts';
-import {
-  expireStuck,
-  gameMinute,
-  launch,
-  STEERER,
-  stepProjectiles,
-} from './land/missiles.ts';
+import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import type { MissileEvent } from './land/missiles.ts';
 import { stillWaterLevel } from './land/water.ts';
 import {
@@ -151,7 +145,12 @@ export type SimEvent =
   | { readonly type: 'SLOT_SELECTED'; readonly slot: number; readonly item: Id | null }
   | { readonly type: 'BOW_DRAWN'; readonly item: Id }
   /** The steerer loosed a missile (`n`, now in flight). */
-  | { readonly type: 'BOW_LOOSED'; readonly item: Id; readonly drawTicks: number; readonly n: number }
+  | {
+      readonly type: 'BOW_LOOSED';
+      readonly item: Id;
+      readonly drawTicks: number;
+      readonly n: number;
+    }
   /** A draw let go without a shot: cancelled, or released before Book 10's minDraw. */
   | {
       readonly type: 'DRAW_CANCELLED';
@@ -552,7 +551,13 @@ export function createSimulation(
       const kept = give(command, 'ITEM_ARROW', arrows);
       // A quiver too full to take them all leaves the rest lying there.
       if (kept < arrows)
-        onFoot.items.push({ key: `${found.key}:arrows`, item: 'ITEM_ARROW', count: arrows - kept, x: found.x, y: found.y });
+        onFoot.items.push({
+          key: `${found.key}:arrows`,
+          item: 'ITEM_ARROW',
+          count: arrows - kept,
+          x: found.x,
+          y: found.y,
+        });
     }
   };
 

@@ -14,7 +14,7 @@ import { envelope } from './engine.ts';
 import type { SynthEngine } from './engine.ts';
 import type { Piece } from './notation.ts';
 import { rng } from './samples.ts';
-import { COMBAT, out, PEOPLE, TELLS } from './sfx.ts';
+import { COMBAT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
@@ -71,7 +71,7 @@ export const CALLS: readonly SoundDef[] = [
 
 /** Every generated one-shot by its cue ID. */
 export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
-  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE].map((d) => [d.id, d]),
+  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES].map((d) => [d.id, d]),
 );
 
 /**

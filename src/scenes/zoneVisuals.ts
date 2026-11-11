@@ -198,6 +198,7 @@ export class ZoneVisuals {
   #runStopUntil = -1;
   #wasRunning = false;
   #looseUntil = -1;
+  #shoveFrom = -1;
   #wasAiming = false;
   #anim: PersonAnim | null = null;
   #wet = new Map<string, Wetness>();
@@ -225,6 +226,40 @@ export class ZoneVisuals {
 
   /** Capture only (`?camera=`): the view's top-left in world pixels, held still. */
   cameraAt: { x: number; y: number } | null = null;
+
+  /**
+   * The steerer shoves (empty hands, or the shove key). The body sheets have no shove yet (Book 7
+   * asks for 4 frames; Stage 9 draws them): until then it is the draw's arms-out frames, played
+   * out and back, which with no bow in hand read as a two-handed push.
+   */
+  shove(): void {
+    this.#shoveFrom = this.seconds;
+  }
+
+  /**
+   * A missile came to rest: a splash where it went into water, a puff of sand where it went into
+   * the ground (Book 7 section 14: what moves leaves a mark).
+   */
+  missileStruck(strike: string, x: number, y: number): void {
+    if (strike === 'water') {
+      this.#emit({ kind: 'splash', x, y, vx: 0, vy: 0, life: 0.25, z: 0, vz: 0 });
+      this.#emit({ kind: 'ripple', x, y: y + 1, vx: 0, vy: 0, life: 0.9, z: 0, vz: 0 });
+    } else if (strike === 'ground' && this.surfaceAt(x, y) !== 'grass') {
+      this.#emit({ kind: 'dust', x, y, vx: 0, vy: 0, z: 0, vz: 0, life: 0.27 });
+    } else if (strike === 'stone') {
+      for (let k = 0; k < 2; k++)
+        this.#emit({
+          kind: 'spray',
+          x,
+          y,
+          vx: (this.#rand() - 0.5) * 30,
+          vy: 0,
+          z: 6,
+          vz: 20 + this.#rand() * 10,
+          life: 0.35,
+        });
+    }
+  }
 
   /** A camera shake, e.g. on a hit (Book 7 section 14, camera feel). Ignored with reduced motion. */
   shake(amount: number): void {
@@ -576,7 +611,17 @@ export class ZoneVisuals {
       this.#looseUntil = t + (a['draw'].ticks * 2) / 60;
     this.#wasAiming = aiming;
 
-    if (aiming && a?.['draw'] !== undefined) {
+    const shoveFrames = [1, 2, 2, 1];
+    const shoveTick = a?.['draw']?.ticks ?? 8;
+    const shoveAt = Math.floor(((t - this.#shoveFrom) * 60) / shoveTick);
+    if (
+      !aiming &&
+      this.#shoveFrom >= 0 &&
+      shoveAt < shoveFrames.length &&
+      a?.['draw'] !== undefined
+    ) {
+      this.#anim = { state: 'draw', frame: shoveFrames[shoveAt] ?? 1 };
+    } else if (aiming && a?.['draw'] !== undefined) {
       const draw = a['draw'];
       const held = (input.tick - (p.aim?.since ?? input.tick)) / draw.ticks;
       // Raise, draw, then hold the full draw; the last frame is the loose.

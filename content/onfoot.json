@@ -44,7 +44,7 @@
   },
   "cover": {
     "prop_wreck_t1": { "w": 64, "h": 14, "material": "wood", "tall": true },
-    "prop_wreck_stern": { "w": 34, "h": 8, "material": "wood", "tall": true },
+    "prop_wreck_stern": { "w": 34, "h": 10, "material": "wood", "tall": true },
     "prop_rock_strand": { "w": 40, "h": 14, "material": "stone", "tall": true },
     "prop_boulder": { "w": 20, "h": 8, "material": "stone", "tall": true },
     "prop_greymen_stone": { "w": 14, "h": 6, "material": "stone", "tall": true },

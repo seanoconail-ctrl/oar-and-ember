@@ -15,7 +15,8 @@ export interface HudView {
   readonly camera: { readonly x: number; readonly y: number };
   readonly seconds: number;
   readonly hotbar: {
-    readonly slots: readonly { readonly icon: string | null }[];
+    /** Each slot's icon, and a count drawn over it (the bow's arrows), if any. */
+    readonly slots: readonly { readonly icon: string | null; readonly count?: number | null }[];
     readonly selected: number;
   };
   /** The target tile, or null when no cursor shows (aiming, a menu, carrying nothing to do). */
@@ -137,6 +138,17 @@ export function createHud(doc: Document, atlases: ReadonlyMap<string, LoadedAtla
         put('ui_hotbar', `${selected ? 'slot_selected' : 'slot'}/-/0`, x, HOTBAR_Y);
         const oy = HOTBAR_Y + (selected ? 0 : 4);
         if (slot.icon !== null) put('ui_icons', `${slot.icon}/-/0`, x + 3, oy + 5);
+        // A count over the icon's lower right, 4 px a digit (ui_digits count).
+        if (slot.count != null) {
+          const digits = String(Math.max(0, Math.floor(slot.count)));
+          for (let k = 0; k < digits.length; k++)
+            put(
+              'ui_digits',
+              `count/-/${digits.charAt(k)}`,
+              x + 14 - (digits.length - 1 - k) * 4,
+              oy + 14,
+            );
+        }
         put('ui_digits', `${selected ? 'key_selected' : 'key'}/-/${i}`, x, oy + 3);
       });
       put('ui_hotbar', 'cap_right/-/0', x0 + SLOT_W * (n + 1), HOTBAR_Y);

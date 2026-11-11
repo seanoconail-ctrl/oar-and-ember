@@ -23,7 +23,9 @@ import type {
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { gustGrid, STRAND_WIND, SWAY_PERIOD } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
-import type { OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
+import { itemShown } from '../sim/land/onFoot.ts';
+import type { FactView, OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
+import { direction16, drawnHeight, MISSILE_DIRECTIONS } from '../sim/land/missiles.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import type { DepthBand } from '../content/balance.ts';
 import type { ZoneLife } from '../content/zoneMap.ts';
@@ -38,6 +40,13 @@ export const FX_SHEET = 'fx_strand';
 /** People's own particles and prints: dust, splashes, ripple rings, drips, surf spray (Book 7 07). */
 export const PEOPLE_FX_SHEET = 'fx_people';
 export const MARKER_SHEET = 'ui_marker';
+/** Missiles in flight and at rest (Book 10 section 21), and the glint on things to pick up. */
+export const MISSILE_SHEET = 'fx_missile';
+export const GLINT_SHEET = 'fx_glint';
+/** The starting weapons lying on the strand: one state per item, named as its hotbar icon. */
+export const PICKUP_SHEET = 'prop_pickup';
+/** Seconds between glints on something lying to be picked up. */
+const GLINT_EVERY = 2.6;
 /** The plant sheet's frames lean -3..3; frame 3 is upright. */
 const UPRIGHT = 3;
 
@@ -401,6 +410,42 @@ export interface ZoneSceneInput {
   readonly visual?: ZoneVisualView;
   /** Capture only (`?actors=none`): leave people out, for preview backgrounds of the place. */
   readonly hidePeople?: boolean;
+  /** Facts the zone reads: an item lying there shows once its `after` fact holds. */
+  readonly facts?: FactView;
+  /** Missiles: the hand's height they leave at (px), the shadow under them, and each item's icon. */
+  readonly missiles?: {
+    readonly releaseHeight: number;
+    readonly shadow: { readonly w: number; readonly h: number };
+    readonly icons: Readonly<Record<string, string>>;
+  };
+}
+
+/** The frame a missile in flight is drawn with: its velocity on screen, the arc's rise included. */
+export function flightFrame(
+  p: OnFootState['projectiles'][number],
+  releaseHeight: number,
+): { dir: number; height: number } {
+  const f = p.ticks > 0 ? p.t / p.ticks : 1;
+  // d(height)/d(f): the arc's slope, and the hand's height fading out over the flight.
+  const rise = 4 * p.apex * (1 - 2 * f) - releaseHeight;
+  const vx = p.ux * p.length;
+  const vy = p.uy * p.length - rise;
+  return { dir: direction16(vx, vy), height: drawnHeight(p, releaseHeight) };
+}
+
+/** The frame of a missile at rest: what it is in, and its direction (in 8, or 4 lying). */
+export function restFrame(s: OnFootState['stuck'][number]): string {
+  const d8 = Math.round(s.dir / 2) % 8;
+  if (s.broken) return `broken/-/${s.dir % 4}`;
+  if (s.kind === 'spear') return `${s.in === 'ground' ? 'spear_ground' : 'spear_wood'}/-/${d8}`;
+  switch (s.in) {
+    case 'ground':
+      return `stuck_ground/-/${d8}`;
+    case 'stone':
+      return `lying/-/${s.dir % 4}`;
+    default:
+      return `stuck_${s.in}/-/${d8}`;
+  }
 }
 
 function steererState(onFoot: OnFootState): string {
@@ -569,6 +614,80 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         layer: 'actor',
       });
     }
+  }
+  // Items lying to be picked up, with a glint every few seconds.
+  const facts = input.facts ?? {};
+  for (const item of onFoot.items) {
+    if (!itemShown(item, facts)) continue;
+    const x = item.x * map.tile - camera.x;
+    const y = item.y * map.tile - camera.y;
+    if (!inView(x, y)) continue;
+    // The item's hotbar icon names its state; without the table, its ID does (ITEM_SEAX: seax).
+    const icon = input.missiles?.icons[item.item] ?? item.item.replace(/^ITEM_/, '').toLowerCase();
+    const sprite: SceneSprite = { sheet: PICKUP_SHEET, frame: `${icon}/-/0`, x, y, layer: 'actor' };
+    sprites.push(sprite);
+    cast(sprite);
+    if (item.glint === true) {
+      const g = anims.get(GLINT_SHEET)?.['glint'];
+      const frames = g?.frames ?? 5;
+      const phase = (seconds + hash01(item.x, item.y, 9) * GLINT_EVERY) % GLINT_EVERY;
+      const i = Math.floor((phase * TICKS_PER_SECOND) / (g?.ticks ?? 4));
+      if (i < frames)
+        sprites.push({
+          sheet: GLINT_SHEET,
+          frame: `glint/-/${i}`,
+          x: x + 4,
+          y: y - 6,
+          layer: 'actor',
+          sort: y + 0.5,
+        });
+    }
+  }
+  // Missiles at rest: in the ground, in props, at the foot of stone, and in people.
+  const personAt = (id: string): { x: number; y: number } | undefined =>
+    id === 'P_STEERER' ? p : onFoot.actors[id];
+  for (const st of onFoot.stuck) {
+    const who = st.target === undefined ? undefined : personAt(st.target);
+    if (st.target !== undefined && who === undefined) continue;
+    if (
+      who !== undefined &&
+      st.target !== undefined &&
+      onFoot.actors[st.target]?.pose === 'carried'
+    )
+      continue;
+    const gx = st.x + (who?.x ?? 0);
+    const gy = st.y + (who?.y ?? 0);
+    const x = gx - camera.x;
+    const y = gy - camera.y;
+    if (!inView(x, y)) continue;
+    sprites.push({
+      sheet: MISSILE_SHEET,
+      frame: restFrame(st),
+      x,
+      y: y - st.h,
+      layer: 'actor',
+      // In a person, drawn just in front of them; otherwise by its own foot.
+      sort: gy - camera.y + (who === undefined ? 0 : 0.6),
+    });
+  }
+  // Missiles in flight: drawn above their ground track, with a soft shadow under them.
+  const missiles = input.missiles;
+  for (const pr of onFoot.projectiles) {
+    const release = missiles?.releaseHeight ?? 0;
+    const { dir, height } = flightFrame(pr, release);
+    const x = pr.x - camera.x;
+    const y = pr.y - camera.y;
+    if (!inView(x, y)) continue;
+    sprites.push({
+      sheet: MISSILE_SHEET,
+      frame: `${pr.kind}/-/${dir % MISSILE_DIRECTIONS}`,
+      x,
+      y: y - height,
+      layer: 'actor',
+      sort: y + 0.7,
+    });
+    const shadow = missiles?.shadow ?? { w: 3, h: 1 };
+    shadows.push({ x, y: y - height, w: shadow.w, h: shadow.h, lift: height });
   }
   const detail = visual?.effects?.detail ?? 2;
   sprites.push(

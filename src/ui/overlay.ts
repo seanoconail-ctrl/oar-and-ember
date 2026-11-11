@@ -14,7 +14,9 @@ export interface Overlay {
   fit(viewport: Viewport, devicePixelRatio: number): void;
   setTextSize(percent: number): void;
   /** A named text region (created on first use). */
-  region(name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel' | 'slot' | 'refusal'): HTMLElement;
+  region(
+    name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel' | 'slot' | 'refusal' | 'tip' | 'help',
+  ): HTMLElement;
 }
 
 const STYLE = `
@@ -35,6 +37,16 @@ const STYLE = `
 .oe-overlay [data-region=menu]:not(:empty) { background: rgba(58, 38, 22, 0.88); border: 2px solid #7b5434;
   padding: 0.6em; }
 .oe-overlay [data-region=ring] { top: 42%; text-align: center; font-size: 1.1em; }
+.oe-overlay [data-region=tip] { top: 6%; left: auto; right: 3%; width: 42%; font-size: 0.85em;
+  line-height: 1.35; }
+.oe-overlay [data-region=tip]:not(:empty) { background: rgba(34, 49, 58, 0.9); border: 2px solid #7b5434;
+  padding: 0.5em 0.7em; }
+.oe-overlay [data-region=tip] strong { display: block; color: #f0ad4c; }
+.oe-overlay [data-region=help] { top: 12%; left: 12%; right: 12%; font-size: 0.9em; line-height: 1.4; }
+.oe-overlay [data-region=help]:not(:empty) { background: rgba(58, 38, 22, 0.94); border: 2px solid #7b5434;
+  padding: 0.6em 0.9em; }
+.oe-overlay [data-region=help] p { margin: 0.3em 0; }
+.oe-overlay [data-region=help] h2 { margin: 0 0 0.3em; font-size: 1.2em; }
 .oe-overlay [data-region=panel] { top: 3%; font-size: 0.85em; line-height: 1.4; white-space: pre-wrap; }
 `;
 

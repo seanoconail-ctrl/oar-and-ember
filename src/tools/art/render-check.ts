@@ -13,6 +13,7 @@ import type { RenderStyle } from '../../render/scene.ts';
 import type { Sheet } from '../../render/sheet.ts';
 import { ART_TEST_CASES, artTestScene, sheetPreviewScene } from '../../scenes/artTest.ts';
 import { loadPalette, loadPeopleLook, loadSheets, readRepo } from './artFiles.ts';
+import { steererOwns, withOwned } from '../../scenes/people.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { encodePng, scaleNearest } from './png.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../content/balance.ts';
@@ -58,7 +59,11 @@ export function openingScenes(
           tick: world.tick,
           tideOpen: false,
           phase: 'dusk',
-          look: loadPeopleLook(body),
+          look: ((l) => ({
+            ...l,
+            steerer: withOwned(l.steerer, (item) => steererOwns(world.player, item)),
+          }))(loadPeopleLook(body)),
+          facts: world.facts,
           anims: sheetAnims,
           highlight: i?.kind === 'LIFT' ? i.target : null,
         }),
