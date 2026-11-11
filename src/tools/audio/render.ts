@@ -55,6 +55,10 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['call:SFX_HORN', 3, {}, 'sfx-horn'],
   ['call:MUS_STINGER_HORN', 3, {}, 'stinger-horn'],
   ['call:MUS_STINGER_DISCOVERY', 3, {}, 'stinger-discovery'],
+  // The Stage 6 rework: wading and the bow.
+  ['call:SFX_SPLASH', 1, {}, 'sfx-splash'],
+  ['call:SFX_BOW_DRAW', 1, {}, 'sfx-bow-draw'],
+  ['call:SFX_BOW_LOOSE', 1, {}, 'sfx-bow-loose'],
   ['ambience:hearth', 12, {}, 'hearth-fire'],
 ];
 

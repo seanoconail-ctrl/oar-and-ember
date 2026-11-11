@@ -205,6 +205,8 @@ export class ZoneVisuals {
   readonly #breakers: { x: number; y: number }[] = [];
   /** Called on each footfall with the surface it lands on (for footstep sounds). */
   onStep: ((surface: Surface, x: number) => void) | null = null;
+  /** Called on each splash (entering knee or waist water, running in it), for its sound. */
+  onSplash: ((x: number) => void) | null = null;
 
   constructor(map: ZoneMap, elevation: Elevation, reducedMotion: boolean, tuning: VisualTuning) {
     this.map = map;
@@ -261,6 +263,7 @@ export class ZoneVisuals {
   }
 
   #splash(x: number, y: number): void {
+    this.onSplash?.(x);
     this.#emit({ kind: 'splash', x, y, vx: 0, vy: 0, life: 0.25, z: 0, vz: 0 });
     for (let k = 0; k < 2; k++)
       this.#emit({

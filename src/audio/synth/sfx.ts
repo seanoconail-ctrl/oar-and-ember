@@ -396,6 +396,112 @@ export const COMBAT: readonly SoundDef[] = [
   },
 ];
 
+/**
+ * People in water and the bow (Stage 6 rework: Book 7 section 07, Book 11 section 07). Soft and
+ * low like the footsteps (decision AU-10): a wading splash is a dull rush with a slap, never a
+ * click; the bow's draw is a slow wooden creak and the loose a dry snap and a low thrum.
+ */
+export const PEOPLE: readonly SoundDef[] = [
+  {
+    id: 'SFX_SPLASH',
+    captionKey: 'caption.sfx.splash',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      noiseHit(
+        e,
+        at,
+        to,
+        'lowpass',
+        1800,
+        0.7,
+        [
+          [0, 0],
+          [0.012, 0.55],
+          [0.09, 0.3],
+          [0.42, 0],
+        ],
+        420,
+      );
+      noiseHit(e, at + 0.03, to, 'bandpass', 700, 1.4, [
+        [0, 0],
+        [0.01, 0.35],
+        [0.16, 0],
+      ]);
+      // Drops falling back on the water.
+      for (const d of [0.16, 0.24, 0.33])
+        noiseHit(e, at + d, to, 'bandpass', 1300 + d * 900, 3, [
+          [0, 0],
+          [0.004, 0.12],
+          [0.05, 0],
+        ]);
+      return 0.5;
+    },
+  },
+  {
+    id: 'SFX_BOW_DRAW',
+    captionKey: 'caption.sfx.bow_draw',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // The stave bending: a slow, low wooden creak rising a little as the string comes back.
+      tone(
+        e,
+        at,
+        to,
+        'sawtooth',
+        [
+          [0, 95],
+          [0.45, 128],
+        ],
+        [
+          [0, 0],
+          [0.08, 0.05],
+          [0.4, 0.04],
+          [0.5, 0],
+        ],
+      );
+      noiseHit(e, at, to, 'bandpass', 520, 4, [
+        [0, 0],
+        [0.1, 0.08],
+        [0.45, 0.05],
+        [0.5, 0],
+      ]);
+      return 0.55;
+    },
+  },
+  {
+    id: 'SFX_BOW_LOOSE',
+    captionKey: 'caption.sfx.bow_loose',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = out(e, 'effects', pan);
+      // The string let go: a dry snap, then its low thrum dying away.
+      noiseHit(e, at, to, 'bandpass', 1500, 1.2, [
+        [0, 0],
+        [0.003, 0.45],
+        [0.04, 0],
+      ]);
+      tone(
+        e,
+        at,
+        to,
+        'triangle',
+        [
+          [0, 150],
+          [0.3, 118],
+        ],
+        [
+          [0, 0],
+          [0.004, 0.3],
+          [0.35, 0.0001],
+        ],
+      );
+      return 0.4;
+    },
+  },
+];
+
 export const TELLS: readonly SoundDef[] = [
   {
     id: 'SFX_TELL_RAN',

@@ -73,11 +73,11 @@ test('music states, stingers and effects each produce a caption', async ({ page 
 
 test('a remapped key persists across a reload', async ({ page }) => {
   await openShell(page);
-  await expect(overlay(page)).toHaveAttribute('data-interact', 'E, Pad 0');
+  await expect(overlay(page)).toHaveAttribute('data-interact', 'E, Mouse 3, Pad 0');
   await page.keyboard.press('F9');
   await page.keyboard.press('KeyG');
-  await expect(overlay(page)).toHaveAttribute('data-interact', 'G, Pad 0');
+  await expect(overlay(page)).toHaveAttribute('data-interact', 'G, Mouse 3, Pad 0');
   await page.reload();
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'shell');
-  await expect(overlay(page)).toHaveAttribute('data-interact', 'G, Pad 0');
+  await expect(overlay(page)).toHaveAttribute('data-interact', 'G, Mouse 3, Pad 0');
 });

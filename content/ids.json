@@ -2513,6 +2513,30 @@
       "origin": "assigned"
     },
     {
+      "id": "SFX_SPLASH",
+      "ref": "splashing through shallow water",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 6 rework: people in water and the bow (generated, Book 11 section 12)."
+    },
+    {
+      "id": "SFX_BOW_DRAW",
+      "ref": "draw and loose",
+      "book": 7,
+      "section": "01",
+      "origin": "assigned",
+      "note": "Stage 6 rework: people in water and the bow (generated, Book 11 section 12)."
+    },
+    {
+      "id": "SFX_BOW_LOOSE",
+      "ref": "draw and loose",
+      "book": 7,
+      "section": "01",
+      "origin": "assigned",
+      "note": "Stage 6 rework: people in water and the bow (generated, Book 11 section 12)."
+    },
+    {
       "id": "SFX_BLOCK",
       "ref": "Block",
       "book": 11,

@@ -21,7 +21,7 @@ import {
 import type { Gait, StepMeasure } from '../audio/synth/footsteps.ts';
 import type { Bus } from '../audio/synth/engine.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
-import { COMBAT, TELLS } from '../audio/synth/sfx.ts';
+import { COMBAT, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -117,7 +117,7 @@ export function startItem(
     };
   }
   if (kind === 'call') {
-    const def = CALLS.find((d) => d.id === id);
+    const def = [...CALLS, ...PEOPLE].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no call ${id}`);
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
@@ -542,8 +542,12 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     SFX_HORN: 'ui.sound.call.horn',
     MUS_STINGER_HORN: 'ui.sound.call.stinger_horn',
     MUS_STINGER_DISCOVERY: 'ui.sound.call.stinger_discovery',
+    SFX_SPLASH: 'ui.sound.call.splash',
+    SFX_BOW_DRAW: 'ui.sound.call.bow_draw',
+    SFX_BOW_LOOSE: 'ui.sound.call.bow_loose',
   };
-  for (const def of CALLS) soundButton(calls, def, callKeys[def.id] ?? def.id, 'call');
+  for (const def of [...CALLS, ...PEOPLE])
+    soundButton(calls, def, callKeys[def.id] ?? def.id, 'call');
   const firePlay = el('button', { 'data-play': 'ambience:hearth' }, t('ui.sound.call.hearth'));
   firePlay.addEventListener('click', () => {
     play('ambience:hearth', {}, 'caption.amb.hearth');
@@ -679,6 +683,7 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...BLIP_LINES.map((l) => `voice:${l.speaker}`),
       ...SURFACES.map((surface) => `step:${surface}`),
       ...CALLS.map((d) => `call:${d.id}`),
+      ...PEOPLE.map((d) => `call:${d.id}`),
       'ambience:hearth',
     ],
     render: (item: string, seconds: number, settings?: RenderSettings, wav?: boolean) =>

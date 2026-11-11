@@ -300,6 +300,12 @@ export function startPlay(
   };
   // The pixel HUD under the text overlay: the hotbar, the target tile and the aim line.
   const hud = createHud(document, atlases);
+  visuals.onSplash = (x) => {
+    if (audio !== null && engine.unlocked)
+      audio.event('WADE_SPLASH', engine.now, {
+        pan: (x - (sim.state.onFoot?.player.x ?? x)) / 200,
+      });
+  };
   const overlay = createOverlay(document);
   const root = overlay.root;
   const items = content.onFoot?.items ?? {};
@@ -378,6 +384,10 @@ export function startPlay(
           const key = e.reason === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room';
           notice = { text: t(key, { name: nameOf(e.detail) }), until: now + captionMs };
         }
+        return;
+      case 'BOW_DRAWN':
+      case 'BOW_LOOSED':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
       case 'BEAT_COMPLETED':
         beat = e.beat;

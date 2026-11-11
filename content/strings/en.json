@@ -852,5 +852,26 @@
   },
   "ui.system.info_off": {
     "text": "Information captions: off. Press {key} to change."
+  },
+  "caption.sfx.splash": {
+    "text": "Splashing through the shallows",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.bow_draw": {
+    "text": "A bow drawn",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.bow_loose": {
+    "text": "A bowstring snaps",
+    "tags": ["INFO"]
+  },
+  "ui.sound.call.splash": {
+    "text": "Wading splash"
+  },
+  "ui.sound.call.bow_draw": {
+    "text": "Bow drawn"
+  },
+  "ui.sound.call.bow_loose": {
+    "text": "Bow loosed"
   }
 }

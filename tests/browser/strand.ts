@@ -5,22 +5,27 @@ import type { Page } from '@playwright/test';
 import { parseTimeBalance, parseWaterBalance } from '../../src/content/balance.ts';
 import { bakeElevation } from '../../src/content/terrain/elevation.ts';
 import { tideAt } from '../../src/sim/calendar/calendar.ts';
-import { bandAt, isDeep, stillWaterLevel } from '../../src/sim/land/water.ts';
+import { bandAt, stillWaterLevel } from '../../src/sim/land/water.ts';
 import { parseZoneMap, tileOf } from '../../src/sim/land/zoneMap.ts';
 import type { Tile } from '../../src/tools/play/openingBot.ts';
 
 const zoneJson = JSON.parse(readFileSync('content/zones/zone_sk_strand.json', 'utf8')) as {
   spawns: Record<string, { x: number; y: number }>;
 };
-export const map = parseZoneMap(zoneJson as unknown, 'content/zones/zone_sk_strand.json');
+export const map = parseZoneMap(zoneJson, 'content/zones/zone_sk_strand.json');
 const balance = JSON.parse(readFileSync('content/balance.json', 'utf8')) as unknown;
 const water = parseWaterBalance(balance);
 const elevation = bakeElevation(map.rows);
 /** The opening's still water level: high water, which holds for the opening's first hours. */
 const level = stillWaterLevel(tideAt({ day: 1, minuteOfDay: 6 * 60 }, parseTimeBalance(balance)));
-/** A tile the keys can walk through: not deep at the point the walk aims for. */
-export const wadeable = (t: Tile): boolean =>
-  !isDeep(bandAt(water, elevation, (t.tx + 0.5) * 24, (t.ty + 0.7) * 24, level));
+/**
+ * A tile the keys can walk through: no deeper than the knee where the walk aims for, so a late
+ * key release on a slow machine never carries the steerer into deep water.
+ */
+export const wadeable = (t: Tile): boolean => {
+  const band = bandAt(water, elevation, (t.tx + 0.5) * 24, (t.ty + 0.7) * 24, level)?.band;
+  return band !== 'WAIST' && band !== 'DEEP';
+};
 export const hildSpawn = zoneJson.spawns['C_HILD'] ?? { x: 0, y: 0 };
 
 export const overlay = (page: Page) => page.locator('.oe-overlay');
@@ -47,9 +52,16 @@ export async function walkAxis(page: Page, axis: 'x' | 'y', target: number): Pro
     const key = axis === 'x' ? (forward ? 'KeyD' : 'KeyA') : forward ? 'KeyS' : 'KeyW';
     await page.keyboard.down(key);
     const deadline = Date.now() + 15_000;
+    // Stop pushing when blocked (deep water, a rock): no progress for a second.
+    let last = at;
+    let lastMoved = Date.now();
     while (Date.now() < deadline) {
       at = await now();
       if (forward ? at >= target - 2 : at <= target + 2) break;
+      if (at !== last) {
+        last = at;
+        lastMoved = Date.now();
+      } else if (Date.now() - lastMoved > 1000) break;
     }
     await page.keyboard.up(key);
     // Let the last frames land before checking again.
@@ -68,6 +80,9 @@ export async function walkPath(page: Page, path: readonly Tile[]): Promise<void>
     const turns = next === undefined || (axis === 'x' ? next.ty !== b.ty : next.tx !== b.tx);
     if (!turns) continue;
     await walkAxis(page, axis, axis === 'x' ? (b.tx + 0.5) * 24 : (b.ty + 0.7) * 24);
+    // Correct a late release along the other axis before the next run.
+    if (axis === 'x') await walkAxis(page, 'y', (b.ty + 0.7) * 24);
+    else await walkAxis(page, 'x', (b.tx + 0.5) * 24);
   }
 }
 
