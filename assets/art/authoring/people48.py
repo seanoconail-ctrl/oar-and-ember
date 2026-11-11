@@ -247,7 +247,7 @@ def separate(parts, order, soft_pairs):
             for n in ((x - 1, y), (x, y - 1), (x + 1, y)):
                 o = owner[L].get(n)
                 if o is not None and o is not me and img[n][2] > z + 0.01 and img[n][0] not in MARKS:
-                    img[(x, y)] = (mat, INNER_DARK if img[n][2] > z + 2.5 else 0, z)
+                    img[(x, y)] = (mat, INNER_DARK if img[n][2] > z + 0.5 else 0, z)
                     break
     out = {}
     below_z = {}
@@ -773,7 +773,8 @@ def fig(ch, facing, pose, prev):
         if k <= 11:
             tb.row(row, x0, x1, 'linen')
         mat = ch.torso_mat(k)
-        (tc if k < UPPER_ROWS else tl).row(row, x0, x1, mat)
+        # The waist above the belt belongs with the chest unless it is the sash.
+        (tc if k < UPPER_ROWS or (k < 8 and mat == ch.sleeve) else tl).row(row, x0, x1, mat)
     # The neck opening, the buckle and the folds.
     top_row, _, ctop = rows[0]
     cx = math.floor(ctop)
