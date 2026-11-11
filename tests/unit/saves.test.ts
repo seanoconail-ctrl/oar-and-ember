@@ -1,7 +1,7 @@
 /**
  * Stage 3 acceptance check 2: save under 200 ms; reload reproduces the hash; the migration chain.
- * Golden saves 1 to 5 are frozen and load through it; golden save 6 (Stage 8: people with
- * happiness, friendship and fear, their day, talk and jobs) is reproduced by its scenario.
+ * Golden saves 1 to 6 are frozen and load through it; golden save 7 (Stage 9: the campaign's
+ * options, fights and the wreck-scavengers) is reproduced by its scenario.
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -27,7 +27,8 @@ import {
   GOLDEN_04,
   GOLDEN_05,
   GOLDEN_06,
-  goldenSave06,
+  GOLDEN_07,
+  goldenSave07,
 } from '../../src/tools/saves/golden.ts';
 import { repoFile } from './books.ts';
 
@@ -114,7 +115,7 @@ describe('save files', () => {
       day: 1,
       chapter: 'CH_1_WRECK',
       seed: 'save-test',
-      schemaVersion: 6,
+      schemaVersion: 7,
     });
     const resumed = createSimulation(b, state);
     for (let i = 0; i < 50_000; i++) {
@@ -125,8 +126,8 @@ describe('save files', () => {
   });
 
   it('migrate a save through the chain', () => {
-    const v7: Migration = {
-      from: 6,
+    const v8: Migration = {
+      from: 7,
       describe: 'test: move player.name into player.identity.name',
       up: (s) => {
         const player = s['player'] as Record<string, unknown>;
@@ -137,11 +138,11 @@ describe('save files', () => {
     const world = campaign();
     world.player.name = 'Ingrid';
     const { state, migratedFrom } = readSave(writeSave(world, meta), {
-      migrations: [v7],
-      currentVersion: 7,
+      migrations: [v8],
+      currentVersion: 8,
     });
-    expect(migratedFrom).toBe(6);
-    expect(state.version).toBe(7);
+    expect(migratedFrom).toBe(7);
+    expect(state.version).toBe(8);
     expect((state.player as unknown as { identity: { name: string } }).identity.name).toBe(
       'Ingrid',
     );
@@ -163,7 +164,7 @@ describe('save files', () => {
       () => readSave({ ...file, header: { ...file.header, schemaVersion: 9 } }),
       'FUTURE_VERSION',
     );
-    expectReason(() => readSave(file, { migrations: [], currentVersion: 7 }), 'NO_MIGRATION');
+    expectReason(() => readSave(file, { migrations: [], currentVersion: 8 }), 'NO_MIGRATION');
     // Schema 3 to 4 needs balance.json: without it the load says so rather than guessing.
     expectReason(() => readSave(JSON.parse(repoFile(GOLDEN_03)) as SaveFile), 'NO_MIGRATION');
     expectReason(
@@ -243,7 +244,7 @@ describe('golden save 1 (schema 1, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(1);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(1);
-    expect(state.version).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.onFoot).toBeNull();
     expect(state.player.hotbar).toEqual({ slots: [], selected: 0 });
     expect(state.player.inventory).toEqual({});
@@ -266,7 +267,7 @@ describe('golden save 2 (schema 2, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(2);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(2);
-    expect(state.version).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.onFoot?.items).toEqual([]);
     expect(state.onFoot?.projectiles).toEqual([]);
     expect(state.onFoot?.stuck).toEqual([]);
@@ -287,7 +288,7 @@ describe('golden save 3 (schema 3, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(3);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(3);
-    expect(state.version).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_BOW', 'ITEM_SEAX', null]);
     expect(state.player.inventory).toEqual({
@@ -317,7 +318,7 @@ describe('golden save 4 (schema 4, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(4);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(4);
-    expect(state.version).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_SEAX', 'ITEM_BOW', null]);
     expect(state.player.inventory).toEqual({
@@ -355,7 +356,7 @@ describe('golden save 5 (schema 5, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(5);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(5);
-    expect(state.version).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.homes['ISLE_SKARV']?.building?.id).toBe('BLD_SAIL_SHELTER');
     expect(state.oneShots['BEAT_1_BROCH']).toBe(1);
@@ -386,13 +387,14 @@ describe('golden save 5 (schema 5, frozen)', () => {
   });
 });
 
-describe('golden save 6 (schema 6)', () => {
+describe('golden save 6 (schema 6, frozen)', () => {
   const golden = JSON.parse(repoFile(GOLDEN_06)) as SaveFile;
 
-  it("loads, matches its hash and holds the camp, Hild's day, her talk and her job", () => {
-    const { state, migratedFrom } = readSave(golden);
-    expect(migratedFrom).toBeNull();
-    expect(state.version).toBe(6);
+  it("loads through the migration and holds the camp, Hild's day, her talk and her job", () => {
+    expect(golden.header.schemaVersion).toBe(6);
+    const { state, migratedFrom } = readSave(golden, { context });
+    expect(migratedFrom).toBe(6);
+    expect(state.version).toBe(7);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.facts).toMatchObject({
       'ch1.at_broch': true,
@@ -412,9 +414,53 @@ describe('golden save 6 (schema 6)', () => {
     expect(state.ledger.map((d) => d.tag)).toContain('RESCUE');
     expect(state.report?.day).toBe(2);
     expect(state.report?.lines.some((l) => l.key === 'report.work.job')).toBe(true);
+    // Schema 7: a new campaign's options, no game over, and the wreck-scavengers among the people.
+    expect(state.options).toEqual({ secondWind: false, ransMercy: false, parryWindow: null });
+    expect(state.gameOver).toBeNull();
+    expect(state.people['E_WRECKER_KETILL']).toMatchObject({ status: 'alive' });
+  });
+
+  it('plays on after the migration', () => {
+    const { state } = readSave(golden, { context });
+    const tick = state.tick;
+    const sim = createSimulation(b, state);
+    for (let i = 0; i < 600; i++) sim.step();
+    expect(sim.state.tick).toBe(tick + 600);
+  });
+
+  it('needs the people content to migrate', () => {
+    expect(() => readSave(golden, { context: { balance } })).toThrow(SaveError);
+  });
+});
+
+describe('golden save 7 (schema 7)', () => {
+  const golden = JSON.parse(repoFile(GOLDEN_07)) as SaveFile;
+
+  it('loads, matches its hash and holds the options, the scavengers by the wreck and a fighter', () => {
+    const { state, migratedFrom } = readSave(golden);
+    expect(migratedFrom).toBeNull();
+    expect(state.version).toBe(7);
+    expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
+    expect(state.options.secondWind).toBe(true);
+    expect(state.gameOver).toBeNull();
+    expect(state.facts['enc.SCN_SK_WRECKERS']).toBe(true);
+    const actors = state.onFoot?.actors ?? {};
+    expect(Object.keys(actors).sort()).toEqual([
+      'E_WRECKER_CONN',
+      'E_WRECKER_KETILL',
+      'E_WRECKER_SVART',
+    ]);
+    expect(actors['E_WRECKER_KETILL']?.fight).toMatchObject({
+      side: 'ENEMY',
+      leader: true,
+      f: { weapon: 'Axe', shield: true, heavy: true },
+    });
+    expect(actors['E_WRECKER_CONN']?.fight?.bow).toBe(true);
+    expect(state.onFoot?.player.fight).toMatchObject({ weapon: 'Seax', state: 'idle' });
+    expect(state.people['C_HILD']?.job?.kind).toBe('CAMP');
   });
 
   it('is reproduced exactly by its scenario', () => {
-    expect(goldenSave06()).toEqual(golden);
+    expect(goldenSave07()).toEqual(golden);
   });
 });

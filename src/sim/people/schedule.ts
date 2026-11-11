@@ -38,7 +38,7 @@ export interface Activity {
 }
 
 /** Jobs done out of doors stop at dark (the season's light, Book 10 section 02). */
-const NEEDS_LIGHT: ReadonlySet<JobKind> = new Set(['FISHER']);
+const NEEDS_LIGHT: ReadonlySet<JobKind> = new Set(['FISHER', 'DRIFTWOOD']);
 
 const at = (s: Spot, pose: ResidentPlace['pose'], task?: Id): ResidentPlace => ({
   zone: s.zone,

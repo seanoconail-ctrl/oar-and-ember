@@ -1,0 +1,118 @@
+{
+  "about": "Combat content (Stage 9; Book 2 sections 12 and 13). Numbers come from balance.json (Book 10 sections 06 and 07), never from here: this file says which Book 10 weapon row each item is, who fights with what, where the three wreck-scavengers stand (decision S9-11), which places are safe for a downed ally, and the lines people shout.",
+  "weapons": {
+    "ITEM_SEAX": { "row": "Seax", "layer": "seax" },
+    "ITEM_AXE": { "row": "Axe", "layer": "axe", "dismember": "HEAVY" },
+    "ITEM_SPEAR": { "row": "Spear", "layer": "spear" },
+    "ITEM_SWORD": { "row": "Sword", "layer": "sword", "dismember": "ANY" },
+    "ITEM_DANE_AXE": { "row": "Dane axe", "layer": "dane_axe", "dismember": "ANY" }
+  },
+  "fighters": [
+    {
+      "person": "E_WRECKER_KETILL",
+      "archetype": "Outlaw",
+      "weapon": "ITEM_AXE",
+      "shield": true,
+      "heavy": true,
+      "leader": true,
+      "look": "wrecker_ketill"
+    },
+    {
+      "person": "E_WRECKER_SVART",
+      "archetype": "Outlaw",
+      "weapon": "ITEM_SPEAR",
+      "shield": true,
+      "look": "wrecker_svart"
+    },
+    {
+      "person": "E_WRECKER_CONN",
+      "archetype": "Archer",
+      "weapon": "ITEM_SEAX",
+      "bow": true,
+      "look": "wrecker_conn"
+    }
+  ],
+  "crew": {
+    "C_HILD": {},
+    "C_ODDI": { "weapon": "ITEM_SEAX" },
+    "C_BRAN": { "weapon": "ITEM_AXE", "shield": true, "heavy": true },
+    "C_RUNA": { "weapon": "ITEM_SEAX" },
+    "C_KARI": { "weapon": "ITEM_AXE", "shield": true },
+    "C_AINE": { "weapon": "ITEM_SEAX", "bow": true }
+  },
+  "encounters": [
+    {
+      "id": "SCN_SK_WRECKERS",
+      "zone": "ZONE_SK_STRAND",
+      "after": "ch1.at_broch",
+      "takesCaptives": false,
+      "checkpoint": "wreckers",
+      "members": [
+        {
+          "person": "E_WRECKER_KETILL",
+          "x": 25.5,
+          "y": 34.7,
+          "facing": "w",
+          "task": "TASK_DRIFTWOOD"
+        },
+        {
+          "person": "E_WRECKER_SVART",
+          "x": 23.4,
+          "y": 35.8,
+          "facing": "s",
+          "task": "TASK_DRIFTWOOD"
+        },
+        { "person": "E_WRECKER_CONN", "x": 30.6, "y": 34.6, "facing": "w" }
+      ]
+    }
+  ],
+  "safePlaces": [
+    {
+      "key": "camp",
+      "about": "On Skarvholm the camp at the broch is the household's village (Book 10 section 06, safePlaces; decision S9-13).",
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 35.5,
+      "y": 31.6,
+      "r": 4.6
+    }
+  ],
+  "barks": {
+    "E_WRECKER_KETILL": {
+      "alarm": ["e_wrecker_ketill.bark.alarm.01", "e_wrecker_ketill.bark.alarm.02"],
+      "taunt": ["e_wrecker_ketill.bark.taunt.01", "e_wrecker_ketill.bark.taunt.02"],
+      "hurt": ["e_wrecker_ketill.bark.hurt.01"],
+      "plead": ["e_wrecker_ketill.bark.plead.01"],
+      "flee": ["e_wrecker_ketill.bark.flee.01"],
+      "fallen": ["e_wrecker_ketill.bark.fallen.01"]
+    },
+    "E_WRECKER_SVART": {
+      "alarm": ["e_wrecker_svart.bark.alarm.01"],
+      "taunt": ["e_wrecker_svart.bark.taunt.01", "e_wrecker_svart.bark.taunt.02"],
+      "hurt": ["e_wrecker_svart.bark.hurt.01"],
+      "plead": ["e_wrecker_svart.bark.plead.01"],
+      "flee": ["e_wrecker_svart.bark.flee.01"],
+      "fallen": ["e_wrecker_svart.bark.fallen.01"]
+    },
+    "E_WRECKER_CONN": {
+      "alarm": ["e_wrecker_conn.bark.alarm.01"],
+      "taunt": ["e_wrecker_conn.bark.taunt.01"],
+      "hurt": ["e_wrecker_conn.bark.hurt.01"],
+      "plead": ["e_wrecker_conn.bark.plead.01", "e_wrecker_conn.bark.plead.02"],
+      "flee": ["e_wrecker_conn.bark.flee.01"],
+      "fallen": ["e_wrecker_conn.bark.fallen.01"]
+    },
+    "C_HILD": {
+      "danger": ["c_hild.bark.combat.danger.01"],
+      "downed": ["c_hild.bark.combat.downed.01"],
+      "safe": ["c_hild.bark.combat.safe.01"],
+      "FOLLOW": ["c_hild.bark.order.follow.01"],
+      "HOLD": ["c_hild.bark.order.hold.01"],
+      "WITHDRAW": ["c_hild.bark.order.withdraw.01"],
+      "ATTACK": ["c_hild.bark.order.attack.01"],
+      "PROTECT": ["c_hild.bark.order.protect.01"],
+      "CARRY": ["c_hild.bark.order.carry.01"],
+      "refuse": ["c_hild.bark.order.refuse.01"],
+      "lift": ["c_hild.bark.combat.lift.01"]
+    }
+  }
+}

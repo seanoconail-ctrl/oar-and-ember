@@ -108,6 +108,11 @@
       "frames": 2,
       "ticks": 36,
       "loop": true
+    },
+    "stagger": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
     }
   },
   "events": {
@@ -1411,6 +1416,38 @@
     "sleep/w/1": [
       32,
       3408
+    ],
+    "stagger/s/0": [
+      0,
+      3456
+    ],
+    "stagger/s/1": [
+      32,
+      3456
+    ],
+    "stagger/n/0": [
+      0,
+      3504
+    ],
+    "stagger/n/1": [
+      32,
+      3504
+    ],
+    "stagger/e/0": [
+      0,
+      3552
+    ],
+    "stagger/e/1": [
+      32,
+      3552
+    ],
+    "stagger/w/0": [
+      0,
+      3600
+    ],
+    "stagger/w/1": [
+      32,
+      3600
     ]
   }
 }

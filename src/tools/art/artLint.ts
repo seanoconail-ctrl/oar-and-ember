@@ -26,9 +26,12 @@ export const SHEET_NAME =
  * addendum 2.3 section 11). Every other actor_ sheet is an animal.
  */
 export const PERSON_SHEET = /^actor_((p|c|l|r|e|h)_[a-z0-9]+(_[a-z0-9]+)*|heavy)$/;
-/** An equipment layer (Book 7 section 11): `layer_<slot>_<name>_<body>`. */
+/**
+ * An equipment layer (Book 7 section 11): `layer_<slot>_<name>_<body>`; Stage 9 adds the bloodied
+ * overlay (Book 7 section 12) as the `blood` slot (decision S9-18).
+ */
 export const LAYER_SHEET =
-  /^layer_(clothing|cloak|helmet|armour|shield|weapon)_[a-z0-9]+(_[a-z0-9]+)*$/;
+  /^layer_(clothing|cloak|helmet|armour|shield|weapon|blood)_[a-z0-9]+(_[a-z0-9]+)*$/;
 /** The heavy build moves heavier: a deeper drop on its down frames (addendum 2.3 section 11). */
 export const isHeavy = (name: string): boolean => /(^|_)heavy(_|$)/.test(name);
 

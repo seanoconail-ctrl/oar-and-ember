@@ -70,7 +70,13 @@ export function stepResident(
   const found = findActor(onFoot, id);
   if (found === null) return;
   const { zone, actor, visible } = found;
-  if (actor.pose === 'carried' || actor.pose === 'down' || actor.pose === 'call') return;
+  if (
+    actor.pose === 'carried' ||
+    actor.pose === 'down' ||
+    actor.pose === 'call' ||
+    actor.pose === 'dead'
+  )
+    return;
   const map = maps.get(zone);
   const target = maps.get(place.zone);
   if (map === undefined || target === undefined) return;

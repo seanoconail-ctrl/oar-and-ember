@@ -893,13 +893,13 @@
     "text": "Right-click  Pick up {item}"
   },
   "ui.tip.seax": {
-    "text": "{use} strikes with the seax towards the cursor. With nothing in hand, {use} shoves."
+    "text": "{use} strikes with the seax towards the cursor; hold {use} for a heavy blow. {parry} parries, {dodge} dodges, {shove} shoves."
   },
   "ui.tip.seax.keys": {
-    "text": "{use} strikes with the seax the way you face. With nothing in hand, {use} shoves."
+    "text": "{use} strikes with the seax the way you face; hold {use} for a heavy blow. {parry} parries, {dodge} dodges, {shove} shoves."
   },
   "ui.tip.seax.pad": {
-    "text": "{use} strikes with the seax towards the right stick. With nothing in hand, {use} shoves."
+    "text": "{use} strikes with the seax towards the right stick; hold {use} for a heavy blow. {parry} parries, {dodge} dodges, {shove} shoves."
   },
   "ui.tip.bow": {
     "text": "{slot} takes the bow in hand. Hold {use} to draw and aim with the mouse; let go to loose. You stand still while it is drawn: {cancel} lowers it."
@@ -1496,6 +1496,9 @@
   },
   "p_steerer.talk.job.camp": {
     "text": "Keep the camp: the fire and the pot."
+  },
+  "p_steerer.talk.job.driftwood": {
+    "text": "Walk the weed line for driftwood."
   },
   "p_steerer.talk.job.builder": {
     "text": "Raise the shelter in the broch."
@@ -2296,6 +2299,9 @@
   "job.name.camp": {
     "text": "keeping the camp"
   },
+  "job.name.driftwood": {
+    "text": "gathering driftwood"
+  },
   "job.name.builder": {
     "text": "raising the shelter"
   },
@@ -2595,5 +2601,312 @@
   },
   "soundtest.line.resident": {
     "text": "Steerer. The fire's lit, and the tide is turning. Will you eat?"
+  },
+  "person.name.e_wrecker_ketill": {
+    "text": "Ketill Wreck-Hand"
+  },
+  "person.name.e_wrecker_svart": {
+    "text": "Svart"
+  },
+  "person.name.e_wrecker_conn": {
+    "text": "Conn"
+  },
+  "person.short.e_wrecker_ketill": {
+    "text": "Big wrecker"
+  },
+  "person.short.e_wrecker_svart": {
+    "text": "Wrecker"
+  },
+  "person.short.e_wrecker_conn": {
+    "text": "Young wrecker"
+  },
+  "e_wrecker_ketill.bark.alarm.01": {
+    "text": "Someone on the beach! Up, up!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.alarm.02": {
+    "text": "Walk on, castaway. This wreck is ours.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.bark.taunt.01": {
+    "text": "The sea gave it up. We take it.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.taunt.02": {
+    "text": "Come on, then. I have dug graves before.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.bark.hurt.01": {
+    "text": "You will pay for that cut.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.bark.plead.01": {
+    "text": "Enough! Take the wreck. Take all of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.bark.flee.01": {
+    "text": "Back to the cave!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.fallen.01": {
+    "text": "Get up, Svart, you fool!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.alarm.01": {
+    "text": "Ketill! A stranger, coming this way!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.taunt.01": {
+    "text": "Plenty of room on that skerry for you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.taunt.02": {
+    "text": "Closer. Come a step closer.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.hurt.01": {
+    "text": "My arm! My arm!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.plead.01": {
+    "text": "I have done! I have done. Let me be.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.flee.01": {
+    "text": "Run for the skiff!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.fallen.01": {
+    "text": "Ketill is down!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.alarm.01": {
+    "text": "Someone is coming!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.taunt.01": {
+    "text": "I have an arrow for you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.bark.hurt.01": {
+    "text": "I am hit! I am hit!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.plead.01": {
+    "text": "Do not! I will go. I will go!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.bark.plead.02": {
+    "text": "It was only salvage. Let me go home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.bark.flee.01": {
+    "text": "I am away!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.fallen.01": {
+    "text": "They have killed him!",
+    "tags": ["VOICED"]
+  },
+  "c_hild.bark.combat.danger.01": {
+    "text": "Men at the wreck, Steerer. Armed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.combat.downed.01": {
+    "text": "I am down. Get me to the fire.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.combat.safe.01": {
+    "text": "The fire. Good. I will live.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.combat.lift.01": {
+    "text": "Up! Up, Steerer. Not yet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.follow.01": {
+    "text": "With you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.hold.01": {
+    "text": "Holding.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.withdraw.01": {
+    "text": "Back to the camp.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.attack.01": {
+    "text": "That one? Done.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.protect.01": {
+    "text": "I am at your back.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.carry.01": {
+    "text": "Carrying. Clear the way.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.order.refuse.01": {
+    "text": "Not on this leg, Steerer.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.sfx.light_attack": {
+    "text": "A blade swings",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.heavy_swing": {
+    "text": "A heavy blow swings",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.hit_flesh": {
+    "text": "A blade bites",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.hit_mail": {
+    "text": "A blow rings on mail",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.hit_shield": {
+    "text": "A blow on a shield",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.dodge": {
+    "text": "A quick step aside",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.shove": {
+    "text": "A hard shove",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gore_wet": {
+    "text": "Blood spatters",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gore_bone": {
+    "text": "Bone cracks",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gore_dismember": {
+    "text": "A limb hewn off",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.downed": {
+    "text": "Someone falls, breathing hard",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.body_fall": {
+    "text": "A body falls",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.weapon_drop": {
+    "text": "A weapon thrown down",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.spear_throw": {
+    "text": "A spear thrown",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.arrow_body": {
+    "text": "An arrow strikes flesh",
+    "tags": ["INFO"]
+  },
+  "caption.stinger.game_over": {
+    "text": "A slow drum, then silence",
+    "tags": ["INFO"]
+  },
+  "caption.music.combat_2": {
+    "text": "Fighting music, rising",
+    "tags": ["INFO"]
+  },
+  "caption.music.combat_3": {
+    "text": "Fighting music, at its height",
+    "tags": ["INFO"]
+  },
+  "caption.info.finish_warning": {
+    "text": "A blade raised over {target}",
+    "tags": ["INFO"]
+  },
+  "caption.info.second_wind": {
+    "text": "Down. An ally can lift you",
+    "tags": ["INFO", "ADDRESS_STEERER"]
+  },
+  "caption.info.surrender": {
+    "text": "{name} kneels, weapon down",
+    "tags": ["INFO"]
+  },
+  "caption.info.flee": {
+    "text": "{name} runs",
+    "tags": ["INFO"]
+  },
+  "caption.info.brought_home": {
+    "text": "{name} is safe at the camp",
+    "tags": ["INFO"]
+  },
+  "caption.info.left_behind": {
+    "text": "{name} was left behind",
+    "tags": ["INFO"]
+  },
+  "ui.gameover.title": {
+    "text": "{steerer} has fallen.",
+    "tags": ["ABOUT_STEERER"]
+  },
+  "ui.gameover.line": {
+    "text": "The fight is lost. The household waits for word that will not come."
+  },
+  "ui.gameover.reload": {
+    "text": "{key}  Reload the latest save (day {day})"
+  },
+  "ui.gameover.restart": {
+    "text": "{key}  Begin again"
+  },
+  "ui.prompt.finish": {
+    "text": "Hold {key}  Finish {name}"
+  },
+  "ui.prompt.finish_click": {
+    "text": "Hold {key}  Finish {name}"
+  },
+  "ui.refusal.no_shield": {
+    "text": "No shield"
+  },
+  "ui.refusal.cannot_fight": {
+    "text": "Cannot fight"
+  },
+  "ui.system.gore": {
+    "text": "Gore: {level}. Press {key} to change."
+  },
+  "ui.gore.full": {
+    "text": "full"
+  },
+  "ui.gore.low": {
+    "text": "low"
+  },
+  "ui.gore.off": {
+    "text": "off"
+  },
+  "ui.system.second_wind_on": {
+    "text": "Second wind: on. Press {key} to change."
+  },
+  "ui.system.second_wind_off": {
+    "text": "Second wind: off. Press {key} to change."
+  },
+  "ui.order.follow": {
+    "text": "Follow"
+  },
+  "ui.order.hold": {
+    "text": "Hold"
+  },
+  "ui.order.attack": {
+    "text": "Attack my target"
+  },
+  "ui.order.protect": {
+    "text": "Protect me"
+  },
+  "ui.order.carry": {
+    "text": "Carry the downed"
+  },
+  "ui.order.withdraw": {
+    "text": "Withdraw to the camp"
   }
 }

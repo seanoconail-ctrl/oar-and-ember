@@ -3,19 +3,23 @@
   "layers": {
     "s": [
       "actor_c_hild",
-      "layer_clothing_dress_hild"
+      "layer_clothing_dress_hild",
+      "layer_gore_blood_hild"
     ],
     "n": [
       "actor_c_hild",
-      "layer_clothing_dress_hild"
+      "layer_clothing_dress_hild",
+      "layer_gore_blood_hild"
     ],
     "e": [
       "actor_c_hild",
-      "layer_clothing_dress_hild"
+      "layer_clothing_dress_hild",
+      "layer_gore_blood_hild"
     ],
     "w": [
       "actor_c_hild",
-      "layer_clothing_dress_hild"
+      "layer_clothing_dress_hild",
+      "layer_gore_blood_hild"
     ]
   }
 }

@@ -186,10 +186,17 @@ CW, CH = 48, 56
 OX, OY = 8, 4        # the body canvas sits at (8, 4) inside the working canvas
 
 
+def set_canvas(big):
+    """Stage 9: a spear needs a larger working canvas round the same anchor. The existing people
+    keep the small one, so their approved frames are written exactly as before."""
+    global CW, CH, OX, OY
+    CW, CH, OX, OY = (78, 86, 23, 19) if big else (48, 56, 8, 4)
+
+
 # Materials that throw a shadow on the pixel below them inside the same part.
 CASTERS = {'hair', 'sash', 'belt', 'tunic', 'cloak', 'shawl', 'iron', 'dress', 'brow'}
 # Materials that are fixed marks: no shading.
-MARKS = {'eye', 'mouth', 'glint', 'bglint', 'blood', 'nose', 'lash', 'fold', 'wrapd', 'cloakf', 'head', 'fletch', 'plait'}
+MARKS = {'eye', 'mouth', 'glint', 'bglint', 'blood', 'blood_dry', 'blood_fresh', 'edge', 'nose', 'lash', 'fold', 'wrapd', 'cloakf', 'head', 'fletch', 'plait'}
 
 
 def shade_part(p):
@@ -294,6 +301,9 @@ def separate(parts, order, soft_pairs):
 LETTERS = 'ABCDEFGHIJLMNOPQRSTUVWXYZabcdefghijlmnopqrstuvwxyz0123456789_'
 
 
+CUT = set()
+
+
 class Sheet:
     """One layer sheet being written: its frames and the letters its materials use."""
 
@@ -348,7 +358,8 @@ class Sheet:
             rows.append(r)
         # Nothing may be cut off by the canvas.
         for (x, y) in img:
-            assert ox <= x < ox + w and oy <= y < oy + h, (self.name, state, facing, i, x, y)
+            if not (ox <= x < ox + w and oy <= y < oy + h):
+                CUT.add((self.name, state, facing, i))
         self.frames[(state, facing, i)] = rows
 
     def text(self, anims, events, poses, extra=''):
@@ -441,6 +452,12 @@ class Pose:
         self.bow = 'back'                  # 'back' or a draw stage 0..3
         self.tool = None                   # a work loop's tool (Stage 7): stick, line, mallet
         self.tool_stage = 0
+        # Stage 9: how weapons are held (None: carried as each weapon is carried at rest), the
+        # blade's direction from the hand (r, f, u), the shield's carriage, weapons thrown down.
+        self.hold = None
+        self.wdir = None
+        self.shield = None
+        self.dropped = False
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -1020,11 +1037,14 @@ class Steerer:
                     tails.put(kx - 1 + side + round(sway + trail + spread * t), y, 'sash')
         if self.sash:
             parts.append(tails)
-        cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch=True)
+        if getattr(self, 'cloak', True):
+            cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch=getattr(self, 'brooch', True))
         if self.helmet:
             helmet(parts, facing, j, pose)
         bow(parts, facing, j, pose, m)
         work_tool(parts, facing, j, pose)
+        # Stage 9: weapons in hand or carried, and a shield (drawn by draw_arms, below).
+        draw_arms(parts, facing, j, pose, self)
 
 
 def cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch):
@@ -2307,13 +2327,738 @@ LAYER_NOTE = {
 }
 
 
+# ===================================================================================== Stage 9
+# Fighting (Book 7 sections 07, 12 and 16; Book 2 section 12's states). Every body that fights
+# (the steerer's two models, the heavy build and the three wreck-scavengers) shares these states,
+# so every one of its layers has their frames:
+#   windup 2 (the raised weapon: the tell of every attack), light1 to light3 3 each (a strike:
+#   cocked, the blow, the follow-through), charge 2 and chargewalk 6 (held high, and walking slowly
+#   so), heavy 3, block 2, parry 2, dodge 3, shove 3, stagger 2, finish 1 (the finishing warning:
+#   the weapon raised high, a pose no other attack uses), surrender 2 (kneeling, empty hands up),
+#   downed 2 (lying, breathing, a hand moving), dead 1 and dead_head, dead_arm, dead_leg (the
+#   corpse of a dismembering blow), and piece_head, piece_arm, piece_leg (what it took).
+# Weapons are held in the right hand and a shield on the left forearm (never mirrored); a weapon
+# and a shield are layers of their own, on a larger canvas round the same foot anchor.
+
+def vnorm(v):
+    l = math.sqrt(sum(c * c for c in v)) or 1e-6
+    return tuple(c / l for c in v)
+
+
+def vcross(a, b):
+    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+
+def vscale(v, k):
+    return tuple(c * k for c in v)
+
+
+CAMERA = {'s': (0.0, 1.0, 0.35), 'n': (0.0, -1.0, 0.35), 'e': (1.0, 0.0, 0.35), 'w': (-1.0, 0.0, 0.35)}
+
+
+def blade_line(part, facing, a, b, w, mat, bias=0.15):
+    zseg(part, facing, a, b, w, mat, bias)
+
+
+def draw_arms(parts, facing, j, pose, ch):
+    """The weapons a person carries (ch.arms): a seax, an axe or a spear in the right hand or carried
+    at rest, and a round shield on the left forearm or slung on the back."""
+    arms = getattr(ch, 'arms', ())
+    if not arms:
+        return
+    R = j['R']['wrist']
+    combat = pose.hold == 'held'
+    if pose.dropped:
+        dropped_arms(parts, facing, j, pose, ch)
+        return
+    for kind in arms:
+        if kind in ('bow',):
+            continue
+        if kind == 'shield':
+            shield(parts, facing, j, pose, ch)
+            continue
+        wp = Part('weapon', 0, kind, side=0)
+        if kind == 'seax':
+            if combat:
+                d = vnorm(pose.wdir or (0.0, 1.0, 0.0))
+                grip = add(R, vscale(d, 0.5))
+                blade_line(wp, facing, add(grip, vscale(d, -2.5)), grip, 1, 'haft', 0.2)
+                blade_line(wp, facing, grip, add(grip, vscale(d, 7.5)), 2 if facing in 'e w' else 1, 'blade', 0.25)
+                tip = P2(facing, add(grip, vscale(d, 5.5)))
+                wp.put(tip[0], tip[1], 'edge', tip[2] + 0.3)
+            else:
+                # Sheathed across the front of the belt, the grip at the right hip (Book 7: seaxes
+                # across the front).
+                P = j['P']
+                a = add(P, (-3.5, 2.4, 3.6))
+                b = add(P, (3.0, 2.4, 3.6))
+                blade_line(wp, facing, a, b, 2, 'sheath', 0.5)
+                h = add(P, (5.0, 2.4, 3.8))
+                blade_line(wp, facing, b, h, 1, 'haft', 0.55)
+        elif kind == 'axe':
+            if combat:
+                d = vnorm(pose.wdir or (0.0, 0.3, 1.0))
+            else:
+                d = None
+            if d is None:
+                # Thrust through the belt at the left hip, the head up behind the arm.
+                P = j['P']
+                bot = add(P, (-4.6, 0.6, -3.0))
+                top = add(P, (-4.8, 0.4, 9.0))
+                blade_line(wp, facing, bot, top, 2, 'haft', -0.4)
+                axe_head(wp, facing, top, (0.0, 0.0, 1.0), (0.0, -1.0, 0.0), -0.3)
+            else:
+                butt = add(R, vscale(d, -2.0))
+                end = add(R, vscale(d, 11.0))
+                blade_line(wp, facing, butt, end, 2, 'haft', 0.2)
+                edge = vnorm(vcross(d, (1.0, 0.0, 0.0))) if abs(d[0]) < 0.8 else vnorm(vcross(d, (0.0, 1.0, 0.0)))
+                if edge[1] < 0 and abs(d[1]) < 0.6:
+                    edge = vscale(edge, -1)
+                axe_head(wp, facing, end, d, edge, 0.3)
+        elif kind == 'spear':
+            d = vnorm(pose.wdir if combat and pose.wdir else (0.0, 0.35, 0.94))
+            butt = add(R, vscale(d, -15.0))
+            tip = add(R, vscale(d, 27.0))
+            blade_line(wp, facing, butt, tip, 1 if not combat or facing in 's n' else 2, 'haft', 0.2)
+            head0 = add(R, vscale(d, 23.0))
+            blade_line(wp, facing, head0, add(tip, vscale(d, 1.5)), 2, 'blade', 0.3)
+            t = P2(facing, add(tip, vscale(d, -1.0)))
+            wp.put(t[0], t[1], 'edge', t[2] + 0.35)
+        parts.append(wp)
+
+
+def axe_head(part, facing, at, d, edge, bias):
+    """A bearded axe head at the end of the haft: the blade out along `edge`, its beard down the
+    haft (Book 7: axes threaten shields)."""
+    for k in range(0, 5):
+        a = add(at, vscale(d, -k * 0.8))
+        b = add(a, vscale(edge, 3.6 - 0.35 * k))
+        blade_line(part, facing, a, b, 1, 'blade' if k < 4 else 'iron', bias)
+    e0 = P2(facing, add(at, vscale(edge, 2.2)))
+    part.put(e0[0], e0[1], 'edge', e0[2] + bias + 0.1)
+
+
+def shield(parts, facing, j, pose, ch):
+    """A round shield of boards with an iron boss and a hide rim, about 14 px across. On the left
+    forearm (facing out to the left), held up in front (blocking), raised high, or on the back."""
+    mode = pose.shield or ('back' if pose.hold != 'held' else 'arm')
+    S = j['S']
+    L = j['L']['wrist']
+    if mode == 'front':
+        c, n = add(S, (-1.0, 6.0, -5.0)), (0.0, 1.0, 0.1)
+    elif mode == 'up':
+        c, n = add(S, (-1.5, 4.5, 1.0)), (0.0, 0.8, 0.6)
+    elif mode == 'arm':
+        c, n = add(L, (-1.2, 0.8, 1.2)), (-0.85, 0.5, 0.1)
+    else:
+        c, n = add(S, (0.0, -4.8, -4.0)), (0.0, -1.0, 0.15)
+    n = vnorm(n)
+    up = (0.0, 0.0, 1.0) if abs(n[2]) < 0.9 else (0.0, 1.0, 0.0)
+    e1 = vnorm(vcross(n, up))
+    e2 = vcross(n, e1)
+    cam = vnorm(CAMERA[facing])
+    face = sum(n[k] * cam[k] for k in range(3)) > 0
+    sp = Part('shield', 0, 'shield', side=0, rim=True)
+    R0 = 7.0
+    steps = 34
+    for a in range(-steps, steps + 1):
+        for b in range(-steps, steps + 1):
+            u = a / steps * R0
+            v = b / steps * R0
+            r = math.hypot(u, v)
+            if r > R0:
+                continue
+            pt = add(c, add(vscale(e1, u), vscale(e2, v)))
+            x, y, dz = P2(facing, pt)
+            if r > R0 - 1.1:
+                mat = 'rim'
+            elif face and r < 1.7:
+                mat = 'boss'
+            elif face:
+                mat = ch.shield_paint(u, v)
+            else:
+                mat = 'board_back'
+            cur = sp.px.get((int(math.floor(x)), int(math.floor(y))))
+            z = dz + 0.4
+            if cur is None or z > cur[1] or (cur[0] == 'rim' and mat != 'rim' and abs(z - cur[1]) < 0.3):
+                sp.put(x, y, mat, z)
+    parts.append(sp)
+
+
+def dropped_arms(parts, facing, j, pose, ch):
+    """Weapons thrown down in surrender: they lie on the ground in front, and the shield beside."""
+    P = j['P']
+    for kind in getattr(ch, 'arms', ()):
+        if kind == 'bow':
+            continue
+        wp = Part('weapon' if kind != 'shield' else 'shield', -2.0, kind + 'down', side=0)
+        if kind == 'shield':
+            c = (P[0] - 4.0, P[1] + 7.5, 0.0)
+            for a in range(-14, 15):
+                for b in range(-14, 15):
+                    u, v = a / 2.0, b / 2.0
+                    if math.hypot(u, v) > 7:
+                        continue
+                    x, y, d = P2g(facing, (c[0] + u, c[1] + v, 0.6))
+                    wp.put(x, y, 'rim' if math.hypot(u, v) > 5.9 else ch.shield_paint(u, v), d - 2)
+        else:
+            length = {'seax': 9.0, 'axe': 13.0, 'spear': 40.0}[kind]
+            f = P[1] + 6.0
+            a = (P[0] - length / 2 + 2.0, f, 0.8)
+            b = (P[0] + length / 2 + 2.0, f, 0.8)
+            pa, pb = P2g(facing, a), P2g(facing, b)
+            wp.seg(pa[:2], pb[:2], 1, 'haft' if kind != 'seax' else 'blade')
+            if kind == 'axe':
+                for k in range(3):
+                    wp.put(pb[0] - k * (1 if facing in 'e s' else -1), pb[1] - 1, 'blade')
+                    wp.put(pb[0] - k * (1 if facing in 'e s' else -1), pb[1] - 2, 'blade')
+            if kind == 'spear':
+                wp.put(pb[0], pb[1], 'blade')
+                wp.put(pb[0] + 1, pb[1], 'edge')
+        parts.append(wp)
+
+
+# ------------------------------------------------------------------------------ fighting poses
+def fight_pose(rh, wdir, lean=(0.0, 0.6), pel=(0.0, 0.0, 0.0), lh=None, shield=None, feet=None,
+               elbow_r=(0.8, -0.6, 0.3), cloth=(0.0, 0.0), head=(0.0, 0.0, 0.0), mouth=0):
+    p = Pose(pel=pel, lean=lean, hold='held', wdir=wdir, shield=shield, head=head, mouth=mouth)
+    p.hands = {'R': rh, 'L': lh or (1.6, 4.2, -6.5)}
+    p.elbow = {'R': elbow_r, 'L': (1.0, -0.6, -0.2)}
+    p.grip = {'R': 'fist', 'L': 'fist'}
+    p.feet = feet or {'R': (-2.0, 0), 'L': (3.0, 0)}
+    p.cloth = cloth
+    p.hair = cloth
+    return p
+
+
+def spear_style(ch):
+    return 'spear' in getattr(ch, 'arms', ())
+
+
+def anim_windup(ch=None):
+    """The tell: the weapon drawn back and up (a spear: drawn back to thrust)."""
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.6, -2.0, -3.5), (0.0, 1.0, 0.05), lean=(0, -0.4)),
+                fight_pose((0.6, -4.0, -3.0), (0.0, 1.0, 0.1), lean=(0, -0.8))]
+    return [fight_pose((1.6, -1.5, 3.5), (0.15, -0.35, 0.92), lean=(0, -0.2)),
+            fight_pose((2.0, -2.8, 6.5), (0.1, -0.6, 0.8), lean=(0, -0.6))]
+
+
+def anim_light(n, ch=None):
+    """A light strike in three frames: cocked, the blow (the active ticks), the follow-through.
+    1 a forehand cut across, 2 a backhand, 3 an overhead chop; a spear thrusts."""
+    if ch is not None and spear_style(ch):
+        lift = {1: 0.0, 2: 2.5, 3: -1.0}[n]
+        return [fight_pose((0.6, -3.5, -3.0 + lift), (0.0, 1.0, 0.05)),
+                fight_pose((0.4, 9.5, -1.5 + lift), (0.0, 1.0, 0.0), lean=(0, 2.2),
+                           feet={'R': (-4.0, 0), 'L': (5.0, 0)}),
+                fight_pose((0.6, 5.0, -3.0), (0.0, 1.0, -0.1), lean=(0, 1.2))]
+    if n == 1:
+        return [fight_pose((2.2, -1.0, 5.5), (0.3, -0.3, 0.9)),
+                fight_pose((-3.5, 8.0, -2.5), (-0.55, 0.8, -0.2), lean=(0, 2.0),
+                           feet={'R': (-3.5, 0), 'L': (4.5, 0)}, cloth=(0.8, 0)),
+                fight_pose((-5.0, 4.5, -8.5), (-0.4, 0.4, -0.85), lean=(0, 1.2), cloth=(0.4, 0))]
+    if n == 2:
+        return [fight_pose((-4.0, 2.5, 2.5), (-0.6, -0.1, 0.8), lean=(-0.3, 0.4)),
+                fight_pose((3.5, 8.5, -2.0), (0.6, 0.8, 0.0), lean=(0.3, 2.0),
+                           feet={'R': (-3.5, 0), 'L': (4.5, 0)}, cloth=(0.8, 0)),
+                fight_pose((4.0, 4.0, -6.5), (0.8, 0.2, -0.55), lean=(0.2, 1.0), cloth=(0.4, 0))]
+    return [fight_pose((0.6, 0.5, 9.0), (0.0, -0.55, 0.85), lean=(0, -0.5)),
+            fight_pose((0.4, 8.5, -4.0), (0.0, 0.6, -0.8), lean=(0, 2.4), pel=(0, 0, -1),
+                       feet={'R': (-3.5, 0), 'L': (5.0, 0)}, cloth=(0.9, 0)),
+            fight_pose((0.4, 6.0, -9.5), (0.0, 0.3, -0.95), lean=(0, 1.6), pel=(0, 0, -1), cloth=(0.4, 0))]
+
+
+def anim_charge(ch=None):
+    """The heavy held: the weapon high behind the shoulder, the body coiled; a tremble in the arm."""
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.8, -5.5, -2.0), (0.0, 1.0, 0.15), lean=(0, -1.0), pel=(0, 0, -1)),
+                fight_pose((0.9, -5.8, -1.6), (0.0, 1.0, 0.18), lean=(0, -1.1), pel=(0, 0, -1))]
+    return [fight_pose((2.4, -3.5, 8.0), (0.1, -0.75, 0.65), lean=(0, -1.0), pel=(0, 0, -1)),
+            fight_pose((2.6, -3.8, 8.4), (0.1, -0.78, 0.62), lean=(0, -1.1), pel=(0, 0, -1))]
+
+
+def anim_chargewalk(ch=None, heavy=False):
+    """Walking slowly with the heavy held (Book 10's charge speed): the walk's legs, the arms set."""
+    walk = anim_walk(heavy)
+    held = anim_charge(ch)[0]
+    out = []
+    for i, w in enumerate(walk):
+        p = w.copy(hold='held', wdir=held.wdir, lean=(0, -0.6))
+        p.hands = {'R': held.hands['R'], 'L': held.hands['L']}
+        p.elbow = dict(held.elbow)
+        p.grip = {'R': 'fist', 'L': 'fist'}
+        out.append(p)
+    return out
+
+
+def anim_heavy(ch=None):
+    """A released charge: the big swing through, a step in, and a heavy recovery."""
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.8, -5.0, -2.0), (0.0, 1.0, 0.1), lean=(0, -0.8)),
+                fight_pose((0.3, 9.5, -2.5), (0.0, 1.0, -0.05), lean=(0, 2.5), pel=(0, 0.8, -1),
+                           feet={'R': (-4.5, 0), 'L': (5.0, 0)}, cloth=(1.0, 0)),
+                fight_pose((0.5, 7.0, -4.0), (0.0, 0.9, -0.3), lean=(0, 2.0), pel=(0, 0.5, -1))]
+    return [fight_pose((2.2, -2.0, 9.0), (0.1, -0.5, 0.85), lean=(0, -0.8)),
+            fight_pose((-1.0, 9.5, -5.0), (-0.2, 0.7, -0.7), lean=(0, 3.0), pel=(0, 1.0, -2),
+                       feet={'R': (-5.0, 0), 'L': (6.0, 0)}, cloth=(1.0, 0)),
+            fight_pose((-2.5, 6.0, -10.0), (-0.2, 0.3, -0.95), lean=(0, 2.2), pel=(0, 0.5, -2))]
+
+
+def anim_block(ch=None):
+    """The shield up in front, braced; the second frame takes a blow."""
+    a = fight_pose((1.5, 2.5, -4.0), (0.2, 0.9, 0.3), lean=(0, 0.6), lh=(0.2, 5.0, -2.0), shield='front',
+                   feet={'R': (-3.0, 0), 'L': (3.0, 0)})
+    b = fight_pose((1.6, 1.5, -4.5), (0.2, 0.9, 0.3), lean=(0, -0.6), lh=(0.2, 4.0, -2.0), shield='front',
+                   feet={'R': (-3.5, 0), 'L': (2.5, 0)})
+    return [a, b]
+
+
+def anim_parry(ch=None):
+    """The blade (or the shield's edge) swept across to meet the blow, then back."""
+    if ch is not None and 'shield' in getattr(ch, 'arms', ()):
+        return [fight_pose((1.8, 2.0, -3.0), (0.3, 0.8, 0.5), lh=(-0.5, 6.5, 0.5), shield='up', lean=(0, 1.0)),
+                fight_pose((2.0, 1.0, -4.0), (0.3, 0.8, 0.4), lh=(0.8, 4.0, -3.0), shield='arm')]
+    return [fight_pose((-1.5, 6.5, 2.5), (-0.7, 0.4, 0.6), lean=(0, 0.8)),
+            fight_pose((1.5, 4.0, -2.0), (0.4, 0.7, 0.5), lean=(0, 0.2))]
+
+
+def anim_dodge(ch=None):
+    """A quick sidestep: crouch, the push away (a lean, the trailing foot lifted), and landing."""
+    a = fight_pose((1.8, 2.0, -6.0), (0.2, 0.9, 0.3), lean=(0, 0.8), pel=(0, 0, -3),
+                   feet={'R': (-2.0, 0), 'L': (2.5, 0)})
+    b = fight_pose((1.6, 1.0, -4.5), (0.3, 0.8, 0.4), lean=(-0.8, -0.5), pel=(-0.6, -1.0, -2),
+                   feet={'R': (-4.0, 3.0), 'L': (2.0, 0)}, cloth=(-1.2, 0))
+    c = fight_pose((1.8, 2.5, -5.5), (0.2, 0.9, 0.3), lean=(0, 0.6), pel=(0, -1.0, -3),
+                   feet={'R': (-2.5, 0), 'L': (2.0, 0)}, cloth=(0.6, 0))
+    return [a, b, c]
+
+
+def anim_shove(ch=None):
+    """Both hands drawn in, then thrust out: a shove that makes space (Book 1 section 09)."""
+    a = fight_pose((-1.0, 3.0, -3.0), (0.2, 0.9, 0.3), lh=(1.0, 3.0, -3.0), lean=(0, -0.4), shield='arm')
+    b = fight_pose((-2.5, 10.0, -2.0), (0.2, 0.9, 0.3), lh=(2.5, 10.0, -2.0), lean=(0, 2.8), pel=(0, 1.0, -1),
+                   feet={'R': (-4.5, 0), 'L': (5.0, 0)}, cloth=(1.0, 0), shield='front')
+    c = fight_pose((0.5, 5.0, -5.0), (0.2, 0.9, 0.3), lh=(1.5, 5.0, -5.0), lean=(0, 1.0), shield='arm')
+    for p in (a, b, c):
+        p.grip = {'R': 'open', 'L': 'open'}
+    return [a, b, c]
+
+
+def anim_stagger(ch=None):
+    """Knocked back off balance: the head thrown back, the arms wide."""
+    a = fight_pose((3.5, -1.5, -5.0), (0.5, 0.5, -0.7), lean=(0.5, -2.5), head=(0, -1.0, 0),
+                   feet={'R': (-3.0, 0), 'L': (2.5, 1.0)}, lh=(3.5, -1.0, -5.0), cloth=(1.4, 0), mouth=1,
+                   shield='arm')
+    b = fight_pose((3.0, -0.5, -7.0), (0.5, 0.6, -0.6), lean=(0.3, -1.5), head=(0, -0.5, 0),
+                   feet={'R': (-3.5, 0), 'L': (2.0, 0)}, lh=(3.0, 0.0, -7.0), cloth=(0.6, 0), shield='arm')
+    return [a, b]
+
+
+def anim_finish(ch=None):
+    """The finishing warning (Book 7 section 07): standing over the downed with the weapon raised
+    high in both hands, held for the whole warning; a pose no other attack uses."""
+    p = fight_pose((0.0, 1.0, 11.0), (0.0, -0.2, 0.98), lean=(0, -1.0), lh=(-0.5, 1.0, 10.0), mouth=1,
+                   shield='back')
+    return [p]
+
+
+def anim_surrender(ch=None):
+    """Kneeling, both hands raised and open, the weapons thrown down in front (Book 7 section 07:
+    surrendered actors kneel with empty hands); the second frame a small flinch."""
+    out = []
+    for k in range(2):
+        p = Pose(pel=(0, -1.0, -9), lean=(0, 1.0 + 0.4 * k), breath=-k, dropped=True)
+        p.hands = {'R': (1.8, 4.0 - k * 0.5, 3.0 - k), 'L': (1.8, 4.0 - k * 0.5, 3.0 - k)}
+        p.elbow = {'R': (1.2, -0.4, -0.6), 'L': (1.2, -0.4, -0.6)}
+        p.grip = {'R': 'open', 'L': 'open'}
+        p.feet = {'R': (-7.0, 0), 'L': (3.5, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        p.head = (0, 0.3 * k, -0.5 * k)
+        out.append(p)
+    return out
+
+
+class Lying:
+    """A lying or dismembered state drawn piece by piece (not a standing skeleton)."""
+
+    def __init__(self, kind, frames):
+        self.kind, self.frames = kind, frames
+
+    def __call__(self):
+        return [None] * self.frames
+
+
+class FightDoll(Doll):
+    """A Doll whose tunic also lays linen under it (the lying of Stage 9)."""
+
+    UNDER = dict(Doll.UNDER, tunic='linen', sash='linen', fold='linen')
+
+
+def lying_parts(ch, kind, i):
+    """Drawn facing east (head to the east), as the sleeper is: the downed on their back, breathing,
+    a hand moving; the dead sprawled and still; a dismembered corpse without its piece, the stump
+    bloody; the piece itself on its own."""
+    d = FightDoll()
+    X, Y = W_, H_
+    m = ch.model
+    heavy = m.heavy
+    if kind.startswith('piece_'):
+        return piece_parts(ch, kind[6:], d)
+    breathe = (0, 1)[i] if kind == 'downed' else 0
+    no_head = kind == 'dead_head'
+    no_arm = kind == 'dead_arm'
+    no_leg = kind == 'dead_leg'
+    thick = 6 if heavy else 5
+    # The cloak spread under the body (those who wear one).
+    if getattr(ch, 'cloak', True) and not isinstance(ch, Hild):
+        cl = d.part('cloak', 'cloak')
+        cl.z = -2.0
+        for x in range(5, 26):
+            for y in range(41, 47):
+                if (x + y) % 7 != 0:
+                    cl.put(X(x), Y(y), 'cloak')
+            cl.put(X(x), Y(46), 'lining')
+    # Legs to the west; the near one ends at the knee when taken.
+    for far, dy, dx in ((True, -1, 1), (False, 0, 0)):
+        fs = '_far' if far else ''
+        stump = no_leg and not far
+
+        def leg(p, mm, dx=dx, dy=dy, fs=fs, stump=stump):
+            p.seg((X(15 + dx), Y(43.5 + dy)), (X(10 + dx), Y(43.5 + dy)), 4 if heavy else 3, mm('trouser' + fs))
+            if stump:
+                return
+            p.seg((X(10 + dx), Y(44 + dy)), (X(5 + dx), Y(44 + dy)), 3, mm('wrap' + fs))
+            p.fill(X(2 + dx), Y(43 + dy), X(4 + dx), Y(45 + dy), mm('shoe' + fs))
+        d.cloth('leg' + fs, leg, z=-0.5 if far else 0.0)
+    if no_leg:
+        bl = d.part('body', 'stump')
+        bl.z = 2.0
+        bl.fill(X(9), Y(43), X(9), Y(45), 'blood')
+        bl.put(X(8), Y(44), 'blood_fresh')
+
+    def torso(p, mm):
+        p.seg((X(23), Y(41.5 - breathe * 0.5)), (X(15), Y(43.0)), thick, mm(ch.torso_mat(4)))
+        p.seg((X(17), Y(40.5)), (X(16.5), Y(45.5)), 1, mm('belt'))
+    d.cloth('torso', torso)
+    # The far arm along the ground.
+    d.cloth('fararm', lambda p, mm: (p.seg((X(22), Y(40)), (X(17), Y(39)), 2, mm(ch.sleeve + '_far')),
+                                     p.seg((X(17), Y(39)), (X(13), Y(39.5)), 2, mm(ch.sleeve + '_far'))), z=-0.8)
+    fh = d.part('body', 'farhand')
+    fh.z = -0.7
+    fh.fill(X(11), Y(39), X(12), Y(40), 'skin_far')
+    if not no_arm:
+        if kind == 'downed':
+            # The near hand on the chest, lifting with the breath.
+            def near(p, mm):
+                p.seg((X(22), Y(44)), (X(19), Y(45.5)), 2, mm(ch.sleeve))
+                p.seg((X(19), Y(45.5)), (X(17), Y(42.5 - breathe)), 2, mm(ch.sleeve))
+            d.cloth('arm', near, z=3.0)
+            hn = d.part('body', 'hand')
+            hn.z = 3.5
+            hn.fill(X(16), Y(41 - breathe), X(17), Y(42 - breathe), 'skin')
+        else:
+            # Flung out towards the viewer, open on the ground.
+            def near(p, mm):
+                p.seg((X(21), Y(43.5)), (X(23), Y(45.2)), 2, mm(ch.sleeve))
+                p.seg((X(23), Y(45.2)), (X(27), Y(45.2)), 2, mm(ch.sleeve))
+            d.cloth('arm', near, z=3.0)
+            hn = d.part('body', 'hand')
+            hn.z = 3.5
+            hn.fill(X(28), Y(45), X(29), Y(45), 'skin')
+            hn.put(X(28), Y(44), 'skin')
+    else:
+        st = d.part('body', 'stump')
+        st.z = 3.2
+        st.fill(X(21), Y(44), X(22), Y(44), 'blood')
+        st.put(X(22), Y(45), 'blood_fresh')
+    if not no_head:
+        hd = d.part('body', 'head', bottom=False)
+        tpl = m.heads['e']
+        if kind != 'downed':
+            tpl = [r.replace('e', 'F') if kind != 'downed' else r for r in tpl]
+        hd.stamp(tpl, X(22), Y(33.5 + (1 if kind != 'downed' else 0)), HEAD_LETTERS)
+    else:
+        st = d.part('body', 'neck')
+        st.z = 1.5
+        st.fill(X(24), Y(40), X(25), Y(42), 'blood')
+        st.put(X(26), Y(41), 'blood_fresh')
+        st.put(X(25), Y(43), 'blood_dry')
+    d.parts = [p for p in d.parts if p.layer in ('body', 'clothing', 'cloak')]
+    # Weapons lie beside the hand.
+    for kind_ in getattr(ch, 'arms', ()):
+        if kind_ == 'bow':
+            continue
+        wp = Part('weapon' if kind_ != 'shield' else 'shield', -2.5, kind_ + 'lying', side=0)
+        if kind_ == 'shield':
+            for a in range(-14, 15):
+                for b in range(-6, 7):
+                    u, v = a / 2.0, b / 2.0
+                    if (u / 7) ** 2 + (v / 3) ** 2 > 1:
+                        continue
+                    wp.put(X(9 + u), Y(39 + v), 'rim' if (u / 7) ** 2 + (v / 3) ** 2 > 0.7 else ch.shield_paint(u, v * 2))
+        else:
+            length = {'seax': 8, 'axe': 13, 'spear': 40}[kind_]
+            x0 = 29 - length
+            wp.seg((X(x0), Y(47.5)), (X(29), Y(47.5)), 1, 'blade' if kind_ == 'seax' else 'haft')
+            if kind_ == 'axe':
+                wp.fill(X(27), Y(45.5), X(29), Y(46.5), 'blade')
+            if kind_ == 'spear':
+                wp.fill(X(28), Y(47), X(30), Y(47), 'blade')
+        d.parts.append(wp)
+    return d.parts
+
+
+def piece_parts(ch, piece, d):
+    """What a dismembering blow took, lying on its own at the anchor."""
+    X, Y = W_, H_
+    m = ch.model
+    if piece == 'head':
+        hd = d.part('body', 'head', bottom=False)
+        tpl = [r.replace('e', 'F') for r in m.heads['e']]
+        hd.stamp(tpl, X(12), Y(38), HEAD_LETTERS)
+        bl = d.part('body', 'neck')
+        bl.z = 1.0
+        bl.fill(X(14), Y(46), X(17), Y(46), 'blood')
+        bl.put(X(18), Y(46), 'blood_fresh')
+    elif piece == 'arm':
+        d.cloth('arm', lambda p, mm: p.seg((X(10), Y(44)), (X(19), Y(45)), 2, mm(ch.sleeve)))
+        hn = d.part('body', 'hand')
+        hn.z = 1.0
+        hn.fill(X(20), Y(44), X(21), Y(45), 'skin')
+        bl = d.part('body', 'stump')
+        bl.z = 1.0
+        bl.fill(X(9), Y(44), X(9), Y(45), 'blood')
+    else:
+        d.cloth('leg', lambda p, mm: (p.seg((X(9), Y(44)), (X(15), Y(44)), 3, mm('trouser')),
+                                      p.seg((X(15), Y(44.5)), (X(20), Y(44.5)), 3, mm('wrap')),
+                                      p.fill(X(21), Y(43), X(23), Y(45), mm('shoe'))))
+        bl = d.part('body', 'stump')
+        bl.z = 1.0
+        bl.fill(X(8), Y(43), X(8), Y(45), 'blood')
+    return [p for p in d.parts if p.layer in ('body', 'clothing')]
+
+
+FIGHT_POSES = {'downed': 'lying', 'dead': 'lying', 'dead_head': 'lying', 'dead_arm': 'lying',
+               'dead_leg': 'lying', 'piece_head': 'lying', 'piece_arm': 'lying', 'piece_leg': 'lying',
+               'surrender': 'seated'}
+
+
+def narrow(poses, ch):
+    """The heavy build's broad shoulders: hands kept closer in, so the figure stays in its cell."""
+    if ch is None or not ch.model.heavy:
+        return poses
+    for p in poses:
+        p.hands = {k: (None if v is None else (max(-0.5, min(0.5, v[0])), v[1], v[2]))
+                   for k, v in p.hands.items()}
+        p.lean = (0.0, p.lean[1])
+        p.pel = (0.0, p.pel[1], p.pel[2])
+        p.elbow = {k: (min(0.4, e[0]), e[1], e[2]) for k, e in p.elbow.items()}
+    return poses
+
+
+def fight_states(ch, heavy=False):
+    """Stage 9's states for a body that fights (the same counts and timing for every build)."""
+    c = ch
+    N = narrow
+    return [
+        ('windup', lambda: N(anim_windup(c), c), 6, False),
+        ('light1', lambda: N(anim_light(1, c), c), 6, False),
+        ('light2', lambda: N(anim_light(2, c), c), 6, False),
+        ('light3', lambda: N(anim_light(3, c), c), 6, False),
+        ('charge', lambda: N(anim_charge(c), c), 6, True),
+        ('chargewalk', lambda: N(anim_chargewalk(c, heavy), c), 8, True),
+        ('heavy', lambda: N(anim_heavy(c), c), 8, False),
+        ('block', lambda: N(anim_block(c), c), 10, False),
+        ('parry', lambda: N(anim_parry(c), c), 6, False),
+        ('dodge', lambda: N(anim_dodge(c), c), 7, False),
+        ('shove', lambda: N(anim_shove(c), c), 7, False),
+        ('stagger', lambda: N(anim_stagger(c), c), 9, False),
+        ('finish', lambda: N(anim_finish(c), c), 30, False),
+        ('surrender', lambda: N(anim_surrender(c), c), 40, True),
+        ('downed', Lying('downed', 2), 40, True),
+        ('dead', Lying('dead', 1), 60, False),
+        ('dead_head', Lying('dead_head', 1), 60, False),
+        ('dead_arm', Lying('dead_arm', 1), 60, False),
+        ('dead_leg', Lying('dead_leg', 1), 60, False),
+        ('piece_head', Lying('piece_head', 1), 60, False),
+        ('piece_arm', Lying('piece_arm', 1), 60, False),
+        ('piece_leg', Lying('piece_leg', 1), 60, False),
+    ]
+
+
+# ---------------------------------------------------------------------------- weapons' colours
+ARMS_MATS = {
+    'blade': ('stone', 5, 7, 9), 'edge': ('stone', 9), 'haft': ('driftwood', 1, 2, 4),
+    'sheath': ('tar', 0, 1, 2), 'iron': ('stone', 3, 5, 7),
+    'rim': ('tar', 0, 1, 2), 'boss': ('stone', 4, 6, 8), 'board_back': ('driftwood', 1, 2, 3),
+    'paint_a': ('driftwood', 2, 3, 5), 'paint_b': ('driftwood', 2, 3, 5),
+    'blood': ('code', '7'), 'blood_dry': ('code', '8'), 'blood_fresh': ('code', '6'),
+}
+
+
+def material_of_factory(ch):
+    return lambda m: m
+
+
+# ----------------------------------------------------------------------- the wreck-scavengers
+HEAD_SVART = {
+    's': ['..HHHH..',
+          '.HHHHHH.',
+          'HHHHHHHH',
+          'HhFFFFhH',
+          'FFeFFeFF',
+          'FFFFFFFF',
+          'hFFFFFFh',
+          '.hhhhhh.'],
+    'n': HEAD_A['n'],
+    'e': ['..HHHH..',
+          '.HHHHHH.',
+          'HHHHHHHH',
+          'HHHHFFF.',
+          'HHFFFeFF',
+          'HHFFFFFF',
+          '.hFFFFhh',
+          '.hhhhhh.'],
+}
+
+
+class Wrecker(Steerer):
+    """A wreck-scavenger (Stage 9, decision S9-11): an outlaw's mended clothes, no sash, a body of
+    one of the three builds; the leader on the heavy build. Never the steerer's madder."""
+
+    sash = False
+
+    def __init__(self, model, arms, cloak=True, paint=('paint_a', 'paint_b')):
+        super().__init__(model)
+        self.arms = arms
+        self.cloak = cloak
+        self.brooch = False
+        self.paint = paint
+
+    def torso_mat(self, k):
+        return 'belt' if k == 8 else 'tunic'
+
+    def shield_paint(self, u, v):
+        return self.paint[0] if u * 0.6 + v >= 0 else self.paint[1]
+
+    @staticmethod
+    def material_of(mat):
+        return mat
+
+
+def steerer_paint(self, u, v):
+    return 'paint_a'
+
+
+Steerer.shield_paint = steerer_paint
+Steerer.material_of = staticmethod(lambda m: m)
+Hild.material_of = staticmethod(lambda m: m)
+Hild.shield_paint = steerer_paint
+
+def merge(*ds):
+    out = {}
+    for d_ in ds:
+        out.update(d_)
+    return out
+
+
+WRECKER_MATS = {
+    'ketill': merge(HEAVY_MATS, ARMS_MATS, {
+        'hair': ('hair_brown', 0, 0, 1), 'brow': ('hair_brown', 0, 0, 1),
+        'tunic': ('seal', 1, 2, 3), 'fold': ('seal', 1),
+        'trouser': ('wool', 1, 2, 3), 'wrap': ('tar', 1, 2, 3), 'wrapd': ('tar', 0),
+        'cloak': ('fleece', 1, 2, 3), 'cloakin': ('fleece', 0, 1, 2), 'cloakf': ('fleece', 1),
+        'lining': ('fleece', 0, 1, 1),
+        'paint_a': ('weld', 1, 2, 3), 'paint_b': ('tar', 0, 1, 2),
+    }),
+    'svart': merge(STEERER_MATS, ARMS_MATS, {
+        'hair': ('hair_brown', 0, 1, 1), 'brow': ('hair_brown', 0, 0, 1),
+        'skin': ('skin_deep', 2, 3, 4), 'mouth': ('skin_deep', 2), 'nose': ('skin_deep', 2),
+        'tunic': ('kelp', 1, 2, 3), 'fold': ('kelp', 1),
+        'trouser': ('earth', 1, 2, 3), 'wrap': ('wool', 1, 2, 3), 'wrapd': ('wool', 0),
+        'cloak': ('stone', 2, 3, 4), 'cloakin': ('stone', 1, 2, 3), 'cloakf': ('stone', 2),
+        'lining': ('stone', 1, 2, 2),
+        'paint_a': ('driftwood', 2, 3, 4), 'paint_b': ('driftwood', 1, 2, 3),
+    }),
+    'conn': merge(STEERER_MATS, ARMS_MATS, {
+        'hair': ('hair_blond', 1, 2, 4), 'brow': ('hair_blond', 1, 1, 2),
+        'tunic': ('moss', 1, 2, 3), 'fold': ('moss', 1),
+        'trouser': ('wool', 2, 3, 4), 'wrap': ('earth', 1, 2, 3), 'wrapd': ('earth', 0),
+    }),
+}
+MODEL_SVART = Model('svart', 6.5,
+                    upper=MODEL_A.upper, lower=MODEL_A.lower, upper_e=MODEL_A.upper_e,
+                    lower_e=MODEL_A.lower_e, heads=HEAD_SVART)
+
+for _mats in (STEERER_MATS, HEAVY_MATS, HILD_MATS):
+    for _key, _val in ARMS_MATS.items():
+        _mats.setdefault(_key, _val)
+
+
+# ------------------------------------------------------------------------------------- output
+LAYER_NOTE = dict(LAYER_NOTE, **{
+    'weapon': 'Weapon layer (Stage 9): in the right hand to fight, carried at rest otherwise, thrown down in\n# surrender and lying beside the dead; on a larger canvas round the same foot anchor.',
+    'shield': 'Shield layer (Stage 9): a round shield on the left forearm, held up to block, slung on the back\n# at rest; on a larger canvas round the same foot anchor.',
+    'blood': 'Bloodied layer (Book 7 section 12, Stage 9): drawn over the clothing below half vitality and on\n# the dead; the clothing darkens at the wound side. Only with the gore setting.',
+})
+
+
+def blood_layer(sep, facing, state):
+    """The bloodied overlay: the clothing's pixels on the wound side (the figure's right flank and
+    belly), darkened with dark, dried and a little fresh blood in clusters."""
+    clothing = sep.get('clothing', {})
+    pts = [(x, y) for (x, y), v in clothing.items()
+           if v != INK and v[0].split('_far')[0] in ('tunic', 'trouser', 'dress', 'trim', 'sash', 'sashd')]
+    if not pts:
+        return {}
+    xs = [x for x, _ in pts]
+    ys = [y for _, y in pts]
+    cx = (min(xs) + max(xs)) / 2
+    top, bot = min(ys), max(ys)
+    lying = state.startswith('dead') or state == 'downed' or state.startswith('piece_')
+    out = {}
+    for (x, y) in pts:
+        t = (y - top) / max(1, bot - top)
+        if lying:
+            side = abs(x - (cx + 1)) < 5
+        elif facing == 's':
+            side = x <= cx
+        elif facing == 'n':
+            side = x >= cx
+        elif facing == 'e':
+            side = x >= cx - 1
+        else:
+            side = x <= cx + 1
+        if not side or not (0.18 <= t <= 0.75 or lying):
+            continue
+        h = ((x * 73856093) ^ (y * 19349663)) % 100
+        if h < 42:
+            out[(x, y)] = ('blood_dry' if h < 9 else 'blood_fresh' if h > 38 else 'blood', 'm')
+    return out
+
+
 def render_character(ch, states, mats, order, names, sizes, soft):
+    fights = {st for st, _, _, _ in fight_states(ch)} | {'stagger'}
+    whole = isinstance(ch, Wrecker)
     sheets = {}
     for L, name in names.items():
         size, pivot = sizes.get(L, ((W, H), PIVOT))
         sheets[L] = Sheet(name, L, mats, size=size, pivot=pivot)
     for state, fn, ticks, loop in states:
-        if fn is not None:
+        if isinstance(fn, Lying):
+            for f in FACINGS:
+                for i in range(fn.frames):
+                    parts = settle_on_ground(lying_parts(ch, fn.kind, i))
+                    if f in 'n w':
+                        parts = mirror_parts(parts)
+                    sep = separate(parts, order[f], soft)
+                    if 'blood' in names:
+                        sep['blood'] = blood_layer(sep, f, state)
+                    close_outline(sep, [L for L in order[f] if L in names], sizes)
+                    for L in names:
+                        sheets[L].add(state, f, i, sep.get(L, {}))
+        elif fn is not None:
             poses = fn()
             for f in FACINGS:
                 for i, pose in enumerate(poses):
@@ -2322,6 +3067,10 @@ def render_character(ch, states, mats, order, names, sizes, soft):
                     for part in parts:
                         part.px = {k: v for k, v in part.px.items() if k[1] <= OY + 46}
                     sep = separate(parts, order[f], soft)
+                    if 'blood' in names:
+                        sep['blood'] = blood_layer(sep, f, state)
+                    if whole or state in fights:
+                        close_outline(sep, [L for L in order[f] if L in names], sizes)
                     for L in names:
                         sheets[L].add(state, f, i, sep.get(L, {}))
         else:
@@ -2343,47 +3092,152 @@ def render_character(ch, states, mats, order, names, sizes, soft):
                     else:
                         parts = hild_sit(f, i)
                     sep = separate(parts, order[f], soft)
+                    if 'blood' in names:
+                        sep['blood'] = blood_layer(sep, f, state)
                     for L in names:
                         sheets[L].add(state, f, i, sep.get(L, {}))
     return sheets
 
 
+def settle_on_ground(parts):
+    """A lying figure rests on the ground: its lowest body or clothing row is the sole row (46), so
+    its outline is on the pivot row, as a standing figure's feet are."""
+    ys = [y for p in parts if p.layer in ('body', 'clothing') for (_, y) in p.px]
+    if not ys:
+        return parts
+    dy = OY + 46 - max(ys)
+    for p in parts:
+        p.px = {(x, y + dy): v for (x, y), v in p.px.items() if y + dy <= OY + 46}
+    return parts
+
+
+def close_outline(sep, order_f, sizes):
+    """Stage 9's frames: wherever the composite of the layers (in draw order) has a coloured pixel at
+    its outer edge (a stump, a blade's tip, cloth meeting cloth), the layer that drew it gets the
+    ink outline outside it, or, at the edge of its canvas, on it (Book 7 section 11)."""
+    comp, owner = {}, {}
+    for L in order_f:
+        for pos, v in sep.get(L, {}).items():
+            comp[pos] = v
+            owner[pos] = L
+    for (x, y), v in list(comp.items()):
+        if v == INK:
+            continue
+        L = owner[(x, y)]
+        (w, h), (px, py) = sizes.get(L, ((W, H), PIVOT))
+        x0, y0 = OX + PIVOT[0] - px, OY + PIVOT[1] - py
+        for n in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if n in comp:
+                continue
+            if x0 <= n[0] < x0 + w and y0 <= n[1] < y0 + h:
+                sep.setdefault(L, {})[n] = INK
+                comp[n] = INK
+                owner[n] = L
+            else:
+                sep[L][(x, y)] = INK
+                comp[(x, y)] = INK
+
+
+def frames_of(state, fn):
+    if isinstance(fn, Lying):
+        return fn.frames
+    if fn is not None:
+        return len(fn())
+    return {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2, 'eat': 4}[state]
+
+
+ORDER_ARMED = {'s': ['body', 'clothing', 'blood', 'bow', 'cloak', 'helmet', 'weapon', 'shield'],
+               'n': ['body', 'clothing', 'blood', 'cloak', 'bow', 'helmet', 'weapon', 'shield'],
+               'e': ['body', 'clothing', 'blood', 'cloak', 'bow', 'helmet', 'weapon', 'shield'],
+               'w': ['body', 'clothing', 'blood', 'cloak', 'bow', 'helmet', 'weapon', 'shield']}
+HILD_ORDER_BLOOD = {f: ['body', 'clothing', 'blood'] for f in FACINGS}
+
+
 def write_character(key):
+    big = False
     if key == 'heavy':
         ch = Heavy()
         ch.helmet = True
+        ch.arms = ()
         names = {'body': 'actor_heavy', 'clothing': 'layer_clothing_tunic_heavy',
                  'cloak': 'layer_cloak_wool_heavy', 'helmet': 'layer_helmet_iron_heavy',
-                 'bow': 'layer_weapon_bow_heavy'}
-        states, mats, order, events, poses = HEAVY_STATES, HEAVY_MATS, STEERER_ORDER, STEERER_EVENTS, WORK_POSES
+                 'bow': 'layer_weapon_bow_heavy', 'blood': 'layer_blood_wound_heavy'}
+        states = HEAVY_STATES + fight_states(ch, True)
+        mats, order, events = HEAVY_MATS, ORDER_ARMED, STEERER_EVENTS
+        poses = dict(WORK_POSES, **FIGHT_POSES)
         intro = INTRO['heavy']
     elif key in ('a', 'b'):
         ch = Steerer(MODEL_A if key == 'a' else MODEL_B)
         ch.helmet = True
+        ch.arms = ('seax',)
         names = {'body': f'actor_p_steerer_{key}', 'clothing': f'layer_clothing_tunic_{key}',
                  'cloak': f'layer_cloak_wool_{key}', 'helmet': f'layer_helmet_iron_{key}',
-                 'bow': f'layer_weapon_bow_{key}'}
-        states, mats, order, events, poses = STEERER_STATES, STEERER_MATS, STEERER_ORDER, STEERER_EVENTS, WORK_POSES
+                 'bow': f'layer_weapon_bow_{key}', 'weapon': f'layer_weapon_seax_{key}',
+                 'blood': f'layer_blood_wound_{key}'}
+        states = STEERER_STATES + fight_states(ch)
+        mats, order, events = STEERER_MATS, ORDER_ARMED, STEERER_EVENTS
+        poses = dict(WORK_POSES, **FIGHT_POSES)
         intro = INTRO['a'].format(L=key.upper())
-    else:
+    elif key == 'hild':
         ch = Hild()
-        names = {'body': 'actor_c_hild', 'clothing': 'layer_clothing_dress_hild'}
-        states, mats, order, events, poses = HILD_STATES, HILD_MATS, HILD_ORDER, HILD_EVENTS, HILD_POSES
+        names = {'body': 'actor_c_hild', 'clothing': 'layer_clothing_dress_hild',
+                 'blood': 'layer_blood_wound_hild'}
+        states = HILD_STATES + [('stagger', lambda: anim_stagger(None), 9, False)]
+        mats, order, events, poses = HILD_MATS, HILD_ORDER_BLOOD, HILD_EVENTS, HILD_POSES
         intro = INTRO['hild']
-    sizes = {'bow': ((48, 56), (24, 51))}
+    else:
+        big = True
+        set_canvas(True)
+        if key == 'ketill':
+            ch = Wrecker(MODEL_HEAVY, ('axe', 'shield'))
+            heavy = True
+        elif key == 'svart':
+            ch = Wrecker(MODEL_SVART, ('spear', 'shield'))
+            heavy = False
+        else:
+            ch = Wrecker(MODEL_B, ('seax', 'bow'), cloak=False)
+            heavy = False
+        # The leader is drawn on the heavy build: every sheet of his says so (Book 7 section 16).
+        nk = f'{key}_heavy' if heavy else key
+        names = {'body': f'actor_e_wrecker_{nk}', 'clothing': f'layer_clothing_wrecker_{nk}',
+                 'blood': f'layer_blood_wound_{nk}'}
+        if ch.cloak:
+            names['cloak'] = f'layer_cloak_wrecker_{nk}'
+        if 'bow' in ch.arms:
+            names['bow'] = f'layer_weapon_bow_{nk}'
+        if any(k in ch.arms for k in ('seax', 'axe', 'spear')):
+            kind = [k for k in ch.arms if k in ('seax', 'axe', 'spear')][0]
+            names['weapon'] = f'layer_weapon_{kind}_{nk}'
+        if 'shield' in ch.arms:
+            names['shield'] = f'layer_shield_round_{nk}'
+        base = HEAVY_STATES if heavy else STEERER_STATES
+        if 'bow' not in ch.arms:
+            base = [s for s in base if s[0] != 'draw']
+        states = base + fight_states(ch, heavy)
+        mats, order, events = WRECKER_MATS[key], ORDER_ARMED, STEERER_EVENTS
+        poses = dict(WORK_POSES, **FIGHT_POSES)
+        intro = INTRO_WRECKER.format(name=key.capitalize())
+    arms_size = ((CW, CH), (OX + PIVOT[0], OY + PIVOT[1]))
+    sizes = {'bow': ((48, 56), (24, 51)) if not big else arms_size, 'weapon': arms_size, 'shield': arms_size}
     sheets = render_character(ch, states, mats, order, names, sizes, getattr(ch, 'soft', SOFT))
     anims = {}
     for state, fn, ticks, loop in states:
-        n = len(fn()) if fn else {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2, 'eat': 4}[state]
-        anims[state] = (n, ticks, loop)
+        anims[state] = (frames_of(state, fn), ticks, loop)
     os.makedirs(OUT, exist_ok=True)
     for L, sh in sheets.items():
         sh.intro = intro + f'\n# {LAYER_NOTE[L]}'
         if L == 'body':
-            sh.shadow = '18x5' if key == 'heavy' else '16x5'
+            sh.shadow = '18x5' if (key == 'heavy' or key == 'ketill') else '16x5'
         with open(f'{OUT}/{sh.name}.map.txt', 'w') as fh:
             fh.write(sh.text(anims, events, poses))
+    set_canvas(False)
     return sheets, names
+
+
+INTRO_WRECKER = """# {name}, one of the three wreck-scavengers (Stage 9, decision S9-11; Book 4 section 08, Chapter 1
+# beat 3), on the 32 x 48 canvas with their own layers: an enemy drawn by Claude, proposed, staged
+# for the user's approval; nothing here is read by the game. Generated by
+# assets/art/authoring/people48.py; edit that script, not this map."""
 
 
 def layers_json(name, layers):
@@ -2393,19 +3247,25 @@ def layers_json(name, layers):
 
 
 def main():
-    for key in ('a', 'b'):
+    only = os.environ.get('PEOPLE_ONLY')
+    keys = only.split(',') if only else ['a', 'b', 'heavy', 'hild', 'ketill', 'svart', 'conn']
+    for key in keys:
         _, n = write_character(key)
-        base = {f: [n[L] for L in STEERER_ORDER[f] if L != 'helmet'] for f in FACINGS}
-        layers_json(f'steerer_{key}', base)
-        if key == 'a':
-            layers_json('steerer_a_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
+        if key in ('a', 'b'):
+            base = {f: [n[L] for L in ORDER_ARMED[f] if L in n and L not in ('helmet',)] for f in FACINGS}
+            layers_json(f'steerer_{key}', base)
+            layers_json(f'steerer_{key}_helmeted', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
+        elif key == 'heavy':
+            layers_json('heavy', {f: [n[L] for L in ORDER_ARMED[f] if L in n and L != 'helmet'] for f in FACINGS})
+            layers_json('heavy_helmeted', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
+        elif key == 'hild':
+            layers_json('hild', {f: [n[L] for L in HILD_ORDER_BLOOD[f]] for f in FACINGS})
         else:
-            layers_json('steerer_b_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
-    _, n = write_character('heavy')
-    layers_json('heavy', {f: [n[L] for L in STEERER_ORDER[f] if L != 'helmet'] for f in FACINGS})
-    layers_json('heavy_helmeted', {f: [n[L] for L in STEERER_ORDER[f]] for f in FACINGS})
-    _, n = write_character('hild')
-    layers_json('hild', {f: [n[L] for L in HILD_ORDER[f]] for f in FACINGS})
+            layers_json(f'wrecker_{key}', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
+    if CUT:
+        for c in sorted(CUT):
+            print('cut off by the canvas:', c)
+        raise SystemExit(1)
     print('wrote the proposed people maps')
 
 

@@ -151,6 +151,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 |---|---|---|
 | workerDay | 8 game hours of work | The rates above are per worker-day; a resident at work adds them by the game minute, the player by the action |
 | wreckStores | 6 rd of salt fish | A split cask among the salvage heaps in the broch at S0 |
+| driftwoodSearchesPerWorkerDay | 2 searches | A resident's worker-day walking the weed lines brings in what 2 of the steerer's searches do (the Driftwood row above): the near tidelines are soon picked over, so a day's search gives 2 loads in spring and summer, 4 in autumn and 6 in winter after storms (decision S8-29) |
 | campFuel | 0 loads | The first fire needs driftwood gathered first (Book 4 Chapter 1 beat 2) |
 | fireLight | 1 load of driftwood | Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house |
 | tutorialGuard | No starvation and no spoilage before tutorialComplete | tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning) |
@@ -347,6 +348,24 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | shove | 12 stamina; breaks block; target staggered 20 ticks |
 | turnLock | Facing locked from windup start to recovery end |
 
+### Fight rules
+*How the frame data above is played (Stage 9, decisions S9-2 to S9-6). Starting values, for tuning after playtests.*
+
+| Key | Value |
+|---|---|
+| strikeArc | 100 degrees in front: a strike meets everyone within its reach there |
+| bodyRadius | 0.3 tiles: reach is measured to the near edge of the body a strike meets |
+| hitStagger | 14 ticks: a hit staggers anyone without poise |
+| blockStun | 10 ticks: a blow taken on the shield rocks the guard |
+| chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |
+| heavySwing | A released charge swings with the weapon's windup before its active ticks |
+| chainWindow | A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped |
+| shoveTiming | Windup 6 ticks, active 3, recovery 12; reach 1 tile |
+| dodgeWay | With no direction held, a dodge goes straight back from the facing |
+| guardBreakHit | A level-2 charge that meets a raised shield breaks the guard and lands |
+| blockNeedsShield | Only a shield blocks; without one the block key does nothing and says so |
+| missileDamage | An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost |
+
 ### Vitality, stamina and armour
 | Key | Value |
 |---|---|
@@ -459,10 +478,30 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | allyKilled | -20 |
 | allyDowned | -10 |
 | leaderKilled | -15 |
+| memberBloodied | -10: a member falls below half vitality (Stage 9, decision S9-8) |
 | outnumberedTwoToOne | -10 per 10 seconds |
 | surrenderBelow | 30 |
 | fleeBelow | 20 |
 | noQuarterAfter | 2 known `SURRENDERED_KILLED` deeds by the household |
+
+### Fighters' habits
+*How the enemy and the crew fight (Stage 9, decision S9-7): Book 2 section 13's choices at 10 a second on the `ai` stream. Starting values, for tuning after playtests.*
+
+| Key | Value |
+|---|---|
+| decideEvery | 6 ticks: each fighter chooses what to do 10 times a second |
+| reactChance | 45%: a fighter who sees an attacker's tell defends before the blow lands |
+| reactTicks | 6 ticks after the tell at the soonest |
+| parryShare | 35% of a fighter's defences are parries when a shield is held; all are parries without one |
+| heavyChance | 20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield |
+| attackGap | 0.5 to 1.2 s between one fighter's attacks while in reach |
+| archerRange | 4 to 7 tiles: an archer keeps this far from its target and shoots from there |
+| archerArrows | 8 arrows in an enemy archer's quiver |
+| searchSeconds | 8: a fighter who loses sight of its target goes to where it was last known and searches |
+| crewFollow | 2.5 tiles behind the steerer |
+| crewProtect | 4 tiles: a protector fights anyone who comes this near the one it protects |
+| fallBackFrom | 3 tiles: an archer whose target comes nearer than this backs away before it shoots again |
+| orderLapse | 60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day |
 
 ### Occupied Skarvholm garrison (late game)
 | Post | Strength | Notes |

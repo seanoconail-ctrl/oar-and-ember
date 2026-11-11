@@ -3268,6 +3268,86 @@
       "section": "07",
       "origin": "assigned",
       "note": "Stage 8 (decision S8-24): see MUS_STINGER_DISPUTE."
+    },
+    {
+      "id": "E_WRECKER_KETILL",
+      "ref": "three wreck-scavengers",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 9 (decision S9-11): the scavengers' leader, heavy build, axe and shield."
+    },
+    {
+      "id": "E_WRECKER_SVART",
+      "ref": "three wreck-scavengers",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 9 (decision S9-11): spear and shield."
+    },
+    {
+      "id": "E_WRECKER_CONN",
+      "ref": "three wreck-scavengers",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 9 (decision S9-11): bow and seax."
+    },
+    {
+      "id": "SCN_SK_WRECKERS",
+      "ref": "three wreck-scavengers",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 9 (decision S9-11): the wreck-scavengers on Wreck Strand by the wreck, until Stage 10 sets Bran's search at the sheepfold."
+    },
+    {
+      "id": "SFX_HEAVY_SWING",
+      "ref": "Light attack",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 9: the swing of a released charge, heavier than the light whoosh."
+    },
+    {
+      "id": "SFX_SHOVE",
+      "ref": "shove",
+      "book": 10,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Stage 9: a shove's thud and grunt (Book 10 section 06, the shove row)."
+    },
+    {
+      "id": "SFX_BODY_FALL",
+      "ref": "Downed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 9: a body falling to the ground (the dead; the downed have SFX_DOWNED)."
+    },
+    {
+      "id": "SFX_WEAPON_DROP",
+      "ref": "surrendered actors kneel with empty hands",
+      "book": 7,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 9: a weapon thrown down in surrender."
+    },
+    {
+      "id": "SFX_SPEAR_THROW",
+      "ref": "a thrown spear's grunt and the rush of the throw",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 9."
+    },
+    {
+      "id": "MUS_STINGER_GAME_OVER",
+      "ref": "Game over",
+      "book": 1,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Stage 9: the steerer's death; the music stops under it."
     }
   ],
   "families": [

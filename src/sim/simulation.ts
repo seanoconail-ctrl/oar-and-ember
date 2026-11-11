@@ -53,6 +53,24 @@ import type {
   TilePos,
 } from './land/onFoot.ts';
 import { stepArcher } from './land/archer.ts';
+import {
+  broughtTo,
+  crewOrder,
+  finisherTarget,
+  hostilesAware,
+  hurt,
+  leaveZone,
+  meleePress,
+  meleeRelease,
+  spawnEncounters,
+  steererBlock,
+  steererDodge,
+  steererParry,
+  steererShove,
+  stepFight,
+} from './land/fight.ts';
+import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
+import { damageOf } from './combat/fighter.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import type { MissileEvent } from './land/missiles.ts';
 import { bandAt, stillWaterLevel } from './land/water.ts';
@@ -96,7 +114,7 @@ import type { JobKind } from './world.ts';
 export type SimState = WorldState;
 export const SIM_STATE_VERSION = WORLD_STATE_VERSION;
 
-/** Crew orders (Book 2 section 12); the crew who carry them out arrive with Stages 8 and 9. */
+/** Crew orders (Book 2 section 12), carried out by the crew in the zone (Stage 9). */
 export type CrewOrder = 'FOLLOW' | 'HOLD' | 'ATTACK' | 'PROTECT' | 'CARRY' | 'WITHDRAW';
 
 export type Command =
@@ -133,6 +151,17 @@ export type Command =
   | { readonly type: 'CANCEL_WORK' }
   /** A shove with empty hands or the shove key, towards a tile (or the facing). */
   | { readonly type: 'SHOVE'; readonly tile?: TilePos }
+  /**
+   * Stage 9 (Book 2 section 12): the melee press (the charge begins; it is a light attack if let go
+   * before level 1) towards a facing, and its release; parry; block held or let go; dodge along a
+   * direction (none: straight back); the finisher held or let go.
+   */
+  | { readonly type: 'MELEE'; readonly facing: 's' | 'n' | 'e' | 'w' }
+  | { readonly type: 'MELEE_RELEASE' }
+  | { readonly type: 'PARRY' }
+  | { readonly type: 'BLOCK'; readonly on: boolean }
+  | { readonly type: 'DODGE'; readonly x: number; readonly y: number }
+  | { readonly type: 'FINISHER'; readonly on: boolean }
   /** Stage 8: talk to a resident; choose an option in the conversation or scene; leave it. */
   | { readonly type: 'TALK'; readonly person: Id }
   | { readonly type: 'TALK_CHOOSE'; readonly index: number }
@@ -228,6 +257,9 @@ export type SimEvent =
   | OpeningEvent
   | CampEvent
   | PeopleEvent
+  | FightEvent
+  /** The held finisher has begun on someone (Book 10 finisherHold). */
+  | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
   | { readonly type: 'ZONE_ENTERED'; readonly zone: Id; readonly from: Id }
   /** The steerer lay down in a bed; the night passes after the camp's sleepSeconds. */
@@ -289,6 +321,8 @@ export interface SimWorldContext extends LandContext {
   readonly camp?: CampContext | null;
   /** The household's people: their day, talk and scenes (Stage 8). */
   readonly people?: PeopleContext | null;
+  /** Fights (Stage 9): weapons, fighters, encounters, safe places, Book 10's combat numbers. */
+  readonly fight?: FightContext | null;
 }
 
 export function createSimulation(
@@ -304,6 +338,7 @@ export function createSimulation(
 
   const camp = land?.camp ?? null;
   const people = land?.people ?? null;
+  const fightCtx = land?.fight ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
@@ -394,6 +429,11 @@ export function createSimulation(
     if (night.cold) addReason('COLD', 'night');
     const c = state.player.condition;
     c.wokeAt = campaignMinute(state, b);
+    // A night's sleep brings the steerer's vitality back, less what light wounds take (Stage 9).
+    if (fightCtx !== null && state.gameOver === null) {
+      const lights = state.player.wounds.filter((w) => w.severity === 'LIGHT').length;
+      state.player.vitality = fightCtx.cb.vitality - fightCtx.cb.lightWoundVitality * lights;
+    }
     c.workedMinutes = 0;
     const day = state.calendar.day;
     if (camp !== null) {
@@ -509,7 +549,56 @@ export function createSimulation(
       }
       case 'CREW_ORDER':
         events.emit({ type: 'CREW_ORDER_GIVEN', order: command.order, tick: state.tick });
+        if (fightCtx !== null && !fallen()) crewOrder(state, fightCtx, command.order, emitFight);
         return;
+      case 'MELEE':
+        if (fightCtx === null || fallen() || busy()) return;
+        if (state.onFoot?.player.aim != null) return;
+        meleePress(state, fightCtx, command.facing, emitFight);
+        return;
+      case 'MELEE_RELEASE':
+        if (fightCtx === null || fallen()) return;
+        meleeRelease(state, fightCtx, emitFight);
+        return;
+      case 'PARRY':
+        if (fightCtx === null || fallen() || busy()) return;
+        steererParry(state, fightCtx, emitFight);
+        return;
+      case 'BLOCK':
+        if (fightCtx === null || fallen()) return;
+        if (command.on && busy()) return;
+        steererBlock(state, fightCtx, command.on, emitFight);
+        return;
+      case 'DODGE': {
+        if (fightCtx === null || fallen()) return;
+        const p = state.onFoot?.player;
+        if (p == null || p.work != null || p.sleep != null || state.onFoot?.carrying != null)
+          return;
+        const len = Math.hypot(command.x, command.y);
+        steererDodge(
+          state,
+          fightCtx,
+          len < 1e-6 ? null : { x: command.x / len, y: command.y / len },
+          emitFight,
+        );
+        return;
+      }
+      case 'FINISHER': {
+        const p = state.onFoot?.player;
+        if (fightCtx === null || p == null || fallen()) return;
+        if (!command.on) {
+          finishing = null;
+          return;
+        }
+        const target = finisherTarget(state, fightCtx, tileSize());
+        if (target === null) {
+          refuse(command, 'NOTHING_IN_REACH');
+          return;
+        }
+        finishing = { target, since: state.tick };
+        events.emit({ type: 'FINISHER_STARTED', target });
+        return;
+      }
       case 'MOVE': {
         if (state.onFoot === null) return;
         const length = Math.hypot(command.x, command.y);
@@ -722,11 +811,50 @@ export function createSimulation(
           const dy = (command.tile.ty + 0.5) * map.tile - p.y;
           p.facing = facingOf(dx, dy, p.facing);
         }
-        // Stage 9 gives the shove its stamina, its reach and its stagger (Book 10 section 06).
+        // The shove's stamina, timing, reach and stagger (Book 10 section 06, Stage 9).
+        if (fallen()) return;
+        if (fightCtx !== null && !steererShove(state, fightCtx, p.facing, emitFight)) return;
         events.emit({ type: 'SHOVED', facing: p.facing });
         return;
       }
     }
+  };
+
+  /** The steerer is downed or dead: nothing but waiting (Second wind) or the game's end. */
+  const fallen = (): boolean => {
+    const f = state.onFoot?.player.fight;
+    return state.gameOver !== null || f?.state === 'downed' || f?.state === 'dead';
+  };
+  /** The held finisher under way (Book 10 finisherHold). */
+  let finishing: { target: Id; since: number } | null = null;
+  const emitFight = (e: Parameters<FightWorld['emit']>[0]): void => {
+    events.emit(e);
+  };
+  /** What a fight needs this tick (null with no fight content or no zone). */
+  const fightWorld = (): FightWorld | null => {
+    const onFoot = state.onFoot;
+    const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+    if (fightCtx === null || onFoot === null || map === undefined || land === null) return null;
+    return {
+      world: state,
+      ctx: fightCtx,
+      land,
+      map,
+      tidalGroundOpen: tideAt(state.calendar, b).tidalGroundOpen,
+      emit: emitFight,
+      deed: (tag, victims, witnesses) => {
+        if (people === null) return;
+        householdDeed(state, people, { tag, placeId: onFoot.zone, victims }, witnesses, emitPeople);
+      },
+      options: {
+        secondWind: state.options.secondWind,
+        ransMercy: state.options.ransMercy,
+        parryWindow: Math.min(
+          fightCtx.cb.parry.windowMax,
+          state.options.parryWindow ?? fightCtx.cb.parry.window,
+        ),
+      },
+    };
   };
 
   /** The zone's tile size in pixels. */
@@ -821,7 +949,7 @@ export function createSimulation(
     if (onFoot === null || land === null) return;
     if (key.startsWith('stuck:')) {
       const n = Number(key.slice(6));
-      const at = onFoot.stuck.findIndex((s) => s.n === n && stuckRecoverable(s));
+      const at = onFoot.stuck.findIndex((s) => s.n === n && stuckRecoverable(s, onFoot));
       const stuck = onFoot.stuck[at];
       if (stuck === undefined) {
         refuse(command, 'NOTHING_THERE');
@@ -888,7 +1016,7 @@ export function createSimulation(
   /** Hands busy with a task or lying down: other actions wait (the press is WORK_PRESS). */
   const busy = (): boolean => {
     const p = state.onFoot?.player;
-    return p?.work != null || p?.sleep != null || state.talk !== null;
+    return p?.work != null || p?.sleep != null || state.talk !== null || fallen();
   };
 
   /** Begins a hands-on action: the feet planted, the work loop playing (Book 2 section 07). */
@@ -989,6 +1117,10 @@ export function createSimulation(
       if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
+      // A downed ally set down: safe at the camp, or downed again where they lie (Stage 9).
+      const fw = fightWorld();
+      const setDown = onFoot.actors[interaction.target];
+      if (fw !== null && setDown !== undefined) broughtTo(fw, interaction.target, setDown);
       if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
       // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
       if (
@@ -1037,7 +1169,32 @@ export function createSimulation(
       nightPasses();
       return;
     }
+    // The game is over: nothing moves until a save is loaded.
+    if (state.gameOver !== null) return;
+    const fw = fightWorld();
+    if (fw !== null) spawnEncounters(state, fw.ctx, map, emitFight);
+    if (fallen()) {
+      p.intent = { x: 0, y: 0, run: false, sneak: false };
+      p.aim = null;
+    }
     stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    if (fw !== null) {
+      stepFight(fw);
+      // The held finisher (Book 10 finisherHold): a kill, and a deed.
+      if (finishing !== null) {
+        const t = onFoot.actors[finishing.target];
+        if (t?.fight?.dead !== null) finishing = null;
+        else if (state.tick - finishing.since >= fw.ctx.cb.finisherHold) {
+          hurt(fw, finishing.target, 9999, STEERER, {
+            heavyKill: true,
+            weapon: p.fight?.weapon ?? null,
+            dx: t.x - p.x,
+            dy: t.y - p.y,
+          });
+          finishing = null;
+        }
+      }
+    }
     const emit = events.emit.bind(events);
     // Stamina in traversal (Book 10 section 06): sprinting, carrying a person, wading waist deep.
     if (sb !== null) {
@@ -1055,6 +1212,8 @@ export function createSimulation(
           carrying: onFoot.carrying !== null,
           wadingWaist: waist && p.moving,
           inWaist: waist,
+          inCombat: hostilesAware(onFoot) > 0,
+          blocking: p.blocking === true,
         },
         state.tick,
         p.winded,
@@ -1091,8 +1250,10 @@ export function createSimulation(
     }
     // Other people: an archer's stop, draw, loose and move, then their own walk.
     for (const [id, actor] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
-      if (actor.archer !== undefined)
-        stepArcher(actor, state.tick, land.missiles.bow.drawTicks, map.tile, (aim) => {
+      if (actor.archer !== undefined) {
+        const kind = actor.archer.kind ?? 'arrow';
+        const weapon = kind === 'arrow' ? land.missiles.bow : land.missiles.spear;
+        stepArcher(actor, state.tick, weapon.drawTicks, map.tile, (aim) => {
           const shot = launch(
             onFoot,
             state.rng.combat,
@@ -1101,15 +1262,57 @@ export function createSimulation(
             id,
             actor,
             aim,
-            'arrow',
+            kind,
             state.tick - aim.since,
           );
-          emit({ type: 'MISSILE_LOOSED', n: shot.n, kind: 'arrow', shooter: id });
+          emit({ type: 'MISSILE_LOOSED', n: shot.n, kind, shooter: id });
         });
+      }
       stepActor(actor, map, land, tide.tidalGroundOpen);
     }
     const now = gameMinute(state.calendar);
-    stepProjectiles(onFoot, state.rng.combat, map, land, level, now, emit);
+    stepProjectiles(onFoot, state.rng.combat, map, land, level, now, (e) => {
+      emit(e);
+      // Stage 9: a missile in a body hurts; on a shield it costs the block (Book 10 "Fight rules").
+      if (fw === null || e.target === undefined) return;
+      const cb = fw.ctx.cb;
+      const dmg = e.kind === 'arrow' ? cb.arrow : cb.thrownSpear;
+      const from =
+        e.shooter === undefined ? null : e.shooter === STEERER ? p : onFoot.actors[e.shooter];
+      if (e.strike === 'body') {
+        const target = e.target === STEERER ? null : onFoot.actors[e.target]?.fight;
+        const f = e.target === STEERER ? p.fight : target?.f;
+        const armour = f?.armour ?? 'NONE';
+        const damage = damageOf({ damage: dmg.damage, cut: false }, armour, cb);
+        hurt(fw, e.target, damage, e.shooter ?? STEERER, {
+          heavyKill: false,
+          weapon: null,
+          dx: e.x - (from?.x ?? e.x),
+          dy: e.y - (from?.y ?? e.y),
+          missile: true,
+        });
+        emitFight({
+          type: 'BLOW',
+          attacker: e.shooter ?? STEERER,
+          defender: e.target,
+          outcome: 'HIT',
+          damage,
+          heavy: false,
+          x: e.x,
+          y: e.y,
+          dx: e.x - (from?.x ?? e.x),
+          dy: e.y - (from?.y ?? e.y),
+          material: 'FLESH',
+        });
+      } else if (e.strike === 'shield') {
+        const pool =
+          e.target === STEERER ? state.player.stamina : onFoot.actors[e.target]?.fight?.stamina;
+        if (pool !== undefined) {
+          pool.current = Math.max(0, pool.current - cb.block.costFactor * dmg.vsShield);
+          pool.spentTick = state.tick;
+        }
+      }
+    });
     expireStuck(onFoot, land, now);
     // Walking off an edge that leads on: into the next zone (Book 2 section 10, FootLink).
     if (p.work == null && p.sleep == null) {
@@ -1120,6 +1323,7 @@ export function createSimulation(
         const at = entryPoint(map, toMap, p.x, p.y, land, tide.tidalGroundOpen);
         if (at !== null) {
           const from = onFoot.zone;
+          if (fw !== null) leaveZone(fw);
           switchZone(onFoot, to, at);
           events.emit({ type: 'ZONE_ENTERED', zone: to, from });
         }

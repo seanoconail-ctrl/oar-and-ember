@@ -822,3 +822,30 @@ describe('the people in the content (Book 5 section 17)', () => {
     expect(person(world, 'C_HILD').life.joinedDay).toBeNull();
   });
 });
+
+describe('A resident gathering driftwood (decision S8-29, Book 10 driftwoodSearchesPerWorkerDay)', () => {
+  it('brings in about a day of searches: the per-search loads times the searches in a worker-day', () => {
+    const { sim, world } = atBroch('driftwood', { time: '05:00', tended: '1', day: '2' });
+    world.facts['ch1.arrived_said'] = true;
+    const h = person(world, 'C_HILD');
+    h.wounds = [];
+    h.job = { kind: 'DRIFTWOOD', since: world.calendar.day, byOrder: true };
+    const home = homeOf(world, camp);
+    if (home === undefined) throw new Error('no home');
+    const before = home.stores['RES_DRIFTWOOD'] ?? 0;
+    world.calendar = { ...world.calendar, minuteOfDay: 10 * 60 };
+    expect(activityOf(world, camp, people, 'C_HILD')).toMatchObject({
+      kind: 'WORK',
+      job: 'DRIFTWOOD',
+    });
+    world.calendar = { ...world.calendar, minuteOfDay: 5 * 60 };
+    run(sim, 1440);
+    const gained = (home.stores['RES_DRIFTWOOD'] ?? 0) - before;
+    const w = camp.work;
+    const day = w.driftwoodPerSearch.Spring * w.driftwoodSearchesPerWorkerDay;
+    expect(w.driftwoodSearchesPerWorkerDay).toBe(2);
+    // Skill, mood and the hours of light move it, but it is a day's searching: not 24 loads.
+    expect(gained).toBeGreaterThan(day * 0.25);
+    expect(gained).toBeLessThan(day * 2);
+  });
+});

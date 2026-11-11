@@ -545,6 +545,7 @@ const MARKER_OVER: Record<OnFootActor['pose'], { x: number; y: number }> = {
   eat: { x: 0, y: 14 },
   watch: { x: 0, y: 0 },
   kneel: { x: 0, y: 6 },
+  dead: { x: 12, y: 22 },
 };
 
 /** The animation state a pose is drawn with (a person calling waves and shouts: `call`). */

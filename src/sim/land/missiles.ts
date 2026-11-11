@@ -139,6 +139,8 @@ export interface MissileEvent {
   readonly type: 'MISSILE_STRUCK';
   readonly n: number;
   readonly kind: MissileKind;
+  /** Who loosed it (Stage 9: a body struck is hurt by them). */
+  readonly shooter?: Id;
   readonly strike: MissileStrike;
   /** The point it came to rest (world pixels, on the ground). */
   readonly x: number;
@@ -215,7 +217,9 @@ function strikeAt(
   ][] = [];
   if (p.shooter !== STEERER) people.push([STEERER, onFoot.player]);
   for (const [id, a] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1)))
-    if (id !== p.shooter && a.pose !== 'carried') people.push([id, a]);
+    // The lying (downed, dead) are flown over.
+    if (id !== p.shooter && a.pose !== 'carried' && a.pose !== 'down' && a.pose !== 'dead')
+      people.push([id, a]);
   for (const [id, who] of people) {
     if (Math.abs(x - who.x) > box.w / 2 || y > who.y + 0.5 || y < who.y - box.h) continue;
     const blocked =
@@ -317,6 +321,7 @@ function rest(
     type: 'MISSILE_STRUCK',
     n: p.n,
     kind: p.kind,
+    shooter: p.shooter,
     strike: hit.strike,
     x: worldX,
     y: worldY,

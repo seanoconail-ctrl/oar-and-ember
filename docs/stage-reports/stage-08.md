@@ -163,9 +163,9 @@ S8-1 to S8-28 (`docs/decision-log.md`, "Stage 8 (crew agents, schedules and conv
 ## Flagged for the user's review
 - **Hild working from the start** at half pace with her leg untended, and tending through the talk
   rather than a direct prompt (S8-5, S8-9).
-- **The household's hours** (S8-6) and the Stage 8 jobs, with driftwood left out as a resident's job
-  because Book 10's rate is ambiguous for residents (S8-7): please say how many loads a resident's
-  day of searching should bring.
+- **The household's hours** (S8-6) and the Stage 8 jobs (S8-7). Driftwood was first left out as a
+  resident's job; the user then left its rate to my judgement, and it is now a job at 2 of the
+  steerer's searches per worker-day, 2 to 6 loads a day by season (S8-29).
 - **The new Book 10 numbers** (S8-1, S8-12) and the re-headed tables (S8-2).
 - **Stances move no number** until Book 10 gives a factor (S8-3); the culture "for/against" rule (S8-4).
 - **People data choices** (S8-18): Bran's codes Norse and Church (stance conventional); Senán Church

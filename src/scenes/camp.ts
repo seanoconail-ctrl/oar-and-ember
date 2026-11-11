@@ -180,6 +180,11 @@ export function campHooks(
       home.stores['RES_SALTED_FISH'] = Math.max(0, (home.stores['RES_SALTED_FISH'] ?? 0) - 1);
     }
   }
+  // Stage 9 (tests and captures): the campaign's options (`secondwind=1`, `ransmercy=1`). The
+  // wreck-scavengers are on the strand once Hild has led to the broch, so `camp=broch` with
+  // `zone=ZONE_SK_STRAND&at=x,y` starts by the fight.
+  if (params.get('secondwind') === '1') world.options.secondWind = true;
+  if (params.get('ransmercy') === '1') world.options.ransMercy = true;
   // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
   const zone = params.get('zone');
   const zoneTo = zone === null ? undefined : land.maps.get(zone);

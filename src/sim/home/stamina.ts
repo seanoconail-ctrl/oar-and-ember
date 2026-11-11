@@ -109,6 +109,10 @@ export interface TraversalNow {
   readonly wadingWaist: boolean;
   /** Standing or moving in waist-deep water (regeneration is halved there). */
   readonly inWaist: boolean;
+  /** Stage 9: a hostile is aware of the steerer (running drains Book 10's in-combat rate). */
+  readonly inCombat?: boolean;
+  /** Stage 9: a shield held up (regeneration is halved, Book 10 section 06 stamina row). */
+  readonly blocking?: boolean;
 }
 
 /** Which traversals ran the bar empty and wait for Book 10's recoverAt. */
@@ -127,7 +131,7 @@ export function traversalTick(
   winded: Winded,
 ): Winded {
   let drain = 0;
-  if (now.running) drain += sb.drain.run;
+  if (now.running) drain += now.inCombat === true ? sb.drain.runCombat : sb.drain.run;
   if (now.carrying) drain += sb.drain.heavyCarry;
   if (now.wadingWaist) drain += sb.drain.waistWade;
   const emptied: Winded = {};
@@ -140,7 +144,7 @@ export function traversalTick(
       if (now.wadingWaist) emptied.wade = true;
     }
   } else if (tick - st.spentTick >= sb.regenDelayTicks && st.current < st.max) {
-    const rate = sb.regenPerSecond * (now.inWaist ? 0.5 : 1);
+    const rate = sb.regenPerSecond * (now.inWaist || now.blocking === true ? 0.5 : 1);
     st.current = Math.min(st.max, st.current + rate / 60);
   }
   if (st.current >= sb.recoverAt) {

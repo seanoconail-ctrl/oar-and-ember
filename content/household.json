@@ -80,6 +80,24 @@
         }
       ]
     },
+    "DRIFTWOOD": {
+      "nameKey": "job.name.driftwood",
+      "task": "TASK_GATHER_DRIFTWOOD",
+      "spots": [
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 77.0,
+          "y": 34.4,
+          "facing": "s"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 84.0,
+          "y": 35.3,
+          "facing": "s"
+        }
+      ]
+    },
     "REST": {
       "nameKey": "job.name.rest"
     }

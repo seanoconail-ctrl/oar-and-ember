@@ -4,7 +4,7 @@
  * enemies use it from Stage 9. Movement itself obeys the same rule as the steerer's (feetPlanted):
  * while an aim is held the walk is ignored, so an archer cannot be hurried off a drawn shot.
  */
-import type { Aim, MoveIntent, OnFootActor } from './onFoot.ts';
+import type { Aim, MissileKind, MoveIntent, OnFootActor } from './onFoot.ts';
 
 const STAND: MoveIntent = { x: 0, y: 0, run: false, sneak: false };
 
@@ -13,8 +13,14 @@ export function orderShot(
   actor: OnFootActor,
   target: { readonly x: number; readonly y: number },
   then: MoveIntent,
+  kind: MissileKind = 'arrow',
 ): void {
-  actor.archer = { phase: 'stopping', target: { ...target }, then: { ...then } };
+  actor.archer = {
+    phase: 'stopping',
+    target: { ...target },
+    then: { ...then },
+    ...(kind === 'arrow' ? {} : { kind }),
+  };
 }
 
 /**

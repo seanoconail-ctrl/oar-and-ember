@@ -1380,5 +1380,44 @@
     "nameKey": "person.name.h_donnchad",
     "home": "TOWN_ARDCARN",
     "faction": "FAC_ARDCARN"
+  },
+  {
+    "id": "E_WRECKER_KETILL",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_wrecker_ketill",
+    "home": "SK_TIDECAVE",
+    "origin": "NORSE",
+    "traits": [
+      {
+        "trait": "HOT_TEMPERED",
+        "known": true
+      }
+    ]
+  },
+  {
+    "id": "E_WRECKER_SVART",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_wrecker_svart",
+    "home": "SK_TIDECAVE",
+    "origin": "NORSE_GAELIC",
+    "traits": [
+      {
+        "trait": "GREEDY",
+        "known": true
+      }
+    ]
+  },
+  {
+    "id": "E_WRECKER_CONN",
+    "kind": "ENEMY",
+    "nameKey": "person.name.e_wrecker_conn",
+    "home": "SK_TIDECAVE",
+    "origin": "GAELIC",
+    "traits": [
+      {
+        "trait": "COWARDLY",
+        "known": true
+      }
+    ]
   }
 ]

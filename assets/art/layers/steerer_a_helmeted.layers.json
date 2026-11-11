@@ -4,30 +4,38 @@
     "s": [
       "actor_p_steerer_a",
       "layer_clothing_tunic_a",
+      "layer_gore_blood_a",
       "layer_weapon_bow_a",
       "layer_cloak_wool_a",
-      "layer_helmet_iron_a"
+      "layer_helmet_iron_a",
+      "layer_weapon_seax_a"
     ],
     "n": [
       "actor_p_steerer_a",
       "layer_clothing_tunic_a",
+      "layer_gore_blood_a",
       "layer_cloak_wool_a",
       "layer_weapon_bow_a",
-      "layer_helmet_iron_a"
+      "layer_helmet_iron_a",
+      "layer_weapon_seax_a"
     ],
     "e": [
       "actor_p_steerer_a",
       "layer_clothing_tunic_a",
+      "layer_gore_blood_a",
       "layer_cloak_wool_a",
       "layer_weapon_bow_a",
-      "layer_helmet_iron_a"
+      "layer_helmet_iron_a",
+      "layer_weapon_seax_a"
     ],
     "w": [
       "actor_p_steerer_a",
       "layer_clothing_tunic_a",
+      "layer_gore_blood_a",
       "layer_cloak_wool_a",
       "layer_weapon_bow_a",
-      "layer_helmet_iron_a"
+      "layer_helmet_iron_a",
+      "layer_weapon_seax_a"
     ]
   }
 }

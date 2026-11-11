@@ -22,6 +22,9 @@ import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
+import { charging, feetPlanted as fightPlanted, facingLocked } from '../combat/fighter.ts';
+import type { Fighter } from '../combat/fighter.ts';
+import type { ActorFight, Battle } from './fight.ts';
 
 export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
 /**
@@ -40,7 +43,9 @@ export type Pose =
   | 'eat'
   | 'watch'
   /** Kneeling at a habit (praying at dawn): the kneel work loop. */
-  | 'kneel';
+  | 'kneel'
+  /** Stage 9: dead where they fell (a corpse stays for the scene; at home until buried). */
+  | 'dead';
 /** Poses of someone who needs lifting. */
 export const NEEDS_LIFT: readonly Pose[] = ['down', 'call'];
 
@@ -87,6 +92,10 @@ export interface OnFootPlayer {
   sleep?: { readonly since: number; readonly site: string } | null;
   /** Traversals that ran the bar empty, until Book 10's recoverAt is regained. */
   winded?: { run?: boolean; carry?: boolean; wade?: boolean };
+  /** Stage 9: the steerer's fighter state machine (src/sim/combat/fighter.ts). */
+  fight?: Fighter | null;
+  /** A shield held up: it stops missiles from the front (as for anyone, Book 10 shieldBlock). */
+  blocking?: boolean;
 }
 
 /**
@@ -124,6 +133,10 @@ export interface OnFootActor {
   walk?: WalkGoal;
   /** The task a resident is working at (pose 'work'): its work loop plays (Book 7 section 07). */
   task?: Id;
+  /** Stage 9: their part in a fight (src/sim/land/fight.ts). */
+  fight?: ActorFight;
+  /** A downed ally they carry (the CARRY order). */
+  carries?: Id;
 }
 
 /** Where an archer is in its stop, draw, loose and move. */
@@ -133,6 +146,8 @@ export interface ArcherState {
   readonly target: { readonly x: number; readonly y: number };
   /** The walk it takes once it has loosed. */
   readonly then: MoveIntent;
+  /** A thrown spear rather than an arrow (Stage 9). */
+  readonly kind?: MissileKind;
 }
 
 export type MissileKind = 'arrow' | 'spear';
@@ -221,12 +236,16 @@ export interface OnFootState {
    * kept as they were left, so walking back finds them.
    */
   elsewhere?: Record<Id, ZoneRest>;
+  /** Stage 9: the fight under way in this zone (its morale, Second wind, whether it is over). */
+  battle?: Battle | null;
 }
 
 export interface ZoneRest {
   actors: Record<Id, OnFootActor>;
   items: GroundItem[];
   stuck: StuckMissile[];
+  /** A fight still held there (Stage 9). */
+  battle?: Battle | null;
 }
 
 /** Controller settings that are not Book 10 tuning numbers (content/onfoot.json). */
@@ -282,6 +301,12 @@ export interface LandContext {
   /** Book 10 section 21, "Missiles" (with the bow and thrown spear of section 06), and "Arrows". */
   readonly missiles: MissileBalance;
   readonly arrows: ArrowBalance;
+  /** Stage 9: how fighting moves the steerer (Book 10 Charge (heavy) speed; the dodge). */
+  readonly combatMove?: {
+    readonly chargeSpeed: number;
+    readonly dodgeTiles: number;
+    readonly dodgeTicks: number;
+  };
 }
 
 /** The tide as movement needs it: whether the tidal ground is open, and the still water level. */
@@ -395,18 +420,36 @@ export function speedAt(
 export function stepMovement(
   state: OnFootState,
   map: ZoneMap,
-  ctx: Pick<LandContext, 'movement' | 'rules' | 'water' | 'elevations'>,
+  ctx: Pick<LandContext, 'movement' | 'rules' | 'water' | 'elevations' | 'combatMove'>,
   tide: TideNow,
 ): void {
   const p = state.player;
   p.gait = gaitFor(state);
   // While drawing, the steerer faces the aim (snapped to the nearest facing) and stands still:
   // the movement wanted is kept, but not walked, until the bow is loosed or lowered. A task's
-  // work loop and lying down to sleep plant the feet too.
-  const planted = feetPlanted(p) || p.work != null || p.sleep != null;
-  const { x: ix, y: iy } = planted ? { x: 0, y: 0 } : p.intent;
-  p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
-  const perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;
+  // work loop and lying down to sleep plant the feet too, and so does a blow, a parry, a block
+  // or a stagger (Stage 9); a charge walks at Book 10's charge speed, and a dodge moves on its own.
+  const fight = p.fight ?? null;
+  const dodging = fight !== null && fight.state === 'dodge' && fight.dodge !== null;
+  const planted =
+    feetPlanted(p) ||
+    p.work != null ||
+    p.sleep != null ||
+    (fight !== null && fightPlanted(fight) && !dodging);
+  const { x: ix, y: iy } = dodging
+    ? (fight.dodge ?? { x: 0, y: 0 })
+    : planted
+      ? { x: 0, y: 0 }
+      : p.intent;
+  if (fight !== null && facingLocked(fight)) p.facing = fight.facing;
+  else
+    p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
+  if (fight !== null && !facingLocked(fight)) fight.facing = p.facing;
+  const cm = ctx.combatMove;
+  let perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;
+  if (dodging && cm !== undefined) perTick = (cm.dodgeTiles * map.tile) / cm.dodgeTicks;
+  else if (fight !== null && charging(fight) && cm !== undefined)
+    perTick = Math.min(perTick, (cm.chargeSpeed * map.tile) / TICKS_PER_SECOND);
   const dx = ix * perTick;
   const dy = iy * perTick;
   const before = { x: p.x, y: p.y };
@@ -487,6 +530,8 @@ export function stepActor(
   tidalGroundOpen: boolean,
 ): void {
   const intent = actor.intent;
+  // A fighter walks by its fight (src/sim/land/fight.ts).
+  if (actor.fight !== undefined) return;
   if (intent === undefined || NEEDS_LIFT.includes(actor.pose) || actor.pose === 'carried') return;
   if (feetPlanted(actor)) {
     delete actor.moving;
@@ -515,8 +560,24 @@ export function itemShown(item: GroundItem, facts: FactView): boolean {
 }
 
 /** A missile at rest that can be pulled free and used again (not broken, not in a person). */
-export function stuckRecoverable(s: StuckMissile): boolean {
-  return !s.broken && s.target === undefined;
+export function stuckRecoverable(s: StuckMissile, state?: OnFootState): boolean {
+  if (s.broken) return false;
+  if (s.target === undefined) return true;
+  // In a person or a shield: pulled free after the fight (Book 2 section 12, decision S9-14): from
+  // the dead at any time, from anyone else once no fight is under way; never from the steerer.
+  if (state === undefined || s.target === 'P_STEERER') return false;
+  const who = state.actors[s.target];
+  if (who === undefined) return false;
+  if (who.pose === 'dead') return true;
+  const battle = state.battle ?? null;
+  return battle === null || battle.over || !battle.engaged;
+}
+
+/** Where a stuck missile is in the world (in a person: their feet plus its offset). */
+export function stuckAt(s: StuckMissile, state: OnFootState): { x: number; y: number } {
+  if (s.target === undefined) return { x: s.x, y: s.y };
+  const who = s.target === 'P_STEERER' ? state.player : state.actors[s.target];
+  return { x: s.x + (who?.x ?? 0), y: s.y + (who?.y ?? 0) };
 }
 
 /** Where something to pick up lies, in world pixels: its key, and its foot. */
@@ -533,7 +594,7 @@ export function pickupSpots(state: OnFootState, map: ZoneMap, facts: FactView): 
     if (itemShown(item, facts))
       out.push({ key: item.key, x: item.x * map.tile, y: item.y * map.tile });
   for (const s of state.stuck)
-    if (stuckRecoverable(s)) out.push({ key: `stuck:${s.n}`, x: s.x, y: s.y });
+    if (stuckRecoverable(s, state)) out.push({ key: `stuck:${s.n}`, ...stuckAt(s, state) });
   return out;
 }
 

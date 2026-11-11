@@ -32,6 +32,7 @@ export const CONTENT_FILES = {
   household: 'content/household.json',
   talk: 'content/talk.json',
   scenes: 'content/scenes.json',
+  combat: 'content/combat.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
 } as const;
@@ -93,7 +94,7 @@ export const TENDENCY_PLACES = ['SHORE', 'FIRE', 'DOOR', 'STORES', 'BOAT', 'HIGH
 export const TENDENCY_POSES = ['watch', 'sit', 'kneel', 'work'] as const;
 /** Book 2 section 06: the schedule's blocks; a job's work fills WORK. */
 export const SCHEDULE_BLOCKS = ['SLEEP', 'MEAL', 'WORK', 'EVENING'] as const;
-export const JOBS = ['FISHER', 'CAMP', 'BUILDER', 'REST'] as const;
+export const JOBS = ['FISHER', 'CAMP', 'DRIFTWOOD', 'BUILDER', 'REST'] as const;
 /** Book 10 section 08, "Conversation replies". */
 export const REPLIES = ['Talk', 'Warm', 'Glad', 'Cold', 'Punished', 'Shamed', 'Threat'] as const;
 export const VOICES = ['NEUTRAL', 'WARM', 'COLD', 'AFRAID', 'DEVOTED'] as const;
@@ -391,6 +392,80 @@ const onFootCheck = object({
   tipSeconds: int(1, 60),
 });
 
+/** Stage 9 (Book 2 sections 12 and 13): weapons, fighters, encounters, safe places and barks. */
+const MELEE_ROWS = ['Spear', 'Axe', 'Sword', 'Seax', 'Dane axe'] as const;
+const combatWeaponCheck = object(
+  {
+    row: oneOf(MELEE_ROWS),
+    /** The weapon layer's name (layer_weapon_<layer>_<build>). */
+    layer: text,
+    /** Killing blows that roll for dismemberment (Book 10 dismemberChance): heavies only, or any. */
+    dismember: oneOf(['HEAVY', 'ANY'] as const),
+  },
+  ['dismember'],
+);
+const fighterCheck = object(
+  {
+    person: ref('person'),
+    archetype: text,
+    weapon: id(['ITEM']),
+    shield: bool,
+    bow: bool,
+    heavy: bool,
+    leader: bool,
+    /** Named cruel enemies who finish the downed after a warning (Book 2 section 12). */
+    finishesDowned: bool,
+    look: text,
+  },
+  ['shield', 'bow', 'heavy', 'leader', 'finishesDowned'],
+);
+const crewArmsCheck = object(
+  { weapon: id(['ITEM']), shield: bool, bow: bool, heavy: bool },
+  ['weapon', 'shield', 'bow', 'heavy'],
+);
+const encounterCheck = object(
+  {
+    id: id(['SCN']),
+    zone: ref('zone'),
+    /** A fact that must hold before the encounter is there. */
+    after: text,
+    /** Enemies who take the downed left behind as captives (Book 10 leftBehind). */
+    takesCaptives: bool,
+    /** The checkpoint saved as it begins (Book 1 section 15: checkpoints before major danger). */
+    checkpoint: text,
+    members: arrayOf(
+      object(
+        {
+          person: ref('person'),
+          x: fraction(0, 512),
+          y: fraction(0, 512),
+          facing: oneOf(['s', 'n', 'e', 'w'] as const),
+          task: id(['TASK']),
+        },
+        ['task'],
+      ),
+    ),
+  },
+  ['after'],
+);
+const safePlaceCheck = object({
+  key: text,
+  about: text,
+  zone: ref('zone'),
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  r: fraction(0.5, 40),
+});
+const combatCheck = object({
+  about: text,
+  weapons: recordOf(id(['ITEM']), combatWeaponCheck),
+  fighters: arrayOf(fighterCheck),
+  crew: recordOf(text, crewArmsCheck),
+  encounters: arrayOf(encounterCheck),
+  safePlaces: arrayOf(safePlaceCheck),
+  barks: recordOf(ref('person'), recordOf(text, arrayOf(ref('string')))),
+});
+
 const openingCheck = object({
   about: text,
   beat: id(['BEAT']),
@@ -655,6 +730,9 @@ export type TraitDef = Out<typeof traitCheck>;
 export type LikingDef = Out<typeof likingCheck>;
 export type TendencyDef = Out<typeof tendencyCheck>;
 export type OnFootDef = Out<typeof onFootCheck>;
+export type CombatDef = Out<typeof combatCheck>;
+export type FighterDef = Out<typeof fighterCheck>;
+export type EncounterDef = Out<typeof encounterCheck>;
 export type OpeningDef = Out<typeof openingCheck>;
 export type CampDef = Out<typeof campCheck>;
 export type TaskDef = Out<typeof taskCheck>;
@@ -689,6 +767,8 @@ export interface Content {
   readonly household: HouseholdDef | null;
   readonly talk: TalkDef | null;
   readonly scenes: readonly SceneDef[];
+  /** Stage 9: weapons, fighters, encounters, safe places and barks. */
+  readonly combat: CombatDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -824,6 +904,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const household = householdCheck(files.household, '', ctx(CONTENT_FILES.household));
   const talk = talkCheck(files.talk, '', ctx(CONTENT_FILES.talk));
   const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
+  const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
   const zoneMaps = new Map<Id, ZoneMap>();
   const strand = checkZoneMap(files.zoneStrand);
   for (const [file, json] of [
@@ -1031,6 +1112,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       household,
       talk,
       scenes,
+      combat,
       zoneMaps,
     },
     issues,

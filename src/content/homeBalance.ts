@@ -112,6 +112,8 @@ export interface WorkBalance {
   readonly fishShore: Readonly<Record<Season, number>>;
   /** Loads per search at skill 2, by season (no storms yet: the plain rate). */
   readonly driftwoodPerSearch: Readonly<Record<Season, number>>;
+  /** A resident's worker-day of searching counts as this many of the steerer's searches. */
+  readonly driftwoodSearchesPerWorkerDay: number;
   /** Loads a heated house (and the camp fire) burns in a day, by season. */
   readonly fuelPerDay: Readonly<Record<Season, number>>;
   readonly foodPerPersonPerDay: number;
@@ -236,6 +238,14 @@ export function parseWorkBalance(json: unknown): WorkBalance {
         camp('wreckStores'),
         new RegExp(`^${N} rd of salt fish$`),
         '"N rd of salt fish"',
+      )[1],
+    ),
+    driftwoodSearchesPerWorkerDay: Number(
+      match(
+        'workAndTheWreckCamp.driftwoodSearchesPerWorkerDay',
+        camp('driftwoodSearchesPerWorkerDay'),
+        new RegExp(`^${N} searches$`),
+        '"N searches"',
       )[1],
     ),
     campFuelLoads: Number(

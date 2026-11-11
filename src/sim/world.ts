@@ -53,8 +53,23 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * day's bookkeeping (`life`: meals, the warning flow, talk, barks, a light-fingered stash); memories
  * gain a kind and a source; the world gains the conversation or scene under way (`talk`), the barks
  * heard (`barks`) and Book 2's disputes.
+ * Version 7 (Stage 9: combat v1) adds the campaign's options that change the simulation (Second
+ * wind, Rán's mercy, the parry window: Book 1 section 15), the game over (`gameOver`), and on foot
+ * each person's part in a fight (`fight`: their state machine, vitality, stamina, side and mind),
+ * the steerer's fighter, someone carried by another (`carries`), and the fight under way
+ * (`battle`); the three wreck-scavengers join `people`.
  */
-export const WORLD_STATE_VERSION = 6;
+export const WORLD_STATE_VERSION = 7;
+
+/** The difficulty options that change the simulation (Book 1 section 15; decision S9-9). */
+export interface CampaignOptions {
+  /** A short downed window in which an adjacent ally can lift the steerer once a scene. */
+  secondWind: boolean;
+  /** No unscripted crew deaths: what would kill them is a grave wound, or capture. */
+  ransMercy: boolean;
+  /** The parry window in ticks (Book 10: the default, up to the option's widest); null: Book 10's. */
+  parryWindow: number | null;
+}
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -515,6 +530,10 @@ export interface WorldState {
   talk: TalkState | null;
   /** Barks heard: by speaker and line, the tick each was last said (Book 8 section 08). */
   barks: { bySpeaker: Record<Id, Record<string, number>>; byLine: Record<string, number> };
+  /** The campaign's options (version 7). */
+  options: CampaignOptions;
+  /** The steerer has died: the game is over until a save is loaded (version 7). */
+  gameOver: { readonly day: number; readonly tick: number; readonly cause: string } | null;
 }
 
 /** A new steerer's stamina: full, at Book 10's base. */
@@ -571,6 +590,8 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     disputes: [],
     talk: null,
     barks: { bySpeaker: {}, byLine: {} },
+    options: { secondWind: false, ransMercy: false, parryWindow: null },
+    gameOver: null,
   };
 }
 

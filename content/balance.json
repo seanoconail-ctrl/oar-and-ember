@@ -458,6 +458,11 @@
      "Notes": "A split cask among the salvage heaps in the broch at S0"
     },
     {
+     "Key": "driftwoodSearchesPerWorkerDay",
+     "Value": "2 searches",
+     "Notes": "A resident's worker-day walking the weed lines brings in what 2 of the steerer's searches do (the Driftwood row above): the near tidelines are soon picked over, so a day's search gives 2 loads in spring and summer, 4 in autumn and 6 in winter after storms (decision S8-29)"
+    },
+    {
      "Key": "campFuel",
      "Value": "0 loads",
      "Notes": "The first fire needs driftwood gathered first (Book 4 Chapter 1 beat 2)"
@@ -1160,6 +1165,56 @@
      "Value": "Facing locked from windup start to recovery end"
     }
    ],
+   "fightRules": [
+    {
+     "Key": "strikeArc",
+     "Value": "100 degrees in front: a strike meets everyone within its reach there"
+    },
+    {
+     "Key": "bodyRadius",
+     "Value": "0.3 tiles: reach is measured to the near edge of the body a strike meets"
+    },
+    {
+     "Key": "hitStagger",
+     "Value": "14 ticks: a hit staggers anyone without poise"
+    },
+    {
+     "Key": "blockStun",
+     "Value": "10 ticks: a blow taken on the shield rocks the guard"
+    },
+    {
+     "Key": "chargeFromPress",
+     "Value": "A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press"
+    },
+    {
+     "Key": "heavySwing",
+     "Value": "A released charge swings with the weapon's windup before its active ticks"
+    },
+    {
+     "Key": "chainWindow",
+     "Value": "A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped"
+    },
+    {
+     "Key": "shoveTiming",
+     "Value": "Windup 6 ticks, active 3, recovery 12; reach 1 tile"
+    },
+    {
+     "Key": "dodgeWay",
+     "Value": "With no direction held, a dodge goes straight back from the facing"
+    },
+    {
+     "Key": "guardBreakHit",
+     "Value": "A level-2 charge that meets a raised shield breaks the guard and lands"
+    },
+    {
+     "Key": "blockNeedsShield",
+     "Value": "Only a shield blocks; without one the block key does nothing and says so"
+    },
+    {
+     "Key": "missileDamage",
+     "Value": "An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost"
+    }
+   ],
    "vitalityStaminaAndArmour": [
     {
      "Key": "vitality",
@@ -1561,6 +1616,10 @@
      "Value": "-15"
     },
     {
+     "Key": "memberBloodied",
+     "Value": "-10: a member falls below half vitality (Stage 9, decision S9-8)"
+    },
+    {
      "Key": "outnumberedTwoToOne",
      "Value": "-10 per 10 seconds"
     },
@@ -1575,6 +1634,60 @@
     {
      "Key": "noQuarterAfter",
      "Value": "2 known SURRENDERED_KILLED deeds by the household"
+    }
+   ],
+   "fightersHabits": [
+    {
+     "Key": "decideEvery",
+     "Value": "6 ticks: each fighter chooses what to do 10 times a second"
+    },
+    {
+     "Key": "reactChance",
+     "Value": "45%: a fighter who sees an attacker's tell defends before the blow lands"
+    },
+    {
+     "Key": "reactTicks",
+     "Value": "6 ticks after the tell at the soonest"
+    },
+    {
+     "Key": "parryShare",
+     "Value": "35% of a fighter's defences are parries when a shield is held; all are parries without one"
+    },
+    {
+     "Key": "heavyChance",
+     "Value": "20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield"
+    },
+    {
+     "Key": "attackGap",
+     "Value": "0.5 to 1.2 s between one fighter's attacks while in reach"
+    },
+    {
+     "Key": "archerRange",
+     "Value": "4 to 7 tiles: an archer keeps this far from its target and shoots from there"
+    },
+    {
+     "Key": "archerArrows",
+     "Value": "8 arrows in an enemy archer's quiver"
+    },
+    {
+     "Key": "searchSeconds",
+     "Value": "8: a fighter who loses sight of its target goes to where it was last known and searches"
+    },
+    {
+     "Key": "crewFollow",
+     "Value": "2.5 tiles behind the steerer"
+    },
+    {
+     "Key": "crewProtect",
+     "Value": "4 tiles: a protector fights anyone who comes this near the one it protects"
+    },
+    {
+     "Key": "fallBackFrom",
+     "Value": "3 tiles: an archer whose target comes nearer than this backs away before it shoots again"
+    },
+    {
+     "Key": "orderLapse",
+     "Value": "60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day"
     }
    ],
    "occupiedSkarvholmGarrison": [

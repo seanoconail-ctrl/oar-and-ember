@@ -832,6 +832,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.builder",
           "reply": "Talk",
           "act": "JOB:BUILDER",
@@ -1073,6 +1079,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.builder",
           "reply": "Talk",
           "act": "JOB:BUILDER",
@@ -1219,6 +1231,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.builder",
           "reply": "Talk",
           "act": "JOB:BUILDER",
@@ -1362,6 +1380,12 @@
           "key": "p_steerer.talk.job.camp",
           "reply": "Talk",
           "act": "JOB:CAMP",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
           "end": true
         },
         {

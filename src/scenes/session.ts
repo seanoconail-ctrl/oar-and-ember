@@ -103,6 +103,10 @@ export class Session {
   /** A draw was lowered: the use button must be let go before it draws again. */
   #cancelLatch = false;
   #wantSlot: number | null = null;
+  /** Stage 9: a melee press held (its release is sent), the block and the finisher held. */
+  #meleeHeld = false;
+  #blockHeld = false;
+  #finisherHeld = false;
   /** USE_AT and INTERACT_AT commands sent (the tests check a refused click sends none). */
   tileCommands = 0;
   /** The household's people (Stage 8), for the conversation's options; null without them. */
@@ -328,7 +332,43 @@ export class Session {
     } else if (this.#aimDir !== null) this.sim.submit({ type: 'AIM', dir: null });
     this.#aimDir = aimDir;
     if (aimDir === null) this.#aimDist = null;
-    if (use !== 'AIM' && use !== null && input.pressed.has('useItem') && !handsFull) {
+    // A melee weapon (Stage 9): the press starts the charge towards the cursor (snapped to the
+    // nearest facing), the stick, or the facing; letting go strikes (a light attack if let go
+    // before level 1).
+    if (use === 'MELEE') {
+      if (input.pressed.has('useItem') && !handsFull) {
+        this.sim.submit({ type: 'MELEE', facing: this.#meleeFacing(input, pointing) });
+        this.#meleeHeld = true;
+      }
+      if (this.#meleeHeld && !input.held.has('useItem')) {
+        this.sim.submit({ type: 'MELEE_RELEASE' });
+        this.#meleeHeld = false;
+      }
+    } else if (this.#meleeHeld) {
+      this.sim.submit({ type: 'MELEE_RELEASE' });
+      this.#meleeHeld = false;
+    }
+    // Parry, block and dodge on their own keys; the finisher held (Book 2 section 21).
+    if (input.pressed.has('parry') && !handsFull) this.sim.submit({ type: 'PARRY' });
+    const block = input.held.has('block') && !handsFull;
+    if (block !== this.#blockHeld) {
+      this.sim.submit({ type: 'BLOCK', on: block });
+      this.#blockHeld = block;
+    }
+    if (input.pressed.has('dodge'))
+      this.sim.submit({ type: 'DODGE', x: input.move.x, y: input.move.y });
+    const finisher = input.held.has('finisher');
+    if (finisher !== this.#finisherHeld) {
+      this.sim.submit({ type: 'FINISHER', on: finisher });
+      this.#finisherHeld = finisher;
+    }
+    if (
+      use !== 'AIM' &&
+      use !== 'MELEE' &&
+      use !== null &&
+      input.pressed.has('useItem') &&
+      !handsFull
+    ) {
       if (inReach(p, toolTile, { ...query, reach: c.toolReach })) {
         this.sim.submit({ type: 'USE_AT', slot, tile: toolTile });
         this.tileCommands++;
@@ -352,6 +392,29 @@ export class Session {
       aimDir,
       refused,
     };
+  }
+
+  /** The facing a melee blow goes towards: the cursor, the right stick, else the way one faces. */
+  #meleeFacing(input: InputFrame, pointing: TargetInput): 's' | 'n' | 'e' | 'w' {
+    const p = this.sim.state.onFoot?.player ?? { x: 0, y: 0, facing: 's' as const };
+    let x = 0;
+    let y = 0;
+    if (pointing.device === 'mouse' && pointing.pointer !== null) {
+      x = pointing.pointer.x - p.x;
+      y = pointing.pointer.y - (p.y - BODY_HEIGHT / 2);
+    } else if (
+      pointing.device === 'pad' &&
+      Math.hypot(input.stick.x, input.stick.y) > (this.land?.controls.gamepadDeadZone ?? 0)
+    ) {
+      x = input.stick.x;
+      y = input.stick.y;
+    } else if (input.move.x !== 0 || input.move.y !== 0) {
+      x = input.move.x;
+      y = input.move.y;
+    }
+    if (x === 0 && y === 0) return p.facing;
+    if (Math.abs(x) > Math.abs(y)) return x > 0 ? 'e' : 'w';
+    return y > 0 ? 's' : 'n';
   }
 
   /**

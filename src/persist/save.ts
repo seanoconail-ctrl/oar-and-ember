@@ -341,6 +341,33 @@ export const MIGRATIONS: readonly Migration[] = [
       return next as unknown as Record<string, unknown>;
     },
   },
+  {
+    from: 6,
+    describe:
+      "the campaign's options and the game over; the wreck-scavengers among the people (Stage 9)",
+    // A version 6 save knew no fight: the options start as a new campaign's (Second wind and Rán's
+    // mercy off, Book 10's parry window), the game is not over, and the people content added since
+    // (the three wreck-scavengers) joins `people` as a new campaign has them. Nobody is fighting.
+    up: (state, ctx) => {
+      if (ctx?.people === undefined)
+        throw new SaveError(
+          'NO_MIGRATION',
+          'Migrating a schema 6 save needs balance.json and content/people.json',
+        );
+      const people = { ...(state['people'] as Record<string, Person>) };
+      const vitality = parsePeopleBasics(ctx.balance).vitality;
+      for (const def of ctx.people as PersonDef[]) {
+        if (def.kind === 'PLAYER' || people[def.id] !== undefined) continue;
+        people[def.id] = newPerson(def, vitality, ctx.balance);
+      }
+      return {
+        ...state,
+        people,
+        options: { secondWind: false, ransMercy: false, parryWindow: null },
+        gameOver: null,
+      };
+    },
+  },
 ];
 
 export interface ReadOptions {

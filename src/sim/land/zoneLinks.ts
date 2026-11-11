@@ -102,12 +102,19 @@ export function switchZone(onFoot: OnFootState, to: Id, at: { x: number; y: numb
   for (const [id, a] of Object.entries(onFoot.actors)) if (id !== onFoot.carrying) staying[id] = a;
   left.actors = staying;
   left.items = onFoot.items;
-  left.stuck = onFoot.stuck;
+  // Missiles in props and bodies stay only until the zone is left; those in the ground stay
+  // their Book 10 day (stuckArrows).
+  left.stuck = onFoot.stuck.filter((m) => m.in === 'ground');
+  if (onFoot.battle != null) left.battle = onFoot.battle;
+  else delete left.battle;
   const entered = restOf(onFoot, to);
   onFoot.zone = to;
   onFoot.actors = entered.actors;
   onFoot.items = entered.items;
   onFoot.stuck = entered.stuck;
+  if (entered.battle != null) onFoot.battle = entered.battle;
+  else delete onFoot.battle;
+  delete entered.battle;
   onFoot.elsewhere = without(onFoot.elsewhere ?? {}, to);
   onFoot.projectiles = [];
   onFoot.player.x = at.x;

@@ -13,6 +13,7 @@
  * - **At dawn** the night is counted (warm, in a bed), the dawn ration served, fear fades, hidden
  *   traits show on their day, and the steward's report says what each resident means to do.
  */
+import { heldByFight } from '../land/fight.ts';
 import type { Id } from '../../core/ids.ts';
 import { nextInt } from '../../core/rng.ts';
 import { minutesIntoDay, seasonOf } from '../calendar/calendar.ts';
@@ -98,6 +99,9 @@ export function stepPeopleTick(
   if (onFoot === null) return;
   for (const id of residents(world)) {
     if (inOpening(world, id, opener)) continue;
+    // In a fight (Stage 9): downed, carried, under an order, or fighting, the fight moves them.
+    const here = onFoot.actors[id];
+    if (here !== undefined && heldByFight(world, id, here)) continue;
     const act = activityOf(world, camp, ctx, id);
     if (act.place === null) {
       // Talking: they stand where they are and face the steerer.
@@ -370,6 +374,14 @@ function workMinute(
           say(p.id, line);
         },
       );
+      return;
+    case 'DRIFTWOOD':
+      // A day on the weed lines: Book 10's loads per search, times the searches a worker-day makes.
+      home.stores['RES_DRIFTWOOD'] =
+        (home.stores['RES_DRIFTWOOD'] ?? 0) +
+        ((camp.work.driftwoodPerSearch[season] * camp.work.driftwoodSearchesPerWorkerDay) /
+          camp.work.workerDayMinutes) *
+          k;
       return;
     case 'CAMP':
       // Keeping the camp: the fire fed from the woodpile before it burns low (half a day's fuel).

@@ -25,7 +25,13 @@
  *   steerer talks with her by the fire about her father and asks her to keep the camp instead of
  *   fishing, then fishes from the shore; the save is made at 15:00.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-06.json
+ *   It is frozen from Stage 9 and must load through the migration chain.
+ * - Golden save 7 (schema 7, Stage 9): the same day played again, with Second wind turned on; on the
+ *   strand after the broch the three wreck-scavengers are there by the wreck at the west end, out
+ *   of sight of the steerer fishing at the east end; the steerer takes the seax in hand, strikes
+ *   once at nothing, parries and dodges, and the save is made at 15:00.
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-07.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -49,17 +55,42 @@ export const GOLDEN_03 = 'tests/golden-saves/golden-03.json';
 export const GOLDEN_04 = 'tests/golden-saves/golden-04.json';
 export const GOLDEN_05 = 'tests/golden-saves/golden-05.json';
 export const GOLDEN_06 = 'tests/golden-saves/golden-06.json';
+export const GOLDEN_07 = 'tests/golden-saves/golden-07.json';
 
 export function goldenWorld06(): WorldState {
+  return goldenDay('golden-06', null);
+}
+
+/** Golden save 7 (Stage 9): golden 6's day with Second wind on and a few blows into the air. */
+export function goldenWorld07(): WorldState {
+  return goldenDay('golden-07', (sim) => {
+    sim.submit({ type: 'SELECT_SLOT', slot: 0 });
+    sim.step();
+    sim.submit({ type: 'MELEE', facing: 'e' });
+    sim.step();
+    sim.submit({ type: 'MELEE_RELEASE' });
+    for (let i = 0; i < 60; i++) sim.step();
+    sim.submit({ type: 'PARRY' });
+    for (let i = 0; i < 40; i++) sim.step();
+    sim.submit({ type: 'DODGE', x: 0, y: -1 });
+    for (let i = 0; i < 40; i++) sim.step();
+  });
+}
+
+function goldenDay(
+  seed: string,
+  stage9: ((sim: ReturnType<typeof createSimulation>) => void) | null,
+): WorldState {
   const balance = loadBalanceJson();
   const b = parseTimeBalance(balance);
   const { content, issues } = loadContentFromDisk();
   if (issues.length > 0)
     throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
-  const world = newCampaign('golden-06', b, parsePeopleBasics(balance), content, {
+  const world = newCampaign(seed, b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'B',
   });
+  if (stage9 !== null) world.options.secondWind = true;
   const land = landContext(content, balance);
   const camp = campContext(content);
   const strand = land.maps.get('ZONE_SK_STRAND');
@@ -109,6 +140,7 @@ export function goldenWorld06(): WorldState {
   bot.goToWater();
   bot.fish();
   bot.fish('late');
+  if (stage9 !== null) stage9(sim);
   bot.waitUntil(15 * 60);
   return sim.state;
 }
@@ -124,7 +156,18 @@ export function goldenSave06(): SaveFile {
   });
 }
 
+export function goldenSave07(): SaveFile {
+  return writeSave(goldenWorld07(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-07',
+    label: 'golden-07',
+    sequence: 1,
+    savedAt: '2026-11-11T00:00:00.000Z',
+  });
+}
+
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_06), `${JSON.stringify(goldenSave06(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_06}`);
+  writeFileSync(join(REPO_ROOT, GOLDEN_07), `${JSON.stringify(goldenSave07(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_07}`);
 }
