@@ -389,13 +389,15 @@ export class ZoneVisuals {
     this.#wetTo = Math.max(this.#tide, this.#wetTo - dt * 0.0015);
     const level = stillWaterLevel(input.tide);
 
+    // Distance since the last frame, measured before the last position is replaced.
+    const moved = Math.hypot(p.x - this.#last.x, p.y - this.#last.y);
     this.#camera(input, dt);
     this.#last = { x: p.x, y: p.y };
     this.#shake *= Math.exp(-dt * 9);
     this.#shakeT += dt;
 
     // The steerer's frames, from distance walked; footfalls on the contact frames.
-    this.#steerer(input, p, level);
+    this.#steerer(input, p, level, moved);
 
     // People in the water: the steerer and everyone standing in the zone.
     this.#water(STEERER, p.x, p.y, level, p.moving);
@@ -559,11 +561,10 @@ export class ZoneVisuals {
    * times the cycle's time); a one-frame lean into a run and a short skid out of it; the bow drawn
    * and loosed; and the idles when still.
    */
-  #steerer(input: FrameInput, p: OnFootPlayer, level: number): void {
+  #steerer(input: FrameInput, p: OnFootPlayer, level: number, moved: number): void {
     const t = this.seconds;
     const a = input.anims.get(input.steererSheet);
     const gait: Gait = input.onFoot.carrying !== null ? 'carry' : p.gait;
-    const moved = Math.hypot(p.x - this.#last.x, p.y - this.#last.y);
     const running = p.moving && gait === 'run';
     if (running && !this.#wasRunning && a?.['runstart'] !== undefined)
       this.#runStartUntil = t + (a['runstart'].frames * a['runstart'].ticks) / 60;

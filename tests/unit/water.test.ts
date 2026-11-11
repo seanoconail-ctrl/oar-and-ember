@@ -331,3 +331,53 @@ describe('Hild in the opening (Book 1 section 15; Book 9)', () => {
     expect(moved).toBeGreaterThan(0);
   });
 });
+
+describe('the steerer’s gait in the game (Book 7 section 06)', () => {
+  /** Walks or runs the steerer north from where they wake, as the game does, frame by frame. */
+  function gaitFrames(run: boolean): { states: Set<string>; frames: Set<number>; steps: number } {
+    const world = campaign();
+    const sim = createSimulation(b, world, land);
+    const onFoot = world.onFoot;
+    if (onFoot === null) throw new Error('no strand');
+    const visuals = new ZoneVisuals(strand, ground, false, visualTuning(balance, palette));
+    let steps = 0;
+    visuals.onStep = () => (steps += 1);
+    const states = new Set<string>();
+    const frames = new Set<number>();
+    const look = (tick: number) => ({
+      dt: 1 / 60,
+      tick,
+      onFoot,
+      tide: openingTide,
+      sky: { minuteOfDay: 900, lightFrom: 390, darkFrom: 1200 },
+      anims,
+      steererSheet: 'actor_p_steerer_a',
+    });
+    for (let i = 0; i < 10; i++) visuals.update(look(i));
+    sim.submit({ type: 'MOVE', x: 0, y: -1, run, sneak: false });
+    for (let i = 10; i < 10 + 60 * 2; i++) {
+      sim.step();
+      visuals.update(look(i));
+      const anim = visuals.view(look(i)).steerer;
+      if (anim !== null && onFoot.player.moving) {
+        states.add(anim.state);
+        if (anim.state === (run ? 'run' : 'walk')) frames.add(anim.frame);
+      }
+    }
+    return { states, frames, steps };
+  }
+
+  it('steps through every walk frame while walking, with footfalls', () => {
+    const walk = gaitFrames(false);
+    expect(walk.states).toEqual(new Set(['walk']));
+    expect(walk.frames.size).toBe(anims.get('actor_p_steerer_a')?.['walk']?.frames);
+    expect(walk.steps).toBeGreaterThan(2);
+  });
+
+  it('steps through every run frame while running, after the lean into it', () => {
+    const run = gaitFrames(true);
+    expect(run.states.has('run')).toBe(true);
+    expect(run.frames.size).toBe(anims.get('actor_p_steerer_a')?.['run']?.frames);
+    expect(run.steps).toBeGreaterThan(4);
+  });
+});

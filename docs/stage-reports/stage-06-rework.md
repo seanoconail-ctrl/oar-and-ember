@@ -74,7 +74,7 @@ These hold in every facing.
   - feet on the pivot row elsewhere;
   - layers matching their body;
   - an ink outline round every composite.
-- `npm test`: **30 files, 341 tests, all passed.**
+- `npm test`: **30 files, 343 tests, all passed.**
   - New: `water.test.ts` (12, including Hild keeping her knee-to-waist footing as the water level changes, and a person in deep water never fully hidden), `journeys.test.ts` (4: Book 10's shortest journeys match the computed network), `controls.test.ts` (11), and caption tags in `strings.test.ts`.
   - Golden save 3 is new; golden save 2 loads through the version-3 migration.
 - `npm run build`: passes.
@@ -95,6 +95,13 @@ These hold in every facing.
   - the bow draw has 0.0155 RMS;
   - the loose peaks at 0.197.
 - **Latest CI before this commit** (c7264ff): Chromium passed and the site published; Firefox and WebKit ran but do not block publishing (BR-1). This commit's results are in the CI run that follows it.
+
+## Fixed after the user's playtest
+- **The steerer slid in one pose when walking or running** (the user's screen recording).
+  - The game measured the distance moved after it had already recorded the new position, so the distance was always zero. The walk and run frames never advanced, and the footfalls (footstep sounds, footprints, dust and ripples on each step) never fired.
+  - Now the distance is measured first.
+  - Two new tests in `water.test.ts` walk and run the steerer through the simulation frame by frame. They require every walk and run frame to be shown, and footfalls to fire. Both failed before the fix.
+  - The sheets and the report's GIFs were always right, because the GIFs are drawn from the sheets. The in-game clips were re-captured.
 
 ## Deviations
 Decision log DB-1 and S6R-1 to S6R-11.
