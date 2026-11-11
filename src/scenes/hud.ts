@@ -39,6 +39,26 @@ export interface HudView {
     readonly facing: 's' | 'n' | 'e' | 'w';
   } | null;
   readonly tile: number;
+  /** The day clock's sky (Stage 7): its icon by the light; the time itself is on the text overlay. */
+  readonly clock?: { readonly minuteOfDay: number; readonly light: 'day' | 'dusk' | 'night' };
+  /**
+   * The stamina bar (Book 7 section 10): its frame as long as the maximum, filled to the current,
+   * and to its right the groove of capacity lost, one segment per reason with its icon.
+   */
+  readonly stamina?: {
+    readonly current: number;
+    readonly max: number;
+    readonly base: number;
+    readonly reasons: readonly { readonly reason: string; readonly amount: number }[];
+  };
+  /** A hands-on action's timing ring over the work, in world pixels (Book 2 section 07). */
+  readonly timing?: {
+    readonly x: number;
+    readonly y: number;
+    /** 0 at the start of the action, 1 at the mark. */
+    readonly progress: number;
+    readonly pressed: boolean;
+  } | null;
 }
 
 export interface Hud {
@@ -50,6 +70,9 @@ export interface Hud {
 /** The hotbar's place: centred along the bottom edge, as approved (preview48.py). */
 const SLOT_W = 22;
 const HOTBAR_Y = LOGICAL_HEIGHT - 30;
+/** The clock's sky icon and the stamina bar, top left (Stage 7). */
+const CLOCK = { x: 4, y: 3 };
+const BAR = { x: 5, y: 19 };
 
 export function createHud(doc: Document, atlases: ReadonlyMap<string, LoadedAtlas>): Hud {
   const canvas = doc.createElement('canvas');
@@ -87,6 +110,49 @@ export function createHud(doc: Document, atlases: ReadonlyMap<string, LoadedAtla
     draw(view) {
       ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
       const cam = view.camera;
+      // The day clock's sky.
+      if (view.clock !== undefined) {
+        const icon =
+          view.clock.light === 'day' ? 'sun' : view.clock.light === 'dusk' ? 'dusk' : 'moon';
+        put('ui_clock', `${icon}/-/0`, CLOCK.x, CLOCK.y);
+      }
+      // The stamina bar: as long as its maximum; the groove of what is lost, a segment a reason.
+      const st = view.stamina;
+      if (st !== undefined) {
+        const x0 = BAR.x;
+        put('ui_stamina', 'cap_left/-/0', x0, BAR.y);
+        const max = Math.round(st.max);
+        const cur = Math.max(0, Math.min(max, Math.round(st.current)));
+        for (let i = 0; i < max; i++)
+          put('ui_stamina', `${i < cur ? 'fill' : 'spent'}/-/0`, x0 + 4 + i, BAR.y);
+        let gx = x0 + 4 + max;
+        put('ui_stamina', 'cap_right/-/0', gx, BAR.y);
+        gx += 4;
+        for (const r of st.reasons) {
+          const w = Math.round(r.amount);
+          for (let i = 0; i < w; i++)
+            put('ui_stamina', `${i === 0 ? 'notch' : 'groove'}/-/0`, gx + i, BAR.y);
+          put(
+            'ui_stamina',
+            `icon_${r.reason.toLowerCase()}/-/0`,
+            gx + Math.floor(w / 2) - 6,
+            BAR.y + 10,
+          );
+          gx += w;
+        }
+      }
+      // The timing ring closing on the mark over the work.
+      const tm = view.timing;
+      if (tm != null) {
+        const x = tm.x - cam.x - 16;
+        const y = tm.y - cam.y - 16;
+        put('ui_timing', 'mark/-/0', x, y);
+        if (tm.pressed) put('ui_timing', 'hit/-/0', x, y);
+        else if (tm.progress < 1.15) {
+          const k = Math.max(0, Math.min(7, Math.floor(Math.min(1, tm.progress) * 7.99)));
+          put('ui_timing', `ring/-/${k}`, x, y);
+        }
+      }
       // The facing arrow at the feet.
       const arrow = view.facingArrow;
       if (arrow !== null) {

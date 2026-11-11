@@ -18,6 +18,7 @@ import type {
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
 import { heightAt } from '../../content/terrain/elevation.ts';
+import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
@@ -27,7 +28,7 @@ export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
  * How a person in the zone is placed: lying down, standing calling for help (Hild in the
  * shallows, too hurt to wade out alone), standing, sitting, or carried.
  */
-export type Pose = 'down' | 'call' | 'idle' | 'sit' | 'carried';
+export type Pose = 'down' | 'call' | 'idle' | 'sit' | 'carried' | 'sleep' | 'work';
 /** Poses of someone who needs lifting. */
 export const NEEDS_LIFT: readonly Pose[] = ['down', 'call'];
 
@@ -68,6 +69,28 @@ export interface OnFootPlayer {
   intent: MoveIntent;
   /** Drawing a bow, or null (Book 2 section 21, AIM). */
   aim: Aim | null;
+  /** A hands-on task under way (Stage 7): the feet are planted while its work loop plays. */
+  work?: Work | null;
+  /** Lying down to sleep at a bed: the night passes after the camp's sleepSeconds. */
+  sleep?: { readonly since: number; readonly site: string } | null;
+  /** Traversals that ran the bar empty, until Book 10's recoverAt is regained. */
+  winded?: { run?: boolean; carry?: boolean; wade?: boolean };
+}
+
+/**
+ * A player's hands-on action (Book 2 section 07): its task and where, when it began and how long
+ * its work loop plays (Book 10 actionSeconds, in ticks), the tick of the timing press if any, and
+ * the person tended or the water fished.
+ */
+export interface Work {
+  readonly task: Id;
+  readonly site: string;
+  readonly since: number;
+  readonly ticks: number;
+  press: number | null;
+  readonly target?: Id;
+  /** Where the work is done (the cast line's water, the fire), in pixels. */
+  readonly at: { readonly x: number; readonly y: number };
 }
 
 export interface OnFootActor {
@@ -85,6 +108,10 @@ export interface OnFootActor {
   blocking?: boolean;
   /** An archer's stop, draw, loose, move (src/sim/combat/archer.ts). */
   archer?: ArcherState;
+  /** A walk under way to a place (Stage 7: residents going about the camp and to work). */
+  walk?: WalkGoal;
+  /** The task a resident is working at (pose 'work'): its work loop plays (Book 7 section 07). */
+  task?: Id;
 }
 
 /** Where an archer is in its stop, draw, loose and move. */
@@ -177,6 +204,17 @@ export interface OnFootState {
   nextMissile: number;
   /** Missiles at rest in the zone, oldest first (Book 10 stuckArrows: at most 40). */
   stuck: StuckMissile[];
+  /**
+   * The zones out of view (version 5): who is there, what lies there and what is stuck there,
+   * kept as they were left, so walking back finds them.
+   */
+  elsewhere?: Record<Id, ZoneRest>;
+}
+
+export interface ZoneRest {
+  actors: Record<Id, OnFootActor>;
+  items: GroundItem[];
+  stuck: StuckMissile[];
 }
 
 /** Controller settings that are not Book 10 tuning numbers (content/onfoot.json). */
@@ -198,6 +236,8 @@ export interface OnFootRules {
 
 export interface ItemRules {
   readonly use: ItemUse;
+  /** A tool used at castReach (a line cast into water) rather than toolReach. */
+  readonly cast?: boolean;
   /** An aimed item's missile, and the item each shot spends (the bow's arrows). */
   readonly missile?: MissileKind;
   readonly ammo?: Id;
@@ -278,7 +318,8 @@ export function placeOnFoot(
 export function gaitFor(state: OnFootState): Gait {
   if (state.carrying !== null) return 'carry';
   if (state.player.intent.sneak) return 'sneak';
-  if (state.player.intent.run) return 'run';
+  // A sprint that ran the bar empty drops to a walk until stamina recovers (Book 10 sprintEmpty).
+  if (state.player.intent.run && state.player.winded?.run !== true) return 'run';
   return 'walk';
 }
 
@@ -333,7 +374,9 @@ export function speedAt(
   const base = p.gait === 'walk' && inWater ? ctx.movement.wade : ctx.movement[p.gait];
   const factor = band?.speedFactor ?? 1;
   const carry = band?.band === 'WAIST' && p.gait === 'carry' ? ctx.water.waistCarryFactor : 1;
-  return base * factor * carry;
+  // Waist deep with the bar run empty: the band's factor again (Book 10 waistWadeEmpty).
+  const tired = band?.band === 'WAIST' && p.winded?.wade === true ? (band.speedFactor ?? 1) : 1;
+  return base * factor * carry * tired;
 }
 
 /** One tick of movement. Each axis moves on its own, so the steerer slides along walls. */
@@ -346,8 +389,9 @@ export function stepMovement(
   const p = state.player;
   p.gait = gaitFor(state);
   // While drawing, the steerer faces the aim (snapped to the nearest facing) and stands still:
-  // the movement wanted is kept, but not walked, until the bow is loosed or lowered.
-  const planted = feetPlanted(p);
+  // the movement wanted is kept, but not walked, until the bow is loosed or lowered. A task's
+  // work loop and lying down to sleep plant the feet too.
+  const planted = feetPlanted(p) || p.work != null || p.sleep != null;
   const { x: ix, y: iy } = planted ? { x: 0, y: 0 } : p.intent;
   p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
   const perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;

@@ -92,7 +92,8 @@ export class Session {
   readonly input: InputMapper;
   readonly menus: MenuController;
   readonly ring = new CommandRing();
-  readonly land: SessionLand | null;
+  /** The zone's map and the controls' rules; replaced when the steerer walks into another zone. */
+  land: SessionLand | null;
   #accumulator = 0;
   #lastMove = '';
   #aimDir: number | null = null;
@@ -155,7 +156,21 @@ export class Session {
     const refusedActions: { action: string; reason: 'CARRYING' }[] = [];
     const onFoot = this.sim.state.onFoot;
     let target: TargetView | null = null;
-    if (onFoot !== null && !this.menus.timeStopped && this.menus.open === null) {
+    const p = onFoot?.player;
+    if (p?.work != null && !this.menus.timeStopped && this.menus.open === null) {
+      // A hands-on action plays (Book 2 section 07): use or interact is the timing press; the
+      // system key and dodge stop it. Movement waits until it ends.
+      if (input.pressed.has('useItem') || input.pressed.has('interact'))
+        this.sim.submit({ type: 'WORK_PRESS' });
+      if (input.pressed.has('dodge')) this.sim.submit({ type: 'CANCEL_WORK' });
+      const key = `0,0,false,false`;
+      if (key !== this.#lastMove) {
+        this.sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+        this.#lastMove = key;
+      }
+    } else if (p?.sleep != null) {
+      // Lying down: nothing to do but let the night come.
+    } else if (onFoot !== null && !this.menus.timeStopped && this.menus.open === null) {
       const move = {
         type: 'MOVE' as const,
         x: input.move.x,

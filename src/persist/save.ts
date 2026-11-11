@@ -4,7 +4,8 @@
  * future versions and runs the migration chain.
  */
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
-import { parseStartingWeapons } from '../content/balance.ts';
+import { parsePeopleBasics, parseStartingWeapons, parseTimeBalance } from '../content/balance.ts';
+import { parseWorkBalance } from '../content/homeBalance.ts';
 import { hashValue } from '../core/hash.ts';
 import { activeChapter, WORLD_STATE_VERSION } from '../sim/world.ts';
 import type { WorldState } from '../sim/world.ts';
@@ -193,6 +194,87 @@ export const MIGRATIONS: readonly Migration[] = [
                 nextMissile: 1,
                 stuck: [],
               },
+      };
+    },
+  },
+  {
+    from: 4,
+    describe:
+      "stamina as Book 2 section 24, the steerer's condition, the camp, tended wounds and the zones out of view (Stage 7)",
+    // The bar becomes its Book 2 shape at Book 10's base; a collapse's penalty becomes the
+    // Exhausted reason. The camp starts as a new one does (the salvaged stores, no fire). Hild,
+    // wounded, has her leg wound, not yet tended. Other zones hold nothing a version 4 save knew.
+    up: (state, ctx) => {
+      if (ctx === null)
+        throw new SaveError('NO_MIGRATION', 'Migrating a schema 4 save needs balance.json');
+      const b = parseTimeBalance(ctx.balance);
+      const base = parsePeopleBasics(ctx.balance).stamina;
+      const work = parseWorkBalance(ctx.balance);
+      const player = state['player'] as Record<string, unknown> & {
+        stamina?: number;
+        staminaMaxChange?: number;
+      };
+      const calendar = state['calendar'] as { day: number; minuteOfDay: number };
+      const now = (calendar.day - 1) * 1440 + ((calendar.minuteOfDay - b.dayStart + 1440) % 1440);
+      const change = player.staminaMaxChange ?? 0;
+      const reductions =
+        change < 0 ? [{ reason: 'EXHAUSTED', amount: -change, since: now, cause: 'collapse' }] : [];
+      const max = base + Math.min(0, change);
+      const rest: Record<string, unknown> = { ...player };
+      delete rest['staminaMaxChange'];
+      const homes = state['homes'] as Record<string, Record<string, unknown>>;
+      const nextHomes: Record<string, unknown> = {};
+      for (const [id, home] of Object.entries(homes)) {
+        const stores = { ...((home['stores'] as Record<string, number> | undefined) ?? {}) };
+        if (home['stage'] === 'S0' && stores['RES_SALTED_FISH'] === undefined) {
+          stores['RES_SALTED_FISH'] = work.wreckStoresRd;
+          stores['RES_DRIFTWOOD'] = work.campFuelLoads;
+        }
+        nextHomes[id] = {
+          ...home,
+          stores,
+          fresh: [],
+          fire: { lit: false, fuel: 0 },
+          building: null,
+          catch: 0,
+          rationDay: calendar.day,
+          shortDays: 0,
+        };
+      }
+      const people = state['people'] as Record<string, Record<string, unknown>>;
+      const nextPeople: Record<string, unknown> = {};
+      for (const [id, person] of Object.entries(people)) {
+        const wounds = (person['wounds'] as unknown[] | undefined) ?? [];
+        nextPeople[id] =
+          id === 'C_HILD' && person['status'] === 'wounded' && wounds.length === 0
+            ? { ...person, wounds: [{ day: 1, severity: 'SERIOUS', where: 'leg' }] }
+            : person;
+      }
+      const onFoot = state['onFoot'] as Record<string, unknown> | null;
+      return {
+        ...state,
+        player: {
+          ...rest,
+          stamina: {
+            current: Math.min(player.stamina ?? base, max),
+            max,
+            base,
+            reductions,
+            spentTick: 0,
+          },
+          condition: {
+            wokeAt: now,
+            lastMealAt: null,
+            mealsWhileStarving: 0,
+            workedMinutes: 0,
+            warmMinutes: 0,
+          },
+          wounds: [],
+        },
+        homes: nextHomes,
+        people: nextPeople,
+        onFoot: onFoot === null ? null : { ...onFoot, elsewhere: {} },
+        report: null,
       };
     },
   },

@@ -15,7 +15,20 @@ export interface Overlay {
   setTextSize(percent: number): void;
   /** A named text region (created on first use). */
   region(
-    name: 'captions' | 'menu' | 'ring' | 'prompt' | 'panel' | 'slot' | 'refusal' | 'tip' | 'help',
+    name:
+      | 'captions'
+      | 'menu'
+      | 'ring'
+      | 'prompt'
+      | 'panel'
+      | 'slot'
+      | 'refusal'
+      | 'tip'
+      | 'help'
+      | 'clock'
+      | 'stamina'
+      | 'report'
+      | 'fade',
   ): HTMLElement;
 }
 
@@ -48,6 +61,15 @@ const STYLE = `
 .oe-overlay [data-region=help] p { margin: 0.3em 0; }
 .oe-overlay [data-region=help] h2 { margin: 0 0 0.3em; font-size: 1.2em; }
 .oe-overlay [data-region=panel] { top: 3%; font-size: 0.85em; line-height: 1.4; white-space: pre-wrap; }
+.oe-overlay [data-region=clock] { top: 1.6%; left: 3.4%; right: auto; font-size: 0.8em; white-space: nowrap; }
+.oe-overlay [data-region=stamina] { top: 11.4%; left: 0.9%; right: auto; font-size: 0.72em; white-space: nowrap;
+  color: #e9d7b8; }
+.oe-overlay [data-region=report] { top: 14%; left: 18%; right: 18%; font-size: 0.95em; line-height: 1.45; }
+.oe-overlay [data-region=report]:not(:empty) { background: rgba(58, 38, 22, 0.94); border: 2px solid #7b5434;
+  padding: 0.7em 1em; }
+.oe-overlay [data-region=report] h2 { margin: 0 0 0.4em; font-size: 1.2em; color: #f0ad4c; }
+.oe-overlay [data-region=report] p { margin: 0.25em 0; }
+.oe-overlay [data-region=fade] { top: 0; bottom: 0; left: 0; right: 0; background: #0b0e16; opacity: 0; }
 `;
 
 export function createOverlay(doc: Document): Overlay {

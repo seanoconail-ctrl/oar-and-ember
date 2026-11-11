@@ -182,7 +182,11 @@ describe('sleep and collapse', () => {
     const { sim, events } = newSim();
     runUntil(sim, events, 'COLLAPSED');
     expect(sim.state.calendar).toEqual(at(2, 8));
-    expect(sim.state.player.staminaMaxChange).toBe(-30);
+    // Book 10: the collapse's penalty is the Exhausted reason (No sleep, -30) until a full rest.
+    expect(sim.state.player.stamina.reductions).toEqual([
+      expect.objectContaining({ reason: 'EXHAUSTED', amount: 30 }),
+    ]);
+    expect(sim.state.player.stamina.max).toBe(sim.state.player.stamina.base - 30);
     expect(events.filter((e) => e.type === 'WOKE').at(-1)).toMatchObject({
       cause: 'collapsed',
       at: '08:00',
@@ -191,7 +195,7 @@ describe('sleep and collapse', () => {
     runTo(sim, 18);
     sim.submit({ type: 'SLEEP' });
     sim.step();
-    expect(sim.state.player.staminaMaxChange).toBe(0);
+    expect(sim.state.player.stamina.reductions).toEqual([]);
   });
 });
 

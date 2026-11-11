@@ -10,7 +10,9 @@
  * The overlay root carries data-* attributes the browser tests read.
  */
 import renderJson from '../../assets/art/render.json';
+import buildingsJson from '../../assets/art/buildings.json';
 import { AudioRouter } from '../audio/router.ts';
+import { PlaceMusic } from '../audio/placeMusic.ts';
 import { WebAudioEngine } from '../audio/webAudio.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../content/balance.ts';
 import type { Content } from '../content/registry.ts';
@@ -43,12 +45,15 @@ import type { TipContext } from './tips.ts';
 import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
+import { campUseNear, campUses } from '../sim/home/camp.ts';
+import { staminaView } from '../sim/home/stamina.ts';
+import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
 import { createOverlay, showCaptions } from '../ui/overlay.ts';
 import type { LoadedAtlas } from './atlases.ts';
-import { lightPhase } from './lightPhase.ts';
+import { homePhase, lightPhase } from './lightPhase.ts';
 import type { NamingChoice } from './namingView.ts';
 import { bundledLayerFiles } from './bundledLayers.ts';
 import { createHud } from './hud.ts';
@@ -56,6 +61,8 @@ import type { HudView } from './hud.ts';
 import { peopleLook } from './people.ts';
 import { Session } from './session.ts';
 import { zoneScene } from './zoneScene.ts';
+import type { CampScene } from './zoneScene.ts';
+import { campHooks, campUseLabel, interactionPoint, reportSentences } from './camp.ts';
 import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
 import type { CameraLead } from './zoneVisuals.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
@@ -235,8 +242,10 @@ export function startPlay(
   const land = landContext(content, content.balance);
   const opening = content.opening;
   if (opening === null || world.onFoot === null) throw new Error('No opening to play');
-  const map = land.maps.get(world.onFoot.zone);
-  if (map === undefined) throw new Error(`No map for ${world.onFoot.zone}`);
+  const startMap = land.maps.get(world.onFoot.zone);
+  if (startMap === undefined) throw new Error(`No map for ${world.onFoot.zone}`);
+  /** The zone in view: replaced when the steerer walks on into another (Book 2 section 10). */
+  let map = startMap;
   // Tests and captures only (`?kit=bow,seax`): start with these items in hand, the bow with Book
   // 10's starting arrows, their tooltips already seen, and the items gone from the strand.
   const kit = (new URLSearchParams(window.location.search).get('kit') ?? '')
@@ -253,6 +262,9 @@ export function startPlay(
       world.player.tipsSeen.push('ITEM_ARROW');
     }
   });
+  // Tests and captures only (`?camp=broch&time=19:00&fire=lit&stage=S1&wood=4`): start at the
+  // broch after beat 2's lead, at a time, with the camp as given.
+  campHooks(world, content, land, new URLSearchParams(window.location.search));
   const sim = createSimulation(b, world, land);
 
   const settings = loadSettings(browserStorage());
@@ -271,6 +283,9 @@ export function startPlay(
     ),
   };
   mark('world');
+  // Waking may have been moved by the test hooks (`?camp=`): the zone's map is the one in view.
+  const viewMap = land.maps.get(world.onFoot.zone);
+  if (viewMap !== undefined) map = viewMap;
   const prepared =
     options.prepared?.zone === map.zone
       ? options.prepared
@@ -287,12 +302,19 @@ export function startPlay(
     window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   mark('elevation');
-  const visuals = new ZoneVisuals(
-    map,
-    elevation,
-    display.reducedMotion,
-    visualTuning(content.balance, palette),
-  );
+  const tuning = visualTuning(content.balance, palette);
+  // Each zone's height field, registered with the renderer the first time the zone is seen.
+  const elevations = new Map([[map.zone, elevation]]);
+  const elevationFor = (zone: ZoneMap): Elevation => {
+    let e = elevations.get(zone.zone);
+    if (e === undefined) {
+      e = bakeElevation(zone.rows);
+      renderer.addElevation(zone.zone, e);
+      elevations.set(zone.zone, e);
+    }
+    return e;
+  };
+  let visuals = new ZoneVisuals(map, elevation, display.reducedMotion, tuning);
   // Reduced motion can be changed from the system menu with M (Book 2 section 21).
   window.addEventListener('keydown', (e) => {
     if (session.menus.open !== 'system') return;
@@ -344,22 +366,25 @@ export function startPlay(
   const engine = new WebAudioEngine(audioTable?.cues ?? []);
   const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
   const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
-  visuals.onStep = (surface, x) => {
-    if (engine.unlocked)
-      engine.footstep(
-        surface,
-        (x - (sim.state.onFoot?.player.x ?? x)) / 200,
-        sim.state.onFoot?.player.gait ?? 'walk',
-      );
+  const wireVisuals = (v: ZoneVisuals): void => {
+    v.onStep = (surface, x) => {
+      if (engine.unlocked)
+        engine.footstep(
+          surface,
+          (x - (sim.state.onFoot?.player.x ?? x)) / 200,
+          sim.state.onFoot?.player.gait ?? 'walk',
+        );
+    };
+    v.onSplash = (x) => {
+      if (audio !== null && engine.unlocked)
+        audio.event('WADE_SPLASH', engine.now, {
+          pan: (x - (sim.state.onFoot?.player.x ?? x)) / 200,
+        });
+    };
   };
+  wireVisuals(visuals);
   // The pixel HUD under the text overlay: the hotbar, the target tile and the aim line.
   const hud = createHud(document, atlases);
-  visuals.onSplash = (x) => {
-    if (audio !== null && engine.unlocked)
-      audio.event('WADE_SPLASH', engine.now, {
-        pan: (x - (sim.state.onFoot?.player.x ?? x)) / 200,
-      });
-  };
   const overlay = createOverlay(document);
   const root = overlay.root;
   const items = content.onFoot?.items ?? {};
@@ -437,10 +462,87 @@ export function startPlay(
     return Math.max(-1, Math.min(1, (actor.x - onFoot.player.x) / 200));
   };
   let lastAmbienceAt = -1;
+  // Home audio (Stage 7): which music a place wants, in turns with ambience only at home, and how
+  // near a lit fire the steerer is.
+  const homeAudio = audioTable?.home;
+  const placeMusic = homeAudio === undefined ? null : new PlaceMusic(homeAudio);
+  const placeAudio = (): void => {
+    if (audio === null) return;
+    const phase = homePhase(sim.state.calendar, b);
+    audio.setPlace(map.zone, phase, engine.now);
+    const atHome = campDef !== null && map.zone === campDef.zone;
+    const want =
+      placeMusic?.want(engine.now, {
+        allowed: sim.state.facts[FACT_HILD_SAFE] === true,
+        home: atHome,
+        phase,
+      }) ?? null;
+    if (want === null) {
+      if (audio.director.state !== null) audio.silence(engine.now);
+    } else if (audio.director.state !== want) audio.play(want, engine.now);
+    const onFoot = sim.state.onFoot;
+    const home = campDef === null ? undefined : sim.state.homes[campDef.home];
+    const fire = campDef?.sites.find((x) => x.kind === 'FIRE' && x.zone === map.zone);
+    let level = 0;
+    if (
+      onFoot !== null &&
+      fire !== undefined &&
+      home?.fire.lit === true &&
+      homeAudio !== undefined
+    ) {
+      const d = Math.hypot(
+        onFoot.player.x / map.tile - fire.x,
+        onFoot.player.y / map.tile - fire.y,
+      );
+      const span = Math.max(1, homeAudio.fireSilentTiles - homeAudio.fireFullTiles);
+      level = Math.max(0, Math.min(1, (homeAudio.fireSilentTiles - d) / span));
+    }
+    engine.setHearth(level);
+  };
   // The frame's clock: events arrive while a frame steps the simulation, and their captions and
   // notices must expire on the clock the frame tests them against (stepped play runs ahead of
   // the wall clock).
   let frameNow = performance.now();
+  // The camp at home (Stage 7): what the scene draws of it, and the day's report.
+  const campDef = content.camp;
+  const broch = (buildingsJson as Record<string, unknown>)['bld_broch'] as
+    | {
+        band: number;
+        top: number;
+        bands: number;
+        boxes?: [number, number, number, number][][];
+      }
+    | undefined;
+  const loops: Record<string, string> = Object.fromEntries(
+    Object.entries(campDef?.tasks ?? {}).map(([id, def]) => [id, def.workLoop]),
+  );
+  const campScene = (): CampScene | undefined => {
+    if (campDef === null) return undefined;
+    const home = sim.state.homes[campDef.home];
+    if (home === undefined) return undefined;
+    const here = map.zone === campDef.zone;
+    const fireSite = campDef.sites.find((s) => s.kind === 'FIRE' && s.zone === map.zone);
+    const stageProps = home.stage === 'S1' ? campDef.props.S1 : campDef.props.S0;
+    return {
+      props: here ? stageProps : [],
+      stage: home.stage,
+      fire:
+        fireSite === undefined
+          ? null
+          : { x: fireSite.x, y: fireSite.y, lit: home.fire.lit, fuel: home.fire.fuel },
+      woodpile: here
+        ? { ...campDef.woodpile, loads: Math.floor(home.stores['RES_DRIFTWOOD'] ?? 0) }
+        : null,
+      loops,
+      building: broch ?? null,
+      light: style.fire ?? null,
+    };
+  };
+  /** The morning report, shown in Report mode until closed (Book 2 section 02). */
+  let reportShown: string[] | null = null;
+  /** The fade in from dark on waking and on entering a zone (frame clock, ms). */
+  let fadeInFrom = -1;
+  let workCue: { since: number; ticks: number; mark: number } | null = null;
   const onEvent = (e: SimEvent): void => {
     const now = frameNow;
     switch (e.type) {
@@ -483,6 +585,13 @@ export function startPlay(
           const key = itemOf(e.detail)?.refusalKey ?? 'ui.refusal.nothing_there';
           refuse('nothing_to_use_on', t(key), lastTarget.tx, lastTarget.ty, now);
         }
+        if (e.reason === 'NO_WATER') refuseHere('no_water', t('ui.refusal.no_water'), now);
+        if (e.reason === 'TOO_EARLY_TO_SLEEP')
+          refuseHere('too_early', t('ui.refusal.too_early'), now);
+        if (e.reason === 'NO_DRIFTWOOD')
+          refuseHere('no_driftwood', t('ui.refusal.no_driftwood'), now);
+        if (e.reason === 'NO_FOOD') refuseHere('no_food', t('ui.refusal.no_food'), now);
+        if (e.reason === 'TOO_TIRED') refuseHere('too_tired', t('ui.refusal.too_tired'), now);
         if (e.reason === 'BELOW_TIDE_LINE' || e.reason === 'NO_ROOM') {
           const key = e.reason === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room';
           notice = { text: t(key, { name: nameOf(e.detail) }), until: now + captionMs };
@@ -517,14 +626,55 @@ export function startPlay(
       case 'SHOVED':
         visuals.shove();
         return;
+      case 'WORK_STARTED':
+        workCue = { since: sim.state.tick, ticks: e.ticks, mark: e.markTick };
+        if (audio !== null && engine.unlocked) {
+          const sound = campDef?.tasks[e.task]?.sound;
+          if (sound !== undefined) audio.event(sound, engine.now, { pan: 0 });
+        }
+        return;
+      case 'WORK_PRESSED':
+        if (e.quality > 0.5 && audio !== null && engine.unlocked)
+          audio.event('TIMING_GOOD', engine.now, { pan: 0 });
+        return;
+      case 'WORK_DONE':
+        workCue = null;
+        return;
+      case 'WORK_CANCELLED':
+        workCue = null;
+        return;
+      case 'FISH_LANDED':
+        if (e.by === 'P_STEERER' && audio !== null && engine.unlocked)
+          audio.event('FISH_LANDED', engine.now, { pan: 0 });
+        return;
+      case 'FIRE_FED':
+        if (audio !== null && engine.unlocked) audio.event('FIRE_FED', engine.now, { pan: 0 });
+        return;
+      case 'FIRE_OUT':
+        if (audio !== null && engine.unlocked) audio.event('FIRE_OUT', engine.now, { pan: 0 });
+        return;
+      case 'FELL_ASLEEP':
+        if (audio !== null && engine.unlocked) audio.event('SLEEP', engine.now, { pan: 0 });
+        return;
+      case 'MORNING_REPORT_DUE': {
+        const report = sim.state.report;
+        if (report !== null) {
+          reportShown = reportSentences(report, t, nameOf);
+          session.menus.request('report');
+        }
+        fadeInFrom = now;
+        return;
+      }
+      case 'ZONE_ENTERED':
+        fadeInFrom = now;
+        return;
       case 'BEAT_COMPLETED':
+        // The island theme enters once Hild is safe (placeAudio): the opening has no music.
         beat = e.beat;
-        // The island theme enters once Hild is safe: the opening itself has no music (Book 11).
-        if (audio !== null && engine.unlocked && audio.director.state === null)
-          audio.play(
-            lightPhase(sim.state.calendar, b) === 'night' ? 'MUS_HOME_NIGHT' : 'MUS_HOME_DAY',
-            engine.now,
-          );
+        return;
+      case 'FIRE_LIT':
+        // The hearth theme starts at the first fire (Book 11 section 04).
+        placeMusic?.begin(engine.now);
         return;
       default:
         return;
@@ -538,7 +688,7 @@ export function startPlay(
         engine.unlock();
         // Book 11: no music in the first seconds of the opening; wind, surf and Hild's voice.
         engine.setSeason(seasonOf(world.calendar.day) === 'Winter');
-        audio.setPlace(map.zone, lightPhase(world.calendar, b), engine.now);
+        audio.setPlace(map.zone, homePhase(world.calendar, b), engine.now);
       }
     },
   });
@@ -603,6 +753,21 @@ export function startPlay(
     const deviceChanged = device !== lastDevice;
     lastDevice = device;
     const result = session.frame(now - last, browser.aim(), { device, pointer });
+    // Walked on into another zone (Book 2 section 10): its map, height field and visuals.
+    const zoneNow = sim.state.onFoot?.zone;
+    if (zoneNow !== undefined && zoneNow !== map.zone) {
+      const next = land.maps.get(zoneNow);
+      if (next !== undefined) {
+        map = next;
+        const detail = visuals.detail;
+        visuals = new ZoneVisuals(map, elevationFor(map), display.reducedMotion, tuning);
+        visuals.detail = detail;
+        wireVisuals(visuals);
+        if (audio !== null && engine.unlocked)
+          audio.setPlace(map.zone, homePhase(sim.state.calendar, b), engine.now);
+      }
+    }
+    if (session.land !== null && session.land.map !== map) session.land = { ...session.land, map };
     // The tooltip in turn: the next one when the last has had its time; named for the device in use.
     if (tip !== null && tip.until < now) tip = null;
     if (tip === null && tipQueue.length > 0) {
@@ -650,6 +815,14 @@ export function startPlay(
         return { kind: 'travel' };
       })(),
       aiming: onFoot.player.aim !== null,
+      fire: ((): { x: number; y: number; lit: boolean } | null => {
+        const site = campDef?.sites.find((x) => x.kind === 'FIRE' && x.zone === map.zone);
+        const home = campDef === null ? undefined : sim.state.homes[campDef.home];
+        return site === undefined || home === undefined
+          ? null
+          : { x: site.x * map.tile, y: site.y * map.tile, lit: home.fire.lit };
+      })(),
+      night: lightPhase(sim.state.calendar, b) === 'night',
     };
     lastVisual = now;
     visuals.update(frameInput);
@@ -692,6 +865,34 @@ export function startPlay(
       prompt = t('ui.prompt.move', { keys: moveKeys });
       promptKind = 'move';
     }
+    // The camp's uses (Stage 7): the nearer of a lift or pickup and a task, as the simulation picks.
+    const campCtx = land.camp ?? null;
+    const uses = campCtx === null ? [] : campUses(sim.state, campCtx, map, onFoot.actors);
+    const reachPx = land.rules.interactRadiusTiles * map.tile;
+    const use =
+      onFoot.carrying === null && onFoot.player.work == null
+        ? campUseNear(uses, onFoot.player, reachPx)
+        : null;
+    const at = interaction === null ? null : interactionPoint(onFoot, interaction, map.tile);
+    if (
+      use !== null &&
+      (interaction === null ||
+        (interaction.kind !== 'SET_DOWN' &&
+          (at === null ||
+            Math.hypot(use.x - onFoot.player.x, use.y - onFoot.player.y) <
+              Math.hypot(at.x - onFoot.player.x, at.y - onFoot.player.y))))
+    ) {
+      const label = campUseLabel(use.use, content, t, nameOf, interactKey, device === 'mouse');
+      prompt = label.text;
+      promptKind = label.kind;
+    }
+    const work = onFoot.player.work;
+    if (work != null) {
+      prompt = t('ui.prompt.timing', {
+        key: device === 'mouse' ? t('ui.input.mouse.0') : keys('useItem'),
+      });
+      promptKind = 'timing';
+    }
     if (notice !== null && notice.until < now) notice = null;
     overlay.region('prompt').textContent = notice?.text ?? prompt;
 
@@ -705,6 +906,7 @@ export function startPlay(
         -STRAND_WIND.dirX,
       );
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
+      placeAudio();
     }
     const soundCaptions = audio === null ? [] : audio.update(engine.now);
     showCaptions(
@@ -747,6 +949,7 @@ export function startPlay(
           }`;
 
     const view = visuals.view(frameInput);
+    const camp = campScene();
     const scene = zoneScene({
       map,
       onFoot,
@@ -761,6 +964,7 @@ export function startPlay(
       hidePeople,
       facts: sim.state.facts,
       missiles: missileLook,
+      ...(camp === undefined ? {} : { camp }),
     });
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
     viewCamera = view.camera;
@@ -814,7 +1018,76 @@ export function startPlay(
           ? { x: p.x, y: p.y, facing: p.aim !== null ? p.facing : facingTowards(p, pointer) }
           : null,
     };
-    hud.draw(hudView);
+    // Stage 7: the day clock, the stamina bar with its reasons, and the work's timing ring.
+    const st = staminaView(sim.state.player.stamina);
+    const light = lightPhase(sim.state.calendar, b);
+    const cue = work == null || workCue === null ? null : workCue;
+    const hudFull: HudView = {
+      ...hudView,
+      clock: { minuteOfDay: sim.state.calendar.minuteOfDay, light },
+      stamina: {
+        current: st.current,
+        max: st.max,
+        base: st.base,
+        reasons: st.reasons
+          .filter((r) => r.amount > 0)
+          .map((r) => ({ reason: r.reason, amount: r.amount })),
+      },
+      timing:
+        cue === null || work == null
+          ? null
+          : {
+              x: work.at.x,
+              y: work.at.y - 18,
+              progress: (sim.state.tick - cue.since) / Math.max(1, cue.mark - cue.since),
+              pressed: work.press !== null,
+            },
+    };
+    hud.draw(hudFull);
+    // The words beside them on the text overlay (Book 8 section 10: the plain reason).
+    const season = seasonOf(sim.state.calendar.day);
+    const clockText2 = t('ui.clock.text', {
+      day: String(sim.state.calendar.day),
+      season: t(`ui.season.${season.toLowerCase()}`),
+      time: clockText(sim.state.calendar.minuteOfDay),
+    });
+    const clockRegion = overlay.region('clock');
+    if (clockRegion.textContent !== clockText2) clockRegion.textContent = clockText2;
+    const reasonText = st.reasons.map((r) => t(r.labelKey)).join('  ·  ');
+    const staminaRegion = overlay.region('stamina');
+    if (staminaRegion.textContent !== reasonText) staminaRegion.textContent = reasonText;
+    // The morning report in Report mode (time stopped until it is closed).
+    const reportRegion = overlay.region('report');
+    const reportOpen = session.menus.open === 'report' && reportShown !== null;
+    if (reportOpen && reportRegion.dataset['shown'] !== reportShown?.join('|')) {
+      const title = document.createElement('h2');
+      title.textContent = t('ui.report.title', {
+        day: String(sim.state.calendar.day),
+        season: t(`ui.season.${season.toLowerCase()}`),
+      });
+      const body = (reportShown ?? []).map((l) => {
+        const para = document.createElement('p');
+        para.textContent = l;
+        return para;
+      });
+      const close = document.createElement('p');
+      close.textContent = t('ui.report.close', { key: keys('report') });
+      reportRegion.replaceChildren(title, ...body, close);
+      reportRegion.dataset['shown'] = reportShown?.join('|') ?? '';
+    } else if (!reportOpen && reportRegion.childElementCount > 0) {
+      reportRegion.replaceChildren();
+      reportRegion.dataset['shown'] = '';
+    }
+    // Lying down: the view darkens as sleep comes; on waking and on entering a zone, it clears.
+    const sleeping = onFoot.player.sleep;
+    let dark = 0;
+    if (sleeping != null && campCtx !== null)
+      dark = Math.min(1, (sim.state.tick - sleeping.since) / Math.max(1, campCtx.sleepTicks));
+    if (fadeInFrom >= 0) dark = Math.max(dark, 1 - (now - fadeInFrom) / 600);
+    if (fadeInFrom >= 0 && now - fadeInFrom > 600) fadeInFrom = -1;
+    const fade = overlay.region('fade');
+    const opacity = dark <= 0.01 ? '0' : dark.toFixed(2);
+    if (fade.style.opacity !== opacity) fade.style.opacity = opacity;
     hud.fit(presenter.viewport, window.devicePixelRatio);
     // The slot's name above the hotbar, and a refusal word beside the target tile.
     const inHand = itemOf(hotbar.slots[target?.slot ?? hotbar.selected] ?? null);
@@ -868,6 +1141,29 @@ export function startPlay(
 
     const tile = tileOf(map, onFoot.player.x, onFoot.player.y);
     root.dataset['tick'] = String(sim.state.tick);
+    // Stage 7, for the browser tests and captures.
+    root.dataset['zone'] = map.zone;
+    root.dataset['day'] = String(sim.state.calendar.day);
+    root.dataset['clock'] = clockText(sim.state.calendar.minuteOfDay);
+    root.dataset['light'] = light;
+    root.dataset['staminaMax'] = st.max.toFixed(1);
+    root.dataset['staminaNow'] = st.current.toFixed(1);
+    root.dataset['reasons'] = st.reasons.map((r) => `${r.reason}:${r.amount}`).join(',');
+    root.dataset['work'] = work?.task ?? '';
+    root.dataset['workLoop'] = work == null ? '' : (loops[work.task] ?? '');
+    root.dataset['sleeping'] = String(sleeping != null);
+    root.dataset['report'] = reportOpen ? (reportShown ?? []).join('|') : '';
+    const homeNow = campDef === null ? undefined : sim.state.homes[campDef.home];
+    root.dataset['fire'] = homeNow?.fire.lit === true ? 'lit' : 'out';
+    root.dataset['stage'] = homeNow?.stage ?? '';
+    root.dataset['wood'] = (homeNow?.stores['RES_DRIFTWOOD'] ?? 0).toFixed(2);
+    root.dataset['pools'] = String(scene.pools.length);
+    root.dataset['hildState'] = ((): string => {
+      const a = onFoot.actors['C_HILD'];
+      if (a === undefined) return '';
+      return a.pose === 'work' ? `work:${loops[a.task ?? ''] ?? ''}` : a.pose;
+    })();
+    root.dataset['steererFrame'] = scene.sprites.find((sp) => sp.focus === true)?.frame ?? '';
     root.dataset['x'] = String(tile.tx);
     root.dataset['y'] = String(tile.ty);
     root.dataset['px'] = onFoot.player.x.toFixed(1);

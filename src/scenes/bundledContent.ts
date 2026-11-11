@@ -15,7 +15,9 @@ import fittings from '../../content/fittings.json';
 import audio from '../../content/audio.json';
 import onFoot from '../../content/onfoot.json';
 import opening from '../../content/opening.json';
+import camp from '../../content/camp.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
+import zoneMachair from '../../content/zones/zone_sk_machair.json';
 import { formatIssue, loadContent } from '../content/registry.ts';
 import type { Content, ContentFiles } from '../content/registry.ts';
 
@@ -33,7 +35,9 @@ export const BUNDLED_FILES: ContentFiles = {
   audio,
   onFoot,
   opening,
+  camp,
   zoneStrand,
+  zoneMachair,
 };
 
 export function bundledContent(): Content {

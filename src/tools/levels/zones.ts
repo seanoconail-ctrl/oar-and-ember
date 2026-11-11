@@ -17,18 +17,27 @@
  *   shells, the wrack line along the tide line, grass in tussocks and as a sward everywhere, flower
  *   drifts, marram on the dunes under the bank, and the plan's props and wildlife.
  *
+ * - a broch (Stage 7, the machair round the steading): its wall a ring of rock tiles (blocking),
+ *   its court trodden earth (`:`), with the door and the breach left open; footpaths from the plan.
+ *
  * Tile codes in the output: ~ sea, - tidal flats, _ shingle below the tide line, . shingle above
- * it, , machair, b the bank, w stream, r rock.
+ * it, , machair, b the bank, w stream, r rock, : the broch's court.
+ *
+ * Neighbouring zones share one terrain: a plan's `terrainSeed` (the strand's for the machair) seeds
+ * the warp and the stream, which read island coordinates, so the ground runs on across the edge
+ * where the zones meet (their `links`).
  */
 import { cyrb53 } from '../../core/hash.ts';
 
-export const TILE_CODES = ['~', '-', '_', '.', ',', 'b', 'w', 'r'] as const;
+export const TILE_CODES = ['~', '-', '_', '.', ',', 'b', 'w', 'r', ':'] as const;
 export type TileCode = (typeof TILE_CODES)[number];
 
 export interface ZonePlan {
   readonly zone: string;
   readonly about: string;
   readonly seed: string;
+  /** The seed of the island's terrain (warp, stream, skerries), if not `seed`. */
+  readonly terrainSeed?: string;
   /** The window of the block grid, in blocks. */
   readonly blocks: {
     readonly x: number;
@@ -53,10 +62,29 @@ export interface ZonePlan {
   readonly cuts: readonly (readonly [number, number])[];
   /** Wildlife, drawn by the renderer only (never simulated). */
   readonly life: readonly ZoneLife[];
+  /** A broch: centre (tiles), the wall's inner and outer radius (tiles), and openings. */
+  readonly broch?: {
+    readonly x: number;
+    readonly y: number;
+    readonly inner: number;
+    readonly outer: number;
+    /** Tiles of the wall left open (offsets from the centre tile): the door and the breach. */
+    readonly openings: readonly (readonly [number, number])[];
+  };
+  /** Worn footpaths, as polylines in tiles. */
+  readonly paths?: readonly (readonly (readonly [number, number])[])[];
+  /** Edges where the steerer walks on into a neighbouring zone (Book 2 section 10, FootLink). */
+  readonly links?: readonly ZoneLink[];
+}
+
+/** A zone edge that leads on to the zone beyond it (the whole edge; positions by island tiles). */
+export interface ZoneLink {
+  readonly edge: 'n' | 's' | 'e' | 'w';
+  readonly to: string;
 }
 
 export interface ZoneLife {
-  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab';
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep';
   /** In tiles. */
   readonly x: number;
   readonly y: number;
@@ -90,6 +118,8 @@ export interface ZoneMap {
   readonly spawns: ZonePlan['spawns'];
   readonly props: readonly ZoneProp[];
   readonly life: readonly ZoneLife[];
+  readonly links?: readonly ZoneLink[];
+  readonly broch?: ZonePlan['broch'];
   /** Sheet and frame of each decoration index ("decal_strand pebbles/-/3"). */
   readonly decalFrames: readonly string[];
   readonly decals: readonly DecalPlacement[];
@@ -140,7 +170,7 @@ function blockToTile(ch: string): TileCode {
 }
 
 export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
-  const seed = cyrb53(plan.seed);
+  const seed = cyrb53(plan.terrainSeed ?? plan.seed);
   const width = plan.blocks.w * BLOCK;
   const height = plan.blocks.h * BLOCK;
   const ox = plan.blocks.x * BLOCK;
@@ -197,6 +227,19 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     }
   }
 
+  // A broch: the wall's ring blocks, the court is trodden earth, the door and breach are open.
+  const broch = plan.broch;
+  if (broch !== undefined) {
+    for (let ty = 0; ty < height; ty++) {
+      for (let tx = 0; tx < width; tx++) {
+        const r = Math.hypot(tx + 0.5 - broch.x, ty + 0.5 - broch.y);
+        if (r <= broch.outer) set(tx, ty, r < broch.inner ? ':' : 'r');
+      }
+    }
+    for (const [dx, dy] of broch.openings)
+      set(Math.floor(broch.x + dx), Math.floor(broch.y + dy), ':');
+  }
+
   // The high-tide line: shingle near the flats or the sea is foreshore, under water at high tide.
   const reach = plan.tideLineTiles;
   const wet: [number, number][] = [];
@@ -231,7 +274,7 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
   }
 
   const rows = tiles.map((r) => r.join(''));
-  const furnished = furnish(rows, width, height, seed, plan.cuts);
+  const furnished = furnish(rows, width, height, cyrb53(plan.seed), plan.cuts, plan.paths ?? []);
   return {
     zone: plan.zone,
     about: plan.about,
@@ -243,6 +286,8 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     spawns: plan.spawns,
     props: [...plan.props, ...furnished.props],
     life: plan.life,
+    ...(plan.links === undefined ? {} : { links: plan.links }),
+    ...(plan.broch === undefined ? {} : { broch: plan.broch }),
     decalFrames: DECAL_FRAMES,
     decals: furnished.decals,
     plants: furnished.plants,
@@ -270,6 +315,7 @@ function furnish(
   height: number,
   seed: number,
   cuts: readonly (readonly [number, number])[],
+  polylines: readonly (readonly (readonly [number, number])[])[] = [],
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -298,14 +344,37 @@ function furnish(
       (py: number): number =>
         ((a + b + 1) / 2) * T + Math.sin(py / 90 + k * 2.1) * 30 + Math.sin(py / 37 + k) * 12,
   );
+  // The plan's own footpaths: points every 5 px along each polyline, a little wavy.
+  const trail: [number, number][] = [];
+  polylines.forEach((line, k) => {
+    for (let i = 0; i + 1 < line.length; i++) {
+      const [ax = 0, ay = 0] = line[i] ?? [];
+      const [bx = 0, by = 0] = line[i + 1] ?? [];
+      const n = Math.max(1, Math.round((Math.hypot(bx - ax, by - ay) * T) / 5));
+      for (let s = 0; s < n; s++) {
+        const t = s / n;
+        const x = (ax + (bx - ax) * t) * T;
+        const y = (ay + (by - ay) * t) * T;
+        trail.push([x + Math.sin(y / 37 + k) * 4, y + Math.sin(x / 41 + k) * 3]);
+      }
+    }
+  });
+  const nearTrail = (px: number, py: number, reach: number): boolean =>
+    trail.some(([x, y]) => Math.abs(px - x) < reach && Math.abs(py - y) < reach);
   const onPath = (px: number, py: number, reach: number): boolean =>
-    paths.some((f) => Math.abs(px - f(py)) < reach);
+    paths.some((f) => Math.abs(px - f(py)) < reach) || nearTrail(px, py, reach);
   for (const f of paths) {
     for (let py = 2; py < H; py += 5) {
       const px = Math.round(f(py));
       if (code(px, py) !== ',') continue;
       decals.push([DECAL_START.path + Math.floor(r(13, px, py) * 4), px, py]);
     }
+  }
+  for (const [x, y] of trail) {
+    const px = Math.round(x);
+    const py = Math.round(y);
+    if (code(px, py) !== ',') continue;
+    decals.push([DECAL_START.path + Math.floor(r(14, px, py) * 4), px, py]);
   }
   // Pebble clusters on the beach: one cluster per few tiles where the cluster noise is high.
   for (let y = 4; y < H; y += 7) {

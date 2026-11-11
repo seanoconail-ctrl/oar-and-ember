@@ -16,6 +16,15 @@
  *   compare.png      the reference mockup beside the capture, both at 2x
  *   motion.png       the still view with cells that do not keep moving marked red
  *   README.md        the figures: motion with the camera still, against the reference
+ * From Stage 7 (`stage-07`), the strand's clips give way to the broch at home (campCapture):
+ *   broch-day.png, broch-night.png, broch-s1.png (and @2x)   the camp by day, by night with the
+ *                    fire lit, and raised to S1, the steerer standing
+ *   broch-*-motion.png, compare-day.png, compare-night.png   motion maps, and the approved mockup
+ *                    (docs/art/mockups/stage-07/) beside the capture at 2x
+ *   broch.mp4/.gif   10 seconds: the steerer walks to the fire ring and lights it (the kneel work
+ *                    loop, a timing press on the mark), the flames and smoke rise, Hild at the fire
+ *   sleep.mp4/.gif   a night's sleep after 18:00: lying down in the lean-to, the night passing, and
+ *                    the morning report (the overlay shown)
  * Needs ffmpeg for the clip.
  */
 import { execFileSync } from 'node:child_process';
@@ -37,6 +46,7 @@ import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
 
 const FPS = 25;
+const pct = (v: number): string => `${(v * 100).toFixed(1)}%`;
 const STEP_MS = 1000 / FPS;
 const CLIP_SECONDS = 10;
 /** The approved mockup's figures (docs/art/README.md). */
@@ -187,6 +197,12 @@ export async function capture(label: string): Promise<string> {
     writeFileSync(join(out, 'motion.png'), encodePng(marked));
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
+    if (CAMP_LABELS.has(label)) {
+      await page.close();
+      const camp = await campCapture(browser, out);
+      writeFileSync(join(out, 'README.md'), campReadme(label, motion.share, camp));
+      return `${out}: strand motion ${pct(motion.share)}, broch by day ${pct(camp.day)}, by night ${pct(camp.night)}`;
+    }
 
     // The wade (design addendum 2.2 section 2): from where the steerer wakes, along the strand to
     // Hild, into the shallows beside her, and back out onto the shingle.
@@ -250,7 +266,6 @@ export async function capture(label: string): Promise<string> {
     ]);
     rmSync(framesDir, { recursive: true, force: true });
 
-    const pct = (v: number): string => `${(v * 100).toFixed(1)}%`;
     writeFileSync(
       join(out, 'README.md'),
       [
@@ -541,6 +556,265 @@ async function wadeClip(
   ]);
   rmSync(wadeDir, { recursive: true, force: true });
   return frames;
+}
+
+/** Captures that show the broch at home instead of the strand's clips (Stage 7 onwards). */
+const CAMP_LABELS = new Set(['stage-07']);
+/** The approved Stage 7 mockup's figures (docs/art/mockups/stage-07/README.md). */
+const CAMP_MOCKUP = {
+  day: 'docs/art/mockups/stage-07/s0-day.png',
+  night: 'docs/art/mockups/stage-07/s0-night.png',
+  motion: { day: 0.998, dayFrozen: 0.927, night: 1.0, nightFrozen: 0.941 },
+};
+
+interface CampCaptureResult {
+  readonly day: number;
+  readonly night: number;
+  readonly s1: number;
+  readonly brochFrames: number;
+  readonly sleepFrames: number;
+}
+
+/** The still with cells that do not keep moving tinted red. */
+function motionMap(still: RgbaImage, motion: ReturnType<typeof continuousMotion>): RgbaImage {
+  const marked = { width: still.width, height: still.height, data: Uint8Array.from(still.data) };
+  motion.cells.forEach((moving, k) => {
+    if (moving) return;
+    const cx = (k % motion.cellsX) * MOTION_CELL;
+    const cy = Math.floor(k / motion.cellsX) * MOTION_CELL;
+    for (let y = cy; y < cy + MOTION_CELL; y++)
+      for (let x = cx; x < cx + MOTION_CELL; x++) {
+        const i = (y * still.width + x) * 4;
+        marked.data[i] = Math.round((marked.data[i] ?? 0) * 0.3 + 140);
+        marked.data[i + 1] = Math.round((marked.data[i + 1] ?? 0) * 0.3 + 28);
+        marked.data[i + 2] = Math.round((marked.data[i + 2] ?? 0) * 0.3 + 28);
+      }
+  });
+  return marked;
+}
+
+/** Opens play at the broch through the camp hooks (src/scenes/camp.ts). */
+async function openCamp(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  query: string,
+  overlay: boolean,
+): Promise<Page> {
+  const page = await browser.newPage({
+    viewport: { width: 640, height: 360 },
+    deviceScaleFactor: 2,
+  });
+  await page.goto(
+    `http://localhost:5287/?capture&quality=full&view=play&name=Ash&body=A&camp=broch&${query}`,
+  );
+  await page.waitForSelector('canvas#screen[data-state=play]', { timeout: 30_000 });
+  if (!overlay)
+    await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
+  await step(page, 60);
+  return page;
+}
+
+/** A still of the camp at 1x and 2x, its motion with the camera still, and its motion map. */
+async function campStill(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+  name: string,
+  query: string,
+): Promise<{ share: number; still2: RgbaImage }> {
+  const page = await openCamp(browser, query, false);
+  const still2 = await shot(page);
+  writeFileSync(join(out, `${name}@2x.png`), encodePng(still2));
+  const still1 = half(still2);
+  writeFileSync(join(out, `${name}.png`), encodePng(still1));
+  const stills: Uint8Array[] = [still1.data];
+  for (let i = 0; i < 40; i++) {
+    await step(page, 4);
+    stills.push(half(await shot(page)).data);
+  }
+  const motion = continuousMotion(stills, 640, 360);
+  writeFileSync(join(out, `${name}-motion.png`), encodePng(motionMap(still1, motion)));
+  await page.close();
+  return { share: motion.share, still2 };
+}
+
+/** Encodes recorded frames as an mp4 at 2x and a gif of the middle 320 x 180 at 12.5 fps. */
+function encodeClip(dir: string, out: string, name: string): void {
+  const input = [
+    '-y',
+    '-loglevel',
+    'error',
+    '-framerate',
+    String(FPS),
+    '-i',
+    join(dir, '%04d.png'),
+  ];
+  execFileSync('ffmpeg', [
+    ...input,
+    '-c:v',
+    'libx264',
+    '-crf',
+    '23',
+    '-pix_fmt',
+    'yuv420p',
+    join(out, `${name}.mp4`),
+  ]);
+  execFileSync('ffmpeg', [
+    ...input,
+    '-vf',
+    'fps=12.5,crop=640:360:320:180,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    join(out, `${name}.gif`),
+  ]);
+}
+
+/**
+ * Stage 7: the broch by day, by night and at S1 (stills, motion, the mockup beside them), a
+ * 10-second clip of the fire being lit, and a night's sleep to the morning report.
+ */
+async function campCapture(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<CampCaptureResult> {
+  const camp = JSON.parse(readFileSync(join(REPO_ROOT, 'content/camp.json'), 'utf8')) as {
+    sites: { key: string; x: number; y: number }[];
+  };
+  const site = (key: string): { x: number; y: number } => {
+    const at = camp.sites.find((x) => x.key === key);
+    if (at === undefined) throw new Error(`no camp site ${key}`);
+    return at;
+  };
+  const day = await campStill(browser, out, 'broch-day', 'time=16:30&wood=3&tended=1');
+  const night = await campStill(browser, out, 'broch-night', 'time=23:00&fire=lit&wood=3&tended=1');
+  const s1 = await campStill(
+    browser,
+    out,
+    'broch-s1',
+    'time=16:30&stage=S1&fire=lit&wood=6&tended=1',
+  );
+  for (const [k, img] of [
+    ['day', day.still2],
+    ['night', night.still2],
+  ] as const) {
+    const mock = decodePng(readFileSync(join(REPO_ROOT, CAMP_MOCKUP[k])));
+    writeFileSync(join(out, `compare-${k}.png`), encodePng(sideBySide(double(mock), img)));
+  }
+
+  // The fire lit: from where the steerer stands at the camp, to the ring, kneel and light it.
+  const fire = site('fire');
+  const record = async (
+    page: Page,
+    name: string,
+    plan: (save: () => Promise<void>) => Promise<void>,
+  ): Promise<number> => {
+    const dir = join(out, `.${name}`);
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    let frames = 0;
+    await plan(async () => {
+      writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+      frames++;
+    });
+    encodeClip(dir, out, name);
+    rmSync(dir, { recursive: true, force: true });
+    return frames;
+  };
+  const attr = async (page: Page, name: string): Promise<string> =>
+    (await page.locator('.oe-overlay').getAttribute(`data-${name}`)) ?? '';
+  let page = await openCamp(browser, 'time=17:40&wood=3&tended=1', false);
+  const brochFrames = await record(page, 'broch', async (save) => {
+    const held = new Set<string>();
+    const to = { x: fire.x * 24, y: (fire.y + 0.95) * 24 };
+    for (let i = 0; i < FPS * 1.2; i++) {
+      await step(page);
+      await save();
+    }
+    for (let guard = 0; guard < FPS * 4; guard++) {
+      if (await steer(page, held, to)) break;
+      await step(page);
+      await save();
+    }
+    for (const k of held) await page.keyboard.up(k);
+    // Face the ring, then light it, pressing on the mark (1.5 s in) for a sure stroke.
+    await page.keyboard.down('KeyW');
+    await step(page);
+    await page.keyboard.up('KeyW');
+    await save();
+    await page.keyboard.press('KeyE');
+    let pressed = false;
+    for (let i = 0; i < FPS * 8; i++) {
+      await step(page);
+      await save();
+      const work = await attr(page, 'work');
+      if (!pressed && work !== '' && i >= Math.round(FPS * 1.5) - 1) {
+        await page.keyboard.press('KeyE');
+        pressed = true;
+      }
+    }
+  });
+  await page.close();
+
+  // A night's sleep: lie down in the lean-to, the night passes, the morning report.
+  const bed = site('bed_s0');
+  page = await openCamp(
+    browser,
+    `time=21:00&fire=lit&wood=3&tended=1&at=${bed.x},${bed.y + 0.6}`,
+    true,
+  );
+  const sleepFrames = await record(page, 'sleep', async (save) => {
+    for (let i = 0; i < FPS * 0.6; i++) {
+      await step(page);
+      await save();
+    }
+    await page.keyboard.press('KeyE');
+    for (let i = 0; i < FPS * 9; i++) {
+      await step(page);
+      await save();
+      if ((await attr(page, 'report')) !== '' && i > FPS * 6) break;
+    }
+    for (let i = 0; i < FPS * 1.5; i++) {
+      await step(page);
+      await save();
+    }
+  });
+  await page.close();
+  return { day: day.share, night: night.share, s1: s1.share, brochFrames, sleepFrames };
+}
+
+function campReadme(label: string, strand: number, c: CampCaptureResult): string {
+  const m = CAMP_MOCKUP.motion;
+  return [
+    `# Capture: ${label}`,
+    '',
+    'Made by `npm run capture -- ' + label + '` (src/tools/art/capture.ts). Compare with',
+    '`docs/art/reference/` and the approved Stage 7 mockup `docs/art/mockups/stage-07/` (Book 7',
+    'section 14).',
+    '',
+    '| File | What it is |',
+    '|---|---|',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30: the lean-to, the salvage, the cold fire ring with wood laid, Hild by it, sheep outside |',
+    '| `broch-night.png`, `broch-night@2x.png` | The same at 23:00, the fire lit: flames, smoke and the flickering warm pool under the night grade |',
+    '| `broch-s1.png`, `broch-s1@2x.png` | The camp raised to S1 by day: the sail roof, beds, the kerbed hearth burning, the floor cleared to the flags, the door |',
+    '| `broch-*-motion.png` | Each still with the cells that do not keep moving tinted red |',
+    '| `compare-day.png`, `compare-night.png` | The approved mockup (left, S0 day and night) beside the capture (right), both at 2x |',
+    `| \`broch.mp4\`, \`broch.gif\` | ${(c.brochFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer walks to the fire ring, kneels and lights it in the kneel work loop, pressing on the mark; the flames take and the smoke rises |`,
+    `| \`sleep.mp4\`, \`sleep.gif\` | ${(c.sleepFrames / FPS).toFixed(1)} s: at 21:00 the steerer lies down in the lean-to (the sleep loop), the night passes under a fade, and the morning report opens (the overlay shown) |`,
+    '',
+    '## Motion with the camera still',
+    '',
+    '| View | Continuous motion |',
+    '|---|---|',
+    `| Wreck Strand (41 frames over 6.4 s) | ${pct(strand)} |`,
+    `| The broch by day, S0 | ${pct(c.day)} |`,
+    `| The broch by night, S0, fire lit | ${pct(c.night)} |`,
+    `| The broch by day, S1 | ${pct(c.s1)} |`,
+    `| Mockup: S0 day (clouds moving / frozen) | ${pct(m.day)} / ${pct(m.dayFrozen)} |`,
+    `| Mockup: S0 night (clouds moving / frozen) | ${pct(m.night)} / ${pct(m.nightFrozen)} |`,
+    `| Book 7 threshold | ${pct(MOTION_THRESHOLD)} |`,
+    '',
+    [strand, c.day, c.night, c.s1].every((v) => v >= MOTION_THRESHOLD)
+      ? 'Every view meets the threshold.'
+      : '**A view is below the threshold: the stage is not done.**',
+    '',
+  ].join('\n');
 }
 
 if (import.meta.filename === process.argv[1]) {

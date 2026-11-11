@@ -6,9 +6,12 @@
  * Systems so far: the calendar and the on-foot clock with sleep and collapse (Stage 2); the
  * on-foot controller, interaction and carrying, and Chapter 1 beat 1 on Wreck Strand (Stage 6);
  * picking up, the inventory with counts, the shove, and missiles loosed standing still with their
- * flight, spread, cover, shields and rest (decisions DD-6 to DD-9).
+ * flight, spread, cover, shields and rest (decisions DD-6 to DD-9); the camp at home, hands-on
+ * tasks with their game time and stamina, stamina and condition, sleep in a bed, the day's start
+ * and the morning report, walking between zones, and Hild leading to the broch (Stage 7).
  */
 import type { TimeBalance } from '../content/balance.ts';
+import type { StaminaBalance } from '../content/homeBalance.ts';
 import { EventBus } from '../core/events.ts';
 import { hashValue } from '../core/hash.ts';
 import { emptyWorld, WORLD_STATE_VERSION } from './world.ts';
@@ -50,7 +53,27 @@ import type {
 import { stepArcher } from './land/archer.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import type { MissileEvent } from './land/missiles.ts';
-import { stillWaterLevel } from './land/water.ts';
+import { bandAt, stillWaterLevel } from './land/water.ts';
+import {
+  byTheFire,
+  campaignMinute,
+  campUseAt,
+  campUseNear,
+  campUses,
+  eat,
+  feedFire,
+  finishWork,
+  homeMinute,
+  markTick,
+  morningReport,
+  sleepAllowed,
+  startDay,
+  timingQuality,
+} from './home/camp.ts';
+import type { CampContext, CampEvent, NightRecord, PlacedUse, SiteUse } from './home/camp.ts';
+import { clearReasons, hasReason, setReason, traversalTick, updateMax } from './home/stamina.ts';
+import { edgeAt, entryPoint, linkOf, switchZone } from './land/zoneLinks.ts';
+import { stepBroch } from './narrative/broch.ts';
 import {
   onLifted,
   onSetDown,
@@ -95,6 +118,10 @@ export type Command =
   | { readonly type: 'AIM'; readonly dir: number | null; readonly dist?: number | null }
   /** Lowers a drawn bow without loosing: no arrow is spent (right-click, Escape or pad B). */
   | { readonly type: 'CANCEL_AIM' }
+  /** The timing press during a hands-on action (Book 2 section 07). */
+  | { readonly type: 'WORK_PRESS' }
+  /** Stops a hands-on action before it ends: nothing is done and nothing is spent. */
+  | { readonly type: 'CANCEL_WORK' }
   /** A shove with empty hands or the shove key, towards a tile (or the facing). */
   | { readonly type: 'SHOVE'; readonly tile?: TilePos };
 
@@ -118,6 +145,13 @@ export type RefusalReason =
   | 'HOTBAR_FULL'
   | 'QUIVER_FULL'
   | 'HANDS_FULL'
+  /** Stage 7: no bed in reach to sleep in; nothing to light, cook or eat; no water to fish. */
+  | 'NO_BED'
+  | 'NO_DRIFTWOOD'
+  | 'NO_FOOD'
+  | 'NO_WATER'
+  /** The bar ran empty carrying: a person cannot be lifted until it recovers. */
+  | 'TOO_TIRED'
   | OnFootRefusal;
 
 export type SimEvent =
@@ -174,6 +208,13 @@ export type SimEvent =
     }
   | { readonly type: 'SHOVED'; readonly facing: 's' | 'n' | 'e' | 'w' }
   | OpeningEvent
+  | CampEvent
+  /** The steerer walked on into another zone. */
+  | { readonly type: 'ZONE_ENTERED'; readonly zone: Id; readonly from: Id }
+  /** The steerer lay down in a bed; the night passes after the camp's sleepSeconds. */
+  | { readonly type: 'FELL_ASLEEP'; readonly site: string }
+  /** The bar ran empty carrying someone: they are set down where the steerer stands. */
+  | { readonly type: 'LOAD_DROPPED'; readonly person: Id }
   | {
       readonly type: 'COMMAND_REFUSED';
       readonly command: Command['type'];
@@ -223,6 +264,10 @@ export interface Simulation {
 /** What the on-foot systems need: zone maps, Book 10 speeds and the controller rules. */
 export interface SimWorldContext extends LandContext {
   readonly opening: OpeningDef | null;
+  /** Book 10 section 06: stamina in traversal and its capacity. */
+  readonly stamina?: StaminaBalance;
+  /** The camp at home and its tasks (Stage 7). */
+  readonly camp?: CampContext | null;
 }
 
 export function createSimulation(
@@ -236,16 +281,108 @@ export function createSimulation(
   const events = new EventBus<SimEvent>();
   let queue: Command[] = [];
 
-  const wake = (day: number, minuteOfDay: number, cause: 'slept' | 'collapsed'): void => {
-    state.calendar = { day, minuteOfDay };
+  const camp = land?.camp ?? null;
+  const sb = land?.stamina ?? null;
+  const emitCamp = (e: CampEvent): void => {
+    events.emit(e);
+  };
+  /** Hild's lines at the camp (the opening's caller). */
+  const sayHild = (lineKey: string): void => {
+    const who = land?.opening?.caller;
+    if (who !== undefined) events.emit({ type: 'PERSON_SPOKE', person: who, lineKey });
+  };
+  /** Where the steerer is, for the fire's warmth. */
+  const steererAt = (): { zone: Id; x: number; y: number; tile: number } | null => {
+    const onFoot = state.onFoot;
+    if (onFoot === null) return null;
+    const tile = land?.maps.get(onFoot.zone)?.tile ?? 24;
+    return { zone: onFoot.zone, x: onFoot.player.x, y: onFoot.player.y, tile };
+  };
+  /** Sets a reason at its Book 10 amount (or, with no stamina balance, the collapse's own). */
+  const addReason = (reason: Parameters<typeof setReason>[2], cause?: string): void => {
+    const st = state.player.stamina;
+    if (sb !== null) {
+      if (!hasReason(st, reason)) {
+        setReason(st, sb, reason, campaignMinute(state, b), cause);
+        events.emit({ type: 'REASON_ADDED', reason });
+      }
+      return;
+    }
+    if (reason !== 'EXHAUSTED' || hasReason(st, reason)) return;
+    st.reductions = [
+      ...st.reductions,
+      { reason, amount: -b.collapse.staminaMaxChange, since: campaignMinute(state, b) },
+    ];
+    st.max = st.base - st.reductions.reduce((s, r) => s + r.amount, 0);
+    st.current = Math.min(st.current, st.max);
+  };
+  const liftReasons = (reasons: Parameters<typeof clearReasons>[2]): void => {
+    const st = state.player.stamina;
+    if (sb !== null) {
+      for (const r of clearReasons(st, sb, reasons))
+        events.emit({ type: 'REASON_LIFTED', reason: r });
+      return;
+    }
+    st.reductions = st.reductions.filter((r) => !reasons.includes(r.reason));
+    st.max = st.base - st.reductions.reduce((s, r) => s + r.amount, 0);
+  };
+
+  /**
+   * Waking (Book 2 section 03): the rest lifts or sets its reasons (Book 10 section 06), the day
+   * starts (spoilage, the ration, wounds mending) and the morning report is written.
+   */
+  const wake = (cause: 'slept' | 'collapsed', night: NightRecord): void => {
     state.clock.subMinute = 0;
     state.player.awake = true;
-    state.player.staminaMaxChange = cause === 'collapsed' ? b.collapse.staminaMaxChange : 0;
-    events.emit({ type: 'WOKE', day, at: clockText(minuteOfDay), cause });
+    if (state.onFoot !== null) state.onFoot.player.sleep = null;
+    const restMinutes = sb?.fullRestMinutes ?? 0;
+    const shortMinutes = sb?.shortSleepMinutes ?? 0;
+    if (cause === 'collapsed') addReason('EXHAUSTED', 'collapse');
+    else {
+      liftReasons(['HARD_WORK']);
+      if (night.slept >= restMinutes) liftReasons(['TIRED', 'EXHAUSTED']);
+      else if (night.slept < shortMinutes) addReason('TIRED', 'short sleep');
+    }
+    if (night.cold) addReason('COLD', 'night');
+    const c = state.player.condition;
+    c.wokeAt = campaignMinute(state, b);
+    c.workedMinutes = 0;
+    const day = state.calendar.day;
+    if (camp !== null) {
+      startDay(state, camp);
+      state.report = morningReport(state, camp, night, (id) => id);
+    }
+    events.emit({ type: 'WOKE', day, at: clockText(state.calendar.minuteOfDay), cause });
     if (seasonDay(day) === 1) {
       events.emit({ type: 'SEASON_STARTED', day, season: seasonOf(day), year: yearOf(day) });
     }
     events.emit({ type: 'MORNING_REPORT_DUE', day });
+  };
+
+  /** Runs `minutes` game minutes through the home step (a task's time, a night), quietly. */
+  const advanceBy = (minutes: number, onMinute?: () => void): void => {
+    for (let i = 0; i < minutes; i++) {
+      advanceOneMinute(true);
+      onMinute?.();
+    }
+  };
+
+  /** The night: from now to the next dawn, through the home step; cold if the fire was out. */
+  const nightPasses = (): void => {
+    const from = minutesIntoDay(state.calendar, b);
+    events.emit({
+      type: 'SLEPT',
+      day: state.calendar.day,
+      at: clockText(state.calendar.minuteOfDay),
+    });
+    state.player.awake = false;
+    let cold = false;
+    const minutes = 1440 - from;
+    advanceBy(minutes, () => {
+      if (camp !== null && state.onFoot !== null && !byTheFire(state, camp, steererAt()))
+        cold = true;
+    });
+    wake('slept', { slept: minutes, cold, collapsed: false });
   };
 
   /** Minutes into the day at which an awake steerer collapses (02:00 is 1200 after 06:00). */
@@ -266,12 +403,41 @@ export function createSimulation(
           });
           return;
         }
+        // On foot at home: in a bed (Book 2 section 03), lying down first.
+        const onFoot = state.onFoot;
+        const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+        if (camp !== null && onFoot !== null && map !== undefined && land !== null) {
+          const bed = campUseNear(
+            usesHere().filter((u) => u.use.kind === 'SLEEP'),
+            onFoot.player,
+            land.rules.interactRadiusTiles * map.tile,
+          );
+          if (bed === null) {
+            refuse(command, 'NO_BED');
+            return;
+          }
+          applyUse(command, bed.use, bed);
+          return;
+        }
+        nightPasses();
+        return;
+      }
+      case 'WORK_PRESS': {
+        const work = state.onFoot?.player.work;
+        if (work?.press !== null || camp === null) return;
+        work.press = state.tick;
         events.emit({
-          type: 'SLEPT',
-          day: state.calendar.day,
-          at: clockText(state.calendar.minuteOfDay),
+          type: 'WORK_PRESSED',
+          task: work.task,
+          quality: timingQuality(work, camp.action),
         });
-        wake(state.calendar.day + 1, b.dayStart, 'slept');
+        return;
+      }
+      case 'CANCEL_WORK': {
+        const p = state.onFoot?.player;
+        if (p?.work == null) return;
+        events.emit({ type: 'WORK_CANCELLED', task: p.work.task });
+        p.work = null;
         return;
       }
       case 'SET_DAY_LENGTH': {
@@ -314,8 +480,16 @@ export function createSimulation(
           refuse(command, 'NOT_ON_FOOT');
           return;
         }
+        if (busy()) return;
         const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
         const interaction = interactionNow(onFoot, map, land.rules, tideOpen, state.facts);
+        const reach = land.rules.interactRadiusTiles * map.tile;
+        const use = onFoot.carrying === null ? campUseNear(usesHere(), onFoot.player, reach) : null;
+        // The nearer of a lift or pickup and a camp use (carrying, only setting down).
+        if (use !== null && (interaction === null || nearer(use, interaction, onFoot, map))) {
+          applyUse(command, use.use, use);
+          return;
+        }
         if (interaction === null) {
           refuse(command, 'NOTHING_IN_REACH');
           return;
@@ -335,6 +509,7 @@ export function createSimulation(
           refuse(command, 'OUT_OF_REACH');
           return;
         }
+        if (busy()) return;
         const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
         const interaction = interactionAt(
           onFoot,
@@ -345,6 +520,11 @@ export function createSimulation(
           state.facts,
         );
         if (interaction === null) {
+          const use = onFoot.carrying === null ? campUseAt(usesHere(), map, command.tile) : null;
+          if (use !== null) {
+            applyUse(command, use.use, use);
+            return;
+          }
           refuse(command, 'NOTHING_THERE');
           return;
         }
@@ -380,11 +560,35 @@ export function createSimulation(
           refuse(command, 'EMPTY_SLOT', String(command.slot));
           return;
         }
-        if (!inReach(map, onFoot.player, command.tile, land.controls.toolReach)) {
+        if (busy()) return;
+        const rules = land.rules.items[item];
+        const reach = rules?.cast === true ? land.controls.castReach : land.controls.toolReach;
+        if (!inReach(map, onFoot.player, command.tile, reach)) {
           refuse(command, 'OUT_OF_REACH', item);
           return;
         }
-        // Nothing on the strand can be cut, dug or struck yet (tasks from Stage 7, combat Stage 9).
+        // A tool's task (Stage 7): the hand line cast into water deep enough to fish.
+        const task =
+          camp === null
+            ? undefined
+            : [...camp.tasks].find(([, t]) => t.def.tool === item && t.def.output !== undefined);
+        if (task !== undefined) {
+          const at = {
+            x: (command.tile.tx + 0.5) * map.tile,
+            y: (command.tile.ty + 0.5) * map.tile,
+          };
+          const elevation = land.elevations.get(map.zone);
+          const level = stillWaterLevel(tideAt(state.calendar, b));
+          const band =
+            elevation === undefined ? null : bandAt(land.water, elevation, at.x, at.y, level);
+          if (band === null || band.band === 'WET' || band.band === 'ANKLE') {
+            refuse(command, 'NO_WATER', item);
+            return;
+          }
+          startWork(task[0], `water:${command.tile.tx},${command.tile.ty}`, at);
+          return;
+        }
+        // Nothing here can be cut, dug or struck yet (combat is Stage 9).
         refuse(command, 'NOTHING_TO_USE_ON', item);
         return;
       }
@@ -561,6 +765,102 @@ export function createSimulation(
     }
   };
 
+  /** The camp's uses in the zone in view (its sites, and anyone to tend). */
+  const usesHere = (): PlacedUse[] => {
+    const onFoot = state.onFoot;
+    const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+    if (camp === null || onFoot === null || map === undefined) return [];
+    return campUses(state, camp, map, onFoot.actors);
+  };
+
+  /** Whether a camp use is nearer the steerer than a lift or pickup. */
+  const nearer = (
+    use: { x: number; y: number },
+    interaction: Interaction,
+    onFoot: NonNullable<SimState['onFoot']>,
+    map: { tile: number },
+  ): boolean => {
+    if (interaction.kind === 'SET_DOWN') return false;
+    const p = onFoot.player;
+    const there =
+      interaction.kind === 'LIFT'
+        ? onFoot.actors[interaction.target]
+        : ((): { x: number; y: number } | undefined => {
+            const item = onFoot.items.find((i) => i.key === interaction.key);
+            if (item !== undefined) return { x: item.x * map.tile, y: item.y * map.tile };
+            const stuck = onFoot.stuck.find((s) => `stuck:${s.n}` === interaction.key);
+            return stuck;
+          })();
+    if (there === undefined) return true;
+    return Math.hypot(use.x - p.x, use.y - p.y) < Math.hypot(there.x - p.x, there.y - p.y);
+  };
+
+  /** Hands busy with a task or lying down: other actions wait (the press is WORK_PRESS). */
+  const busy = (): boolean => {
+    const p = state.onFoot?.player;
+    return p?.work != null || p?.sleep != null;
+  };
+
+  /** Begins a hands-on action: the feet planted, the work loop playing (Book 2 section 07). */
+  const startWork = (task: Id, site: string, at: { x: number; y: number }, target?: Id): void => {
+    const onFoot = state.onFoot;
+    if (onFoot === null || camp === null) return;
+    const p = onFoot.player;
+    p.aim = null;
+    p.work = {
+      task,
+      site,
+      since: state.tick,
+      ticks: camp.actionTicks,
+      press: null,
+      at,
+      ...(target === undefined ? {} : { target }),
+    };
+    // Face the work.
+    p.facing = facingOf(at.x - p.x, at.y - p.y, p.facing);
+    events.emit({
+      type: 'WORK_STARTED',
+      task,
+      site,
+      ticks: camp.actionTicks,
+      markTick: markTick(state.tick, camp.action),
+    });
+  };
+
+  /** What a camp use does: a task's action, feeding the fire, eating, lying down to sleep. */
+  const applyUse = (command: Command, use: SiteUse, at: { x: number; y: number }): void => {
+    const onFoot = state.onFoot;
+    if (onFoot === null || camp === null) return;
+    switch (use.kind) {
+      case 'REFUSE':
+        refuse(
+          command,
+          use.reason,
+          use.reason === 'TOO_EARLY_TO_SLEEP' ? clockText(b.sleepAfter) : '',
+        );
+        return;
+      case 'SLEEP':
+        if (!sleepAllowed(state, b)) {
+          refuse(command, 'TOO_EARLY_TO_SLEEP', clockText(b.sleepAfter));
+          return;
+        }
+        onFoot.player.aim = null;
+        onFoot.player.work = null;
+        onFoot.player.sleep = { since: state.tick, site: use.site };
+        events.emit({ type: 'FELL_ASLEEP', site: use.site });
+        return;
+      case 'EAT':
+        eat(state, camp, false, emitCamp);
+        return;
+      case 'FEED_FIRE':
+        feedFire(state, camp, emitCamp);
+        return;
+      case 'TASK':
+        startWork(use.task, use.site, at, use.target);
+        return;
+    }
+  };
+
   const refuse = (command: Command, reason: RefusalReason, detail = ''): void => {
     events.emit({ type: 'COMMAND_REFUSED', command: command.type, reason, detail });
   };
@@ -577,6 +877,11 @@ export function createSimulation(
       refuse(command, interaction.refusal, interaction.target);
       if (interaction.refusal === 'BELOW_TIDE_LINE' && land.opening !== null)
         onTideRefusal(land.opening, interaction.target, events.emit.bind(events));
+      return;
+    }
+    // A bar run empty carrying: no lifting until it recovers (Book 10 heavyCarryEmpty).
+    if (interaction.kind === 'LIFT' && onFoot.player.winded?.carry === true) {
+      refuse(command, 'TOO_TIRED', interaction.target);
       return;
     }
     // Lifting someone puts a drawn bow away.
@@ -599,11 +904,71 @@ export function createSimulation(
     if (map === undefined) return;
     const tide = tideAt(state.calendar, b);
     const level = stillWaterLevel(tide);
+    const p = onFoot.player;
+    // A hands-on action ends: its work counts and its game time passes (Book 2 section 07).
+    if (p.work != null && camp !== null && state.tick - p.work.since >= p.work.ticks) {
+      const work = p.work;
+      p.work = null;
+      finishWork(
+        state,
+        camp,
+        work,
+        state.tick,
+        emitCamp,
+        (m) => {
+          advanceBy(m);
+        },
+        sayHild,
+      );
+    }
+    // Lying down: after a few seconds the night passes.
+    if (p.sleep != null && camp !== null && state.tick - p.sleep.since >= camp.sleepTicks) {
+      nightPasses();
+      return;
+    }
     stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
     const emit = events.emit.bind(events);
+    // Stamina in traversal (Book 10 section 06): sprinting, carrying a person, wading waist deep.
+    if (sb !== null) {
+      const elevation = land.elevations.get(map.zone);
+      const band = elevation === undefined ? null : bandAt(land.water, elevation, p.x, p.y, level);
+      const waist = band?.band === 'WAIST' || band?.band === 'DEEP';
+      const st = state.player.stamina;
+      updateMax(st, sb);
+      p.winded ??= {};
+      const emptied = traversalTick(
+        st,
+        sb,
+        {
+          running: p.moving && p.gait === 'run',
+          carrying: onFoot.carrying !== null,
+          wadingWaist: waist && p.moving,
+          inWaist: waist,
+        },
+        state.tick,
+        p.winded,
+      );
+      if (Object.keys(p.winded).length === 0) delete p.winded;
+      // Empty while carrying: the load is set down where the steerer stands.
+      if (emptied.carry === true && onFoot.carrying !== null) {
+        const person = onFoot.carrying;
+        const actor = onFoot.actors[person];
+        onFoot.carrying = null;
+        if (actor !== undefined) {
+          actor.pose = 'down';
+          actor.x = p.x;
+          actor.y = p.y;
+        }
+        events.emit({ type: 'LOAD_DROPPED', person });
+      }
+      // Wet through outside summer: cold until warmed by a fire or a hot meal.
+      const deep = band !== null && band.band !== 'WET' && band.band !== 'ANKLE';
+      if (deep && seasonOf(state.calendar.day) !== 'Summer') addReason('COLD', 'wet');
+    }
     if (land.opening !== null) {
       stepOpening(state, land.opening, map, land, level, emit);
       stepOpeningAfter(state, land.opening, emit);
+      if (camp !== null) stepBroch(state, camp, land.opening, land, tide.tidalGroundOpen, emit);
     }
     // Other people: an archer's stop, draw, loose and move, then their own walk.
     for (const [id, actor] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
@@ -627,21 +992,49 @@ export function createSimulation(
     const now = gameMinute(state.calendar);
     stepProjectiles(onFoot, state.rng.combat, map, land, level, now, emit);
     expireStuck(onFoot, land, now);
+    // Walking off an edge that leads on: into the next zone (Book 2 section 10, FootLink).
+    if (p.work == null && p.sleep == null) {
+      const edge = edgeAt(map, p.x, p.y, land.rules.footprint, p.intent);
+      const to = edge === null ? null : linkOf(map, edge);
+      const toMap = to === null ? undefined : land.maps.get(to);
+      if (to !== null && toMap !== undefined) {
+        const at = entryPoint(map, toMap, p.x, p.y, land, tide.tidalGroundOpen);
+        if (at !== null) {
+          const from = onFoot.zone;
+          switchZone(onFoot, to, at);
+          events.emit({ type: 'ZONE_ENTERED', zone: to, from });
+        }
+      }
+    }
   };
 
-  const advanceOneMinute = (): void => {
+  /**
+   * One game minute (Book 2 section 03): the calendar, then the home step. `quiet` while time is
+   * skipped (a task's minutes, a night): no watch or tide events then.
+   */
+  const advanceOneMinute = (quiet = false): void => {
     const before = state.calendar;
     const after = advanceMinutes(before, 1, b);
     state.calendar = after;
-    if (watchOf(after, b) !== watchOf(before, b)) {
+    if (!quiet && watchOf(after, b) !== watchOf(before, b)) {
       events.emit({ type: 'WATCH_STARTED', day: after.day, watch: watchOf(after, b) });
       const tide = tideAt(after, b).phase;
       if (tide !== tideAt(before, b).phase)
         events.emit({ type: 'TIDE_TURNED', day: after.day, phase: tide });
     }
+    if (camp !== null) homeMinute(state, camp, steererAt(), emitCamp, sayHild);
     if (state.player.awake && minutesIntoDay(after, b) === collapseAt) {
       events.emit({ type: 'COLLAPSED', day: after.day, at: clockText(after.minuteOfDay) });
-      wake(after.day + 1, b.collapse.wakeAt, 'collapsed');
+      // Asleep where they stood until Book 10's wake time, through the home step.
+      state.player.awake = false;
+      if (state.onFoot !== null) {
+        state.onFoot.player.work = null;
+        state.onFoot.player.sleep = null;
+      }
+      const until = (b.collapse.wakeAt - b.dayStart + 1440) % 1440;
+      const minutes = 1440 - minutesIntoDay(state.calendar, b) + until;
+      advanceBy(minutes);
+      wake('collapsed', { slept: minutes, cold: false, collapsed: true });
     }
   };
 

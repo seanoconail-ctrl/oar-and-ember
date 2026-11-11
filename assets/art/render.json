@@ -12,5 +12,19 @@
     }
   },
   "poolBands": 3,
-  "cutawayFade": 0.5
+  "cutawayFade": 0.5,
+  "fire": {
+    "about": "The camp fire's light (Book 7 sections 08 and 14): a warm pool added to the ambient light, wider as the light goes, flickering by this share of its radius.",
+    "radius": {
+      "day": 30,
+      "dusk": 76,
+      "night": 110
+    },
+    "colour": {
+      "day": [40, 20, 2],
+      "dusk": [132, 72, 24],
+      "night": [196, 112, 44]
+    },
+    "flicker": 0.07
+  }
 }

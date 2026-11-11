@@ -89,6 +89,11 @@ export class AudioRouter {
     this.#caption(cue, now, options.direction);
   }
 
+  /** Lets the music end on its next bar line, leaving ambience only (Book 11 section 03). */
+  silence(now: number): void {
+    this.director.silence(now);
+  }
+
   /** A game event, mapped through the content table. Returns the cue it played, if any. */
   event(
     name: string,
@@ -102,7 +107,7 @@ export class AudioRouter {
   }
 
   /** The ambience layers for a zone and time of day (Book 11 section 07). */
-  setPlace(zone: string, phase: 'day' | 'dusk' | 'night', now: number): readonly string[] {
+  setPlace(zone: string, phase: 'dawn' | 'day' | 'dusk' | 'night', now: number): readonly string[] {
     const layers = this.#table.cues.filter(
       (c) =>
         c.kind === 'ambience' &&

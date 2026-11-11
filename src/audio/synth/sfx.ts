@@ -41,7 +41,7 @@ export function out(
 }
 
 /** A burst of filtered noise with an envelope. */
-function noiseHit(
+export function noiseHit(
   e: SynthEngine,
   at: number,
   to: AudioNode,
@@ -65,7 +65,7 @@ function noiseHit(
 }
 
 /** A sine (or other wave) with pitch and level envelopes. */
-function tone(
+export function tone(
   e: SynthEngine,
   at: number,
   to: AudioNode,
@@ -85,7 +85,7 @@ function tone(
 }
 
 /** Metal: inharmonic partials struck together, each with its own decay. */
-function metal(
+export function metal(
   e: SynthEngine,
   at: number,
   to: AudioNode,
@@ -111,7 +111,7 @@ function metal(
 }
 
 /** A breath: noise through a vowel-ish band, swelling and falling. */
-function breath(
+export function breath(
   e: SynthEngine,
   at: number,
   to: AudioNode,

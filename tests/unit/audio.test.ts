@@ -107,7 +107,7 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
   it('ducks the music under a stinger for its length, and clears captions after their time', () => {
     const sink = new RecordingSink();
     const router = new AudioRouter(table, content.strings, sink);
-    router.play('MUS_HOME_DAY', 0);
+    router.play('MUS_ISLAND_EXPLORE', 0);
     router.update(0);
     router.play('MUS_STINGER_HORN', 10);
     const duck = sink.calls.find(
@@ -126,11 +126,20 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
   it('chooses ambience layers by zone and time of day', () => {
     const router = new AudioRouter(table, content.strings, new RecordingSink());
     expect(router.setPlace('ZONE_SK_STRAND', 'day', 0)).toEqual(['AMB_SURF_SHINGLE']);
+    // Stage 7: the steading's life by the part of the day; the hearth's crackle at any hour (its
+    // level follows the distance to a lit fire).
     expect(router.setPlace('ZONE_SK_MACHAIR', 'night', 0)).toEqual([
       'AMB_WIND_HEATHER',
       'AMB_HEARTH',
+      'AMB_HOME_NIGHT',
     ]);
-    expect(router.setPlace('ZONE_SK_MACHAIR', 'day', 0)).toEqual(['AMB_WIND_HEATHER']);
+    expect(router.setPlace('ZONE_SK_MACHAIR', 'dawn', 0)).toEqual([
+      'AMB_WIND_HEATHER',
+      'AMB_HEARTH',
+      'AMB_HOME_DAWN',
+    ]);
+    expect(router.setPlace('ZONE_SK_MACHAIR', 'day', 0)).toContain('AMB_HOME_DAY');
+    expect(router.setPlace('ZONE_SK_MACHAIR', 'dusk', 0)).toContain('AMB_HOME_DUSK');
   });
 
   it('lint refuses a gameplay sound without a caption, and flags only uncomposed cues as temporary', () => {

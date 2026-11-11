@@ -250,7 +250,7 @@ void main() {
     // The terrain under the pixel (nearest sample): a sheen runs over the grass in the gusts,
     // and dry sand drifts along the beach in streamers.
     vec4 E = texelFetch(u_elev, ivec2(w / ${ELEVATION_CELL.toFixed(1)}), 0);
-    int layer = int(E.a * 255.0) / 32;
+    int layer = int(E.a * 255.0) / 16;
     if (layer == 2 && E.r * 3.0 - 1.0 < u_dryAbove) layer = -1;
     float g = gust(w, u_wind.xy, u_t) * u_wind.z;
     if (layer == 6) k *= 1.0 + 0.05 * g;

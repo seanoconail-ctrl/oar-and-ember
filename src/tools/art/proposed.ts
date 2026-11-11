@@ -26,7 +26,7 @@ import { encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
 
 export const PROPOSED = 'assets/art/proposed';
-const OUT = 'docs/art/stage-06-rework/sheets';
+const OUT = process.env['PROPOSED_OUT'] ?? 'docs/art/stage-06-rework/sheets';
 /** The ground behind the contact sheets: the strand's dry sand. */
 const GROUND = [196, 176, 138];
 

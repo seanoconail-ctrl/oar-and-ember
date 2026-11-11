@@ -28,7 +28,9 @@ export const CONTENT_FILES = {
   audio: 'content/audio.json',
   onFoot: 'content/onfoot.json',
   opening: 'content/opening.json',
+  camp: 'content/camp.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
+  zoneMachair: 'content/zones/zone_sk_machair.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -111,8 +113,10 @@ const personCheck = object(
     home: ref('place'),
     faction: ref('faction'),
     ties: arrayOf(tieCheck),
+    /** The skills Book 5 names for the person (Book 10 section 08, startingSkills). */
+    skills: arrayOf(text),
   },
-  ['values', 'home', 'faction', 'ties'],
+  ['values', 'home', 'faction', 'ties', 'skills'],
 );
 const factionCheck = object({
   id: id(['FAC']),
@@ -144,7 +148,7 @@ const cueCheck = object(
     lengthBeats: int(1, 32),
     bus: oneOf(AUDIO_BUSES),
     zones: arrayOf(ref('zone')),
-    phases: arrayOf(oneOf(['day', 'dusk', 'night'] as const)),
+    phases: arrayOf(oneOf(['dawn', 'day', 'dusk', 'night'] as const)),
     captionKey: ref('string'),
     temporary: bool,
     piece: oneOf(['hearth', 'skarvholm', 'raid'] as const),
@@ -172,7 +176,19 @@ const audioCheck = object({
       : (ctx.issues.push({ file: ctx.file, path, reason: 'expected a level from 0 to 1' }), null),
   cues: arrayOf(cueCheck),
   events: recordOf(text, id(['MUS', 'SFX', 'AMB', 'VO'])),
-});
+  /**
+   * Home audio (Book 11 sections 03 and 12; Stage 7): the hearth theme plays for `playSeconds`
+   * after `restSeconds` of ambience only, over and over, so at least a third of home time is
+   * ambience only; the fire's crackle is full within `fireFullTiles` and silent from
+   * `fireSilentTiles`.
+   */
+  home: object({
+    restSeconds: int(10, 600),
+    playSeconds: int(10, 600),
+    fireFullTiles: int(0, 40),
+    fireSilentTiles: int(1, 60),
+  }),
+}, ['home']);
 
 const fraction =
   (min: number, max: number): Check<number> =>
@@ -203,8 +219,10 @@ const itemCheck = object(
     ammo: id(['ITEM']),
     /** The tooltip shown the first time one is picked up, naming its controls. */
     tipKey: ref('string'),
+    /** Used at castReach (Book 10 section 21: casting a line). */
+    cast: bool,
   },
-  ['glyph', 'missile', 'ammo', 'tipKey'],
+  ['glyph', 'missile', 'ammo', 'tipKey', 'cast'],
 );
 
 const pickupCheck = object(
@@ -272,9 +290,87 @@ const openingCheck = object({
   bowLineSeconds: int(0, 60),
 });
 
+const placeAt = object({ x: fraction(0, 512), y: fraction(0, 512) });
+const facingAt = object({
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  facing: oneOf(['s', 'n', 'e', 'w'] as const),
+});
+const STAGES = ['S0', 'S1'] as const;
+const taskCheck = object(
+  {
+    nameKey: ref('string'),
+    /** The task's row in Book 10 section 09, "Homestead tasks: time and stamina". */
+    balanceRow: text,
+    skill: text,
+    /** The work loop animation the steerer and residents play (Book 7 section 07). */
+    workLoop: oneOf(['gather', 'fish', 'kneel', 'build'] as const),
+    /** The game event its sound is played by (content/audio.json events). */
+    sound: text,
+    output: id(['RES']),
+    /** The item used to do it (selected in the hotbar). */
+    tool: id(['ITEM']),
+  },
+  ['output', 'tool'],
+);
+const siteCheck = object(
+  {
+    key: text,
+    zone: ref('zone'),
+    kind: oneOf(['FIRE', 'BED', 'BUILD', 'STORES', 'DRIFTWOOD'] as const),
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    stages: arrayOf(oneOf(STAGES)),
+  },
+  ['stages'],
+);
+const campPropCheck = object(
+  {
+    sheet: text,
+    frame: text,
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    /** Lies flat on the ground (a fire ring, a hearth kerb): drawn under people and the fire. */
+    flat: bool,
+  },
+  ['flat'],
+);
+const campPersonCheck = object({
+  camp: facingAt,
+  sleep: object({ S0: facingAt, S1: facingAt }),
+  work: object({
+    task: id(['TASK']),
+    zone: ref('zone'),
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    facing: oneOf(['s', 'n', 'e', 'w'] as const),
+  }),
+  workFrom: text,
+  workUntil: text,
+  leadWaitTiles: fraction(1, 20),
+});
+const campCheck = object({
+  about: text,
+  home: ref('place'),
+  zone: ref('zone'),
+  beat: id(['BEAT']),
+  shelter: object({ building: id(['BLD']), balanceRow: text }),
+  sleepSeconds: fraction(0, 10),
+  tasks: recordOf(id(['TASK']), taskCheck),
+  sites: arrayOf(siteCheck),
+  props: object({ S0: arrayOf(campPropCheck), S1: arrayOf(campPropCheck) }),
+  woodpile: placeAt,
+  people: recordOf(id(['C']), campPersonCheck),
+  lines: recordOf(text, ref('string')),
+  leadAfterSeconds: int(0, 60),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
 export type OnFootDef = Out<typeof onFootCheck>;
 export type OpeningDef = Out<typeof openingCheck>;
+export type CampDef = Out<typeof campCheck>;
+export type TaskDef = Out<typeof taskCheck>;
+export type CampSite = Out<typeof siteCheck>;
 export type CueDef = Out<typeof cueCheck>;
 export type AudioTable = Out<typeof audioCheck>;
 export type PlaceDef = Out<typeof placeCheck>;
@@ -301,6 +397,7 @@ export interface Content {
   readonly cues: ReadonlyMap<Id, CueDef>;
   readonly onFoot: OnFootDef | null;
   readonly opening: OpeningDef | null;
+  readonly camp: CampDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -432,26 +529,66 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
 
   const onFoot = onFootCheck(files.onFoot, '', ctx(CONTENT_FILES.onFoot));
   const opening = openingCheck(files.opening, '', ctx(CONTENT_FILES.opening));
+  const camp = campCheck(files.camp, '', ctx(CONTENT_FILES.camp));
   const zoneMaps = new Map<Id, ZoneMap>();
   const strand = checkZoneMap(files.zoneStrand);
-  for (const reason of strand.problems)
-    issues.push({ file: CONTENT_FILES.zoneStrand, path: '(map)', reason });
-  if (strand.map !== null) {
-    zoneMaps.set(strand.map.zone, strand.map);
-    if (!zones.has(strand.map.zone))
-      issues.push({
-        file: CONTENT_FILES.zoneStrand,
-        path: 'zone',
-        reason: `unknown zone "${strand.map.zone}"`,
-      });
-    for (const who of Object.keys(strand.map.spawns)) {
+  for (const [file, json] of [
+    [CONTENT_FILES.zoneStrand, files.zoneStrand],
+    [CONTENT_FILES.zoneMachair, files.zoneMachair],
+  ] as const) {
+    const checked = checkZoneMap(json);
+    for (const reason of checked.problems) issues.push({ file, path: '(map)', reason });
+    if (checked.map === null) continue;
+    zoneMaps.set(checked.map.zone, checked.map);
+    if (!zones.has(checked.map.zone))
+      issues.push({ file, path: 'zone', reason: `unknown zone "${checked.map.zone}"` });
+    for (const who of Object.keys(checked.map.spawns)) {
       if (who !== 'P_STEERER' && !people.has(who))
+        issues.push({ file, path: `spawns.${who}`, reason: `unknown person "${who}"` });
+    }
+  }
+  // Every link leads to a zone with a map, which links back (Book 2 section 10, FootLink).
+  for (const map of zoneMaps.values()) {
+    for (const link of map.links ?? []) {
+      const back = zoneMaps.get(link.to)?.links?.some((l) => l.to === map.zone) ?? false;
+      if (!back)
         issues.push({
-          file: CONTENT_FILES.zoneStrand,
-          path: `spawns.${who}`,
-          reason: `unknown person "${who}"`,
+          file: `content/zones/${map.zone.toLowerCase()}.json`,
+          path: `links.${link.edge}`,
+          reason: `${link.to} has no map that links back to ${map.zone}`,
         });
     }
+  }
+  if (camp !== null) {
+    for (const task of Object.keys(camp.tasks))
+      if (!ids.byId.has(task))
+        issues.push({
+          file: CONTENT_FILES.camp,
+          path: `tasks.${task}`,
+          reason: `"${task}" is not in the ID registry (${CONTENT_FILES.ids})`,
+        });
+    const taskRows = balanceRows(
+      files.balance,
+      'buildingsToolsAndCrafting',
+      'homesteadTasksTimeAndStamina',
+      'Task',
+    );
+    for (const [task, def] of Object.entries(camp.tasks)) {
+      if (!taskRows.has(def.balanceRow))
+        issues.push({
+          file: CONTENT_FILES.camp,
+          path: `tasks.${task}.balanceRow`,
+          reason: `Book 10 section 09 has no task "${def.balanceRow}"`,
+        });
+      if (def.tool !== undefined && onFoot !== null && onFoot.items[def.tool] === undefined)
+        issues.push({
+          file: CONTENT_FILES.camp,
+          path: `tasks.${task}.tool`,
+          reason: `"${def.tool}" has no entry in ${CONTENT_FILES.onFoot} items`,
+        });
+    }
+    if (!zoneMaps.has(camp.zone))
+      issues.push({ file: CONTENT_FILES.camp, path: 'zone', reason: `no map for ${camp.zone}` });
   }
   if (onFoot !== null) {
     onFoot.hotbar.start.forEach((item, i) => {
@@ -594,6 +731,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       cues,
       onFoot,
       opening,
+      camp,
       zoneMaps,
     },
     issues,

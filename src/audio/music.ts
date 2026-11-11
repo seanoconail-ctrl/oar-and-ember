@@ -71,6 +71,8 @@ export class MusicDirector {
   readonly #cues: ReadonlyMap<string, MusicCue>;
   #playing: { cue: MusicCue; startedAt: number } | null = null;
   #pending: { cue: MusicCue; at: number } | null = null;
+  /** When the playing cue is to stop (a bar line), for silence. */
+  #stopAt: number | null = null;
   #intensity = 0;
   #target = 0;
   #lastUpdate: number | null = null;
@@ -81,7 +83,8 @@ export class MusicDirector {
 
   /** The cue playing now (or due to start). */
   get state(): string | null {
-    return this.#pending?.cue.id ?? this.#playing?.cue.id ?? null;
+    if (this.#pending !== null) return this.#pending.cue.id;
+    return this.#stopAt === null ? (this.#playing?.cue.id ?? null) : null;
   }
 
   get intensity(): number {
@@ -92,13 +95,26 @@ export class MusicDirector {
   request(id: string, now: number): number {
     const cue = this.#cues.get(id);
     if (cue === undefined) throw new Error(`No music cue "${id}"`);
+    if (this.#stopAt !== null && this.#pending === null && this.#playing?.cue.id === id) {
+      // Asked back before its stop landed: it simply plays on.
+      this.#stopAt = null;
+      return this.#playing.startedAt;
+    }
     if (this.state === id) return this.#pending?.at ?? this.#playing?.startedAt ?? now;
     const at =
       this.#playing === null
         ? now
         : nextBarLine(this.#playing.startedAt, now, barSeconds(this.#playing.cue));
     this.#pending = { cue, at };
+    this.#stopAt = null;
     return at;
+  }
+
+  /** Asks for silence: whatever plays stops on its next bar line (nothing pending starts). */
+  silence(now: number): void {
+    this.#pending = null;
+    if (this.#playing === null || this.#stopAt !== null) return;
+    this.#stopAt = nextBarLine(this.#playing.startedAt, now, barSeconds(this.#playing.cue));
   }
 
   setIntensity(target: number): void {
@@ -115,6 +131,11 @@ export class MusicDirector {
   /** Advances to `now` and returns what the audio engine should do. */
   update(now: number): MusicAction[] {
     const actions: MusicAction[] = [];
+    if (this.#stopAt !== null && this.#playing !== null && now >= this.#stopAt - 0.25) {
+      actions.push({ type: 'stop', cue: this.#playing.cue.id, at: this.#stopAt });
+      this.#playing = null;
+      this.#stopAt = null;
+    }
     if (this.#pending !== null && now >= this.#pending.at - 0.25) {
       // Schedule slightly ahead so the switch lands exactly on the bar line.
       const { cue, at } = this.#pending;

@@ -14,6 +14,8 @@ import { envelope } from './engine.ts';
 import type { SynthEngine } from './engine.ts';
 import type { Piece } from './notation.ts';
 import { rng } from './samples.ts';
+import { HOME } from './home.ts';
+import type { HomePhase } from './home.ts';
 import { COMBAT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
@@ -71,7 +73,7 @@ export const CALLS: readonly SoundDef[] = [
 
 /** Every generated one-shot by its cue ID. */
 export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
-  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES].map((d) => [d.id, d]),
+  [...COMBAT, ...TELLS, ...CALLS, ...PEOPLE, ...MISSILES, ...HOME].map((d) => [d.id, d]),
 );
 
 /**
@@ -85,12 +87,25 @@ export class HearthAmbience {
   readonly #sources: AudioScheduledSourceNode[] = [];
   #next = 0;
   #running = false;
+  #level: number;
 
-  constructor(engine: SynthEngine) {
+  constructor(engine: SynthEngine, level = 1) {
     this.#e = engine;
+    this.#level = level;
     this.#out = engine.ctx.createGain();
-    this.#out.gain.value = 0.5;
+    this.#out.gain.value = 0.5 * level;
     this.#out.connect(engine.buses.ambience);
+  }
+
+  /**
+   * How near the fire is, 0 (out of hearing, or out) to 1 (beside it). The crackle follows the
+   * listener smoothly; when it is silent no crackles are scheduled.
+   */
+  setLevel(level: number, at: number): void {
+    const l = Math.max(0, Math.min(1, level));
+    if (Math.abs(l - this.#level) < 0.01) return;
+    this.#level = l;
+    this.#out.gain.setTargetAtTime(0.5 * l, at, 0.3);
   }
 
   start(at: number): void {
@@ -115,6 +130,10 @@ export class HearthAmbience {
 
   schedule(until: number): void {
     if (!this.#running) return;
+    if (this.#level <= 0.01) {
+      this.#next = Math.max(this.#next, until);
+      return;
+    }
     while (this.#next < until) {
       const t = this.#next;
       const src = this.#e.noise(t);
@@ -136,10 +155,22 @@ export class HearthAmbience {
   }
 }
 
-/** Ambience implementations: the strand bed (wind, sea, gulls) or the hearth. */
-export const AMBIENCES: Readonly<Record<string, 'strand' | 'heath' | 'hearth'>> = {
+/** Ambience implementations: the strand bed (wind, sea, gulls), the hearth or home life. */
+export const AMBIENCES: Readonly<Record<string, 'strand' | 'heath' | 'hearth' | 'home'>> = {
   AMB_SURF_SHINGLE: 'strand',
   // Inland heather: the same wind, with the sea far off (the strand bed at low water).
   AMB_WIND_HEATHER: 'heath',
   AMB_HEARTH: 'hearth',
+  AMB_HOME_DAWN: 'home',
+  AMB_HOME_DAY: 'home',
+  AMB_HOME_DUSK: 'home',
+  AMB_HOME_NIGHT: 'home',
+};
+
+/** The part of the day each home-life ambience is for (Stage 7). */
+export const HOME_LIFE: Readonly<Record<string, HomePhase>> = {
+  AMB_HOME_DAWN: 'dawn',
+  AMB_HOME_DAY: 'day',
+  AMB_HOME_DUSK: 'dusk',
+  AMB_HOME_NIGHT: 'night',
 };

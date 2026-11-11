@@ -51,6 +51,12 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       sneak: 6,
       carry: 6,
       draw: 4,
+      // Stage 7: the work loops (Book 7 section 07) and sleep.
+      gather: 6,
+      fish: 6,
+      kneel: 6,
+      build: 6,
+      sleep: 2,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);

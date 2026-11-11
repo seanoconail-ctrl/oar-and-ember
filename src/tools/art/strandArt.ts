@@ -117,6 +117,18 @@ function paint(
       const st = valueNoise(wx, wy, 4, 17, P);
       return st > 0.62 ? c('stone', 3 + (st > 0.75 ? 1 : 0)) : c('sand_wet', 1.4);
     }
+    case ':': {
+      // The broch's court (Stage 7): trodden earth, darker and mossy in the damp ring of shade
+      // at the wall's foot, with small stones and grit; calm patches where people walk most.
+      const wall = nearAbove(layerIndex('r'));
+      if (wall < 2.5) return c('moss', 1.4 + wall * 0.4);
+      if (wall < 6 && valueNoise(wx, wy, 3, 31, P) > 0.55)
+        return c('moss', 2 + (detail > 0.6 ? 1 : 0));
+      const grit = hash01(wx, wy, 32);
+      if (grit < 0.025) return c('stone', 4 + (grit < 0.01 ? 1 : 0));
+      if (grit > 0.985) return c('earth', 1);
+      return c('earth', 2.6 + (tone - 0.5) * 1.6 + (detail - 0.5) * 0.7 + (wall < 9 ? -0.5 : 0));
+    }
     case 'r': {
       // Rock: a jumble of faceted boulders lit from the upper left; wet and weedy where the
       // water reaches it, dark at its foot elsewhere; lichen on lit faces.
@@ -182,16 +194,22 @@ function header(name: string, kind: string, w: number, h: number, pivot: string)
   ];
 }
 
-/** The autotile sheet for a zone's rows: every visual tile the zone uses. */
-export function strandTiles(palette: Palette, rows: readonly string[]): string {
-  const width = rows[0]?.length ?? 0;
-  const height = rows.length;
+/**
+ * The autotile sheet for Skarvholm's zones: every visual tile any of them uses (Wreck Strand, and
+ * from Stage 7 the machair round the broch). A zone's origin is a multiple of the pattern's period
+ * away from the strand's, so a tile's place in the pattern is the same in either zone.
+ */
+export function strandTiles(palette: Palette, zones: readonly (readonly string[])[]): string {
   const states = new Map<string, { corners: Layer[]; phase: number }>();
-  for (let j = 0; j <= height; j++) {
-    for (let i = 0; i <= width; i++) {
-      const corners = visualCorners(rows, i, j);
-      const phase = phaseOf(i, j);
-      states.set(tileState(corners, phase), { corners, phase });
+  for (const rows of zones) {
+    const width = rows[0]?.length ?? 0;
+    const height = rows.length;
+    for (let j = 0; j <= height; j++) {
+      for (let i = 0; i <= width; i++) {
+        const corners = visualCorners(rows, i, j);
+        const phase = phaseOf(i, j);
+        states.set(tileState(corners, phase), { corners, phase });
+      }
     }
   }
   const lines = header('tile_strand', 'tile', TILE, TILE, '0,0');

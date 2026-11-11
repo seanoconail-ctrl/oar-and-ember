@@ -38,7 +38,7 @@ export function packSheet(sheet: Sheet): { image: IndexedImage; manifest: Manife
     for (const facing of sheet.facings)
       for (let i = 0; i < anim.frames; i++) keys.push(frameKey(state, facing, i));
   let image;
-  if (rows * sheet.height <= MAX_ATLAS) {
+  if (rows * sheet.height <= MAX_ATLAS && columns * sheet.width <= MAX_ATLAS) {
     // One row per state and facing: easy to read when the atlas is inspected.
     image = createIndexedImage(columns * sheet.width, rows * sheet.height);
     let row = 0;

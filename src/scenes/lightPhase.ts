@@ -19,3 +19,12 @@ export function lightPhase(cal: CalendarState, b: TimeBalance): Phase {
     Math.min(Math.abs(m - edge), 1440 - Math.abs(m - edge)) <= TWILIGHT_MINUTES;
   return near(lightFrom) || near(darkFrom) ? 'dusk' : 'night';
 }
+
+/**
+ * The part of the day for home audio (Book 11 section 03): the light's phase, with the twilight
+ * before noon called dawn.
+ */
+export function homePhase(cal: CalendarState, b: TimeBalance): 'dawn' | Phase {
+  const p = lightPhase(cal, b);
+  return p === 'dusk' && cal.minuteOfDay < 720 ? 'dawn' : p;
+}

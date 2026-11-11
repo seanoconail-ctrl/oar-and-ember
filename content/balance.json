@@ -446,6 +446,33 @@
      "Winter": "3 after storms"
     }
    ],
+   "workAndTheWreckCamp": [
+    {
+     "Key": "workerDay",
+     "Value": "8 game hours of work",
+     "Notes": "The rates above are per worker-day; a resident at work adds them by the game minute, the player by the action"
+    },
+    {
+     "Key": "wreckStores",
+     "Value": "6 rd of salt fish",
+     "Notes": "A split cask among the salvage heaps in the broch at S0"
+    },
+    {
+     "Key": "campFuel",
+     "Value": "0 loads",
+     "Notes": "The first fire needs driftwood gathered first (Book 4 Chapter 1 beat 2)"
+    },
+    {
+     "Key": "fireLight",
+     "Value": "1 load of driftwood",
+     "Notes": "Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house"
+    },
+    {
+     "Key": "tutorialGuard",
+     "Value": "No starvation and no spoilage before tutorialComplete",
+     "Notes": "tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning)"
+    }
+   ],
    "barleyAndKale": [
     {
      "Key": "skarvholmPlots",
@@ -1644,6 +1671,10 @@
     {
      "Key": "playerTimingBonus",
      "Value": "Up to +25% task output for good timing"
+    },
+    {
+     "Key": "startingSkills",
+     "Value": "2 in each skill Book 5 names for a person; the steerer 1 in every homestead task; 0 otherwise"
     }
    ],
    "friendshipDeltasByDeed": [
@@ -2275,6 +2306,11 @@
      "Severity": "Maimed",
      "Recovery": "Permanent",
      "Effect": "A trait (lost eye, stiff hand) with a skill penalty"
+    },
+    {
+     "Severity": "Untended",
+     "Recovery": "No recovery",
+     "Effect": "A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day"
     }
    ]
   },
@@ -2567,6 +2603,25 @@
      "Task": "Train",
      "Game minutes per action": "30",
      "Stamina per action": "3"
+    },
+    {
+     "Task": "Light a fire",
+     "Game minutes per action": "10",
+     "Stamina per action": "0"
+    }
+   ],
+   "handsOnAction": [
+    {
+     "Key": "actionSeconds",
+     "Value": "2.5 real seconds while the work loop plays; the task's game minutes pass at its end"
+    },
+    {
+     "Key": "timingMark",
+     "Value": "1.5 real seconds into the action"
+    },
+    {
+     "Key": "timingWindow",
+     "Value": "0.3 real seconds either side of the mark earns the full playerTimingBonus, falling to none 0.3 s further out"
     }
    ],
    "disputes": [

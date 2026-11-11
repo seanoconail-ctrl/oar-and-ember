@@ -14,6 +14,8 @@ export const TERRAIN = {
   b: 'bank',
   w: 'stream',
   r: 'rock',
+  /** The broch's court: trodden earth inside its wall (Stage 7). */
+  ':': 'floor',
 } as const;
 export type TerrainCode = keyof typeof TERRAIN;
 export type Terrain = (typeof TERRAIN)[TerrainCode];
@@ -31,7 +33,7 @@ export interface ZoneProp {
 
 /** Wildlife the renderer draws (never simulated). */
 export interface ZoneLife {
-  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab';
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep';
   readonly x: number;
   readonly y: number;
   readonly r?: number;
@@ -51,6 +53,17 @@ export interface ZoneMap {
   >;
   readonly props: readonly ZoneProp[];
   readonly life: readonly ZoneLife[];
+  /** The zone's north-west corner on the island, in tiles (neighbouring zones line up by it). */
+  readonly origin?: { readonly x: number; readonly y: number };
+  /** Edges that lead on to a neighbouring zone (Book 2 section 10, FootLink). */
+  readonly links?: readonly { readonly edge: 'n' | 's' | 'e' | 'w'; readonly to: Id }[];
+  /** The broch, where the zone has one: centre and wall radii in tiles (Stage 7). */
+  readonly broch?: {
+    readonly x: number;
+    readonly y: number;
+    readonly inner: number;
+    readonly outer: number;
+  };
   /** "sheet state/facing/index" for each decoration index. */
   readonly decalFrames: readonly string[];
   /** [frame index, x, y] in pixels: flat decoration on the ground. */

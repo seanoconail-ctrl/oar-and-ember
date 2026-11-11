@@ -286,7 +286,7 @@
     "tags": ["INFO"]
   },
   "caption.music.home_day": {
-    "text": "The island theme by day",
+    "text": "The hearth theme by day",
     "tags": ["INFO"]
   },
   "caption.music.home_dusk": {
@@ -1059,5 +1059,388 @@
   },
   "ui.sound.call.pickup": {
     "text": "Picking something up"
+  },
+  "item.name.line": {
+    "text": "Hand line"
+  },
+  "ui.tip.line": {
+    "text": "{slot} takes the line in hand. {use} on water within reach casts it. Press {use} again as the line tightens for a better catch."
+  },
+  "ui.tip.line.keys": {
+    "text": "{slot} takes the line in hand. Face the water and press {use} to cast. Press {use} again as the line tightens for a better catch."
+  },
+  "ui.tip.line.pad": {
+    "text": "{slot} takes the line in hand. Point the right stick at water and press {use} to cast. Press {use} again as the line tightens."
+  },
+  "ui.refusal.no_water": {
+    "text": "No water deep enough"
+  },
+  "ui.refusal.too_early": {
+    "text": "Too early to sleep"
+  },
+  "ui.refusal.no_driftwood": {
+    "text": "No driftwood"
+  },
+  "ui.refusal.no_food": {
+    "text": "No food"
+  },
+  "ui.refusal.too_tired": {
+    "text": "Too tired"
+  },
+  "ui.refusal.done": {
+    "text": "Already done"
+  },
+  "task.name.driftwood": {
+    "text": "Gather driftwood"
+  },
+  "task.name.fish": {
+    "text": "Fish"
+  },
+  "task.name.tend": {
+    "text": "Tend the wound"
+  },
+  "task.name.light_fire": {
+    "text": "Light the fire"
+  },
+  "task.name.cook": {
+    "text": "Cook a hot meal"
+  },
+  "task.name.build_shelter": {
+    "text": "Raise the sail shelter"
+  },
+  "ui.prompt.task": {
+    "text": "{key}  {task}"
+  },
+  "ui.prompt.task_click": {
+    "text": "Right-click  {task}"
+  },
+  "ui.prompt.tend": {
+    "text": "{key}  Tend {name}'s leg"
+  },
+  "ui.prompt.tend_click": {
+    "text": "Right-click  Tend {name}'s leg"
+  },
+  "ui.prompt.feed_fire": {
+    "text": "{key}  Put driftwood on the fire"
+  },
+  "ui.prompt.feed_fire_click": {
+    "text": "Right-click  Put driftwood on the fire"
+  },
+  "ui.prompt.sleep": {
+    "text": "{key}  Sleep"
+  },
+  "ui.prompt.sleep_click": {
+    "text": "Right-click  Sleep"
+  },
+  "ui.prompt.eat": {
+    "text": "{key}  Eat a cold meal"
+  },
+  "ui.prompt.eat_click": {
+    "text": "Right-click  Eat a cold meal"
+  },
+  "ui.prompt.fish": {
+    "text": "{key}  Cast the line"
+  },
+  "ui.prompt.timing": {
+    "text": "{key} as the mark closes"
+  },
+  "ui.prompt.need_wood": {
+    "text": "The fire needs driftwood: gather it on the strand."
+  },
+  "ui.prompt.too_early": {
+    "text": "Too early to sleep: after {time}."
+  },
+  "ui.work.result.driftwood": {
+    "text": "Driftwood: {count} loads at the camp"
+  },
+  "ui.work.result.fish": {
+    "text": "A fish landed: {count} in the stores"
+  },
+  "ui.work.result.nibble": {
+    "text": "Nothing yet. The line is out."
+  },
+  "ui.work.result.fire": {
+    "text": "The fire is lit"
+  },
+  "ui.work.result.fed": {
+    "text": "The fire is fed"
+  },
+  "ui.work.result.meal": {
+    "text": "A hot meal eaten"
+  },
+  "ui.work.result.cold_meal": {
+    "text": "A cold meal eaten"
+  },
+  "ui.work.result.tended": {
+    "text": "The wound is bound"
+  },
+  "ui.work.result.build": {
+    "text": "The sail shelter: {part}"
+  },
+  "ui.work.result.built": {
+    "text": "The sail shelter is up"
+  },
+  "ui.work.good": {
+    "text": "Good timing"
+  },
+  "ui.clock.text": {
+    "text": "Day {day}, {season}  {time}"
+  },
+  "ui.season.spring": {
+    "text": "spring"
+  },
+  "ui.season.summer": {
+    "text": "summer"
+  },
+  "ui.season.autumn": {
+    "text": "autumn"
+  },
+  "ui.season.winter": {
+    "text": "winter"
+  },
+  "ui.stamina.label": {
+    "text": "Stamina"
+  },
+  "ui.stamina.reason.cold": {
+    "text": "Cold"
+  },
+  "ui.stamina.reason.hungry": {
+    "text": "Hungry"
+  },
+  "ui.stamina.reason.starving": {
+    "text": "Starving"
+  },
+  "ui.stamina.reason.wounded": {
+    "text": "Wounded"
+  },
+  "ui.stamina.reason.badly_wounded": {
+    "text": "Badly wounded"
+  },
+  "ui.stamina.reason.sick": {
+    "text": "Sick"
+  },
+  "ui.stamina.reason.tired": {
+    "text": "Tired"
+  },
+  "ui.stamina.reason.exhausted": {
+    "text": "Exhausted"
+  },
+  "ui.stamina.reason.hard_work": {
+    "text": "Worn out from work"
+  },
+  "ui.stamina.reason.feast": {
+    "text": "Well fed"
+  },
+  "ui.report.title": {
+    "text": "Morning, day {day} of {season}"
+  },
+  "ui.report.close": {
+    "text": "{key} to go on"
+  },
+  "report.food.days": {
+    "text": "There is food for {days} days: {rd} rations in the camp."
+  },
+  "report.food.one": {
+    "text": "There is food for one more day. Fish, or go short."
+  },
+  "report.food.none": {
+    "text": "There is no food left in the camp."
+  },
+  "report.food.fresh": {
+    "text": "Fresh fish makes up {fish} of it; eat that first, before it spoils."
+  },
+  "report.fire.lit": {
+    "text": "The fire is still in, with fuel for about {hours} hours."
+  },
+  "report.fire.out": {
+    "text": "The fire went out in the night. It needs driftwood to light again."
+  },
+  "report.fire.none": {
+    "text": "There is no fire yet. Driftwood lies along the weed line on the strand."
+  },
+  "report.wood.stack": {
+    "text": "There are {loads} loads of driftwood stacked by the fire."
+  },
+  "report.shelter.none": {
+    "text": "The torn sail could be raised over the court as a roof."
+  },
+  "report.shelter.started": {
+    "text": "The sail shelter is {part}."
+  },
+  "report.shelter.done": {
+    "text": "The sail shelter keeps the rain off six."
+  },
+  "report.part.begun": {
+    "text": "barely begun"
+  },
+  "report.part.half": {
+    "text": "half raised"
+  },
+  "report.part.most": {
+    "text": "nearly up"
+  },
+  "report.wound.untended": {
+    "text": "{name}'s leg has not been tended. It will not mend until it is."
+  },
+  "report.wound.tended": {
+    "text": "{name}'s leg is bound and mending. About {days} days more."
+  },
+  "report.wound.healed": {
+    "text": "{name}'s leg has mended."
+  },
+  "report.work.hild": {
+    "text": "{name} means to fish from the rocks below the path today."
+  },
+  "report.slept.well": {
+    "text": "You slept well."
+  },
+  "report.slept.short": {
+    "text": "You slept badly and will feel it today."
+  },
+  "report.slept.cold": {
+    "text": "The night was cold without a fire."
+  },
+  "report.collapsed.night": {
+    "text": "You fell asleep where you stood, long after dark."
+  },
+  "report.tide.low": {
+    "text": "Low water today near {time}."
+  },
+  "report.threats.none": {
+    "text": "Nothing has been seen on the water."
+  },
+  "report.guard.tutorial": {
+    "text": "The salvage will feed you while you find your feet."
+  },
+  "c_hild.bark.broch.01": {
+    "text": "There's an old broch up past the bank. Walls, at least. Come on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.broch.02": {
+    "text": "Keep up. My leg's worse than yours.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.broch.03": {
+    "text": "Dry, near enough. We need a fire. Driftwood's along the weed line.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.fire.01": {
+    "text": "That's better. Now see to this leg before it sets crooked.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.tended.01": {
+    "text": "Tight. Good. You've done that before.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.meal.01": {
+    "text": "Hot food. The sea can keep the rest of us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.fishing.01": {
+    "text": "I can't walk far, but I can fish. I'll be on the rocks below the path.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.fish.01": {
+    "text": "There. Supper, if you can cook it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.shelter.01": {
+    "text": "A roof. Father's sail, keeping us dry. He'd laugh.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.bark.evening.01": {
+    "text": "Sleep when you can. I'll keep the fire in.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.sfx.task_driftwood": {
+    "text": "Driftwood gathered",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_cast": {
+    "text": "A line cast into the water",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_catch": {
+    "text": "A fish splashing on the line",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_tend": {
+    "text": "Cloth torn and bound",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_cook": {
+    "text": "Fish sizzling over the fire",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_build": {
+    "text": "Mallet on a stake",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.fire_lit": {
+    "text": "Flint struck, the fire catches",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.fire_fed": {
+    "text": "Wood thrown on the fire",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.fire_out": {
+    "text": "The fire dies down",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.timing_good": {
+    "text": "A sure, well-timed stroke",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sleep": {
+    "text": "Settling down to sleep",
+    "tags": ["INFO"]
+  },
+  "ui.play.zone.machair": {
+    "text": "The machair and the old broch"
+  },
+  "caption.music.island_explore": {
+    "text": "The Skarvholm theme, out on the island",
+    "tags": ["INFO"]
+  },
+  "ui.sound.home": {
+    "text": "Home (Stage 7)"
+  },
+  "ui.sound.home.life": {
+    "text": "The steading by time of day"
+  },
+  "ui.sound.home.dawn": {
+    "text": "Dawn"
+  },
+  "ui.sound.home.day": {
+    "text": "Day"
+  },
+  "ui.sound.home.dusk": {
+    "text": "Dusk"
+  },
+  "ui.sound.home.night": {
+    "text": "Night"
+  },
+  "ui.sound.home.work": {
+    "text": "Work, fire and sleep"
+  },
+  "caption.amb.home_dawn": {
+    "text": "Larks and oystercatchers at first light",
+    "tags": ["INFO"]
+  },
+  "caption.amb.home_day": {
+    "text": "Sheep and larks on the machair",
+    "tags": ["INFO"]
+  },
+  "caption.amb.home_dusk": {
+    "text": "Curlews calling at dusk",
+    "tags": ["INFO"]
+  },
+  "caption.amb.home_night": {
+    "text": "A corncrake in the long grass",
+    "tags": ["INFO"]
+  },
+  "report.wood.one": {
+    "text": "There is one load of driftwood stacked by the fire."
   }
 }

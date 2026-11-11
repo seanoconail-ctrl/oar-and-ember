@@ -18,7 +18,7 @@ export const TILE = 24;
 export const PERIOD = 5;
 
 /** Visual priority, low to high: a terrain laps over every terrain before it. */
-export const LAYERS = ['~', '-', '_', 'w', '.', 'b', ',', 'r'] as const;
+export const LAYERS = ['~', '-', '_', 'w', '.', 'b', ',', ':', 'r'] as const;
 export type Layer = (typeof LAYERS)[number];
 
 /** Short letters for frame names. */
@@ -30,6 +30,7 @@ export const LETTER: Readonly<Record<Layer, string>> = {
   '.': 'h',
   b: 'b',
   ',': 'm',
+  ':': 'e',
   r: 'r',
 };
 
@@ -42,6 +43,7 @@ const ROUGHNESS: Readonly<Record<Layer, number>> = {
   '.': 0.32,
   b: 0.16,
   ',': 0.34,
+  ':': 0.3,
   r: 0.38,
 };
 

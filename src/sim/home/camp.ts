@@ -1,0 +1,748 @@
+/**
+ * The first camp at home and the task system v0 (Book 2 sections 03 and 07; Book 4 Chapter 1
+ * beat 2; Book 10 sections 03, 06, 08 and 09; Stage 7).
+ *
+ * - **Sites** in the zones (content/camp.json): the fire, the beds, the sail to be raised, the
+ *   salvaged stores, and driftwood along the strand's weed line. What interacting with one does
+ *   depends on the camp: lay and light the fire with driftwood, feed it, cook a hot meal, sleep,
+ *   eat a cold meal, raise the sail shelter, gather driftwood; a wounded person can be tended.
+ * - **A hands-on action** plants the feet while its work loop plays for Book 10's actionSeconds;
+ *   one press of use near the mark earns up to playerTimingBonus; missing it never ruins the task.
+ *   At its end the work counts at the steerer's skill, the clock advances by the task's Book 10
+ *   game minutes (run minute by minute through the home step) and only its small stamina is spent.
+ * - **The home step**, once a game minute: the fire burns its fuel, a resident at work adds work by
+ *   the minute, and the steerer's condition is recomputed (warmth by the fire, hunger, hard work).
+ * - **The day's start**, on waking: fresh fish spoil and the day's ration is served, except that
+ *   before tutorialComplete nothing spoils and the household never goes short (Book 10 section 03,
+ *   tutorialGuard); wounds mend from the day they were tended; the morning report is written.
+ */
+import { parseTimeBalance, SEASONS } from '../../content/balance.ts';
+import type { TimeBalance } from '../../content/balance.ts';
+import {
+  parseStaminaBalance,
+  parseTaskBalance,
+  parseWorkBalance,
+} from '../../content/homeBalance.ts';
+import type {
+  ActionBalance,
+  StaminaBalance,
+  TaskCost,
+  WorkBalance,
+} from '../../content/homeBalance.ts';
+import type { CampDef, CampSite, Content, TaskDef } from '../../content/registry.ts';
+import type { Id } from '../../core/ids.ts';
+import { clockText, minutesIntoDay, seasonOf, tideAt } from '../calendar/calendar.ts';
+import { TICKS_PER_SECOND } from '../land/onFoot.ts';
+import type { OnFootActor, Work } from '../land/onFoot.ts';
+import { tileOf } from '../land/zoneMap.ts';
+import type { ZoneMap } from '../land/zoneMap.ts';
+import type { HomeState, MorningReport, ReportLine, WorldState } from '../world.ts';
+import { ateSinceWaking, clearReasons, hasReason, setReason, spendOnTask } from './stamina.ts';
+
+/** The fact set when Chapter 1 ends at the launch (Book 10 section 03, tutorialGuard). */
+export const FACT_TUTORIAL_COMPLETE = 'tutorialComplete';
+/** Beat 2's facts: Hild has led the steerer to the broch; the fire was first lit; her leg tended. */
+export const FACT_AT_BROCH = 'ch1.at_broch';
+export const FACT_FIRE_LIT = 'ch1.fire_lit';
+export const FACT_HILD_TENDED = 'ch1.hild_tended';
+
+/** Everything the camp reads: its content and Book 10's numbers. */
+export interface CampContext {
+  readonly def: CampDef;
+  readonly tasks: ReadonlyMap<Id, { readonly def: TaskDef; readonly cost: TaskCost }>;
+  readonly action: ActionBalance;
+  readonly work: WorkBalance;
+  readonly stamina: StaminaBalance;
+  readonly time: TimeBalance;
+  /** Worker-days to raise the sail shelter (Book 10 section 09, Buildings). */
+  readonly shelterWorkerDays: number;
+  /** Ticks of a hands-on action, and of lying down before the night passes. */
+  readonly actionTicks: number;
+  readonly sleepTicks: number;
+}
+
+function buildingWorkerDays(balance: unknown, row: string): number {
+  const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  const list = tables?.['buildingsToolsAndCrafting']?.['buildings'];
+  const found = Array.isArray(list)
+    ? (list as Record<string, string>[]).find((r) => r['Building'] === row)
+    : undefined;
+  const text = found?.['Worker-days'] ?? '';
+  if (!/^\d+(\.\d+)?$/.test(text))
+    throw new Error(`balance.json: buildings "${row}" Worker-days is "${text}"`);
+  return Number(text);
+}
+
+export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampContext | null {
+  const def = content.camp;
+  if (def === null) return null;
+  const taskBalance = parseTaskBalance(content.balance);
+  const tasks = new Map<Id, { def: TaskDef; cost: TaskCost }>();
+  for (const [id, t] of Object.entries(def.tasks)) {
+    const cost = taskBalance.costs.get(t.balanceRow);
+    if (cost === undefined) throw new Error(`Book 10 has no task row "${t.balanceRow}"`);
+    tasks.set(id, { def: t, cost });
+  }
+  return {
+    def,
+    tasks,
+    action: taskBalance.action,
+    work: parseWorkBalance(content.balance),
+    stamina: parseStaminaBalance(content.balance),
+    time: parseTimeBalance(content.balance),
+    shelterWorkerDays: buildingWorkerDays(content.balance, def.shelter.balanceRow),
+    actionTicks: Math.round(taskBalance.action.actionSeconds * TICKS_PER_SECOND),
+    sleepTicks: Math.round(def.sleepSeconds * TICKS_PER_SECOND),
+  };
+}
+
+/** Game minutes since the campaign began (day 1, 06:00 is 0). */
+export function campaignMinute(world: WorldState, b: TimeBalance): number {
+  return (world.calendar.day - 1) * 1440 + minutesIntoDay(world.calendar, b);
+}
+
+/** The home this camp belongs to. */
+export function homeOf(world: WorldState, ctx: CampContext): HomeState | undefined {
+  return world.homes[ctx.def.home];
+}
+
+/** A new campaign's camp: the wreck's salvaged stores, no fuel, no fire (Book 10 section 03). */
+export function setupCamp(world: WorldState, ctx: CampContext): void {
+  const home = world.homes[ctx.def.home];
+  if (home === undefined) return;
+  home.stores = { RES_SALTED_FISH: ctx.work.wreckStoresRd, RES_DRIFTWOOD: ctx.work.campFuelLoads };
+  home.fresh = [];
+  home.fire = { lit: false, fuel: 0 };
+  home.building = null;
+  home.catch = 0;
+  home.rationDay = world.calendar.day;
+  home.shortDays = 0;
+}
+
+/** The output multiplier for a skill level, relative to Book 10's "at skill 2" rates. */
+export function skillRatio(work: WorkBalance, level: number): number {
+  const at = (l: number): number => work.output.base + work.output.perLevel * l;
+  return at(level) / at(2);
+}
+
+/** Food in the stores, in ration-days. */
+export function foodRd(home: HomeState): number {
+  return (home.stores['RES_SALTED_FISH'] ?? 0) + home.fresh.reduce((s, f) => s + f.rd, 0);
+}
+
+export type SiteUse =
+  | { readonly kind: 'TASK'; readonly task: Id; readonly site: string; readonly target?: Id }
+  | { readonly kind: 'FEED_FIRE'; readonly site: string }
+  | { readonly kind: 'SLEEP'; readonly site: string }
+  | { readonly kind: 'EAT'; readonly site: string }
+  | {
+      readonly kind: 'REFUSE';
+      readonly site: string;
+      readonly reason: 'NO_DRIFTWOOD' | 'NO_FOOD' | 'TOO_EARLY_TO_SLEEP';
+    };
+
+/** The sites of a zone that exist at the camp's stage. */
+export function activeSites(world: WorldState, ctx: CampContext, zone: Id): CampSite[] {
+  const stage = homeOf(world, ctx)?.stage ?? 'S0';
+  return ctx.def.sites.filter(
+    (s) => s.zone === zone && (s.stages === undefined || (s.stages as string[]).includes(stage)),
+  );
+}
+
+/** Whether a bed ends the day now (Book 2 section 03: after 18:00). */
+export function sleepAllowed(world: WorldState, b: TimeBalance): boolean {
+  const from = (b.sleepAfter - b.dayStart + 1440) % 1440;
+  return minutesIntoDay(world.calendar, b) >= from;
+}
+
+/** What interacting with a site does now, or why it cannot. */
+export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): SiteUse | null {
+  const home = homeOf(world, ctx);
+  if (home === undefined) return null;
+  const wood = home.stores['RES_DRIFTWOOD'] ?? 0;
+  switch (site.kind) {
+    case 'DRIFTWOOD':
+      return { kind: 'TASK', task: 'TASK_GATHER_DRIFTWOOD', site: site.key };
+    case 'FIRE':
+      if (!home.fire.lit)
+        return wood >= ctx.work.fireLightLoads
+          ? { kind: 'TASK', task: 'TASK_LIGHT_FIRE', site: site.key }
+          : { kind: 'REFUSE', site: site.key, reason: 'NO_DRIFTWOOD' };
+      // A lit fire cooks a hot meal while there is food; with the steerer fed, it takes wood.
+      if (!ateSinceWaking(world) && foodRd(home) > 0)
+        return { kind: 'TASK', task: 'TASK_COOK', site: site.key };
+      if (wood >= 1) return { kind: 'FEED_FIRE', site: site.key };
+      if (foodRd(home) > 0) return { kind: 'TASK', task: 'TASK_COOK', site: site.key };
+      return { kind: 'REFUSE', site: site.key, reason: 'NO_DRIFTWOOD' };
+    case 'BED':
+      return sleepAllowed(world, ctx.time)
+        ? { kind: 'SLEEP', site: site.key }
+        : { kind: 'REFUSE', site: site.key, reason: 'TOO_EARLY_TO_SLEEP' };
+    case 'BUILD':
+      return home.stage === 'S0' ? { kind: 'TASK', task: 'TASK_BUILD', site: site.key } : null;
+    case 'STORES':
+      if (ateSinceWaking(world)) return null;
+      return foodRd(home) > 0
+        ? { kind: 'EAT', site: site.key }
+        : { kind: 'REFUSE', site: site.key, reason: 'NO_FOOD' };
+  }
+}
+
+/** A wounded resident whose wound is not yet tended can be tended (TASK_CARE). */
+export function personUse(world: WorldState, id: Id): SiteUse | null {
+  const person = world.people[id];
+  if (person === undefined || !world.household.residents.includes(id)) return null;
+  const untended = person.wounds.some((w) => w.tendedDay === undefined);
+  return untended ? { kind: 'TASK', task: 'TASK_CARE', site: `person:${id}`, target: id } : null;
+}
+
+/** A use with where it is, for choosing the nearest. */
+export interface PlacedUse {
+  readonly use: SiteUse;
+  readonly x: number;
+  readonly y: number;
+}
+
+/** Every camp use in a zone now: its sites, and the people who can be tended. */
+export function campUses(
+  world: WorldState,
+  ctx: CampContext,
+  map: ZoneMap,
+  actors: Readonly<Record<Id, OnFootActor>>,
+): PlacedUse[] {
+  const out: PlacedUse[] = [];
+  for (const site of activeSites(world, ctx, map.zone)) {
+    const use = siteUse(world, ctx, site);
+    if (use !== null) out.push({ use, x: site.x * map.tile, y: site.y * map.tile });
+  }
+  for (const [id, actor] of Object.entries(actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
+    if (actor.pose === 'carried' || actor.pose === 'down' || actor.pose === 'call') continue;
+    const use = personUse(world, id);
+    if (use !== null) out.push({ use, x: actor.x, y: actor.y });
+  }
+  return out;
+}
+
+/**
+ * The nearest camp use within `reach` pixels of `at`: something that can be done before a reason
+ * why something cannot (too early to sleep), so a refusal never hides a task beside it.
+ */
+export function campUseNear(
+  uses: readonly PlacedUse[],
+  at: { readonly x: number; readonly y: number },
+  reach: number,
+): (PlacedUse & { readonly d: number }) | null {
+  let best: (PlacedUse & { d: number }) | null = null;
+  const rank = (u: PlacedUse): number => (u.use.kind === 'REFUSE' ? 1 : 0);
+  for (const u of uses) {
+    const d = Math.hypot(u.x - at.x, u.y - at.y);
+    if (d > reach) continue;
+    if (best === null || rank(u) < rank(best) || (rank(u) === rank(best) && d < best.d))
+      best = { ...u, d };
+  }
+  return best;
+}
+
+/** The camp use on a tile (or on the tile below it: a click on a tall thing counts). */
+export function campUseAt(
+  uses: readonly PlacedUse[],
+  map: ZoneMap,
+  tile: { readonly tx: number; readonly ty: number },
+): PlacedUse | null {
+  for (const u of uses) {
+    const t = tileOf(map, u.x, u.y - 0.001);
+    if (t.tx === tile.tx && (t.ty === tile.ty || t.ty === tile.ty + 1)) return u;
+  }
+  return null;
+}
+
+export type CampEvent =
+  | {
+      readonly type: 'WORK_STARTED';
+      readonly task: Id;
+      readonly site: string;
+      readonly ticks: number;
+      readonly markTick: number;
+    }
+  | { readonly type: 'WORK_PRESSED'; readonly task: Id; readonly quality: number }
+  | {
+      readonly type: 'WORK_DONE';
+      readonly task: Id;
+      readonly site: string;
+      readonly minutes: number;
+      readonly stamina: number;
+      readonly bonus: number;
+      readonly output: number;
+    }
+  | { readonly type: 'WORK_CANCELLED'; readonly task: Id }
+  | { readonly type: 'FIRE_LIT' }
+  | { readonly type: 'FIRE_FED'; readonly fuel: number }
+  | { readonly type: 'FIRE_OUT' }
+  | { readonly type: 'FISH_LANDED'; readonly count: number; readonly by: Id }
+  | { readonly type: 'MEAL_EATEN'; readonly hot: boolean }
+  | { readonly type: 'WOUND_TENDED'; readonly person: Id }
+  | { readonly type: 'BUILDING_RAISED'; readonly building: Id; readonly share: number }
+  | { readonly type: 'CAMP_STAGE'; readonly stage: HomeState['stage'] }
+  | { readonly type: 'REASON_ADDED'; readonly reason: string }
+  | { readonly type: 'REASON_LIFTED'; readonly reason: string };
+
+/** How good a timing press was, 0 to 1 (Book 10 section 09, "Hands-on action"). */
+export function timingQuality(work: Work, action: ActionBalance): number {
+  if (work.press === null) return 0;
+  const t = (work.press - work.since) / TICKS_PER_SECOND;
+  const off = Math.abs(t - action.markSeconds);
+  if (off <= action.windowSeconds) return 1;
+  return Math.max(0, 1 - (off - action.windowSeconds) / action.windowSeconds);
+}
+
+/** The tick the mark falls on in a work begun at `since`. */
+export function markTick(since: number, action: ActionBalance): number {
+  return since + Math.round(action.markSeconds * TICKS_PER_SECOND);
+}
+
+/**
+ * Finishes a hands-on action: its output at the steerer's skill and timing, its game time run
+ * through the home step (`advance`), and its small stamina.
+ */
+export function finishWork(
+  world: WorldState,
+  ctx: CampContext,
+  work: Work,
+  tick: number,
+  emit: (e: CampEvent) => void,
+  advance: (minutes: number) => void,
+  say: (lineKey: string) => void,
+): void {
+  const home = homeOf(world, ctx);
+  const task = ctx.tasks.get(work.task);
+  if (home === undefined || task === undefined) return;
+  const season = seasonOf(world.calendar.day);
+  const level = world.player.skills[task.def.skill] ?? 0;
+  const quality = timingQuality(work, ctx.action);
+  const bonus = quality * ctx.work.timingBonus;
+  const k = skillRatio(ctx.work, level) * (1 + bonus);
+  let output = 0;
+  switch (work.task) {
+    case 'TASK_GATHER_DRIFTWOOD':
+      output = ctx.work.driftwoodPerSearch[season] * k;
+      home.stores['RES_DRIFTWOOD'] = (home.stores['RES_DRIFTWOOD'] ?? 0) + output;
+      break;
+    case 'TASK_FISH_SHORE': {
+      output = (ctx.work.fishShore[season] / ctx.work.workerDayMinutes) * task.cost.gameMinutes * k;
+      land(world, ctx, home, output, 'P_STEERER', emit, say);
+      break;
+    }
+    case 'TASK_CARE': {
+      const person = work.target === undefined ? undefined : world.people[work.target];
+      for (const w of person?.wounds ?? []) w.tendedDay ??= world.calendar.day;
+      if (work.target !== undefined) emit({ type: 'WOUND_TENDED', person: work.target });
+      if (work.target === 'C_HILD' && world.facts[FACT_HILD_TENDED] !== true) {
+        world.facts[FACT_HILD_TENDED] = true;
+        const line = ctx.def.lines['tended'];
+        if (line !== undefined) say(line);
+      }
+      output = 1;
+      break;
+    }
+    case 'TASK_LIGHT_FIRE': {
+      const wood = home.stores['RES_DRIFTWOOD'] ?? 0;
+      const laid = Math.min(wood, ctx.work.fireLightLoads);
+      home.stores['RES_DRIFTWOOD'] = wood - laid;
+      home.fire = { lit: true, fuel: home.fire.fuel + laid };
+      output = laid;
+      emit({ type: 'FIRE_LIT' });
+      if (world.facts[FACT_FIRE_LIT] !== true) {
+        world.facts[FACT_FIRE_LIT] = true;
+        const line = ctx.def.lines['fireLit'];
+        if (line !== undefined) say(line);
+      }
+      break;
+    }
+    case 'TASK_COOK': {
+      eat(world, ctx, true, emit);
+      output = 1;
+      const line = ctx.def.lines['meal'];
+      if (line !== undefined && world.household.residents.includes('C_HILD')) say(line);
+      break;
+    }
+    case 'TASK_BUILD': {
+      const building = home.building ?? { id: ctx.def.shelter.building, progress: 0 };
+      output = task.cost.gameMinutes * k;
+      building.progress += output;
+      const need = ctx.shelterWorkerDays * ctx.work.workerDayMinutes;
+      if (building.progress >= need) {
+        home.building = null;
+        home.stage = 'S1';
+        if (!home.buildings.includes(building.id)) home.buildings.push(building.id);
+        emit({ type: 'BUILDING_RAISED', building: building.id, share: 1 });
+        emit({ type: 'CAMP_STAGE', stage: 'S1' });
+        const line = ctx.def.lines['shelter'];
+        if (line !== undefined) say(line);
+      } else {
+        home.building = building;
+        emit({ type: 'BUILDING_RAISED', building: building.id, share: building.progress / need });
+      }
+      break;
+    }
+  }
+  const minutes = task.cost.gameMinutes;
+  spendOnTask(world.player.stamina, task.cost.stamina, tick);
+  world.player.condition.workedMinutes += minutes;
+  emit({
+    type: 'WORK_DONE',
+    task: work.task,
+    site: work.site,
+    minutes,
+    stamina: task.cost.stamina,
+    bonus,
+    output,
+  });
+  advance(minutes);
+}
+
+/** Adds fish to a catch in progress; whole fish go to the stores, fresh, by today. */
+function land(
+  world: WorldState,
+  ctx: CampContext,
+  home: HomeState,
+  share: number,
+  by: Id,
+  emit: (e: CampEvent) => void,
+  say: (lineKey: string) => void,
+): void {
+  home.catch += share;
+  const whole = Math.floor(home.catch + 1e-9);
+  if (whole <= 0) return;
+  home.catch -= whole;
+  const rd = whole * ctx.work.freshFish.rd;
+  const today = home.fresh.find((f) => f.day === world.calendar.day);
+  if (today !== undefined) today.rd += rd;
+  else home.fresh.push({ rd, day: world.calendar.day });
+  emit({ type: 'FISH_LANDED', count: whole, by });
+  if (world.facts['ch1.first_fish'] !== true) {
+    world.facts['ch1.first_fish'] = true;
+    const line = ctx.def.lines['firstFish'];
+    if (by === 'P_STEERER' && line !== undefined) say(line);
+  }
+}
+
+/** A meal: a hot one lifts Hungry and Cold, a cold one Hungry (Book 10 section 06). */
+export function eat(
+  world: WorldState,
+  ctx: CampContext,
+  hot: boolean,
+  emit: (e: CampEvent) => void,
+): void {
+  const now = campaignMinute(world, ctx.time);
+  const c = world.player.condition;
+  const st = world.player.stamina;
+  c.lastMealAt = now;
+  const lifted: string[] = [];
+  if (hasReason(st, 'STARVING')) {
+    c.mealsWhileStarving++;
+    // Two meals end starving (Book 10).
+    if (c.mealsWhileStarving >= 2) {
+      lifted.push(...clearReasons(st, ctx.stamina, ['STARVING']));
+      c.mealsWhileStarving = 0;
+    }
+  }
+  lifted.push(...clearReasons(st, ctx.stamina, hot ? ['HUNGRY', 'COLD'] : ['HUNGRY']));
+  if (hot) c.warmMinutes = 0;
+  emit({ type: 'MEAL_EATEN', hot });
+  for (const r of lifted) emit({ type: 'REASON_LIFTED', reason: r });
+}
+
+/** Feeds the fire one load from the stack. */
+export function feedFire(world: WorldState, ctx: CampContext, emit: (e: CampEvent) => void): void {
+  const home = homeOf(world, ctx);
+  if (home === undefined) return;
+  const wood = home.stores['RES_DRIFTWOOD'] ?? 0;
+  if (wood < 1) return;
+  home.stores['RES_DRIFTWOOD'] = wood - 1;
+  home.fire.fuel += 1;
+  emit({ type: 'FIRE_FED', fuel: home.fire.fuel });
+}
+
+/** Where the steerer is, for warmth: the zone and the feet in pixels. */
+export interface SteererAt {
+  readonly zone: Id;
+  readonly x: number;
+  readonly y: number;
+  readonly tile: number;
+}
+
+/** Whether the steerer is within a lit fire's warmth (Book 10 warmFire: within 3 tiles). */
+export function byTheFire(world: WorldState, ctx: CampContext, at: SteererAt | null): boolean {
+  const home = homeOf(world, ctx);
+  if (home === undefined || !home.fire.lit || at === null) return false;
+  const fire = ctx.def.sites.find((s) => s.kind === 'FIRE');
+  if (fire?.zone !== at.zone) return false;
+  return (
+    Math.hypot(fire.x * at.tile - at.x, fire.y * at.tile - at.y) <=
+    ctx.stamina.warmFire.tiles * at.tile
+  );
+}
+
+/** Whether a resident is at their work now (Hild fishes from the morning after she is tended). */
+export function residentWorking(world: WorldState, ctx: CampContext, id: Id): boolean {
+  const plan = ctx.def.people[id];
+  const person = world.people[id];
+  if (plan === undefined || person === undefined || !world.household.residents.includes(id))
+    return false;
+  if (world.facts[FACT_AT_BROCH] !== true) return false;
+  const tended = person.wounds.every((w) => w.tendedDay !== undefined);
+  const since = Math.max(0, ...person.wounds.map((w) => w.tendedDay ?? 0));
+  if (!tended || since >= world.calendar.day) return false;
+  const m = world.calendar.minuteOfDay;
+  const [fh = 0, fm = 0] = plan.workFrom.split(':').map(Number);
+  const [uh = 0, um = 0] = plan.workUntil.split(':').map(Number);
+  return m >= fh * 60 + fm && m < uh * 60 + um;
+}
+
+/** A resident's work for a minute: by Book 10's rate a worker-day, at skill, half if badly hurt. */
+export function residentMinute(
+  world: WorldState,
+  ctx: CampContext,
+  id: Id,
+  emit: (e: CampEvent) => void,
+  say: (lineKey: string) => void,
+): void {
+  const plan = ctx.def.people[id];
+  const home = homeOf(world, ctx);
+  const person = world.people[id];
+  if (plan === undefined || home === undefined || person === undefined) return;
+  const task = ctx.tasks.get(plan.work.task);
+  if (task === undefined) return;
+  const season = seasonOf(world.calendar.day);
+  const serious = person.wounds.some((w) => w.severity !== 'LIGHT');
+  const k =
+    skillRatio(ctx.work, person.skills[task.def.skill] ?? 0) *
+    (serious ? ctx.work.seriousWorkFactor : 1);
+  // Fishing from the shore is the one resident task of Stage 7 (content/camp.json).
+  if (plan.work.task === 'TASK_FISH_SHORE')
+    land(
+      world,
+      ctx,
+      home,
+      (ctx.work.fishShore[season] / ctx.work.workerDayMinutes) * k,
+      id,
+      emit,
+      say,
+    );
+}
+
+/**
+ * One game minute at home: the fire burns, residents at work add their work, and the steerer's
+ * condition is brought up to date (warmth, hunger, hard work, wounds).
+ */
+export function homeMinute(
+  world: WorldState,
+  ctx: CampContext,
+  at: SteererAt | null,
+  emit: (e: CampEvent) => void,
+  say: (lineKey: string) => void,
+): void {
+  const home = homeOf(world, ctx);
+  if (home === undefined) return;
+  const season = seasonOf(world.calendar.day);
+  if (home.fire.lit) {
+    home.fire.fuel = Math.max(0, home.fire.fuel - ctx.work.fuelPerDay[season] / 1440);
+    if (home.fire.fuel <= 1e-9) {
+      home.fire = { lit: false, fuel: 0 };
+      emit({ type: 'FIRE_OUT' });
+    }
+  }
+  for (const id of world.household.residents)
+    if (residentWorking(world, ctx, id)) residentMinute(world, ctx, id, emit, say);
+  conditionMinute(world, ctx, at, emit);
+}
+
+/** The steerer's condition, recomputed once a game minute (Book 2 section 24). */
+export function conditionMinute(
+  world: WorldState,
+  ctx: CampContext,
+  at: SteererAt | null,
+  emit: (e: CampEvent) => void,
+): void {
+  const st = world.player.stamina;
+  const sb = ctx.stamina;
+  const c = world.player.condition;
+  const now = campaignMinute(world, ctx.time);
+  const add = (reason: Parameters<typeof setReason>[2], cause?: string): void => {
+    if (hasReason(st, reason)) return;
+    setReason(st, sb, reason, now, cause);
+    emit({ type: 'REASON_ADDED', reason });
+  };
+  const lift = (reasons: Parameters<typeof clearReasons>[2]): void => {
+    for (const r of clearReasons(st, sb, reasons)) emit({ type: 'REASON_LIFTED', reason: r });
+  };
+  // Warm: an hour within a lit fire's reach lifts Cold.
+  if (hasReason(st, 'COLD')) {
+    if (byTheFire(world, ctx, at)) c.warmMinutes++;
+    if (c.warmMinutes >= sb.warmFire.minutes) {
+      lift(['COLD']);
+      c.warmMinutes = 0;
+    }
+  } else c.warmMinutes = 0;
+  if (world.player.awake) {
+    // Hungry by 14:00 without a meal since waking; starving after a whole day without food,
+    // but never before tutorialComplete (the tutorial guard).
+    const into = minutesIntoDay(world.calendar, ctx.time);
+    const hungryFrom = (sb.hungryAt - ctx.time.dayStart + 1440) % 1440;
+    const guard = world.facts[FACT_TUTORIAL_COMPLETE] !== true;
+    const lastMeal = c.lastMealAt ?? -Infinity;
+    if (!guard && now - lastMeal >= 1440 && now >= 1440) {
+      if (!hasReason(st, 'STARVING')) {
+        lift(['HUNGRY']);
+        add('STARVING');
+        c.mealsWhileStarving = 0;
+      }
+    } else if (!ateSinceWaking(world) && into >= hungryFrom && !hasReason(st, 'STARVING'))
+      add('HUNGRY');
+    if (c.workedMinutes > sb.hardWorkMinutes) add('HARD_WORK');
+  }
+  // The steerer's own wounds (none until Stage 9's combat).
+  const light = world.player.wounds.some((w) => w.severity === 'LIGHT');
+  const bad = world.player.wounds.some((w) => w.severity !== 'LIGHT');
+  if (bad) add('BADLY_WOUNDED');
+  else lift(['BADLY_WOUNDED']);
+  if (light) add('WOUNDED');
+  else lift(['WOUNDED']);
+}
+
+/**
+ * The start of a day, on waking: spoilage and the day's ration (never before tutorialComplete:
+ * the tutorial guard), wounds mending from the day they were tended, and the report.
+ */
+export function startDay(world: WorldState, ctx: CampContext): void {
+  const home = homeOf(world, ctx);
+  const day = world.calendar.day;
+  const guard = world.facts[FACT_TUTORIAL_COMPLETE] !== true;
+  if (home !== undefined && home.rationDay < day) {
+    // Spoilage: fresh fish keeps Book 10's days; none spoils before tutorialComplete.
+    if (!guard) home.fresh = home.fresh.filter((f) => day - f.day < ctx.work.freshFish.keepsDays);
+    // The day's ration for every mouth: the oldest fresh fish first, then the salt fish.
+    const mouths = 1 + world.household.residents.length;
+    let need = mouths * ctx.work.foodPerPersonPerDay;
+    home.fresh.sort((a, b) => a.day - b.day);
+    for (const lot of home.fresh) {
+      const take = Math.min(lot.rd, need);
+      lot.rd -= take;
+      need -= take;
+    }
+    home.fresh = home.fresh.filter((f) => f.rd > 1e-9);
+    const salted = home.stores['RES_SALTED_FISH'] ?? 0;
+    const take = Math.min(salted, need);
+    home.stores['RES_SALTED_FISH'] = salted - take;
+    need -= take;
+    // Short: before tutorialComplete the household scrapes by; after, the shortfall counts.
+    if (need > 1e-9 && !guard) home.shortDays++;
+    home.rationDay = day;
+  }
+  // Wounds mend from the day they were tended (Book 10 section 08).
+  for (const person of Object.values(world.people)) {
+    const left = person.wounds.filter(
+      (w) => w.tendedDay === undefined || day - w.tendedDay < ctx.work.woundDays[w.severity],
+    );
+    if (left.length !== person.wounds.length) {
+      person.wounds = left;
+      if (left.length === 0 && person.status === 'wounded') person.status = 'alive';
+    }
+  }
+}
+
+/** How the night went, for the report. */
+export interface NightRecord {
+  readonly slept: number;
+  readonly cold: boolean;
+  readonly collapsed: boolean;
+}
+
+/** The morning report v0 in sentences (Book 1 section 03; Book 7 section 10: plain sentences). */
+export function morningReport(
+  world: WorldState,
+  ctx: CampContext,
+  night: NightRecord,
+  nameOf: (id: Id) => string,
+): MorningReport {
+  const lines: ReportLine[] = [];
+  const line = (key: string, vars: Record<string, string | number> = {}): void => {
+    lines.push({ key, vars });
+  };
+  const home = homeOf(world, ctx);
+  if (night.collapsed) line('report.collapsed.night');
+  else
+    line(night.slept < ctx.stamina.shortSleepMinutes ? 'report.slept.short' : 'report.slept.well');
+  if (night.cold) line('report.slept.cold');
+  if (home !== undefined) {
+    const mouths = 1 + world.household.residents.length;
+    const rd = foodRd(home);
+    const days = Math.floor(rd / (mouths * ctx.work.foodPerPersonPerDay) + 1e-9);
+    if (rd <= 1e-9) line('report.food.none');
+    else if (days <= 1) line('report.food.one');
+    else line('report.food.days', { days, rd: Math.round(rd) });
+    const fish = Math.round(home.fresh.reduce((s, f) => s + f.rd, 0));
+    if (fish > 0) line('report.food.fresh', { fish });
+    if (world.facts[FACT_TUTORIAL_COMPLETE] !== true && rd < mouths) line('report.guard.tutorial');
+    const season = seasonOf(world.calendar.day);
+    if (home.fire.lit)
+      line('report.fire.lit', {
+        hours: Math.max(1, Math.round((home.fire.fuel / ctx.work.fuelPerDay[season]) * 24)),
+      });
+    else if (world.facts[FACT_FIRE_LIT] === true) line('report.fire.out');
+    else line('report.fire.none');
+    const wood = Math.floor(home.stores['RES_DRIFTWOOD'] ?? 0);
+    if (wood === 1) line('report.wood.one');
+    else if (wood > 1) line('report.wood.stack', { loads: wood });
+    if (home.stage === 'S0' && world.facts[FACT_AT_BROCH] === true) {
+      if (home.building === null) line('report.shelter.none');
+      else {
+        const share = home.building.progress / (ctx.shelterWorkerDays * ctx.work.workerDayMinutes);
+        line('report.shelter.started', {
+          part:
+            share < 0.34
+              ? 'report.part.begun'
+              : share < 0.67
+                ? 'report.part.half'
+                : 'report.part.most',
+        });
+      }
+    } else if (home.stage === 'S1') line('report.shelter.done');
+  }
+  for (const id of world.household.residents) {
+    const person = world.people[id];
+    if (person === undefined) continue;
+    const name = nameOf(id);
+    const wound = person.wounds[0];
+    if (wound === undefined) continue;
+    if (wound.tendedDay === undefined) line('report.wound.untended', { name });
+    else
+      line('report.wound.tended', {
+        name,
+        days: Math.max(
+          1,
+          ctx.work.woundDays[wound.severity] - (world.calendar.day - wound.tendedDay),
+        ),
+      });
+    if (residentWorkToday(world, ctx, id)) line('report.work.hild', { name });
+  }
+  const tide = tideAt(world.calendar, ctx.time);
+  const low = (world.calendar.minuteOfDay + tide.minutesToLowWater) % 1440;
+  line('report.tide.low', { time: clockText(low) });
+  line('report.threats.none');
+  return { day: world.calendar.day, lines };
+}
+
+/** Whether a resident will work today (for the report): tended before today. */
+function residentWorkToday(world: WorldState, ctx: CampContext, id: Id): boolean {
+  const person = world.people[id];
+  if (person === undefined || ctx.def.people[id] === undefined) return false;
+  if (world.facts[FACT_AT_BROCH] !== true) return false;
+  return (
+    person.wounds.every((w) => w.tendedDay !== undefined) &&
+    person.wounds.every((w) => (w.tendedDay ?? 0) < world.calendar.day)
+  );
+}
+
+/** The seasons, for report wording. */
+export const SEASON_KEYS = SEASONS.map((s) => `ui.season.${s.toLowerCase()}`);

@@ -74,7 +74,12 @@ export function onLifted(
   if (person !== opening.caller || world.facts[FACT_HILD_FOUND] === true) return;
   setFact(world, FACT_HILD_FOUND, true);
   const record = world.people[person];
-  if (record !== undefined) record.status = 'wounded';
+  if (record !== undefined) {
+    record.status = 'wounded';
+    // Her leg (Book 4: hurt in the wreck): a serious wound that mends once tended (Stage 7).
+    if (record.wounds.length === 0)
+      record.wounds.push({ day: world.calendar.day, severity: 'SERIOUS', where: 'leg' });
+  }
   emit({ type: 'PERSON_SPOKE', person, lineKey: opening.foundLine });
 }
 

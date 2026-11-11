@@ -1059,6 +1059,14 @@
       "note": "Effect in Book 10 section 09: watch cairn gives \"One watch of warning when manned\"."
     },
     {
+      "id": "TASK_LIGHT_FIRE",
+      "ref": "Light a fire",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Stage 7 (decision S7-8): laying and lighting the camp fire."
+    },
+    {
       "id": "RES_GRAIN",
       "ref": "Grain lot",
       "book": 10,
@@ -1412,6 +1420,14 @@
       "section": "07",
       "origin": "assigned",
       "note": "Also Kolgrim's weapon \"Dane axe, torch\" in section 13."
+    },
+    {
+      "id": "ITEM_LINE",
+      "ref": "a line",
+      "book": 10,
+      "section": "10",
+      "origin": "assigned",
+      "note": "The hand line of the wreck kit (Book 10 section 10, day 6), found in the salvage at the broch: fishing from the shore (Stage 7)."
     },
     {
       "id": "ITEM_ADZE",
@@ -2591,6 +2607,118 @@
       "section": "21",
       "origin": "assigned",
       "note": "Starting weapons and missiles (decisions DD-6 to DD-9; generated, Book 11 section 12). Something picked up from the ground."
+    },
+    {
+      "id": "SFX_WORK_DRIFTWOOD",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Driftwood pulled from the wrack and knocked together."
+    },
+    {
+      "id": "SFX_WORK_CAST",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). A hand line cast from the shore."
+    },
+    {
+      "id": "SFX_WORK_CATCH",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). A fish landed on the line."
+    },
+    {
+      "id": "SFX_WORK_TEND",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Linen torn and bound round a wound."
+    },
+    {
+      "id": "SFX_WORK_COOK",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Fish cooked over the fire."
+    },
+    {
+      "id": "SFX_FIRE_LIT",
+      "ref": "the hearth",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Flint struck and the fire caught."
+    },
+    {
+      "id": "SFX_FIRE_FED",
+      "ref": "the hearth",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Wood thrown on the fire."
+    },
+    {
+      "id": "SFX_FIRE_OUT",
+      "ref": "the hearth",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). The fire dying out."
+    },
+    {
+      "id": "SFX_TIMING_GOOD",
+      "ref": "timingWindow",
+      "book": 10,
+      "section": "09",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). A hands-on action pressed on its mark."
+    },
+    {
+      "id": "SFX_SLEEP",
+      "ref": "A full rest",
+      "book": 10,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). Lying down to sleep."
+    },
+    {
+      "id": "AMB_HOME_DAWN",
+      "ref": "Every zone has a day and a night bed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). The steading's life at dawn: larks, oystercatchers, wheatears."
+    },
+    {
+      "id": "AMB_HOME_DAY",
+      "ref": "Every zone has a day and a night bed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). The steading's life by day: sheep, larks, wheatears."
+    },
+    {
+      "id": "AMB_HOME_DUSK",
+      "ref": "Every zone has a day and a night bed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). The steading's life at dusk: curlews, sheep."
+    },
+    {
+      "id": "AMB_HOME_NIGHT",
+      "ref": "Every zone has a day and a night bed",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 7 home sounds (generated, Book 11 section 12; decision S7-20). The steading's life at night: the corncrake."
     },
     {
       "id": "SFX_BLOCK",

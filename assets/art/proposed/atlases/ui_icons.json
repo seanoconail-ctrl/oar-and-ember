@@ -75,6 +75,11 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "arrow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -128,6 +133,10 @@
     "rope/-/0": [
       0,
       176
+    ],
+    "arrow/-/0": [
+      0,
+      192
     ]
   }
 }

@@ -1,0 +1,165 @@
+{
+  "sheet": "prop_camp",
+  "kind": "prop",
+  "image": "prop_camp.png",
+  "width": 48,
+  "height": 54,
+  "pivot": {
+    "x": 24,
+    "y": 52
+  },
+  "footprint": {
+    "w": 48,
+    "h": 54
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "chest": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cask": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bags": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "oar": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bedroll": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bed": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "skin": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "door": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "firering": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hearth": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "laid": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "pot": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "woodpile": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 22,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "chest/-/0": [
+      0,
+      0
+    ],
+    "cask/-/0": [
+      0,
+      54
+    ],
+    "bags/-/0": [
+      0,
+      108
+    ],
+    "oar/-/0": [
+      0,
+      162
+    ],
+    "bedroll/-/0": [
+      0,
+      216
+    ],
+    "bed/-/0": [
+      0,
+      270
+    ],
+    "bed/-/1": [
+      48,
+      270
+    ],
+    "bed/-/2": [
+      96,
+      270
+    ],
+    "skin/-/0": [
+      0,
+      324
+    ],
+    "door/-/0": [
+      0,
+      378
+    ],
+    "firering/-/0": [
+      0,
+      432
+    ],
+    "hearth/-/0": [
+      0,
+      486
+    ],
+    "laid/-/0": [
+      0,
+      540
+    ],
+    "pot/-/0": [
+      0,
+      594
+    ],
+    "woodpile/-/0": [
+      0,
+      648
+    ],
+    "woodpile/-/1": [
+      48,
+      648
+    ],
+    "woodpile/-/2": [
+      96,
+      648
+    ],
+    "woodpile/-/3": [
+      144,
+      648
+    ]
+  }
+}

@@ -439,6 +439,8 @@ class Pose:
         self.flap = 0                      # ripple phase in the gust
         self.hair = (0.0, 0.0)             # loose hair lag (f, u)
         self.bow = 'back'                  # 'back' or a draw stage 0..3
+        self.tool = None                   # a work loop's tool (Stage 7): stick, line, mallet
+        self.tool_stage = 0
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -1022,6 +1024,7 @@ class Steerer:
         if self.helmet:
             helmet(parts, facing, j, pose)
         bow(parts, facing, j, pose, m)
+        work_tool(parts, facing, j, pose)
 
 
 def cloak_wool(parts, facing, j, pose, rows, lag_u, m, brooch):
@@ -1242,6 +1245,7 @@ STEERER_MATS = {
     'iron': ('stone', 3, 5, 7), 'ironband': ('stone', 2, 4, 6), 'glint': ('stone', 9),
     'wood': ('bracken', 1, 2, 4), 'string': ('wool', 4, 5, 6), 'strap': ('tar', 2, 3, 4),
     'arrow': ('driftwood', 3, 4, 5), 'fletch': ('gull', 4), 'head': ('stone', 8),
+    'drift': ('driftwood', 3, 5, 6),
 }
 STEERER_ORDER = {'s': ['body', 'clothing', 'bow', 'cloak', 'helmet'],
                  'n': ['body', 'clothing', 'cloak', 'bow', 'helmet'],
@@ -1462,6 +1466,193 @@ def anim_draw():
     return out
 
 
+# ------------------------------------------------------------------------- work loops (Stage 7)
+# Book 7 section 07: every homestead task has a readable work loop of 4 to 8 frames, the same for the
+# steerer and residents, its tool drawn to the people scale of section 01. Shoulders stay 11 px over
+# the pelvis, so stooping is a crouch: the pelvis drops and the knees bend.
+
+def work_tool(parts, facing, j, pose):
+    """The work loop's tool in the hands, on the body layer at the hand's depth."""
+    if pose.tool is None:
+        return
+    R, L = j['R']['wrist'], j['L']['wrist']
+    t = Part('body', 0, 'tool', side=0)
+
+    def fillz(x0, y0, x1, y1, mat, z):
+        for yy in range(int(math.floor(y0)), int(math.floor(y1)) + 1):
+            for xx in range(int(math.floor(x0)), int(math.floor(x1)) + 1):
+                t.put(xx, yy, mat, z)
+
+    def pt(p):
+        x, y, d = P2(facing, p)
+        return x, y, d
+    if pose.tool == 'stick':
+        # A length of driftwood (14 px): picked up in the right hand, then carried under the left
+        # arm with the others (the bundle).
+        if pose.tool_stage in (1, 2):
+            a = pt(add(R, (0.0, 1.5, -1.0)))
+            b = pt(add(R, (0.0, -9.0, -2.0))) if pose.tool_stage == 1 else pt(add(R, (0.0, 2.0, 9.0)))
+            t.seg(a[:2], b[:2], 2, 'drift', a[2] + 0.2)
+        for k in range(3 if pose.tool_stage >= 2 else 2):
+            a = pt(add(L, (0.5, 5.0 - k * 0.8, 1.0 + k * 1.4)))
+            b = pt(add(L, (0.5, -8.0 + k * 0.8, 1.0 + k * 1.4)))
+            t.seg(a[:2], b[:2], 2, 'drift', a[2] + 0.3 + k * 0.01)
+    elif pose.tool == 'line':
+        # A hand line: a coil in the left hand, the line from the right running out to the water.
+        c = pt(L)
+        fillz(c[0] - 1, c[1] - 1, c[0] + 1, c[1], 'string', c[2] + 0.3)
+        r = pt(R)
+        if pose.tool_stage == 0:
+            # Swung back: the weight hangs from the hand.
+            t.line(r[:2], (r[0], r[1] + 4), 'string', r[2] + 0.2)
+            t.put(r[0], r[1] + 5, 'iron', r[2] + 0.2)
+        else:
+            out = pt(add(R, (0.0, 9.0, -6.0 - 2 * (pose.tool_stage % 2))))
+            # The line runs on out of the frame to the water (the scene draws its end there); in
+            # the sprite it stops inside the canvas so its outline closes.
+            ex = clamp(out[0], OX + 2, OX + 29)
+            ey = clamp(out[1], OY + 2, OY + 45)
+            t.line(r[:2], (ex, ey), 'string', r[2] + 0.2)
+    elif pose.tool == 'mallet':
+        # A wooden mallet in the right hand; a stake held upright in the left.
+        r = pt(R)
+        head = pt(add(R, (0.0, 2.5, 6.0) if pose.tool_stage == 0 else (0.0, 6.0, 1.0)))
+        head = (clamp(head[0], OX + 2, OX + 29), clamp(head[1], OY + 2, OY + 45), head[2])
+        t.seg(r[:2], head[:2], 1, 'wood', r[2] + 0.2)
+        fillz(head[0] - 1, head[1] - 1, head[0] + 1, head[1] + 1, 'wood', head[2] + 0.25)
+        l = pt(L)
+        t.seg((l[0], l[1] - 2), (l[0], 46.5 + OY - 1), 2, 'wood', l[2] + 0.2)
+    parts.append(t)
+
+
+def anim_gather():
+    """Gathering driftwood: crouch at the weed line, take a piece up, rise, tuck it under the left
+    arm with the others."""
+    out = []
+    spec = [
+        # pelvis drop, lean forward, right hand, tool stage
+        (0, 0.5, (0.8, 1.5, -10.5), 0),
+        (-4, 2.0, (0.6, 4.5, -11.0), 0),
+        (-8, 3.0, (0.4, 6.0, -11.5), 0),
+        (-8, 3.0, (0.4, 6.5, -11.0), 1),
+        (-4, 1.5, (0.6, 5.0, -6.0), 2),
+        (0, 0.5, (-1.5, 3.5, -5.0), 2),
+    ]
+    for pel, lean, rh, st in spec:
+        p = Pose(pel=(0, 0, pel), lean=(0, lean), tool='stick', tool_stage=st)
+        p.hands = {'R': rh, 'L': (1.2, 2.0, -6.5)}
+        p.elbow = {'R': (0.3, -1.0, 0.0), 'L': (1.0, -1.0, -0.4)}
+        p.grip = {'R': 'fist' if st else 'open', 'L': 'fist'}
+        p.feet = {'R': (-1.5 if pel else -1.0, 0), 'L': (2.5 if pel else 1.0, 0)}
+        out.append(p)
+    return out
+
+
+def anim_fish():
+    """Fishing from the shore with a hand line: swing the weighted line back and up, cast it out,
+    then haul hand over hand."""
+    out = []
+    spec = [
+        ((0.4, -3.5, -3.0), (1.0, 3.0, -7.0), 0, -0.5),
+        ((0.3, -1.5, 3.5), (1.0, 3.0, -7.0), 0, -0.8),
+        ((0.3, 7.0, -1.0), (1.0, 3.5, -7.0), 1, 0.8),
+        ((0.6, 5.5, -6.5), (1.0, 3.5, -7.5), 2, 0.6),
+        ((0.6, 3.5, -7.5), (1.0, 5.5, -6.0), 3, 0.5),
+        ((0.6, 5.5, -6.5), (1.0, 3.5, -7.5), 4, 0.6),
+    ]
+    for rh, lh, st, lean in spec:
+        p = Pose(lean=(0, lean), tool='line', tool_stage=st)
+        p.hands = {'R': rh, 'L': lh}
+        p.elbow = {'R': (0.6, -1.0, 0.3), 'L': (1.0, -1.0, -0.4)}
+        p.grip = {'R': 'fist', 'L': 'fist'}
+        p.feet = {'R': (-2.0, 0), 'L': (3.0, 0)}
+        out.append(p)
+    return out
+
+
+def anim_kneel():
+    """Kneeling at work low in front: binding a wound, laying and blowing on a fire, stirring the
+    pot (Book 7: cooking and tending wounds). One knee down, the hands working in turn."""
+    out = []
+    for i in range(6):
+        a = math.sin(i * math.pi / 3)
+        p = Pose(pel=(0, -1.0, -9), lean=(0, 2.5), breath=(0, -1, -1, 0, 0, -1)[i])
+        p.hands = {'R': (0.0, 6.0 + a, -8.0 + 1.2 * a), 'L': (0.0, 6.0 - a, -8.0 - 1.2 * a)}
+        p.elbow = {'R': (0.8, -1.0, 0.0), 'L': (0.8, -1.0, 0.0)}
+        p.grip = {'R': 'fist' if i % 3 == 1 else 'open', 'L': 'open'}
+        p.feet = {'R': (-7.0, 0), 'L': (3.5, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        out.append(p)
+    return out
+
+
+def anim_build():
+    """Raising the sail shelter: a stake held in the left hand, driven with a mallet in the right:
+    lift, strike, rebound."""
+    out = []
+    spec = [
+        ((0.8, 1.0, 3.0), 0, -0.4),
+        ((0.8, 0.5, 4.5), 0, -0.6),
+        ((0.4, 6.5, -8.0), 1, 1.6),
+        ((0.5, 6.0, -6.0), 1, 1.2),
+        ((0.7, 4.0, -2.0), 0, 0.4),
+        ((0.8, 2.0, 1.5), 0, 0.0),
+    ]
+    for rh, st, lean in spec:
+        p = Pose(pel=(0, 0, -3), lean=(0, 1.5 + lean), tool='mallet', tool_stage=st)
+        p.hands = {'R': rh, 'L': (0.5, 6.0, -9.5)}
+        p.elbow = {'R': (0.8, -1.0, 0.4), 'L': (0.8, -1.0, 0.0)}
+        p.grip = {'R': 'fist', 'L': 'fist'}
+        p.feet = {'R': (-2.5, 0), 'L': (3.0, 0)}
+        out.append(p)
+    return out
+
+
+def sleeper(ch, i):
+    """Asleep on the ground (Stage 7): on the side, the head to the east on the rolled edge of the
+    cloak (Hild in her dress), the body under the cloak along the ground to the west, breathing."""
+    d = Doll()
+    X, Y = W_, H_
+    lift = (0, 1)[i]
+    hild = isinstance(ch, Hild)
+    m = ch.model
+
+    def legs(p, mm):
+        p.seg((X(15), Y(44.5)), (X(7), Y(44.5)), 4, mm('trouser'))
+        p.seg((X(7), Y(45)), (X(3.5), Y(45)), 3, mm('wrap'))
+        p.fill(X(1), Y(44), X(2.5), Y(46), mm('shoe'))
+    d.cloth('legs', legs, z=-0.5)
+
+    def torso(p, mm):
+        p.seg((X(23), Y(42.5)), (X(14), Y(43.5)), 6, mm('dress' if hild else 'tunic'))
+    d.cloth('torso', torso)
+    hd = d.part('body', 'head', bottom=False)
+    hd.stamp(m.heads['e'], X(21), Y(33.5) + lift * 0, HEAD_LETTERS)
+    # The near hand tucked under the cheek.
+    hn = d.part('body', 'hand')
+    hn.z = 1.5
+    hn.fill(X(27), Y(41), X(28), Y(42), 'skin')
+    if not hild:
+        cl = d.part('cloak', 'cloak')
+        # The cloak over shoulder to shin, its madder hem along the lower edge; it rises and falls.
+        for x in range(3, 26):
+            t = (x - 3) / 22
+            top = 40.0 - 2.2 * math.sin(math.pi * min(1.0, t * 1.15)) - (lift if 9 < x < 22 else 0)
+            for y in range(int(math.floor(top)), 46):
+                cl.put(X(x), Y(y), 'cloak')
+            cl.put(X(x), Y(46), 'lining')
+        for x in range(4, 25, 5):
+            cl.put(X(x), Y(42), 'cloakf')
+    else:
+        # Hild's braid lies over her shoulder.
+        br = d.part('body', 'braid', side=0)
+        br.z = 3.0
+        br.seg((X(21.5), Y(40.5)), (X(17), Y(42)), 2, 'hair')
+        plait(br)
+        br.put(X(16), Y(42), 'tie')
+    return d.parts
+
+
 def states_for(heavy=False, bow=True):
     """The steerer's state list, shared by the heavy build (the same counts and timing)."""
     h = heavy
@@ -1480,7 +1671,19 @@ def states_for(heavy=False, bow=True):
     ]
     if bow:
         out.append(('draw', anim_draw, 8, False))
+    out += WORK_STATES
     return out
+
+
+# The work loops and sleep (Stage 7), shared by every body: the same frame counts and timing.
+WORK_STATES = [
+    ('gather', anim_gather, 8, True),
+    ('fish', anim_fish, 10, True),
+    ('kneel', anim_kneel, 9, True),
+    ('build', anim_build, 7, True),
+    ('sleep', None, 36, True),
+]
+WORK_POSES = {'gather': 'seated', 'kneel': 'seated', 'sleep': 'lying'}
 
 
 STEERER_STATES = states_for(False)
@@ -1622,7 +1825,7 @@ class Hild:
         parts.append(br)
 
     def extras(self, parts, facing, j, pose, prev, rows, lag_u, lag_f):
-        pass
+        work_tool(parts, facing, j, pose)
 
 
 HILD_MATS = {
@@ -1635,6 +1838,8 @@ HILD_MATS = {
     'trouser': ('earth', 2, 3, 4), 'wrap': ('wool', 2, 3, 4), 'wrapd': ('wool', 1),
     'shoe': ('tar', 1, 2, 3),
     'bind': ('wool', 4, 5, 6), 'blood': ('code', '7'),
+    'wood': ('bracken', 1, 2, 4), 'string': ('wool', 4, 5, 6), 'iron': ('stone', 3, 5, 7),
+    'drift': ('driftwood', 3, 5, 6),
 }
 HILD_ORDER = {f: ['body', 'clothing'] for f in FACINGS}
 HILD_SOFT = {('clothing', 'body')}
@@ -2009,9 +2214,9 @@ HILD_STATES = [
     ('down', None, 24, True),
     ('carried', None, 5, True),
     ('sit', None, 18, True),
-]
+] + WORK_STATES
 HILD_EVENTS = 'walk 0, walk 3, run 0, run 4'
-HILD_POSES = {'down': 'lying', 'carried': 'carried', 'sit': 'seated'}
+HILD_POSES = {'down': 'lying', 'carried': 'carried', 'sit': 'seated', **WORK_POSES}
 
 INTRO = {
     'a': """# The steerer, body model {L} (Book 5 section 02, Book 7 section 07), on the 32 x 48 canvas
@@ -2047,14 +2252,21 @@ def render_character(ch, states, mats, order, names, sizes, soft):
             for f in FACINGS:
                 for i, pose in enumerate(poses):
                     parts = fig(ch, f, pose, poses[i - 1])
+                    # Cloth that reaches the ground lies on it: nothing below the sole row.
+                    for part in parts:
+                        part.px = {k: v for k, v in part.px.items() if k[1] <= OY + 46}
                     sep = separate(parts, order[f], soft)
                     for L in names:
                         sheets[L].add(state, f, i, sep.get(L, {}))
         else:
-            n = {'down': 2, 'carried': 6, 'sit': 4}[state]
+            n = {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2}[state]
             for f in FACINGS:
                 for i in range(n):
-                    if state == 'down':
+                    if state == 'sleep':
+                        parts = sleeper(ch, i)
+                        if f in 'n w':
+                            parts = mirror_parts(parts)
+                    elif state == 'down':
                         parts = hild_down(i)
                         if f in 'n w':
                             parts = mirror_parts(parts)
@@ -2075,7 +2287,7 @@ def write_character(key):
         names = {'body': 'actor_heavy', 'clothing': 'layer_clothing_tunic_heavy',
                  'cloak': 'layer_cloak_wool_heavy', 'helmet': 'layer_helmet_iron_heavy',
                  'bow': 'layer_weapon_bow_heavy'}
-        states, mats, order, events, poses = HEAVY_STATES, HEAVY_MATS, STEERER_ORDER, STEERER_EVENTS, {}
+        states, mats, order, events, poses = HEAVY_STATES, HEAVY_MATS, STEERER_ORDER, STEERER_EVENTS, WORK_POSES
         intro = INTRO['heavy']
     elif key in ('a', 'b'):
         ch = Steerer(MODEL_A if key == 'a' else MODEL_B)
@@ -2083,7 +2295,7 @@ def write_character(key):
         names = {'body': f'actor_p_steerer_{key}', 'clothing': f'layer_clothing_tunic_{key}',
                  'cloak': f'layer_cloak_wool_{key}', 'helmet': f'layer_helmet_iron_{key}',
                  'bow': f'layer_weapon_bow_{key}'}
-        states, mats, order, events, poses = STEERER_STATES, STEERER_MATS, STEERER_ORDER, STEERER_EVENTS, {}
+        states, mats, order, events, poses = STEERER_STATES, STEERER_MATS, STEERER_ORDER, STEERER_EVENTS, WORK_POSES
         intro = INTRO['a'].format(L=key.upper())
     else:
         ch = Hild()
@@ -2094,7 +2306,7 @@ def write_character(key):
     sheets = render_character(ch, states, mats, order, names, sizes, getattr(ch, 'soft', SOFT))
     anims = {}
     for state, fn, ticks, loop in states:
-        n = len(fn()) if fn else {'down': 2, 'carried': 6, 'sit': 4}[state]
+        n = len(fn()) if fn else {'down': 2, 'carried': 6, 'sit': 4, 'sleep': 2}[state]
         anims[state] = (n, ticks, loop)
     os.makedirs(OUT, exist_ok=True)
     for L, sh in sheets.items():

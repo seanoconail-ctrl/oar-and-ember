@@ -1,0 +1,175 @@
+/**
+ * The camp in the play view (Stage 7): what the prompt says for a camp use, the morning report's
+ * sentences, and the test and capture hooks that start play at the broch (`?camp=broch`).
+ */
+import type { Content } from '../content/registry.ts';
+import type { Id } from '../core/ids.ts';
+import { FACT_AT_BROCH, FACT_FIRE_LIT, FACT_HILD_TENDED } from '../sim/home/camp.ts';
+import type { SiteUse } from '../sim/home/camp.ts';
+import type { Interaction, OnFootState } from '../sim/land/onFoot.ts';
+import { fireOneShot } from '../sim/ledger/ledger.ts';
+import { placeActor, switchZone } from '../sim/land/zoneLinks.ts';
+import { FACT_LEAD_STARTED } from '../sim/narrative/broch.ts';
+import {
+  FACT_BOW_NAMED,
+  FACT_HILD_FOUND,
+  FACT_HILD_SAFE,
+  FACT_HILD_SAFE_AT,
+} from '../sim/narrative/opening.ts';
+import type { SimWorldContext } from '../sim/simulation.ts';
+import type { MorningReport, WorldState } from '../sim/world.ts';
+
+type Translate = (key: string, vars?: Record<string, string>) => string;
+
+/** The morning report as sentences: names and the report's own words filled in. */
+export function reportSentences(
+  report: MorningReport,
+  t: Translate,
+  nameOf: (id: Id) => string,
+): string[] {
+  return report.lines.map((line) => {
+    const vars: Record<string, string> = {};
+    for (const [k, v] of Object.entries(line.vars)) {
+      if (k === 'name' && typeof v === 'string') vars[k] = nameOf(v);
+      else if (typeof v === 'string' && v.startsWith('report.')) vars[k] = t(v);
+      else vars[k] = String(v);
+    }
+    return t(line.key, vars);
+  });
+}
+
+/** The prompt for a camp use, for the device in use. */
+export function campUseLabel(
+  use: SiteUse,
+  content: Pick<Content, 'camp'>,
+  t: Translate,
+  nameOf: (id: Id) => string,
+  key: string,
+  mouse: boolean,
+): { text: string; kind: string } {
+  const click = (k: string, vars: Record<string, string> = {}): string =>
+    mouse ? t(`${k}_click`, vars) : t(k, { key, ...vars });
+  switch (use.kind) {
+    case 'TASK': {
+      if (use.task === 'TASK_CARE')
+        return { text: click('ui.prompt.tend', { name: nameOf(use.target ?? '') }), kind: 'tend' };
+      const def = content.camp?.tasks[use.task];
+      const task = def === undefined ? use.task : t(def.nameKey);
+      return { text: click('ui.prompt.task', { task }), kind: use.task.toLowerCase() };
+    }
+    case 'FEED_FIRE':
+      return { text: click('ui.prompt.feed_fire'), kind: 'feed_fire' };
+    case 'SLEEP':
+      return { text: click('ui.prompt.sleep'), kind: 'sleep' };
+    case 'EAT':
+      return { text: click('ui.prompt.eat'), kind: 'eat' };
+    case 'REFUSE':
+      if (use.reason === 'TOO_EARLY_TO_SLEEP')
+        return { text: t('ui.prompt.too_early', { time: '18:00' }), kind: 'too_early' };
+      if (use.reason === 'NO_DRIFTWOOD')
+        return { text: t('ui.prompt.need_wood'), kind: 'need_wood' };
+      return { text: t('ui.refusal.no_food'), kind: 'no_food' };
+  }
+}
+
+/**
+ * Tests and captures only: start at the broch after beat 2's lead (`?camp=broch`), and set the
+ * hour (`time=HH:MM`), the day (`day=N`), the fire (`fire=lit`), Hild's leg tended (`tended=1`),
+ * the camp's stage (`stage=S1`), its driftwood (`wood=N`), the hand line in hand (`line=1`) and
+ * where the steerer stands in the zone (`at=x,y` in tiles).
+ */
+export function campHooks(
+  world: WorldState,
+  content: Content,
+  land: SimWorldContext,
+  params: URLSearchParams,
+): void {
+  const camp = content.camp;
+  const onFoot = world.onFoot;
+  const home = camp === null ? undefined : world.homes[camp.home];
+  if (camp === null || onFoot === null || home === undefined) return;
+  const day = Number(params.get('day') ?? '');
+  if (Number.isInteger(day) && day > 0) world.calendar = { ...world.calendar, day };
+  const time = /^(\d{2}):(\d{2})$/.exec(params.get('time') ?? '');
+  if (time !== null)
+    world.calendar = { ...world.calendar, minuteOfDay: Number(time[1]) * 60 + Number(time[2]) };
+  if (params.get('camp') === 'broch') {
+    const hild = 'C_HILD';
+    for (const fact of [
+      FACT_HILD_FOUND,
+      FACT_HILD_SAFE,
+      FACT_BOW_NAMED,
+      FACT_LEAD_STARTED,
+      FACT_AT_BROCH,
+      'ch1.arrived_said',
+    ])
+      world.facts[fact] = true;
+    world.facts[FACT_HILD_SAFE_AT] = 0;
+    fireOneShot(world, 'BEAT_1_WAKE', () => undefined);
+    if (!world.household.residents.includes(hild)) world.household.residents.push(hild);
+    const person = world.people[hild];
+    if (person !== undefined) {
+      person.status = 'wounded';
+      if (person.wounds.length === 0)
+        person.wounds.push({ day: 1, severity: 'SERIOUS', where: 'leg' });
+    }
+    const map = land.maps.get(camp.zone);
+    const spawn = map?.spawns['P_STEERER'];
+    if (map !== undefined && spawn !== undefined) {
+      const actor = onFoot.actors[hild];
+      switchZone(onFoot, camp.zone, { x: spawn.x * map.tile, y: spawn.y * map.tile });
+      const spot = camp.people[hild]?.camp;
+      if (actor !== undefined && spot !== undefined) {
+        actor.pose = 'sit';
+        actor.x = spot.x * map.tile;
+        actor.y = spot.y * map.tile;
+        actor.facing = spot.facing;
+        placeActor(onFoot, hild, camp.zone, actor);
+      }
+      onFoot.player.facing = spawn.facing;
+    }
+    world.player.condition.wokeAt = 0;
+  }
+  if (params.get('fire') === 'lit') {
+    home.fire = { lit: true, fuel: 2 };
+    world.facts[FACT_FIRE_LIT] = true;
+  }
+  if (params.get('tended') === '1') {
+    for (const w of world.people['C_HILD']?.wounds ?? []) w.tendedDay = 1;
+    world.facts[FACT_HILD_TENDED] = true;
+  }
+  if (params.get('stage') === 'S1') {
+    home.stage = 'S1';
+    if (!home.buildings.includes(camp.shelter.building)) home.buildings.push(camp.shelter.building);
+  }
+  const wood = Number(params.get('wood') ?? '');
+  if (Number.isFinite(wood) && wood >= 0 && params.has('wood')) home.stores['RES_DRIFTWOOD'] = wood;
+  if (params.get('line') === '1') {
+    const slots = world.player.hotbar.slots;
+    const free = slots.indexOf(null);
+    if (!slots.includes('ITEM_LINE') && free >= 0) slots[free] = 'ITEM_LINE';
+    if (!world.player.tipsSeen.includes('ITEM_LINE')) world.player.tipsSeen.push('ITEM_LINE');
+    onFoot.items = onFoot.items.filter((i) => i.item !== 'ITEM_LINE');
+    for (const rest of Object.values(onFoot.elsewhere ?? {}))
+      rest.items = rest.items.filter((i) => i.item !== 'ITEM_LINE');
+  }
+  const at = /^(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)$/.exec(params.get('at') ?? '');
+  const map = land.maps.get(onFoot.zone);
+  if (at !== null && map !== undefined) {
+    onFoot.player.x = Number(at[1]) * map.tile;
+    onFoot.player.y = Number(at[2]) * map.tile;
+  }
+}
+
+/** Where an interaction's target is, in pixels (to compare with a camp use's distance). */
+export function interactionPoint(
+  onFoot: OnFootState,
+  interaction: Interaction,
+  tile: number,
+): { x: number; y: number } | null {
+  if (interaction.kind === 'SET_DOWN') return interaction.at;
+  if (interaction.kind === 'LIFT') return onFoot.actors[interaction.target] ?? null;
+  const item = onFoot.items.find((i) => i.key === interaction.key);
+  if (item !== undefined) return { x: item.x * tile, y: item.y * tile };
+  return onFoot.stuck.find((st) => `stuck:${st.n}` === interaction.key) ?? null;
+}

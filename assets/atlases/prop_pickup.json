@@ -30,6 +30,11 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "fishing_line": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -50,6 +55,10 @@
     "arrow/-/0": [
       0,
       36
+    ],
+    "fishing_line/-/0": [
+      0,
+      54
     ]
   }
 }

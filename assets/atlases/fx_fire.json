@@ -1,0 +1,114 @@
+{
+  "sheet": "fx_fire",
+  "kind": "decal",
+  "image": "fx_fire.png",
+  "width": 24,
+  "height": 30,
+  "pivot": {
+    "x": 12,
+    "y": 26
+  },
+  "footprint": {
+    "w": 24,
+    "h": 30
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "flames": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": false
+    },
+    "embers": {
+      "frames": 2,
+      "ticks": 20,
+      "loop": false
+    },
+    "smoke": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    },
+    "spark": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "moth": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "flames/-/0": [
+      0,
+      0
+    ],
+    "flames/-/1": [
+      24,
+      0
+    ],
+    "flames/-/2": [
+      48,
+      0
+    ],
+    "flames/-/3": [
+      72,
+      0
+    ],
+    "flames/-/4": [
+      96,
+      0
+    ],
+    "flames/-/5": [
+      120,
+      0
+    ],
+    "embers/-/0": [
+      0,
+      30
+    ],
+    "embers/-/1": [
+      24,
+      30
+    ],
+    "smoke/-/0": [
+      0,
+      60
+    ],
+    "smoke/-/1": [
+      24,
+      60
+    ],
+    "smoke/-/2": [
+      48,
+      60
+    ],
+    "smoke/-/3": [
+      72,
+      60
+    ],
+    "spark/-/0": [
+      0,
+      90
+    ],
+    "spark/-/1": [
+      24,
+      90
+    ],
+    "moth/-/0": [
+      0,
+      120
+    ],
+    "moth/-/1": [
+      24,
+      120
+    ]
+  }
+}

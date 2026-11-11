@@ -20,6 +20,8 @@ import {
 } from '../audio/synth/footsteps.ts';
 import type { Gait, StepMeasure } from '../audio/synth/footsteps.ts';
 import type { Bus } from '../audio/synth/engine.ts';
+import { HOME, HomeAmbience } from '../audio/synth/home.ts';
+import type { HomePhase } from '../audio/synth/home.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
 import { COMBAT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
@@ -115,6 +117,34 @@ export function startItem(
         fire.stop(t);
       },
     };
+  }
+  if (kind === 'home') {
+    // The steading's life by time of day (Stage 7), over the heath's wind.
+    const phase = id as HomePhase;
+    if (!['dawn', 'day', 'dusk', 'night'].includes(id)) throw new Error(`no part of the day ${id}`);
+    const life = new HomeAmbience(e, phase);
+    const wind = new StrandAmbience(e);
+    wind.setTide(0, at);
+    wind.start(at);
+    life.start(at);
+    return {
+      schedule: (until, now) => {
+        for (let t = Math.max(at, now); t < until; t += 0.25)
+          wind.setWind(s.wind ?? STRAND_WIND.strength, gustAt(STRAND_WIND, 640, 900, t - at), 0, t);
+        wind.schedule(until);
+        life.schedule(until);
+      },
+      stop: (t) => {
+        wind.stop(t);
+        life.stop(t);
+      },
+    };
+  }
+  if (kind === 'work') {
+    const def = HOME.find((d) => d.id === id);
+    if (def === undefined) throw new Error(`no work sound ${id}`);
+    def.play(e, at, 0, { gore: 2 });
+    return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'call') {
     const def = [...CALLS, ...PEOPLE, ...MISSILES].find((d) => d.id === id);
@@ -565,6 +595,29 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   calls.append(el('br'), firePlay, fireStop);
   root.append(calls);
 
+  // Home (Stage 7): the steading's life by time of day, and the work, fire and sleep sounds. Its
+  // buttons carry their own data attributes, so the counts of the sections above stay as they are.
+  const home = el('section');
+  home.append(el('h2', {}, t('ui.sound.home')), el('h3', {}, t('ui.sound.home.life')));
+  for (const phase of ['dawn', 'day', 'dusk', 'night'] as const) {
+    const b = el('button', { 'data-home-play': `home:${phase}` }, t(`ui.sound.home.${phase}`));
+    b.addEventListener('click', () => {
+      play(`home:${phase}`, {}, `caption.amb.home_${phase}`);
+    });
+    home.append(b);
+  }
+  const homeStop = el('button', { 'data-home-stop': '' }, t('ui.sound.stop'));
+  homeStop.addEventListener('click', stopRunning);
+  home.append(homeStop, el('h3', {}, t('ui.sound.home.work')));
+  for (const def of HOME) {
+    const b = el('button', { 'data-home-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`work:${def.id}`, def.captionKey);
+    });
+    home.append(b);
+  }
+  root.append(home);
+
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
   feet.append(
@@ -694,6 +747,11 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...PEOPLE.map((d) => `call:${d.id}`),
       ...MISSILES.map((d) => `call:${d.id}`),
       'ambience:hearth',
+    ],
+    /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
+    homeItems: [
+      ...(['dawn', 'day', 'dusk', 'night'] as const).map((p) => `home:${p}`),
+      ...HOME.map((d) => `work:${d.id}`),
     ],
     render: (item: string, seconds: number, settings?: RenderSettings, wav?: boolean) =>
       renderItem(strings, item, seconds, settings, wav),

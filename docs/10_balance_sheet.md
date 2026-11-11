@@ -144,6 +144,17 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | Shellfish and seaweed | 2 per low-tide window | 2 | 2 | 1 |
 | Driftwood | 1 load per search | 1 | 2 after storms | 3 after storms |
 
+### Work and the wreck camp
+*Added for Stage 7 (decisions S7-4 to S7-7): what a worker-day is, what the first camp starts with, and the tutorial guard.*
+
+| Key | Value | Notes |
+|---|---|---|
+| workerDay | 8 game hours of work | The rates above are per worker-day; a resident at work adds them by the game minute, the player by the action |
+| wreckStores | 6 rd of salt fish | A split cask among the salvage heaps in the broch at S0 |
+| campFuel | 0 loads | The first fire needs driftwood gathered first (Book 4 Chapter 1 beat 2) |
+| fireLight | 1 load of driftwood | Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house |
+| tutorialGuard | No starvation and no spoilage before tutorialComplete | tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning) |
+
 ### Barley and kale
 | Key | Value |
 |---|---|
@@ -485,6 +496,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | xpToLevel | 10 for 2, 30 for 3, 60 for 4, 100 for 5 (cumulative) |
 | outputMultiplier | 0.6 + 0.15 x level (0.6 at 0, 1.35 at 5) |
 | playerTimingBonus | Up to +25% task output for good timing |
+| startingSkills | 2 in each skill Book 5 names for a person; the steerer 1 in every homestead task; 0 otherwise |
 
 ### Friendship deltas by deed (valence per value point)
 | Deed | Gain | Mercy | Glory | Kin | Faith | Word |
@@ -658,6 +670,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Serious | 6 days | Cannot fight; half work |
 | Grave | 14 days | Bed-bound; needs care; 10% death risk without care |
 | Maimed | Permanent | A trait (lost eye, stiff hand) with a skill penalty |
+| Untended | No recovery | A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day |
 
 ## 09 / Buildings, tools and crafting
 ### Buildings
@@ -726,6 +739,16 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Repair the ship | 30 | 2 |
 | Gather shellfish, seaweed or eggs | 20 | 1 |
 | Train | 30 | 3 |
+| Light a fire | 10 | 0 |
+
+### Hands-on action
+*Added for Stage 7 (decision S7-8): how a player's action plays. Book 2 section 07: a timed press adds work at the player's skill with a bonus for good timing; missing the timing never ruins the task.*
+
+| Key | Value |
+|---|---|
+| actionSeconds | 2.5 real seconds while the work loop plays; the task's game minutes pass at its end |
+| timingMark | 1.5 real seconds into the action |
+| timingWindow | 0.3 real seconds either side of the mark earns the full playerTimingBonus, falling to none 0.3 s further out |
 
 ### Disputes
 | Key | Value |

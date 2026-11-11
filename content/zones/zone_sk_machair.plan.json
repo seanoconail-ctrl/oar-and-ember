@@ -1,0 +1,160 @@
+{
+  "zone": "ZONE_SK_MACHAIR",
+  "about": "The machair round the old broch, the steading's ground (Book 9 sections 03 and 04): blocks 12 to 23 by 18 to 22, directly north of Wreck Strand, expanded by src/tools/levels/zones.ts. The broch stands with its door on the south, about 25 tiles above the shingle as in the steading plan; the stream from the Kelda runs south on its east. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_machair",
+  "terrainSeed": "zone_sk_strand",
+  "blocks": {
+    "x": 12,
+    "y": 18,
+    "w": 12,
+    "h": 5
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 3,
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 36.6,
+      "y": 33.4,
+      "facing": "w"
+    },
+    "C_HILD": {
+      "x": 33.9,
+      "y": 31.9,
+      "facing": "e"
+    }
+  },
+  "broch": {
+    "x": 35.5,
+    "y": 31.5,
+    "inner": 4.2,
+    "outer": 5.8,
+    "openings": [
+      [0, 5],
+      [0, -5]
+    ]
+  },
+  "props": [
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/1",
+      "x": 24,
+      "y": 30
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/2",
+      "x": 55,
+      "y": 14
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/3",
+      "x": 70,
+      "y": 30
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 20,
+      "y": 12
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/1",
+      "x": 46,
+      "y": 24
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 28,
+      "y": 20
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 62,
+      "y": 8
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/0",
+      "x": 41.6,
+      "y": 34.8
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/1",
+      "x": 29.2,
+      "y": 35.6
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/2",
+      "x": 40.6,
+      "y": 27.4
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/3",
+      "x": 30.0,
+      "y": 27.0
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [35.5, 37.2],
+      [34.2, 38.4],
+      [31.6, 39.98]
+    ],
+    [
+      [35.9, 37.4],
+      [42, 38.6],
+      [56, 39.2],
+      [68.5, 39.98]
+    ],
+    [
+      [35.5, 25.8],
+      [37.4, 18],
+      [36.4, 9],
+      [37.6, 0.02]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "s",
+      "to": "ZONE_SK_STRAND"
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 44,
+      "y": 20,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 28,
+      "r": 4
+    },
+    {
+      "kind": "sheep",
+      "x": 47,
+      "y": 33
+    },
+    {
+      "kind": "sheep",
+      "x": 49.5,
+      "y": 34.4
+    },
+    {
+      "kind": "sheep",
+      "x": 45.4,
+      "y": 36.6
+    }
+  ]
+}

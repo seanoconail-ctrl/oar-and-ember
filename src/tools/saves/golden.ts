@@ -11,17 +11,24 @@
  * - Golden save 3 (schema 3, the Stage 6 rework) is frozen: the same scenario with the hotbar
  *   (the bow and seax the steerer then woke with), Hild standing in the shallows and the water's
  *   depth bands. It must load through the migration chain.
- * - Golden save 4 (schema 4, starting weapons and missiles): the steerer wakes empty-handed, picks
- *   up the seax from the wreck's debris, rescues Hild, fetches the bow and quiver she names from
- *   the wreck's stern, looses one arrow into the stern's timber, and then the same two days.
+ * - Golden save 4 (schema 4, starting weapons and missiles) is frozen: the steerer wakes
+ *   empty-handed, picks up the seax, rescues Hild, fetches the bow and quiver she names, looses
+ *   one arrow into the stern's timber, and then the same two days. It must load through the
+ *   migration chain.
+ * - Golden save 5 (schema 5, Stage 7): the opening as golden 4 played it to the bow, then Hild leads
+ *   to the broch; driftwood is gathered on the strand, the fire lit, her leg tended, a hot meal
+ *   cooked, the hand line picked up and a start made on the sail shelter; the steerer sleeps by the
+ *   fire and wakes to the morning report, then fishes from the shore on day 2 while Hild fishes from
+ *   the rocks, and the save is made at 15:00.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-04.json
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-05.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parsePeopleBasics, parseTimeBalance } from '../../content/balance.ts';
 import { writeSave } from '../../persist/save.ts';
 import type { SaveFile } from '../../persist/save.ts';
+import { campContext } from '../../sim/home/camp.ts';
 import { landContext } from '../../sim/land/context.ts';
 import { createSimulation } from '../../sim/simulation.ts';
 import { newCampaign } from '../../sim/world.ts';
@@ -29,57 +36,80 @@ import type { WorldState } from '../../sim/world.ts';
 import { REPO_ROOT } from '../art/loadTitleArt.ts';
 import { loadBalanceJson } from '../content/loadBalance.ts';
 import { loadContentFromDisk } from '../content/loadContentFiles.ts';
+import { CampBot } from '../play/campBot.ts';
 import { OpeningBot } from '../play/openingBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
 export const GOLDEN_03 = 'tests/golden-saves/golden-03.json';
 export const GOLDEN_04 = 'tests/golden-saves/golden-04.json';
+export const GOLDEN_05 = 'tests/golden-saves/golden-05.json';
 
-export function goldenWorld04(): WorldState {
+export function goldenWorld05(): WorldState {
   const balance = loadBalanceJson();
   const b = parseTimeBalance(balance);
   const { content, issues } = loadContentFromDisk();
   if (issues.length > 0)
     throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
-  const world = newCampaign('golden-04', b, parsePeopleBasics(balance), content, {
+  const world = newCampaign('golden-05', b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'B',
   });
   const land = landContext(content, balance);
-  const sim = createSimulation(b, world, land);
+  const camp = campContext(content);
   const strand = land.maps.get('ZONE_SK_STRAND');
-  if (strand === undefined) throw new Error('no Wreck Strand map');
-  const bot = new OpeningBot(sim, strand, b, land);
-  bot.pickUp('wreck_seax');
-  bot.rescue('C_HILD');
-  bot.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
-  bot.pickUp('stern_bow');
-  bot.selectItem('ITEM_BOW');
-  // One arrow loosed at a full draw into the stern's timber, east of the bow.
-  bot.shoot(0, 3.5, land.missiles.bow.drawTicks);
-  bot.waitFor(() => sim.state.onFoot?.projectiles.length === 0);
-  // Day 1: play to 19:00 and sleep.
-  while (sim.state.calendar.minuteOfDay !== 19 * 60) sim.step();
+  if (strand === undefined || camp === null) throw new Error('no Wreck Strand or camp');
+  const sim = createSimulation(b, world, land);
+  const opening = new OpeningBot(sim, strand, b, land);
+  opening.pickUp('wreck_seax');
+  opening.rescue('C_HILD');
+  opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
+  opening.pickUp('stern_bow');
+  const bot = new CampBot(sim, b, land, camp);
+  // Driftwood from the weed line, then up to the broch Hild has led to.
+  bot.doAt('wrack_1');
+  bot.doAt('wrack_2', 'late');
+  bot.goToZone('ZONE_SK_MACHAIR');
+  bot.goToSite('stores');
+  bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  bot.doAt('fire');
+  bot.tend('C_HILD');
+  bot.doAt('fire');
+  // The hand line in the salvage, and a start on the sail shelter.
+  bot.goToSite('stores');
+  const line = sim.state.onFoot?.items.find((i) => i.key === 'camp_line');
+  if (line !== undefined) {
+    bot.walkTo((t) => t.tx === Math.floor(line.x) && t.ty === Math.floor(line.y - 0.001));
+    bot.interact();
+  }
+  bot.doAt('shelter');
+  bot.doAt('shelter', 'none');
+  // Night by the fire.
+  bot.waitUntil(b.sleepAfter + 15);
+  bot.goToSite('bed_s0');
   sim.submit({ type: 'SLEEP' });
-  sim.step();
-  // Day 2: stay up until the collapse at 02:00; wake at 08:00 on day 3.
-  while (sim.state.calendar.day < 3) sim.step();
+  bot.waitFor(() => sim.state.calendar.day === 2);
+  // Day 2: down to the shore to fish while Hild fishes from the rocks.
+  bot.goToZone('ZONE_SK_STRAND');
+  bot.goToWater();
+  bot.fish();
+  bot.fish('late');
+  bot.waitUntil(15 * 60);
   return sim.state;
 }
 
-export function goldenSave04(): SaveFile {
-  return writeSave(goldenWorld04(), {
+export function goldenSave05(): SaveFile {
+  return writeSave(goldenWorld05(), {
     build: 'golden',
     kind: 'checkpoint',
-    slot: 'checkpoint:golden-04',
-    label: 'golden-04',
+    slot: 'checkpoint:golden-05',
+    label: 'golden-05',
     sequence: 1,
-    savedAt: '2026-11-10T00:00:00.000Z',
+    savedAt: '2026-11-11T00:00:00.000Z',
   });
 }
 
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_04), `${JSON.stringify(goldenSave04(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_04}`);
+  writeFileSync(join(REPO_ROOT, GOLDEN_05), `${JSON.stringify(goldenSave05(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_05}`);
 }

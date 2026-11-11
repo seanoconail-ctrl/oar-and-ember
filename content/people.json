@@ -11,7 +11,8 @@
     "values": {
       "KIN": 3,
       "GLORY": 2
-    }
+    },
+    "skills": ["sailing", "fishing", "spear"]
   },
   {
     "id": "C_ODDI",

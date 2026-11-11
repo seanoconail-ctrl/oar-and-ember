@@ -1,0 +1,37 @@
+{
+  "sheet": "prop_sail_leanto",
+  "kind": "prop",
+  "image": "prop_sail_leanto.png",
+  "width": 78,
+  "height": 91,
+  "pivot": {
+    "x": 39,
+    "y": 90
+  },
+  "footprint": {
+    "w": 78,
+    "h": 91
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "s0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 39,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "s0/-/0": [
+      0,
+      0
+    ]
+  }
+}

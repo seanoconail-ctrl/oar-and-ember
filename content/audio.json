@@ -6,22 +6,38 @@
     {
       "id": "MUS_HOME_DAWN",
       "kind": "music",
-      "bpm": 92,
-      "beatsPerBar": 3,
-      "stems": ["bed", "rhythm", "melody"],
+      "bpm": 54,
+      "beatsPerBar": 2,
+      "stems": ["bed", "melody"],
       "captionKey": "caption.music.home_dawn",
       "temporary": false,
-      "piece": "skarvholm"
+      "piece": "hearth",
+      "layers": {
+        "drone": false,
+        "lyre": true,
+        "melody": true,
+        "voice": false,
+        "harp": false,
+        "drum": false
+      }
     },
     {
       "id": "MUS_HOME_DAY",
       "kind": "music",
-      "bpm": 92,
-      "beatsPerBar": 3,
-      "stems": ["bed", "rhythm", "melody"],
+      "bpm": 54,
+      "beatsPerBar": 2,
+      "stems": ["bed", "melody"],
       "captionKey": "caption.music.home_day",
       "temporary": false,
-      "piece": "skarvholm"
+      "piece": "hearth",
+      "layers": {
+        "drone": true,
+        "lyre": true,
+        "melody": true,
+        "voice": false,
+        "harp": false,
+        "drum": false
+      }
     },
     {
       "id": "MUS_HOME_DUSK",
@@ -31,7 +47,15 @@
       "stems": ["bed", "melody"],
       "captionKey": "caption.music.home_dusk",
       "temporary": false,
-      "piece": "hearth"
+      "piece": "hearth",
+      "layers": {
+        "drone": true,
+        "lyre": true,
+        "melody": false,
+        "voice": true,
+        "harp": false,
+        "drum": false
+      }
     },
     {
       "id": "MUS_HOME_NIGHT",
@@ -41,7 +65,25 @@
       "stems": ["bed", "melody"],
       "captionKey": "caption.music.home_night",
       "temporary": false,
-      "piece": "hearth"
+      "piece": "hearth",
+      "layers": {
+        "drone": true,
+        "lyre": true,
+        "melody": false,
+        "voice": false,
+        "harp": false,
+        "drum": false
+      }
+    },
+    {
+      "id": "MUS_ISLAND_EXPLORE",
+      "kind": "music",
+      "bpm": 92,
+      "beatsPerBar": 3,
+      "stems": ["bed", "rhythm", "melody"],
+      "captionKey": "caption.music.island_explore",
+      "temporary": false,
+      "piece": "skarvholm"
     },
     {
       "id": "MUS_RAID_APPROACH",
@@ -205,6 +247,83 @@
       "temporary": false
     },
     {
+      "id": "SFX_WORK_DRIFTWOOD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_driftwood",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_CAST",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_cast",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_CATCH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_catch",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_TEND",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_tend",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_COOK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_cook",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_HAMMER",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_build",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIRE_LIT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.fire_lit",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIRE_FED",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.fire_fed",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIRE_OUT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.fire_out",
+      "temporary": false
+    },
+    {
+      "id": "SFX_TIMING_GOOD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.timing_good",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SLEEP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sleep",
+      "temporary": false
+    },
+    {
       "id": "AMB_SURF_SHINGLE",
       "kind": "ambience",
       "zones": ["ZONE_SK_STRAND", "ZONE_SK_NAUST"],
@@ -220,7 +339,34 @@
       "id": "AMB_HEARTH",
       "kind": "ambience",
       "zones": ["ZONE_SK_MACHAIR"],
-      "phases": ["dusk", "night"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_HOME_DAWN",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "phases": ["dawn"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_HOME_DAY",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "phases": ["day"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_HOME_DUSK",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "phases": ["dusk"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_HOME_NIGHT",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "phases": ["night"],
       "temporary": false
     }
   ],
@@ -242,6 +388,23 @@
     "ARROW_STONE": "SFX_ARROW_STONE",
     "ARROW_WATER": "SFX_ARROW_WATER",
     "QUIVER_EMPTY": "SFX_QUIVER_EMPTY",
-    "ITEM_PICKED_UP": "SFX_PICKUP"
+    "ITEM_PICKED_UP": "SFX_PICKUP",
+    "TASK_DRIFTWOOD": "SFX_WORK_DRIFTWOOD",
+    "TASK_FISH": "SFX_WORK_CAST",
+    "FISH_LANDED": "SFX_WORK_CATCH",
+    "TASK_TEND": "SFX_WORK_TEND",
+    "TASK_COOK": "SFX_WORK_COOK",
+    "TASK_BUILD": "SFX_WORK_HAMMER",
+    "FIRE_LIT": "SFX_FIRE_LIT",
+    "FIRE_FED": "SFX_FIRE_FED",
+    "FIRE_OUT": "SFX_FIRE_OUT",
+    "TIMING_GOOD": "SFX_TIMING_GOOD",
+    "SLEEP": "SFX_SLEEP"
+  },
+  "home": {
+    "restSeconds": 90,
+    "playSeconds": 150,
+    "fireFullTiles": 2,
+    "fireSilentTiles": 14
   }
 }

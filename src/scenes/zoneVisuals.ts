@@ -51,7 +51,20 @@ export interface SkyInput {
   readonly darkFrom: number;
 }
 
-type Kind = 'spray' | 'sand' | 'midge' | 'dust' | 'splash' | 'ripple' | 'drip' | 'surf';
+type Kind =
+  | 'spray'
+  | 'sand'
+  | 'midge'
+  | 'dust'
+  | 'splash'
+  | 'ripple'
+  | 'drip'
+  | 'surf'
+  | 'smoke'
+  | 'spark'
+  | 'moth';
+/** The camp fire's particles, drawn from fx_fire (Stage 7). */
+const FIRE_FX: ReadonlySet<Kind> = new Set(['smoke', 'spark', 'moth']);
 /** Particles drawn from fx_people (the people's own effects); the rest are the place's (fx_strand). */
 const PEOPLE_FX: ReadonlySet<Kind> = new Set(['dust', 'splash', 'ripple', 'drip', 'surf']);
 
@@ -127,6 +140,9 @@ export interface FrameInput {
   readonly lead?: CameraLead;
   /** Drawing a bow: the camera leads further (lookAheadAiming). */
   readonly aiming?: boolean;
+  /** The camp fire in this zone (world pixels), burning or not; and whether it is dark. */
+  readonly fire?: { readonly x: number; readonly y: number; readonly lit: boolean } | null;
+  readonly night?: boolean;
 }
 
 const MAX_PRINTS = 80;
@@ -490,8 +506,55 @@ export class ZoneVisuals {
       }
     }
 
+    // The camp fire: smoke rising straight in the sheltered court, then bending downwind once it
+    // clears the wall head; sparks; moths round it at night (Book 7 section 14).
+    const fire = input.fire;
+    if (fire?.lit === true && this.#near(fire.x, fire.y, 160)) {
+      if (this.#rand() < dt * 5)
+        this.#emit({
+          kind: 'smoke',
+          x: fire.x + (this.#rand() - 0.5) * 3,
+          y: fire.y,
+          vx: 0,
+          vy: 0,
+          z: 6,
+          vz: 16 + this.#rand() * 6,
+          life: 4.2,
+        });
+      if (this.#rand() < dt * (input.night === true ? 3 : 1.2))
+        this.#emit({
+          kind: 'spark',
+          x: fire.x + (this.#rand() - 0.5) * 6,
+          y: fire.y,
+          vx: (this.#rand() - 0.5) * 6,
+          vy: 0,
+          z: 8,
+          vz: 30 + this.#rand() * 25,
+          life: 1.2,
+        });
+      if (
+        input.night === true &&
+        this.#rand() < dt * 0.6 &&
+        this.#particles.filter((q) => q.kind === 'moth').length < 4
+      )
+        this.#emit({ kind: 'moth', x: fire.x, y: fire.y, vx: 0, vy: 0, z: 22, vz: 0, life: 9 });
+    }
+
     for (const q of this.#particles) {
       q.age += dt;
+      if (q.kind === 'moth' && fire != null) {
+        // Circling the fire's light in loose loops.
+        const a = q.age * 2.1 + q.life;
+        q.x = fire.x + Math.cos(a) * (10 + 4 * Math.sin(q.age * 1.3)) + Math.sin(q.age * 5) * 2;
+        q.y = fire.y + Math.sin(a) * 4;
+        q.z = 20 + Math.sin(q.age * 3.1) * 6;
+        continue;
+      }
+      if (q.kind === 'smoke' || q.kind === 'spark') {
+        // Above the wall head the wind takes it east.
+        const over = Math.max(0, q.z - 56);
+        q.vx = this.wind.dirX * Math.min(40, over * 0.9);
+      }
       if (q.kind === 'midge') {
         q.x += Math.sin(t * 7 + q.y) * 0.4;
         q.y += Math.cos(t * 5.3 + q.x) * 0.25;
@@ -782,17 +845,20 @@ export class ZoneVisuals {
     }
     for (const q of this.#particles) {
       const people = PEOPLE_FX.has(q.kind);
+      const fireFx = FIRE_FX.has(q.kind);
       const frames = people
         ? (input.anims.get(PEOPLE_FX_SHEET)?.[q.kind]?.frames ?? 1)
-        : q.kind === 'midge'
-          ? 2
-          : 3;
+        : fireFx
+          ? (input.anims.get('fx_fire')?.[q.kind]?.frames ?? 1)
+          : q.kind === 'midge'
+            ? 2
+            : 3;
       const i =
-        q.kind === 'midge'
+        q.kind === 'midge' || q.kind === 'moth'
           ? Math.floor(this.seconds * 6 + q.x) % 2
           : Math.min(frames - 1, Math.floor((q.age / q.life) * frames));
       marks.push({
-        sheet: people ? PEOPLE_FX_SHEET : FX_SHEET,
+        sheet: people ? PEOPLE_FX_SHEET : fireFx ? 'fx_fire' : FX_SHEET,
         frame: `${q.kind}/-/${i}`,
         x: q.x,
         y: q.y - q.z,

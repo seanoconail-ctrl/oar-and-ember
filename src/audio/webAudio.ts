@@ -8,7 +8,8 @@
  */
 import type { CueDef } from '../content/registry.ts';
 import { StrandAmbience } from './synth/ambience.ts';
-import { AMBIENCES, HearthAmbience, PIECES, SOUNDS } from './synth/cues.ts';
+import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
+import { HomeAmbience } from './synth/home.ts';
 import { allInstrumentSamples, SynthEngine, warmSamples } from './synth/engine.ts';
 import { footstep, isSurface } from './synth/footsteps.ts';
 import type { Gait } from './synth/footsteps.ts';
@@ -34,6 +35,8 @@ export class WebAudioEngine implements AudioSink {
   readonly #players = new Map<string, PiecePlayer>();
   #strand: StrandAmbience | null = null;
   #hearth: HearthAmbience | null = null;
+  #hearthLevel = 0;
+  #home: HomeAmbience | null = null;
   #steps = 0;
   #winter = false;
   #wind = { strength: 0.55, gust: 0, from: 0 };
@@ -99,6 +102,14 @@ export class WebAudioEngine implements AudioSink {
     }
     this.#strand?.schedule(until);
     this.#hearth?.schedule(until);
+    this.#home?.schedule(until);
+  }
+
+  /** How near a lit fire the listener is, 0 (unheard or out) to 1 (beside it). */
+  setHearth(level: number): void {
+    this.#hearthLevel = level;
+    const e = this.#e;
+    if (e !== null) this.#hearth?.setLevel(level, e.ctx.currentTime);
   }
 
   setVolume(bus: Bus, level: number): void {
@@ -199,11 +210,21 @@ export class WebAudioEngine implements AudioSink {
       this.#strand = null;
     }
     if (kinds.has('hearth') && this.#hearth === null) {
-      this.#hearth = new HearthAmbience(e);
+      this.#hearth = new HearthAmbience(e, this.#hearthLevel);
       this.#hearth.start(t);
     } else if (!kinds.has('hearth') && this.#hearth !== null) {
       this.#hearth.stop(t);
       this.#hearth = null;
+    }
+    // Home life by time of day: one caller set at a time, changing as the day turns.
+    const life = cues.map((c) => HOME_LIFE[c.id]).find((p) => p !== undefined);
+    if (life !== undefined && this.#home === null) {
+      this.#home = new HomeAmbience(e, life);
+      this.#home.start(t);
+    } else if (life !== undefined) this.#home?.setPhase(life, t);
+    else if (this.#home !== null) {
+      this.#home.stop(t);
+      this.#home = null;
     }
   }
 

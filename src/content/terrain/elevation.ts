@@ -24,7 +24,7 @@ export interface Elevation {
   readonly stream: Uint8Array;
   /**
    * RGBA bytes for the shaders: R height ((e + 1) / 3), G stream, B distance into the stream,
-   * A the drawn terrain (its index in autotile LAYERS, times 32, plus 16).
+   * A the drawn terrain (its index in autotile LAYERS, times 16, plus 8).
    */
   readonly rgba: Uint8Array;
 }
@@ -96,7 +96,7 @@ export function bakeElevation(rows: readonly string[]): Elevation {
   const dNotSea = distanceFrom(w, h, (i) => code[i] !== '~' && code[i] !== 'w');
   const dLow = distanceFrom(w, h, is('~-'));
   const dForeshore = distanceFrom(w, h, is('_'));
-  const dLand = distanceFrom(w, h, is('.b,r'));
+  const dLand = distanceFrom(w, h, is('.b,:r'));
   const dDry = distanceFrom(w, h, (i) => code[i] !== 'w');
   const e = new Float32Array(w * h);
   const filled = new Uint8Array(w * h);
@@ -159,7 +159,7 @@ export function bakeElevation(rows: readonly string[]): Elevation {
     rgba[i * 4] = Math.max(0, Math.min(255, Math.round((((e[i] ?? 0) + 1) / 3) * 255)));
     rgba[i * 4 + 1] = s * 255;
     rgba[i * 4 + 2] = Math.min(255, Math.round((dDry[i] ?? 0) * 40));
-    rgba[i * 4 + 3] = (LAYERS as readonly string[]).indexOf(code[i] ?? '~') * 32 + 16;
+    rgba[i * 4 + 3] = (LAYERS as readonly string[]).indexOf(code[i] ?? '~') * 16 + 8;
   }
   const out: Elevation = { width: w, height: h, height01: e, stream, rgba };
   cache.set(rows, out);

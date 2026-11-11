@@ -69,6 +69,49 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['call:SFX_QUIVER_EMPTY', 1, {}, 'sfx-quiver-empty'],
   ['call:SFX_PICKUP', 1, {}, 'sfx-pickup'],
   ['ambience:hearth', 12, {}, 'hearth-fire'],
+  // Stage 7: the hearth theme by time of day (the layers of MUS_HOME_DAWN/DAY/DUSK/NIGHT in
+  // content/audio.json), the steading's life by time of day, and the work, fire and sleep sounds.
+  ...(
+    [
+      ['dawn', { drone: false, lyre: true, melody: true, voice: false, harp: false, drum: false }],
+      ['day', { drone: true, lyre: true, melody: true, voice: false, harp: false, drum: false }],
+      ['dusk', { drone: true, lyre: true, melody: false, voice: true, harp: false, drum: false }],
+      ['night', { drone: true, lyre: true, melody: false, voice: false, harp: false, drum: false }],
+    ] as const
+  ).map(([p, layers]): [string, number, Record<string, unknown>, string] => [
+    'music:hearth',
+    38,
+    { layers },
+    `home-music-${p}`,
+  ]),
+  ...(['dawn', 'day', 'dusk', 'night'] as const).map(
+    (p): [string, number, Record<string, unknown>, string] => [
+      `home:${p}`,
+      40,
+      { wind: 0.45 },
+      `home-life-${p}`,
+    ],
+  ),
+  ...(
+    [
+      'SFX_WORK_DRIFTWOOD',
+      'SFX_WORK_CAST',
+      'SFX_WORK_CATCH',
+      'SFX_WORK_TEND',
+      'SFX_WORK_COOK',
+      'SFX_WORK_HAMMER',
+      'SFX_FIRE_LIT',
+      'SFX_FIRE_FED',
+      'SFX_FIRE_OUT',
+      'SFX_TIMING_GOOD',
+      'SFX_SLEEP',
+    ] as const
+  ).map((id): [string, number, Record<string, unknown>, string] => [
+    `work:${id}`,
+    2.5,
+    {},
+    `sfx-${id.slice(4).toLowerCase().replaceAll('_', '-')}`,
+  ]),
 ];
 
 if (import.meta.filename === process.argv[1]) {

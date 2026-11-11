@@ -1,0 +1,80 @@
+{
+  "sheet": "ui_timing",
+  "kind": "decal",
+  "image": "ui_timing.png",
+  "width": 32,
+  "height": 32,
+  "pivot": {
+    "x": 16,
+    "y": 16
+  },
+  "footprint": {
+    "w": 32,
+    "h": 32
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "ring": {
+      "frames": 8,
+      "ticks": 1,
+      "loop": false
+    },
+    "mark": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "ring/-/0": [
+      0,
+      0
+    ],
+    "ring/-/1": [
+      32,
+      0
+    ],
+    "ring/-/2": [
+      64,
+      0
+    ],
+    "ring/-/3": [
+      96,
+      0
+    ],
+    "ring/-/4": [
+      128,
+      0
+    ],
+    "ring/-/5": [
+      160,
+      0
+    ],
+    "ring/-/6": [
+      192,
+      0
+    ],
+    "ring/-/7": [
+      224,
+      0
+    ],
+    "mark/-/0": [
+      0,
+      32
+    ],
+    "hit/-/0": [
+      0,
+      64
+    ]
+  }
+}

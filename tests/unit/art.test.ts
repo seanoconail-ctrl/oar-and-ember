@@ -68,8 +68,12 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'actor_p_steerer_a',
       'actor_p_steerer_b',
       'actor_seal',
+      'actor_sheep',
+      'bld_broch',
       'decal_blood_01',
+      'decal_broch',
       'decal_strand',
+      'fx_fire',
       'fx_glint',
       'fx_missile',
       'fx_people',
@@ -89,17 +93,21 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'layer_weapon_bow_heavy',
       'plant_strand',
       'prop_boulder',
+      'prop_camp',
       'prop_debris',
       'prop_greymen_stone',
       'prop_heather',
       'prop_pickup',
       'prop_rock_strand',
+      'prop_sail_leanto',
+      'prop_sail_roof',
       'prop_stones',
       'prop_wreck_stern',
       'prop_wreck_t1',
       'tile_machair_01',
       'tile_strand',
       'ui_aim',
+      'ui_clock',
       'ui_cursor',
       'ui_cursor_glyph',
       'ui_digits',
@@ -108,6 +116,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'ui_marker',
       'ui_stamina',
       'ui_stamina_reason',
+      'ui_timing',
     ]);
   });
 
@@ -197,10 +206,11 @@ describe('atlases', () => {
     const steerer = byName.get('actor_p_steerer_a');
     if (steerer === undefined) throw new Error('missing');
     const { image, manifest } = packSheet(steerer);
-    // Eleven states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 1, runstop 2,
-    // sneak 6, carry 6, draw 4) in four facings: 44 rows of up to 8.
-    expect([image.width, image.height]).toEqual([8 * 32, 44 * 48]);
-    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 1 + 2 + 6 + 6 + 4;
+    // Sixteen states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 1, runstop 2,
+    // sneak 6, carry 6, draw 4; and from Stage 7 the work loops gather, fish, kneel and build 6
+    // each, and sleep 2) in four facings: 64 rows of up to 8.
+    expect([image.width, image.height]).toEqual([8 * 32, 64 * 48]);
+    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 1 + 2 + 6 + 6 + 4 + 6 + 6 + 6 + 6 + 2;
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
     expect(manifest.frames['idle/w/3']).toEqual([96, 3 * 48]);

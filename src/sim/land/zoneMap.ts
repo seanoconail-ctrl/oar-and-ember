@@ -28,7 +28,7 @@ export function blocksMovement(terrain: Terrain, tidalGroundOpen: boolean): bool
  * running water, and where it crosses the shore it is below the tide line too.)
  */
 export function aboveTideLine(terrain: Terrain): boolean {
-  return terrain === 'shingle' || terrain === 'machair';
+  return terrain === 'shingle' || terrain === 'machair' || terrain === 'floor';
 }
 
 /** The tile under a point given in logical pixels. */

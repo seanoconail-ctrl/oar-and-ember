@@ -7,6 +7,9 @@
  * bargains, powers) are present with their Book 2 shape and start empty.
  */
 import { parseControlsBalance, parseStartingWeapons } from '../content/balance.ts';
+import { parseStaminaBalance, parseWorkBalance } from '../content/homeBalance.ts';
+import { campContext, setupCamp } from './home/camp.ts';
+import { setReason } from './home/stamina.ts';
 import type { PeopleBasics, TimeBalance } from '../content/balance.ts';
 import type { Content, VALUES, TIE_KINDS } from '../content/registry.ts';
 import type { Id } from '../core/ids.ts';
@@ -24,8 +27,14 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * with counts (`player.inventory`: arrows), the pickup tooltips already shown
  * (`player.tipsSeen`), an aim's distance (`aim.dist`), and in the zone the items lying there,
  * missiles in flight and missiles at rest (`onFoot.items`, `projectiles`, `nextMissile`, `stuck`).
+ * Version 5 (Stage 7: day and night, shelter and first tasks) makes stamina the Book 2 section 24
+ * shape (`player.stamina`: current, max, base and the reasons it is smaller; the collapse's
+ * `staminaMaxChange` becomes the Exhausted reason), adds the steerer's condition (meals, sleep,
+ * warmth, hours worked, wounds), the camp at home (stores with fresh fish by the day caught, the
+ * fire, a building going up, the day's ration), a tended day on wounds, people's skills, the
+ * zones out of view (`onFoot.elsewhere`) and the latest morning report.
  */
-export const WORLD_STATE_VERSION = 4;
+export const WORLD_STATE_VERSION = 5;
 
 export type Value = (typeof VALUES)[number];
 export type TieKind = (typeof TIE_KINDS)[number];
@@ -48,6 +57,8 @@ export interface Wound {
   readonly day: number;
   readonly severity: 'LIGHT' | 'SERIOUS' | 'GRAVE';
   readonly where: string;
+  /** The day it was first tended (Book 10 section 08: an untended wound does not heal). */
+  tendedDay?: number;
 }
 
 /** Book 2 section 06. */
@@ -79,12 +90,15 @@ export interface PlayerState {
   name: string;
   bodyModel: BodyModel | null;
   vitality: number;
-  stamina: number;
+  /** Book 2 section 24: the bar, its maximum and the reasons it is smaller (version 5). */
+  stamina: Stamina;
   skills: Partial<Record<string, 0 | 1 | 2 | 3 | 4 | 5>>;
   gear: Id[];
   awake: boolean;
-  /** Change to maximum stamina for the current day (the collapse penalty, Book 10). */
-  staminaMaxChange: number;
+  /** What the steerer's condition depends on: meals, sleep, warmth and work (version 5). */
+  condition: Condition;
+  /** The steerer's own wounds (none until Stage 9's combat); they lower the bar's maximum. */
+  wounds: Wound[];
   /** Book 2 section 21: the slots (Book 10 section 21, hotbarSlots) and the one in hand. */
   hotbar: Hotbar;
   /** Items carried by count rather than in a slot: arrows (Book 10 section 21, "Arrows"). */
@@ -96,6 +110,52 @@ export interface PlayerState {
 export interface Hotbar {
   slots: (Id | null)[];
   selected: number;
+}
+
+/** Book 2 section 24: why the bar is smaller (or, for a feast, larger). */
+export type StaminaReason =
+  | 'COLD'
+  | 'HUNGRY'
+  | 'STARVING'
+  | 'WOUNDED'
+  | 'BADLY_WOUNDED'
+  | 'SICK'
+  | 'TIRED'
+  | 'EXHAUSTED'
+  | 'HARD_WORK'
+  | 'FEAST';
+
+export interface StaminaReduction {
+  readonly reason: StaminaReason;
+  /** Taken off the maximum (a feast's is negative: it adds). */
+  readonly amount: number;
+  /** Campaign minute it began. */
+  readonly since: number;
+  readonly cause?: string;
+}
+
+export interface Stamina {
+  /** 0..max. */
+  current: number;
+  /** base minus every reduction, never below Book 10's minimumMax. */
+  max: number;
+  base: number;
+  reductions: StaminaReduction[];
+  /** The tick stamina was last spent (regeneration waits Book 10's ticks after it). */
+  spentTick: number;
+}
+
+/** What the steerer's condition reads (Book 10 section 06, "Stamina capacity"). */
+export interface Condition {
+  /** Campaign minute the steerer last woke, and last ate a meal (null: not since the campaign began). */
+  wokeAt: number;
+  lastMealAt: number | null;
+  /** Meals in a row while starving (two end it). */
+  mealsWhileStarving: number;
+  /** Game minutes worked at tasks since waking. */
+  workedMinutes: number;
+  /** Game minutes spent warm (within a lit fire's reach) since becoming cold. */
+  warmMinutes: number;
 }
 
 /** Book 2 section 15. */
@@ -147,7 +207,31 @@ export interface HomeState {
   /** Book 7 section 06 stage, S0 (wreck camp) onwards. */
   stage: 'S0' | 'S1' | 'S2' | 'S3' | 'S4' | 'S5' | 'S6' | 'M0' | 'M1' | 'M2' | 'M3';
   buildings: Id[];
+  /** RES_ id to amount: ration-days of food, loads of fuel (version 5: never below zero). */
   stores: Record<string, number>;
+  /** Fresh fish by the day it was caught, in ration-days (it spoils after Book 10's days). */
+  fresh: { rd: number; day: number }[];
+  /** The camp fire: lit, and the loads of fuel left in it. */
+  fire: { lit: boolean; fuel: number };
+  /** A building going up: worker-minutes of labour done. */
+  building: { id: Id; progress: number } | null;
+  /** Fish hooked but not yet landed: a share of one fish. */
+  catch: number;
+  /** The day the day's ration was last served, and the days the stores fell short since. */
+  rationDay: number;
+  shortDays: number;
+}
+
+/** A sentence of the morning report: a string key and its values (Book 7 section 10: words). */
+export interface ReportLine {
+  readonly key: string;
+  readonly vars: Readonly<Record<string, string | number>>;
+}
+
+/** The steward's morning report, v0 (Book 1 section 03; Book 2 section 02, Report mode). */
+export interface MorningReport {
+  readonly day: number;
+  readonly lines: readonly ReportLine[];
 }
 
 export interface RegionState {
@@ -200,6 +284,13 @@ export interface WorldState {
   oneShots: Record<Id, number>;
   /** The on-foot scene the steerer is in (decision S6-3); null at sea or in a world with no zone. */
   onFoot: OnFootState | null;
+  /** The latest morning report (version 5), shown on waking. */
+  report: MorningReport | null;
+}
+
+/** A new steerer's stamina: full, at Book 10's base. */
+export function freshStamina(base: number): Stamina {
+  return { current: base, max: base, base, reductions: [], spentTick: 0 };
 }
 
 /** An empty world: the calendar and RNG only. Used by runtime tests that need no content. */
@@ -215,11 +306,18 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
       name: '',
       bodyModel: null,
       vitality: 0,
-      stamina: 0,
+      stamina: freshStamina(0),
       skills: {},
       gear: [],
       awake: true,
-      staminaMaxChange: 0,
+      condition: {
+        wokeAt: 0,
+        lastMealAt: null,
+        mealsWhileStarving: 0,
+        workedMinutes: 0,
+        warmMinutes: 0,
+      },
+      wounds: [],
       hotbar: { slots: [], selected: 0 },
       inventory: {},
       tipsSeen: [],
@@ -240,6 +338,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     facts: {},
     oneShots: {},
     onFoot: null,
+    report: null,
   };
 }
 
@@ -262,7 +361,8 @@ export function newCampaign(
   content: Pick<
     Content,
     'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps' | 'onFoot' | 'balance'
-  >,
+  > &
+    Partial<Pick<Content, 'camp'>>,
   steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
     name: '',
     bodyModel: null,
@@ -272,7 +372,7 @@ export function newCampaign(
   world.player.name = steerer.name;
   world.player.bodyModel = steerer.bodyModel;
   world.player.vitality = basics.vitality;
-  world.player.stamina = basics.stamina;
+  world.player.stamina = freshStamina(basics.stamina);
   // What the steerer has on waking (content/onfoot.json), in a hotbar of Book 10's size.
   const start = content.onFoot?.hotbar;
   if (start !== undefined) {
@@ -303,6 +403,20 @@ export function newCampaign(
       valueShifts: 0,
     };
   }
+  // Starting skills (Book 10 section 08): the skills Book 5 names at their level, and the
+  // steerer's level in every homestead task.
+  const camp =
+    content.camp == null ? null : campContext({ camp: content.camp, balance: content.balance });
+  if (camp !== null) {
+    const skills = parseWorkBalance(content.balance).startingSkills;
+    for (const def of content.people.values()) {
+      const person = world.people[def.id];
+      if (person !== undefined)
+        for (const s of def.skills ?? []) person.skills[s] = skills.named as 0 | 1 | 2 | 3 | 4 | 5;
+    }
+    for (const t of camp.tasks.values())
+      world.player.skills[t.def.skill] = skills.steererTasks as 0 | 1 | 2 | 3 | 4 | 5;
+  }
   for (const place of content.places.values()) {
     world.places[place.id] = {
       known: place.id === 'ISLE_SKARV' || place.region === 'REG_SK',
@@ -323,7 +437,19 @@ export function newCampaign(
     world.regions[region.id] = { discoveredZones: [], resourceNodes: {}, puzzles: {} };
   }
   world.regions['REG_SK'] = { discoveredZones: ['ZONE_SK_STRAND'], resourceNodes: {}, puzzles: {} };
-  world.homes['ISLE_SKARV'] = { place: 'ISLE_SKARV', stage: 'S0', buildings: [], stores: {} };
+  world.homes['ISLE_SKARV'] = {
+    place: 'ISLE_SKARV',
+    stage: 'S0',
+    buildings: [],
+    stores: {},
+    fresh: [],
+    fire: { lit: false, fuel: 0 },
+    building: null,
+    catch: 0,
+    rationDay: 1,
+    shortDays: 0,
+  };
+  if (camp !== null) setupCamp(world, camp);
   world.knowledge.places['ISLE_SKARV'] = 'KNOWN';
   CHAPTERS.forEach((ch, i) => {
     world.chapters[ch] = i === 0 ? { status: 'ACTIVE', openedDay: 1 } : { status: 'LOCKED' };
@@ -338,6 +464,16 @@ export function newCampaign(
       opening.callerPose,
       zoneItems(content, strand.zone),
     );
+    // The other zones keep what lies in them until walked into (the hand line at the camp).
+    for (const zone of content.zoneMaps.keys()) {
+      if (zone === strand.zone) continue;
+      const items = zoneItems(content, zone);
+      world.onFoot.elsewhere ??= {};
+      world.onFoot.elsewhere[zone] = { actors: {}, items, stuck: [] };
+    }
+    // Washed ashore wet through on a spring morning: the steerer wakes cold (decision S7-9).
+    if (camp !== null)
+      setReason(world.player.stamina, parseStaminaBalance(content.balance), 'COLD', 0, 'wet');
   }
   return world;
 }

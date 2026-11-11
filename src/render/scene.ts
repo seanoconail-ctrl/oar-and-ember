@@ -20,6 +20,11 @@ export interface SceneSprite {
   readonly layer: Layer;
   /** A tall object that can hide what stands behind it. */
   readonly tall?: boolean;
+  /**
+   * The parts of a tall sprite's canvas that are drawn, [x, y, w, h] from its top-left (a band of
+   * a building, Stage 7): it is cut away only where one of these covers the focus actor.
+   */
+  readonly boxes?: readonly (readonly [number, number, number, number])[];
   /** The actor the camera follows; tall objects in front of it are cut away. */
   readonly focus?: boolean;
   /** Sort line within the actor layer, if not the foot (a bird in flight sorts over everything). */
@@ -220,7 +225,17 @@ export function buildDrawList(
   return order.map((i, k) => {
     const item = items[i];
     if (item === undefined) throw new Error('draw list: lost an item');
-    if (focus !== undefined && k > focusAt && sprites[i]?.tall === true && overlaps(item, focus))
+    const sprite = sprites[i];
+    if (
+      focus !== undefined &&
+      k > focusAt &&
+      sprite?.tall === true &&
+      overlaps(item, focus) &&
+      (sprite.boxes === undefined ||
+        sprite.boxes.some(([bx, by, bw, bh]) =>
+          overlaps({ ...item, x: item.x + bx, y: item.y + by, width: bw, height: bh }, focus),
+        ))
+    )
       return { ...item, fade: cutawayFade };
     return item;
   });
@@ -238,6 +253,12 @@ export interface RenderStyle {
   readonly phases: Readonly<Record<Phase, { readonly ambient: readonly [number, number, number] }>>;
   readonly poolBands: number;
   readonly cutawayFade: number;
+  /** The camp fire's light pool by phase, and its flicker (Stage 7). */
+  readonly fire?: {
+    readonly radius: Readonly<Record<Phase, number>>;
+    readonly colour: Readonly<Record<Phase, readonly [number, number, number]>>;
+    readonly flicker: number;
+  };
 }
 
 export function parseRenderStyle(json: unknown): RenderStyle {

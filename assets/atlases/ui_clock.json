@@ -1,0 +1,52 @@
+{
+  "sheet": "ui_clock",
+  "kind": "decal",
+  "image": "ui_clock.png",
+  "width": 14,
+  "height": 14,
+  "pivot": {
+    "x": 7,
+    "y": 7
+  },
+  "footprint": {
+    "w": 14,
+    "h": 14
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "sun": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "dusk": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "moon": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "sun/-/0": [
+      0,
+      0
+    ],
+    "dusk/-/0": [
+      0,
+      14
+    ],
+    "moon/-/0": [
+      0,
+      28
+    ]
+  }
+}
