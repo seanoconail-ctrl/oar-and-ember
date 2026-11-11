@@ -41,7 +41,14 @@ the user's approval. Stage 7 has not been started, and nothing is wired into the
     on the next bar line.
   - In one earlier full run, the Stage 6 rescue test timed out while the machine was under
     heavy load; it passed on its own and in the rerun of the full suite.
-  - Firefox and WebKit run in CI.
+- **Latest CI (commit 6bf23ea; Book 3 rule, decision BR-1):**
+  - Chromium (Linux): lint, unit tests, build and 25 browser tests pass, at the build and at the
+    published address.
+  - Firefox (macOS): passes, at the build and at the published address. The Stage 6 control
+    check now takes 1.1 to 1.3 s (it was 10 to 26 s), after AP-18. Firefox does not block
+    publishing until Stage 12 (BR-1, temporary).
+  - WebKit (macOS): fails ("WebGL2 vertex shader failed: no log", context lost). It does not
+    block publishing until Stage 12 (S1-18, BR-1).
 
 ## Listening back (AU-8)
 Claude cannot hear. Every item was rendered and measured instead.
@@ -73,6 +80,12 @@ Decision log AU-1 to AU-9, and AP-17: the user kept the extra mockup steps.
 - **Low:** until Step 2 the game itself still plays the Stage 5 temporary tones and the
   temporary footsteps (AU-9).
 - **Low:** the Stage 6 rescue browser test can time out on a heavily loaded machine.
+- **Medium:** on CI's macOS Firefox, which has no real graphics card, preparing play behind the
+  title (AP-18) takes about 20 to 25 s. Most of that is the first hidden draw, a single task of
+  17 to 20 s, during which the title does not answer keys. Control then comes about 1 s after
+  the naming screen. Fixing this is the next Firefox step: splitting the first draw into smaller
+  steps.
+- **Medium:** WebKit still fails in CI (lost WebGL context at the first shader).
 
 ## Next step ready
 WAITING for the user's approval of the sound test page or their changes (Step 2 wires audio
