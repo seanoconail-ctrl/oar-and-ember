@@ -64,6 +64,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install firefox
+      - name: What WebGL2 the browser offers
+        run: node tests/browser/webgl-probe.ts firefox
+        continue-on-error: true
       - run: npm run test:browser -- --project=firefox
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
@@ -88,6 +91,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install webkit
+      - name: What WebGL2 the browser offers
+        run: node tests/browser/webgl-probe.ts webkit
+        continue-on-error: true
       - run: npm run test:browser -- --project=webkit
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
@@ -97,17 +103,20 @@ jobs:
           path: test-results
           retention-days: 7
 
-  # EXPERIMENT (temporary): Firefox and WebKit on Linux, headless and headed under a virtual
-  # display, to see whether software WebGL2 there now runs the game. Never blocks anything.
-  browsers-linux-probe:
-    name: Experiment - ${{ matrix.browser }} on Linux (${{ matrix.mode }})
-    runs-on: ubuntu-latest
+  # EXPERIMENT (temporary): where can WebKit run the game? On macOS (headless) its WebGL context is
+  # lost at the first shader. Tried here: Linux headless, Linux headed under a virtual display, and
+  # macOS headed. Never blocks anything.
+  browsers-webkit-probe:
+    name: Experiment - WebKit on ${{ matrix.os }} (${{ matrix.mode }})
+    runs-on: ${{ matrix.os }}
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        browser: [firefox, webkit]
-        mode: [headless, headed]
+        include:
+          - { os: ubuntu-latest, mode: headless }
+          - { os: ubuntu-latest, mode: headed }
+          - { os: macos-15-intel, mode: headed }
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -116,58 +125,34 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: >-
-          timeout 300 npx playwright install --with-deps ${{ matrix.browser }} ||
-          npx playwright install ${{ matrix.browser }}
+      - name: Install WebKit
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then
+            timeout 600 npx playwright install --with-deps webkit || npx playwright install webkit
+          else
+            npx playwright install webkit
+          fi
       - name: What WebGL2 the browser offers
         run: |
-          cat > "$RUNNER_TEMP/probe.mjs" <<'PROBE'
-          import { createRequire } from 'node:module';
-          const require = createRequire(process.cwd() + '/package.json');
-          const pw = require('@playwright/test');
-          const [name, mode] = process.argv.slice(2);
-          const browser = await pw[name].launch({
-            headless: mode !== 'headed',
-            ...(name === 'firefox' ? { firefoxUserPrefs: { 'webgl.force-enabled': true } } : {}),
-          });
-          const page = await browser.newPage();
-          await page.setContent('<canvas id="c" width="64" height="64"></canvas>');
-          const info = await page.evaluate(() => {
-            const c = document.getElementById('c');
-            const gl = c.getContext('webgl2');
-            if (gl === null) return { webgl2: false };
-            const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-            const vs = gl.createShader(gl.VERTEX_SHADER);
-            gl.shaderSource(vs, '#version 300 es\nin vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}');
-            gl.compileShader(vs);
-            return {
-              webgl2: true,
-              renderer: gl.getParameter(dbg === null ? gl.RENDERER : dbg.UNMASKED_RENDERER_WEBGL),
-              version: gl.getParameter(gl.VERSION),
-              compiled: gl.getShaderParameter(vs, gl.COMPILE_STATUS),
-              lost: gl.isContextLost(),
-            };
-          });
-          console.log(name, mode, JSON.stringify(info));
-          await browser.close();
-          PROBE
-          if [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a node "$RUNNER_TEMP/probe.mjs" ${{ matrix.browser }} headed
+          if [ "$RUNNER_OS" = Linux ] && [ "${{ matrix.mode }}" = headed ]; then
+            xvfb-run -a node tests/browser/webgl-probe.ts webkit headed
           else
-            node "$RUNNER_TEMP/probe.mjs" ${{ matrix.browser }} headless
+            node tests/browser/webgl-probe.ts webkit ${{ matrix.mode }}
           fi
       - name: Browser tests
         run: |
-          if [ "${{ matrix.mode }}" = headed ]; then
-            xvfb-run -a npm run test:browser -- --project=${{ matrix.browser }} --headed
+          if [ "$RUNNER_OS" = Linux ] && [ "${{ matrix.mode }}" = headed ]; then
+            xvfb-run -a npm run test:browser -- --project=webkit --headed
+          elif [ "${{ matrix.mode }}" = headed ]; then
+            npm run test:browser -- --project=webkit --headed
           else
-            npm run test:browser -- --project=${{ matrix.browser }}
+            npm run test:browser -- --project=webkit
           fi
       - name: Keep the failed tests' screenshots and page snapshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.browser }}-linux-${{ matrix.mode }}
+          name: test-results-webkit-${{ matrix.os }}-${{ matrix.mode }}
           path: test-results
           retention-days: 7
 

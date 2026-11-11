@@ -27,7 +27,8 @@ async function open(
   await page.goto(`./?${query}`);
   const canvas = page.locator('canvas#screen');
   try {
-    await expect(canvas).toHaveAttribute('data-state', 'art', { timeout: 15_000 });
+    // Generous: CI's software-rendered browsers compile and upload slowly on a cold start.
+    await expect(canvas).toHaveAttribute('data-state', 'art', { timeout: 60_000 });
   } catch (cause) {
     const where = await canvas.evaluate((c: HTMLElement) =>
       Object.fromEntries(Object.entries(c.dataset)),
