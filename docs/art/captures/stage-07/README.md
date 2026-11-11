@@ -7,7 +7,7 @@ section 14).
 | File | What it is |
 |---|---|
 | `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |
-| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30: the lean-to, the salvage, the cold fire ring with wood laid, Hild by it, sheep outside |
+| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30, as the mockup: the lean-to, the salvage, the fire burning in its ring with Hild by it, turf in the court and on the wall head, sheep outside |
 | `broch-night.png`, `broch-night@2x.png` | The same at 23:00, the fire lit: flames, smoke and the flickering warm pool under the night grade |
 | `broch-s1.png`, `broch-s1@2x.png` | The camp raised to S1 by day: the sail roof, beds, the kerbed hearth burning, the floor cleared to the flags, the door |
 | `broch-*-motion.png` | Each still with the cells that do not keep moving tinted red |
@@ -19,12 +19,12 @@ section 14).
 
 | View | Continuous motion |
 |---|---|
-| Wreck Strand (41 frames over 6.4 s) | 92.7% |
-| The broch by day, S0 | 51.0% |
-| The broch by night, S0, fire lit | 65.1% |
-| The broch by day, S1 | 52.3% |
+| Wreck Strand (41 frames over 6.4 s) | 93.8% |
+| The broch by day, S0 | 82.8% |
+| The broch by night, S0, fire lit | 85.9% |
+| The broch by day, S1 | 80.6% |
 | Mockup: S0 day (clouds moving / frozen) | 99.8% / 92.7% |
 | Mockup: S0 night (clouds moving / frozen) | 100.0% / 94.1% |
 | Book 7 threshold | 80.0% |
 
-**A view is below the threshold: the stage is not done.**
+Every view meets the threshold.

@@ -511,6 +511,7 @@ export function startPlay(
         top: number;
         bands: number;
         boxes?: [number, number, number, number][][];
+        tufts?: [number, number, number, number][];
       }
     | undefined;
   const loops: Record<string, string> = Object.fromEntries(

@@ -22,7 +22,7 @@ import type {
   Wade,
 } from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
-import { gustGrid, STRAND_WIND, SWAY_PERIOD } from '../render/wind.ts';
+import { gustGrid, plantLean, STRAND_WIND, SWAY_CALM, SWAY_PERIOD } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import { itemShown } from '../sim/land/onFoot.ts';
 import type { FactView, OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
@@ -204,6 +204,8 @@ export function plantSprites(
   reducedMotion: boolean,
   /** Share of plants drawn (low effect detail draws fewer, AP-16). */
   share = 1,
+  /** A circle of the world (px) where no plant grows: a cleared floor (Stage 7's S1 court). */
+  cleared: { readonly x: number; readonly y: number; readonly r: number } | null = null,
 ): SceneSprite[] {
   const out: SceneSprite[] = [];
   const index = zoneIndex(map);
@@ -229,6 +231,7 @@ export function plantSprites(
       const { x, y } = plant;
       if (x < camera.x - 10 || x > camera.x + LOGICAL_WIDTH + 10) continue;
       if (share < 1 && plant.phase >= share) continue;
+      if (cleared !== null && Math.hypot(x - cleared.x, y - cleared.y) < cleared.r) continue;
       near.length = 0;
       for (const w of walkers) if (Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8) near.push(w);
       // The same lean as plantLean (render/wind.ts), inlined for the thousands of plants a
@@ -236,7 +239,7 @@ export function plantSprites(
       const g = gust(x, y);
       const push = wind.dirX * wind.strength * (0.6 + (plant.tall ? 2.6 : 1.9) * g);
       const sw = (sa1 * plant.c1 + ca1 * plant.s1) * 0.7 + (sa2 * plant.c2 + ca2 * plant.s2) * 0.3;
-      let lean = push + sw * (reducedMotion ? 0.35 : 0.8 + 0.6 * g);
+      let lean = push + sw * (reducedMotion ? 0.35 : SWAY_CALM + 0.6 * g);
       for (const w of near) {
         const dx = x - w.x;
         const dy = (y - w.y) * 1.6;
@@ -479,6 +482,8 @@ export interface CampScene {
     readonly bands: number;
     /** The drawn parts of each band (assets/art/buildings.json), for the cutaway. */
     readonly boxes?: readonly (readonly (readonly [number, number, number, number])[])[];
+    /** Grass and thrift on the wall head: [dx, dy] from the centre (px), band, kind (0 grass). */
+    readonly tufts?: readonly (readonly [number, number, number, number])[];
   } | null;
   /** The fire's light by phase (assets/art/render.json): radius in px and colour added. */
   readonly light: FireLight | null;
@@ -630,6 +635,24 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         ...(camp.building.boxes?.[k] === undefined ? {} : { boxes: camp.building.boxes[k] }),
       });
     }
+    // The wall head's grass and thrift, in the full wind, each drawn just after its band.
+    for (const [dx, dy, k, kind] of camp.building.tufts ?? []) {
+      const x = cx + dx;
+      const y = cy + dy;
+      if (x < -10 || x > LOGICAL_WIDTH + 10 || y < -10 || y > LOGICAL_HEIGHT + 10) continue;
+      const phase = hash01(dx, dy, 7);
+      const lean = plantLean(wind, x + camera.x, y + camera.y, seconds, phase, false, [], reduced);
+      const v = Math.floor(hash01(dx, dy, 11) * 4);
+      sprites.push({
+        sheet: PLANT_SHEET,
+        frame: `${kind === 1 ? 'thrift' : 'grass'}${v}/-/${UPRIGHT + lean}`,
+        x,
+        y,
+        layer: 'actor',
+        sort: cy + top + band * k + band - 1 + 0.5,
+        tall: true,
+      });
+    }
   }
   if (camp !== undefined) {
     for (const prop of camp.props) {
@@ -641,9 +664,14 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         sprites.push({ sheet: prop.sheet, frame: prop.frame, x, y, layer: 'decal' });
         continue;
       }
+      // A prop with a loop of its own (the sails' ripples) plays it; others hold their frame.
+      const [state = '', facing = '-'] = prop.frame.split('/');
+      const loop = (anims.get(prop.sheet)?.[state]?.frames ?? 1) > 1;
       const sprite: SceneSprite = {
         sheet: prop.sheet,
-        frame: prop.frame,
+        frame: loop
+          ? `${state}/${facing}/${frameIndex(anims, prop.sheet, state, reduced ? 0 : tick)}`
+          : prop.frame,
         x,
         y,
         layer: 'actor',
@@ -907,7 +935,19 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   }
   const detail = visual?.effects?.detail ?? 2;
   sprites.push(
-    ...plantSprites(map, camera, seconds, wind, walkers, reduced, detail === 0 ? 0.45 : 1),
+    ...plantSprites(
+      map,
+      camera,
+      seconds,
+      wind,
+      walkers,
+      reduced,
+      detail === 0 ? 0.45 : 1,
+      // At S1 the court is cleared to its old flagged floor.
+      map.broch !== undefined && camp !== undefined && camp.stage !== 'S0'
+        ? { x: map.broch.x * map.tile, y: map.broch.y * map.tile, r: map.broch.inner * map.tile }
+        : null,
+    ),
   );
   for (const m of visual?.marks ?? []) {
     const x = m.x - camera.x;

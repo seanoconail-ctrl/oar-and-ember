@@ -167,28 +167,31 @@ const cueCheck = object(
     'layers',
   ],
 );
-const audioCheck = object({
-  about: text,
-  captionSeconds: int(1, 10),
-  stingerDuck: (v, path, ctx) =>
-    typeof v === 'number' && v >= 0 && v <= 1
-      ? v
-      : (ctx.issues.push({ file: ctx.file, path, reason: 'expected a level from 0 to 1' }), null),
-  cues: arrayOf(cueCheck),
-  events: recordOf(text, id(['MUS', 'SFX', 'AMB', 'VO'])),
-  /**
-   * Home audio (Book 11 sections 03 and 12; Stage 7): the hearth theme plays for `playSeconds`
-   * after `restSeconds` of ambience only, over and over, so at least a third of home time is
-   * ambience only; the fire's crackle is full within `fireFullTiles` and silent from
-   * `fireSilentTiles`.
-   */
-  home: object({
-    restSeconds: int(10, 600),
-    playSeconds: int(10, 600),
-    fireFullTiles: int(0, 40),
-    fireSilentTiles: int(1, 60),
-  }),
-}, ['home']);
+const audioCheck = object(
+  {
+    about: text,
+    captionSeconds: int(1, 10),
+    stingerDuck: (v, path, ctx) =>
+      typeof v === 'number' && v >= 0 && v <= 1
+        ? v
+        : (ctx.issues.push({ file: ctx.file, path, reason: 'expected a level from 0 to 1' }), null),
+    cues: arrayOf(cueCheck),
+    events: recordOf(text, id(['MUS', 'SFX', 'AMB', 'VO'])),
+    /**
+     * Home audio (Book 11 sections 03 and 12; Stage 7): the hearth theme plays for `playSeconds`
+     * after `restSeconds` of ambience only, over and over, so at least a third of home time is
+     * ambience only; the fire's crackle is full within `fireFullTiles` and silent from
+     * `fireSilentTiles`.
+     */
+    home: object({
+      restSeconds: int(10, 600),
+      playSeconds: int(10, 600),
+      fireFullTiles: int(0, 40),
+      fireSilentTiles: int(1, 60),
+    }),
+  },
+  ['home'],
+);
 
 const fraction =
   (min: number, max: number): Check<number> =>

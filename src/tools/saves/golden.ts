@@ -66,12 +66,14 @@ export function goldenWorld05(): WorldState {
   opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
   opening.pickUp('stern_bow');
   const bot = new CampBot(sim, b, land, camp);
-  // Driftwood from the weed line, then up to the broch Hild has led to.
-  bot.doAt('wrack_1');
-  bot.doAt('wrack_2', 'late');
+  // Up to the broch Hild has led to, back down for driftwood from the weed line, and up again.
   bot.goToZone('ZONE_SK_MACHAIR');
   bot.goToSite('stores');
   bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  bot.goToZone('ZONE_SK_STRAND');
+  bot.doAt('wrack_1');
+  bot.doAt('wrack_2', 'late');
+  bot.goToZone('ZONE_SK_MACHAIR');
   bot.doAt('fire');
   bot.tend('C_HILD');
   bot.doAt('fire');

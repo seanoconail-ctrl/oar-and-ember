@@ -72,8 +72,10 @@ def sheet_text(name, kind, size, pivot, frames, anims, about, shadow=None, facin
     ]
     if shadow:
         lines.append(f'shadow: {shadow}')
-    for state, (n, ticks) in anims.items():
-        lines.append(f'anim.{state}: frames {n}, ticks {ticks}')
+    for state, spec in anims.items():
+        n, ticks = spec[0], spec[1]
+        loop = ', loop' if len(spec) > 2 and spec[2] == 'loop' else ''
+        lines.append(f'anim.{state}: frames {n}, ticks {ticks}{loop}')
     for state, pose in (poses or {}).items():
         lines.append(f'pose.{state}: {pose}')
     for (state, facing, i), rows in frames:
@@ -159,6 +161,58 @@ def opaque_runs(fm, gap=4):
     return runs
 
 
+def wall_tufts(n=600, seed=707):
+    """Grass and thrift on the wall head, in the full wind (the mockup's tufts): screen offsets
+    [dx, dy] from the tower's centre, the band they stand on (drawn just after it), and the kind
+    (0 grass, 1 thrift). The game draws them as swaying plants (decision S7-24)."""
+    B.SAIL['none'] = lambda x, y, z: np.zeros(np.broadcast(x, y, z).shape, bool)
+    hz = B.raycast('none')
+    S = B.surface('none', hz)
+    top_abs = B.CY - B.ROUT - 2
+    r = np.random.default_rng(seed)
+    cells = np.argwhere(S['kind'] == 1)
+    out = []
+    for (sy, sx) in cells[r.choice(len(cells), min(n, len(cells)), replace=False)]:
+        z = S['z'][sy, sx]
+        rad = S['r'][sy, sx]
+        if rad < B.RIN + 3 or rad > B.ROUT - B.BATTER * z - 3:
+            continue
+        band = int((S['y'][sy, sx] - top_abs) // BAND)
+        kind = 1 if r.random() < 0.28 else 0
+        out.append([int(sx - B.CX), int(sy - B.CY), band, kind])
+    out.sort(key=lambda t: (t[2], t[1], t[0]))
+    return out
+
+
+def write_buildings(boxes=None, tufts=None):
+    path = f'{REPO}/assets/art/buildings.json'
+    with open(path) as f:
+        data = json.load(f)
+    if boxes is not None:
+        data['bld_broch']['boxes'] = boxes
+    if tufts is not None:
+        data['bld_broch']['tufts'] = tufts
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2)
+        f.write('\n')
+
+
+def write_sail(name, stage, about):
+    frames = []
+    for k in range(SAIL_FRAMES):
+        spr, at = sail_sprite(stage, k)
+        if k == 0:
+            print(f'{name}: anchor {at[0] - B.CX:+.1f}, {at[1] - B.CY:+.1f} px from the broch centre')
+            sz = (spr.w + 2, spr.h + 2)
+            pvt = (spr.ax + 1, sz[1] - 1)
+        rgb, m = place(spr, sz, pvt)
+        frames.append(((stage, '-', k), codes(rgb, m)))
+    write(name, sheet_text(name, 'prop', sz, pvt, frames, {stage: (SAIL_FRAMES, 12, 'loop')},
+                           [about, 'From the mockup\'s ray-cast sail, with its posts; ripples run across',
+                            f'the cloth in the wind ({SAIL_FRAMES} frames, a loop).'],
+                           shadow=f'{max(8, sz[0] // 2)}x6'))
+
+
 def floor_s1():
     """The old flagged floor, uncovered in the cleared middle of the court and along the way to
     the door (the mockup's S1 ground), as a flat decal centred on the broch."""
@@ -169,16 +223,31 @@ def floor_s1():
     seam = ((xs / 9 + np.sin(ys / 7) * 0.6) % 1 < 0.13) | ((ys / 7 + np.sin(xs / 9) * 0.5) % 1 < 0.16)
     flags = (core.fbm(B.H, B.W, 18, 322) > 0.56) & w.clear & (np.hypot(xs - B.CX, ys - B.CY) < B.RIN - 6)
     col = core.ramp_lookup('stone', 3.6 + ctone * 1.6 - seam * 1.8)
+    # The court cleared to the earth round the flags (the turf lifted for the shelter's floor;
+    # decision S7-22): the whole court inside the wall foot, ragged at the wall.
+    rad = np.hypot(xs - B.CX, ys - B.CY)
+    earth = core.ramp_lookup('earth', 2.4 + core.fbm(B.H, B.W, 6, 323) * 1.6)
+    court = rad + (core.fbm(B.H, B.W, 4, 324) - 0.5) * 6 < B.RIN - 3
+    col = np.where(flags[..., None], col, earth)
     r = B.RIN
     size = (2 * r, 2 * r)
     sub = (slice(B.CY - r, B.CY + r), slice(B.CX - r, B.CX + r))
-    rows = codes(col[sub], flags[sub])
+    rows = codes(col[sub], (flags | court)[sub])
     return [(('flags', '-', 0), rows)], size, (r, r)
 
 
 # ---------------------------------------------------------------------------- the sails
-def sail_sprite(stage):
-    """The sail (with its posts, the oar ridge and, at S1, the drying lines) as one prop."""
+SAIL_FRAMES = 16          # a 3.2-second loop at 12 ticks a frame
+SAIL_ABOUT = {
+    's0': 'S0: the torn sail as a lean-to against the north-west inner wall on a broken oar and two forked sticks.',
+    's1': 'S1: the sail stretched over the north of the court on a ridge pole and two posts, the eave 46 px up; drying lines of split fish.',
+}
+
+
+def sail_sprite(stage, k=0):
+    """The sail (with its posts, the oar ridge and, at S1, the drying lines) as one prop, frame k
+    of its ripple loop: ripples run across the cloth in the wind, the lean-to sheltered by the
+    court more than the roof (the mockup's _sail_wind; decision S7-24)."""
     hz = B.raycast(stage)
     S = B.surface(stage, hz)
     img = B.paint_static(S, stage, np.zeros((B.H, B.W, 3), np.float32), np.ones((B.H, B.W), bool))
@@ -187,6 +256,11 @@ def sail_sprite(stage):
     canvas = np.zeros((B.H, B.W, 3), np.float32)
     cm = np.zeros((B.H, B.W), bool)
     canvas[m] = img[m]
+    t = k / SAIL_FRAMES
+    amp = 0.6 if stage == 's0' else 1.0
+    wave = np.sin(S['x'][m] / 6.5 - 2 * math.pi * t * 2 + np.sin(S['y'][m] / 9) * 1.5) * amp + \
+        0.5 * np.sin(S['x'][m] / 3.1 + S['y'][m] / 4 - 2 * math.pi * t * 4)
+    canvas[m] = canvas[m] * (1 + 0.075 * np.rint(wave)[:, None])
     cm |= m
     for (_, spr, x, y, hgt, kind) in w.props:
         if kind != 'post':
@@ -217,9 +291,11 @@ def sail_sprite(stage):
                 canvas[int(yy), int(x)] = C('wool', 3)
                 cm[int(yy), int(x)] = True
         for (x, y, z, ph) in w.fish:
+            # Each split fish swings on its line in the wind, on its own phase.
+            swing = int(round(math.sin(2 * math.pi * (t * 2 + ph))))
             for dy in range(5):
                 for dx in (0, 1):
-                    yy, xx = int(y - z) + dy, int(x) + dx
+                    yy, xx = int(y - z) + dy, int(x) + dx + (swing if dy >= 2 else 0)
                     canvas[yy, xx] = C('stone_warm', 4 - dy * 0.5 - dx)
                     cm[yy, xx] = True
         foot_y = 168
@@ -317,7 +393,7 @@ def fire_frames():
     for i in range(n):
         t = i / n * core.LOOP / 9 * 3
         out.append((('flames', '-', i), frame(lambda b, t=t: SB.draw_fire(b, pv[0], pv[1] - 2, t, 1.0, logs=False))))
-    anims['flames'] = (n, 5)
+    anims['flames'] = (n, 5, 'loop')
     for i in range(2):
         def embers(b, i=i):
             for k in range(-5, 6):
@@ -326,7 +402,7 @@ def fire_frames():
                 if abs(k) < 3:
                     b[pv[1] - 2, pv[0] + k] = C('fire', 2 + glow * 2)
         out.append((('embers', '-', i), frame(embers)))
-    anims['embers'] = (2, 20)
+    anims['embers'] = (2, 20, 'loop')
     for i in range(4):
         def smoke(b, i=i):
             rad = 1.5 + i * 1.6
@@ -356,7 +432,7 @@ def fire_frames():
                 b[y, x - 1] = C('wool', 3)
                 b[y, x + 1] = C('wool', 3)
         out.append((('moth', '-', i), frame(moth)))
-    anims['moth'] = (2, 3)
+    anims['moth'] = (2, 3, 'loop')
     return out, size, pv, anims
 
 
@@ -381,7 +457,7 @@ def sheep_frames():
             s = mirror(spr) if flip else spr
             rgb, m = place(s, size, pv)
             frames.append((('lie', facing, i), codes(rgb, m)))
-    return frames, size, pv, {'graze': (4, 36), 'lie': (2, 48)}
+    return frames, size, pv, {'graze': (4, 36, 'loop'), 'lie': (2, 48, 'loop')}
 
 
 def sheep_lying(i):
@@ -419,6 +495,7 @@ def main():
                             'each band [x, y, w, h] on its canvas, for the cutaway.',
                    'bld_broch': {'band': BAND, 'top': top, 'bands': nb, 'boxes': boxes}}, f, indent=2)
         f.write('\n')
+    write_buildings(tufts=wall_tufts())
     # The flagged floor.
     frames, size, pv = floor_s1()
     write('decal_broch', sheet_text(
@@ -426,16 +503,8 @@ def main():
         ['The broch\'s old flagged floor, uncovered when the court was cleared for the sail shelter (S1),',
          'centred on the broch; flat, under people.']))
     # The sails.
-    for name, stage, about in (('prop_sail_leanto', 's0', 'S0: the torn sail as a lean-to against the north-west inner wall on a broken oar and two forked sticks.'),
-                               ('prop_sail_roof', 's1', 'S1: the sail stretched over the north of the court on a ridge pole and two posts, the eave 46 px up; drying lines of split fish.')):
-        spr, at = sail_sprite(stage)
-        print(f'{name}: anchor {at[0] - B.CX:+.1f}, {at[1] - B.CY:+.1f} px from the broch centre')
-        sz = (spr.w + 2, spr.h + 2)
-        pvt = (spr.ax + 1, sz[1] - 1)
-        rgb, m = place(spr, sz, pvt)
-        write(name, sheet_text(name, 'prop', sz, pvt, [((stage, '-', 0), codes(rgb, m))], {stage: (1, 1)},
-                               [about, 'From the mockup\'s ray-cast sail, with its posts.'],
-                               shadow=f'{max(8, sz[0] // 2)}x6'))
+    for name, stage in (('prop_sail_leanto', 's0'), ('prop_sail_roof', 's1')):
+        write_sail(name, stage, SAIL_ABOUT[stage])
     # The camp's things.
     props = camp_props()
     size, pv = (48, 54), (24, 52)
@@ -466,4 +535,20 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if sys.argv[1:] == ['floor']:
+        # Only the S1 floor decal (no other sheet repainted).
+        frames, size, pv = floor_s1()
+        write('decal_broch', sheet_text(
+            'decal_broch', 'decal', size, pv, frames, {'flags': (1, 1)},
+            ['The broch\'s old flagged floor, uncovered when the court was cleared for the sail shelter (S1),',
+             'centred on the broch; flat, under people.']))
+    elif sys.argv[1:] == ['sails']:
+        # Only the two sails (no other sheet repainted).
+        write_sail('prop_sail_leanto', 's0', SAIL_ABOUT['s0'])
+        write_sail('prop_sail_roof', 's1', SAIL_ABOUT['s1'])
+    elif sys.argv[1:] == ['tufts']:
+        # Only the wall-head tufts, into assets/art/buildings.json (no sheets repainted).
+        write_buildings(tufts=wall_tufts())
+        print('wrote the wall-head tufts')
+    else:
+        main()

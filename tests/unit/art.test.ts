@@ -120,9 +120,11 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
     ]);
   });
 
+  // It regenerates every sheet and atlas in memory: Stage 7's broch, camp and work loops made that
+  // longer than the default five seconds.
   it('finds generated sheets and atlases in step with their sources', () => {
     expect(staleArtFiles()).toEqual([]);
-  });
+  }, 30_000);
 
   const lint = (body: string, header = HEADER) =>
     lintSheet(compileSheet(`${header}\n${body}`, 't.txt', palette), palette).map((i) => i.reason);

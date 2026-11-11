@@ -22,12 +22,12 @@
     "graze": {
       "frames": 4,
       "ticks": 36,
-      "loop": false
+      "loop": true
     },
     "lie": {
       "frames": 2,
       "ticks": 48,
-      "loop": false
+      "loop": true
     }
   },
   "events": {},

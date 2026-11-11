@@ -211,6 +211,9 @@ export function campUses(
   actors: Readonly<Record<Id, OnFootActor>>,
 ): PlacedUse[] {
   const out: PlacedUse[] = [];
+  // The camp's work begins once Hild has led the steerer to the broch (Book 4 Chapter 1 beat 2;
+  // decision S7-26): the opening on the strand offers only its own prompts.
+  if (world.facts[FACT_AT_BROCH] !== true) return out;
   for (const site of activeSites(world, ctx, map.zone)) {
     const use = siteUse(world, ctx, site);
     if (use !== null) out.push({ use, x: site.x * map.tile, y: site.y * map.tile });

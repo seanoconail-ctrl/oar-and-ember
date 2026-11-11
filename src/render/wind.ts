@@ -41,6 +41,8 @@ export function gustAt(wind: Wind, x: number, y: number, t: number): number {
 /** A slow sway that never stops, out of step between plants (each has its own phase). */
 /** The period of the plants' sway, seconds. */
 export const SWAY_PERIOD = 3.6;
+/** How far a plant sways in a lull, in pixels either way (full motion). */
+export const SWAY_CALM = 1.4;
 
 export function swayAt(t: number, phase: number, period = SWAY_PERIOD): number {
   return (
@@ -67,7 +69,9 @@ export function plantLean(
 ): number {
   const g = gust ?? gustAt(wind, x, y, t);
   const push = wind.dirX * wind.strength * (0.6 + (tall ? 2.6 : 1.9) * g);
-  const sway = swayAt(t, phase) * (reducedMotion ? 0.35 : 0.8 + 0.6 * g);
+  // Each plant sways on its own phase even in a lull, by more than a pixel either way, so a
+  // field of grass keeps moving with the camera still (Book 7 section 14; decision S7-23).
+  const sway = swayAt(t, phase) * (reducedMotion ? 0.35 : SWAY_CALM + 0.6 * g);
   let lean = push + sway;
   for (const w of walkers) {
     const dx = x - w.x;

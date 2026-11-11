@@ -23,6 +23,7 @@ import { formatString } from '../../src/content/strings.ts';
 import { minutesIntoDay } from '../../src/sim/calendar/calendar.ts';
 import {
   campContext,
+  campUses,
   FACT_AT_BROCH,
   FACT_TUTORIAL_COMPLETE,
   foodRd,
@@ -82,6 +83,16 @@ function toTheBroch(seed = 'home'): { sim: Simulation; events: SimEvent[]; bot: 
 }
 
 describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
+  it('offers no camp work during the opening, only once at the broch (decision S7-26)', () => {
+    const { sim } = play('gate');
+    const onFoot = sim.state.onFoot;
+    const strand = land.maps.get('ZONE_SK_STRAND');
+    if (onFoot === null || strand === undefined) throw new Error('no strand');
+    expect(campUses(sim.state, camp, strand, onFoot.actors)).toEqual([]);
+    sim.state.facts[FACT_AT_BROCH] = true;
+    expect(campUses(sim.state, camp, strand, onFoot.actors).length).toBeGreaterThan(0);
+  });
+
   it('leads up from the strand, sits by the fire ring and says what is needed', () => {
     const { sim, events } = toTheBroch();
     const hild = sim.state.onFoot?.actors['C_HILD'];
@@ -215,6 +226,7 @@ describe('Stage 7 check 3: the action adds output at skill; missed timing never 
     const results: Record<string, number> = {};
     for (const press of ['good', 'late', 'none'] as const) {
       const { sim, bot } = play(`wood-${press}`);
+      sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
       if (sim.state.onFoot !== null) sim.state.onFoot.items = [];
       bot.doAt('wrack_1', press);
       results[press] = home(sim.state).stores['RES_DRIFTWOOD'] ?? 0;
@@ -230,6 +242,7 @@ describe('Stage 7 check 3: the action adds output at skill; missed timing never 
   it('works faster at a higher skill', () => {
     const at = (skill: number) => {
       const { sim, bot } = play(`skill-${skill}`);
+      sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
       sim.state.player.skills['gathering'] = skill as 0;
       bot.doAt('wrack_2', 'none');
       return home(sim.state).stores['RES_DRIFTWOOD'] ?? 0;
@@ -309,6 +322,7 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
 
   it('never empties the bar on its own, and counts the hours towards a hard day', () => {
     const { sim, bot } = play('hard');
+    sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
     sim.state.player.stamina.current = 1;
     for (let i = 0; i < 26; i++) bot.doAt('wrack_3', 'none');
     expect(sim.state.player.stamina.current).toBeGreaterThan(0);

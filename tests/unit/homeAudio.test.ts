@@ -115,7 +115,7 @@ describe('home music (Book 11 sections 03 and 12; Stage 7)', () => {
     const stop = sink.calls.find(
       (c) => c.kind === 'music' && (c.detail as { type: string }).type === 'stop',
     );
-    expect((stop?.detail as { at: number }).at).toBeCloseTo(60 / 54 * 2);
+    expect((stop?.detail as { at: number }).at).toBeCloseTo((60 / 54) * 2);
   });
 });
 

@@ -10,11 +10,11 @@ pivot: 12,26
 footprint: 24x30
 facings: -
 placeholder: false
-anim.flames: frames 6, ticks 5
-anim.embers: frames 2, ticks 20
+anim.flames: frames 6, ticks 5, loop
+anim.embers: frames 2, ticks 20, loop
 anim.smoke: frames 4, ticks 1
 anim.spark: frames 2, ticks 1
-anim.moth: frames 2, ticks 3
+anim.moth: frames 2, ticks 3, loop
 
 frame flames - 0
 ........................

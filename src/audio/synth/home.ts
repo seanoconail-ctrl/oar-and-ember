@@ -434,7 +434,9 @@ export class HomeAmbience {
   }
 
   #plan(at: number): void {
-    this.#next = new Map(LIFE[this.#phase].map(([c, lo, hi]) => [c, at + 0.5 + this.#r() * (hi - lo) * 0.5]));
+    this.#next = new Map(
+      LIFE[this.#phase].map(([c, lo, hi]) => [c, at + 0.5 + this.#r() * (hi - lo) * 0.5]),
+    );
   }
 
   schedule(until: number): void {

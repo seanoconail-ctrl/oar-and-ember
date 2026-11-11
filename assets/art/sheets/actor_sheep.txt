@@ -11,8 +11,8 @@ footprint: 28x22
 facings: s n e w
 placeholder: false
 shadow: 16x4
-anim.graze: frames 4, ticks 36
-anim.lie: frames 2, ticks 48
+anim.graze: frames 4, ticks 36, loop
+anim.lie: frames 2, ticks 48, loop
 pose.lie: lying
 
 frame graze s 0

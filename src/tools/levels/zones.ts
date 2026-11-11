@@ -38,6 +38,11 @@ export interface ZonePlan {
   readonly seed: string;
   /** The seed of the island's terrain (warp, stream, skerries), if not `seed`. */
   readonly terrainSeed?: string;
+  /**
+   * The share of the sward's places that grow a grass tuft (0.42 by default, the strand's): the
+   * steading's grazed turf is thicker (Stage 7 mockup; decision S7-23).
+   */
+  readonly sward?: number;
   /** The window of the block grid, in blocks. */
   readonly blocks: {
     readonly x: number;
@@ -70,6 +75,12 @@ export interface ZonePlan {
     readonly outer: number;
     /** Tiles of the wall left open (offsets from the centre tile): the door and the breach. */
     readonly openings: readonly (readonly [number, number])[];
+    /**
+     * The trodden earth in the court round the fire (centre and radius, tiles), and a trodden way
+     * from it to the door; the rest of the court is turf (the Stage 7 mockup). Without it, the
+     * whole court is trodden earth.
+     */
+    readonly trodden?: { readonly x: number; readonly y: number; readonly r: number };
   };
   /** Worn footpaths, as polylines in tiles. */
   readonly paths?: readonly (readonly (readonly [number, number])[])[];
@@ -233,7 +244,21 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     for (let ty = 0; ty < height; ty++) {
       for (let tx = 0; tx < width; tx++) {
         const r = Math.hypot(tx + 0.5 - broch.x, ty + 0.5 - broch.y);
-        if (r <= broch.outer) set(tx, ty, r < broch.inner ? ':' : 'r');
+        if (r > broch.outer) continue;
+        if (r >= broch.inner) {
+          set(tx, ty, 'r');
+          continue;
+        }
+        const t = broch.trodden;
+        if (t === undefined) {
+          set(tx, ty, ':');
+          continue;
+        }
+        // Trodden round the fire, ragged at the edge, and along the way to the door (south).
+        const near =
+          Math.hypot(tx + 0.5 - t.x, ty + 0.5 - t.y) + (noise(seed + 9, tx, ty, 2) - 0.5);
+        const door = Math.abs(tx + 0.5 - broch.x) < 0.9 && ty + 0.5 > t.y;
+        set(tx, ty, near < t.r || door ? ':' : ',');
       }
     }
     for (const [dx, dy] of broch.openings)
@@ -274,7 +299,15 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
   }
 
   const rows = tiles.map((r) => r.join(''));
-  const furnished = furnish(rows, width, height, cyrb53(plan.seed), plan.cuts, plan.paths ?? []);
+  const furnished = furnish(
+    rows,
+    width,
+    height,
+    cyrb53(plan.seed),
+    plan.cuts,
+    plan.paths ?? [],
+    plan.sward ?? 0.42,
+  );
   return {
     zone: plan.zone,
     about: plan.about,
@@ -316,6 +349,7 @@ function furnish(
   seed: number,
   cuts: readonly (readonly [number, number])[],
   polylines: readonly (readonly (readonly [number, number])[])[] = [],
+  sward = 0.42,
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -417,7 +451,7 @@ function furnish(
         else if (tussock > 0.55 && r(24, x, y) < (tussock - 0.5) * 2.2) plants.push([1, px, py, v]);
         else if (drift > 0.62 && r(25, x, y) < (drift - 0.6) * 3)
           plants.push([drift > 0.7 ? 4 : 5, px, py, v]);
-        else if (r(26, x, y) < 0.42) plants.push([0, px, py, v]);
+        else if (r(26, x, y) < sward) plants.push([0, px, py, v]);
       } else if (c === '.' && nearBank(px, py, 4)) {
         // Marram in clumps on the dunes under the bank, sand showing between them.
         const clump = noise(seed + 32, px / T, py / T, 1.6);

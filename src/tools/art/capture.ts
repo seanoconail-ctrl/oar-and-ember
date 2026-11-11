@@ -681,7 +681,7 @@ async function campCapture(
     if (at === undefined) throw new Error(`no camp site ${key}`);
     return at;
   };
-  const day = await campStill(browser, out, 'broch-day', 'time=16:30&wood=3&tended=1');
+  const day = await campStill(browser, out, 'broch-day', 'time=16:30&fire=lit&wood=3&tended=1');
   const night = await campStill(browser, out, 'broch-night', 'time=23:00&fire=lit&wood=3&tended=1');
   const s1 = await campStill(
     browser,
@@ -790,7 +790,7 @@ function campReadme(label: string, strand: number, c: CampCaptureResult): string
     '| File | What it is |',
     '|---|---|',
     '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
-    '| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30: the lean-to, the salvage, the cold fire ring with wood laid, Hild by it, sheep outside |',
+    '| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30, as the mockup: the lean-to, the salvage, the fire burning in its ring with Hild by it, turf in the court and on the wall head, sheep outside |',
     '| `broch-night.png`, `broch-night@2x.png` | The same at 23:00, the fire lit: flames, smoke and the flickering warm pool under the night grade |',
     '| `broch-s1.png`, `broch-s1@2x.png` | The camp raised to S1 by day: the sail roof, beds, the kerbed hearth burning, the floor cleared to the flags, the door |',
     '| `broch-*-motion.png` | Each still with the cells that do not keep moving tinted red |',

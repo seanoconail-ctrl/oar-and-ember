@@ -19,12 +19,12 @@
     "flames": {
       "frames": 6,
       "ticks": 5,
-      "loop": false
+      "loop": true
     },
     "embers": {
       "frames": 2,
       "ticks": 20,
-      "loop": false
+      "loop": true
     },
     "smoke": {
       "frames": 4,
@@ -39,7 +39,7 @@
     "moth": {
       "frames": 2,
       "ticks": 3,
-      "loop": false
+      "loop": true
     }
   },
   "events": {},
