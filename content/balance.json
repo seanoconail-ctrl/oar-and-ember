@@ -1154,8 +1154,8 @@
      "Value": "50% vitality"
     },
     {
-     "Key": "downedBleedOut",
-     "Value": "45 seconds unless carried or treated"
+     "Key": "downed",
+     "Value": "Downed allies do not bleed out (design addendum 2.3 section 7); see Downed and carried"
     },
     {
      "Key": "secondWind",
@@ -1172,6 +1172,36 @@
     {
      "Key": "hitStop",
      "Value": "3 ticks"
+    }
+   ],
+   "downedAndCarried": [
+    {
+     "Key": "safePlaces",
+     "Value": "The boat, the village, or on a journey a safe camp or a waystation"
+    },
+    {
+     "Key": "broughtHome",
+     "Value": "A downed ally carried to a safe place before the scene ends lives, with a serious wound (section 08, Wounds)"
+    },
+    {
+     "Key": "leftBehind",
+     "Value": "A downed ally left at the end of a scene is captured by enemies who take captives (Norse raiders, Gaelic lords, Orm's men, the Church's hired swords) and killed by the rest (outlaws in a hurry, wolves, the dead)"
+    },
+    {
+     "Key": "carrySpeed",
+     "Value": "The carry speed (section 02); the carrier cannot fight while carrying"
+    },
+    {
+     "Key": "finishWarning",
+     "Value": "Berserkers and named cruel enemies may finish the downed, after a visible 3 s warning (a raised weapon, a shout)"
+    },
+    {
+     "Key": "ransomRescue",
+     "Value": "Captives can be rescued or ransomed later (section 04, Wages, debts and payments)"
+    },
+    {
+     "Key": "ransMercy",
+     "Value": "The Rán's mercy option prevents unscripted crew deaths; scripted deaths still happen"
     }
    ],
    "staminaInTraversal": [
@@ -1741,11 +1771,29 @@
     {
      "Deed": "HOSTAGE_TAKEN",
      "Gain": "+1",
-     "Mercy": "-1",
+     "Mercy": "0",
      "Glory": "0",
      "Kin": "0",
      "Faith": "0",
      "Word": "0"
+    },
+    {
+     "Deed": "Captive harmed",
+     "Gain": "0",
+     "Mercy": "-3",
+     "Glory": "-1",
+     "Kin": "0",
+     "Faith": "-1",
+     "Word": "-2"
+    },
+    {
+     "Deed": "Theft from the household's own stores",
+     "Gain": "-2",
+     "Mercy": "0",
+     "Glory": "-1",
+     "Kin": "-3",
+     "Faith": "0",
+     "Word": "-3"
     },
     {
      "Deed": "PROMISE_KEPT",
@@ -1791,6 +1839,176 @@
      "Kin": "+2",
      "Faith": "0",
      "Word": "0"
+    }
+   ],
+   "deedReactionsByCulture": [
+    {
+     "Deed": "KILLING in open fight",
+     "Norse": "x1.0 (honourable if bold)",
+     "Gaels": "x1.5 against (an act of war; éraic owed)",
+     "Church": "x1.2 against (a sin, though kings do it)",
+     "Keepers": "x0.5 (the sea's business)",
+     "Saltvik": "x1.0 (bad for trade)"
+    },
+    {
+     "Deed": "THEFT",
+     "Norse": "x1.0; the Glory-minded scorn it",
+     "Gaels": "x0.8 against (less grave than burning)",
+     "Church": "x1.0 against (a sin)",
+     "Keepers": "x1.0 against (taking without giving)",
+     "Saltvik": "x1.5 against (cheating the bargain)"
+    },
+    {
+     "Deed": "CIVILIAN_KILLED",
+     "Norse": "x1.0 against (no glory, bad luck, vengeance)",
+     "Gaels": "x2.0 against (outrage; éraic by rank)",
+     "Church": "x2.0 against (a grave sin)",
+     "Keepers": "x1.5 against (blood on the shore)",
+     "Saltvik": "x1.5 against"
+    },
+    {
+     "Deed": "SURRENDERED_KILLED",
+     "Norse": "x1.5 against (níð-worthy shame)",
+     "Gaels": "x1.5 against",
+     "Church": "x2.0 against (murder)",
+     "Keepers": "x1.5 against (oath-breaking)",
+     "Saltvik": "x1.5 against"
+    },
+    {
+     "Deed": "KILLING_HIDDEN (proposal)",
+     "Norse": "x2.0 against (murder)",
+     "Gaels": "x1.5 against",
+     "Church": "x1.5 against",
+     "Keepers": "x0",
+     "Saltvik": "x1.0 against"
+    },
+    {
+     "Deed": "HOSPITALITY_BROKEN (proposal)",
+     "Norse": "x2.0 against",
+     "Gaels": "x2.0 against (the briugu's curse)",
+     "Church": "x1.5 against",
+     "Keepers": "x1.5 against",
+     "Saltvik": "x2.0 against"
+    },
+    {
+     "Deed": "SACRILEGE at a church",
+     "Norse": "x0.2 against (bad luck to the superstitious)",
+     "Gaels": "x1.5 against",
+     "Church": "x3.0 against (the worst of crimes)",
+     "Keepers": "x0",
+     "Saltvik": "x0.5 against"
+    },
+    {
+     "Deed": "SACRILEGE at an old shrine or mound",
+     "Norse": "x1.5 against (the land-spirits)",
+     "Gaels": "x1.0 against (the aos sí remember)",
+     "Church": "x1.0 for (a good work)",
+     "Keepers": "x2.0 against",
+     "Saltvik": "x0.5 against"
+    },
+    {
+     "Deed": "BLOOD_PRICE_PAID / BLOOD_PRICE_TAKEN (proposal)",
+     "Norse": "x1.0 for; Glory 2 or more against",
+     "Gaels": "x1.5 for",
+     "Church": "x1.0 for",
+     "Keepers": "x0",
+     "Saltvik": "x1.5 for"
+    },
+    {
+     "Deed": "HOSTAGE_TAKEN",
+     "Norse": "x0 (ordinary dealing)",
+     "Gaels": "x0",
+     "Church": "x0",
+     "Keepers": "x0",
+     "Saltvik": "x0"
+    },
+    {
+     "Deed": "PROMISE_BROKEN",
+     "Norse": "x1.5 against",
+     "Gaels": "x2.0 against (sureties ruined)",
+     "Church": "x1.5 against (a sin)",
+     "Keepers": "x3.0 against",
+     "Saltvik": "x2.0 against"
+    },
+    {
+     "Deed": "RITES_DENIED (proposal)",
+     "Norse": "x1.5 against (invites draugar)",
+     "Gaels": "x1.0 against",
+     "Church": "x2.0 against (the soul denied)",
+     "Keepers": "x1.5 against",
+     "Saltvik": "x1.0 against"
+    },
+    {
+     "Deed": "CHALLENGE_REFUSED (proposal)",
+     "Norse": "x1.5 against (cowardice; níð)",
+     "Gaels": "x1.0 against",
+     "Church": "x1.0 for (righteous)",
+     "Keepers": "x0",
+     "Saltvik": "x0"
+    }
+   ],
+   "traits": [
+    {
+     "Key": "traitsPerPerson",
+     "Value": "2 to 4; one or two shown at once, the rest discovered over 5 to 20 days"
+    }
+   ],
+   "likesAndDislikes": [
+    {
+     "Key": "likeMet",
+     "Value": "Happiness +5 that day (a liked food, activity, place, weather or person)"
+    },
+    {
+     "Key": "dislikeMet",
+     "Value": "Happiness -5 that day"
+    },
+    {
+     "Key": "likedGift",
+     "Value": "Friendship +3 (as a gift that suits them)"
+    },
+    {
+     "Key": "dislikedGift",
+     "Value": "Friendship -2"
+    },
+    {
+     "Key": "perPerson",
+     "Value": "3 to 5 likes and 2 to 3 dislikes"
+    }
+   ],
+   "relationships": [
+    {
+     "Key": "friends",
+     "Value": "Two residents become friends at +40 between them, rivals at -40 (shared events move it: a shared fight +8, a meal together +1, a dispute lost to the other -10)"
+    },
+    {
+     "Key": "mentor",
+     "Value": "A resident two skill levels above another, after 10 days working beside them"
+    },
+    {
+     "Key": "drinkingCompanions",
+     "Value": "After three feasts drinking together"
+    },
+    {
+     "Key": "griefOfFriend",
+     "Value": "A friend's death: happiness -25 x1.5"
+    },
+    {
+     "Key": "rivalDisputes",
+     "Value": "Disputes between rivals x2"
+    },
+    {
+     "Key": "noRomance",
+     "Value": "No romance ties form; existing marriages and family ties remain"
+    }
+   ],
+   "stances": [
+    {
+     "Key": "kinds",
+     "Value": "Conventional, sceptical, cynical, transgressive (Book 5)"
+    },
+    {
+     "Key": "shift",
+     "Value": "After a strong event (a deed worth 15 or more friendship, a tie's death, a bargain), at most once per 30 days"
     }
    ],
    "happinessFriendshipAndFear": [
@@ -2742,11 +2960,11 @@
    "timersAndRules": [
     {
      "Key": "ormTakesSkarvholm",
-     "Value": "About day 228"
+     "Value": "Typically about day 228, after the move ashore (a gate)"
     },
     {
      "Key": "returnWindow",
-     "Value": "Days 241 to 252; one retry before day 255"
+     "Value": "Typically days 241 to 252; one retry before the household sets out for the final battle"
     },
     {
      "Key": "hornToReinforcement",
@@ -2847,306 +3065,1014 @@
     }
    ]
   },
-  "theMainland": {
-   "areas": [
+  "theMainlandJourneys": {
+   "sitesAndRoutes": [
     {
      "ID": "MAIN_CARRICK_STRAND",
-     "Area": "Carrick Strand",
-     "Type": "Coast, home site A",
-     "Known at start": "Yes (by sea)",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Carrick Strand",
+     "Kind": "Site, home site A",
+     "Reached by ship": "Yes"
     },
     {
      "ID": "MAIN_CARRICK_LANDING",
-     "Area": "Carrick Landing",
-     "Type": "Coast",
-     "Known at start": "Yes",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Carrick Landing",
+     "Kind": "Site",
+     "Reached by ship": "Yes"
     },
     {
      "ID": "MAIN_ARDCARN",
-     "Area": "Ardcarn",
-     "Type": "Village",
-     "Known at start": "Yes",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "Ardcarn",
+     "Kind": "Site",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_LOCH_CARN",
-     "Area": "Loch Carn and Brigid's Well",
-     "Type": "Lake",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
-    },
-    {
-     "ID": "MAIN_KILBRECC",
-     "Area": "Kilbrecc",
-     "Type": "Monastery, coast",
-     "Known at start": "Yes",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Loch Carn and Brigid's Well",
+     "Kind": "Site",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_KILBRECC_FARMS",
-     "Area": "The tenant farms",
-     "Type": "Farmland",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "The tenant farms",
+     "Kind": "Site",
+     "Reached by ship": "No"
+    },
+    {
+     "ID": "MAIN_KILBRECC",
+     "Place": "Kilbrecc",
+     "Kind": "Site",
+     "Reached by ship": "Yes"
     },
     {
      "ID": "MAIN_BLACKWOOD_EDGE",
-     "Area": "Fiodh Dubh: the edge",
-     "Type": "Oakwood",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "The Black Wood path",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_BLACKWOOD_HEART",
-     "Area": "Fiodh Dubh: the heart",
-     "Type": "Old forest, dungeon",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "The hill-folk's leave"
+     "Place": "The Black Wood heart",
+     "Kind": "Site, dungeon",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_MOIN_MHOR",
-     "Area": "Móin Mhór, the Great Bog",
-     "Type": "Bog",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "Móin Mhór: the turf village and bog edge",
+     "Kind": "Site",
+     "Reached by ship": "No"
+    },
+    {
+     "ID": "MAIN_PLANK_ROAD",
+     "Place": "The plank road",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_TRACKWAY",
-     "Area": "The Drowned Trackway",
-     "Type": "Bog, dungeon",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Summer and autumn, or a winter cold snap"
+     "Place": "The Drowned Trackway",
+     "Kind": "Site, dungeon",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_SLIABH_CARN",
-     "Area": "Sliabh Carn",
-     "Type": "Mountain",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "Sliabh Carn",
+     "Kind": "Site",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_CAILLEACH_CAVE",
-     "Area": "The Cailleach's Cave",
-     "Type": "Mountain cave, dungeon",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Closed by snow in winter"
+     "Place": "The Cailleach's Cave",
+     "Kind": "Site, dungeon",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_HIGH_PASS",
-     "Area": "The High Pass",
-     "Type": "Pass",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Landslide until cleared"
+     "Place": "The High Pass",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_DUN_FIACH",
-     "Area": "Dún Fiach",
-     "Type": "Royal fort",
-     "Known at start": "Yes (by sea)",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Dún Fiach",
+     "Kind": "Site",
+     "Reached by ship": "Yes (its landing)"
     },
     {
      "ID": "MAIN_RIDGE_ROAD",
-     "Area": "The Ridge Road",
-     "Type": "Road",
-     "Known at start": "Yes",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "The Ridge Road",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_FORD",
-     "Area": "The River Ford",
-     "Type": "River crossing",
-     "Known at start": "Yes",
-     "Reached by ship": "No",
-     "Opens": "Closed in spate unless bridged"
+     "Place": "The river path and the Ford",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_SALT_PANS",
-     "Area": "Ottar's farms and salt pans",
-     "Type": "Farmland, coast",
-     "Known at start": "Yes",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Ottar's farms and salt pans",
+     "Kind": "Site",
+     "Reached by ship": "Yes"
     },
     {
      "ID": "MAIN_SALTVIK",
-     "Area": "Saltvik",
-     "Type": "Town, coast",
-     "Known at start": "Yes",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Saltvik",
+     "Kind": "Site",
+     "Reached by ship": "Yes"
     },
     {
      "ID": "MAIN_SALTNESS",
-     "Area": "Saltness headland",
-     "Type": "Coast, home site B",
-     "Known at start": "Yes",
-     "Reached by ship": "From Chapter 3",
-     "Opens": "Open"
+     "Place": "Saltness",
+     "Kind": "Site, home site B",
+     "Reached by ship": "Yes"
+    },
+    {
+     "ID": "MAIN_MOOR_ROAD",
+     "Place": "The moor road",
+     "Kind": "Route",
+     "Reached by ship": "No"
     },
     {
      "ID": "MAIN_MOUND_FIELD",
-     "Area": "The Mound Field and the moor",
-     "Type": "Burial ground, moor, dungeon",
-     "Known at start": "No",
-     "Reached by ship": "No",
-     "Opens": "Open"
+     "Place": "The Mound Field",
+     "Kind": "Site, dungeon",
+     "Reached by ship": "No"
     }
    ],
-   "connections": [
+   "network": [
     {
      "From": "Carrick Strand",
      "To": "Carrick Landing",
-     "Minutes": "1",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Carrick Landing",
      "To": "Ardcarn",
-     "Minutes": "1.5",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Ardcarn",
      "To": "Loch Carn",
-     "Minutes": "2",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Ardcarn",
      "To": "Kilbrecc farms",
-     "Minutes": "2",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Kilbrecc farms",
      "To": "Kilbrecc",
-     "Minutes": "1",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Ardcarn",
-     "To": "Black Wood edge",
-     "Minutes": "2.5",
-     "Condition": ""
+     "To": "The Black Wood path (south end)",
+     "Kind": "Road",
+     "Hours": "2"
     },
     {
-     "From": "Black Wood edge",
-     "To": "Black Wood heart",
-     "Minutes": "3",
-     "Condition": "Opens with the hill-folk's leave (an offering, a kept promise or the right words)"
+     "From": "The Black Wood path (south end)",
+     "To": "The Black Wood path (north end)",
+     "Kind": "Route",
+     "Hours": "2.5"
     },
     {
-     "From": "Black Wood edge",
+     "From": "The Black Wood path (south end)",
+     "To": "The Black Wood heart",
+     "Kind": "Route",
+     "Hours": "1.25"
+    },
+    {
+     "From": "The Black Wood path (north end)",
+     "To": "The Black Wood heart",
+     "Kind": "Route",
+     "Hours": "1.25"
+    },
+    {
+     "From": "The Black Wood path (north end)",
      "To": "Móin Mhór",
-     "Minutes": "2.5",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Móin Mhór",
-     "To": "Drowned Trackway",
-     "Minutes": "2",
-     "Condition": "Summer and autumn only, or frozen in a winter cold snap"
+     "To": "The plank road (west end)",
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
-     "From": "Móin Mhór",
+     "From": "The plank road (west end)",
+     "To": "The plank road (east end)",
+     "Kind": "Route",
+     "Hours": "2"
+    },
+    {
+     "From": "The plank road (west end)",
+     "To": "The Drowned Trackway",
+     "Kind": "Route",
+     "Hours": "1"
+    },
+    {
+     "From": "The plank road (east end)",
+     "To": "The Drowned Trackway",
+     "Kind": "Route",
+     "Hours": "1"
+    },
+    {
+     "From": "The plank road (east end)",
      "To": "Sliabh Carn",
-     "Minutes": "3",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Sliabh Carn",
-     "To": "Cailleach's Cave",
-     "Minutes": "2",
-     "Condition": "Closed by snow in winter"
+     "To": "The Cailleach's Cave",
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Sliabh Carn",
-     "To": "High Pass",
-     "Minutes": "2",
-     "Condition": ""
+     "To": "The High Pass (north end)",
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
-     "From": "High Pass",
+     "From": "The High Pass (north end)",
+     "To": "The High Pass (south end)",
+     "Kind": "Route",
+     "Hours": "2.5"
+    },
+    {
+     "From": "The High Pass (south end)",
      "To": "Dún Fiach",
-     "Minutes": "2.5",
-     "Condition": "Landslide until cleared"
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Kilbrecc",
-     "To": "Ridge Road",
-     "Minutes": "2",
-     "Condition": ""
+     "To": "The Ridge Road (west end)",
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
-     "From": "Ridge Road",
+     "From": "The Ridge Road (west end)",
+     "To": "The Ridge Road (east end)",
+     "Kind": "Route",
+     "Hours": "2"
+    },
+    {
+     "From": "The Ridge Road (west end)",
+     "To": "The Ridge Road (south branch)",
+     "Kind": "Route",
+     "Hours": "2"
+    },
+    {
+     "From": "The Ridge Road (east end)",
+     "To": "The Ridge Road (south branch)",
+     "Kind": "Route",
+     "Hours": "2"
+    },
+    {
+     "From": "The Ridge Road (east end)",
      "To": "Dún Fiach",
-     "Minutes": "2",
-     "Condition": "Guards attack if Dún Fiach is hostile"
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
-     "From": "Ridge Road",
-     "To": "River Ford",
-     "Minutes": "2.5",
-     "Condition": ""
+     "From": "The Ridge Road (south branch)",
+     "To": "The river path (north end)",
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
-     "From": "River Ford",
+     "From": "The river path (north end)",
+     "To": "The river path (south end)",
+     "Kind": "Route",
+     "Hours": "2"
+    },
+    {
+     "From": "The river path (south end)",
      "To": "Salt pans",
-     "Minutes": "2",
-     "Condition": "Impassable in spate (spring days 1 to 20; autumn storms) unless bridged"
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
      "From": "Salt pans",
      "To": "Saltvik",
-     "Minutes": "1",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Saltvik",
      "To": "Saltness",
-     "Minutes": "1",
-     "Condition": ""
+     "Kind": "Road",
+     "Hours": "0.5"
     },
     {
      "From": "Salt pans",
-     "To": "Mound Field and moor",
-     "Minutes": "2.5",
-     "Condition": ""
+     "To": "The moor road (south end)",
+     "Kind": "Road",
+     "Hours": "1"
     },
     {
-     "From": "Mound Field and moor",
+     "From": "The moor road (south end)",
+     "To": "The moor road (north end)",
+     "Kind": "Route",
+     "Hours": "2.5"
+    },
+    {
+     "From": "The moor road (south end)",
+     "To": "The Mound Field",
+     "Kind": "Route",
+     "Hours": "1.25"
+    },
+    {
+     "From": "The moor road (north end)",
+     "To": "The Mound Field",
+     "Kind": "Route",
+     "Hours": "1.25"
+    },
+    {
+     "From": "The moor road (north end)",
      "To": "Móin Mhór",
-     "Minutes": "3",
-     "Condition": "Wolves in winter"
+     "Kind": "Road",
+     "Hours": "1.5"
     }
    ],
-   "travelAndTheOpeningMap": [
+   "journeyModifiers": [
     {
-     "Key": "quickTravel",
-     "Value": "Along known roads between waymarks, when no enemy is aware and the ground is not hostile"
+     "Key": "night",
+     "Value": "Road legs x1.5 at night, and riskier"
     },
     {
-     "Key": "quickTravelCost",
-     "Value": "1 game hour per real minute of the walk"
+     "Key": "cargoOrCattle",
+     "Value": "x1.5 when driving cattle or carrying cargo"
     },
+    {
+     "Key": "knownRoad",
+     "Value": "x0.8 on a road leg already travelled"
+    },
+    {
+     "Key": "kelpieBridle",
+     "Value": "Water crossings take half the time with the water-horse"
+    },
+    {
+     "Key": "blocks",
+     "Value": "A landslide, spate, snow or flood closes its leg until cleared, or forces the long way round"
+    },
+    {
+     "Key": "journeyEvent",
+     "Value": "25% of road legs are interrupted by a short playable scene (travellers, bandits, wolves, weather, a wounded stranger, or a discovery that adds a point of interest)"
+    },
+    {
+     "Key": "dayPlan",
+     "Value": "A day (06:00 to 02:00, 20 game hours) fits one or two nearby sites; far sites need a camp on the way, or the ship"
+    }
+   ],
+   "routeEncounters": [
+    {
+     "Key": "wanderers",
+     "Value": "50% of crossings meet wandering people (travellers, pilgrims, pedlars, herders, charcoal burners, patrols, outlaws, a lost traveller, a fleeing thrall, a hunting party)"
+    },
+    {
+     "Key": "hostileDay",
+     "Value": "20% of crossings by day meet a hostile encounter (bandits, outlaws, wolves, a boar, a hostile patrol)"
+    },
+    {
+     "Key": "hostileNight",
+     "Value": "33% of crossings at night"
+    },
+    {
+     "Key": "winterWolves",
+     "Value": "Hostile chance x1.5 on the High Pass and the moor road in winter"
+    },
+    {
+     "Key": "hostileFaction",
+     "Value": "Hostile chance x2 on a route held by a faction hostile to the household"
+    },
+    {
+     "Key": "cargo",
+     "Value": "Hostile chance x1.5 when carrying cargo or driving cattle"
+    },
+    {
+     "Key": "cleared",
+     "Value": "Hostile chance x0.5 once the household has driven out the route's outlaws"
+    },
+    {
+     "Key": "ambushSign",
+     "Value": "Every ambush shows a sign (a fallen tree, crows rising, a stretch gone quiet, fresh tracks) at least 6 tiles ahead; a keen-eyed companion sees it 3 tiles sooner"
+    }
+   ],
+   "shortestJourneys": [
+    {
+     "From": "Carrick Strand",
+     "To": "Carrick Landing",
+     "Hours": "0.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Ardcarn",
+     "Hours": "1"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Loch Carn",
+     "Hours": "2"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Kilbrecc farms",
+     "Hours": "2"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Kilbrecc",
+     "Hours": "2.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "The Black Wood heart",
+     "Hours": "4.25"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Móin Mhór",
+     "Hours": "6.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "The Drowned Trackway",
+     "Hours": "8"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Sliabh Carn",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "The Cailleach's Cave",
+     "Hours": "10.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Dún Fiach",
+     "Hours": "6"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Salt pans",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Saltvik",
+     "Hours": "10"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "Saltness",
+     "Hours": "10.5"
+    },
+    {
+     "From": "Carrick Strand",
+     "To": "The Mound Field",
+     "Hours": "9.25"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Ardcarn",
+     "Hours": "0.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Loch Carn",
+     "Hours": "1.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Kilbrecc farms",
+     "Hours": "1.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Kilbrecc",
+     "Hours": "2"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "The Black Wood heart",
+     "Hours": "3.75"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Móin Mhór",
+     "Hours": "6"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "The Drowned Trackway",
+     "Hours": "7.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Sliabh Carn",
+     "Hours": "9"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "The Cailleach's Cave",
+     "Hours": "10"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Dún Fiach",
+     "Hours": "5.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Salt pans",
+     "Hours": "9"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Saltvik",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "Saltness",
+     "Hours": "10"
+    },
+    {
+     "From": "Carrick Landing",
+     "To": "The Mound Field",
+     "Hours": "8.75"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Loch Carn",
+     "Hours": "1"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Kilbrecc farms",
+     "Hours": "1"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Kilbrecc",
+     "Hours": "1.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "The Black Wood heart",
+     "Hours": "3.25"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Móin Mhór",
+     "Hours": "5.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "The Drowned Trackway",
+     "Hours": "7"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Sliabh Carn",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "The Cailleach's Cave",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Dún Fiach",
+     "Hours": "5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Salt pans",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Saltvik",
+     "Hours": "9"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "Saltness",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Ardcarn",
+     "To": "The Mound Field",
+     "Hours": "8.25"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Kilbrecc farms",
+     "Hours": "2"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Kilbrecc",
+     "Hours": "2.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "The Black Wood heart",
+     "Hours": "4.25"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Móin Mhór",
+     "Hours": "6.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "The Drowned Trackway",
+     "Hours": "8"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Sliabh Carn",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "The Cailleach's Cave",
+     "Hours": "10.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Dún Fiach",
+     "Hours": "6"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Salt pans",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Saltvik",
+     "Hours": "10"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "Saltness",
+     "Hours": "10.5"
+    },
+    {
+     "From": "Loch Carn",
+     "To": "The Mound Field",
+     "Hours": "9.25"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Kilbrecc",
+     "Hours": "0.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "The Black Wood heart",
+     "Hours": "4.25"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Móin Mhór",
+     "Hours": "6.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "The Drowned Trackway",
+     "Hours": "8"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Sliabh Carn",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "The Cailleach's Cave",
+     "Hours": "9.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Dún Fiach",
+     "Hours": "4"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Salt pans",
+     "Hours": "7.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Saltvik",
+     "Hours": "8"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "Saltness",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Kilbrecc farms",
+     "To": "The Mound Field",
+     "Hours": "9.25"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "The Black Wood heart",
+     "Hours": "4.75"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Móin Mhór",
+     "Hours": "7"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "The Drowned Trackway",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Sliabh Carn",
+     "Hours": "8"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "The Cailleach's Cave",
+     "Hours": "9"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Dún Fiach",
+     "Hours": "3.5"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Salt pans",
+     "Hours": "7"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Saltvik",
+     "Hours": "7.5"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "Saltness",
+     "Hours": "8"
+    },
+    {
+     "From": "Kilbrecc",
+     "To": "The Mound Field",
+     "Hours": "9.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Móin Mhór",
+     "Hours": "2.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "The Drowned Trackway",
+     "Hours": "3.75"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Sliabh Carn",
+     "Hours": "5.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "The Cailleach's Cave",
+     "Hours": "6.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Dún Fiach",
+     "Hours": "8.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Salt pans",
+     "Hours": "7.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Saltvik",
+     "Hours": "7.75"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "Saltness",
+     "Hours": "8.25"
+    },
+    {
+     "From": "The Black Wood heart",
+     "To": "The Mound Field",
+     "Hours": "5"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "The Drowned Trackway",
+     "Hours": "1.5"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "Sliabh Carn",
+     "Hours": "3"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "The Cailleach's Cave",
+     "Hours": "4"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "Dún Fiach",
+     "Hours": "7.5"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "Salt pans",
+     "Hours": "5"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "Saltvik",
+     "Hours": "5.5"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "Saltness",
+     "Hours": "6"
+    },
+    {
+     "From": "Móin Mhór",
+     "To": "The Mound Field",
+     "Hours": "2.75"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "Sliabh Carn",
+     "Hours": "1.5"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "The Cailleach's Cave",
+     "Hours": "2.5"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "Dún Fiach",
+     "Hours": "6"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "Salt pans",
+     "Hours": "6.5"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "Saltvik",
+     "Hours": "7"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "Saltness",
+     "Hours": "7.5"
+    },
+    {
+     "From": "The Drowned Trackway",
+     "To": "The Mound Field",
+     "Hours": "4.25"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "The Cailleach's Cave",
+     "Hours": "1"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "Dún Fiach",
+     "Hours": "4.5"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "Salt pans",
+     "Hours": "8"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "Saltvik",
+     "Hours": "8.5"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "Saltness",
+     "Hours": "9"
+    },
+    {
+     "From": "Sliabh Carn",
+     "To": "The Mound Field",
+     "Hours": "5.75"
+    },
+    {
+     "From": "The Cailleach's Cave",
+     "To": "Dún Fiach",
+     "Hours": "5.5"
+    },
+    {
+     "From": "The Cailleach's Cave",
+     "To": "Salt pans",
+     "Hours": "9"
+    },
+    {
+     "From": "The Cailleach's Cave",
+     "To": "Saltvik",
+     "Hours": "9.5"
+    },
+    {
+     "From": "The Cailleach's Cave",
+     "To": "Saltness",
+     "Hours": "10"
+    },
+    {
+     "From": "The Cailleach's Cave",
+     "To": "The Mound Field",
+     "Hours": "6.75"
+    },
+    {
+     "From": "Dún Fiach",
+     "To": "Salt pans",
+     "Hours": "6.5"
+    },
+    {
+     "From": "Dún Fiach",
+     "To": "Saltvik",
+     "Hours": "7"
+    },
+    {
+     "From": "Dún Fiach",
+     "To": "Saltness",
+     "Hours": "7.5"
+    },
+    {
+     "From": "Dún Fiach",
+     "To": "The Mound Field",
+     "Hours": "8.75"
+    },
+    {
+     "From": "Salt pans",
+     "To": "Saltvik",
+     "Hours": "0.5"
+    },
+    {
+     "From": "Salt pans",
+     "To": "Saltness",
+     "Hours": "1"
+    },
+    {
+     "From": "Salt pans",
+     "To": "The Mound Field",
+     "Hours": "2.25"
+    },
+    {
+     "From": "Saltvik",
+     "To": "Saltness",
+     "Hours": "0.5"
+    },
+    {
+     "From": "Saltvik",
+     "To": "The Mound Field",
+     "Hours": "2.75"
+    },
+    {
+     "From": "Saltness",
+     "To": "The Mound Field",
+     "Hours": "3.25"
+    }
+   ],
+   "openingTheMap": [
     {
      "Key": "highPassClearing",
      "Value": "A work party with axes and levers, 6 worker-days; or Fiachra's men after an alliance; or the Cailleach's maul"
@@ -3162,10 +4088,6 @@
     {
      "Key": "coldSnap",
      "Value": "15% a winter day, lasting 2 to 4 days; freezes the bog"
-    },
-    {
-     "Key": "travelTimeTolerance",
-     "Value": "Within 10% of the table (Book 3 Stage 28)"
     }
    ]
   },
@@ -3254,7 +4176,11 @@
     },
     {
      "Key": "companionsOnFoot",
-     "Value": "Up to 2 residents"
+     "Value": "Up to 2 friendly characters"
+    },
+    {
+     "Key": "waystation",
+     "Value": "A safe camp with a small store at one camp spot per route (proposal): 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25"
     }
    ]
   },
@@ -3564,6 +4490,82 @@
     {
      "Key": "cameraSnap",
      "Value": "The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels"
+    }
+   ]
+  },
+  "storyGates": {
+   "table": [
+    {
+     "Key": "waiting",
+     "Value": "A dated story event waits at its gate; the calendar, seasons, crops and winter go on"
+    },
+    {
+     "Key": "pressure",
+     "Value": "While a gate waits past its typical day: a demand grows 10% every 10 days, and one rumour spreads every 5 days; pressure never starts a gate"
+    },
+    {
+     "Key": "warning",
+     "Value": "Every readiness screen says plainly that the gate is a point of no return"
+    }
+   ]
+  },
+  "conversationDepth": {
+   "table": [
+    {
+     "Key": "greetings",
+     "Value": "One for each season and time of day (morning, day, evening, night): 16, plus feast days"
+    },
+    {
+     "Key": "topicTrees",
+     "Value": "At least 3"
+    },
+    {
+     "Key": "deedReactions",
+     "Value": "At least 10 deed types"
+    },
+    {
+     "Key": "callbacks",
+     "Value": "At least 5 remembered events"
+    },
+    {
+     "Key": "voiceThresholds",
+     "Value": "Voice changes at friendship 40 and -40 and at fear 60"
+    },
+    {
+     "Key": "minorLines",
+     "Value": "Minor characters: pools of 1 or 2 lines, by culture, season, time of day, weather and the household's deeds"
+    }
+   ]
+  },
+  "heavyBuild": {
+   "table": [
+    {
+     "Key": "poise",
+     "Value": "Light attacks do not stagger a heavy fighter"
+    },
+    {
+     "Key": "windup",
+     "Value": "+4 ticks on every attack"
+    },
+    {
+     "Key": "damage",
+     "Value": "x1.2"
+    },
+    {
+     "Key": "runSpeed",
+     "Value": "x0.9"
+    },
+    {
+     "Key": "carrySpeed",
+     "Value": "x1.15 carrying loads and downed allies"
+    },
+    {
+     "Key": "runStamina",
+     "Value": "Running drains x1.25"
+    },
+    {
+     "Key": "share",
+     "Value": "About one in six generated people"
     }
    ]
   }

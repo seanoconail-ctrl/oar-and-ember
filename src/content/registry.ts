@@ -9,7 +9,7 @@ import type { IdRegistry } from './idRegistry.ts';
 import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
 import { steererWordingProblems } from './steererWords.ts';
-import { captionProblems, parseStringTable } from './strings.ts';
+import { captionProblems, isDialogueKey, modernMoralWordsIn, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
 import type { StringTable } from './strings.ts';
@@ -376,6 +376,14 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     // Design addendum 2.3 section 10: speech and information captions.
     for (const reason of captionProblems(key, entry))
       issues.push({ file: CONTENT_FILES.strings, path: key, reason });
+    // Design addendum 2.3 section 2: no modern moral vocabulary in dialogue.
+    if (isDialogueKey(key))
+      for (const word of modernMoralWordsIn(entry.text))
+        issues.push({
+          file: CONTENT_FILES.strings,
+          path: key,
+          reason: `dialogue uses the modern word "${word}" (Book 8: speak in period terms)`,
+        });
   }
 
   const onFoot = onFootCheck(files.onFoot, '', ctx(CONTENT_FILES.onFoot));

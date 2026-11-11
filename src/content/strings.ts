@@ -88,3 +88,37 @@ export function captionProblems(key: string, entry: StringEntry): string[] {
   }
   return problems;
 }
+
+/**
+ * Modern moral vocabulary, banned from dialogue (design addendum 2.3 section 2; Book 8): people
+ * around AD 900 speak of honour and shame, luck, oaths, kin, sin and the honour-price. Dialogue says
+ * "farmers", "folk" or "people who bore no weapon", never "civilians"; "innocent" is allowed (a
+ * Church word). Interface text is exempt.
+ */
+export const MODERN_MORAL_WORDS: readonly string[] = [
+  'rights',
+  'war crime',
+  'genocide',
+  'trauma',
+  'civilian',
+  'ethics',
+  'morality',
+  'values',
+  'consent',
+  'abuse',
+  'victim',
+  'tolerance',
+  'equality',
+];
+
+/** Dialogue strings are spoken by someone: keys whose speaker part is a person (c_, l_, e_...). */
+export function isDialogueKey(key: string): boolean {
+  return /^(c|l|r|e|h|p)_[a-z0-9_]+\./.test(key);
+}
+
+export function modernMoralWordsIn(text: string): string[] {
+  const lower = text.toLowerCase();
+  return MODERN_MORAL_WORDS.filter((w) =>
+    new RegExp(`\\b${w.replace(' ', '\\s+')}(s|es)?\\b`).test(lower),
+  );
+}

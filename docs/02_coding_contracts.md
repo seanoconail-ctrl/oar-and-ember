@@ -20,7 +20,7 @@ An empty GitHub repository containing only `CLAUDE.md`, `docs/` (these books as 
 - **Platform:** desktop browsers first (Chromium, Firefox, Safari current versions); keyboard and mouse, with gamepad support.
 - **Art:** authored by Claude as palette-indexed pixel sources compiled to atlases (section 19).
 - **Combat:** real time with no tactical pause; light, charged heavy, parry, block, dodge, shove, stamina and facing.
-- **Death:** the steerer's death is game over; crew permadeath with the *Rán's mercy* option.
+- **Death:** the steerer's death is game over. Downed crew and allies are not dead: they survive if carried to safety before the scene ends, and are captured or killed if left behind (section 12). Crew permadeath comes from being left behind, from berserkers and cruel enemies, and from scripted deaths; the *Rán's mercy* option prevents every unscripted death.
 - **Violence:** mature: gore and dismemberment; civilians and the surrendered can be killed, with consequences.
 
 ### Non-negotiables
@@ -59,21 +59,23 @@ docs/          decision-log.md, stage-reports/
 ### Where the larger systems live
 | System | Folder |
 |---|---|
-| Happiness, friendship and fear; disputes; requests; stamina and condition (sections 06, 24) | `sim/people/` |
+| Happiness, friendship and fear; traits, likes, relationships, tendencies and stances; disputes; requests; stamina and condition (sections 06, 24) | `sim/people/` |
 | The away simulation and visiting traders at the homestead (sections 07, 25) | `sim/home/` |
-| The mainland's areas, travel, quick travel, water depth, camping, companions, travellers and bandit camps on and off screen (sections 10, 25) | `sim/land/` |
-| News carried by people (sections 15, 25) | `sim/ledger/` |
-| Quests and the event deck (sections 06, 16, 25) | `sim/narrative/` |
-| Assaults, muster and formations (sections 11 to 13) | `sim/raid/`, `sim/combat/`, `sim/ai/` |
+| The mainland's sites and routes, journeys (road legs, journey events, the travel map, shortest journeys), route state and waystations, water depth, camping, companions, travellers and bandit camps on and off screen (sections 10, 25) | `sim/land/` |
+| News carried by people; deed reactions by culture (sections 15, 25) | `sim/ledger/` |
+| Quests, the event deck, story gates and conversation (sections 06, 16, 25) | `sim/narrative/` |
+| Raids, land and sea-borne attacks, defences, muster and formations; downed and carried (sections 11 to 13) | `sim/raid/`, `sim/combat/`, `sim/ai/` |
 
 ### Modes
 ```
 Boot -> Title -> Campaign -> GameOver | Ending
 Campaign modes:
-  OnFoot     (home, island zones, mainland areas, dungeons, raid sites, harbours) real time
+  OnFoot     (home, island zones, mainland sites and routes, dungeons, raid sites, harbours,
+              journey events) real time
   SeaMap     route plotting and watch-by-watch travel
   SeaBattle  ship-to-ship arena, boarding uses OnFoot combat rules
-  Planning   raid plan, departure, council seating (opened only when safe)
+  Planning   raid plan, departure, the travel map, a gate's readiness screen, council seating
+              (opened only when safe)
   Dialogue   conversations (barks are not a mode)
   Report     morning report, homecoming report, post-raid summary (opened only when safe)
 ```
@@ -88,8 +90,9 @@ A menu or planning screen may open only when no hostile actor is aware of the pl
 - Simulation tick **60 Hz** fixed step with render interpolation.
 - **Calendar:** `day` from 1; `year = ceil(day / 120)`; seasons of 30 days; four watches per day (Morning 06-12, Day 12-18, Evening 18-24, Night 00-06).
 - **On-foot clock:** one game hour lasts `balance.time.secondsPerHour` real seconds (Book 10). The active day runs 06:00 to 02:00. Sleeping in a bed after 18:00, or at a camp (section 10), advances to 06:00 and triggers the morning report. Staying awake past 02:00 causes a collapse with the penalty in Book 10. A day-length option scales the clock.
-- **Actions that cost game time:** a homestead task done by the steerer (section 07), quick travel (section 10) and camping advance the clock by their Book 10 time. The world is never skipped: the interval is run through the low-detail steps (the home step of section 07, the world step of section 25), so crops grow, stores are eaten and travellers move exactly as if the time had passed in play. A time advance happens only under the safe rule and stops at once if a hostile becomes aware.
+- **Actions that cost game time:** a homestead task done by the steerer (section 07), a journey's road legs (section 10) and camping advance the clock by their Book 10 time. The world is never skipped: the interval is run through the low-detail steps (the home step of section 07, the world step of section 25), so crops grow, stores are eaten and travellers move exactly as if the time had passed in play. A time advance happens only under the safe rule and stops at once if a hostile becomes aware.
 - **At sea:** travel resolves per watch (six game hours) with a short animation.
+- **The calendar never waits for the story.** Seasons turn, crops grow and winter comes whatever the player does, but no chapter deadline passes without the player: chapters have typical dates (Book 4), and dated story events wait at their gate until the player chooses to start it (section 16).
 - **Tide:** flood and ebb alternate each watch, low water at the end of each ebb watch, phase shifting one watch every three days; spring tides on days 1 and 16 of each season. Tidal ground is passable within the window in Book 10.
 - **RNG streams:** `weather, encounters, loot, combat, ai, people, generation, gore, world` seeded from the campaign seed. `world` drives the living world (travellers, visiting traders, bandit camps, the event deck, off-screen places) and the away simulation, so what happens out of sight never disturbs the draws of a raid or a voyage. No `Math.random()` or wall-clock time in `sim/`.
 - **Determinism test:** replaying a recorded input stream from a save reproduces identical state hashes.
@@ -101,7 +104,7 @@ A menu or planning screen may open only when no hostile actor is aware of the pl
 |---|---|
 | `ISLE_ TOWN_ FORT_ ABBEY_ GLEN_ CAMP_ SITE_` | Places on the sea map |
 | `REG_ ZONE_` | On-foot regions and their zones |
-| `MAIN_` | Areas of the mainland, the one shared region of twenty areas (Book 4, Book 9) |
+| `MAIN_` | Places of the mainland, the one shared region: sites explored on foot and the wilderness routes between them (Book 4, Book 9) |
 | `SK_` | Places on Skarvholm |
 | `HAZ_` | Sea hazards |
 | `C_ L_ R_ E_ H_ P_` | Residents, leaders, rival captains, enemies, hostages, player |
@@ -114,6 +117,8 @@ A menu or planning screen may open only when no hostile actor is aware of the pl
 
 One schema per content type, validated at load; every cross-reference must resolve. `content/balance.json` is generated from Book 10's tables and is the only place numbers live. All player-facing text uses string keys.
 
+Some kinds of content use an existing prefix rather than their own: a journey event is a scenario (`SCN_`, section 10), a story gate is a beat (`BEAT_`, section 16), and a waystation is a building (`BLD_`, section 10). Traits, stances and caption kinds are fixed enumerations in code, not IDs.
+
 ## 05 / World state
 *One serialisable world state. Everything that matters to a consequence lives here.*
 
@@ -121,7 +126,8 @@ One schema per content type, validated at load; every cross-reference must resol
 interface WorldState {
   version: number; seed: string; rng: Record<RngStream, RngState>;
   calendar: { day: number; minuteOfDay: number; weather: WeatherState; tide: TideState };
-  player: PlayerState;                    // section 24: vitality, stamina, skills, equipment, bodyModel, name
+  player: PlayerState;                    // section 24: vitality, stamina, skills, equipment, hotbar, bodyModel, name
+  onFoot: OnFootState | null;             // the on-foot scene: the steerer (with a drawn bow's aim), the people nearby, who is carried
   party: { companions: Id[] };            // residents on foot with the steerer (section 10)
   household: { residents: Id[]; hostages: Id[]; guests: Id[]; shelterPlan?: ShelterPlan };
   people: Record<Id, Person>;             // everyone with a name, alive or dead
@@ -129,7 +135,8 @@ interface WorldState {
   ships: Record<Id, ShipInstance>;
   homes: Record<Id, HomeState>;           // buildings, plots, designations, stores, fields
   away: AwayState | null;                 // the home while the steerer is away (section 07)
-  regions: Record<Id, RegionState>;       // discovery, areas, blocks, resource nodes, puzzles, bodies
+  regions: Record<Id, RegionState>;       // discovery, sites, routes and their state, blocks, resource nodes, puzzles, bodies
+  journey: JourneyState | null;           // the journey under way, if any (section 10)
   camp: CampState | null;                 // the steerer's camp tonight (section 10)
   places: Record<Id, PlaceState>;         // settlements' true stores, defences, people, leader
   world: LivingWorldState;                // section 25: travellers, bandit camps, news, traders, event deck
@@ -138,31 +145,43 @@ interface WorldState {
   evidence: Evidence[];                   // bodies, dropped items, tracks awaiting discovery
   knowledge: KnowledgeState;
   bargains: Record<Id, Bargain>; powers: Record<Id, PowerState>;
-  chapters: Record<Id, ChapterState>;
+  chapters: Record<Id, ChapterState>; gates: Record<Id, GateState>;   // section 16
   facts: Record<string, FactValue>; oneShots: Record<Id, number>;
 }
 ```
 The ledger is append-only; facts are superseded, never deleted; the dead stay in `people` with their memories; one-shots are recorded before their effects apply.
 
+**Versions.** The state carries its schema version, and every change to its shape adds a migration (section 20). Version 2 (Stage 6) added `onFoot`; version 3 (the Stage 6 rework, decision S6R-7) added `player.hotbar` and `onFoot.player.aim`. The fields above that are not yet built (among them `journey`, `gates` and the people data of section 06) arrive with their stages, each with its own version step.
+
 ## 06 / People
-*Residents and leaders are people with values, ties and memories. Three measures (happiness, friendship and fear) are computed from how they live and from witnessed deeds, and shown in readable steps.*
+*Residents and leaders are people with values, traits, likes, ties and memories, judging by the code of their own culture. Three measures (happiness, friendship and fear) are computed from how they live and from witnessed deeds, and shown in readable steps with the reason for each.*
 
 ```ts
 type Value = 'GAIN' | 'MERCY' | 'GLORY' | 'KIN' | 'FAITH' | 'WORD';
+type Code = 'NORSE' | 'GAELIC' | 'CHURCH' | 'KEEPERS' | 'SALTVIK';   // the ethics a person judges by (Book 5)
+type CodeStance = 'CONVENTIONAL' | 'SCEPTICAL' | 'CYNICAL' | 'TRANSGRESSIVE';
+type Trait = 'BERSERK'|'COWARDLY'|'SUPERSTITIOUS'|'BRAVE'|'GREEDY'|'PIOUS'|'HOT_TEMPERED'|'GENTLE'|'DRINKER'
+  |'LIGHT_FINGERED'|'KEEN_EYED'|'SEA_SICK'|'STORYTELLER'|'GRUDGE_HOLDER'|'DILIGENT'|'LAZY';
 interface Person {
-  id: Id; nameKey: string; origin: Origin; appearance: AppearanceRef; equipment: Equipment; // section 19
+  id: Id; nameKey: string; origin: Origin; appearance: AppearanceRef; equipment: Equipment; // section 19: build A, B or HEAVY
   status: 'alive'|'downed'|'wounded'|'sick'|'dead'|'missing'|'captive';
   vitality: number; skills: Partial<Record<Skill, 0|1|2|3|4|5>>; skillXp: Partial<Record<Skill, number>>;
   values: Partial<Record<Value, 1|2|3>>; faithTarget?: 'OLD_GODS'|'CHRIST'|'LAND_SPIRITS'|'NONE';
+  codes: Code[];                          // one, or two for people of mixed birth (Bran, Senán, Áine, much of Saltvik)
+  codeStance: CodeStance;                 // towards their own code; can shift after strong events, as values do
+  traits: { trait: Trait; known: boolean; faith?: Person['faithTarget'] }[];   // two to four; PIOUS names its faith
+  likes: Liking[]; dislikes: Liking[]; tendencies: Id[];   // small daily behaviours, by schedule (below)
   happiness: number;                      // 0..100: mood now
   friendship: number;                     // -100..100: how they feel about the steerer over time
   fear: number;                           // 0..100: how much they fear the steerer
   moodToday: MoodFactor[];                // the reasons for today's happiness, each with its share
-  ties: Tie[];                            // kin, friend, rival, spouse, debt, grievance, oath, mentor
+  ties: Tie[];                            // kin, spouse, friend, rival, grudge, mentor, drinking companion, debt, grievance, oath
   memories: Memory[]; wounds: Wound[]; job?: JobAssignment; schedule: ScheduleRef;
-  requests: Id[]; hiddenStance?: Id; valueShifts: number;
+  requests: Id[]; hiddenStance?: Id /* a secret allegiance, never shown until discovered */; valueShifts: number;
 }
-interface MoodFactor { cause: 'FOOD'|'WARMTH'|'REST'|'SAFETY'|'SUCCESS'|'GRIEF'|'FESTIVAL'|'TREATMENT';
+interface Liking { kind: 'FOOD'|'ACTIVITY'|'PLACE'|'WEATHER'|'PERSON'|'GIFT'; ref: Id | string; known: boolean }
+interface Tie { to: Id; kind: TieKind; since: number; cause?: Id | string /* the shared event it formed from */ }
+interface MoodFactor { cause: 'FOOD'|'WARMTH'|'REST'|'SAFETY'|'SUCCESS'|'GRIEF'|'FESTIVAL'|'TREATMENT'|'LIKE'|'DISLIKE'|'TIE';
   amount: number; detail?: string /* string key: "slept cold", "praised at the feast" */ }
 ```
 Leaders are people too: friendship and fear apply to every named leader of a settlement or camp, alongside their faction's state (section 15).
@@ -171,14 +190,43 @@ Leaders are people too: friendship and fear apply to every named leader of a set
 - **Happiness** is mood now. It is recomputed each morning from food, warmth, rest, safety, recent success, grief, festivals and how the person was treated, and moves during the day as those change. `moodToday` holds the reasons so the interface can say why.
 - **Friendship** is how the person feels about the steerer over time. It moves with kept and broken promises, care, gifts, time spent together, and shared deeds that fit the person's values.
 - **Fear** is how much the person fears the steerer. It moves with brutality, punishments, displays of strength and threats.
-- **Deeds feed friendship and fear.** Each deed a person witnesses or hears of (section 15) applies the friendship deltas by deed, weighted by the person's values and the witness factor, and the fear deltas by deed (Book 10 section 08). The steerer's acts at home (a gift, a punishment, a judgement, a promise) are deeds of the same kind.
+- **Deeds feed friendship and fear, judged by the witness's own code.** Each deed a person witnesses or hears of (section 15) is weighed first by the witness's culture (Book 10 section 08, "Deed reactions by culture": the same deed reads differently to the Norse, the Gaels, the Church, the Keepers and Saltvik), then by their values, their traits ("Traits") and their stance ("Stances"), with the witness factor, giving the friendship and fear deltas. A person with two codes judges, and is judged, by either. The steerer's acts at home (a gift, a punishment, a judgement, a promise) are deeds of the same kind, and the household reacts by its own code even when the player acts against it.
 - **Effects** follow the Book 10 section 08 table "Happiness, friendship and fear": work output scales with happiness, and low happiness makes disputes likelier; high friendship volunteers for danger, defends the steerer and stays in hard times; low friendship without fear leaves; high fear without friendship obeys any order at lower quality and may desert or betray while the steerer is away or wounded; high fear with high friendship is fierce devotion.
 - **The warning flow** stays: crossing a friendship band downwards (Book 10 section 08, "Friendship bands"), or falling into one of the effects above that ends in leaving, triggers in order, with at least two days between steps: a remark, a complaint scene, refusal of the order class that caused it, a request to leave.
 - **Ties** include existing relationships (spouses, siblings) from content; there is no romance system and no tie of type lover can be created in play.
 - **Schedules:** each resident follows a daily schedule (wake, eat, work shift, meal, evening, sleep) adjusted by job, season, weather, wounds and events, so they are always visibly doing something.
-- **Conversation topics** are generated from memories (recent deeds, deaths, wounds, the weather, their job, their ties) with a priority and a cooldown; residents may approach the player with high-priority topics.
+- **Conversation topics** are generated from memories (recent deeds, deaths, wounds, the weather, their job, their ties) with a priority and a cooldown; residents may approach the player with high-priority topics. What they say is chosen from the conversation data of section 16.
 - **Player references:** dialogue never uses gendered pronouns or gendered terms for the steerer. Content lint rejects strings tagged as addressing or describing the steerer that contain them.
 - **Harming residents:** the player can strike residents. The first blow triggers a warning reaction; repeated harm or a killing is a deed with household-wide consequences, up to residents fleeing, fighting back or leaving.
+
+### Traits, likes, relationships, tendencies and stances
+Every resident and companion has two to four traits, likes and dislikes, relationships with other residents and small tendencies (Book 5 gives each person's; generated people draw theirs on the `people` stream). Values say what a person cares about; traits say how they behave; stance says how they hold their own culture's code.
+- **Traits** are known at once or discovered over time (`known`): a trait is revealed by the first event that shows it (a berserk fit, a theft found, a panic at an omen), and is then shown for good. Each trait's effect comes from Book 10 section 08, "Traits":
+
+| Trait | What it changes |
+|---|---|
+| Berserk | Combat (section 12): when wounded or when a friend falls, may go berserk on the `combat` stream |
+| Cowardly | Cohesion (section 13): breaks first; may flee a fight; unhappy on night raids |
+| Superstitious | Refuses tasks or voyages after bad omens (section 17); panics at supernatural signs; insists on rites |
+| Brave | Holds the line longer; volunteers for danger |
+| Greedy | Pockets loot; raises `PLUNDER_SHARE` disputes |
+| Pious (to a faith) | Prays daily (a tendency); reacts more strongly to sacrilege against its faith and to its own faith's cruelty |
+| Hot-tempered | Starts `INSULT` and `FIGHT` disputes; quick to fight |
+| Gentle | Calms disputes as a watcher; unhappy at killing |
+| Drinker | Drinks at feasts and in hard times; works and fights worse the morning after |
+| Light-fingered | Takes small things from the stores (a `THEFT` dispute when found) |
+| Keen-eyed | Spots sails, ambush signs (section 10) and hidden things sooner, at sea and on watch |
+| Sea-sick | Works and fights worse at sea; better on land |
+| Storyteller or singer | Raises the happiness of everyone at the evening fire |
+| Grudge-holder | Remembers every slight as a grudge tie; feuds |
+| Diligent or lazy | Works more or less without supervision |
+
+- **Traits reach every system:** work output (section 07), combat behaviour (section 12) and cohesion (section 13), reactions to deeds (above), the disputes that arise and who calms them (below), and what a person says (section 16).
+- **Likes and dislikes** cover foods (salt fish, honey, ale, kale), activities (fishing, carving, fighting), places, weather, people and gifts. A like that is met adds a `LIKE` mood factor (Book 10 section 08, "Likes and dislikes"); a like ignored costs nothing; a dislike suffered adds a `DISLIKE` factor. Likes start unknown unless shown and are learned by talk and by watching.
+- **Relationships between residents** form and break through shared events (a fight side by side, a dispute judged, a share argued over, a night of drinking, a rescue) at the Book 10 section 08 "Relationships" rates: friends, rivals, grudges, mentors, drinking companions and family. A tie records the event it grew from. Existing marriages and family ties come from content; there is no romance system.
+- **Tendencies** are small scheduled behaviours that make people readable (praying at dawn, walking the shore at night, hoarding stones, singing at the oars). They are entries in the person's schedule, never effects on the simulation beyond where the person stands.
+- **Stances** (conventional, sceptical, cynical, transgressive) choose how a person justifies themselves and which lines they speak (section 16), and adjust their reactions by Book 10 section 08, "Stances". A stance can shift after a strong event, like a value, and the shift is a memory.
+- **The household screen** shows each person's known traits, known likes and dislikes, relationships, happiness, friendship and fear, each with a line saying why it is what it is ("Happy: a hot meal, a warm bed, honey at the feast"; "Fears you: the flogging at the thing"; "Rival of Kolbeinn since the quarrel over the shares"). The lines come from `moodToday`, the deeds and memories behind each measure and each tie's cause, never from hidden truth (section 01). The household screen is interface text, not dialogue, so the dialogue word list (section 23) does not apply to it.
 
 ### Disputes
 ```ts
@@ -188,7 +236,7 @@ interface Dispute { id: Id; kind: DisputeKind; day: number; parties: Id[]; cause
   watchers: Id[]; status: 'OPEN'|'JUDGED'|'IGNORED'|'BOILED_OVER';
   judgement?: { kind: Judgement; favoured?: Id; punished?: Id[]; paid?: Cost[]; day: number } }
 ```
-- Disputes arise on the `people` stream at the Book 10 section 08 rate once the household reaches the size that table gives, more often when happiness is low. Each grows from something real: a tie, a memory, a share of plunder, a debt, a shrine, a broken promise. No dispute is about a stranger.
+- Disputes arise on the `people` stream at the Book 10 section 08 rate once the household reaches the size that table gives, more often when happiness is low. Each grows from something real: a tie, a memory, a share of plunder, a debt, a shrine, a broken promise. No dispute is about a stranger. Traits shape them: the hot-tempered, greedy, light-fingered and grudge-holding start more, and a gentle watcher makes boiling over less likely (Book 10 section 08, "Traits").
 - The steerer judges in a dialogue: take a side, find a compromise, punish, pay compensation, call a household thing to decide, or ignore it. Each judgement moves happiness, friendship and fear for the parties and for everyone watching, by their values (Book 10 section 08, "Disputes"). A punishment is a fine, hard work, a lost share or exile from the household; there is no torture (section 26).
 - An open or ignored dispute can **boil over** after the Book 10 time, into a fight, a theft or a resident leaving, most often while the steerer is away (section 07).
 
@@ -221,7 +269,7 @@ interface TaskInstance { def: Id; site: Id; workers: Id[]; progress: number; qua
 - Tasks include sow, weed, harvest, fish (shore and boat), gather (shellfish, seaweed, eggs, driftwood), cut peat, cut hay, build, carpentry, smith, cook, care, herd, shear, slaughter and preserve, repair ship, train, watch; and, from the steerer's list in Book 1 section 10, felling and splitting timber, watering the kale garden in dry spells, threshing, net-mending and milking. Build covers hammering, raising beams and thatching; care is tending wounds.
 - **Every task by hand:** the steerer can do every task residents do, with the same work loop. The player interacts with a task site, or uses the selected hotbar tool on its tile (section 21), and performs its `playerAction` (timed press, hold-and-release, or rhythm), adding work at their skill level and a quality bonus for good timing. Missing the timing never ruins the task; it only adds less.
 - **Time, not toil:** each completed player action advances the clock by the task's `playerGameMinutes` while the work loop plays (section 03: run through the home step, safe rule only; when hostiles are aware the work still counts but no time is advanced) and costs the task's small `playerStamina`. Task stamina never empties the bar on its own; the hours worked count towards the hard day's work that lowers the maximum (section 24).
-- Output per worker per unit follows Book 10 section 03 and is modified by skill, tools, weather, season and the worker's happiness (section 06).
+- Output per worker per unit follows Book 10 section 03 and is modified by skill, tools, weather, season, the worker's happiness and their traits (diligent or lazy without supervision, a drinker the morning after, the sea-sick at sea; section 06).
 
 ### Building designation
 ```ts
@@ -285,7 +333,7 @@ interface SeaEdge { id: Id; a: Id; b: Id; baseWatches: number; exposure: 0|1|2|3
 - Interruptions hand off to `SeaBattle` or `OnFoot` and return results. Winter-closed edges open only in calm windows.
 
 ## 10 / On-foot regions and exploration
-*Home, island and mainland are made of streamed scenes joined by routes on foot. Discovery, resources, puzzles, territory, water, hazards and camping live here.*
+*Home and island are streamed scenes joined by links on foot; the mainland is sites and wilderness routes joined by journeys. Discovery, resources, puzzles, territory, water, hazards and camping live here.*
 
 ```ts
 interface RegionDef { id: Id; scenes: SceneRef[]; links: FootLink[]; zones: ZoneDef[] }
@@ -303,23 +351,51 @@ interface PuzzleDef { id: Id; states: string[]; transitions: { from: string; to:
 - **Territory:** every on-foot tile belongs to a faction territory or wilderness. A faction's `hostility` decides whether its guards greet, warn, watch or **attack on sight**. Recognition uses faces (leaders, witnesses), sail and shields nearby, and known gear.
 - **Reachability test:** every scene must pass an automated flood-fill showing every objective, landing and exit reachable under the stated conditions.
 
-### The mainland: one shared region of twenty areas
+### The mainland: sites, routes and journeys
 ```ts
-interface AreaDef { id: Id /* MAIN_ */; region: Id; kind: AreaKind; scenes: SceneRef[]; coastal: boolean;
-  knownAtStart: 'NO'|'YES'|'BY_SEA'; homeSite?: Id; leader?: Id; territory: Id | 'WILDERNESS';
-  waymarks: Id[]; seasonal: { season: Season; changes: Effect[] }[]; dungeon?: Id }
-interface AreaLink { id: Id; a: Id; b: Id; road: boolean; walkTime: number /* Book 10 section 14 */;
-  conditions?: Condition[] /* season, spate, snow, cold snap, hostility, block cleared */ }
-interface Block { id: Id; link: Id; kind: 'LANDSLIDE'|'SPATE'|'LEAVE'|'SEASON';
-  clearedBy: Condition[][] /* any one way */; clearedFact: string; reasonKey: string }
-interface AreaState { known: boolean; visited: boolean; waymarksFound: Id[]; secretsFound: Id[] }
-interface RegionState { discoveredZones: Id[]; areas: Record<Id, AreaState>; blocksCleared: Id[];
+interface MainlandPlaceDef { id: Id /* MAIN_ */; region: Id; kind: 'SITE'|'ROUTE'; scenes: SceneRef[];
+  coastal: boolean; knownAtStart: 'NO'|'YES'|'BY_SEA'; homeSite?: Id; leader?: Id;
+  territory: Id | 'WILDERNESS'; ends: RoadEnd[] /* where road legs leave it */;
+  pois: PoiDef[]; seasonal: { season: Season; changes: Effect[] }[]; dungeon?: Id;
+  route?: RouteDef /* kind ROUTE only */ }
+interface RoadEnd { id: string /* 'NORTH', 'SOUTH', 'EAST', 'WEST', or a branch */; pos: Vec2; waymark?: Id }
+interface RouteDef { campSpots: Id[]; waystationSpot?: Id /* one camp spot per route */; shortcuts: Id[];
+  branches: { site: Id; at: Vec2 }[] /* sites entered from the route: the Black Wood's heart, the Trackway, the Mound Field */;
+  encounterTable: Id /* Book 10 section 14, "Route encounters" */; ambushSites: Id[] }
+interface PoiDef { id: Id; major: boolean; pos: Vec2; offPath: boolean; guardedBy?: Id[] /* hazards, a climb, a wade, a puzzle */;
+  rewards: Id[]; foundFact: string }
+interface RoadLeg { id: Id; a: { place: Id; end: string }; b: { place: Id; end: string };
+  hours: number /* Book 10 section 14, "Network" */; waterCrossing: boolean;
+  conditions?: Condition[] /* season, spate, snow, flood, cold snap, block cleared */ }
+interface Block { id: Id; on: { leg: Id } | { place: Id }; kind: 'LANDSLIDE'|'SPATE'|'SNOW'|'FLOOD'|'LEAVE'|'SEASON';
+  clearedBy: Condition[][] /* any one way */; clearedFact: string; reasonKey: string; detour?: Id[] }
+type JourneyStep =
+  | { kind: 'ROAD'; leg: Id; minutes: number; modifiers: JourneyModifier[] }   // off screen
+  | { kind: 'ROUTE'; place: Id; from: string; to: string }                     // crossed on foot
+  | { kind: 'ARRIVE'; place: Id; end: string };
+type JourneyModifier = 'NIGHT'|'CATTLE'|'CARGO'|'KNOWN_ROAD'|'KELPIE_BRIDLE'|'DETOUR';
+interface JourneyPlan { from: Id; to: Id; steps: JourneyStep[]; offScreenMinutes: number; routesToCross: Id[] }
+interface JourneyState { plan: JourneyPlan; step: number; leg?: { departed: number; arrives: number; elapsed: number };
+  party: Id[]; cattle: number; cargo: CargoLot[] }
+interface MainlandPlaceState { known: boolean; visited: boolean; poisFound: Id[]; secretsFound: Id[];
+  route?: { cleared: boolean; waymarked: boolean; heldBy?: Id /* FAC_ */; shortcutsFound: Id[];
+    waystation?: Id /* BLD_ */; crossings: number } }
+interface RegionState { discoveredZones: Id[]; places: Record<Id, MainlandPlaceState>; blocksCleared: Id[];
   resourceNodes: Record<Id, ResourceNodeState>; puzzles: Record<Id, string>; bodies: Id[] }
 ```
-- **One map for everyone.** The mainland is one region of twenty areas with `MAIN_` IDs (Book 4; plans in Book 9), the same in every campaign. It holds both home sites. Glen Arra, Inis Rón and Crowwick stay separate places across the sea, each with its own small region.
-- **How it opens.** From Chapter 3 the coastal areas have landings on the sea map; inland areas open on foot as they are discovered and as blocks are cleared. A block is a fact with one or more ways to clear it: a work party at the site (a designation with worker-days, built like a homestead building), an alliance, an item, the right words, a season window or a cold snap. A blocked link shows its reason in words. Hostile ground stays open but dangerous (territory, above).
-- **Seasons** change each area through its `seasonal` effects and the links' conditions, driven by the calendar and the weather.
-- **Quick travel** runs along known roads between found waymarks, only under the safe rule and never into hostile territory. It costs game time equal to the walk at the Book 10 section 14 rate, run through the world step (section 25); a traveller, ambush or hazard on the way stops it and hands off to `OnFoot` at that spot.
+- **One map for everyone.** The mainland is one region with `MAIN_` IDs (Book 4; plans in Book 9), the same in every campaign. It has two kinds of playable place: **sites**, destinations explored in full on foot (villages, forts, the monastery, farms, dungeons, the bog village, the mountain), and **wilderness routes**, long playable places *between* sites (the Black Wood path, the plank road, the High Pass, the Ridge Road, the river path and the Ford, the moor road). It holds both home sites. Glen Arra, Inis Rón and Crowwick stay separate places across the sea, each with its own small region.
+- **Road legs** join sites and route ends. They are never walked on screen: a leg costs game time (Book 10 section 14, "Network") and is run through the world step (section 25), so the world goes on exactly as if the time had passed in play.
+- **A journey is a chain** of road legs, routes and arrivals, for example Ardcarn, two hours on the road (off screen), the Black Wood path (crossed on foot), one hour on the road (off screen), Móin Mhór. **Whenever a journey passes through a route, the player crosses it on foot, in game**: no road leg skips a route, and the planner can only chain legs through route ends. Inland places can be reached only through the routes.
+- **The travel map** (`Planning` mode, safe rule) plans a journey: it shows the whole chain before the player sets out, with each road leg's time after its modifiers, the routes to cross, camp spots and waystations, blocks with their reasons in words, and routes held by a hostile faction. Coastal sites (Carrick, Kilbrecc, Dún Fiach's landing, the salt pans, Saltvik, Saltness) can also be reached by the ship, the fast way along the coast, on the sea map with its own risks (section 09); the travel map offers it when the ship is at hand.
+- **Journey modifiers** multiply a leg's time (Book 10 section 14, "Journey modifiers"): night (and riskier), driving cattle or carrying cargo, a known road, the kelpie bridle on a water crossing. Blocks (landslide, spate, snow, flood) force a detour or close the way; a blocked leg or route shows its reason in words. A block is a fact with one or more ways to clear it: a work party at the site (a designation with worker-days, built like a homestead building), an alliance, an item, the right words, a season window or a cold snap.
+- **Journey events.** A road leg can be interrupted by a short playable scene (a scenario, `SCN_`, of section 11): travellers, bandits, wolves, weather, a wounded stranger, or a discovery ("smoke in the hills" adds a new point of interest). The chance comes from Book 10 section 14 ("Journey modifiers", `journeyEvent`), drawn on the `encounters` stream and filtered by season, time, faction state and cargo; most legs are quiet. The leg stops where the event happens, hands off to `OnFoot` in the event's scene, and resumes with the time left when the scene ends. Living-world travellers and bandits really on that leg (section 25) meet the player as themselves.
+- **Routes are crossed on foot.** A route is a long scene with a clear main path, side paths, pockets, camp spots and at least one shortcut to find; its direct crossing takes the game time Book 10 section 14 gives ("Network"), and exploring off it takes longer. Time runs at the normal rate. Each crossing differs by time of day, weather, season and the living world: on entry the route draws its wandering people, wildlife and any hostile encounter on the `encounters` stream at the Book 10 section 14 "Route encounters" rates, modified by season, faction state, cargo carried and whether the household has cleared the route. Cargo and cattle slow the crossing and draw raiders; companions cross with the steerer.
+- **Ambushes are readable.** Every route ambush declares its signs like any danger (section 17): a fallen tree across the path, crows rising ahead, a stretch gone too quiet, fresh tracks. The signs show at the distance Book 10 section 14 gives ("Route encounters", `ambushSign`) before the ambush can strike; keen-eyed companions see them sooner (section 06).
+- **Route state.** A route can be made better: its shortcuts found (`shortcutsFound`, shortening later crossings), cleared of the outlaws who use it (`cleared`, lowering its hostile encounters), waymarked (`waymarked`), its ford bridged (a block cleared), and (proposal) given a **waystation** at its waystation spot, a safe camp with a small store built as a designation (`BLD_`, Book 10 section 15, "Waystations"). A route held by a hostile faction (`heldBy`) stays open but dangerous: its patrols and toll posts follow that faction's hostility (territory, above).
+- **Points of interest.** Every site has one or two major points of interest and every route one (a village, dungeon, ruin, shrine or camp with people and quests), and each has several minor ones (a cairn, a wreck, a carved stone, a hermit's hut, a hidden cache, a viewpoint, an eagle's nest, a herb patch, a grave, a burned farm). The best minor rewards lie off the obvious paths (`offPath`), behind a climb, a wade, a hazard or a puzzle (`guardedBy`). Book 9 places them in every plan; content lint checks that every site and route has its major point of interest and its minor ones.
+- **Shortest journeys** are a pure function of the network: the least game time between every pair of sites over road legs and the direct crossing times of routes, with no modifiers and every block cleared (and again under each season's closures). A unit test checks them against Book 10 section 14, "Shortest journeys", so the network and the table never drift apart.
+- **Seasons** change each site and route through its `seasonal` effects and the legs' conditions, driven by the calendar and the weather.
+- **How it opens.** From Chapter 3 the coastal sites have landings on the sea map; inland places open as they are discovered (walking there, a chart, testimony, a view from a height, a journey event) and as blocks are cleared.
 
 ### Water depth bands
 - Every water tile has a bed height; its **depth band** (`WET, ANKLE, KNEE, WAIST, DEEP`) is the water level (tide, spate, flood, freeze) over the bed, computed from the calendar and weather (Book 10 section 02, "Water depth bands"). It is never stored per frame, and what is drawn always agrees with it.

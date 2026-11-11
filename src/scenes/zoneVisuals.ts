@@ -352,7 +352,9 @@ export class ZoneVisuals {
   #personWater(id: string): PersonWater {
     const state = this.#wet.get(id);
     if (state === undefined) return { dark: 0 };
-    const band = this.tuning.water.bands.find((b) => b.band === state.band);
+    const bands = this.tuning.water.bands;
+    // A person standing (not swimming) is never hidden entirely: deep water draws at the waist.
+    const band = bands.find((b) => b.band === (state.band === 'DEEP' ? 'WAIST' : state.band));
     const mask = band?.maskPx ?? 0;
     const remaining = Math.max(0, state.dripUntil - this.seconds);
     // Darker while dripping, fading back over the last part of the time.

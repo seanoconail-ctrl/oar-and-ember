@@ -6,7 +6,7 @@ A pixel-art Viking settlement RPG set on a fictional island in the Narrow Sea, a
 
 **How to use:** Planning only. No implementation is authorised by this delivery. Book 1 owns design intent. Books 4 to 11 own setting, people, scenarios, art, dialogue, level layouts, numbers and audio within Book 1's limits. Book 2 owns data and runtime contracts. Book 3 owns build order and records the Stage 0 decisions. Implement one stage at a time and pass its gate before starting the next.
 
-_Revision 2.2 (design addendum 2.2, 11 November 2026) adds people drawn on 32 x 48 canvases with equipment layers, water and wading, one shared mainland of twenty areas with two home sites, wilderness, camping and dungeons with game-changing equipment, a living world, stealth raids and all-out assaults, every homestead task by hand and a home that runs without the steerer, happiness, friendship and fear, disputes, requests and quests, twists and unexpected events, stamina in traversal and condition, and a longer stage plan. Revision 2.1 renamed the game Oar and Ember and added the playable homestead, on-foot exploration, seasons with consequences, real-time combat without pause, the steerer's death, mature violence, the Stage 0 decisions and the Return to Skarvholm. Specification only: nothing here claims that systems exist or tests pass. Names, characters and supernatural rules are fictional design choices drawing on Norse and Gaelic myth._
+_Revision 2.3 (design addendum 2.3, 11 November 2026) adds the cruelty of every tradition, period ethics and stances, journeys of off-screen road legs and wilderness routes crossed on foot, story gates in place of fixed dates, traits, likes, relationships and tendencies, downed allies who live if brought home, scripted deaths, raids and assaults by land and sea, speech and information subtitles, a heavy body build and a reworked run cycle. Revision 2.2 (design addendum 2.2) added people drawn on 32 x 48 canvases with equipment layers, water and wading, one shared mainland of twenty areas with two home sites, wilderness, camping and dungeons with game-changing equipment, a living world, stealth raids and all-out assaults, every homestead task by hand and a home that runs without the steerer, happiness, friendship and fear, disputes, requests and quests, twists and unexpected events, stamina in traversal and condition, and a longer stage plan. Revision 2.1 renamed the game Oar and Ember and added the playable homestead, on-foot exploration, seasons with consequences, real-time combat without pause, the steerer's death, mature violence, the Stage 0 decisions and the Return to Skarvholm. Specification only: nothing here claims that systems exist or tests pass. Names, characters and supernatural rules are fictional design choices drawing on Norse and Gaelic myth._
 
 
 ## 01 / Design authority
@@ -26,7 +26,7 @@ A fictional island, **Skarvholm**, lies in the **Narrow Sea**, a fictionalised N
 - Single-player, desktop browser first, TypeScript with WebGL.
 - **Real time, no tactical pause.** The world does not stop to give orders. Menus can be opened only when no enemy is aware of the player.
 - **The home is playable.** Skarvholm, and later the mainland home, is explored and worked on foot. The player can help with any homestead task, designate buildings, watch residents at work, and talk with them about events, wounds and plans. Combat controls stay enabled at home.
-- **On-foot exploration is diverse and extensive.** Skarvholm has its own caves, cliffs, tidal ground, ruins and puzzles. **The mainland is one shared, connected region of twenty areas** on the Irish coast, the same for every player, that opens up over time: villages, a monastery, a royal fort, a trading town, farms, wilderness and six dungeon sites. Something worth stopping for lies every 20 to 30 seconds of walking.
+- **On-foot exploration is diverse and extensive.** Skarvholm has its own caves, cliffs, tidal ground, ruins and puzzles. **The mainland is one shared region of sixteen sites joined by road legs and six wilderness routes** on the Irish coast, the same for every player, that opens up over time: villages, a monastery, a royal fort, a trading town, farms, wilderness and six dungeon sites. Something worth stopping for lies every 20 to 30 seconds of walking.
 - **Every homestead task can be done by hand** by the steerer, with a proper work animation, and **the home runs without the steerer**, at reduced efficiency, while they are away.
 - **Every raid can be a stealth raid or an all-out assault**; some targets can only be taken by assault.
 - **Each resident has happiness, friendship and fear**, not a single regard.
@@ -46,6 +46,8 @@ A fictional island, **Skarvholm**, lies in the **Narrow Sea**, a fictionalised N
 - The player can kill anyone they can fight, including civilians and people who have surrendered. Consequences follow from witnesses, evidence and the crew's own values, so they are likely but not certain: a massacre with no surviving witness may never reach the coast, but the crew always knows.
 - Hard limits that do not change: children never appear as actors in any scene; no sexual violence of any kind; no player-performed torture; captives are named people, never a currency, and there is no slave-market loop.
 - Religions are presented through their believers. The game never proves Christianity or the old beliefs right or wrong; the supernatural is real in the fiction but ambiguous in its meaning.
+- **Every tradition is shown with its cruelty as well as its comfort, even-handedly**, through what its believers do: thralls killed to follow a chieftain, captured crews given to Rán; the abbey's bondmen, public floggings and the abbot's fast against a household; satire that can ruin a person and the blood-price that lets the rich kill the poor; seal-kin women bound by whoever holds their skin and the sick left on a skerry. Shown, never glorified, always with believers who are kind, doubtful or ashamed too. The hard limits below still hold.
+- **Everyone judges by the ethics of their own culture around AD 900, the household included**: honour and shame, luck, oaths, kin and vengeance, hospitality, blood-price, sin and penance. Compassion is real but speaks in period terms. Characters may speak of thralls, slave markets, blood-feud and harsh penance as ordinary; the game still has no slave-market loop, and captives are never currency.
 
 ### Scope boundaries
 No ageing, pregnancy, playable children, multiplayer, procedural continent or full naval simulation. No romance system; residents may arrive with existing relationships. Any adult can learn any job; origin and belief grant no stat bonuses. The player directly commands one flagship; a second vessel is managed only on the sea map.
@@ -141,8 +143,8 @@ Rewards must change what the player can do. A good day produces progress; a good
 
 | Chapter | Phase | Core goal | Ends when |
 |---|---|---|---|
-| 1 The Wreck | Survive on the island | Shelter, rescue four crew, repair the boat | The boat is launched and named |
-| 2 The First Raid | Learn the coast | Provisions and iron from Carrick Landing | The haul is home and two leads are offered |
+| 1 The Wreck | Survive on the island | Shelter, rescue four crew, repair the boat | The launch (a gate) |
+| 2 The First Raid | Learn the coast | Provisions and iron from Carrick Landing | The Carrick raid (a gate) is home and two leads are offered |
 | 3 The Open Coast | Learn the coast | Trade, explore, recruit, sow, first refit | The Followers arrive and the island needs more |
 | 4 A Name on the Water | Become wealthy | Bigger voyages, harvest, karvi, survive the first winter | Orm's tribute demand comes due |
 | 5 The Long Memory | Face the cost | Answer retaliation; the island begins to fail | The household commits to moving ashore |
@@ -150,7 +152,7 @@ Rewards must change what the player can do. A good day produces progress; a good
 | 7 The Gathering | Unite the coast | Win allies, pay what they demand | The council at Kilbrecc ends |
 | 8 The Sea King | Unite the coast | Return to Skarvholm for Manannán's Cup; defeat or outlast Orm and break his bargain | An ending is reached |
 
-Book 4 holds the full chapter structure and calendar. The year has a rhythm: spring sowing and the hungry gap, summer voyages and peat, autumn harvest and storms, winter at home living on what was prepared.
+**The story moves forward only through gates**: major events the player chooses to start (the launch, the Carrick raid, the reply to Asgrim, the defence of Skarvholm, the household council, the move ashore, the Gathering, the Return, the final battle; proposal). Each has a readiness screen (crew, ship, stores, allies, equipment) and says plainly that it is a point of no return. The calendar keeps running: seasons turn and winter must be prepared for, but dated story events wait at their gate; pressure builds gently while the player delays (demands grow, rumours spread) and never forces a gate. Chapter dates are typical, not limits (Book 10 section 22). Book 4 holds the full chapter structure and calendar. The year has a rhythm: spring sowing and the hungry gap, summer voyages and peat, autumn harvest and storms, winter at home living on what was prepared.
 
 ### Strategic arc
 Every raid writes deeds into the coast's memory. Every promise kept or broken changes who will stand with you. The external threat is **Orm Sveinsson of Kaldness**, a sea king swallowing independent harbours, who has made a bargain with **Rán**, the Norse sea power who gathers the drowned, through his seeress **Heid the Grey**. That bargain is also why strange tides are souring Skarvholm's spring and eating its landing. After the household moves ashore, Orm's men take the empty island, and Heid's apprentice begins digging into the Hollow Cairn for the Cup that could undo him.
@@ -181,6 +183,9 @@ A lead names a place and a rumour with a source and a confidence. Scouting, trad
 | Fight | You outmatch the defenders, or must | Wounds, deaths, lasting grievance |
 | Slaughter | The player chooses to kill everyone they find | Crew horror or delight, and a hunted name if anyone escapes |
 | Withdraw | The plan has failed | Little gain, but people come home |
+
+### Raids, assaults and defences by land and sea
+Raids come by sea, by stealth or in force. Once on the mainland the household can also march overland with allies to assault a camp, farm or fort, and land in force from the ships on coastal places (Carrick, Kilbrecc, Saltvik's outer harbour, Crowwick, Orm's outposts), with the same formation and objective rules. The homestead and the mainland home are defended with watch, warning and preparation (walls, traps, stakes, archers on platforms), then the battle. Each is a gate when it is a story event, and optional otherwise.
 
 ### Stealth or assault
 Every raid can be a **stealth raid** (a small party, often by night, aiming not to be seen) or an **all-out assault**, a strandhögg in force: the full crew lands by day, defenders muster over time with horns, reinforcements and archers, and battles run 10 to 30 a side around objectives (break the gate, fire the thatch, seize the store, take or kill the leader, hold the landing). Fortified places, Crowwick and Orm's outposts can only be taken by assault. The crew fights with real-time commands for shield wall, charge, hold, archers' volley and fall back to the ships. An assault's consequences are heavier and more public: more witnesses, more deaths, faster retaliation, and more glory with the Glory-minded. Carrick supports both.
@@ -213,6 +218,10 @@ Each resident holds two or three of six values: **Gain**, **Mercy**, **Glory**, 
 - **Happiness**, their mood now, from food, warmth, rest, safety, success, grief, festivals and how they were treated today. Unhappy people work worse and quarrel more.
 - **Friendship**, how they feel about the steerer over time, from kept promises, care, shared deeds that fit their values, gifts and time spent with them. Friends volunteer for danger and stay in hard times; enemies who do not fear the steerer leave.
 - **Fear**, how much they fear the steerer, from brutality, punishments, displays of strength and threats. Fear buys obedience at a cost in quality and loyalty, unless it sits with friendship, which makes fierce devotion.
+
+The same deed reads differently in each culture (Norse, Gaels, the Church, the Keepers; Saltvik judges by the bargain), so witnesses react first by their culture, then by their values, traits and **stance** towards their own code (conventional, sceptical, cynical or transgressive). Book 6 holds the reactions by culture.
+
+Each resident and companion also has **two to four traits** (some discovered over time: berserk, cowardly, superstitious, brave, greedy, pious, hot-tempered, gentle, a drinker, light-fingered, keen-eyed, sea-sick, a storyteller, a grudge-holder, diligent or lazy), **likes and dislikes**, **relationships** with the other residents (friends, rivals, grudges, mentors, drinking companions, family; never romance) and small daily **tendencies**. Traits change how they work, fight, react, quarrel and talk; the household screen shows what is known of each person and why. Most people are ordinary, with simple motives; major characters have branching, reactive conversations, and minor characters a line or two from pools that vary with culture, season, time, weather and deeds.
 
 Strong disapproval shows as a remark, a complaint, refusal of a specific kind of order, then a request to leave, never as a hidden stat that suddenly fires. Some residents relish brutality; most do not. Book 10 section 08 gives the numbers; friendship and fear apply to leaders too.
 
@@ -265,7 +274,7 @@ The controls follow the farming-RPG pattern. A hotbar of twelve slots holds tool
 Committed attacks have readable tells and recovery windows. Spears control distance; axes threaten shields; swords are flexible and rare; seaxes are fast; Dane axes are slow and devastating. Bows and thrown spears matter most at sea and at landings. Skill should overcome modest differences in equipment.
 
 ### Blood and death
-Hits draw blood; heavy kills can sever limbs and heads; bodies stay. A gore setting reduces this for players who want less. The steerer's death ends the game; named residents can die permanently unless the *Rán's mercy* option is chosen.
+Hits draw blood; heavy kills can sever limbs and heads; bodies stay. A gore setting reduces this for players who want less. The steerer's death ends the game. **Downed allies do not bleed out**: carried back to the boat, the village, or on a journey a safe camp or waystation, they live; left behind at the end of a scene, they are captured (to be rescued or ransomed later) or killed, according to the enemy. Enemies do not finish the downed, except berserkers and a few named cruel enemies, with a visible warning. Crew deaths come mainly from being left behind, from berserkers and cruel enemies, and from scripted deaths and death-choices (proposal); the *Rán's mercy* option prevents unscripted deaths. Every death changes the household: grief, lost skills, a grave, songs, sometimes a ghost.
 
 ### Enemies and crew
 Enemies see, hear, remember and communicate by shouts, horns and runners. Groups hold narrow ground, flank and break when cohesion fails; most surrender when beaten, unless your reputation tells them not to bother. Crew commands (follow, hold, attack my target, protect, carry, withdraw to the ship) are issued with quick keys in real time and acknowledged aloud. Getting back to the boat with loot or wounded people is part of the fight.
@@ -301,7 +310,9 @@ Combat controls stay enabled at home. Scavengers, raiders, retaliating neighbour
 A small island with a lot in it, and everything found there matters again in the late-game return: cliffs to climb for eggs, tide caves that open only at low water, a causeway to the Skerry of the Drowned at spring low tides, a hermit's ruined cell, a stone ring, a peat bog, an eagle stack, the Hollow Cairn and the Hag's Seat. Seasons change what can be found. Book 9 holds the plans.
 
 ### The mainland
-The mainland is one connected region of twenty areas on the Irish coast, the same for every player (Book 4 section 03; Book 9 section 10). From Chapter 3 its coastal areas can be reached by ship; inland areas open on foot as they are discovered and as blocks are cleared: a landslide on the High Pass, the River Ford in spate, the hill-folk's leave for the heart of the Black Wood, the season for the Drowned Trackway. It is fully explorable long before Chapter 6, so the household chooses its home knowing the land. There are two home sites, Carrick Strand by Ardcarn and the Saltness headland by Saltvik. Every area changes with season and tide.
+**A journey is a chain of road legs and wilderness routes.** Sites (villages, forts, the monastery, farms, dungeons, the bog village, the mountain) are explored in full on foot. Road legs between them pass off screen and cost game time (longer at night or driving cattle; interrupted now and then by a short playable scene). Six **wilderness routes** (the Black Wood path, the plank road, the High Pass, the Ridge Road, the river path and the Ford, the moor road) lie between sites, and **whenever a journey passes through one, the player crosses it on foot**: a long place with a main path, side paths, a shortcut, camp spots, wildlife, gathering, hazards, wanderers and readable ambushes, about two or three game hours direct. A day fits one or two nearby sites; far sites need a camp on the way, or the ship, which is the fast way along the coast. Book 10 section 14 holds the network and the shortest journeys. Every site and route has major and minor points of interest, with the best finds off the beaten track.
+
+The mainland is one region of sites and routes on the Irish coast, the same for every player (Book 4 section 03; Book 9 section 10). From Chapter 3 its coastal areas can be reached by ship; inland areas open on foot as they are discovered and as blocks are cleared: a landslide on the High Pass, the River Ford in spate, the hill-folk's leave for the heart of the Black Wood, the season for the Drowned Trackway. It is fully explorable long before Chapter 6, so the household chooses its home knowing the land. There are two home sites, Carrick Strand by Ardcarn and the Saltness headland by Saltvik. Every area changes with season and tide.
 
 ### Wilderness, camping and companions
 The wilderness is big and worth exploring: every wilderness area has at least one secret, one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger. Hazards include bog holes, spate rivers, cliffs and scree, cold at night, fog, wolves, boar, outlaws, landslides after rain, lightning on high ground and the hill-folk's rules. The steerer can camp anywhere not hostile with a bedroll and a fire: a camp ends the day, heals, and saves if safe, and its risks fall with a good fire, a companion on watch and a sheltered spot. Up to two residents can travel with the steerer on foot and comment, help and fight.
@@ -385,7 +396,7 @@ Wake on the shore with control in seconds. Someone is calling beyond the rocks: 
 - Planning screens open in safe moments; crew orders use quick keys and a hold-to-open command ring that does not stop time.
 - Difficulty options: combat speed, parry window, enemy damage, *Second wind* (a brief rescue window when the steerer falls), *Rán's mercy* (no crew permadeath), gore level, day length.
 - Checkpoints before major danger; failure teaches without twenty minutes of repetition.
-- Remappable controls, colour-independent readability, subtitles and sound captions, adjustable text size.
+- Remappable controls, colour-independent readability, subtitles and sound captions, adjustable text size. Subtitles show **speech** upright as "Name: words" and **information** (sounds, directions, cues such as "Hild, calling from the west") in a real italic with no speaker, above the speech; information captions can be turned off apart from speech.
 
 ## 16 / First builds and proof
 *The first prototype is one island, one ship and one coastal target, followed by a return voyage and consequences at home.*
@@ -396,7 +407,7 @@ Wake on the shore with control in seconds. Someone is calling beyond the rocks: 
 | 2: The First Voyage | Whole island explorable, homestead v1 with tasks and designations, sea travel, Carrick with every approach, consequences | Different choices produce different useful outcomes; players choose to spend days at home |
 | 3: Reasons to Return | Saltvik on foot, ship upgrades, sea battle, a returning character, the first bargain | Players form their own next goal |
 
-| 4: The Mainland | All twenty mainland areas, travel, blocks, seasons, camping, wilderness hazards and the six dungeons | The mainland is worth exploring for its own sake, and the player knows where they want to live |
+| 4: The Mainland | Every mainland site and the six wilderness routes, journeys, blocks, seasons, camping, wilderness hazards and the six dungeons | The mainland is worth exploring for its own sake, and the player knows where they want to live |
 
 The user playtests each build gate personally at first. The most important test of Build 2: after the first raid, does the player want another voyage because they have a plan, and a day at home because there is something to do?
 
@@ -404,6 +415,7 @@ The user playtests each build gate personally at first. The most important test 
 *Book 7 is the full art reference; these rules are locked here.*
 
 - Logical viewport 640 x 360; world tiles 24 x 24; adult sprite canvas **32 x 48** with a grounded foot anchor at bottom centre; adults stand about **40 px tall (about 1.7 tiles)**, about 18 x 40 occupied pixels, a little larger relative to the world than before. Everything people use is scaled to match: doors, beds, benches, workstations, tools, carried loads, ship benches and deck spacing, and buildings' door and eave heights (Book 7).
+- A **heavy body build** (broad shoulders, thick torso and limbs) for some residents and enemies, never the steerer, shares the same animation set and moves heavier. The **run** has a forward tilt, a suspension frame each stride, a deep knee bend, a high knee drive, a heel kick and a 90-degree arm pump, with hair and cloth trailing (Book 7).
 - People are layered sheets (body, clothing, cloak, helmet, armour, shield, weapon) sharing the body's frames, so worn equipment is visible. Iron helmets are rare; the steerer starts with none. Six-frame walk with a 1 px bob, eight-frame run, breathing idles, secondary motion on hair and cloth, and a soft ground shadow under every person, animal and prop.
 - The steerer carries a madder-red accent so they stand out against sand and grass; each resident has a signature colour and silhouette detail.
 - WebGL rendering with nearest-neighbour sampling, pixel-aligned drawing and integer scaling; letterbox rather than stretch.
@@ -439,3 +451,9 @@ Travellers move between areas on schedules, each with an origin, a destination a
 - An event deck of about forty rare events, each firing at most once per campaign and only when its conditions fit the moment, brings the unexpected about every 5 to 10 days, never during a tutorial and never two at once.
 
 Book 4 section 12 holds the twist seeds (proposals for the user's review) and the event deck; Book 5 holds the people's secrets and personal quests.
+
+## 21 / Optional quests and companions
+*Things worth doing on the way.*
+
+Optional quests can be mounted at any time for ship enhancements (a better sail, a carved prow, a sea-charm, a famous mast timber), character equipment (the dungeon rewards and smaller finds) and residents' requests. The steerer can take up to two friendly characters on any expedition on foot; they fight, help with puzzles and hazards, comment, react through their traits and can be wounded. Some quests need a particular companion (Runa to judge a mast timber, Senán to read a carved stone).
+

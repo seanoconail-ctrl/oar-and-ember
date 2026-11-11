@@ -27,8 +27,9 @@ it one stage at a time, following `docs/03_stage_plan.md`.
 | 11 | docs/11_audio_and_music.md | Music, sound and voice |
 
 PDF copies for people are in `docs/pdf/`. The markdown files are the source of truth. Design
-addendum 2.2 (`docs/design-addendum-2.2.md`) is folded into the books (decision log DA-1 to DA-16);
-it is kept as a record only, and the books win over it from now on.
+addenda 2.2 and 2.3 (`docs/design-addendum-2.2.md`, `docs/design-addendum-2.3.md`) are folded into
+the books (decision log DA-1 to DA-16 and DC-1 to DC-16); they are kept as a record only, and the
+books win over them from now on.
 
 ## Authority when books disagree
 The user's latest instruction > Book 1 > Books 4 to 11 > Book 2 > Book 3.
@@ -36,7 +37,7 @@ Book 10 and `content/balance.json` are the only source of tuning numbers.
 
 ## Rules that never change
 - Do only the named stage. Never start the next one. Stop at the build gates (Stages 12, 20, 24 and
-  32) so the user can playtest.
+  33) so the user can playtest.
 - Follow Book 2. Never hard-code a tuning number; read it from `content/balance.json`.
 - Real time with no tactical pause. The steerer's death is game over.
 - Never use a gendered word for the steerer (Book 8 section 03).

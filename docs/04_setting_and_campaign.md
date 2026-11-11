@@ -4,7 +4,7 @@
 
 The Narrow Sea is a few days' sailing wide and crowded with people who need each other and fear each other: Gaelic farmers and kings, monks with long memories, Norse-Gaelic traders, hungry raiders, and the old powers of sea, mist and hill that both peoples half believe in.
 
-**How to use:** Use this book for world facts, stable IDs, Skarvholm and the mainland on foot, seasons, supernatural rules, the wilderness, dungeons, the living world, twists and chapter beats. It must not contradict Book 1. Book 5 holds people, Book 6 scenarios, Book 7 appearance, Book 8 voices, Book 9 tile plans and Book 10 every number. Every place, zone, area, power and chapter here has a stable ID for Book 2's content files.
+**How to use:** Use this book for world facts, stable IDs, Skarvholm and the mainland on foot, journeys, seasons, beliefs and their cruelties, supernatural rules, the wilderness, dungeons, the living world, twists, chapter beats and story gates, quests and companions, deaths, and attacks and defences. It must not contradict Book 1. Book 5 holds people, Book 6 scenarios, Book 7 appearance, Book 8 voices, Book 9 tile plans and Book 10 every number. Every place, zone, site, route, power and chapter here has a stable ID for Book 2's content files.
 
 _All places, people, saints and events are fictional. Mythological figures are adapted from Norse and Gaelic sources for play; they are not reconstructions of historical belief. Historical touchstones are inspiration and should be checked before any claim of accuracy is made in marketing or in-game text._
 
@@ -15,7 +15,7 @@ _All places, people, saints and events are fictional. Mythological figures are a
 > Figure: schematic map of the Narrow Sea (drawn in the PDF version of this book).
 
 ### Shape of the region
-The Irish coast runs along the south-west of the map: farmland, ringforts, a monastery on a headland and Saltvik's harbour at its eastern end. Behind that shore lies the mainland, one region of twenty areas with woods, a great bog, a mountain and a moor (section 03). The Scottish coast closes the north-east: a long peninsula, a sea loch reaching into the hills and small islands. Skarvholm sits in the middle, exposed to every wind, a day's row from almost anywhere. To the north-west, past Blue Men's Sound, lie the northern isles where Orm Sveinsson rules from Kaldness. The deep water around Skarvholm is Rán's Reach, where the drowned go down.
+The Irish coast runs along the south-west of the map: farmland, ringforts, a monastery on a headland and Saltvik's harbour at its eastern end. Behind that shore lies the mainland: sixteen sites, from villages to dungeons, joined by road legs and by six wilderness routes through an oakwood, a great bog, a mountain pass, a ridge, a river and a moor (section 03). The Scottish coast closes the north-east: a long peninsula, a sea loch reaching into the hills and small islands. Skarvholm sits in the middle, exposed to every wind, a day's row from almost anywhere. To the north-west, past Blue Men's Sound, lie the northern isles where Orm Sveinsson rules from Kaldness. The deep water around Skarvholm is Rán's Reach, where the drowned go down.
 
 ### Places and stable IDs
 | ID | Display name | Type | Who lives there | Offers the player |
@@ -84,88 +84,151 @@ Skarvholm is 384 x 256 tiles: about a minute's run straight across, several minu
 Spring brings lambs, eggs on the cliffs and the first peat cutting. Summer brings long light, birds and the best fishing. Autumn brings seal pups and storms that throw wreckage onto the strand. Winter freezes the bog pools, darkens the afternoons and brings the dead closer at Samhain and Yule. Every zone changes with season and tide, so the island repays walking it again.
 
 ## 03 / The mainland
-*One shared region of twenty areas on the Irish coast, the same for every player. It opens up over time, and the household knows it long before it chooses a home there.*
+*Sixteen sites explored on foot, joined by off-screen road legs and six wilderness routes that are crossed on foot; the ship is the fast way along the coast. The same for every player, it opens up over time, and the household knows it long before it chooses a home there.*
 
 ### One region that opens over time
-The mainland (`REG_MAINLAND`) is one connected region of twenty areas on the Irish coast, and every player gets the same mainland. From Chapter 3 its coastal areas can be reached by ship; inland areas open on foot as they are discovered and as blocks are cleared. The mainland is fully explorable long before Chapter 6, so the household chooses its home knowing the land. Places belong to factions or to the wilderness: a hostile faction's guards attack on sight in its territory, and areas held by factions the household has wronged stay open but dangerous. Every area changes with season and tide. Book 9 section 10 holds the layout overview; Book 10 section 14 holds the travel times, quick-travel cost and the costs of clearing blocks.
+The mainland (`REG_MAINLAND`) is one connected region on the Irish coast, and every player gets the same mainland. It has two kinds of playable place, joined by road legs:
+- **Sites** are destinations explored in full on foot: villages, forts, the monastery, farms, dungeons, the turf village and the mountain.
+- **Wilderness routes** are long playable places *between* sites. **Whenever a journey passes through a route, the player crosses it on foot, in game.**
+- **Road legs** join sites and route ends. They happen off screen and cost game time.
+
+From Chapter 3 the coastal sites can be reached by ship, and the inland sites open on foot through the routes as they are discovered and as blocks are cleared. The mainland is fully explorable long before Chapter 6, so the household chooses its home knowing the land. Places belong to factions or to the wilderness: a hostile faction's guards attack on sight in its territory, and sites and routes held by factions the household has wronged stay open but dangerous. Every site and route changes with season and tide. Book 9 sections 10 and 14 hold the layouts; Book 10 section 14 ("Sites and routes", "Network", "Journey modifiers", "Shortest journeys", "Route encounters") holds every travel number and the costs of clearing blocks.
 
 ### Home sites (Chapter 6)
 There are two home sites, both on this map. Arra Foot is no longer a home site.
 
-| Site | Area | Strengths | Weaknesses | Ways to secure it |
+| Site | Place | Strengths | Weaknesses | Ways to secure it |
 |---|---|---|---|---|
 | `SITE_CARRICK_STRAND` Carrick Strand, beside Ardcarn | `MAIN_CARRICK_STRAND` | Good farmland, near Kilbrecc and Dún Fiach | It is the shore you first raided | Grant from Fiachra (service, hostage or a marriage tie between other households) plus compensation to Ardcarn; or seizure |
 | `SITE_SALTNESS` Saltness headland, outside Saltvik | `MAIN_SALTNESS` | Trade, shipyard, strong position; sea caves below the headland | Poor soil; Orm's likely first target | Purchase in silver, or a season escorting Saltvik's fleet; council vote |
 
-### The twenty areas
-| # | ID | Area | Type | Known at start | Leader / faction | Notes |
-|---|---|---|---|---|---|---|
-| 1 | `MAIN_CARRICK_STRAND` | Carrick Strand | Coast, home site A | Yes (by sea) | Ardcarn's land | Farmland by the shore first raided |
-| 2 | `MAIN_CARRICK_LANDING` | Carrick Landing | Coast | Yes | Muiredach | First raid site |
-| 3 | `MAIN_ARDCARN` | Ardcarn | Village | Yes | Muiredach | Fields, guesthouse, Eithne's old home |
-| 4 | `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Lake | No | (the each-uisce) | Water-horse; holy well |
-| 5 | `MAIN_KILBRECC` | Kilbrecc | Monastery, coast | Yes | Abbot Colmán | Round tower, the Bell |
-| 6 | `MAIN_KILBRECC_FARMS` | The tenant farms | Farmland | No | Colmán's reeve | Tithe barns, pilgrims' road |
-| 7 | `MAIN_BLACKWOOD_EDGE` | Fiodh Dubh: the edge | Oakwood | No | Wilderness | Boar, charcoal burners, outlaw scouts |
-| 8 | `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Old forest, dungeon | No | The aos sí | Hill-folk ringfort and souterrain |
-| 9 | `MAIN_MOIN_MHOR` | Móin Mhór, the Great Bog | Bog | No | Peat-cutters (Lasair) | Plank road; floods in winter |
-| 10 | `MAIN_TRACKWAY` | The Drowned Trackway | Bog, dungeon | No | (the Bog King) | Sunken trackway and shrine |
-| 11 | `MAIN_SLIABH_CARN` | Sliabh Carn | Mountain | No | Herders (Dubhthach) | Shielings in summer; summit cairn |
-| 12 | `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Mountain cave, dungeon | No | (the Cailleach) | Ice, wind, old stone |
-| 13 | `MAIN_HIGH_PASS` | The High Pass | Pass | No | Wilderness | Blocked by a landslide at first |
-| 14 | `MAIN_DUN_FIACH` | Dún Fiach | Royal fort | Yes (by sea) | King Fiachra, Órlaith | Rath on a crag |
-| 15 | `MAIN_RIDGE_ROAD` | The Ridge Road | Road | Yes | Fiachra's riders | Patrolled; tolls |
-| 16 | `MAIN_FORD` | The River Ford | River crossing | Yes | The ford-keeper (Cuán) | Floods in spate; border |
-| 17 | `MAIN_SALT_PANS` | Ottar's farms and salt pans | Farmland, coast | Yes | Hrefna, Ottar's steward | Work, trade, smugglers' rumours |
-| 18 | `MAIN_SALTVIK` | Saltvik | Town, coast | Yes | Ottar Silkbeard, Gunnhild | Market, yards, guards |
-| 19 | `MAIN_SALTNESS` | Saltness headland | Coast, home site B | Yes | Saltvik council | Sea caves below the headland |
-| 20 | `MAIN_MOUND_FIELD` | The Mound Field and the moor | Burial ground, moor, dungeon | No | (Hrolf the Barrow-King); outlaws (Faolán) | Norse mounds; the outlaws' hill-fort beyond |
+### Sites and routes
+| ID | Place | Kind | Known at start | Leader / faction | Notes |
+|---|---|---|---|---|---|
+| `MAIN_CARRICK_STRAND` | Carrick Strand | Site, coast, home site A | Yes (by sea) | Ardcarn's land | Farmland by the shore first raided |
+| `MAIN_CARRICK_LANDING` | Carrick Landing | Site, coast | Yes | Muiredach | First raid site |
+| `MAIN_ARDCARN` | Ardcarn | Site, village | Yes | Muiredach | Fields, guesthouse, Eithne's old home |
+| `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Site, lake | No | (the each-uisce) | Water-horse; holy well |
+| `MAIN_KILBRECC_FARMS` | The tenant farms | Site, farmland | No | Colmán's reeve | Tithe barns, the pilgrims' road, the bondmen who work the land |
+| `MAIN_KILBRECC` | Kilbrecc | Site, monastery, coast | Yes | Abbot Colmán | Round tower, the Bell |
+| `MAIN_BLACKWOOD_EDGE` | The Black Wood path (Fiodh Dubh) | **Route**, oakwood | No | Wilderness | Boar, charcoal burners, outlaw scouts. The ID keeps its first name, the edge |
+| `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Site, old forest, dungeon | No | The aos sí | Entered from the Black Wood path through the hill-folk's gate |
+| `MAIN_MOIN_MHOR` | Móin Mhór: the turf village and bog edge | Site, bog | No | Peat-cutters (Lasair) | The turf village on the Great Bog's edge; the plank road and the moor road end here |
+| `MAIN_PLANK_ROAD` | The plank road across the Great Bog | **Route**, bog | No | Wilderness; the peat-cutters keep the planks | Móin Mhór to Sliabh Carn; floods in winter |
+| `MAIN_TRACKWAY` | The Drowned Trackway | Site, bog, dungeon | No | (the Bog King) | Branches off the plank road; summer and autumn, or a winter freeze |
+| `MAIN_SLIABH_CARN` | Sliabh Carn | Site, mountain | No | Herders (Dubhthach) | Shielings in summer; summit cairn |
+| `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Site, mountain cave, dungeon | No | (the Cailleach) | Ice, wind, old stone; closed by snow in winter |
+| `MAIN_HIGH_PASS` | The High Pass | **Route**, pass | No | Wilderness | Landslide until cleared |
+| `MAIN_DUN_FIACH` | Dún Fiach | Site, royal fort, coast | Yes (by sea) | King Fiachra, Órlaith | Rath on a crag |
+| `MAIN_RIDGE_ROAD` | The Ridge Road | **Route**, ridge | Yes | Fiachra's riders | Patrolled; tolls |
+| `MAIN_FORD` | The river path and the Ford | **Route**, river | Yes | The ford-keeper (Cuán) | Closed in spate unless bridged; the border |
+| `MAIN_SALT_PANS` | Ottar's farms and salt pans | Site, farmland, coast | Yes | Hrefna, Ottar's steward | Work, trade, smugglers' rumours |
+| `MAIN_SALTVIK` | Saltvik | Site, town, coast | Yes | Ottar Silkbeard, Gunnhild | Market, yards, guards |
+| `MAIN_SALTNESS` | Saltness headland | Site, coast, home site B | Yes | Saltvik council | Sea caves below the headland |
+| `MAIN_MOOR_ROAD` | The moor road | **Route**, moor | No | Wilderness | Salt pans to Móin Mhór; wolves in winter |
+| `MAIN_MOUND_FIELD` | The Mound Field | Site, burial ground, dungeon | No | (Hrolf the Barrow-King); outlaws (Faolán) | Entered from the moor road; Faolán's outlaws' hill-fort beyond the mounds |
 
-Five sea-map places are areas of the mainland: Carrick Landing (`SITE_CARRICK`), Ardcarn (`TOWN_ARDCARN`, reached from the sea through Carrick Landing), Kilbrecc (`ABBEY_KILBRECC`), Dún Fiach (`FORT_DUNFIACH`) and Saltvik (`TOWN_SALTVIK`), and the two home sites are areas too. A name in brackets under Leader / faction is a power or one of the dead (section 07), not a living leader. Book 5 holds the leaders. Bealtaine fires are lit at the summit cairn on Sliabh Carn; the sea-wife keeps her hut at Saltvik; rumour says smugglers use the sea caves under Saltness.
+Sixteen places are sites and six are routes. Five sea-map places are sites of the mainland: Carrick Landing (`SITE_CARRICK`), Ardcarn (`TOWN_ARDCARN`, reached from the sea through Carrick Landing), Kilbrecc (`ABBEY_KILBRECC`), Dún Fiach (`FORT_DUNFIACH`) and Saltvik (`TOWN_SALTVIK`), and the two home sites are sites too. A name in brackets under Leader / faction is a power or one of the dead (section 07), not a living leader. Book 5 holds the leaders. Bealtaine fires are lit at the summit cairn on Sliabh Carn; the sea-wife keeps her hut at Saltvik; rumour says smugglers use the sea caves under Saltness.
 
-### Connections and travel times
-Times are real time on foot, walking (Book 10 section 14).
+### The network
+A road leg is off screen and costs game time; a route is crossed on foot, and its time is for its direct path at walking pace. These are starting values; Book 10 section 14 ("Network") holds the numbers and computes the shortest journey between every pair of sites from them ("Shortest journeys"), and a test checks them.
 
-| From | To | Walk | Condition |
-|---|---|---|---|
-| Carrick Strand | Carrick Landing | 1 min | |
-| Carrick Landing | Ardcarn | 1.5 min | |
-| Ardcarn | Loch Carn | 2 min | |
-| Ardcarn | Kilbrecc farms | 2 min | |
-| Kilbrecc farms | Kilbrecc | 1 min | |
-| Ardcarn | Black Wood edge | 2.5 min | |
-| Black Wood edge | Black Wood heart | 3 min | Opens with the hill-folk's leave (an offering or the right words) |
-| Black Wood edge | Móin Mhór | 2.5 min | |
-| Móin Mhór | Drowned Trackway | 2 min | Summer and autumn only; or frozen in a winter cold snap |
-| Móin Mhór | Sliabh Carn | 3 min | |
-| Sliabh Carn | Cailleach's Cave | 2 min | Closed by snow in winter |
-| Sliabh Carn | High Pass | 2 min | |
-| High Pass | Dún Fiach | 2.5 min | Landslide until cleared |
-| Kilbrecc | Ridge Road | 2 min | |
-| Ridge Road | Dún Fiach | 2 min | Guards attack if Dún Fiach is hostile |
-| Ridge Road | River Ford | 2.5 min | |
-| River Ford | Salt pans | 2 min | Impassable in spate (spring days 1 to 20; autumn storms) unless bridged |
-| Salt pans | Saltvik | 1 min | |
-| Saltvik | Saltness | 1 min | |
-| Salt pans | Mound Field and moor | 2.5 min | |
-| Mound Field and moor | Móin Mhór | 3 min | Wolves in winter |
+| From | To | Kind | Time | Condition |
+|---|---|---|---|---|
+| Carrick Strand | Carrick Landing | Road | 0.5 h | |
+| Carrick Landing | Ardcarn | Road | 0.5 h | |
+| Ardcarn | Loch Carn | Road | 1 h | |
+| Ardcarn | Kilbrecc farms | Road | 1 h | |
+| Kilbrecc farms | Kilbrecc | Road | 0.5 h | |
+| Ardcarn | Black Wood path (south end) | Road | 2 h | |
+| Black Wood path | (crossing) | **Route** | About 2.5 h direct | The hill-folk's gate to the heart lies off it, and opens with their leave |
+| Black Wood path (north end) | Móin Mhór | Road | 1 h | |
+| Móin Mhór | Plank road (west end) | Road | 0.5 h | |
+| Plank road | (crossing) | **Route** | About 2 h direct | The Trackway branches off it in summer and autumn, or in a winter cold snap |
+| Plank road (east end) | Sliabh Carn | Road | 0.5 h | |
+| Sliabh Carn | Cailleach's Cave | Road | 1 h | Closed by snow in winter |
+| Sliabh Carn | High Pass (north end) | Road | 1 h | |
+| High Pass | (crossing) | **Route** | About 2.5 h direct | Closed by the landslide until it is cleared |
+| High Pass (south end) | Dún Fiach | Road | 1 h | |
+| Kilbrecc | Ridge Road (west end) | Road | 1 h | |
+| Ridge Road | (crossing) | **Route** | About 2 h direct | Branches east to Dún Fiach and south to the river; Fiachra's riders attack if Dún Fiach is hostile |
+| Ridge Road (east end) | Dún Fiach | Road | 0.5 h | Guards attack if Dún Fiach is hostile |
+| Ridge Road (south branch) | River path (north end) | Road | 1 h | |
+| River path and Ford | (crossing) | **Route** | About 2 h direct | The Ford is closed in spate unless bridged |
+| River path (south end) | Salt pans | Road | 1 h | |
+| Salt pans | Saltvik | Road | 0.5 h | |
+| Saltvik | Saltness | Road | 0.5 h | |
+| Salt pans | Moor road (south end) | Road | 1 h | |
+| Moor road | (crossing) | **Route** | About 2.5 h direct | The Mound Field lies off it |
+| Moor road (north end) | Móin Mhór | Road | 1.5 h | |
 
-Quick travel along known roads between waymarks is allowed when safe; it costs game time equal to the walk, at about one game hour per real minute walked (Book 10 section 14). By sea, from Chapter 3, the coastal areas (Carrick Strand, Carrick Landing, Kilbrecc, Dún Fiach below its crag, the salt pans, Saltvik and Saltness) are landings on the sea map.
+### How a journey works
+- **A journey is a chain** of road legs and routes. For example: Ardcarn, then two hours on the road (off screen), then **the Black Wood path** (played: about 2.5 game hours on its direct path, longer if the party explores), then one hour on the road (off screen), then Móin Mhór.
+- **The travel map shows the chain before the player sets out**: each leg and route, its time, the time of arrival, and any block, season or hostile ground on the way. The player leaves a site by its road and chooses where to go; the off-screen legs pass, and the party arrives at the next route's end or at the destination.
+- **A day fits one or two nearby sites.** At the Book 10 clock (section 02, "Clock": 50 real seconds a game hour, so 16.7 real minutes from 06:00 to 02:00), a far site needs a camp on the way, or the ship.
+- **The ship is the fast way along the coast.** The coastal sites (Carrick Strand and Carrick Landing, Kilbrecc, Dún Fiach's landing below the crag, the salt pans, Saltvik and Saltness) can be reached by sea from Chapter 3, on the sea map with its own risks, skipping the inland routes. The inland sites can only be reached through the routes.
+- **A route has no quick way through.** Whoever takes a journey through a route walks it; the party can turn back the way it came, camp on it, or leave by any of its ends.
+
+### Road legs (off screen)
+- **Modifiers** (Book 10 section 14, "Journey modifiers"): travel at night is slower and riskier; driving cattle or carrying cargo is slower; known roads are quicker; the kelpie bridle (section 10) halves water crossings; blocks (the landslide, spate, snow and flood) force a detour or close the way (below).
+- **Journey events:** a road leg can be interrupted by a short playable scene: travellers, bandits, wolves, weather, a wounded stranger, or a discovery ("smoke in the hills" adds a new point of interest to the map). Most road legs are quiet. When the scene ends, the leg goes on.
+
+### Wilderness routes (played)
+- **Shape:** long rather than square, with a clear main path, side paths, pockets, one or two camp spots and at least one shortcut to find. The direct path takes about 1.5 to 2.5 real minutes of walking (2 to 3 game hours); exploring off it can double that. Time runs at its normal rate. Book 9 section 14 holds each route's layout in outline.
+- **Contents:** one major point of interest, 4 to 8 minor ones, wildlife always, gathering spots (herbs, nuts, berries, timber, peat, fish in the streams), hazards (section 09) and camp spots.
+- **Each crossing is different:** the time of day, the weather, the season, and the living world (section 11) draw what the party meets:
+  - wandering people: travellers, pilgrims, pedlars, herders, charcoal burners, patrols, outlaws, a lost traveller, a fleeing thrall, a hunting party;
+  - wildlife: deer, boar, hares, wolves, ravens, otters, eagles, by season;
+  - the risk of attack: bandits, outlaws, wolves, a boar, or a patrol of a hostile faction.
+- **Encounters (proposal):** wandering people on about half of all crossings; a hostile encounter on about one crossing in five by day and one in three at night; more or fewer with the season, the factions' state, the cargo carried and whether the household has cleared the route (Book 10 section 14, "Route encounters").
+- **Ambushes are readable:** a fallen tree across the path, crows rising ahead, a stretch gone too quiet, fresh tracks. Keen-eyed companions spot them sooner (Book 5). Each ambush keeps the fairness of every danger: a sign first, then a choice to fight, pay, go round or turn back.
+- **Cargo and cattle** slow the crossing and draw raiders. Companions cross with the steerer, and so does anyone being carried.
+
+### The six routes
+Each route has its own country and must meet the terrain art standard set at Stage 6 (wind, moving plants, light, water and wildlife); Book 7 draws it and Book 9 section 14 lays it out.
+
+| Route | Country | Major point of interest | Typical dangers | Seasons |
+|---|---|---|---|---|
+| The Black Wood path | Old oakwood, holly, moss, shafts of light, streams | The charcoal burners' camp; the hill-folk's gate to the heart | Boar, outlaw scouts, wolves in winter, getting lost off the path | Nuts and mushrooms in autumn; bare and dark in winter |
+| The plank road | Open bog, pools, cotton grass, the timber trackway | The turf-cutters' shelter; the branch to the Drowned Trackway | Sinking ground off the planks, mist, will-o'-the-wisps, the Bog King's drowned | Floods in winter; frozen in cold snaps |
+| The High Pass | Scree, crags, a stream in a gorge, wind | The landslide (until cleared); a ruined watchtower | Rockfall, cold, wolves, Faolán's outlaws | Snow slows it in winter |
+| The Ridge Road | Open ridge, heather, cairns, long views to the sea | Fiachra's toll post | Fiachra's riders if Dún Fiach is hostile; toll disputes | Busiest in summer, with fairs and pilgrims |
+| The river path and the Ford | Alder and willow, a wide brown river, stepping stones | Cuán's ford-house and the crossing | Spate, the river itself, smugglers | Closed in spate unless bridged |
+| The moor road | Heather moor, standing stones, a gallows tree | The standing stones; the turn to the Mound Field | Wolves in winter, outlaws, the barrow-dead at night | Long dark nights in winter |
+
+### Making a route better
+- **Find its shortcuts:** each route has at least one, off the main path, that shortens later crossings once found.
+- **Drive out the outlaws** who use it: a broken camp scatters (section 11), and the route's hostile encounters fall.
+- **Waymark it:** cairns or blazes along the main path keep a party on it in fog and at night.
+- **Bridge the Ford:** a timber bridge, built like a homestead building, ends the spate closure for everyone (below).
+- **Build a waystation (proposal):** a safe camp with a small store, at one camp spot per route. It counts as a safe camp for sleeping, saving and bringing the downed to safety (section 14). Book 10 section 15 ("Waystations") gives its cost and store.
+- **Hostile ground stays open:** a route held by a hostile faction is never closed, but it is dangerous.
+
+### Points of interest in every site and route
+- **Major points of interest:** one or two in each site and one on each route: a village, dungeon, ruin, shrine or camp with people and quests.
+- **Minor points of interest:** 4 to 8 in each site and route: a cairn, a wreck, a carved stone, a hermit's hut, a hidden cache, a viewpoint, an eagle's nest, a herb patch, a grave, a burned farm.
+- **Off the beaten track:** the best minor rewards lie off the obvious paths, behind a climb, a wade, a hazard or a puzzle, and reward curiosity with food, materials, lore, collectibles or equipment. Hazards (section 09) guard many of the best finds.
+- **Camping:** if night falls away from home, the party camps at a site, at one of a route's camp spots or at a waystation (section 09).
+
+Book 9 section 12 sets how densely they are placed.
 
 ### How the map opens up
-- **The landslide on the High Pass:** cleared by a work party with axes and levers, by Fiachra's men after an alliance, or by the Cailleach's maul (section 10). Book 10 section 14 gives the worker-days.
-- **The River Ford in spate:** wait for the water to fall, or build a timber bridge (a homestead build at the ford), which also helps everyone who travels it. Book 10 section 14 gives the timber and worker-days.
-- **The Black Wood heart:** the hill-folk let the household in after an offering, a kept promise or the right words found in the hermit's psalter on Skarvholm.
-- **The Drowned Trackway:** reachable in summer and autumn, or when a winter cold snap freezes the bog.
-- **Hostile ground:** areas held by factions the household has wronged stay open but dangerous.
+The blocks lie on the routes and road legs. A closed way shows its reason in words on the travel map, and a detour, or the ship, goes round it.
+- **The landslide on the High Pass:** fallen rock and timber close the route's main path until cleared by a work party with axes and levers, by Fiachra's men after an alliance, or by the Cailleach's maul (section 10). Until then, Sliabh Carn and Dún Fiach are joined only the long way round, through the plank road, Móin Mhór, the Black Wood path, Ardcarn, Kilbrecc and the Ridge Road, or by sea. Book 10 section 14 gives the worker-days.
+- **The Ford in spate:** the river path's crossing is closed in spate. Wait for the water to fall, go round by the moor road, take the ship to the salt pans, or build a timber bridge (a homestead build at the Ford), which also helps everyone who travels it. Book 10 section 14 gives the timber, the worker-days and when the river is in spate.
+- **The hill-folk's gate:** the heart of the Black Wood lies off the Black Wood path. The hill-folk let the household in after an offering, a kept promise or the right words found in the hermit's psalter on Skarvholm.
+- **The Drowned Trackway:** it branches off the plank road and is reachable in summer and autumn, or when a winter cold snap freezes the bog.
+- **The bog in winter flood:** the plank road stays open on its planks, but its side paths and the Trackway branch go under water until a cold snap freezes them.
+- **Snow on the climb:** the road leg from Sliabh Carn to the Cailleach's Cave is closed by snow in winter, and snow slows the High Pass.
+- **Hostile ground:** sites and routes held by factions the household has wronged stay open but dangerous.
 
 ### Seasons on the mainland
 | Season | Changes |
 |---|---|
-| Spring | Rivers in spate; the ford closes; lambing in the farms; the bog wet but passable |
-| Summer | Herders at the shielings on Sliabh Carn; the Trackway reachable; fairs and pilgrims; most traffic |
-| Autumn | Harvest work; storms; the ford may close; nuts, berries and mushrooms in the Black Wood |
-| Winter | Snow closes the Cailleach's Cave and slows the pass; the bog floods (or freezes in cold snaps); wolves range widely; fewer travellers; nights are long and cold |
+| Spring | Rivers in spate; the Ford closes; lambing in the farms; the bog wet but the planks passable |
+| Summer | Herders at the shielings on Sliabh Carn; the Trackway reachable; fairs and pilgrims on the Ridge Road; most traffic on every route |
+| Autumn | Harvest work; storms; the Ford may close; nuts, berries and mushrooms on the Black Wood path |
+| Winter | Snow closes the Cailleach's Cave and slows the High Pass; the bog floods off the planks (or freezes in cold snaps); wolves range widely on the moor road and in the Black Wood; fewer travellers; nights are long and cold, so far journeys need a camp |
 
 ### Destinations across the sea
 Glen Arra, Inis Rón and Crowwick are not part of the mainland. They remain destinations across the sea, each with its own small area on foot.
@@ -177,9 +240,9 @@ Glen Arra, Inis Rón and Crowwick are not part of the mainland. They remain dest
 | `CAMP_CROWWICK` Crowwick | Ulf's camp and its beach; taken only by assault |
 
 ## 04 / Seasons, weather and the calendar
-*A 120-day year of four 30-day seasons. Each season changes what can be done and what must be done. The calendar opens windows; it never forces an outcome on its own.*
+*A 120-day year of four 30-day seasons. Each season changes what can be done and what must be done. The calendar keeps running, but it never forces a story gate (section 08).*
 
-> Figure: chapter timeline across the calendar (drawn in the PDF version of this book).
+> Figure: chapter timeline across the calendar, at typical dates (drawn in the PDF version of this book).
 
 ### The year
 | Days in year | Season | Sailing | Festival on the first day |
@@ -227,7 +290,22 @@ A small community on a seal island who still serve the old powers openly: Manann
 - Each resident has a **Faith** value pointing at something specific: the old gods, Christ and the saints, the land-spirits, or nothing.
 - The steading's shrine is chosen by the residents, not the player alone. A hammer-post, a cross, a stone for offerings or more than one can stand together.
 - Sacred places raise the stakes of raids. Taking a relic, a well's offerings or a mound's grave goods triggers both human and supernatural consequences.
-- The game shows sincere believers in every tradition, including sceptics and hypocrites. It never declares one tradition correct.
+- The game shows sincere believers in every tradition, including sceptics and hypocrites. It never declares one tradition correct, and it shows every tradition's cruelty as well as its comfort (below).
+- Each people judges right and wrong by its own code: honour and shame, luck, oaths, kin and vengeance, hospitality, blood-price, sin and penance. Book 6 and Book 10 say how each culture reads a deed; Book 5 gives each major character's stance towards their own code.
+
+### The cruelty of every tradition
+Every religious tradition in the Narrow Sea is shown with its cruelty as well as its comfort, even-handedly, through what its believers do. No tradition is the good one. These are facts of the world, met in play:
+
+| Tradition | Cruelty shown in play |
+|---|---|
+| Norse belief | Thralls killed to follow a chieftain into death; Heid giving captured crews to Rán; blood-oaths that bind sons to their fathers' feuds; Orm drowning hostages whose families failed to pay |
+| The Church at Kilbrecc | Bondmen who work the tithe farms and cannot leave; public floggings for penance; the abbot's curse (a fast and a malediction against a household, the Gaelic custom of fasting against an enemy); hired swords when prayer fails; shrines of the older faith smashed |
+| Gaelic custom | Satire that can ruin a person; the blood-price that lets the rich kill the poor; hostages starved when treaties break; geasa that doom people to impossible choices |
+| The Keepers and the old powers | Seal-kin women bound by whoever holds their skin; the sick left on a skerry for the sea to judge; the Bog King's drowned offerings in the peat |
+
+- **Shown, not glorified.** A cruelty is seen in what people do and what it costs those it falls on; the game never makes it a spectacle or a reward.
+- **Always with kind, doubtful or ashamed believers too.** Every tradition has them: Tófi One-Eye tells the ugly truth about old raids; Thrand broke his oath to Orm after Heid gave a captured crew to Rán; Brother Senán is troubled by the abbey's bondmen and hired swords, and Sister Muirenn records the Church's own sins as faithfully as the heathens'; Faolán Wolf-Hand was outlawed for refusing to burn Kilbrecc; Bran keeps a Christian conscience inside a raider's past (Book 5).
+- **The hard limits hold.** No children as actors, no sexual violence, no player torture. Period views of thralls, captives and marriage may be spoken; they never become a system, captives are never currency, and there is no slave market to sell into.
 
 ### Historical touchstones (inspiration only)
 Norse raids on Irish and Hebridean monasteries are recorded from the 790s. A Norse base at Dublin is recorded from 841, and its Norse rulers were expelled in 902 before returning in 917. Irish annals name the Gall-Gaedil, the mixed Norse-Gaelic people, from the 850s. The Corryvreckan whirlpool and its Cailleach lore inspire the Cauldron. Treat these as atmosphere; Saltvik, Kilbrecc and every named person are invented.
@@ -307,7 +385,7 @@ Death is normally final. A **draugr** rises only from a specific unresolved cond
 
 ### Omens (Norse and Gaelic)
 - **The fetch and the fylgja:** a resident's double, or an animal that follows them, is seen by another resident. It means that person is close to death. Rest, care or keeping them off the next voyage can change it. The game never kills someone because their fetch appeared; it is a warning.
-- **The washer at the ford:** before the final battle, a woman is seen washing bloody shirts in a stream. Asked, she will name whose shirts they are. The player can change orders, and so change fate.
+- **The washer at the ford:** before the final battle, a woman is seen washing bloody shirts in a stream. Asked, she will name whose shirts they are. The player can change orders, and so change fate, at a cost elsewhere (section 14).
 - **The bean sí:** the keening woman of Dún Fiach's royal line. When she is heard, someone of Fiachra's blood will die unless something is done.
 
 ### Creatures of the sea and water
@@ -328,7 +406,7 @@ Each follows the fairness contract: a sign, a rule, a response and a saved conse
 **The hill-folk of the Black Wood.** The aos sí keep a ringfort and its souterrain in the heart of Fiodh Dubh.
 - **Signs:** flowers out of season; shadows falling the wrong way; a path that is not there the second time.
 - **Rules:** nobody passes into the heart without their leave, given for an offering, a kept promise or the right words from the hermit's psalter. Inside, their doors answer riddles, and their champion keeps the last room.
-- **Response:** ask leave properly, keep the promise, find the words; or stay at the edge.
+- **Response:** ask leave properly, keep the promise, find the words; or keep to the Black Wood path.
 - **Saved consequence:** their leave, and any promise made for it, is recorded; breaking one of their rules brings ill luck. Whoever keeps Ceo, the mist-spear, is called on by the hill-folk for a service each Samhain, and Christian residents are uneasy about it.
 
 **The Bog King.** A drowned offering-priest who still keeps the shrine at the end of the Drowned Trackway.
@@ -350,7 +428,7 @@ Each follows the fairness contract: a sign, a rule, a response and a saved conse
 - **Saved consequence:** taking the barrow mail is recorded. The dead are drawn to its wearer at night, and Ottar's family claim it (section 12).
 
 ### Human practitioners
-- **Heid the Grey:** Orm's seeress, a völva who works seiðr with staff and song. She speaks for Rán and can call fog and turn tides within Orm's bargain. She is a person with history and doubts, and can be argued with (Book 5).
+- **Heid the Grey:** Orm's seeress, a völva who works seiðr with staff and song. She speaks for Rán and can call fog and turn tides within Orm's bargain. She is a person with a history; she believes every cruel rite she performs is owed, never doubts it, and can still be argued with (Book 5).
 - **Sea-wives and wind-knots:** a sea-wife at Saltvik sells cords tied in three knots. One knot loosed is a fair wind, two a strong one, three a gale nobody controls. Each knot also adds a little to Rán's share.
 - **The Keepers:** they know the old compacts and the right words, and can teach specific rites. They are not wizards.
 
@@ -367,10 +445,31 @@ The **Bell of Brecc** stills water around it and keeps Breccán's crew asleep. W
 - No power that changes the terms of an accepted bargain after the fact.
 
 ## 08 / Chapter structure
-*Eight chapters across six phases. Each chapter has a window, a goal, key beats, unlocks and a gate. Beats are ordered by default but most can be taken in a different order.*
+*Eight chapters across six phases. Each chapter has typical dates, a goal, key beats, unlocks and the story gates that move it on. Beats are ordered by default but most can be taken in a different order.*
+
+### Story gates
+- **The story moves forward only through major events the player chooses to start:** a raid, an expedition, a defence, a council. These are **gates**.
+- **The calendar keeps running.** Seasons turn, crops grow and winter must be prepared for, but no chapter deadline passes without the player: a dated story event waits at its gate.
+- **Pressure builds gently while the player delays** (demands grow, rumours spread), but it never forces a gate. Book 10 section 22 ("Story gates") gives how fast it builds.
+- **Each gate has a readiness screen** showing the crew, the ship, the stores, the allies and the equipment, with a clear warning that it is a point of no return.
+- **The chapter dates below are typical dates** for a well-paced player, not limits. Book 10 section 10's progression is a guide for such a player, not a deadline.
+
+| Gate (proposal) | Chapter | The player starts it by |
+|---|---|---|
+| The launch | 1 | Launching the boat at the end of Chapter 1 |
+| The Carrick raid | 2 | Setting out for Carrick Landing |
+| The reply to Asgrim | 4 | Giving Orm's tribute-collector the household's answer |
+| The defence of Skarvholm | 5 | Standing to for the attack, when the Answer is an attack (Book 6 scenario 8) |
+| The household council | 5 | Calling the council that decides the household's future |
+| The move ashore | 6 | Sailing the household to its mainland site |
+| The Gathering | 7 | Calling the council under sanctuary at Kilbrecc |
+| The Return to Skarvholm | 8 | Setting out for the occupied island |
+| The final battle | 8 | Setting out to meet Orm |
+
+Optional raids, attacks and quests are never gates unless they are story events (sections 13 and 15).
 
 ### Chapter 1: The Wreck
-**Window:** days 1 to 6. **Session target:** 45 to 60 minutes. **Goal:** shelter, rescue four crew, make the boat seaworthy.
+**Typical dates:** days 1 to 6. **Session target:** 45 to 60 minutes. **Goal:** shelter, rescue four crew, make the boat seaworthy.
 1. Wake on Wreck Strand. Control in seconds. Hild is calling beyond the rocks, hurt and standing knee to waist deep in the shallows; wade out to her and carry her above the tide line.
 2. Hild leads to the old broch. Gather driftwood, light a fire, treat her injury. Warmth, food, a conversation.
 3. Three searches, any order: **Oddi** injured near the wreck (recover a chest now, or take Oddi home first); **Bran** in a sheepfold by the Hollow Cairn, guarding Thorkel's body from three wreck-scavengers (fight, sneak, or bargain with the chest); **Runa** at the Hag's Seat, injured, following a strange light (leave an offering for the Cailleach's help, or take the slower cliff path).
@@ -379,16 +478,16 @@ The **Bell of Brecc** stills water around it and keeps Breccán's crew asleep. W
 6. Thorkel's rites (optional, recommended by Hild): a stone ship-setting on the machair, or a sea burial with gold for Rán.
 7. Days and nights pass in real time: the first night by the fire, the first dawn report, the first fish from the shore.
 8. Launch. Name the boat and choose a sail mark. The sea map reveals the coast and smoke rising at Carrick Landing.
-**Unlocks:** sea map, steading basics. **Gate:** the boat is launched.
+**Unlocks:** sea map, steading basics. **Gate:** the launch: the boat is launched.
 
 ### Chapter 2: The First Raid
-**Window:** days 7 to 15. **Goal:** provisions and iron. Full scenario in Book 6.
-Lead from a chart fragment and the smoke. One preparation advantage. Carrick Landing supports theft, bargaining, threatening the keeper or fighting the guards, with one complication. The boat cannot hold everything. Return to Skarvholm: the haul becomes tangible (a forge, food runway, a newcomer at the fire). Two leads are offered: Saltvik (trade and Runa's sister) and Glen Arra (cattle and a rumour of Ulf).
+**Typical dates:** days 7 to 15. **Goal:** provisions and iron. Full scenario in Book 6.
+Lead from a chart fragment and the smoke. Setting out for Carrick Landing is the Carrick raid gate. One preparation advantage. Carrick Landing supports theft, bargaining, threatening the keeper or fighting the guards, with one complication. The boat cannot hold everything. Return to Skarvholm: the haul becomes tangible (a forge, food runway, a newcomer at the fire). Two leads are offered: Saltvik (trade and Runa's sister) and Glen Arra (cattle and a rumour of Ulf).
 Back home, the first days of real work: the forge, the drying racks, the first peat cutting and the first plots dug.
-**Unlocks:** raiding, home consequences, homestead tasks and building designation, the steward role if Eithne joined. **Gate:** two leads offered.
+**Unlocks:** raiding, home consequences, homestead tasks and building designation, the steward role if Eithne joined. **Moves on:** when two leads are offered.
 
 ### Chapter 3: The Open Coast
-**Window:** days 16 to 60. **Goal:** learn the coast, build a capable crew, make the island a home.
+**Typical dates:** days 16 to 60. **Goal:** learn the coast, build a capable crew, make the island a home.
 - Saltvik: trade, the first ship fittings, Kolbeinn the smith, wind-knots, news of Orm.
 - Glen Arra and Crowwick: Ulf appears as a rival who wants a share of everything.
 - Kilbrecc can be visited, traded with or raided. Brother Senán can become a contact.
@@ -396,11 +495,11 @@ Back home, the first days of real work: the forge, the drying racks, the first p
 - About day 40 to 50, the **Followers' boat** arrives: Old Gudrun and five more of Thorkel's household who escaped separately. Too many mouths; the island needs more.
 - At home: sow the plots before day 25, cut peat, build the longhouse, and explore the whole island: Seal Cave, the Grey Men, the cairn, the cell and the Skerry of the Drowned.
 - First sign of the tides: a spring tide reaches the broch's foot.
-- The mainland opens: from this chapter its coastal areas (Carrick Strand and Carrick Landing, Kilbrecc, Dún Fiach, the salt pans, Saltvik and Saltness) can be reached by ship, and inland areas open on foot as they are found and their blocks are cleared (section 03). Up to two residents can go ashore with the steerer, and camps let a trip inland last several days (section 09).
-**Gate:** residents at least 9 and a longhouse built, or day 60.
+- The mainland opens: from this chapter its coastal sites (Carrick Strand and Carrick Landing, Kilbrecc, Dún Fiach, the salt pans, Saltvik and Saltness) can be reached by ship, and the inland sites open on foot through the wilderness routes as they are found and their blocks are cleared (section 03). Up to two companions can go ashore with the steerer (section 13), and camps let a journey inland last several days (section 09).
+**Moves on:** when residents number at least 9 and a longhouse is built (typically about day 60). No date ends the chapter.
 
 ### Chapter 4: A Name on the Water
-**Window:** days 61 to 120. **Goal:** become wealthy and survive winter.
+**Typical dates:** days 61 to 120. **Goal:** become wealthy and survive winter.
 - Bigger targets: the Bell of Brecc, Glen Arra's cattle, Asgrim's tribute ship. Rival crews notice.
 - The karvi hull: bought at Saltvik, captured, or built in the boatshed over winter.
 - **Asgrim Cold-Hand** arrives from Orm: a tenth of all plunder and one hostage, or Orm's displeasure.
@@ -408,74 +507,74 @@ Back home, the first days of real work: the forge, the drying racks, the first p
 - The Cailleach's washing closes the sea. Winter at home: cold, fuel and sickness; Samhain and the Yule feast; stories, crafting and repairs; the Nessa reveal window opens.
 - The Kelda spring turns brackish at spring tides.
 - Between voyages, expeditions inland: the Black Wood, Móin Mhór, Sliabh Carn and the Mound Field hold the dungeons and their equipment (section 10). Autumn is the last chance at the Cailleach's Cave before snow closes it; a winter cold snap can freeze the bog to the Drowned Trackway.
-**Gate:** Asgrim returns at the end of winter for an answer.
+**Gate:** the reply to Asgrim. He returns for an answer, typically at the end of winter, and waits for it: the player chooses when to give it, while Orm's demands grow.
 
 ### Chapter 5: The Long Memory
-**Window:** days 121 to 180. **Goal:** face the cost of earlier raids and decide the household's future.
+**Typical dates:** days 121 to 180. **Goal:** face the cost of earlier raids and decide the household's future.
 - Retaliation falls due according to the deed ledger: Fergal's ships from Dún Fiach, an interdict from Kilbrecc, Ulf's ambition, Ardcarn's hired swords. None is scripted; each is earned.
 - Orm's fleet takes an independent harbour. Refugees arrive.
 - A storm-tide slumps Naust Cove. The spring fails at every spring tide.
 - **The household council:** stay and dwindle, or move ashore to Carrick Strand or Saltness, on a mainland the household already knows. Residents argue from their values and from what they have seen there.
-**Gate:** the household commits to a mainland site. Choosing to stay leads to the Lonely Isle path.
+**Gates:** the defence of Skarvholm, if the Answer is an attack (Book 6 scenario 8): its precursors show, and the attack waits until the player stands to for it (section 15); then the household council, where the household commits to a mainland site. Choosing to stay leads to the Lonely Isle path.
 
 ### Chapter 6: The Borrowed Shore
-**Window:** days 181 to 210 (earlier if the council commits earlier). **Goal:** secure a mainland home and move the household.
+**Typical dates:** days 181 to 210 (earlier if the council commits earlier). **Goal:** secure a mainland home and move the household.
 - Secure the chosen site, Carrick Strand or Saltness, by the ways in section 03: a grant from Fiachra won by service, a hostage or a marriage tie, with compensation to Ardcarn; purchase or service to Saltvik and a council vote; or seizure.
 - Move people, livestock, stores and workshops over several voyages. The consort ship helps.
 - Live on ground the household already knows. The mainland has been open since Chapter 3, so this chapter finishes opening what is still blocked and settles who the neighbours are; hostile ground stays open but dangerous. A Gaelic pedlar starts calling at the new home (section 11).
 - Raise a hall and a palisade. Meet the neighbours who remember you.
 - Decide what remains on Skarvholm: an outpost with a few residents, a lookout only, or nothing. Whatever is left there is taken when Orm seizes the island in Chapter 7.
-**Gate:** hall and defences built and most of the household moved.
+**Gate:** the move ashore: the household sails for its mainland site. **Moves on:** when the hall and defences are built and most of the household has moved.
 
 ### Chapter 7: The Gathering
-**Window:** days 211 to 240. **Goal:** unite former rivals against Orm.
+**Typical dates:** days 211 to 240. **Goal:** unite former rivals against Orm.
 - A council under sanctuary at Kilbrecc. Each faction states its contribution and its demand.
 - Compensation, returned captives, returned relics, public concessions and marriage ties are negotiated.
 - Rival raiders call it betrayal. Some leave; some can be won.
-- Orm's ships take Skarvholm (about day 228); outpost residents become captives in the broch.
+- Orm's ships take Skarvholm in the week of the Gathering (typically about day 228); outpost residents become captives in the broch.
 - The Keepers reveal how Orm's bargain can be broken, and that the compact needs Manannán's Cup from the Hollow Cairn, where Gróa is now digging. Nessa's fate is settled.
-**Gate:** the council ends and Orm's fleet sails at the start of Year 3.
+**Gate:** the Gathering: the player calls the council when ready. When it ends, Orm's fleet sails (typically at the start of Year 3).
 
 ### Chapter 8: The Sea King
-**Window:** days 241 to 270. **Goal:** defeat or outlast Orm and break his bargain.
-- **The Return to Skarvholm (days 241 to 252):** a required expedition to the occupied island for the Cup (Book 6 scenario 9). Checkpoint before landing; one retry before day 255 if it fails.
-- A last preparation window: renew the compact at Inis Rón if the Cup is in hand; assign allies, ships and defenders. Checkpoint before the battle.
+**Typical dates:** days 241 to 270. **Goal:** defeat or outlast Orm and break his bargain.
+- **The Return to Skarvholm (typically days 241 to 252):** a required expedition to the occupied island for the Cup (Book 6 scenario 9), and a gate. Checkpoint before landing; if it fails, one retry before you set out for the final battle.
+- A last preparation window: renew the compact at Inis Rón if the Cup is in hand; assign allies, ships and defenders. Orm's fleet is at sea, and its raids on the coast grow while the household waits, but the battle begins only when the player sets out for it: the final battle gate. Checkpoint before the battle.
 - The washer at the ford names who will die. Orders can change it.
 - Battle in two linked parts: a sea engagement at the approaches (Rán's daughters against Manannán's mist, if renewed) and the defence of the mainland home.
 - Breaking the bargain during the battle turns the weather. Orm can be killed, captured, exiled or bargained with.
 **Endings:** the United Coast, the Uneasy Peace, the New Sea King, the Lonely Isle; defeat returns to the pre-battle checkpoint.
 
 ### Chapter state contract
-Each chapter has states: **locked**, **open**, **active**, **resolved**. A chapter opens when its window starts or its prerequisites are met, whichever is later. Resolution is recorded with the facts that caused it. Loading a save never replays a resolved beat.
+Each chapter has states: **locked**, **open**, **active**, **resolved**. A chapter opens when the gate or the conditions that end the chapter before it are passed; a date never opens, ends or skips a chapter. A dated story event (Asgrim's return, Orm's seizure of Skarvholm) waits at its gate rather than passing without the player. Resolution is recorded with the facts that caused it. Loading a save never replays a resolved beat.
 
 ## 09 / Wilderness, hazards and camping
 *The wilderness is big and worth exploring. Its dangers are fair: each one shows itself before it bites.*
 
-### What every wilderness area holds
-Every wilderness area has at least one secret, one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger. Wolves hunt in packs at night and in winter; boar charge when cornered; deer and birds flush and give warning. Outlaws can be fought, paid, avoided or recruited.
+### What every wilderness route and wild site holds
+Every wilderness route (section 03) and every wild site (the heart of the Black Wood, Loch Carn, Sliabh Carn, the Mound Field and the dungeons) has at least one secret, one resource worth the trip, one story (a traveller, a ruin, a grave) and one danger, among the points of interest section 03 requires. Wolves hunt in packs at night and in winter; boar charge when cornered; deer and birds flush and give warning. Outlaws can be fought, paid, avoided or recruited.
 
 ### Hazards
 | Hazard | Where and when | Sign | What happens and the response |
 |---|---|---|---|
-| Bog holes | Móin Mhór, the Drowned Trackway, the moor | Bright green moss, standing water, bubbles | Slow, then sink unless pulled out by a companion, a pole or a rope; the peat-cutters know the safe steps |
-| Spate rivers | The River Ford and streams in spring and after autumn storms | Brown water, a roar, foam over the stepping stones | A person who enters is swept downstream; wait for the water to fall, or bridge it |
-| Cliffs and scree | Sliabh Carn, the High Pass, the coast | Loose stone underfoot, a marked climb or none | Falls cost vitality; scree slides under a running party |
+| Bog holes | Off the plank road's planks, Móin Mhór's bog edge, the Drowned Trackway, the moor road | Bright green moss, standing water, bubbles | Slow, then sink unless pulled out by a companion, a pole or a rope; the peat-cutters know the safe steps |
+| Spate rivers | The Ford on the river path, and streams, in spring and after autumn storms | Brown water, a roar, foam over the stepping stones | A person who enters is swept downstream; wait for the water to fall, or bridge it |
+| Cliffs and scree | Sliabh Carn, the High Pass, the coast; the climbs to off-path finds | Loose stone underfoot, a marked climb or none | Falls cost vitality; scree slides under a running party |
 | Cold at night | Everywhere in winter; high ground in any season | Breath shows, frost forms, the stamina bar shrinks with the reason "Cold" | Make a fire, find shelter, or press on and grow weaker |
-| Fog | The bog, the moor, the Black Wood | Sounds go flat; the far edge of the scene greys out | Getting turned round: the way out may not be the way in; a guide or a known landmark helps |
-| Wolves | Packs at night and in winter; the moor road in winter | Howling, tracks, sheep scattered | Fire keeps them off; stand together or get to shelter |
-| Boar | The Black Wood | Rooted ground, a snort in the undergrowth | Charges when cornered; give it room |
-| Outlaws | Roads and woods, when camps are unchecked | Cut trees across a road, a whistle, too-quiet birds | Ambushes and roadblocks: fight, pay, avoid or recruit |
-| Landslides | The High Pass and steep ground after rain | Trickling stones, cracked turf | Ground gives way; wait for it to settle, or take another route |
+| Fog | The plank road, the moor road, the Black Wood path | Sounds go flat; the far edge of the scene greys out | Getting turned round off a route's main path: the way out may not be the way in; a guide, a known landmark or a waymarked path helps |
+| Wolves | Packs at night and in winter; the moor road, the High Pass and the Black Wood path in winter | Howling, tracks, sheep scattered | Fire keeps them off; stand together or get to shelter |
+| Boar | The Black Wood path | Rooted ground, a snort in the undergrowth | Charges when cornered; give it room |
+| Outlaws | The routes, and now and then a road leg, when camps are unchecked | A fallen tree across the path, crows rising ahead, a whistle, a stretch gone too quiet, fresh tracks | Ambushes and roadblocks: fight, pay, go round or turn back, or recruit |
+| Landslides | The High Pass and steep ground after rain | Trickling stones, cracked turf | Ground gives way; wait for it to settle, or take another way |
 | Lightning | High ground in storms | Hair lifts, a hum in iron, the storm overhead | Get off the summit and away from iron |
 | The hill-folk's rules | Rings, mounds and the Black Wood heart | Flowers out of season, shadows falling the wrong way | Leave them alone, or learn the rule (section 07) |
 
 Traversal draws on the steerer's stamina: climbing, swimming and waist-deep wading drain it, and running out mid-climb or mid-swim is a hazard of its own (Book 1 section 18). Cold, hunger, wounds, lack of sleep and a hard day lower the bar's size, so a long day in the wilderness makes every crossing harder. Book 10 sections 06 and 15 give the numbers.
 
 ### Camping
-The steerer can sleep anywhere not hostile, with a bedroll and a fire. A camp ends the day, heals, and saves if it is safe. Its risks scale with the area and the season: wolves, outlaws and cold. A good fire, a companion on watch and a sheltered spot each reduce them, and a warm fire with a hot meal restores the stamina that the cold and the day took. Book 10 section 15 gives the numbers.
+If night falls away from home, the party camps at a site, at one of a route's camp spots or at a waystation (section 03), on ground that is not hostile, with a bedroll and a fire. A far journey needs a camp on the way, or the ship. A camp ends the day, heals, and saves if it is safe; a safe camp or a waystation is also somewhere to bring a downed ally (section 14). Its risks scale with the place and the season: wolves, outlaws and cold. A good fire, a companion on watch and a sheltered spot each reduce them, and a warm fire with a hot meal restores the stamina that the cold and the day took. Book 10 section 15 gives the numbers.
 
 ### Companions on foot
-Up to two residents can travel with the steerer on the mainland. They comment on what they see from their own values and memories, help with hazards (a hand out of a bog hole, a watch at camp), and fight. They are away from the home while they travel, and the home runs without them (Book 10 section 19).
+Up to two companions can travel with the steerer on any expedition on foot (section 13). They comment on what they see from their own values, traits and memories, help with hazards and puzzles (a hand out of a bog hole, a watch at camp), spot ambushes if they are keen-eyed, and fight. They are away from the home while they travel, and the home runs without them (Book 10 section 19).
 
 ## 10 / Dungeons and game-changing equipment
 *Six dungeon sites on the mainland, each with a reward that changes how the game is played, and a price for it.*
@@ -485,12 +584,12 @@ Each dungeon has a lead, puzzles from the world, fair traps with signs, enemies,
 
 | Site | Guardian | Reward | What it changes | Cost |
 |---|---|---|---|---|
-| Black Wood souterrain (area 8) | The hill-folk's champion; riddling doors | **Ceo, the mist-spear** | In fog and at night, thrusts pass through shields | The hill-folk call on you at Samhain; Christian residents are uneasy |
-| The Barrow-King's mound (area 20) | Hrolf the haugbúi and his draugar | **Barrow mail** | Best armour; immune to stagger | The dead are drawn to you at night; Ottar's family claim it (section 12) |
-| The Drowned Trackway (area 10) | The Bog King, a drowned offering-priest | **The bog torc** | The dead cannot see you; you walk flooded bog | Fires warm you less; cold sickness risk |
-| Outlaws' hill-fort (area 20, moor) | Faolán Wolf-Hand and his band | **A Frankish sword** | The finest sword on the coast | It was stolen from Dún Fiach; wearing it there is an accusation |
-| The Cailleach's Cave (area 12) | Wind and ice, then the Cailleach herself | **The Cailleach's maul** | Shatters shields; freezes water it strikes (ice bridges, frozen bog) | Only works in autumn and winter; using it in summer angers her |
-| Loch Carn (area 4), quest | The each-uisce | **The kelpie bridle** | Summon the water-horse to cross lochs, bogs and rivers fast | Never keep it near water at night, or it drowns its rider |
+| Black Wood souterrain (the heart) | The hill-folk's champion; riddling doors | **Ceo, the mist-spear** | In fog and at night, thrusts pass through shields | The hill-folk call on you at Samhain; Christian residents are uneasy |
+| The Barrow-King's mound (the Mound Field) | Hrolf the haugbúi and his draugar | **Barrow mail** | Best armour; immune to stagger | The dead are drawn to you at night; Ottar's family claim it (section 12) |
+| The Drowned Trackway (off the plank road) | The Bog King, a drowned offering-priest | **The bog torc** | The dead cannot see you; you walk flooded bog | Fires warm you less; cold sickness risk |
+| Outlaws' hill-fort (beyond the Mound Field) | Faolán Wolf-Hand and his band | **A Frankish sword** | The finest sword on the coast | It was stolen from Dún Fiach; wearing it there is an accusation |
+| The Cailleach's Cave (above Sliabh Carn) | Wind and ice, then the Cailleach herself | **The Cailleach's maul** | Shatters shields; freezes water it strikes (ice bridges, frozen bog) | Only works in autumn and winter; using it in summer angers her |
+| Loch Carn, quest | The each-uisce | **The kelpie bridle** | Summon the water-horse to cross lochs, bogs and rivers fast | Never keep it near water at night, or it drowns its rider |
 
 The costs are terms, not curses: each has a sign and is saved, like any supernatural consequence (section 07). The Cailleach's maul can also clear the landslide on the High Pass (section 03).
 
@@ -501,13 +600,13 @@ Skarvholm keeps the Hollow Cairn, and the Seal Cave's deep passage is a small du
 *The coast goes on without the household. People travel for their own reasons, and news arrives with them.*
 
 ### Travellers
-Travellers move between areas on schedules, each with an origin, a destination and a reason: pilgrims to Kilbrecc, monks, herders driving cattle, Fiachra's riders, a travelling poet, traders' carts, tinkers, fugitives, and refugees from Orm's raids. They can be talked to, traded with, helped, recruited or robbed, and deeds apply to whatever is done to them, with witnesses like any other deed.
+Travellers move between sites on schedules, along the road legs and through the routes, each with an origin, a destination and a reason: pilgrims to Kilbrecc, monks, herders driving cattle, Fiachra's riders, a travelling poet, traders' carts, tinkers, fugitives, and refugees from Orm's raids. They can be talked to, traded with, helped, recruited or robbed, and deeds apply to whatever is done to them, with witnesses like any other deed.
 
 ### Wandering characters
-Wandering characters with small stories recur across the game: a poet who writes satires about the steerer, a pedlar who always knows a rumour, a hermit, and a disgraced warrior. Each can be met on a road, at a fair or at the household's own fire, and remembers the last meeting.
+Wandering characters with small stories recur across the game: a poet who writes satires about the steerer, a pedlar who always knows a rumour, a hermit, and a disgraced warrior. Each can be met on a route or a road leg, at a fair or at the household's own fire, and remembers the last meeting.
 
 ### Bandits
-Outlaw camps form and break up. Outlaws ambush roads, and they raid farms when nobody checks them. A camp that is broken scatters its people; one that is left alone grows.
+Outlaw camps form and break up, most of them off the routes. Outlaws ambush the routes and now and then a road leg, and they raid farms when nobody checks them. A camp that is broken scatters its people; one that is left alone grows.
 
 ### Off-screen life and news
 Places and travellers are simulated at low detail when off screen. Things happen while the household is away: a farm is raided, a fair is held, a leader falls ill, Orm takes a harbour. News reaches the household through travellers and traders, late and sometimes wrong, never by an all-seeing report.
@@ -516,7 +615,7 @@ Places and travellers are simulated at low detail when off screen. Things happen
 Traders visit the household's home and bring goods, prices and leads: a Saltvik knarr in the sailing season, a Gaelic pedlar once the household is on the mainland, a wandering smith once a season, the sea-wife now and then, and Ulf's men as fences for stolen goods. Book 10 section 17 gives how often each comes.
 
 ### How busy the world is
-On a road or in a settlement, a traveller or living event comes roughly every minute; in the wilderness, a creature, sign or event every 30 to 60 seconds (Book 10 section 17).
+In a settlement, a traveller or living event comes roughly every minute; on a wilderness route or in a wild site, a creature, sign or event every 30 to 60 seconds (Book 10 section 17). Each route crossing also draws its wandering people and its risk of attack (section 03); most road legs are quiet.
 
 ## 12 / Twists and the unexpected
 *Every major quest has a reveal that changes what the right choice looks like.*
@@ -531,7 +630,7 @@ On a road or in a settlement, a traveller or living event comes roughly every mi
 
 ### Twist seeds (proposal)
 These are proposals for the user's review; build them unless vetoed. Book 5 holds the people's secrets and their personal quests.
-1. **Thorkel's debt.** The household's drowned chief made his own bargain with Rán before the wreck: safe passage south for his people, at a price. The wreck was part of the price, and part of it is still owed. Revealed through Thorkel's ghost, Gudrun's memories and the Skerry of the Drowned.
+1. **Thorkel's debt.** The household's drowned chief made his own bargain with Rán before the wreck: safe passage south for his people, at a price. The wreck was part of the price, and part of it is still owed. Revealed through Thorkel's ghost, Gudrun's memories and the Skerry of the Drowned. What is still owed comes due as Rán's debt (section 14).
 2. **The outlaw prince.** Faolán Wolf-Hand is Fiachra's eldest son, outlawed for refusing to burn Kilbrecc in an old feud. Restoring him can split Dún Fiach between him and Órlaith, and the Frankish sword in his fort is the proof of who he is.
 3. **The barrow's silver.** Hrolf the Barrow-King was Ottar's grandfather, buried with church silver stolen from Kilbrecc. Opening his mound exposes how Saltvik was founded.
 4. **The abbot's calm water.** Brother Senán finds that the Bell's peace was bought with an old bargain, and the abbot knows. Whether it was a saint's prayer or a bargain stays ambiguous.

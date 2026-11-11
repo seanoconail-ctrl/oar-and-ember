@@ -187,6 +187,20 @@ describe('people in water (Book 7 section 07)', () => {
     }
   });
 
+  it('never hides a standing person entirely: deep water draws them at the waist', () => {
+    const world = campaign();
+    const onFoot = world.onFoot;
+    if (onFoot === null) throw new Error('no strand');
+    const at = spot('DEEP');
+    onFoot.player.x = at.x;
+    onFoot.player.y = at.y;
+    const visuals = new ZoneVisuals(strand, elevation, false, visualTuning(balance, palette));
+    for (let i = 0; i < 5; i++) visuals.update(frame(onFoot, i));
+    expect(visuals.view(frame(onFoot, 5)).water['P_STEERER']?.wade?.mask).toBe(
+      band('WAIST')?.maskPx,
+    );
+  });
+
   it('draws only the rows above the cut; below it, the water’s colour with the body faint', () => {
     const style = parseRenderStyle(JSON.parse(readRepo('assets/art/render.json')) as unknown);
     const water12 = { mask: 12, colour: [40, 90, 100] as const };
@@ -271,5 +285,43 @@ describe('Hild in the opening (Book 1 section 15; Book 9)', () => {
     expect(hild.pose).toBe('call');
     const at = bandAt(water, elevation, hild.x, hild.y, level)?.band;
     expect(['KNEE', 'WAIST']).toContain(at);
+  });
+
+  /** Runs the simulation from `minuteOfDay` for 20 game minutes, checking Hild's band each tick. */
+  const watch = (minuteOfDay: number): { bands: Set<string>; moved: number } => {
+    const world = campaign();
+    world.calendar = { day: 1, minuteOfDay };
+    const sim = createSimulation(b, world, land);
+    const hild = world.onFoot?.actors['C_HILD'];
+    if (hild === undefined) throw new Error('no Hild');
+    // Later in the day the water has gone out from her spawn: she stands at the knee line then.
+    const now = stillWaterLevel(tideAt(world.calendar, b));
+    const was = bandAt(water, ground, hild.x, hild.y, now)?.band;
+    if (was !== 'KNEE' && was !== 'WAIST') {
+      let y = hild.y;
+      while (bandAt(water, ground, hild.x, y, now)?.band !== 'KNEE' && y < hild.y + 240) y++;
+      hild.y = y + 2;
+    }
+    const from = { x: hild.x, y: hild.y };
+    const bands = new Set<string>();
+    const start = world.calendar.minuteOfDay;
+    while (world.calendar.minuteOfDay < start + 20) {
+      sim.step();
+      const lvl = stillWaterLevel(tideAt(world.calendar, b));
+      bands.add(bandAt(water, ground, hild.x, hild.y, lvl)?.band ?? 'DRY');
+    }
+    return { bands, moved: Math.hypot(hild.x - from.x, hild.y - from.y) };
+  };
+
+  it('keeps knee to waist deep over the opening’s first 20 game minutes', () => {
+    const { bands } = watch(OPENING.minuteOfDay);
+    expect([...bands].every((x) => x === 'KNEE' || x === 'WAIST'), [...bands].join()).toBe(true);
+  });
+
+  it('keeps her footing as the tide falls: steps seaward to stay knee to waist deep', () => {
+    // Mid-ebb, when the level drops fastest.
+    const { bands, moved } = watch(15 * 60);
+    expect([...bands].every((x) => x === 'KNEE' || x === 'WAIST'), [...bands].join()).toBe(true);
+    expect(moved).toBeGreaterThan(0);
   });
 });

@@ -374,8 +374,10 @@ export function createSimulation(
     const map = land.maps.get(onFoot.zone);
     if (map === undefined) return;
     const tide = tideAt(state.calendar, b);
-    stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level: stillWaterLevel(tide) });
-    if (land.opening !== null) stepOpening(state, land.opening, map.tile, events.emit.bind(events));
+    const level = stillWaterLevel(tide);
+    stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    if (land.opening !== null)
+      stepOpening(state, land.opening, map, land, level, events.emit.bind(events));
   };
 
   const advanceOneMinute = (): void => {

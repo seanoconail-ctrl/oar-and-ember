@@ -175,6 +175,86 @@ export async function capture(label: string): Promise<string> {
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
 
+    // The wade (design addendum 2.2 section 2): running along the strand to Hild, wading out
+    // beside her into the shallows, a pause, and back out, dripping (wade.mp4 and wade.gif at 2x).
+    {
+      const hild = { x: 31.5 * 24, y: 35.6 * 24 };
+      const wadeDir = join(out, '.wade');
+      rmSync(wadeDir, { recursive: true, force: true });
+      mkdirSync(wadeDir, { recursive: true });
+      const begin = await where(page);
+      const route =
+        findPath(map, false, tileOf(map, begin.x, begin.y), (t: Tile) => {
+          const c = tileOf(map, hild.x + 30, hild.y + 6);
+          return Math.abs(t.tx - c.tx) <= 0 && Math.abs(t.ty - c.ty) <= 0;
+        }) ?? [];
+      const targets = route
+        .filter((_, i) => i % 2 === 0 || i === route.length - 1)
+        .map((t) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.6) * 24 }));
+      const keys = new Set<string>();
+      let k = 0;
+      let frame = 0;
+      const save = async (): Promise<void> => {
+        writeFileSync(
+          join(wadeDir, `${String(frame).padStart(4, '0')}.png`),
+          encodePng(await shot(page)),
+        );
+        frame++;
+      };
+      // Run until a few seconds out from Hild, recording the last stretch.
+      await page.keyboard.down('ShiftLeft');
+      for (let guard = 0; guard < 3000 && k < targets.length; guard++) {
+        const to = targets[k];
+        if (to !== undefined && (await steer(page, keys, to))) k++;
+        await step(page);
+        const at = await where(page);
+        if (Math.hypot(at.x - hild.x, at.y - hild.y) < 9 * 24 && frame < 15 * FPS) await save();
+        if (k === targets.length - 3) await page.keyboard.up('ShiftLeft');
+      }
+      await page.keyboard.up('ShiftLeft');
+      // Into the water beside her, a pause, and back out.
+      const near = await where(page);
+      for (const to of [
+        { x: hild.x + 26, y: hild.y + 2 },
+        { x: hild.x + 26, y: hild.y + 2 },
+        { x: near.x + 10, y: near.y + 40 },
+      ]) {
+        for (let guard = 0; guard < 160; guard++) {
+          if (await steer(page, keys, to)) break;
+          await step(page);
+          await save();
+        }
+        for (let i = 0; i < FPS * 1.5; i++) {
+          await step(page);
+          await save();
+        }
+      }
+      for (const key of keys) await page.keyboard.up(key);
+      for (const [name, args] of [
+        ['wade.mp4', ['-c:v', 'libx264', '-crf', '14', '-pix_fmt', 'yuv420p']],
+        [
+          'wade.gif',
+          [
+            '-vf',
+            'fps=12.5,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=none',
+          ],
+        ],
+      ] as const) {
+        execFileSync('ffmpeg', [
+          '-y',
+          '-loglevel',
+          'error',
+          '-framerate',
+          String(FPS),
+          '-i',
+          join(wadeDir, '%04d.png'),
+          ...args,
+          join(out, name),
+        ]);
+      }
+      rmSync(wadeDir, { recursive: true, force: true });
+    }
+
     // The walk: up the strand from where the steerer wakes, through the cut onto the machair.
     const start = await where(page);
     const from = tileOf(map, start.x, start.y);
@@ -243,6 +323,7 @@ export async function capture(label: string): Promise<string> {
         '|---|---|',
         '| `still.png`, `still@2x.png` | Wreck Strand where the steerer wakes, at 1x and 2x |',
         '| `walk.mp4` | 10 seconds at 2x, 25 fps: up the strand, through the cut, onto the machair |',
+        '| `wade.mp4`, `wade.gif` | At 2x: running along the strand to Hild, wading out beside her, and back out |',
         '| `compare.png` | The approved reference (left) beside the capture (right), both at 2x |',
         '| `motion.png` | The still view; cells without continuous motion are marked red |',
         '',

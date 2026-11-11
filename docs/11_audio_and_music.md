@@ -210,9 +210,9 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 | Build 2 (Stage 20) | Sea states, raid approach, alarm and extraction, Carrick ambience, home seasons |
 | Build 3 (Stage 24) | Saltvik, sea battle, first supernatural motifs, blips for the starting crew |
 | The living coast (Stages 25 to 27) | Travellers, carts, herds and bandits; wandering characters' blips; festivals; winter, Samhain and Yule |
-| Build 4 (Stage 32) | The twenty mainland areas' ambiences and music by season; wilderness hazard warnings (wolves, thunder, the bog); the six dungeons and their guardians; the mainland leaders' blips |
-| Campaign (Stages 33 to 36) | Moving ashore, all motifs, laments, the Return to Skarvholm, the finale |
-| Stage 37 | Final mix, loudness pass, captions complete |
+| Build 4 (Stage 33) | The mainland sites' and the six wilderness routes' ambiences and music by season; wilderness hazard warnings (wolves, thunder, the bog); the six dungeons and their guardians; the mainland leaders' blips |
+| Campaign (Stages 34 to 37) | Moving ashore, all motifs, laments, the Return to Skarvholm, the finale |
+| Stage 38 | Final mix, loudness pass, captions complete |
 
 Each stage that adds a place, character or system adds its sounds and music to the section 12 standard.
 

@@ -549,7 +549,9 @@ export function zoneScene(input: ZoneSceneInput): Scene {
           { shadow: false },
         );
       } else {
-        const st = poseState(actor.pose, own);
+        // A wader stepping to keep their footing walks; otherwise the pose's own animation.
+        const st =
+          actor.moving === true && own['walk'] !== undefined ? 'walk' : poseState(actor.pose, own);
         const frame = frameIndex(anims, who.body, st, tick);
         person(who, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
         walkers.push({ x: actor.x, y: actor.y });

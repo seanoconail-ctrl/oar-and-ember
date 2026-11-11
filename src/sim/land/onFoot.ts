@@ -11,6 +11,7 @@
 import type { ControlsBalance, MovementBalance, WaterBalance } from '../../content/balance.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
+import { heightAt } from '../../content/terrain/elevation.ts';
 import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, blocksMovement, terrainAt, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
@@ -55,6 +56,8 @@ export interface OnFootActor {
   y: number;
   facing: Facing;
   pose: Pose;
+  /** Stepping this tick (a wader keeping their footing as the tide moves); absent when still. */
+  moving?: boolean;
 }
 
 export interface OnFootState {
@@ -224,6 +227,50 @@ export function stepMovement(
   }
 }
 
+/**
+ * Someone standing in the shallows waiting for rescue (Hild in the opening: knee to waist deep,
+ * Book 1 section 15, Book 9) keeps their footing as the tide moves: when the water at their feet
+ * comes within a tenth of the knee and waist bands' span of leaving them, they step at their
+ * wading pace up or down the slope of the shore until it is back inside that margin. A step
+ * never goes onto rock. Deterministic: the still water level and the baked ground height only.
+ */
+export function keepFooting(
+  actor: OnFootActor,
+  map: ZoneMap,
+  ctx: Pick<LandContext, 'movement' | 'water' | 'elevations'>,
+  level: number,
+): void {
+  delete actor.moving;
+  const elevation = ctx.elevations.get(map.zone);
+  const knee = ctx.water.bands.find((b) => b.band === 'KNEE');
+  const waist = ctx.water.bands.find((b) => b.band === 'WAIST');
+  const ankle = ctx.water.bands.find((b) => b.band === 'ANKLE');
+  if (elevation === undefined || knee === undefined || waist === undefined || ankle === undefined)
+    return;
+  const lo = ankle.upTo;
+  const hi = waist.upTo;
+  const margin = (hi - lo) / 10;
+  const depth = level - heightAt(elevation, actor.x, actor.y);
+  // -1: too shallow, step seaward (down the slope); 1: too deep, step shoreward (up the slope).
+  const way = depth < lo + margin ? -1 : depth > hi - margin ? 1 : 0;
+  if (way === 0) return;
+  const gx = heightAt(elevation, actor.x + 4, actor.y) - heightAt(elevation, actor.x - 4, actor.y);
+  const gy = heightAt(elevation, actor.x, actor.y + 4) - heightAt(elevation, actor.x, actor.y - 4);
+  const g = Math.hypot(gx, gy);
+  if (g < 1e-6) return;
+  const band = bandAt(ctx.water, elevation, actor.x, actor.y, level);
+  const pace =
+    (ctx.movement.wade * (band?.speedFactor ?? knee.speedFactor ?? 1) * map.tile) /
+    TICKS_PER_SECOND;
+  const x = actor.x + (way * gx * pace) / g;
+  const y = actor.y + (way * gy * pace) / g;
+  const { tx, ty } = tileOf(map, x, y);
+  if (terrainAt(map, tx, ty) === 'rock') return;
+  actor.x = x;
+  actor.y = y;
+  actor.moving = true;
+}
+
 export type RefusalReason = 'BELOW_TIDE_LINE' | 'NO_ROOM';
 
 export type Interaction =
@@ -330,6 +377,7 @@ const OPPOSITE: Record<Facing, Facing> = { s: 'n', n: 's', e: 'w', w: 'e' };
 export function applyInteraction(state: OnFootState, interaction: Interaction): void {
   const actor = state.actors[interaction.target];
   if (actor === undefined) return;
+  delete actor.moving;
   if (interaction.kind === 'LIFT') {
     state.carrying = interaction.target;
     actor.pose = 'carried';

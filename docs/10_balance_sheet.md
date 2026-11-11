@@ -344,11 +344,22 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | mail | -30% cut, -15% thrust and missiles |
 | helmet | Head-blow critical chance halved |
 | bloodiedBelow | 50% vitality |
-| downedBleedOut | 45 seconds unless carried or treated |
+| downed | Downed allies do not bleed out (design addendum 2.3 section 7); see Downed and carried |
 | secondWind | 5 seconds; adjacent ally lifts the steerer to 25 vitality; once per scene |
 | dismemberChance | 35% on killing blows from heavy axe, Dane axe or sword |
 | finisherHold | 24 ticks |
 | hitStop | 3 ticks |
+
+### Downed and carried
+| Key | Value |
+|---|---|
+| safePlaces | The boat, the village, or on a journey a safe camp or a waystation |
+| broughtHome | A downed ally carried to a safe place before the scene ends lives, with a serious wound (section 08, Wounds) |
+| leftBehind | A downed ally left at the end of a scene is captured by enemies who take captives (Norse raiders, Gaelic lords, Orm's men, the Church's hired swords) and killed by the rest (outlaws in a hurry, wolves, the dead) |
+| carrySpeed | The carry speed (section 02); the carrier cannot fight while carrying |
+| finishWarning | Berserkers and named cruel enemies may finish the downed, after a visible 3 s warning (a raised weapon, a shout) |
+| ransomRescue | Captives can be rescued or ransomed later (section 04, Wages, debts and payments) |
+| ransMercy | The Rán's mercy option prevents unscripted crew deaths; scripted deaths still happen |
 
 ### Stamina in traversal
 | Activity | Drain per second | Notes |
@@ -491,14 +502,85 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | `SACRED_TAKEN` | +2 | 0 | +1 | 0 | -4 (same faith) | 0 |
 | `SACRILEGE` | 0 | -1 | 0 | 0 | -3 (same faith) | 0 |
 | `RESCUE` | -1 | +3 | 0 | +1 | 0 | 0 |
-| `HOSTAGE_TAKEN` | +1 | -1 | 0 | 0 | 0 | 0 |
+| `HOSTAGE_TAKEN` | +1 | 0 | 0 | 0 | 0 | 0 |
+| Captive harmed | 0 | -3 | -1 | 0 | -1 | -2 |
+| Theft from the household's own stores | -2 | 0 | -1 | -3 | 0 | -3 |
 | `PROMISE_KEPT` | 0 | 0 | 0 | 0 | 0 | +3 |
 | `PROMISE_BROKEN` | 0 | 0 | 0 | 0 | 0 | -4 |
 | Resident left behind | 0 | -1 | 0 | -4 | 0 | -1 |
 | Crew member died | 0 | 0 | 0 | -2 | 0 | 0 |
 | Retreat with everyone alive | 0 | +1 | -2 | +2 | 0 | 0 |
 
-`delta = sum(weight x valence x witness)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat `CIVILIAN_KILLED` Glory as +1. (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
+Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Mercy objects to cruelty towards captives, not to capture); theft from the household's own stores is judged more harshly than open plunder abroad. `delta = sum(weight x valence x witness x culture)` in friendship, clamped to -15 and +15 per deed; witness factor 1.0 present, 0.6 told by a trusted tie, 0.3 rumour. Kári and any resident with Glory 3 and no Mercy treat `CIVILIAN_KILLED` Glory as +1. (Revision 2.2: these deltas, which moved the single regard, now move friendship; fear has its own table below.)
+
+### Deed reactions by culture
+*The witness's culture weighs a deed first (the `culture` factor in the delta above, and a fear or shame response), then their values, traits and stance (design addendum 2.3 section 2; Book 6 section 01). Positive is approval; the words are how they say it.*
+
+| Deed | Norse | Gaels | Church | Keepers | Saltvik |
+|---|---|---|---|---|---|
+| `KILLING` in open fight | x1.0 (honourable if bold) | x1.5 against (an act of war; éraic owed) | x1.2 against (a sin, though kings do it) | x0.5 (the sea's business) | x1.0 (bad for trade) |
+| `THEFT` | x1.0; the Glory-minded scorn it | x0.8 against (less grave than burning) | x1.0 against (a sin) | x1.0 against (taking without giving) | x1.5 against (cheating the bargain) |
+| `CIVILIAN_KILLED` | x1.0 against (no glory, bad luck, vengeance) | x2.0 against (outrage; éraic by rank) | x2.0 against (a grave sin) | x1.5 against (blood on the shore) | x1.5 against |
+| `SURRENDERED_KILLED` | x1.5 against (níð-worthy shame) | x1.5 against | x2.0 against (murder) | x1.5 against (oath-breaking) | x1.5 against |
+| `KILLING_HIDDEN` (proposal) | x2.0 against (murder) | x1.5 against | x1.5 against | x0 | x1.0 against |
+| `HOSPITALITY_BROKEN` (proposal) | x2.0 against | x2.0 against (the briugu's curse) | x1.5 against | x1.5 against | x2.0 against |
+| `SACRILEGE` at a church | x0.2 against (bad luck to the superstitious) | x1.5 against | x3.0 against (the worst of crimes) | x0 | x0.5 against |
+| `SACRILEGE` at an old shrine or mound | x1.5 against (the land-spirits) | x1.0 against (the aos sí remember) | x1.0 for (a good work) | x2.0 against | x0.5 against |
+| `BLOOD_PRICE_PAID` / `BLOOD_PRICE_TAKEN` (proposal) | x1.0 for; Glory 2 or more against | x1.5 for | x1.0 for | x0 | x1.5 for |
+| `HOSTAGE_TAKEN` | x0 (ordinary dealing) | x0 | x0 | x0 | x0 |
+| `PROMISE_BROKEN` | x1.5 against | x2.0 against (sureties ruined) | x1.5 against (a sin) | x3.0 against | x2.0 against |
+| `RITES_DENIED` (proposal) | x1.5 against (invites draugar) | x1.0 against | x2.0 against (the soul denied) | x1.5 against | x1.0 against |
+| `CHALLENGE_REFUSED` (proposal) | x1.5 against (cowardice; níð) | x1.0 against | x1.0 for (righteous) | x0 | x0 |
+
+People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger of their two cultures' factors.
+
+### Traits
+| Trait | Effect |
+|---|---|
+| Berserk | When wounded (30%) or when a friend falls (50%), goes berserk for 20 s: ignores orders, attacks the nearest enemy (including the surrendering, and farmers in reach), damage x1.3, defence x0.7; the deeds count against the household |
+| Cowardly | Breaks when cohesion falls below 40 (others at 25); 25% to flee a losing fight; happiness -10 on night raids |
+| Superstitious | 50% to refuse a task or voyage after a bad omen; panics at supernatural signs (cohesion -20); insists on rites |
+| Brave | Cohesion +20; volunteers for danger |
+| Greedy | Pockets 5% of loot; plunder-share disputes x2 |
+| Pious (a faith) | Prays 15 game minutes a day; reactions to sacrilege x2, and to its own faith's cruelty x1.5 |
+| Hot-tempered | Starts disputes x1.5; 20% to come to blows |
+| Gentle | Disputes among those watching x0.5; friendship lost over a killing x1.5 |
+| Drinker | Drinks at feasts and in hard times; work x0.7 the morning after |
+| Light-fingered | Takes one small item from the stores every 6 days, unless watched |
+| Keen-eyed | Sight +2 tiles at sea and on watch; spots ambush signs 3 tiles sooner |
+| Sea-sick | Work x0.8 at sea; x1.05 on land |
+| Storyteller or singer | Happiness +5 for everyone at the fire |
+| Grudge-holder | Grudges never fade; friendship lost to a slight x1.5 |
+| Diligent / Lazy | Unsupervised work x1.1 / x0.85 |
+
+| Key | Value |
+|---|---|
+| traitsPerPerson | 2 to 4; one or two shown at once, the rest discovered over 5 to 20 days |
+
+### Likes and dislikes
+| Key | Value |
+|---|---|
+| likeMet | Happiness +5 that day (a liked food, activity, place, weather or person) |
+| dislikeMet | Happiness -5 that day |
+| likedGift | Friendship +3 (as a gift that suits them) |
+| dislikedGift | Friendship -2 |
+| perPerson | 3 to 5 likes and 2 to 3 dislikes |
+
+### Relationships
+| Key | Value |
+|---|---|
+| friends | Two residents become friends at +40 between them, rivals at -40 (shared events move it: a shared fight +8, a meal together +1, a dispute lost to the other -10) |
+| mentor | A resident two skill levels above another, after 10 days working beside them |
+| drinkingCompanions | After three feasts drinking together |
+| griefOfFriend | A friend's death: happiness -25 x1.5 |
+| rivalDisputes | Disputes between rivals x2 |
+| noRomance | No romance ties form; existing marriages and family ties remain |
+
+### Stances
+| Key | Value |
+|---|---|
+| kinds | Conventional, sceptical, cynical, transgressive (Book 5) |
+| shift | After a strong event (a deed worth 15 or more friendship, a tie's death, a bargain), at most once per 30 days |
 
 ### Happiness, friendship and fear
 | Key | Value |
@@ -665,7 +747,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | otherWaysOut | A blood-price of 12 oz, a duel (hólmganga rules, section 13), exile (the target leaves the coast), or the truth (the quest ends with no deed) |
 
 ## 10 / Target progression for a good player
-*An idealised path for a capable player who plans well. It sets balance targets; it is not a script. Most players will be behind it in places and ahead in others.*
+*An idealised path for a capable player who plans well. It sets balance targets; it is not a script, and never a deadline (design addendum 2.3 section 4: the story moves only through gates the player starts). Most players will be behind it in places and ahead in others.*
 
 | Day | Milestone | Residents | Voyages (raids) | Tools and weapons | Ship | Buildings | Food and stores |
 |---|---|---|---|---|---|---|---|
@@ -744,8 +826,8 @@ food 563 rd   fuel 75 loads   hay 25 loads
 ### Timers and rules
 | Key | Value |
 |---|---|
-| ormTakesSkarvholm | About day 228 |
-| returnWindow | Days 241 to 252; one retry before day 255 |
+| ormTakesSkarvholm | Typically about day 228, after the move ashore (a gate) |
+| returnWindow | Typically days 241 to 252; one retry before the household sets out for the final battle |
 | hornToReinforcement | 360 s real after the horn |
 | naustCrewsJoin | 120 s after the horn |
 | beaconDelay | 60 s after the horn, if the cairn watch lives |
@@ -771,68 +853,233 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Drowned digger | 90 | Resists stagger | Grip | Slow; banished by daylight or rites, not killed |
 | Cairn warden | 200 | Cannot be killed | Blows that knock down | Driven back for 20 s by heavy blows; leaves when the truths are complete or the party leaves |
 
-## 14 / The mainland
-*One shared region of twenty areas (Book 4 section 03, Book 9). Walking times are real time at walking speed.*
+## 14 / The mainland: journeys
+*Sites explored on foot, joined by road legs that pass off screen and by wilderness routes that must be crossed on foot (design addendum 2.3 section 3; Book 4 section 03, Book 9 section 10). Hours are game hours at 50 real seconds each.*
 
-### Areas
-| ID | Area | Type | Known at start | Reached by ship | Opens |
-|---|---|---|---|---|---|
-| `MAIN_CARRICK_STRAND` | Carrick Strand | Coast, home site A | Yes (by sea) | From Chapter 3 | Open |
-| `MAIN_CARRICK_LANDING` | Carrick Landing | Coast | Yes | From Chapter 3 | Open |
-| `MAIN_ARDCARN` | Ardcarn | Village | Yes | No | Open |
-| `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Lake | No | No | Open |
-| `MAIN_KILBRECC` | Kilbrecc | Monastery, coast | Yes | From Chapter 3 | Open |
-| `MAIN_KILBRECC_FARMS` | The tenant farms | Farmland | No | No | Open |
-| `MAIN_BLACKWOOD_EDGE` | Fiodh Dubh: the edge | Oakwood | No | No | Open |
-| `MAIN_BLACKWOOD_HEART` | Fiodh Dubh: the heart | Old forest, dungeon | No | No | The hill-folk's leave |
-| `MAIN_MOIN_MHOR` | Móin Mhór, the Great Bog | Bog | No | No | Open |
-| `MAIN_TRACKWAY` | The Drowned Trackway | Bog, dungeon | No | No | Summer and autumn, or a winter cold snap |
-| `MAIN_SLIABH_CARN` | Sliabh Carn | Mountain | No | No | Open |
-| `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Mountain cave, dungeon | No | No | Closed by snow in winter |
-| `MAIN_HIGH_PASS` | The High Pass | Pass | No | No | Landslide until cleared |
-| `MAIN_DUN_FIACH` | Dún Fiach | Royal fort | Yes (by sea) | From Chapter 3 | Open |
-| `MAIN_RIDGE_ROAD` | The Ridge Road | Road | Yes | No | Open |
-| `MAIN_FORD` | The River Ford | River crossing | Yes | No | Closed in spate unless bridged |
-| `MAIN_SALT_PANS` | Ottar's farms and salt pans | Farmland, coast | Yes | From Chapter 3 | Open |
-| `MAIN_SALTVIK` | Saltvik | Town, coast | Yes | From Chapter 3 | Open |
-| `MAIN_SALTNESS` | Saltness headland | Coast, home site B | Yes | From Chapter 3 | Open |
-| `MAIN_MOUND_FIELD` | The Mound Field and the moor | Burial ground, moor, dungeon | No | No | Open |
-
-### Connections
-| From | To | Minutes | Condition |
+### Sites and routes
+| ID | Place | Kind | Reached by ship |
 |---|---|---|---|
-| Carrick Strand | Carrick Landing | 1 | |
-| Carrick Landing | Ardcarn | 1.5 | |
-| Ardcarn | Loch Carn | 2 | |
-| Ardcarn | Kilbrecc farms | 2 | |
-| Kilbrecc farms | Kilbrecc | 1 | |
-| Ardcarn | Black Wood edge | 2.5 | |
-| Black Wood edge | Black Wood heart | 3 | Opens with the hill-folk's leave (an offering, a kept promise or the right words) |
-| Black Wood edge | Móin Mhór | 2.5 | |
-| Móin Mhór | Drowned Trackway | 2 | Summer and autumn only, or frozen in a winter cold snap |
-| Móin Mhór | Sliabh Carn | 3 | |
-| Sliabh Carn | Cailleach's Cave | 2 | Closed by snow in winter |
-| Sliabh Carn | High Pass | 2 | |
-| High Pass | Dún Fiach | 2.5 | Landslide until cleared |
-| Kilbrecc | Ridge Road | 2 | |
-| Ridge Road | Dún Fiach | 2 | Guards attack if Dún Fiach is hostile |
-| Ridge Road | River Ford | 2.5 | |
-| River Ford | Salt pans | 2 | Impassable in spate (spring days 1 to 20; autumn storms) unless bridged |
-| Salt pans | Saltvik | 1 | |
-| Saltvik | Saltness | 1 | |
-| Salt pans | Mound Field and moor | 2.5 | |
-| Mound Field and moor | Móin Mhór | 3 | Wolves in winter |
+| `MAIN_CARRICK_STRAND` | Carrick Strand | Site, home site A | Yes |
+| `MAIN_CARRICK_LANDING` | Carrick Landing | Site | Yes |
+| `MAIN_ARDCARN` | Ardcarn | Site | No |
+| `MAIN_LOCH_CARN` | Loch Carn and Brigid's Well | Site | No |
+| `MAIN_KILBRECC_FARMS` | The tenant farms | Site | No |
+| `MAIN_KILBRECC` | Kilbrecc | Site | Yes |
+| `MAIN_BLACKWOOD_EDGE` | The Black Wood path | Route | No |
+| `MAIN_BLACKWOOD_HEART` | The Black Wood heart | Site, dungeon | No |
+| `MAIN_MOIN_MHOR` | Móin Mhór: the turf village and bog edge | Site | No |
+| `MAIN_PLANK_ROAD` | The plank road | Route | No |
+| `MAIN_TRACKWAY` | The Drowned Trackway | Site, dungeon | No |
+| `MAIN_SLIABH_CARN` | Sliabh Carn | Site | No |
+| `MAIN_CAILLEACH_CAVE` | The Cailleach's Cave | Site, dungeon | No |
+| `MAIN_HIGH_PASS` | The High Pass | Route | No |
+| `MAIN_DUN_FIACH` | Dún Fiach | Site | Yes (its landing) |
+| `MAIN_RIDGE_ROAD` | The Ridge Road | Route | No |
+| `MAIN_FORD` | The river path and the Ford | Route | No |
+| `MAIN_SALT_PANS` | Ottar's farms and salt pans | Site | Yes |
+| `MAIN_SALTVIK` | Saltvik | Site | Yes |
+| `MAIN_SALTNESS` | Saltness | Site, home site B | Yes |
+| `MAIN_MOOR_ROAD` | The moor road | Route | No |
+| `MAIN_MOUND_FIELD` | The Mound Field | Site, dungeon | No |
 
-### Travel and the opening map
+### Network
+*A route's ends are nodes; a Route leg is crossed on foot along the route's direct path (exploring off it can double the time). A site off a route (the heart, the Trackway, the Mound Field) is reached partway along it.*
+
+| From | To | Kind | Hours |
+|---|---|---|---|
+| Carrick Strand | Carrick Landing | Road | 0.5 |
+| Carrick Landing | Ardcarn | Road | 0.5 |
+| Ardcarn | Loch Carn | Road | 1 |
+| Ardcarn | Kilbrecc farms | Road | 1 |
+| Kilbrecc farms | Kilbrecc | Road | 0.5 |
+| Ardcarn | The Black Wood path (south end) | Road | 2 |
+| The Black Wood path (south end) | The Black Wood path (north end) | Route | 2.5 |
+| The Black Wood path (south end) | The Black Wood heart | Route | 1.25 |
+| The Black Wood path (north end) | The Black Wood heart | Route | 1.25 |
+| The Black Wood path (north end) | Móin Mhór | Road | 1 |
+| Móin Mhór | The plank road (west end) | Road | 0.5 |
+| The plank road (west end) | The plank road (east end) | Route | 2 |
+| The plank road (west end) | The Drowned Trackway | Route | 1 |
+| The plank road (east end) | The Drowned Trackway | Route | 1 |
+| The plank road (east end) | Sliabh Carn | Road | 0.5 |
+| Sliabh Carn | The Cailleach's Cave | Road | 1 |
+| Sliabh Carn | The High Pass (north end) | Road | 1 |
+| The High Pass (north end) | The High Pass (south end) | Route | 2.5 |
+| The High Pass (south end) | Dún Fiach | Road | 1 |
+| Kilbrecc | The Ridge Road (west end) | Road | 1 |
+| The Ridge Road (west end) | The Ridge Road (east end) | Route | 2 |
+| The Ridge Road (west end) | The Ridge Road (south branch) | Route | 2 |
+| The Ridge Road (east end) | The Ridge Road (south branch) | Route | 2 |
+| The Ridge Road (east end) | Dún Fiach | Road | 0.5 |
+| The Ridge Road (south branch) | The river path (north end) | Road | 1 |
+| The river path (north end) | The river path (south end) | Route | 2 |
+| The river path (south end) | Salt pans | Road | 1 |
+| Salt pans | Saltvik | Road | 0.5 |
+| Saltvik | Saltness | Road | 0.5 |
+| Salt pans | The moor road (south end) | Road | 1 |
+| The moor road (south end) | The moor road (north end) | Route | 2.5 |
+| The moor road (south end) | The Mound Field | Route | 1.25 |
+| The moor road (north end) | The Mound Field | Route | 1.25 |
+| The moor road (north end) | Móin Mhór | Road | 1.5 |
+
+### Journey modifiers
 | Key | Value |
 |---|---|
-| quickTravel | Along known roads between waymarks, when no enemy is aware and the ground is not hostile |
-| quickTravelCost | 1 game hour per real minute of the walk |
+| night | Road legs x1.5 at night, and riskier |
+| cargoOrCattle | x1.5 when driving cattle or carrying cargo |
+| knownRoad | x0.8 on a road leg already travelled |
+| kelpieBridle | Water crossings take half the time with the water-horse |
+| blocks | A landslide, spate, snow or flood closes its leg until cleared, or forces the long way round |
+| journeyEvent | 25% of road legs are interrupted by a short playable scene (travellers, bandits, wolves, weather, a wounded stranger, or a discovery that adds a point of interest) |
+| dayPlan | A day (06:00 to 02:00, 20 game hours) fits one or two nearby sites; far sites need a camp on the way, or the ship |
+
+### Route encounters
+*Rolled per crossing (proposal values, for tuning after playtests).*
+
+| Key | Value |
+|---|---|
+| wanderers | 50% of crossings meet wandering people (travellers, pilgrims, pedlars, herders, charcoal burners, patrols, outlaws, a lost traveller, a fleeing thrall, a hunting party) |
+| hostileDay | 20% of crossings by day meet a hostile encounter (bandits, outlaws, wolves, a boar, a hostile patrol) |
+| hostileNight | 33% of crossings at night |
+| winterWolves | Hostile chance x1.5 on the High Pass and the moor road in winter |
+| hostileFaction | Hostile chance x2 on a route held by a faction hostile to the household |
+| cargo | Hostile chance x1.5 when carrying cargo or driving cattle |
+| cleared | Hostile chance x0.5 once the household has driven out the route's outlaws |
+| ambushSign | Every ambush shows a sign (a fallen tree, crows rising, a stretch gone quiet, fresh tracks) at least 6 tiles ahead; a keen-eyed companion sees it 3 tiles sooner |
+
+### Shortest journeys
+*Computed from the Network by `src/sim/travel/journeys.ts` (a test checks every row). Hours by land, the fastest chain of road legs and routes, without modifiers.*
+
+| From | To | Hours |
+|---|---|---|
+| Carrick Strand | Carrick Landing | 0.5 |
+| Carrick Strand | Ardcarn | 1 |
+| Carrick Strand | Loch Carn | 2 |
+| Carrick Strand | Kilbrecc farms | 2 |
+| Carrick Strand | Kilbrecc | 2.5 |
+| Carrick Strand | The Black Wood heart | 4.25 |
+| Carrick Strand | Móin Mhór | 6.5 |
+| Carrick Strand | The Drowned Trackway | 8 |
+| Carrick Strand | Sliabh Carn | 9.5 |
+| Carrick Strand | The Cailleach's Cave | 10.5 |
+| Carrick Strand | Dún Fiach | 6 |
+| Carrick Strand | Salt pans | 9.5 |
+| Carrick Strand | Saltvik | 10 |
+| Carrick Strand | Saltness | 10.5 |
+| Carrick Strand | The Mound Field | 9.25 |
+| Carrick Landing | Ardcarn | 0.5 |
+| Carrick Landing | Loch Carn | 1.5 |
+| Carrick Landing | Kilbrecc farms | 1.5 |
+| Carrick Landing | Kilbrecc | 2 |
+| Carrick Landing | The Black Wood heart | 3.75 |
+| Carrick Landing | Móin Mhór | 6 |
+| Carrick Landing | The Drowned Trackway | 7.5 |
+| Carrick Landing | Sliabh Carn | 9 |
+| Carrick Landing | The Cailleach's Cave | 10 |
+| Carrick Landing | Dún Fiach | 5.5 |
+| Carrick Landing | Salt pans | 9 |
+| Carrick Landing | Saltvik | 9.5 |
+| Carrick Landing | Saltness | 10 |
+| Carrick Landing | The Mound Field | 8.75 |
+| Ardcarn | Loch Carn | 1 |
+| Ardcarn | Kilbrecc farms | 1 |
+| Ardcarn | Kilbrecc | 1.5 |
+| Ardcarn | The Black Wood heart | 3.25 |
+| Ardcarn | Móin Mhór | 5.5 |
+| Ardcarn | The Drowned Trackway | 7 |
+| Ardcarn | Sliabh Carn | 8.5 |
+| Ardcarn | The Cailleach's Cave | 9.5 |
+| Ardcarn | Dún Fiach | 5 |
+| Ardcarn | Salt pans | 8.5 |
+| Ardcarn | Saltvik | 9 |
+| Ardcarn | Saltness | 9.5 |
+| Ardcarn | The Mound Field | 8.25 |
+| Loch Carn | Kilbrecc farms | 2 |
+| Loch Carn | Kilbrecc | 2.5 |
+| Loch Carn | The Black Wood heart | 4.25 |
+| Loch Carn | Móin Mhór | 6.5 |
+| Loch Carn | The Drowned Trackway | 8 |
+| Loch Carn | Sliabh Carn | 9.5 |
+| Loch Carn | The Cailleach's Cave | 10.5 |
+| Loch Carn | Dún Fiach | 6 |
+| Loch Carn | Salt pans | 9.5 |
+| Loch Carn | Saltvik | 10 |
+| Loch Carn | Saltness | 10.5 |
+| Loch Carn | The Mound Field | 9.25 |
+| Kilbrecc farms | Kilbrecc | 0.5 |
+| Kilbrecc farms | The Black Wood heart | 4.25 |
+| Kilbrecc farms | Móin Mhór | 6.5 |
+| Kilbrecc farms | The Drowned Trackway | 8 |
+| Kilbrecc farms | Sliabh Carn | 8.5 |
+| Kilbrecc farms | The Cailleach's Cave | 9.5 |
+| Kilbrecc farms | Dún Fiach | 4 |
+| Kilbrecc farms | Salt pans | 7.5 |
+| Kilbrecc farms | Saltvik | 8 |
+| Kilbrecc farms | Saltness | 8.5 |
+| Kilbrecc farms | The Mound Field | 9.25 |
+| Kilbrecc | The Black Wood heart | 4.75 |
+| Kilbrecc | Móin Mhór | 7 |
+| Kilbrecc | The Drowned Trackway | 8.5 |
+| Kilbrecc | Sliabh Carn | 8 |
+| Kilbrecc | The Cailleach's Cave | 9 |
+| Kilbrecc | Dún Fiach | 3.5 |
+| Kilbrecc | Salt pans | 7 |
+| Kilbrecc | Saltvik | 7.5 |
+| Kilbrecc | Saltness | 8 |
+| Kilbrecc | The Mound Field | 9.25 |
+| The Black Wood heart | Móin Mhór | 2.25 |
+| The Black Wood heart | The Drowned Trackway | 3.75 |
+| The Black Wood heart | Sliabh Carn | 5.25 |
+| The Black Wood heart | The Cailleach's Cave | 6.25 |
+| The Black Wood heart | Dún Fiach | 8.25 |
+| The Black Wood heart | Salt pans | 7.25 |
+| The Black Wood heart | Saltvik | 7.75 |
+| The Black Wood heart | Saltness | 8.25 |
+| The Black Wood heart | The Mound Field | 5 |
+| Móin Mhór | The Drowned Trackway | 1.5 |
+| Móin Mhór | Sliabh Carn | 3 |
+| Móin Mhór | The Cailleach's Cave | 4 |
+| Móin Mhór | Dún Fiach | 7.5 |
+| Móin Mhór | Salt pans | 5 |
+| Móin Mhór | Saltvik | 5.5 |
+| Móin Mhór | Saltness | 6 |
+| Móin Mhór | The Mound Field | 2.75 |
+| The Drowned Trackway | Sliabh Carn | 1.5 |
+| The Drowned Trackway | The Cailleach's Cave | 2.5 |
+| The Drowned Trackway | Dún Fiach | 6 |
+| The Drowned Trackway | Salt pans | 6.5 |
+| The Drowned Trackway | Saltvik | 7 |
+| The Drowned Trackway | Saltness | 7.5 |
+| The Drowned Trackway | The Mound Field | 4.25 |
+| Sliabh Carn | The Cailleach's Cave | 1 |
+| Sliabh Carn | Dún Fiach | 4.5 |
+| Sliabh Carn | Salt pans | 8 |
+| Sliabh Carn | Saltvik | 8.5 |
+| Sliabh Carn | Saltness | 9 |
+| Sliabh Carn | The Mound Field | 5.75 |
+| The Cailleach's Cave | Dún Fiach | 5.5 |
+| The Cailleach's Cave | Salt pans | 9 |
+| The Cailleach's Cave | Saltvik | 9.5 |
+| The Cailleach's Cave | Saltness | 10 |
+| The Cailleach's Cave | The Mound Field | 6.75 |
+| Dún Fiach | Salt pans | 6.5 |
+| Dún Fiach | Saltvik | 7 |
+| Dún Fiach | Saltness | 7.5 |
+| Dún Fiach | The Mound Field | 8.75 |
+| Salt pans | Saltvik | 0.5 |
+| Salt pans | Saltness | 1 |
+| Salt pans | The Mound Field | 2.25 |
+| Saltvik | Saltness | 0.5 |
+| Saltvik | The Mound Field | 2.75 |
+| Saltness | The Mound Field | 3.25 |
+
+### Opening the map
+| Key | Value |
+|---|---|
 | highPassClearing | A work party with axes and levers, 6 worker-days; or Fiachra's men after an alliance; or the Cailleach's maul |
 | fordBridge | A homestead build at the ford: 8 timber, 6 worker-days; ends the spate closure for everyone |
 | fordSpate | Spring days 1 to 20, and 2 days after each autumn storm |
 | coldSnap | 15% a winter day, lasting 2 to 4 days; freezes the bog |
-| travelTimeTolerance | Within 10% of the table (Book 3 Stage 28) |
 
 ## 15 / Wilderness, hazards and camping
 ### Hazards
@@ -859,7 +1106,8 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | saves | When no enemy is aware and the ground is not hostile |
 | nightRisk | A night event: 5% on a road, 15% in the wilderness, 25% deep in the wilderness; x1.5 in winter |
 | riskReduction | A good fire x0.67, a companion on watch x0.67, a sheltered spot x0.75 (multiplied) |
-| companionsOnFoot | Up to 2 residents |
+| companionsOnFoot | Up to 2 friendly characters |
+| waystation | A safe camp with a small store at one camp spot per route (proposal): 6 timber, 2 stone, 4 worker-days; stores 10 lots; night risk x0.25 |
 
 ## 16 / Dungeons and equipment
 | Reward | Dungeon | Effect | Cost |
@@ -968,4 +1216,50 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | lookAheadDeadZone | 0.5 tiles: no look-ahead while the cursor is this close |
 | cameraHalfLife | 0.18 s, critically damped, in sub-pixel space |
 | cameraSnap | The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels |
+
+## 22 / Story gates
+*The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline.*
+
+| Gate (proposal) | Typical day | Readiness screen shows |
+|---|---|---|
+| The launch (end of Chapter 1) | 6 | The boat's repairs, crew, stores |
+| The Carrick raid | 12 to 15 | Crew, ship, plan, equipment |
+| The reply to Asgrim | 118 to 120 | Silver, allies, the household's answer |
+| The defence of Skarvholm | 121 to 150 | Watch, walls, weapons, warning |
+| The household council | About 180 | Stores, the island's state, the two sites |
+| The move ashore | 181 to 210 | Ships, cargo, the site secured |
+| The Gathering | 211 to 240 | Allies, demands, offers |
+| The Return to Skarvholm | 241 to 252 | Crew, equipment, keys, the checkpoint |
+| The final battle | 256 to 270 | Allies, ships, the Cup |
+
+| Key | Value |
+|---|---|
+| waiting | A dated story event waits at its gate; the calendar, seasons, crops and winter go on |
+| pressure | While a gate waits past its typical day: a demand grows 10% every 10 days, and one rumour spreads every 5 days; pressure never starts a gate |
+| warning | Every readiness screen says plainly that the gate is a point of no return |
+
+## 23 / Conversation depth
+*The minimum for each major character (leaders, antagonists, residents, quest characters), checked by content lint (design addendum 2.3 section 2; Book 8).*
+
+| Key | Value |
+|---|---|
+| greetings | One for each season and time of day (morning, day, evening, night): 16, plus feast days |
+| topicTrees | At least 3 |
+| deedReactions | At least 10 deed types |
+| callbacks | At least 5 remembered events |
+| voiceThresholds | Voice changes at friendship 40 and -40 and at fear 60 |
+| minorLines | Minor characters: pools of 1 or 2 lines, by culture, season, time of day, weather and the household's deeds |
+
+## 24 / Heavy build
+*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Proposal values.*
+
+| Key | Value |
+|---|---|
+| poise | Light attacks do not stagger a heavy fighter |
+| windup | +4 ticks on every attack |
+| damage | x1.2 |
+| runSpeed | x0.9 |
+| carrySpeed | x1.15 carrying loads and downed allies |
+| runStamina | Running drains x1.25 |
+| share | About one in six generated people |
 

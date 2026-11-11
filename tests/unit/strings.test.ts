@@ -65,3 +65,14 @@ describe('captions (design addendum 2.3 section 10)', () => {
     expect(captionProblems('ui.x.y', entry('Anything: at all', []))).toEqual([]);
   });
 });
+
+describe('period speech (design addendum 2.3 section 2)', () => {
+  it('finds modern moral words in dialogue and leaves interface text alone', async () => {
+    const { isDialogueKey, modernMoralWordsIn } = await import('../../src/content/strings.ts');
+    expect(modernMoralWordsIn('Those civilians had rights.')).toEqual(['rights', 'civilian']);
+    expect(modernMoralWordsIn('He was innocent, and his kin will come.')).toEqual([]);
+    expect(modernMoralWordsIn('A war  crime, they will call it.')).toEqual(['war crime']);
+    expect(isDialogueKey('c_hild.bark.call.03')).toBe(true);
+    expect(isDialogueKey('ui.household.values')).toBe(false);
+  });
+});

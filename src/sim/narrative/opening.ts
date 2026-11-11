@@ -7,7 +7,9 @@
 import type { OpeningDef } from '../../content/registry.ts';
 import type { Id } from '../../core/ids.ts';
 import { fireOneShot, setFact } from '../ledger/ledger.ts';
-import { compass, NEEDS_LIFT, TICKS_PER_SECOND } from '../land/onFoot.ts';
+import { compass, keepFooting, NEEDS_LIFT, TICKS_PER_SECOND } from '../land/onFoot.ts';
+import type { LandContext } from '../land/onFoot.ts';
+import type { ZoneMap } from '../land/zoneMap.ts';
 import type { WorldState } from '../world.ts';
 
 export const FACT_HILD_FOUND = 'ch1.hild_found';
@@ -24,17 +26,24 @@ export type OpeningEvent =
   | { readonly type: 'PERSON_SPOKE'; readonly person: Id; readonly lineKey: string }
   | { readonly type: 'BEAT_COMPLETED'; readonly beat: Id };
 
-/** Hild's call schedule: until she is lifted and found, she calls every few seconds. */
+/**
+ * Hild's call schedule: until she is lifted and found, she calls every few seconds. While she
+ * stands calling in the shallows she keeps her footing knee to waist deep as the tide moves.
+ */
 export function stepOpening(
   world: WorldState,
   opening: OpeningDef,
-  tile: number,
+  map: ZoneMap,
+  land: Pick<LandContext, 'movement' | 'water' | 'elevations'>,
+  level: number,
   emit: (event: OpeningEvent) => void,
 ): void {
+  const tile = map.tile;
   const onFoot = world.onFoot;
   if (onFoot?.zone !== opening.zone) return;
   const caller = onFoot.actors[opening.caller];
   if (caller === undefined || !NEEDS_LIFT.includes(caller.pose)) return;
+  if (caller.pose === 'call') keepFooting(caller, map, land, level);
   if (world.facts[FACT_HILD_FOUND] === true) return;
   const first = opening.firstCallSeconds * TICKS_PER_SECOND;
   const every = opening.callEverySeconds * TICKS_PER_SECOND;
