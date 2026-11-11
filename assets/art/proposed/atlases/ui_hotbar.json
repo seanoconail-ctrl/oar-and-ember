@@ -1,0 +1,61 @@
+{
+  "sheet": "ui_hotbar",
+  "kind": "decal",
+  "image": "ui_hotbar.png",
+  "width": 22,
+  "height": 30,
+  "pivot": {
+    "x": 11,
+    "y": 29
+  },
+  "footprint": {
+    "w": 22,
+    "h": 30
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "slot": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "slot_selected": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_left": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_right": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "slot/-/0": [
+      0,
+      0
+    ],
+    "slot_selected/-/0": [
+      0,
+      30
+    ],
+    "cap_left/-/0": [
+      0,
+      60
+    ],
+    "cap_right/-/0": [
+      0,
+      90
+    ]
+  }
+}

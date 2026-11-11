@@ -1,0 +1,133 @@
+{
+  "sheet": "ui_icons",
+  "kind": "decal",
+  "image": "ui_icons.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 8,
+    "y": 8
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "axe": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "spade": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "sickle": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "seed_bag": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "pail": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hammer": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fishing_line": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "spear": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "seax": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bread": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "rope": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "axe/-/0": [
+      0,
+      0
+    ],
+    "spade/-/0": [
+      0,
+      16
+    ],
+    "sickle/-/0": [
+      0,
+      32
+    ],
+    "seed_bag/-/0": [
+      0,
+      48
+    ],
+    "pail/-/0": [
+      0,
+      64
+    ],
+    "hammer/-/0": [
+      0,
+      80
+    ],
+    "fishing_line/-/0": [
+      0,
+      96
+    ],
+    "spear/-/0": [
+      0,
+      112
+    ],
+    "bow/-/0": [
+      0,
+      128
+    ],
+    "seax/-/0": [
+      0,
+      144
+    ],
+    "bread/-/0": [
+      0,
+      160
+    ],
+    "rope/-/0": [
+      0,
+      176
+    ]
+  }
+}

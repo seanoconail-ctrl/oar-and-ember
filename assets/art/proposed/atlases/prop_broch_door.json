@@ -1,0 +1,37 @@
+{
+  "sheet": "prop_broch_door",
+  "kind": "prop",
+  "image": "prop_broch_door.png",
+  "width": 96,
+  "height": 80,
+  "pivot": {
+    "x": 48,
+    "y": 79
+  },
+  "footprint": {
+    "w": 88,
+    "h": 10
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "wall": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 92,
+    "h": 10
+  },
+  "placeholder": false,
+  "frames": {
+    "wall/-/0": [
+      0,
+      0
+    ]
+  }
+}

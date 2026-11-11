@@ -1,0 +1,176 @@
+{
+  "sheet": "ui_digits",
+  "kind": "decal",
+  "image": "ui_digits.png",
+  "width": 5,
+  "height": 7,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 5,
+    "h": 7
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "key": {
+      "frames": 12,
+      "ticks": 1,
+      "loop": false
+    },
+    "key_selected": {
+      "frames": 12,
+      "ticks": 1,
+      "loop": false
+    },
+    "count": {
+      "frames": 10,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "key/-/0": [
+      0,
+      0
+    ],
+    "key/-/1": [
+      5,
+      0
+    ],
+    "key/-/2": [
+      10,
+      0
+    ],
+    "key/-/3": [
+      15,
+      0
+    ],
+    "key/-/4": [
+      20,
+      0
+    ],
+    "key/-/5": [
+      25,
+      0
+    ],
+    "key/-/6": [
+      30,
+      0
+    ],
+    "key/-/7": [
+      35,
+      0
+    ],
+    "key/-/8": [
+      40,
+      0
+    ],
+    "key/-/9": [
+      45,
+      0
+    ],
+    "key/-/10": [
+      50,
+      0
+    ],
+    "key/-/11": [
+      55,
+      0
+    ],
+    "key_selected/-/0": [
+      0,
+      7
+    ],
+    "key_selected/-/1": [
+      5,
+      7
+    ],
+    "key_selected/-/2": [
+      10,
+      7
+    ],
+    "key_selected/-/3": [
+      15,
+      7
+    ],
+    "key_selected/-/4": [
+      20,
+      7
+    ],
+    "key_selected/-/5": [
+      25,
+      7
+    ],
+    "key_selected/-/6": [
+      30,
+      7
+    ],
+    "key_selected/-/7": [
+      35,
+      7
+    ],
+    "key_selected/-/8": [
+      40,
+      7
+    ],
+    "key_selected/-/9": [
+      45,
+      7
+    ],
+    "key_selected/-/10": [
+      50,
+      7
+    ],
+    "key_selected/-/11": [
+      55,
+      7
+    ],
+    "count/-/0": [
+      0,
+      14
+    ],
+    "count/-/1": [
+      5,
+      14
+    ],
+    "count/-/2": [
+      10,
+      14
+    ],
+    "count/-/3": [
+      15,
+      14
+    ],
+    "count/-/4": [
+      20,
+      14
+    ],
+    "count/-/5": [
+      25,
+      14
+    ],
+    "count/-/6": [
+      30,
+      14
+    ],
+    "count/-/7": [
+      35,
+      14
+    ],
+    "count/-/8": [
+      40,
+      14
+    ],
+    "count/-/9": [
+      45,
+      14
+    ]
+  }
+}

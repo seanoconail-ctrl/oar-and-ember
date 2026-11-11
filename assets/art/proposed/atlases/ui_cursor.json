@@ -1,0 +1,47 @@
+{
+  "sheet": "ui_cursor",
+  "kind": "decal",
+  "image": "ui_cursor.png",
+  "width": 28,
+  "height": 28,
+  "pivot": {
+    "x": 14,
+    "y": 14
+  },
+  "footprint": {
+    "w": 24,
+    "h": 24
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "valid": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "reach": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "valid/-/0": [
+      0,
+      0
+    ],
+    "valid/-/1": [
+      28,
+      0
+    ],
+    "reach/-/0": [
+      0,
+      28
+    ]
+  }
+}
