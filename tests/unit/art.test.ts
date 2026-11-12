@@ -129,6 +129,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'layer_helmet_iron_a',
       'layer_helmet_iron_b',
       'layer_helmet_iron_heavy',
+      'layer_shield_back_svart',
       'layer_shield_round_bran_heavy',
       'layer_shield_round_ketill_heavy',
       'layer_shield_round_svart',

@@ -316,7 +316,9 @@ async function parryRiposte(browser: Browser, out: string): Promise<string> {
   let landed = false;
   for (let i = 0; i < FPS * 12 && riposted < FPS * 1.5; i++) {
     const s = await svart(page);
-    if (!parried && s.state === 'heavyRelease' && s.toActive > 2 && s.toActive <= 6) {
+    // His slow heavy for preference (the dusk fight's lesson); after four seconds any strike.
+    const strike = s.state === 'heavyRelease' || (i > FPS * 4 && s.toActive >= 0);
+    if (!parried && strike && s.toActive > 2 && s.toActive <= 6) {
       await page.keyboard.press('KeyQ');
       parried = true;
     }
@@ -472,6 +474,8 @@ async function arrowDodged(browser: Browser, out: string): Promise<string> {
     y: 35.1,
     alert: true,
     held: true,
+    // The fight already on, so drawing the bow does not start it and set him choosing again.
+    engaged: true,
     able: true,
     shield: false,
     // Whole again for each take, so the shots he does not sidestep never fell him.

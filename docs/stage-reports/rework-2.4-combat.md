@@ -82,7 +82,7 @@ this session; the main session commits.
 
 ## Tests
 - `npm run lint`: clean. ESLint, Prettier, content lint (1346 strings, 507 registered IDs) and art
-  lint (139 sheets, 30,065 frames, 0 placeholders).
+  lint (140 sheets, 30,582 frames, 0 placeholders).
 - `npm run build`: builds (the usual large-chunk warning only).
 - `npm test`: **48 files, 669 tests: 666 pass, 1 skipped, 2 fail** (last full run):
   - `art.test.ts` "in step with their sources" timed out at its 30 s limit under the parallel
@@ -96,7 +96,7 @@ this session; the main session commits.
     regenerated, and goldens 1 to 10 load and migrate to version 11.
   - An earlier full run also failed `opening2.test.ts` (the mast stores and rations count) while
     the opening work was mid-edit; it passes now.
-- New: `tests/unit/combat2.test.ts` (**43 tests**): the swept box; arrows registering in every
+- New: `tests/unit/combat2.test.ts` (**44 tests**, all pass): the swept box; arrows registering in every
   state (idle, alert, attacking, blocking, dodging, staggered, downed, fleeing) at 16, 64, 400
   and 3000 tiles a second, before, during and after a fight, and in the dead; the shield's thunk; aware sidesteps (about
   25%) and unaware double damage; the stance's turn; lock-on back-off and strafe speeds, running
@@ -108,7 +108,9 @@ this session; the main session commits.
   exhaustion; healing and its interruption; the bars; the wounded backing off and calling for
   help; one or two pressers and the rest circling; the leash; footstep noise by ground; awareness
   states; the backstab; warnings at 8, 5 and 3 tiles, walking away, a weapon drawn; checkpoints
-  and the camp autosave; the dusk fight: there at 18:30, the fight (in at least two of three seeds,
+  and the camp autosave; Svart's shield drawn slung on his back at work and fighting while he has
+  none in hand (the slung layer has every frame the arm layer has), on his arm once taken up, and
+  not slung once broken; the dusk fight: there at 18:30, the fight (in at least two of three seeds,
   Svart's slow heavy parried, the riposte felling him and Conn fleeing), walking away, the bargain, the sneak through the
   dune grass to a backstab, and an exact replay.
 - Updated, keeping what they check: `combat.test.ts` (Stage 9, on combat v2's numbers),
@@ -125,6 +127,9 @@ this session; the main session commits.
   - `standard.spec.ts` (script per frame 9.95 ms under load; **3.20 ms** on the rerun, limit
     5.5), `stage08.spec.ts` (barks: timed out under load; passes) and `opening2.spec.ts` (the
     net's caption: the opening work's; passes on the rerun).
+- After the slung shield and the per-voice grunt: art lint clean (140 sheets, 30,582 frames);
+  `combat.test.ts`, `combat2.test.ts` and `art.test.ts` 105 passed; the audio unit tests 26
+  passed; `combat2.spec.ts` and `sound.spec.ts` in Chromium 9 passed.
 - Firefox and WebKit were not run here (the main session runs the CI).
 
 ## Art check
@@ -138,11 +143,23 @@ inspected; art lint clean, 0 placeholders):
   a bob), the thin enemy bar, the lock-on brackets (two frames), the binding and ration icons.
   `fx_combat` (16 x 16): the parry's star (4 frames), sparks (3), splinters (3), the sidestep's
   puff (3) (`assets/art/authoring/combat24_ui.py`).
+- **Svart's slung shield** (DE-14, DE-47): `layer_shield_back_svart`, the same round shield on his
+  back in every state his sheet has (42) and all four facings, with its layer file
+  `wrecker_svart_slung` (so art lint checks its canvas and the composite's ink outline in every
+  frame). The game draws it in place of the shield on his arm whenever a fighter has a shield but
+  none in hand and none broken (`withSlungShield`, `shieldSlung` in `src/scenes/people.ts`, used by
+  `zoneScene.ts`), so what is drawn matches the simulation: no shield in front, nothing blocked.
+  Inspected at 1x and 4x: `docs/art/rework-2.4/combat/sheets/wrecker_svart_slung@1x.png` (every
+  state), `wrecker_svart_slung_fight@1x.png` and `@4x.png` (the fighting states, slung beside the
+  arm, south and east) and `wrecker_svart_slung.gif` (`assets/art/authoring/combat24_slung.py`).
+  From the north the shield shows whole on his back; from the south the body hides it; from the
+  sides it is behind the cloak, as the at-rest shield on his back already was.
 - The proposed sheets in `assets/art/proposed` match what ships (`npm run art:adopt`).
 
 **Clips from the real game** (`npm run capture -- rework-2.4-combat`, `src/tools/art/captureCombat2.ts`):
 each a GIF at 1x (320 x 180 round the steerer and Svart, 30 frames a second) and a still at 4x of
-its key moment, in `docs/art/rework-2.4/combat/`, all under 3 MB:
+its key moment, in `docs/art/rework-2.4/combat/`, all under 3 MB. All but arrow-blocked were captured
+again with the slung shield, so Svart fights with his shield on his back, as in the simulation:
 
 | Clip | GIF | Shows |
 |---|---|---|
@@ -150,8 +167,8 @@ its key moment, in `docs/art/rework-2.4/combat/`, all under 3 MB:
 | back-off | 0.49 MB | Locked on to Svart: backing off west, strafing south and north, the stance facing him throughout |
 | hit-reactions | 0.35 MB | A light seax hit (flinch, knockback, flash, spray) and a charged heavy (stagger, shake) |
 | hurt-backs-off | 0.53 MB | Svart badly hurt holding off further, backing away as the steerer presses |
-| arrow-blocked | 0.25 MB | An arrow into Svart's raised shield: the thunk and splinters, the arrow stuck in the board |
-| arrow-dodged | 0.19 MB | Aware Svart reading the draw and sidestepping; the arrow passes |
+| arrow-blocked | 0.25 MB | An arrow into Svart's raised shield (staged with the shield taken up): the thunk and splinters, the arrow stuck in the board |
+| arrow-dodged | 0.22 MB | Aware Svart reading the draw and sidestepping; the arrow passes |
 | backstab | 0.26 MB | A backstab on Svart at work, unaware: the heavy strike and the fall |
 
 **Compared with `docs/art/reference/`** (wreck-strand-target): the people read clearly at 1x
@@ -169,7 +186,9 @@ back with `npm run audio:render` (peak / RMS, linear; the ceiling is -1 dBTP, ab
 | Sound | Event | Peak | RMS |
 |---|---|---|---|
 | SFX_STEERER_BREATH (hurt: a breath, never a cry) | STEERER_HURT | 0.228 | 0.0220 |
-| SFX_GRUNT (enemies, wordless) | GRUNT | 0.167 | 0.0166 |
+| SFX_GRUNT (enemies, wordless; Svart's 150 Hz) | GRUNT | 0.167 | 0.0166 |
+| SFX_GRUNT at Ketill's pitch (98 Hz) | GRUNT | 0.165 | 0.0133 |
+| SFX_GRUNT at Conn's pitch (244 Hz) | GRUNT | 0.161 | 0.0194 |
 | SFX_PARRY_RING (the sharp ring) | PARRY_RING | 0.265 | 0.0486 |
 | SFX_RIPOSTE (a heavy layered hit) | RIPOSTE_HIT | 0.706 | 0.1600 |
 | SFX_LUNGE (the lunge's tell) | LUNGE_TELL | 0.198 | 0.0222 |
@@ -182,23 +201,23 @@ back with `npm run audio:render` (peak / RMS, linear; the ceiling is -1 dBTP, ab
 
 All are under the ceiling (the riposte first peaked at 0.908 and was brought down). The riposte and
 backstab are the loudest, as the heaviest blows; the grunt, alert and eating sit low under the
-ambience. The barks (warnings, "Who's there?", calls for help, bargaining, running) are Book 8
+ambience. The grunt is pitched from each person's voice data (`voice.ts` speaking pitch, passed
+with the event through the audio router to the sound; DE-48), so Ketill, Svart and Conn are told
+apart and stay at the same loudness. The barks (warnings, "Who's there?", calls for help, bargaining, running) are Book 8
 lines with voice blips, as before.
 
 ## Deviations
 DE-35 to DE-59 in `docs/decision-log.md`, each with its reason. None departs from Book 1.
 
 ## Known issues
-- **Bindings in the world.** Healing reads `ITEM_BINDING` from the pack, but where bindings are
-  found (the camp salvage and Thorkel's chest) is Chapter 1 content owned by the opening work; until
-  that content gives them, the steerer has none: H eats a ration when one is carried, and
+- **Bindings in the world** now come from the opening work's content: the camp's salvage on the
+  machair (`camp_bindings`, Book 10 bindingsAtCamp) and three in Thorkel's chest, taken into the
+  pack up to Book 10's carried limit. With none carried, H eats a ration if one is carried, and
   otherwise refuses with a caption ("No bindings").
 - **Perception and avoidance** model darkness, rain (a hook: rain is false until weather is
   built), cover, deep water and a lit camp fire; light pools and cliff edges are not yet modelled.
-- **Svart's shield on his back is not drawn there.** In the simulation he has no shield in the
-  dusk fight (DE-14: the spear in both hands), but his sprite still draws the round shield layer
-  on his arm, as before. A shield-on-back layer is new art, left for review; the arrow clip stages
-  him with the shield taken up to show the block.
+- **A broken shield has no art.** A shield split or worn out (`shieldBreaks`) is gone in the
+  simulation but still drawn on the arm. Only Svart has a slung layer; no one else is ever slung.
 - **The club or hammer** has its moveset but no Chapter 1 item.
 - **Edge case**: visiting the fold during the dusk window could meet the fold's band before the
   dusk survivors join it; they join at dark.
@@ -216,4 +235,4 @@ DE-35 to DE-59 in `docs/decision-log.md`, each with its reason. None departs fro
 - **The backstab arc read as 60 degrees either side** (DE-42).
 - **Cornered runners surrender** and a cornered archer draws a sidearm once (DE-41).
 - **Marks toggle** on A in the system menu (DE-57), until a settings screen exists.
-- **One grunt for all enemies** (DE-48), not yet pitched per voice.
+- **Svart's slung shield** (DE-47): new art for review, in `docs/art/rework-2.4/combat/sheets/`.
