@@ -43,5 +43,9 @@ export default defineConfig({
   test: {
     include: ['tests/**/*.test.ts'],
     environment: 'node',
+    // The scenario tests play whole searches, fights and repairs through the simulation; on a
+    // shared CI runner, with every file in parallel, those take longer than vitest's default five
+    // seconds (decision S12-27). A limit for a hung test, not a measure of anything.
+    testTimeout: 60_000,
   },
 });

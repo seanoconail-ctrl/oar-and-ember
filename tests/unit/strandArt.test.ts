@@ -175,5 +175,5 @@ describe('the strand scene', () => {
       }
     }
     expect([...missing]).toEqual([]);
-  }, 30_000);
+  }, 120_000);
 });
