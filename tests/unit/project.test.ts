@@ -101,9 +101,10 @@ describe('the GitHub Actions workflow', () => {
     );
   });
 
-  it('publishes only when Chromium, Firefox and WebKit pass (Book 3 Stage 12; decision BR-7)', () => {
-    expect(workflow).toContain('needs: [check, browsers-firefox, browsers-webkit]');
-    // Neither browser is excused: a failure blocks publishing and shows red.
+  it('publishes only when Chromium and WebKit pass; Firefox runs but does not block (decision BR-8)', () => {
+    expect(workflow).toContain('needs: [check, browsers-webkit]');
+    // Firefox still runs on every push, and a failure still shows red: no job is excused.
+    expect(workflow).toMatch(/browsers-firefox:/);
     expect(workflow).not.toContain('continue-on-error');
   });
 

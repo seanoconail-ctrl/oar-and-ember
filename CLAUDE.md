@@ -69,7 +69,8 @@ Book 10 and `content/balance.json` are the only source of tuning numbers.
 - For visible work, run `npm run capture -- stage-NN` and compare the capture with
   `docs/art/reference/` in the report.
 - Write `docs/stage-reports/stage-NN.md` in the Book 2 report format, including the latest CI
-  results for Chromium, Firefox and WebKit. All three block publishing (decisions BR-2 to BR-7,
-  which ended BR-1 and S1-18).
+  results for Chromium, Firefox and WebKit. Chromium and WebKit block publishing; Firefox still
+  runs and is reported, but does not block publishing for now, at the user's request (decision
+  BR-8).
 - Commit with a clear message and tell the user, in plain words, what changed, what to try at the
   published link, and anything they need to decide.

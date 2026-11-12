@@ -1,7 +1,8 @@
 # Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
 # are built, publish the build to GitHub Pages and check the published address in Chromium (Linux),
-# Firefox (macOS) and WebKit (Linux, in Playwright's image). Publishing waits for all three browser
-# checks (decision BR-7, ending BR-1 and S1-18; Book 3, Stage 12 acceptance check).
+# Firefox (macOS) and WebKit (Linux, in Playwright's image). Publishing waits for Chromium and WebKit.
+# Firefox still runs and shows red on failure, but does not block publishing for now, at the user's
+# request (decision BR-8, 2026-11-12; it superseded BR-7 for Firefox only).
 #
 # Repository settings needed once:
 # - Settings > Pages > Build and deployment > Source: "GitHub Actions".
@@ -48,7 +49,8 @@ jobs:
           path: dist
 
   # Firefox runs on macOS, where it has WebGL2 (software rendering, about four frames a second;
-  # the tests that play the game step it frame by frame: decision BR-2). Blocks publishing.
+  # the tests that play the game step it frame by frame: decision BR-2). Does not block publishing
+  # for now (decision BR-8); the job is not excused, so a failure still shows red.
   browsers-firefox:
     name: Firefox smoke test (macOS)
     runs-on: macos-15-intel
@@ -107,7 +109,8 @@ jobs:
 
   deploy:
     name: Publish to GitHub Pages
-    needs: [check, browsers-firefox, browsers-webkit]
+    # Firefox is left out for now, at the user's request (decision BR-8).
+    needs: [check, browsers-webkit]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
     runs-on: ubuntu-latest
     permissions:
