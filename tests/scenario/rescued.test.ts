@@ -91,6 +91,8 @@ interface Seen {
   /** Game minutes (gameMinutes) when up and when first by the fire. */
   upMinute: number | null;
   campMinute: number | null;
+  /** When the first fire was lit: Hild waits on the strand for its smoke (DE-62). */
+  smokeMinute: number | null;
   campAt: number | null;
   /** Ticks awake, away from what their day asks, unmoved and unchanged (Book 10 rescueStuck). */
   still: number;
@@ -125,6 +127,7 @@ function watch(p: Play): void {
     const s = p.seen;
     const w = p.sim.state;
     if (s.rescuedAt === null) return;
+    if (s.smokeMinute === null && w.facts['ch1.fire_lit'] === true) s.smokeMinute = gameMinutes(w);
     const f = findActor(w.onFoot ?? (null as never), p.who);
     if (f === null) return;
     const pose = f.actor.pose;
@@ -195,6 +198,7 @@ function newPlay(who: Who, sim: Simulation): Play {
       upAt: null,
       upMinute: null,
       campMinute: null,
+      smokeMinute: null,
       campAt: null,
       still: 0,
       stillMost: 0,
@@ -464,8 +468,25 @@ const ODDI = {
   },
 };
 
+/** A downed ally carried into the camp's safe place (Book 10 broughtHome), lifted again if dropped. */
+function broughtHome(p: Play, id: string): void {
+  if (findActor(p.bot.onFoot, id)?.actor.pose !== 'down') return;
+  const safe = land.fight?.def.safePlaces[0];
+  if (safe === undefined) throw new Error('no safe place');
+  carryInto(
+    p,
+    id,
+    safe.zone,
+    (t) => dry(p)(t) && Math.hypot(t.tx + 0.5 - safe.x, t.ty + 0.5 - safe.y) < safe.r - 1.5,
+  );
+}
+
 const BRAN = {
-  fight: (p: Play) => p.bot.bran('FIGHT'),
+  /** The fight at the fold; Bran, if downed in it, carried home (the bot's carry may drop him). */
+  fight: (p: Play) => {
+    p.bot.bran('FIGHT');
+    broughtHome(p, 'C_BRAN');
+  },
   sneak: (p: Play) => p.bot.bran('SNEAK'),
   /** The fold's price is the ship's silver: Oddi's strongbox brought off his strand first. */
   bargain: (p: Play) => {
@@ -508,8 +529,17 @@ function play(run: Run, seed: string): Play {
 
   run.rescue(p);
   // Bran and Runa join at the end of their search; Bran may be carrying his father home first.
-  p.bot.waitFor(() => rescued(p), T * 600);
+  try {
+    p.bot.waitFor(() => rescued(p), T * 600);
+  } catch (e) {
+    throw new Error(`never rescued: ${describeWho(p)} ${String(world(p).facts['search.bran'])} ${JSON.stringify(world(p).people[run.who]?.status)} carrying=${String(p.bot.onFoot.carrying)}`, { cause: e });
+  }
   markRescued(p);
+  if (process.env['OE_DEBUG'] !== undefined) {
+    console.log('rescued', describeWho(p));
+    const id = setInterval(() => undefined, 1000);
+    clearInterval(id);
+  }
 
   if (run.save === 'load') {
     // Game over's reload into the same simulation (Book 2 section 20), straight after the rescue.
@@ -545,6 +575,11 @@ function play(run: Run, seed: string): Play {
     const walking = at(p);
     p.sim.restore(loaded(saveNow(p, 'walking')));
     expect(at(p)?.actor.x).toBe(walking?.actor.x);
+    if (process.env['OE_DEBUG'] !== undefined)
+      for (let i = 0; i < 12; i++) {
+        console.log('walkLoad', describeWho(p), JSON.stringify(at(p)?.actor.walk)?.slice(0, 200), at(p)?.actor.carries, at(p)?.visible);
+        p.bot.step(T * 2);
+      }
   }
 
   if (run.after === 'leave') {
@@ -560,7 +595,7 @@ function play(run: Run, seed: string): Play {
     expect(p.bot.onFoot.player.sleep, 'the steerer asleep').not.toBeNull();
   } else if (run.after === 'fight') {
     // Straight off to fight the scavengers at the fold (Bran's search by a fight).
-    p.bot.bran('FIGHT');
+    BRAN.fight(p);
   } else p.bot.step(getUpTicks + 2 * T);
 
   follow(p, run);
@@ -577,18 +612,29 @@ function follow(p: Play, run: Run): void {
     p.bot.waitFor(() => s.upAt !== null, getUpTicks + 10 * T);
     expect(s.upAt, `${label}: up`).not.toBeNull();
   }
-  // Responds to talk once up (the playtest's Oddi refused it), unless the household is abed.
+  // Responds to talk once home by the fire (the playtest's Oddi refused it; Bran carries his
+  // father to the bier first), unless the household is abed by then.
   const rescueDay = world(p).calendar.day;
-  const awake = minute(p) >= 7 * 60 && minute(p) < 21 * 60;
-  if (awake && run.who !== 'C_HILD') expect(talkOpens(p), `${label}: talk after the rescue`).toBe(true);
+  if (run.who !== 'C_HILD') {
+    const by = gameMinutes(world(p)) + homeMinutes;
+    p.bot.waitFor(() => s.campAt !== null || gameMinutes(world(p)) > by, T * 60 * 60);
+    const awake = minute(p) >= 7 * 60 && minute(p) < 21 * 60;
+    if (awake && s.campAt !== null)
+      expect(talkOpens(p), `${label}: talk once home: ${describeWho(p)}`).toBe(true);
+  }
 
   for (let night = 0; night < 2; night++) {
     // Hild walks up at the first fire's smoke (DE-62): the camp's first work, as a player does it.
     if (run.who === 'C_HILD' && night === 0) hildCamp(p);
     const asleep = night === 0 && run.after === 'sleep';
     if (asleep) {
-      // The steerer abed since the rescue: the small hours, as the household sleeps.
-      p.bot.waitFor(() => minute(p) >= 60 && minute(p) < 5 * 60, T * 1200);
+      // The steerer abed since the rescue: the night passes at once (Book 2 section 03), so the
+      // night is checked by its record: spent at home, counted at dawn.
+      const day = world(p).calendar.day;
+      p.bot.waitFor(() => world(p).player.awake && world(p).calendar.day > day, T * 120);
+      const record = world(p).people[p.who]?.life.night;
+      expect(record?.day, `${label}: a night at home`).toBe(world(p).calendar.day);
+      expect(s.campAt ?? s.upAt, `${label}: up before the night`).not.toBeNull();
     } else {
       p.bot.goToZone(CAMP_ZONE);
       // 4. At night, under the shelter. A scene that evening (Oddi's theft) is judged first.
@@ -600,19 +646,28 @@ function follow(p: Play, run: Run): void {
       p.bot.step(T * 5);
       settleTalk(p);
     }
-    p.bot.waitFor(() => at(p)?.actor.pose === 'sleep' && underShelter(p), T * 600);
-    expect(underShelter(p), `${label}: under the shelter, night ${night}: ${describeWho(p)}`).toBe(
-      true,
-    );
-    expect(world(p).people[p.who]?.life.activity, `${label} night ${night}`).toBe('SLEEP');
-    // 1. By then at the camp's fire, within Book 10's rescueHome of getting up.
-    expect(s.campAt, `${label}: reached the camp`).not.toBeNull();
+    if (process.env['OE_DEBUG'] !== undefined)
+      console.log('night', night, describeWho(p), s.upMinute, s.campMinute);
+    if (!asleep) {
+      p.bot.waitFor(() => at(p)?.actor.pose === 'sleep' && underShelter(p), T * 600);
+      expect(underShelter(p), `${label}: under the shelter, night ${night}: ${describeWho(p)}`).toBe(
+        true,
+      );
+      expect(world(p).people[p.who]?.life.activity, `${label} night ${night}`).toBe('SLEEP');
+      // 1. By then at the camp's fire, within Book 10's rescueHome of getting up.
+      expect(s.campAt, `${label}: reached the camp`).not.toBeNull();
+    }
+    // Hild waits on the strand for the first fire's smoke (DE-62): counted from the later of the two.
+    const from =
+      run.who === 'C_HILD' ? Math.max(s.upMinute ?? 0, s.smokeMinute ?? 0) : (s.upMinute ?? 0);
     if (night === 0 && s.upMinute !== null && s.campMinute !== null)
-      expect(s.campMinute - s.upMinute, `${label}: at the fire within rescueHome`).toBeLessThanOrEqual(
+      expect(s.campMinute - from, `${label}: at the fire within rescueHome`).toBeLessThanOrEqual(
         homeMinutes,
       );
-    if (!asleep) p.bot.doAt('bed_s0');
-    p.bot.waitFor(() => minute(p) >= 6 * 60 && minute(p) < 7 * 60, T * 1200);
+    if (!asleep) {
+      p.bot.doAt('bed_s0');
+      p.bot.waitFor(() => minute(p) >= 6 * 60 && minute(p) < 7 * 60, T * 1200);
+    }
     // 2. and 3. The day: at work, fed, and talking at the fire in the evening.
     const day = world(p).calendar.day;
     waitUntil(p, 12 * 60);

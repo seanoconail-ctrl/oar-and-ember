@@ -70,16 +70,43 @@ export type MeleeWeaponName = (typeof MELEE_WEAPONS)[number];
 /** How armour takes a blow (Book 10 "Weapon rules": mail by damage type). */
 export type DamageType = 'CUT' | 'THRUST' | 'BLOW';
 
-/** One weapon's moveset (ticks at 60 Hz), reach, damage, type, poise damage and stamina. */
+/** A move's class for its telegraph and sound (Book 10 "Frame data", Weight). */
+export type Weight = 'LIGHT' | 'HEAVY' | 'CHARGED';
+/** The moves of Book 10's "Frame data" (design addendum 2.5; decision DF-10). */
+export type MoveName =
+  | 'light1'
+  | 'light2'
+  | 'light3'
+  | 'heavy'
+  | 'charged'
+  | 'lunge'
+  | 'riposte'
+  | 'backstab';
+
+/**
+ * One move's frames (Book 10 "Frame data"): wind-up, active and recovery ticks, the miss recovery
+ * added when its active ticks meet no one (null: it starts only on a target in reach), the step in
+ * tiles covered over its active ticks, its stamina, and its chain window (null: none).
+ */
+export interface MoveFrames {
+  readonly weight: Weight;
+  readonly windup: number;
+  readonly active: number;
+  readonly recovery: number;
+  readonly miss: number | null;
+  readonly step: number;
+  readonly stamina: number;
+  readonly chain: number | null;
+}
+
+/** One weapon's moveset: reach, combo, damage, type, poise damage and stamina, and its frames. */
 export interface WeaponStats {
   readonly name: MeleeWeaponName;
   readonly reachTiles: number;
   /** Light attacks in a chain. */
   readonly combo: number;
-  readonly windup: number;
-  readonly active: number;
-  readonly recovery: number;
-  readonly chainWindow: number;
+  /** Every move's frames (design addendum 2.5, "Frame data"). */
+  readonly moves: Readonly<Partial<Record<MoveName, MoveFrames>>>;
   readonly damage: number;
   readonly type: DamageType;
   /** What a blow costs a shield (the block's stamina is Guard's blockCost of this). */
@@ -109,19 +136,22 @@ export interface CombatBalance {
     readonly level2At: number;
     readonly level2Damage: number;
     readonly maxHold: number;
-    /** Added to the weapon's recovery after a released charge. */
-    readonly releaseRecoveryExtra: number;
     readonly staminaL1: number;
     readonly staminaL2: number;
   };
+  /** Design addendum 2.5's predictive parry (Book 10 "Parry"; decision DF-4). */
   readonly parry: {
-    readonly startup: number;
+    /** Ticks before the parry is live. */
+    readonly windup: number;
+    /** Its live ticks (the overlap window), and the difficulty option's widest. */
     readonly window: number;
-    /** The difficulty option's widest window. */
     readonly windowMax: number;
-    readonly recoveryOnMiss: number;
+    /** Ticks of recovery after the live ticks when nothing was parried (open to a punish). */
+    readonly recovery: number;
+    /** On a parry, the parrier's remaining ticks become this settle before a riposte. */
+    readonly settle: number;
     readonly cost: number;
-    /** A sword widens the window by this many ticks (Weapon rules, swordParry). */
+    /** A sword widens the live ticks by this many (Weapon rules, swordParry; Parry, parryActive). */
     readonly swordExtra: number;
     /** Hitstop on both fighters (Parry and riposte, parryHitstop). */
     readonly hitstop: number;
@@ -140,13 +170,28 @@ export interface CombatBalance {
     /** Guard's blockCost: factor x the vs-shield damage + flat. */
     readonly costFactor: number;
     readonly costFlat: number;
-    /** A broken guard leaves the blocker open this long (Guard, guardBreak). */
+    /** A broken guard leaves the blocker open this long (Guard, guardBreak; Block, guardBreakOther). */
     readonly guardBreak: number;
     readonly stun: number;
+    /** Design addendum 2.5 (Book 10 "Block"; decision DF-5): raising and lowering take ticks. */
+    readonly raise: number;
+    readonly lower: number;
+    /** A raised shield's speed share. */
+    readonly speed: number;
+    /** A hit that empties the bar: the stagger's ticks and its knockback in px. */
+    readonly breakEmpty: number;
+    readonly breakEmptyPx: number;
   };
+  /** Design addendum 2.5's dodge (Book 10 "Dodge"; decision DF-6). */
   readonly dodge: {
     readonly stamina: number;
+    /** The dip and push-off, the dash, and the planted recovery, in ticks. */
+    readonly start: number;
+    readonly dash: number;
+    readonly recovery: number;
+    /** The whole dodge, start to end of recovery. */
     readonly ticks: number;
+    /** The invulnerable ticks of the dodge (counted from its first tick), inclusive. */
     readonly invulnFrom: number;
     readonly invulnTo: number;
     readonly tiles: number;
@@ -154,12 +199,50 @@ export interface CombatBalance {
   readonly shove: {
     readonly stamina: number;
     readonly stagger: number;
-    readonly windup: number;
-    readonly active: number;
-    readonly recovery: number;
+    /** Its frames (Book 10 "Frame data": Unarmed, Shove; Shield, Bash). */
+    readonly frames: MoveFrames;
+    readonly bash: MoveFrames;
     readonly reachTiles: number;
     /** How far the one shoved is pushed back. */
     readonly pushTiles: number;
+  };
+  /** The bow's draw, loose and recovery, and the spear's throw (Book 10 "Frame data"). */
+  readonly bowFrames: MoveFrames;
+  readonly throwFrames: MoveFrames;
+  /** Book 10 "Commitment" (decision DF-1): the punish's hitstop and poise multiple. */
+  readonly commitment: { readonly punishHitstop: number; readonly punishPoise: number };
+  /** Book 10 "Telegraphs" (decision DF-9). */
+  readonly telegraphs: {
+    readonly floor: Readonly<Record<Weight, number>>;
+    readonly floorDraw: number;
+    readonly enemyLungeTell: number;
+    /** How far the weapon is drawn back past its ready pose, in px, by weight. */
+    readonly drawBack: Readonly<Record<Weight, number>>;
+    /** The flash's frames, and its lead before the first active tick. */
+    readonly flashFrames: number;
+    readonly flashLead: number;
+  };
+  /** Book 10 "Movement and acceleration" (decision DF-2): ticks to full speed and to stop. */
+  readonly accel: {
+    readonly modes: Readonly<Record<AccelMode, { readonly up: number; readonly stop: number }>>;
+    /** Run from a walk. */
+    readonly runFromWalk: number;
+    readonly mail: number;
+    readonly heavy: number;
+    readonly both: number;
+    /** Exhausted and blocking speed shares. */
+    readonly exhaustedSpeed: number;
+    readonly blockingSpeed: number;
+  };
+  /** Book 10 "Exhausted" (decision DF-3). */
+  readonly exhausted: {
+    /** Recovered at this share of the current maximum. */
+    readonly until: number;
+    readonly regenDelay: number;
+    readonly exhaustedRegenDelay: number;
+    readonly regenPerSecond: number;
+    readonly exhaustedRegenPerSecond: number;
+    readonly speed: number;
   };
   readonly strikeArcDegrees: number;
   readonly bodyRadiusTiles: number;
@@ -168,10 +251,6 @@ export interface CombatBalance {
     readonly max: number;
     readonly regenPerSecond: number;
     readonly regenDelay: number;
-    /** Exhausted at 0 until back to this (Health, stamina and healing, exhausted). */
-    readonly recoverAt: number;
-    /** Windups and recoveries are this much longer while exhausted. */
-    readonly exhaustedSlow: number;
   };
   readonly armour: {
     readonly padded: number;
@@ -186,8 +265,6 @@ export interface CombatBalance {
   readonly dismemberChance: number;
   readonly finisherHold: number;
   readonly finishWarningTicks: number;
-  /** Book 10 section 02, "Charge (heavy)": tiles a second while holding a heavy. */
-  readonly chargeSpeed: number;
   readonly heavy: {
     readonly windupExtra: number;
     readonly damage: number;
@@ -217,9 +294,6 @@ export interface CombatBalance {
     readonly lockLostRange: number;
     readonly lockLostTicks: number;
     readonly lockCameraShare: number;
-    readonly attackTurnDegrees: number;
-    readonly dodgeCancelTicks: number;
-    readonly missRecovery: number;
   };
   /** Book 10 "Weapon rules". */
   readonly rules: {
@@ -229,7 +303,6 @@ export interface CombatBalance {
     readonly spearInsideTiles: number;
     readonly spearInsideDamage: number;
     readonly spearInsideWindup: number;
-    readonly spearMissRecovery: number;
     readonly shieldBreaksAfter: number;
   };
   /** Book 10 "Lunge". */
@@ -237,7 +310,6 @@ export interface CombatBalance {
     readonly tiles: Readonly<Record<MeleeWeaponName, number>>;
     readonly tellTicks: number;
     readonly staminaExtra: number;
-    readonly recoveryExtra: number;
   };
   /** Book 10 "Poise". */
   readonly poise: {
@@ -298,6 +370,52 @@ export interface CombatBalance {
 /** Ticks per second (Book 2 section 03). */
 const HZ = 60;
 
+/** The modes of Book 10 "Movement and acceleration". */
+export type AccelMode =
+  | 'walk'
+  | 'run'
+  | 'sneak'
+  | 'backOff'
+  | 'strafe'
+  | 'blocking'
+  | 'exhausted'
+  | 'carry';
+
+const MOVE_NAMES: Readonly<Record<string, MoveName>> = {
+  'Light 1': 'light1',
+  'Light 2': 'light2',
+  'Light 3': 'light3',
+  Heavy: 'heavy',
+  'Charged heavy': 'charged',
+  Lunge: 'lunge',
+  Riposte: 'riposte',
+  Backstab: 'backstab',
+};
+
+const WEIGHTS: Readonly<Record<string, Weight>> = {
+  Light: 'LIGHT',
+  Heavy: 'HEAVY',
+  Charged: 'CHARGED',
+};
+
+/** A "Frame data" row read strictly (a dash, "-", for no miss recovery or chain window). */
+function moveFrames(r: Row, where: string): MoveFrames {
+  const weight = WEIGHTS[r['Weight'] ?? ''];
+  if (weight === undefined) fail(`${where}.Weight`, r['Weight'] ?? '', 'Light, Heavy or Charged');
+  const opt = (col: string): number | null =>
+    r[col] === '-' ? null : num(`${where}.${col}`, r[col]);
+  return {
+    weight,
+    windup: num(`${where}.Wind-up`, r['Wind-up']),
+    active: num(`${where}.Active`, r['Active']),
+    recovery: num(`${where}.Recovery`, r['Recovery']),
+    miss: opt('Miss recovery'),
+    step: num(`${where}.Step`, r['Step']),
+    stamina: num(`${where}.Stamina`, r['Stamina']),
+    chain: opt('Chain window'),
+  };
+}
+
 const DAMAGE_TYPES: Readonly<Record<string, DamageType>> = {
   Cut: 'CUT',
   Thrust: 'THRUST',
@@ -313,8 +431,21 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   };
   const cell = (name: string, col: string): number =>
     num(`weaponMovesets.${name}.${col}`, row(name)[col]);
+  // Design addendum 2.5 (decision DF-10): every move's frames.
+  const frameRows = rows(json, 'combatTimings', 'frameData');
+  const framesOf = (weapon: string, move: string): MoveFrames => {
+    const r = frameRows.find((x) => x['Weapon'] === weapon && x['Move'] === move);
+    if (r === undefined) throw new Error(`balance.json: frameData has no ${weapon} ${move} row`);
+    return moveFrames(r, `frameData.${weapon}.${move}`);
+  };
   const weapons = {} as Record<MeleeWeaponName, WeaponStats>;
   for (const name of MELEE_WEAPONS) {
+    const moves: Partial<Record<MoveName, MoveFrames>> = {};
+    for (const r of frameRows.filter((x) => x['Weapon'] === name)) {
+      const move = MOVE_NAMES[r['Move'] ?? ''];
+      if (move === undefined) fail(`frameData.${name}.Move`, r['Move'] ?? '', 'a known move');
+      moves[move] = moveFrames(r, `frameData.${name}.${r['Move'] ?? ''}`);
+    }
     const typeText = row(name)['Type'] ?? '';
     const type = DAMAGE_TYPES[typeText];
     if (type === undefined) fail(`weaponMovesets.${name}.Type`, typeText, 'Cut, Thrust or Blow');
@@ -322,10 +453,7 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       name,
       reachTiles: cell(name, 'Reach'),
       combo: cell(name, 'Combo'),
-      windup: cell(name, 'Windup'),
-      active: cell(name, 'Active'),
-      recovery: cell(name, 'Recovery'),
-      chainWindow: cell(name, 'Chain window'),
+      moves,
       damage: cell(name, 'Damage'),
       type,
       vsShield: cell(name, 'vs shield'),
@@ -361,13 +489,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     '^(\\d+) ticks, then auto-release$',
     '"N ticks, then auto-release"',
   );
-  const [extra] = grab(
-    ch,
-    'chargedHeavy',
-    'releaseRecovery',
-    '^Weapon recovery \\+ (\\d+) ticks$',
-    '"Weapon recovery + N ticks"',
-  );
   const [s1, s2] = grab(
     ch,
     'chargedHeavy',
@@ -377,15 +498,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   );
 
   const d = keyed(json, 'combatTimings', 'defence');
-  const [startup] = grab(d, 'defence', 'parryStartup', '^(\\d+) ticks$', '"N ticks"');
-  const [win, winMax] = grab(
-    d,
-    'defence',
-    'parryWindow',
-    '^(\\d+) ticks \\(option: up to (\\d+)\\)$',
-    '"N ticks (option: up to N)"',
-  );
-  const [miss] = grab(d, 'defence', 'parryRecoveryOnMiss', '^(\\d+) ticks$', '"N ticks"');
   const [pcost] = grab(
     d,
     'defence',
@@ -394,13 +506,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     '"N stamina, refunded on success"',
   );
   const [arc] = grab(d, 'defence', 'blockArc', '^(\\d+) degrees front$', '"N degrees front"');
-  const [ds, dt, di0, di1, dtiles] = grab(
-    d,
-    'defence',
-    'dodge',
-    `^(\\d+) stamina; (\\d+) ticks; invulnerable ticks (\\d+) to (\\d+); ${N} tiles$`,
-    '"N stamina; N ticks; invulnerable ticks N to N; N tiles"',
-  );
   const [ss, sstag] = grab(
     d,
     'defence',
@@ -419,13 +524,12 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   );
   const [body] = grab(f, 'fightRules', 'bodyRadius', `^${N} tiles:`, '"N tiles: ..."');
   const [blockStun] = grab(f, 'fightRules', 'blockStun', '^(\\d+) ticks:', '"N ticks: ..."');
-  const [sw, sa, sr, sreach, spush] = grab(
-    f,
-    'fightRules',
-    'shoveTiming',
-    `^Windup (\\d+) ticks, active (\\d+), recovery (\\d+); reach ${N} tiles?; pushes the one shoved ${N} tiles$`,
-    '"Windup N ticks, active N, recovery N; reach N tile; pushes the one shoved N tiles"',
-  );
+  // The shove's reach is bare hands' (Weapon movesets, Unarmed), its push the row's Strength.
+  const unarmedStrength = row('Unarmed')['Strength'] ?? '';
+  const pushMatch = new RegExp(`pushes ${N} tiles`).exec(unarmedStrength);
+  if (pushMatch === null)
+    fail('weaponMovesets.Unarmed.Strength', unarmedStrength, '"... pushes N tiles ..."');
+  const spush = Number(pushMatch[1]);
 
   const v = keyed(json, 'combatTimings', 'vitalityStaminaAndArmour');
   const [vit] = grab(v, 'vitality', 'vitality', '^(\\d+) for', '"N for ..."');
@@ -449,9 +553,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     '"... after a visible N s warning ..."',
   );
 
-  const moves = rows(json, 'timeAndTravel', 'movementOnFoot');
-  const chargeRow = moves.find((r) => r['Mode'] === 'Charge (heavy)');
-  const chargeSpeed = num('movementOnFoot.Charge (heavy)', chargeRow?.['Speed']);
 
   const h = keyed(json, 'heavyBuild', 'table');
   const [hw] = grab(h, 'heavyBuild', 'windup', '^\\+(\\d+) ticks on every attack$', '"+N ticks"');
@@ -519,18 +620,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     'lockOnCamera',
     `^The look-ahead points at the target and is ${N} of the way to it`,
   );
-  const [attackTurn] = sg(
-    'attackTurn',
-    '^Up to (\\d+) degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery$',
-  );
-  const [dodgeCancel] = sg(
-    'dodgeCancel',
-    '^A light attack can be cancelled into a dodge in the first (\\d+) ticks of its windup$',
-  );
-  const [missRec] = sg(
-    'missRecovery',
-    '^\\+(\\d+) ticks of recovery for a swing that meets no one$',
-  );
 
   const wr = keyed(json, 'combatTimings', 'weaponRules');
   const wg = (key: string, pattern: string): number[] =>
@@ -547,10 +636,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   const [insideAt, insideDmg, insideWind] = wg(
     'spearInside',
     `^Against a foe nearer than ${N} tiles, a spear does x${N} damage and its windup is (\\d+) ticks longer$`,
-  );
-  const [spearMiss] = wg(
-    'spearMiss',
-    '^A spear thrust that meets no one adds (\\d+) ticks of recovery',
   );
   const [swordParry] = wg('swordParry', '^A sword widens the parry window by (\\d+) ticks$');
   const [mailCut] = wg('mailCut', '^Mail: -(\\d+)% from cuts$');
@@ -580,13 +665,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     'lungeStamina',
     "^The attack's stamina \\+ (\\d+)$",
     '"The attack\'s stamina + N"',
-  );
-  const [lungeRec] = grab(
-    lu,
-    'lunge',
-    'lungeRecovery',
-    '^\\+(\\d+) ticks of recovery$',
-    '"+N ticks of recovery"',
   );
 
   const pr = keyed(json, 'combatTimings', 'parryAndRiposte');
@@ -665,10 +743,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     'staminaRegen',
     '^(\\d+) a second after (\\d+) ticks without spending; half while blocking$',
   );
-  const [recoverAt, slow] = sh(
-    'exhausted',
-    `^At 0 stamina: exhausted until back to (\\d+); no dodge and no run, and attack windups and recoveries x${N}$`,
-  );
   const [bindS, bindV] = sh(
     'bindWound',
     `^${N} real seconds kneeling; uses 1 binding; restores (\\d+) vitality`,
@@ -700,6 +774,97 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     '"... over any enemy for N s after it was last hit"',
   );
 
+  // ------------------------------------------------- design addendum 2.5 (decisions DF-1 to DF-10)
+  const t2 = (table: string): ((key: string, pattern: string) => number[]) => {
+    const k = keyed(json, 'combatTimings', table);
+    return (key, pattern) => grab(k, table, key, pattern, `"${pattern}"`);
+  };
+  const cm = t2('commitment');
+  const [punishStop, punishPoise] = cm(
+    'punish',
+    `: hitstopHeavy \\((\\d+) ticks\\) and x${N} the blow's poise damage$`,
+  );
+  const tg = t2('telegraphs');
+  const [fl] = tg('floorLight', '^(\\d+) ticks$');
+  const [fh] = tg('floorHeavy', '^(\\d+) ticks$');
+  const [fc] = tg('floorCharged', '^(\\d+) ticks$');
+  const [fd2] = tg('floorDraw', '^(\\d+) ticks$');
+  const [elt] = tg('enemyLungeTell', '^(\\d+) ticks$');
+  const [dbl, dbh, dbc] = tg(
+    'drawBack',
+    '^(\\d+) px for a light, (\\d+) px for a heavy, (\\d+) px for a charged attack$',
+  );
+  const [flF, flLead] = tg('flash', '^(\\d+) frames?, (\\d+) ticks before the first active tick$');
+  const accRows = rows(json, 'combatTimings', 'movementAndAcceleration');
+  const accRow = (mode: string): Row => {
+    const r = accRows.find((x) => x['Mode'] === mode);
+    if (r === undefined) throw new Error(`balance.json: movementAndAcceleration has no ${mode}`);
+    return r;
+  };
+  const ticksOf = (mode: string, col: string): number => {
+    const text = accRow(mode)[col] ?? '';
+    const m = /^(\d+) ticks$/.exec(text);
+    if (m === null) fail(`movementAndAcceleration.${mode}.${col}`, text, '"N ticks"');
+    return Number(m[1]);
+  };
+  const accel = (mode: string): { up: number; stop: number } => ({
+    up: ticksOf(mode, 'To full speed'),
+    stop: ticksOf(mode, 'To stop'),
+  });
+  const runNote = accRow('Run')['Notes'] ?? '';
+  const runWalk = /from a walk (\d+) ticks/.exec(runNote);
+  if (runWalk === null) fail('movementAndAcceleration.Run.Notes', runNote, '"... from a walk N ticks ..."');
+  const speedShare = (mode: string): number => {
+    const text = accRow(mode)['Speed'] ?? '';
+    const m = new RegExp(`^${N} x the speed the way moved$`).exec(text);
+    if (m === null) fail(`movementAndAcceleration.${mode}.Speed`, text, '"N x the speed the way moved"');
+    return Number(m[1]);
+  };
+  const factor = (mode: string): number => {
+    const text = accRow(mode)['To full speed'] ?? '';
+    const m = new RegExp(`^x${N} the ticks$`).exec(text);
+    if (m === null) fail(`movementAndAcceleration.${mode}`, text, '"xN the ticks"');
+    return Number(m[1]);
+  };
+  const heavyNote = accRow('Heavy build')['Notes'] ?? '';
+  const both = new RegExp(`In mail as well, x${N}`).exec(heavyNote);
+  if (both === null) fail('movementAndAcceleration.Heavy build.Notes', heavyNote, '"In mail as well, xN"');
+  const ex = t2('exhausted');
+  const [exUntil] = ex('exhaustedUntil', '^(\\d+)% of the current maximum$');
+  const [exDelay] = ex('regenDelay', '^(\\d+) ticks after the last cost$');
+  const [exZeroDelay] = ex('exhaustedRegenDelay', '^(\\d+) ticks after reaching 0$');
+  const [rr, rrEx] = ex('regenRate', '^(\\d+) a second; (\\d+) a second while exhausted$');
+  const [exSpeed] = ex('exhaustedSpeed', `^${N} x the speed the way moved$`);
+  const pa = t2('parry');
+  const [pWind] = pa('parryWindup', '^(\\d+) ticks$');
+  const [pAct, pActMax, pSword] = pa(
+    'parryActive',
+    '^(\\d+) ticks \\(option: up to (\\d+)\\); a sword \\+(\\d+)$',
+  );
+  const [pRec] = pa('parryRecovery', '^(\\d+) ticks after the active ticks');
+  const [pSettle] = pa('parrySettle', 'become a (\\d+)-tick settle');
+  const [pCost] = pa('parryStamina', '^(\\d+), refunded on a parry$');
+  const bl = t2('block');
+  const [bRaise] = bl('blockRaise', '^(\\d+) ticks$');
+  const [bLower] = bl('blockLower', '^(\\d+) ticks after the key is let go$');
+  const [bSpeed] = bl('blockSpeed', `^${N} x the speed the way moved$`);
+  const [gbe, gbePx] = bl('guardBreakEmpty', '^(\\d+) ticks of stagger, knocked back (\\d+) px');
+  const [gbo] = bl('guardBreakOther', 'open (\\d+) ticks\\)$');
+  const dg = t2('dodge');
+  const [dStart] = dg('dodgeStart', '^(\\d+) ticks');
+  const [dDash, dTiles] = dg('dodgeDash', `^(\\d+) ticks covering ${N} tiles`);
+  const [, , dInv0, dInv1] = dg(
+    'dodgeInvulnerable',
+    '^Dash ticks (\\d+) to (\\d+) \\(ticks (\\d+) to (\\d+) of the dodge\\)',
+  );
+  const [dRec] = dg('dodgeRecovery', '^(\\d+) ticks');
+  const [dTotal] = dg('dodgeTotal', '^(\\d+) ticks$');
+  const [dStam] = dg('dodgeStamina', '^(\\d+)$');
+  if ((dStart ?? 0) + (dDash ?? 0) + (dRec ?? 0) !== dTotal)
+    fail('dodge.dodgeTotal', String(dTotal), 'dodgeStart + dodgeDash + dodgeRecovery');
+  if ((gbo ?? 0) !== (gbTicks ?? 0))
+    fail('block.guardBreakOther', String(gbo), `Guard's guardBreak (${String(gbTicks)})`);
+
   return {
     weapons,
     unarmed: { reachTiles: cell('Unarmed', 'Reach'), poiseDamage: cell('Unarmed', 'Poise damage') },
@@ -716,17 +881,17 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       level2At: l2 ?? 0,
       level2Damage: l2d ?? 1,
       maxHold: maxHold ?? 0,
-      releaseRecoveryExtra: extra ?? 0,
       staminaL1: s1 ?? 1,
       staminaL2: s2 ?? 1,
     },
     parry: {
-      startup: startup ?? 0,
-      window: win ?? 0,
-      windowMax: winMax ?? 0,
-      recoveryOnMiss: miss ?? 0,
-      cost: pcost ?? 0,
-      swordExtra: swordParry ?? 0,
+      windup: pWind ?? 0,
+      window: pAct ?? 0,
+      windowMax: pActMax ?? 0,
+      recovery: pRec ?? 0,
+      settle: pSettle ?? 0,
+      cost: pCost ?? pcost ?? 0,
+      swordExtra: pSword ?? swordParry ?? 0,
       hitstop: pHit ?? 0,
       open: pOpen ?? 0,
       riposteReachExtra: ripReach ?? 0,
@@ -748,22 +913,66 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       costFlat: bflat ?? 0,
       guardBreak: gbTicks ?? 0,
       stun: blockStun ?? 0,
+      raise: bRaise ?? 0,
+      lower: bLower ?? 0,
+      speed: bSpeed ?? 1,
+      breakEmpty: gbe ?? 0,
+      breakEmptyPx: gbePx ?? 0,
     },
     dodge: {
-      stamina: ds ?? 0,
-      ticks: dt ?? 0,
-      invulnFrom: di0 ?? 0,
-      invulnTo: di1 ?? 0,
-      tiles: dtiles ?? 0,
+      stamina: dStam ?? 0,
+      start: dStart ?? 0,
+      dash: dDash ?? 0,
+      recovery: dRec ?? 0,
+      ticks: dTotal ?? 0,
+      invulnFrom: dInv0 ?? 0,
+      invulnTo: dInv1 ?? 0,
+      tiles: dTiles ?? 0,
     },
     shove: {
       stamina: ss ?? 0,
       stagger: sstag ?? 0,
-      windup: sw ?? 0,
-      active: sa ?? 0,
-      recovery: sr ?? 0,
-      reachTiles: sreach ?? 0,
-      pushTiles: spush ?? 0,
+      frames: framesOf('Unarmed', 'Shove'),
+      bash: framesOf('Shield', 'Bash'),
+      reachTiles: cell('Unarmed', 'Reach'),
+      pushTiles: spush,
+    },
+    bowFrames: framesOf('Hunting bow', 'Draw, loose, recover'),
+    throwFrames: framesOf('Spear, thrown', 'Throw'),
+    commitment: { punishHitstop: punishStop ?? 0, punishPoise: punishPoise ?? 1 },
+    telegraphs: {
+      floor: { LIGHT: fl ?? 0, HEAVY: fh ?? 0, CHARGED: fc ?? 0 },
+      floorDraw: fd2 ?? 0,
+      enemyLungeTell: elt ?? 0,
+      drawBack: { LIGHT: dbl ?? 0, HEAVY: dbh ?? 0, CHARGED: dbc ?? 0 },
+      flashFrames: flF ?? 0,
+      flashLead: flLead ?? 0,
+    },
+    accel: {
+      modes: {
+        walk: accel('Walk'),
+        run: accel('Run'),
+        sneak: accel('Sneak'),
+        backOff: accel('Back off'),
+        strafe: accel('Strafe'),
+        blocking: accel('Blocking'),
+        exhausted: accel('Exhausted'),
+        carry: accel('Carry'),
+      },
+      runFromWalk: Number(runWalk[1]),
+      mail: factor('In mail'),
+      heavy: factor('Heavy build'),
+      both: Number(both[1]),
+      exhaustedSpeed: speedShare('Exhausted'),
+      blockingSpeed: speedShare('Blocking'),
+    },
+    exhausted: {
+      until: (exUntil ?? 0) / 100,
+      regenDelay: exDelay ?? 0,
+      exhaustedRegenDelay: exZeroDelay ?? 0,
+      regenPerSecond: rr ?? 0,
+      exhaustedRegenPerSecond: rrEx ?? 0,
+      speed: exSpeed ?? 1,
     },
     strikeArcDegrees: strikeArc ?? 0,
     bodyRadiusTiles: body ?? 0,
@@ -772,8 +981,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       max: smax ?? 0,
       regenPerSecond: sregen ?? 0,
       regenDelay: sdelay ?? 0,
-      recoverAt: recoverAt ?? 0,
-      exhaustedSlow: slow ?? 1,
     },
     armour: {
       padded: (padded ?? 0) / 100,
@@ -787,7 +994,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     dismemberChance: (dism ?? 0) / 100,
     finisherHold: finish ?? 0,
     finishWarningTicks: (warn ?? 0) * HZ,
-    chargeSpeed,
     heavy: {
       windupExtra: hw ?? 0,
       damage: hd ?? 1,
@@ -815,9 +1021,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       lockLostRange: relRange ?? 0,
       lockLostTicks: Math.round((relSight ?? 0) * HZ),
       lockCameraShare: camShare ?? 0,
-      attackTurnDegrees: attackTurn ?? 0,
-      dodgeCancelTicks: dodgeCancel ?? 0,
-      missRecovery: missRec ?? 0,
     },
     rules: {
       axeHookTicks: hook ?? 0,
@@ -826,7 +1029,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       spearInsideTiles: insideAt ?? 0,
       spearInsideDamage: insideDmg ?? 1,
       spearInsideWindup: insideWind ?? 0,
-      spearMissRecovery: spearMiss ?? 0,
       shieldBreaksAfter: breaksAfter ?? 0,
     },
     lunge: {
@@ -840,7 +1042,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       },
       tellTicks: lungeTell ?? 0,
       staminaExtra: lungeStam ?? 0,
-      recoveryExtra: lungeRec ?? 0,
     },
     poise: {
       ordinary: pOrd ?? 0,
@@ -939,18 +1140,17 @@ export interface AiBalance {
     readonly noQuarterAfter: number;
   };
   readonly habits: {
-    readonly decideEvery: number;
+    /** Awareness fills and decays this often (Book 10 awarenessEvery). */
+    readonly awarenessEvery: number;
     readonly reactChance: number;
     readonly reactTicks: number;
     readonly parryShare: number;
     readonly heavyChance: number;
-    readonly attackGap: { readonly min: number; readonly max: number };
     readonly archerRange: { readonly min: number; readonly max: number };
     readonly archerArrows: number;
     readonly searchTicks: number;
     readonly crewFollow: number;
     readonly crewProtect: number;
-    readonly fallBackFrom: number;
     readonly orderLapseTicks: number;
     /** How many of one group may be in an attack on one target at once (S9-29). */
     readonly attackTokens: number;
@@ -1005,7 +1205,8 @@ export interface AiBalance {
     readonly longReachExtra: number;
     readonly shortReach: number;
     readonly woundedAt: number;
-    readonly woundedGap: number;
+    /** Patience is this many times longer when wounded. */
+    readonly woundedPatience: number;
     readonly woundedDefend: number;
     readonly woundedBackOff: number;
     readonly retreatAt: number;
@@ -1029,6 +1230,35 @@ export interface AiBalance {
     readonly gapTicks: number;
     readonly walkAway: number;
   };
+  /** Book 10 "AI states" and "AI decisions" (design addendum 2.5; decision DF-7). */
+  readonly states: {
+    /** The least ticks in each state (its cooldown); Attack lasts until its recovery ends. */
+    readonly least: Readonly<Record<FightStateName, number>>;
+    /** Recover stamina goes back to Circle at this share of the maximum. */
+    readonly recoverTo: number;
+    /** Recover stamina backs off this far beyond the circle radius, in tiles. */
+    readonly recoverExtraTiles: number;
+    readonly decisionInterval: number;
+    readonly attackCooldown: number;
+    readonly turnAround: number;
+  };
+  /** Book 10 "Distances by archetype" (decision DF-7), by archetype name. */
+  readonly distances: Readonly<Record<string, ArchetypeDistances>>;
+  /** Book 10 "Archers" (decision DF-8). */
+  readonly archers: {
+    readonly shootFrom: { readonly min: number; readonly max: number };
+    readonly settle: number;
+    readonly recover: number;
+    readonly tooClose: number;
+    readonly dashTiles: number;
+    readonly dashTicks: number;
+    readonly dashStamina: number;
+    readonly reset: number;
+    readonly dashOnceTicks: number;
+    readonly corneredTiles: number;
+    /** Ticks to draw the sidearm (cornered or out of arrows). */
+    readonly sidearmTicks: number;
+  };
   /** Book 10 "The scavengers at dusk" (decisions DE-14 and DE-15). */
   readonly dusk: {
     readonly day: number;
@@ -1036,6 +1266,135 @@ export interface AiBalance {
     readonly svartWindup: number;
     readonly svartHeavies: number;
     readonly foodRd: number;
+  };
+}
+
+/** Book 10 "AI states" (Book 2 section 13's FightState). */
+export type FightStateName =
+  | 'IDLE'
+  | 'APPROACH'
+  | 'CIRCLE'
+  | 'WAIT_FOR_OPENING'
+  | 'ATTACK'
+  | 'RETREAT'
+  | 'RECOVER_STAMINA'
+  | 'FLEE_OR_SURRENDER';
+
+/** One archetype's distances (Book 10 "Distances by archetype"); null where its row has none. */
+export interface ArchetypeDistances {
+  /** Tiles where it stops approaching and circles (null: an archer's shooting range). */
+  readonly engage: number | null;
+  /** Added to its circle radius (null: it does not circle). */
+  readonly margin: number | null;
+  /** The stamina share below which it backs off to recover (null: never). */
+  readonly recoverAt: number | null;
+  /** Its patience in ticks (null: none). */
+  readonly patience: { readonly min: number; readonly max: number } | null;
+}
+
+const STATE_ROWS: Readonly<Record<string, FightStateName>> = {
+  Idle: 'IDLE',
+  Approach: 'APPROACH',
+  Circle: 'CIRCLE',
+  'Wait for opening': 'WAIT_FOR_OPENING',
+  Attack: 'ATTACK',
+  Retreat: 'RETREAT',
+  'Recover stamina': 'RECOVER_STAMINA',
+  'Flee or surrender': 'FLEE_OR_SURRENDER',
+};
+
+function parseAiStates(json: unknown): Pick<AiBalance, 'states' | 'distances' | 'archers'> {
+  const least = {} as Record<FightStateName, number>;
+  let recoverTo = 0;
+  let recoverExtra = 0;
+  for (const r of rows(json, 'enemiesWildlifeAndPerception', 'aiStates')) {
+    const st = STATE_ROWS[r['State'] ?? ''];
+    if (st === undefined) fail('aiStates.State', r['State'] ?? '', 'a known state');
+    const text = r['Least time'] ?? '';
+    const m = /^(\d+) ticks$/.exec(text);
+    least[st] = m === null ? 0 : Number(m[1]);
+    if (m === null && st !== 'ATTACK' && st !== 'FLEE_OR_SURRENDER')
+      fail(`aiStates.${st}.Least time`, text, '"N ticks"');
+    if (st === 'RECOVER_STAMINA') {
+      const does = r['Does'] ?? '';
+      const to = /back to Circle at (\d+)%/.exec(does);
+      const extra = new RegExp(`its circle radius \\+ ${N} tiles`).exec(does);
+      if (to === null || extra === null)
+        fail('aiStates.Recover stamina.Does', does, '"... radius + N tiles ... back to Circle at N%"');
+      recoverTo = Number(to[1]) / 100;
+      recoverExtra = Number(extra[1]);
+    }
+  }
+  const dk = keyed(json, 'enemiesWildlifeAndPerception', 'aiDecisions');
+  const dg = (key: string, pattern: string): number[] =>
+    grab(dk, 'aiDecisions', key, pattern, `"${pattern}"`);
+  const [interval] = dg('decisionInterval', '^(\\d+) ticks:');
+  const [cool] = dg('attackCooldown', '^(\\d+) ticks after its own recovery ends');
+  const [turn] = dg('turnAround', 'at most once each (\\d+) ticks');
+  const distances: Record<string, ArchetypeDistances> = {};
+  for (const r of rows(json, 'enemiesWildlifeAndPerception', 'distancesByArchetype')) {
+    const name = (r['Archetype'] ?? '').replace(/ \(.*\)$/, '');
+    const engage = /^(\d+(?:\.\d+)?)$/.exec(r['Engage'] ?? '');
+    const margin = /^(\d+(?:\.\d+)?)$/.exec(r['Circle margin'] ?? '');
+    const rec = /^(\d+)%$/.exec(r['Recover at'] ?? '');
+    const pat = new RegExp(`^${N} to ${N} s$`).exec(r['Patience'] ?? '');
+    distances[name] = {
+      engage: engage === null ? null : Number(engage[1]),
+      margin: margin === null ? null : Number(margin[1]),
+      recoverAt: rec === null ? null : Number(rec[1]) / 100,
+      patience:
+        pat === null
+          ? null
+          : { min: Math.round(Number(pat[1]) * HZ), max: Math.round(Number(pat[2]) * HZ) },
+    };
+  }
+  const ak = keyed(json, 'enemiesWildlifeAndPerception', 'archers');
+  const ag = (key: string, pattern: string): number[] =>
+    grab(ak, 'archers', key, pattern, `"${pattern}"`);
+  const [sMin, sMax] = ag('shootFrom', `^${N} to ${N} tiles`);
+  const [settle, recover] = ag(
+    'standStill',
+    '^It settles for (\\d+) ticks, then draws and looses .* and recovers for (\\d+) ticks',
+  );
+  const [close] = ag('tooClose', `^${N} tiles$`);
+  const [dTiles, dTicks, dStam] = ag(
+    'dashAway',
+    `^Once: a hop back away from the target, ${N} tiles over (\\d+) ticks, (\\d+) stamina, not invulnerable$`,
+  );
+  const [reset] = ag('reset', '^(\\d+) ticks after the dash');
+  const [once] = ag('dashOnce', `^At most one dash in ${N} real seconds$`);
+  const [corner] = ag('cornered', `within ${N} tiles behind it`);
+  const cornerNote =
+    rows(json, 'enemiesWildlifeAndPerception', 'archers').find((r) => r['Key'] === 'cornered')?.[
+      'Notes'
+    ] ?? '';
+  const sideM = /^It draws its sidearm \((\d+) ticks; a seax\)/.exec(cornerNote);
+  if (sideM === null)
+    fail('archers.cornered.Notes', cornerNote, '"It draws its sidearm (N ticks; a seax) ..."');
+  const side = Number(sideM[1]);
+  return {
+    states: {
+      least,
+      recoverTo,
+      recoverExtraTiles: recoverExtra,
+      decisionInterval: interval ?? 0,
+      attackCooldown: cool ?? 0,
+      turnAround: turn ?? 0,
+    },
+    distances,
+    archers: {
+      shootFrom: { min: sMin ?? 0, max: sMax ?? 0 },
+      settle: settle ?? 0,
+      recover: recover ?? 0,
+      tooClose: close ?? 0,
+      dashTiles: dTiles ?? 0,
+      dashTicks: dTicks ?? 0,
+      dashStamina: dStam ?? 0,
+      reset: reset ?? 0,
+      dashOnceTicks: Math.round((once ?? 0) * HZ),
+      corneredTiles: corner ?? 0,
+      sidearmTicks: side ?? 0,
+    },
   };
 }
 
@@ -1116,14 +1475,11 @@ export function parseAiBalance(json: unknown): AiBalance {
       noQuarterAfter: cn('noQuarterAfter', '^(\\d+) known'),
     },
     habits: {
-      decideEvery: g('decideEvery', '^(\\d+) ticks:')[0] ?? 6,
+      awarenessEvery: g('awarenessEvery', '^(\\d+) ticks:')[0] ?? 6,
       reactChance: (g('reactChance', '^(\\d+)%:')[0] ?? 0) / 100,
       reactTicks: g('reactTicks', '^(\\d+) ticks after')[0] ?? 0,
       parryShare: (g('parryShare', '^(\\d+)% of')[0] ?? 0) / 100,
       heavyChance: (g('heavyChance', '^(\\d+)% of')[0] ?? 0) / 100,
-      attackGap: ((m) => ({ min: (m[0] ?? 0) * HZ, max: (m[1] ?? 0) * HZ }))(
-        g('attackGap', `^${N} to ${N} s between`),
-      ),
       archerRange: ((m) => ({ min: m[0] ?? 0, max: m[1] ?? 0 }))(
         g('archerRange', `^${N} to ${N} tiles:`),
       ),
@@ -1131,7 +1487,6 @@ export function parseAiBalance(json: unknown): AiBalance {
       searchTicks: (g('searchSeconds', '^(\\d+):')[0] ?? 0) * HZ,
       crewFollow: g('crewFollow', `^${N} tiles behind`)[0] ?? 0,
       crewProtect: g('crewProtect', `^${N} tiles:`)[0] ?? 0,
-      fallBackFrom: g('fallBackFrom', `^${N} tiles:`)[0] ?? 0,
       orderLapseTicks: (g('orderLapse', '^(\\d+) s:')[0] ?? 0) * HZ,
       attackTokens: g('attackTokens', '^(\\d+): at most')[0] ?? 0,
       tokenRestTicks: Math.round((g('tokenRest', `^${N} s:`)[0] ?? 0) * HZ),
@@ -1144,6 +1499,7 @@ export function parseAiBalance(json: unknown): AiBalance {
     cowardBreak: Number(coward[1]),
     braveCohesion: Number(brave[1]),
     ...parseCombatV2Ai(json),
+    ...parseAiStates(json),
   };
 }
 
@@ -1196,7 +1552,7 @@ function parseCombatV2Ai(
   const [shortR] = sp('shortReach', `crowds in to ${N} of its own reach$`);
   const [wAt, wGap, wDef, wBack] = sp(
     'woundedAt',
-    `^Below (\\d+)% vitality a fighter grows cautious: attackGap x${N}, it defends (\\d+) points more often, backs off ${N} tiles between attacks`,
+    `^Below (\\d+)% vitality a fighter grows cautious: patience x${N}, it defends (\\d+) points more often, backs off ${N} tiles between attacks`,
   );
   const [rAt, rTiles] = sp(
     'retreatAt',
@@ -1258,7 +1614,7 @@ function parseCombatV2Ai(
       longReachExtra: longExtra ?? 0,
       shortReach: shortR ?? 1,
       woundedAt: (wAt ?? 0) / 100,
-      woundedGap: wGap ?? 1,
+      woundedPatience: wGap ?? 1,
       woundedDefend: (wDef ?? 0) / 100,
       woundedBackOff: wBack ?? 0,
       retreatAt: (rAt ?? 0) / 100,

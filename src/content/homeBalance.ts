@@ -399,7 +399,7 @@ export interface StaminaBalance {
     readonly climb: number;
     readonly swim: number;
   };
-  /** Stamina regained before a sprint, a heavy carry or waist wading can start again. */
+  /** Stamina regained before a heavy carry or waist wading can start again (heavyCarryEmpty). */
   readonly recoverAt: number;
   /** Capacity: the amount each reason lowers (or a feast raises) the maximum. */
   readonly capacity: Readonly<Record<StaminaReason, number>>;
@@ -448,11 +448,13 @@ export function parseStaminaBalance(json: unknown): StaminaBalance {
   );
   const stamina = [max[0], max[1], regen[1], regen[2]] as const;
   const out = keyed(json, 'combatTimings', 'runningOutOfStamina');
+  // Design addendum 2.5 (decision DF-19): sprintEmpty is gone (running out exhausts, Book 10
+  // "Exhausted"); a heavy carry and a waist-deep wade still wait for heavyCarryEmpty's stamina.
   const recover = match(
-    'runningOutOfStamina.sprintEmpty',
-    out('sprintEmpty'),
-    /until (\d+) stamina is regained/,
-    '"... until N stamina is regained"',
+    'runningOutOfStamina.heavyCarryEmpty',
+    out('heavyCarryEmpty'),
+    /can lift again at (\d+) stamina/,
+    '"... can lift again at N stamina"',
   );
   const cap = rows(json, 'combatTimings', 'staminaCapacity');
   const capRow = (condition: string): Row => {
