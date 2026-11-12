@@ -56,6 +56,9 @@ export const DRIFTWOOD_SHEET = 'prop_driftwood';
 /** Stage 10: the Hag's Seat's light and the Kelda Spring's bubbles; the weeping stone. */
 export const SOUTH_FX_SHEET = 'fx_south';
 export const HAGSTONE_SHEET = 'prop_hagstone';
+/** Stage 11: Seal Cave's cliff face (strips) and the dark inside its arch. */
+export const SEALCAVE_SHEET = 'bld_sealcave';
+export const SEALCAVE_FX_SHEET = 'fx_sealcave';
 export const FIRE_SHEET = 'fx_fire';
 /** Seconds between glints on something lying to be picked up. */
 const GLINT_EVERY = 2.6;
@@ -596,6 +599,8 @@ export interface CampScene {
     x: number;
     y: number;
     flat?: boolean;
+    /** Stage 11: drawn this many px after its foot line (the boat's layers over its hull). */
+    after?: number;
   }[];
   readonly stage: string;
   /** The fire, in tiles: lit or not, and its fuel in loads (it burns low as it runs out). */
@@ -758,16 +763,23 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       const state = input.stoneWeeps === true ? 'wet' : 'dry';
       frame = `${state}/-/${frameIndex(anims, HAGSTONE_SHEET, state, reduced ? 0 : tick)}`;
     }
+    // Stage 11: the dark inside Seal Cave's mouth moves with light off the water.
+    if (prop.sheet === SEALCAVE_FX_SHEET) {
+      frame = `gloom/-/${frameIndex(anims, SEALCAVE_FX_SHEET, 'gloom', reduced ? 0 : tick)}`;
+    }
+    const built = prop.sheet === SEALCAVE_SHEET || prop.sheet === SEALCAVE_FX_SHEET;
     const sprite: SceneSprite = {
       sheet: prop.sheet,
       frame,
       x,
       y,
       layer: 'actor',
-      tall: true,
+      tall: prop.sheet !== SEALCAVE_FX_SHEET,
+      ...(prop.sort === undefined ? {} : { sort: prop.sort * map.tile - camera.y }),
     };
     sprites.push(sprite);
-    cast(sprite);
+    // A cliff face and the dark in its mouth cast no shadow of their own on the cove.
+    if (!built) cast(sprite);
     if (prop.sheet === HAGSTONE_SHEET && input.stoneWeeps === true) {
       // The pale light Runa followed, hanging by the stone and drifting (Book 7 section 09).
       const drift = Math.sin(seconds * 0.9) * 5;
@@ -858,6 +870,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         y,
         layer: 'actor',
         tall: true,
+        ...(prop.after === undefined ? {} : { sort: y + prop.after }),
       };
       sprites.push(sprite);
       cast(sprite);

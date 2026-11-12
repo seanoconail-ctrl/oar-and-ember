@@ -26,6 +26,7 @@ export const ZONE_GROUND: Readonly<Record<string, string>> = {
   ZONE_SK_MACHAIR: 'tile_strand',
   ZONE_SK_HAGSEAT: 'tile_strand',
   ZONE_SK_CAIRN: 'tile_strand',
+  ZONE_SK_SEALCAVE: 'tile_strand',
 };
 
 /** Every generated zone map in content/zones. */

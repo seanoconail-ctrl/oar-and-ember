@@ -8,6 +8,7 @@
  */
 import type { CueDef } from '../content/registry.ts';
 import { StrandAmbience } from './synth/ambience.ts';
+import { CaveAmbience } from './synth/repairs.ts';
 import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
 import { HomeAmbience } from './synth/home.ts';
 import { GALE_WIND, SpringAmbience } from './synth/south.ts';
@@ -40,6 +41,7 @@ export class WebAudioEngine implements AudioSink {
   #home: HomeAmbience | null = null;
   /** Stage 10: the Kelda Spring (by distance), and the gale on the Hag's Seat. */
   #spring: SpringAmbience | null = null;
+  #cave: CaveAmbience | null = null;
   #springLevel = 0;
   #gale = false;
   #steps = 0;
@@ -111,6 +113,7 @@ export class WebAudioEngine implements AudioSink {
     this.#hearth?.schedule(until);
     this.#home?.schedule(until);
     this.#spring?.schedule(until);
+    this.#cave?.schedule(until);
   }
 
   /** How near the Kelda Spring the listener is, 0 (unheard) to 1 (beside it): Stage 10. */
@@ -230,14 +233,15 @@ export class WebAudioEngine implements AudioSink {
     const kinds = new Set(cues.map((c) => AMBIENCES[c.id]));
     // Stage 10: the Hag's Seat's gale is the strand's bed with the wind up and the surf below.
     this.#gale = kinds.has('gale');
-    const wantStrand = kinds.has('strand') || kinds.has('heath') || this.#gale;
+    const cave = kinds.has('cave');
+    const wantStrand = kinds.has('strand') || kinds.has('heath') || this.#gale || cave;
     if (wantStrand && this.#strand === null) {
       this.#strand = new StrandAmbience(e);
       const strength = this.#gale
         ? Math.min(1, this.#wind.strength * GALE_WIND)
         : this.#wind.strength;
       this.#strand.setWind(strength, this.#wind.gust, this.#wind.from, t);
-      this.#strand.setTide(kinds.has('strand') ? this.#tide : this.#gale ? 0.45 : 0, t);
+      this.#strand.setTide(kinds.has('strand') || cave ? this.#tide : this.#gale ? 0.45 : 0, t);
       this.#strand.start(t);
     } else if (!wantStrand && this.#strand !== null) {
       this.#strand.stop(t);
@@ -249,6 +253,14 @@ export class WebAudioEngine implements AudioSink {
     } else if (!kinds.has('hearth') && this.#hearth !== null) {
       this.#hearth.stop(t);
       this.#hearth = null;
+    }
+    // Stage 11: Seal Cave's drips, booms and seals over the cove's surf.
+    if (cave && this.#cave === null) {
+      this.#cave = new CaveAmbience(e);
+      this.#cave.start(t);
+    } else if (!cave && this.#cave !== null) {
+      this.#cave.stop(t);
+      this.#cave = null;
     }
     // Stage 10: the spring, by its own level.
     if (kinds.has('spring') && this.#spring === null) {

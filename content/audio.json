@@ -574,6 +574,96 @@
       "captionKey": "caption.stinger.game_over",
       "temporary": false,
       "lengthBeats": 8
+    },
+    {
+      "id": "SFX_WORK_REPAIR",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.task_repair",
+      "temporary": false
+    },
+    {
+      "id": "SFX_RIGGING_CUT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.rigging_cut",
+      "temporary": false
+    },
+    {
+      "id": "SFX_LOAD_LAID",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.load_laid",
+      "temporary": false
+    },
+    {
+      "id": "SFX_REPAIR_DONE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.repair_done",
+      "temporary": false
+    },
+    {
+      "id": "SFX_OAR_TAKEN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.oar_taken",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FITTING_DONE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.fitting_done",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FITTING_UNSHIPPED",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.fitting_unshipped",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WORK_ADZE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.work_adze",
+      "temporary": false
+    },
+    {
+      "id": "SFX_STONES_SET",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.stones_set",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SEA_BURIAL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sea_burial",
+      "temporary": false
+    },
+    {
+      "id": "MUS_STINGER_BUILDING_FINISHED",
+      "kind": "stinger",
+      "lengthBeats": 4,
+      "captionKey": "caption.stinger.boat_ready",
+      "temporary": false
+    },
+    {
+      "id": "MUS_LAMENT_THORKEL",
+      "kind": "stinger",
+      "lengthBeats": 32,
+      "captionKey": "caption.music.lament_thorkel",
+      "temporary": false
+    },
+    {
+      "id": "AMB_SEALCAVE",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_SEALCAVE"],
+      "temporary": false
     }
   ],
   "events": {
@@ -627,7 +717,20 @@
     "WEAPON_DROPPED": "SFX_WEAPON_DROP",
     "SPEAR_THROWN": "SFX_SPEAR_THROW",
     "GAME_OVER": "MUS_STINGER_GAME_OVER",
-    "SIGN_CAILLEACH": "SFX_TELL_CAILLEACH"
+    "SIGN_CAILLEACH": "SFX_TELL_CAILLEACH",
+    "TASK_REPAIR": "SFX_WORK_REPAIR",
+    "RIGGING_CUT": "SFX_RIGGING_CUT",
+    "MATERIAL_LAID": "SFX_LOAD_LAID",
+    "REPAIR_DONE": "SFX_REPAIR_DONE",
+    "OAR_TAKEN": "SFX_OAR_TAKEN",
+    "FITTING_DONE": "SFX_FITTING_DONE",
+    "FITTING_UNSHIPPED": "SFX_FITTING_UNSHIPPED",
+    "OAR_CARVED": "SFX_WORK_ADZE",
+    "RITES_STONES": "SFX_STONES_SET",
+    "RITES_DONE_SETTING": "SFX_STONES_SET",
+    "RITES_DONE_SEA": "SFX_SEA_BURIAL",
+    "BOAT_READY": "MUS_STINGER_BUILDING_FINISHED",
+    "RITES_BEGAN": "MUS_LAMENT_THORKEL"
   },
   "home": {
     "restSeconds": 90,

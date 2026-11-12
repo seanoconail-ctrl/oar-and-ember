@@ -257,6 +257,14 @@ void main() {
       float glint = hash2(floor(w / 2.0) + floor(u_t * 4.0 + hash2(floor(w / 2.0)) * 4.0) * vec2(13.0, 7.0));
       if (glint > 0.965) k *= 1.32;
     }
+    // Stage 11: the tidal flats left by the ebb hold a film of water: it shimmers as the wind runs
+    // over it, and the light catches in it, so the open sand at low water is never still.
+    if (layer == 1 && u_detail >= 1) {
+      float film = vnoise(vec2((w.x - u_t * 14.0) / 11.0, (w.y + u_t * 5.0) / 5.0));
+      if (film > 0.62) k *= 1.12;
+      float glint = hash2(floor(w / 2.0) + floor(u_t * 4.0 + hash2(floor(w / 2.0)) * 4.0) * vec2(7.0, 19.0));
+      if (u_detail >= 2 && glint > 0.97) k *= 1.3;
+    }
     if (layer == 2 && E.r * 3.0 - 1.0 < u_dryAbove) layer = -1;
     float g = gust(w, u_wind.xy, u_t) * u_wind.z;
     if (layer == 6) k *= 1.0 + 0.05 * g;

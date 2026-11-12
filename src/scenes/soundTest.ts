@@ -25,6 +25,7 @@ import type { HomePhase } from '../audio/synth/home.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
 import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
+import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -178,6 +179,32 @@ export function startItem(
         life?.stop(t);
       },
     };
+  }
+  if (kind === 'repairs') {
+    // Stage 11: the repairs, the fitting, the oar, the rites and the lament; and Seal Cave.
+    if (id === 'sealcave') {
+      const wind = new StrandAmbience(e);
+      wind.setTide(0.5, at);
+      wind.start(at);
+      const cave = new CaveAmbience(e);
+      cave.start(at);
+      return {
+        schedule: (until, now) => {
+          for (let t = Math.max(at, now); t < until; t += 0.25)
+            wind.setWind(STRAND_WIND.strength * 0.7, gustAt(STRAND_WIND, 640, 900, t - at), 0, t);
+          wind.schedule(until);
+          cave.schedule(until);
+        },
+        stop: (t) => {
+          wind.stop(t);
+          cave.stop(t);
+        },
+      };
+    }
+    const def = REPAIR_SOUNDS.find((d) => d.id === id);
+    if (def === undefined) throw new Error(`no repair sound ${id}`);
+    def.play(e, at, 0, { gore: 2 });
+    return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'work') {
     const def = HOME.find((d) => d.id === id);
@@ -737,6 +764,25 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   });
   south.append(southStop, tell);
   root.append(south);
+  // Stage 11: the boat's repairs, Seal Cave and Thorkel's rites, in a section of their own.
+  const repairs = el('section');
+  repairs.append(el('h2', {}, t('ui.sound.repairs')));
+  const cave = el('button', { 'data-repairs-play': 'repairs:sealcave' }, t('caption.amb.sealcave'));
+  cave.addEventListener('click', () => {
+    play('repairs:sealcave', {}, 'caption.amb.sealcave');
+  });
+  repairs.append(cave);
+  for (const def of REPAIR_SOUNDS) {
+    const b = el('button', { 'data-repairs-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`repairs:${def.id}`, def.captionKey);
+    });
+    repairs.append(b);
+  }
+  const repairsStop = el('button', { 'data-repairs-stop': '' }, t('ui.sound.stop'));
+  repairsStop.addEventListener('click', stopRunning);
+  repairs.append(repairsStop);
+  root.append(repairs);
 
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
@@ -881,6 +927,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     ],
     /** Stage 10's southern island: the spring, the gale, the fold and the Hag's Seat's tell. */
     southItems: ['south:spring', 'south:gale', 'south:fold', 'south:SFX_TELL_CAILLEACH'],
+    /** Stage 11: Seal Cave, and every repair, fitting and rite sound, and the lament. */
+    repairItems: ['repairs:sealcave', ...REPAIR_SOUNDS.map((d) => `repairs:${d.id}`)],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [
       ...(['dawn', 'day', 'dusk', 'night'] as const).map((p) => `home:${p}`),

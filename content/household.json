@@ -98,6 +98,31 @@
         }
       ]
     },
+    "SHIPWRIGHT": {
+      "nameKey": "job.name.shipwright",
+      "task": "TASK_REPAIR_SHIP",
+      "needs": "SHIP_WORK",
+      "spots": [
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 43.2,
+          "y": 27.9,
+          "facing": "n"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 40.6,
+          "y": 27.9,
+          "facing": "n"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 45.6,
+          "y": 27.9,
+          "facing": "n"
+        }
+      ]
+    },
     "REST": {
       "nameKey": "job.name.rest"
     }
@@ -244,7 +269,8 @@
           "about": "THORKEL",
           "day": 1
         }
-      ]
+      ],
+      "then": ["SHIPWRIGHT"]
     }
   }
 }

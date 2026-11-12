@@ -31,6 +31,8 @@ import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
 import type { CalendarState } from './calendar/calendar.ts';
 import { placeOnFoot } from './land/onFoot.ts';
+import { shipDefsOf, wreckedBoat, FLAGSHIP } from './ship/ship.ts';
+import type { ShipInstance } from './ship/ship.ts';
 import type { GroundItem, OnFootState } from './land/onFoot.ts';
 
 /**
@@ -58,8 +60,12 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * each person's part in a fight (`fight`: their state machine, vitality, stamina, side and mind),
  * the steerer's fighter, someone carried by another (`carries`), and the fight under way
  * (`battle`); the three wreck-scavengers join `people`.
+ * Version 8 (Stage 10: the three searches and the southern island) moves the wreck-scavengers to
+ * the sheepfold.
+ * Version 9 (Stage 11: boat repairs and the first fitting) gives `ships` its Book 2 section 08
+ * shape: the household's boat (`ships.flagship`), with Chapter 1's repairs and a fitting under way.
  */
-export const WORLD_STATE_VERSION = 8;
+export const WORLD_STATE_VERSION = 9;
 
 /** The difficulty options that change the simulation (Book 1 section 15; decision S9-9). */
 export interface CampaignOptions {
@@ -505,7 +511,8 @@ export interface WorldState {
   player: PlayerState;
   household: { residents: Id[]; hostages: Id[]; guests: Id[] };
   people: Record<Id, Person>;
-  ships: Record<Id, unknown>;
+  /** The household's ships (version 9): `flagship`, Chapter 1's coastal boat. */
+  ships: Record<string, ShipInstance>;
   homes: Record<Id, HomeState>;
   regions: Record<Id, RegionState>;
   places: Record<Id, PlaceState>;
@@ -616,7 +623,7 @@ export function newCampaign(
     Content,
     'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps' | 'onFoot' | 'balance'
   > &
-    Partial<Pick<Content, 'camp' | 'household'>>,
+    Partial<Pick<Content, 'camp' | 'household' | 'repairs' | 'hulls' | 'fittings'>>,
   steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
     name: '',
     bodyModel: null,
@@ -687,6 +694,21 @@ export function newCampaign(
     shortDays: 0,
   };
   if (camp !== null) setupCamp(world, camp);
+  // Stage 11: the household's coastal boat lies wrecked on the strand (Book 4 Chapter 1 beat 4).
+  const repairs = content.repairs;
+  if (repairs != null && content.hulls !== undefined && content.fittings !== undefined) {
+    const defs = shipDefsOf({
+      hulls: content.hulls,
+      fittings: content.fittings,
+      balance: content.balance,
+    });
+    world.ships[FLAGSHIP] = wreckedBoat(
+      defs,
+      repairs.hull,
+      { zone: repairs.boat.zone, x: repairs.boat.x, y: repairs.boat.y },
+      1,
+    );
+  }
   world.knowledge.places['ISLE_SKARV'] = 'KNOWN';
   CHAPTERS.forEach((ch, i) => {
     world.chapters[ch] = i === 0 ? { status: 'ACTIVE', openedDay: 1 } : { status: 'LOCKED' };

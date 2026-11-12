@@ -34,7 +34,14 @@
  *   pieces, kept in the region's resource nodes, two of them washed up again at dawn) and the
  *   camp's other work is a plain action; the save's shape is unchanged.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-07.json
+ * - Golden save 8 (schema 8, Stage 10): the opening, then the three searches (Oddi chest first, a
+ *   confession at the Hag's Seat, the silver for Thorkel's body). Frozen from Stage 11.
+ * - Golden save 9 (schema 9, Stage 11): golden 8's day played on: the salvaged boards carried to the
+ *   boat, the rigging cut from the wreck at low water and carried back, the steering oar traded for
+ *   salt fish at Seal Cave, the boat worked by hand and by Runa until all three repairs are done,
+ *   and an extended hold fitted.
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-09.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -52,6 +59,7 @@ import { loadContentFromDisk } from '../content/loadContentFiles.ts';
 import { CampBot } from '../play/campBot.ts';
 import { OpeningBot } from '../play/openingBot.ts';
 import { SearchBot } from '../play/searchBot.ts';
+import { RepairBot } from '../play/repairBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
@@ -61,6 +69,7 @@ export const GOLDEN_05 = 'tests/golden-saves/golden-05.json';
 export const GOLDEN_06 = 'tests/golden-saves/golden-06.json';
 export const GOLDEN_07 = 'tests/golden-saves/golden-07.json';
 export const GOLDEN_08 = 'tests/golden-saves/golden-08.json';
+export const GOLDEN_09 = 'tests/golden-saves/golden-09.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -119,6 +128,37 @@ export function goldenWorld08(): WorldState {
   bot.bran('BARGAIN');
   bot.waitFor(() => sim.state.facts['ch1.thorkel_body'] === 'CAMP', 60 * 600);
   return sim.state;
+}
+
+/** Golden save 9 (Stage 11): golden 8's searches, then the repairs, the oar and a fitting. */
+export function goldenWorld09(): WorldState {
+  const balance = loadBalanceJson();
+  const b = parseTimeBalance(balance);
+  const { content } = loadContentFromDisk();
+  const land = landContext(content, balance);
+  const camp = campContext(content);
+  if (camp === null || land.searches == null || land.repairs == null)
+    throw new Error('no camp, searches or repairs');
+  const world = goldenWorld08();
+  const sim = createSimulation(b, world, land);
+  const bot = new RepairBot(sim, b, land, camp, land.searches, land.repairs);
+  bot.boards();
+  bot.rigging();
+  bot.oar('TRADE');
+  bot.workUntil(() => sim.state.facts['ch1.boat_ready'] === true, 400);
+  bot.fit('HOLD');
+  return sim.state;
+}
+
+export function goldenSave09(): SaveFile {
+  return writeSave(goldenWorld09(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-09',
+    label: 'golden-09',
+    sequence: 1,
+    savedAt: '2026-11-12T00:00:00.000Z',
+  });
 }
 
 export function goldenSave08(): SaveFile {
@@ -225,7 +265,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  // Golden saves 1 to 7 are frozen (Book 2 section 20): only the newest is written.
-  writeFileSync(join(REPO_ROOT, GOLDEN_08), `${JSON.stringify(goldenSave08(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_08}`);
+  // Golden saves 1 to 8 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_09), `${JSON.stringify(goldenSave09(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_09}`);
 }

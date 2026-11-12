@@ -29,6 +29,8 @@ export interface ZoneProp {
   /** Foot anchor, in tiles. */
   readonly x: number;
   readonly y: number;
+  /** Stage 11: the line it sorts at, in tiles, if not its foot (the dark inside a cave's mouth). */
+  readonly sort?: number;
 }
 
 /** Wildlife the renderer draws (never simulated). */

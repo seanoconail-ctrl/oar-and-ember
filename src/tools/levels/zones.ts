@@ -200,6 +200,8 @@ export interface ZoneProp {
   readonly frame: string;
   readonly x: number;
   readonly y: number;
+  /** Stage 11: the line it sorts at, in tiles, if not its foot. */
+  readonly sort?: number;
 }
 
 export interface ZoneMap {

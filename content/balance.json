@@ -1053,11 +1053,6 @@
      "Notes": "Patched with the salvaged boards; the patch is made good with iron after the first raid (Book 6 section 03)"
     },
     {
-     "Key": "cutRigging",
-     "Value": "30 game minutes, 2 stamina",
-     "Notes": "Cutting the mast, yard, sail and lines free of the wreck on the skerry: one action at low water, then one load to carry"
-    },
-    {
      "Key": "rigging",
      "Value": "1 worker-day",
      "Notes": "Stepping the mast and setting up the salvaged rigging on the boat"
@@ -1081,11 +1076,6 @@
      "Key": "fitBowPlatform",
      "Value": "1 worker-day",
      "Notes": "The raised bow platform, made from the wreck's timber"
-    },
-    {
-     "Key": "unship",
-     "Value": "30 game minutes, 1 stamina",
-     "Notes": "A fitting taken off in one action at the boat; fitting it again costs its labour again"
     },
     {
      "Key": "oarFood",

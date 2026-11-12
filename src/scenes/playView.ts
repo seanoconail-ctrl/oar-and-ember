@@ -46,6 +46,8 @@ import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { campUseNear, campUses, driftwoodPieces, isTimed } from '../sim/home/camp.ts';
+import { boatLayers, repairProps } from './repairsScene.ts';
+import { boatOf, repairPlacedUses } from '../sim/narrative/repairs.ts';
 import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
@@ -654,8 +656,11 @@ export function startPlay(
     const here = map.zone === campDef.zone;
     const fireSite = campDef.sites.find((s) => s.kind === 'FIRE' && s.zone === map.zone);
     const stageProps = home.stage === 'S1' ? campDef.props.S1 : campDef.props.S0;
+    // Stage 11: the boat and its repairs, the wreck's rigging, the skiff, the ship of stones.
+    const repairDef = content.repairs;
+    const extra = repairDef === null ? [] : repairProps(sim.state, { def: repairDef }, map.zone);
     return {
-      props: here ? stageProps : [],
+      props: [...(here ? stageProps : []), ...extra],
       stage: home.stage,
       fire:
         fireSite === undefined
@@ -833,6 +838,23 @@ export function startPlay(
         return;
       case 'FELL_ASLEEP':
         if (audio !== null && engine.unlocked) audio.event('SLEEP', engine.now, { pan: 0 });
+        return;
+      // ---- Stage 11: every repair and its task has its sound (Book 11 section 12).
+      case 'MATERIAL_LAID':
+      case 'RIGGING_CUT':
+      case 'OAR_TAKEN':
+      case 'REPAIR_DONE':
+      case 'BOAT_READY':
+      case 'FITTING_DONE':
+      case 'FITTING_UNSHIPPED':
+      case 'OAR_CARVED':
+      case 'RITES_STONES':
+      case 'RITES_BEGAN':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      case 'RITES_DONE':
+        if (audio !== null && engine.unlocked)
+          audio.event(`RITES_DONE_${e.form}`, engine.now, { pan: 0 });
         return;
       case 'MORNING_REPORT_DUE': {
         const report = sim.state.report;
@@ -1223,6 +1245,8 @@ export function startPlay(
     const uses = campCtx === null ? [] : campUses(sim.state, campCtx, map, onFoot.actors);
     // Stage 10: the searches' words (Bran, Ketill, Runa, the stone), as the simulation offers them.
     if (land.searches != null) uses.push(...searchPlacedUses(sim.state, land.searches, map));
+    // Stage 11: the boat, the wreck's rigging, the skiff's oar, the words at the cave and the bier.
+    if (land.repairs != null) uses.push(...repairPlacedUses(sim.state, land.repairs, map));
     const reachPx = land.rules.interactRadiusTiles * map.tile;
     const use =
       onFoot.carrying === null && onFoot.player.work == null
@@ -1651,6 +1675,22 @@ export function startPlay(
       .map((f) => `${f}=${String(sim.state.facts[f] ?? '')}`)
       .join('|');
     root.dataset['stone'] = stoneWeeps(sim.state) ? 'wet' : 'dry';
+    // Stage 11: the boat's repairs and fitting, how the oar was come by, and the rites.
+    const boat = boatOf(sim.state);
+    root.dataset['repairs'] =
+      boat === null
+        ? ''
+        : [
+            ...Object.entries(boat.repairs).map(([k, r]) => `${k}=${r.stage}`),
+            `FIT=${Object.values(boat.fittings)
+              .filter((f) => f !== null)
+              .join('+')}`,
+            `OAR=${String(sim.state.facts['repair.oar'] ?? '')}`,
+            `RITES=${String(sim.state.facts['ch1.rites'] ?? '')}`,
+          ].join('|');
+    root.dataset['boat'] = boatLayers(sim.state)
+      .map((l) => l.frame.split('/')[0] ?? '')
+      .join('+');
     root.dataset['barks'] = String(barksHeard);
     root.dataset['scene'] = String(sim.state.facts['scene.beat_1_oddi_theft'] ?? '');
     canvas.setAttribute(

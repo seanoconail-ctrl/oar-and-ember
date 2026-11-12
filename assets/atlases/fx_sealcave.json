@@ -1,0 +1,46 @@
+{
+  "sheet": "fx_sealcave",
+  "kind": "building",
+  "image": "fx_sealcave.png",
+  "width": 124,
+  "height": 92,
+  "pivot": {
+    "x": 62,
+    "y": 90
+  },
+  "footprint": {
+    "w": 124,
+    "h": 92
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "gloom": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "gloom/-/0": [
+      0,
+      0
+    ],
+    "gloom/-/1": [
+      124,
+      0
+    ],
+    "gloom/-/2": [
+      248,
+      0
+    ],
+    "gloom/-/3": [
+      372,
+      0
+    ]
+  }
+}

@@ -19,6 +19,7 @@ import { HOME } from './home.ts';
 import type { HomePhase } from './home.ts';
 import { COMBAT, FIGHT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import { SOUTH } from './south.ts';
+import { REPAIR_SOUNDS } from './repairs.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
@@ -140,6 +141,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...FIGHT,
     ...ENDINGS,
     ...SOUTH,
+    ...REPAIR_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 
@@ -224,7 +226,7 @@ export class HearthAmbience {
 
 /** Ambience implementations: the strand bed (wind, sea, gulls), the hearth or home life. */
 export const AMBIENCES: Readonly<
-  Record<string, 'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold'>
+  Record<string, 'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold' | 'cave'>
 > = {
   AMB_SURF_SHINGLE: 'strand',
   // Inland heather: the same wind, with the sea far off (the strand bed at low water).
@@ -238,6 +240,8 @@ export const AMBIENCES: Readonly<
   AMB_KELDA_SPRING: 'spring',
   AMB_HAGSEAT_GALE: 'gale',
   AMB_CAIRN_FOLD: 'fold',
+  // Stage 11: Seal Cave, the cove's surf with the cave's drips and booms (repairs.ts).
+  AMB_SEALCAVE: 'cave',
 };
 
 /** The part of the day each home-life ambience is for (Stage 7). */

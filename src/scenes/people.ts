@@ -50,6 +50,10 @@ export const PERSON_LOOKS: Readonly<Record<Id, string>> = {
 export const CARRIED_LOOKS: Readonly<Record<Id, string>> = {
   ITEM_THORKEL_CHEST: 'prop_chest_thorkel',
   ITEM_RUNA_TOOLS: 'prop_chest_runa',
+  // Stage 11: the repairs' three loads.
+  ITEM_BOARDS: 'prop_boards',
+  ITEM_RIGGING: 'prop_rigging',
+  ITEM_STEERING_OAR: 'prop_steering_oar',
 };
 
 export function personLook(file: LayerFile): PersonLook {

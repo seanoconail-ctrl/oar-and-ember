@@ -99,7 +99,7 @@ export const TENDENCY_PLACES = ['SHORE', 'FIRE', 'DOOR', 'STORES', 'BOAT', 'HIGH
 export const TENDENCY_POSES = ['watch', 'sit', 'kneel', 'work'] as const;
 /** Book 2 section 06: the schedule's blocks; a job's work fills WORK. */
 export const SCHEDULE_BLOCKS = ['SLEEP', 'MEAL', 'WORK', 'EVENING'] as const;
-export const JOBS = ['FISHER', 'CAMP', 'DRIFTWOOD', 'BUILDER', 'REST'] as const;
+export const JOBS = ['FISHER', 'CAMP', 'DRIFTWOOD', 'BUILDER', 'SHIPWRIGHT', 'REST'] as const;
 /** Book 10 section 08, "Conversation replies". */
 export const REPLIES = ['Talk', 'Warm', 'Glad', 'Cold', 'Punished', 'Shamed', 'Threat'] as const;
 export const VOICES = ['NEUTRAL', 'WARM', 'COLD', 'AFRAID', 'DEVOTED'] as const;
@@ -620,9 +620,11 @@ const jobCheck = object(
     task: id(['TASK']),
     /** The camp stages it can be done at (raising the shelter: S0 only). */
     stages: arrayOf(oneOf(STAGES)),
+    /** Stage 11: open only while there is such work (the boat's repairs and fitting). */
+    needs: oneOf(['SHIP_WORK'] as const),
     spots: arrayOf(spotCheck),
   },
-  ['task', 'stages', 'spots'],
+  ['task', 'stages', 'needs', 'spots'],
 );
 const householdCheck = object({
   about: text,
@@ -640,6 +642,8 @@ const householdCheck = object({
     object(
       {
         job: oneOf(JOBS),
+        /** Stage 11: the jobs they take up, in order, when their own has no work. */
+        then: arrayOf(oneOf(JOBS)),
         memories: arrayOf(
           object({ kind: oneOf(MEMORY_KINDS), about: text, day: int(1, 999), tie: bool }, [
             'day',
@@ -647,7 +651,7 @@ const householdCheck = object({
           ]),
         ),
       },
-      ['memories'],
+      ['then', 'memories'],
     ),
   ),
 });

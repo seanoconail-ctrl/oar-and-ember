@@ -107,15 +107,11 @@ export interface ChapterOneRepairs {
   readonly hullBoards: number;
   readonly hullRivets: number;
   readonly hullWorkerDays: number;
-  readonly cutRiggingMinutes: number;
-  readonly cutRiggingStamina: number;
   readonly riggingWorkerDays: number;
   readonly shipOarWorkerDays: number;
   readonly carveOarWorkerDays: number;
   readonly fitHoldWorkerDays: number;
   readonly fitBowPlatformWorkerDays: number;
-  readonly unshipMinutes: number;
-  readonly unshipStamina: number;
   /** Salt fish (ration-days) the scavengers take for their steering oar. */
   readonly oarFoodRd: number;
 }
@@ -179,7 +175,7 @@ const TERMS: readonly {
   readonly to: (m: RegExpExecArray) => StatMods;
 }[] = [
   {
-    re: new RegExp(`^cargo ([+-]\\d+) \\(([+-]\\d+) on T1\\)$`),
+    re: /^cargo ([+-]\d+) \(([+-]\d+) on t1\)$/,
     to: (m) => ({ cargo: Number(m[1]), cargoT1: Number(m[2]) }),
   },
   { re: /^cargo ([+-]\d+)$/, to: (m) => ({ cargo: Number(m[1]) }) },
@@ -234,7 +230,7 @@ export function parseMods(text: string, where: string): StatMods {
     for (const t of TERMS) {
       const m = t.re.exec(term);
       if (m === null) continue;
-      for (const [k, v] of Object.entries(t.to(m))) {
+      for (const [k, v] of Object.entries(t.to(m)) as [string, number | boolean][]) {
         const prev = out[k];
         out[k] = typeof v === 'number' && typeof prev === 'number' ? prev + v : v;
       }
@@ -243,17 +239,11 @@ export function parseMods(text: string, where: string): StatMods {
     }
     if (!matched) throw new Error(`balance.json: ${where}: unknown effect "${raw.trim()}"`);
   }
-  return out as StatMods;
+  return out;
 }
 
 function workerDays(text: string, what: string): number {
   return num(text, new RegExp(`^${N} worker-days?$`), what);
-}
-
-function minutesAndStamina(text: string, what: string): { minutes: number; stamina: number } {
-  const m = new RegExp(`^${N} game minutes, ${N} stamina$`).exec(text.trim());
-  if (m === null) throw new Error(`balance.json: ${what} is "${text}"`);
-  return { minutes: Number(m[1]), stamina: Number(m[2]) };
 }
 
 export function parseShipBalance(json: unknown): ShipBalance {
@@ -287,11 +277,10 @@ export function parseShipBalance(json: unknown): ShipBalance {
   const patch = table(json, 'buildingsToolsAndCrafting', 'carpentry').find(
     (r) => r['Product'] === 'Hull patch (Chapter 1)',
   );
-  if (patch === undefined) throw new Error('balance.json: Carpentry has no "Hull patch (Chapter 1)"');
+  if (patch === undefined)
+    throw new Error('balance.json: Carpentry has no "Hull patch (Chapter 1)"');
   const mats = /^(\d+) boards, (\d+) rivets$/.exec(patch['Materials'] ?? '');
   if (mats === null) throw new Error(`balance.json: Hull patch materials "${patch['Materials']}"`);
-  const cut = minutesAndStamina(v('cutRigging'), 'cutRigging');
-  const unship = minutesAndStamina(v('unship'), 'unship');
   const rites = table(json, 'peopleSkillsAndWounds', 'thorkelSRites');
   const r = (key: string): string => keyed(rites, key, "Thorkel's rites");
   return {
@@ -305,15 +294,11 @@ export function parseShipBalance(json: unknown): ShipBalance {
       hullBoards: Number(mats[1]),
       hullRivets: Number(mats[2]),
       hullWorkerDays: workerDays(patch['Labour'] ?? '', 'Hull patch (Chapter 1) Labour'),
-      cutRiggingMinutes: cut.minutes,
-      cutRiggingStamina: cut.stamina,
       riggingWorkerDays: workerDays(v('rigging'), 'rigging'),
       shipOarWorkerDays: workerDays(v('shipOar'), 'shipOar'),
       carveOarWorkerDays: workerDays(v('carveOar'), 'carveOar'),
       fitHoldWorkerDays: workerDays(v('fitHold'), 'fitHold'),
       fitBowPlatformWorkerDays: workerDays(v('fitBowPlatform'), 'fitBowPlatform'),
-      unshipMinutes: unship.minutes,
-      unshipStamina: unship.stamina,
       oarFoodRd: num(v('oarFood'), new RegExp(`^${N} rd$`), 'oarFood'),
     },
     rites: {
@@ -325,7 +310,8 @@ export function parseShipBalance(json: unknown): ShipBalance {
       guardFriendship: num(r('ritesGuard'), /^Bran ([+-]\d+) friendship$/, 'ritesGuard'),
       happiness: num(r('ritesHappiness'), /^([+-]\d+) happiness$/, 'ritesHappiness'),
       seaGoldPerGain: num(r('seaGold'), /^([+-]\d+) friendship per point$/, 'seaGold'),
-      settingMinutes: num(r('settingStones'), new RegExp(`^${N} game hours$`), 'settingStones') * 60,
+      settingMinutes:
+        num(r('settingStones'), new RegExp(`^${N} game hours$`), 'settingStones') * 60,
       riteMinutes: num(r('riteLength'), new RegExp(`^${N} game minutes$`), 'riteLength'),
     },
   };

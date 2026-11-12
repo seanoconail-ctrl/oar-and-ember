@@ -1,0 +1,49 @@
+{
+  "sheet": "prop_rigging_tangle",
+  "kind": "prop",
+  "image": "prop_rigging_tangle.png",
+  "width": 76,
+  "height": 44,
+  "pivot": {
+    "x": 38,
+    "y": 40
+  },
+  "footprint": {
+    "w": 60,
+    "h": 10
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "fouled": {
+      "frames": 4,
+      "ticks": 8,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 60,
+    "h": 8
+  },
+  "placeholder": false,
+  "frames": {
+    "fouled/-/0": [
+      0,
+      0
+    ],
+    "fouled/-/1": [
+      76,
+      0
+    ],
+    "fouled/-/2": [
+      152,
+      0
+    ],
+    "fouled/-/3": [
+      228,
+      0
+    ]
+  }
+}

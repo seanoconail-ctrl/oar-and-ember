@@ -80,9 +80,7 @@
       "takesCaptives": false,
       "checkpoint": "wreckers",
       "parley": true,
-      "allies": [
-        "C_BRAN"
-      ],
+      "allies": ["C_BRAN"],
       "members": [
         {
           "person": "E_WRECKER_KETILL",
@@ -146,111 +144,45 @@
   ],
   "barks": {
     "E_WRECKER_KETILL": {
-      "alarm": [
-        "e_wrecker_ketill.bark.alarm.01",
-        "e_wrecker_ketill.bark.alarm.02"
-      ],
-      "taunt": [
-        "e_wrecker_ketill.bark.taunt.01",
-        "e_wrecker_ketill.bark.taunt.02"
-      ],
-      "hurt": [
-        "e_wrecker_ketill.bark.hurt.01"
-      ],
-      "plead": [
-        "e_wrecker_ketill.bark.plead.01"
-      ],
-      "flee": [
-        "e_wrecker_ketill.bark.flee.01"
-      ],
-      "fallen": [
-        "e_wrecker_ketill.bark.fallen.01"
-      ],
-      "parley": [
-        "e_wrecker_ketill.bark.parley.01"
-      ]
+      "alarm": ["e_wrecker_ketill.bark.alarm.01", "e_wrecker_ketill.bark.alarm.02"],
+      "taunt": ["e_wrecker_ketill.bark.taunt.01", "e_wrecker_ketill.bark.taunt.02"],
+      "hurt": ["e_wrecker_ketill.bark.hurt.01"],
+      "plead": ["e_wrecker_ketill.bark.plead.01"],
+      "flee": ["e_wrecker_ketill.bark.flee.01"],
+      "fallen": ["e_wrecker_ketill.bark.fallen.01"],
+      "parley": ["e_wrecker_ketill.bark.parley.01"]
     },
     "E_WRECKER_SVART": {
-      "alarm": [
-        "e_wrecker_svart.bark.alarm.01"
-      ],
-      "taunt": [
-        "e_wrecker_svart.bark.taunt.01",
-        "e_wrecker_svart.bark.taunt.02"
-      ],
-      "hurt": [
-        "e_wrecker_svart.bark.hurt.01"
-      ],
-      "plead": [
-        "e_wrecker_svart.bark.plead.01"
-      ],
-      "flee": [
-        "e_wrecker_svart.bark.flee.01"
-      ],
-      "fallen": [
-        "e_wrecker_svart.bark.fallen.01"
-      ]
+      "alarm": ["e_wrecker_svart.bark.alarm.01"],
+      "taunt": ["e_wrecker_svart.bark.taunt.01", "e_wrecker_svart.bark.taunt.02"],
+      "hurt": ["e_wrecker_svart.bark.hurt.01"],
+      "plead": ["e_wrecker_svart.bark.plead.01"],
+      "flee": ["e_wrecker_svart.bark.flee.01"],
+      "fallen": ["e_wrecker_svart.bark.fallen.01"]
     },
     "E_WRECKER_CONN": {
-      "alarm": [
-        "e_wrecker_conn.bark.alarm.01"
-      ],
-      "taunt": [
-        "e_wrecker_conn.bark.taunt.01"
-      ],
-      "hurt": [
-        "e_wrecker_conn.bark.hurt.01"
-      ],
-      "plead": [
-        "e_wrecker_conn.bark.plead.01",
-        "e_wrecker_conn.bark.plead.02"
-      ],
-      "flee": [
-        "e_wrecker_conn.bark.flee.01"
-      ],
-      "fallen": [
-        "e_wrecker_conn.bark.fallen.01"
-      ]
+      "alarm": ["e_wrecker_conn.bark.alarm.01"],
+      "taunt": ["e_wrecker_conn.bark.taunt.01"],
+      "hurt": ["e_wrecker_conn.bark.hurt.01"],
+      "plead": ["e_wrecker_conn.bark.plead.01", "e_wrecker_conn.bark.plead.02"],
+      "flee": ["e_wrecker_conn.bark.flee.01"],
+      "fallen": ["e_wrecker_conn.bark.fallen.01"]
     },
     "C_HILD": {
-      "danger": [
-        "c_hild.bark.combat.danger.01"
-      ],
-      "downed": [
-        "c_hild.bark.combat.downed.01"
-      ],
-      "safe": [
-        "c_hild.bark.combat.safe.01"
-      ],
-      "FOLLOW": [
-        "c_hild.bark.order.follow.01"
-      ],
-      "HOLD": [
-        "c_hild.bark.order.hold.01"
-      ],
-      "WITHDRAW": [
-        "c_hild.bark.order.withdraw.01"
-      ],
-      "ATTACK": [
-        "c_hild.bark.order.attack.01"
-      ],
-      "PROTECT": [
-        "c_hild.bark.order.protect.01"
-      ],
-      "CARRY": [
-        "c_hild.bark.order.carry.01"
-      ],
-      "refuse": [
-        "c_hild.bark.order.refuse.01"
-      ],
-      "lift": [
-        "c_hild.bark.combat.lift.01"
-      ]
+      "danger": ["c_hild.bark.combat.danger.01"],
+      "downed": ["c_hild.bark.combat.downed.01"],
+      "safe": ["c_hild.bark.combat.safe.01"],
+      "FOLLOW": ["c_hild.bark.order.follow.01"],
+      "HOLD": ["c_hild.bark.order.hold.01"],
+      "WITHDRAW": ["c_hild.bark.order.withdraw.01"],
+      "ATTACK": ["c_hild.bark.order.attack.01"],
+      "PROTECT": ["c_hild.bark.order.protect.01"],
+      "CARRY": ["c_hild.bark.order.carry.01"],
+      "refuse": ["c_hild.bark.order.refuse.01"],
+      "lift": ["c_hild.bark.combat.lift.01"]
     },
     "C_BRAN": {
-      "danger": [
-        "c_bran.bark.combat.danger.01"
-      ]
+      "danger": ["c_bran.bark.combat.danger.01"]
     }
   },
   "gore": {

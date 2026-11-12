@@ -90,7 +90,7 @@ A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), whi
 
 | Zone | Blocks | Layout notes |
 |---|---|---|
-| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood lies in pieces at 12 spots (along the high-tide line at both ends, under the bank, among the rocks of both outcrops, by the stern) and washes up again at dawn, more after storms (Book 10 section 03, "Driftwood finds"; decision PT-2); the shallows where Hild stands in the opening (below); the wreck's debris near the waking spot and the stern at the east end (below) |
+| `ZONE_SK_STRAND` | (8 to 30, 22 to 31) | Shingle ribbon with tidal flats below; the wreck on the skerry at (14, 29) reachable on foot at low tide; driftwood lies in pieces at 12 spots (along the high-tide line at both ends, under the bank, among the rocks of both outcrops, by the stern) and washes up again at dawn, more after storms (Book 10 section 03, "Driftwood finds"; decision PT-2); the shallows where Hild stands in the opening (below); the wreck's debris near the waking spot and the stern at the east end (below); Stage 11: the household's coastal boat drawn up under the bank at tiles (39 to 45, 25 to 26) of the zone, the salvaged boards on the shingle just east of it, and the wreck's rigging fouled on the skerry's north edge, reached over the flats at low water (decisions S11-1 and S11-5) |
 | `ZONE_SK_MACHAIR` | (12 to 30, 17 to 24) | The steading plan (section 05) sits at blocks (14 to 21, 19 to 23); plots at (20 to 25, 21 to 22) |
 | `ZONE_SK_KELDA` | (17 to 21, 17 to 21) | Spring pool at (19, 19); the stream flows south to the strand, ankle deep, with foam at its stones |
 | `ZONE_SK_ROOK` | (16 to 28, 6 to 14) | Summit at (22, 9); heather slopes; the watch cairn plot |
@@ -99,7 +99,7 @@ A manned cairn on Rook Hill sees 14 blocks from the summit (the ochre ring), whi
 | `ZONE_SK_CAIRN` | (29 to 33, 18 to 23) | Mound at (31, 20) with its sealed east door; sheepfold at (28, 22) |
 | `ZONE_SK_CLIFFS` | (5 to 40, 3 to 9) | Climbing routes marked with hand-holds; eggs on ledges in spring; eagle stack offshore at (3, 12) |
 | `ZONE_SK_GEO` | (9 to 14, 2 to 10) | The narrow geo, a steep path up to the hermit's cell at (11, 8) |
-| `ZONE_SK_SEALCAVE` | (38 to 44, 5 to 12) | Cave mouth at (41, 9); a tidal back passage runs south-west under the bog to the cairn: the Seal Cave's deep passage, a small dungeon (section 11) |
+| `ZONE_SK_SEALCAVE` | (38 to 44, 5 to 12) | Cave mouth at (41, 9); a tidal back passage runs south-west under the bog to the cairn: the Seal Cave's deep passage, a small dungeon (section 11). Stage 11 builds its cove and mouth as a zone of blocks (34 to 45, 8 to 17), reached from the cairn's ground at its north-east corner; the mouth is drawn a block south, at (41, 10), the inner chamber's floor is tidal ground (dry round low water) and the scavengers' skiff lies in it; the deep passage waits for Stage 14 (decisions S11-18 and S11-19) |
 | `ZONE_SK_HAGSEAT` | (2 to 9, 15 to 21) | The stone at (5, 18); kelp below; the windiest place on the island |
 | `ZONE_SK_NAUST` | (30 to 43, 23 to 30) | Cove beach, boatshed plot, causeway to the Skerry |
 

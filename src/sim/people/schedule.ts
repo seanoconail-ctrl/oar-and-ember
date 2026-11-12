@@ -20,6 +20,7 @@ import { TILE } from '../../content/terrain/autotile.ts';
 import { seasonOf } from '../calendar/calendar.ts';
 import type { CampContext } from '../home/camp.ts';
 import { FACT_ARRIVED_SAID, FACT_AT_BROCH, foodRd, homeOf } from '../home/camp.ts';
+import { shipWorkFor } from '../ship/work.ts';
 import type { ResidentPlace } from './residents.ts';
 import type { ActivityKind, JobKind, Person, WorldState } from '../world.ts';
 import { blockAt } from './context.ts';
@@ -92,14 +93,28 @@ export function jobToday(
     // Rest was for that day: back to the work they had before, or the household's first job.
     return ctx.household.people[p.id]?.job ?? 'CAMP';
   }
-  return jobOpen(world, camp, ctx.household.jobs[job.kind]) ? job.kind : 'CAMP';
+  if (jobOpen(world, camp, ctx.household.jobs[job.kind], p.id)) return job.kind;
+  // Stage 11: the first of their next jobs with work (Runa to the boat once the shelter is up).
+  for (const next of ctx.household.people[p.id]?.then ?? [])
+    if (jobOpen(world, camp, ctx.household.jobs[next], p.id)) return next;
+  return 'CAMP';
 }
 
-/** Whether a job can be worked now (raising the shelter: only while the camp is at S0). */
-export function jobOpen(world: WorldState, camp: CampContext, def: JobDef | undefined): boolean {
+/**
+ * Whether a job can be worked now (raising the shelter: only while the camp is at S0; the
+ * shipwright's: only while there is work at the boat for them, Stage 11).
+ */
+export function jobOpen(
+  world: WorldState,
+  camp: CampContext,
+  def: JobDef | undefined,
+  who?: Id,
+): boolean {
   if (def === undefined) return false;
   const stage = homeOf(world, camp)?.stage ?? 'S0';
-  return def.stages === undefined || (def.stages as string[]).includes(stage);
+  if (def.stages !== undefined && !(def.stages as string[]).includes(stage)) return false;
+  if (def.needs === 'SHIP_WORK') return shipWorkFor(world, who ?? '') !== null;
+  return true;
 }
 
 /** Where a job is worked by this resident: their own spot, or the job's in turn. */

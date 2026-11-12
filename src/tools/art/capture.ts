@@ -206,6 +206,19 @@ export async function capture(label: string): Promise<string> {
         .map((v) => `${v.view.name} ${pct(v.share)}`)
         .join(', ')}; Hag's Seat clip ${(south.clipFrames / FPS).toFixed(1)} s`;
     }
+    if (STAGE11_LABELS.has(label)) {
+      await page.close();
+      // CAPTURE_VIEWS=a,b re-takes only those views (no clip, no README), while tuning a view.
+      const only = process.env['CAPTURE_VIEWS']?.split(',') ?? null;
+      const list =
+        only === null ? STAGE11_VIEWS : STAGE11_VIEWS.filter((v) => only.includes(v.name));
+      const c = await southCapture(browser, out, list, only === null ? STAGE11_CLIP : null);
+      if (only !== null) return c.views.map((v) => `${v.view.name} ${pct(v.share)}`).join(', ');
+      writeFileSync(join(out, 'README.md'), stage11Readme(label, motion.share, c));
+      return `${out}: strand motion ${pct(motion.share)}, ${c.views
+        .map((v) => `${v.view.name} ${pct(v.share)}`)
+        .join(', ')}; clip ${(c.clipFrames / FPS).toFixed(1)} s`;
+    }
     if (FIGHT_LABELS.has(label)) {
       await page.close();
       const fight = await fightCapture(browser, out);
@@ -663,7 +676,7 @@ async function campStill(
 }
 
 /** Encodes recorded frames as an mp4 at 2x and a gif of the middle 320 x 180 at 12.5 fps. */
-function encodeClip(dir: string, out: string, name: string): void {
+function encodeClip(dir: string, out: string, name: string, small = false): void {
   const input = [
     '-y',
     '-loglevel',
@@ -686,7 +699,10 @@ function encodeClip(dir: string, out: string, name: string): void {
   execFileSync('ffmpeg', [
     ...input,
     '-vf',
-    'fps=12.5,crop=640:360:320:180,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    // Stage 11: `small` keeps a busy clip's GIF under 4 MB: 1x, 6.25 fps.
+    small
+      ? 'fps=6.25,crop=640:360:320:180,scale=320:180:flags=neighbor,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none'
+      : 'fps=12.5,crop=640:360:320:180,split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
     join(out, `${name}.gif`),
   ]);
 }
@@ -1127,15 +1143,17 @@ interface SouthCaptureResult {
 async function southCapture(
   browser: Awaited<ReturnType<typeof chromium.launch>>,
   out: string,
+  list: readonly SouthView[] = SOUTH_VIEWS,
+  clip: Stage11Clip | null = null,
 ): Promise<SouthCaptureResult> {
   const views: { view: SouthView; share: number }[] = [];
-  for (const view of SOUTH_VIEWS) {
+  for (const view of list) {
     const { share } = await campStill(browser, out, view.name, view.query);
     views.push({ view, share });
   }
   // The loops: 4 seconds at 1x, the camera held (as the mockups' loops are made).
   const loops: string[] = [];
-  for (const view of SOUTH_VIEWS.filter((v) => v.loop === true)) {
+  for (const view of list.filter((v) => v.loop === true)) {
     const dir = join(out, `.loop-${view.name}`);
     rmSync(dir, { recursive: true, force: true });
     mkdirSync(dir, { recursive: true });
@@ -1163,6 +1181,11 @@ async function southCapture(
     rmSync(dir, { recursive: true, force: true });
     loops.push(`${view.name}-loop.gif`);
   }
+  if (clip !== null) {
+    const frames = await stage11Clip(browser, out, clip);
+    return { views, clipFrames: frames, loops };
+  }
+  if (list !== SOUTH_VIEWS) return { views, clipFrames: 0, loops };
   // The clip: from the heath west of the stone, east past Runa and the stone, through the neck.
   const dir = join(out, '.south');
   rmSync(dir, { recursive: true, force: true });
@@ -1190,6 +1213,115 @@ async function southCapture(
   encodeClip(dir, out, 'hagseat-walk');
   rmSync(dir, { recursive: true, force: true });
   return { views, clipFrames: frames, loops };
+}
+
+/** Captures of Stage 11: the boat on the strand, the wreck's rigging, Seal Cave, the rites. */
+const STAGE11_LABELS = new Set(['stage-11']);
+
+const STAGE11_VIEWS: readonly SouthView[] = [
+  {
+    name: 'boat-wrecked',
+    what: 'The coastal boat as found, drawn up under the bank on Wreck Strand at 10:00: two strakes stove in, no mast, no steering oar; the salvaged boards in the debris to the east',
+    query: 'time=10:00&crew=1&zone=ZONE_SK_STRAND&at=45.5,30.6&camera=42.5,26.5',
+    loop: true,
+  },
+  {
+    name: 'boat-ready',
+    what: 'The boat patched, rigged and steered, with the extended hold, launch-ready on its rollers, 10:00',
+    query:
+      'time=10:00&crew=1&ship=hull,rig,oar&fit=hold&zone=ZONE_SK_STRAND&at=45.5,30.6&camera=42.5,26.5',
+    loop: true,
+  },
+  {
+    name: 'boat-work',
+    what: "The boards and the rigging laid by the boat and Runa at work on it (the shipwright's job), 11:00",
+    query: 'time=11:00&crew=1&lay=boards,rig&zone=ZONE_SK_STRAND&at=47.5,30.6&camera=42.5,27.5',
+  },
+  {
+    name: 'skerry',
+    what: 'The wreck on the skerry at low water, 17:30, its rigging fouled across the rocks, the flats open',
+    query: 'time=17:30&crew=1&zone=ZONE_SK_STRAND&at=24.5,44.6&camera=22.5,46.5',
+  },
+  {
+    name: 'sealcave',
+    what: "Seal Cave at low water, 17:20: the cliff and the cave's arch, the scavengers' skiff in its mouth with the steering oar, the scavengers by their fire on the shingle, the cove's sand and the sea",
+    query: 'time=17:20&crew=1&zone=ZONE_SK_SEALCAVE&at=51.5,29.6&camera=54.5,21.5',
+    loop: true,
+  },
+  {
+    name: 'shipsetting',
+    what: "Thorkel's ship of stones on the machair, 15:00, the household's rite done",
+    query: 'time=15:00&crew=1&rites=setting&zone=ZONE_SK_MACHAIR&at=26.5,37.6&camera=22.5,33.5',
+  },
+];
+
+interface Stage11Clip {
+  readonly query: string;
+  readonly keys: readonly string[];
+  readonly name: string;
+}
+
+/** Stage 11's clip: the steerer walks down from the moor to Seal Cave's cove, the camera following. */
+const STAGE11_CLIP: Stage11Clip = {
+  query: 'time=17:20&crew=1&zone=ZONE_SK_SEALCAVE&at=36.5,40.6',
+  keys: ['KeyD', 'KeyW'],
+  name: 'sealcave-walk',
+};
+
+async function stage11Clip(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+  clip: Stage11Clip,
+): Promise<number> {
+  const dir = join(out, '.clip');
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const page = await openCamp(browser, clip.query, true);
+  for (const k of clip.keys) await page.keyboard.down(k);
+  let frames = 0;
+  while (frames < FPS * 10) {
+    await step(page);
+    writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  }
+  for (const k of clip.keys) await page.keyboard.up(k);
+  await page.close();
+  encodeClip(dir, out, clip.name, true);
+  rmSync(dir, { recursive: true, force: true });
+  return frames;
+}
+
+function stage11Readme(label: string, strand: number, c: SouthCaptureResult): string {
+  const all = [strand, ...c.views.map((v) => v.share)];
+  return [
+    `# Capture: ${label}`,
+    '',
+    'Made by `npm run capture -- ' + label + '` (src/tools/art/capture.ts). Compare with',
+    '`docs/art/reference/` (Book 7 section 14), the Stage 11 mockup in `docs/art/mockups/stage-11/`',
+    'and the boat and props in `docs/art/stage-11/`.',
+    '',
+    '| File | What it is |',
+    '|---|---|',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
+    ...c.loops.map(
+      (l) => `| \`${l}\` | 4 s at 1x, 25 fps, the camera held: the view above as it moves |`,
+    ),
+    `| \`sealcave-walk.mp4\`, \`sealcave-walk.gif\` | ${(c.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 at 1x round the middle, 6.25 fps, to stay under 4 MB): the steerer walks north-east over the moor and down towards Seal Cave's cove, the camera following (the overlay shown) |`,
+    '',
+    '## Motion with the camera still',
+    '',
+    '| View | Continuous motion |',
+    '|---|---|',
+    `| Wreck Strand (41 frames over 6.4 s) | ${pct(strand)} |`,
+    ...c.views.map((v) => `| ${v.view.name} | ${pct(v.share)} |`),
+    `| Book 7 threshold | ${pct(MOTION_THRESHOLD)} |`,
+    '',
+    all.every((v) => v >= MOTION_THRESHOLD)
+      ? 'Every view meets the threshold.'
+      : '**A view is below the threshold: the stage is not done.**',
+    '',
+  ].join('\n');
 }
 
 function southReadme(label: string, strand: number, c: SouthCaptureResult): string {

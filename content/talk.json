@@ -844,6 +844,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.rest",
           "reply": "Talk",
           "act": "JOB:REST",
@@ -1091,6 +1097,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.rest",
           "reply": "Talk",
           "act": "JOB:REST",
@@ -1243,6 +1255,12 @@
           "end": true
         },
         {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
           "key": "p_steerer.talk.job.rest",
           "reply": "Talk",
           "act": "JOB:REST",
@@ -1392,6 +1410,12 @@
           "key": "p_steerer.talk.job.builder",
           "reply": "Talk",
           "act": "JOB:BUILDER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
           "end": true
         },
         {

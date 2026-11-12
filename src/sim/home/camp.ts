@@ -234,6 +234,8 @@ export type SiteUse =
   | { readonly kind: 'TALK'; readonly site: string; readonly target: Id }
   /** Stage 10: a search's words (site: the talk's id; target: who or what is spoken to). */
   | { readonly kind: 'SEARCH'; readonly site: string; readonly target: Id }
+  /** Stage 11: a repair's own act (site: take_oar, taking the steering oar from the skiff). */
+  | { readonly kind: 'REPAIR'; readonly site: string; readonly target: Id }
   | {
       readonly kind: 'REFUSE';
       readonly site: string;
@@ -427,6 +429,8 @@ export function finishWork(
   emit: (e: CampEvent) => void,
   advance: (minutes: number) => void,
   say: (lineKey: string) => void,
+  /** Stage 11: a "Repair the ship" action's site and its worker-minutes (the boat, the wreck). */
+  repair?: (site: string, workerMinutes: number) => void,
 ): void {
   const home = homeOf(world, ctx);
   const task = ctx.tasks.get(work.task);
@@ -488,6 +492,11 @@ export function finishWork(
     case 'TASK_BUILD': {
       output = task.cost.gameMinutes * k;
       addShelterWork(ctx, home, output, emit, say, true);
+      break;
+    }
+    case 'TASK_REPAIR_SHIP': {
+      output = task.cost.gameMinutes * k;
+      repair?.(work.site, output);
       break;
     }
   }

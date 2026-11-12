@@ -316,7 +316,7 @@ interface ShipInstance { id: Id; nameKey: string; hull: Id; fittings: Record<Slo
   cargo: CargoLot[]; aboard: Id[]; history: ShipLogEntry[]; isFlagship: boolean }
 function deriveStats(ship, crew, load): ShipStats   // pure; values from Book 10 section 05
 ```
-Every cargo lot takes one slot; livestock pens two; passengers beyond berths two each. Replacing a hull transfers name, marks, history and up to two fittings. Wear and repair follow Book 10.
+Stage 11 (decisions S11-2 and S11-3): the household's ship is `ships.flagship`; `ShipInstance` also holds where it lies on foot (`lies`), Chapter 1's repairs (`repairs`: HULL, RIGGING and STEERING_OAR, each LACKING, MATERIALS with work in worker-minutes, or DONE, and how it was come by) and a fitting under way (`fitting`); `fittings` is keyed by the hull's slot labels (content/hulls.json `slots`; a second midship is MIDSHIP_2). `deriveStats` reads every fitting's effect and drawback cells from Book 10 term by term; a ship lacking a repair is not seaworthy, and without rigging has no sail. Every cargo lot takes one slot; livestock pens two; passengers beyond berths two each. Replacing a hull transfers name, marks, history and up to two fittings. Wear and repair follow Book 10.
 
 ## 09 / Sea map
 *A graph of charted routes, resolved per watch, with weather, tide, stores and encounters.*

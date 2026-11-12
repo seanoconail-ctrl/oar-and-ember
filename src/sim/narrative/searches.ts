@@ -37,6 +37,8 @@ import { tileOf } from '../land/zoneMap.ts';
 import type { ZoneMap } from '../land/zoneMap.ts';
 import { stepResident } from '../people/residents.ts';
 import type { TalkState, WorldState } from '../world.ts';
+import { repairChoiceOpen } from './repairs.ts';
+import type { RepairsContext } from './repairs.ts';
 
 export const FACT_SEARCHES_OPEN = 'search.open';
 export const FACT_ODDI = 'search.oddi';
@@ -71,18 +73,26 @@ export const CAILLEACH = 'POWER_CAILLEACH';
 export interface SearchContext {
   readonly def: SearchesDef;
   readonly b: SearchBalance;
+  /** The searches' talks, and (Stage 11) the repairs' words, which play the same way. */
   readonly talks: ReadonlyMap<string, SearchTalkDef>;
+  /** Stage 11: the repairs, for their choices' conditions. */
+  readonly repairs: RepairsContext | null;
 }
 
 export function searchContext(
   content: Pick<Content, 'searches' | 'balance'>,
+  repairs: RepairsContext | null = null,
 ): SearchContext | null {
   const def = content.searches;
   if (def == null) return null;
   return {
     def,
     b: parseSearchBalance(content.balance),
-    talks: new Map(def.talks.map((t) => [t.id, t])),
+    talks: new Map([
+      ...def.talks.map((t): [string, SearchTalkDef] => [t.id, t]),
+      ...(repairs === null ? [] : [...repairs.talks]),
+    ]),
+    repairs,
   };
 }
 
@@ -273,8 +283,12 @@ export function searchUses(world: WorldState, ctx: SearchContext, map: ZoneMap):
 }
 
 /** Whether a choice can be taken now. */
-function choiceOpen(world: WorldState, when: string | undefined): boolean {
+function choiceOpen(world: WorldState, when: string | undefined, ctx: SearchContext): boolean {
   const onFoot = world.onFoot;
+  if (when !== undefined && ctx.repairs !== null) {
+    const open = repairChoiceOpen(world, ctx.repairs, when);
+    if (open !== null) return open;
+  }
   switch (when) {
     case undefined:
       return true;
@@ -298,7 +312,9 @@ export function searchOptions(world: WorldState, ctx: SearchContext): { key: str
   const def = ctx.talks.get(talk.scene ?? '');
   if (def === undefined) return [];
   return def.choices
-    .filter((c) => choiceOpen(world, c.when) && !(c.once === true && talk.topics.includes(c.key)))
+    .filter(
+      (c) => choiceOpen(world, c.when, ctx) && !(c.once === true && talk.topics.includes(c.key)),
+    )
     .map((c) => ({ key: c.key }));
 }
 
@@ -342,6 +358,8 @@ export interface SearchHooks {
   readonly fight: () => void;
   /** The scavengers take the silver and go. */
   readonly bargain: () => void;
+  /** Stage 11: a repairs' choice (a fitting, the carving, a trade, the rites). */
+  readonly repair?: (action: string) => void;
 }
 
 /** The steerer chooses option `index` of a search's words. */
@@ -384,6 +402,17 @@ export function chooseSearch(
       resolveBran(world, ctx, 'BARGAIN', emit);
       setFact(world, FACT_CHEST, 'GIVEN');
       setFact(world, FACT_WRECKERS, 'PAID');
+      return;
+    case 'FIT_HOLD':
+    case 'FIT_BOW':
+    case 'UNSHIP':
+    case 'CARVE':
+    case 'TRADE_SILVER':
+    case 'TRADE_FOOD':
+    case 'RITES_SETTING':
+    case 'RITES_SEA':
+      end();
+      hooks.repair?.(choice.do);
       return;
     case 'OFFER_CONFESSION':
     case 'OFFER_SEAX':
@@ -764,7 +793,8 @@ function stepBran(
   if (world.facts[FACT_WRECKERS] === 'PAID') {
     for (const id of WRECKERS) {
       const found = findActor(onFoot, id);
-      if (found === null) continue;
+      // Stage 11: only those still at the fold (at Seal Cave they are the cave's).
+      if (found?.zone !== d.zone) continue;
       const map = land.maps.get(found.zone);
       if (!found.visible || map === undefined) {
         remove(onFoot, id);
@@ -792,7 +822,7 @@ function stepBran(
   }
   // Gone unaware to their skiff in Seal Cave once the steerer has left the fold.
   if (world.facts[FACT_WRECKERS] === 'SEALCAVE' && onFoot.zone !== d.zone)
-    for (const id of WRECKERS) remove(onFoot, id);
+    for (const id of WRECKERS) if (findActor(onFoot, id)?.zone === d.zone) remove(onFoot, id);
   // Bran carries Thorkel home to the bier by the broch; there he lays him down.
   if (outcome === undefined || outcome === 'LOST' || world.facts[FACT_BRAN_HOME] === true) return;
   const bran = findActor(onFoot, d.person);

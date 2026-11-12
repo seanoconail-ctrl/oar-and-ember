@@ -1,0 +1,55 @@
+{
+  "sheet": "prop_shipsetting",
+  "kind": "prop",
+  "image": "prop_shipsetting.png",
+  "width": 152,
+  "height": 74,
+  "pivot": {
+    "x": 76,
+    "y": 68
+  },
+  "footprint": {
+    "w": 130,
+    "h": 30
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "marked": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "half": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "done": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 130,
+    "h": 14
+  },
+  "placeholder": false,
+  "frames": {
+    "marked/-/0": [
+      0,
+      0
+    ],
+    "half/-/0": [
+      0,
+      74
+    ],
+    "done/-/0": [
+      0,
+      148
+    ]
+  }
+}

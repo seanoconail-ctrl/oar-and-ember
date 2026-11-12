@@ -354,6 +354,7 @@ function workMinute(
   emit: Emit,
   say: (person: Id, key: string) => void,
   tile: number,
+  shipWork?: (person: Id, workerMinutes: number) => void,
 ): void {
   const task = act.task === undefined ? undefined : camp.tasks.get(act.task);
   if (task === undefined || act.job === undefined) return;
@@ -395,6 +396,10 @@ function workMinute(
         say(p.id, line);
       });
       return;
+    case 'SHIPWRIGHT':
+      // Stage 11: a minute's work at the boat (a repair, the fitting, or Runa's carving).
+      shipWork?.(p.id, k);
+      return;
     default:
       return;
   }
@@ -435,6 +440,8 @@ export function peopleMinute(
   opener: Id | null,
   emit: Emit,
   say: (person: Id, key: string) => void,
+  /** Stage 11: a resident's minute at the boat. */
+  shipWork?: (person: Id, workerMinutes: number) => void,
 ): void {
   const home = homeOf(world, camp);
   if (home === undefined) return;
@@ -483,7 +490,7 @@ export function peopleMinute(
     }
     if (act.kind === 'SLEEP' && !home.fire.lit) p.life.coldTonight = true;
     if (act.kind === 'WORK') {
-      workMinute(world, ctx, camp, p, act, home, emit, say, tile);
+      workMinute(world, ctx, camp, p, act, home, emit, say, tile, shipWork);
       if (act.task !== undefined) meet(world, p, act.task, false);
       // Working beside the steerer: an hour of it is time spent (Book 10).
       const beside =

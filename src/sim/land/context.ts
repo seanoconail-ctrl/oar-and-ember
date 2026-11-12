@@ -14,6 +14,9 @@ import { parseCombatBalance } from '../../content/combatBalance.ts';
 import { fightContext } from './fight.ts';
 import { peopleContext } from '../people/context.ts';
 import { searchContext } from '../narrative/searches.ts';
+import { repairsContext } from '../narrative/repairs.ts';
+import { shipDefsOf } from '../ship/ship.ts';
+import { parseWorkBalance } from '../../content/homeBalance.ts';
 import { bakeElevation } from '../../content/terrain/elevation.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
@@ -24,7 +27,17 @@ export function landContext(
     Partial<
       Pick<
         Content,
-        'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people' | 'combat' | 'searches'
+        | 'camp'
+        | 'balance'
+        | 'household'
+        | 'talk'
+        | 'scenes'
+        | 'people'
+        | 'combat'
+        | 'searches'
+        | 'repairs'
+        | 'hulls'
+        | 'fittings'
       >
     >,
   balance: unknown,
@@ -37,6 +50,15 @@ export function landContext(
       : fightContext({ combat: content.combat }, balance, parseTimeBalance(balance).daylight);
   const cb = fight === null ? null : parseCombatBalance(balance);
   for (const [zone, map] of content.zoneMaps) elevations.set(zone, bakeElevation(map.rows));
+  // Stage 11: the boat's repairs, its fitting and Thorkel's rites.
+  const repairs =
+    content.repairs == null || content.hulls === undefined || content.fittings === undefined
+      ? null
+      : repairsContext(
+          content.repairs,
+          shipDefsOf({ hulls: content.hulls, fittings: content.fittings, balance }),
+          parseWorkBalance(balance).workerDayMinutes,
+        );
   return {
     maps: content.zoneMaps,
     movement: parseMovementBalance(balance),
@@ -60,7 +82,10 @@ export function landContext(
     stamina: parseStaminaBalance(balance),
     camp: content.camp === undefined ? null : campContext({ camp: content.camp, balance }),
     searches:
-      content.searches == null ? null : searchContext({ searches: content.searches, balance }),
+      content.searches == null
+        ? null
+        : searchContext({ searches: content.searches, balance }, repairs),
+    repairs,
     people:
       content.household == null || content.people === undefined
         ? null

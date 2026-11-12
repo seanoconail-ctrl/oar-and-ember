@@ -1,0 +1,82 @@
+{
+  "sheet": "ship_t1_parts",
+  "kind": "building",
+  "image": "ship_t1_parts.png",
+  "width": 208,
+  "height": 196,
+  "pivot": {
+    "x": 104,
+    "y": 186
+  },
+  "footprint": {
+    "w": 208,
+    "h": 196
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "rig": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    },
+    "oar": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hold": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ready": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "rig/-/0": [
+      0,
+      0
+    ],
+    "rig/-/1": [
+      208,
+      0
+    ],
+    "rig/-/2": [
+      416,
+      0
+    ],
+    "rig/-/3": [
+      624,
+      0
+    ],
+    "oar/-/0": [
+      0,
+      196
+    ],
+    "hold/-/0": [
+      0,
+      392
+    ],
+    "bow/-/0": [
+      0,
+      588
+    ],
+    "ready/-/0": [
+      0,
+      784
+    ]
+  }
+}

@@ -3436,6 +3436,126 @@
       "section": "02",
       "origin": "assigned",
       "note": "Stage 10: the cairn and sheepfold's ambience (sheep, larks, the wind in the grass)."
+    },
+    {
+      "id": "ITEM_BOARDS",
+      "ref": "patch the hull with salvaged boards",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the four salvaged boards and their rivets, one load lying in the debris on Wreck Strand (Book 10 Carpentry, Hull patch (Chapter 1))."
+    },
+    {
+      "id": "ITEM_RIGGING",
+      "ref": "recover rigging from the wreck section on the skerry at low tide",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the mast, yard, sail and lines cut free of the wreck on the skerry, one load."
+    },
+    {
+      "id": "ITEM_STEERING_OAR",
+      "ref": "recover the steering oar from the scavengers' skiff in Seal Cave",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the steering oar, taken, traded for or carved new by Runa."
+    },
+    {
+      "id": "SCN_SK_SEALCAVE",
+      "ref": "A tide cave on the north-east cliffs where the wreck-scavengers hide their skiff",
+      "book": 4,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 11: the wreck-scavengers at their skiff in Seal Cave after the sheepfold (the steering oar's encounter)."
+    },
+    {
+      "id": "SFX_WORK_REPAIR",
+      "ref": "Work sounds for every homestead task",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 11: repairing the ship, rivets clenched on the strakes (Book 10 Repair the ship)."
+    },
+    {
+      "id": "SFX_RIGGING_CUT",
+      "ref": "recover rigging from the wreck section on the skerry at low tide",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the rigging cut free of the wreck."
+    },
+    {
+      "id": "SFX_LOAD_LAID",
+      "ref": "Carrying loot or wounded people slows movement and occupies hands",
+      "book": 1,
+      "section": "05",
+      "origin": "assigned",
+      "note": "Stage 11: a repair's load set down by the boat."
+    },
+    {
+      "id": "SFX_REPAIR_DONE",
+      "ref": "Repairs leave visible patches in newer timber and cloth",
+      "book": 7,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Stage 11: a repair finished."
+    },
+    {
+      "id": "SFX_OAR_TAKEN",
+      "ref": "recover the steering oar from the scavengers' skiff in Seal Cave",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the steering oar taken from the skiff."
+    },
+    {
+      "id": "SFX_FITTING_DONE",
+      "ref": "Every fitting is a trade-off with a visible change on the hull",
+      "book": 7,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 11: a fitting made."
+    },
+    {
+      "id": "SFX_FITTING_UNSHIPPED",
+      "ref": "One reversible customisation",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: a fitting taken off again."
+    },
+    {
+      "id": "SFX_STONES_SET",
+      "ref": "a stone ship-setting on the machair",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: the ship-setting's stones set."
+    },
+    {
+      "id": "SFX_SEA_BURIAL",
+      "ref": "a sea burial with gold for Rán",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Stage 11: Thorkel given to the sea."
+    },
+    {
+      "id": "MUS_LAMENT_THORKEL",
+      "ref": "Thorkel's lament",
+      "book": 11,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Stage 11: played at his rites."
+    },
+    {
+      "id": "AMB_SEALCAVE",
+      "ref": "A tide cave on the north-east cliffs where the wreck-scavengers hide their skiff",
+      "book": 4,
+      "section": "02",
+      "origin": "assigned",
+      "note": "Stage 11: Seal Cave's ambience."
     }
   ],
   "families": [

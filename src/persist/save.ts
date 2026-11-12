@@ -415,6 +415,15 @@ export const MIGRATIONS: readonly Migration[] = [
       return { ...state, facts };
     },
   },
+  {
+    from: 8,
+    describe:
+      "boat repairs and the first fitting (Stage 11): the household's boat in `ships`, with its repairs",
+    // Version 9 gives `ships` its Book 2 section 08 shape. A version 8 save has no ship: the
+    // simulation lays the wrecked coastal boat on the strand on its first tick, as a new campaign
+    // has it (content/repairs.json), lacking all three repairs; nothing else changes.
+    up: (state) => ({ ...state, ships: { ...(state['ships'] as Record<string, unknown>) } }),
+  },
 ];
 
 export interface ReadOptions {

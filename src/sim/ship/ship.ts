@@ -9,6 +9,7 @@
  * launched (`seaworthy` false); without rigging it has no sail, and its integrity is Book 10's
  * wreckedIntegrity until the hull is patched.
  */
+import { parseShipBalance } from '../../content/shipBalance.ts';
 import type { FittingRow, HullRow, ShipBalance, StatMods } from '../../content/shipBalance.ts';
 import type { Id } from '../../core/ids.ts';
 
@@ -134,6 +135,19 @@ export interface ShipLoad {
 }
 
 export const NO_LOAD: ShipLoad = { lots: 0, pens: 0, passengers: 0 };
+
+/** The ship's content: hull and fitting definitions, and Book 10 section 05's numbers. */
+export function shipDefsOf(content: {
+  readonly hulls: ShipDefs['hulls'];
+  readonly fittings: ShipDefs['fittings'];
+  readonly balance: unknown;
+}): ShipDefs {
+  return {
+    hulls: content.hulls,
+    fittings: content.fittings,
+    balance: parseShipBalance(content.balance),
+  };
+}
 
 /** The hull's slots, in order (content/hulls.json), MIDSHIP_2 for a second midship. */
 export function slotsOf(defs: ShipDefs, hull: Id): string[] {

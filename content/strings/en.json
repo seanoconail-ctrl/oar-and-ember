@@ -3120,5 +3120,326 @@
   },
   "ui.sound.south": {
     "text": "The southern island"
+  },
+  "ui.prompt.look_boat": {
+    "text": "{key}  Look the boat over"
+  },
+  "ui.prompt.look_boat_click": {
+    "text": "Right-click  Look the boat over"
+  },
+  "ui.prompt.cut_rigging": {
+    "text": "{key}  Cut the rigging free"
+  },
+  "ui.prompt.cut_rigging_click": {
+    "text": "Right-click  Cut the rigging free"
+  },
+  "ui.prompt.take_oar": {
+    "text": "{key}  Take the steering oar"
+  },
+  "ui.prompt.take_oar_click": {
+    "text": "Right-click  Take the steering oar"
+  },
+  "ui.prompt.rites": {
+    "text": "{key}  Speak with Hild about her father"
+  },
+  "ui.prompt.rites_click": {
+    "text": "Right-click  Speak with Hild about her father"
+  },
+  "task.name.repair_ship": {
+    "text": "Work on the boat"
+  },
+  "job.name.shipwright": {
+    "text": "working on the boat"
+  },
+  "p_steerer.talk.job.shipwright": {
+    "text": "Work on the boat with what we've laid by it."
+  },
+  "info.boat.look": {
+    "text": "The coastal boat, drawn up under the bank: six oars, clinker-built, older than any of you",
+    "tags": ["INFO"]
+  },
+  "info.boat.lack_hull": {
+    "text": "Two strakes stove in below the waterline: it wants boards and rivets",
+    "tags": ["INFO"]
+  },
+  "info.boat.lack_rigging": {
+    "text": "No mast, no yard, no sail: the wreck on the skerry still holds its rigging",
+    "tags": ["INFO"]
+  },
+  "info.boat.lack_oar": {
+    "text": "No steering oar on its quarter: the scavengers' skiff in Seal Cave has one",
+    "tags": ["INFO"]
+  },
+  "info.boat.ready": {
+    "text": "Patched, rigged and steered: the boat would float",
+    "tags": ["INFO"]
+  },
+  "info.boat.fit_hold": {
+    "text": "Hides and lashings go up amidships: more room for cargo, a heavier pull at the oars",
+    "tags": ["INFO"]
+  },
+  "info.boat.fit_bow": {
+    "text": "A platform of wreck timber goes up at the bow: a place to fight from, less room aft",
+    "tags": ["INFO"]
+  },
+  "p_steerer.boat.fit_hold": {
+    "text": "Make room amidships for cargo."
+  },
+  "p_steerer.boat.fit_bow": {
+    "text": "Raise a fighting platform at the bow."
+  },
+  "p_steerer.boat.unship_hold": {
+    "text": "Take the hold out again."
+  },
+  "p_steerer.boat.unship_bow": {
+    "text": "Take the bow platform down again."
+  },
+  "p_steerer.boat.carve": {
+    "text": "Runa, could you carve a new steering oar?"
+  },
+  "c_runa.repair.carve": {
+    "text": "From the wreck's yard. Two days, if nobody talks to me. Leave it with me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.repair.carved": {
+    "text": "There. A steering oar. Ash would have been better. It'll do.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.repair.boards_laid": {
+    "text": "Good boards. The rivets will come out of them clean enough.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.repair.rigging_laid": {
+    "text": "Half of this is knots. I like knots. Leave it with me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.repair.oar_laid": {
+    "text": "Father's boat had an oar like that. Lash it on tight.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.repair.hull_done": {
+    "text": "The strakes are closed. She'll float. Don't look at the patch.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.repair.rigging_done": {
+    "text": "Mast's stepped. Stays are set up. Don't whistle near it.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.repair.oar_done": {
+    "text": "There's a steering oar on the boat now. Somebody has to hold it. That's you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.repair.all_done": {
+    "text": "Patched, rigged, steered. Father would have hated this boat. That's how I know it's sound.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.repair.fitted": {
+    "text": "Fitted. If you want it off again, say so before I'm used to it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.repair.rigging_cut": {
+    "text": "The rigging comes free of the wreck",
+    "tags": ["INFO"]
+  },
+  "caption.repair.oar_taken": {
+    "text": "The steering oar is yours to carry",
+    "tags": ["INFO"]
+  },
+  "caption.repair.oar_seen": {
+    "text": "They saw you take it",
+    "tags": ["INFO"]
+  },
+  "caption.repair.unshipped": {
+    "text": "The fitting is taken off",
+    "tags": ["INFO"]
+  },
+  "e_wrecker_ketill.cave.open": {
+    "text": "You again. That's our skiff, and our oar. Say what you want or get off our beach.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.cave.open": {
+    "text": "Ketill's not here to talk. I am. What do you want with our skiff?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.cave.open": {
+    "text": "Don't. Please. There's only me. What do you want?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.cave.silver": {
+    "text": "The silver in Thorkel's chest, for your steering oar."
+  },
+  "p_steerer.cave.food": {
+    "text": "Three days of salt fish, for your steering oar."
+  },
+  "p_steerer.cave.take": {
+    "text": "Then we'll take it."
+  },
+  "e_wrecker_ketill.cave.silver": {
+    "text": "Silver. Now you talk sense. Take the oar. We'll row with a paddle.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.cave.food": {
+    "text": "Fish. We're hungry enough. Take it, then, and go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.cave.take": {
+    "text": "Try it.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.cave.silver": {
+    "text": "Silver's silver. It's yours.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.cave.food": {
+    "text": "Fish will do. Take the thing.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.cave.take": {
+    "text": "Come and get it, then.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.cave.silver": {
+    "text": "Yes. Yes, take it. Just go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.cave.food": {
+    "text": "Fish? Yes. Take it. Thank you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.cave.take": {
+    "text": "No! Stay back!",
+    "tags": ["VOICED"]
+  },
+  "c_hild.rites.raise": {
+    "text": "Father's lain there long enough. Rites, before we sail. Talk to me when you're ready.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.rites.ask": {
+    "text": "Father's rites. A ship of stones on the machair, looking out to sea. Or the sea itself, with Father's ring for Rán, a gift to bring into Rán's hall. You choose. I'd give Father to the sea.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.rites.setting": {
+    "text": "A ship of stones on the machair, where he can see the sea."
+  },
+  "p_steerer.rites.sea": {
+    "text": "The sea, with his gold ring for Rán."
+  },
+  "p_steerer.rites.not_yet": {
+    "text": "Not yet. When we're ready."
+  },
+  "c_hild.rites.chose_setting": {
+    "text": "Stones, then. Bran will carry Father up. We'll set them this afternoon. Come when they're up.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.rites.chose_sea": {
+    "text": "The sea. Thank you. We'll take Father down to the shore. Come when we're there.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.rites.not_yet": {
+    "text": "Not long. He's waited enough.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.rites.setting": {
+    "text": "He was the best steerer on the north coast. Now his ship is stone, and it won't sink.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.rites.setting": {
+    "text": "Christ keep him, and his own gods too, if they want him. I kept him as long as I could.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.rites.setting": {
+    "text": "Stem to the west, stern to the east. The stones are set right. He'll sail well.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.rites.setting": {
+    "text": "He paid me fair. Every time. That's more than most.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.rites.sea": {
+    "text": "Here's your ring, Father. Give it to her yourself. Tell her we're not coming yet.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.rites.sea": {
+    "text": "The sea had him first. Christ keep him in it.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.rites.sea": {
+    "text": "Gold in his hand. Rán won't turn him from her door.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.rites.sea": {
+    "text": "That ring would have fed us a month. Still. It's his.",
+    "tags": ["VOICED"]
+  },
+  "caption.rites.gather": {
+    "text": "The household goes to make Thorkel's rites",
+    "tags": ["INFO"]
+  },
+  "caption.rites.stones": {
+    "text": "The stones of the ship-setting are up",
+    "tags": ["INFO"]
+  },
+  "caption.rites.setting_done": {
+    "text": "Thorkel lies in his ship of stones",
+    "tags": ["INFO"]
+  },
+  "caption.rites.sea_done": {
+    "text": "The sea takes Thorkel and his ring",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.task_repair": {
+    "text": "Rivets clenched on the strakes",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.rigging_cut": {
+    "text": "A knife saws through rope",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.load_laid": {
+    "text": "A load set down by the boat",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.repair_done": {
+    "text": "The hull creaks, taking the work",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.oar_taken": {
+    "text": "The steering oar slides free",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.fitting_done": {
+    "text": "Lashings drawn tight",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.fitting_unshipped": {
+    "text": "Timber lifted out of the boat",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.work_adze": {
+    "text": "An adze shaping new wood",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.stones_set": {
+    "text": "Stones set in the turf",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sea_burial": {
+    "text": "A swell breaks over the shallows",
+    "tags": ["INFO"]
+  },
+  "caption.stinger.boat_ready": {
+    "text": "The boat made whole",
+    "tags": ["INFO"]
+  },
+  "caption.music.lament_thorkel": {
+    "text": "Thorkel's lament, keened over the lyre",
+    "tags": ["INFO"]
+  },
+  "caption.amb.sealcave": {
+    "text": "Surf in the cove, drips inside",
+    "tags": ["INFO"]
+  },
+  "ui.sound.repairs": {
+    "text": "Stage 11: the boat, Seal Cave and the rites"
   }
 }

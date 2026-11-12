@@ -221,7 +221,7 @@ def skiff(oar=True, facing_right=True):
         # The steering oar on the near quarter at the stern (the right end): the loom rising above
         # the gunwale, lashed at its boss with a withy, the broad blade down in the sand, and the
         # tiller across the stern.
-        ax, ay, bx, by = 92, 1, 104, 44
+        ax, ay, bx, by = 92, 1, 104, 36
         for k in range(70):
             f = k / 69
             x = ax + (bx - ax) * f

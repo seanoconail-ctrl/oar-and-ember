@@ -325,19 +325,17 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | stormDamage | 5 x storm strength x exposure / seaworthiness per watch |
 
 ### Chapter 1 repairs
-*Added for Stage 11 (decisions S11-4 to S11-12): the coastal boat's three repairs and its first fitting (Book 4 section 08, beats 4 and 5). Labour is in worker-days (section 03, workerDay: 8 game hours), added by whoever works on the boat at their skill: a resident with the shipwright's job, or the steerer by hand. Every material is one load found in the world and carried to the boat, never a count to gather (Book 3 Stage 11, check 3). The hull patch's materials and labour are the Carpentry row "Hull patch (Chapter 1)" (section 09).*
+*Added for Stage 11 (decisions S11-4 to S11-12): the coastal boat's three repairs and its first fitting (Book 4 section 08, beats 4 and 5). Labour is in worker-days (section 03, workerDay: 8 game hours), added by whoever works on the boat at their skill: a resident with the shipwright's job, or the steerer by hand. Every material is one load found in the world and carried to the boat, never a count to gather (Book 3 Stage 11, check 3). The hull patch's materials and labour are the Carpentry row "Hull patch (Chapter 1)" (section 09). Cutting the rigging free of the wreck on the skerry (at low water) and taking a fitting off are each one "Repair the ship" action (section 09, Homestead tasks: 30 game minutes, 2 stamina); a fitting taken off is fitted again for its labour again.*
 
 | Key | Value | Notes |
 |---|---|---|
 | wreckedIntegrity | 30 | The coastal boat as found, drawn up on Wreck Strand: strakes sprung and stove in; it cannot float |
 | patchedIntegrity | 80 | Patched with the salvaged boards; the patch is made good with iron after the first raid (Book 6 section 03) |
-| cutRigging | 30 game minutes, 2 stamina | Cutting the mast, yard, sail and lines free of the wreck on the skerry: one action at low water, then one load to carry |
 | rigging | 1 worker-day | Stepping the mast and setting up the salvaged rigging on the boat |
 | shipOar | 0.125 worker-day | Lashing a steering oar to its boss on the quarter |
 | carveOar | 2 worker-days | Runa carves a new steering oar from the wreck's yard; only a carpenter of skill 2 or more can (Book 4: "over two days") |
 | fitHold | 1 worker-day | The extended hold, made from salvage (hides, lashings and the wreck's thwarts): Chapter 1 has no iron |
 | fitBowPlatform | 1 worker-day | The raised bow platform, made from the wreck's timber |
-| unship | 30 game minutes, 1 stamina | A fitting taken off in one action at the boat; fitting it again costs its labour again |
 | oarFood | 3 rd | Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk |
 
 ## 06 / Combat timings

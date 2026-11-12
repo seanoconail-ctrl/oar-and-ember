@@ -1,0 +1,90 @@
+{
+  "sheet": "bld_sealcave",
+  "kind": "building",
+  "image": "bld_sealcave.png",
+  "width": 48,
+  "height": 276,
+  "pivot": {
+    "x": 0,
+    "y": 274
+  },
+  "footprint": {
+    "w": 48,
+    "h": 276
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "face": {
+      "frames": 15,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "face/-/0": [
+      0,
+      0
+    ],
+    "face/-/1": [
+      48,
+      0
+    ],
+    "face/-/2": [
+      96,
+      0
+    ],
+    "face/-/3": [
+      144,
+      0
+    ],
+    "face/-/4": [
+      192,
+      0
+    ],
+    "face/-/5": [
+      240,
+      0
+    ],
+    "face/-/6": [
+      288,
+      0
+    ],
+    "face/-/7": [
+      336,
+      0
+    ],
+    "face/-/8": [
+      384,
+      0
+    ],
+    "face/-/9": [
+      432,
+      0
+    ],
+    "face/-/10": [
+      480,
+      0
+    ],
+    "face/-/11": [
+      528,
+      0
+    ],
+    "face/-/12": [
+      576,
+      0
+    ],
+    "face/-/13": [
+      624,
+      0
+    ],
+    "face/-/14": [
+      672,
+      0
+    ]
+  }
+}

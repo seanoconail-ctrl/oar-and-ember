@@ -133,7 +133,7 @@ Recognition depends on what a witness could see: sail and device from far away, 
 *Ships in local scenes are walkable places built from modular segments, drawn at true tile length.*
 
 ### Construction
-Hulls are built from segments: **bow**, a repeatable **midship** segment (one per three to four tiles of length) and **stern**. The deck is a walkable layer with benches, mast step, cargo spaces and gunwale, drawn to the people scale of section 01 (gunwale height, bench height and spacing, the walkway). Each tier has its own segment set; segments are never stretched. The coastal boat on Wreck Strand is redrawn to the people scale at Stage 11, with its repairs (decision DB-1); until then it keeps its earlier drawing.
+Hulls are built from segments: **bow**, a repeatable **midship** segment (one per three to four tiles of length) and **stern**. The deck is a walkable layer with benches, mast step, cargo spaces and gunwale, drawn to the people scale of section 01 (gunwale height, bench height and spacing, the walkway). Each tier has its own segment set; segments are never stretched. The coastal boat on Wreck Strand is redrawn to the people scale at Stage 11, with its repairs (decision DB-1): a six-oared boat drawn up under the bank, broadside on, bow to the east, its hull wrecked or patched and its rigging, steering oar, fitting and launch-ready rollers drawn as layers over it (`ship_t1`, `ship_t1_parts`; decisions S11-1 and S11-22). The earlier drawing stays on the skerry as the wreck of Thorkel's boat, whose rigging the household salvages.
 
 ### States
 | System | States |

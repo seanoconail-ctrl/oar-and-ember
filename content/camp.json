@@ -54,6 +54,13 @@
       "skill": "building",
       "workLoop": "build",
       "sound": "TASK_BUILD"
+    },
+    "TASK_REPAIR_SHIP": {
+      "nameKey": "task.name.repair_ship",
+      "balanceRow": "Repair the ship",
+      "skill": "shipRepair",
+      "workLoop": "build",
+      "sound": "TASK_REPAIR"
     }
   },
   "sites": [

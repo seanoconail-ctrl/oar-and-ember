@@ -112,6 +112,18 @@ import {
 } from './narrative/searches.ts';
 import type { SearchContext, SearchEvent } from './narrative/searches.ts';
 import {
+  addShipWork,
+  boatLooked,
+  chooseRepair,
+  repairActionDone,
+  repairPlacedUses,
+  repairSetDown,
+  repairsHold,
+  stepRepairs,
+  takeOar,
+} from './narrative/repairs.ts';
+import type { RepairEvent, RepairsContext } from './narrative/repairs.ts';
+import {
   onLifted,
   onSetDown,
   onTideRefusal,
@@ -278,6 +290,7 @@ export type SimEvent =
   | PeopleEvent
   | FightEvent
   | SearchEvent
+  | RepairEvent
   /** The held finisher has begun on someone (Book 10 finisherHold). */
   | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
@@ -350,6 +363,8 @@ export interface SimWorldContext extends LandContext {
   readonly fight?: FightContext | null;
   /** Chapter 1's three searches and the Hag's Seat's sign (Stage 10). */
   readonly searches?: SearchContext | null;
+  /** Chapter 1's repairs, the first fitting and Thorkel's rites (Stage 11). */
+  readonly repairs?: RepairsContext | null;
 }
 
 export function createSimulation(
@@ -367,6 +382,7 @@ export function createSimulation(
   const people = land?.people ?? null;
   const fightCtx = land?.fight ?? null;
   const searchCtx = land?.searches ?? null;
+  const repairCtx = land?.repairs ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
@@ -879,6 +895,10 @@ export function createSimulation(
   const emitSearch = (e: SearchEvent): void => {
     events.emit(e);
   };
+  /** The repairs' events (Stage 11): onto the bus. */
+  const emitRepair = (e: RepairEvent): void => {
+    events.emit(e);
+  };
   /** What a search's choices do beyond the search (Stage 10). */
   const searchHooks = {
     giveUp: (item: Id): void => {
@@ -894,6 +914,25 @@ export function createSimulation(
     bargain: (): void => {
       const fw = fightWorld();
       if (fw !== null) endInBargain(fw);
+    },
+    repair: (action: string): void => {
+      if (repairCtx !== null) chooseRepair(state, repairCtx, action, repairHooks, emitRepair);
+    },
+  };
+  /** What the repairs' choices do beyond them (Stage 11). */
+  const repairHooks = {
+    work: (site: string): void => {
+      const onFoot = state.onFoot;
+      const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+      if (repairCtx === null || map === undefined) return;
+      const w = repairCtx.def.boat.work;
+      startWork('TASK_REPAIR_SHIP', site, { x: w.x * map.tile, y: w.y * map.tile });
+    },
+    fight: (): void => {
+      searchHooks.fight();
+    },
+    bargain: (): void => {
+      searchHooks.bargain();
     },
   };
 
@@ -1065,6 +1104,8 @@ export function createSimulation(
     const uses = camp === null ? [] : campUses(state, camp, map, onFoot.actors);
     // Stage 10: a search's words to open (Bran, Ketill, Runa, the stone).
     if (searchCtx !== null) uses.push(...searchPlacedUses(state, searchCtx, map));
+    // Stage 11: the boat, the wreck's rigging, the skiff's oar, the words at the cave and the bier.
+    if (repairCtx !== null) uses.push(...repairPlacedUses(state, repairCtx, map));
     return uses;
   };
 
@@ -1131,6 +1172,12 @@ export function createSimulation(
     if (onFoot === null) return;
     if (use.kind === 'SEARCH') {
       if (searchCtx !== null) startSearchTalk(state, searchCtx, use.site, emitSearch);
+      if (use.site === 'boat.look' && repairCtx !== null) boatLooked(state, repairCtx);
+      return;
+    }
+    if (use.kind === 'REPAIR') {
+      if (repairCtx !== null && use.site === 'take_oar')
+        takeOar(state, repairCtx, repairHooks, emitRepair);
       return;
     }
     if (camp === null) return;
@@ -1212,6 +1259,9 @@ export function createSimulation(
       const zoneMap = land.maps.get(onFoot.zone);
       if (searchCtx !== null && zoneMap !== undefined)
         searchSetDown(state, searchCtx, interaction.target, zoneMap, emitSearch);
+      // Stage 11: the boards, the rigging or the steering oar laid by the boat.
+      if (repairCtx !== null && zoneMap !== undefined)
+        repairSetDown(state, repairCtx, interaction.target, zoneMap, emitRepair);
       // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
       if (
         people !== null &&
@@ -1252,6 +1302,10 @@ export function createSimulation(
           advanceBy(m);
         },
         sayHild,
+        (site, workerMinutes) => {
+          if (repairCtx !== null)
+            repairActionDone(state, repairCtx, site, workerMinutes, emitRepair);
+        },
       );
     }
     // Lying down: after a few seconds the night passes.
@@ -1351,6 +1405,8 @@ export function createSimulation(
         land.opening?.caller ?? null,
         emitSearch,
       );
+    // Chapter 1 beats 4 to 6: the repairs, the fitting and Thorkel's rites (Stage 11).
+    if (repairCtx !== null) stepRepairs(state, repairCtx, land, tide.tidalGroundOpen, emitRepair);
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
     // a conversation's lines play; residents in earshot bark.
     if (people !== null && camp !== null) {
@@ -1362,7 +1418,7 @@ export function createSimulation(
         land,
         tide.tidalGroundOpen,
         land.opening?.caller ?? null,
-        (id) => searchHolds(state, searchCtx, id),
+        (id) => searchHolds(state, searchCtx, id) || repairsHold(state, repairCtx, id),
       );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
       barkTick(state, people, camp, map.tile, residents(state), emitPeople);
@@ -1472,7 +1528,18 @@ export function createSimulation(
     if (camp !== null) homeMinute(state, camp, steererAt(), emitCamp);
     if (camp !== null && people !== null) {
       const at = steererAt();
-      peopleMinute(state, people, camp, at, land?.opening?.caller ?? null, emitPeople, sayAs);
+      peopleMinute(
+        state,
+        people,
+        camp,
+        at,
+        land?.opening?.caller ?? null,
+        emitPeople,
+        sayAs,
+        (id, workerMinutes) => {
+          if (repairCtx !== null) addShipWork(state, repairCtx, workerMinutes, id, emitRepair);
+        },
+      );
       sceneMinute(state, people, camp, at?.tile ?? 24, emitPeople);
     }
     if (state.player.awake && minutesIntoDay(after, b) === collapseAt) {

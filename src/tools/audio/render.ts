@@ -76,6 +76,29 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['south:gale', 24, {}, 'south-hagseat-gale'],
   ['south:fold', 30, {}, 'south-cairn-fold'],
   ['south:SFX_TELL_CAILLEACH', 7, {}, 'tell-cailleach'],
+  // Stage 11: Seal Cave, every repair, fitting and rite sound, and Thorkel's lament.
+  ['repairs:sealcave', 24, {}, 'amb-sealcave'],
+  ...(
+    [
+      ['SFX_WORK_REPAIR', 3.5],
+      ['SFX_RIGGING_CUT', 3.5],
+      ['SFX_LOAD_LAID', 1.5],
+      ['SFX_REPAIR_DONE', 3],
+      ['SFX_OAR_TAKEN', 2],
+      ['SFX_FITTING_DONE', 2.5],
+      ['SFX_FITTING_UNSHIPPED', 2],
+      ['SFX_WORK_ADZE', 2.5],
+      ['SFX_STONES_SET', 3],
+      ['SFX_SEA_BURIAL', 4.5],
+      ['MUS_STINGER_BUILDING_FINISHED', 3.5],
+      ['MUS_LAMENT_THORKEL', 50],
+    ] as const
+  ).map(([id, s]): [string, number, Record<string, unknown>, string] => [
+    `repairs:${id}`,
+    s,
+    {},
+    id.toLowerCase().replace(/_/g, '-'),
+  ]),
   ['call:MUS_STINGER_DISPUTE', 3, {}, 'stinger-dispute'],
   ['call:MUS_STINGER_JUDGEMENT', 3, {}, 'stinger-judgement'],
   // Decision AU-10: footsteps by surface, walking and running.
