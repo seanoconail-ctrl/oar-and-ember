@@ -209,6 +209,7 @@ They want loot, not a death, and warn before they fight (Book 1 section 09; Book
 - No identical bark from the same speaker within ten minutes; no two speakers repeating the same line within a minute.
 - Priority: danger, orders, wounds, discoveries, reactions, idle.
 - Barks are text; as one appears its speaker's voice blip plays (Book 11 section 08). Nothing is voice-acted, and the steerer has no blip.
+- **In a fight, barks are the only lines on screen** (design addendum 2.5; section 10, "On-screen text: less of it"). One speech line shows at a time, so a new bark replaces the last; a fight's barks are short (under six words) so they read at a glance. Enemies' awareness is shown by their barks and bodies ("Who's there?", then "There!"), not by marks or words.
 
 ### Samples by category
 | Category | Samples |
@@ -271,13 +272,59 @@ Subtitles show two kinds of line, and they look different:
 |---|---|
 | Information lines | Under eight words, in the present tense, with a direction when it helps the player find the source. Plain, modern-neutral English: no glossary words, no slang, no period voice |
 | Edges | Walking into an edge gives one of three information lines, at most once in a few seconds (Book 10 section 25): *Nothing that way*; *The water's too deep*; *Too steep to climb*. They say why, never that the steerer "cannot" |
-| Actions | The opening's tactile moments have their captions: *The net parts*; *Sparks from the flint*; *The flame takes*; *The sail fills and settles*; *The lashing parts*; *A splash in the shallows*; *A door creaks open* |
+| Actions | The opening's tactile moments (*The net parts*; *Sparks from the flint*; *The flame takes*; *The sail fills and settles*; *The lashing parts*; *A splash in the shallows*; *A door creaks open*) are no longer captioned: each is seen and heard (design addendum 2.5; the audit below). Their strings may stay in the table, unshown |
 | Unmet speakers | A speaker the player has not met is named by what they appear to be ("Monk:", "Stranger:", "Ardcarn guard:") until introduced |
 | Hidden identities | A subtitle name never gives away a hidden identity: Nessa's secret, a disguised enemy, an outlaw prince |
-| Both at once | The information line sits above the speech line |
+| Both at once | The information line sits above the speech line; never more than one of each (below, "On-screen text: less of it") |
 | Italic | A real italic of the caption font, or a hand-made slanted variant if the font is a pixel font; crisp at 1x, never a blurred, synthetic skew |
 | Settings | Information captions can be turned off separately from speech subtitles (Book 2 section 21) |
 | Tags and lint | Every caption string is tagged `SPEECH` or `INFO`. Content lint checks that a `SPEECH` string has a speaker (it starts `{speaker}: `) and an `INFO` string has none (no "Name:" prefix, no quotation marks, under eight words) |
+
+### On-screen text: less of it
+Design addendum 2.5 section 2 (decisions DF-11 to DF-14): text stacked up and covered the action, and most of it was no use. The rules, for every line the game shows:
+- **One caption line and one speech line at most.** A new line replaces the old one of its kind; they never stack or queue. A repeated line is suppressed (an information line within 20 seconds; speech by the bark rules of section 08). Lines fade in and out quickly (Book 10 section 21, "On-screen text").
+- **At the bottom, clear of the action**: low and centred above the hotbar, information above speech.
+- **Cut what the picture or sound already says.** A caption is for what the player could not otherwise know: a sound from out of sight, a direction, a consequence off screen, a reason. A door that visibly opens, a flame that visibly takes, a kneeling foe, gets none.
+- **In a fight, only speech barks show** (Book 2 section 18). Combat is read by sight and sound: no line ever reports a hit, a block, a parry, a dodge, damage or a state, and there are no damage numbers or log. Information lines wait until the fight ends (one is kept, if still fresh), except **safety lines**, which show at once: the edge lines (*Nothing that way*; *The water's too deep*; *Too steep to climb*) and the neck's gale; a horn or the alarm, with its direction; a supernatural tell (*A hum under the water*, *Hooves on the water*, *Dripping, coming closer*, *Hail rattling on the standing stone*); a blade raised over a downed ally (*A blade raised over {target}*); the steerer down with an ally near (*Down. An ally can lift you*); and an arrow from a shooter out of sight (*An arrow whistles past*, with its direction).
+- **Tutorial prompts** ("W A S D to move", a timed task's press) and pickup tooltips fade out during story beats, scenes and talk, and whenever a speech line shows; they disappear for good once the player has done the thing; they never sit alongside a narrative line.
+- **Refusal words** beside the cursor stay: one or two words answering a press ("Too far", "No arrows"), one at a time. A refusal the body already shows has none.
+- An accessibility option, off by default, captions combat sounds in a fight, one line at a time (decision DF-14).
+
+#### The audit
+Every kind of message the game showed when design addendum 2.5 was written (`content/strings/en.json`, `src/scenes/playView.ts`, the audio router's sound captions), with what happens to it. **Keep** stays, under the rules above; **Cut** is no longer shown; **Merge** folds it into another line or another kind of message. Class is the information priority (Book 2 section 18): safety, direction, story or sound. A new kind of message needs a row here before it is shown.
+
+| Category | Examples (keys) | Where shown today | Verdict | How, after 2.5 |
+|---|---|---|---|---|
+| Speech: talk, barks, warnings, hints | `c_*.bark.*`, `c_*.talk.*`, `c_*.hint.*`, `c_*.warn.*`, `e_wrecker_*.bark.*` | Captions, up to three lines stacked with others | Keep | One speech line; a new one replaces it. The only lines in a fight, besides safety |
+| A distant call | `caption.voice.*_calling` with `caption.format.with_direction`, and the caller's speech line | Captions: an information line and a speech line | Keep | Direction class: the information line names the caller and direction, the speech line the words |
+| Someone walking up | `caption.voice.approach` ("{name}, coming over") | Captions | Cut | The person is seen walking up, and speaks on arrival |
+| Talk and search information | `caption.search.*`, `caption.scene.theft_found`, `info.boat.*`, `info.launch.not_yet` | Captions, and the talk panel | Keep | Story class (waits in a fight); `caption.search.neck_gale` is a safety line. In talk they stay in the talk panel |
+| A foe yields or runs | `caption.info.surrender`, `caption.info.flee` | Captions, in the fight | Cut | The kneeling, the weapon thrown down and the running show it |
+| Brought home, left behind | `caption.info.brought_home`, `caption.info.left_behind` | Captions | Keep | Story class: held until the fight ends (the one held line) |
+| A finishing blow raised; second wind | `caption.info.finish_warning`, `caption.info.second_wind` | Captions | Keep | Safety lines, shown in a fight |
+| Healing | `ui.heal.bind`, `ui.heal.eat`, `ui.heal.interrupted` | Captions | Cut | The kneeling loop and its sound show it; a cut-short heal shows the flinch |
+| Edges | `caption.edge.nothing`, `caption.edge.deep`, `caption.edge.steep` | Captions, once each 4 s | Keep | Safety lines |
+| Doors | `caption.door.open`, `caption.door.flap`, `caption.door.close` | Captions, and sound captions | Cut | The door is seen and heard opening |
+| The opening's actions | `caption.action.*` (the net parts, sparks, the flame takes, the sail fills, the lashing parts, a splash) | Captions, and sound captions | Cut | Each has its animation, particles and sound (Book 7, Book 11) |
+| The opening's moments | `caption.net.wave`, `caption.wake.cough`, `caption.chest.*`, `caption.cold.storm`, `caption.cold.timber`, `caption.cold.strike`, `caption.ring.clink` | Captions and sound captions | Cut | Seen and heard |
+| Thorkel's shout in the cold open | `caption.cold.shout` | An information line beside his speech | Merge | Into his speech line, which names him |
+| The Hag's Stone | `caption.hag.light`, `caption.hag.hush`, `caption.hag.whisper`, `caption.hag.gust` | Captions and sound captions | Keep the light and the whisper; cut the hush and the gust | *A pale light, far off* gains its direction (direction class); *A whisper by the stone* is a sound with nothing seen (story class); the stillness and the gust are seen in the grass and the mist |
+| Music | `caption.music.*` | Sound captions | Cut | Music is mood, not information. The alarm drums merge into the horn's safety line |
+| Stingers | `caption.stinger.horn`, `.discovery`, `.dispute`, `.judgement`, `.boat_ready`, `.game_over`, `.chapter_end` | Sound captions | Keep the horn and the dispute; cut the rest | The horn is a safety line with its direction; *Trouble at the fire* is story class. The others are shown by their screens and scenes |
+| Combat sounds | `caption.sfx.light_attack`, `.heavy_swing`, `.hit_*`, `.block`, `.parry`, `.parry_ring`, `.guard_break`, `.charge_level_1`, `.charge_level_2`, `.dodge`, `.shove`, `.grunt`, `.steerer_breath`, `.riposte`, `.lunge`, `.backstab`, `.sidestep`, `.alert`, `.gore_*`, `.downed`, `.body_fall`, `.weapon_drop` | Sound captions, several at once in a fight | Cut | Read by sight and sound: the telegraph's draw-back and flash, sparks, the parry's spark, the bodies. Shown only with the combat sound captions option (off by default) |
+| Missile sounds | `caption.sfx.bow_draw`, `.bow_loose`, `.arrow_*`, `.spear_throw`, `.quiver_empty` | Sound captions | Cut, but for one | *An arrow whistles past* stays as a safety line when the shooter is out of sight, with its direction. The empty quiver is the refusal word *No arrows* |
+| Work, camp, repairs, rites and launch sounds and moments | `caption.sfx.task_*`, `.driftwood_pickup`, `.fire_*`, `.timing_good`, `.sleep`, `.pickup`, `.splash`, `.task_repair`, `.rigging_cut`, `.load_laid`, `.repair_done`, `.oar_taken`, `.fitting_*`, `.work_adze`, `.stones_set`, `.sea_burial`, `.beaching`, `.oar_*`, `.sail_*`, `caption.repair.*`, `caption.rites.*`, `caption.launch.*` | Sound captions and captions | Cut, but for one | Each is seen in its work loop or scene. *They saw you take it* (`caption.repair.oar_seen`) stays: a consequence not otherwise shown (story class) |
+| Supernatural tells | `caption.tell.*`, `caption.sfx.tell_ran` | Sound captions | Keep | Safety lines with their direction: a sound heard before anything is seen |
+| Footsteps and ambience | `caption.sfx.footsteps.*`, `caption.amb.*` | The sound test page only | Keep there | Never in play |
+| Interaction prompts | `ui.prompt.lift`, `.set_down`, `.pick_up`, `.talk`, `.task`, `.cut_net`, `.open_chest`, `.raise_shelter`, `.door`, `.finish` and their `_click` forms | The prompt line, one at a time | Keep | Hidden during story beats, scenes and talk |
+| Tutorial prompts | `ui.prompt.move`, `ui.prompt.timing` | The prompt line | Keep | Faded during story beats, talk and speech lines; gone once done (Book 10 `promptDone`) |
+| Notices in the prompt line | `ui.prompt.below_tide`, `.no_room`, `.hands_full`, `.need_wood`, `.too_early`; `ui.reason.*`; a crew member's "Cannot fight" | The prompt line, over the prompt | Merge | Into refusal words at the cursor ("Below the tide line", "No room", "Hands full", "No driftwood", "Too early to sleep"); a refused job into the person's reply in the talk panel; a refused order into the person's bark |
+| Refusal words | `ui.refusal.*` | Beside the cursor | Keep, but for one | One at a time, 1.2 s. *Too spent* (`ui.refusal.exhausted`) is cut: the exhausted body and breathing show it |
+| Pickup tooltips | `ui.tip.*` | Top right, once per item kind | Keep | Faded during story beats, talk and speech lines; gone after 8 s or once the controls are used twice; kept in the help pages |
+| The slot's name | an item's `item.name.*` | Above the hotbar, 1.5 s | Keep | |
+| Panels the player opens or the day brings | the clock, the stamina bar's reasons, the journal and morning report, the talk panel, the help pages, menus, game over, the launch's readiness, naming and mark panels, the chapter's end, the sea map's labels, the timings readout | Their own panels | Keep | Never in a fight (the safe rule closes menus); the morning report opens on waking only |
+| Marks over the world | the awareness "?" and "!", a crew order's icon, the lock-on mark, the stance arrow, the bars | The pixel layer | Keep; the awareness marks off by default | Drawn shapes, not text |
+| Strings never shown in play | `ui.activity.*`, `ui.work.result.*`, `ui.work.good`, `ui.play.zone.*`; `ui.play.label` (the canvas's screen-reader label only) | Nowhere on screen | Keep out | Not to be shown; the screen-reader label stays |
 
 ### Interface wording
 - Interface words are short, plain and the same everywhere: one word for one thing.
@@ -297,6 +344,7 @@ Subtitles show two kinds of line, and they look different:
 9. Interface words: short, plain, and the same word for the same thing everywhere.
 10. Does the speaker judge by their own culture's code, giving a period reason (section 16)?
 11. Is a caption string tagged `SPEECH` (with a speaker) or `INFO` (without one, under eight words)?
+12. Does an information line say something the picture and sound do not? Is it in the audit (section 10), with its class?
 
 ## 11 / Happiness, friendship and fear in speech
 *Nobody says "I am unhappy with you". People talk about the cold, the food, and what they saw the steerer do.*

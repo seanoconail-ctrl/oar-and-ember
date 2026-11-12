@@ -1,6 +1,6 @@
 {
  "title": "Oar and Ember balance sheet",
- "revision": "2.5",
+ "revision": "2.6",
  "source": "Book 10",
  "tables": {
   "timeAndTravel": {
@@ -124,7 +124,7 @@
     {
      "Mode": "Charge (heavy)",
      "Speed": "1.5",
-     "Notes": "While holding a heavy"
+     "Notes": "While holding a heavy. **Superseded by 2.5, removed when built:** no movement while a heavy is charged: starting any melee attack, a charge included, stops the fighter at once (section 06, \"Commitment\" and \"Movement and acceleration\")"
     },
     {
      "Mode": "Climb",
@@ -1103,99 +1103,122 @@
    "chargedHeavy": [
     {
      "Key": "level1At",
-     "Value": "18 ticks held: damage x1.5, vs shield x1.5, tell: glint"
+     "Value": "18 ticks held: damage x1.5, vs shield x1.5, tell: glint",
+     "Notes": ""
     },
     {
      "Key": "level2At",
-     "Value": "45 ticks held: damage x2.0, guard break (unblockable, parryable), tell: flash and sound"
+     "Value": "45 ticks held: damage x2.0, guard break (unblockable, parryable), tell: flash and sound",
+     "Notes": ""
     },
     {
      "Key": "maxHold",
-     "Value": "90 ticks, then auto-release"
+     "Value": "90 ticks, then auto-release",
+     "Notes": ""
     },
     {
      "Key": "releaseRecovery",
-     "Value": "Weapon recovery + 10 ticks"
+     "Value": "Weapon recovery + 10 ticks",
+     "Notes": "**Superseded by 2.5, removed when built:** each weapon's heavy and charged heavy have their own swing, active and recovery ticks (\"Frame data\"); the hold before the swing is part of the wind-up and its telegraph."
     },
     {
      "Key": "staminaCost",
-     "Value": "Weapon stamina x1.5 (L1), x2.0 (L2)"
+     "Value": "Weapon stamina x1.5 (L1), x2.0 (L2)",
+     "Notes": ""
     }
    ],
    "defence": [
     {
      "Key": "parryStartup",
-     "Value": "2 ticks"
+     "Value": "2 ticks",
+     "Notes": "**Superseded by 2.5, removed when built:** the parry's wind-up is 6 ticks (\"Parry\")."
     },
     {
      "Key": "parryWindow",
-     "Value": "8 ticks (option: up to 12)"
+     "Value": "8 ticks (option: up to 12)",
+     "Notes": "**Superseded by 2.5, removed when built:** the parry's active ticks (\"Parry\"), the same 8 (option up to 12)."
     },
     {
      "Key": "parryRecoveryOnMiss",
-     "Value": "18 ticks"
+     "Value": "18 ticks",
+     "Notes": "**Superseded by 2.5, removed when built:** a mistimed parry's recovery is 18 ticks after its active ticks (\"Parry\")."
     },
     {
      "Key": "parryCost",
-     "Value": "8 stamina, refunded on success"
+     "Value": "8 stamina, refunded on success",
+     "Notes": ""
     },
     {
      "Key": "blockArc",
-     "Value": "120 degrees front"
+     "Value": "120 degrees front",
+     "Notes": ""
     },
     {
      "Key": "dodge",
-     "Value": "20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles"
+     "Value": "20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles",
+     "Notes": "**Superseded by 2.5, removed when built:** \"Dodge\": 30 stamina; 4 ticks of start, a 12-tick dash of 1.25 tiles invulnerable on ticks 8 to 13, then 18 ticks of recovery."
     },
     {
      "Key": "shove",
-     "Value": "12 stamina; breaks block; target staggered 20 ticks"
+     "Value": "12 stamina; breaks block; target staggered 20 ticks",
+     "Notes": "Its stamina and stagger stand; its frames are \"Frame data\" (Unarmed, Shove)."
     }
    ],
    "fightRules": [
     {
      "Key": "strikeArc",
-     "Value": "100 degrees in front: a strike meets everyone within its reach there"
+     "Value": "100 degrees in front: a strike meets everyone within its reach there",
+     "Notes": ""
     },
     {
      "Key": "bodyRadius",
-     "Value": "0.3 tiles: reach is measured to the near edge of the body a strike meets"
+     "Value": "0.3 tiles: reach is measured to the near edge of the body a strike meets",
+     "Notes": ""
     },
     {
      "Key": "blockStun",
-     "Value": "10 ticks: a blow taken on the shield rocks the guard"
+     "Value": "10 ticks: a blow taken on the shield rocks the guard",
+     "Notes": ""
     },
     {
      "Key": "chargeFromPress",
-     "Value": "A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press"
+     "Value": "A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press",
+     "Notes": ""
     },
     {
      "Key": "heavySwing",
-     "Value": "A released charge swings with the weapon's windup before its active ticks"
+     "Value": "A released charge swings with the weapon's windup before its active ticks",
+     "Notes": "**Superseded by 2.5, removed when built:** each weapon's heavy and charged heavy swing with their own wind-up (\"Frame data\")."
     },
     {
      "Key": "chainWindow",
-     "Value": "A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped"
+     "Value": "A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped",
+     "Notes": "Kept: each light's chain window is in \"Frame data\". The queued light starts only when the recovery has ended (no cancels, design addendum 2.5)."
     },
     {
      "Key": "shoveTiming",
-     "Value": "Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles"
+     "Value": "Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles",
+     "Notes": "**Superseded by 2.5, removed when built:** the shove's and the shield bash's frames are \"Frame data\" (wind-up 8, active 3, recovery 16; reach and push unchanged)."
     },
     {
      "Key": "dodgeWay",
-     "Value": "With no direction held, a dodge goes straight back from the facing"
+     "Value": "With no direction held, a dodge goes straight back from the facing",
+     "Notes": ""
     },
     {
      "Key": "guardBreakHit",
-     "Value": "A level-2 charge that meets a raised shield breaks the guard and lands"
+     "Value": "A level-2 charge that meets a raised shield breaks the guard and lands",
+     "Notes": ""
     },
     {
      "Key": "blockNeedsShield",
-     "Value": "Only a shield blocks; without one the block key does nothing and says so"
+     "Value": "Only a shield blocks; without one the block key does nothing and says so",
+     "Notes": ""
     },
     {
      "Key": "missileDamage",
-     "Value": "An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost"
+     "Value": "An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost",
+     "Notes": ""
     }
    ],
    "vitalityStaminaAndArmour": [
@@ -1298,23 +1321,28 @@
    "runningOutOfStamina": [
     {
      "Key": "sprintEmpty",
-     "Value": "Drops to a walk until 25 stamina is regained"
+     "Value": "Drops to a walk until 25 stamina is regained",
+     "Notes": "**Superseded by 2.5, removed when built:** running out while running exhausts the runner as any empty bar does (\"Exhausted\": half speed until 30% of the maximum)."
     },
     {
      "Key": "heavyCarryEmpty",
-     "Value": "Sets the load down; can lift again at 25 stamina"
+     "Value": "Sets the load down; can lift again at 25 stamina",
+     "Notes": ""
     },
     {
      "Key": "climbEmpty",
-     "Value": "Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2"
+     "Value": "Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2",
+     "Notes": ""
     },
     {
      "Key": "swimEmpty",
-     "Value": "Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it"
+     "Value": "Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it",
+     "Notes": ""
     },
     {
      "Key": "waistWadeEmpty",
-     "Value": "Speed factor x0.5 again until 25 stamina is regained"
+     "Value": "Speed factor x0.5 again until 25 stamina is regained",
+     "Notes": ""
     }
    ],
    "staminaCapacity": [
@@ -1467,17 +1495,17 @@
     {
      "Key": "attackTurn",
      "Value": "Up to 30 degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery",
-     "Notes": "Attacks commit. Replaces combat v1's turnLock"
+     "Notes": "**Superseded by 2.5, removed when built:** no turning at all from the first wind-up tick to the end of recovery, locked on or not (\"Commitment\")"
     },
     {
      "Key": "dodgeCancel",
      "Value": "A light attack can be cancelled into a dodge in the first 4 ticks of its windup",
-     "Notes": "No other attack can be cancelled"
+     "Notes": "**Superseded by 2.5, removed when built:** there are no cancels: no attack can become a dodge (\"Commitment\")"
     },
     {
      "Key": "missRecovery",
      "Value": "+6 ticks of recovery for a swing that meets no one",
-     "Notes": "A missed swing matters (the spear's is longer, Weapon rules)"
+     "Notes": "**Superseded by 2.5, removed when built:** each move's miss recovery is in \"Frame data\" (seax +8 to Dane axe +26)"
     },
     {
      "Key": "drawnFacing",
@@ -1660,115 +1688,142 @@
    "weaponRules": [
     {
      "Key": "axeHook",
-     "Value": "A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double"
+     "Value": "A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double",
+     "Notes": ""
     },
     {
      "Key": "spearEdge",
-     "Value": "A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall)"
+     "Value": "A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall)",
+     "Notes": ""
     },
     {
      "Key": "spearKeep",
-     "Value": "A spear hit pushes the one struck back 0.3 tiles"
+     "Value": "A spear hit pushes the one struck back 0.3 tiles",
+     "Notes": ""
     },
     {
      "Key": "spearInside",
-     "Value": "Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer"
+     "Value": "Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer",
+     "Notes": ""
     },
     {
      "Key": "spearMiss",
-     "Value": "A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery"
+     "Value": "A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery",
+     "Notes": "**Superseded by 2.5, removed when built:** the spear's miss recoveries are in \"Frame data\" (+18 to +22)."
     },
     {
      "Key": "swordParry",
-     "Value": "A sword widens the parry window by 4 ticks"
+     "Value": "A sword widens the parry window by 4 ticks",
+     "Notes": ""
     },
     {
      "Key": "daneAxeGuard",
-     "Value": "Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped"
+     "Value": "Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped",
+     "Notes": ""
     },
     {
      "Key": "daneAxeHands",
-     "Value": "Two hands: no shield with it; it parries but cannot block"
+     "Value": "Two hands: no shield with it; it parries but cannot block",
+     "Notes": ""
     },
     {
      "Key": "seaxGuard",
-     "Value": "A seax's level-2 charge does not break a guard"
+     "Value": "A seax's level-2 charge does not break a guard",
+     "Notes": ""
     },
     {
      "Key": "seaxCuts",
-     "Value": "Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold)"
+     "Value": "Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold)",
+     "Notes": ""
     },
     {
      "Key": "mailCut",
-     "Value": "Mail: -40% from cuts"
+     "Value": "Mail: -40% from cuts",
+     "Notes": ""
     },
     {
      "Key": "mailThrust",
-     "Value": "Mail: -25% from thrusts and missiles"
+     "Value": "Mail: -25% from thrusts and missiles",
+     "Notes": ""
     },
     {
      "Key": "mailBlow",
-     "Value": "Mail: -10% from blows"
+     "Value": "Mail: -10% from blows",
+     "Notes": ""
     },
     {
      "Key": "padded",
-     "Value": "Padded: -10% from everything"
+     "Value": "Padded: -10% from everything",
+     "Notes": ""
     },
     {
      "Key": "shieldBreaks",
-     "Value": "A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped"
+     "Value": "A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped",
+     "Notes": ""
     }
    ],
    "lunge": [
     {
      "Key": "lungeWhen",
-     "Value": "An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach"
+     "Value": "An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach",
+     "Notes": ""
     },
     {
      "Key": "lungeDistance",
-     "Value": "1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge"
+     "Value": "1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge",
+     "Notes": ""
     },
     {
      "Key": "lungeTell",
-     "Value": "A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound"
+     "Value": "A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound",
+     "Notes": "Kept for the steerer's lunge. An enemy's lunge tell is 20 ticks (\"Telegraphs\")."
     },
     {
      "Key": "lungeStamina",
-     "Value": "The attack's stamina + 8"
+     "Value": "The attack's stamina + 8",
+     "Notes": ""
     },
     {
      "Key": "lungeRecovery",
-     "Value": "+8 ticks of recovery"
+     "Value": "+8 ticks of recovery",
+     "Notes": "**Superseded by 2.5, removed when built:** each weapon's lunge recovery is in \"Frame data\"; the lunge covers its distance in drawn strides during its wind-up, never a slide."
     }
    ],
    "parryAndRiposte": [
     {
      "Key": "parryWindow",
-     "Value": "As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4"
+     "Value": "As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4",
+     "Notes": "**Superseded by 2.5, removed when built:** \"Parry\" (design addendum 2.5) holds the parry's wind-up, active and recovery ticks and its overlap rule."
     },
     {
      "Key": "parryHitstop",
-     "Value": "14 ticks on both fighters, with a bright spark and a sharp ring"
+     "Value": "14 ticks on both fighters, with a bright spark and a sharp ring",
+     "Notes": ""
     },
     {
      "Key": "parryOpen",
-     "Value": "The parried attacker reels open for 60 ticks"
+     "Value": "The parried attacker reels open for 60 ticks",
+     "Notes": ""
     },
     {
      "Key": "riposteReach",
-     "Value": "The weapon's reach + 0.3 tiles: the riposter steps in"
+     "Value": "The weapon's reach + 0.3 tiles: the riposter steps in",
+     "Notes": ""
     },
     {
      "Key": "riposteTicks",
-     "Value": "Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead"
+     "Value": "Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead",
+     "Notes": ""
     },
     {
      "Key": "riposteDamage",
-     "Value": "x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked"
+     "Value": "x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked",
+     "Notes": ""
     },
     {
      "Key": "riposteFrames",
-     "Value": "The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37)"
+     "Value": "The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37)",
+     "Notes": "Kept: \"Frame data\" lists the same ticks for each weapon's riposte."
     }
    ],
    "poise": [
@@ -1804,19 +1859,23 @@
    "guard": [
     {
      "Key": "blockCost",
-     "Value": "0.6 x the attack's vs-shield damage + 4 stamina a block"
+     "Value": "0.6 x the attack's vs-shield damage + 4 stamina a block",
+     "Notes": ""
     },
     {
      "Key": "blockRegen",
-     "Value": "Half regeneration while the shield is up (as combat v1)"
+     "Value": "Half regeneration while the shield is up (as combat v1)",
+     "Notes": ""
     },
     {
      "Key": "guardBreak",
-     "Value": "Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks"
+     "Value": "Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks",
+     "Notes": "Kept for a level-2 charge, an axe hook and a Dane axe heavy. A block that empties the bar breaks the guard with \"Block\"'s larger stagger (guardBreakEmpty)."
     },
     {
      "Key": "blockArrows",
-     "Value": "A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock)"
+     "Value": "A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock)",
+     "Notes": ""
     }
    ],
    "hitReactions": [
@@ -1876,51 +1935,63 @@
    "healthStaminaAndHealing": [
     {
      "Key": "steererVitality",
-     "Value": "100 (unchanged)"
+     "Value": "100 (unchanged)",
+     "Notes": ""
     },
     {
      "Key": "residentVitality",
-     "Value": "100 for adult residents (unchanged)"
+     "Value": "100 for adult residents (unchanged)",
+     "Notes": ""
     },
     {
      "Key": "enemyVitality",
-     "Value": "Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte"
+     "Value": "Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte",
+     "Notes": ""
     },
     {
      "Key": "staminaMax",
-     "Value": "100"
+     "Value": "100",
+     "Notes": ""
     },
     {
      "Key": "staminaRegen",
-     "Value": "25 a second after 48 ticks without spending; half while blocking"
+     "Value": "25 a second after 48 ticks without spending; half while blocking",
+     "Notes": ""
     },
     {
      "Key": "exhausted",
-     "Value": "At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5"
+     "Value": "At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5",
+     "Notes": "**Superseded by 2.5, removed when built:** \"Exhausted\": at 0 stamina no attack, parry, shove, dodge, block or run, at half speed, until stamina is back to 30% of its maximum (the slower windups and recoveries are gone)."
     },
     {
      "Key": "bindWound",
-     "Value": "2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds"
+     "Value": "2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds",
+     "Notes": ""
     },
     {
      "Key": "eat",
-     "Value": "2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina"
+     "Value": "2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina",
+     "Notes": ""
     },
     {
      "Key": "healInterrupt",
-     "Value": "A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost"
+     "Value": "A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost",
+     "Notes": ""
     },
     {
      "Key": "healCarry",
-     "Value": "Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores)"
+     "Value": "Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores)",
+     "Notes": ""
     },
     {
      "Key": "bindingsFound",
-     "Value": "2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest"
+     "Value": "2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest",
+     "Notes": ""
     },
     {
      "Key": "afterFight",
-     "Value": "As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15)"
+     "Value": "As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15)",
+     "Notes": ""
     }
    ],
    "bars": [
@@ -1935,6 +2006,1216 @@
     {
      "Key": "enemyBar",
      "Value": "A thin health bar over the locked target, and over any enemy for 4 s after it was last hit"
+    }
+   ],
+   "commitment": [
+    {
+     "Key": "phases",
+     "Value": "Every action has wind-up ticks (the start, and the tell), active ticks (the hitbox, the parry or the guard live) and recovery ticks",
+     "Notes": "Attacks in \"Frame data\" and \"Enemy attacks\"; the parry, block and dodge in their own tables; a bow's draw, loose and recovery; healing as \"Health, stamina and healing\""
+    },
+    {
+     "Key": "locked",
+     "Value": "From the first wind-up tick to the last recovery tick the fighter cannot move, turn, dodge, block, parry or start another action",
+     "Notes": "Player and AI alike. A light pressed in a chain window is queued and starts only when the recovery has ended"
+    },
+    {
+     "Key": "noCancels",
+     "Value": "No action becomes another before its recovery ends",
+     "Notes": "A held charge can only be released (it swings); a drawn bow can only be loosed or let down, and letting it down plays the bow's recovery. Replaces dodgeCancel"
+    },
+    {
+     "Key": "facing",
+     "Value": "The facing is fixed at the first wind-up tick, locked on or not",
+     "Notes": "A target that steps aside makes the attack miss. Replaces attackTurn"
+    },
+    {
+     "Key": "stopOnAttack",
+     "Value": "The first wind-up tick of any melee attack (a charge included) sets the fighter's speed to zero at once",
+     "Notes": "The only ground an attack covers is its step, and a lunge's strides (\"Movement and acceleration\")"
+    },
+    {
+     "Key": "step",
+     "Value": "Each attack steps forward its fixed distance (\"Frame data\", Step) evenly over its active ticks",
+     "Notes": "Drawn as a planted step of the leading foot; never a slide or a drift"
+    },
+    {
+     "Key": "missRecovery",
+     "Value": "An attack whose active ticks meet no one adds its miss recovery (\"Frame data\", Miss recovery)",
+     "Notes": "A missed attack leaves the attacker highly vulnerable. Replaces missRecovery and spearMiss"
+    },
+    {
+     "Key": "punish",
+     "Value": "A hit on a fighter in a miss recovery, a mistimed parry's recovery, a dodge's recovery or a broken guard is a punish: hitstopHeavy (7 ticks) and x1.5 the blow's poise damage",
+     "Notes": "Shown by the hit's weight, never by text"
+    },
+    {
+     "Key": "needsStamina",
+     "Value": "An action that costs stamina starts only with stamina above 0; its cost may take the bar to 0, which exhausts the fighter (\"Exhausted\")",
+     "Notes": ""
+    },
+    {
+     "Key": "interrupt",
+     "Value": "A hit that breaks poise (a stagger or a knockdown) ends any action; a flinch does not",
+     "Notes": "As \"Poise\" and \"Hit reactions\""
+    }
+   ],
+   "frameData": [
+    {
+     "Weapon": "Seax",
+     "Move": "Light 1",
+     "Weight": "Light",
+     "Wind-up": "10",
+     "Active": "4",
+     "Recovery": "14",
+     "Miss recovery": "8",
+     "Step": "0.15",
+     "Stamina": "9",
+     "Chain window": "8"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Light 2",
+     "Weight": "Light",
+     "Wind-up": "10",
+     "Active": "4",
+     "Recovery": "14",
+     "Miss recovery": "8",
+     "Step": "0.15",
+     "Stamina": "9",
+     "Chain window": "8"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Light 3",
+     "Weight": "Light",
+     "Wind-up": "13",
+     "Active": "5",
+     "Recovery": "20",
+     "Miss recovery": "10",
+     "Step": "0.2",
+     "Stamina": "9",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Heavy",
+     "Weight": "Heavy",
+     "Wind-up": "12",
+     "Active": "5",
+     "Recovery": "24",
+     "Miss recovery": "12",
+     "Step": "0.25",
+     "Stamina": "14",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "14",
+     "Active": "5",
+     "Recovery": "28",
+     "Miss recovery": "14",
+     "Step": "0.3",
+     "Stamina": "18",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "7",
+     "Active": "4",
+     "Recovery": "7",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "9",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Seax",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "12",
+     "Active": "4",
+     "Recovery": "14",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "9",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Light 1",
+     "Weight": "Light",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "22",
+     "Miss recovery": "12",
+     "Step": "0.2",
+     "Stamina": "15",
+     "Chain window": "10"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Light 2",
+     "Weight": "Light",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "22",
+     "Miss recovery": "12",
+     "Step": "0.2",
+     "Stamina": "15",
+     "Chain window": "10"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Light 3",
+     "Weight": "Light",
+     "Wind-up": "20",
+     "Active": "6",
+     "Recovery": "28",
+     "Miss recovery": "14",
+     "Step": "0.25",
+     "Stamina": "15",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Heavy",
+     "Weight": "Heavy",
+     "Wind-up": "18",
+     "Active": "6",
+     "Recovery": "30",
+     "Miss recovery": "16",
+     "Step": "0.3",
+     "Stamina": "23",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "20",
+     "Active": "7",
+     "Recovery": "34",
+     "Miss recovery": "18",
+     "Step": "0.35",
+     "Stamina": "30",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "30",
+     "Miss recovery": "12",
+     "Step": "1.2",
+     "Stamina": "23",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "11",
+     "Active": "6",
+     "Recovery": "11",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "15",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "18",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "15",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Light 1",
+     "Weight": "Light",
+     "Wind-up": "15",
+     "Active": "6",
+     "Recovery": "20",
+     "Miss recovery": "18",
+     "Step": "0.25",
+     "Stamina": "14",
+     "Chain window": "10"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Light 2",
+     "Weight": "Light",
+     "Wind-up": "17",
+     "Active": "6",
+     "Recovery": "24",
+     "Miss recovery": "18",
+     "Step": "0.25",
+     "Stamina": "14",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Heavy",
+     "Weight": "Heavy",
+     "Wind-up": "18",
+     "Active": "7",
+     "Recovery": "28",
+     "Miss recovery": "20",
+     "Step": "0.35",
+     "Stamina": "21",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "20",
+     "Active": "7",
+     "Recovery": "32",
+     "Miss recovery": "22",
+     "Step": "0.4",
+     "Stamina": "28",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "28",
+     "Miss recovery": "18",
+     "Step": "1.5",
+     "Stamina": "22",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "10",
+     "Active": "6",
+     "Recovery": "10",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "14",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "18",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "14",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Spear, thrown",
+     "Move": "Throw",
+     "Weight": "Heavy",
+     "Wind-up": "18",
+     "Active": "2",
+     "Recovery": "24",
+     "Miss recovery": "-",
+     "Step": "0",
+     "Stamina": "16",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Light 1",
+     "Weight": "Light",
+     "Wind-up": "12",
+     "Active": "5",
+     "Recovery": "16",
+     "Miss recovery": "10",
+     "Step": "0.2",
+     "Stamina": "12",
+     "Chain window": "9"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Light 2",
+     "Weight": "Light",
+     "Wind-up": "12",
+     "Active": "5",
+     "Recovery": "16",
+     "Miss recovery": "10",
+     "Step": "0.2",
+     "Stamina": "12",
+     "Chain window": "9"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Light 3",
+     "Weight": "Light",
+     "Wind-up": "15",
+     "Active": "5",
+     "Recovery": "22",
+     "Miss recovery": "12",
+     "Step": "0.25",
+     "Stamina": "12",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Heavy",
+     "Weight": "Heavy",
+     "Wind-up": "15",
+     "Active": "6",
+     "Recovery": "26",
+     "Miss recovery": "14",
+     "Step": "0.3",
+     "Stamina": "18",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "17",
+     "Active": "6",
+     "Recovery": "30",
+     "Miss recovery": "16",
+     "Step": "0.35",
+     "Stamina": "24",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "13",
+     "Active": "5",
+     "Recovery": "24",
+     "Miss recovery": "10",
+     "Step": "1.2",
+     "Stamina": "20",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "10",
+     "Active": "5",
+     "Recovery": "9",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "12",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Sword",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "16",
+     "Active": "5",
+     "Recovery": "19",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "12",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Light 1",
+     "Weight": "Heavy",
+     "Wind-up": "24",
+     "Active": "7",
+     "Recovery": "32",
+     "Miss recovery": "20",
+     "Step": "0.3",
+     "Stamina": "26",
+     "Chain window": "12"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Light 2",
+     "Weight": "Heavy",
+     "Wind-up": "28",
+     "Active": "7",
+     "Recovery": "36",
+     "Miss recovery": "20",
+     "Step": "0.3",
+     "Stamina": "26",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Heavy",
+     "Weight": "Charged",
+     "Wind-up": "28",
+     "Active": "8",
+     "Recovery": "40",
+     "Miss recovery": "24",
+     "Step": "0.4",
+     "Stamina": "39",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "32",
+     "Active": "8",
+     "Recovery": "44",
+     "Miss recovery": "26",
+     "Step": "0.45",
+     "Stamina": "52",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "24",
+     "Active": "7",
+     "Recovery": "40",
+     "Miss recovery": "20",
+     "Step": "1.0",
+     "Stamina": "34",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "14",
+     "Active": "7",
+     "Recovery": "13",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "26",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "16",
+     "Active": "7",
+     "Recovery": "17",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "26",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Light 1",
+     "Weight": "Heavy",
+     "Wind-up": "20",
+     "Active": "6",
+     "Recovery": "26",
+     "Miss recovery": "16",
+     "Step": "0.25",
+     "Stamina": "20",
+     "Chain window": "10"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Light 2",
+     "Weight": "Heavy",
+     "Wind-up": "23",
+     "Active": "6",
+     "Recovery": "30",
+     "Miss recovery": "16",
+     "Step": "0.25",
+     "Stamina": "20",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Heavy",
+     "Weight": "Charged",
+     "Wind-up": "24",
+     "Active": "7",
+     "Recovery": "34",
+     "Miss recovery": "20",
+     "Step": "0.35",
+     "Stamina": "30",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "27",
+     "Active": "7",
+     "Recovery": "38",
+     "Miss recovery": "22",
+     "Step": "0.4",
+     "Stamina": "40",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "20",
+     "Active": "6",
+     "Recovery": "34",
+     "Miss recovery": "16",
+     "Step": "1.0",
+     "Stamina": "28",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Riposte",
+     "Weight": "Heavy",
+     "Wind-up": "13",
+     "Active": "6",
+     "Recovery": "13",
+     "Miss recovery": "-",
+     "Step": "0.3",
+     "Stamina": "20",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Move": "Backstab",
+     "Weight": "Heavy",
+     "Wind-up": "16",
+     "Active": "6",
+     "Recovery": "18",
+     "Miss recovery": "-",
+     "Step": "0.2",
+     "Stamina": "20",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Unarmed",
+     "Move": "Shove",
+     "Weight": "Light",
+     "Wind-up": "8",
+     "Active": "3",
+     "Recovery": "16",
+     "Miss recovery": "6",
+     "Step": "0.1",
+     "Stamina": "12",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Shield",
+     "Move": "Bash",
+     "Weight": "Light",
+     "Wind-up": "8",
+     "Active": "3",
+     "Recovery": "16",
+     "Miss recovery": "8",
+     "Step": "0.15",
+     "Stamina": "12",
+     "Chain window": "-"
+    },
+    {
+     "Weapon": "Hunting bow",
+     "Move": "Draw, loose, recover",
+     "Weight": "Light",
+     "Wind-up": "30",
+     "Active": "2",
+     "Recovery": "20",
+     "Miss recovery": "-",
+     "Step": "0",
+     "Stamina": "10",
+     "Chain window": "-"
+    }
+   ],
+   "enemyAttacks": [
+    {
+     "Attack": "Seax light",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "4",
+     "Recovery": "14",
+     "Miss recovery": "8",
+     "Step": "0.15",
+     "Stamina": "9",
+     "Tell": "A sharp breath; the blade drawn back to the hip",
+     "Used by": "Conn, civilians, outlaws, an archer's sidearm"
+    },
+    {
+     "Attack": "Seax heavy",
+     "Weight": "Heavy",
+     "Wind-up": "36 (hold 24, swing 12)",
+     "Active": "5",
+     "Recovery": "24",
+     "Miss recovery": "12",
+     "Step": "0.25",
+     "Stamina": "14",
+     "Tell": "Steel scraping; the blade drawn back high",
+     "Used by": "Outlaws"
+    },
+    {
+     "Attack": "Hand axe light",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "6",
+     "Recovery": "22",
+     "Miss recovery": "12",
+     "Step": "0.2",
+     "Stamina": "15",
+     "Tell": "A sharp breath; the axe drawn back over the shoulder",
+     "Used by": "Warriors, raiders, Ketill"
+    },
+    {
+     "Attack": "Hand axe heavy",
+     "Weight": "Heavy",
+     "Wind-up": "36 (hold 18, swing 18)",
+     "Active": "6",
+     "Recovery": "30",
+     "Miss recovery": "16",
+     "Step": "0.3",
+     "Stamina": "23",
+     "Tell": "A grunt and the haft's creak; the axe raised high, held",
+     "Used by": "Warriors, raiders, Ketill (it hooks a shield)"
+    },
+    {
+     "Attack": "Spear light",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "6",
+     "Recovery": "20",
+     "Miss recovery": "18",
+     "Step": "0.25",
+     "Stamina": "14",
+     "Tell": "A sharp breath; the spear drawn back along the arm",
+     "Used by": "Guards, raiders, Svart"
+    },
+    {
+     "Attack": "Spear heavy",
+     "Weight": "Heavy",
+     "Wind-up": "36 (hold 18, swing 18)",
+     "Active": "7",
+     "Recovery": "28",
+     "Miss recovery": "20",
+     "Step": "0.35",
+     "Stamina": "21",
+     "Tell": "Steel scraping; the spear drawn right back, the weight on the back foot",
+     "Used by": "Guards, raiders, Svart (48 at the dusk, svartWindup)"
+    },
+    {
+     "Attack": "Spear charged heavy",
+     "Weight": "Charged",
+     "Wind-up": "65 (hold 45, swing 20)",
+     "Active": "7",
+     "Recovery": "32",
+     "Miss recovery": "22",
+     "Step": "0.4",
+     "Stamina": "28",
+     "Tell": "The charge's creak, then its ring; the spear drawn back and trembling",
+     "Used by": "Guards, raiders"
+    },
+    {
+     "Attack": "Sword light",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "5",
+     "Recovery": "16",
+     "Miss recovery": "10",
+     "Step": "0.2",
+     "Stamina": "12",
+     "Tell": "A sharp breath; the blade drawn back across the body",
+     "Used by": "Warriors, huscarls"
+    },
+    {
+     "Attack": "Sword heavy",
+     "Weight": "Heavy",
+     "Wind-up": "36 (hold 21, swing 15)",
+     "Active": "6",
+     "Recovery": "26",
+     "Miss recovery": "14",
+     "Step": "0.3",
+     "Stamina": "18",
+     "Tell": "Steel scraping; the blade raised high, held",
+     "Used by": "Warriors, huscarls"
+    },
+    {
+     "Attack": "Dane axe light",
+     "Weight": "Heavy",
+     "Wind-up": "36",
+     "Active": "7",
+     "Recovery": "32",
+     "Miss recovery": "20",
+     "Step": "0.3",
+     "Stamina": "26",
+     "Tell": "A grunt and the haft's creak; the axe swung back behind the shoulder",
+     "Used by": "Huscarls"
+    },
+    {
+     "Attack": "Dane axe heavy",
+     "Weight": "Charged",
+     "Wind-up": "48 (hold 20, swing 28)",
+     "Active": "8",
+     "Recovery": "40",
+     "Miss recovery": "24",
+     "Step": "0.4",
+     "Stamina": "39",
+     "Tell": "A long grunt, steel scraping; the axe raised over the head and held",
+     "Used by": "Huscarls (it breaks a guard)"
+    },
+    {
+     "Attack": "Club or hammer light",
+     "Weight": "Heavy",
+     "Wind-up": "36",
+     "Active": "6",
+     "Recovery": "26",
+     "Miss recovery": "16",
+     "Step": "0.25",
+     "Stamina": "20",
+     "Tell": "A grunt and a creak of wood; the club drawn back low",
+     "Used by": "Outlaws, the Crowwick men"
+    },
+    {
+     "Attack": "Club or hammer heavy",
+     "Weight": "Charged",
+     "Wind-up": "48 (hold 24, swing 24)",
+     "Active": "7",
+     "Recovery": "34",
+     "Miss recovery": "20",
+     "Step": "0.35",
+     "Stamina": "30",
+     "Tell": "A long grunt; the club raised over the head and held",
+     "Used by": "Outlaws, the Crowwick men"
+    },
+    {
+     "Attack": "Lunge",
+     "Weight": "Charged",
+     "Wind-up": "48 (tell 20, strides 28)",
+     "Active": "The weapon's",
+     "Recovery": "The weapon's lunge recovery",
+     "Miss recovery": "The weapon's",
+     "Step": "The lunge distance",
+     "Stamina": "The weapon's + 8",
+     "Tell": "A scuff of feet and a drawn breath; the shoulders dip",
+     "Used by": "Any enemy with a lunging weapon, from beyond its reach"
+    },
+    {
+     "Attack": "Shove or shield bash",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "3",
+     "Recovery": "16",
+     "Miss recovery": "8",
+     "Step": "0.15",
+     "Stamina": "12",
+     "Tell": "A grunt; the shoulder or shield turned in",
+     "Used by": "Anyone"
+    },
+    {
+     "Attack": "Bow",
+     "Weight": "Light",
+     "Wind-up": "42 (settle 6, draw 36)",
+     "Active": "2",
+     "Recovery": "20",
+     "Miss recovery": "-",
+     "Step": "0",
+     "Stamina": "10",
+     "Tell": "The bow raised, the string's creak growing",
+     "Used by": "Archers, Conn (\"Archers\", section 07)"
+    },
+    {
+     "Attack": "Spear, thrown",
+     "Weight": "Heavy",
+     "Wind-up": "36",
+     "Active": "2",
+     "Recovery": "24",
+     "Miss recovery": "-",
+     "Step": "0",
+     "Stamina": "16",
+     "Tell": "The spear raised back over the shoulder, the arm held",
+     "Used by": "Raiders, guards"
+    },
+    {
+     "Attack": "Draugr blow",
+     "Weight": "Heavy",
+     "Wind-up": "36",
+     "Active": "7",
+     "Recovery": "30",
+     "Miss recovery": "20",
+     "Step": "0.3",
+     "Stamina": "0",
+     "Tell": "Dripping that quickens; the arm drawn back",
+     "Used by": "The draugr (the dead do not tire)"
+    },
+    {
+     "Attack": "Draugr grip",
+     "Weight": "Charged",
+     "Wind-up": "48",
+     "Active": "8",
+     "Recovery": "40",
+     "Miss recovery": "24",
+     "Step": "0.3",
+     "Stamina": "0",
+     "Tell": "Both arms raised, a wet rattle; cannot be blocked or parried, only dodged",
+     "Used by": "The draugr"
+    },
+    {
+     "Attack": "Wolf bite",
+     "Weight": "Light",
+     "Wind-up": "28",
+     "Active": "4",
+     "Recovery": "24",
+     "Miss recovery": "16",
+     "Step": "0.5",
+     "Stamina": "10",
+     "Tell": "A low growl, the body crouched",
+     "Used by": "Wolves (a leaping bite)"
+    },
+    {
+     "Attack": "Boar charge",
+     "Weight": "Charged",
+     "Wind-up": "48",
+     "Active": "30",
+     "Recovery": "40",
+     "Miss recovery": "30",
+     "Step": "Up to 4 tiles over the active ticks",
+     "Stamina": "20",
+     "Tell": "Snorting and pawing, the head lowered; cannot be parried; a shield takes it as a level-2 charge",
+     "Used by": "Boar"
+    },
+    {
+     "Attack": "Each-uisce drag",
+     "Weight": "Charged",
+     "Wind-up": "60",
+     "Active": "10",
+     "Recovery": "60",
+     "Miss recovery": "30",
+     "Step": "0",
+     "Stamina": "0",
+     "Tell": "The water bulging, a gurgle; only dodged (Book 4: bind or avoid)",
+     "Used by": "The each-uisce"
+    }
+   ],
+   "telegraphs": [
+    {
+     "Key": "floorLight",
+     "Value": "28 ticks",
+     "Notes": "The least wind-up of an enemy's light attack: seax, hand axe, spear and sword lights, the shove and the bash, a wolf's bite"
+    },
+    {
+     "Key": "floorHeavy",
+     "Value": "36 ticks",
+     "Notes": "Dane axe and club lights, every heavy (hold and swing together), a thrown spear, the draugr's blow"
+    },
+    {
+     "Key": "floorCharged",
+     "Value": "48 ticks",
+     "Notes": "Charged heavies, the Dane axe and club heavies, lunges, grips and the boar's charge (the each-uisce 60)"
+    },
+    {
+     "Key": "floorDraw",
+     "Value": "42 ticks",
+     "Notes": "An enemy archer's settle and draw before it looses"
+    },
+    {
+     "Key": "enemyLungeTell",
+     "Value": "20 ticks",
+     "Notes": "An enemy's lunge tell, before its strides (the steerer's stays lungeTell, 10)"
+    },
+    {
+     "Key": "drawBack",
+     "Value": "3 px for a light, 5 px for a heavy, 7 px for a charged attack",
+     "Notes": "How far the weapon is drawn back past its ready pose; a heavy or charged attack holds still at the top for its last 6 wind-up ticks before the swing"
+    },
+    {
+     "Key": "flash",
+     "Value": "1 frame, 28 ticks before the first active tick",
+     "Notes": "A subtle flash on the attacker's body and weapon, two palette steps lighter, never white. At the same lead for every attack, so from the flash to a well-timed parry press is always 15 to 22 ticks (\"Parry\"). With reduced flashes the weapon's ink edge brightens for that frame instead"
+    },
+    {
+     "Key": "sound",
+     "Value": "At the flash, panned to the attacker, louder with the weight",
+     "Notes": "A sharp breath (light); steel scraping (a bladed heavy or charged); a grunt and a creak of wood (an axe, club or Dane axe heavy); the charge's creak (level 1) and ring (level 2); a scuff and a drawn breath (lunge); the bow's creak (draw); a growl, a snort and pawing, a wet rattle or a gurgle for the beasts and the dead (Book 11 section 07)"
+    },
+    {
+     "Key": "enemyStrings",
+     "Value": "One attack per opening; warriors, raiders and huscarls may follow with a second light, which has its own full telegraph",
+     "Notes": "No enemy chains three"
+    },
+    {
+     "Key": "steererTells",
+     "Value": "The steerer's own attacks use \"Frame data\" without the floors; they are drawn with the same draw-back, and their sound is a breath",
+     "Notes": "The steerer has no voice (Book 11 section 08)"
+    },
+    {
+     "Key": "noText",
+     "Value": "No caption, number, word or log entry reports a hit, a block, a parry, damage or a state in a fight",
+     "Notes": "The bars, the lock-on mark and the hit reactions are the only interface in a fight (Book 8 section 10)"
+    }
+   ],
+   "movementAndAcceleration": [
+    {
+     "Mode": "Walk",
+     "To full speed": "9 ticks",
+     "To stop": "6 ticks",
+     "Speed": "Walk",
+     "Notes": ""
+    },
+    {
+     "Mode": "Run",
+     "To full speed": "24 ticks",
+     "To stop": "18 ticks",
+     "Speed": "Run",
+     "Notes": "From standing; from a walk 15 ticks. The run's two-frame stop (Book 7 section 17) plays over the stop"
+    },
+    {
+     "Mode": "Sneak",
+     "To full speed": "12 ticks",
+     "To stop": "6 ticks",
+     "Speed": "Sneak",
+     "Notes": ""
+    },
+    {
+     "Mode": "Back off",
+     "To full speed": "12 ticks",
+     "To stop": "7 ticks",
+     "Speed": "backOff",
+     "Notes": ""
+    },
+    {
+     "Mode": "Strafe",
+     "To full speed": "11 ticks",
+     "To stop": "7 ticks",
+     "Speed": "strafe",
+     "Notes": ""
+    },
+    {
+     "Mode": "Blocking",
+     "To full speed": "12 ticks",
+     "To stop": "6 ticks",
+     "Speed": "0.5 x the speed the way moved",
+     "Notes": "Walk, strafe or back off with the shield up; no running (\"Block\")"
+    },
+    {
+     "Mode": "Exhausted",
+     "To full speed": "15 ticks",
+     "To stop": "8 ticks",
+     "Speed": "0.5 x the speed the way moved",
+     "Notes": "No running (\"Exhausted\")"
+    },
+    {
+     "Mode": "Carry",
+     "To full speed": "18 ticks",
+     "To stop": "12 ticks",
+     "Speed": "Carry",
+     "Notes": ""
+    },
+    {
+     "Mode": "Charging or attacking",
+     "To full speed": "-",
+     "To stop": "0 ticks: stops at once",
+     "Speed": "0",
+     "Notes": "\"Commitment\"; replaces Charge (heavy)"
+    },
+    {
+     "Mode": "In mail",
+     "To full speed": "x1.25 the ticks",
+     "To stop": "x1.25 the ticks",
+     "Speed": "",
+     "Notes": ""
+    },
+    {
+     "Mode": "Heavy build",
+     "To full speed": "x1.25 the ticks",
+     "To stop": "x1.25 the ticks",
+     "Speed": "",
+     "Notes": "In mail as well, x1.5"
+    }
+   ],
+   "exhausted": [
+    {
+     "Key": "exhaustedAt",
+     "Value": "0 stamina, by any cost",
+     "Notes": "An attack, a parry, a shove, a dodge, a block's drain or running"
+    },
+    {
+     "Key": "exhaustedLocks",
+     "Value": "No attack, parry, shove, dodge, block or run",
+     "Notes": "A raised shield drops; a block that empties the bar is a guard break (\"Block\"). Binding a wound and eating are allowed"
+    },
+    {
+     "Key": "exhaustedSpeed",
+     "Value": "0.5 x the speed the way moved",
+     "Notes": "\"Movement and acceleration\""
+    },
+    {
+     "Key": "exhaustedUntil",
+     "Value": "30% of the current maximum",
+     "Notes": "30 at a full 100; the bar shows the threshold as a notch while exhausted"
+    },
+    {
+     "Key": "regenDelay",
+     "Value": "48 ticks after the last cost",
+     "Notes": "As staminaRegen (\"Health, stamina and healing\")"
+    },
+    {
+     "Key": "exhaustedRegenDelay",
+     "Value": "60 ticks after reaching 0",
+     "Notes": ""
+    },
+    {
+     "Key": "regenRate",
+     "Value": "25 a second; 20 a second while exhausted",
+     "Notes": "Half while blocking (staminaRegen)"
+    },
+    {
+     "Key": "exhaustedFor",
+     "Value": "2.5 real seconds from 0 at a full maximum",
+     "Notes": "1 s of delay and 1.5 s of refill: long enough to be punished"
+    },
+    {
+     "Key": "exhaustedLook",
+     "Value": "The exhausted idle (Book 7 section 01: bent, blowing hard) and a hard breathing sound; no word on screen",
+     "Notes": "The refusal word \"Too spent\" is cut (Book 8 section 10)"
+    },
+    {
+     "Key": "everyone",
+     "Value": "Enemies and the crew are exhausted by the same rule; the dead do not tire",
+     "Notes": "Their stamina is 100 (staminaMax)"
+    },
+    {
+     "Key": "traversal",
+     "Value": "Climbing, swimming and waist-deep wading keep their own empty-bar rules (\"Running out of stamina\"), which come first",
+     "Notes": ""
+    }
+   ],
+   "parry": [
+    {
+     "Key": "parryWindup",
+     "Value": "6 ticks",
+     "Notes": "The shield or blade comes up; nothing is parried yet"
+    },
+    {
+     "Key": "parryActive",
+     "Value": "8 ticks (option: up to 12); a sword +4",
+     "Notes": "As the old window and swordParry"
+    },
+    {
+     "Key": "parryRecovery",
+     "Value": "18 ticks after the active ticks, when nothing was parried",
+     "Notes": "The mistimed parry leaves the parrier open: a hit then is a punish (\"Commitment\")"
+    },
+    {
+     "Key": "parryOverlap",
+     "Value": "A blow is parried when its first active tick that would meet the parrier falls within the parrier's active ticks, inside blockArc",
+     "Notes": "A blow that lands during the parry's wind-up or recovery hits"
+    },
+    {
+     "Key": "parryTiming",
+     "Value": "So a parry is pressed 6 to 13 ticks before the blow's first active tick: in the attacker's wind-up, 15 to 22 ticks after its flash (\"Telegraphs\")",
+     "Notes": "With the option at 12, 6 to 17 ticks before"
+    },
+    {
+     "Key": "parryStun",
+     "Value": "The attacker is stunned (parried) for parryOpen, 60 ticks, after parryHitstop (14 ticks on both)",
+     "Notes": "\"Parry and riposte\""
+    },
+    {
+     "Key": "parrySettle",
+     "Value": "On a parry the parrier's remaining active and recovery ticks become a 6-tick settle; then it may riposte",
+     "Notes": "A riposte's wind-up starts inside the stun (\"Frame data\")"
+    },
+    {
+     "Key": "parryStamina",
+     "Value": "8, refunded on a parry",
+     "Notes": "Defence, parryCost"
+    },
+    {
+     "Key": "parryNot",
+     "Value": "Missiles, the draugr's grip, the boar's charge and the each-uisce's drag cannot be parried",
+     "Notes": ""
+    }
+   ],
+   "block": [
+    {
+     "Key": "blockRaise",
+     "Value": "6 ticks",
+     "Notes": "The shield comes up; the guard is live from the 7th tick"
+    },
+    {
+     "Key": "blockLower",
+     "Value": "6 ticks after the key is let go",
+     "Notes": ""
+    },
+    {
+     "Key": "blockSpeed",
+     "Value": "0.5 x the speed the way moved",
+     "Notes": "\"Movement and acceleration\""
+    },
+    {
+     "Key": "blockDrain",
+     "Value": "Guard's blockCost: 0.6 x the attack's vs-shield damage + 4 stamina a hit",
+     "Notes": "So the drain follows the blow's power: a level-1 charge's vs shield is x1.5 (\"Charged heavy\")"
+    },
+    {
+     "Key": "blockStun",
+     "Value": "10 ticks a hit",
+     "Notes": "Fight rules, blockStun"
+    },
+    {
+     "Key": "guardBreakEmpty",
+     "Value": "60 ticks of stagger, knocked back 4 px, the shield arm flung wide; then exhausted",
+     "Notes": "A hit that takes the blocker's stamina to 0"
+    },
+    {
+     "Key": "guardBreakOther",
+     "Value": "A level-2 charge, an axe hook or a Dane axe heavy break the guard as Guard says (open 50 ticks)",
+     "Notes": ""
+    },
+    {
+     "Key": "blockArc",
+     "Value": "120 degrees front",
+     "Notes": "Defence"
+    }
+   ],
+   "dodge": [
+    {
+     "Key": "dodgeStart",
+     "Value": "4 ticks",
+     "Notes": "A dip and a push-off; not invulnerable"
+    },
+    {
+     "Key": "dodgeDash",
+     "Value": "12 ticks covering 1.25 tiles, eased out",
+     "Notes": "The way held, else straight back (Fight rules, dodgeWay)"
+    },
+    {
+     "Key": "dodgeInvulnerable",
+     "Value": "Dash ticks 4 to 9 (ticks 8 to 13 of the dodge): 6 ticks",
+     "Notes": ""
+    },
+    {
+     "Key": "dodgeRecovery",
+     "Value": "18 ticks, feet planted, no action",
+     "Notes": "A hit then is a punish (\"Commitment\")"
+    },
+    {
+     "Key": "dodgeTotal",
+     "Value": "34 ticks",
+     "Notes": ""
+    },
+    {
+     "Key": "dodgeStamina",
+     "Value": "30",
+     "Notes": ""
     }
    ]
   },
@@ -2176,83 +3457,103 @@
    "fightersHabits": [
     {
      "Key": "decideEvery",
-     "Value": "6 ticks: each fighter chooses what to do 10 times a second"
+     "Value": "6 ticks: each fighter chooses what to do 10 times a second",
+     "Notes": "**Superseded by 2.5, removed when built:** fighting choices are made every 15 ticks (\"AI decisions\"); awareness still fills every 6."
     },
     {
      "Key": "reactChance",
-     "Value": "45%: a fighter who sees an attacker's tell defends before the blow lands"
+     "Value": "45%: a fighter who sees an attacker's tell defends before the blow lands",
+     "Notes": "Kept. A fighter's parry follows \"Parry\"'s predictive frames like anyone's, so it parries only blows whose wind-up gives it time; otherwise it blocks or backs off."
     },
     {
      "Key": "reactTicks",
-     "Value": "6 ticks after the tell at the soonest"
+     "Value": "6 ticks after the tell at the soonest",
+     "Notes": ""
     },
     {
      "Key": "parryShare",
-     "Value": "35% of a fighter's defences are parries when a shield is held; all are parries without one"
+     "Value": "35% of a fighter's defences are parries when a shield is held; all are parries without one",
+     "Notes": ""
     },
     {
      "Key": "heavyChance",
-     "Value": "20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield"
+     "Value": "20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield",
+     "Notes": ""
     },
     {
      "Key": "attackGap",
-     "Value": "0.5 to 1.2 s between one fighter's attacks while in reach"
+     "Value": "0.5 to 1.2 s between one fighter's attacks while in reach",
+     "Notes": "**Superseded by 2.5, removed when built:** each archetype's patience (\"Distances by archetype\") and the attack cooldown (\"AI decisions\")."
     },
     {
      "Key": "archerRange",
-     "Value": "4 to 7 tiles: an archer keeps this far from its target and shoots from there"
+     "Value": "4 to 7 tiles: an archer keeps this far from its target and shoots from there",
+     "Notes": ""
     },
     {
      "Key": "archerArrows",
-     "Value": "8 arrows in an enemy archer's quiver"
+     "Value": "8 arrows in an enemy archer's quiver",
+     "Notes": ""
     },
     {
      "Key": "searchSeconds",
-     "Value": "8: a fighter who loses sight of its target goes to where it was last known and searches"
+     "Value": "8: a fighter who loses sight of its target goes to where it was last known and searches",
+     "Notes": ""
     },
     {
      "Key": "crewFollow",
-     "Value": "2.5 tiles behind the steerer"
+     "Value": "2.5 tiles behind the steerer",
+     "Notes": ""
     },
     {
      "Key": "crewProtect",
-     "Value": "4 tiles: a protector fights anyone who comes this near the one it protects"
+     "Value": "4 tiles: a protector fights anyone who comes this near the one it protects",
+     "Notes": ""
     },
     {
      "Key": "fallBackFrom",
-     "Value": "3 tiles: an archer whose target comes nearer than this backs away before it shoots again"
+     "Value": "3 tiles: an archer whose target comes nearer than this backs away before it shoots again",
+     "Notes": "**Superseded by 2.5, removed when built:** \"Archers\": tooClose 3 tiles, one dash away, then reset or the sidearm."
     },
     {
      "Key": "orderLapse",
-     "Value": "60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day"
+     "Value": "60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day",
+     "Notes": ""
     },
     {
      "Key": "attackTokens",
-     "Value": "1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29)"
+     "Value": "1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29)",
+     "Notes": ""
     },
     {
      "Key": "tokenRest",
-     "Value": "2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29)"
+     "Value": "2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29)",
+     "Notes": ""
     },
     {
      "Key": "closeIn",
-     "Value": "0.85: a fighter closes to this share of its reach before it strikes"
+     "Value": "0.85: a fighter closes to this share of its reach before it strikes",
+     "Notes": ""
     },
     {
      "Key": "runAt",
-     "Value": "3 tiles: a fighter further than this from its target runs to it"
+     "Value": "3 tiles: a fighter further than this from its target runs to it",
+     "Notes": ""
     },
     {
      "Key": "crewRunAt",
-     "Value": "5 tiles: a follower further than this behind the steerer runs"
+     "Value": "5 tiles: a follower further than this behind the steerer runs",
+     "Notes": ""
     },
     {
      "Key": "guardHeld",
-     "Value": "40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold"
+     "Value": "40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold",
+     "Notes": ""
     },
     {
      "Key": "fledAt",
-     "Value": "9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is"
+     "Value": "9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is",
+     "Notes": ""
     }
    ],
    "occupiedSkarvholmGarrison": [
@@ -2362,7 +3663,7 @@
     },
     {
      "Key": "marks",
-     "Value": "A small \"?\" over the head while suspicious and a \"!\" for 2 s on turning alert; an option, on by default"
+     "Value": "A small \"?\" over the head while suspicious and a \"!\" for 2 s on turning alert; an option, off by default (design addendum 2.5: awareness shows by barks and body language; decision DF-9)"
     }
    ],
    "sneaking": [
@@ -2537,6 +3838,246 @@
     {
      "Key": "checkpoint",
      "Value": "An autosave before it (Book 2 section 20)"
+    }
+   ],
+   "aiStates": [
+    {
+     "State": "Idle",
+     "Enters when": "No hostile is alert to it, or the fight has ended",
+     "Does": "Its day: work, guard, patrol, or warn (Warnings)",
+     "Least time": "30 ticks"
+    },
+    {
+     "State": "Approach",
+     "Enters when": "Alert to a target farther off than its engage distance (\"Distances by archetype\")",
+     "Does": "Walks towards the target, running beyond runAt; a guard keeps to its post's leash",
+     "Least time": "30 ticks"
+    },
+    {
+     "State": "Circle",
+     "Enters when": "Within engage distance",
+     "Does": "Strafes round the target at its circle radius, facing it, at strafe speed; turns back at most once each 90 ticks; keeps out of a friend's line of attack",
+     "Least time": "45 ticks"
+    },
+    {
+     "State": "Wait for opening",
+     "Enters when": "In Circle and holding an attack token (attackTokens)",
+     "Does": "Holds at its circle radius, shield up if it has one, and watches; steps in on an opening it can take, or when its patience runs out",
+     "Least time": "20 ticks"
+    },
+    {
+     "State": "Attack",
+     "Enters when": "An opening it can take, or its patience run out",
+     "Does": "One closing step to its attack range at walking speed, then one attack (a second for warriors, raiders and huscarls; \"Telegraphs\", enemyStrings), or a lunge from beyond reach; feints at the feint share (Self-preservation)",
+     "Least time": "Until its recovery ends (\"Commitment\")"
+    },
+    {
+     "State": "Retreat",
+     "Enters when": "Its attack has ended, or the target has stepped inside its circle radius",
+     "Does": "Backs off to its circle radius at back-off speed, within stepOut (Self-preservation)",
+     "Least time": "30 ticks"
+    },
+    {
+     "State": "Recover stamina",
+     "Enters when": "Its stamina is below its archetype's recover-at share",
+     "Does": "Backs off to its circle radius + 2 tiles, shield lowered to refill at the full rate unless the target closes; back to Circle at 70%",
+     "Least time": "60 ticks"
+    },
+    {
+     "State": "Flee or surrender",
+     "Enters when": "Cohesion or wounds break it (Cohesion and surrender; Self-preservation, retreatAt)",
+     "Does": "Flees, begs or surrenders as before; cornered, it surrenders (decision DE-41)",
+     "Least time": "To the fight's end"
+    }
+   ],
+   "aiDecisions": [
+    {
+     "Key": "decisionInterval",
+     "Value": "15 ticks: a fighter chooses its state 4 times a second",
+     "Notes": "Each fighter's first choice is offset by 0 to 14 ticks on the ai stream, so a group never decides in step. Awareness still fills every decideEvery (6 ticks). Replaces decideEvery for fighting"
+    },
+    {
+     "Key": "circleRadius",
+     "Value": "The larger of its own attack range and the reach of the one it faces, + its circle margin",
+     "Notes": "\"Distances by archetype\"; with holdOff (Self-preservation) as the least"
+    },
+    {
+     "Key": "opening",
+     "Value": "The target in a miss recovery, a mistimed parry's recovery, a dodge's recovery, a broken guard, a stagger or a knockdown; exhausted, healing or drawing a bow; or with its back turned",
+     "Notes": "Read from what the fighter can see (the target's drawn state), never hidden numbers"
+    },
+    {
+     "Key": "takeOpening",
+     "Value": "It steps in only if it can walk to its attack range and finish its wind-up before the opening ends; otherwise it keeps waiting",
+     "Notes": "A melee enemy waits for the steerer's recovery before stepping in"
+    },
+    {
+     "Key": "attackCooldown",
+     "Value": "45 ticks after its own recovery ends before the same fighter starts another attack",
+     "Notes": "Replaces attackGap with patience"
+    },
+    {
+     "Key": "patience",
+     "Value": "By archetype (\"Distances by archetype\"); x1.5 when wounded (woundedAt)",
+     "Notes": "How long it waits in Wait for opening before it attacks, or feints, anyway"
+    },
+    {
+     "Key": "turnAround",
+     "Value": "It changes its circling direction at most once each 90 ticks, and never steps back and forth within one decision",
+     "Notes": "Its facing turns at turnRate (\"Stance and lock-on\")"
+    },
+    {
+     "Key": "sameRules",
+     "Value": "Fighters obey \"Commitment\", \"Movement and acceleration\", \"Exhausted\", \"Parry\", \"Block\" and \"Dodge\" exactly as the steerer does",
+     "Notes": "Only the telegraph floors are theirs alone (\"Telegraphs\")"
+    }
+   ],
+   "distancesByArchetype": [
+    {
+     "Archetype": "Civilian",
+     "Engage": "3",
+     "Circle margin": "0.3",
+     "Attack range": "Their tool or seax",
+     "Recover at": "40%",
+     "Patience": "2.0 to 3.0 s",
+     "Notes": "Fights only when cornered"
+    },
+    {
+     "Archetype": "Guard",
+     "Engage": "6",
+     "Circle margin": "0.5",
+     "Attack range": "Spear 1.8",
+     "Recover at": "35%",
+     "Patience": "2.5 to 4.0 s",
+     "Notes": "Holds its post (leash); shield up while it waits"
+    },
+    {
+     "Archetype": "Warrior",
+     "Engage": "5",
+     "Circle margin": "0.4",
+     "Attack range": "Hand axe 1.1 or sword 1.3",
+     "Recover at": "30%",
+     "Patience": "2.0 to 3.0 s",
+     "Notes": "Two in a string"
+    },
+    {
+     "Archetype": "Raider (Crowwick)",
+     "Engage": "5",
+     "Circle margin": "0.3",
+     "Attack range": "Hand axe 1.1 or spear 1.8",
+     "Recover at": "25%",
+     "Patience": "1.2 to 2.0 s",
+     "Notes": "The most aggressive; two in a string"
+    },
+    {
+     "Archetype": "Huscarl",
+     "Engage": "6",
+     "Circle margin": "0.4",
+     "Attack range": "Sword 1.3 or Dane axe 1.6",
+     "Recover at": "30%",
+     "Patience": "1.8 to 3.0 s",
+     "Notes": "Disciplined: keeps its place in a line; two in a string"
+    },
+    {
+     "Archetype": "Outlaw (and the wreck-scavengers)",
+     "Engage": "5",
+     "Circle margin": "0.4",
+     "Attack range": "Their weapon's",
+     "Recover at": "40%",
+     "Patience": "2.0 to 3.5 s",
+     "Notes": "Svart (spear), Ketill (hand axe, heavy build); Conn is an archer (\"Archers\")"
+    },
+    {
+     "Archetype": "Archer",
+     "Engage": "Its shooting range (\"Archers\")",
+     "Circle margin": "-",
+     "Attack range": "Bow; seax 0.8 when cornered",
+     "Recover at": "40%",
+     "Patience": "-",
+     "Notes": "\"Archers\""
+    },
+    {
+     "Archetype": "Draugr",
+     "Engage": "8",
+     "Circle margin": "-",
+     "Attack range": "Grip 0.9",
+     "Recover at": "Never",
+     "Patience": "-",
+     "Notes": "Does not circle or tire: walks steadily in and strikes in range"
+    },
+    {
+     "Archetype": "Wolf",
+     "Engage": "7",
+     "Circle margin": "0.8",
+     "Attack range": "Bite 0.7",
+     "Recover at": "30%",
+     "Patience": "1.0 to 2.0 s",
+     "Notes": "The pack circles at 2 to 3 tiles; one bites at a time (attackTokens)"
+    },
+    {
+     "Archetype": "Boar",
+     "Engage": "5",
+     "Circle margin": "-",
+     "Attack range": "Charge 1.0",
+     "Recover at": "-",
+     "Patience": "-",
+     "Notes": "Charges when cornered or hurt; turns and charges again 2 s after a charge ends"
+    },
+    {
+     "Archetype": "Each-uisce",
+     "Engage": "3 from the water's edge",
+     "Circle margin": "-",
+     "Attack range": "Drag 1.2",
+     "Recover at": "-",
+     "Patience": "-",
+     "Notes": "Book 4: avoid or bind"
+    }
+   ],
+   "archers": [
+    {
+     "Key": "shootFrom",
+     "Value": "4 to 7 tiles (archerRange)",
+     "Notes": "It walks to a spot in this band with a clear line before it draws"
+    },
+    {
+     "Key": "lineOfSight",
+     "Value": "A clear line from the bow to the target's body: no cover, closed door or friend in the way (section 21, Missiles, coverBlock)",
+     "Notes": "Without one it does not draw; it moves to a spot that has one"
+    },
+    {
+     "Key": "standStill",
+     "Value": "It settles for 6 ticks, then draws and looses (\"Enemy attacks\", Bow) and recovers for 20 ticks, all standing completely still",
+     "Notes": "It moves only between shots"
+    },
+    {
+     "Key": "tooClose",
+     "Value": "3 tiles",
+     "Notes": ""
+    },
+    {
+     "Key": "dashAway",
+     "Value": "Once: a hop back away from the target, 2 tiles over 18 ticks, 25 stamina, not invulnerable",
+     "Notes": "Drawn with the dodge frames"
+    },
+    {
+     "Key": "reset",
+     "Value": "12 ticks after the dash, then it re-evaluates: beyond tooClose it shoots again; within it, it is cornered",
+     "Notes": ""
+    },
+    {
+     "Key": "dashOnce",
+     "Value": "At most one dash in 6 real seconds",
+     "Notes": "Too close again within that, it is cornered"
+    },
+    {
+     "Key": "cornered",
+     "Value": "Deep water, a cliff edge, a wall or the zone's edge within 1.5 tiles behind it, or the target still within tooClose after the dash",
+     "Notes": "It draws its sidearm (20 ticks; a seax) and fights in melee as an outlaw for the rest of the fight (decision DE-41)"
+    },
+    {
+     "Key": "noArrows",
+     "Value": "Out of arrows it draws its sidearm the same way",
+     "Notes": "Section 13 of Book 2"
     }
    ]
   },
@@ -3362,6 +4903,16 @@
      "Key": "rescueGetUp",
      "Value": "4 real seconds",
      "Notes": "A rescued person set down gets up after this, walks to the camp (at the limp speed if hurt), takes up work, eats and sleeps under the shelter; no one is left sitting where they were found (decision DE-22)"
+    },
+    {
+     "Key": "rescueHome",
+     "Value": "Reaches the camp's fire within 3 game hours of getting up",
+     "Notes": "Whatever the time of day, the route taken home or what the steerer does next (leaving the zone at once, sleeping, fighting); checked by the rescue scenario test (Book 2 section 23; decision DF-18)"
+    },
+    {
+     "Key": "rescueStuck",
+     "Value": "30 real seconds",
+     "Notes": "A rescued person who is awake and not in talk, work, a meal or a scene, and has neither moved nor changed what they are doing for this long, is stuck: the rescue scenario test fails"
     }
    ],
    "thorkelSRites": [
@@ -5948,6 +7499,83 @@
      "Key": "finds",
      "Value": "1 to 4 arrows in a cache, a dead archer's quiver or a hunter's camp; traders sell them by the dozen (section 04)"
     }
+   ],
+   "onScreenText": [
+    {
+     "Key": "captionLines",
+     "Value": "1 information line and 1 speech line at most",
+     "Notes": "Information above speech, as before"
+    },
+    {
+     "Key": "captionReplace",
+     "Value": "A new line replaces the line of its kind at once, cross-fading over 0.15 real seconds",
+     "Notes": "Lines never stack or queue, except the one line held in a fight (heldAfterFight)"
+    },
+    {
+     "Key": "captionRepeat",
+     "Value": "The same information line is not shown again within 20 real seconds",
+     "Notes": "Speech repeats follow Book 8's bark rules (no identical bark from one speaker within ten minutes)"
+    },
+    {
+     "Key": "infoHold",
+     "Value": "2.5 real seconds, then a 0.4 s fade",
+     "Notes": ""
+    },
+    {
+     "Key": "speechHold",
+     "Value": "1.0 real second + 0.05 s a character, from 2 to 5 real seconds, then a 0.4 s fade",
+     "Notes": "Lines in the talk panel stay until the next"
+    },
+    {
+     "Key": "captionFadeIn",
+     "Value": "0.15 real seconds",
+     "Notes": ""
+    },
+    {
+     "Key": "captionPlace",
+     "Value": "Bottom centre, within the lowest 16% of the view, above the hotbar",
+     "Notes": "Clear of the steerer, who is drawn near the middle of the view"
+    },
+    {
+     "Key": "inFight",
+     "Value": "Any hostile alert to the steerer within 12 tiles, or a blow struck or taken by the steerer in the last 4 real seconds",
+     "Notes": "While so, only speech barks and safety lines show (Book 8 section 10)"
+    },
+    {
+     "Key": "heldAfterFight",
+     "Value": "One waiting information line is kept, the newest of the most important; it shows 1 real second after the fight ends if it is under 8 s old, else it is dropped",
+     "Notes": ""
+    },
+    {
+     "Key": "infoPriority",
+     "Value": "Safety, then a call's direction, then story information, then a sound",
+     "Notes": "When two information lines arrive together, the higher shows"
+    },
+    {
+     "Key": "promptFade",
+     "Value": "0.5 real seconds",
+     "Notes": "Tutorial prompts and pickup tooltips fade out, never blink off"
+    },
+    {
+     "Key": "promptQuiet",
+     "Value": "Tutorial prompts and pickup tooltips hide while a speech line, a story beat, a scene or a talk is showing, and come back 2 real seconds after it, unless done",
+     "Notes": "They never share the screen with a narrative line"
+    },
+    {
+     "Key": "promptDone",
+     "Value": "A tutorial prompt goes for good once its action is done",
+     "Notes": "Moving: 2 tiles walked. Use: the item used once. Its fade is promptFade"
+    },
+    {
+     "Key": "tipHold",
+     "Value": "A pickup tooltip shows for 8 real seconds of play, or until its controls have been used twice, then fades",
+     "Notes": "Kept in the help pages (Book 2 section 21)"
+    },
+    {
+     "Key": "refusalHold",
+     "Value": "A refusal word beside the cursor shows for 1.2 real seconds",
+     "Notes": "One at a time; a new one replaces it"
+    }
    ]
   },
   "storyGates": {
@@ -6394,6 +8022,78 @@
      "Key": "stingers",
      "Value": "No fade",
      "Notes": "Stingers alone start and stop sharply"
+    }
+   ],
+   "theStorm": [
+    {
+     "Key": "cursorHidden",
+     "Value": "The mouse cursor is hidden through the cold open, the black and the waking until the first input, and in every scene that takes control (the first night's fire, the rites, the launch)",
+     "Notes": "Shown again on the first mouse movement once control returns, or when a pointer use is offered. The cold open is steered with the movement keys"
+    },
+    {
+     "Key": "lightningEvery",
+     "Value": "6 to 14 real seconds between strikes",
+     "Notes": "One scripted strike shows the skerry ahead about 25 s in, before the hull strikes"
+    },
+    {
+     "Key": "lightningFlash",
+     "Value": "Bright for 4 ticks, dim for 3, bright for 3, then fading over 0.4 real seconds",
+     "Notes": "At most two flashes in any one second. The bright frames light the ship, the sea and the land to 70% of the day grade, with hard shadows thrown away from the strike"
+    },
+    {
+     "Key": "lightningReduced",
+     "Value": "With reduced flashes: one soft swell of light, 0.3 s up and 0.6 s down, at half strength",
+     "Notes": "No flicker"
+    },
+    {
+     "Key": "thunderAfter",
+     "Value": "0.6 to 3.0 real seconds after the flash, by the strike's distance",
+     "Notes": "A near strike is sooner and louder; the roll lasts 2.5 to 4 real seconds"
+    },
+    {
+     "Key": "fog",
+     "Value": "Two layers of mist over the water, drifting downwind at 0.3 and 0.6 tiles a second",
+     "Notes": "20 to 45% cover in ordered dither, thickest low over the swells, torn open by gusts; it never hides the steerer or the steering oar"
+    },
+    {
+     "Key": "lightVaries",
+     "Value": "The night grade varies by 12% either way in drifting patches about 8 tiles across, moving with the wind at 1.5 tiles a second",
+     "Notes": "Never a flat, uniform blue; the stern lantern's pool of 3 tiles swings with the ship"
+    },
+    {
+     "Key": "cameraSway",
+     "Value": "3 px up and down over the pitch's period and 2 px side to side over the roll's",
+     "Notes": "Whole pixels, eased; none with reduced motion. The strike on the skerry at the end keeps its own shake"
+    },
+    {
+     "Key": "pitch",
+     "Value": "The bow rises and falls up to 4 px, over 3.2 real seconds",
+     "Notes": "The people on deck move with it and brace"
+    },
+    {
+     "Key": "roll",
+     "Value": "The hull drawn in three roll frames (to port, level, to starboard) over 5.4 real seconds",
+     "Notes": "The mast's head sways 2 px with it"
+    },
+    {
+     "Key": "swells",
+     "Value": "Crests 3 to 4 tiles apart, rolling across at 1.2 tiles a second, with foam streaks animated along them",
+     "Notes": ""
+    },
+    {
+     "Key": "breakingWaves",
+     "Value": "A wave breaks against the hull every 3 to 6 real seconds",
+     "Notes": "A burst of 10 to 18 spray particles reaching 20 to 40 px up, falling back across the deck"
+    },
+    {
+     "Key": "greenWater",
+     "Value": "Green water comes over the side every 8 to 12 real seconds",
+     "Notes": "As before (Book 7 section 05)"
+    },
+    {
+     "Key": "rain",
+     "Value": "80 to 120 drops on screen, slanting 25 degrees downwind",
+     "Notes": ""
     }
    ]
   }

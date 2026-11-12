@@ -178,9 +178,13 @@ Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber 
 | Lunge and backstab (combat v2) | The lunge's tell is a scuff of feet and a drawn breath; the backstab is a short struggle, muffled, carrying only a few tiles |
 | Arrow dodge and awareness (combat v2) | A quick scuff for a sidestep; a suspicious enemy's "Who's there?" is a bark with its blip; turning alert, a sharp intake of breath and the weapon drawn |
 | Warnings | Spoken barks with blips, rising as the steerer comes on; a weapon drawn near them rings out of its sheath |
+| Telegraphs (design addendum 2.5) | Every enemy attack has a distinct sound at its tell's flash, 28 ticks before the blow lands (Book 10 section 06, "Telegraphs"), panned to the attacker and louder with the blow's weight: a sharp breath for a light attack; steel scraping for a bladed heavy or charged attack; a grunt and a creak of wood for an axe, club or Dane axe heavy; the charge's creak and ring; a scuff and a drawn breath for a lunge; the bow's creak as it is drawn; a low growl for a wolf, snorting and pawing for a boar, a wet rattle for the draugr's grip, a gurgle for the each-uisce. Each weight is told apart by ear, so a player can parry by sound alone. The steerer's own attacks have a breath only |
+| Commitment and stamina (design addendum 2.5) | A parry's wind-up is a short rasp of the guard coming up, distinct from the parry's ring; a block raised, a soft leather creak; a dodge, cloth, a push-off and a heavy landing; a missed attack, the whoosh carrying on into an overbalanced scuff; a guard broken by an empty bar, a splintering crack and a stagger grunt, longer than any other break; the exhausted, hard, ragged breathing until stamina is back to the threshold (the steerer's as breath, like every steerer sound). None has a caption in a fight (section 09) |
 
 ### Ships and sea
 Oar creak and splash in time with the stroke; sail flap, fill and strain; hull groan in storms; the scrape of beaching; grapnel and boarding-plank impacts; arrows into wood and shields.
+
+**The storm of the cold open** (design addendum 2.5 section 3; Book 10 section 25, "The storm"): **thunder** after every lightning flash, its delay and loudness by the strike's distance (a near strike a sharp crack splitting into a long roll, a far one only a low rumble, 2.5 to 4 seconds), never on the flash itself; the **wind** howling in the rigging, rising with each gust; **rain** hissing on the sea and drumming on the deck and the sail; **waves** breaking against the hull, a deep boom and a hiss of spray falling back across the deck, panned to the side they strike; **timber** groaning and the mast creaking in time with the pitch and roll, so the sound rocks with the picture; the torn sail flogging; Thorkel's shouts as voice blips. No music: the cold open is the storm alone (section 03). Under the new caption rules only Thorkel's speech has a line: the storm is seen.
 
 Every missile sound (section 07, Combat) has an information caption with its direction where it helps: *Bowstring, to the north*; *Arrow overhead*; *Arrow into timber*; *Arrow into the ground*; *Arrow on a shield*; *Arrow breaks on stone*; *Arrow into the water*. The whistle is captioned only when an arrow passes near the steerer, so a volley does not flood the captions.
 
@@ -201,7 +205,7 @@ Each sign has a unique, learnable audio tell, so a careful player can hear dange
 - **Ducking:** music ducks under blips and stingers; ambience ducks under combat.
 - **Loudness:** integrated about -16 LUFS for the master on the web; true peak below -1 dBTP. Music sits about -21 to -24 dBFS RMS, ambience about -22, so effects and tells stand out.
 - **Sliders:** master, music, ambience, effects, voice blips, and a separate slider for supernatural tells.
-- **Captions** for every gameplay-relevant sound, with direction where it helps ("Horn, north").
+- **Captions** for gameplay-relevant sounds the picture does not already show, with direction where it helps ("Horn, north"), one line at a time (Book 2 section 18). In a fight, combat sounds are read by ear and by their drawn twin (the telegraph's draw-back and flash, sparks, the parry's spark) and are not captioned; an accessibility option, off by default, captions them (design addendum 2.5; decision DF-14). Sound captions that only restate the picture (work, doors, the opening's actions, music) are cut (Book 8 section 10, the audit).
 - **Mono** option and a reduced dynamic range option for small speakers.
 - **Gore audio** follows the gore setting.
 
@@ -259,7 +263,8 @@ The game generates all of its own audio. No recordings, no commissioned composer
 - Doors and flaps opening and closing; the opening's tactile actions (section 07).
 - Music fades in gently from a single layer and fades out whenever it stops; only stingers start and stop sharply (section 03, "Fades").
 - Every supernatural sign has its own learnable sound tell (section 07).
-- Every gameplay-relevant sound keeps its caption.
+- Every gameplay-relevant sound that the picture does not show has its caption; combat sounds have a drawn twin instead and are captioned only with the accessibility option (section 09).
+- Every enemy attack has its telegraph sound, told apart by weight; the exhausted breathe hard; the cold open's storm has thunder after the lightning, wind, rain, breaking waves and timber rocking with the ship (sections 07 and "Ships and sea").
 
 ### Voice
 No voiced barks. Dialogue and barks stay as text, with a short voice blip for each speaker (their own pitch, timbre and rhythm). The steerer has no voice blip.
@@ -270,7 +275,7 @@ No voiced barks. Dialogue and barks stay as text, with a short voice blip for ea
 - Separate volume sliders for master, music, ambience, effects and voice blips, plus one for supernatural tells. Mono option. Within the Book 2 and section 10 budgets.
 
 ### How it is checked
-- `tests/unit/synth.test.ts`: every bar fits its metre; every pitched note is in its piece's mode in every season; no piece needs more than 8 voices; samples are deterministic, never clip and loop without a click; every combat sound and tell has a caption; every speaker has a voice of their own and the steerer none.
+- `tests/unit/synth.test.ts`: every bar fits its metre; every pitched note is in its piece's mode in every season; no piece needs more than 8 voices; samples are deterministic, never clip and loop without a click; every gameplay-relevant sound has a caption or, in a fight, a drawn twin, and every enemy attack weight has its telegraph sound; every speaker has a voice of their own and the steerer none.
 - `tests/browser/sound.spec.ts`: the sound test page offers every item; rendered offline, every item sounds and none clips, the hearth theme loops without a gap, and a raised alarm lands on the next bar line.
 - Listening back: `npm run audio:render` writes every item to `artifacts/audio/` with its levels, for spectrograms and a listen against this section before anything is shown to the user.
 

@@ -1,6 +1,6 @@
 # Oar and Ember, Book 10: Balance Sheet
 
-*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer, exploration density, and the opening, guidance and feel of design addendum 2.4 (section 25).*
+*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer, exploration density, the opening, guidance and feel of design addendum 2.4 (section 25), and the commitment, frame data, AI, on-screen text and storm of design addendum 2.5 (sections 06, 07, 21 and 25).*
 
 Numbers drift when they live in seven books. This book is the single source. The tables here are exported as `balance.json`, which the game reads; nothing is hard-coded.
 
@@ -55,7 +55,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | Walk | 2.0 | Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people) |
 | Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal). Running turns the body to the way of travel and breaks the combat stance's facing (section 06, "Stance and lock-on") |
 | Carry | 1.8 | Lot or person; attacks disabled |
-| Charge (heavy) | 1.5 | While holding a heavy |
+| Charge (heavy) | 1.5 | While holding a heavy. **Superseded by 2.5, removed when built:** no movement while a heavy is charged: starting any melee attack, a charge included, stops the fighter at once (section 06, "Commitment" and "Movement and acceleration") |
 | Climb | 1.0 | On marked climbing routes; drains stamina |
 | Wade | 2.0 | Walking speed in water before the depth band's speed factor (Water depth bands) |
 | Swim | 1.2 | Deep water where swimming is allowed; drains stamina |
@@ -342,46 +342,46 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | oarFood | 3 rd | Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk |
 
 ## 06 / Combat timings
-*Combat v2 (design addendum 2.4; decisions DE-1 to DE-13), built in the 2.4 rework: the combat v1 rows it replaced (the Weapons table, parryStagger, blockCost, turnLock, hitStagger, the stamina row's regeneration, padded, mail and hitStop) were removed in the same change, with the parsers moved to the v2 keys (decision DE-13). The tables from "Charged heavy" to "Stamina capacity" hold from Stage 9; those from "Stance and lock-on" are combat v2's.*
+*Combat v2 (design addendum 2.4; decisions DE-1 to DE-13), built in the 2.4 rework: the combat v1 rows it replaced (the Weapons table, parryStagger, blockCost, turnLock, hitStagger, the stamina row's regeneration, padded, mail and hitStop) were removed in the same change, with the parsers moved to the v2 keys (decision DE-13). The tables from "Charged heavy" to "Stamina capacity" hold from Stage 9; those from "Stance and lock-on" are combat v2's. **Design addendum 2.5** (decisions DF-1 to DF-6, DF-9 and DF-10) makes every action commit with wind-up, active and recovery ticks and no cancels, adds acceleration, a new exhausted state, a predictive parry, a slower block and a costlier dodge, and reads combat by sight and sound only; its tables are the last nine of this section, from "Commitment" to "Dodge". The rows they replace are marked "Superseded by 2.5, removed when built" and stay, with their values, while the built game still reads them (as decision DE-13 did for combat v1).*
 
 ### Charged heavy
-| Key | Value |
-|---|---|
-| level1At | 18 ticks held: damage x1.5, vs shield x1.5, tell: glint |
-| level2At | 45 ticks held: damage x2.0, guard break (unblockable, parryable), tell: flash and sound |
-| maxHold | 90 ticks, then auto-release |
-| releaseRecovery | Weapon recovery + 10 ticks |
-| staminaCost | Weapon stamina x1.5 (L1), x2.0 (L2) |
+| Key | Value | Notes |
+|---|---|---|
+| level1At | 18 ticks held: damage x1.5, vs shield x1.5, tell: glint |  |
+| level2At | 45 ticks held: damage x2.0, guard break (unblockable, parryable), tell: flash and sound |  |
+| maxHold | 90 ticks, then auto-release |  |
+| releaseRecovery | Weapon recovery + 10 ticks | **Superseded by 2.5, removed when built:** each weapon's heavy and charged heavy have their own swing, active and recovery ticks ("Frame data"); the hold before the swing is part of the wind-up and its telegraph. |
+| staminaCost | Weapon stamina x1.5 (L1), x2.0 (L2) |  |
 
 ### Defence
 *From Stage 9. The parry's reward is "Parry and riposte", the block's cost and the guard break "Guard", and the facing "Stance and lock-on" (combat v2).*
 
-| Key | Value |
-|---|---|
-| parryStartup | 2 ticks |
-| parryWindow | 8 ticks (option: up to 12) |
-| parryRecoveryOnMiss | 18 ticks |
-| parryCost | 8 stamina, refunded on success |
-| blockArc | 120 degrees front |
-| dodge | 20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles |
-| shove | 12 stamina; breaks block; target staggered 20 ticks |
+| Key | Value | Notes |
+|---|---|---|
+| parryStartup | 2 ticks | **Superseded by 2.5, removed when built:** the parry's wind-up is 6 ticks ("Parry"). |
+| parryWindow | 8 ticks (option: up to 12) | **Superseded by 2.5, removed when built:** the parry's active ticks ("Parry"), the same 8 (option up to 12). |
+| parryRecoveryOnMiss | 18 ticks | **Superseded by 2.5, removed when built:** a mistimed parry's recovery is 18 ticks after its active ticks ("Parry"). |
+| parryCost | 8 stamina, refunded on success |  |
+| blockArc | 120 degrees front |  |
+| dodge | 20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles | **Superseded by 2.5, removed when built:** "Dodge": 30 stamina; 4 ticks of start, a 12-tick dash of 1.25 tiles invulnerable on ticks 8 to 13, then 18 ticks of recovery. |
+| shove | 12 stamina; breaks block; target staggered 20 ticks | Its stamina and stagger stand; its frames are "Frame data" (Unarmed, Shove). |
 
 ### Fight rules
 *How the frame data is played (Stage 9, decisions S9-2 to S9-6; the frames are "Weapon movesets"). Starting values, for tuning after playtests. A hit wears poise rather than staggering ("Poise"); blockNeedsShield also covers the Dane axe (Weapon rules, daneAxeHands).*
 
-| Key | Value |
-|---|---|
-| strikeArc | 100 degrees in front: a strike meets everyone within its reach there |
-| bodyRadius | 0.3 tiles: reach is measured to the near edge of the body a strike meets |
-| blockStun | 10 ticks: a blow taken on the shield rocks the guard |
-| chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |
-| heavySwing | A released charge swings with the weapon's windup before its active ticks |
-| chainWindow | A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped |
-| shoveTiming | Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles |
-| dodgeWay | With no direction held, a dodge goes straight back from the facing |
-| guardBreakHit | A level-2 charge that meets a raised shield breaks the guard and lands |
-| blockNeedsShield | Only a shield blocks; without one the block key does nothing and says so |
-| missileDamage | An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost |
+| Key | Value | Notes |
+|---|---|---|
+| strikeArc | 100 degrees in front: a strike meets everyone within its reach there |  |
+| bodyRadius | 0.3 tiles: reach is measured to the near edge of the body a strike meets |  |
+| blockStun | 10 ticks: a blow taken on the shield rocks the guard |  |
+| chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |  |
+| heavySwing | A released charge swings with the weapon's windup before its active ticks | **Superseded by 2.5, removed when built:** each weapon's heavy and charged heavy swing with their own wind-up ("Frame data"). |
+| chainWindow | A light attack pressed in the last chain-window ticks of a strike's recovery follows when the recovery ends; no recovery is skipped | Kept: each light's chain window is in "Frame data". The queued light starts only when the recovery has ended (no cancels, design addendum 2.5). |
+| shoveTiming | Windup 6 ticks, active 3, recovery 12; reach 1 tile; pushes the one shoved 0.4 tiles | **Superseded by 2.5, removed when built:** the shove's and the shield bash's frames are "Frame data" (wind-up 8, active 3, recovery 16; reach and push unchanged). |
+| dodgeWay | With no direction held, a dodge goes straight back from the facing |  |
+| guardBreakHit | A level-2 charge that meets a raised shield breaks the guard and lands |  |
+| blockNeedsShield | Only a shield blocks; without one the block key does nothing and says so |  |
+| missileDamage | An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost |  |
 
 ### Vitality, stamina and armour
 *From Stage 9. Stamina is "Health, stamina and healing", armour "Weapon rules" and the hitstop "Hit reactions" (combat v2).*
@@ -419,13 +419,13 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Regeneration | 0 while climbing or swimming | Elsewhere as the stamina row (half while waist deep) |
 
 ### Running out of stamina
-| Key | Value |
-|---|---|
-| sprintEmpty | Drops to a walk until 25 stamina is regained |
-| heavyCarryEmpty | Sets the load down; can lift again at 25 stamina |
-| climbEmpty | Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2 |
-| swimEmpty | Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it |
-| waistWadeEmpty | Speed factor x0.5 again until 25 stamina is regained |
+| Key | Value | Notes |
+|---|---|---|
+| sprintEmpty | Drops to a walk until 25 stamina is regained | **Superseded by 2.5, removed when built:** running out while running exhausts the runner as any empty bar does ("Exhausted": half speed until 30% of the maximum). |
+| heavyCarryEmpty | Sets the load down; can lift again at 25 stamina |  |
+| climbEmpty | Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2 |  |
+| swimEmpty | Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it |  |
+| waistWadeEmpty | Speed factor x0.5 again until 25 stamina is regained |  |
 
 ### Stamina capacity
 *The bar's maximum, shown as its length, with each reason named on screen (Book 8 section 10 wording).*
@@ -464,13 +464,13 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | lockOnRelease | Holding the key 0.4 s; the target dead, downed or surrendered; the target beyond 12 tiles, or out of sight for 2 s | |
 | lockOnFacing | While locked, the stance always faces the target; the cursor still aims bows and thrown spears | |
 | lockOnCamera | The look-ahead points at the target and is 0.5 of the way to it, capped at lookAheadAiming (section 21) | The camera centres between the steerer and the target |
-| attackTurn | Up to 30 degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery | Attacks commit. Replaces combat v1's turnLock |
-| dodgeCancel | A light attack can be cancelled into a dodge in the first 4 ticks of its windup | No other attack can be cancelled |
-| missRecovery | +6 ticks of recovery for a swing that meets no one | A missed swing matters (the spear's is longer, Weapon rules) |
+| attackTurn | Up to 30 degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery | **Superseded by 2.5, removed when built:** no turning at all from the first wind-up tick to the end of recovery, locked on or not ("Commitment") |
+| dodgeCancel | A light attack can be cancelled into a dodge in the first 4 ticks of its windup | **Superseded by 2.5, removed when built:** there are no cancels: no attack can become a dodge ("Commitment") |
+| missRecovery | +6 ticks of recovery for a swing that meets no one | **Superseded by 2.5, removed when built:** each move's miss recovery is in "Frame data" (seax +8 to Dane axe +26) |
 | drawnFacing | The body is drawn in the nearest of the four authored facings; strikes, shields and backs use the true facing | No new sprite directions (decision DE-2) |
 
 ### Weapon movesets
-*Combat v2: how every weapon is played (decision DE-4). Ticks at 60 Hz; reach in tiles to the near edge of the body struck (Fight rules, bodyRadius). Damage is before armour; its type is how mail takes it (Weapon rules). Poise damage wears down the target's poise (Poise). Stamina is per swing, per bash or per draw.*
+*Combat v2: how every weapon is played (decision DE-4). Ticks at 60 Hz; reach in tiles to the near edge of the body struck (Fight rules, bodyRadius). Damage is before armour; its type is how mail takes it (Weapon rules). Poise damage wears down the target's poise (Poise). Stamina is per swing, per bash or per draw. **Superseded by 2.5, removed when built:** the Windup, Active, Recovery and Chain window columns; every move's ticks are now "Frame data". Reach, speed, combo, damage, type, vs shield, poise damage and stamina stand.*
 
 | Weapon | Reach | Speed | Combo | Windup | Active | Recovery | Chain window | Damage | Type | vs shield | Poise damage | Stamina | Strength | Weakness |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -488,47 +488,47 @@ food 563 rd   fuel 75 loads   hay 25 loads
 ### Weapon rules
 *Combat v2: what each weapon does besides its numbers, and armour against the three kinds of damage (decision DE-4). Weapon choice changes how a fight is played, not just the damage.*
 
-| Key | Value |
-|---|---|
-| axeHook | A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double |
-| spearEdge | A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall) |
-| spearKeep | A spear hit pushes the one struck back 0.3 tiles |
-| spearInside | Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer |
-| spearMiss | A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery |
-| swordParry | A sword widens the parry window by 4 ticks |
-| daneAxeGuard | Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped |
-| daneAxeHands | Two hands: no shield with it; it parries but cannot block |
-| seaxGuard | A seax's level-2 charge does not break a guard |
-| seaxCuts | Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold) |
-| mailCut | Mail: -40% from cuts |
-| mailThrust | Mail: -25% from thrusts and missiles |
-| mailBlow | Mail: -10% from blows |
-| padded | Padded: -10% from everything |
-| shieldBreaks | A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped |
+| Key | Value | Notes |
+|---|---|---|
+| axeHook | A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double |  |
+| spearEdge | A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall) |  |
+| spearKeep | A spear hit pushes the one struck back 0.3 tiles |  |
+| spearInside | Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer |  |
+| spearMiss | A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery | **Superseded by 2.5, removed when built:** the spear's miss recoveries are in "Frame data" (+18 to +22). |
+| swordParry | A sword widens the parry window by 4 ticks |  |
+| daneAxeGuard | Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped |  |
+| daneAxeHands | Two hands: no shield with it; it parries but cannot block |  |
+| seaxGuard | A seax's level-2 charge does not break a guard |  |
+| seaxCuts | Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold) |  |
+| mailCut | Mail: -40% from cuts |  |
+| mailThrust | Mail: -25% from thrusts and missiles |  |
+| mailBlow | Mail: -10% from blows |  |
+| padded | Padded: -10% from everything |  |
+| shieldBreaks | A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped |  |
 
 ### Lunge
 *Combat v2: lunging attacks close distance at a cost, with a readable tell (decision DE-4).*
 
-| Key | Value |
-|---|---|
-| lungeWhen | An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach |
-| lungeDistance | 1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge |
-| lungeTell | A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound |
-| lungeStamina | The attack's stamina + 8 |
-| lungeRecovery | +8 ticks of recovery |
+| Key | Value | Notes |
+|---|---|---|
+| lungeWhen | An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach |  |
+| lungeDistance | 1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge |  |
+| lungeTell | A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound | Kept for the steerer's lunge. An enemy's lunge tell is 20 ticks ("Telegraphs"). |
+| lungeStamina | The attack's stamina + 8 |  |
+| lungeRecovery | +8 ticks of recovery | **Superseded by 2.5, removed when built:** each weapon's lunge recovery is in "Frame data"; the lunge covers its distance in drawn strides during its wind-up, never a slide. |
 
 ### Parry and riposte
 *Combat v2: the parry keeps its window, and its reward grows (decision DE-5).*
 
-| Key | Value |
-|---|---|
-| parryWindow | As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4 |
-| parryHitstop | 14 ticks on both fighters, with a bright spark and a sharp ring |
-| parryOpen | The parried attacker reels open for 60 ticks |
-| riposteReach | The weapon's reach + 0.3 tiles: the riposter steps in |
-| riposteTicks | Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead |
-| riposteDamage | x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked |
-| riposteFrames | The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37) |
+| Key | Value | Notes |
+|---|---|---|
+| parryWindow | As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4 | **Superseded by 2.5, removed when built:** "Parry" (design addendum 2.5) holds the parry's wind-up, active and recovery ticks and its overlap rule. |
+| parryHitstop | 14 ticks on both fighters, with a bright spark and a sharp ring |  |
+| parryOpen | The parried attacker reels open for 60 ticks |  |
+| riposteReach | The weapon's reach + 0.3 tiles: the riposter steps in |  |
+| riposteTicks | Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead |  |
+| riposteDamage | x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked |  |
+| riposteFrames | The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37) | Kept: "Frame data" lists the same ticks for each weapon's riposte. |
 
 ### Poise
 *Combat v2: every fighter has poise; hits wear it down, and when it breaks they stagger (decision DE-5).*
@@ -546,12 +546,12 @@ food 563 rd   fuel 75 loads   hay 25 loads
 ### Guard
 *Combat v2: blocking costs stamina, and a broken guard leaves the blocker open (decision DE-5).*
 
-| Key | Value |
-|---|---|
-| blockCost | 0.6 x the attack's vs-shield damage + 4 stamina a block |
-| blockRegen | Half regeneration while the shield is up (as combat v1) |
-| guardBreak | Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks |
-| blockArrows | A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock) |
+| Key | Value | Notes |
+|---|---|---|
+| blockCost | 0.6 x the attack's vs-shield damage + 4 stamina a block |  |
+| blockRegen | Half regeneration while the shield is up (as combat v1) |  |
+| guardBreak | Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks | Kept for a level-2 charge, an axe hook and a Dane axe heavy. A block that empties the bar breaks the guard with "Block"'s larger stagger (guardBreakEmpty). |
+| blockArrows | A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock) |  |
 
 ### Hit reactions
 *Combat v2: hits land with weight, on both sides (decision DE-7). Hitstop freezes both fighters' ticks of state together, so it is part of the simulation and replays exactly; everyone else carries on. Knockback is in logical pixels, in the hit's direction.*
@@ -575,20 +575,20 @@ food 563 rd   fuel 75 loads   hay 25 loads
 ### Health, stamina and healing
 *Combat v2 (decision DE-8). Less health for most enemies, stamina that pauses before it refills and runs out, and healing that takes time and leaves the healer open.*
 
-| Key | Value |
-|---|---|
-| steererVitality | 100 (unchanged) |
-| residentVitality | 100 for adult residents (unchanged) |
-| enemyVitality | Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte |
-| staminaMax | 100 |
-| staminaRegen | 25 a second after 48 ticks without spending; half while blocking |
-| exhausted | At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5 |
-| bindWound | 2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds |
-| eat | 2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina |
-| healInterrupt | A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost |
-| healCarry | Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores) |
-| bindingsFound | 2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest |
-| afterFight | As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15) |
+| Key | Value | Notes |
+|---|---|---|
+| steererVitality | 100 (unchanged) |  |
+| residentVitality | 100 for adult residents (unchanged) |  |
+| enemyVitality | Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte |  |
+| staminaMax | 100 |  |
+| staminaRegen | 25 a second after 48 ticks without spending; half while blocking |  |
+| exhausted | At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5 | **Superseded by 2.5, removed when built:** "Exhausted": at 0 stamina no attack, parry, shove, dodge, block or run, at half speed, until stamina is back to 30% of its maximum (the slower windups and recoveries are gone). |
+| bindWound | 2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds |  |
+| eat | 2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina |  |
+| healInterrupt | A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost |  |
+| healCarry | Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores) |  |
+| bindingsFound | 2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest |  |
+| afterFight | As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15) |  |
 
 ### Bars
 *Combat v2: health and stamina as two bars (decision DE-8).*
@@ -598,6 +598,196 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | barsPlace | Health above stamina, top left |
 | barsFade | Outside a fight, a bar at full fades out 3 s after it last changed, over 0.5 s; both show at once whenever a fight starts or either changes |
 | enemyBar | A thin health bar over the locked target, and over any enemy for 4 s after it was last hit |
+
+### Commitment
+*Design addendum 2.5 section 1.1 (decision DF-1): every action has three strict phases, and once begun it is played to its end, by the steerer and by everyone else. Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| phases | Every action has wind-up ticks (the start, and the tell), active ticks (the hitbox, the parry or the guard live) and recovery ticks | Attacks in "Frame data" and "Enemy attacks"; the parry, block and dodge in their own tables; a bow's draw, loose and recovery; healing as "Health, stamina and healing" |
+| locked | From the first wind-up tick to the last recovery tick the fighter cannot move, turn, dodge, block, parry or start another action | Player and AI alike. A light pressed in a chain window is queued and starts only when the recovery has ended |
+| noCancels | No action becomes another before its recovery ends | A held charge can only be released (it swings); a drawn bow can only be loosed or let down, and letting it down plays the bow's recovery. Replaces dodgeCancel |
+| facing | The facing is fixed at the first wind-up tick, locked on or not | A target that steps aside makes the attack miss. Replaces attackTurn |
+| stopOnAttack | The first wind-up tick of any melee attack (a charge included) sets the fighter's speed to zero at once | The only ground an attack covers is its step, and a lunge's strides ("Movement and acceleration") |
+| step | Each attack steps forward its fixed distance ("Frame data", Step) evenly over its active ticks | Drawn as a planted step of the leading foot; never a slide or a drift |
+| missRecovery | An attack whose active ticks meet no one adds its miss recovery ("Frame data", Miss recovery) | A missed attack leaves the attacker highly vulnerable. Replaces missRecovery and spearMiss |
+| punish | A hit on a fighter in a miss recovery, a mistimed parry's recovery, a dodge's recovery or a broken guard is a punish: hitstopHeavy (7 ticks) and x1.5 the blow's poise damage | Shown by the hit's weight, never by text |
+| needsStamina | An action that costs stamina starts only with stamina above 0; its cost may take the bar to 0, which exhausts the fighter ("Exhausted") | |
+| interrupt | A hit that breaks poise (a stagger or a knockdown) ends any action; a flinch does not | As "Poise" and "Hit reactions" |
+
+### Frame data
+*Every move of every weapon, in ticks at 60 Hz (design addendum 2.5; decisions DF-1 and DF-10). These replace the Windup, Active and Recovery columns of "Weapon movesets"; reach, damage, poise damage and the weapon rules stand. **Weight** is the move's class for its telegraph and sound ("Telegraphs"). A heavy is a charge released at level 1 and a charged heavy one released at level 2 ("Charged heavy"): their Wind-up is the swing after the release, and the hold before it is wind-up too. A lunge's Wind-up comes after its 10-tick tell (Lunge), and covers the lunge distance in drawn strides. Miss recovery is added when the active ticks meet no one ("-": the move starts only on a target in reach). Step is the ground covered evenly over the active ticks, in tiles. Stamina is the move's cost (a heavy x1.5 and a charged heavy x2.0 the weapon's, "Charged heavy"; a lunge +8). A chain window queues the next light (Fight rules, chainWindow). The heavy build adds 4 ticks to every wind-up (section 24).*
+
+| Weapon | Move | Weight | Wind-up | Active | Recovery | Miss recovery | Step | Stamina | Chain window |
+|---|---|---|---|---|---|---|---|---|---|
+| Seax | Light 1 | Light | 10 | 4 | 14 | 8 | 0.15 | 9 | 8 |
+| Seax | Light 2 | Light | 10 | 4 | 14 | 8 | 0.15 | 9 | 8 |
+| Seax | Light 3 | Light | 13 | 5 | 20 | 10 | 0.2 | 9 | - |
+| Seax | Heavy | Heavy | 12 | 5 | 24 | 12 | 0.25 | 14 | - |
+| Seax | Charged heavy | Charged | 14 | 5 | 28 | 14 | 0.3 | 18 | - |
+| Seax | Riposte | Heavy | 7 | 4 | 7 | - | 0.3 | 9 | - |
+| Seax | Backstab | Heavy | 12 | 4 | 14 | - | 0.2 | 9 | - |
+| Hand axe | Light 1 | Light | 16 | 6 | 22 | 12 | 0.2 | 15 | 10 |
+| Hand axe | Light 2 | Light | 16 | 6 | 22 | 12 | 0.2 | 15 | 10 |
+| Hand axe | Light 3 | Light | 20 | 6 | 28 | 14 | 0.25 | 15 | - |
+| Hand axe | Heavy | Heavy | 18 | 6 | 30 | 16 | 0.3 | 23 | - |
+| Hand axe | Charged heavy | Charged | 20 | 7 | 34 | 18 | 0.35 | 30 | - |
+| Hand axe | Lunge | Charged | 16 | 6 | 30 | 12 | 1.2 | 23 | - |
+| Hand axe | Riposte | Heavy | 11 | 6 | 11 | - | 0.3 | 15 | - |
+| Hand axe | Backstab | Heavy | 16 | 6 | 18 | - | 0.2 | 15 | - |
+| Spear | Light 1 | Light | 15 | 6 | 20 | 18 | 0.25 | 14 | 10 |
+| Spear | Light 2 | Light | 17 | 6 | 24 | 18 | 0.25 | 14 | - |
+| Spear | Heavy | Heavy | 18 | 7 | 28 | 20 | 0.35 | 21 | - |
+| Spear | Charged heavy | Charged | 20 | 7 | 32 | 22 | 0.4 | 28 | - |
+| Spear | Lunge | Charged | 16 | 6 | 28 | 18 | 1.5 | 22 | - |
+| Spear | Riposte | Heavy | 10 | 6 | 10 | - | 0.3 | 14 | - |
+| Spear | Backstab | Heavy | 16 | 6 | 18 | - | 0.2 | 14 | - |
+| Spear, thrown | Throw | Heavy | 18 | 2 | 24 | - | 0 | 16 | - |
+| Sword | Light 1 | Light | 12 | 5 | 16 | 10 | 0.2 | 12 | 9 |
+| Sword | Light 2 | Light | 12 | 5 | 16 | 10 | 0.2 | 12 | 9 |
+| Sword | Light 3 | Light | 15 | 5 | 22 | 12 | 0.25 | 12 | - |
+| Sword | Heavy | Heavy | 15 | 6 | 26 | 14 | 0.3 | 18 | - |
+| Sword | Charged heavy | Charged | 17 | 6 | 30 | 16 | 0.35 | 24 | - |
+| Sword | Lunge | Charged | 13 | 5 | 24 | 10 | 1.2 | 20 | - |
+| Sword | Riposte | Heavy | 10 | 5 | 9 | - | 0.3 | 12 | - |
+| Sword | Backstab | Heavy | 16 | 5 | 19 | - | 0.2 | 12 | - |
+| Dane axe | Light 1 | Heavy | 24 | 7 | 32 | 20 | 0.3 | 26 | 12 |
+| Dane axe | Light 2 | Heavy | 28 | 7 | 36 | 20 | 0.3 | 26 | - |
+| Dane axe | Heavy | Charged | 28 | 8 | 40 | 24 | 0.4 | 39 | - |
+| Dane axe | Charged heavy | Charged | 32 | 8 | 44 | 26 | 0.45 | 52 | - |
+| Dane axe | Lunge | Charged | 24 | 7 | 40 | 20 | 1.0 | 34 | - |
+| Dane axe | Riposte | Heavy | 14 | 7 | 13 | - | 0.3 | 26 | - |
+| Dane axe | Backstab | Heavy | 16 | 7 | 17 | - | 0.2 | 26 | - |
+| Club or hammer | Light 1 | Heavy | 20 | 6 | 26 | 16 | 0.25 | 20 | 10 |
+| Club or hammer | Light 2 | Heavy | 23 | 6 | 30 | 16 | 0.25 | 20 | - |
+| Club or hammer | Heavy | Charged | 24 | 7 | 34 | 20 | 0.35 | 30 | - |
+| Club or hammer | Charged heavy | Charged | 27 | 7 | 38 | 22 | 0.4 | 40 | - |
+| Club or hammer | Lunge | Charged | 20 | 6 | 34 | 16 | 1.0 | 28 | - |
+| Club or hammer | Riposte | Heavy | 13 | 6 | 13 | - | 0.3 | 20 | - |
+| Club or hammer | Backstab | Heavy | 16 | 6 | 18 | - | 0.2 | 20 | - |
+| Unarmed | Shove | Light | 8 | 3 | 16 | 6 | 0.1 | 12 | - |
+| Shield | Bash | Light | 8 | 3 | 16 | 8 | 0.15 | 12 | - |
+| Hunting bow | Draw, loose, recover | Light | 30 | 2 | 20 | - | 0 | 10 | - |
+
+### Enemy attacks
+*What an enemy's attack looks like to the steerer (design addendum 2.5 section 1.6; decisions DF-9 and DF-10). An enemy uses its weapon's "Frame data", except that no wind-up is shorter than the telegraph floor for its weight ("Telegraphs"): a light's wind-up is lengthened, and a heavy's or charged heavy's hold is lengthened, so the whole telegraph (hold and swing) is at least the floor. The rows give the result. Active, recovery, miss recovery, step and stamina are the weapon's. The heavy build adds 4 ticks to each wind-up (section 24); Svart's dusk heavy adds svartWindup (section 07). The beasts and the dead have their own attacks.*
+
+| Attack | Weight | Wind-up | Active | Recovery | Miss recovery | Step | Stamina | Tell | Used by |
+|---|---|---|---|---|---|---|---|---|---|
+| Seax light | Light | 28 | 4 | 14 | 8 | 0.15 | 9 | A sharp breath; the blade drawn back to the hip | Conn, civilians, outlaws, an archer's sidearm |
+| Seax heavy | Heavy | 36 (hold 24, swing 12) | 5 | 24 | 12 | 0.25 | 14 | Steel scraping; the blade drawn back high | Outlaws |
+| Hand axe light | Light | 28 | 6 | 22 | 12 | 0.2 | 15 | A sharp breath; the axe drawn back over the shoulder | Warriors, raiders, Ketill |
+| Hand axe heavy | Heavy | 36 (hold 18, swing 18) | 6 | 30 | 16 | 0.3 | 23 | A grunt and the haft's creak; the axe raised high, held | Warriors, raiders, Ketill (it hooks a shield) |
+| Spear light | Light | 28 | 6 | 20 | 18 | 0.25 | 14 | A sharp breath; the spear drawn back along the arm | Guards, raiders, Svart |
+| Spear heavy | Heavy | 36 (hold 18, swing 18) | 7 | 28 | 20 | 0.35 | 21 | Steel scraping; the spear drawn right back, the weight on the back foot | Guards, raiders, Svart (48 at the dusk, svartWindup) |
+| Spear charged heavy | Charged | 65 (hold 45, swing 20) | 7 | 32 | 22 | 0.4 | 28 | The charge's creak, then its ring; the spear drawn back and trembling | Guards, raiders |
+| Sword light | Light | 28 | 5 | 16 | 10 | 0.2 | 12 | A sharp breath; the blade drawn back across the body | Warriors, huscarls |
+| Sword heavy | Heavy | 36 (hold 21, swing 15) | 6 | 26 | 14 | 0.3 | 18 | Steel scraping; the blade raised high, held | Warriors, huscarls |
+| Dane axe light | Heavy | 36 | 7 | 32 | 20 | 0.3 | 26 | A grunt and the haft's creak; the axe swung back behind the shoulder | Huscarls |
+| Dane axe heavy | Charged | 48 (hold 20, swing 28) | 8 | 40 | 24 | 0.4 | 39 | A long grunt, steel scraping; the axe raised over the head and held | Huscarls (it breaks a guard) |
+| Club or hammer light | Heavy | 36 | 6 | 26 | 16 | 0.25 | 20 | A grunt and a creak of wood; the club drawn back low | Outlaws, the Crowwick men |
+| Club or hammer heavy | Charged | 48 (hold 24, swing 24) | 7 | 34 | 20 | 0.35 | 30 | A long grunt; the club raised over the head and held | Outlaws, the Crowwick men |
+| Lunge | Charged | 48 (tell 20, strides 28) | The weapon's | The weapon's lunge recovery | The weapon's | The lunge distance | The weapon's + 8 | A scuff of feet and a drawn breath; the shoulders dip | Any enemy with a lunging weapon, from beyond its reach |
+| Shove or shield bash | Light | 28 | 3 | 16 | 8 | 0.15 | 12 | A grunt; the shoulder or shield turned in | Anyone |
+| Bow | Light | 42 (settle 6, draw 36) | 2 | 20 | - | 0 | 10 | The bow raised, the string's creak growing | Archers, Conn ("Archers", section 07) |
+| Spear, thrown | Heavy | 36 | 2 | 24 | - | 0 | 16 | The spear raised back over the shoulder, the arm held | Raiders, guards |
+| Draugr blow | Heavy | 36 | 7 | 30 | 20 | 0.3 | 0 | Dripping that quickens; the arm drawn back | The draugr (the dead do not tire) |
+| Draugr grip | Charged | 48 | 8 | 40 | 24 | 0.3 | 0 | Both arms raised, a wet rattle; cannot be blocked or parried, only dodged | The draugr |
+| Wolf bite | Light | 28 | 4 | 24 | 16 | 0.5 | 10 | A low growl, the body crouched | Wolves (a leaping bite) |
+| Boar charge | Charged | 48 | 30 | 40 | 30 | Up to 4 tiles over the active ticks | 20 | Snorting and pawing, the head lowered; cannot be parried; a shield takes it as a level-2 charge | Boar |
+| Each-uisce drag | Charged | 60 | 10 | 60 | 30 | 0 | 0 | The water bulging, a gurgle; only dodged (Book 4: bind or avoid) | The each-uisce |
+
+### Telegraphs
+*Combat is read by sight and sound only: no combat text, no damage numbers and no log (design addendum 2.5 section 1.6; decision DF-9). Every enemy attack has an exaggerated tell in its wind-up; heavier attacks have longer, bigger tells.*
+
+| Key | Value | Notes |
+|---|---|---|
+| floorLight | 28 ticks | The least wind-up of an enemy's light attack: seax, hand axe, spear and sword lights, the shove and the bash, a wolf's bite |
+| floorHeavy | 36 ticks | Dane axe and club lights, every heavy (hold and swing together), a thrown spear, the draugr's blow |
+| floorCharged | 48 ticks | Charged heavies, the Dane axe and club heavies, lunges, grips and the boar's charge (the each-uisce 60) |
+| floorDraw | 42 ticks | An enemy archer's settle and draw before it looses |
+| enemyLungeTell | 20 ticks | An enemy's lunge tell, before its strides (the steerer's stays lungeTell, 10) |
+| drawBack | 3 px for a light, 5 px for a heavy, 7 px for a charged attack | How far the weapon is drawn back past its ready pose; a heavy or charged attack holds still at the top for its last 6 wind-up ticks before the swing |
+| flash | 1 frame, 28 ticks before the first active tick | A subtle flash on the attacker's body and weapon, two palette steps lighter, never white. At the same lead for every attack, so from the flash to a well-timed parry press is always 15 to 22 ticks ("Parry"). With reduced flashes the weapon's ink edge brightens for that frame instead |
+| sound | At the flash, panned to the attacker, louder with the weight | A sharp breath (light); steel scraping (a bladed heavy or charged); a grunt and a creak of wood (an axe, club or Dane axe heavy); the charge's creak (level 1) and ring (level 2); a scuff and a drawn breath (lunge); the bow's creak (draw); a growl, a snort and pawing, a wet rattle or a gurgle for the beasts and the dead (Book 11 section 07) |
+| enemyStrings | One attack per opening; warriors, raiders and huscarls may follow with a second light, which has its own full telegraph | No enemy chains three |
+| steererTells | The steerer's own attacks use "Frame data" without the floors; they are drawn with the same draw-back, and their sound is a breath | The steerer has no voice (Book 11 section 08) |
+| noText | No caption, number, word or log entry reports a hit, a block, a parry, damage or a state in a fight | The bars, the lock-on mark and the hit reactions are the only interface in a fight (Book 8 section 10) |
+
+### Movement and acceleration
+*Grounded, weighty movement (design addendum 2.5 section 1.2; decision DF-2). No instant starts or stops: speed eases towards the speed wanted at full speed divided by the ticks to full speed each tick, and down at full speed divided by the ticks to stop, so a reversal slows through a stop. Speeds are section 02's and "Stance and lock-on"'s.*
+
+| Mode | To full speed | To stop | Speed | Notes |
+|---|---|---|---|---|
+| Walk | 9 ticks | 6 ticks | Walk | |
+| Run | 24 ticks | 18 ticks | Run | From standing; from a walk 15 ticks. The run's two-frame stop (Book 7 section 17) plays over the stop |
+| Sneak | 12 ticks | 6 ticks | Sneak | |
+| Back off | 12 ticks | 7 ticks | backOff | |
+| Strafe | 11 ticks | 7 ticks | strafe | |
+| Blocking | 12 ticks | 6 ticks | 0.5 x the speed the way moved | Walk, strafe or back off with the shield up; no running ("Block") |
+| Exhausted | 15 ticks | 8 ticks | 0.5 x the speed the way moved | No running ("Exhausted") |
+| Carry | 18 ticks | 12 ticks | Carry | |
+| Charging or attacking | - | 0 ticks: stops at once | 0 | "Commitment"; replaces Charge (heavy) |
+| In mail | x1.25 the ticks | x1.25 the ticks | | |
+| Heavy build | x1.25 the ticks | x1.25 the ticks | | In mail as well, x1.5 |
+
+### Exhausted
+*Stamina governs everything (design addendum 2.5 section 1.3; decision DF-3). Fights take a rhythm: engage, back away to recover, engage again. Replaces exhausted ("Health, stamina and healing") and sprintEmpty ("Running out of stamina").*
+
+| Key | Value | Notes |
+|---|---|---|
+| exhaustedAt | 0 stamina, by any cost | An attack, a parry, a shove, a dodge, a block's drain or running |
+| exhaustedLocks | No attack, parry, shove, dodge, block or run | A raised shield drops; a block that empties the bar is a guard break ("Block"). Binding a wound and eating are allowed |
+| exhaustedSpeed | 0.5 x the speed the way moved | "Movement and acceleration" |
+| exhaustedUntil | 30% of the current maximum | 30 at a full 100; the bar shows the threshold as a notch while exhausted |
+| regenDelay | 48 ticks after the last cost | As staminaRegen ("Health, stamina and healing") |
+| exhaustedRegenDelay | 60 ticks after reaching 0 | |
+| regenRate | 25 a second; 20 a second while exhausted | Half while blocking (staminaRegen) |
+| exhaustedFor | 2.5 real seconds from 0 at a full maximum | 1 s of delay and 1.5 s of refill: long enough to be punished |
+| exhaustedLook | The exhausted idle (Book 7 section 01: bent, blowing hard) and a hard breathing sound; no word on screen | The refusal word "Too spent" is cut (Book 8 section 10) |
+| everyone | Enemies and the crew are exhausted by the same rule; the dead do not tire | Their stamina is 100 (staminaMax) |
+| traversal | Climbing, swimming and waist-deep wading keep their own empty-bar rules ("Running out of stamina"), which come first | |
+
+### Parry
+*Predictive, not reactive (design addendum 2.5 section 1.4; decision DF-4). The parry has its own frames, and must be started during the enemy's wind-up so that its active ticks meet the blow. Replaces parryStartup, parryWindow and parryRecoveryOnMiss (Defence).*
+
+| Key | Value | Notes |
+|---|---|---|
+| parryWindup | 6 ticks | The shield or blade comes up; nothing is parried yet |
+| parryActive | 8 ticks (option: up to 12); a sword +4 | As the old window and swordParry |
+| parryRecovery | 18 ticks after the active ticks, when nothing was parried | The mistimed parry leaves the parrier open: a hit then is a punish ("Commitment") |
+| parryOverlap | A blow is parried when its first active tick that would meet the parrier falls within the parrier's active ticks, inside blockArc | A blow that lands during the parry's wind-up or recovery hits |
+| parryTiming | So a parry is pressed 6 to 13 ticks before the blow's first active tick: in the attacker's wind-up, 15 to 22 ticks after its flash ("Telegraphs") | With the option at 12, 6 to 17 ticks before |
+| parryStun | The attacker is stunned (parried) for parryOpen, 60 ticks, after parryHitstop (14 ticks on both) | "Parry and riposte" |
+| parrySettle | On a parry the parrier's remaining active and recovery ticks become a 6-tick settle; then it may riposte | A riposte's wind-up starts inside the stun ("Frame data") |
+| parryStamina | 8, refunded on a parry | Defence, parryCost |
+| parryNot | Missiles, the draugr's grip, the boar's charge and the each-uisce's drag cannot be parried | |
+
+### Block
+*Deliberate defence (design addendum 2.5 section 1.4; decision DF-5). A raised shield halves speed; each hit drains stamina by the attack's power, and a guard emptied breaks with a large stagger.*
+
+| Key | Value | Notes |
+|---|---|---|
+| blockRaise | 6 ticks | The shield comes up; the guard is live from the 7th tick |
+| blockLower | 6 ticks after the key is let go | |
+| blockSpeed | 0.5 x the speed the way moved | "Movement and acceleration" |
+| blockDrain | Guard's blockCost: 0.6 x the attack's vs-shield damage + 4 stamina a hit | So the drain follows the blow's power: a level-1 charge's vs shield is x1.5 ("Charged heavy") |
+| blockStun | 10 ticks a hit | Fight rules, blockStun |
+| guardBreakEmpty | 60 ticks of stagger, knocked back 4 px, the shield arm flung wide; then exhausted | A hit that takes the blocker's stamina to 0 |
+| guardBreakOther | A level-2 charge, an axe hook or a Dane axe heavy break the guard as Guard says (open 50 ticks) | |
+| blockArc | 120 degrees front | Defence |
+
+### Dodge
+*A short, stamina-heavy dash with a brief invulnerable middle and a punishing recovery, so it cannot be spammed (design addendum 2.5 section 1.4; decision DF-6). Replaces dodge (Defence).*
+
+| Key | Value | Notes |
+|---|---|---|
+| dodgeStart | 4 ticks | A dip and a push-off; not invulnerable |
+| dodgeDash | 12 ticks covering 1.25 tiles, eased out | The way held, else straight back (Fight rules, dodgeWay) |
+| dodgeInvulnerable | Dash ticks 4 to 9 (ticks 8 to 13 of the dodge): 6 ticks | |
+| dodgeRecovery | 18 ticks, feet planted, no action | A hit then is a punish ("Commitment") |
+| dodgeTotal | 34 ticks | |
+| dodgeStamina | 30 | |
 
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
@@ -662,28 +852,28 @@ food 563 rd   fuel 75 loads   hay 25 loads
 ### Fighters' habits
 *How the enemy and the crew fight (Stage 9, decision S9-7): Book 2 section 13's choices at 10 a second on the `ai` stream. Starting values, for tuning after playtests.*
 
-| Key | Value |
-|---|---|
-| decideEvery | 6 ticks: each fighter chooses what to do 10 times a second |
-| reactChance | 45%: a fighter who sees an attacker's tell defends before the blow lands |
-| reactTicks | 6 ticks after the tell at the soonest |
-| parryShare | 35% of a fighter's defences are parries when a shield is held; all are parries without one |
-| heavyChance | 20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield |
-| attackGap | 0.5 to 1.2 s between one fighter's attacks while in reach |
-| archerRange | 4 to 7 tiles: an archer keeps this far from its target and shoots from there |
-| archerArrows | 8 arrows in an enemy archer's quiver |
-| searchSeconds | 8: a fighter who loses sight of its target goes to where it was last known and searches |
-| crewFollow | 2.5 tiles behind the steerer |
-| crewProtect | 4 tiles: a protector fights anyone who comes this near the one it protects |
-| fallBackFrom | 3 tiles: an archer whose target comes nearer than this backs away before it shoots again |
-| orderLapse | 60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day |
-| attackTokens | 1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29) |
-| tokenRest | 2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29) |
-| closeIn | 0.85: a fighter closes to this share of its reach before it strikes |
-| runAt | 3 tiles: a fighter further than this from its target runs to it |
-| crewRunAt | 5 tiles: a follower further than this behind the steerer runs |
-| guardHeld | 40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold |
-| fledAt | 9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is |
+| Key | Value | Notes |
+|---|---|---|
+| decideEvery | 6 ticks: each fighter chooses what to do 10 times a second | **Superseded by 2.5, removed when built:** fighting choices are made every 15 ticks ("AI decisions"); awareness still fills every 6. |
+| reactChance | 45%: a fighter who sees an attacker's tell defends before the blow lands | Kept. A fighter's parry follows "Parry"'s predictive frames like anyone's, so it parries only blows whose wind-up gives it time; otherwise it blocks or backs off. |
+| reactTicks | 6 ticks after the tell at the soonest |  |
+| parryShare | 35% of a fighter's defences are parries when a shield is held; all are parries without one |  |
+| heavyChance | 20% of a fighter's attacks are charged heavies, held to level 1, or to level 2 against a raised shield |  |
+| attackGap | 0.5 to 1.2 s between one fighter's attacks while in reach | **Superseded by 2.5, removed when built:** each archetype's patience ("Distances by archetype") and the attack cooldown ("AI decisions"). |
+| archerRange | 4 to 7 tiles: an archer keeps this far from its target and shoots from there |  |
+| archerArrows | 8 arrows in an enemy archer's quiver |  |
+| searchSeconds | 8: a fighter who loses sight of its target goes to where it was last known and searches |  |
+| crewFollow | 2.5 tiles behind the steerer |  |
+| crewProtect | 4 tiles: a protector fights anyone who comes this near the one it protects |  |
+| fallBackFrom | 3 tiles: an archer whose target comes nearer than this backs away before it shoots again | **Superseded by 2.5, removed when built:** "Archers": tooClose 3 tiles, one dash away, then reset or the sidearm. |
+| orderLapse | 60 s: a crew order lapses after this long with no fight under way, and the resident goes back to their day |  |
+| attackTokens | 1: at most this many of one side are in an attack on one target at once (a charge, a strike's windup and active frames, a bow drawn); the rest close, flank and threaten until it is over. Warbands 2 (Stage 19) (Stage 9, decision S9-29) |  |
+| tokenRest | 2 s: when the last attack on a target ends, the next of that side waits this long before it starts one (S9-29) |  |
+| closeIn | 0.85: a fighter closes to this share of its reach before it strikes |  |
+| runAt | 3 tiles: a fighter further than this from its target runs to it |  |
+| crewRunAt | 5 tiles: a follower further than this behind the steerer runs |  |
+| guardHeld | 40 ticks: a defender who raises its shield against a charge holds it this long past the charge's longest hold |  |
+| fledAt | 9 tiles: one who flees and stops this far from the steerer (cornered or lost) is gone from the zone, as one out of sight is |  |
 
 ### Occupied Skarvholm garrison (late game)
 | Post | Strength | Notes |
@@ -721,7 +911,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | suspiciousAt | 30: the actor says so ("Who's there?"), turns to the last thing seen or heard and goes to look (searchSeconds) |
 | alertAt | 100: the actor fights, flees, warns or raises the alarm, by its kind |
 | decay | 10 a second after 3 s with nothing seen or heard; an alert actor stays alert for memorySeconds |
-| marks | A small "?" over the head while suspicious and a "!" for 2 s on turning alert; an option, on by default |
+| marks | A small "?" over the head while suspicious and a "!" for 2 s on turning alert; an option, off by default (design addendum 2.5: awareness shows by barks and body language; decision DF-9) |
 
 ### Sneaking
 *Combat v2: a toggle for a slow, quiet crouching walk; the ground matters, and tall grass, shadow, night and rain hide (decision DE-9).*
@@ -793,6 +983,66 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | connFlees | Conn flees to the fold when Svart falls (dead, downed or surrendered), or when Conn is hit |
 | foodBargain | 2 rd of salt fish from the camp's stores: they take it and go |
 | checkpoint | An autosave before it (Book 2 section 20) |
+
+### AI states
+*AI with intent and distance (design addendum 2.5 section 1.5; decision DF-7). A fighter runs a state machine with cooldowns and decides at intervals ("AI decisions"), never every tick, so enemies never jitter or shuffle. Melee enemies circle just outside their attack range and wait for the steerer to miss before stepping in; they never swarm. It works with the attack tokens of "Fighters' habits" and the rules of "Self-preservation", and Book 2 section 13 holds the contract. The last column is the least time in the state (its cooldown) unless the fighter is hit hard (staggered or knocked down) or its target falls.*
+
+| State | Enters when | Does | Least time |
+|---|---|---|---|
+| Idle | No hostile is alert to it, or the fight has ended | Its day: work, guard, patrol, or warn (Warnings) | 30 ticks |
+| Approach | Alert to a target farther off than its engage distance ("Distances by archetype") | Walks towards the target, running beyond runAt; a guard keeps to its post's leash | 30 ticks |
+| Circle | Within engage distance | Strafes round the target at its circle radius, facing it, at strafe speed; turns back at most once each 90 ticks; keeps out of a friend's line of attack | 45 ticks |
+| Wait for opening | In Circle and holding an attack token (attackTokens) | Holds at its circle radius, shield up if it has one, and watches; steps in on an opening it can take, or when its patience runs out | 20 ticks |
+| Attack | An opening it can take, or its patience run out | One closing step to its attack range at walking speed, then one attack (a second for warriors, raiders and huscarls; "Telegraphs", enemyStrings), or a lunge from beyond reach; feints at the feint share (Self-preservation) | Until its recovery ends ("Commitment") |
+| Retreat | Its attack has ended, or the target has stepped inside its circle radius | Backs off to its circle radius at back-off speed, within stepOut (Self-preservation) | 30 ticks |
+| Recover stamina | Its stamina is below its archetype's recover-at share | Backs off to its circle radius + 2 tiles, shield lowered to refill at the full rate unless the target closes; back to Circle at 70% | 60 ticks |
+| Flee or surrender | Cohesion or wounds break it (Cohesion and surrender; Self-preservation, retreatAt) | Flees, begs or surrenders as before; cornered, it surrenders (decision DE-41) | To the fight's end |
+
+### AI decisions
+*How a fighter chooses (design addendum 2.5 section 1.5; decision DF-7). Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| decisionInterval | 15 ticks: a fighter chooses its state 4 times a second | Each fighter's first choice is offset by 0 to 14 ticks on the `ai` stream, so a group never decides in step. Awareness still fills every decideEvery (6 ticks). Replaces decideEvery for fighting |
+| circleRadius | The larger of its own attack range and the reach of the one it faces, + its circle margin | "Distances by archetype"; with holdOff (Self-preservation) as the least |
+| opening | The target in a miss recovery, a mistimed parry's recovery, a dodge's recovery, a broken guard, a stagger or a knockdown; exhausted, healing or drawing a bow; or with its back turned | Read from what the fighter can see (the target's drawn state), never hidden numbers |
+| takeOpening | It steps in only if it can walk to its attack range and finish its wind-up before the opening ends; otherwise it keeps waiting | A melee enemy waits for the steerer's recovery before stepping in |
+| attackCooldown | 45 ticks after its own recovery ends before the same fighter starts another attack | Replaces attackGap with patience |
+| patience | By archetype ("Distances by archetype"); x1.5 when wounded (woundedAt) | How long it waits in Wait for opening before it attacks, or feints, anyway |
+| turnAround | It changes its circling direction at most once each 90 ticks, and never steps back and forth within one decision | Its facing turns at turnRate ("Stance and lock-on") |
+| sameRules | Fighters obey "Commitment", "Movement and acceleration", "Exhausted", "Parry", "Block" and "Dodge" exactly as the steerer does | Only the telegraph floors are theirs alone ("Telegraphs") |
+
+### Distances by archetype
+*Strict distance thresholds (design addendum 2.5 section 1.5; decision DF-7), in tiles to the near edge of the body (Fight rules, bodyRadius). Engage is where a fighter stops approaching and starts to circle; its circle radius is the larger of its attack range and the reach it faces, plus its margin; Recover at is the stamina share below which it backs off to recover. Attack range is the weapon's reach (section 06, "Weapon movesets"; Archetypes, Reach), closed to closeIn of it before the strike.*
+
+| Archetype | Engage | Circle margin | Attack range | Recover at | Patience | Notes |
+|---|---|---|---|---|---|---|
+| Civilian | 3 | 0.3 | Their tool or seax | 40% | 2.0 to 3.0 s | Fights only when cornered |
+| Guard | 6 | 0.5 | Spear 1.8 | 35% | 2.5 to 4.0 s | Holds its post (leash); shield up while it waits |
+| Warrior | 5 | 0.4 | Hand axe 1.1 or sword 1.3 | 30% | 2.0 to 3.0 s | Two in a string |
+| Raider (Crowwick) | 5 | 0.3 | Hand axe 1.1 or spear 1.8 | 25% | 1.2 to 2.0 s | The most aggressive; two in a string |
+| Huscarl | 6 | 0.4 | Sword 1.3 or Dane axe 1.6 | 30% | 1.8 to 3.0 s | Disciplined: keeps its place in a line; two in a string |
+| Outlaw (and the wreck-scavengers) | 5 | 0.4 | Their weapon's | 40% | 2.0 to 3.5 s | Svart (spear), Ketill (hand axe, heavy build); Conn is an archer ("Archers") |
+| Archer | Its shooting range ("Archers") | - | Bow; seax 0.8 when cornered | 40% | - | "Archers" |
+| Draugr | 8 | - | Grip 0.9 | Never | - | Does not circle or tire: walks steadily in and strikes in range |
+| Wolf | 7 | 0.8 | Bite 0.7 | 30% | 1.0 to 2.0 s | The pack circles at 2 to 3 tiles; one bites at a time (attackTokens) |
+| Boar | 5 | - | Charge 1.0 | - | - | Charges when cornered or hurt; turns and charges again 2 s after a charge ends |
+| Each-uisce | 3 from the water's edge | - | Drag 1.2 | - | - | Book 4: avoid or bind |
+
+### Archers
+*Archers need a clear line of sight and stand completely still to draw; brought too close, they dash away once, then reset, re-evaluate, or draw a sidearm when cornered (design addendum 2.5 section 1.5; decision DF-8). Replaces fallBackFrom (Fighters' habits).*
+
+| Key | Value | Notes |
+|---|---|---|
+| shootFrom | 4 to 7 tiles (archerRange) | It walks to a spot in this band with a clear line before it draws |
+| lineOfSight | A clear line from the bow to the target's body: no cover, closed door or friend in the way (section 21, Missiles, coverBlock) | Without one it does not draw; it moves to a spot that has one |
+| standStill | It settles for 6 ticks, then draws and looses ("Enemy attacks", Bow) and recovers for 20 ticks, all standing completely still | It moves only between shots |
+| tooClose | 3 tiles | |
+| dashAway | Once: a hop back away from the target, 2 tiles over 18 ticks, 25 stamina, not invulnerable | Drawn with the dodge frames |
+| reset | 12 ticks after the dash, then it re-evaluates: beyond tooClose it shoots again; within it, it is cornered | |
+| dashOnce | At most one dash in 6 real seconds | Too close again within that, it is cornered |
+| cornered | Deep water, a cliff edge, a wall or the zone's edge within 1.5 tiles behind it, or the target still within tooClose after the dash | It draws its sidearm (20 ticks; a seax) and fights in melee as an outlaw for the rest of the fight (decision DE-41) |
+| noArrows | Out of arrows it draws its sidearm the same way | Section 13 of Book 2 |
 
 ## 08 / People, skills and wounds
 ### Skills
@@ -1013,6 +1263,8 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | runaTruth | Runa +2 friendship | The true place told |
 | runaLie | Runa -3 friendship per point of her Word | A false place told is found out when she goes to look, on her next walk past it and at most a day later; it counts against Word (her Word 2: -6) |
 | rescueGetUp | 4 real seconds | A rescued person set down gets up after this, walks to the camp (at the limp speed if hurt), takes up work, eats and sleeps under the shelter; no one is left sitting where they were found (decision DE-22) |
+| rescueHome | Reaches the camp's fire within 3 game hours of getting up | Whatever the time of day, the route taken home or what the steerer does next (leaving the zone at once, sleeping, fighting); checked by the rescue scenario test (Book 2 section 23; decision DF-18) |
+| rescueStuck | 30 real seconds | A rescued person who is awake and not in talk, work, a meal or a scene, and has neither moved nor changed what they are doing for this long, is stuck: the rescue scenario test fails |
 
 ### Thorkel's rites
 *Added for Stage 11 (decisions S11-13 to S11-16): Thorkel's rites, optional and recommended by Hild (Book 4 section 08, beat 6), once his body lies on its bier by the broch. Like the searches' numbers, these are the household's own reaction to the rite, besides anything the ledger weighs.*
@@ -1705,6 +1957,27 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | headDamage | Bone heads: damage x0.85 and vs shield x0.7; iron heads: as the bow in section 06 |
 | finds | 1 to 4 arrows in a cache, a dead archer's quiver or a hunter's camp; traders sell them by the dozen (section 04) |
 
+### On-screen text
+*Much less text, and never stacked over the action (design addendum 2.5 section 2; decisions DF-11 to DF-13). Book 2 section 18 holds the rules and Book 8 section 10 the audit of every message. These timings replace `captionSeconds` in `content/audio.json` when built.*
+
+| Key | Value | Notes |
+|---|---|---|
+| captionLines | 1 information line and 1 speech line at most | Information above speech, as before |
+| captionReplace | A new line replaces the line of its kind at once, cross-fading over 0.15 real seconds | Lines never stack or queue, except the one line held in a fight (heldAfterFight) |
+| captionRepeat | The same information line is not shown again within 20 real seconds | Speech repeats follow Book 8's bark rules (no identical bark from one speaker within ten minutes) |
+| infoHold | 2.5 real seconds, then a 0.4 s fade | |
+| speechHold | 1.0 real second + 0.05 s a character, from 2 to 5 real seconds, then a 0.4 s fade | Lines in the talk panel stay until the next |
+| captionFadeIn | 0.15 real seconds | |
+| captionPlace | Bottom centre, within the lowest 16% of the view, above the hotbar | Clear of the steerer, who is drawn near the middle of the view |
+| inFight | Any hostile alert to the steerer within 12 tiles, or a blow struck or taken by the steerer in the last 4 real seconds | While so, only speech barks and safety lines show (Book 8 section 10) |
+| heldAfterFight | One waiting information line is kept, the newest of the most important; it shows 1 real second after the fight ends if it is under 8 s old, else it is dropped | |
+| infoPriority | Safety, then a call's direction, then story information, then a sound | When two information lines arrive together, the higher shows |
+| promptFade | 0.5 real seconds | Tutorial prompts and pickup tooltips fade out, never blink off |
+| promptQuiet | Tutorial prompts and pickup tooltips hide while a speech line, a story beat, a scene or a talk is showing, and come back 2 real seconds after it, unless done | They never share the screen with a narrative line |
+| promptDone | A tutorial prompt goes for good once its action is done | Moving: 2 tiles walked. Use: the item used once. Its fade is promptFade |
+| tipHold | A pickup tooltip shows for 8 real seconds of play, or until its controls have been used twice, then fades | Kept in the help pages (Book 2 section 21) |
+| refusalHold | A refusal word beside the cursor shows for 1.2 real seconds | One at a time; a new one replaces it |
+
 ## 22 / Story gates
 *The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline. The one exception is the defence of Skarvholm, which comes on a fixed night (decision DD-3).*
 
@@ -1776,7 +2049,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 
 
 ## 25 / The opening, guidance and feel
-*Design addendum 2.4 sections 2 to 6 (decisions DE-16 to DE-30): the first minutes of Chapter 1, help for a stuck player, the world's feedback, doors, the Hag's Stone and the music's fades. Starting values, for tuning after playtests.*
+*Design addendum 2.4 sections 2 to 6 (decisions DE-16 to DE-30): the first minutes of Chapter 1, help for a stuck player, the world's feedback, doors, the Hag's Stone and the music's fades; and design addendum 2.5 section 3 (decisions DF-15 to DF-17): the storm of the cold open. Starting values, for tuning after playtests.*
 
 ### The first minutes
 *Targets for a scripted new player, measured by the chapter's telemetry (decision S12-12): a chain of small wins, each with a payoff (design addendum 2.4 section 6).*
@@ -1861,3 +2134,23 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | fadeOut | 6 real seconds (4 to 8 by piece) | Whenever music stops |
 | crossFade | The outgoing piece's fadeOut | A change between pieces cross-fades; the new one still starts with one layer |
 | stingers | No fade | Stingers alone start and stop sharply |
+
+### The storm
+*The cold open made rough and alive (design addendum 2.5 section 3; decisions DF-15 to DF-17): a hidden cursor, lightning with thunder after, rolling fog and mist, light that varies, a camera that sways with the sea, foam, breaking waves, spray, and the ship pitching and rolling. Book 7 section 05 draws it and Book 11 section 07 sounds it. The cold open stays 30 to 45 seconds (coldOpen). Random choices use the presentation's own seeded stream, never the simulation's.*
+
+| Key | Value | Notes |
+|---|---|---|
+| cursorHidden | The mouse cursor is hidden through the cold open, the black and the waking until the first input, and in every scene that takes control (the first night's fire, the rites, the launch) | Shown again on the first mouse movement once control returns, or when a pointer use is offered. The cold open is steered with the movement keys |
+| lightningEvery | 6 to 14 real seconds between strikes | One scripted strike shows the skerry ahead about 25 s in, before the hull strikes |
+| lightningFlash | Bright for 4 ticks, dim for 3, bright for 3, then fading over 0.4 real seconds | At most two flashes in any one second. The bright frames light the ship, the sea and the land to 70% of the day grade, with hard shadows thrown away from the strike |
+| lightningReduced | With reduced flashes: one soft swell of light, 0.3 s up and 0.6 s down, at half strength | No flicker |
+| thunderAfter | 0.6 to 3.0 real seconds after the flash, by the strike's distance | A near strike is sooner and louder; the roll lasts 2.5 to 4 real seconds |
+| fog | Two layers of mist over the water, drifting downwind at 0.3 and 0.6 tiles a second | 20 to 45% cover in ordered dither, thickest low over the swells, torn open by gusts; it never hides the steerer or the steering oar |
+| lightVaries | The night grade varies by 12% either way in drifting patches about 8 tiles across, moving with the wind at 1.5 tiles a second | Never a flat, uniform blue; the stern lantern's pool of 3 tiles swings with the ship |
+| cameraSway | 3 px up and down over the pitch's period and 2 px side to side over the roll's | Whole pixels, eased; none with reduced motion. The strike on the skerry at the end keeps its own shake |
+| pitch | The bow rises and falls up to 4 px, over 3.2 real seconds | The people on deck move with it and brace |
+| roll | The hull drawn in three roll frames (to port, level, to starboard) over 5.4 real seconds | The mast's head sways 2 px with it |
+| swells | Crests 3 to 4 tiles apart, rolling across at 1.2 tiles a second, with foam streaks animated along them | |
+| breakingWaves | A wave breaks against the hull every 3 to 6 real seconds | A burst of 10 to 18 spray particles reaching 20 to 40 px up, falling back across the deck |
+| greenWater | Green water comes over the side every 8 to 12 real seconds | As before (Book 7 section 05) |
+| rain | 80 to 120 drops on screen, slanting 25 degrees downwind | |
