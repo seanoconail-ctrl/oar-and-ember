@@ -1,6 +1,6 @@
 # STAGE 12 REPORT: the launch and the Build 1 gate
 
-In the Book 2 section 23 format: one heading per report field. Decisions are S12-1 to S12-24 in
+In the Book 2 section 23 format: one heading per report field. Decisions are S12-1 to S12-25 in
 `docs/decision-log.md`. Built under DD-11 without waiting for approval of the new art or the new
 screens. **This is a build gate: the user playtests now, and Stage 13 waits for the user.** The
 playtest script is `docs/playtest/build-1.md`. Everything for the user's review, from Stages 7 to
@@ -50,12 +50,15 @@ playtest script is `docs/playtest/build-1.md`. Everything for the user's review,
   are frozen and load.
 - **The playtest script**: `docs/playtest/build-1.md`.
 - **Fixed on the way**: a downed Bran no longer stalls Thorkel's rite (S12-23); the build's version
-  is 0.12.0 (S12-24).
+  is 0.12.0 (S12-24); the wreck-scavengers, the only speakers in Chapter 1 with no voice, have voice
+  blips (S12-25).
 
 ## Tests
-- `npm run lint`: clean. ESLint, Prettier, content lint (1146 strings, 467 registered IDs) and art
+- `npm run lint`: clean. ESLint, Prettier, content lint (1147 strings, 467 registered IDs) and art
   lint (120 sheets, 27,639 frames, 0 placeholders).
-- `npm test`: RESULT_UNIT. New:
+- `npm test`: **46 files, 603 tests, all pass** (one full run; the frame-budget test in
+  `standard.test.ts` and the strand art timeouts have flaked under parallel load before and pass
+  alone; they passed in this run). New:
   - `tests/scenario/launch.test.ts` (10 tests): the gate closed and opening on its own conditions,
     never starting itself; offered at the boat; the readiness screen's lines and warning; the tide
     out refusing the start; the start's checkpoint, the rites denied, the name cleaned and the mark;
@@ -70,7 +73,8 @@ playtest script is `docs/playtest/build-1.md`. Everything for the user's review,
   added and reproduced by its scenario), `art.test.ts` (the census), `controls.test.ts` (its
   "changing nothing" leaves out the telemetry, which marks on any tick as the clock moves).
 - `npm run build`: passes.
-- `npm run test:browser -- --project=chromium`: RESULT_BROWSER. New: `tests/browser/stage12.spec.ts`,
+- `npm run test:browser -- --project=chromium`: **56 passed** (5.2 min; the standard's motion 96.0%,
+  62.3% reduced; script 4.07 ms a frame). New: `tests/browser/stage12.spec.ts`,
   4 tests, stepped with `oeStep`, waiting in game time for residents to pass the boat: the whole
   launch through the boat's words, the readiness screen (time stopped), the name, the mark, the
   scene, the music, the sea map revealed, the chapter's end and its save, the telemetry; "Not yet"
@@ -88,8 +92,11 @@ playtest script is `docs/playtest/build-1.md`. Everything for the user's review,
 3. **Art lint clean for every Build 1 asset, no placeholders: PASS.** Art lint: 120 sheets,
    27,639 frames, 0 placeholders; no sheet has `placeholder: true`, no audio cue is `temporary`, no
    placeholder or TODO in the source.
-4. **The Book 7 section 14 standard: RESULT_STANDARD** (see **Art check**).
-5. **Firefox and WebKit block publishing: PASS** (BR-2 to BR-7). `.github/workflows` RESULT_WORKFLOW.
+4. **The Book 7 section 14 standard: PASS** for every in-world view (Wreck Strand 93.9%, the boat
+   ready 88.9%, the heave 91.7%, afloat 92.4%, against 80%), with the shortfalls named in **Art
+   check** (see **Art check**).
+5. **Firefox and WebKit block publishing: PASS** (BR-2 to BR-7). `.github/workflows/ci.yml`: `deploy` has
+   `needs: [check, browsers-firefox, browsers-webkit]`, and no job has `continue-on-error`.
 6. **Audio: PASS.** The launch music and every new sound play, captioned, and were rendered and
    checked by level. Chapter 1 audit below; I cannot hear the renders: the user should listen in
    the sound test's Stage 12 section.
@@ -131,19 +138,98 @@ The reasoning:
 No filler was added to reach a number.
 
 ## Art check
-ART_SECTION
+Captures in `docs/art/captures/stage-12/` (`npm run capture -- stage-12`; its README lists every
+file), mockups in `docs/art/mockups/stage-12/`, and the new art at 1x and 4x with a GIF in
+`docs/art/stage-12/`.
+
+| View | Continuous motion with the camera still |
+|---|---|
+| Wreck Strand (as at Stage 6) | 93.9% |
+| The boat ready on its skids (`launch-ready`) | 88.9% |
+| The heave and the run down the skids (`launch-heave`) | 91.7% |
+| Afloat under the mark, rowing (`launch-sail`) | 92.4% |
+| The sea map (a screen, not an in-world view; for the record) | 72.9% |
+| Book 7 threshold (in-world views) | 80% |
+
+Compared with `docs/art/reference/` (`wreck-strand-target.png`, `kelda-summer-target.png`,
+`target-walk.mp4`):
+- **Terrain, water, wind, life, light**: the launch plays on the approved Wreck Strand, so the
+  strand's sward, wrack, foam lines, sheen and tide match the reference as at Stage 11; the sea
+  keeps moving round the boat, the grass sways, the crew row, the sail billows in four frames.
+- **The boat afloat**: the hull is cut at its waterline with the water lapping along it (not a
+  sprite pasted on the sea); the crew sit at their oars and dip them in time with the drum; the
+  sail's mark reads at 1x (every one of the 28 marks is shown at 1x and 4x in
+  `docs/art/stage-12/sail_marks*.png`).
+- **The screens** (readiness, naming, mark) are drawn panels over the frozen strand in the game's
+  wood-and-wool panel style with the boat drawn by the game's own sheets in the preview (not boxes);
+  the naming and mark screens show the boat beached and then afloat under the chosen mark.
+- **The sea map** is a drawn chart: shaded coasts with surf lines and cliffs, grass and peat on the
+  land, deep and shallow water with a moving sheen, drifting cloud shadows, a mist that clears
+  outward and a mist bank that never does, the household's boat as a token under its own mark, and
+  smoke rising. Its motion is lower than the strand's because the land on a chart holds still.
+- **Shortfalls against the reference**: the heave is read from the people standing at the boat's
+  far side in a lean, not a strong pushing pose (no push animation was drawn; see **Known
+  issues**); the boat runs broadside down the beach because the hull is side-on.
+- The 10-second clip (`launch-clip.mp4`, `launch-clip.gif`) shows the heave, the run down, the
+  float and the boarding with the camera following.
 
 ## Balance
-BALANCE_SECTION
+**Book 10 additions** (section 22, "The launch"; exported by `npm run balance`; S12-3): floats Knee;
+skids 8 tiles; slideSpeed 1.8 tiles a second; rowSpeed 1.2 tiles a second; rowOut 9 tiles; trialRow
+60 game minutes; tideLookahead 24 game hours; storesShort 3 days. Section 22's two older tables were
+given headings ("Gates", "Gate rules") so the export keeps them; no value changed.
+
+**Audio levels** (`npm run audio:render`, full run, no item clips; peak and RMS of the render):
+
+| Item | Peak | RMS |
+|---|---|---|
+| `MUS_LAUNCH` (the Ship theme, all layers) | 0.452 | 0.0668 (about -23.5 dBFS) |
+| `SFX_BEACHING` (the keel on the skids) | 0.278 | 0.0263 |
+| `SFX_OAR_SPLASH` | 0.435 | 0.0447 |
+| `SFX_OAR_CREAK` | 0.141 | 0.0206 |
+| `SFX_SAIL_FLAP` | 0.351 | 0.0296 |
+| `SFX_SAIL_FILL` | 0.377 | 0.0285 |
+| `MUS_STINGER_CHAPTER_END` | 0.467 | 0.0656 (about -23.7 dBFS) |
+| Ketill's voice blips | 0.178 | 0.0214 |
+| Svart's voice blips | 0.149 | 0.0160 |
+| Conn's voice blips | 0.244 | 0.0238 |
+
+The theme and the stinger sit with the other music (about -23 dBFS RMS); the effects and the new
+voices sit with the household's (voices 0.15 to 0.29 peak).
+
+**Chapter 1 audio audit** (Book 11 section 12): every place has its ambience (Wreck Strand, the
+machair and the broch with the hearth, the Kelda pool, the Hag's Seat's gale, the cairn and the
+fold, Seal Cave); every speaker has a voice (the household, Hild, and now the three scavengers);
+every system has its sounds and captions (the fire, fishing, work, sleep, the report, combat and
+gore, the searches, the repairs, the rites, the launch). **Without a sound of its own:** the sea map
+has no ambience (it plays over the launch's music and the stinger; its sea sounds come with
+Stage 13's sea travel).
 
 ## Deviations
-- None from the books' intent. Every choice the books leave open is logged as S12-1 to S12-24.
+- None from the books' intent. Every choice the books leave open is logged as S12-1 to S12-25.
   Small book updates: Book 2 section 05 (version 10) and 16 (readiness lines), Book 3 Stage 12 (the
   golden save's number), Book 7 section 04 (the marks), Book 10 section 22 (The launch; two tables
   given headings), Book 11 section 03 (`MUS_LAUNCH`).
 
 ## Known issues
-KNOWN_SECTION
+- **The timing check is not proven** until the playtest: the scripted players do not sleep and do
+  not search, so the 45 to 60 minutes is an estimate (see **Timing**), and a fight can be avoided
+  altogether (flagged).
+- **The heave has no pushing pose**: the household stand at the boat's far side, leaning, and the
+  steerer uses the gathering loop; then the boat runs broadside down the beach (the hull is drawn
+  side-on). It reads, but a proper shove animation would read better.
+- **The sea map shows no routes, wind or tide, and has no ambience of its own**: those come with
+  sea travel (Stage 13). Its motion (72.9%) is below the in-world threshold, which it is not held to.
+- **The Ship theme does not sing the boat's name** (Book 11's "can be sung in it once chosen"); left
+  for Stage 13's sea music (S12-17).
+- **The mockups were rendered from the built scene**, not drawn first (S12-19).
+- **After the chapter's end the island goes on with nothing new to do**; the map key shows the
+  read-only map again.
+- **`launch-clip.mp4` is 4.4 MB** (an MP4 at 2x; the GIF is 1.2 MB).
+- **Flaky under load, not failing**: `standard.test.ts`'s frame budget and the strand art tests'
+  timeouts can fail when the whole suite runs in parallel on a busy machine; they pass alone and
+  passed in the final run. No threshold was changed.
+- Firefox and WebKit were not run locally; CI runs them and they now block publishing.
 
 ## Flagged for the user's review
 Gathered from the stage reports and decision-log sections of Stages 7 to 12. Every one was built

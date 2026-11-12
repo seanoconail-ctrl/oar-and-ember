@@ -1722,7 +1722,12 @@ export function startPlay(
       },
       cursor:
         // A blade has no target tile (it swings at the cursor's facing, S9-22): its arrow shows.
-        target === null || p.aim !== null || hidePeople || target.use === 'MELEE'
+        // The launch scene has the steerer: no tile is offered while it plays (Stage 12).
+        target === null ||
+        p.aim !== null ||
+        hidePeople ||
+        target.use === 'MELEE' ||
+        (launchDef !== null && launchView(sim.state, { def: launchDef }) !== null)
           ? null
           : {
               tx: target.tile.tx,
