@@ -43,6 +43,16 @@ export interface ZonePlan {
    * steading's grazed turf is thicker (Stage 7 mockup; decision S7-23).
    */
   readonly sward?: number;
+  /**
+   * The share of places on bare rock that grow a tuft in a crevice: thrift and grass in the
+   * cliff-top rock (Stage 10: the Hag's Seat; none by default, so the strand is unchanged).
+   */
+  readonly crevices?: number;
+  /**
+   * Where tussocks grow in clumps: the clump noise above this (0.55 by default, the strand's).
+   * Lower on the rough grazing of the south (Stage 10), so its long grass moves in the wind.
+   */
+  readonly tussock?: number;
   /** The window of the block grid, in blocks. */
   readonly blocks: {
     readonly x: number;
@@ -117,12 +127,22 @@ export interface ZonePlan {
   }[];
   /** Stage 10: the place's wind against the strand's (the Hag's Seat is the windiest place). */
   readonly wind?: number;
+  /**
+   * Stage 10: plants placed by an art script on a built thing, in pixels, each with the y it sorts
+   * at (the turf on the cairn's mound, assets/art/authoring/southern_art.py).
+   */
+  readonly plantsExtra?: readonly (readonly [number, number, number, number, number])[];
 }
 
 export type Carve =
   | {
       readonly code: TileCode;
-      readonly ellipse: { readonly x: number; readonly y: number; readonly rx: number; readonly ry: number };
+      readonly ellipse: {
+        readonly x: number;
+        readonly y: number;
+        readonly rx: number;
+        readonly ry: number;
+      };
       readonly rough?: number;
     }
   | {
@@ -135,10 +155,22 @@ export type Carve =
 export type SolidShape =
   | {
       /** A drystone ring: the tiles of a rectangle's edge, less its gaps. */
-      readonly ring: { readonly x0: number; readonly y0: number; readonly x1: number; readonly y1: number };
+      readonly ring: {
+        readonly x0: number;
+        readonly y0: number;
+        readonly x1: number;
+        readonly y1: number;
+      };
       readonly gaps: readonly (readonly [number, number])[];
     }
-  | { readonly ellipse: { readonly x: number; readonly y: number; readonly rx: number; readonly ry: number } }
+  | {
+      readonly ellipse: {
+        readonly x: number;
+        readonly y: number;
+        readonly rx: number;
+        readonly ry: number;
+      };
+    }
   | { readonly tiles: readonly (readonly [number, number])[] };
 
 /** A zone edge that leads on to the zone beyond it (the whole edge; positions by island tiles). */
@@ -148,7 +180,7 @@ export interface ZoneLink {
 }
 
 export interface ZoneLife {
-  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep';
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep' | 'spring';
   /** In tiles. */
   readonly x: number;
   readonly y: number;
@@ -160,8 +192,7 @@ export interface ZoneLife {
 export type DecalPlacement = readonly [number, number, number];
 /** Plant placements: [kind index into PLANT_KINDS, x, y, variant] in pixels, and a sort y. */
 export type PlantPlacement =
-  | readonly [number, number, number, number]
-  | readonly [number, number, number, number, number];
+  readonly [number, number, number, number] | readonly [number, number, number, number, number];
 export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
 
 export interface ZoneProp {
@@ -384,6 +415,8 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     plan.paths ?? [],
     plan.sward ?? 0.42,
     solidSet,
+    plan.crevices ?? 0,
+    plan.tussock ?? 0.55,
   );
   // Grass grown on built things, sorted with them (the turf on the cairn's mound).
   const raised: PlantPlacement[] = [];
@@ -415,7 +448,7 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     ...(plan.broch === undefined ? {} : { broch: plan.broch }),
     decalFrames: DECAL_FRAMES,
     decals: furnished.decals,
-    plants: [...furnished.plants, ...raised],
+    plants: [...furnished.plants, ...raised, ...(plan.plantsExtra ?? [])],
     ...(solid.length === 0 ? {} : { solid }),
     ...(plan.wind === undefined ? {} : { wind: plan.wind }),
   };
@@ -454,7 +487,8 @@ function solidTiles(plan: ZonePlan, width: number, height: number): [number, num
       const e = s.ellipse;
       for (let ty = 0; ty < height; ty++)
         for (let tx = 0; tx < width; tx++)
-          if (Math.hypot((tx + 0.5 - e.x) / e.rx, (ty + 0.5 - e.y) / e.ry) < 1) out.add(`${tx},${ty}`);
+          if (Math.hypot((tx + 0.5 - e.x) / e.rx, (ty + 0.5 - e.y) / e.ry) < 1)
+            out.add(`${tx},${ty}`);
     } else for (const [x, y] of s.tiles) out.add(`${x},${y}`);
   }
   return [...out]
@@ -487,6 +521,8 @@ function furnish(
   polylines: readonly (readonly (readonly [number, number])[])[] = [],
   sward = 0.42,
   solid: ReadonlySet<string> = new Set(),
+  crevices = 0,
+  tussockAt = 0.55,
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -587,7 +623,8 @@ function furnish(
         const drift = noise(seed + 31, px / T, py / T, 3.5);
         const lip = code(px, py + T) === 'b' || code(px, py + T) === '.';
         if (lip && r(23, x, y) < 0.35) plants.push([3, px, py, v]);
-        else if (tussock > 0.55 && r(24, x, y) < (tussock - 0.5) * 2.2) plants.push([1, px, py, v]);
+        else if (tussock > tussockAt && r(24, x, y) < (tussock - tussockAt + 0.05) * 2.2)
+          plants.push([1, px, py, v]);
         else if (drift > 0.62 && r(25, x, y) < (drift - 0.6) * 3)
           plants.push([drift > 0.7 ? 4 : 5, px, py, v]);
         else if (r(26, x, y) < sward) plants.push([0, px, py, v]);
@@ -597,6 +634,9 @@ function furnish(
         if (clump > 0.5 && r(27, x, y) < (clump - 0.45) * 1.6) plants.push([2, px, py, v]);
       } else if (c === '.' && r(28, x, y) < 0.02) {
         plants.push([2, px, py, v]);
+      } else if (c === 'r' && crevices > 0 && r(32, x, y) < crevices) {
+        // Sea pinks and grass in the crevices of the cliff-top rock, more thrift than grass.
+        plants.push([r(33, x, y) < 0.6 ? 3 : 0, px, py, v]);
       }
     }
   }

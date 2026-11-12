@@ -49,6 +49,8 @@ import { STEERER } from './missiles.ts';
 import { facingOf, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext, OnFootActor, OnFootState } from './onFoot.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
+import { tilePath } from './path.ts';
+import { parseSearchBalance } from '../../content/searchBalance.ts';
 import type { ZoneMap } from './zoneMap.ts';
 import type { WorldState } from '../world.ts';
 
@@ -150,6 +152,12 @@ export interface Battle {
   lastBlow: number;
   /** Book 10 attackTokens: the last tick each side was in an attack on each target ("side:target"). */
   lastAttack?: Record<string, number>;
+  /**
+   * Stage 10 (decision S10-9): enemies who hold and talk with a steerer come with empty hands, until
+   * this tick (Book 10 The three searches, parley); `done` once a parley has ended, so it never
+   * starts again in this fight.
+   */
+  parley?: { until: number; done: boolean } | null;
 }
 
 export interface FightContext {
@@ -158,6 +166,9 @@ export interface FightContext {
   readonly def: CombatDef;
   readonly fighters: ReadonlyMap<Id, FighterDef>;
   readonly daylight: TimeBalance['daylight'];
+  /** Stage 10 (Book 10 The three searches): a parley's ticks, and an ally's guard in tiles. */
+  readonly parleyTicks: number;
+  readonly guardTiles: number;
 }
 
 export function fightContext(
@@ -167,13 +178,90 @@ export function fightContext(
 ): FightContext | null {
   const def = content.combat;
   if (def == null) return null;
+  const searches = parseSearchBalance(balance);
   return {
     cb: parseCombatBalance(balance),
     ai: parseAiBalance(balance),
     def,
     fighters: new Map(def.fighters.map((f) => [f.person, f])),
     daylight,
+    parleyTicks: Math.round(searches.parleySeconds * TICKS_PER_SECOND),
+    guardTiles: searches.guardTiles,
   };
+}
+
+/** The encounter a battle belongs to. */
+function encounterOf(
+  ctx: FightContext,
+  battle: Battle | null | undefined,
+): CombatDef['encounters'][number] | undefined {
+  if (battle == null) return undefined;
+  return ctx.def.encounters.find((e) => e.id === battle.scene);
+}
+
+/** Whether a person fights beside the household in this battle without being a resident (Bran). */
+function allyOf(ctx: FightContext, battle: Battle | null | undefined, id: Id): boolean {
+  return encounterOf(ctx, battle)?.allies?.includes(id) === true;
+}
+
+/**
+ * Whether the steerer comes as one to talk with (Stage 10, decision S10-9): empty hands (no
+ * weapon or bow selected), not running, not mid-blow.
+ */
+export function openHanded(world: WorldState, ctx: FightContext): boolean {
+  const onFoot = world.onFoot;
+  if (onFoot === null) return false;
+  const p = onFoot.player;
+  const item = world.player.hotbar.slots[world.player.hotbar.selected] ?? null;
+  const armed = item !== null && (weaponRow(ctx, item) !== null || item === 'ITEM_BOW');
+  const f = p.fight;
+  const striking = f != null && f.state !== 'idle';
+  return !armed && !striking && p.aim === null && !(p.moving && p.gait === 'run');
+}
+
+/** The fight begins now (Stage 10: Bran's call, a threat, or a parley broken). */
+export function startFight(fw: FightWorld): void {
+  const onFoot = fw.world.onFoot;
+  const battle = onFoot?.battle ?? null;
+  if (onFoot == null || battle === null || battle.over) return;
+  battle.parley = { until: fw.world.tick, done: true };
+  const p = onFoot.player;
+  for (const [id, a] of Object.entries(onFoot.actors).sort(ORDERLY)) {
+    const fa = a.fight;
+    if (fa?.side !== 'ENEMY' || !fighting(fa)) continue;
+    fa.ai.memory = { x: p.x, y: p.y, tick: fw.world.tick, seen: true };
+    fa.ai.target = STEERER;
+    if (!fa.ai.aware) {
+      fa.ai.aware = true;
+      delete a.task;
+      a.pose = 'idle';
+      fw.emit({ type: 'ENEMY_AWARE', person: id });
+    }
+    fa.ai.next = fw.world.tick;
+  }
+  if (!battle.engaged) {
+    battle.engaged = true;
+    fw.emit({ type: 'FIGHT_STARTED', scene: battle.scene });
+  }
+}
+
+/**
+ * The scavengers take the silver and go (Stage 10, the bargain): they stop being a fight; the
+ * searches walk them off. The battle is over without a blow.
+ */
+export function endInBargain(fw: FightWorld): void {
+  const onFoot = fw.world.onFoot;
+  const battle = onFoot?.battle ?? null;
+  if (onFoot == null || battle === null) return;
+  for (const a of Object.values(onFoot.actors)) {
+    if (a.fight?.side !== 'ENEMY') continue;
+    delete a.fight;
+    delete a.task;
+    delete a.archer;
+    a.aim = null;
+    a.pose = 'idle';
+  }
+  onFoot.battle = null;
 }
 
 /** The Book 10 weapon row of an item, or null (the bow, a tool, empty hands). */
@@ -685,9 +773,13 @@ export function stepFight(fw: FightWorld): void {
     onFoot.player.blocking = sf.shield && (sf.state === 'block' || sf.state === 'blockStun');
   const battle = onFoot.battle ?? null;
   // The household in the zone takes part once a fight is under way (Second wind, orders).
-  if (battle !== null && !battle.over && battle.engaged)
+  if (battle !== null && !battle.over && battle.engaged) {
     for (const r of world.household.residents)
       if (onFoot.actors[r] !== undefined) crewFight(world, ctx, r);
+    // Stage 10: those who fight beside the household though not of it yet (Bran at the fold).
+    for (const r of encounterOf(ctx, battle)?.allies ?? [])
+      if (onFoot.actors[r]?.pose === 'idle') crewFight(world, ctx, r);
+  }
   const actors = Object.entries(onFoot.actors).sort(ORDERLY);
   // Fighters choose, then their state machines run, then they walk.
   for (const [id, a] of actors) {
@@ -1266,10 +1358,47 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
         if (hears(a, o, ctx.ai.noise.shout, tile)) of.ai.memory = { ...ai.memory, seen: false };
       }
     }
-    if (onFoot.battle != null && !onFoot.battle.engaged) {
-      onFoot.battle.engaged = true;
-      fw.emit({ type: 'FIGHT_STARTED', scene: onFoot.battle.scene });
+    const battle = onFoot.battle ?? null;
+    if (battle !== null && !battle.engaged) {
+      // Stage 10: an empty-handed steerer is met with words, for a while (decision S10-9).
+      if (
+        encounterOf(ctx, battle)?.parley === true &&
+        battle.parley == null &&
+        (ai.target === STEERER || ai.target === null) &&
+        openHanded(world, ctx)
+      ) {
+        battle.parley = { until: tick + ctx.parleyTicks, done: false };
+        const leader = Object.entries(onFoot.actors).find(([, o]) => o.fight?.leader === true)?.[0];
+        say(ctx, leader ?? id, 'parley', fw.emit, tick);
+        for (const o of Object.values(onFoot.actors)) {
+          const of = o.fight;
+          if (of?.side !== 'ENEMY') continue;
+          of.ai.aware = true;
+          delete o.task;
+          o.pose = 'idle';
+        }
+      } else if (battle.parley == null || battle.parley.done) {
+        battle.engaged = true;
+        fw.emit({ type: 'FIGHT_STARTED', scene: battle.scene });
+      }
     }
+  }
+  // Stage 10: holding for words: they stand facing the steerer until the parley ends.
+  const parley = onFoot.battle?.parley ?? null;
+  if (parley !== null && !parley.done && onFoot.battle?.engaged !== true) {
+    const talking = world.talk?.kind === 'SEARCH';
+    if (talking) parley.until = Math.max(parley.until, tick + 1);
+    if (tick < parley.until && (talking || openHanded(world, ctx))) {
+      const p = onFoot.player;
+      ai.mode = 'GUARD';
+      ai.goal = null;
+      a.facing = facingOf(p.x - a.x, p.y - a.y, a.facing);
+      fa.f.facing = a.facing;
+      return;
+    }
+    // Patience gone, a weapon taken up or a blow: the fight is on.
+    startFight(fw);
+    say(ctx, id, 'taunt', fw.emit, tick);
   }
   if (!remembered(ctx.ai, ai.memory, tick)) {
     // Lost for Book 10's memory time: back to what they were doing, until alerted again.
@@ -1632,6 +1761,32 @@ function crewThink(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void
     default:
       break;
   }
+  // Stage 10: an ally keeps to what they guard (Bran by Thorkel's body): a foe near it first, then
+  // any foe in the fight; with none left, back to it.
+  if (allyOf(ctx, onFoot.battle, id)) {
+    if (!fa.able || fa.f.weapon === null) return;
+    const home = ai.home;
+    let best: [Id, OnFootActor] | null = null;
+    let bestD = Infinity;
+    for (const [eid, e] of Object.entries(onFoot.actors).sort(ORDERLY)) {
+      const ef = e.fight;
+      if (ef?.side !== 'ENEMY' || !fighting(ef) || !ef.ai.aware) continue;
+      // Anyone come at the body, or anyone in the fight at all: he comes out to it.
+      const d =
+        Math.hypot(e.x - home.x, e.y - home.y) <= ctx.guardTiles * tile
+          ? 0
+          : Math.hypot(e.x - a.x, e.y - a.y);
+      if (d < bestD) {
+        bestD = d;
+        best = [eid, e];
+      }
+    }
+    if (best !== null) fightIt(fw, id, a, fa, best[0], best[1]);
+    else
+      ai.goal =
+        Math.hypot(a.x - home.x, a.y - home.y) > 4 ? { x: home.x, y: home.y, run: false } : null;
+    return;
+  }
   // No order: an able, armed resident fights an enemy near the steerer; others keep their day.
   if (!fa.able || fa.f.weapon === null) return;
   const near = nearestEnemy(onFoot, p, false);
@@ -1812,6 +1967,36 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ny = a.y + vy * speed;
   if (vx !== 0 && clear(nx, a.y)) a.x = nx;
   if (vy !== 0 && clear(a.x, ny)) a.y = ny;
+  // Stage 10: a wall in the way (the sheepfold's): round it by the tiles, towards the goal.
+  const goal = fa.ai.goal;
+  const moved = Math.hypot(a.x - before.x, a.y - before.y);
+  const walled =
+    !footprintClear(map, land.rules, nx, before.y, fw.tidalGroundOpen) ||
+    !footprintClear(map, land.rules, before.x, ny, fw.tidalGroundOpen);
+  if (moved < speed * 0.5 && walled && goal !== null && goal.away !== true) {
+    const path = tilePath(
+      map,
+      tileOf(map, a.x, a.y),
+      tileOf(map, goal.x, goal.y),
+      fw.tidalGroundOpen,
+    );
+    const step = path?.[1];
+    if (step !== undefined) {
+      const tx = (step.tx + 0.5) * tile - a.x;
+      const ty = (step.ty + 0.6) * tile - a.y;
+      const l = Math.hypot(tx, ty);
+      if (l > 0.01) {
+        const mx = a.x + (tx / l) * speed;
+        const my = a.y + (ty / l) * speed;
+        if (clear(mx, a.y)) a.x = mx;
+        if (clear(a.x, my)) a.y = my;
+        if (f.state === 'idle') {
+          a.facing = facingOf(tx, ty, a.facing);
+          f.facing = a.facing;
+        }
+      }
+    }
+  }
   if (a.x !== before.x || a.y !== before.y) a.moving = true;
   if (a.carries !== undefined) carryAlong(onFoot, a);
   // Fled out of sight far enough: gone from the zone (to the cave).

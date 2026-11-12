@@ -94,11 +94,13 @@ export function stepPeopleTick(
   land: Pick<LandContext, 'rules' | 'movement' | 'maps'>,
   tidalGroundOpen: boolean,
   opener: Id | null,
+  /** Residents something else moves for now (Stage 10: Bran carrying Thorkel home). */
+  held: (id: Id) => boolean = () => false,
 ): void {
   const onFoot = world.onFoot;
   if (onFoot === null) return;
   for (const id of residents(world)) {
-    if (inOpening(world, id, opener)) continue;
+    if (inOpening(world, id, opener) || held(id)) continue;
     // In a fight (Stage 9): downed, carried, under an order, or fighting, the fight moves them.
     const here = onFoot.actors[id];
     if (here !== undefined && heldByFight(world, id, here)) continue;

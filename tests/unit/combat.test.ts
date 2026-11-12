@@ -58,7 +58,51 @@ const b = parseTimeBalance(balance);
 const cb = parseCombatBalance(balance);
 const ai = parseAiBalance(balance);
 const { content } = loadContentFromDisk();
-const land = landContext(content, balance);
+/**
+ * Stage 9's fight on Wreck Strand, kept as this file's fixture: the mechanics are tested on the
+ * open shingle where they were measured, with the scavengers where Stage 9 put them (decision
+ * S9-11). Stage 10 moved them to the sheepfold (decision S10-5): the first test below checks the
+ * real content puts them there; tests/scenario/searches.test.ts plays the fold.
+ */
+const stage9 = {
+  ...content,
+  searches: null,
+  combat:
+    content.combat === null
+      ? null
+      : {
+          ...content.combat,
+          encounters: [
+            {
+              id: 'SCN_SK_WRECKERS',
+              zone: 'ZONE_SK_STRAND',
+              after: 'ch1.at_broch',
+              takesCaptives: false,
+              checkpoint: 'wreckers',
+              members: [
+                {
+                  person: 'E_WRECKER_KETILL',
+                  x: 25.5,
+                  y: 34.7,
+                  facing: 'w' as const,
+                  task: 'TASK_GATHER_DRIFTWOOD',
+                },
+                {
+                  person: 'E_WRECKER_SVART',
+                  x: 23.4,
+                  y: 35.8,
+                  facing: 's' as const,
+                  task: 'TASK_GATHER_DRIFTWOOD',
+                },
+                { person: 'E_WRECKER_CONN', x: 30.6, y: 34.6, facing: 'w' as const },
+              ],
+            },
+          ],
+        },
+};
+const land = landContext(stage9, balance);
+/** The game's own content: the scavengers at the sheepfold (Stage 10). */
+const landNow = landContext(content, balance);
 const TILE = 24;
 
 const pool = (current = 100): StaminaPool => ({ current, spentTick: 0 });
@@ -442,8 +486,37 @@ function fightOn(f: Fight, max = 6000, stop: () => boolean = () => false): void 
   }
 }
 
-describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decision S9-11)', () => {
-  it('are on Wreck Strand by the wreck once Hild has led to the broch, unaware, at work', () => {
+describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decisions S9-11, S10-5)', () => {
+  it('are at the sheepfold under the cairn since Stage 10, watching Bran, unaware; Bran fights beside', () => {
+    const world = newCampaign('fold', b, parsePeopleBasics(balance), content, {
+      name: 'Ash',
+      bodyModel: 'A',
+    });
+    campHooks(world, content, landNow, new URLSearchParams('camp=broch&time=10:00'));
+    const onFoot = must(world.onFoot);
+    const sim = createSimulation(b, world, landNow);
+    const events: SimEvent[] = [];
+    sim.events.onAny((e) => events.push(e));
+    sim.step();
+    switchZone(onFoot, 'ZONE_SK_CAIRN', { x: 3 * TILE, y: 36 * TILE });
+    sim.step();
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'ENCOUNTER_STARTED', scene: 'SCN_SK_WRECKERS' }),
+    );
+    const enc = content.combat?.encounters.find((e) => e.id === 'SCN_SK_WRECKERS');
+    expect(enc?.zone).toBe('ZONE_SK_CAIRN');
+    expect(enc?.allies).toEqual(['C_BRAN']);
+    expect(
+      Object.keys(onFoot.actors)
+        .filter((id) => id.startsWith('E_'))
+        .sort(),
+    ).toEqual(['E_WRECKER_CONN', 'E_WRECKER_KETILL', 'E_WRECKER_SVART']);
+    expect(onFoot.actors['C_BRAN']?.pose).toBe('idle');
+    for (let i = 0; i < 120; i++) sim.step();
+    expect(Object.values(onFoot.actors).every((a) => a.fight?.ai.aware !== true)).toBe(true);
+  });
+
+  it('are on Wreck Strand by the wreck once Hild has led to the broch, unaware, at work (the Stage 9 fixture)', () => {
     const f = strandFight('wreckers');
     expect(f.events).toContainEqual(
       expect.objectContaining({ type: 'ENCOUNTER_STARTED', scene: 'SCN_SK_WRECKERS' }),

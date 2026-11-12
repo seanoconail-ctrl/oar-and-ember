@@ -14,7 +14,7 @@ import { bandAt, isDeep, stillWaterLevel } from '../../sim/land/water.ts';
 import { tileOf } from '../../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../../sim/land/zoneMap.ts';
 import type { Simulation, SimWorldContext } from '../../sim/simulation.ts';
-import { findActor } from '../../sim/land/zoneLinks.ts';
+import { beyond, findActor } from '../../sim/land/zoneLinks.ts';
 import { talkOptions } from '../../sim/people/talk.ts';
 import { findPath } from './openingBot.ts';
 import type { Tile } from './openingBot.ts';
@@ -31,6 +31,19 @@ export class CampBot {
     this.#b = b;
     this.#land = land;
     this.#camp = camp;
+  }
+
+  /** The simulation, its world context and the scene on foot (for bots built on this one). */
+  get sim(): Simulation {
+    return this.#sim;
+  }
+
+  get land(): SimWorldContext {
+    return this.#land;
+  }
+
+  get onFoot() {
+    return this.#onFoot;
   }
 
   get #onFoot() {
@@ -63,7 +76,14 @@ export class CampBot {
   }
 
   /** Walks within the zone to the first tile matching `goal`. */
-  walkTo(goal: (t: Tile) => boolean, run = false, maxTicks = 60 * 180): boolean {
+  walkTo(
+    goal: (t: Tile) => boolean,
+    run = false,
+    maxTicks = 60 * 180,
+    /** Tiles to keep off (Stage 10: the Hag's neck in her gale), and the gait. */
+    avoid: (t: Tile) => boolean = () => false,
+    sneak = false,
+  ): boolean {
     const map = this.map;
     const tide = tideAt(this.#sim.state.calendar, this.#b);
     const elevation = this.#land.elevations.get(map.zone);
@@ -72,7 +92,7 @@ export class CampBot {
     const passable = (t: Tile): boolean => {
       if (elevation === undefined) return true;
       const at = spot(t);
-      return !isDeep(bandAt(this.#land.water, elevation, at.x, at.y, level));
+      return !avoid(t) && !isDeep(bandAt(this.#land.water, elevation, at.x, at.y, level));
     };
     const p = this.#onFoot.player;
     const path = findPath(map, tide.tidalGroundOpen, tileOf(map, p.x, p.y), goal, passable);
@@ -87,26 +107,65 @@ export class CampBot {
         if (Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
         if (this.ticks > limit) return false;
         const len = Math.hypot(dx, dy);
-        this.#move(dx / len, dy / len, run);
+        this.#sim.submit({ type: 'MOVE', x: dx / len, y: dy / len, run, sneak });
+        this.step();
       }
     }
     this.stop();
     return true;
   }
 
-  /** Walks to `zone`, crossing a linked edge (north or south) where needed. */
+  /**
+   * Walks to `zone`, crossing linked edges where needed (any side; Stage 10 joins the machair to
+   * the Hag's Seat on the west and the cairn on the east): the next zone on the shortest chain of
+   * links, through the edge's tiles where that zone runs on beyond it.
+   */
   goToZone(zone: string): void {
-    for (let guard = 0; guard < 3 && this.#onFoot.zone !== zone; guard++) {
+    for (let guard = 0; guard < 6 && this.#onFoot.zone !== zone; guard++) {
       const map = this.map;
-      const link = map.links?.find((l) => l.to === zone);
-      if (link === undefined) throw new Error(`${map.zone} has no link to ${zone}`);
-      const edgeRow = link.edge === 'n' ? 0 : map.height - 1;
-      if (!this.walkTo((t) => t.ty === edgeRow)) throw new Error(`no way to the ${link.edge} edge`);
-      const dir = link.edge === 'n' ? -1 : 1;
-      for (let i = 0; i < 120 && this.#onFoot.zone !== zone; i++) this.#move(0, dir);
+      const next = this.#nextZone(map.zone, zone);
+      if (next === null) throw new Error(`${map.zone} has no way to ${zone}`);
+      const link = map.links?.find((l) => l.to === next);
+      const toMap = this.#land.maps.get(next);
+      if (link === undefined || toMap === undefined) throw new Error(`no link to ${next}`);
+      const T = map.tile;
+      const onEdge = (t: Tile): boolean => {
+        const at =
+          link.edge === 'n'
+            ? t.ty === 0
+            : link.edge === 's'
+              ? t.ty === map.height - 1
+              : link.edge === 'w'
+                ? t.tx === 0
+                : t.tx === map.width - 1;
+        return at && beyond(map, toMap, { x: (t.tx + 0.5) * T, y: (t.ty + 0.9) * T });
+      };
+      if (!this.walkTo(onEdge)) throw new Error(`no way to the ${link.edge} edge`);
+      const dir = { n: [0, -1], s: [0, 1], w: [-1, 0], e: [1, 0] }[link.edge];
+      const dx = dir[0] ?? 0;
+      const dy = dir[1] ?? 0;
+      for (let i = 0; i < 120 && this.#onFoot.zone === map.zone; i++) this.#move(dx, dy);
       this.stop();
     }
     if (this.#onFoot.zone !== zone) throw new Error(`could not walk into ${zone}`);
+  }
+
+  /** The first zone on the shortest chain of links from `from` to `to`. */
+  #nextZone(from: string, to: string): string | null {
+    const came = new Map<string, string>([[from, '']]);
+    const queue = [from];
+    for (const z of queue) {
+      if (z === to) break;
+      for (const l of this.#land.maps.get(z)?.links ?? [])
+        if (!came.has(l.to)) {
+          came.set(l.to, z);
+          queue.push(l.to);
+        }
+    }
+    if (!came.has(to)) return null;
+    let at = to;
+    while (came.get(at) !== from) at = came.get(at) ?? from;
+    return at;
   }
 
   /** Walks next to a site of the camp (crossing zones) and faces it. */
@@ -151,7 +210,9 @@ export class CampBot {
   /** The options of the conversation open, as string keys. */
   options(): string[] {
     const people = this.#land.people ?? null;
-    return people === null ? [] : talkOptions(this.#sim.state, people).map((o) => o.key);
+    return people === null
+      ? []
+      : talkOptions(this.#sim.state, people, this.#land.searches ?? null).map((o) => o.key);
   }
 
   /** Chooses the option whose string key is `key` in the conversation open. */

@@ -33,7 +33,7 @@ export interface ZoneProp {
 
 /** Wildlife the renderer draws (never simulated). */
 export interface ZoneLife {
-  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep';
+  readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep' | 'spring';
   readonly x: number;
   readonly y: number;
   readonly r?: number;
@@ -73,8 +73,7 @@ export interface ZoneMap {
    * given, is the y the plant is sorted at (Stage 10: grass on the cairn's mound sorts with it).
    */
   readonly plants: readonly (
-    | readonly [number, number, number, number]
-    | readonly [number, number, number, number, number]
+    readonly [number, number, number, number] | readonly [number, number, number, number, number]
   )[];
   /**
    * Tiles that block movement and sight though their ground is drawn as it is (Stage 10): built
@@ -144,7 +143,7 @@ export function checkZoneMap(json: unknown): { map: ZoneMap | null; problems: st
     );
   if (!triples(decals, 3)) problems.push('decals must be [frame, x, y] triples');
   if (!triples(plants, 4, 5)) problems.push('plants must be [kind, x, y, variant, sort?] entries');
-  const solid = (json as Record<string, unknown>)['solid'];
+  const solid = json['solid'];
   if (solid !== undefined && !triples(solid, 2)) problems.push('solid must be [x, y] tiles');
   if (!Array.isArray(life)) problems.push('life must be a list');
   return { map: problems.length === 0 ? (json as unknown as ZoneMap) : null, problems };

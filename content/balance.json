@@ -2574,6 +2574,53 @@
      "Effect": "A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day"
     }
    ],
+   "theThreeSearches": [
+    {
+     "Key": "oddiCall",
+     "Value": "9 tiles",
+     "Notes": "Oddi calls out when the steerer comes this near him on Wreck Strand and asks for Thorkel's chest, which lies a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it"
+    },
+    {
+     "Key": "chestSilver",
+     "Value": "4 oz",
+     "Notes": "Thorkel's hack-silver in his chest: what the wreck-scavengers take for his body (Book 10 section 04 prices it)"
+    },
+    {
+     "Key": "chestFirst",
+     "Value": "Oddi +3 friendship",
+     "Notes": "The chest carried up before him: the haul saved (Gain)"
+    },
+    {
+     "Key": "chestLost",
+     "Value": "Oddi -3 friendship",
+     "Notes": "The chest left for the scavengers to take"
+    },
+    {
+     "Key": "limp",
+     "Value": "0.9 tiles per second",
+     "Notes": "How fast a rescued person with a serious leg wound walks home under their own power (Runa)"
+    },
+    {
+     "Key": "parley",
+     "Value": "30 real seconds",
+     "Notes": "Wreck-scavengers who see the steerer come with empty hands, not running, hold and talk this long before they lose patience; a weapon taken in hand, a blow or a threat ends it at once"
+    },
+    {
+     "Key": "guard",
+     "Value": "3 tiles",
+     "Notes": "Bran fights any foe who comes this near Thorkel's body, and goes back to it between"
+    },
+    {
+     "Key": "offering",
+     "Value": "Runa +5 friendship",
+     "Notes": "The Cailleach given her due at the Hag's Seat (Faith in the old powers)"
+    },
+    {
+     "Key": "cliffPath",
+     "Value": "Runa -3 friendship",
+     "Notes": "The cliff path taken with the stone still weeping: the rite left undone"
+    }
+   ],
    "theHouseholdDayAndTalk": [
     {
      "Key": "barkEarshot",

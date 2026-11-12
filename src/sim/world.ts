@@ -59,7 +59,7 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * the steerer's fighter, someone carried by another (`carries`), and the fight under way
  * (`battle`); the three wreck-scavengers join `people`.
  */
-export const WORLD_STATE_VERSION = 7;
+export const WORLD_STATE_VERSION = 8;
 
 /** The difficulty options that change the simulation (Book 1 section 15; decision S9-9). */
 export interface CampaignOptions {
@@ -273,7 +273,8 @@ export interface Person {
 
 /** The conversation or scene under way (Book 8 section 09; Book 2 section 16). */
 export interface TalkState {
-  readonly kind: 'TALK' | 'SCENE';
+  /** A conversation, a dispute's scene, or a search's words (Stage 10: Bran, Ketill, Runa, the stone). */
+  readonly kind: 'TALK' | 'SCENE' | 'SEARCH';
   /** The resident spoken with (in a scene, the one it is about). */
   readonly with: Id;
   /** A scene: its beat, and who found it (null: the steerer). */

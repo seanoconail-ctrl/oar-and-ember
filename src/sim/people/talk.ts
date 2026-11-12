@@ -22,6 +22,8 @@ import { seasonOf, watchOf } from '../calendar/calendar.ts';
 import type { CampContext } from '../home/camp.ts';
 import { FACT_AT_BROCH } from '../home/camp.ts';
 import type { JobKind, Person, TalkState, WorldState } from '../world.ts';
+import { searchOptions } from '../narrative/searches.ts';
+import type { SearchContext } from '../narrative/searches.ts';
 import type { PeopleContext } from './context.ts';
 import { checkFeelings, meet, tilesFromSteerer, timeSpent, treat } from './day.ts';
 import type { Emit } from './day.ts';
@@ -156,8 +158,17 @@ export interface TalkOption {
   readonly kind: 'TOPIC' | 'CHOICE' | 'LEAVE' | 'SCENE';
 }
 
-export function talkOptions(world: WorldState, ctx: PeopleContext): TalkOption[] {
+export function talkOptions(
+  world: WorldState,
+  ctx: PeopleContext,
+  search: SearchContext | null = null,
+): TalkOption[] {
   const talk = world.talk;
+  // Stage 10: a search's words (Bran, Ketill, Runa, the stone).
+  if (talk?.kind === 'SEARCH')
+    return search === null
+      ? []
+      : searchOptions(world, search).map((o) => ({ key: o.key, kind: 'CHOICE' as const }));
   if (talk === null || ctx.talk === null) return [];
   if (talk.queue.length > 0 || talk.ending) return [];
   if (talk.kind === 'SCENE') {

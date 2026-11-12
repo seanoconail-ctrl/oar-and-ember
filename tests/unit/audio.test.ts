@@ -128,15 +128,24 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
     expect(router.setPlace('ZONE_SK_STRAND', 'day', 0)).toEqual(['AMB_SURF_SHINGLE']);
     // Stage 7: the steading's life by the part of the day; the hearth's crackle at any hour (its
     // level follows the distance to a lit fire).
+    // Stage 10: the Kelda Spring is on the machair (its level follows the distance to its pool).
     expect(router.setPlace('ZONE_SK_MACHAIR', 'night', 0)).toEqual([
       'AMB_WIND_HEATHER',
       'AMB_HEARTH',
       'AMB_HOME_NIGHT',
+      'AMB_KELDA_SPRING',
     ]);
     expect(router.setPlace('ZONE_SK_MACHAIR', 'dawn', 0)).toEqual([
       'AMB_WIND_HEATHER',
       'AMB_HEARTH',
       'AMB_HOME_DAWN',
+      'AMB_KELDA_SPRING',
+    ]);
+    // Stage 10: each southern zone has its ambience (Book 11 section 12).
+    expect(router.setPlace('ZONE_SK_HAGSEAT', 'day', 0)).toEqual(['AMB_HAGSEAT_GALE']);
+    expect(router.setPlace('ZONE_SK_CAIRN', 'day', 0)).toEqual([
+      'AMB_WIND_HEATHER',
+      'AMB_CAIRN_FOLD',
     ]);
     expect(router.setPlace('ZONE_SK_MACHAIR', 'day', 0)).toContain('AMB_HOME_DAY');
     expect(router.setPlace('ZONE_SK_MACHAIR', 'dusk', 0)).toContain('AMB_HOME_DUSK');

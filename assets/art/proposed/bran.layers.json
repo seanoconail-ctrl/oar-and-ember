@@ -1,0 +1,33 @@
+{
+  "name": "bran",
+  "layers": {
+    "s": [
+      "actor_c_bran_heavy",
+      "layer_clothing_tunic_bran_heavy",
+      "layer_blood_wound_bran_heavy",
+      "layer_weapon_axe_bran_heavy",
+      "layer_shield_round_bran_heavy"
+    ],
+    "n": [
+      "actor_c_bran_heavy",
+      "layer_clothing_tunic_bran_heavy",
+      "layer_blood_wound_bran_heavy",
+      "layer_weapon_axe_bran_heavy",
+      "layer_shield_round_bran_heavy"
+    ],
+    "e": [
+      "actor_c_bran_heavy",
+      "layer_clothing_tunic_bran_heavy",
+      "layer_blood_wound_bran_heavy",
+      "layer_weapon_axe_bran_heavy",
+      "layer_shield_round_bran_heavy"
+    ],
+    "w": [
+      "actor_c_bran_heavy",
+      "layer_clothing_tunic_bran_heavy",
+      "layer_blood_wound_bran_heavy",
+      "layer_weapon_axe_bran_heavy",
+      "layer_shield_round_bran_heavy"
+    ]
+  }
+}

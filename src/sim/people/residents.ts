@@ -66,6 +66,8 @@ export function stepResident(
   land: Pick<LandContext, 'rules' | 'movement'>,
   tidalGroundOpen: boolean,
   hold = false,
+  /** Tiles a second (Stage 10: a limp, a carry); the walking speed when not given. */
+  speed?: number,
 ): void {
   const found = findActor(onFoot, id);
   if (found === null) return;
@@ -142,7 +144,14 @@ export function stepResident(
     actor.pose = 'idle';
     delete actor.task;
   }
-  const arrived = walkAlong(actor, actor.walk, map, land, land.movement.walk, tidalGroundOpen);
+  const arrived = walkAlong(
+    actor,
+    actor.walk,
+    map,
+    land,
+    speed ?? land.movement.walk,
+    tidalGroundOpen,
+  );
   if (!arrived) return;
   if (zone === place.zone) {
     settle(actor, place);

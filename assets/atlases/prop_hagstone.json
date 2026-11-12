@@ -1,0 +1,66 @@
+{
+  "sheet": "prop_hagstone",
+  "kind": "prop",
+  "image": "prop_hagstone.png",
+  "width": 34,
+  "height": 60,
+  "pivot": {
+    "x": 17,
+    "y": 58
+  },
+  "footprint": {
+    "w": 22,
+    "h": 6
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "dry": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "wet": {
+      "frames": 6,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 22,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "dry/-/0": [
+      0,
+      0
+    ],
+    "wet/-/0": [
+      0,
+      60
+    ],
+    "wet/-/1": [
+      34,
+      60
+    ],
+    "wet/-/2": [
+      68,
+      60
+    ],
+    "wet/-/3": [
+      102,
+      60
+    ],
+    "wet/-/4": [
+      136,
+      60
+    ],
+    "wet/-/5": [
+      170,
+      60
+    ]
+  }
+}

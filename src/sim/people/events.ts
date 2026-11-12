@@ -28,7 +28,11 @@ export type PeopleEvent =
   | { readonly type: 'MEAL_TAKEN'; readonly person: Id; readonly hot: boolean }
   /** A pressing topic: the resident comes to the steerer to raise it. */
   | { readonly type: 'RESIDENT_APPROACHED'; readonly person: Id; readonly topic: string }
-  | { readonly type: 'TALK_STARTED'; readonly person: Id; readonly kind: 'TALK' | 'SCENE' }
+  | {
+      readonly type: 'TALK_STARTED';
+      readonly person: Id;
+      readonly kind: 'TALK' | 'SCENE' | 'SEARCH';
+    }
   | { readonly type: 'TALK_ENDED'; readonly person: Id }
   | { readonly type: 'TALK_INFO'; readonly key: string }
   | { readonly type: 'JOB_ASSIGNED'; readonly person: Id; readonly job: JobKind }

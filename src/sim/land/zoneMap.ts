@@ -22,7 +22,12 @@ export function solidAt(map: ZoneMap, tx: number, ty: number): boolean {
 }
 
 /** Whether tile (tx, ty) blocks movement under the tide: its terrain, or a built thing on it. */
-export function tileBlocks(map: ZoneMap, tx: number, ty: number, tidalGroundOpen: boolean): boolean {
+export function tileBlocks(
+  map: ZoneMap,
+  tx: number,
+  ty: number,
+  tidalGroundOpen: boolean,
+): boolean {
   return blocksMovement(terrainAt(map, tx, ty), tidalGroundOpen) || solidAt(map, tx, ty);
 }
 

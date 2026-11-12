@@ -78,6 +78,16 @@ import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
 import type { CameraLead } from './zoneVisuals.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
 import { talkOptions } from '../sim/people/talk.ts';
+import {
+  FACT_BODY,
+  FACT_BRAN,
+  FACT_CHEST,
+  FACT_ODDI,
+  FACT_RUNA,
+  FACT_WRECKERS,
+  searchPlacedUses,
+  stoneWeeps,
+} from '../sim/narrative/searches.ts';
 import { activityOf } from '../sim/people/schedule.ts';
 import type { BodyModel } from '../sim/world.ts';
 
@@ -201,6 +211,7 @@ export function* preparePlay(
       anims,
       shadows,
       highlight: null,
+      stoneWeeps: stoneWeeps(sim.state),
       visual: visuals.view({
         dt: 1 / 60,
         tick: sim.state.tick,
@@ -309,6 +320,7 @@ export function startPlay(
     { map, controls: land.controls, rules: land.rules },
   );
   session.people = land.people ?? null;
+  session.searches = land.searches ?? null;
   const style = parseRenderStyle(renderJson);
   const missileLook = {
     releaseHeight: land.rules.releaseHeightPx,
@@ -580,7 +592,43 @@ export function startPlay(
       level = Math.max(0, Math.min(1, (homeAudio.fireSilentTiles - d) / span));
     }
     engine.setHearth(level);
+    // Stage 10: the Kelda Spring, louder as the steerer nears its pool.
+    const south = audioTable?.south;
+    let spring = 0;
+    const springAt = south?.spring.zone === map.zone ? south.spring : undefined;
+    if (onFoot !== null && springAt !== undefined) {
+      const d = Math.hypot(
+        onFoot.player.x / map.tile - springAt.x,
+        onFoot.player.y / map.tile - springAt.y,
+      );
+      const span = Math.max(1, springAt.silentTiles - springAt.fullTiles);
+      spring = Math.max(0, Math.min(1, (springAt.silentTiles - d) / span));
+    }
+    engine.setSpring(spring);
+    // The Hag's Seat's tell while her stone weeps and the steerer is on the headland: hail on the
+    // stone, now and then, from where the stone stands (Book 11 section 12: every sign its tell).
+    const searchDef = content.searches;
+    if (
+      south !== undefined &&
+      searchDef != null &&
+      onFoot !== null &&
+      map.zone === searchDef.runa.zone &&
+      stoneWeeps(sim.state) &&
+      engine.unlocked
+    ) {
+      const lo = south.tellLeast;
+      const hi = Math.max(lo, south.tellMost);
+      // The first soon after arriving: within the least wait.
+      nextTell ??= engine.now + lo * 0.4;
+      if (engine.now >= nextTell) {
+        const dx = searchDef.runa.stone.x - onFoot.player.x / map.tile;
+        audio.event('SIGN_CAILLEACH', engine.now, { pan: Math.max(-1, Math.min(1, dx / 12)) });
+        nextTell = engine.now + lo + (((sim.state.tick * 7919) % 1000) / 1000) * (hi - lo);
+      }
+    } else nextTell = null;
   };
+  /** When the Hag's Seat's tell next sounds (audio clock), while it is due. */
+  let nextTell: number | null = null;
   // The frame's clock: events arrive while a frame steps the simulation, and their captions and
   // notices must expire on the clock the frame tests them against (stepped play runs ahead of
   // the wall clock).
@@ -668,7 +716,12 @@ export function startPlay(
         if (e.bark !== undefined) barksHeard++;
         return;
       case 'TALK_INFO':
+      case 'SEARCH_INFO':
         say(t(e.key), now, 'info');
+        return;
+      // Stage 10: a checkpoint before a search's danger (Book 2 section 20).
+      case 'CHECKPOINT':
+        checkpointDue = e.label;
         return;
       case 'RESIDENT_APPROACHED':
         say(t('caption.voice.approach', { name: nameOf(e.person) }), now, 'info');
@@ -910,7 +963,7 @@ export function startPlay(
       root.dataset['talkOptions'] = '';
       return;
     }
-    const options = talkOptions(sim.state, peopleCtx);
+    const options = talkOptions(sim.state, peopleCtx, land.searches ?? null);
     const cursor = Math.min(session.talkCursor, Math.max(0, options.length - 1));
     const lineKey = talk.line?.key ?? '';
     const shown = [talk.with, lineKey, options.map((o) => o.key).join('|'), cursor, mouse].join(
@@ -1168,6 +1221,8 @@ export function startPlay(
     // The camp's uses (Stage 7): the nearer of a lift or pickup and a task, as the simulation picks.
     const campCtx = land.camp ?? null;
     const uses = campCtx === null ? [] : campUses(sim.state, campCtx, map, onFoot.actors);
+    // Stage 10: the searches' words (Bran, Ketill, Runa, the stone), as the simulation offers them.
+    if (land.searches != null) uses.push(...searchPlacedUses(sim.state, land.searches, map));
     const reachPx = land.rules.interactRadiusTiles * map.tile;
     const use =
       onFoot.carrying === null && onFoot.player.work == null
@@ -1273,6 +1328,7 @@ export function startPlay(
       visual: view,
       hidePeople,
       facts: sim.state.facts,
+      stoneWeeps: stoneWeeps(sim.state),
       missiles: missileLook,
       ...(camp === undefined ? {} : { camp }),
       gore: display.gore,
@@ -1583,6 +1639,18 @@ export function startPlay(
         ? ''
         : `${hildP.happiness.toFixed(1)},${hildP.friendship.toFixed(1)},${hildP.fear.toFixed(1)}`;
     root.dataset['residents'] = sim.state.household.residents.join(',');
+    // Stage 10: the three searches as facts (tests), and whether the Hag's Seat stone weeps.
+    root.dataset['searches'] = [
+      FACT_ODDI,
+      FACT_BRAN,
+      FACT_RUNA,
+      FACT_CHEST,
+      FACT_WRECKERS,
+      FACT_BODY,
+    ]
+      .map((f) => `${f}=${String(sim.state.facts[f] ?? '')}`)
+      .join('|');
+    root.dataset['stone'] = stoneWeeps(sim.state) ? 'wet' : 'dry';
     root.dataset['barks'] = String(barksHeard);
     root.dataset['scene'] = String(sim.state.facts['scene.beat_1_oddi_theft'] ?? '');
     canvas.setAttribute(

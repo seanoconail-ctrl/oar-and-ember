@@ -63,7 +63,9 @@ import {
   leaveZone,
   meleePress,
   meleeRelease,
+  endInBargain,
   spawnEncounters,
+  startFight,
   steererBlock,
   steererDodge,
   steererParry,
@@ -97,6 +99,18 @@ import type { CampContext, CampEvent, NightRecord, PlacedUse, SiteUse } from './
 import { clearReasons, hasReason, setReason, traversalTick, updateMax } from './home/stamina.ts';
 import { edgeAt, entryPoint, linkOf, switchZone } from './land/zoneLinks.ts';
 import { stepBroch } from './narrative/broch.ts';
+import {
+  chooseSearch,
+  galeHolds,
+  galeRefused,
+  searchHolds,
+  searchLifted,
+  searchSetDown,
+  searchPlacedUses,
+  startSearchTalk,
+  stepSearches,
+} from './narrative/searches.ts';
+import type { SearchContext, SearchEvent } from './narrative/searches.ts';
 import {
   onLifted,
   onSetDown,
@@ -263,6 +277,7 @@ export type SimEvent =
   | CampEvent
   | PeopleEvent
   | FightEvent
+  | SearchEvent
   /** The held finisher has begun on someone (Book 10 finisherHold). */
   | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
@@ -333,6 +348,8 @@ export interface SimWorldContext extends LandContext {
   readonly people?: PeopleContext | null;
   /** Fights (Stage 9): weapons, fighters, encounters, safe places, Book 10's combat numbers. */
   readonly fight?: FightContext | null;
+  /** Chapter 1's three searches and the Hag's Seat's sign (Stage 10). */
+  readonly searches?: SearchContext | null;
 }
 
 export function createSimulation(
@@ -349,6 +366,7 @@ export function createSimulation(
   const camp = land?.camp ?? null;
   const people = land?.people ?? null;
   const fightCtx = land?.fight ?? null;
+  const searchCtx = land?.searches ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
@@ -789,6 +807,11 @@ export function createSimulation(
         return;
       }
       case 'TALK_CHOOSE': {
+        if (state.talk?.kind === 'SEARCH') {
+          if (searchCtx !== null)
+            chooseSearch(state, searchCtx, command.index, searchHooks, emitSearch);
+          return;
+        }
         if (people === null || camp === null || state.talk === null) return;
         if (state.talk.kind === 'SCENE')
           chooseScene(state, people, camp, command.index, tileSize(), emitPeople);
@@ -800,6 +823,12 @@ export function createSimulation(
       }
       case 'TALK_END': {
         // A scene waits for its judgement; a conversation can be left at any time.
+        if (state.talk?.kind === 'SEARCH') {
+          const with_ = state.talk.with;
+          state.talk = null;
+          events.emit({ type: 'TALK_ENDED', person: with_ });
+          return;
+        }
         if (people === null || state.talk?.kind !== 'TALK') return;
         endTalk(state, people, emitPeople);
         return;
@@ -846,6 +875,28 @@ export function createSimulation(
   const emitFight = (e: Parameters<FightWorld['emit']>[0]): void => {
     events.emit(e);
   };
+  /** A search's events (Stage 10): onto the bus, and a resolved search is remembered. */
+  const emitSearch = (e: SearchEvent): void => {
+    events.emit(e);
+  };
+  /** What a search's choices do beyond the search (Stage 10). */
+  const searchHooks = {
+    giveUp: (item: Id): void => {
+      const slots = state.player.hotbar.slots;
+      const at = slots.indexOf(item);
+      if (at >= 0) slots[at] = null;
+      if (state.onFoot !== null) state.onFoot.player.aim = null;
+    },
+    fight: (): void => {
+      const fw = fightWorld();
+      if (fw !== null) startFight(fw);
+    },
+    bargain: (): void => {
+      const fw = fightWorld();
+      if (fw !== null) endInBargain(fw);
+    },
+  };
+
   /** What a fight needs this tick (null with no fight content or no zone). */
   const fightWorld = (): FightWorld | null => {
     const onFoot = state.onFoot;
@@ -1010,8 +1061,11 @@ export function createSimulation(
   const usesHere = (): PlacedUse[] => {
     const onFoot = state.onFoot;
     const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
-    if (camp === null || onFoot === null || map === undefined) return [];
-    return campUses(state, camp, map, onFoot.actors);
+    if (onFoot === null || map === undefined) return [];
+    const uses = camp === null ? [] : campUses(state, camp, map, onFoot.actors);
+    // Stage 10: a search's words to open (Bran, Ketill, Runa, the stone).
+    if (searchCtx !== null) uses.push(...searchPlacedUses(state, searchCtx, map));
+    return uses;
   };
 
   /** Whether a camp use is nearer the steerer than a lift or pickup. */
@@ -1074,7 +1128,12 @@ export function createSimulation(
   /** What a camp use does: a task's action, feeding the fire, eating, lying down to sleep. */
   const applyUse = (command: Command, use: SiteUse, at: { x: number; y: number }): void => {
     const onFoot = state.onFoot;
-    if (onFoot === null || camp === null) return;
+    if (onFoot === null) return;
+    if (use.kind === 'SEARCH') {
+      if (searchCtx !== null) startSearchTalk(state, searchCtx, use.site, emitSearch);
+      return;
+    }
+    if (camp === null) return;
     switch (use.kind) {
       case 'REFUSE':
         refuse(
@@ -1141,6 +1200,7 @@ export function createSimulation(
     if (interaction.kind === 'LIFT') {
       events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
       if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
+      if (searchCtx !== null) searchLifted(state, searchCtx, interaction.target, emitSearch);
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
       // A downed ally set down: safe at the camp, or downed again where they lie (Stage 9).
@@ -1148,6 +1208,10 @@ export function createSimulation(
       const setDown = onFoot.actors[interaction.target];
       if (fw !== null && setDown !== undefined) broughtTo(fw, interaction.target, setDown);
       if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
+      // Stage 10: Oddi safe (he joins), Thorkel's chest saved, Runa's tools past the neck.
+      const zoneMap = land.maps.get(onFoot.zone);
+      if (searchCtx !== null && zoneMap !== undefined)
+        searchSetDown(state, searchCtx, interaction.target, zoneMap, emitSearch);
       // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
       if (
         people !== null &&
@@ -1203,7 +1267,18 @@ export function createSimulation(
       p.intent = { x: 0, y: 0, run: false, sneak: false };
       p.aim = null;
     }
+    // The gale on the Hag's neck holds anyone carrying while the stone weeps (Stage 10).
+    const wanted = p.intent;
+    let held = false;
+    if (searchCtx !== null && (wanted.x !== 0 || wanted.y !== 0)) {
+      held = galeHolds(state, searchCtx, map, p.x + wanted.x * 6, p.y + wanted.y * 6);
+      if (held) {
+        p.intent = { ...wanted, x: 0, y: 0 };
+        galeRefused(state, emitSearch, searchCtx);
+      }
+    }
     stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    if (held) p.intent = wanted;
     if (fw !== null) {
       stepFight(fw);
       // The held finisher (Book 10 finisherHold): a kill, and a deed.
@@ -1266,11 +1341,29 @@ export function createSimulation(
       stepOpeningAfter(state, land.opening, emit);
       if (camp !== null) stepBroch(state, camp, land.opening, land, tide.tidalGroundOpen, emit);
     }
+    // Chapter 1 beat 3, the three searches (Stage 10).
+    if (searchCtx !== null)
+      stepSearches(
+        state,
+        searchCtx,
+        land,
+        tide.tidalGroundOpen,
+        land.opening?.caller ?? null,
+        emitSearch,
+      );
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
     // a conversation's lines play; residents in earshot bark.
     if (people !== null && camp !== null) {
       joinNew(state, people, state.tick, emitPeople);
-      stepPeopleTick(state, people, camp, land, tide.tidalGroundOpen, land.opening?.caller ?? null);
+      stepPeopleTick(
+        state,
+        people,
+        camp,
+        land,
+        tide.tidalGroundOpen,
+        land.opening?.caller ?? null,
+        (id) => searchHolds(state, searchCtx, id),
+      );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
       barkTick(state, people, camp, map.tile, residents(state), emitPeople);
     }

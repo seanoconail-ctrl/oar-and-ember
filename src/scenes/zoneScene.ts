@@ -53,6 +53,9 @@ export const BROCH_FLOOR_SHEET = 'decal_broch';
 export const CAMP_SHEET = 'prop_camp';
 /** Pieces of driftwood lying to be picked up (decision PT-5). */
 export const DRIFTWOOD_SHEET = 'prop_driftwood';
+/** Stage 10: the Hag's Seat's light and the Kelda Spring's bubbles; the weeping stone. */
+export const SOUTH_FX_SHEET = 'fx_south';
+export const HAGSTONE_SHEET = 'prop_hagstone';
 export const FIRE_SHEET = 'fx_fire';
 /** Seconds between glints on something lying to be picked up. */
 const GLINT_EVERY = 2.6;
@@ -135,6 +138,8 @@ interface IndexedPlant {
   readonly c2: number;
   /** Frame names for leans -3..3. */
   readonly frames: readonly string[];
+  /** The line it sorts on, if not its foot: turf on a raised thing (the cairn) sorts with it. */
+  readonly sort?: number;
 }
 interface ZoneIndex {
   readonly decals: readonly (readonly (readonly [number, number, number])[])[];
@@ -148,7 +153,7 @@ function zoneIndex(map: ZoneMap): ZoneIndex {
   const plants = Array.from({ length: map.height + 2 }, () => [] as IndexedPlant[]);
   const names = new Map<string, string[]>();
   for (const d of map.decals) decals[Math.max(0, Math.floor(d[2] / TILE))]?.push([...d]);
-  for (const [k, x, y, v] of map.plants) {
+  for (const [k, x, y, v, sort] of map.plants) {
     const kind = PLANT_KINDS[k] ?? 'grass';
     const state = `${kind}${v}`;
     let frames = names.get(state);
@@ -166,6 +171,8 @@ function zoneIndex(map: ZoneMap): ZoneIndex {
       c2: Math.cos(hash01(x, y, 5) * 3.1 * 2 * Math.PI),
       tall: kind === 'marram' || kind === 'tussock',
       frames,
+      // Just after the band it grows on (Stage 10: the turf on the Hollow Cairn).
+      ...(sort === undefined ? {} : { sort: sort + 0.5 }),
     });
   }
   for (const row of plants) row.sort((a, b) => a.y - b.y || a.x - b.x);
@@ -256,6 +263,7 @@ export function plantSprites(
         x: x - camera.x,
         y: y - camera.y,
         layer: 'actor',
+        ...(plant.sort === undefined ? {} : { sort: plant.sort - camera.y }),
       });
     }
   }
@@ -346,6 +354,23 @@ export function lifeSprites(
           layer: 'actor',
         },
       });
+      return;
+    }
+    if (l.kind === 'spring') {
+      // Stage 10: the Kelda Spring welling up, bubbles rising through its pool (Book 7: springs bubble).
+      for (let k = 0; k < 3; k++) {
+        const f = Math.floor((t + k * 0.37) / 0.11) % 6;
+        out.push({
+          lift: 0,
+          sprite: {
+            sheet: SOUTH_FX_SHEET,
+            frame: `bubble/-/${f}`,
+            x: cx + (k - 1) * 9 - camera.x,
+            y: cy + (k % 2) * 5 - camera.y,
+            layer: 'decal',
+          },
+        });
+      }
       return;
     }
     if (l.kind === 'sheep') {
@@ -447,6 +472,8 @@ export interface ZoneSceneInput {
   readonly hidePeople?: boolean;
   /** Facts the zone reads: an item lying there shows once its `after` fact holds. */
   readonly facts?: FactView;
+  /** Stage 10: the Hag's Seat stone weeps (the first supernatural sign). */
+  readonly stoneWeeps?: boolean;
   /** Missiles: the hand's height they leave at (px), and each item's icon. */
   readonly missiles?: {
     readonly releaseHeight: number;
@@ -716,16 +743,24 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   };
 
   const sprites: SceneSprite[] = groundSprites(map, camera);
+  const pools: LightPool[] = [];
   sprites.push(...decalSprites(map, camera));
   const inView = (x: number, y: number): boolean =>
     x > -80 && y > -16 && x < LOGICAL_WIDTH + 80 && y < LOGICAL_HEIGHT + 100;
   for (const prop of map.props) {
     const x = prop.x * map.tile - camera.x;
     const y = prop.y * map.tile - camera.y;
-    if (!inView(x, y)) continue;
+    // Big built things (the cairn's bands) reach far above their foot.
+    if (!(x > -260 && y > -16 && x < LOGICAL_WIDTH + 260 && y < LOGICAL_HEIGHT + 200)) continue;
+    // Stage 10: the Hag's Seat weeps while her sign holds, the water running down it in a loop.
+    let frame = prop.frame;
+    if (prop.sheet === HAGSTONE_SHEET) {
+      const state = input.stoneWeeps === true ? 'wet' : 'dry';
+      frame = `${state}/-/${frameIndex(anims, HAGSTONE_SHEET, state, reduced ? 0 : tick)}`;
+    }
     const sprite: SceneSprite = {
       sheet: prop.sheet,
-      frame: prop.frame,
+      frame,
       x,
       y,
       layer: 'actor',
@@ -733,13 +768,33 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     };
     sprites.push(sprite);
     cast(sprite);
+    if (prop.sheet === HAGSTONE_SHEET && input.stoneWeeps === true) {
+      // The pale light Runa followed, hanging by the stone and drifting (Book 7 section 09).
+      const drift = Math.sin(seconds * 0.9) * 5;
+      const bob = Math.sin(seconds * 1.7) * 3;
+      const lx = x - 15 + drift;
+      const ly = y - 34 + bob;
+      sprites.push({
+        sheet: SOUTH_FX_SHEET,
+        frame: `wisp/-/${Math.floor(seconds / 0.1) % 8}`,
+        x: lx,
+        y: ly + 8,
+        layer: 'actor',
+        sort: y + 1,
+      });
+      pools.push({
+        x: lx,
+        y: ly,
+        radius: 26 + 3 * Math.sin(seconds * 5.1),
+        colour: [150, 210, 200],
+      });
+    }
   }
   for (const { sprite, lift } of lifeSprites(map.life, camera, seconds, input.phase === 'night')) {
     if (!inView(sprite.x, sprite.y + lift)) continue;
     sprites.push(sprite);
     cast(sprite, lift);
   }
-  const pools: LightPool[] = [];
   const camp = input.camp;
   const broch = map.broch;
   if (broch !== undefined && camp?.building != null) {
@@ -1102,10 +1157,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         );
       } else {
         // A wader stepping to keep their footing walks; otherwise the pose's own animation.
-        const st =
-          actor.moving === true && own['walk'] !== undefined
-            ? 'walk'
-            : poseState(actor, own, input.camp?.loops ?? {});
+        // Carrying someone (Bran with Thorkel, Stage 10): the carry walk.
+        const st0 =
+          actor.carries !== undefined && own['carry'] !== undefined
+            ? 'carry'
+            : actor.moving === true && own['walk'] !== undefined
+              ? 'walk'
+              : poseState(actor, own, input.camp?.loops ?? {});
+        // A pose the sheet has no drawing for (a chest set down) is drawn lying, or standing.
+        const st = own[st0] !== undefined ? st0 : own['down'] !== undefined ? 'down' : 'idle';
         const frame = frameIndex(anims, who.body, st, tick);
         person(drawn, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
         walkers.push({ x: actor.x, y: actor.y });

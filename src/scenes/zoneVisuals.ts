@@ -192,7 +192,7 @@ export class ZoneVisuals {
   readonly map: ZoneMap;
   readonly elevation: Elevation;
   readonly tuning: VisualTuning;
-  readonly wind: Wind = STRAND_WIND;
+  readonly wind: Wind;
   reducedMotion: boolean;
   /** Effect detail (2 full, 1 lite, 0 low): the play view steps it down on a slow machine. */
   detail: 0 | 1 | 2 = 2;
@@ -256,6 +256,7 @@ export class ZoneVisuals {
     this.elevation = elevation;
     this.reducedMotion = reducedMotion;
     this.tuning = tuning;
+    this.wind = STRAND_WIND;
     for (let ty = 0; ty < map.height; ty++) {
       const row = map.rows[ty] ?? '';
       for (let tx = 0; tx < map.width; tx++) {

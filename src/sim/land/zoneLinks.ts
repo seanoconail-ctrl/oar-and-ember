@@ -53,7 +53,11 @@ export function linkOf(
 }
 
 /** Whether a point at an edge of `from` lies along the side of `to` that meets it. */
-export function beyond(from: ZoneMap, to: ZoneMap, at: { readonly x: number; readonly y: number }): boolean {
+export function beyond(
+  from: ZoneMap,
+  to: ZoneMap,
+  at: { readonly x: number; readonly y: number },
+): boolean {
   const p = translate(from, to, at.x, at.y);
   const W = to.width * to.tile;
   const H = to.height * to.tile;

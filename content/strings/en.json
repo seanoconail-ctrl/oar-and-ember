@@ -2929,15 +2929,15 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_oddi.search.call": {
-    "text": "Steerer! Here, by the wreck! Thorkel's chest is in the wash. The sea's taking it. Get it, quick!",
+    "text": "Steerer! Here, by the wreck! Thorkel's chest is down there in the wash. Leave it and the scavengers will have it. They've picked at the wreck all morning.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_oddi.search.lifted_first": {
-    "text": "No, the chest! There it goes. Thorkel's silver, and we gave it to the sea.",
+    "text": "Me first? Then the chest's as good as theirs. Fine. Fine.",
     "tags": ["VOICED"]
   },
   "c_oddi.search.chest_saved": {
-    "text": "That's it, up the beach with it. I'll keep. I'm not going anywhere.",
+    "text": "That's it, take it up. I'll keep. I'm not going anywhere.",
     "tags": ["VOICED"]
   },
   "c_oddi.search.safe_chest": {
@@ -2945,11 +2945,11 @@
     "tags": ["VOICED"]
   },
   "c_oddi.search.safe_no_chest": {
-    "text": "Thanks for the lift. I'd still rather we had the chest as well.",
+    "text": "Thanks for the carry. Thorkel's chest is gone, mind. The scavengers will have it by now.",
     "tags": ["VOICED"]
   },
   "caption.search.chest_lost": {
-    "text": "The sea takes Thorkel's chest",
+    "text": "The chest is gone from the strand",
     "tags": ["INFO"]
   },
   "caption.search.oddi_calling": {
@@ -3109,5 +3109,16 @@
   "caption.amb.cairn": {
     "text": "Sheep and larks about the cairn",
     "tags": ["INFO"]
+  },
+  "e_wrecker_ketill.bark.parley.01": {
+    "text": "Hold there. Hands where I can see them.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.bark.combat.danger.01": {
+    "text": "Keep off him!",
+    "tags": ["VOICED"]
+  },
+  "ui.sound.south": {
+    "text": "The southern island"
   }
 }

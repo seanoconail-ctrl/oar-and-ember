@@ -745,6 +745,21 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Maimed | Permanent | A trait (lost eye, stiff hand) with a skill penalty |
 | Untended | No recovery | A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day |
 
+### The three searches
+*Added for Stage 10 (decisions S10-7 to S10-10): the numbers of Chapter 1's three searches (Book 4 section 08, beat 3). Where they move friendship they are the person's own reaction to how they were found, as a reply's are (Conversation replies), besides any deed the ledger weighs.*
+
+| Key | Value | Notes |
+|---|---|---|
+| oddiCall | 9 tiles | Oddi calls out when the steerer comes this near him on Wreck Strand and asks for Thorkel's chest, which lies a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it |
+| chestSilver | 4 oz | Thorkel's hack-silver in his chest: what the wreck-scavengers take for his body (Book 10 section 04 prices it) |
+| chestFirst | Oddi +3 friendship | The chest carried up before him: the haul saved (Gain) |
+| chestLost | Oddi -3 friendship | The chest left for the scavengers to take |
+| limp | 0.9 tiles per second | How fast a rescued person with a serious leg wound walks home under their own power (Runa) |
+| parley | 30 real seconds | Wreck-scavengers who see the steerer come with empty hands, not running, hold and talk this long before they lose patience; a weapon taken in hand, a blow or a threat ends it at once |
+| guard | 3 tiles | Bran fights any foe who comes this near Thorkel's body, and goes back to it between |
+| offering | Runa +5 friendship | The Cailleach given her due at the Hag's Seat (Faith in the old powers) |
+| cliffPath | Runa -3 friendship | The cliff path taken with the stone still weeping: the rite left undone |
+
 ### The household day and talk
 *Added for Stage 8 (decisions S8-1 to S8-30): barks, conversation, schedules and the warning flow. Starting values, for tuning after playtests.*
 

@@ -232,6 +232,8 @@ export type SiteUse =
   | { readonly kind: 'SLEEP'; readonly site: string }
   | { readonly kind: 'EAT'; readonly site: string }
   | { readonly kind: 'TALK'; readonly site: string; readonly target: Id }
+  /** Stage 10: a search's words (site: the talk's id; target: who or what is spoken to). */
+  | { readonly kind: 'SEARCH'; readonly site: string; readonly target: Id }
   | {
       readonly kind: 'REFUSE';
       readonly site: string;
@@ -304,6 +306,8 @@ export interface PlacedUse {
   readonly use: SiteUse;
   readonly x: number;
   readonly y: number;
+  /** Its own reach in pixels (Stage 10: words over a wall), instead of the interaction radius. */
+  readonly reach?: number;
 }
 
 /** Every camp use in a zone now: its sites, and the people who can be tended. */
@@ -343,7 +347,7 @@ export function campUseNear(
   const rank = (u: PlacedUse): number => (u.use.kind === 'REFUSE' ? 1 : 0);
   for (const u of uses) {
     const d = Math.hypot(u.x - at.x, u.y - at.y);
-    if (d > reach) continue;
+    if (d > (u.reach ?? reach)) continue;
     if (best === null || rank(u) < rank(best) || (rank(u) === rank(best) && d < best.d))
       best = { ...u, d };
   }
@@ -818,6 +822,19 @@ export function morningReport(
   }
   // The household's plans for the day, and how they are (src/sim/people/day.ts).
   lines.push(...plans);
+  // Stage 10: the Hag's Seat's consequence, reported once (the omen's saved state, Book 4
+  // section 07's fourth part; src/sim/narrative/searches.ts).
+  const cailleach = world.powers['POWER_CAILLEACH'] as
+    { stone: string; offering: string | null; passedBy: boolean } | undefined;
+  if (cailleach !== undefined && world.facts['search.reported_cailleach'] !== true) {
+    if (cailleach.stone === 'DRY') {
+      line('report.search.cailleach');
+      world.facts['search.reported_cailleach'] = true;
+    } else if (cailleach.passedBy) {
+      line('report.search.cailleach_unanswered');
+      world.facts['search.reported_cailleach'] = true;
+    }
+  }
   const tide = tideAt(world.calendar, ctx.time);
   const low = (world.calendar.minuteOfDay + tide.minutesToLowWater) % 1440;
   line('report.tide.low', { time: clockText(low) });

@@ -3359,7 +3359,7 @@
     },
     {
       "id": "BEAT_1_SEARCH_ODDI",
-      "ref": "Oddi injured near the wreck",
+      "ref": "injured near the wreck",
       "book": 4,
       "section": "08",
       "origin": "assigned",
@@ -3367,7 +3367,7 @@
     },
     {
       "id": "BEAT_1_SEARCH_BRAN",
-      "ref": "Bran in a sheepfold by the Hollow Cairn",
+      "ref": "a sheepfold by the Hollow Cairn",
       "book": 4,
       "section": "08",
       "origin": "assigned",
@@ -3375,9 +3375,9 @@
     },
     {
       "id": "BEAT_1_SEARCH_RUNA",
-      "ref": "Runa at the Hag's Seat",
-      "book": 4,
-      "section": "08",
+      "ref": "found injured at the Hag's Seat",
+      "book": 5,
+      "section": "02",
       "origin": "assigned",
       "note": "Stage 10: the third search; its outcome is the fact search.runa."
     },
@@ -3415,9 +3415,9 @@
     },
     {
       "id": "AMB_KELDA_SPRING",
-      "ref": "The spring bubbling",
-      "book": 11,
-      "section": "12",
+      "ref": "springs bubble",
+      "book": 7,
+      "section": "14",
       "origin": "assigned",
       "note": "Stage 10: the Kelda Spring's ambience, by the pool in ZONE_SK_MACHAIR (decision S10-2)."
     },

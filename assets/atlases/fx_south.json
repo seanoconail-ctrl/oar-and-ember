@@ -1,0 +1,91 @@
+{
+  "sheet": "fx_south",
+  "kind": "decal",
+  "image": "fx_south.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 8,
+    "y": 15
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "wisp": {
+      "frames": 8,
+      "ticks": 6,
+      "loop": true
+    },
+    "bubble": {
+      "frames": 6,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "wisp/-/0": [
+      0,
+      0
+    ],
+    "wisp/-/1": [
+      16,
+      0
+    ],
+    "wisp/-/2": [
+      32,
+      0
+    ],
+    "wisp/-/3": [
+      48,
+      0
+    ],
+    "wisp/-/4": [
+      64,
+      0
+    ],
+    "wisp/-/5": [
+      80,
+      0
+    ],
+    "wisp/-/6": [
+      96,
+      0
+    ],
+    "wisp/-/7": [
+      112,
+      0
+    ],
+    "bubble/-/0": [
+      0,
+      16
+    ],
+    "bubble/-/1": [
+      16,
+      16
+    ],
+    "bubble/-/2": [
+      32,
+      16
+    ],
+    "bubble/-/3": [
+      48,
+      16
+    ],
+    "bubble/-/4": [
+      64,
+      16
+    ],
+    "bubble/-/5": [
+      80,
+      16
+    ]
+  }
+}

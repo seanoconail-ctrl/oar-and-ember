@@ -18,6 +18,7 @@ import { rng } from './samples.ts';
 import { HOME } from './home.ts';
 import type { HomePhase } from './home.ts';
 import { COMBAT, FIGHT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
+import { SOUTH } from './south.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
@@ -138,6 +139,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...DISPUTES,
     ...FIGHT,
     ...ENDINGS,
+    ...SOUTH,
   ].map((d) => [d.id, d]),
 );
 
@@ -221,7 +223,9 @@ export class HearthAmbience {
 }
 
 /** Ambience implementations: the strand bed (wind, sea, gulls), the hearth or home life. */
-export const AMBIENCES: Readonly<Record<string, 'strand' | 'heath' | 'hearth' | 'home'>> = {
+export const AMBIENCES: Readonly<
+  Record<string, 'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold'>
+> = {
   AMB_SURF_SHINGLE: 'strand',
   // Inland heather: the same wind, with the sea far off (the strand bed at low water).
   AMB_WIND_HEATHER: 'heath',
@@ -230,6 +234,10 @@ export const AMBIENCES: Readonly<Record<string, 'strand' | 'heath' | 'hearth' | 
   AMB_HOME_DAY: 'home',
   AMB_HOME_DUSK: 'home',
   AMB_HOME_NIGHT: 'home',
+  // Stage 10: the Kelda Spring, the Hag's Seat's gale, the sheepfold by the cairn (south.ts).
+  AMB_KELDA_SPRING: 'spring',
+  AMB_HAGSEAT_GALE: 'gale',
+  AMB_CAIRN_FOLD: 'fold',
 };
 
 /** The part of the day each home-life ambience is for (Stage 7). */

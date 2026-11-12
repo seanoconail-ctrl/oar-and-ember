@@ -39,6 +39,17 @@ export const PERSON_LOOKS: Readonly<Record<Id, string>> = {
   E_WRECKER_KETILL: 'wrecker_ketill',
   E_WRECKER_SVART: 'wrecker_svart',
   E_WRECKER_CONN: 'wrecker_conn',
+  // Stage 10: the three found in the searches, and Thorkel's body.
+  C_ODDI: 'oddi',
+  C_BRAN: 'bran',
+  C_RUNA: 'runa',
+  C_THORKEL: 'thorkel',
+};
+
+/** Things carried like people (Stage 10: the chests), drawn from one prop sheet in every facing. */
+export const CARRIED_LOOKS: Readonly<Record<Id, string>> = {
+  ITEM_THORKEL_CHEST: 'prop_chest_thorkel',
+  ITEM_RUNA_TOOLS: 'prop_chest_runa',
 };
 
 export function personLook(file: LayerFile): PersonLook {
@@ -61,6 +72,8 @@ export function peopleLook(
   };
   const people: Record<Id, PersonLook> = {};
   for (const [id, name] of Object.entries(PERSON_LOOKS)) people[id] = look(name);
+  for (const [id, sheet] of Object.entries(CARRIED_LOOKS))
+    people[id] = { body: sheet, layers: { s: [sheet], n: [sheet], e: [sheet], w: [sheet] } };
   return { steerer: look(STEERER_LOOKS[bodyModel]), people };
 }
 

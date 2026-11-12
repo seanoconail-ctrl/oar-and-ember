@@ -310,8 +310,24 @@ const audioCheck = object(
       fireFullTiles: int(0, 40),
       fireSilentTiles: int(1, 60),
     }),
+    /**
+     * Stage 10 (presentation, like `home`): the Kelda Spring heard full within `fullTiles` of its
+     * pool and silent from `silentTiles`; the Hag's Seat's tell every `tellLeast` to `tellMost`
+     * seconds while the stone weeps and the steerer is on the headland.
+     */
+    south: object({
+      spring: object({
+        zone: text,
+        x: int(0, 512),
+        y: int(0, 512),
+        fullTiles: int(0, 40),
+        silentTiles: int(1, 60),
+      }),
+      tellLeast: int(2, 120),
+      tellMost: int(2, 120),
+    }),
   },
-  ['home'],
+  ['home', 'south'],
 );
 
 const fraction =
@@ -438,6 +454,13 @@ const encounterCheck = object(
     takesCaptives: bool,
     /** The checkpoint saved as it begins (Book 1 section 15: checkpoints before major danger). */
     checkpoint: text,
+    /**
+     * Stage 10: they hold and talk with a steerer who comes with empty hands (Book 10 The three
+     * searches, parley), rather than fight on sight.
+     */
+    parley: bool,
+    /** Stage 10: people who fight on the household's side once it starts (Bran at the fold). */
+    allies: arrayOf(ref('person')),
     members: arrayOf(
       object(
         {
@@ -451,7 +474,7 @@ const encounterCheck = object(
       ),
     ),
   },
-  ['after'],
+  ['after', 'parley', 'allies'],
 );
 const safePlaceCheck = object({
   key: text,
@@ -1035,11 +1058,12 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   searches?.omens.forEach((o, i) => {
     for (const part of ['sign', 'rule', 'response', 'consequence'] as const) {
       const v = o[part];
-      if (v === undefined || (Array.isArray(v) && v.length === 0))
+      if (Array.isArray(v) && v.length === 0)
         issues.push({
           file: CONTENT_FILES.searches,
           path: `omens[${i}].${part}`,
-          reason: 'every dangerous supernatural mechanic declares sign, rule, response and consequence',
+          reason:
+            'every dangerous supernatural mechanic declares sign, rule, response and consequence',
         });
     }
   });

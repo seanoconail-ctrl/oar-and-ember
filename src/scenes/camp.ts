@@ -41,7 +41,7 @@ export function reportSentences(
 /** The prompt for a camp use, for the device in use. */
 export function campUseLabel(
   use: SiteUse,
-  content: Pick<Content, 'camp'>,
+  content: Pick<Content, 'camp' | 'searches'>,
   t: Translate,
   nameOf: (id: Id) => string,
   key: string,
@@ -65,6 +65,15 @@ export function campUseLabel(
       return { text: click('ui.prompt.eat'), kind: 'eat' };
     case 'TALK':
       return { text: click('ui.prompt.talk', { name: nameOf(use.target) }), kind: 'talk' };
+    case 'SEARCH': {
+      // Stage 10: a search's words: talk to Bran, Ketill or Runa; leave an offering at the stone.
+      const talk = content.searches?.talks.find((x) => x.id === use.site);
+      const prompt = talk?.promptKey ?? 'ui.prompt.talk';
+      return {
+        text: click(prompt, { name: nameOf(use.target) }),
+        kind: prompt === 'ui.prompt.talk' ? 'talk' : 'offering',
+      };
+    }
     case 'REFUSE':
       if (use.reason === 'TOO_EARLY_TO_SLEEP')
         return { text: t('ui.prompt.too_early', { time: '18:00' }), kind: 'too_early' };
@@ -180,9 +189,10 @@ export function campHooks(
       home.stores['RES_SALTED_FISH'] = Math.max(0, (home.stores['RES_SALTED_FISH'] ?? 0) - 1);
     }
   }
-  // Stage 9 (tests and captures): the campaign's options (`secondwind=1`, `ransmercy=1`). The
-  // wreck-scavengers are on the strand once Hild has led to the broch, so `camp=broch` with
-  // `zone=ZONE_SK_STRAND&at=x,y` starts by the fight.
+  // Stage 9 (tests and captures): the campaign's options (`secondwind=1`, `ransmercy=1`). From
+  // Stage 10 the wreck-scavengers hold the sheepfold under the cairn (S9-11), and the three
+  // searches open once Hild has led to the broch, so `camp=broch` with `zone=ZONE_SK_CAIRN&at=x,y`
+  // starts by the fight, and `zone=ZONE_SK_HAGSEAT` by the weeping stone.
   if (params.get('secondwind') === '1') world.options.secondWind = true;
   if (params.get('ransmercy') === '1') world.options.ransMercy = true;
   // Stage 9 (tests only): the steerer starts this hurt (`vitality=N`), for a quick game over.

@@ -198,6 +198,14 @@ export async function capture(label: string): Promise<string> {
     writeFileSync(join(out, 'motion.png'), encodePng(marked));
     const reference = decodePng(readFileSync(join(REPO_ROOT, REFERENCE.image)));
     writeFileSync(join(out, 'compare.png'), encodePng(sideBySide(double(reference), still2)));
+    if (SOUTH_LABELS.has(label)) {
+      await page.close();
+      const south = await southCapture(browser, out);
+      writeFileSync(join(out, 'README.md'), southReadme(label, motion.share, south));
+      return `${out}: strand motion ${pct(motion.share)}, ${south.views
+        .map((v) => `${v.view.name} ${pct(v.share)}`)
+        .join(', ')}; Hag's Seat clip ${(south.clipFrames / FPS).toFixed(1)} s`;
+    }
     if (FIGHT_LABELS.has(label)) {
       await page.close();
       const fight = await fightCapture(browser, out);
@@ -1060,6 +1068,161 @@ async function fightCapture(
   encodeClip(dir, out, 'fight');
   rmSync(dir, { recursive: true, force: true });
   return { work, fight, low, clipFrames: frames };
+}
+
+/** Captures of the southern zones and the three searches (Stage 10). */
+const SOUTH_LABELS = new Set(['stage-10']);
+
+interface SouthView {
+  readonly name: string;
+  readonly what: string;
+  readonly query: string;
+  /** Whether a 4-second loop of it is made too (for the mockups in docs/art/mockups/stage-10/). */
+  readonly loop?: boolean;
+}
+
+/** Each southern view: the camera held, the steerer standing, the searches open (`camp=broch`). */
+const SOUTH_VIEWS: readonly SouthView[] = [
+  {
+    name: 'hagseat',
+    what: "The Hag's Seat at 11:00: the standing stone weeping, the pale light by it, Runa hurt below it with her tools, the gale in the grass, the cliffs and the geo",
+    query: 'time=11:00&zone=ZONE_SK_HAGSEAT&at=50.5,23.6&camera=47.5,21.5',
+    loop: true,
+  },
+  {
+    name: 'neck',
+    what: "The Hag's neck at 11:00: the cliff path below, the rock ridges either side and the sea in the geo",
+    query: 'time=11:00&zone=ZONE_SK_HAGSEAT&at=66.5,21.5&camera=60.5,23.5',
+  },
+  {
+    name: 'fold',
+    what: 'The sheepfold under the Hollow Cairn at 10:00: the wreck-scavengers at the gate, Bran inside guarding Thorkel, the sheep outside',
+    query: 'time=10:00&zone=ZONE_SK_CAIRN&at=44.5,39.6&camera=36.5,35.5',
+    loop: true,
+  },
+  {
+    name: 'cairn',
+    what: 'The Hollow Cairn at 10:00: the grassed mound and its kerb, the heath round it',
+    query: 'time=10:00&zone=ZONE_SK_CAIRN&at=56.5,27.6&camera=60.5,20.5',
+  },
+  {
+    name: 'kelda',
+    what: 'The Kelda Spring on the machair at 14:00: the pool welling up, its stream running down to the burn',
+    query: 'time=14:00&zone=ZONE_SK_MACHAIR&at=61.5,14.6&camera=57.5,12.5',
+  },
+];
+
+interface SouthCaptureResult {
+  readonly views: readonly { readonly view: SouthView; readonly share: number }[];
+  readonly clipFrames: number;
+  readonly loops: readonly string[];
+}
+
+/**
+ * Stage 10: a still of each southern view with its motion (the camera held) and motion map, a
+ * 4-second loop of the Hag's Seat and of the fold (the
+ * camera held, at 1x), and a 10-second clip of the steerer walking the Hag's Seat headland past the
+ * weeping stone and through the neck, the camera following.
+ */
+async function southCapture(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<SouthCaptureResult> {
+  const views: { view: SouthView; share: number }[] = [];
+  for (const view of SOUTH_VIEWS) {
+    const { share } = await campStill(browser, out, view.name, view.query);
+    views.push({ view, share });
+  }
+  // The loops: 4 seconds at 1x, the camera held (as the mockups' loops are made).
+  const loops: string[] = [];
+  for (const view of SOUTH_VIEWS.filter((v) => v.loop === true)) {
+    const dir = join(out, `.loop-${view.name}`);
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    const page = await openCamp(browser, view.query, false);
+    for (let k = 0; k < FPS * 4; k++) {
+      await step(page);
+      writeFileSync(
+        join(dir, `${String(k).padStart(4, '0')}.png`),
+        encodePng(half(await shot(page))),
+      );
+    }
+    await page.close();
+    execFileSync('ffmpeg', [
+      '-y',
+      '-loglevel',
+      'error',
+      '-framerate',
+      String(FPS),
+      '-i',
+      join(dir, '%04d.png'),
+      '-vf',
+      'split[a][b];[a]palettegen=max_colors=160:stats_mode=full[p];[b][p]paletteuse=dither=none',
+      join(out, `${view.name}-loop.gif`),
+    ]);
+    rmSync(dir, { recursive: true, force: true });
+    loops.push(`${view.name}-loop.gif`);
+  }
+  // The clip: from the heath west of the stone, east past Runa and the stone, through the neck.
+  const dir = join(out, '.south');
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const page = await openCamp(browser, 'time=11:00&zone=ZONE_SK_HAGSEAT&at=36.5,23.2', true);
+  let frames = 0;
+  await page.keyboard.down('KeyD');
+  let up = false;
+  while (frames < FPS * 10) {
+    // Below Runa and the stone, then up onto the neck's turf between the rock ridges.
+    const at = await where(page);
+    const want = at.x > 50.5 * 24 && at.y > 20.6 * 24;
+    if (want !== up) {
+      if (want) await page.keyboard.down('KeyW');
+      else await page.keyboard.up('KeyW');
+      up = want;
+    }
+    await step(page);
+    writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+    frames++;
+  }
+  await page.keyboard.up('KeyD');
+  if (up) await page.keyboard.up('KeyW');
+  await page.close();
+  encodeClip(dir, out, 'hagseat-walk');
+  rmSync(dir, { recursive: true, force: true });
+  return { views, clipFrames: frames, loops };
+}
+
+function southReadme(label: string, strand: number, c: SouthCaptureResult): string {
+  const all = [strand, ...c.views.map((v) => v.share)];
+  return [
+    `# Capture: ${label}`,
+    '',
+    'Made by `npm run capture -- ' + label + '` (src/tools/art/capture.ts). Compare with',
+    '`docs/art/reference/` (Book 7 section 14), the Stage 10 mockups in `docs/art/mockups/stage-10/`',
+    'and the people sheets in `docs/art/stage-10/people/`.',
+    '',
+    '| File | What it is |',
+    '|---|---|',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
+    ...c.loops.map(
+      (l) => `| \`${l}\` | 4 s at 1x, 25 fps, the camera held: the view above as it moves |`,
+    ),
+    `| \`hagseat-walk.mp4\`, \`hagseat-walk.gif\` | ${(c.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 round the middle, 12.5 fps): the steerer walks east over the Hag's Seat headland, past Runa and the weeping stone, and into the neck, the camera following (the overlay shown) |`,
+    '',
+    '## Motion with the camera still',
+    '',
+    '| View | Continuous motion |',
+    '|---|---|',
+    `| Wreck Strand (41 frames over 6.4 s) | ${pct(strand)} |`,
+    ...c.views.map((v) => `| ${v.view.name} | ${pct(v.share)} |`),
+    `| Book 7 threshold | ${pct(MOTION_THRESHOLD)} |`,
+    '',
+    all.every((v) => v >= MOTION_THRESHOLD)
+      ? 'Every view meets the threshold.'
+      : '**A view is below the threshold: the stage is not done.**',
+    '',
+  ].join('\n');
 }
 
 function fightReadme(label: string, strand: number, f: FightCaptureResult): string {

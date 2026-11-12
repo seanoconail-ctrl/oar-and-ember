@@ -1,0 +1,25 @@
+{
+  "name": "runa",
+  "layers": {
+    "s": [
+      "actor_c_runa",
+      "layer_clothing_dress_runa",
+      "layer_blood_wound_runa"
+    ],
+    "n": [
+      "actor_c_runa",
+      "layer_clothing_dress_runa",
+      "layer_blood_wound_runa"
+    ],
+    "e": [
+      "actor_c_runa",
+      "layer_clothing_dress_runa",
+      "layer_blood_wound_runa"
+    ],
+    "w": [
+      "actor_c_runa",
+      "layer_clothing_dress_runa",
+      "layer_blood_wound_runa"
+    ]
+  }
+}

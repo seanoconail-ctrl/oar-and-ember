@@ -10,6 +10,7 @@ import type { CueDef } from '../content/registry.ts';
 import { StrandAmbience } from './synth/ambience.ts';
 import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
 import { HomeAmbience } from './synth/home.ts';
+import { GALE_WIND, SpringAmbience } from './synth/south.ts';
 import { allInstrumentSamples, SynthEngine, warmSamples } from './synth/engine.ts';
 import { footstep, isSurface } from './synth/footsteps.ts';
 import type { Gait } from './synth/footsteps.ts';
@@ -37,6 +38,10 @@ export class WebAudioEngine implements AudioSink {
   #hearth: HearthAmbience | null = null;
   #hearthLevel = 0;
   #home: HomeAmbience | null = null;
+  /** Stage 10: the Kelda Spring (by distance), and the gale on the Hag's Seat. */
+  #spring: SpringAmbience | null = null;
+  #springLevel = 0;
+  #gale = false;
   #steps = 0;
   #winter = false;
   /** The gore setting (0 off, 1 low, 2 full) scales the wet layers of the fight sounds. */
@@ -105,6 +110,14 @@ export class WebAudioEngine implements AudioSink {
     this.#strand?.schedule(until);
     this.#hearth?.schedule(until);
     this.#home?.schedule(until);
+    this.#spring?.schedule(until);
+  }
+
+  /** How near the Kelda Spring the listener is, 0 (unheard) to 1 (beside it): Stage 10. */
+  setSpring(level: number): void {
+    this.#springLevel = level;
+    const e = this.#e;
+    if (e !== null) this.#spring?.setLevel(level, e.ctx.currentTime);
   }
 
   /** How near a lit fire the listener is, 0 (unheard or out) to 1 (beside it). */
@@ -135,7 +148,7 @@ export class WebAudioEngine implements AudioSink {
   /** The game's wind at the listener (Book 7 section 14): strength 0..1, gust 0..1, side -1..1. */
   setWind(strength: number, gust: number, from: number): void {
     this.#wind = { strength, gust, from };
-    this.#strand?.setWind(strength, gust, from);
+    this.#strand?.setWind(this.#gale ? Math.min(1, strength * GALE_WIND) : strength, gust, from);
   }
 
   /** The tide's height 0 (low) to 1 (high). */
@@ -215,11 +228,16 @@ export class WebAudioEngine implements AudioSink {
     if (e === null) return;
     const t = Math.max(at, e.ctx.currentTime);
     const kinds = new Set(cues.map((c) => AMBIENCES[c.id]));
-    const wantStrand = kinds.has('strand') || kinds.has('heath');
+    // Stage 10: the Hag's Seat's gale is the strand's bed with the wind up and the surf below.
+    this.#gale = kinds.has('gale');
+    const wantStrand = kinds.has('strand') || kinds.has('heath') || this.#gale;
     if (wantStrand && this.#strand === null) {
       this.#strand = new StrandAmbience(e);
-      this.#strand.setWind(this.#wind.strength, this.#wind.gust, this.#wind.from, t);
-      this.#strand.setTide(kinds.has('strand') ? this.#tide : 0, t);
+      const strength = this.#gale
+        ? Math.min(1, this.#wind.strength * GALE_WIND)
+        : this.#wind.strength;
+      this.#strand.setWind(strength, this.#wind.gust, this.#wind.from, t);
+      this.#strand.setTide(kinds.has('strand') ? this.#tide : this.#gale ? 0.45 : 0, t);
       this.#strand.start(t);
     } else if (!wantStrand && this.#strand !== null) {
       this.#strand.stop(t);
@@ -232,8 +250,19 @@ export class WebAudioEngine implements AudioSink {
       this.#hearth.stop(t);
       this.#hearth = null;
     }
-    // Home life by time of day: one caller set at a time, changing as the day turns.
-    const life = cues.map((c) => HOME_LIFE[c.id]).find((p) => p !== undefined);
+    // Stage 10: the spring, by its own level.
+    if (kinds.has('spring') && this.#spring === null) {
+      this.#spring = new SpringAmbience(e, this.#springLevel);
+      this.#spring.start(t);
+    } else if (!kinds.has('spring') && this.#spring !== null) {
+      this.#spring.stop(t);
+      this.#spring = null;
+    }
+    // Home life by time of day: one caller set at a time, changing as the day turns (the fold's
+    // own set by the cairn, Stage 10).
+    const life = kinds.has('fold')
+      ? ('fold' as const)
+      : cues.map((c) => HOME_LIFE[c.id]).find((p) => p !== undefined);
     if (life !== undefined && this.#home === null) {
       this.#home = new HomeAmbience(e, life);
       this.#home.start(t);

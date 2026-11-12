@@ -1936,6 +1936,11 @@ def plait(part):
             part.put(x, y, 'plait')
 
 
+# Stage 10: whose head these hand-drawn poses wear (Hild's, or Runa's sharing her dress), whether a
+# braid is drawn, and the cloth a carried person wears (her dress, or a tunic).
+CUR = {'head': HEAD_HILD, 'braid': True, 'cloth': 'dress'}
+
+
 def hild_down(i):
     """Lying on her side, propped on her far elbow, calling with the near arm raised (Book 7:
     downed 2). Drawn facing east, the head at the east end; the waving hand moves."""
@@ -1973,7 +1978,7 @@ def hild_down(i):
         p.seg((X(17.5), Y(40)), (X(16.5), Y(46)), 1, m('belt'))
     d.cloth('torso', torso)
     hd = d.part('body', 'head', bottom=False)
-    hd.stamp(HEAD_HILD['e'], X(21), Y(30), HEAD_LETTERS)
+    hd.stamp(CUR["head"]['e'], X(21), Y(30), HEAD_LETTERS)
     hd.fill(X(23), Y(38), X(25), Y(38), 'skin')
     br = d.part('body', 'braid', side=0)
     br.z = 3.0
@@ -2029,7 +2034,7 @@ def hild_sit(facing, i):
             p.row(Y(38), X(11), X(17), m('belt'))
         d.cloth('torso', body)
         hd = d.part('body', 'head', bottom=False)
-        hd.stamp(HEAD_HILD['e'], X(11), Y(22 + br), HEAD_LETTERS)
+        hd.stamp(CUR["head"]['e'], X(11), Y(22 + br), HEAD_LETTERS)
         hd.fill(X(13), Y(30 + br), X(15), Y(30 + br), 'skin')
 
         def arm(p, m):
@@ -2073,7 +2078,7 @@ def hild_sit(facing, i):
             p.fill(X(19), Y(44), X(21), Y(46), m('shoe'))
         d.cloth('feet', feet, z=-0.5)
     hd = d.part('body', 'head', bottom=False)
-    hd.stamp(HEAD_HILD[facing], X(12), Y(22 + br), HEAD_LETTERS)
+    hd.stamp(CUR["head"][facing], X(12), Y(22 + br), HEAD_LETTERS)
     hd.fill(X(14), Y(30 + br), X(17), Y(30 + br), 'skin')
     if front:
         def arms(p, m):
@@ -2189,7 +2194,7 @@ def hild_carried(facing, i):
         hn.fill(X(7), Yl(25), X(8), Yl(27), 'skin')
         hd = d.part('body', 'head', bottom=False)
         # Her head hangs face down at the left: the crown downwards, seen from the side.
-        flipped = [r for r in reversed(HEAD_HILD['e'])]
+        flipped = [r for r in reversed(CUR["head"]['e'])]
         hd.stamp(flipped, X(1), Yl(16), HEAD_LETTERS)
         br = d.part('body', 'braid', side=0)
         br.seg((X(3), Yl(24)), (X(3.5), Yl(31)), 2, 'hair')
@@ -2224,6 +2229,22 @@ def hild_carried(facing, i):
     if facing in 'n w':
         parts = mirror_parts(parts)
     return parts
+
+
+def body_carried(ch, facing, i):
+    """Anyone in a tunic across the steerer's (or a bearer's) shoulders (Stage 10: Oddi, Thorkel's
+    body): Hild's carried pose with their own head and tunic, no braid."""
+    keep = dict(CUR)
+    CUR.update(head=ch.model.heads, braid=False, cloth='tunic')
+    try:
+        parts = _tunic_carried(facing, i)
+    finally:
+        CUR.update(keep)
+    return [p for p in parts if p.name != 'braid']
+
+
+def _tunic_carried(facing, i):
+    return _tunic_variant()(facing, i)
 
 
 # ------------------------------------------------------------------------------------- output
@@ -2283,6 +2304,17 @@ class Heavy(Steerer):
 
     def torso_mat(self, k):
         return 'belt' if k == 8 else 'tunic'
+
+
+def _tunic_variant():
+    import inspect
+    src = inspect.getsource(hild_carried)
+    src = src.replace('def hild_carried(facing, i):', 'def _carried_tunic(facing, i):')
+    src = src.replace("m('dress_far')", "m('tunic_far')").replace("m('dress')", "m('tunic')")
+    src = src.replace('d = Doll()', 'd = FightDoll()')
+    ns = dict(globals())
+    exec(src, ns)
+    return ns['_carried_tunic']
 
 
 HILD_STATES = [
@@ -2990,6 +3022,139 @@ for _mats in (STEERER_MATS, HEAVY_MATS, HILD_MATS):
 
 
 # ------------------------------------------------------------------------------------- output
+# ------------------------------------------------------------------- Stage 10: the three searches
+class Resident(Wrecker):
+    """A resident found in Chapter 1's searches (Stage 10; Book 5 section 02): working dress like the
+    scavengers' cut (no sash: the madder is the steerer's), their own colours and silhouette."""
+
+    ladle = False
+
+    def extras(self, parts, facing, j, pose, prev, rows, lag_u, lag_f):
+        super().extras(parts, facing, j, pose, prev, rows, lag_u, lag_f)
+        if not self.ladle:
+            return
+        # Bran's ladle at his belt (Book 7 section 07: his silhouette detail), on the right hip.
+        Px, Py, _ = P2(facing, j['P'])
+        side = {'s': -6, 'n': 6, 'e': -2, 'w': 2}[facing]
+        z = {'s': 3.0, 'n': -3.0, 'e': -2.0, 'w': 3.0}[facing]
+        lad = Part('clothing', z, 'ladle', side=0)
+        x = Px + side
+        for k in range(5):
+            lad.put(x, Py - 1 + k, 'wood')
+        lad.fill(x - 1, Py + 4, x + 1, Py + 5, 'wood')
+        lad.put(x, Py + 5, 'drift')
+        parts.append(lad)
+
+
+class Thorkel(Steerer):
+    """Thorkel Ketilsson, drowned in the wreck (Book 5 section 02): only lying dead and carried."""
+
+    sash = False
+
+    def __init__(self):
+        super().__init__(MODEL_A)
+        self.brooch = True
+
+    def torso_mat(self, k):
+        return 'belt' if k == 8 else 'tunic'
+
+
+HEAD_RUNA = {
+    's': ['..HHHH..',
+          '.HHHHHH.',
+          'HHHHHHHH',
+          'HHFFFFHH',
+          'HFeFFeFH',
+          '.FFFFFF.',
+          '.FFmmFF.',
+          '..FFFF..'],
+    'n': HEAD_HILD['n'],
+    'e': ['..HHHH...',
+          '.HHHHHH..',
+          'HHHHHHHH.',
+          'HHHHHHFF.',
+          'HHHHFFeF.',
+          '.HHHFFFFF',
+          '..HFFFFF.',
+          '..hFFFF..'],
+}
+MODEL_RUNA = Model('runa', 5.5, forearm=2, upper=MODEL_HILD.upper, lower=MODEL_HILD.lower,
+                   upper_e=MODEL_HILD.upper_e, lower_e=MODEL_HILD.lower_e, heads=HEAD_RUNA)
+
+
+class Runa(Hild):
+    """Runa Asdisardottir (C_RUNA, Book 5 section 02): an ochre dress (her signature colour), dark
+    hair pinned up in a knot, her ankle bound where the headland took it, and the adze over her
+    shoulder (her silhouette detail, Book 7 section 07)."""
+
+    def __init__(self):
+        super().__init__()
+        self.model = MODEL_RUNA
+        self.mats = RUNA_MATS
+
+    def hair_extra(self, parts, facing, j, pose, prev, chin, ncx, head):
+        # The knot at the back of her head, a pixel behind the crown; it does not swing.
+        z = {'s': -2.0, 'n': 3.0, 'e': 2.0, 'w': 2.0}[facing]
+        k = Part('body', z, 'knot', side=0)
+        x = ncx + {'s': 0, 'n': 0, 'e': -4, 'w': 4}[facing]
+        y = chin - 9
+        k.fill(x - 1, y, x + 1, y + 1, 'hair')
+        k.put(x, y - 1, 'plait')
+        parts.append(k)
+
+    def extras(self, parts, facing, j, pose, prev, rows, lag_u, lag_f):
+        work_tool(parts, facing, j, pose)
+        if pose.tool is not None:
+            return
+        # The adze over her right shoulder, the haft down her back and its iron head up by her ear.
+        Sx, Sy, _ = P2(facing, j['S'])
+        z = {'s': -3.0, 'n': 3.0, 'e': -3.0, 'w': 3.0}[facing]
+        a = Part('body', z, 'adze', side=0)
+        dx = {'s': 4, 'n': -4, 'e': -3, 'w': 3}[facing]
+        for k in range(11):
+            a.put(Sx + dx - (k // 4) * (1 if dx > 0 else -1), Sy - 5 + k, 'wood')
+        a.fill(Sx + dx - 1, Sy - 7, Sx + dx + 1, Sy - 6, 'iron')
+        parts.append(a)
+
+
+RESIDENT_MATS = {
+    'oddi': merge(STEERER_MATS, ARMS_MATS, {
+        'hair': ('hair_brown', 2, 3, 4), 'brow': ('hair_brown', 2, 2, 3),
+        'tunic': ('stone', 4, 5, 6), 'fold': ('stone', 4),
+        'trouser': ('earth', 2, 3, 4), 'wrap': ('wool', 1, 2, 3), 'wrapd': ('wool', 0),
+        'bind': ('wool', 4, 5, 6), 'blood': ('code', '7'),
+    }),
+    'bran': merge(HEAVY_MATS, ARMS_MATS, {
+        'hair': ('hair_brown', 0, 1, 2), 'brow': ('hair_brown', 0, 0, 1),
+        'tunic': ('wool', 4, 5, 6), 'fold': ('wool', 4),
+        'trouser': ('earth', 1, 2, 3), 'wrap': ('tar', 2, 3, 4), 'wrapd': ('tar', 1),
+        'paint_a': ('earth', 2, 3, 4), 'paint_b': ('wool', 3, 4, 5),
+        'bind': ('wool', 4, 5, 6), 'blood': ('code', '7'),
+    }),
+    'thorkel': merge(STEERER_MATS, ARMS_MATS, {
+        'hair': ('stone', 5, 6, 8), 'brow': ('stone', 5, 5, 6),
+        'tunic': ('woad', 1, 2, 3), 'fold': ('woad', 1),
+        'trouser': ('earth', 1, 2, 3), 'wrap': ('wool', 2, 3, 4), 'wrapd': ('wool', 1),
+        'cloak': ('stone', 2, 3, 4), 'cloakin': ('stone', 1, 2, 3), 'cloakf': ('stone', 2),
+        'lining': ('woad', 1, 2, 3), 'brooch': ('stone', 6, 7, 8), 'bglint': ('stone', 9),
+        'bind': ('wool', 4, 5, 6), 'blood': ('code', '7'),
+    }),
+}
+RUNA_MATS = dict(HILD_MATS)
+RUNA_MATS.update({
+    'hair': ('hair_brown', 1, 2, 3), 'plait': ('hair_brown', 1), 'brow': ('hair_brown', 1, 1, 2),
+    'dress': ('bracken', 2, 3, 4), 'fold': ('bracken', 2), 'trim': ('wool', 2, 3, 4),
+    'trouser': ('earth', 1, 2, 3),
+})
+for _key, _val in ARMS_MATS.items():
+    RUNA_MATS.setdefault(_key, _val)
+
+
+def sit_kneel():
+    """Sitting back on the heels at the fire (Stage 10's residents): the kneel loop's first pose."""
+    return anim_kneel()[:1] * 4
+
+
 LAYER_NOTE = dict(LAYER_NOTE, **{
     'weapon': 'Weapon layer (Stage 9): in the right hand to fight, carried at rest otherwise, thrown down in\n# surrender and lying beside the dead; on a larger canvas round the same foot anchor.',
     'shield': 'Shield layer (Stage 9): a round shield on the left forearm, held up to block, slung on the back\n# at rest; on a larger canvas round the same foot anchor.',
@@ -3081,9 +3246,11 @@ def render_character(ch, states, mats, order, names, sizes, soft):
                         if f in 'n w':
                             parts = mirror_parts(parts)
                     elif state == 'carried':
-                        parts = hild_carried(f, i)
+                        parts = hild_carried(f, i) if isinstance(ch, Hild) else body_carried(ch, f, i)
                     else:
                         parts = hild_sit(f, i)
+                    if not CUR['braid']:
+                        parts = [p for p in parts if p.name != 'braid']
                     sep = separate(parts, order[f], soft)
                     if 'blood' in names:
                         sep['blood'] = blood_layer(sep, f, state)
@@ -3178,6 +3345,47 @@ def write_character(key):
         states = HILD_STATES + [('stagger', lambda: anim_stagger(None), 9, False)]
         mats, order, events, poses = HILD_MATS, HILD_ORDER_BLOOD, HILD_EVENTS, HILD_POSES
         intro = INTRO['hild']
+    elif key == 'runa':
+        ch = Runa()
+        names = {'body': 'actor_c_runa', 'clothing': 'layer_clothing_dress_runa',
+                 'blood': 'layer_blood_wound_runa'}
+        states = HILD_STATES + [('stagger', lambda: anim_stagger(None), 9, False)]
+        mats, order, events, poses = RUNA_MATS, HILD_ORDER_BLOOD, HILD_EVENTS, HILD_POSES
+        intro = INTRO_RESIDENT.format(name='Runa Asdisardottir (C_RUNA)')
+        CUR.update(head=HEAD_RUNA, braid=False)
+    elif key == 'thorkel':
+        ch = Thorkel()
+        names = {'body': 'actor_c_thorkel', 'clothing': 'layer_clothing_tunic_thorkel',
+                 'cloak': 'layer_cloak_wool_thorkel'}
+        # In the game he is only lying dead and carried; the sheet keeps a person's idle, walk and
+        # run all the same (Book 7 section 01: every person's body sheet has them).
+        moving = [s_ for s_ in STEERER_STATES if s_[0] in ('idle', 'walk', 'run')]
+        states = moving + [('dead', Lying('dead', 1), 60, False), ('carried', None, 5, True)]
+        mats, order, events = RESIDENT_MATS['thorkel'], ORDER_ARMED, 'walk 0, walk 3, run 0, run 4'
+        poses = dict(WORK_POSES, dead='lying', carried='carried')
+        intro = INTRO_RESIDENT.format(name='Thorkel Ketilsson (C_THORKEL), drowned; lying dead and carried in play')
+    elif key in ('oddi', 'bran'):
+        big = True
+        set_canvas(True)
+        heavy = key == 'bran'
+        ch = Resident(MODEL_HEAVY if heavy else MODEL_B,
+                      ('axe', 'shield') if heavy else ('seax',), cloak=False,
+                      paint=('paint_a', 'paint_b'))
+        ch.ladle = heavy
+        nk = f'{key}_heavy' if heavy else key
+        names = {'body': f'actor_c_{nk}', 'clothing': f'layer_clothing_tunic_{nk}',
+                 'blood': f'layer_blood_wound_{nk}'}
+        kind = 'axe' if heavy else 'seax'
+        names['weapon'] = f'layer_weapon_{kind}_{nk}'
+        if heavy:
+            names['shield'] = f'layer_shield_round_{nk}'
+        base = [s_ for s_ in (HEAVY_STATES if heavy else STEERER_STATES) if s_[0] != 'draw']
+        states = base + fight_states(ch, heavy) + [('sit', sit_kneel, 18, True)]
+        if not heavy:
+            states += [('down', Lying('downed', 2), 40, True), ('carried', None, 5, True)]
+        mats, order, events = RESIDENT_MATS[key], ORDER_ARMED, STEERER_EVENTS
+        poses = dict(WORK_POSES, **FIGHT_POSES, sit='seated', down='lying', carried='carried')
+        intro = INTRO_RESIDENT.format(name={'oddi': 'Oddi Gunnarsson (C_ODDI)', 'bran': 'Bran Gilla Brigte (C_BRAN), the heavy build'}[key])
     else:
         big = True
         set_canvas(True)
@@ -3224,6 +3432,7 @@ def write_character(key):
         with open(f'{OUT}/{sh.name}.map.txt', 'w') as fh:
             fh.write(sh.text(anims, events, poses))
     set_canvas(False)
+    CUR.update(head=HEAD_HILD, braid=True, cloth='dress')
     return sheets, names
 
 
@@ -3231,6 +3440,11 @@ INTRO_WRECKER = """# {name}, one of the three wreck-scavengers (Stage 9, decisio
 # beat 3), on the 32 x 48 canvas with their own layers: an enemy drawn by Claude, proposed, staged
 # for the user's approval; nothing here is read by the game. Generated by
 # assets/art/authoring/people48.py; edit that script, not this map."""
+
+
+INTRO_RESIDENT = """# {name}, found in Chapter 1's searches (Stage 10; Book 5 section 02), on the
+# 32 x 48 canvas with their own layers: drawn by Claude, proposed, flagged for the user's review
+# (decision DD-11). Generated by assets/art/authoring/people48.py; edit that script, not this map."""
 
 
 def layers_json(name, layers):
@@ -3241,7 +3455,8 @@ def layers_json(name, layers):
 
 def main():
     only = os.environ.get('PEOPLE_ONLY')
-    keys = only.split(',') if only else ['a', 'b', 'heavy', 'hild', 'ketill', 'svart', 'conn']
+    keys = only.split(',') if only else ['a', 'b', 'heavy', 'hild', 'ketill', 'svart', 'conn',
+                                          'oddi', 'bran', 'runa', 'thorkel']
     for key in keys:
         _, n = write_character(key)
         if key in ('a', 'b'):
@@ -3253,6 +3468,10 @@ def main():
             layers_json('heavy_helmeted', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
         elif key == 'hild':
             layers_json('hild', {f: [n[L] for L in HILD_ORDER_BLOOD[f]] for f in FACINGS})
+        elif key == 'runa':
+            layers_json('runa', {f: [n[L] for L in HILD_ORDER_BLOOD[f]] for f in FACINGS})
+        elif key in ('oddi', 'bran', 'thorkel'):
+            layers_json(key, {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
         else:
             layers_json(f'wrecker_{key}', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
     if CUT:

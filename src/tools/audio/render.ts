@@ -71,6 +71,11 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     `resident-${id.slice(2).toLowerCase()}`,
   ]),
+  // Stage 10: the southern island's ambiences and the Hag's Seat's tell (Book 11 section 12).
+  ['south:spring', 24, {}, 'south-kelda-spring'],
+  ['south:gale', 24, {}, 'south-hagseat-gale'],
+  ['south:fold', 30, {}, 'south-cairn-fold'],
+  ['south:SFX_TELL_CAILLEACH', 7, {}, 'tell-cailleach'],
   ['call:MUS_STINGER_DISPUTE', 3, {}, 'stinger-dispute'],
   ['call:MUS_STINGER_JUDGEMENT', 3, {}, 'stinger-judgement'],
   // Decision AU-10: footsteps by surface, walking and running.

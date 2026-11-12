@@ -405,8 +405,17 @@ export type HomePhase = 'dawn' | 'day' | 'dusk' | 'night';
 
 type Call = 'lark' | 'oyster' | 'wheatear' | 'sheep' | 'curlew' | 'corncrake';
 
+/** A set of callers: a part of the day at the steading, or the sheepfold by the cairn (Stage 10). */
+export type LifeSet = HomePhase | 'fold';
+
 /** What calls in each part of the day, and how often (seconds between, min and max). */
-const LIFE: Readonly<Record<HomePhase, readonly (readonly [Call, number, number])[]>> = {
+const LIFE: Readonly<Record<LifeSet, readonly (readonly [Call, number, number])[]>> = {
+  // Stage 10: by the sheepfold the flock is near and many; larks over the cairn's turf.
+  fold: [
+    ['sheep', 2.5, 7],
+    ['lark', 6, 14],
+    ['wheatear', 11, 24],
+  ],
   dawn: [
     ['lark', 5, 12],
     ['oyster', 12, 26],
@@ -432,11 +441,11 @@ export class HomeAmbience {
   readonly #e: SynthEngine;
   readonly #r = rng(503);
   readonly #out: GainNode;
-  #phase: HomePhase;
+  #phase: LifeSet;
   #next = new Map<Call, number>();
   #running = false;
 
-  constructor(engine: SynthEngine, phase: HomePhase) {
+  constructor(engine: SynthEngine, phase: LifeSet) {
     this.#e = engine;
     this.#phase = phase;
     this.#out = engine.ctx.createGain();
@@ -444,7 +453,7 @@ export class HomeAmbience {
     this.#out.connect(engine.buses.ambience);
   }
 
-  get phase(): HomePhase {
+  get phase(): LifeSet {
     return this.#phase;
   }
 
@@ -461,7 +470,7 @@ export class HomeAmbience {
   }
 
   /** A new part of the day: the old callers fall quiet, the new ones begin after a while. */
-  setPhase(phase: HomePhase, at: number): void {
+  setPhase(phase: LifeSet, at: number): void {
     if (phase === this.#phase) return;
     this.#phase = phase;
     this.#plan(at);

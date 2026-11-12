@@ -24,6 +24,7 @@ import { HOME, HomeAmbience } from '../audio/synth/home.ts';
 import type { HomePhase } from '../audio/synth/home.ts';
 import { PiecePlayer } from '../audio/synth/sequencer.ts';
 import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
+import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -137,6 +138,44 @@ export function startItem(
       stop: (t) => {
         wind.stop(t);
         life.stop(t);
+      },
+    };
+  }
+  if (kind === 'south') {
+    // Stage 10: the Hag's Seat's tell, the Kelda Spring, the gale on the headland, the fold.
+    if (id === 'SFX_TELL_CAILLEACH') {
+      const def = SOUTH.find((d) => d.id === id);
+      def?.play(e, at, 0, { gore: 2 });
+      return { schedule: () => undefined, stop: () => undefined };
+    }
+    const wind = new StrandAmbience(e);
+    const strength =
+      id === 'gale' ? Math.min(1, STRAND_WIND.strength * GALE_WIND) : STRAND_WIND.strength;
+    wind.setTide(id === 'gale' ? 0.45 : 0, at);
+    wind.start(at);
+    const spring = id === 'spring' ? new SpringAmbience(e, 1) : null;
+    const life = id === 'fold' ? new HomeAmbience(e, 'fold') : null;
+    if (id !== 'spring' && id !== 'gale' && id !== 'fold')
+      throw new Error(`no southern sound ${id}`);
+    spring?.start(at);
+    life?.start(at);
+    return {
+      schedule: (until, now) => {
+        for (let t = Math.max(at, now); t < until; t += 0.25)
+          wind.setWind(
+            id === 'spring' ? strength * 0.6 : strength,
+            gustAt(STRAND_WIND, 640, 900, t - at),
+            0,
+            t,
+          );
+        wind.schedule(until);
+        spring?.schedule(until);
+        life?.schedule(until);
+      },
+      stop: (t) => {
+        wind.stop(t);
+        spring?.stop(t);
+        life?.stop(t);
       },
     };
   }
@@ -671,6 +710,34 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   }
   root.append(fight);
 
+  // The southern island (Stage 10): its own buttons and data attributes, so the sections above
+  // keep their counts.
+  const south = el('section');
+  south.append(el('h2', {}, t('ui.sound.south')));
+  for (const [item, key] of [
+    ['south:spring', 'caption.amb.kelda'],
+    ['south:gale', 'caption.amb.hagseat'],
+    ['south:fold', 'caption.amb.cairn'],
+  ] as const) {
+    const b = el('button', { 'data-south-play': item }, t(key));
+    b.addEventListener('click', () => {
+      play(item, {}, key);
+    });
+    south.append(b);
+  }
+  const southStop = el('button', { 'data-south-stop': '' }, t('ui.sound.stop'));
+  southStop.addEventListener('click', stopRunning);
+  const tell = el(
+    'button',
+    { 'data-south-sound': 'SFX_TELL_CAILLEACH' },
+    t('caption.tell.cailleach'),
+  );
+  tell.addEventListener('click', () => {
+    oneShot('south:SFX_TELL_CAILLEACH', 'caption.tell.cailleach');
+  });
+  south.append(southStop, tell);
+  root.append(south);
+
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
   feet.append(
@@ -812,6 +879,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...FIGHT.map((d) => `fight:${d.id}`),
       ...ENDINGS.map((d) => `call:${d.id}`),
     ],
+    /** Stage 10's southern island: the spring, the gale, the fold and the Hag's Seat's tell. */
+    southItems: ['south:spring', 'south:gale', 'south:fold', 'south:SFX_TELL_CAILLEACH'],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [
       ...(['dawn', 'day', 'dusk', 'night'] as const).map((p) => `home:${p}`),

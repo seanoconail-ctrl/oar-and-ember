@@ -394,7 +394,7 @@
     {
       "id": "AMB_WIND_HEATHER",
       "kind": "ambience",
-      "zones": ["ZONE_SK_ROOK", "ZONE_SK_MACHAIR", "ZONE_SK_HAGSEAT"],
+      "zones": ["ZONE_SK_ROOK", "ZONE_SK_MACHAIR", "ZONE_SK_CAIRN"],
       "temporary": false
     },
     {
@@ -429,6 +429,31 @@
       "kind": "ambience",
       "zones": ["ZONE_SK_MACHAIR"],
       "phases": ["night"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_KELDA_SPRING",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_HAGSEAT_GALE",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_HAGSEAT"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_CAIRN_FOLD",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_CAIRN"],
+      "temporary": false
+    },
+    {
+      "id": "SFX_TELL_CAILLEACH",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.tell.cailleach",
       "temporary": false
     },
     {
@@ -601,12 +626,24 @@
     "BODY_FALL": "SFX_BODY_FALL",
     "WEAPON_DROPPED": "SFX_WEAPON_DROP",
     "SPEAR_THROWN": "SFX_SPEAR_THROW",
-    "GAME_OVER": "MUS_STINGER_GAME_OVER"
+    "GAME_OVER": "MUS_STINGER_GAME_OVER",
+    "SIGN_CAILLEACH": "SFX_TELL_CAILLEACH"
   },
   "home": {
     "restSeconds": 90,
     "playSeconds": 150,
     "fireFullTiles": 2,
     "fireSilentTiles": 14
+  },
+  "south": {
+    "spring": {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 58,
+      "y": 11,
+      "fullTiles": 2,
+      "silentTiles": 16
+    },
+    "tellLeast": 14,
+    "tellMost": 26
   }
 }

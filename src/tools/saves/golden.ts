@@ -51,6 +51,7 @@ import { loadBalanceJson } from '../content/loadBalance.ts';
 import { loadContentFromDisk } from '../content/loadContentFiles.ts';
 import { CampBot } from '../play/campBot.ts';
 import { OpeningBot } from '../play/openingBot.ts';
+import { SearchBot } from '../play/searchBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
@@ -59,6 +60,7 @@ export const GOLDEN_04 = 'tests/golden-saves/golden-04.json';
 export const GOLDEN_05 = 'tests/golden-saves/golden-05.json';
 export const GOLDEN_06 = 'tests/golden-saves/golden-06.json';
 export const GOLDEN_07 = 'tests/golden-saves/golden-07.json';
+export const GOLDEN_08 = 'tests/golden-saves/golden-08.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -77,6 +79,56 @@ export function goldenWorld07(): WorldState {
     for (let i = 0; i < 40; i++) sim.step();
     sim.submit({ type: 'DODGE', x: 0, y: -1 });
     for (let i = 0; i < 40; i++) sim.step();
+  });
+}
+
+/**
+ * Golden save 8 (Stage 10): the opening played, Hild led to the broch, then the three searches:
+ * Thorkel's chest carried off the strand before Oddi, a confession at the Hag's Seat and Runa home
+ * over the neck, and the chest's silver for Thorkel's body at the sheepfold; Bran lays him by the
+ * broch.
+ */
+export function goldenWorld08(): WorldState {
+  const balance = loadBalanceJson();
+  const b = parseTimeBalance(balance);
+  const { content, issues } = loadContentFromDisk();
+  if (issues.length > 0)
+    throw new Error(`content has ${issues.length} problem(s); run npm run content:lint`);
+  const world = newCampaign('golden-08', b, parsePeopleBasics(balance), content, {
+    name: 'Ash',
+    bodyModel: 'A',
+  });
+  const land = landContext(content, balance);
+  const camp = campContext(content);
+  const strand = land.maps.get('ZONE_SK_STRAND');
+  const searches = land.searches;
+  if (strand === undefined || camp === null || searches == null)
+    throw new Error('no Wreck Strand, camp or searches');
+  const sim = createSimulation(b, world, land);
+  const opening = new OpeningBot(sim, strand, b, land);
+  opening.pickUp('wreck_seax');
+  opening.rescue('C_HILD');
+  opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
+  opening.pickUp('stern_bow');
+  const bot = new SearchBot(sim, b, land, camp, searches);
+  bot.goToZone('ZONE_SK_MACHAIR');
+  bot.goToSite('stores');
+  bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  bot.oddi('CHEST_FIRST');
+  bot.runa('OFFERING');
+  bot.bran('BARGAIN');
+  bot.waitFor(() => sim.state.facts['ch1.thorkel_body'] === 'CAMP', 60 * 600);
+  return sim.state;
+}
+
+export function goldenSave08(): SaveFile {
+  return writeSave(goldenWorld08(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-08',
+    label: 'golden-08',
+    sequence: 1,
+    savedAt: '2026-11-11T00:00:00.000Z',
   });
 }
 
@@ -173,6 +225,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  writeFileSync(join(REPO_ROOT, GOLDEN_07), `${JSON.stringify(goldenSave07(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_07}`);
+  // Golden saves 1 to 7 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_08), `${JSON.stringify(goldenSave08(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_08}`);
 }

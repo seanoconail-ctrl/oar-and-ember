@@ -368,6 +368,53 @@ export const MIGRATIONS: readonly Migration[] = [
       };
     },
   },
+  {
+    from: 7,
+    describe:
+      'the three searches and the southern island (Stage 10): the wreck-scavengers move to the sheepfold',
+    // Stage 10 moved the wreck-scavengers from Wreck Strand to the sheepfold under the Hollow Cairn
+    // (decision S10-5). In a version 7 save that met them on the strand but never fought them they
+    // are taken off the strand and come again at the fold. If they were fought, the fight stands:
+    // they are beaten (Bran's search then needs no fight). The rest is new ground and new facts;
+    // the searches open from the save's facts as play goes on.
+    up: (state) => {
+      const facts = { ...(state['facts'] as Record<string, unknown>) };
+      const onFoot = state['onFoot'] as Record<string, unknown> | null;
+      const ids = ['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN'];
+      if (onFoot !== null && facts['enc.SCN_SK_WRECKERS'] === true) {
+        const holders: Record<string, Record<string, unknown>>[] = [
+          onFoot['actors'] as Record<string, Record<string, unknown>>,
+          ...Object.values(
+            (onFoot['elsewhere'] as
+              Record<string, { actors: Record<string, Record<string, unknown>> }> | undefined) ??
+              {},
+          ).map((r) => r.actors),
+        ];
+        const found = holders.flatMap((h) => ids.map((id) => h[id]).filter((a) => a !== undefined));
+        const fought = found.some((a) => {
+          const fa = a['fight'] as { ai?: { aware?: boolean }; dead?: unknown } | undefined;
+          return fa?.ai?.aware === true || (fa?.dead ?? null) !== null;
+        });
+        if (fought || found.length < ids.length) facts['ch1.wreckers'] = 'BEATEN';
+        else {
+          for (const h of holders) for (const id of ids) Reflect.deleteProperty(h, id);
+          Reflect.deleteProperty(facts, 'enc.SCN_SK_WRECKERS');
+          if (
+            (onFoot['battle'] as { scene?: string } | null | undefined)?.scene === 'SCN_SK_WRECKERS'
+          )
+            onFoot['battle'] = null;
+          for (const rest of Object.values(
+            (onFoot['elsewhere'] as Record<string, Record<string, unknown>> | undefined) ?? {},
+          ))
+            if (
+              (rest['battle'] as { scene?: string } | null | undefined)?.scene === 'SCN_SK_WRECKERS'
+            )
+              Reflect.deleteProperty(rest, 'battle');
+        }
+      }
+      return { ...state, facts };
+    },
+  },
 ];
 
 export interface ReadOptions {

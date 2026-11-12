@@ -28,6 +28,7 @@ import { AIM_DIRECTIONS } from '../sim/simulation.ts';
 import type { Simulation } from '../sim/simulation.ts';
 import type { PeopleContext } from '../sim/people/context.ts';
 import { talkOptions } from '../sim/people/talk.ts';
+import type { SearchContext } from '../sim/narrative/searches.ts';
 import { MenuController } from '../ui/menus.ts';
 import type { MenuId, OpenResult, ThreatView } from '../ui/menus.ts';
 
@@ -111,6 +112,8 @@ export class Session {
   tileCommands = 0;
   /** The household's people (Stage 8), for the conversation's options; null without them. */
   people: PeopleContext | null = null;
+  /** Stage 10: the searches' words (their options come from here). */
+  searches: SearchContext | null = null;
   /** The option highlighted in a conversation (the wheel and the pad move it). */
   talkCursor = 0;
 
@@ -172,7 +175,7 @@ export class Session {
       // A conversation or scene (Book 8 section 09): a number chooses, the wheel or the pad moves
       // the highlight and use or interact takes it; Escape or dodge leaves a conversation (a
       // scene waits for its judgement). Time goes on; walking away ends a conversation.
-      const options = talkOptions(this.sim.state, this.people);
+      const options = talkOptions(this.sim.state, this.people, this.searches);
       const n = options.length;
       if (n > 0) {
         this.talkCursor = Math.min(this.talkCursor, n - 1);
@@ -188,7 +191,10 @@ export class Session {
           this.talkCursor = 0;
         }
       }
-      if (talk.kind === 'TALK' && (input.pressed.has('dodge') || menuResults.length > 0))
+      if (
+        (talk.kind === 'TALK' || talk.kind === 'SEARCH') &&
+        (input.pressed.has('dodge') || menuResults.length > 0)
+      )
         this.sim.submit({ type: 'TALK_END' });
       const walk = talk.kind === 'TALK' ? input.move : { x: 0, y: 0 };
       const key = `${walk.x},${walk.y},false,false`;

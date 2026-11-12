@@ -13,6 +13,7 @@ import { campContext } from '../home/camp.ts';
 import { parseCombatBalance } from '../../content/combatBalance.ts';
 import { fightContext } from './fight.ts';
 import { peopleContext } from '../people/context.ts';
+import { searchContext } from '../narrative/searches.ts';
 import { bakeElevation } from '../../content/terrain/elevation.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
@@ -21,7 +22,10 @@ import type { SimWorldContext } from '../simulation.ts';
 export function landContext(
   content: Pick<Content, 'onFoot' | 'opening' | 'zoneMaps'> &
     Partial<
-      Pick<Content, 'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people' | 'combat'>
+      Pick<
+        Content,
+        'camp' | 'balance' | 'household' | 'talk' | 'scenes' | 'people' | 'combat' | 'searches'
+      >
     >,
   balance: unknown,
 ): SimWorldContext {
@@ -55,6 +59,8 @@ export function landContext(
         }),
     stamina: parseStaminaBalance(balance),
     camp: content.camp === undefined ? null : campContext({ camp: content.camp, balance }),
+    searches:
+      content.searches == null ? null : searchContext({ searches: content.searches, balance }),
     people:
       content.household == null || content.people === undefined
         ? null
