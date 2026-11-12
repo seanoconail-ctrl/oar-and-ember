@@ -33,6 +33,7 @@ import { FLAGSHIP, fit, REPAIRS, unship, wreckedBoat } from '../ship/ship.ts';
 import { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor } from '../ship/work.ts';
 import type { RepairKind, ShipDefs, ShipInstance } from '../ship/ship.ts';
 import type { WorldState } from '../world.ts';
+import { GATE_LAUNCH } from './gates.ts';
 
 export { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor };
 export const FACT_REPAIRS_OPEN = 'repair.open';
@@ -102,7 +103,9 @@ export type RepairEvent =
   | { readonly type: 'RITES_STONES' }
   | { readonly type: 'RITES_BEGAN'; readonly form: 'SETTING' | 'SEA' }
   | { readonly type: 'RITES_DONE'; readonly form: 'SETTING' | 'SEA' }
-  | { readonly type: 'CHECKPOINT'; readonly label: string };
+  | { readonly type: 'CHECKPOINT'; readonly label: string }
+  /** Stage 12: launching the boat was chosen at the boat: the readiness screen opens. */
+  | { readonly type: 'READINESS_ASKED'; readonly gate: Id };
 
 export type RepairEmit = (e: RepairEvent) => void;
 
@@ -277,6 +280,9 @@ function ritesOpen(world: WorldState, ctx: RepairsContext): boolean {
   if (world.facts['ch1.thorkel_body'] !== 'CAMP' || world.facts[FACT_RITES] !== undefined)
     return false;
   if (world.facts[FACT_PENDING] !== undefined) return false;
+  // Once the launch has begun it is too late (Book 6 RITES_DENIED; decision S12-6).
+  const gate = world.gates[GATE_LAUNCH]?.status;
+  if (gate === 'STARTED' || gate === 'PASSED') return false;
   if (!world.household.residents.includes(r.recommends)) return false;
   const onFoot = world.onFoot;
   const body = bodyAt(world, ctx);
@@ -396,6 +402,8 @@ export function repairChoiceOpen(
       const home = world.homes['ISLE_SKARV'];
       return (home?.stores['RES_SALTED_FISH'] ?? 0) >= ctx.b.repairs.oarFoodRd;
     }
+    case 'GATE_OPEN':
+      return world.gates[GATE_LAUNCH]?.status === 'OPEN';
     default:
       return null;
   }
@@ -419,6 +427,9 @@ export function boatLooked(world: WorldState, ctx: RepairsContext): void {
   }
   if (lacking.length === 0 && info['ready'] !== undefined)
     talk.queue.push({ speaker: '', key: info['ready'] });
+  // Stage 12: ready, but the launch waits for everyone to be found (decision S12-2).
+  if (lacking.length === 0 && world.gates[GATE_LAUNCH]?.status === 'CLOSED' && info['notYet'])
+    talk.queue.push({ speaker: '', key: info['notYet'] });
 }
 
 /** What the simulation does for the repairs' choices beyond them. */
@@ -475,6 +486,9 @@ export function chooseRepair(
       giveOar(world, ctx, 'TRADE', emit);
       return;
     }
+    case 'LAUNCH':
+      emit({ type: 'READINESS_ASKED', gate: GATE_LAUNCH });
+      return;
     case 'RITES_SETTING':
     case 'RITES_SEA':
       setFact(world, FACT_PENDING, action === 'RITES_SETTING' ? 'SETTING' : 'SEA');

@@ -15,6 +15,8 @@ import { fightContext } from './fight.ts';
 import { peopleContext } from '../people/context.ts';
 import { searchContext } from '../narrative/searches.ts';
 import { repairsContext } from '../narrative/repairs.ts';
+import { launchContext } from '../narrative/launch.ts';
+import { parseLaunchBalance } from '../../content/launchBalance.ts';
 import { shipDefsOf } from '../ship/ship.ts';
 import { parseWorkBalance } from '../../content/homeBalance.ts';
 import { bakeElevation } from '../../content/terrain/elevation.ts';
@@ -36,6 +38,7 @@ export function landContext(
         | 'combat'
         | 'searches'
         | 'repairs'
+        | 'launch'
         | 'hulls'
         | 'fittings'
       >
@@ -58,6 +61,16 @@ export function landContext(
           content.repairs,
           shipDefsOf({ hulls: content.hulls, fittings: content.fittings, balance }),
           parseWorkBalance(balance).workerDayMinutes,
+        );
+  // Stage 12: the launch, Chapter 1's gate.
+  const launch =
+    content.launch == null || repairs === null
+      ? null
+      : launchContext(
+          content.launch,
+          parseLaunchBalance(balance),
+          repairs.ship,
+          parseWorkBalance(balance).foodPerPersonPerDay,
         );
   return {
     maps: content.zoneMaps,
@@ -86,6 +99,7 @@ export function landContext(
         ? null
         : searchContext({ searches: content.searches, balance }, repairs),
     repairs,
+    launch,
     people:
       content.household == null || content.people === undefined
         ? null

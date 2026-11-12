@@ -32,7 +32,7 @@ export interface RepairState {
 /** A notable event in the ship's history (Book 7 section 02, the ship's history log). */
 export interface ShipLogEntry {
   readonly day: number;
-  readonly kind: 'FOUND' | 'REPAIRED' | 'FITTED' | 'UNSHIPPED';
+  readonly kind: 'FOUND' | 'REPAIRED' | 'FITTED' | 'UNSHIPPED' | 'NAMED' | 'LAUNCHED';
   readonly what: string;
   readonly how?: string;
 }
@@ -53,8 +53,13 @@ export interface CargoLot {
 /** Book 2 section 08's ShipInstance, with Chapter 1's repairs and a fitting under way. */
 export interface ShipInstance {
   readonly id: string;
-  /** Named at the launch (Stage 12). */
+  /** A name from content, by string key (Book 2 section 08); null for a name the player chose. */
   nameKey: string | null;
+  /**
+   * The name the player gave it at the launch (Stage 12, version 10; decision S12-10): free text,
+   * cleaned by `cleanShipName`. Null until the launch.
+   */
+  name: string | null;
   hull: Id;
   /** Each of the hull's slots (BOW, MIDSHIP, STERN; a second MIDSHIP is MIDSHIP_2) and what is in it. */
   fittings: Record<string, Id | null>;
@@ -171,6 +176,7 @@ export function newShip(defs: ShipDefs, hull: Id, lies: ShipInstance['lies']): S
   return {
     id: FLAGSHIP,
     nameKey: null,
+    name: null,
     hull,
     fittings: Object.fromEntries(slotsOf(defs, hull).map((s) => [s, null])),
     refits: [],

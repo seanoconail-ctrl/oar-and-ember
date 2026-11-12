@@ -35,6 +35,7 @@ export const CONTENT_FILES = {
   combat: 'content/combat.json',
   searches: 'content/searches.json',
   repairs: 'content/repairs.json',
+  launch: 'content/launch.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
   zoneHagseat: 'content/zones/zone_sk_hagseat.json',
@@ -276,7 +277,7 @@ const cueCheck = object(
     phases: arrayOf(oneOf(['dawn', 'day', 'dusk', 'night'] as const)),
     captionKey: ref('string'),
     temporary: bool,
-    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat'] as const),
+    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship'] as const),
     layers: recordOf(text, bool),
   },
   [
@@ -792,6 +793,8 @@ export const SEARCH_ACTIONS = [
   'TRADE_FOOD',
   'RITES_SETTING',
   'RITES_SEA',
+  // Stage 12: the launch's readiness screen, from looking the boat over.
+  'LAUNCH',
 ] as const;
 export const SEARCH_WHEN = [
   'UNSEEN',
@@ -804,6 +807,8 @@ export const SEARCH_WHEN = [
   'HAS_BOW_PLATFORM',
   'CAN_CARVE',
   'HAS_FOOD',
+  // Stage 12: the launch is open (its gate).
+  'GATE_OPEN',
 ] as const;
 const searchTalkCheck = object({
   id: text,
@@ -956,7 +961,67 @@ const repairsCheck = object({
   talks: arrayOf(searchTalkCheck),
 });
 
+/** Stage 12: the launch, Chapter 1's gate (content/launch.json). */
+const xy = object({ x: fraction(0, 640), y: fraction(0, 360) });
+const launchCheck = object({
+  about: text,
+  gate: id(['BEAT']),
+  chapter: id(['CH']),
+  next: id(['CH']),
+  kind: oneOf(['RAID', 'EXPEDITION', 'DEFENCE', 'COUNCIL', 'VOYAGE', 'BATTLE'] as const),
+  opensWhen: arrayOf(text),
+  typicalDay: int(1, 300),
+  checkpoint: text,
+  chapterSave: text,
+  speaker: ref('person'),
+  readiness: arrayOf(
+    object({
+      kind: oneOf(['CREW', 'SHIP', 'STORES', 'ALLIES', 'EQUIPMENT', 'OTHER'] as const),
+      measure: oneOf(['BOAT', 'TIDE', 'CREW', 'FOOD', 'WEAPONS', 'ALLIES', 'RITES'] as const),
+      labelKey: ref('string'),
+    }),
+  ),
+  pointOfNoReturnKey: ref('string'),
+  weapons: arrayOf(id(['ITEM'])),
+  push: object({
+    dy: fraction(-4, 0),
+    steerer: fraction(-4, 4),
+    crew: arrayOf(fraction(-4, 4)),
+    boardDy: fraction(-4, 0),
+  }),
+  scene: object({
+    heaveSeconds: fraction(0.5, 10),
+    boardStaggerSeconds: fraction(0.1, 3),
+    hoistSeconds: fraction(0.5, 10),
+    strokeSeconds: fraction(0.5, 3),
+    settleSeconds: fraction(0, 5),
+  }),
+  drawnUp: object({ steerer: atFacing, crew: arrayOf(point) }),
+  lines: recordOf(text, ref('string')),
+  info: recordOf(text, ref('string')),
+  names: object({
+    maxLength: int(8, 40),
+    defaultKey: ref('string'),
+    suggestions: arrayOf(ref('string')),
+  }),
+  marks: object({
+    patterns: arrayOf(object({ key: text, nameKey: ref('string'), dyed: bool })),
+    dyes: arrayOf(object({ key: text, nameKey: ref('string') })),
+    likeness: arrayOf(
+      object({ pattern: text, dye: text, noteKey: ref('string') }, ['dye']),
+    ),
+  }),
+  seaMap: object({
+    rumoured: arrayOf(ref('place')),
+    smoke: ref('place'),
+    home: ref('place'),
+    places: recordOf(ref('place'), xy),
+    hazards: recordOf(ref('hazard'), xy),
+  }),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
+export type LaunchDef = Out<typeof launchCheck>;
 export type HouseholdDef = Out<typeof householdCheck>;
 export type TalkDef = Out<typeof talkCheck>;
 export type SpeakerDef = Out<typeof speakerCheck>;
@@ -1018,6 +1083,8 @@ export interface Content {
   readonly searches: SearchesDef | null;
   /** Stage 11: Chapter 1's repairs, the first fitting and Thorkel's rites. */
   readonly repairs: RepairsDef | null;
+  /** Stage 12: the launch, Chapter 1's gate. */
+  readonly launch: LaunchDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -1156,6 +1223,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
   const searches = searchesCheck(files.searches, '', ctx(CONTENT_FILES.searches));
   const repairs = repairsCheck(files.repairs, '', ctx(CONTENT_FILES.repairs));
+  const launch = launchCheck(files.launch, '', ctx(CONTENT_FILES.launch));
   // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
   searches?.omens.forEach((o, i) => {
     for (const part of ['sign', 'rule', 'response', 'consequence'] as const) {
@@ -1395,6 +1463,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       combat,
       searches,
       repairs,
+      launch,
       zoneMaps,
     },
     issues,

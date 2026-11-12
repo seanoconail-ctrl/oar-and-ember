@@ -30,7 +30,10 @@ export interface Overlay {
       | 'report'
       | 'talk'
       | 'gameover'
-      | 'fade',
+      | 'fade'
+      | 'launch'
+      | 'seamap'
+      | 'timings',
   ): HTMLElement;
 }
 
@@ -89,6 +92,20 @@ const STYLE = `
 .oe-overlay [data-region=talk] ol { margin: 0; padding-left: 1.4em; }
 .oe-overlay [data-region=talk] li.chosen { color: #f0ad4c; }
 .oe-overlay [data-region=talk] p.hint { font-size: 0.85em; color: #e9d7b8; }
+.oe-overlay [data-region=launch] { top: 0; bottom: 0; }
+.oe-overlay [data-region=timings] { top: 0; bottom: 0; }
+.oe-overlay [data-region=seamap] { top: 0; bottom: 0; left: 0; right: 0; }
+.oe-overlay [data-region=seamap] .label { position: absolute; transform: translate(-50%, 0); font-size: 0.8em;
+  white-space: nowrap; font-style: italic; color: #f4efe4; }
+.oe-overlay [data-region=seamap] .label.home { font-style: normal; font-weight: 600; }
+.oe-overlay [data-region=seamap] .title { position: absolute; top: 3%; left: 0; right: 0; text-align: center;
+  font-size: 1.2em; color: #f0ad4c; }
+.oe-overlay [data-region=seamap] .foot { position: absolute; bottom: 3%; left: 0; right: 0; text-align: center;
+  font-size: 0.85em; }
+.oe-overlay [data-region=seamap] .foot p { margin: 0.2em auto; display: table; padding: 0.1em 0.6em;
+  background: rgba(34, 49, 58, 0.85); }
+.oe-overlay [data-region=seamap] button { font: inherit; pointer-events: auto; cursor: pointer; padding: 0.2em 1em;
+  background: #c98f3a; color: #22313a; border: 0; font-weight: 600; }
 .oe-overlay [data-region=fade] { top: 0; bottom: 0; left: 0; right: 0; background: #0b0e16; opacity: 0; }
 `;
 

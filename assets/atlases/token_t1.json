@@ -1,0 +1,389 @@
+{
+  "sheet": "token_t1",
+  "kind": "decal",
+  "image": "token_t1.png",
+  "width": 24,
+  "height": 16,
+  "pivot": {
+    "x": 12,
+    "y": 14
+  },
+  "footprint": {
+    "w": 24,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "plain": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_broad_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_broad_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_broad_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_narrow_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_narrow_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "stripes_narrow_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "lozenge_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "lozenge_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "lozenge_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "quartered_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "quartered_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "quartered_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "raven_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "raven_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "raven_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "serpent_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "serpent_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "serpent_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "wave_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "wave_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "wave_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "cross_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "cross_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "cross_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "sunwheel_madder": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "sunwheel_woad": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    },
+    "sunwheel_weld": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "plain/-/0": [
+      0,
+      0
+    ],
+    "plain/-/1": [
+      24,
+      0
+    ],
+    "stripes_broad_madder/-/0": [
+      0,
+      16
+    ],
+    "stripes_broad_madder/-/1": [
+      24,
+      16
+    ],
+    "stripes_broad_woad/-/0": [
+      0,
+      32
+    ],
+    "stripes_broad_woad/-/1": [
+      24,
+      32
+    ],
+    "stripes_broad_weld/-/0": [
+      0,
+      48
+    ],
+    "stripes_broad_weld/-/1": [
+      24,
+      48
+    ],
+    "stripes_narrow_madder/-/0": [
+      0,
+      64
+    ],
+    "stripes_narrow_madder/-/1": [
+      24,
+      64
+    ],
+    "stripes_narrow_woad/-/0": [
+      0,
+      80
+    ],
+    "stripes_narrow_woad/-/1": [
+      24,
+      80
+    ],
+    "stripes_narrow_weld/-/0": [
+      0,
+      96
+    ],
+    "stripes_narrow_weld/-/1": [
+      24,
+      96
+    ],
+    "lozenge_madder/-/0": [
+      0,
+      112
+    ],
+    "lozenge_madder/-/1": [
+      24,
+      112
+    ],
+    "lozenge_woad/-/0": [
+      0,
+      128
+    ],
+    "lozenge_woad/-/1": [
+      24,
+      128
+    ],
+    "lozenge_weld/-/0": [
+      0,
+      144
+    ],
+    "lozenge_weld/-/1": [
+      24,
+      144
+    ],
+    "quartered_madder/-/0": [
+      0,
+      160
+    ],
+    "quartered_madder/-/1": [
+      24,
+      160
+    ],
+    "quartered_woad/-/0": [
+      0,
+      176
+    ],
+    "quartered_woad/-/1": [
+      24,
+      176
+    ],
+    "quartered_weld/-/0": [
+      0,
+      192
+    ],
+    "quartered_weld/-/1": [
+      24,
+      192
+    ],
+    "raven_madder/-/0": [
+      0,
+      208
+    ],
+    "raven_madder/-/1": [
+      24,
+      208
+    ],
+    "raven_woad/-/0": [
+      0,
+      224
+    ],
+    "raven_woad/-/1": [
+      24,
+      224
+    ],
+    "raven_weld/-/0": [
+      0,
+      240
+    ],
+    "raven_weld/-/1": [
+      24,
+      240
+    ],
+    "serpent_madder/-/0": [
+      0,
+      256
+    ],
+    "serpent_madder/-/1": [
+      24,
+      256
+    ],
+    "serpent_woad/-/0": [
+      0,
+      272
+    ],
+    "serpent_woad/-/1": [
+      24,
+      272
+    ],
+    "serpent_weld/-/0": [
+      0,
+      288
+    ],
+    "serpent_weld/-/1": [
+      24,
+      288
+    ],
+    "wave_madder/-/0": [
+      0,
+      304
+    ],
+    "wave_madder/-/1": [
+      24,
+      304
+    ],
+    "wave_woad/-/0": [
+      0,
+      320
+    ],
+    "wave_woad/-/1": [
+      24,
+      320
+    ],
+    "wave_weld/-/0": [
+      0,
+      336
+    ],
+    "wave_weld/-/1": [
+      24,
+      336
+    ],
+    "cross_madder/-/0": [
+      0,
+      352
+    ],
+    "cross_madder/-/1": [
+      24,
+      352
+    ],
+    "cross_woad/-/0": [
+      0,
+      368
+    ],
+    "cross_woad/-/1": [
+      24,
+      368
+    ],
+    "cross_weld/-/0": [
+      0,
+      384
+    ],
+    "cross_weld/-/1": [
+      24,
+      384
+    ],
+    "sunwheel_madder/-/0": [
+      0,
+      400
+    ],
+    "sunwheel_madder/-/1": [
+      24,
+      400
+    ],
+    "sunwheel_woad/-/0": [
+      0,
+      416
+    ],
+    "sunwheel_woad/-/1": [
+      24,
+      416
+    ],
+    "sunwheel_weld/-/0": [
+      0,
+      432
+    ],
+    "sunwheel_weld/-/1": [
+      24,
+      432
+    ]
+  }
+}

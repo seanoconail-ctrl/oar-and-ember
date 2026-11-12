@@ -3441,5 +3441,475 @@
   },
   "ui.sound.repairs": {
     "text": "Stage 11: the boat, Seal Cave and the rites"
+  },
+  "ui.gate.launch.title": {
+    "text": "The launch"
+  },
+  "ui.gate.launch.lead": {
+    "text": "The boat lies ready on Wreck Strand. Before it goes into the water:"
+  },
+  "ui.gate.kind.ship": {
+    "text": "The boat"
+  },
+  "ui.gate.kind.tide": {
+    "text": "The tide"
+  },
+  "ui.gate.kind.crew": {
+    "text": "The crew"
+  },
+  "ui.gate.kind.stores": {
+    "text": "Stores"
+  },
+  "ui.gate.kind.equipment": {
+    "text": "Weapons"
+  },
+  "ui.gate.kind.allies": {
+    "text": "Allies"
+  },
+  "ui.gate.kind.rites": {
+    "text": "Thorkel"
+  },
+  "ui.gate.state.ready": {
+    "text": "Ready"
+  },
+  "ui.gate.state.short": {
+    "text": "Short"
+  },
+  "ui.gate.state.unknown": {
+    "text": "Not known"
+  },
+  "ui.gate.launch.warning": {
+    "text": "Launching the boat ends Chapter 1. There is no going back to it: what is left undone on the island stays undone."
+  },
+  "ui.gate.launch.start": {
+    "text": "{key}  Launch the boat"
+  },
+  "ui.gate.launch.start_click": {
+    "text": "Launch the boat"
+  },
+  "ui.gate.launch.back": {
+    "text": "{key}  Not yet"
+  },
+  "ui.gate.launch.cannot": {
+    "text": "The boat cannot go into the water until the tide comes in."
+  },
+  "ui.gate.launch.ship.ready": {
+    "text": "Sound: the hull patched, the mast stepped and rigged, the steering oar shipped."
+  },
+  "ui.gate.launch.ship.fitted": {
+    "text": "Sound: the hull patched, rigged, the steering oar shipped, with the {fitting}."
+  },
+  "ui.gate.launch.ship.short": {
+    "text": "Not seaworthy yet: it still lacks {what}."
+  },
+  "ui.gate.launch.tide.ready": {
+    "text": "The tide is in: water enough to float the boat off its skids."
+  },
+  "ui.gate.launch.tide.short": {
+    "text": "The tide is out. Water enough to float the boat in about {hours} hours."
+  },
+  "ui.gate.launch.tide.soon": {
+    "text": "The tide is out. Water enough to float the boat within the hour."
+  },
+  "ui.gate.launch.tide.none": {
+    "text": "The tide is out, and will not float the boat off today."
+  },
+  "ui.gate.launch.crew.ready": {
+    "text": "{count} to row and the steerer at the steering oar: {names}."
+  },
+  "ui.gate.launch.crew.short": {
+    "text": "Only {count} at the oars, where the boat wants {oars}: {names}."
+  },
+  "ui.gate.launch.crew.dead": {
+    "text": "{names} will not sail with the household."
+  },
+  "ui.gate.launch.stores.ready": {
+    "text": "Food for {days} days in store."
+  },
+  "ui.gate.launch.stores.short": {
+    "text": "Food for only {days} days in store."
+  },
+  "ui.gate.launch.stores.none": {
+    "text": "No food left in store."
+  },
+  "ui.gate.launch.gear.ready": {
+    "text": "In hand: {items}."
+  },
+  "ui.gate.launch.gear.short": {
+    "text": "No weapon in hand."
+  },
+  "ui.gate.launch.gear.arrows": {
+    "text": "{count} arrows"
+  },
+  "ui.gate.launch.allies.unknown": {
+    "text": "No one on this coast owes the household anything yet."
+  },
+  "ui.gate.launch.rites.setting": {
+    "text": "Laid to rest under a ship of stones on the machair."
+  },
+  "ui.gate.launch.rites.sea": {
+    "text": "Given to the sea, his gold ring with him for Rán."
+  },
+  "ui.gate.launch.rites.short": {
+    "text": "Thorkel has had no rites. Once the boat is launched, it is too late."
+  },
+  "ui.gate.launch.lack.hull": {
+    "text": "its hull boards"
+  },
+  "ui.gate.launch.lack.rigging": {
+    "text": "its rigging"
+  },
+  "ui.gate.launch.lack.oar": {
+    "text": "its steering oar"
+  },
+  "ui.gate.launch.and": {
+    "text": " and "
+  },
+  "ui.gate.launch.list": {
+    "text": ", "
+  },
+  "ui.launch.name.title": {
+    "text": "Name the boat"
+  },
+  "ui.launch.name.lead": {
+    "text": "The household stands round the boat on its skids. It needs a name before it touches the water."
+  },
+  "ui.launch.name.label": {
+    "text": "Its name"
+  },
+  "ui.launch.name.hint": {
+    "text": "Type a name, or take one of these. Letters, spaces, hyphens and apostrophes."
+  },
+  "ui.launch.name.default": {
+    "text": "Cormorant"
+  },
+  "ui.launch.name.s1": {
+    "text": "Cormorant"
+  },
+  "ui.launch.name.s2": {
+    "text": "Skarfr"
+  },
+  "ui.launch.name.s3": {
+    "text": "Grey Seal"
+  },
+  "ui.launch.name.s4": {
+    "text": "Wave-Hound"
+  },
+  "ui.launch.name.s5": {
+    "text": "Storm-Petrel"
+  },
+  "ui.launch.name.s6": {
+    "text": "Driftwood"
+  },
+  "ui.launch.name.s7": {
+    "text": "Patched Sow"
+  },
+  "ui.launch.name.s8": {
+    "text": "Second Keel"
+  },
+  "ui.launch.name.next": {
+    "text": "On to the sail"
+  },
+  "ui.launch.mark.title": {
+    "text": "The mark on the sail"
+  },
+  "ui.launch.mark.lead": {
+    "text": "The coast will know the household by its sail, from far off."
+  },
+  "ui.launch.mark.pattern": {
+    "text": "Pattern"
+  },
+  "ui.launch.mark.dye": {
+    "text": "Dye"
+  },
+  "ui.launch.mark.undyed": {
+    "text": "Undyed wool"
+  },
+  "ui.launch.mark.pattern.plain": {
+    "text": "Plain undyed wool"
+  },
+  "ui.launch.mark.pattern.stripes_broad": {
+    "text": "Broad stripes"
+  },
+  "ui.launch.mark.pattern.stripes_narrow": {
+    "text": "Narrow stripes"
+  },
+  "ui.launch.mark.pattern.lozenge": {
+    "text": "Lozenge checks"
+  },
+  "ui.launch.mark.pattern.quartered": {
+    "text": "Quartered"
+  },
+  "ui.launch.mark.pattern.raven": {
+    "text": "A raven"
+  },
+  "ui.launch.mark.pattern.serpent": {
+    "text": "A serpent"
+  },
+  "ui.launch.mark.pattern.wave": {
+    "text": "A wave"
+  },
+  "ui.launch.mark.pattern.cross": {
+    "text": "A cross"
+  },
+  "ui.launch.mark.pattern.sunwheel": {
+    "text": "A sun-wheel"
+  },
+  "ui.launch.mark.dye.madder": {
+    "text": "Madder red"
+  },
+  "ui.launch.mark.dye.woad": {
+    "text": "Woad blue"
+  },
+  "ui.launch.mark.dye.weld": {
+    "text": "Weld yellow"
+  },
+  "ui.launch.mark.like_saltvik": {
+    "text": "Saltvik's traders sail under red and white stripes: some will take the boat for theirs."
+  },
+  "ui.launch.mark.like_kilbrecc": {
+    "text": "Kilbrecc's boats sail undyed with a blue cross, and claim the Church's peace."
+  },
+  "ui.launch.mark.like_ulf": {
+    "text": "Ulf Hrafnsson's raiders sail under a raven. The coast expects killing from a raven."
+  },
+  "ui.launch.mark.like_plain": {
+    "text": "A plain sail says nothing: easy to forget, easy to change."
+  },
+  "ui.launch.mark.go": {
+    "text": "Launch"
+  },
+  "ui.launch.mark.hint": {
+    "text": "Arrow keys or a click choose; Enter launches."
+  },
+  "ui.seamap.title": {
+    "text": "The Narrow Sea"
+  },
+  "ui.seamap.smoke": {
+    "text": "Smoke on the Irish shore"
+  },
+  "ui.seamap.home": {
+    "text": "Skarvholm"
+  },
+  "ui.seamap.close": {
+    "text": "{key}  Back to the island"
+  },
+  "ui.seamap.close_click": {
+    "text": "Back to the island"
+  },
+  "ui.seamap.readonly": {
+    "text": "The coast as it looks from the boat. Sailing it comes in the next part of the game."
+  },
+  "ui.chapter.end.title": {
+    "text": "Chapter 1 ends: The Wreck"
+  },
+  "ui.chapter.end.line": {
+    "text": "{ship} is in the water, named and marked. Smoke rises at Carrick Landing."
+  },
+  "ui.chapter.end.saved": {
+    "text": "Saved: the end of Chapter 1."
+  },
+  "ui.chapter.end.build": {
+    "text": "This is the end of Build 1. The island is still yours to walk."
+  },
+  "ui.chapter.end.time": {
+    "text": "Played: {played}. First fight: {fight}."
+  },
+  "ui.chapter.end.no_fight": {
+    "text": "none"
+  },
+  "ui.chapter.end.close": {
+    "text": "{key}  Back to the island"
+  },
+  "ui.system.timings": {
+    "text": "{key}: timings"
+  },
+  "ui.timings.title": {
+    "text": "Timings (Chapter 1)"
+  },
+  "ui.timings.played": {
+    "text": "Played so far: {time}"
+  },
+  "ui.timings.held": {
+    "text": "Of which menus held the game: {time}"
+  },
+  "ui.timings.fight": {
+    "text": "First fight: {time}"
+  },
+  "ui.timings.no_fight": {
+    "text": "First fight: not yet"
+  },
+  "ui.timings.unknown": {
+    "text": "This save began before timings were kept; times count from when it was loaded."
+  },
+  "ui.timings.close": {
+    "text": "{key}  Close"
+  },
+  "ui.timings.mark": {
+    "text": "{name}: {time}"
+  },
+  "ui.timings.mark.seax": {
+    "text": "Seax found"
+  },
+  "ui.timings.mark.hild_safe": {
+    "text": "Hild carried to safety"
+  },
+  "ui.timings.mark.bow": {
+    "text": "Bow found"
+  },
+  "ui.timings.mark.at_broch": {
+    "text": "At the broch"
+  },
+  "ui.timings.mark.fire": {
+    "text": "Fire lit"
+  },
+  "ui.timings.mark.hild_tended": {
+    "text": "Hild's leg tended"
+  },
+  "ui.timings.mark.first_night": {
+    "text": "First night slept"
+  },
+  "ui.timings.mark.first_fish": {
+    "text": "First fish"
+  },
+  "ui.timings.mark.search_oddi": {
+    "text": "Oddi's search decided"
+  },
+  "ui.timings.mark.search_runa": {
+    "text": "Runa's search decided"
+  },
+  "ui.timings.mark.search_bran": {
+    "text": "Bran's search decided"
+  },
+  "ui.timings.mark.first_combat": {
+    "text": "First fight"
+  },
+  "ui.timings.mark.hull": {
+    "text": "Hull patched"
+  },
+  "ui.timings.mark.rigging": {
+    "text": "Rigging set up"
+  },
+  "ui.timings.mark.oar": {
+    "text": "Steering oar shipped"
+  },
+  "ui.timings.mark.fitting": {
+    "text": "First fitting made"
+  },
+  "ui.timings.mark.rites": {
+    "text": "Thorkel's rites"
+  },
+  "ui.timings.mark.boat_ready": {
+    "text": "Boat seaworthy"
+  },
+  "ui.timings.mark.gate_open": {
+    "text": "Launch offered"
+  },
+  "ui.timings.mark.launch": {
+    "text": "Launch begun"
+  },
+  "ui.timings.mark.chapter_end": {
+    "text": "Chapter 1 ended"
+  },
+  "ui.timings.minutes": {
+    "text": "{m} min {s} s"
+  },
+  "p_steerer.boat.launch": {
+    "text": "Launch the boat."
+  },
+  "info.launch.not_yet": {
+    "text": "Not everyone is found yet",
+    "tags": ["INFO"]
+  },
+  "c_hild.launch.heave": {
+    "text": "Hands on the strakes. Together now. Heave!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.launch.slide": {
+    "text": "It's moving! It's actually moving!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.launch.afloat": {
+    "text": "Afloat. I'd have lost a wager on that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.launch.patch": {
+    "text": "Dry inside. My patch holds.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.launch.named": {
+    "text": "{ship}. Father would have laughed at that. Then rowed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.launch.sail": {
+    "text": "Sheet home. Let the wind have it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.launch.row": {
+    "text": "Out oars! Which end is the front again?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.launch.smoke": {
+    "text": "Smoke on the Irish shore. Where there's smoke, there's grain.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.launch.no_rites": {
+    "text": "We sail, and Father lies there with no rites.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.launch.drawn_up": {
+    "text": "Drawn up again, above the tide. It rows.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.launch.gather": {
+    "text": "The household sets hands to the boat",
+    "tags": ["INFO"]
+  },
+  "caption.launch.afloat": {
+    "text": "The boat floats free",
+    "tags": ["INFO"]
+  },
+  "caption.launch.aboard": {
+    "text": "The crew climb aboard",
+    "tags": ["INFO"]
+  },
+  "caption.launch.sail": {
+    "text": "The sail drops and fills",
+    "tags": ["INFO"]
+  },
+  "caption.launch.drawn_up": {
+    "text": "The boat drawn up above the tide",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.beaching": {
+    "text": "The keel grinds down the skids",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.oar_creak": {
+    "text": "Oars creak as the crew pull",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.oar_splash": {
+    "text": "Oar blades dip in time",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sail_flap": {
+    "text": "The sail flaps as it drops",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sail_fill": {
+    "text": "The sail fills with a crack",
+    "tags": ["INFO"]
+  },
+  "caption.music.launch": {
+    "text": "Drums and voices: the boat's song",
+    "tags": ["INFO"]
+  },
+  "caption.stinger.chapter_end": {
+    "text": "A horn and drums: the chapter ends",
+    "tags": ["INFO"]
+  },
+  "ui.sound.launch": {
+    "text": "Stage 12: the launch"
   }
 }

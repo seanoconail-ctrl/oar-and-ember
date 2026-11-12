@@ -473,6 +473,15 @@ export interface ZoneSceneInput {
   readonly visual?: ZoneVisualView;
   /** Capture only (`?actors=none`): leave people out, for preview backgrounds of the place. */
   readonly hidePeople?: boolean;
+  /**
+   * Stage 12, the launch: people not drawn on foot (aboard the boat, drawn by its layers), whether
+   * the steerer is aboard too, and the loop the steerer plays heaving at the boat.
+   */
+  readonly launch?: {
+    readonly hidden: readonly Id[];
+    readonly steererHidden: boolean;
+    readonly steererLoop: string | null;
+  };
   /** Facts the zone reads: an item lying there shows once its `after` fact holds. */
   readonly facts?: FactView;
   /** Stage 10: the Hag's Seat stone weeps (the first supernatural sign). */
@@ -601,6 +610,8 @@ export interface CampScene {
     flat?: boolean;
     /** Stage 11: drawn this many px after its foot line (the boat's layers over its hull). */
     after?: number;
+    /** Stage 12: hold this frame rather than playing the state's loop (a sail being hoisted). */
+    fixed?: boolean;
   }[];
   readonly stage: string;
   /** The fire, in tiles: lit or not, and its fuel in loads (it burns low as it runs out). */
@@ -860,7 +871,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       }
       // A prop with a loop of its own (the sails' ripples) plays it; others hold their frame.
       const [state = '', facing = '-'] = prop.frame.split('/');
-      const loop = (anims.get(prop.sheet)?.[state]?.frames ?? 1) > 1;
+      const loop = prop.fixed !== true && (anims.get(prop.sheet)?.[state]?.frames ?? 1) > 1;
       const sprite: SceneSprite = {
         sheet: prop.sheet,
         frame: loop
@@ -1014,6 +1025,12 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     state = visual.steerer.state;
     stepFrame = visual.steerer.frame;
   } else if (state === 'idle' || state === 'draw') stepFrame = frameIndex(anims, body, state, tick);
+  // Stage 12: heaving at the boat with the household, the stoop of the gather loop.
+  const heave = input.launch?.steererLoop ?? null;
+  if (heave !== null && work == null) {
+    state = heave;
+    stepFrame = frameIndex(anims, body, heave, tick);
+  }
   // A cast line's end in the water: a ring where it went in (Book 7 section 07: casting and hauling).
   if (work != null && loops[work.task] === 'fish') {
     const ring = frameIndex(anims, PEOPLE_FX_SHEET, 'ripple', tick - work.since);
@@ -1037,7 +1054,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   }
   const steererLook =
     gore > 0 && input.steererBloodied === true ? look.steerer : withoutBlood(look.steerer);
-  if (input.hidePeople !== true)
+  if (input.hidePeople !== true && input.launch?.steererHidden !== true)
     person(
       steererLook,
       `${state}/${p.facing}/${stepFrame}`,
@@ -1080,7 +1097,8 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       gore < 2 &&
       input.corpseFade !== undefined &&
       tick - fa.dead.tick >= (gore === 1 ? input.corpseFade.low : input.corpseFade.off);
-    if (who !== undefined && inView(x, y) && input.hidePeople !== true && !faded) {
+    const aboard = input.launch?.hidden.includes(id) === true;
+    if (who !== undefined && inView(x, y) && input.hidePeople !== true && !faded && !aboard) {
       const own = anims.get(who.body) ?? {};
       const bloodied = gore > 0 && fa !== undefined && (fa.bloodied || fa.dead !== null);
       const drawn = bloodied ? who : withoutBlood(who);

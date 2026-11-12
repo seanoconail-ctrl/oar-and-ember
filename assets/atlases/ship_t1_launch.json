@@ -1,0 +1,76 @@
+{
+  "sheet": "ship_t1_launch",
+  "kind": "building",
+  "image": "ship_t1_launch.png",
+  "width": 208,
+  "height": 196,
+  "pivot": {
+    "x": 104,
+    "y": 186
+  },
+  "footprint": {
+    "w": 208,
+    "h": 196
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "afloat": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "mast": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    },
+    "oar": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "afloat/-/0": [
+      0,
+      0
+    ],
+    "afloat/-/1": [
+      208,
+      0
+    ],
+    "afloat/-/2": [
+      416,
+      0
+    ],
+    "afloat/-/3": [
+      624,
+      0
+    ],
+    "mast/-/0": [
+      0,
+      196
+    ],
+    "mast/-/1": [
+      208,
+      196
+    ],
+    "mast/-/2": [
+      416,
+      196
+    ],
+    "mast/-/3": [
+      624,
+      196
+    ],
+    "oar/-/0": [
+      0,
+      392
+    ]
+  }
+}

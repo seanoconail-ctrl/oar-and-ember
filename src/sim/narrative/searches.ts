@@ -411,6 +411,7 @@ export function chooseSearch(
     case 'TRADE_FOOD':
     case 'RITES_SETTING':
     case 'RITES_SEA':
+    case 'LAUNCH':
       end();
       hooks.repair?.(choice.do);
       return;

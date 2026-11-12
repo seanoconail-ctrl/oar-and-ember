@@ -5242,7 +5242,54 @@
    ]
   },
   "storyGates": {
-   "table": [
+   "gates": [
+    {
+     "Gate": "The launch (end of Chapter 1)",
+     "Typical day": "6",
+     "Readiness screen shows": "The boat's repairs, crew, stores"
+    },
+    {
+     "Gate": "The Carrick raid",
+     "Typical day": "12 to 15",
+     "Readiness screen shows": "Crew, ship, plan, equipment"
+    },
+    {
+     "Gate": "The reply to Asgrim",
+     "Typical day": "118 to 120",
+     "Readiness screen shows": "Silver, allies, the household's answer"
+    },
+    {
+     "Gate": "The defence of Skarvholm (fixed night: the one gate that does not wait)",
+     "Typical day": "135 (see defenceNight)",
+     "Readiness screen shows": "Watch, walls, weapons, warning"
+    },
+    {
+     "Gate": "The household council",
+     "Typical day": "About 180",
+     "Readiness screen shows": "Stores, the island's state, the two sites"
+    },
+    {
+     "Gate": "The move ashore",
+     "Typical day": "181 to 210",
+     "Readiness screen shows": "Ships, cargo, the site secured"
+    },
+    {
+     "Gate": "The Gathering",
+     "Typical day": "211 to 240",
+     "Readiness screen shows": "Allies, demands, offers"
+    },
+    {
+     "Gate": "The Return to Skarvholm",
+     "Typical day": "241 to 252",
+     "Readiness screen shows": "Crew, equipment, keys, the checkpoint"
+    },
+    {
+     "Gate": "The final battle",
+     "Typical day": "256 to 270",
+     "Readiness screen shows": "Allies, ships, the Cup"
+    }
+   ],
+   "gateRules": [
     {
      "Key": "waiting",
      "Value": "A dated story event waits at its gate; the calendar, seasons, crops and winter go on"
@@ -5286,6 +5333,48 @@
     {
      "Key": "beaconPressure",
      "Value": "With the beacon lit, the final battle's pressure steps come twice as often (a demand grows 10% every 5 days; a rumour every 2.5 days)"
+    }
+   ],
+   "theLaunch": [
+    {
+     "Key": "floats",
+     "Value": "Knee",
+     "Notes": "The boat floats off where the water at its keel, from stern to stem, is at least knee deep (section 02, Water depth bands); shallower, it grounds"
+    },
+    {
+     "Key": "skids",
+     "Value": "8 tiles",
+     "Notes": "How far down the shingle the household can run the boat on its skids; if it would still not float there, the tide is out and the launch waits for it"
+    },
+    {
+     "Key": "slideSpeed",
+     "Value": "1.8 tiles a second",
+     "Notes": "The household running the boat down its skids, at the carrying pace (section 02, Movement on foot)"
+    },
+    {
+     "Key": "rowSpeed",
+     "Value": "1.2 tiles a second",
+     "Notes": "Out from the strand under oars with the sail set: the coastal boat's oars (section 05) at a launching crew's first stroke"
+    },
+    {
+     "Key": "rowOut",
+     "Value": "9 tiles",
+     "Notes": "How far the boat goes out from the strand before the sea map opens"
+    },
+    {
+     "Key": "trialRow",
+     "Value": "60 game minutes",
+     "Notes": "Rowed round the skerry and back, then drawn up again above the tide: the time the launch takes from the day"
+    },
+    {
+     "Key": "tideLookahead",
+     "Value": "24 game hours",
+     "Notes": "How far ahead the readiness screen looks for water enough to float the boat off"
+    },
+    {
+     "Key": "storesShort",
+     "Value": "3 days",
+     "Notes": "Fewer days of food in store than this reads short on the readiness screen"
     }
    ]
   },

@@ -664,6 +664,65 @@
       "kind": "ambience",
       "zones": ["ZONE_SK_SEALCAVE"],
       "temporary": false
+    },
+    {
+      "id": "MUS_LAUNCH",
+      "kind": "music",
+      "bpm": 120,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.launch",
+      "temporary": false,
+      "piece": "ship",
+      "layers": {
+        "drone": true,
+        "drums": true,
+        "creak": true,
+        "chorus": true,
+        "tune": true
+      }
+    },
+    {
+      "id": "SFX_BEACHING",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.beaching",
+      "temporary": false
+    },
+    {
+      "id": "SFX_OAR_CREAK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.oar_creak",
+      "temporary": false
+    },
+    {
+      "id": "SFX_OAR_SPLASH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.oar_splash",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_FLAP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sail_flap",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_FILL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sail_fill",
+      "temporary": false
+    },
+    {
+      "id": "MUS_STINGER_CHAPTER_END",
+      "kind": "stinger",
+      "lengthBeats": 8,
+      "captionKey": "caption.stinger.chapter_end",
+      "temporary": false
     }
   ],
   "events": {
@@ -730,7 +789,16 @@
     "RITES_DONE_SETTING": "SFX_STONES_SET",
     "RITES_DONE_SEA": "SFX_SEA_BURIAL",
     "BOAT_READY": "MUS_STINGER_BUILDING_FINISHED",
-    "RITES_BEGAN": "MUS_LAMENT_THORKEL"
+    "RITES_BEGAN": "MUS_LAMENT_THORKEL",
+    "LAUNCH_SLIDE": "SFX_BEACHING",
+    "LAUNCH_AFLOAT": "SFX_SPLASH",
+    "CREW_ABOARD": "SFX_SPLASH",
+    "SAIL_HOISTED": "SFX_SAIL_FLAP",
+    "SAIL_SET": "SFX_SAIL_FILL",
+    "OAR_STROKE": "SFX_OAR_SPLASH",
+    "OAR_CREAK": "SFX_OAR_CREAK",
+    "SEA_MAP_REVEALED": "MUS_STINGER_DISCOVERY",
+    "CHAPTER_ENDED": "MUS_STINGER_CHAPTER_END"
   },
   "home": {
     "restSeconds": 90,

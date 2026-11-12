@@ -65,7 +65,45 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * Version 9 (Stage 11: boat repairs and the first fitting) gives `ships` its Book 2 section 08
  * shape: the household's boat (`ships.flagship`), with Chapter 1's repairs and a fitting under way.
  */
-export const WORLD_STATE_VERSION = 9;
+/*
+ * Version 10 (Stage 12: the launch and the Build 1 gate) adds the story gates' state (`gates`,
+ * Book 2 section 16's GateState), the chapter's telemetry (`telemetry`: when each beat was reached,
+ * in ticks and the time a menu held the game) and the boat's own name (`ShipInstance.name`).
+ */
+export const WORLD_STATE_VERSION = 10;
+
+/** Book 2 section 16. */
+export interface GateState {
+  status: 'CLOSED' | 'OPEN' | 'STARTED' | 'PASSED';
+  openedDay?: number;
+  startedDay?: number;
+  pressureSteps: number;
+  retriesUsed: number;
+  fixedDay?: number;
+  warnedDay?: number;
+}
+
+/** When a milestone of the chapter was first reached (Stage 12 telemetry; decision S12-12). */
+export interface TelemetryMark {
+  readonly tick: number;
+  readonly day: number;
+  readonly minute: number;
+  /** Real milliseconds menus had held the game by then (time stopped for a report or a plan). */
+  readonly heldMs: number;
+}
+
+/**
+ * The chapter's telemetry (Book 3 Stage 12 check 1): when play began, how long menus held the
+ * game, and the first time each milestone was reached. Played time is ticks at 60 a second plus
+ * the held time. Written by the simulation from the world itself; the held time arrives as a
+ * command from the interface.
+ */
+export interface Telemetry {
+  /** The tick play began (0 for a new campaign; null in a save from before version 10). */
+  start: number | null;
+  heldMs: number;
+  marks: Record<string, TelemetryMark>;
+}
 
 /** The difficulty options that change the simulation (Book 1 section 15; decision S9-9). */
 export interface CampaignOptions {
@@ -542,6 +580,10 @@ export interface WorldState {
   options: CampaignOptions;
   /** The steerer has died: the game is over until a save is loaded (version 7). */
   gameOver: { readonly day: number; readonly tick: number; readonly cause: string } | null;
+  /** Book 2 section 16: each story gate's state, by its beat ID (version 10). */
+  gates: Record<Id, GateState>;
+  /** The chapter's telemetry (version 10). */
+  telemetry: Telemetry;
 }
 
 /** A new steerer's stamina: full, at Book 10's base. */
@@ -600,6 +642,8 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     barks: { bySpeaker: {}, byLine: {} },
     options: { secondWind: false, ransMercy: false, parryWindow: null },
     gameOver: null,
+    gates: {},
+    telemetry: { start: 0, heldMs: 0, marks: {} },
   };
 }
 

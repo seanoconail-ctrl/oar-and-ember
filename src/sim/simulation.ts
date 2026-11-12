@@ -124,6 +124,17 @@ import {
 } from './narrative/repairs.ts';
 import type { RepairEvent, RepairsContext } from './narrative/repairs.ts';
 import {
+  closeSeaMap,
+  launchActive,
+  launchHolds,
+  markSail,
+  nameShip,
+  startLaunch,
+  stepLaunch,
+} from './narrative/launch.ts';
+import type { LaunchContext, LaunchEvent } from './narrative/launch.ts';
+import { addHeld, stepTelemetry } from './narrative/telemetry.ts';
+import {
   onLifted,
   onSetDown,
   onTideRefusal,
@@ -198,7 +209,16 @@ export type Command =
   | { readonly type: 'TALK_CHOOSE'; readonly index: number }
   | { readonly type: 'TALK_END' }
   /** Delegation (Book 1 section 10): give a resident a job. */
-  | { readonly type: 'ASSIGN_JOB'; readonly person: Id; readonly job: JobKind };
+  | { readonly type: 'ASSIGN_JOB'; readonly person: Id; readonly job: JobKind }
+  /** Stage 12: start a story gate from its readiness screen (Book 2 section 16). */
+  | { readonly type: 'START_GATE'; readonly gate: Id }
+  /** The boat's name and its sail's mark, given at the launch (Book 7 section 04). */
+  | { readonly type: 'NAME_SHIP'; readonly name: string }
+  | { readonly type: 'MARK_SAIL'; readonly pattern: string; readonly dye: string | null }
+  /** The sea map shown at the launch is closed: Chapter 1 ends. */
+  | { readonly type: 'CLOSE_SEA_MAP' }
+  /** Real milliseconds a menu held the game (time stopped), for the telemetry. */
+  | { readonly type: 'TIME_HELD'; readonly ms: number };
 
 /** Aim vectors are quantised to this many directions, so replays are exact. */
 export const AIM_DIRECTIONS = 64;
@@ -217,6 +237,8 @@ export type RefusalReason =
   | 'NO_SUCH_SLOT'
   /** A draw refused: the quiver is empty (detail: the bow). */
   | 'NO_ARROWS'
+  /** Stage 12: the launch cannot start (detail: why). */
+  | 'GATE_REFUSED'
   | 'HOTBAR_FULL'
   | 'QUIVER_FULL'
   | 'HANDS_FULL'
@@ -291,6 +313,7 @@ export type SimEvent =
   | FightEvent
   | SearchEvent
   | RepairEvent
+  | LaunchEvent
   /** The held finisher has begun on someone (Book 10 finisherHold). */
   | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
@@ -365,6 +388,8 @@ export interface SimWorldContext extends LandContext {
   readonly searches?: SearchContext | null;
   /** Chapter 1's repairs, the first fitting and Thorkel's rites (Stage 11). */
   readonly repairs?: RepairsContext | null;
+  /** Chapter 1's gate, the launch (Stage 12). */
+  readonly launch?: LaunchContext | null;
 }
 
 export function createSimulation(
@@ -383,6 +408,7 @@ export function createSimulation(
   const fightCtx = land?.fight ?? null;
   const searchCtx = land?.searches ?? null;
   const repairCtx = land?.repairs ?? null;
+  const launchCtx = land?.launch ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
@@ -524,7 +550,45 @@ export function createSimulation(
   const sleepFrom = (b.sleepAfter - b.dayStart + 1440) % 1440;
 
   const apply = (command: Command): void => {
+    // Stage 12: while the launch scene has the household, the steerer is part of it: only the
+    // launch's own commands, the options and the telemetry are taken.
+    if (
+      launchActive(state) &&
+      ![
+        'NAME_SHIP',
+        'MARK_SAIL',
+        'CLOSE_SEA_MAP',
+        'TIME_HELD',
+        'SET_OPTIONS',
+        'SET_DAY_LENGTH',
+      ].includes(command.type)
+    )
+      return;
     switch (command.type) {
+      case 'TIME_HELD':
+        addHeld(state, command.ms);
+        return;
+      case 'START_GATE': {
+        if (launchCtx === null || land === null || command.gate !== launchCtx.def.gate) return;
+        const why = startLaunch(state, launchCtx, land, b, launchHooks, emitLaunch);
+        if (why !== null) refuse(command, 'GATE_REFUSED', why);
+        return;
+      }
+      case 'NAME_SHIP': {
+        if (launchCtx === null) return;
+        nameShip(state, launchCtx, command.name, emitLaunch);
+        return;
+      }
+      case 'MARK_SAIL': {
+        if (launchCtx === null) return;
+        markSail(state, launchCtx, command.pattern, command.dye, emitLaunch);
+        return;
+      }
+      case 'CLOSE_SEA_MAP': {
+        if (launchCtx === null) return;
+        closeSeaMap(state, launchCtx, launchHooks, emitLaunch);
+        return;
+      }
       case 'SLEEP': {
         const into = minutesIntoDay(state.calendar, b);
         if (into < sleepFrom) {
@@ -898,6 +962,20 @@ export function createSimulation(
   /** The repairs' events (Stage 11): onto the bus. */
   const emitRepair = (e: RepairEvent): void => {
     events.emit(e);
+  };
+  /** The launch's events (Stage 12): onto the bus. */
+  const emitLaunch = (e: LaunchEvent): void => {
+    events.emit(e);
+  };
+  const launchHooks = {
+    advance: (minutes: number): void => {
+      advanceBy(minutes);
+    },
+    deed: (tag: string, witnesses: readonly Id[]): void => {
+      if (people === null) return;
+      const zone = state.onFoot?.zone ?? 'ISLE_SKARV';
+      householdDeed(state, people, { tag, placeId: zone }, witnesses, emitPeople);
+    },
   };
   /** What a search's choices do beyond the search (Stage 10). */
   const searchHooks = {
@@ -1331,7 +1409,8 @@ export function createSimulation(
         galeRefused(state, emitSearch, searchCtx);
       }
     }
-    stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    // The launch scene moves the steerer itself (Stage 12).
+    if (!launchActive(state)) stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
     if (held) p.intent = wanted;
     if (fw !== null) {
       stepFight(fw);
@@ -1407,6 +1486,8 @@ export function createSimulation(
       );
     // Chapter 1 beats 4 to 6: the repairs, the fitting and Thorkel's rites (Stage 11).
     if (repairCtx !== null) stepRepairs(state, repairCtx, land, tide.tidalGroundOpen, emitRepair);
+    // Chapter 1 beat 8, the launch and its gate (Stage 12).
+    if (launchCtx !== null) stepLaunch(state, launchCtx, emitLaunch);
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
     // a conversation's lines play; residents in earshot bark.
     if (people !== null && camp !== null) {
@@ -1418,10 +1499,14 @@ export function createSimulation(
         land,
         tide.tidalGroundOpen,
         land.opening?.caller ?? null,
-        (id) => searchHolds(state, searchCtx, id) || repairsHold(state, repairCtx, id),
+        (id) =>
+          searchHolds(state, searchCtx, id) ||
+          repairsHold(state, repairCtx, id) ||
+          launchHolds(state, id),
       );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
-      barkTick(state, people, camp, map.tile, residents(state), emitPeople);
+      if (!launchActive(state))
+        barkTick(state, people, camp, map.tile, residents(state), emitPeople);
     }
     // Other people: an archer's stop, draw, loose and move, then their own walk.
     for (const [id, actor] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
@@ -1577,6 +1662,7 @@ export function createSimulation(
       queue = [];
       for (const command of pending) apply(command);
       stepLand();
+      stepTelemetry(state);
       state.clock.subMinute += TICK_UNITS;
       const threshold = unitsPerMinute(b, state.clock.dayLengthPercent);
       while (state.clock.subMinute >= threshold) {

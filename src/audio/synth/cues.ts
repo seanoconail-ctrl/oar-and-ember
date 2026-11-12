@@ -11,6 +11,7 @@ import hearthJson from '../../../content/music/hearth.json';
 import combatJson from '../../../content/music/combat.json';
 import raidJson from '../../../content/music/raid.json';
 import skarvholmJson from '../../../content/music/skarvholm.json';
+import shipJson from '../../../content/music/ship.json';
 import { envelope } from './engine.ts';
 import type { SynthEngine } from './engine.ts';
 import type { Piece } from './notation.ts';
@@ -20,6 +21,7 @@ import type { HomePhase } from './home.ts';
 import { COMBAT, FIGHT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import { SOUTH } from './south.ts';
 import { REPAIR_SOUNDS } from './repairs.ts';
+import { LAUNCH_SOUNDS } from './launch.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
@@ -27,6 +29,7 @@ export const PIECES: Readonly<Record<string, Piece>> = {
   skarvholm: skarvholmJson,
   raid: raidJson,
   combat: combatJson,
+  ship: shipJson,
 };
 
 /** The horn and the two stingers, generated from the instruments' samples. */
@@ -142,6 +145,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...ENDINGS,
     ...SOUTH,
     ...REPAIR_SOUNDS,
+    ...LAUNCH_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 

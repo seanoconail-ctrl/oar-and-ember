@@ -3550,6 +3550,14 @@
       "note": "Stage 11: played at his rites."
     },
     {
+      "id": "MUS_LAUNCH",
+      "ref": "The Ship",
+      "book": 11,
+      "section": "04",
+      "origin": "assigned",
+      "note": "Stage 12: the Ship theme played at the launch (frame drum, a men's chorus on the voice pad, the oar-creak rhythm at the rowing stroke), on to the sea map."
+    },
+    {
       "id": "AMB_SEALCAVE",
       "ref": "A tide cave on the north-east cliffs where the wreck-scavengers hide their skiff",
       "book": 4,

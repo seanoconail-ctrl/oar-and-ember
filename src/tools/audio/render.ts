@@ -99,6 +99,23 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     id.toLowerCase().replace(/_/g, '-'),
   ]),
+  // Stage 12: the launch's music (the Ship theme) and sounds, and the chapter's end.
+  ['music:ship', 20, {}, 'mus-launch-ship'],
+  ...(
+    [
+      ['SFX_BEACHING', 3],
+      ['SFX_OAR_CREAK', 1],
+      ['SFX_OAR_SPLASH', 1.2],
+      ['SFX_SAIL_FLAP', 2.2],
+      ['SFX_SAIL_FILL', 2],
+      ['MUS_STINGER_CHAPTER_END', 8],
+    ] as const
+  ).map(([id, s]): [string, number, Record<string, unknown>, string] => [
+    `launch:${id}`,
+    s,
+    {},
+    id.toLowerCase().replace(/_/g, '-'),
+  ]),
   ['call:MUS_STINGER_DISPUTE', 3, {}, 'stinger-dispute'],
   ['call:MUS_STINGER_JUDGEMENT', 3, {}, 'stinger-judgement'],
   // Decision AU-10: footsteps by surface, walking and running.

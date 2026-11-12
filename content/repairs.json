@@ -144,7 +144,8 @@
     "lackHull": "info.boat.lack_hull",
     "lackRigging": "info.boat.lack_rigging",
     "lackOar": "info.boat.lack_oar",
-    "ready": "info.boat.ready"
+    "ready": "info.boat.ready",
+    "notYet": "info.launch.not_yet"
   },
   "talks": [
     {
@@ -181,6 +182,11 @@
           "when": "CAN_CARVE",
           "reply": ["c_runa.repair.carve"],
           "do": "CARVE"
+        },
+        {
+          "key": "p_steerer.boat.launch",
+          "when": "GATE_OPEN",
+          "do": "LAUNCH"
         },
         {
           "key": "ui.talk.leave",

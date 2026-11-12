@@ -1466,6 +1466,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 ## 22 / Story gates
 *The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline. The one exception is the defence of Skarvholm, which comes on a fixed night (decision DD-3).*
 
+### Gates
 | Gate | Typical day | Readiness screen shows |
 |---|---|---|
 | The launch (end of Chapter 1) | 6 | The boat's repairs, crew, stores |
@@ -1478,6 +1479,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | The Return to Skarvholm | 241 to 252 | Crew, equipment, keys, the checkpoint |
 | The final battle | 256 to 270 | Allies, ships, the Cup |
 
+### Gate rules
 | Key | Value |
 |---|---|
 | waiting | A dated story event waits at its gate; the calendar, seasons, crops and winter go on |
@@ -1491,6 +1493,20 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | readinessOpens | At dusk on the night; the attack comes at nightfall |
 | beaconEarlier | The beacon lit in the Return brings the final battle's typical day 5 days earlier (it is still a gate) |
 | beaconPressure | With the beacon lit, the final battle's pressure steps come twice as often (a demand grows 10% every 5 days; a rumour every 2.5 days) |
+
+### The launch
+*Added for Stage 12 (decisions S12-3 to S12-9): Chapter 1's gate. The boat lies drawn up on Wreck Strand; it is run down its skids into the water by the whole household and floats off only when the tide gives it water enough. Starting values, for tuning after the playtest.*
+
+| Key | Value | Notes |
+|---|---|---|
+| floats | Knee | The boat floats off where the water at its keel, from stern to stem, is at least knee deep (section 02, Water depth bands); shallower, it grounds |
+| skids | 8 tiles | How far down the shingle the household can run the boat on its skids; if it would still not float there, the tide is out and the launch waits for it |
+| slideSpeed | 1.8 tiles a second | The household running the boat down its skids, at the carrying pace (section 02, Movement on foot) |
+| rowSpeed | 1.2 tiles a second | Out from the strand under oars with the sail set: the coastal boat's oars (section 05) at a launching crew's first stroke |
+| rowOut | 9 tiles | How far the boat goes out from the strand before the sea map opens |
+| trialRow | 60 game minutes | Rowed round the skerry and back, then drawn up again above the tide: the time the launch takes from the day |
+| tideLookahead | 24 game hours | How far ahead the readiness screen looks for water enough to float the boat off |
+| storesShort | 3 days | Fewer days of food in store than this reads short on the readiness screen |
 
 ## 23 / Conversation depth
 *The minimum for each major character (leaders, antagonists, residents, quest characters), checked by content lint (design addendum 2.3 section 2; Book 8).*

@@ -22,6 +22,7 @@ import scenes from '../../content/scenes.json';
 import combat from '../../content/combat.json';
 import searches from '../../content/searches.json';
 import repairs from '../../content/repairs.json';
+import launch from '../../content/launch.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
 import zoneMachair from '../../content/zones/zone_sk_machair.json';
 import zoneHagseat from '../../content/zones/zone_sk_hagseat.json';
@@ -51,6 +52,7 @@ export const BUNDLED_FILES: ContentFiles = {
   combat,
   searches,
   repairs,
+  launch,
   zoneStrand,
   zoneMachair,
   zoneHagseat,

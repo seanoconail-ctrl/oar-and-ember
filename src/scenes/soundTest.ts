@@ -26,6 +26,7 @@ import { PiecePlayer } from '../audio/synth/sequencer.ts';
 import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
 import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
+import { LAUNCH_SOUNDS } from '../audio/synth/launch.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { speak, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -203,6 +204,13 @@ export function startItem(
     }
     const def = REPAIR_SOUNDS.find((d) => d.id === id);
     if (def === undefined) throw new Error(`no repair sound ${id}`);
+    def.play(e, at, 0, { gore: 2 });
+    return { schedule: () => undefined, stop: () => undefined };
+  }
+  if (kind === 'launch') {
+    // Stage 12: the launch's sounds and the chapter's end.
+    const def = LAUNCH_SOUNDS.find((d) => d.id === id);
+    if (def === undefined) throw new Error(`no launch sound ${id}`);
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
   }
@@ -783,6 +791,25 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   repairsStop.addEventListener('click', stopRunning);
   repairs.append(repairsStop);
   root.append(repairs);
+  // Stage 12: the launch's music (the Ship theme, note data) and sounds, in a section of their own.
+  const launch = el('section');
+  launch.append(el('h2', {}, t('ui.sound.launch')));
+  const shipTheme = el('button', { 'data-launch-play': 'music:ship' }, t('caption.music.launch'));
+  shipTheme.addEventListener('click', () => {
+    play('music:ship', {}, 'caption.music.launch');
+  });
+  launch.append(shipTheme);
+  for (const def of LAUNCH_SOUNDS) {
+    const b = el('button', { 'data-launch-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`launch:${def.id}`, def.captionKey);
+    });
+    launch.append(b);
+  }
+  const launchStop = el('button', { 'data-launch-stop': '' }, t('ui.sound.stop'));
+  launchStop.addEventListener('click', stopRunning);
+  launch.append(launchStop);
+  root.append(launch);
 
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
@@ -929,6 +956,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     southItems: ['south:spring', 'south:gale', 'south:fold', 'south:SFX_TELL_CAILLEACH'],
     /** Stage 11: Seal Cave, and every repair, fitting and rite sound, and the lament. */
     repairItems: ['repairs:sealcave', ...REPAIR_SOUNDS.map((d) => `repairs:${d.id}`)],
+    /** Stage 12: the launch's music and sounds, and the chapter's end. */
+    launchItems: ['music:ship', ...LAUNCH_SOUNDS.map((d) => `launch:${d.id}`)],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [
       ...(['dawn', 'day', 'dusk', 'night'] as const).map((p) => `home:${p}`),

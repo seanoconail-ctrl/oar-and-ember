@@ -91,6 +91,26 @@ import {
   stoneWeeps,
 } from '../sim/narrative/searches.ts';
 import { activityOf } from '../sim/people/schedule.ts';
+import {
+  cleanShipName,
+  FACT_SMOKE,
+  GATE_LAUNCH,
+  launchPhase,
+  launchView,
+  readinessView,
+} from '../sim/narrative/launch.ts';
+import { telemetryReport } from '../sim/narrative/telemetry.ts';
+import { activeChapter } from '../sim/world.ts';
+import {
+  chapterPanel,
+  markPanel,
+  namingPanel,
+  PANEL_STYLE,
+  readinessPanel,
+  timingsPanel,
+} from './launchPanels.ts';
+import type { PanelWords } from './launchPanels.ts';
+import { SeaMapView } from './seaMap.ts';
 import type { BodyModel } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
@@ -518,7 +538,9 @@ export function startPlay(
     const key = world.people[id]?.nameKey;
     return key === undefined ? id : t(key);
   };
-  const line = (key: string): string => t(key, { steerer: world.player.name });
+  // Stage 12: the boat's name, once given, in the lines that speak of it ({ship}, Book 8).
+  const line = (key: string): string =>
+    t(key, { steerer: world.player.name, ship: sim.state.ships['flagship']?.name ?? '' });
   let subtitles: { text: string; kind: 'speech' | 'info'; until: number }[] = [];
   const say = (text: string, now: number, kind: 'speech' | 'info' = 'speech'): void => {
     subtitles = subtitles.filter((s) => s.text !== text);
@@ -563,10 +585,17 @@ export function startPlay(
     const battle = sim.state.onFoot?.battle;
     const inFight = battle != null && battle.engaged && !battle.over && sim.state.gameOver === null;
     audio.director.setIntensity(inFight ? fightIntensity() : 0);
+    // Stage 12: the Ship theme from the heave to the sea map (Book 11 section 04).
+    const phaseNow = launchPhase(sim.state);
+    const launching =
+      mapMode === 'reveal' ||
+      (phaseNow !== null && phaseNow !== 'NAMING' && phaseNow !== 'DONE');
     const want =
       sim.state.gameOver !== null
         ? null
-        : inFight
+        : launching
+          ? 'MUS_LAUNCH'
+          : inFight
           ? 'MUS_COMBAT_1'
           : (placeMusic?.want(engine.now, {
               allowed: sim.state.facts[FACT_HILD_SAFE] === true,
@@ -658,7 +687,10 @@ export function startPlay(
     const stageProps = home.stage === 'S1' ? campDef.props.S1 : campDef.props.S0;
     // Stage 11: the boat and its repairs, the wreck's rigging, the skiff, the ship of stones.
     const repairDef = content.repairs;
-    const extra = repairDef === null ? [] : repairProps(sim.state, { def: repairDef }, map.zone);
+    const extra =
+      repairDef === null
+        ? []
+        : repairProps(sim.state, { def: repairDef }, map.zone, content.launch);
     return {
       props: [...(here ? stageProps : []), ...extra],
       stage: home.stage,
@@ -693,6 +725,53 @@ export function startPlay(
       pan: person === undefined || person === 'P_STEERER' ? 0 : panOf(person),
     });
   };
+  // ---- Stage 12: the launch's screens, the sea map and the chapter's end.
+  const launchDef = content.launch;
+  const launchCtx = land.launch ?? null;
+  const panelStyle = document.createElement('style');
+  panelStyle.textContent = PANEL_STYLE;
+  document.head.append(panelStyle);
+  /** Which launch screen is up: the readiness screen, the name, the mark, the chapter's end. */
+  let launchUi: 'none' | 'readiness' | 'naming' | 'mark' | 'chapter' = 'none';
+  let launchShown = '';
+  let pendingName = '';
+  /** The sea map: being revealed at the launch, or looked at again (M) afterwards. */
+  let mapMode: 'reveal' | 'view' | null = null;
+  let mapOpenedAt = 0;
+  let seaMap: SeaMapView | null = null;
+  let mapClosedAt = -1;
+  /** Real milliseconds a menu has held the game since time last ran (telemetry, S12-12). */
+  let heldMs = 0;
+  let timingsOpen = new URLSearchParams(window.location.search).has('timings');
+  let timingsShown = '';
+  /** The chapter's figures when it ended (played seconds and the first fight's). */
+  let chapterEnd: { played: number; fight: number | null } | null = null;
+  const words: PanelWords = {
+    t: (key, vars) => t(key, vars ?? {}),
+    person: (id) => nameOf(id),
+    item: (id) => {
+      const def = itemOf(id);
+      return def === undefined ? id : t(def.nameKey);
+    },
+    fitting: (id) => t(`fitting.name.${id.toLowerCase()}`),
+  };
+  const openLaunch = (ui: typeof launchUi): void => {
+    launchUi = ui;
+    launchShown = '';
+  };
+  const seaMapView = (): SeaMapView | null => {
+    if (seaMap !== null || launchDef === null) return seaMap;
+    const sm = launchDef.seaMap;
+    const home = sm.places[sm.home];
+    const smoke = sm.places[sm.smoke];
+    const mist = sm.hazards['HAZ_MIST'];
+    if (home === undefined || smoke === undefined || mist === undefined) return null;
+    seaMap = new SeaMapView(document, atlases, { home, smoke, mist });
+    return seaMap;
+  };
+  /** The token's state for the household's mark (Book 7 section 05: a sail in its colours). */
+  const markState = (): string =>
+    (sim.state.ships['flagship']?.marks.sail ?? 'plain').replace(':', '_');
   const onEvent = (e: SimEvent): void => {
     const now = frameNow;
     switch (e.type) {
@@ -856,6 +935,52 @@ export function startPlay(
         if (audio !== null && engine.unlocked)
           audio.event(`RITES_DONE_${e.form}`, engine.now, { pan: 0 });
         return;
+      // ---- Stage 12: the launch (its gate, its scene, the sea map and the chapter's end).
+      case 'READINESS_ASKED':
+        if (session.menus.request('planning').ok) openLaunch('readiness');
+        return;
+      case 'LAUNCH_GATHERED':
+        fadeInFrom = now;
+        return;
+      case 'LAUNCH_SLIDE':
+      case 'LAUNCH_AFLOAT':
+      case 'SAIL_HOISTED':
+      case 'SAIL_SET':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      case 'CREW_ABOARD':
+        if (audio !== null && engine.unlocked)
+          audio.event('CREW_ABOARD', engine.now, {
+            pan: e.person === 'P_STEERER' ? 0 : panOf(e.person),
+          });
+        return;
+      case 'OAR_STROKE': {
+        // In time with the drawn stroke: the blades bite at the catch, creak on the recovery.
+        if (audio === null || !engine.unlocked) return;
+        const catchIn = ((60 - (sim.state.tick % 60)) % 60) / 60;
+        audio.event('OAR_STROKE', engine.now + catchIn, { pan: 0 });
+        audio.event('OAR_CREAK', engine.now + catchIn + 0.75, { pan: 0 });
+        return;
+      }
+      case 'SEA_MAP_REVEALED':
+        if (session.menus.request('map').ok) {
+          mapMode = 'reveal';
+          mapOpenedAt = now;
+        }
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now + 2.5, { pan: 0 });
+        return;
+      case 'CHAPTER_ENDED': {
+        checkpointDue = e.save;
+        const rep = telemetryReport(sim.state);
+        chapterEnd = {
+          played: rep.now,
+          fight: rep.marks.find((m) => m.key === 'first_combat')?.seconds ?? null,
+        };
+        reportShown = null;
+        if (session.menus.request('report').ok) openLaunch('chapter');
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      }
       case 'MORNING_REPORT_DUE': {
         const report = sim.state.report;
         if (report !== null) {
@@ -1122,6 +1247,13 @@ export function startPlay(
     const deviceChanged = device !== lastDevice;
     lastDevice = device;
     const result = session.frame(now - last, browser.aim(), { device, pointer });
+    // Stage 12, telemetry: real time a menu held the game is sent once time runs again.
+    if (session.menus.timeStopped) heldMs += now - last;
+    else if (heldMs > 0) {
+      sim.submit({ type: 'TIME_HELD', ms: Math.round(heldMs) });
+      heldMs = 0;
+    }
+    updateLaunchUi(now);
     // A checkpoint before major danger (Book 2 section 20), written between ticks.
     if (checkpointDue !== null) {
       saves.checkpoint(sim.state, checkpointDue);

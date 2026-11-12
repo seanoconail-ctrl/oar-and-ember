@@ -424,6 +424,26 @@ export const MIGRATIONS: readonly Migration[] = [
     // has it (content/repairs.json), lacking all three repairs; nothing else changes.
     up: (state) => ({ ...state, ships: { ...(state['ships'] as Record<string, unknown>) } }),
   },
+  {
+    from: 9,
+    describe:
+      "the launch and the Build 1 gate (Stage 12): story gates, the chapter's telemetry and the boat's own name",
+    // Version 10 adds Book 2's story gates (`gates`: none started yet in a version 9 save; the
+    // simulation opens the launch when its conditions hold), the telemetry (a version 9 save does
+    // not know when its play began, so `start` is null and nothing is marked yet: milestones
+    // reached after loading are marked when they are reached), and `name` on each ship (null:
+    // unnamed until the launch).
+    up: (state) => ({
+      ...state,
+      gates: {},
+      telemetry: { start: null, heldMs: 0, marks: {} },
+      ships: Object.fromEntries(
+        Object.entries((state['ships'] as Record<string, Record<string, unknown>>) ?? {}).map(
+          ([k, ship]) => [k, { ...ship, name: null }],
+        ),
+      ),
+    }),
+  },
 ];
 
 export interface ReadOptions {
