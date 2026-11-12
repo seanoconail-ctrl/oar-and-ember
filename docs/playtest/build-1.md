@@ -1,7 +1,7 @@
 # Build 1 playtest: The Wreck
 
-Thank you for playing. This is the whole of Chapter 1, from waking on the beach to launching the
-boat. It should take about 45 minutes to an hour. Play it the way you would play any game: there is
+Thank you for playing. This is the whole of Chapter 1, from the storm at sea to launching the
+boat, as design addendum 2.4 rebuilt it (combat v2 and the new opening). It should take about 45 minutes to an hour. Play it the way you would play any game: there is
 no wrong way, and getting lost or stuck is useful to know about.
 
 ## Before you start
@@ -21,51 +21,65 @@ no wrong way, and getting lost or stuck is useful to know about.
 
 | Do this | Keyboard and mouse | Gamepad |
 |---|---|---|
-| Walk / run / sneak | W A S D or arrow keys / hold Shift / C | Left stick / L3 / R3 |
+| Walk / run / sneak (sneak is a toggle) | W A S D or arrow keys / hold Shift / C | Left stick / L3 / d-pad down |
 | Interact (talk, pick up, carry, work) | E, or right-click | A |
 | Use what is in hand (strike, draw the bow) | Left-click, or F | RT |
 | Choose a hotbar slot | 1 to 0, - and =, or the mouse wheel | LB / RB |
 | Parry / block / dodge / shove | Q / left Ctrl / Space / R | Y / LT / B / X |
-| Crew orders (hold to open the ring) | Tab | D-pad |
-| Morning report | J | |
+| Lock on to an enemy (press again to switch, hold to let go) | Z, or the middle mouse button | R3 |
+| Bind a wound or eat a ration | H | |
+| Crew orders (hold to open the ring) | Tab | D-pad up |
+| Journal (the current aim, and the morning report) | J | |
 | Sea map (after the launch) | M | Back |
 | System menu | Esc | Start |
 
 In the system menu: **H** shows the help (every item's controls), **T** shows your **timings**,
 **G** changes the gore setting, **K** turns Second wind on or off, **I** turns sound captions on or
-off, **M** reduces motion.
+off, **M** reduces motion, **A** turns the "?" and "!" marks over enemies on or off.
 
 There is no pause in a fight. Menus and the report stop time only when no enemy has seen you.
 
 ## What to do, with rough times
 
-The game tells you the next thing to do in words at the bottom of the screen; this list is only
-here so you can tell if you are badly stuck.
+There are no quest markers. People tell you what to do next, and if you are stuck for a while
+someone nearby gives a hint; the journal (J) always holds the current aim in one sentence. This
+list is only here so you can tell if you are badly stuck.
 
-1. **Wake on the beach (2 to 5 minutes).** Someone is calling. Find Hild in the shallows past the
-   rocks, pick her up (E) and carry her up the beach above the line of weed. A short blade glints
-   near where you woke; pick it up. Hild will tell you where her father's bow is.
-2. **The old broch (5 to 10 minutes).** Follow Hild up to the broch. Pick up driftwood on the beach
-   for a fire, light it, and see to Hild's leg (talk to her).
-3. **The three searches, in any order (15 to 25 minutes).** Oddi is hurt on the beach near the
-   wreck, with a chest; Bran guards Thorkel's body at the sheepfold by the Hollow Cairn (east), with
-   three scavengers at the gate; Runa is at the Hag's Seat (west), where a standing stone is doing
-   something strange. Each can be done more than one way: fight, sneak, bargain, leave an offering,
-   take the long way round. This is where the first fight usually comes.
-4. **Nights.** After 6 in the evening you can sleep in the lean-to in the broch. Each morning a
+1. **The storm (under a minute).** The game opens at night at sea, with you at the steering oar
+   (A and D, or the arrow keys) as the boat breaks on the rocks.
+2. **Wake in the surf (about 5 minutes).** Press any movement key to get up. Someone is calling:
+   Hild is caught in a net in the shallows among the rocks. A short blade (a seax) lies in the
+   wreckage on the way; pick it up, then hold E (or right-click) beside her to cut her free, and
+   carry her up the beach. Carry Thorkel's chest (it washed up near her) up to the camp above the
+   beach, where its outline shows. Pick up driftwood on the beach, light a fire at the camp; Hild
+   sees the smoke and walks up, and asks you to raise the sail between the oars as a shelter.
+   See to her leg (talk to her).
+3. **The first dusk (about 10 to 12 minutes in).** Two scavengers strip the stern of the wreck at
+   the east end of the beach. You can fight them (the big one's slow heavy blow is there to be
+   parried), walk away (they leave at dark), offer them salt fish from the camp, or creep through
+   the dune grass for a strike from behind. A pale light shows at the Hag's Seat. That night by the
+   fire Hild names the searches.
+4. **The three searches, in any order (15 to 25 minutes).** Oddi is hurt on the beach near the
+   wreck, with the ship's silver in a strongbox; Bran guards Thorkel's body at the sheepfold by the
+   Hollow Cairn (east), with the scavengers at the gate; Runa is at the Hag's Seat (west), where a
+   standing stone is doing something strange. Each can be done more than one way: fight, sneak,
+   bargain, leave an offering, take the long way round. Thorkel's key comes to you whichever way
+   Bran's search ends: it opens his chest at the camp, and his hunting bow is inside. Its first use
+   is the stores lashed to the broken mast on the western rocks.
+5. **Nights.** After 6 in the evening you can sleep under the sail shelter. Each morning a
    short report tells you how the household is doing (J opens it again).
-5. **The boat (15 to 30 minutes).** An old boat lies under the bank on the beach. Look it over (E):
+6. **The boat (15 to 30 minutes).** An old boat lies under the bank on the beach. Look it over (E):
    it needs its hull patched (the boards are close by), its rigging (out on the wreck on the rocks,
    only reachable at low tide) and a steering oar (the scavengers have one in their skiff at Seal
    Cave, north past the cairn; Runa can also carve one, slowly). Runa works on the boat if she has
    nothing else to do, and you can work on it yourself at the boat. You can also choose one fitting.
-6. **Thorkel's rites (optional, 3 to 5 minutes).** When his body is home, Hild will ask about her
+7. **Thorkel's rites (optional, 3 to 5 minutes).** When his body is home, Hild will ask about her
    father's rites near his bier. It cannot be done after the launch.
-7. **The launch (3 to 5 minutes).** When the boat is ready and everyone is found, look the boat over
+8. **The launch (3 to 5 minutes).** When the boat is ready and everyone is found, look the boat over
    and choose to launch it. A screen shows what the household has and warns that there is no going
    back. Then name the boat (type a name or pick one), choose the mark on its sail, and watch. The
    boat needs the tide in to float; if it is out, the screen says when it will be in.
-8. **The end of the chapter.** The sea map shows the coast and smoke on the Irish shore. Close it
+9. **The end of the chapter.** The sea map shows the coast and smoke on the Irish shore. Close it
    (E) and the chapter ends: its save is made and a card says so. You can keep walking the island
    afterwards, but nothing new happens yet.
 
@@ -77,7 +91,10 @@ Please note anything, but these questions matter most:
   what is across the water?
 - **Was the next thing to do always clear?** Where did you get lost or stuck, and for how long?
 - **The first fight:** did it come early enough, and did it feel fair? Did you understand parry,
-  block and dodge?
+  block and dodge, lock-on and backing away? Did hits feel heavy? Did enemies feel like they wanted
+  to live?
+- **The first five minutes:** did the storm, the net and the camp pull you in? Did you always know
+  what to do next without markers?
 - **The people:** can you name one of the household you care about? Did anyone's words land?
 - **The searches and repairs:** did the different ways feel like real choices? Did any task feel like
   a chore?
@@ -100,8 +117,9 @@ before the next stage is built.
 
 ## Choices made for you to judge
 
-These were decided while building Stages 7 to 12 without waiting for you; the stage reports list
-them all. The ones you will meet in this playtest:
+These were decided while building Stages 7 to 12 and the addendum 2.4 rework without waiting for
+you; the reports (`docs/stage-reports/stage-12.md` and `rework-2.4.md`) list them all. The ones you
+will meet in this playtest:
 
 - The boat that is repaired is an old boat under the bank, not Thorkel's wreck.
 - The launch waits for the tide, and for everyone to be found.
@@ -109,3 +127,8 @@ them all. The ones you will meet in this playtest:
 - The boat's name suggestions and the 28 sail marks.
 - The sail is drawn face-on on the side-on boat so its mark can be seen.
 - After the chapter ends you stay on the island (Chapter 2's voyage is the next build).
+- The scavengers at dusk are Svart and Conn, with Ketill at the fold; Svart's first heavy blows are
+  slow, to teach the parry.
+- Oddi's choice is over the ship's silver in a strongbox; Thorkel's own chest holds the bow.
+- The mast stores fall on the flats and are fetched at low water.
+- Healing is on H; rations are packed from the camp's salt fish when you reach camp.

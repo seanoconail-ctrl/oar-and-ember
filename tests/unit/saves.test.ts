@@ -1,7 +1,7 @@
 /**
  * Stage 3 acceptance check 2: save under 200 ms; reload reproduces the hash; the migration chain.
- * Golden saves 1 to 9 are frozen and load through it; golden save 10 (Stage 12: the launch and the
- * chapter's end) is reproduced by its scenario.
+ * Golden saves 1 to 10 are frozen and load through it; golden save 11 (design addendum 2.4: Chapter
+ * 1 played to its end by the chapter run) is reproduced by its scenario (decision DE-80).
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -32,7 +32,8 @@ import {
   GOLDEN_08,
   GOLDEN_09,
   GOLDEN_10,
-  goldenSave10,
+  GOLDEN_11,
+  goldenSave11,
 } from '../../src/tools/saves/golden.ts';
 import { repoFile } from './books.ts';
 
@@ -544,12 +545,14 @@ describe('golden save 9 (schema 9, frozen)', () => {
   });
 });
 
-describe('golden save 10 (schema 10): the chapter-end save', () => {
+describe('golden save 10 (schema 10, frozen)', () => {
   const golden = JSON.parse(repoFile(GOLDEN_10)) as SaveFile;
 
-  it('loads, matches its hash and holds Chapter 1 ended: the boat launched, named and marked', () => {
-    const { state, migratedFrom } = readSave(golden);
-    // Frozen at schema 10: it loads through combat v2's step (decisions DE-1 to DE-15).
+  it('loads through the migration and holds Chapter 1 ended: the boat launched, named and marked', () => {
+    expect(golden.header.schemaVersion).toBe(10);
+    const { state, migratedFrom } = readSave(golden, { context });
+    // Frozen from design addendum 2.4 (decision DE-80): it loads through combat v2's step and the
+    // opening's (decisions DE-1 to DE-79).
     expect(migratedFrom).toBe(10);
     expect(state.version).toBe(11);
     expect(golden.header.chapter).toBe('CH_2_FIRST_RAID');
@@ -563,9 +566,67 @@ describe('golden save 10 (schema 10): the chapter-end save', () => {
     expect(state.facts['tutorialComplete']).toBe(true);
     expect(state.knowledge.places['SITE_CARRICK']).toBe('RUMOURED');
     expect(state.telemetry.marks['chapter_end']).toBeDefined();
+    // Version 11: the steerer's stance at rest (no lock-on, not sneaking).
+    expect(state.onFoot?.player.stance).toMatchObject({ lockOn: null, sneaking: false });
+  });
+
+  it('plays on after the migration', () => {
+    const { state } = readSave(golden, { context });
+    const { content: c } = loadContentFromDisk();
+    const sim = createSimulation(b, state, landContext(c, balance));
+    const tick = state.tick;
+    for (let i = 0; i < 600; i++) sim.step();
+    expect(sim.state.tick).toBe(tick + 600);
+    expect(sim.state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
+  });
+});
+
+describe('golden save 11 (schema 11): the chapter-end save of design addendum 2.4', () => {
+  const golden = JSON.parse(repoFile(GOLDEN_11)) as SaveFile;
+
+  it('loads, matches its hash and holds Chapter 1 as 2.4 plays it, ended', () => {
+    const { state, migratedFrom } = readSave(golden);
+    expect(migratedFrom).toBeNull();
+    expect(state.version).toBe(11);
+    expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
+    expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
+    expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');
+    expect(state.ships['flagship']).toMatchObject({
+      name: 'Grey Seal',
+      marks: { sail: 'raven:woad' },
+      fittings: { MIDSHIP: 'FIT_EXTENDED_HOLD' },
+    });
+    // The 2.4 opening: Hild cut free, the chest home, the fire, Hild walking up, the sail raised.
+    expect(state.facts).toMatchObject({
+      'ch1.net_free': true,
+      'ch1.chest_home': true,
+      'ch1.fire_lit': true,
+      'ch1.hild_walked_up': true,
+      'ch1.shelter_raised': true,
+      'ch1.dusk': 'DARK',
+      'ch1.fire_scene': true,
+    });
+    // The searches, Runa's question answered truly, the key, the chest and the mast stores.
+    expect(state.facts).toMatchObject({
+      'search.oddi': 'CHEST_FIRST',
+      'search.runa': 'OFFERING',
+      'search.bran': 'FIGHT',
+      'runa.told': 'FIRE',
+      'runa.tools_at': 'FIRE',
+      'ch1.key': 'BODY',
+      'ch1.chest_opened': true,
+      'ch1.mast_stores': 'CAMP',
+      'ch1.rites': 'SEA_BURIAL',
+      tutorialComplete: true,
+    });
+    expect(state.player.hotbar.slots.slice(0, 2)).toEqual(['ITEM_SEAX', 'ITEM_BOW']);
+    expect([...state.household.residents].sort()).toEqual(['C_BRAN', 'C_HILD', 'C_ODDI', 'C_RUNA']);
+    expect(state.knowledge.places['SITE_CARRICK']).toBe('RUMOURED');
+    for (const mark of ['first_combat', 'bow', 'stores', 'chapter_end'])
+      expect(state.telemetry.marks[mark], mark).toBeDefined();
   });
 
   it('is reproduced exactly by its scenario', () => {
-    expect(goldenSave10()).toEqual(golden);
+    expect(goldenSave11()).toEqual(golden);
   }, 120_000);
 });

@@ -45,10 +45,26 @@
  * - Golden save 10 (schema 10, Stage 12): golden 9's day played on: Thorkel given to the sea with
  *   his ring, the launch asked for at the boat, the tide waited for, the boat named Grey Seal and
  *   its sail marked with broad madder stripes, the scene played to the sea map, the map closed: the
- *   chapter-end save (Book 3 Stage 12's "golden save 2", numbered 10 after the frozen nine,
- *   decision S12-20).
+ *   chapter-end save of Stage 12 (Book 3 Stage 12's "golden save 2", numbered 10 after the frozen
+ *   nine, decision S12-20).
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-10.json
+ *   Frozen from design addendum 2.4 (decision DE-80): its scenario began with the opening as Stages
+ *   6 to 12 built it, which addendum 2.4 replaced, so the file cannot be made again. It must load
+ *   through the migration chain. `goldenWorld08` to `goldenWorld10` below keep the route, brought to
+ *   the 2.4 opening; nothing compares what they play with the frozen files.
+ * - Golden save 11 (schema 11, design addendum 2.4): the chapter-end save again, Chapter 1 as 2.4
+ *   plays it. It is the chapter run's own world (`playChapter` in src/tools/play/chapterRun.ts,
+ *   seed chapter-1, the scripted pace), the run whose telemetry is reported: waking in the surf,
+ *   the seax, Hild cut free and carried up, Thorkel's chest to its home, the first fire, Hild
+ *   walking up, the sail raised, her leg tended; the scavengers at dusk left alone (they leave at
+ *   dark); the first night's fire with Hild; Oddi's strongbox saved first, Runa by a confession at
+ *   the Hag's Seat and her question answered truly, Bran by a fight at the fold (combat v2's first
+ *   fight; all three scavengers fall); the key taken from Thorkel's body, the chest opened and the
+ *   bow; the mast stores shot down; the boards, the rigging, the oar found at the empty skiff, the
+ *   extended hold; Thorkel given to the sea; the launch, the boat named Grey Seal under a woad
+ *   raven, the sea map closed. It is reproduced exactly by its scenario.
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-11.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -67,6 +83,7 @@ import { CampBot } from '../play/campBot.ts';
 import { playToCamp, WreckBot } from '../play/wreckBot.ts';
 import { SearchBot } from '../play/searchBot.ts';
 import { LaunchBot } from '../play/launchBot.ts';
+import { BOT_PACE, playChapter } from '../play/chapterRun.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
@@ -78,6 +95,7 @@ export const GOLDEN_07 = 'tests/golden-saves/golden-07.json';
 export const GOLDEN_08 = 'tests/golden-saves/golden-08.json';
 export const GOLDEN_09 = 'tests/golden-saves/golden-09.json';
 export const GOLDEN_10 = 'tests/golden-saves/golden-10.json';
+export const GOLDEN_11 = 'tests/golden-saves/golden-11.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -183,6 +201,25 @@ export function goldenWorld10(): WorldState {
   bot.launch('Grey Seal', 'stripes_broad', 'madder', 20);
   bot.step(60);
   return sim.state;
+}
+
+/**
+ * Golden save 11 (design addendum 2.4): Chapter 1 played to its end by the chapter run, the same
+ * world whose telemetry the rework report gives (decision DE-80).
+ */
+export function goldenWorld11(): WorldState {
+  return playChapter('chapter-1', BOT_PACE).world;
+}
+
+export function goldenSave11(): SaveFile {
+  return writeSave(goldenWorld11(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-11',
+    label: 'golden-11',
+    sequence: 1,
+    savedAt: '2026-11-12T18:00:00.000Z',
+  });
 }
 
 export function goldenSave10(): SaveFile {
@@ -306,7 +343,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  // Golden saves 1 to 9 are frozen (Book 2 section 20): only the newest is written.
-  writeFileSync(join(REPO_ROOT, GOLDEN_10), `${JSON.stringify(goldenSave10(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_10}`);
+  // Golden saves 1 to 10 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_11), `${JSON.stringify(goldenSave11(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_11}`);
 }

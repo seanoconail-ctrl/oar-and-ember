@@ -10,6 +10,9 @@ import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.t
 import { parseOpeningBalance } from '../../src/content/openingBalance.ts';
 import { referentsOf, steererWordingProblems } from '../../src/content/steererWords.ts';
 import { fadeGain, layerJoinAt, MusicDirector, musicCues } from '../../src/audio/music.ts';
+import type { MusicAction } from '../../src/audio/music.ts';
+import { AudioRouter } from '../../src/audio/router.ts';
+import { RecordingSink } from '../../src/audio/webAudio.ts';
 import { PiecePlayer } from '../../src/audio/synth/sequencer.ts';
 import { PIECES } from '../../src/audio/synth/cues.ts';
 import { campContext } from '../../src/sim/home/camp.ts';
@@ -778,6 +781,63 @@ describe('music fades (DE-29)', () => {
     expect(layerJoinAt(0, 4, 25, bar)).toBe(0);
     expect(layerJoinAt(3, 4, 25, bar)).toBeGreaterThanOrEqual(25 - 1e-9);
     expect(layerJoinAt(3, 4, 25, bar)).toBeLessThan(25 + bar);
+  });
+  it('in the game’s router, every music cue starts and stops faded; only stingers are sharp', () => {
+    // The fades as the game gives them to the router (src/scenes/playView.ts: Book 10 section 25).
+    const m = land.wreck?.ob.music;
+    if (m === undefined) throw new Error('no music fades');
+    const gameFades = {
+      fadeIn: m.fadeInSeconds,
+      fadeOut: m.fadeOutSeconds,
+      layersJoin: (m.layersJoin[0] + m.layersJoin[1]) / 2,
+    };
+    expect(gameFades.fadeIn).toBeGreaterThan(0);
+    expect(gameFades.fadeOut).toBeGreaterThan(0);
+    const musicOf = (sink: RecordingSink): MusicAction[] =>
+      sink.calls.flatMap((c) => (c.kind === 'music' ? [c.detail as MusicAction] : []));
+    const music = table.cues.filter((c) => c.kind === 'music');
+    expect(music.length).toBeGreaterThan(0);
+    for (const cue of music) {
+      // Started from silence, changed to another piece, and silenced: never at full volume.
+      const sink = new RecordingSink();
+      const router = new AudioRouter(table, content.strings, sink, gameFades);
+      const other = music.find((c) => c.id !== cue.id);
+      router.play(cue.id, 0);
+      router.update(0);
+      if (other !== undefined) {
+        router.play(other.id, 5);
+        for (let t = 5; t < 30; t += 0.5) router.update(t);
+        router.play(cue.id, 30);
+        for (let t = 30; t < 60; t += 0.5) router.update(t);
+      }
+      router.silence(60);
+      for (let t = 60; t < 120; t += 0.5) router.update(t);
+      const actions = musicOf(sink);
+      const starts = actions.filter((a) => a.type === 'start');
+      const stops = actions.filter((a) => a.type === 'stop');
+      expect(starts.length, cue.id).toBeGreaterThan(0);
+      expect(stops.length, cue.id).toBe(starts.length);
+      for (const a of starts) expect(a.fadeIn, `${cue.id} start`).toBe(gameFades.fadeIn);
+      for (const a of stops) expect(a.fadeOut, `${cue.id} stop`).toBe(gameFades.fadeOut);
+      expect(fadeGain('in', 0, gameFades.fadeIn)).toBe(0);
+      expect(fadeGain('out', gameFades.fadeOut, gameFades.fadeOut)).toBe(0);
+    }
+    // A stinger plays at once as a one-shot over the music, which only ducks: no fade, no start.
+    const stingers = table.cues.filter((c) => c.kind === 'stinger');
+    expect(stingers.length).toBeGreaterThan(0);
+    for (const cue of stingers) {
+      const sink = new RecordingSink();
+      const router = new AudioRouter(table, content.strings, sink, gameFades);
+      router.play(cue.id, 3);
+      expect(sink.calls, cue.id).toContainEqual({
+        kind: 'oneShot',
+        detail: { cue: cue.id, at: 3, pan: 0 },
+      });
+      expect(
+        musicOf(sink).map((a) => a.type),
+        cue.id,
+      ).toEqual(['duck']);
+    }
   });
 });
 

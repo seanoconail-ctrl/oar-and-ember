@@ -164,11 +164,10 @@ export async function capture(label: string): Promise<string> {
       viewport: { width: 640, height: 360 },
       deviceScaleFactor: 2,
     });
-    await page.goto('http://localhost:5287/?capture&quality=full');
-    await page.waitForSelector('canvas#screen[data-state=title]', { timeout: 30_000 });
-    await page.keyboard.press('Enter');
-    await page.keyboard.type('Ash');
-    await page.locator('.oe-naming input').press('Enter');
+    // Design addendum 2.4 (decision DE-67): a new game from the naming screen opens with the cold
+    // open at sea, so the strand's still starts in play, awake where the steerer gets up, as the
+    // naming screen led to before 2.4 (the cold open has its own capture, rework-2.4-opening).
+    await page.goto('http://localhost:5287/?capture&quality=full&view=play&name=Ash&body=A');
     await page.waitForSelector('canvas#screen[data-state=play]', { timeout: 30_000 });
     await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
     await step(page, 60);
@@ -1314,7 +1313,7 @@ function stage11Readme(label: string, strand: number, c: SouthCaptureResult): st
     '',
     '| File | What it is |',
     '|---|---|',
-    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer gets up after the waking (started in play: the cold open is in `docs/art/rework-2.4/opening/`), its motion map, and the reference beside it |',
     ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
     ...c.loops.map(
       (l) => `| \`${l}\` | 4 s at 1x, 25 fps, the camera held: the view above as it moves |`,
@@ -1347,7 +1346,7 @@ function southReadme(label: string, strand: number, c: SouthCaptureResult): stri
     '',
     '| File | What it is |',
     '|---|---|',
-    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer gets up after the waking (started in play: the cold open is in `docs/art/rework-2.4/opening/`), its motion map, and the reference beside it |',
     ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
     ...c.loops.map(
       (l) => `| \`${l}\` | 4 s at 1x, 25 fps, the camera held: the view above as it moves |`,
@@ -1379,7 +1378,7 @@ function fightReadme(label: string, strand: number, f: FightCaptureResult): stri
     '',
     '| File | What it is |',
     '|---|---|',
-    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer gets up after the waking (started in play: the cold open is in `docs/art/rework-2.4/opening/`), its motion map, and the reference beside it |',
     '| `wreckers-at-work.png` (and @2x, `-motion.png`) | The three wreck-scavengers by the wreck on the strand, 10:00, unaware and at work (the camera held on them) |',
     '| `fight.png` (and @2x, `-motion.png`) | The fight on the strand at gore full, the steerer with the seax among them (the camera held): blood on the shingle, the fallen where they fell. Three on one, the wreckers strike one at a time (S9-29) |',
     '| `fight-low.png` (and @2x, `-motion.png`) | The same fight at gore low: fewer, darker stains and no pieces |',
@@ -1440,7 +1439,7 @@ function campReadme(
     '',
     '| File | What it is |',
     '|---|---|',
-    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer gets up after the waking (started in play: the cold open is in `docs/art/rework-2.4/opening/`), its motion map, and the reference beside it |',
     '| `broch-day.png`, `broch-day@2x.png` | The broch at S0, 16:30, as the mockup: the lean-to, the salvage, the fire burning in its ring with Hild by it, turf in the court and on the wall head, sheep outside |',
     '| `broch-night.png`, `broch-night@2x.png` | The same at 23:00, the fire lit: flames, smoke and the flickering warm pool under the night grade |',
     '| `broch-s1.png`, `broch-s1@2x.png` | The camp raised to S1 by day: the sail roof, beds, the kerbed hearth burning, the floor cleared to the flags, the door |',
@@ -1498,6 +1497,18 @@ const STAGE12_VIEWS: readonly Stage12View[] = [
     query: `${STAGE12_AT}&launch=scene&mark=raven:woad&at=45.5,30.6&camera=46.5,28.5`,
     phase: 'ROW',
     loop: true,
+  },
+  // Design addendum 2.4 in the Build 1 gate: the camp as the new opening leaves it, and the
+  // scavengers at the stern at the first dusk (decisions DE-14 to DE-20).
+  {
+    name: 'camp-sail',
+    what: "The camp at 11:00 as addendum 2.4 leaves it: the sail raised between the oars, the fire lit, Thorkel's chest at its home, the household about it",
+    query: 'time=11:00&fire=lit&at=35.4,32.2',
+  },
+  {
+    name: 'dusk-stern',
+    what: "The first dusk (18:35): Svart, his shield slung on his back, and Conn stripping the wreck's stern at the east end of Wreck Strand, the steerer watching from beyond their warning range",
+    query: 'time=18:35&zone=ZONE_SK_STRAND&at=84.5,34.2&camera=90.5,34.5',
   },
 ];
 
@@ -1669,7 +1680,7 @@ function stage12Readme(label: string, strand: number, c: Stage12Result): string 
     '',
     '| File | What it is |',
     '|---|---|',
-    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer gets up after the waking (started in play: the cold open is in `docs/art/rework-2.4/opening/`), its motion map, and the reference beside it |',
     ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
     ...STAGE12_SCREENS.map((sc) => `| \`${sc.name}.png\` (and @2x) | ${sc.what} |`),
     '| `seamap-reveal-1.png`, `seamap-reveal-2.png` | The sea map as the mist clears outward from Skarvholm, about 1 s and 3 s in |',
