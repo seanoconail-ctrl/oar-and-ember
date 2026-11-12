@@ -310,7 +310,7 @@ found and picked up, the camera easing; the driftwood numbers and art (PT-3, PT-
    test's Stage 12 section; the scavengers' new voice blips.
 9. **The mockups were rendered from the built scene**, not drawn first (S12-19).
 10. **The golden save numbered 10**, not 2 (S12-20).
-11. **CLAUDE.md's BR-1 sentence** is out of date (BR-7 ended it); the user may wish to edit it.
+11. **CLAUDE.md's browser sentence** was brought up to date in commit 4147909 (all three browsers block publishing, BR-2 to BR-7); a change to the user's instructions file, for review.
 
 ## Next stage ready
 No: this is the Build 1 gate. Stage 13 (sea-map travel) waits for the user's playtest and word.
