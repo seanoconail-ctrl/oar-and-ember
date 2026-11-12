@@ -1155,8 +1155,26 @@ export function wreckSetDown(
     if (place !== null) setFact(world, FACT_RUNA_TOOLS_AT, place);
     return;
   }
-  if (ctx.rw.rescue.people.includes(target) && world.facts[`rescue.${target}.down`] === undefined)
+}
+
+/**
+ * A rescued person's get-up clock (DE-22) starts only at the set-down that rescues them: once
+ * they are of the household and no longer downed (decision DE-82). Call it after every other
+ * set-down rule (Oddi joins off his strand; a downed ally is safe at the camp). Set down before
+ * that (Oddi above the tide line on his own strand, a downed ally outside a safe place) they lie
+ * where they were put, for the steerer to lift again: never standing, unrescued, out of reach.
+ */
+export function rescueSetDown(world: WorldState, ctx: WreckContext, target: Id): void {
+  const actor = world.onFoot?.actors[target];
+  if (
+    actor === undefined ||
+    !ctx.rw.rescue.people.includes(target) ||
+    world.facts[`rescue.${target}.down`] !== undefined
+  )
+    return;
+  if (world.household.residents.includes(target) && world.people[target]?.status !== 'downed')
     setFact(world, `rescue.${target}.down`, world.tick);
+  else actor.pose = 'down';
 }
 
 /** Which of Runa's safe places a point is in (the shelter first: it is inside the camp). */

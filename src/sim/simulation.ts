@@ -155,6 +155,7 @@ import {
   netInteract,
   runaAnswer,
   runaAsks,
+  rescueSetDown,
   startHagStone,
   stepMast,
   stepWreck,
@@ -1598,6 +1599,8 @@ export function createSimulation(
       // Stage 11: the boards, the rigging or the steering oar laid by the boat.
       if (repairCtx !== null && zoneMap !== undefined)
         repairSetDown(state, repairCtx, interaction.target, zoneMap, emitRepair);
+      // Rescued by this set-down (of the household, not downed): the get-up clock (DE-22, DE-82).
+      if (wreckCtx !== null) rescueSetDown(state, wreckCtx, interaction.target);
       // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
       if (
         people !== null &&

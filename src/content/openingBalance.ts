@@ -121,6 +121,10 @@ export interface OpeningBalance {
     readonly runaLiePerWord: number;
     /** A rescued person gets up this long after being set down (real seconds). */
     readonly rescueGetUpSeconds: number;
+    /** The rescue scenario test (decision DF-18): at the camp's fire this long after getting up. */
+    readonly rescueHomeMinutes: number;
+    /** The rescue scenario test: idle, unmoved and unchanged this long is stuck (real seconds). */
+    readonly rescueStuckSeconds: number;
   };
 }
 
@@ -331,6 +335,15 @@ export function parseOpeningBalance(json: unknown): OpeningBalance {
         '"Runa -N friendship per point of her Word"',
       ),
       rescueGetUpSeconds: one(search, 'rescueGetUp', `^${N} real seconds$`, '"N real seconds"'),
+      rescueHomeMinutes:
+        60 *
+        one(
+          search,
+          'rescueHome',
+          `^Reaches the camp's fire within ${N} game hours of getting up$`,
+          '"Reaches the camp\'s fire within N game hours of getting up"',
+        ),
+      rescueStuckSeconds: one(search, 'rescueStuck', `^${N} real seconds$`, '"N real seconds"'),
     },
   };
 }
