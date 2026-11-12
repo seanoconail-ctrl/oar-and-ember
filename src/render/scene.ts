@@ -177,7 +177,9 @@ export function buildDrawList(
   const xKey = new Float64Array(n);
   const order = new Array<number>(n);
   let focusIndex = -1;
-  sprites.forEach((sprite, i) => {
+  for (let i = 0; i < n; i++) {
+    const sprite = sprites[i];
+    if (sprite === undefined) continue;
     const sheet = sheets.get(sprite.sheet);
     if (sheet === undefined) throw new Error(`Scene uses unknown sheet "${sprite.sheet}"`);
     const footY = Math.round(sprite.y);
@@ -212,7 +214,7 @@ export function buildDrawList(
     xKey[i] = actor ? anchorX : 0;
     order[i] = i;
     if (sprite.focus === true) focusIndex = i;
-  });
+  }
   order.sort(
     (a, b) =>
       (layerKey[a] ?? 0) - (layerKey[b] ?? 0) ||

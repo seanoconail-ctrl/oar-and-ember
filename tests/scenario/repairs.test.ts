@@ -160,7 +160,8 @@ describe('the steering oar from Seal Cave: fight, theft, trade or carving', () =
     expect(events).toContainEqual({ type: 'OAR_CARVED' });
     expect(world.calendar.day).toBeGreaterThanOrEqual(2);
     bot.waitFor(() => boatOf(world)?.repairs.STEERING_OAR.stage === 'DONE', 60 * 60 * 120);
-  });
+    // Two game days of Runa's work: longer than five seconds on a shared CI runner.
+  }, 60_000);
 });
 
 describe('one reversible fitting (Book 4 beat 5)', () => {

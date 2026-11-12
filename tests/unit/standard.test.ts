@@ -153,52 +153,58 @@ describe('the Book 7 terrain art standard (section 14)', () => {
     expect(MOTION_THRESHOLD).toBeGreaterThanOrEqual(0.7);
   });
 
-  it('builds a strand frame within the Book 2 budget (scene and draw list under 4 ms)', () => {
-    const world = newCampaign('budget', b, parsePeopleBasics(balance), content, {
-      name: 'Ash',
-      bodyModel: 'B',
-    });
-    const map = land.maps.get('ZONE_SK_STRAND');
-    const onFoot = world.onFoot;
-    if (map === undefined || onFoot === null) throw new Error('no strand');
-    const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false, tuning);
-    // The busiest view: the machair, thick with plants.
-    onFoot.player.x = 70 * 24;
-    onFoot.player.y = 5 * 24;
-    const frame = (tick: number) => ({
-      dt: 1 / 60,
-      tick,
-      onFoot,
-      tide: { minutesToLowWater: 200, minutesSinceLowWater: 200, tidalGroundOpen: false },
-      sky: { minuteOfDay: 900, lightFrom: 390, darkFrom: 1200 },
-      anims,
-      steererSheet: 'actor_p_steerer_b',
-    });
-    const run = (n: number): number => {
-      const t0 = performance.now();
-      for (let tick = 0; tick < n; tick++) {
-        const f = frame(tick);
-        visuals.update(f);
-        const scene = zoneScene({
-          map,
-          onFoot,
-          tick,
-          tideOpen: false,
-          phase: 'day',
-          look: loadPeopleLook('B'),
-          anims,
-          shadows,
-          highlight: null,
-          visual: visuals.view(f),
-        });
-        buildDrawList(scene, sheets, 0.5);
-      }
-      return (performance.now() - t0) / n;
-    };
-    run(30); // warm up
-    // The best of several batches: other test files share the machine, and contention only
-    // ever adds time, so the fastest batch is the closest to the frame's own cost.
-    const ms = Math.min(...Array.from({ length: 6 }, () => run(30)));
-    expect(ms).toBeLessThan(4);
-  });
+  // Timed alone (`npm test` runs it in a second pass with OE_BUDGET=1, the only file then): in the
+  // parallel run forty other test files share the machine, and a shared CI runner's contention
+  // then measured 4.09 ms for a frame that takes about 3 ms. The 4 ms budget is unchanged.
+  it.runIf(process.env['OE_BUDGET'] === '1')(
+    'builds a strand frame within the Book 2 budget (scene and draw list under 4 ms)',
+    () => {
+      const world = newCampaign('budget', b, parsePeopleBasics(balance), content, {
+        name: 'Ash',
+        bodyModel: 'B',
+      });
+      const map = land.maps.get('ZONE_SK_STRAND');
+      const onFoot = world.onFoot;
+      if (map === undefined || onFoot === null) throw new Error('no strand');
+      const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false, tuning);
+      // The busiest view: the machair, thick with plants.
+      onFoot.player.x = 70 * 24;
+      onFoot.player.y = 5 * 24;
+      const frame = (tick: number) => ({
+        dt: 1 / 60,
+        tick,
+        onFoot,
+        tide: { minutesToLowWater: 200, minutesSinceLowWater: 200, tidalGroundOpen: false },
+        sky: { minuteOfDay: 900, lightFrom: 390, darkFrom: 1200 },
+        anims,
+        steererSheet: 'actor_p_steerer_b',
+      });
+      const run = (n: number): number => {
+        const t0 = performance.now();
+        for (let tick = 0; tick < n; tick++) {
+          const f = frame(tick);
+          visuals.update(f);
+          const scene = zoneScene({
+            map,
+            onFoot,
+            tick,
+            tideOpen: false,
+            phase: 'day',
+            look: loadPeopleLook('B'),
+            anims,
+            shadows,
+            highlight: null,
+            visual: visuals.view(f),
+          });
+          buildDrawList(scene, sheets, 0.5);
+        }
+        return (performance.now() - t0) / n;
+      };
+      run(30); // warm up
+      // The best of several batches: other test files share the machine, and contention only
+      // ever adds time, so the fastest batch is the closest to the frame's own cost.
+      const ms = Math.min(...Array.from({ length: 6 }, () => run(30)));
+      expect(ms).toBeLessThan(4);
+    },
+  );
 });

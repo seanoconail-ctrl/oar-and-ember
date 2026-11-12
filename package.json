@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run && OE_BUDGET=1 vitest run tests/unit/standard.test.ts -t \"Book 2 budget\"",
     "test:watch": "vitest",
     "test:browser": "playwright test",
     "lint": "eslint . && prettier --check . && node src/tools/content/lint.ts && node src/tools/art/lint.ts",

@@ -260,13 +260,15 @@ export function plantSprites(
         if (d < 11) lean += Math.sign(Math.abs(dx) > 0.5 ? dx : 1) * ((11 - d) / 11) * 4.5;
       }
       lean = Math.max(-3, Math.min(3, Math.round(lean)));
+      // Built without a spread: thousands a frame, and one shape for all of them.
       out.push({
         sheet: PLANT_SHEET,
         frame: plant.frames[UPRIGHT + lean] ?? '',
         x: x - camera.x,
         y: y - camera.y,
         layer: 'actor',
-        ...(plant.sort === undefined ? {} : { sort: plant.sort - camera.y }),
+        // The draw list sorts an actor without its own sort by its rounded foot line: the same.
+        sort: plant.sort === undefined ? Math.round(y - camera.y) : plant.sort - camera.y,
       });
     }
   }
