@@ -93,6 +93,9 @@ test.describe('Stage 7: day and night, shelter and first tasks', () => {
     await startPlay(page, 'A', `capture&camp=broch&time=17:00&wood=2&at=${fire.x},${fire.y + 0.9}`);
     await step(page, 3);
     await expect(overlay(page)).toHaveAttribute('data-fire', 'out');
+    // Hild may still be passing the ring on her way to her place (her talk is then the nearer
+    // use): wait, in game time, until the fire is the nearest thing to hand.
+    await stepUntil(page, 'prompt', (p) => p === 'task_light_fire', 60);
     await expect(overlay(page)).toHaveAttribute('data-prompt', 'task_light_fire');
     const before = minutes(await attr(page, 'clock'));
     await page.keyboard.press('KeyE');
