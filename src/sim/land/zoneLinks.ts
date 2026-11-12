@@ -44,7 +44,15 @@ export function linkOf(
   maps?: ReadonlyMap<Id, ZoneMap>,
 ): Id | null {
   const links = (map.links ?? []).filter((l) => l.edge === edge);
-  if (at === undefined || maps === undefined || links.length < 2) return links[0]?.to ?? null;
+  if (at === undefined || maps === undefined) return links[0]?.to ?? null;
+  // Stage 11: a link holds only where its neighbour lies beyond the edge (the cairn's north edge
+  // meets Seal Cave's ground only at its east end); elsewhere the edge is the end of the ground.
+  if (links.length < 2) {
+    const only = links[0];
+    const to = only === undefined ? undefined : maps.get(only.to);
+    if (only === undefined) return null;
+    return to === undefined || beyond(map, to, at) ? only.to : null;
+  }
   for (const l of links) {
     const to = maps.get(l.to);
     if (to !== undefined && beyond(map, to, at)) return l.to;

@@ -447,6 +447,9 @@ export function spawnEncounters(
       const fd = ctx.fighters.get(m.person);
       const person = world.people[m.person];
       if (fd === undefined || person === undefined) continue;
+      // Stage 11: the dead, the taken and the gone are not placed again (the wreckers at Seal Cave
+      // after the sheepfold are the ones who walked away from it).
+      if (person.status === 'dead' || person.status === 'captive') continue;
       const arch = ctx.ai.archetypes[fd.archetype] ?? { vitality: ctx.cb.vitality, armour: 'NONE' };
       const x = m.x * map.tile;
       const y = m.y * map.tile;
@@ -493,6 +496,7 @@ export function spawnEncounters(
       group.members.push(m.person);
       if (fd.leader === true) group.leader = m.person;
     }
+    if (group.members.length === 0) continue;
     onFoot.battle = {
       scene: enc.id,
       started: world.tick,

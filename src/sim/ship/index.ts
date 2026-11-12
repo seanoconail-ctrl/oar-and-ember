@@ -1,2 +1,2 @@
-// sim/ship: see README.md. Empty until its stage.
-export {};
+// sim/ship: see README.md. The ship and deriveStats (Stage 11).
+export * from './ship.ts';

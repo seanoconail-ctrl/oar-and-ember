@@ -1040,6 +1040,58 @@
      "Key": "stormDamage",
      "Value": "5 x storm strength x exposure / seaworthiness per watch"
     }
+   ],
+   "chapter1Repairs": [
+    {
+     "Key": "wreckedIntegrity",
+     "Value": "30",
+     "Notes": "The coastal boat as found, drawn up on Wreck Strand: strakes sprung and stove in; it cannot float"
+    },
+    {
+     "Key": "patchedIntegrity",
+     "Value": "80",
+     "Notes": "Patched with the salvaged boards; the patch is made good with iron after the first raid (Book 6 section 03)"
+    },
+    {
+     "Key": "cutRigging",
+     "Value": "30 game minutes, 2 stamina",
+     "Notes": "Cutting the mast, yard, sail and lines free of the wreck on the skerry: one action at low water, then one load to carry"
+    },
+    {
+     "Key": "rigging",
+     "Value": "1 worker-day",
+     "Notes": "Stepping the mast and setting up the salvaged rigging on the boat"
+    },
+    {
+     "Key": "shipOar",
+     "Value": "0.125 worker-day",
+     "Notes": "Lashing a steering oar to its boss on the quarter"
+    },
+    {
+     "Key": "carveOar",
+     "Value": "2 worker-days",
+     "Notes": "Runa carves a new steering oar from the wreck's yard; only a carpenter of skill 2 or more can (Book 4: \"over two days\")"
+    },
+    {
+     "Key": "fitHold",
+     "Value": "1 worker-day",
+     "Notes": "The extended hold, made from salvage (hides, lashings and the wreck's thwarts): Chapter 1 has no iron"
+    },
+    {
+     "Key": "fitBowPlatform",
+     "Value": "1 worker-day",
+     "Notes": "The raised bow platform, made from the wreck's timber"
+    },
+    {
+     "Key": "unship",
+     "Value": "30 game minutes, 1 stamina",
+     "Notes": "A fitting taken off in one action at the boat; fitting it again costs its labour again"
+    },
+    {
+     "Key": "oarFood",
+     "Value": "3 rd",
+     "Notes": "Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk"
+    }
    ]
   },
   "combatTimings": {
@@ -2619,6 +2671,38 @@
      "Key": "cliffPath",
      "Value": "Runa -3 friendship",
      "Notes": "The cliff path taken with the stone still weeping: the rite left undone"
+    }
+   ],
+   "thorkelSRites": [
+    {
+     "Key": "ritesValue",
+     "Value": "+2 friendship per point",
+     "Notes": "Each resident's Kin and Faith points, when Thorkel is given his rites in either form"
+    },
+    {
+     "Key": "ritesGuard",
+     "Value": "Bran +3 friendship",
+     "Notes": "Bran kept the body for this"
+    },
+    {
+     "Key": "ritesHappiness",
+     "Value": "+10 happiness",
+     "Notes": "Everyone at the rite: the grief eased, for the day"
+    },
+    {
+     "Key": "seaGold",
+     "Value": "-1 friendship per point",
+     "Notes": "Each resident's Gain points, when Thorkel's gold ring goes into the sea with him"
+    },
+    {
+     "Key": "settingStones",
+     "Value": "2 game hours",
+     "Notes": "The household lays the stones of the ship-setting on the machair before the rite begins"
+    },
+    {
+     "Key": "riteLength",
+     "Value": "60 game minutes",
+     "Notes": "The rite itself, from the gathering to the last word"
     }
    ],
    "theHouseholdDayAndTalk": [

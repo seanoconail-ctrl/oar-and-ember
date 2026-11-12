@@ -324,6 +324,22 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | repair | 1 timber per 25 integrity; 1 worker-day per 20 |
 | stormDamage | 5 x storm strength x exposure / seaworthiness per watch |
 
+### Chapter 1 repairs
+*Added for Stage 11 (decisions S11-4 to S11-12): the coastal boat's three repairs and its first fitting (Book 4 section 08, beats 4 and 5). Labour is in worker-days (section 03, workerDay: 8 game hours), added by whoever works on the boat at their skill: a resident with the shipwright's job, or the steerer by hand. Every material is one load found in the world and carried to the boat, never a count to gather (Book 3 Stage 11, check 3). The hull patch's materials and labour are the Carpentry row "Hull patch (Chapter 1)" (section 09).*
+
+| Key | Value | Notes |
+|---|---|---|
+| wreckedIntegrity | 30 | The coastal boat as found, drawn up on Wreck Strand: strakes sprung and stove in; it cannot float |
+| patchedIntegrity | 80 | Patched with the salvaged boards; the patch is made good with iron after the first raid (Book 6 section 03) |
+| cutRigging | 30 game minutes, 2 stamina | Cutting the mast, yard, sail and lines free of the wreck on the skerry: one action at low water, then one load to carry |
+| rigging | 1 worker-day | Stepping the mast and setting up the salvaged rigging on the boat |
+| shipOar | 0.125 worker-day | Lashing a steering oar to its boss on the quarter |
+| carveOar | 2 worker-days | Runa carves a new steering oar from the wreck's yard; only a carpenter of skill 2 or more can (Book 4: "over two days") |
+| fitHold | 1 worker-day | The extended hold, made from salvage (hides, lashings and the wreck's thwarts): Chapter 1 has no iron |
+| fitBowPlatform | 1 worker-day | The raised bow platform, made from the wreck's timber |
+| unship | 30 game minutes, 1 stamina | A fitting taken off in one action at the boat; fitting it again costs its labour again |
+| oarFood | 3 rd | Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk |
+
 ## 06 / Combat timings
 ### Weapons (ticks at 60 Hz)
 | Weapon | Reach tiles | Combo | Windup | Active | Recovery | Chain window | Damage | vs shield | Stamina |
@@ -759,6 +775,18 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | guard | 3 tiles | Bran fights any foe who comes this near Thorkel's body, and goes back to it between |
 | offering | Runa +5 friendship | The Cailleach given her due at the Hag's Seat (Faith in the old powers) |
 | cliffPath | Runa -3 friendship | The cliff path taken with the stone still weeping: the rite left undone |
+
+### Thorkel's rites
+*Added for Stage 11 (decisions S11-13 to S11-16): Thorkel's rites, optional and recommended by Hild (Book 4 section 08, beat 6), once his body lies on its bier by the broch. Like the searches' numbers, these are the household's own reaction to the rite, besides anything the ledger weighs.*
+
+| Key | Value | Notes |
+|---|---|---|
+| ritesValue | +2 friendship per point | Each resident's Kin and Faith points, when Thorkel is given his rites in either form |
+| ritesGuard | Bran +3 friendship | Bran kept the body for this |
+| ritesHappiness | +10 happiness | Everyone at the rite: the grief eased, for the day |
+| seaGold | -1 friendship per point | Each resident's Gain points, when Thorkel's gold ring goes into the sea with him |
+| settingStones | 2 game hours | The household lays the stones of the ship-setting on the machair before the rite begins |
+| riteLength | 60 game minutes | The rite itself, from the gathering to the last word |
 
 ### The household day and talk
 *Added for Stage 8 (decisions S8-1 to S8-30): barks, conversation, schedules and the warning flow. Starting values, for tuning after playtests.*

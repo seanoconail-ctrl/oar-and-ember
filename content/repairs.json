@@ -1,0 +1,264 @@
+{
+  "about": "Chapter 1 beats 4 to 6 (Book 4 section 08; Stage 11, decisions S11-1 to S11-25): the coastal boat's three repairs, its first fitting and Thorkel's rites. The boat lies drawn up under the bank on Wreck Strand. Its hull is patched with the four salvaged boards and their rivets, carried up from the debris as one load; its rigging is cut from the wreck on the skerry at low water and carried back over the flats; its steering oar is in the wreck-scavengers' skiff in Seal Cave, to be fought for, stolen unseen, traded for, or carved new by Runa over two days. Each material laid by the boat is worked by whoever has the shipwright's job, or by the steerer's own hands. One fitting at a time, reversible: an extended hold or a raised bow platform. When Thorkel lies on his bier, Hild asks for his rites: a ship of stones on the machair, or the sea with his gold ring for Rán. Every number is Book 10's (section 05, Chapter 1 repairs; section 08, Thorkel's rites); positions are tiles in each zone's own map.",
+  "opensAfter": "ch1.at_broch",
+  "beat": "BEAT_1_REPAIRS",
+  "customise": "BEAT_1_CUSTOMISE",
+  "hull": "HULL_COASTAL_BOAT",
+  "boat": {
+    "zone": "ZONE_SK_STRAND",
+    "x": 42.0,
+    "y": 27.0,
+    "look": { "x": 39.8, "y": 27.6 },
+    "work": { "x": 43.4, "y": 27.6 },
+    "layByTiles": 4,
+    "spots": [
+      { "zone": "ZONE_SK_STRAND", "x": 43.2, "y": 27.9, "facing": "n" },
+      { "zone": "ZONE_SK_STRAND", "x": 40.6, "y": 27.9, "facing": "n" },
+      { "zone": "ZONE_SK_STRAND", "x": 45.6, "y": 27.9, "facing": "n" }
+    ]
+  },
+  "boards": {
+    "id": "ITEM_BOARDS",
+    "zone": "ZONE_SK_STRAND",
+    "x": 80.0,
+    "y": 34.6,
+    "facing": "e"
+  },
+  "rigging": {
+    "id": "ITEM_RIGGING",
+    "zone": "ZONE_SK_STRAND",
+    "tangle": { "x": 20.6, "y": 48.9 },
+    "cut": { "x": 19.6, "y": 47.7 },
+    "lies": { "x": 19.4, "y": 47.4, "facing": "e" }
+  },
+  "oar": {
+    "id": "ITEM_STEERING_OAR",
+    "zone": "ZONE_SK_SEALCAVE",
+    "skiff": { "x": 56.2, "y": 20.15 },
+    "take": { "x": 56.4, "y": 20.9 },
+    "encounter": "SCN_SK_SEALCAVE",
+    "carver": "C_RUNA",
+    "carveSkill": "carpentry",
+    "carveLevel": 2
+  },
+  "fittings": ["FIT_EXTENDED_HOLD", "FIT_RAISED_BOW_PLATFORM"],
+  "rites": {
+    "beat": "BEAT_1_RITES",
+    "recommends": "C_HILD",
+    "guard": "C_BRAN",
+    "body": "C_THORKEL",
+    "setting": {
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 22.0,
+      "y": 35.0,
+      "around": [
+        [19.4, 37.0],
+        [22.0, 37.4],
+        [24.6, 37.0],
+        [20.6, 33.0],
+        [23.4, 33.0]
+      ]
+    },
+    "sea": {
+      "zone": "ZONE_SK_STRAND",
+      "x": 33.0,
+      "y": 35.6,
+      "around": [
+        [31.0, 34.6],
+        [34.9, 34.5],
+        [32.2, 33.7],
+        [33.9, 33.6],
+        [35.6, 35.7]
+      ]
+    },
+    "reachTiles": 6,
+    "lines": {
+      "setting": ["c_hild.rites.setting", "c_bran.rites.setting", "c_runa.rites.setting", "c_oddi.rites.setting"],
+      "sea": ["c_hild.rites.sea", "c_bran.rites.sea", "c_runa.rites.sea", "c_oddi.rites.sea"]
+    },
+    "info": {
+      "gather": "caption.rites.gather",
+      "stones": "caption.rites.stones",
+      "settingDone": "caption.rites.setting_done",
+      "seaDone": "caption.rites.sea_done"
+    }
+  },
+  "lines": {
+    "boardsLaid": "c_runa.repair.boards_laid",
+    "riggingLaid": "c_oddi.repair.rigging_laid",
+    "oarLaid": "c_hild.repair.oar_laid",
+    "hullDone": "c_runa.repair.hull_done",
+    "riggingDone": "c_runa.repair.rigging_done",
+    "oarDone": "c_hild.repair.oar_done",
+    "carved": "c_runa.repair.carved",
+    "allDone": "c_hild.repair.all_done",
+    "fitted": "c_runa.repair.fitted"
+  },
+  "info": {
+    "riggingCut": "caption.repair.rigging_cut",
+    "oarTaken": "caption.repair.oar_taken",
+    "oarSeen": "caption.repair.oar_seen",
+    "unshipped": "caption.repair.unshipped",
+    "lackHull": "info.boat.lack_hull",
+    "lackRigging": "info.boat.lack_rigging",
+    "lackOar": "info.boat.lack_oar",
+    "ready": "info.boat.ready"
+  },
+  "talks": [
+    {
+      "id": "boat.look",
+      "with": "SHIP",
+      "reachTiles": 1.5,
+      "promptKey": "ui.prompt.look_boat",
+      "open": "info.boat.look",
+      "choices": [
+        {
+          "key": "p_steerer.boat.fit_hold",
+          "when": "FIT_FREE",
+          "reply": ["info.boat.fit_hold"],
+          "do": "FIT_HOLD"
+        },
+        {
+          "key": "p_steerer.boat.fit_bow",
+          "when": "FIT_FREE",
+          "reply": ["info.boat.fit_bow"],
+          "do": "FIT_BOW"
+        },
+        {
+          "key": "p_steerer.boat.unship_hold",
+          "when": "HAS_HOLD",
+          "do": "UNSHIP"
+        },
+        {
+          "key": "p_steerer.boat.unship_bow",
+          "when": "HAS_BOW_PLATFORM",
+          "do": "UNSHIP"
+        },
+        {
+          "key": "p_steerer.boat.carve",
+          "when": "CAN_CARVE",
+          "reply": ["c_runa.repair.carve"],
+          "do": "CARVE"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "ketill.cave",
+      "with": "E_WRECKER_KETILL",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "e_ketill.cave.open",
+      "choices": [
+        {
+          "key": "p_steerer.cave.silver",
+          "when": "CHEST_SAVED",
+          "reply": ["e_ketill.cave.silver"],
+          "do": "TRADE_SILVER"
+        },
+        {
+          "key": "p_steerer.cave.food",
+          "when": "HAS_FOOD",
+          "reply": ["e_ketill.cave.food"],
+          "do": "TRADE_FOOD"
+        },
+        {
+          "key": "p_steerer.cave.take",
+          "reply": ["e_ketill.cave.take"],
+          "do": "FIGHT"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "svart.cave",
+      "with": "E_WRECKER_SVART",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "e_svart.cave.open",
+      "choices": [
+        {
+          "key": "p_steerer.cave.silver",
+          "when": "CHEST_SAVED",
+          "reply": ["e_svart.cave.silver"],
+          "do": "TRADE_SILVER"
+        },
+        {
+          "key": "p_steerer.cave.food",
+          "when": "HAS_FOOD",
+          "reply": ["e_svart.cave.food"],
+          "do": "TRADE_FOOD"
+        },
+        {
+          "key": "p_steerer.cave.take",
+          "reply": ["e_svart.cave.take"],
+          "do": "FIGHT"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "conn.cave",
+      "with": "E_WRECKER_CONN",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "e_conn.cave.open",
+      "choices": [
+        {
+          "key": "p_steerer.cave.silver",
+          "when": "CHEST_SAVED",
+          "reply": ["e_conn.cave.silver"],
+          "do": "TRADE_SILVER"
+        },
+        {
+          "key": "p_steerer.cave.food",
+          "when": "HAS_FOOD",
+          "reply": ["e_conn.cave.food"],
+          "do": "TRADE_FOOD"
+        },
+        {
+          "key": "p_steerer.cave.take",
+          "reply": ["e_conn.cave.take"],
+          "do": "FIGHT"
+        },
+        {
+          "key": "ui.talk.leave",
+          "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "hild.rites",
+      "with": "C_HILD",
+      "reachTiles": 1.6,
+      "promptKey": "ui.prompt.rites",
+      "open": "c_hild.rites.ask",
+      "choices": [
+        {
+          "key": "p_steerer.rites.setting",
+          "reply": ["c_hild.rites.chose_setting"],
+          "do": "RITES_SETTING"
+        },
+        {
+          "key": "p_steerer.rites.sea",
+          "reply": ["c_hild.rites.chose_sea"],
+          "do": "RITES_SEA"
+        },
+        {
+          "key": "p_steerer.rites.not_yet",
+          "reply": ["c_hild.rites.not_yet"],
+          "do": "LEAVE"
+        }
+      ]
+    }
+  ]
+}

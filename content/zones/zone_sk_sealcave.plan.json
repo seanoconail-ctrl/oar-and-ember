@@ -1,0 +1,338 @@
+{
+  "zone": "ZONE_SK_SEALCAVE",
+  "about": "Seal Cave on the north-east cliffs (Book 4 section 02; Book 9 sections 03 and 05; Stage 11, decisions S11-17 to S11-19): blocks 34 to 45 by 8 to 17, north of the Hollow Cairn's ground, expanded by src/tools/levels/zones.ts. The moor comes down from the cairn's north-east corner to a cove on the coast; the cave runs into the headland at the cove's head, its mouth facing south over the cove's sand (block (41, 9) of Book 9's grid, drawn a block lower so the view holds the cliff above it). The inner chamber floor is tidal ground, dry only round low water; the wreck-scavengers' skiff lies drawn up in it, and their camp is on the dry shingle on the cove's west side. The cave's deep passage is Stage 14's. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_sealcave",
+  "terrainSeed": "zone_sk_strand",
+  "blocks": {
+    "x": 34,
+    "y": 8,
+    "w": 12,
+    "h": 10
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 2,
+  "sward": 0.62,
+  "tussock": 0.45,
+  "crevices": 0.5,
+  "codes": {
+    "#": ",",
+    "r": ",",
+    "~": ","
+  },
+  "carve": [
+    {
+      "code": "~",
+      "ellipse": {
+        "x": 96,
+        "y": 44,
+        "rx": 25,
+        "ry": 64
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "r",
+      "line": [
+        [
+          64,
+          -2
+        ],
+        [
+          66,
+          10
+        ],
+        [
+          68,
+          22
+        ],
+        [
+          70,
+          34
+        ],
+        [
+          71.5,
+          50
+        ],
+        [
+          72.5,
+          66
+        ],
+        [
+          73,
+          82
+        ]
+      ],
+      "width": 4.5,
+      "rough": 0.7
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 57,
+        "y": 18.4,
+        "rx": 14,
+        "ry": 3.2
+      },
+      "rough": 0.35
+    },
+    {
+      "code": "~",
+      "ellipse": {
+        "x": 72,
+        "y": 30,
+        "rx": 8,
+        "ry": 5.5
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "-",
+      "ellipse": {
+        "x": 60,
+        "y": 28,
+        "rx": 11,
+        "ry": 6.2
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "-",
+      "ellipse": {
+        "x": 56.5,
+        "y": 19.6,
+        "rx": 3.1,
+        "ry": 2.6
+      },
+      "rough": 0.15
+    },
+    {
+      "code": ".",
+      "line": [
+        [
+          44,
+          24
+        ],
+        [
+          46,
+          28
+        ],
+        [
+          49,
+          32
+        ],
+        [
+          55,
+          35.5
+        ]
+      ],
+      "width": 5.5,
+      "rough": 0.3
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 67.6,
+        "y": 23.4,
+        "rx": 1.4,
+        "ry": 1.0
+      },
+      "rough": 0.2
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 66.5,
+        "y": 34.6,
+        "rx": 1.6,
+        "ry": 1.1
+      },
+      "rough": 0.2
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 60.6,
+        "y": 21.0,
+        "rx": 1.6,
+        "ry": 0.9
+      },
+      "rough": 0.15
+    }
+  ],
+  "solid": [
+    {
+      "tiles": [
+        [
+          54,
+          19
+        ],
+        [
+          55,
+          19
+        ],
+        [
+          56,
+          19
+        ],
+        [
+          57,
+          19
+        ],
+        [
+          58,
+          19
+        ]
+      ]
+    }
+  ],
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 8,
+      "y": 76,
+      "facing": "n"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 18,
+      "y": 40
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/1",
+      "x": 30,
+      "y": 20
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 12,
+      "y": 30
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/0",
+      "x": 40,
+      "y": 10
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/1",
+      "x": 26,
+      "y": 66
+    },
+    {
+      "sheet": "prop_heather",
+      "frame": "clump/-/2",
+      "x": 50,
+      "y": 48
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/0",
+      "x": 24,
+      "y": 48
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/1",
+      "x": 36,
+      "y": 58
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/2",
+      "x": 8,
+      "y": 20
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/3",
+      "x": 55,
+      "y": 44
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [
+        8.5,
+        79.98
+      ],
+      [
+        12,
+        70
+      ],
+      [
+        20,
+        58
+      ],
+      [
+        30,
+        46
+      ],
+      [
+        38,
+        36
+      ],
+      [
+        44.5,
+        30.5
+      ]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "s",
+      "to": "ZONE_SK_CAIRN"
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 60,
+      "y": 14,
+      "r": 6
+    },
+    {
+      "kind": "gull",
+      "x": 40,
+      "y": 40,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 78,
+      "y": 50,
+      "r": 7
+    },
+    {
+      "kind": "seal",
+      "x": 66.5,
+      "y": 34.2
+    },
+    {
+      "kind": "seal",
+      "x": 76,
+      "y": 40
+    },
+    {
+      "kind": "cormorant",
+      "x": 67.6,
+      "y": 23.1
+    },
+    {
+      "kind": "gull_standing",
+      "x": 70.2,
+      "y": 46
+    },
+    {
+      "kind": "sheep",
+      "x": 22,
+      "y": 62
+    }
+  ]
+}

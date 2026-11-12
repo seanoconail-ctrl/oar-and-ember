@@ -34,10 +34,12 @@ export const CONTENT_FILES = {
   scenes: 'content/scenes.json',
   combat: 'content/combat.json',
   searches: 'content/searches.json',
+  repairs: 'content/repairs.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
   zoneHagseat: 'content/zones/zone_sk_hagseat.json',
   zoneCairn: 'content/zones/zone_sk_cairn.json',
+  zoneSealcave: 'content/zones/zone_sk_sealcave.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -250,6 +252,8 @@ const hullCheck = object({
   tier: oneOf(TIERS),
   balanceRow: ref('balance:hull'),
   nameKey: ref('string'),
+  /** The hull's fitting slots in order (Book 7 section 03); as many as Book 10's Slots. */
+  slots: arrayOf(oneOf(SLOTS)),
 });
 const fittingCheck = object({
   id: id(['FIT']),
@@ -775,8 +779,28 @@ export const SEARCH_ACTIONS = [
   'OFFER_CONFESSION',
   'OFFER_SEAX',
   'OFFER_BOW',
+  // Stage 11: the boat's fitting and the steering oar (content/repairs.json).
+  'FIT_HOLD',
+  'FIT_BOW',
+  'UNSHIP',
+  'CARVE',
+  'TRADE_SILVER',
+  'TRADE_FOOD',
+  'RITES_SETTING',
+  'RITES_SEA',
 ] as const;
-export const SEARCH_WHEN = ['UNSEEN', 'CHEST_SAVED', 'HAS_SEAX', 'HAS_BOW'] as const;
+export const SEARCH_WHEN = [
+  'UNSEEN',
+  'CHEST_SAVED',
+  'HAS_SEAX',
+  'HAS_BOW',
+  // Stage 11.
+  'FIT_FREE',
+  'HAS_HOLD',
+  'HAS_BOW_PLATFORM',
+  'CAN_CARVE',
+  'HAS_FOOD',
+] as const;
 const searchTalkCheck = object({
   id: text,
   with: text,
@@ -858,6 +882,76 @@ const searchesCheck = object({
   omens: arrayOf(omenCheck),
 });
 
+/** Stage 11: Chapter 1's repairs, the first fitting and Thorkel's rites (content/repairs.json). */
+const tileXY = object({ x: fraction(0, 512), y: fraction(0, 512) });
+const zoneSpot = object({
+  zone: ref('zone'),
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  facing: oneOf(FACINGS4),
+});
+const riteCheck = object({
+  zone: ref('zone'),
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  around: arrayOf(point),
+});
+const repairsCheck = object({
+  about: text,
+  opensAfter: text,
+  beat: id(['BEAT']),
+  customise: id(['BEAT']),
+  hull: ref('hull'),
+  boat: object({
+    zone: ref('zone'),
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    look: tileXY,
+    work: tileXY,
+    layByTiles: fraction(1, 12),
+    spots: arrayOf(zoneSpot),
+  }),
+  boards: object({
+    id: id(['ITEM']),
+    zone: ref('zone'),
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    facing: oneOf(FACINGS4),
+  }),
+  rigging: object({
+    id: id(['ITEM']),
+    zone: ref('zone'),
+    tangle: tileXY,
+    cut: tileXY,
+    lies: atFacing,
+  }),
+  oar: object({
+    id: id(['ITEM']),
+    zone: ref('zone'),
+    skiff: tileXY,
+    take: tileXY,
+    encounter: id(['SCN']),
+    carver: ref('person'),
+    carveSkill: text,
+    carveLevel: int(0, 5),
+  }),
+  fittings: arrayOf(ref('fitting')),
+  rites: object({
+    beat: id(['BEAT']),
+    recommends: ref('person'),
+    guard: ref('person'),
+    body: text,
+    setting: riteCheck,
+    sea: riteCheck,
+    reachTiles: fraction(1, 20),
+    lines: object({ setting: arrayOf(ref('string')), sea: arrayOf(ref('string')) }),
+    info: recordOf(text, ref('string')),
+  }),
+  lines: recordOf(text, ref('string')),
+  info: recordOf(text, ref('string')),
+  talks: arrayOf(searchTalkCheck),
+});
+
 type Out<C> = C extends Check<infer T> ? T : never;
 export type HouseholdDef = Out<typeof householdCheck>;
 export type TalkDef = Out<typeof talkCheck>;
@@ -876,6 +970,7 @@ export type OnFootDef = Out<typeof onFootCheck>;
 export type CombatDef = Out<typeof combatCheck>;
 export type SearchesDef = Out<typeof searchesCheck>;
 export type SearchTalkDef = SearchesDef['talks'][number];
+export type RepairsDef = Out<typeof repairsCheck>;
 export type OmenDef = SearchesDef['omens'][number];
 export type FighterDef = Out<typeof fighterCheck>;
 export type EncounterDef = Out<typeof encounterCheck>;
@@ -917,6 +1012,8 @@ export interface Content {
   readonly combat: CombatDef | null;
   /** Stage 10: Chapter 1's three searches and the Hag's Seat's sign. */
   readonly searches: SearchesDef | null;
+  /** Stage 11: Chapter 1's repairs, the first fitting and Thorkel's rites. */
+  readonly repairs: RepairsDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -1054,6 +1151,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const scenes = arrayOf(sceneCheck)(files.scenes, '', ctx(CONTENT_FILES.scenes)) ?? [];
   const combat = combatCheck(files.combat, '', ctx(CONTENT_FILES.combat));
   const searches = searchesCheck(files.searches, '', ctx(CONTENT_FILES.searches));
+  const repairs = repairsCheck(files.repairs, '', ctx(CONTENT_FILES.repairs));
   // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
   searches?.omens.forEach((o, i) => {
     for (const part of ['sign', 'rule', 'response', 'consequence'] as const) {
@@ -1085,6 +1183,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     [CONTENT_FILES.zoneMachair, files.zoneMachair],
     [CONTENT_FILES.zoneHagseat, files.zoneHagseat],
     [CONTENT_FILES.zoneCairn, files.zoneCairn],
+    [CONTENT_FILES.zoneSealcave, files.zoneSealcave],
   ] as const) {
     const checked = checkZoneMap(json);
     for (const reason of checked.problems) issues.push({ file, path: '(map)', reason });
@@ -1291,6 +1390,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       scenes,
       combat,
       searches,
+      repairs,
       zoneMaps,
     },
     issues,
