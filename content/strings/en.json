@@ -9,7 +9,7 @@
     "text": "Oar and Ember title screen. Build {build}. Press any key to begin."
   },
   "ui.boot.webgl2_missing": {
-    "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge, Firefox and Safari all support it."
+    "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge and Safari all support it."
   },
   "place.name.isle_skarv": {
     "text": "Skarvholm"

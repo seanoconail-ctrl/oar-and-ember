@@ -7,7 +7,7 @@ no wrong way, and getting lost or stuck is useful to know about.
 ## Before you start
 
 - **Where:** https://seanoconail-ctrl.github.io/oar-and-ember/
-- **Use a desktop browser** (Chrome, Firefox, Edge or Safari) with sound on. A mouse helps; a gamepad
+- **Use a desktop browser** (Chrome, Edge or Safari) with sound on. A mouse helps; a gamepad
   works too.
 - **Hard-refresh first**, so you get the newest build and not an old one from the browser's memory:
   - Windows and Linux: **Ctrl + Shift + R** (or Ctrl + F5)

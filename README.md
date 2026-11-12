@@ -32,7 +32,7 @@ npm run dev            # play locally with live reload
 npm run lint           # ESLint (including the Book 2 layer rules) and Prettier
 npm test               # unit tests (Vitest)
 npm run build          # type-check and build to dist/
-npm run test:browser   # pixel-exact title screen check in Chromium, Firefox and WebKit (after build)
+npm run test:browser   # pixel-exact title screen check in Chromium and WebKit (after build)
 npm run art:check      # render the title, every sheet and the opening at 1x and 4x to artifacts/
 npm run art:sheets     # regenerate sheets from material maps and terrain recipes
 npm run art:compile    # pack sheets into assets/atlases/
@@ -43,7 +43,7 @@ npm run golden         # rewrite golden save 2 (golden save 1 is frozen)
 ## Publishing
 
 `.github/workflows/ci.yml` runs lint, tests, the build and the browser smoke tests on every push
-(Chromium on Linux; Firefox and WebKit on macOS, which has a GPU). Pushes to `main`, and to the
+(Chromium on Linux; WebKit on Linux in Playwright's image). Pushes to `main`, and to the
 working branch `claude/lucid-bell-kgmdfi` while Stages 1 to 6 are built, also publish `dist/` to
 GitHub Pages and re-run the smoke tests against the published address. Settings needed once:
 

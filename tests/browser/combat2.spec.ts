@@ -6,7 +6,7 @@
  * shield sticks in the board.
  *
  * Every test plays stepped (`capture`: the page advances only when stepped, by `oeStep`), so a
- * slow machine (CI's Firefox at about 4 frames a second) plays exactly what a fast one does. A
+ * slow, software-rendered CI machine plays exactly what a fast one does. A
  * moment of a fight is staged through the page's world (`oeWorld`, capture mode only), as the
  * unit tests stage it; people walking past (Hild, the household) change none of the checks.
  */

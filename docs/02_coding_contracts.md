@@ -17,7 +17,7 @@ An empty GitHub repository containing only `CLAUDE.md`, `docs/` (these books as 
 
 ### Decided (Stage 0)
 - **Language:** TypeScript in strict mode. **Rendering:** WebGL2 with nearest-neighbour sampling. **Audio:** Web Audio API.
-- **Platform:** desktop browsers first (Chromium, Firefox, Safari current versions); keyboard and mouse, with gamepad support.
+- **Platform:** desktop, in Chromium (current Chrome and Edge, and the Chromium-based desktop wrapper planned for a Steam release) and WebKit (current Safari); Firefox is not a target (decision BR-9). Keyboard and mouse, with gamepad support.
 - **Art:** authored by Claude as palette-indexed pixel sources compiled to atlases (section 19).
 - **Combat:** real time with no tactical pause; light, charged heavy, parry, block, dodge, shove, stamina and facing.
 - **Death:** the steerer's death is game over. Downed crew and allies are not dead: they survive if carried to safety before the scene ends, and are captured or killed if left behind (section 12). Crew permadeath comes from being left behind, from berserkers and cruel enemies, and from scripted deaths; the *Rán's mercy* option prevents every unscripted death.

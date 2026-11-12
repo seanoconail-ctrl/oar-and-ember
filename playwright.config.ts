@@ -21,15 +21,6 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        // Overrides Firefox's graphics blocklist, which can turn WebGL off on the virtual GPUs of
-        // CI machines. A desktop Firefox with a supported graphics card needs nothing.
-        launchOptions: { firefoxUserPrefs: { 'webgl.force-enabled': true } },
-      },
-    },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   ...(published === undefined

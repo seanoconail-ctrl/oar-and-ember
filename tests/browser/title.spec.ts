@@ -1,5 +1,5 @@
 /**
- * Stage 1 acceptance check 2: the title screen appears in Chromium, Firefox and WebKit (Safari's
+ * Stage 1 acceptance check 2: the title screen appears in Chromium and WebKit (Safari's
  * engine), drawn at a whole-number scale with letterbox bars, pixel for pixel as composed.
  */
 import { expect, test } from '@playwright/test';

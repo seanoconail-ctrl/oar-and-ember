@@ -1,8 +1,7 @@
 # Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
-# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux),
-# Firefox (macOS) and WebKit (Linux, in Playwright's image). Publishing waits for Chromium and WebKit.
-# Firefox still runs and shows red on failure, but does not block publishing for now, at the user's
-# request (decision BR-8, 2026-11-12; it superseded BR-7 for Firefox only).
+# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux)
+# and WebKit (Linux, in Playwright's image). Publishing waits for both. Firefox is not tested, at
+# the user's request (decision BR-9: the game ships on Steam in a Chromium-based wrapper).
 #
 # Repository settings needed once:
 # - Settings > Pages > Build and deployment > Source: "GitHub Actions".
@@ -48,33 +47,6 @@ jobs:
         with:
           path: dist
 
-  # Firefox runs on macOS, where it has WebGL2 (software rendering, about four frames a second;
-  # the tests that play the game step it frame by frame: decision BR-2). Does not block publishing
-  # for now (decision BR-8); the job is not excused, so a failure still shows red.
-  browsers-firefox:
-    name: Firefox smoke test (macOS)
-    runs-on: macos-15-intel
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: npx playwright install firefox
-      # For the log only: never fails the job.
-      - name: What WebGL2 the browser offers
-        run: node tests/browser/webgl-probe.ts firefox || true
-      - run: npm run test:browser -- --project=firefox
-      - name: Keep the failed tests' screenshots and page snapshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-firefox-macos
-          path: test-results
-          retention-days: 7
-
   # WebKit runs on Linux inside Playwright's own image (pinned to the Playwright version in
   # package.json), which carries every library WebKit needs. On the macOS runners WebKit's WebGL
   # context was lost as soon as it was made (renderer "null"), headless or headed.
@@ -109,7 +81,6 @@ jobs:
 
   deploy:
     name: Publish to GitHub Pages
-    # Firefox is left out for now, at the user's request (decision BR-8).
     needs: [check, browsers-webkit]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
     runs-on: ubuntu-latest
@@ -138,22 +109,6 @@ jobs:
       - run: npm ci
       - run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
       - run: npm run test:browser -- --project=chromium
-        env:
-          BASE_URL: ${{ needs.deploy.outputs.page_url }}
-
-  published-firefox:
-    name: Smoke-test the published address (Firefox, macOS)
-    needs: deploy
-    runs-on: macos-15-intel
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install firefox
-      - run: npm run test:browser -- --project=firefox
         env:
           BASE_URL: ${{ needs.deploy.outputs.page_url }}
 

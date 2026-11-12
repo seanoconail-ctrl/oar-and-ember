@@ -64,7 +64,7 @@ function trackSize(canvas: HTMLCanvasElement, presenter: Presenter): void {
     measure(sizes?.[0]);
   });
   try {
-    // Exact device pixels where supported (Chromium, Firefox).
+    // Exact device pixels where supported (Chromium).
     observer.observe(canvas, { box: 'device-pixel-content-box' });
   } catch {
     observer.observe(canvas);

@@ -88,8 +88,8 @@ describe('the GitHub Actions workflow', () => {
     }
   });
 
-  it("checks Firefox on macOS and WebKit in Playwright's Linux image (decisions S1-16, BR-4)", () => {
-    expect(workflow).toMatch(/runs-on: macos-15-intel[\s\S]*--project=firefox\n/);
+  it("checks WebKit in Playwright's Linux image, and never Firefox (decisions BR-4, BR-9)", () => {
+    expect(workflow).not.toMatch(/--project=firefox|playwright install firefox|browsers-firefox/);
     const version = (
       JSON.parse(repoFile('package.json')) as { devDependencies: Record<string, string> }
     ).devDependencies['@playwright/test'];
@@ -101,10 +101,9 @@ describe('the GitHub Actions workflow', () => {
     );
   });
 
-  it('publishes only when Chromium and WebKit pass; Firefox runs but does not block (decision BR-8)', () => {
+  it('publishes only when Chromium and WebKit pass (decisions BR-7, BR-9)', () => {
     expect(workflow).toContain('needs: [check, browsers-webkit]');
-    // Firefox still runs on every push, and a failure still shows red: no job is excused.
-    expect(workflow).toMatch(/browsers-firefox:/);
+    // Neither browser is excused: a failure blocks publishing and shows red.
     expect(workflow).not.toContain('continue-on-error');
   });
 

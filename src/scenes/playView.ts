@@ -2404,7 +2404,7 @@ export function startPlay(
   if (manual) {
     let clock = performance.now();
     // `draw` false runs the frame (the simulation, the scene and the overlay's attributes) without
-    // drawing it: a stepped test drawing only the last of many frames, as Firefox on CI's macOS
+    // drawing it: a stepped test drawing only the last of many frames, as a software-rendered CI
     // runners draws in software at a few frames a second (decision DE-81).
     (window as unknown as { oeStep: (ms: number, draw?: boolean) => void }).oeStep = (
       ms: number,
