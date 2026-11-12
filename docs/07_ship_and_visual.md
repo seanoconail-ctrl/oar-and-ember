@@ -118,7 +118,7 @@ Sails are woven in panels and can be dyed. Patterns: plain undyed wool, broad st
 | Grey, plain | Orm's fleet | The Sea King's tribute ships |
 | Red and white stripes | Saltvik traders | Merchants; usually peaceful |
 | Undyed with a blue cross | Kilbrecc's boats | Church; sanctuary claimed |
-| Player's choice | The household | Chosen at the launch in Chapter 1 |
+| Player's choice | The household | Chosen at the launch in Chapter 1: a pattern in madder, woad or weld on undyed wool, or plain undyed (28 marks, decision S12-11), drawn face-on on the sail as the period's pictures of ships show it (S12-15) |
 
 ### Shields, carvings and trophies
 Shield colours come in sets of two or three. Stem and stern carvings range from a plain curl to a beast-head. Trophies are earned and displayed: a captured enemy vane, a Glen Arra cattle bell, a piece of the lyngbakr's heather, the Ferryman's lamp-hook. Each trophy has an entry in the history log.

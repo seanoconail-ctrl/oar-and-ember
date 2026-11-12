@@ -438,7 +438,7 @@ export const MIGRATIONS: readonly Migration[] = [
       gates: {},
       telemetry: { start: null, heldMs: 0, marks: {} },
       ships: Object.fromEntries(
-        Object.entries((state['ships'] as Record<string, Record<string, unknown>>) ?? {}).map(
+        Object.entries((state['ships'] ?? {}) as Record<string, Record<string, unknown>>).map(
           ([k, ship]) => [k, { ...ship, name: null }],
         ),
       ),

@@ -667,7 +667,7 @@ export function newCampaign(
     Content,
     'people' | 'places' | 'factions' | 'regions' | 'opening' | 'zoneMaps' | 'onFoot' | 'balance'
   > &
-    Partial<Pick<Content, 'camp' | 'household' | 'repairs' | 'hulls' | 'fittings'>>,
+    Partial<Pick<Content, 'camp' | 'household' | 'repairs' | 'hulls' | 'fittings' | 'launch'>>,
   steerer: { readonly name: string; readonly bodyModel: BodyModel | null } = {
     name: '',
     bodyModel: null,
@@ -754,6 +754,9 @@ export function newCampaign(
     );
   }
   world.knowledge.places['ISLE_SKARV'] = 'KNOWN';
+  // Stage 12: Chapter 1's gate, the launch, closed until the boat is ready and the crew found.
+  if (content.launch != null)
+    world.gates[content.launch.gate] = { status: 'CLOSED', pressureSteps: 0, retriesUsed: 0 };
   CHAPTERS.forEach((ch, i) => {
     world.chapters[ch] = i === 0 ? { status: 'ACTIVE', openedDay: 1 } : { status: 'LOCKED' };
   });

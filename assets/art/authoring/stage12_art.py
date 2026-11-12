@@ -729,7 +729,7 @@ def smoke(k):
         for yy in range(int(y - r), int(y + r) + 1):
             for xx in range(int(x - r), int(x + r) + 1):
                 if (xx - x) ** 2 + (yy - y) ** 2 <= r * r and hash01(xx, yy, k + 11) > rise / 70:
-                    s.px(xx, yy, C('smoke', 3.6 - rise * 0.04 + ((xx + yy) % 2) * 0.5))
+                    s.px(xx, yy, C('smoke', 4.6 - rise * 0.03 + ((xx + yy) % 2) * 0.6))
     # The fire's glow at its foot.
     for d in (-1, 0, 1):
         s.px(w // 2 + d, h - 1, C('fire', 4 + (d == 0)))

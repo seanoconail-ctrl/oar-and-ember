@@ -37,6 +37,10 @@ export const PANEL_STYLE = `
 .oe-launch canvas { display: block; margin: 0.3em auto; image-rendering: pixelated; }
 .oe-launch .note { font-size: 0.9em; color: #e9d7b8; font-style: italic; min-height: 1.3em; }
 .oe-launch ul { margin: 0.2em 0; padding-left: 1.2em; }
+.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=clock],
+.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=stamina],
+.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=prompt],
+.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=slot] { display: none; }
 `;
 
 /** What the panels need to put words to IDs. */
@@ -114,7 +118,10 @@ export function readinessPanel(
   onBack: () => void,
 ): HTMLDivElement {
   const p = panel(doc, 'readiness');
-  p.append(el(doc, 'h2', w.t('ui.gate.launch.title')), el(doc, 'p', w.t('ui.gate.launch.lead'), 'lead'));
+  p.append(
+    el(doc, 'h2', w.t('ui.gate.launch.title')),
+    el(doc, 'p', w.t('ui.gate.launch.lead'), 'lead'),
+  );
   const table = el(doc, 'table');
   for (const line of view.lines) {
     const tr = el(doc, 'tr');
@@ -122,7 +129,12 @@ export function readinessPanel(
     tr.dataset['state'] = line.state;
     tr.append(
       el(doc, 'td', w.t(line.labelKey), 'kind'),
-      el(doc, 'td', w.t(`ui.gate.state.${line.state.toLowerCase()}`), `state ${line.state.toLowerCase()}`),
+      el(
+        doc,
+        'td',
+        w.t(`ui.gate.state.${line.state.toLowerCase()}`),
+        `state ${line.state.toLowerCase()}`,
+      ),
       el(doc, 'td', readinessText(line, w)),
     );
     table.append(tr);
@@ -170,7 +182,17 @@ export function drawBoatPreview(
     const at = a?.manifest.frames[frame];
     if (a === undefined || at === undefined) return;
     const m = a.manifest;
-    ctx.drawImage(a.image, at[0], at[1], m.width, m.height, fx - m.pivot.x, fy - m.pivot.y, m.width, m.height);
+    ctx.drawImage(
+      a.image,
+      at[0],
+      at[1],
+      m.width,
+      m.height,
+      fx - m.pivot.x,
+      fy - m.pivot.y,
+      m.width,
+      m.height,
+    );
   };
   if (mark === null) {
     put('ship_t1', 'hull_patched/-/0');
@@ -194,7 +216,10 @@ export function namingPanel(
   onDone: (name: string) => void,
 ): HTMLDivElement {
   const p = panel(doc, 'naming');
-  p.append(el(doc, 'h2', w.t('ui.launch.name.title')), el(doc, 'p', w.t('ui.launch.name.lead'), 'lead'));
+  p.append(
+    el(doc, 'h2', w.t('ui.launch.name.title')),
+    el(doc, 'p', w.t('ui.launch.name.lead'), 'lead'),
+  );
   const canvas = el(doc, 'canvas');
   canvas.width = 220;
   canvas.height = 206;
@@ -258,6 +283,7 @@ export function markPanel(
   let pattern = def.marks.patterns[1]?.key ?? 'plain';
   let dye: string = def.marks.dyes[0]?.key ?? 'madder';
   const note = el(doc, 'p', '', 'note');
+  note.dataset['likeness'] = '';
   const patterns = el(doc, 'div', undefined, 'row');
   const dyes = el(doc, 'div', undefined, 'row');
   patterns.setAttribute('role', 'radiogroup');

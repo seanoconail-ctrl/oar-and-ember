@@ -206,6 +206,14 @@ export async function capture(label: string): Promise<string> {
         .map((v) => `${v.view.name} ${pct(v.share)}`)
         .join(', ')}; Hag's Seat clip ${(south.clipFrames / FPS).toFixed(1)} s`;
     }
+    if (STAGE12_LABELS.has(label)) {
+      await page.close();
+      const c = await stage12Capture(browser, out);
+      writeFileSync(join(out, 'README.md'), stage12Readme(label, motion.share, c));
+      return `${out}: strand motion ${pct(motion.share)}, ${c.views
+        .map((v) => `${v.view.name} ${pct(v.share)}`)
+        .join(', ')}; sea map ${pct(c.map)}; clip ${(c.clipFrames / FPS).toFixed(1)} s`;
+    }
     if (STAGE11_LABELS.has(label)) {
       await page.close();
       // CAPTURE_VIEWS=a,b re-takes only those views (no clip, no README), while tuning a view.
@@ -1454,6 +1462,228 @@ function campReadme(
     all.every((v) => v >= MOTION_THRESHOLD)
       ? 'Every view meets the threshold.'
       : '**A view is below the threshold: the stage is not done.**',
+    '',
+  ].join('\n');
+}
+
+/** Captures of Stage 12: the launch, its screens, the sea map, and the mockups. */
+const STAGE12_LABELS = new Set(['stage-12']);
+
+interface Stage12View extends SouthView {
+  /** The launch's phase to wait for before the still (data-launch). */
+  readonly phase?: string;
+}
+
+const STAGE12_AT = 'time=10:00&crew=1&zone=ZONE_SK_STRAND&wreckers=cave';
+
+const STAGE12_VIEWS: readonly Stage12View[] = [
+  {
+    name: 'launch-ready',
+    what: 'The boat ready on its skids under the bank at 10:00, the launch open (its gate), the household about the strand',
+    query: `${STAGE12_AT}&launch=open&at=45.5,30.6&camera=42.5,27.5`,
+  },
+  {
+    name: 'launch-heave',
+    what: 'The household sets hands to the boat and heaves, the steerer with them; the boat runs down its skids (the 6.4 s of motion take it to the water)',
+    query: `${STAGE12_AT}&launch=scene&mark=raven:woad&at=45.5,30.6&camera=42.5,27.8`,
+    phase: 'HEAVE',
+  },
+  {
+    name: 'launch-sail',
+    what: 'Afloat: the household at the oars, the steerer at the steering oar, the sail set with its mark (a woad raven), rowing out east along the strand',
+    query: `${STAGE12_AT}&launch=scene&mark=raven:woad&at=45.5,30.6&camera=46.5,28.5`,
+    phase: 'ROW',
+    loop: true,
+  },
+];
+
+/** The launch's screens: the readiness screen, the name and the mark (stills, the overlay shown). */
+const STAGE12_SCREENS: readonly { name: string; what: string; query: string }[] = [
+  {
+    name: 'screen-readiness',
+    what: "The readiness screen (Book 6 section 15): the boat, the tide, the crew, the stores, the weapons in hand, allies and Thorkel's rites, each with its state, and the point-of-no-return warning",
+    query: `${STAGE12_AT}&launch=open&screen=readiness&at=40.5,28.4`,
+  },
+  {
+    name: 'screen-naming',
+    what: 'Naming the boat: the boat on its skids, a field for the name and eight suggestions',
+    query: `${STAGE12_AT}&launch=open&screen=naming&at=40.5,28.4`,
+  },
+  {
+    name: 'screen-mark',
+    what: "Choosing the sail's mark: the boat afloat with the mark on its sail, the ten patterns and three dyes, and what the coast will make of it",
+    query: `${STAGE12_AT}&launch=open&screen=mark&at=40.5,28.4`,
+  },
+];
+
+interface Stage12Result {
+  readonly views: readonly { readonly view: Stage12View; readonly share: number }[];
+  readonly map: number;
+  readonly clipFrames: number;
+}
+
+/** Steps a page until its launch phase is `phase` (or a limit). */
+async function untilPhase(page: Page, phase: string): Promise<void> {
+  for (let i = 0; i < 1200; i++) {
+    if ((await page.locator('.oe-overlay').getAttribute('data-launch')) === phase) return;
+    await step(page, 1);
+  }
+  throw new Error(`the launch did not reach ${phase}`);
+}
+
+/** Writes a 4-second loop of `page` at 1x (the camera held) as a GIF. */
+async function loopGif(page: Page, out: string, name: string): Promise<void> {
+  const dir = join(out, `.loop-${name}`);
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  for (let k = 0; k < FPS * 4; k++) {
+    await step(page);
+    writeFileSync(
+      join(dir, `${String(k).padStart(4, '0')}.png`),
+      encodePng(half(await shot(page))),
+    );
+  }
+  execFileSync('ffmpeg', [
+    '-y',
+    '-loglevel',
+    'error',
+    '-framerate',
+    String(FPS),
+    '-i',
+    join(dir, '%04d.png'),
+    '-vf',
+    'split[a][b];[a]palettegen=max_colors=160:stats_mode=full[p];[b][p]paletteuse=dither=none',
+    join(out, `${name}.gif`),
+  ]);
+  rmSync(dir, { recursive: true, force: true });
+}
+
+async function stage12Capture(
+  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  out: string,
+): Promise<Stage12Result> {
+  const mockups = join(REPO_ROOT, 'docs/art/mockups/stage-12');
+  mkdirSync(mockups, { recursive: true });
+  const only = process.env['CAPTURE_VIEWS']?.split(',') ?? null;
+  const views: { view: Stage12View; share: number }[] = [];
+  for (const view of STAGE12_VIEWS) {
+    if (only !== null && !only.includes(view.name)) continue;
+    const phase = view.phase;
+    const { share, still2 } = await campStill(
+      browser,
+      out,
+      view.name,
+      view.query,
+      phase === undefined
+        ? undefined
+        : async (page) => (await page.locator('.oe-overlay').getAttribute('data-launch')) === phase,
+    );
+    views.push({ view, share });
+    if (view.loop === true) {
+      writeFileSync(join(mockups, `${view.name}.png`), encodePng(half(still2)));
+      const page = await openCamp(browser, view.query, false);
+      if (phase !== undefined) await untilPhase(page, phase);
+      await loopGif(page, mockups, `${view.name}-loop`);
+      await page.close();
+    }
+  }
+  // The screens, the overlay shown.
+  for (const screen of STAGE12_SCREENS) {
+    if (only !== null && !only.includes(screen.name)) continue;
+    const page = await openCamp(browser, screen.query, true);
+    await step(page, 4);
+    const img = await shot(page);
+    writeFileSync(join(out, `${screen.name}@2x.png`), encodePng(img));
+    writeFileSync(join(out, `${screen.name}.png`), encodePng(half(img)));
+    if (screen.name === 'screen-mark')
+      writeFileSync(join(mockups, `${screen.name}.png`), encodePng(half(img)));
+    await page.close();
+  }
+  // The sea map: the reveal at 1 s and 3 s, then the whole chart, its motion and a loop.
+  let map = 0;
+  if (only === null || only.includes('seamap')) {
+    const page = await openCamp(
+      browser,
+      `${STAGE12_AT}&launch=scene&mark=raven:woad&at=45.5,30.6`,
+      true,
+    );
+    await untilPhase(page, 'MAP');
+    await page.addStyleTag({
+      content: '.oe-overlay [data-region=captions] { visibility: hidden !important; }',
+    });
+    await step(page, 14);
+    writeFileSync(join(out, 'seamap-reveal-1.png'), encodePng(half(await shot(page))));
+    await step(page, 20);
+    writeFileSync(join(out, 'seamap-reveal-2.png'), encodePng(half(await shot(page))));
+    await step(page, 60);
+    const still2 = await shot(page);
+    writeFileSync(join(out, 'seamap@2x.png'), encodePng(still2));
+    writeFileSync(join(out, 'seamap.png'), encodePng(half(still2)));
+    writeFileSync(join(mockups, 'seamap.png'), encodePng(half(still2)));
+    const stills: Uint8Array[] = [half(still2).data];
+    for (let i = 0; i < 40; i++) {
+      await step(page, 4);
+      stills.push(half(await shot(page)).data);
+    }
+    const motion = continuousMotion(stills, 640, 360);
+    writeFileSync(join(out, 'seamap-motion.png'), encodePng(motionMap(half(still2), motion)));
+    map = motion.share;
+    await loopGif(page, mockups, 'seamap-loop');
+    await page.close();
+  }
+  // The clip: the launch from the heave to rowing out, the camera following (the overlay shown).
+  let frames = 0;
+  if (only === null) {
+    const dir = join(out, '.clip');
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    const page = await openCamp(
+      browser,
+      `${STAGE12_AT}&launch=scene&mark=raven:woad&at=45.5,30.6`,
+      true,
+    );
+    while (frames < FPS * 10) {
+      await step(page);
+      writeFileSync(join(dir, `${String(frames).padStart(4, '0')}.png`), await page.screenshot());
+      frames++;
+    }
+    await page.close();
+    encodeClip(dir, out, 'launch-clip', true);
+    rmSync(dir, { recursive: true, force: true });
+  }
+  return { views, map, clipFrames: frames };
+}
+
+function stage12Readme(label: string, strand: number, c: Stage12Result): string {
+  const all = [strand, ...c.views.map((v) => v.share)];
+  return [
+    `# Capture: ${label}`,
+    '',
+    'Made by `npm run capture -- ' + label + '` (src/tools/art/capture.ts). Compare with',
+    '`docs/art/reference/` (Book 7 section 14), the Stage 12 mockups in `docs/art/mockups/stage-12/`',
+    'and the boat, sail marks, crew and chart in `docs/art/stage-12/`.',
+    '',
+    '| File | What it is |',
+    '|---|---|',
+    '| `still.png`, `still@2x.png`, `motion.png`, `compare.png` | Wreck Strand where the steerer wakes (as at Stage 6), its motion map, and the reference beside it |',
+    ...c.views.map((v) => `| \`${v.view.name}.png\` (and @2x, \`-motion.png\`) | ${v.view.what} |`),
+    ...STAGE12_SCREENS.map((sc) => `| \`${sc.name}.png\` (and @2x) | ${sc.what} |`),
+    '| `seamap-reveal-1.png`, `seamap-reveal-2.png` | The sea map as the mist clears outward from Skarvholm, about 1 s and 3 s in |',
+    "| `seamap.png` (and @2x, `-motion.png`) | The read-only sea map revealed: the coasts, the household's boat off Skarvholm under its mark, smoke at Carrick Landing, Manannán's mist off the Irish shore |",
+    `| \`launch-clip.mp4\`, \`launch-clip.gif\` | ${(c.clipFrames / FPS).toFixed(1)} s at 2x, 25 fps (gif 320 x 180 at 1x round the middle, 6.25 fps): the launch from the heave, the camera following the steerer (the overlay shown) |`,
+    '',
+    '## Motion with the camera still',
+    '',
+    '| View | Continuous motion |',
+    '|---|---|',
+    `| Wreck Strand (41 frames over 6.4 s) | ${pct(strand)} |`,
+    ...c.views.map((v) => `| ${v.view.name} | ${pct(v.share)} |`),
+    `| The sea map (not an in-world view; for the record) | ${pct(c.map)} |`,
+    `| Book 7 threshold (in-world views) | ${pct(MOTION_THRESHOLD)} |`,
+    '',
+    all.every((v) => v >= MOTION_THRESHOLD)
+      ? 'Every in-world view meets the threshold.'
+      : '**An in-world view is below the threshold: the stage is not done.**',
     '',
   ].join('\n');
 }

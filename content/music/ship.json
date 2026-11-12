@@ -60,22 +60,22 @@
       ]
     },
     {
-      "id": "chorus",
-      "name": "Men's chorus (voice pad)",
+      "id": "chorus_low",
+      "name": "Men's chorus, low (voice pad)",
       "instrument": "pad",
       "gain": 0.62,
       "pan": 0,
       "echo": 0.25,
-      "bars": [
-        "[D3 A3]:8",
-        "[C3 G3]:8",
-        "[D3 A3]:8",
-        "[A2 E3]:8",
-        "[F3 C4]:8",
-        "[C3 G3]:8",
-        "[G2 D3]:8",
-        "[D3 A3]:8"
-      ]
+      "bars": ["D3:8", "C3:8", "D3:8", "A2:8", "F3:8", "C3:8", "G2:8", "D3:8"]
+    },
+    {
+      "id": "chorus_high",
+      "name": "Men's chorus, high (voice pad)",
+      "instrument": "pad",
+      "gain": 0.5,
+      "pan": 0,
+      "echo": 0.25,
+      "bars": ["A3:8", "G3:8", "A3:8", "E3:8", "C4:8", "G3:8", "D3:8", "A3:8"]
     },
     {
       "id": "tune",

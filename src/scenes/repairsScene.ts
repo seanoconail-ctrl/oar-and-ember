@@ -19,6 +19,7 @@ export interface RepairProp {
   readonly y: number;
   readonly after?: number;
   readonly fixed?: boolean;
+  readonly opaque?: boolean;
 }
 
 /** A layer of the boat: its sheet and frame, and (Stage 12) where along the hull, and a held frame. */
@@ -142,6 +143,7 @@ export function repairProps(
   const out: RepairProp[] = [];
   const ship = boatOf(world);
   if (ship !== null && ship.lies.zone === zone) {
+    const launching = launch !== null && launchView(world, { def: launch }) !== null;
     boatLayers(world, launch).forEach((layer, k) => {
       out.push({
         sheet: layer.sheet,
@@ -150,6 +152,8 @@ export function repairProps(
         y: ship.lies.y,
         ...(k > 0 ? { after: 0.01 * k } : {}),
         ...(layer.fixed === true ? { fixed: true } : {}),
+        // During the launch the boat is the scene: it is never cut away over the steerer.
+        ...(launching ? { opaque: true } : {}),
       });
     });
     for (const [repair, laid] of Object.entries(LAID)) {

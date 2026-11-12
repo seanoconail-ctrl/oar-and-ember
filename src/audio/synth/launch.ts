@@ -108,9 +108,13 @@ export const LAUNCH_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Oars working against their thole pins on the recovery, staggered a little along the boat.
-      const to = out(e, 'effects', pan, 0.05);
+      const to = e.ctx.createGain();
+      // Level-matched with the other effects when listened back (npm run audio:render).
+      to.gain.value = 6;
+      to.connect(out(e, 'effects', pan, 0.05));
       const r = rng(1212);
-      for (let k = 0; k < 3; k++) creak(e, at + k * 0.05 + r() * 0.03, to, 0.24, 0.16, 520 + k * 60);
+      for (let k = 0; k < 3; k++)
+        creak(e, at + k * 0.05 + r() * 0.03, to, 0.24, 0.16, 520 + k * 60);
       return 0.45;
     },
   },
@@ -138,7 +142,10 @@ export const LAUNCH_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Wool cloth flogging as the yard goes up and the sail drops loose: quick dull slaps.
-      const to = out(e, 'effects', pan, 0.08);
+      const to = e.ctx.createGain();
+      // Level-matched with the other effects when listened back (npm run audio:render).
+      to.gain.value = 3;
+      to.connect(out(e, 'effects', pan, 0.08));
       const r = rng(1214);
       let t = at;
       for (let k = 0; k < 9; k++) {
@@ -160,7 +167,10 @@ export const LAUNCH_SOUNDS: readonly SoundDef[] = [
     play: (e, at, pan) => {
       // The wind takes the sail: a sharp crack of cloth snapping taut, a deep whump as it fills,
       // and the sheets and stays groaning as they take the strain.
-      const to = out(e, 'effects', pan, 0.15);
+      const to = e.ctx.createGain();
+      // Level-matched with the other effects when listened back (npm run audio:render).
+      to.gain.value = 3;
+      to.connect(out(e, 'effects', pan, 0.15));
       noiseHit(e, at, to, 'bandpass', 1400, 1.4, [
         [0, 0],
         [0.003, 0.7],
@@ -192,12 +202,13 @@ export const LAUNCH_SOUNDS: readonly SoundDef[] = [
       // The chapter's end (Book 11 section 03, stingers): the horn calls twice over a slow roll of
       // the frame drum, and the household's chord rises to rest on D (Dorian). 8 beats at 72.
       const to = e.ctx.createGain();
-      to.gain.value = 2.6;
+      to.gain.value = 1.5;
       to.connect(out(e, 'music', pan, 0.4));
       const beat = 60 / 72;
       e.playNote('horn', 50, at, beat * 1.4, 0.8, to, 0);
       e.playNote('horn', 57, at + beat * 1.5, beat * 2.2, 0.85, to, 0);
-      for (let k = 0; k < 6; k++) e.playNote('drum', 38, at + k * beat * 0.5, 0.4, 0.5 + k * 0.08, to);
+      for (let k = 0; k < 6; k++)
+        e.playNote('drum', 38, at + k * beat * 0.5, 0.4, 0.5 + k * 0.08, to);
       e.playNote('drum', 38, at + beat * 4, 0.6, 1, to);
       for (const m of [50, 57, 62]) e.playNote('pad', m, at + beat * 3.5, beat * 4.5, 0.55, to);
       e.playNote('lyre', 74, at + beat * 4, beat * 2, 0.5, to);

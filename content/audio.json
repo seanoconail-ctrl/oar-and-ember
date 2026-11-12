@@ -678,7 +678,8 @@
         "drone": true,
         "drums": true,
         "creak": true,
-        "chorus": true,
+        "chorus_low": true,
+        "chorus_high": true,
         "tune": true
       }
     },

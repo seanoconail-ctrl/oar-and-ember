@@ -731,7 +731,14 @@ function stepRites(
     const guard = findActor(onFoot, r.guard);
     const atPlace = { zone: place.zone, x: place.x * T + 18, y: place.y * T, facing: 'w' as const };
     if (body === null) return;
-    if (guard === null || !world.household.residents.includes(r.guard) || !awake) {
+    // Stage 12 (decision S12-23): a guard lying downed cannot carry him either.
+    if (
+      guard === null ||
+      !world.household.residents.includes(r.guard) ||
+      !awake ||
+      guard.actor.pose === 'down' ||
+      guard.actor.pose === 'dead'
+    ) {
       // No one to carry him in view: the household brings him.
       placeActor(onFoot, r.body, place.zone, {
         x: place.x * T,

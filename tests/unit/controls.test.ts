@@ -219,9 +219,12 @@ describe('use and interact at a tile', () => {
   it('refuses out-of-reach commands in the simulation too, changing nothing', () => {
     const { sim, events, onFoot } = play('controls', true);
     const own = tileOf(strand, onFoot.player.x, onFoot.player.y);
-    /** The world without the clock, which moves on each tick whatever happens. */
+    /**
+     * The world without the clock, which moves on each tick whatever happens, and the telemetry
+     * (Stage 12), which marks on any tick the milestones already reached (the kit's seax).
+     */
     const world = (): string =>
-      JSON.stringify({ ...sim.state, tick: 0, clock: null, calendar: null });
+      JSON.stringify({ ...sim.state, tick: 0, clock: null, calendar: null, telemetry: null });
     const before = world();
     sim.submit({ type: 'INTERACT_AT', tile: { tx: own.tx - 5, ty: own.ty } });
     sim.submit({ type: 'USE_AT', slot: 1, tile: { tx: own.tx + 4, ty: own.ty } });

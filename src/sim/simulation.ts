@@ -1410,7 +1410,8 @@ export function createSimulation(
       }
     }
     // The launch scene moves the steerer itself (Stage 12).
-    if (!launchActive(state)) stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    if (!launchActive(state))
+      stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
     if (held) p.intent = wanted;
     if (fw !== null) {
       stepFight(fw);

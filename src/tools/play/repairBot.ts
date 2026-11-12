@@ -37,6 +37,11 @@ export class RepairBot extends SearchBot {
     this.#b = b;
   }
 
+  /** Book 10 section 02's time balance (for bots built on this one). */
+  get timeBalance(): TimeBalance {
+    return this.#b;
+  }
+
   get tideOpen(): boolean {
     return tideAt(this.sim.state.calendar, this.#b).tidalGroundOpen;
   }

@@ -612,6 +612,8 @@ export interface CampScene {
     after?: number;
     /** Stage 12: hold this frame rather than playing the state's loop (a sail being hoisted). */
     fixed?: boolean;
+    /** Stage 12: never cut away over the steerer (the boat at the launch, the scene's subject). */
+    opaque?: boolean;
   }[];
   readonly stage: string;
   /** The fire, in tiles: lit or not, and its fuel in loads (it burns low as it runs out). */
@@ -880,7 +882,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         x,
         y,
         layer: 'actor',
-        tall: true,
+        tall: prop.opaque !== true,
         ...(prop.after === undefined ? {} : { sort: y + prop.after }),
       };
       sprites.push(sprite);

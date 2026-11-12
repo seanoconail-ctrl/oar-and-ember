@@ -41,7 +41,14 @@
  *   salt fish at Seal Cave, the boat worked by hand and by Runa until all three repairs are done,
  *   and an extended hold fitted.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-09.json
+ *   Frozen from Stage 12.
+ * - Golden save 10 (schema 10, Stage 12): golden 9's day played on: Thorkel given to the sea with
+ *   his ring, the launch asked for at the boat, the tide waited for, the boat named Grey Seal and
+ *   its sail marked with broad madder stripes, the scene played to the sea map, the map closed: the
+ *   chapter-end save (Book 3 Stage 12's "golden save 2", numbered 10 after the frozen nine,
+ *   decision S12-20).
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-10.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -60,6 +67,7 @@ import { CampBot } from '../play/campBot.ts';
 import { OpeningBot } from '../play/openingBot.ts';
 import { SearchBot } from '../play/searchBot.ts';
 import { RepairBot } from '../play/repairBot.ts';
+import { LaunchBot } from '../play/launchBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
 export const GOLDEN_02 = 'tests/golden-saves/golden-02.json';
@@ -70,6 +78,7 @@ export const GOLDEN_06 = 'tests/golden-saves/golden-06.json';
 export const GOLDEN_07 = 'tests/golden-saves/golden-07.json';
 export const GOLDEN_08 = 'tests/golden-saves/golden-08.json';
 export const GOLDEN_09 = 'tests/golden-saves/golden-09.json';
+export const GOLDEN_10 = 'tests/golden-saves/golden-10.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -148,6 +157,41 @@ export function goldenWorld09(): WorldState {
   bot.workUntil(() => sim.state.facts['ch1.boat_ready'] === true, 400);
   bot.fit('HOLD');
   return sim.state;
+}
+
+/** Golden save 10 (Stage 12): golden 9's day on to the rites, the launch and the chapter's end. */
+export function goldenWorld10(): WorldState {
+  const balance = loadBalanceJson();
+  const b = parseTimeBalance(balance);
+  const { content } = loadContentFromDisk();
+  const land = landContext(content, balance);
+  const camp = campContext(content);
+  if (camp === null || land.searches == null || land.repairs == null)
+    throw new Error('no camp, searches or repairs');
+  const world = goldenWorld09();
+  const sim = createSimulation(b, world, land);
+  const bot = new LaunchBot(sim, b, land, camp, land.searches, land.repairs);
+  // In the evening Hild is by the camp's fire, near her father on his bier.
+  bot.goToZone('ZONE_SK_MACHAIR');
+  bot.waitUntil(18 * 60 + 30);
+  bot.rites('SEA');
+  bot.goToZone('ZONE_SK_STRAND');
+  bot.waitForWater();
+  bot.askToLaunch();
+  bot.launch('Grey Seal', 'stripes_broad', 'madder', 20);
+  bot.step(60);
+  return sim.state;
+}
+
+export function goldenSave10(): SaveFile {
+  return writeSave(goldenWorld10(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-10',
+    label: 'golden-10',
+    sequence: 1,
+    savedAt: '2026-11-12T12:00:00.000Z',
+  });
 }
 
 export function goldenSave09(): SaveFile {
@@ -265,7 +309,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  // Golden saves 1 to 8 are frozen (Book 2 section 20): only the newest is written.
-  writeFileSync(join(REPO_ROOT, GOLDEN_09), `${JSON.stringify(goldenSave09(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_09}`);
+  // Golden saves 1 to 9 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_10), `${JSON.stringify(goldenSave10(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_10}`);
 }

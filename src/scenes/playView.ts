@@ -391,7 +391,16 @@ export function startPlay(
       else if (e.code === 'KeyN') window.location.reload();
       return;
     }
+    // Stage 12: the sea map closes with interact or Enter (as with Escape).
+    if (mapMode !== null && (e.code === 'Enter' || keyCodes('interact').includes(e.code))) {
+      session.menus.close();
+      return;
+    }
     if (session.menus.open !== 'system') return;
+    if (e.code === 'KeyT') {
+      timingsOpen = !timingsOpen;
+      return;
+    }
     if (e.code === 'KeyG') {
       // The gore setting (Book 7 section 12): full, low, off, and round again.
       const gore = display.gore === 2 ? 1 : display.gore === 1 ? 0 : 2;
@@ -588,20 +597,19 @@ export function startPlay(
     // Stage 12: the Ship theme from the heave to the sea map (Book 11 section 04).
     const phaseNow = launchPhase(sim.state);
     const launching =
-      mapMode === 'reveal' ||
-      (phaseNow !== null && phaseNow !== 'NAMING' && phaseNow !== 'DONE');
+      mapMode === 'reveal' || (phaseNow !== null && phaseNow !== 'NAMING' && phaseNow !== 'DONE');
     const want =
       sim.state.gameOver !== null
         ? null
         : launching
           ? 'MUS_LAUNCH'
           : inFight
-          ? 'MUS_COMBAT_1'
-          : (placeMusic?.want(engine.now, {
-              allowed: sim.state.facts[FACT_HILD_SAFE] === true,
-              home: atHome,
-              phase,
-            }) ?? null);
+            ? 'MUS_COMBAT_1'
+            : (placeMusic?.want(engine.now, {
+                allowed: sim.state.facts[FACT_HILD_SAFE] === true,
+                home: atHome,
+                phase,
+              }) ?? null);
     if (want === null) {
       if (audio.director.state !== null) audio.silence(engine.now);
     } else if (audio.director.state !== want) audio.play(want, engine.now);
@@ -1213,6 +1221,167 @@ export function startPlay(
   let fastFrames = 0;
   let steppedDown = false;
   let lastFrameAt = -1;
+  /** Stage 12: the launch's screens, kept in step with the menus and the simulation. */
+  const closeMap = (now: number): void => {
+    if (mapMode === 'reveal') sim.submit({ type: 'CLOSE_SEA_MAP' });
+    mapMode = null;
+    mapClosedAt = now;
+    const region = overlay.region('seamap');
+    region.replaceChildren();
+    region.dataset['shown'] = '';
+  };
+  // Tests and captures only (`screen=readiness|naming|mark`, with `launch=open`): open a launch
+  // screen on the first frame, as looking the boat over and choosing to launch would.
+  let screenHook = new URLSearchParams(window.location.search).get('screen');
+  const updateLaunchUi = (now: number): void => {
+    if (launchDef === null || launchCtx === null) return;
+    if (screenHook !== null) {
+      const want = screenHook;
+      screenHook = null;
+      if (
+        (want === 'readiness' || want === 'naming' || want === 'mark') &&
+        session.menus.request('planning').ok
+      ) {
+        pendingName = t(launchDef.names.suggestions[1] ?? launchDef.names.defaultKey);
+        openLaunch(want);
+      }
+    }
+    const open = session.menus.open;
+    const ship = sim.state.ships['flagship'];
+    // A screen whose menu was closed (Escape): the readiness screen is left; once the launch is
+    // confirmed, its name and mark are asked again, for there is no going back.
+    if (launchUi === 'readiness' && open !== 'planning') openLaunch('none');
+    if ((launchUi === 'naming' || launchUi === 'mark') && open !== 'planning')
+      session.menus.request('planning');
+    if (launchUi === 'chapter' && open !== 'report') openLaunch('none');
+    // A gate started with no name or mark yet (a checkpoint loaded part-way): ask for them.
+    if (
+      launchUi === 'none' &&
+      launchPhase(sim.state) === 'NAMING' &&
+      ship !== undefined &&
+      (ship.name === null || ship.marks.sail === null)
+    )
+      if (session.menus.request('planning').ok) {
+        pendingName = ship.name ?? '';
+        openLaunch(ship.name === null ? 'naming' : 'mark');
+      }
+    // The sea map: the reveal at the launch, or looked at again with the map key afterwards.
+    if (mapMode !== null && open !== 'map') closeMap(now);
+    if (
+      mapMode === null &&
+      open === 'map' &&
+      sim.state.facts[FACT_SMOKE] === true &&
+      now - mapClosedAt > 150
+    ) {
+      mapMode = 'view';
+      mapOpenedAt = now;
+    }
+    const region = overlay.region('launch');
+    const key = `${launchUi}|${open ?? ''}`;
+    if (launchShown === key) return;
+    launchShown = key;
+    root.dataset['launchUi'] = launchUi;
+    switch (launchUi) {
+      case 'none':
+        region.replaceChildren();
+        return;
+      case 'readiness':
+        region.replaceChildren(
+          readinessPanel(
+            document,
+            readinessView(sim.state, launchCtx, land, b),
+            words,
+            { start: keys('interact'), back: 'Esc' },
+            () => {
+              openLaunch('naming');
+            },
+            () => {
+              session.menus.close();
+              openLaunch('none');
+            },
+          ),
+        );
+        return;
+      case 'naming':
+        region.replaceChildren(
+          namingPanel(document, launchDef, words, atlases, (name) => {
+            pendingName =
+              cleanShipName(name, launchDef.names.maxLength) ?? t(launchDef.names.defaultKey);
+            openLaunch('mark');
+          }),
+        );
+        return;
+      case 'mark':
+        region.replaceChildren(
+          markPanel(document, launchDef, words, atlases, pendingName, (pattern, dye) => {
+            // Confirmed: the gate starts, the boat is named and marked, and the scene plays.
+            if (sim.state.gates[GATE_LAUNCH]?.status === 'OPEN')
+              sim.submit({ type: 'START_GATE', gate: GATE_LAUNCH });
+            if (sim.state.ships['flagship']?.name == null)
+              sim.submit({ type: 'NAME_SHIP', name: pendingName });
+            sim.submit({ type: 'MARK_SAIL', pattern, dye });
+            openLaunch('none');
+            session.menus.close();
+          }),
+        );
+        return;
+      case 'chapter':
+        region.replaceChildren(
+          chapterPanel(
+            document,
+            words,
+            sim.state.ships['flagship']?.name ?? '',
+            chapterEnd?.played ?? 0,
+            chapterEnd?.fight ?? null,
+            keys('interact'),
+            () => {
+              session.menus.close();
+              openLaunch('none');
+            },
+          ),
+        );
+        return;
+    }
+  };
+  /** The sea map's words over the chart: its title, the places known, and how to leave it. */
+  const seaMapLabels = (revealed: number): void => {
+    const region = overlay.region('seamap');
+    if (launchDef === null) return;
+    const sm = launchDef.seaMap;
+    const home = sm.places[sm.home];
+    const smoke = sm.places[sm.smoke];
+    if (home === undefined || smoke === undefined) return;
+    const reach = Math.hypot(smoke.x - home.x, smoke.y - home.y) / (Math.hypot(640, 360) * 0.75);
+    const showSmoke = revealed >= reach;
+    const shown = `${mapMode ?? ''}|${showSmoke}|${keys('interact')}`;
+    if (region.dataset['shown'] === shown) return;
+    region.dataset['shown'] = shown;
+    const at = (x: number, y: number, text: string, cls: string): HTMLElement => {
+      const l = document.createElement('div');
+      l.className = `label ${cls}`;
+      l.style.left = `${(x / LOGICAL_WIDTH) * 100}%`;
+      l.style.top = `${(y / LOGICAL_HEIGHT) * 100}%`;
+      l.textContent = text;
+      return l;
+    };
+    const title = document.createElement('div');
+    title.className = 'title';
+    title.textContent = t('ui.seamap.title');
+    const parts: HTMLElement[] = [title, at(home.x, home.y + 22, t('ui.seamap.home'), 'home')];
+    if (showSmoke) parts.push(at(smoke.x, smoke.y + 8, t('ui.seamap.smoke'), 'smoke'));
+    const foot = document.createElement('div');
+    foot.className = 'foot';
+    const note = document.createElement('p');
+    note.textContent = t('ui.seamap.readonly');
+    const close = document.createElement('button');
+    close.textContent = t('ui.seamap.close', { key: keys('interact') });
+    close.addEventListener('click', () => {
+      session.menus.close();
+    });
+    foot.append(note, close);
+    parts.push(foot);
+    region.replaceChildren(...parts);
+  };
   const frame = (now: number): void => {
     frameNow = now;
     const workStart = performance.now();
@@ -1415,6 +1584,11 @@ export function startPlay(
       promptKind = 'timing';
     }
     if (notice !== null && notice.until < now) notice = null;
+    // Stage 12: the launch scene has the steerer; nothing is offered to do while it plays.
+    if (launchDef !== null && launchView(sim.state, { def: launchDef }) !== null) {
+      prompt = '';
+      promptKind = '';
+    }
     overlay.region('prompt').textContent = notice?.text ?? prompt;
 
     subtitles = subtitles.filter((s) => s.until > now);
@@ -1461,11 +1635,11 @@ export function startPlay(
     root.dataset['help'] = helpOpen ? String(sim.state.player.tipsSeen.length) : '';
     root.dataset['tipsSeen'] = sim.state.player.tipsSeen.join(',');
     overlay.region('menu').textContent =
-      open === null
+      open === null || mapMode !== null || launchUi !== 'none'
         ? ''
         : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
             open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })}`
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })} ${t('ui.system.timings', { key: 'T' })}`
               : ''
           }`;
 
@@ -1494,6 +1668,20 @@ export function startPlay(
           .map(([id, o]) => [id, o.order]),
       ),
       steererBloodied: steererBloodied(),
+      ...((): {
+        launch?: { hidden: string[]; steererHidden: boolean; steererLoop: string | null };
+      } => {
+        const lv = launchDef === null ? null : launchView(sim.state, { def: launchDef });
+        return lv === null
+          ? {}
+          : {
+              launch: {
+                hidden: [...lv.aboard],
+                steererHidden: lv.steererAboard,
+                steererLoop: lv.heaving ? 'gather' : null,
+              },
+            };
+      })(),
       ...(content.combat === null
         ? {}
         : {
@@ -1582,6 +1770,8 @@ export function startPlay(
             },
     };
     hud.draw(hudFull);
+    // Stage 12: the sea map fills the frame; the hotbar and clock are not drawn over it.
+    hud.canvas.style.visibility = mapMode === null ? '' : 'hidden';
     // The words beside them on the text overlay (Book 8 section 10: the plain reason).
     const season = seasonOf(sim.state.calendar.day);
     const clockText2 = t('ui.clock.text', {
@@ -1727,7 +1917,22 @@ export function startPlay(
     root.dataset['gore'] = String(display.gore);
     root.dataset['music'] = audio?.director.state ?? '';
     if (frames < 3) mark(`scene${frames}`);
-    renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
+    // Stage 12: the sea map (read-only) is drawn in place of the scene while it is open.
+    const chart = mapMode === null ? null : seaMapView();
+    if (chart !== null) {
+      const f = chart.frame(
+        (now - mapOpenedAt) / 1000,
+        mapMode === 'reveal' ? 0.4 : null,
+        markState(),
+        display.reducedMotion,
+      );
+      presenter.present(f.rgba);
+      seaMapLabels(f.revealed);
+      root.dataset['seamap'] = f.revealed.toFixed(2);
+    } else {
+      renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
+      root.dataset['seamap'] = '';
+    }
     if (frames < 3) {
       mark(`frame${frames}`);
       root.dataset['startup'] = JSON.stringify(marks);
@@ -1824,6 +2029,30 @@ export function startPlay(
       .map((l) => l.frame.split('/')[0] ?? '')
       .join('+');
     root.dataset['barks'] = String(barksHeard);
+    // Stage 12: the launch's gate and scene, the boat's name and mark, the chapter, the timings.
+    root.dataset['gate'] = sim.state.gates[GATE_LAUNCH]?.status ?? '';
+    root.dataset['launch'] = launchPhase(sim.state) ?? '';
+    root.dataset['launchUi'] = launchUi;
+    root.dataset['shipName'] = sim.state.ships['flagship']?.name ?? '';
+    root.dataset['sail'] = sim.state.ships['flagship']?.marks.sail ?? '';
+    root.dataset['chapter'] = activeChapter(sim.state) ?? '';
+    const report = telemetryReport(sim.state);
+    root.dataset['telemetry'] = JSON.stringify({
+      now: Math.round(report.now),
+      held: Math.round(report.held),
+      marks: Object.fromEntries(report.marks.map((m) => [m.key, Math.round(m.seconds)])),
+    });
+    // The timings (system menu T, or ?timings for a dev readout that stays up).
+    const timings = overlay.region('timings');
+    const showTimings =
+      timingsOpen &&
+      (session.menus.open === 'system' ||
+        new URLSearchParams(window.location.search).has('timings'));
+    const timingsKey = showTimings ? `${Math.floor(report.now)}|${report.marks.length}` : '';
+    if (timingsKey !== timingsShown) {
+      timingsShown = timingsKey;
+      timings.replaceChildren(...(showTimings ? [timingsPanel(document, words, report, 'T')] : []));
+    }
     root.dataset['scene'] = String(sim.state.facts['scene.beat_1_oddi_theft'] ?? '');
     canvas.setAttribute(
       'aria-label',

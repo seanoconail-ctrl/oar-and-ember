@@ -78,6 +78,7 @@ Modal, mostly Dorian and Aeolian with drones. The Gaelic coast leans pentatonic 
 | `MUS_SEABATTLE` | Sea battle | Rowing drums and horn calls |
 | `MUS_SUPERNATURAL_<power>` | Signs and encounters | Each power's motif |
 | `MUS_COUNCIL` | Kilbrecc council | Restrained, ceremonial |
+| `MUS_LAUNCH` | The launch (Chapter 1's gate), to the sea map | The Ship theme: frame drum on the stroke, oar creak, men's chorus (decision S12-17) |
 | `MUS_RETURN_SKARVHOLM` | The late-game expedition | The island theme broken and salted (section 04) |
 | `MUS_FINALE_*` | Chapter 8 | All themes converging |
 

@@ -40,18 +40,12 @@ export { GATE_LAUNCH };
 
 const T = 24;
 const TICKS = 60;
+/** The coastal boat's beam on the ground, in tiles (its far side behind the keel line). */
+const BEAM = 1;
 
 /** The launch scene's phase (fact `launch.phase`). */
 export type LaunchPhase =
-  | 'NAMING'
-  | 'GATHER'
-  | 'HEAVE'
-  | 'SLIDE'
-  | 'BOARD'
-  | 'HOIST'
-  | 'ROW'
-  | 'MAP'
-  | 'DONE';
+  'NAMING' | 'GATHER' | 'HEAVE' | 'SLIDE' | 'BOARD' | 'HOIST' | 'ROW' | 'MAP' | 'DONE';
 
 export const FACT_PHASE = 'launch.phase';
 const FACT_SINCE = 'launch.since';
@@ -189,11 +183,20 @@ export function floatLine(
   const need = DEPTH_BANDS.indexOf(ctx.b.floats);
   // The keel's wetted length: stern to stem, inside the posts (the T1 hull is 7 tiles).
   const xs = [-2.6, -1.3, 0, 1.3, 2.6].map((dx) => (berth.x + dx) * T);
+  const wet = DEPTH_BANDS.indexOf('ANKLE');
   for (let d = 0; d <= ctx.b.skidsTiles + 1e-9; d += 0.25) {
     const y = (berth.y + d) * T;
+    // The keel in water deep enough, and water along the hull's far side too (its beam, a tile
+    // behind the keel line), so the water drawn round the hull is water where it floats.
     const ok = xs.every((x) => {
       const band = bandAt(land.water, elevation, x, y, level);
-      return band !== null && DEPTH_BANDS.indexOf(band.band) >= need;
+      const far = bandAt(land.water, elevation, x, y - BEAM * T, level);
+      return (
+        band !== null &&
+        DEPTH_BANDS.indexOf(band.band) >= need &&
+        far !== null &&
+        DEPTH_BANDS.indexOf(far.band) >= wet
+      );
     });
     if (ok) return berth.y + d;
   }
@@ -287,7 +290,8 @@ export function readinessView(
             vars: {},
             list: { kind: 'fitting', ids: [fitting] },
           });
-        else lines.push({ ...base, state: 'READY', textKey: 'ui.gate.launch.ship.ready', vars: {} });
+        else
+          lines.push({ ...base, state: 'READY', textKey: 'ui.gate.launch.ship.ready', vars: {} });
         break;
       }
       case 'TIDE':
@@ -314,7 +318,9 @@ export function readinessView(
           textKey: crew.length >= oars ? 'ui.gate.launch.crew.ready' : 'ui.gate.launch.crew.short',
           vars: { count: crew.length, oars },
           list: { kind: 'person', ids: crew },
-          ...(lost.length === 0 ? {} : { extra: { textKey: 'ui.gate.launch.crew.dead', ids: lost } }),
+          ...(lost.length === 0
+            ? {}
+            : { extra: { textKey: 'ui.gate.launch.crew.dead', ids: lost } }),
         });
         break;
       }
@@ -428,12 +434,12 @@ export function startLaunch(
  * spaces, hyphens and apostrophes only; spaces collapsed; at most `max` characters. Empty: null.
  */
 export function cleanShipName(raw: string, max: number): string | null {
-  const kept = [...raw.normalize('NFC')]
+  const kept = (raw.normalize('NFC').match(/./gsu) ?? [])
     .filter((c) => /[\p{L}\p{M}' \-’]/u.test(c))
     .join('')
     .replace(/\s+/g, ' ')
     .replace(/^[\s'’-]+|[\s'’-]+$/g, '');
-  const name = [...kept].slice(0, max).join('').trim();
+  const name = (kept.match(/./gsu) ?? []).slice(0, max).join('').trim();
   return name === '' ? null : name;
 }
 
@@ -559,11 +565,7 @@ function stand(
  * One tick of the launch: the gate opens when its conditions hold; once started and the boat is
  * named and marked, the scene plays.
  */
-export function stepLaunch(
-  world: WorldState,
-  ctx: LaunchContext,
-  emit: LaunchEmit,
-): void {
+export function stepLaunch(world: WorldState, ctx: LaunchContext, emit: LaunchEmit): void {
   const gate = gateOf(world, ctx);
   if (gate.status === 'CLOSED' && opensNow(world, ctx)) {
     gate.status = 'OPEN';
@@ -726,8 +728,7 @@ function reveal(
   phaseTo(world, 'MAP');
   gate.status = 'PASSED';
   ship.history.push({ day: world.calendar.day, kind: 'LAUNCHED', what: ship.name ?? '' });
-  for (const place of ctx.def.seaMap.rumoured)
-    if (world.knowledge.places[place] === undefined) world.knowledge.places[place] = 'RUMOURED';
+  for (const place of ctx.def.seaMap.rumoured) world.knowledge.places[place] ??= 'RUMOURED';
   setFact(world, FACT_SMOKE, true);
   setFact(world, FACT_LAUNCHED, true);
   // The tutorial guard ends at the launch (Book 10 tutorialGuard; decision S7-7).
@@ -770,7 +771,15 @@ export function closeSeaMap(
   const d = ctx.def.drawnUp;
   crew.forEach((id, i) => {
     const spot = d.crew[i % Math.max(1, d.crew.length)] ?? [berth.x, berth.y + 2];
-    stand(world, id, ship.lies.zone, (spot[0] ?? berth.x) * T, (spot[1] ?? berth.y) * T, 'idle', false);
+    stand(
+      world,
+      id,
+      ship.lies.zone,
+      (spot[0] ?? berth.x) * T,
+      (spot[1] ?? berth.y) * T,
+      'idle',
+      false,
+    );
   });
   onFoot.player.x = d.steerer.x * T;
   onFoot.player.y = d.steerer.y * T;

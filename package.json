@@ -1,6 +1,6 @@
 {
   "name": "oar-and-ember",
-  "version": "0.1.0",
+  "version": "0.12.0",
   "private": true,
   "description": "A pixel-art Viking settlement RPG for desktop browsers.",
   "type": "module",

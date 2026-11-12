@@ -1007,9 +1007,7 @@ const launchCheck = object({
   marks: object({
     patterns: arrayOf(object({ key: text, nameKey: ref('string'), dyed: bool })),
     dyes: arrayOf(object({ key: text, nameKey: ref('string') })),
-    likeness: arrayOf(
-      object({ pattern: text, dye: text, noteKey: ref('string') }, ['dye']),
-    ),
+    likeness: arrayOf(object({ pattern: text, dye: text, noteKey: ref('string') }, ['dye'])),
   }),
   seaMap: object({
     rumoured: arrayOf(ref('place')),

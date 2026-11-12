@@ -4,6 +4,8 @@
  */
 import type { Content } from '../content/registry.ts';
 import { parseShipBalance } from '../content/shipBalance.ts';
+import { parseTimeBalance } from '../content/balance.ts';
+import { markSail, nameShip, startLaunch } from '../sim/narrative/launch.ts';
 import type { Id } from '../core/ids.ts';
 import { FACT_AT_BROCH, FACT_FIRE_LIT, FACT_HILD_TENDED } from '../sim/home/camp.ts';
 import type { SiteUse } from '../sim/home/camp.ts';
@@ -219,6 +221,11 @@ export function campHooks(
   // (`ship=hull,rig,oar` repairs done, `fit=hold|bow`, `lay=boards,rig,oar` materials by it).
   if (params.get('crew') === '1') seedCrew(world, content, land, params.get('wreckers') ?? 'cave');
   seedShip(world, content, params);
+  // Stage 12 (tests and captures): the launch (`launch=open|naming|scene`): the boat ready and the
+  // gate open; or the gate started with the boat to be named; or named (`name=`) and marked
+  // (`mark=raven:woad`), so the scene plays from the first tick. The tide must be in (`time=`).
+  const launchParam = params.get('launch');
+  if (launchParam !== null) seedLaunch(world, content, land, launchParam, params);
   // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
   const zone = params.get('zone');
   const zoneTo = zone === null ? undefined : land.maps.get(zone);
@@ -353,4 +360,39 @@ function seedShip(world: WorldState, content: Content, params: URLSearchParams):
   const fit = params.get('fit');
   if (fit === 'hold') ship.fittings['MIDSHIP'] = 'FIT_EXTENDED_HOLD';
   if (fit === 'bow') ship.fittings['BOW'] = 'FIT_RAISED_BOW_PLATFORM';
+}
+
+/** Stage 12 hooks: the launch open, started or under way (`launch=open|naming|scene`). */
+function seedLaunch(
+  world: WorldState,
+  content: Content,
+  land: SimWorldContext,
+  which: string,
+  params: URLSearchParams,
+): void {
+  const ctx = land.launch ?? null;
+  const ship = world.ships['flagship'];
+  if (ctx === null || ship === undefined) return;
+  for (const r of ['HULL', 'RIGGING', 'STEERING_OAR'] as const)
+    ship.repairs[r] = { stage: 'DONE', progress: 0, day: 1 };
+  ship.integrity = parseShipBalance(content.balance).repairs.patchedIntegrity;
+  world.facts['ch1.boat_ready'] = true;
+  world.facts['repair.open'] = true;
+  // Hild's first days' lines are long said by the launch.
+  world.facts['ch1.fishing_said'] = true;
+  world.facts['ch1.evening_said'] = true;
+  world.gates[ctx.def.gate] = {
+    status: 'OPEN',
+    openedDay: world.calendar.day,
+    pressureSteps: 0,
+    retriesUsed: 0,
+  };
+  if (which === 'open') return;
+  const b = parseTimeBalance(content.balance);
+  const quiet = (): void => undefined;
+  startLaunch(world, ctx, land, b, { advance: quiet, deed: quiet }, quiet);
+  if (which === 'naming') return;
+  nameShip(world, ctx, params.get('name') ?? 'Grey Seal', quiet);
+  const [pattern = 'raven', dye = null] = (params.get('mark') ?? 'raven:woad').split(':');
+  markSail(world, ctx, pattern, dye, quiet);
 }

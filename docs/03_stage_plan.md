@@ -296,7 +296,7 @@ the fitting choice and the rites. Test stats, sprites and reversibility.
 ### Stage 12: Launch and the Build 1 gate
 **Goal:** a fulfilling end to Chapter 1.
 **Prerequisites:** Stage 11.
-**Deliverables:** the launch as the first story gate, with its readiness screen (design addendum 2.3 section 4); naming the boat and choosing a sail mark; the launch scene and its music; the read-only sea-map reveal; chapter-end save; golden save 2; a playtest script for the user.
+**Deliverables:** the launch as the first story gate, with its readiness screen (design addendum 2.3 section 4); naming the boat and choosing a sail mark; the launch scene and its music; the read-only sea-map reveal; chapter-end save; golden save 2 (numbered 10 in `tests/golden-saves/`, after the nine frozen ones: decision S12-20); a playtest script for the user.
 **Acceptance checks:**
 1. Chapter 1 takes 45 to 60 minutes for a new player, with combat inside 25 minutes (measured by telemetry).
 2. User playtest: the chapter is finished and the user wants to launch.
