@@ -11,9 +11,36 @@
  * (src/scenes/camp.ts); at 10:00 on day 1 the tide floats the boat.
  */
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { approach, attr, overlay, startPlay, step, stepUntil } from './strand.ts';
 
 const T = 24;
+
+/**
+ * Looks the boat over and chooses to launch it. A resident walking past may take the prompt or
+ * the talk first, so it waits in game time for the boat's own prompt and words, leaving any other
+ * talk and trying again.
+ */
+async function askToLaunch(page: Page): Promise<void> {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    await approach(page, 39.8 * T, 28.2 * T);
+    await stepUntil(page, 'prompt', 'look_boat', 30);
+    if ((await attr(page, 'prompt')) !== 'look_boat') continue;
+    await page.keyboard.press('KeyE');
+    await step(page, 2);
+    if ((await attr(page, 'talk')) !== 'SHIP') {
+      await page.keyboard.press('Space');
+      await stepUntil(page, 'talk', '', 10);
+      continue;
+    }
+    await stepUntil(page, 'talk-options', /p_steerer\.boat\.launch/, 30);
+    const options = (await attr(page, 'talk-options')).split('|');
+    await page.keyboard.press(`Digit${options.indexOf('p_steerer.boat.launch') + 1}`);
+    await stepUntil(page, 'launch-ui', 'readiness', 5);
+    return;
+  }
+  throw new Error('the boat could not be looked over');
+}
 const AT = 'capture&camp=broch&crew=1&time=10:00&zone=ZONE_SK_STRAND';
 const OPEN = `${AT}&launch=open`;
 
@@ -25,15 +52,9 @@ test.describe('Stage 12: the launch and the Build 1 gate', () => {
   }) => {
     await startPlay(page, 'A', `${OPEN}&at=40.5,28.4`);
     await step(page, 2);
+    await stepUntil(page, 'gate', 'OPEN', 5);
     expect(await attr(page, 'gate')).toBe('OPEN');
-    await approach(page, 39.8 * T, 28.2 * T);
-    await stepUntil(page, 'prompt', 'look_boat', 3);
-    await page.keyboard.press('KeyE');
-    await step(page, 2);
-    await stepUntil(page, 'talk-options', /p_steerer\.boat\.launch/, 30);
-    const options = (await attr(page, 'talk-options')).split('|');
-    await page.keyboard.press(`Digit${options.indexOf('p_steerer.boat.launch') + 1}`);
-    await step(page, 3);
+    await askToLaunch(page);
     // The readiness screen: its lines, the warning, and time stopped (the planning menu).
     const ready = page.locator('[data-panel=readiness]');
     await expect(ready).toBeVisible();
@@ -72,7 +93,7 @@ test.describe('Stage 12: the launch and the Build 1 gate', () => {
     expect(await attr(page, 'music')).toBe('MUS_LAUNCH');
     // The sea map, drawn in place of the scene; read-only; the smoke appears as it is revealed.
     await stepUntil(page, 'launch', 'MAP', 200);
-    await stepUntil(page, 'seamap', /^(0\.[5-9]\d|1\.00)$/, 120);
+    await stepUntil(page, 'seamap', /^(0\.[5-9]\d|1\.00)$/, 30);
     expect(await attr(page, 'menu')).toBe('map');
     await expect(page.locator('[data-region=seamap] .label.smoke')).toBeVisible();
     expect(await attr(page, 'chapter')).toBe('CH_2_FIRST_RAID');
@@ -98,14 +119,7 @@ test.describe('Stage 12: the launch and the Build 1 gate', () => {
   }) => {
     await startPlay(page, 'A', `${OPEN}&at=40.5,28.4`);
     await step(page, 2);
-    await approach(page, 39.8 * T, 28.2 * T);
-    await stepUntil(page, 'prompt', 'look_boat', 3);
-    await page.keyboard.press('KeyE');
-    await step(page, 2);
-    await stepUntil(page, 'talk-options', /p_steerer\.boat\.launch/, 30);
-    const options = (await attr(page, 'talk-options')).split('|');
-    await page.keyboard.press(`Digit${options.indexOf('p_steerer.boat.launch') + 1}`);
-    await step(page, 3);
+    await askToLaunch(page);
     await expect(page.locator('[data-panel=readiness]')).toBeVisible();
     await page.locator('[data-panel=readiness] [data-action=back]').click();
     await step(page, 2);
@@ -113,7 +127,9 @@ test.describe('Stage 12: the launch and the Build 1 gate', () => {
     expect(await attr(page, 'gate')).toBe('OPEN');
   });
 
-  test('a launch begun with no name asks for it (a checkpoint loaded part-way)', async ({ page }) => {
+  test('a launch begun with no name asks for it (a checkpoint loaded part-way)', async ({
+    page,
+  }) => {
     await startPlay(page, 'A', `${AT}&launch=naming&at=41.6,29.4`);
     await step(page, 2);
     const naming = page.locator('[data-panel=naming]');

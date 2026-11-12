@@ -116,6 +116,14 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     id.toLowerCase().replace(/_/g, '-'),
   ]),
+  ...(['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN'] as const).map(
+    (id): [string, number, Record<string, unknown>, string] => [
+      `resident:${id}`,
+      5,
+      {},
+      `voice-${id.slice(2).toLowerCase().replace('_', '-')}`,
+    ],
+  ),
   ['call:MUS_STINGER_DISPUTE', 3, {}, 'stinger-dispute'],
   ['call:MUS_STINGER_JUDGEMENT', 3, {}, 'stinger-judgement'],
   // Decision AU-10: footsteps by surface, walking and running.

@@ -334,9 +334,11 @@ export function readinessView(
           textKey:
             days <= 0
               ? 'ui.gate.launch.stores.none'
-              : days >= ctx.b.storesShortDays
-                ? 'ui.gate.launch.stores.ready'
-                : 'ui.gate.launch.stores.short',
+              : days === 1
+                ? 'ui.gate.launch.stores.one'
+                : days >= ctx.b.storesShortDays
+                  ? 'ui.gate.launch.stores.ready'
+                  : 'ui.gate.launch.stores.short',
           vars: { days },
         });
         break;

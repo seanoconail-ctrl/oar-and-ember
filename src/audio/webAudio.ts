@@ -16,7 +16,7 @@ import { allInstrumentSamples, SynthEngine, warmSamples } from './synth/engine.t
 import { footstep, isSurface } from './synth/footsteps.ts';
 import type { Gait } from './synth/footsteps.ts';
 import { PiecePlayer } from './synth/sequencer.ts';
-import { speak, VOICES } from './synth/voice.ts';
+import { speak, voiceOf } from './synth/voice.ts';
 import type { MusicAction } from './music.ts';
 import type { AudioSink, Bus } from './router.ts';
 
@@ -295,7 +295,7 @@ export class WebAudioEngine implements AudioSink {
   /** A line spoken in the speaker's voice blips (Book 11 section 08), if they have a voice. */
   voice(speaker: string, text: string, pan: number): void {
     const e = this.#e;
-    if (e === null || VOICES[speaker] === undefined) return;
+    if (e === null || voiceOf(speaker) === undefined) return;
     const at = e.ctx.currentTime + 0.03;
     const length = speak(e, at, speaker, text, pan);
     // Music ducks under the voice.

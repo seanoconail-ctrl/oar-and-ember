@@ -3911,5 +3911,8 @@
   },
   "ui.sound.launch": {
     "text": "Stage 12: the launch"
+  },
+  "ui.gate.launch.stores.one": {
+    "text": "Food for only one day in store."
   }
 }

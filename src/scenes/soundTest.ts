@@ -28,7 +28,7 @@ import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
 import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
 import { LAUNCH_SOUNDS } from '../audio/synth/launch.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
-import { speak, VOICES } from '../audio/synth/voice.ts';
+import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
@@ -278,7 +278,7 @@ export function startItem(
   }
   if (kind === 'resident') {
     // Stage 8: every resident's voice, speaking the sound test's own line (decision S8-25).
-    if (VOICES[id] === undefined) throw new Error(`no voice ${id}`);
+    if (voiceOf(id) === undefined) throw new Error(`no voice ${id}`);
     speak(e, at, id, formatString(strings, 'soundtest.line.resident'));
     return { schedule: () => undefined, stop: () => undefined };
   }
@@ -799,6 +799,14 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     play('music:ship', {}, 'caption.music.launch');
   });
   launch.append(shipTheme);
+  // The wreck-scavengers' voices (they speak at the sheepfold and at Seal Cave).
+  for (const id of Object.keys(OTHER_VOICES)) {
+    const b = el('button', { 'data-launch-voice': id }, t(`person.short.${id.toLowerCase()}`));
+    b.addEventListener('click', () => {
+      oneShot(`resident:${id}`, `person.short.${id.toLowerCase()}`);
+    });
+    launch.append(b);
+  }
   for (const def of LAUNCH_SOUNDS) {
     const b = el('button', { 'data-launch-sound': def.id }, t(def.captionKey));
     b.addEventListener('click', () => {
@@ -957,7 +965,11 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     /** Stage 11: Seal Cave, and every repair, fitting and rite sound, and the lament. */
     repairItems: ['repairs:sealcave', ...REPAIR_SOUNDS.map((d) => `repairs:${d.id}`)],
     /** Stage 12: the launch's music and sounds, and the chapter's end. */
-    launchItems: ['music:ship', ...LAUNCH_SOUNDS.map((d) => `launch:${d.id}`)],
+    launchItems: [
+      'music:ship',
+      ...LAUNCH_SOUNDS.map((d) => `launch:${d.id}`),
+      ...Object.keys(OTHER_VOICES).map((id) => `resident:${id}`),
+    ],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [
       ...(['dawn', 'day', 'dusk', 'night'] as const).map((p) => `home:${p}`),

@@ -252,8 +252,54 @@ export function syllables(text: string): { vowel: string; pause: number; end: st
 }
 
 /** Speaks `text` in blips from `at`; returns the length in seconds. */
+/**
+ * Stage 12: the other speakers of Chapter 1 (Book 11 section 08: every speaker has their own voice).
+ * The three wreck-scavengers speak at the sheepfold and at Seal Cave; each sounds as who they are
+ * (decision S9-12), apart from every resident's voice.
+ */
+export const OTHER_VOICES: Readonly<Record<string, VoiceProfile>> = {
+  // Ketill: the big one, their leader, hot-tempered; a low bark that rises when crossed.
+  E_WRECKER_KETILL: {
+    pitch: 98,
+    wave: 'sawtooth',
+    size: 0.78,
+    syllable: 0.085,
+    gap: 0.035,
+    lilt: 0.3,
+    tilt: 0.12,
+    gain: 0.95,
+  },
+  // Svart: greedy and sly; a thin, sliding middle voice.
+  E_WRECKER_SVART: {
+    pitch: 150,
+    wave: 'triangle',
+    size: 0.9,
+    syllable: 0.068,
+    gap: 0.03,
+    lilt: 0.42,
+    tilt: -0.04,
+    gain: 1.25,
+  },
+  // Conn: the youngest of the three men, frightened; a light, quick voice.
+  E_WRECKER_CONN: {
+    pitch: 244,
+    wave: 'square',
+    size: 1.08,
+    syllable: 0.052,
+    gap: 0.026,
+    lilt: 0.6,
+    tilt: 0.16,
+    gain: 0.7,
+  },
+};
+
+/** A speaker's voice: a resident's, or one of the other speakers'. */
+export function voiceOf(speaker: string): VoiceProfile | undefined {
+  return VOICES[speaker] ?? OTHER_VOICES[speaker];
+}
+
 export function speak(e: SynthEngine, at: number, speaker: string, text: string, pan = 0): number {
-  const v = VOICES[speaker];
+  const v = voiceOf(speaker);
   if (v === undefined) return 0;
   const c = e.ctx;
   const out = c.createStereoPanner();

@@ -3551,11 +3551,11 @@
     },
     {
       "id": "MUS_LAUNCH",
-      "ref": "The Ship",
+      "ref": "MUS_LAUNCH",
       "book": 11,
-      "section": "04",
-      "origin": "assigned",
-      "note": "Stage 12: the Ship theme played at the launch (frame drum, a men's chorus on the voice pad, the oar-creak rhythm at the rowing stroke), on to the sea map."
+      "section": "03",
+      "origin": "stated",
+      "note": "Stage 12 (decision S12-17): the Ship theme at the launch (frame drum, a men's chorus on the voice pad, the oar-creak rhythm at the rowing stroke), on to the sea map; written into Book 11 section 03's music states."
     },
     {
       "id": "AMB_SEALCAVE",

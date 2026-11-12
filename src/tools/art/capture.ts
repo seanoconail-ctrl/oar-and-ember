@@ -209,7 +209,9 @@ export async function capture(label: string): Promise<string> {
     if (STAGE12_LABELS.has(label)) {
       await page.close();
       const c = await stage12Capture(browser, out);
-      writeFileSync(join(out, 'README.md'), stage12Readme(label, motion.share, c));
+      // CAPTURE_VIEWS=a,b re-takes only those views and screens (the README is left as it was).
+      if (process.env['CAPTURE_VIEWS'] === undefined)
+        writeFileSync(join(out, 'README.md'), stage12Readme(label, motion.share, c));
       return `${out}: strand motion ${pct(motion.share)}, ${c.views
         .map((v) => `${v.view.name} ${pct(v.share)}`)
         .join(', ')}; sea map ${pct(c.map)}; clip ${(c.clipFrames / FPS).toFixed(1)} s`;

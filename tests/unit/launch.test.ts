@@ -183,9 +183,10 @@ describe('the launch music (Book 11 section 04, the Ship theme, as note data)', 
       const parsed = parseLayer(piece, l);
       expect(parsed.problems, l.id).toEqual([]);
       if (l.instrument === 'drum' || l.instrument === 'knock') continue;
-      expect(parsed.notes.filter((n) => !classes.has(n.midi % 12)).map((n) => n.midi), l.id).toEqual(
-        [],
-      );
+      expect(
+        parsed.notes.filter((n) => !classes.has(n.midi % 12)).map((n) => n.midi),
+        l.id,
+      ).toEqual([]);
     }
     // A stroke a second (content/launch.json strokeSeconds): two beats at its tempo.
     expect((60 / piece.tempo) * 2).toBeCloseTo(launch.def.scene.strokeSeconds, 5);

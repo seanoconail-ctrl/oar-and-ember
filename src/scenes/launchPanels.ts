@@ -10,7 +10,7 @@ import type { ReadinessLine, ReadinessView } from '../sim/narrative/launch.ts';
 import type { LoadedAtlas } from './atlases.ts';
 
 export const PANEL_STYLE = `
-.oe-launch { position: absolute; left: 8%; right: 8%; top: 6%; max-height: 88%; overflow: auto;
+.oe-launch { position: absolute; left: 6%; right: 6%; top: 4%; max-height: 92%; overflow: auto;
   pointer-events: auto; background: rgba(58, 38, 22, 0.95); border: 2px solid #7b5434; padding: 0.7em 1em;
   font-size: 0.9em; line-height: 1.4; z-index: 3; box-sizing: border-box; }
 .oe-launch h2 { margin: 0 0 0.4em; font-size: 1.3em; color: #f0ad4c; }
@@ -34,13 +34,19 @@ export const PANEL_STYLE = `
   background: #f4efe4; color: #22313a; border: 2px solid #7b5434; }
 .oe-launch .row { display: flex; flex-wrap: wrap; gap: 0.2em; }
 .oe-launch .row button { margin: 0; padding: 0.2em 0.6em; }
-.oe-launch canvas { display: block; margin: 0.3em auto; image-rendering: pixelated; }
+.oe-launch canvas { float: right; width: 40%; height: auto; margin: 0 0 0.4em 0.8em;
+  image-rendering: pixelated; border: 2px solid #7b5434; }
+.oe-launch .side { overflow: hidden; }
+.oe-launch .side label { display: block; margin: 0.2em 0; }
 .oe-launch .note { font-size: 0.9em; color: #e9d7b8; font-style: italic; min-height: 1.3em; }
 .oe-launch ul { margin: 0.2em 0; padding-left: 1.2em; }
 .oe-overlay[data-seamap]:not([data-seamap='']) [data-region=clock],
 .oe-overlay[data-seamap]:not([data-seamap='']) [data-region=stamina],
 .oe-overlay[data-seamap]:not([data-seamap='']) [data-region=prompt],
-.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=slot] { display: none; }
+.oe-overlay[data-seamap]:not([data-seamap='']) [data-region=slot],
+.oe-overlay[data-launch-ui=readiness] [data-region=prompt],
+.oe-overlay[data-launch-ui=naming] [data-region=prompt],
+.oe-overlay[data-launch-ui=mark] [data-region=prompt] { display: none; }
 `;
 
 /** What the panels need to put words to IDs. */
@@ -223,8 +229,6 @@ export function namingPanel(
   const canvas = el(doc, 'canvas');
   canvas.width = 220;
   canvas.height = 206;
-  canvas.style.width = '330px';
-  canvas.style.height = '309px';
   drawBoatPreview(canvas, atlases, null);
   const label = el(doc, 'label', w.t('ui.launch.name.label'));
   label.htmlFor = 'oe-ship-name';
@@ -254,7 +258,11 @@ export function namingPanel(
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') done();
   });
-  p.append(canvas, label, input, el(doc, 'p', w.t('ui.launch.name.hint'), 'note'), row, next);
+  // The controls sit beside the boat (their own block, so the full-width input does not drop
+  // below the floated preview).
+  const side = el(doc, 'div', undefined, 'side');
+  side.append(label, input, el(doc, 'p', w.t('ui.launch.name.hint'), 'note'), row, next);
+  p.append(canvas, side);
   queueMicrotask(() => {
     input.focus();
   });
@@ -278,8 +286,6 @@ export function markPanel(
   const canvas = el(doc, 'canvas');
   canvas.width = 220;
   canvas.height = 206;
-  canvas.style.width = '330px';
-  canvas.style.height = '309px';
   let pattern = def.marks.patterns[1]?.key ?? 'plain';
   let dye: string = def.marks.dyes[0]?.key ?? 'madder';
   const note = el(doc, 'p', '', 'note');

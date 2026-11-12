@@ -155,11 +155,18 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   // The repairs, a fitting, the rites, the launch.
   const trace = (what: string): void => {
     if (process.env['TRACE'] !== undefined)
-      console.log(`${what}: day ${sim.state.calendar.day} ${sim.state.calendar.minuteOfDay}, ${(sim.state.tick / 3600).toFixed(1)} min`);
+      console.log(
+        `${what}: day ${sim.state.calendar.day} ${sim.state.calendar.minuteOfDay}, ${(sim.state.tick / 3600).toFixed(1)} min`,
+      );
   };
   trace('home');
   if (process.env['TRACE'] !== undefined)
-    console.log(['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN'].map((id) => `${id}:${sim.state.people[id]?.status}`).join(' '), sim.state.facts['ch1.wreckers']);
+    console.log(
+      ['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN']
+        .map((id) => `${id}:${sim.state.people[id]?.status}`)
+        .join(' '),
+      sim.state.facts['ch1.wreckers'],
+    );
   bot.boards();
   trace('boards');
   bot.rigging();
