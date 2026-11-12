@@ -554,6 +554,15 @@ export function createSceneRenderer(
       gl.uniform1f(u('u_fog'), fx.fog);
       gl.uniform3f(u('u_fogColour'), 178, 187, 187);
       gl.uniform1f(u('u_flash'), fx.flash);
+      // Design addendum 2.5 (DF-16): the light varies in drifting patches, never a flat blue.
+      const pt = fx.patches;
+      gl.uniform4f(
+        u('u_patches'),
+        pt?.share ?? 0,
+        pt?.size ?? 1,
+        (pt?.vx ?? 0) * fx.seconds,
+        (pt?.vy ?? 0) * fx.seconds,
+      );
       gl.uniform1i(u('u_detail'), fx.detail ?? 2);
       gl.uniform1f(u('u_dryAbove'), fx.water === null ? -9 : fx.water.wetTo + 0.16);
     }

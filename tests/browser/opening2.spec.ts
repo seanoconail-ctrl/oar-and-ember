@@ -6,10 +6,10 @@
  *
  * - The played cold open, its oar answering at once, the black and the waking; the first input
  *   gets the steerer up; Hild's call within Book 10's hildCallBy.
- * - Hild in the net: the hold-to-cut with the seax frees her; the net's caption.
+ * - Hild in the net: the hold-to-cut with the seax frees her (seen, not captioned since 2.5).
  * - The journal (J) shows the current aim as one plain sentence; no marker is drawn.
  * - "Nothing that way": walking into the sea stops the steerer with its caption.
- * - The broch's door opens when walked into, with its caption, and swings shut after.
+ * - The broch's door opens when walked into, with no caption (2.5), and swings shut after.
  */
 import { expect, test } from '@playwright/test';
 import { attr, overlay, startPlay, step, stepUntil, stepUntilText } from './strand.ts';
@@ -27,7 +27,11 @@ test('the cold open is played, steered at once, then the waking and Hild’s cal
   await step(page, 10);
   expect(Number(await attr(page, 'coldoar'))).toBeGreaterThan(0.3);
   await page.keyboard.up('KeyD');
-  await stepUntilText(page, CAPTIONS, 'Thorkel, shouting from the bow', 15);
+  // Thorkel's shout is his speech line, which names him (design addendum 2.5: the information
+  // line "Thorkel, shouting from the bow" is merged into it).
+  await stepUntilText(page, CAPTIONS, 'Thorkel: ', 15);
+  await expect(page.locator(CAPTIONS).filter({ hasText: 'Thorkel: ' })).toHaveCount(1);
+  await expect(page.locator(CAPTIONS).filter({ hasText: 'shouting from the bow' })).toHaveCount(0);
   // On to the strike, the black and the waking in the surf.
   await stepUntil(page, 'phase', 'WAKING', 45);
   await expect(overlay(page)).toHaveAttribute('data-phase', 'WAKING');
@@ -50,7 +54,8 @@ test('Hild in the net is cut free with a held Interact, the net parting', async 
   await page.keyboard.up('KeyE');
   await step(page, 1);
   await expect(overlay(page)).toHaveAttribute('data-opening', /net_free/);
-  await expect(page.locator(CAPTIONS).filter({ hasText: 'The net parts' })).toHaveCount(1);
+  // Seen and heard, not captioned (design addendum 2.5, the audit).
+  await expect(page.locator(CAPTIONS).filter({ hasText: 'The net parts' })).toHaveCount(0);
 });
 
 test('the journal shows the current aim in plain words; no quest marker is drawn', async ({
@@ -90,7 +95,8 @@ test('the broch’s door opens when walked into and swings shut behind', async (
   await page.keyboard.down('KeyW');
   await stepUntil(page, 'doors', /broch_door:1\.00/, 4);
   await expect(overlay(page)).toHaveAttribute('data-doors', /broch_door:1\.00/);
-  await stepUntilText(page, CAPTIONS, 'A door creaks open', 2);
+  // The door is seen and heard opening: no caption (design addendum 2.5, the audit).
+  await expect(page.locator(CAPTIONS).filter({ hasText: 'A door creaks open' })).toHaveCount(0);
   // Through and on into the court; the doorway clear, it closes after a moment.
   await step(page, 15);
   await page.keyboard.up('KeyW');

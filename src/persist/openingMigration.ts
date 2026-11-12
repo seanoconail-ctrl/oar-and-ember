@@ -10,14 +10,22 @@
  * - the opening's facts that follow from what the save had done: Hild found and safe means she was
  *   reached and cut free and named the chest; the broch reached means she walked up; the lean-to is
  *   up (it was always drawn up before the rework); the searches open means the dusk and the first
- *   night's fire are past.
+ *   night's fire are past;
+ * - with the balance context (Book 10), the camp's salvage gains its linen bindings (Book 10
+ *   bindingsAtCamp) where a new game has them, unless the save already holds them (decision DE-79,
+ *   finished by DF-51). Without the context (an old tool reading a save) they are left out, as
+ *   before.
  */
+import { parseOpeningBalance } from '../content/openingBalance.ts';
+
 type State = Record<string, unknown>;
 
 const SHIP_SILVER = 'ITEM_SHIP_SILVER';
 const THORKEL_CHEST = 'ITEM_THORKEL_CHEST';
 /** Book 9 section 04: the chest's home by the shelter, in the machair zone's tiles. */
 const CHEST_HOME = { zone: 'ZONE_SK_MACHAIR', x: 32.2, y: 31.4 };
+/** The camp's salvage bindings (content/onfoot.json `camp_bindings`, Book 9 section 04). */
+const CAMP_BINDINGS = { key: 'camp_bindings', zone: 'ZONE_SK_MACHAIR', x: 37.6, y: 30.4 };
 
 function renameActor(
   actors: Record<string, unknown> | undefined,
@@ -28,7 +36,10 @@ function renameActor(
   );
 }
 
-export function migrateOpening(state: State): State {
+export function migrateOpening(
+  state: State,
+  ctx: { readonly balance: unknown } | null = null,
+): State {
   const facts = { ...((state['facts'] ?? {}) as Record<string, unknown>) };
   const player = (state['player'] ?? {}) as { hotbar?: { slots?: (string | null)[] } };
   const bowOwned = player.hotbar?.slots?.includes('ITEM_BOW') === true;
@@ -65,6 +76,26 @@ export function migrateOpening(state: State): State {
     facts['ch1.chest_home'] = true;
     facts['ch1.chest_opened'] = true;
     facts['ch1.key'] = 'BODY';
+  }
+  // The camp's salvage bindings (Book 10 bindingsAtCamp), where a new game lays them.
+  if (ctx !== null && onFoot != null) {
+    const count = parseOpeningBalance(ctx.balance).camp.bindingsAtCamp;
+    const here = onFoot['zone'] === CAMP_BINDINGS.zone;
+    const elsewhere = (onFoot['elsewhere'] ??= {}) as Record<string, Record<string, unknown>>;
+    const rest = here
+      ? onFoot
+      : (elsewhere[CAMP_BINDINGS.zone] ??= { actors: {}, items: [], stuck: [] });
+    const items = ((rest['items'] ?? []) as { key: string }[]).slice();
+    if (count > 0 && !items.some((i) => i.key === CAMP_BINDINGS.key))
+      items.push({
+        key: CAMP_BINDINGS.key,
+        item: 'ITEM_BINDING',
+        count,
+        x: CAMP_BINDINGS.x,
+        y: CAMP_BINDINGS.y,
+        glint: true,
+      } as { key: string });
+    rest['items'] = items;
   }
   // The opening's facts that follow from what the save had done.
   facts['ch1.phase'] = 'PLAY';

@@ -798,8 +798,13 @@ const jobCheck = object(
     /** Stage 11: open only while there is such work (the boat's repairs and fitting). */
     needs: oneOf(['SHIP_WORK'] as const),
     spots: arrayOf(spotCheck),
+    /**
+     * Design addendum 2.5 (DF-21, item 8): where a seriously wounded worker does this job seated,
+     * off the steerer's work spot (Runa at the boat with her ankle).
+     */
+    hurtSpots: arrayOf(spotCheck),
   },
-  ['task', 'stages', 'needs', 'spots'],
+  ['task', 'stages', 'needs', 'spots', 'hurtSpots'],
 );
 const householdCheck = object({
   about: text,

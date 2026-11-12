@@ -3878,6 +3878,38 @@
       "note": "Design addendum 2.4 (decision DE-27): a soft patter with drips from the edge, heard only under the shelter."
     },
     {
+      "id": "SFX_THUNDER_NEAR",
+      "ref": "a near strike a sharp crack splitting into a long roll",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decision DF-16): thunder after a near flash in the cold open."
+    },
+    {
+      "id": "SFX_THUNDER_FAR",
+      "ref": "a far one only a low rumble",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decision DF-16): thunder after a far flash in the cold open."
+    },
+    {
+      "id": "SFX_WAVE_HULL",
+      "ref": "a deep boom and a hiss of spray falling back across the deck",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decision DF-17): a wave breaking against the hull in the cold open."
+    },
+    {
+      "id": "SFX_GREEN_WATER",
+      "ref": "green water coming over the side",
+      "book": 7,
+      "section": "05",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decision DF-17): green water over the gunwale and off through the scuppers."
+    },
+    {
       "id": "SFX_DOOR_KNOCK",
       "ref": "a driftwood door's creak and knock",
       "book": 11,

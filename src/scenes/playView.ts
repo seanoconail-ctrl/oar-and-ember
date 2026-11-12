@@ -67,7 +67,13 @@ import {
 import type { SaveStore } from '../persist/manager.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
-import { createOverlay, showCaptions } from '../ui/overlay.ts';
+import { createOverlay, showCaptionSlots } from '../ui/overlay.ts';
+import { CaptionDirector, inFight as fightHolds } from '../ui/captions.ts';
+import { auditInfo, NOTICE_REFUSALS } from '../ui/textAudit.ts';
+import type { InfoClass } from '../ui/textAudit.ts';
+import { PromptFade, TipLife } from '../ui/prompts.ts';
+import { parseStormBalance, parseTextBalance } from '../content/presentationBalance.ts';
+import { cinematicNow, CursorGate } from './cursor.ts';
 import type { LoadedAtlas } from './atlases.ts';
 import { homePhase, lightPhase } from './lightPhase.ts';
 import type { NamingChoice } from './namingView.ts';
@@ -80,14 +86,23 @@ import { zoneScene } from './zoneScene.ts';
 import {
   coldBoat,
   coldOpenScene,
+  coldStorm,
+  underSail,
   decorate,
   hagCamera,
   OpeningFx,
   openingProps,
   stagePropsNow,
 } from './openingView.ts';
-import { bladeOf, hagNow, netted } from '../sim/narrative/wreck.ts';
+import { bladeOf, hagNow, netted, wreckPhase } from '../sim/narrative/wreck.ts';
+import type { ColdStorm } from './openingView.ts';
+import { firstRainDrops, swayAt } from './storm.ts';
+import { heightAt } from '../content/terrain/elevation.ts';
+import { stillWaterLevel } from '../sim/land/water.ts';
 import type { WreckWhat } from '../sim/narrative/wreck.ts';
+
+/** How long the swell takes to carry the fallen stores into the shallows (presentation, ms). */
+const BUNDLE_DRIFT_MS = 2200;
 
 /** The opening's sounds by what happened (content/audio.json events; Book 11 section 07). */
 const WRECK_SOUNDS: Partial<Record<WreckWhat, string>> = {
@@ -523,7 +538,9 @@ export function startPlay(
         };
   })();
   const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine, fades);
-  const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
+  // Design addendum 2.5 section 2 (Book 10 section 21, "On-screen text"; DF-11 to DF-13).
+  const textB = parseTextBalance(content.balance);
+  const stormB = parseStormBalance(content.balance);
   const wireVisuals = (v: ZoneVisuals): void => {
     // Stage 9: the gore setting and how long stains last (content/combat.json gore).
     v.gore = display.gore;
@@ -556,7 +573,7 @@ export function startPlay(
   /** A short refusal word beside the target tile: "Too far", "Nothing to cut". */
   let refusal: { key: string; text: string; tx: number; ty: number; until: number } | null = null;
   const refuse = (key: string, text: string, tx: number, ty: number, now: number): void => {
-    refusal = { key, text, tx, ty, until: now + 1200 };
+    refusal = { key, text, tx, ty, until: now + textB.refusalSeconds * 1000 };
   };
   let lastTarget = { tx: 0, ty: 0 };
   let viewCamera = { x: 0, y: 0 };
@@ -567,10 +584,10 @@ export function startPlay(
     const at = tileOf(map, p.x, p.y);
     refuse(key, text, at.tx - 1, at.ty - 1, now);
   };
-  // Pickup tooltips: shown once per item kind, one after another; the help page keeps them.
-  const tipSeconds = content.onFoot?.tipSeconds ?? 10;
+  // Pickup tooltips: shown once per item kind, one after another; the help page keeps them. Each
+  // shows Book 10's tipHold of play or until its controls are used twice, fading (DF-12).
   let tipQueue: Id[] = [];
-  let tip: { item: Id; until: number } | null = null;
+  let tip: { item: Id; life: TipLife } | null = null;
   let helpOpen = false;
   let lastDevice: 'mouse' | 'key' | 'pad' = 'key';
   const tipContext = (item: Id): TipContext => ({
@@ -609,13 +626,29 @@ export function startPlay(
   // Stage 12: the boat's name, once given, in the lines that speak of it ({ship}, Book 8).
   const line = (key: string): string =>
     t(key, { steerer: world.player.name, ship: sim.state.ships['flagship']?.name ?? '' });
-  let subtitles: { text: string; kind: 'speech' | 'info'; until: number }[] = [];
-  const say = (text: string, now: number, kind: 'speech' | 'info' = 'speech'): void => {
-    subtitles = subtitles.filter((s) => s.text !== text);
-    subtitles.push({ text, kind, until: now + captionMs });
-    if (subtitles.length > 3) subtitles.shift();
+  // The caption view: one information line and one speech line, never stacked (DF-11). Every
+  // information line goes through the text audit by its string key (Book 8 section 10).
+  const captions = new CaptionDirector(textB);
+  captions.showInfo = display.infoCaptions;
+  /** A speech line ("Name: words"). */
+  const say = (text: string, now: number): void => {
+    captions.speech(text, now / 1000);
   };
-  let notice: { text: string; until: number } | null = null;
+  /** An information line by its string key, as the audit says (cut lines are never shown). */
+  const inform = (key: string, text: string, now: number, cls?: InfoClass): void => {
+    const verdict = auditInfo(key);
+    if (cls !== undefined) captions.info(text, cls, now / 1000);
+    else if (verdict.show && verdict.unseenOnly !== true)
+      captions.info(text, verdict.cls, now / 1000);
+  };
+  /** A refused job's reason, shown in the talk panel under the person's line (the audit's merge). */
+  let talkNote: { text: string; line: string } | null = null;
+  /** When the steerer last struck or took a blow (frame clock, ms): Book 10's inFight. */
+  let lastBlowAt = -Infinity;
+  /** When the mast's stores fell (frame clock, ms): drawn drifting into the shallows (DF-82). */
+  let bundleFellAt = -Infinity;
+  /** The rites scene under way (it takes control: the cursor hides, DF-15). */
+  let ritesScene = false;
   /** Barks heard this session (Stage 8; the browser tests read it). */
   let barksHeard = 0;
   let beat = '';
@@ -791,6 +824,21 @@ export function startPlay(
   let edgeCaptions = 0;
   const openingFx = new OpeningFx();
   const wreckCtx = land.wreck ?? null;
+  // Design addendum 2.5 section 3: the storm of the cold open, its strikes, waves and green water
+  // fixed from Book 10 and the script; swells are drawn only over the strand's open sea.
+  const storm = ((): ColdStorm | null => {
+    const elev = land.elevations.get(startMap.zone);
+    if (wreckCtx === null || elev === undefined) return null;
+    const level = stillWaterLevel(tideAt(world.calendar, b));
+    return coldStorm(stormB, wreckCtx, (x, y) => heightAt(elev, x, y) < level - 0.15);
+  })();
+  /** The cold open's seconds at the last frame, for the storm's sounds (thunder after the flash). */
+  let stormLastT = -1;
+  /** Thunder heard so far: [flash at, thunder at] in cold-open seconds (tests). */
+  const thunderHeard: [number, number][] = [];
+  /** Capture only (`camera=still`): the cold open's view held where it starts, for the motion check. */
+  const cameraStill = new URLSearchParams(window.location.search).get('camera') === 'still';
+  let stillCamera: { x: number; y: number } | null = null;
   /** The fade in from dark on waking and on entering a zone (frame clock, ms). */
   let fadeInFrom = -1;
   let workCue: { since: number; ticks: number; mark: number | null } | null = null;
@@ -861,16 +909,17 @@ export function startPlay(
   const onEvent = (e: SimEvent): void => {
     const now = frameNow;
     switch (e.type) {
-      case 'PERSON_CALLED':
-        say(
+      case 'PERSON_CALLED': {
+        // Direction class: the caller and where from; the words are the speech line.
+        const own = `caption.voice.${e.person.slice(2).toLowerCase()}_calling`;
+        const key = has(own) ? own : 'caption.voice.hild_calling';
+        inform(
+          key,
           t('caption.format.with_direction', {
-            caption: has(`caption.voice.${e.person.slice(2).toLowerCase()}_calling`)
-              ? t(`caption.voice.${e.person.slice(2).toLowerCase()}_calling`)
-              : t('caption.voice.hild_calling'),
+            caption: t(key),
             direction: t(`caption.direction.${e.direction}`),
           }),
           now,
-          'info',
         );
         say(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
@@ -879,6 +928,7 @@ export function startPlay(
         // Her call in voice blips, from the side she calls from (Book 11 section 08).
         engine.voice(e.person, line(e.lineKey), panOf(e.person));
         return;
+      }
       case 'PERSON_SPOKE':
         say(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
@@ -888,24 +938,32 @@ export function startPlay(
         if (e.bark !== undefined) barksHeard++;
         return;
       case 'TALK_INFO':
+        // In talk it stays in the talk panel (the audit); a scene's line likewise.
+        if (sim.state.talk === null) inform(e.key, t(e.key), now);
+        return;
       case 'SEARCH_INFO':
-        say(t(e.key), now, 'info');
+        inform(e.key, t(e.key), now);
         return;
       // Stage 10: a checkpoint before a search's danger (Book 2 section 20).
       case 'CHECKPOINT':
         checkpointDue = e.label;
         return;
       case 'RESIDENT_APPROACHED':
-        say(t('caption.voice.approach', { name: nameOf(e.person) }), now, 'info');
+        // Cut (the audit): the person is seen walking up, and speaks on arrival.
+        return;
+      case 'RITES_BEGAN':
+        ritesScene = true;
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
       case 'DISPUTE_RAISED':
       case 'JUDGEMENT_GIVEN':
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
       case 'JOB_REFUSED':
-        notice = {
+        // Merged into the person's reply in the talk panel (the audit).
+        talkNote = {
           text: t(`ui.reason.${e.reason.toLowerCase()}`, { name: nameOf(e.person) }),
-          until: now + captionMs,
+          line: sim.state.talk?.line?.key ?? '',
         };
         return;
       case 'COMMAND_REFUSED':
@@ -931,21 +989,47 @@ export function startPlay(
           refuseHere('no_driftwood', t('ui.refusal.no_driftwood'), now);
         if (e.reason === 'NO_FOOD') refuseHere('no_food', t('ui.refusal.no_food'), now);
         if (e.reason === 'TOO_TIRED') refuseHere('too_tired', t('ui.refusal.too_tired'), now);
+        // The prompt line's notices, merged into refusal words at the cursor (the audit).
         if (e.reason === 'BELOW_TIDE_LINE' || e.reason === 'NO_ROOM') {
-          const key = e.reason === 'BELOW_TIDE_LINE' ? 'ui.prompt.below_tide' : 'ui.prompt.no_room';
-          notice = { text: t(key, { name: nameOf(e.detail) }), until: now + captionMs };
+          const key = NOTICE_REFUSALS[e.reason] ?? 'ui.refusal.nothing_there';
+          refuse(e.reason.toLowerCase(), t(key), lastTarget.tx, lastTarget.ty, now);
         }
         return;
       case 'BOW_DRAWN':
       case 'BOW_LOOSED':
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        // The bow's (and the arrows') tooltip counts its controls used (Book 10 tipHold).
+        if (e.type === 'BOW_LOOSED' && (tip?.item === 'ITEM_BOW' || tip?.item === 'ITEM_ARROW'))
+          tip.life.used();
         return;
-      case 'MISSILE_LOOSED':
+      case 'MISSILE_LOOSED': {
         if (audio !== null && engine.unlocked)
           audio.event(e.kind === 'spear' ? 'SPEAR_THROWN' : 'ARROW_FLIGHT', engine.now + 0.05, {
             pan: panOf(e.shooter),
           });
+        // A safety line: an arrow from a shooter out of sight, with its direction (the audit).
+        const shooter = sim.state.onFoot?.actors[e.shooter];
+        const pl = sim.state.onFoot?.player;
+        if (e.shooter !== 'P_STEERER' && shooter !== undefined && pl !== undefined) {
+          const sx = shooter.x - viewCamera.x;
+          const sy = shooter.y - viewCamera.y;
+          if (sx < 0 || sy < 0 || sx > LOGICAL_WIDTH || sy > LOGICAL_HEIGHT) {
+            const ang = Math.atan2(shooter.y - pl.y, shooter.x - pl.x);
+            const dirs = ['e', 'se', 's', 'sw', 'w', 'nw', 'n', 'ne'] as const;
+            const dir = dirs[(Math.round(ang / (Math.PI / 4)) + 8) % 8] ?? 'n';
+            inform(
+              'caption.sfx.arrow_flight',
+              t('caption.format.with_direction', {
+                caption: t('caption.sfx.arrow_flight'),
+                direction: t(`caption.direction.${dir}`),
+              }),
+              now,
+              'SAFETY',
+            );
+          }
+        }
         return;
+      }
       case 'MISSILE_STRUCK': {
         visuals.missileStruck(e.strike, e.x, e.y);
         const cue = {
@@ -986,6 +1070,8 @@ export function startPlay(
       case 'WORK_PRESSED':
         if (e.quality > 0.5 && audio !== null && engine.unlocked)
           audio.event('TIMING_GOOD', engine.now, { pan: 0 });
+        // The timed task's press is done once pressed (Book 10 promptDone: "the item used once").
+        timingPrompt.done();
         return;
       case 'WORK_DONE':
         workCue = null;
@@ -1016,10 +1102,10 @@ export function startPlay(
       case 'FITTING_UNSHIPPED':
       case 'OAR_CARVED':
       case 'RITES_STONES':
-      case 'RITES_BEGAN':
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
       case 'RITES_DONE':
+        ritesScene = false;
         if (audio !== null && engine.unlocked)
           audio.event(`RITES_DONE_${e.form}`, engine.now, { pan: 0 });
         return;
@@ -1093,8 +1179,7 @@ export function startPlay(
         if (site !== undefined)
           openingFx.burst('spark', site.x * map.tile, site.y * map.tile, 10, 4);
         if (audio !== null && engine.unlocked) audio.event('FLINT', engine.now, { pan: 0 });
-        say(t('caption.action.sparks'), now, 'info');
-        say(t('caption.action.flame'), now + 600, 'info');
+        // The sparks and the flame taking are seen and heard, not captioned (the audit).
         return;
       }
       // ---- Design addendum 2.4: the opening, the aims, the edges and the doors.
@@ -1103,14 +1188,28 @@ export function startPlay(
         const sound = WRECK_SOUNDS[e.what];
         if (sound !== undefined && audio !== null && engine.unlocked)
           audio.event(sound, engine.now, { pan: at === null ? 0 : panAt(at.x) });
-        if (e.key !== undefined && e.what !== 'COLD_SHOUT' && has(e.key))
-          say(t(e.key), now, 'info');
-        if (e.what === 'COLD_SHOUT') say(t('caption.cold.shout'), now, 'info');
+        // The audit: the opening's actions and moments are cut; the pale light gains its
+        // direction (it is seen in the west); Thorkel's shout is merged into his speech line.
+        if (e.key === 'caption.hag.light')
+          inform(
+            e.key,
+            t('caption.format.with_direction', {
+              caption: t(e.key),
+              direction: t('caption.direction.w'),
+            }),
+            now,
+          );
+        else if (e.key !== undefined && has(e.key)) inform(e.key, t(e.key), now);
         if (at !== null) {
           if (e.what === 'NET_CUT') openingFx.burst('fibre', at.x, at.y, 14, 18);
           if (e.what === 'LASHING_CUT') openingFx.burst('fibre', at.x, at.y + 60, 8, 60);
-          if (e.what === 'BUNDLE_SPLASH' || e.what === 'NET_WAVE')
-            openingFx.burst('spray', at.x, at.y, 9, 6);
+          if (e.what === 'NET_WAVE') openingFx.burst('spray', at.x, at.y, 9, 6);
+          if (e.what === 'BUNDLE_SPLASH' && wreckCtx !== null) {
+            // It falls under the lashing, and the swell carries it into the stream's mouth (DF-82).
+            const l = wreckCtx.rw.mast.lashing;
+            openingFx.burst('spray', l.x * map.tile, l.y * map.tile, 12, 6);
+            bundleFellAt = now;
+          }
           if (e.what === 'LOAD_DOWN' || e.what === 'CHEST_HOME' || e.what === 'STORES_BROUGHT')
             openingFx.burst('puff', at.x, at.y, 6);
           if (e.what === 'RING_FOUND')
@@ -1127,12 +1226,12 @@ export function startPlay(
         hintsHeard++;
         return;
       case 'EDGE_CAPTION':
-        say(t(e.key), now, 'info');
+        inform(e.key, t(e.key), now);
         edgeCaptions++;
         return;
       case 'DOOR': {
         if (e.what === 'OPENING') {
-          say(t(e.kind === 'FLAP' ? 'caption.door.flap' : 'caption.door.open'), now, 'info');
+          // The door is seen and heard opening: no caption (the audit).
           if (audio !== null && engine.unlocked)
             audio.event(e.kind === 'FLAP' ? 'FLAP_OPEN' : 'DOOR_OPEN', engine.now, {
               pan: panAt(e.x),
@@ -1152,12 +1251,21 @@ export function startPlay(
         return;
       case 'SWING':
         fightSound(e.heavy ? 'SWING_HEAVY' : 'SWING_LIGHT', e.who);
+        if (e.who === 'P_STEERER') {
+          lastBlowAt = now;
+          if (
+            tip !== null &&
+            tip.item === sim.state.player.hotbar.slots[sim.state.player.hotbar.selected]
+          )
+            tip.life.used();
+        }
         return;
       case 'BLOW': {
         const who = e.defender;
         // Combat v2 (decision DE-7): the hit's reactions, its shake (heavy hits only) and the
         // hurt sound under the impact: a grunt, or for the steerer a sharp breath, never a cry.
         combatFx.blow(e, sim.state.tick, display.reducedMotion);
+        if (e.attacker === 'P_STEERER' || e.defender === 'P_STEERER') lastBlowAt = now;
         if (e.shake != null) visuals.shake(e.shake.px);
         const landed = e.outcome === 'HIT' || e.outcome === 'GUARD_BROKEN';
         if (landed && e.damage > 0)
@@ -1205,44 +1313,59 @@ export function startPlay(
         fightSound('WEAPON_DROPPED', e.person, 0.3);
         if (e.piece !== null && display.gore === 2) fightSound('GORE_DISMEMBER', e.person);
         return;
+      // A foe kneeling or running is seen: no caption (the audit).
       case 'PERSON_SURRENDERED':
-        say(t('caption.info.surrender', { name: nameOf(e.person) }), now, 'info');
-        return;
       case 'PERSON_FLED':
-        say(t('caption.info.flee', { name: nameOf(e.person) }), now, 'info');
         return;
       case 'PERSON_BROUGHT_HOME':
-        say(t('caption.info.brought_home', { name: nameOf(e.person) }), now, 'info');
+        inform(
+          'caption.info.brought_home',
+          t('caption.info.brought_home', { name: nameOf(e.person) }),
+          now,
+        );
         return;
       case 'LEFT_BEHIND':
-        say(t('caption.info.left_behind', { name: nameOf(e.person) }), now, 'info');
+        inform(
+          'caption.info.left_behind',
+          t('caption.info.left_behind', { name: nameOf(e.person) }),
+          now,
+        );
         return;
       case 'STEERER_DOWNED':
-        if (e.secondWind) say(t('caption.info.second_wind'), now, 'info');
+        if (e.secondWind) inform('caption.info.second_wind', t('caption.info.second_wind'), now);
         fightSound('PERSON_DOWNED', 'P_STEERER');
         return;
       case 'STEERER_DIED':
         if (audio !== null && engine.unlocked) audio.event('GAME_OVER', engine.now, { pan: 0 });
         return;
       case 'FINISH_WARNING':
-        say(t('caption.info.finish_warning', { target: nameOf(e.target) }), now, 'info');
+        inform(
+          'caption.info.finish_warning',
+          t('caption.info.finish_warning', { target: nameOf(e.target) }),
+          now,
+        );
         return;
       case 'CREW_ORDER_ACK':
         ordersShown[e.person] = { order: e.order.toLowerCase(), until: now + 1500 };
         return;
       case 'CREW_ORDER_REFUSED':
+        // Merged into the person's bark (the audit).
         if (e.reason === 'CANNOT_FIGHT')
-          notice = {
-            text: `${nameOf(e.person)}: ${t('ui.refusal.cannot_fight')}`,
-            until: now + captionMs,
-          };
+          say(
+            t('caption.format.subtitle', {
+              speaker: nameOf(e.person),
+              line: t('crew.bark.cannot_fight'),
+            }),
+            now,
+          );
         return;
       case 'FIGHT_REFUSED':
         if (e.reason === 'NO_SHIELD') refuseHere('no_shield', t('ui.refusal.no_shield'), now);
         else if (e.reason === 'NO_BINDING')
           refuseHere('no_binding', t('ui.refusal.no_binding'), now);
         else if (e.reason === 'NO_RATION') refuseHere('no_ration', t('ui.refusal.no_ration'), now);
-        else if (e.reason === 'EXHAUSTED') refuseHere('exhausted', t('ui.refusal.exhausted'), now);
+        // "Too spent" is cut: the exhausted body and breathing show it (the audit).
+        else if (e.reason === 'EXHAUSTED') return;
         else refuseHere('too_tired', t('ui.refusal.too_tired'), now);
         return;
       // ---- Combat v2 (design addendum 2.4): awareness, sidesteps, lunges, healing, the camp.
@@ -1260,11 +1383,10 @@ export function startPlay(
         if (e.kind === 'lunge') fightSound('LUNGE_TELL', e.who);
         return;
       case 'HEAL_STARTED':
+        // Healing is seen in its kneeling loop and heard: no caption (the audit).
         fightSound(e.kind === 'BIND' ? 'BIND_WOUND' : 'EAT_RATION', 'P_STEERER');
-        say(t(e.kind === 'BIND' ? 'ui.heal.bind' : 'ui.heal.eat'), now, 'info');
         return;
       case 'HEAL_INTERRUPTED':
-        say(t('ui.heal.interrupted'), now, 'info');
         return;
       case 'CAMP_REACHED': {
         const call = saveFor(e);
@@ -1297,9 +1419,16 @@ export function startPlay(
     const options = talkOptions(sim.state, peopleCtx, land.searches ?? null);
     const cursor = Math.min(session.talkCursor, Math.max(0, options.length - 1));
     const lineKey = talk.line?.key ?? '';
-    const shown = [talk.with, lineKey, options.map((o) => o.key).join('|'), cursor, mouse].join(
-      '#',
-    );
+    // A refused job's reason, merged into the talk panel under the line it answers (the audit).
+    const note = talkNote !== null && talkNote.line === lineKey ? talkNote.text : '';
+    const shown = [
+      talk.with,
+      lineKey,
+      options.map((o) => o.key).join('|'),
+      cursor,
+      mouse,
+      note,
+    ].join('#');
     root.dataset['talk'] = talk.with;
     root.dataset['talkKind'] = talk.kind;
     root.dataset['talkLine'] = lineKey;
@@ -1322,6 +1451,12 @@ export function startPlay(
           line: line(talk.line.key),
         });
       }
+      parts.push(p);
+    }
+    if (note !== '') {
+      const p = document.createElement('p');
+      p.className = 'info';
+      p.textContent = note;
       parts.push(p);
     }
     if (options.length > 0) {
@@ -1370,16 +1505,28 @@ export function startPlay(
       window.location.reload();
       return;
     }
-    sim.restore(saves.load(point.slot).state);
+    // With Book 10 for the migrations that need it (schema 3 to 4, the camp's bindings at 10 to 11).
+    sim.restore(saves.load(point.slot, { context: { balance: content.balance } }).state);
     restored = true;
     lookOwns = null;
-    subtitles = [];
-    notice = null;
+    captions.clear();
     fadeInFrom = frameNow;
   };
 
   const started = performance.now();
-  let moved = false;
+  /** The tutorial prompts' fades (Book 10 promptFade, promptQuiet, promptDone; DF-12). */
+  const movePrompt = new PromptFade(textB);
+  const timingPrompt = new PromptFade(textB);
+  /** How far the steerer has walked (tiles), for the move prompt's promptDone. */
+  let walked = 0;
+  let walkedFrom: { x: number; y: number } | null = null;
+  /** The cursor: hidden in cinematic moments until the mouse moves (Book 10 cursorHidden). */
+  const cursorGate = new CursorGate();
+  window.addEventListener('mousemove', () => {
+    cursorGate.mouseMoved();
+  });
+  /** Whether a narrative line or beat is showing, as last drawn: prompts stay quiet then. */
+  let narrativeShowing = false;
   let last = started;
   let first = true;
   let lastVisual = started;
@@ -1626,15 +1773,20 @@ export function startPlay(
       }
     }
     if (session.land !== null && session.land.map !== map) session.land = { ...session.land, map };
-    // The tooltip in turn: the next one when the last has had its time; named for the device in use.
-    if (tip !== null && tip.until < now) tip = null;
+    // The tooltip in turn: the next one when the last has had its time; named for the device in
+    // use; faded out while a narrative line, beat, scene or talk shows (DF-12).
+    if (tip?.life.over === true) tip = null;
     if (tip === null && tipQueue.length > 0) {
       const next = tipQueue[0];
       tipQueue = tipQueue.slice(1);
-      if (next !== undefined) tip = { item: next, until: now + tipSeconds * 1000 };
+      if (next !== undefined) tip = { item: next, life: new TipLife(textB) };
       renderTip();
     } else if (tip === null && root.dataset['tip'] !== '') renderTip();
     else if (tip !== null && deviceChanged) renderTip();
+    const tipAlpha = tip === null ? 0 : tip.life.update(now / 1000, narrativeShowing);
+    const tipRegion = overlay.region('tip');
+    const tipOpacity = tipAlpha.toFixed(2);
+    if (tipRegion.style.opacity !== tipOpacity) tipRegion.style.opacity = tipOpacity;
     last = now;
     const target = result.target;
     if (target !== null) {
@@ -1651,11 +1803,18 @@ export function startPlay(
       root.dataset['controlMs'] = String(Math.round(now - options.wokeAt));
       first = false;
     }
-    if (result.refusedActions.length > 0)
-      notice = { text: t('ui.prompt.hands_full'), until: now + captionMs };
+    // Hands full: a refusal word at the cursor, not a notice over the prompt (the audit).
+    if (result.refusedActions.length > 0) refuseHere('hands_full', t('ui.refusal.hands_full'), now);
     const onFoot = sim.state.onFoot;
     if (onFoot === null) return;
-    if (onFoot.player.moving) moved = true;
+    // Book 10 promptDone: the move prompt is done once the steerer has walked 2 tiles.
+    const step =
+      walkedFrom === null
+        ? 0
+        : Math.hypot(onFoot.player.x - walkedFrom.x, onFoot.player.y - walkedFrom.y) / map.tile;
+    if (step < 3) walked += step;
+    walkedFrom = { x: onFoot.player.x, y: onFoot.player.y };
+    if (walked >= textB.moveDoneTiles && wreckPhase(sim.state) === 'PLAY') movePrompt.done();
     const tide = tideAt(sim.state.calendar, b);
     const tideOpen = tide.tidalGroundOpen;
     const daylight = b.daylight[seasonOf(sim.state.calendar.day)];
@@ -1749,7 +1908,7 @@ export function startPlay(
         );
         promptKind = interaction.refusal === 'BELOW_TIDE_LINE' ? 'below_tide' : 'no_room';
       }
-    } else if (!moved && now - started > opening.moveHintSeconds * 1000) {
+    } else if (!movePrompt.isDone && now - started > opening.moveHintSeconds * 1000) {
       prompt = t('ui.prompt.move', { keys: moveKeys });
       promptKind = 'move';
     }
@@ -1795,15 +1954,38 @@ export function startPlay(
       });
       promptKind = 'timing';
     }
-    if (notice !== null && notice.until < now) notice = null;
     // Stage 12: the launch scene has the steerer; nothing is offered to do while it plays.
-    if (launchDef !== null && launchView(sim.state, { def: launchDef }) !== null) {
+    const launchPlaying = launchDef !== null && launchView(sim.state, { def: launchDef }) !== null;
+    if (launchPlaying) {
       prompt = '';
       promptKind = '';
     }
-    overlay.region('prompt').textContent = notice?.text ?? prompt;
-
-    subtitles = subtitles.filter((s) => s.until > now);
+    // Design addendum 2.5 (DF-12): a story beat, a scene or a talk hides every prompt; tutorial
+    // prompts also fade while a narrative line shows, come back 2 s after, and go once done.
+    const talkOpen = sim.state.talk !== null;
+    const storyBeat =
+      wreckPhase(sim.state) !== 'PLAY' ||
+      (wreckCtx !== null && hagNow(sim.state, wreckCtx) !== null) ||
+      ritesScene ||
+      launchPlaying;
+    const quiet = narrativeShowing || storyBeat || talkOpen;
+    const secs = now / 1000;
+    const moveAlpha = movePrompt.update(secs, promptKind === 'move', quiet);
+    const timingAlpha = timingPrompt.update(secs, promptKind === 'timing', quiet);
+    const promptAlpha =
+      promptKind === 'move'
+        ? moveAlpha
+        : promptKind === 'timing'
+          ? timingAlpha
+          : storyBeat || talkOpen
+            ? 0
+            : 1;
+    const promptRegion = overlay.region('prompt');
+    const promptText = promptAlpha <= 0 ? '' : prompt;
+    if (promptRegion.textContent !== promptText) promptRegion.textContent = promptText;
+    const promptOpacity = promptAlpha.toFixed(2);
+    if (promptRegion.style.opacity !== promptOpacity) promptRegion.style.opacity = promptOpacity;
+    root.dataset['promptAlpha'] = promptOpacity;
     // The ambience follows the game's own wind at the steerer and the drawn tide, four times a second.
     if (engine.unlocked && now - lastAmbienceAt > 250) {
       lastAmbienceAt = now;
@@ -1819,15 +2001,51 @@ export function startPlay(
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
       placeAudio();
     }
-    // A sound captioned with the same words as a line already shown is not shown twice.
-    const soundCaptions = (audio === null ? [] : audio.update(engine.now)).filter(
-      (c) => !subtitles.some((s) => s.text === c.text),
+    // Sound captions go through the audit by key like every other line (most are cut).
+    if (audio !== null) {
+      audio.update(engine.now);
+      for (const c of audio.takeCaptions()) inform(c.key, c.text, now);
+    }
+    // Book 10's inFight: a hostile alert to the steerer within 12 tiles, or a blow lately.
+    const hostiles = Object.values(onFoot.actors).flatMap((a) =>
+      a.fight?.side === 'ENEMY' && a.fight.vitality > 0
+        ? [
+            {
+              alert: a.fight.ai.awareness.state === 'ALERT',
+              tiles: Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y) / map.tile,
+            },
+          ]
+        : [],
     );
-    showCaptions(
-      overlay.region('captions'),
-      [...subtitles, ...soundCaptions],
-      display.infoCaptions,
-    );
+    const fight = fightHolds(hostiles, (now - lastBlowAt) / 1000, textB);
+    captions.showInfo = display.infoCaptions;
+    const cf = captions.update(secs, fight);
+    showCaptionSlots(overlay.region('captions'), cf.info, cf.speech, cf.outgoing);
+    narrativeShowing =
+      cf.speech !== null ||
+      (cf.info !== null && (cf.info.cls === 'STORY' || cf.info.cls === 'DIRECTION'));
+    root.dataset['fight'] = fight ? '1' : '';
+    root.dataset['captionInfo'] = cf.info?.text ?? '';
+    root.dataset['captionSpeech'] = cf.speech?.text ?? '';
+    root.dataset['captionHeld'] = cf.held ?? '';
+    root.dataset['tipAlpha'] = tipOpacity;
+    // The cursor is hidden through cinematic moments until the mouse moves (DF-15).
+    const cinematic = cinematicNow({
+      phase: wreckPhase(sim.state),
+      gettingUp: sim.state.facts['ch1.getting_up'] !== undefined,
+      scene: sim.state.talk?.kind === 'SCENE' || sim.state.talk?.scene != null,
+      rites: ritesScene,
+      launch: launchPlaying,
+    });
+    const pointerOffered =
+      launchUi !== 'none' || mapMode !== null || sim.state.gameOver !== null || helpOpen;
+    const cursorHidden = cursorGate.update(cinematic, pointerOffered);
+    const cursorStyle = cursorHidden ? 'none' : '';
+    if (canvas.style.cursor !== cursorStyle) {
+      canvas.style.cursor = cursorStyle;
+      document.body.style.cursor = cursorStyle;
+    }
+    root.dataset['cursor'] = cursorHidden ? 'hidden' : 'shown';
     const open = session.menus.open;
     if (open !== 'system') helpOpen = false;
     // The help page: every tooltip seen so far, for the device in use.
@@ -1870,7 +2088,21 @@ export function startPlay(
         wreckCtx === null
           ? view0.camera
           : coldBoatAt !== null
-            ? { x: Math.round(coldBoatAt.x - 320), y: Math.round(coldBoatAt.y - 200) }
+            ? ((): { x: number; y: number } => {
+                // The camera sways with the sea, in whole pixels (none with reduced motion).
+                if (cameraStill) {
+                  stillCamera ??= {
+                    x: Math.round(coldBoatAt.x - 320),
+                    y: Math.round(coldBoatAt.y - 200),
+                  };
+                  return stillCamera;
+                }
+                const sway = swayAt(coldBoatAt.t, stormB, display.reducedMotion);
+                return {
+                  x: Math.round(coldBoatAt.x - 320) + sway.x,
+                  y: Math.round(coldBoatAt.y - 200) + sway.y,
+                };
+              })()
             : hagCamera(sim.state, wreckCtx, map, view0.camera, display.reducedMotion),
     };
     openingFx.update(Math.min(0.1, frameInput.dt));
@@ -2210,20 +2442,93 @@ export function startPlay(
       root.dataset['seamap'] = f.revealed.toFixed(2);
     } else {
       // Design addendum 2.4: the opening's drawing over the zone, or the cold open in its place.
+      // The first rain over the island, beading on the sail and heard under it (DF-21).
+      const rainDrops = firstRainDrops(
+        sim.state.calendar.day,
+        sim.state.calendar.minuteOfDay,
+        sim.state.facts['ch1.shelter_raised'] === true,
+        stormB,
+        visuals.seconds,
+      );
+      const underCloth =
+        rainDrops > 0 && wreckCtx !== null && underSail(sim.state, wreckCtx, map, onFoot.player);
+      if (engine.unlocked) engine.setRainCloth(underCloth ? 1 : 0);
+      root.dataset['rain'] = rainDrops > 0 ? (underCloth ? 'under' : 'falling') : '';
+      const cold =
+        wreckCtx === null || coldBoatAt === null || storm === null
+          ? null
+          : coldOpenScene(
+              scene,
+              sim.state,
+              wreckCtx,
+              map,
+              view.camera,
+              choice.bodyModel,
+              display.reducedMotion,
+              storm,
+            );
+      if (cold?.drawing != null && coldBoatAt !== null && storm !== null) {
+        const t = coldBoatAt.t;
+        const d = cold.drawing;
+        // The storm's sounds as their moments pass: thunder after each flash by its distance,
+        // a wave's boom on the side it strikes, green water over the side (Book 11 section 07).
+        if (stormLastT >= 0 && t > stormLastT) {
+          const crossed = (at: number): boolean => stormLastT < at && at <= t;
+          const lead = (at: number): number => Math.max(0, at - t);
+          for (const k of storm.list)
+            if (crossed(k.thunderAt)) {
+              thunderHeard.push([k.at, k.thunderAt]);
+              if (audio !== null && engine.unlocked)
+                audio.event(
+                  k.distance < 0.5 ? 'THUNDER_NEAR' : 'THUNDER_FAR',
+                  engine.now + lead(k.thunderAt),
+                  {
+                    pan: (k.across - 0.5) * 1.4,
+                  },
+                );
+            }
+          for (const w of storm.waves)
+            if (crossed(w.at) && audio !== null && engine.unlocked)
+              audio.event('WAVE_HULL', engine.now, { pan: w.along * 0.6 });
+          for (const g of storm.green)
+            if (crossed(g) && audio !== null && engine.unlocked)
+              audio.event('GREEN_WATER', engine.now, { pan: -0.1 });
+        }
+        stormLastT = t;
+        root.dataset['storm'] = JSON.stringify({
+          t: Math.round(t * 100) / 100,
+          flash: Math.round(d.flash * 100) / 100,
+          sway: [
+            view.camera.x - Math.round(coldBoatAt.x - 320),
+            view.camera.y - Math.round(coldBoatAt.y - 200),
+          ],
+          bow: Math.round(d.bow * 10) / 10,
+          roll: d.roll,
+          drops: d.drops,
+          mist: d.mist.length,
+          clear: d.clear,
+          strikes: storm.list.map((k) => [
+            Math.round(k.at * 100) / 100,
+            Math.round(k.thunderAt * 100) / 100,
+          ]),
+          heard: thunderHeard,
+        });
+        if (audio !== null && engine.unlocked)
+          engine.setStorm(
+            t < (wreckCtx?.rw.coldOpen.blackSeconds ?? 0) ? 1 : 0,
+            stormB.pitchSeconds,
+            stormB.rollSeconds,
+          );
+      } else if (stormLastT >= 0) {
+        stormLastT = -1;
+        root.dataset['storm'] = '';
+        engine.setStorm(0);
+      }
       const drawn =
         wreckCtx === null
           ? scene
-          : coldBoatAt !== null
-            ? coldOpenScene(
-                scene,
-                sim.state,
-                wreckCtx,
-                map,
-                view.camera,
-                visuals.seconds,
-                choice.bodyModel,
-                display.reducedMotion,
-              )
+          : cold !== null
+            ? cold.scene
             : decorate(scene, {
                 world: sim.state,
                 ctx: wreckCtx,
@@ -2236,6 +2541,23 @@ export function startPlay(
                 fx: openingFx,
                 steererSheets: [look.steerer.body, ...Object.values(look.steerer.layers).flat()],
                 bodyModel: choice.bodyModel,
+                bundleDrift:
+                  wreckCtx === null || now - bundleFellAt > BUNDLE_DRIFT_MS
+                    ? null
+                    : {
+                        k: (now - bundleFellAt) / BUNDLE_DRIFT_MS,
+                        from: {
+                          x: wreckCtx.rw.mast.lashing.x * map.tile,
+                          y: wreckCtx.rw.mast.lashing.y * map.tile,
+                        },
+                      },
+                rain:
+                  rainDrops > 0
+                    ? {
+                        drops: rainDrops,
+                        slant: Math.tan((stormB.rainSlantDegrees * Math.PI) / 180),
+                      }
+                    : null,
               });
       if (drawThis) renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
       root.dataset['seamap'] = '';
@@ -2311,7 +2633,7 @@ export function startPlay(
     root.dataset['moving'] = String(onFoot.player.moving);
     root.dataset['carrying'] = onFoot.carrying ?? '';
     root.dataset['hild'] = onFoot.actors['C_HILD']?.pose ?? '';
-    root.dataset['prompt'] = notice === null ? promptKind : 'notice';
+    root.dataset['prompt'] = promptKind;
     root.dataset['beat'] = beat;
     root.dataset['menu'] = open ?? '';
     root.dataset['body'] = sim.state.player.bodyModel ?? '';

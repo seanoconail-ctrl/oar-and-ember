@@ -25,6 +25,10 @@ import { hagNow, hagPhases, lashingHit } from '../../src/sim/narrative/wreck.ts'
 import { createSimulation } from '../../src/sim/simulation.ts';
 import type { SimEvent } from '../../src/sim/simulation.ts';
 import { newCampaign } from '../../src/sim/world.ts';
+import { tideAt } from '../../src/sim/calendar/calendar.ts';
+import { bandAt, stillWaterLevel } from '../../src/sim/land/water.ts';
+import { migrateOpening } from '../../src/persist/openingMigration.ts';
+import { activityOf } from '../../src/sim/people/schedule.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
 import { openingProps, stagePropsNow } from '../../src/scenes/openingView.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
@@ -366,6 +370,52 @@ describe('the bow’s first use: the stores on the mast (DE-19)', () => {
     bot.storesToCamp();
     expect(world.facts['ch1.mast_stores']).toBe('CAMP');
     expect(fish()).toBe(before + ob.camp.mastStoresRd);
+  });
+
+  it('the bundle lands in wading depth at any tide, in view while aiming from the shot (DF-82)', () => {
+    const m = wreck.rw.mast;
+    const elev = land.elevations.get(m.zone);
+    if (elev === undefined) throw new Error('no strand');
+    for (const level of [0, 0.25, 0.5, 0.75, 1]) {
+      const band = bandAt(land.water, elev, m.fall.x * 24, m.fall.y * 24, level)?.band ?? 'DRY';
+      expect(['DRY', 'WET', 'ANKLE', 'KNEE'], `level ${level}`).toContain(band);
+    }
+    // A tile below the lashing, and in view from the bot's shooting spot while aiming (Book 10
+    // lookAheadAiming: the view leads 5 tiles towards the aim, half a view is 13.3 x 7.5 tiles).
+    // Off the outcrop's foot, in the shallows at every state of the tide (not dry, never deep).
+    for (const level of [0, 0.5, 1])
+      expect(['ANKLE', 'KNEE']).toContain(
+        bandAt(land.water, elev, m.fall.x * 24, m.fall.y * 24, level)?.band ?? 'DRY',
+      );
+    expect(Math.hypot(m.fall.x - m.foot.x, m.fall.y - m.foot.y)).toBeLessThan(3.5);
+    const shot = { x: 41.5, y: 27.5 };
+    expect(Math.abs(m.fall.x - shot.x)).toBeLessThan(13.3);
+    expect(Math.abs(m.fall.y - (shot.y + 5))).toBeLessThan(7.5);
+  });
+
+  it('the bundle is waded for at high water with no wait for the ebb (DF-82)', () => {
+    const { sim, world } = start('mast-high');
+    world.player.hotbar.slots[0] = 'ITEM_BOW';
+    world.player.inventory['ITEM_ARROW'] = 6;
+    world.facts['ch1.at_broch'] = true;
+    const bot = new WreckBot(
+      sim,
+      b,
+      land,
+      camp,
+      land.searches ?? (null as never),
+      land.repairs ?? (null as never),
+    );
+    bot.shootLashing({ x: 41.5, y: 27.5 }, 6);
+    expect(world.facts['ch1.lashing_cut']).toBe(true);
+    // Wait for high water, then go for the bundle at once.
+    bot.waitFor(() => stillWaterLevel(tideAt(world.calendar, b)) > 0.95, 60 * 60 * 30);
+    expect(stillWaterLevel(tideAt(world.calendar, b))).toBeGreaterThan(0.95);
+    const before = world.tick;
+    bot.lift(wreck.rw.mast.bundle);
+    expect(world.onFoot?.carrying).toBe(wreck.rw.mast.bundle);
+    expect(stillWaterLevel(tideAt(world.calendar, b))).toBeGreaterThan(0.8);
+    expect(world.tick - before).toBeLessThan(60 * 60);
   });
 
   it('a missile that passes beside the lashing does not cut it', () => {
@@ -859,5 +909,67 @@ describe('REFERS lines (DE-31)', () => {
       'c_hild.chest.bow',
     ])
       expect(referentsOf(content.strings.get(key)?.tags ?? []).length, key).toBe(1);
+  });
+});
+
+describe('2.4 work finished by 2.5 (DF-21)', () => {
+  it("a save from before version 11 gains the camp's bindings with the balance context (DF-51)", () => {
+    const { world } = start('old-save');
+    const state = structuredClone(world) as unknown as Record<string, unknown>;
+    const onFoot = state['onFoot'] as {
+      zone: string;
+      items: { key: string }[];
+      elsewhere: Record<string, { items: { key: string }[] }>;
+    };
+    // A save from before 2.4 had no bindings lying at the camp.
+    for (const rest of Object.values(onFoot.elsewhere))
+      rest.items = rest.items.filter((i) => i.key !== 'camp_bindings');
+    onFoot.items = onFoot.items.filter((i) => i.key !== 'camp_bindings');
+    const without = migrateOpening(structuredClone(state));
+    const withCtx = migrateOpening(structuredClone(state), { balance });
+    const found = (s: Record<string, unknown>) => {
+      const o = s['onFoot'] as typeof onFoot;
+      return [...o.items, ...Object.values(o.elsewhere).flatMap((r) => r.items)].filter(
+        (i) => i.key === 'camp_bindings',
+      ) as unknown as { count: number; item: string }[];
+    };
+    expect(found(without)).toHaveLength(0);
+    expect(found(withCtx)).toEqual([
+      expect.objectContaining({ item: 'ITEM_BINDING', count: ob.camp.bindingsAtCamp }),
+    ]);
+    // Not twice.
+    expect(found(migrateOpening(withCtx, { balance }))).toHaveLength(1);
+  });
+
+  it("Runa, seriously wounded, works the boat seated beside it, off the steerer's spot (DF-52)", () => {
+    const { world } = start('runa-hurt');
+    const people = land.people;
+    if (people == null) throw new Error('no people');
+    world.household.residents.push('C_RUNA');
+    const runa = world.people['C_RUNA'];
+    if (runa === undefined) throw new Error('no Runa');
+    runa.job = { kind: 'SHIPWRIGHT', since: world.calendar.day, byOrder: false };
+    runa.wounds = [{ severity: 'SERIOUS' } as (typeof runa.wounds)[number]];
+    const job = people.household.jobs['SHIPWRIGHT'];
+    const seat = job?.hurtSpots?.[0];
+    if (seat === undefined) throw new Error('no seated place');
+    const work = content.repairs?.boat.work;
+    if (work === undefined) throw new Error('no boat');
+    // Off the steerer's work spot at the boat by more than the interact reach.
+    expect(Math.hypot(seat.x - work.x, seat.y - work.y)).toBeGreaterThan(2);
+    // In the working day, with work at the boat for her (the hull's boards laid by it).
+    (world.calendar as { minuteOfDay: number }).minuteOfDay = 10 * 60;
+    const ship = world.ships['flagship'];
+    if (ship === undefined) throw new Error('no boat');
+    (ship.repairs.HULL as { stage: string }).stage = 'MATERIALS';
+    const act = activityOf(world, camp, people, 'C_RUNA');
+    expect(act.kind).toBe('WORK');
+    expect(act.job).toBe('SHIPWRIGHT');
+    expect(act.place?.pose).toBe('sit');
+    expect(act.half).toBe(true);
+    expect(act.place?.x).toBeCloseTo(seat.x * 24);
+    // Healed, she works at the boat's own spot again.
+    runa.wounds = [];
+    expect(activityOf(world, camp, people, 'C_RUNA').place?.pose).toBe('work');
   });
 });

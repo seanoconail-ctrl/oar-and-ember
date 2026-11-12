@@ -75,8 +75,12 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * continuous facing, poise, hitstop, exhaustion, flinch and shield, the steerer's stance (facing,
  * lock-on, sneaking) and a heal under way, each enemy's awareness, and a battle's warnings; and the
  * Chapter 1 opening changes (decisions DE-16 to DE-32).
+ * Version 12 (design addendum 2.5, decisions DF-1 to DF-10) adds committed combat's state: each
+ * fighter's move in play, its weight, its miss, its step, its telegraph's flash and whether it
+ * plays by the enemies' floors (the attack-turn origin goes); each fighter's mind (the fight state
+ * machine), an archer's hop and sidearm, and an eased velocity; the steerer's velocity and motion.
  */
-export const WORLD_STATE_VERSION = 11;
+export const WORLD_STATE_VERSION = 12;
 
 /** Book 2 section 16. */
 export interface GateState {

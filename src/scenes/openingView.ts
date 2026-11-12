@@ -31,6 +31,9 @@ import {
 } from '../sim/narrative/wreck.ts';
 import type { WreckContext } from '../sim/narrative/wreck.ts';
 import type { WorldState } from '../sim/world.ts';
+import type { StormBalance } from '../content/presentationBalance.ts';
+import { drawStorm, greenWater, strikeNow, strikes, waves } from './storm.ts';
+import type { Strike, StormDrawing, Wave } from './storm.ts';
 
 type CampProp = CampDef['props']['S0'][number] & { readonly fixed?: boolean };
 
@@ -240,6 +243,34 @@ export interface DecorateInput {
   /** The steerer's body sheet and its layers (to draw them lying on waking). */
   readonly steererSheets: readonly string[];
   readonly bodyModel: 'A' | 'B';
+  /**
+   * The first rain (Book 10 section 25 firstRain; DF-21): drops on screen over the island and the
+   * slant, or null when it is dry. Presentation only: the simulation's rain is not yet applied.
+   */
+  readonly rain?: { readonly drops: number; readonly slant: number } | null;
+  /**
+   * The mast's stores just fallen (DF-82): `k` 0..1 of the swell carrying them from under the
+   * lashing (`from`, world px) round into the stream's mouth where they lie.
+   */
+  readonly bundleDrift?: { readonly k: number; readonly from: { x: number; y: number } } | null;
+}
+
+/** Whether the steerer stands under the raised sail (its cloth cut away, the rain heard on it). */
+export function underSail(
+  world: WorldState,
+  ctx: WreckContext,
+  map: ZoneMap,
+  p: { x: number; y: number },
+): boolean {
+  const camp = ctx.camp;
+  if (camp === null || map.zone !== camp.zone || world.facts['ch1.shelter_raised'] === false)
+    return false;
+  const sail = ctx.rw.camp.sail;
+  return (
+    Math.abs(p.x / map.tile - (sail.x - 0.2)) < 1.9 &&
+    p.y / map.tile > sail.y - 0.6 &&
+    p.y / map.tile < sail.y + 1.6
+  );
 }
 
 const W = 640;
@@ -308,20 +339,28 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
   const camp = ctx.camp;
   if (camp !== null && map.zone === camp.zone && world.facts['ch1.shelter_raised'] !== false) {
     const sail = ctx.rw.camp.sail;
-    const under =
-      Math.abs(p.x / map.tile - (sail.x - 0.2)) < 1.9 &&
-      p.y / map.tile > sail.y - 0.6 &&
-      p.y / map.tile < sail.y + 1.6;
-    if (under)
-      for (let i = 0; i < sprites.length; i++) {
-        const s = sprites[i];
-        if (s?.sheet === 'prop_sail_leanto')
-          sprites[i] = {
-            ...s,
-            sheet: 'fx_shelter_cut',
-            frame: `cut/-/${s.frame.split('/')[2] ?? '0'}`,
-          };
-      }
+    const under = underSail(world, ctx, map, p);
+    const raining = input.rain != null && input.rain.drops > 0;
+    for (let i = 0, n = sprites.length; i < n; i++) {
+      const s = sprites[i];
+      if (s?.sheet !== 'prop_sail_leanto') continue;
+      if (under)
+        sprites[i] = {
+          ...s,
+          sheet: 'fx_shelter_cut',
+          frame: `cut/-/${s.frame.split('/')[2] ?? '0'}`,
+        };
+      // Rain beading on the cloth and running down it, drops falling from its edge (DE-27).
+      if (raining)
+        sprites.push({
+          sheet: 'fx_rain_cloth',
+          frame: `beads/-/${Math.floor(seconds * 6) % 12}`,
+          x: s.x,
+          y: s.y,
+          layer: s.layer,
+          sort: (s.sort ?? s.y) + 0.01,
+        });
+    }
     const home = world.homes['ISLE_SKARV'];
     if (home?.fire.lit === true) {
       const at = scr(sail.x * map.tile, (sail.y + 0.4) * map.tile);
@@ -331,6 +370,21 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
         input.fx.burst('smoke', (sail.x + 1.4) * map.tile, (sail.y - 0.4) * map.tile, 1, 30);
     }
   }
+  // The fallen stores carried by the swell into the shallows, bobbing as they go.
+  const drift = input.bundleDrift;
+  if (drift != null && drift.k < 1)
+    for (let i = 0; i < sprites.length; i++) {
+      const s = sprites[i];
+      if (s?.sheet !== 'prop_stores_bundle' || !s.frame.startsWith('down')) continue;
+      const e = drift.k * drift.k * (3 - 2 * drift.k);
+      const fx = drift.from.x - camera.x;
+      const fy = drift.from.y - camera.y;
+      sprites[i] = {
+        ...s,
+        x: Math.round(fx + (s.x - fx) * e),
+        y: Math.round(fy + (s.y - fy) * e + Math.sin(drift.k * 9) * 1.5),
+      };
+    }
   // Waking in the surf: the steerer lies, coughing, until up (decision DE-30).
   if (wreckPhase(world) === 'WAKING') {
     const at = scr(p.x, p.y);
@@ -460,6 +514,22 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
     }
   }
   sprites.push(...input.fx.sprites(camera));
+  // The first rain: a light overlay slanting downwind that never hides a threat (Book 7 section 08).
+  const rain = input.rain;
+  if (rain != null && rain.drops > 0)
+    for (let i = 0; i < rain.drops; i++) {
+      const fall = 300 + (i % 5) * 26;
+      const ry = ((i * 61.7 + seconds * fall) % 380) - 10;
+      const rx = ((((i * 113.3 - seconds * fall * rain.slant) % 680) + 680) % 680) - 20;
+      sprites.push({
+        sheet: 'fx_storm_drops',
+        frame: `rain/-/${(i + Math.floor(seconds * 20)) % 4}`,
+        x: Math.round(rx),
+        y: Math.round(ry),
+        layer: 'actor',
+        sort: 1e6,
+      });
+    }
   return { ...scene, sprites, pools, ...(effects === undefined ? {} : { effects }) };
 }
 
@@ -519,64 +589,70 @@ export function coldBoat(
   return { x, y, roll: Math.sin(t * 1.3) * 2 + oar, t };
 }
 
-/** The cold open's scene over the strand's sea at night: the boat, the crew, rain and lightning. */
+/** The night's ambient light (assets/art/render.json phases.night), as a share of the day's. */
+const NIGHT_AMBIENT = [92 / 255, 116 / 255, 164 / 255] as const;
+
+/** The storm's fixed parts for a cold open: its strikes, waves and green water (DF-16, DF-17). */
+export interface ColdStorm {
+  readonly b: StormBalance;
+  readonly list: readonly Strike[];
+  readonly waves: readonly Wave[];
+  readonly green: readonly number[];
+  /** Whether a world pixel is open sea (no swell is drawn over rock or sand). */
+  readonly isSea: (x: number, y: number) => boolean;
+}
+
+/** The storm's fixed parts, from Book 10 section 25 and the cold open's script. */
+export function coldStorm(
+  b: StormBalance,
+  ctx: WreckContext,
+  isSea: (x: number, y: number) => boolean,
+): ColdStorm {
+  const until = ctx.rw.coldOpen.strikeSeconds;
+  return { b, list: strikes(b, until), waves: waves(b, until), green: greenWater(b, until), isSea };
+}
+
+/**
+ * The cold open's scene over the strand's sea at night (design addendum 2.5 section 3): the ship
+ * pitching and rolling with its people braced, the storm's swells, foam, breaking waves, spray,
+ * green water, rain, rolling mist, the lantern's swinging pool, light varying in drifting patches
+ * and lightning lighting it all with hard shadows; then the strike on the skerry and the black.
+ */
 export function coldOpenScene(
   scene: Scene,
   world: WorldState,
   ctx: WreckContext,
   map: ZoneMap,
   camera: { readonly x: number; readonly y: number },
-  seconds: number,
   bodyModel: 'A' | 'B',
   reducedMotion: boolean,
-): Scene {
+  storm: ColdStorm,
+): { scene: Scene; drawing: StormDrawing | null } {
   const boat = coldBoat(world, ctx, map.tile);
-  if (boat === null) return scene;
+  if (boat === null) return { scene, drawing: null };
   const c = ctx.rw.coldOpen;
   const t = boat.t;
-  const sprites: SceneSprite[] = [...scene.sprites];
-  const bx = boat.x - camera.x;
-  const by = boat.y - camera.y;
-  const roll = Math.round(boat.roll);
-  const k4 = Math.floor(seconds * 4) % 4;
-  const push = (sheet: string, frame: string, dx: number, dy: number, sort: number): void => {
-    sprites.push({ sheet, frame, x: bx + dx, y: by + dy + roll, layer: 'actor', sort: by + sort });
-  };
-  push('ship_t1_launch', `afloat/-/${k4}`, 0, 0, 0);
-  push('ship_t1_launch', `mast/-/${k4}`, 0, 0, 0.1);
-  push('prop_cold_sail', `torn/-/${Math.floor(seconds * 8) % 4}`, 0, -52, 0.2);
-  for (const [who, dx] of [
-    ['hild_1', -36],
-    ['oddi_2', -12],
-    ['bran_0', 12],
-    ['runa_3', 34],
-  ] as const)
-    push('ship_t1_crew', `${who}/-/${Math.floor(seconds * 3) % 4}`, dx, -6, 0.3);
-  // The steerer at the steering oar in the stern; Thorkel at the bow, shouting at the rocks.
-  push(
-    'ship_t1_crew',
-    `helm_${bodyModel.toLowerCase()}/-/${Math.floor(seconds * 2) % 4}`,
-    78,
-    -8,
-    0.35,
-  );
-  push('prop_cold_figures', `thorkel/-/${Math.floor(seconds * 5) % 4}`, -84, -14, 0.35);
-  // Rain slanting across the whole view.
-  for (let i = 0; i < 70; i++) {
-    const rx = ((i * 97 + seconds * 220) % (W + 40)) - 20;
-    const ry = ((i * 53 + seconds * 380) % (H + 20)) - 10;
-    sprites.push({
-      sheet: 'fx_opening',
-      frame: `rain/-/${(i + k4) % 4}`,
-      x: rx,
-      y: ry,
-      layer: 'actor',
-      sort: 10000,
-    });
-  }
-  // Lightning: a flash every few seconds (the strike at strikeSeconds), never with reduced flashes.
-  const bolt = [5.5, 12.2, 19.8, 26.4, c.strikeSeconds];
-  const flash = reducedMotion ? 0 : bolt.some((b) => t >= b && t < b + 0.18) ? 0.85 : 0;
+  const drawing = drawStorm({
+    t,
+    b: storm.b,
+    reduced: reducedMotion,
+    bx: Math.round(boat.x - camera.x),
+    by: Math.round(boat.y - camera.y),
+    camera,
+    tile: map.tile,
+    isSea: storm.isSea,
+    bodyModel,
+    strikeSeconds: c.strikeSeconds,
+    list: storm.list,
+    waveList: storm.waves,
+    greenList: storm.green,
+  });
+  const sprites: SceneSprite[] = [
+    ...scene.sprites,
+    ...drawing.under,
+    ...drawing.ship,
+    ...drawing.over,
+  ];
   const black =
     t >= c.blackSeconds
       ? 1
@@ -585,23 +661,51 @@ export function coldOpenScene(
         : 0;
   const e = scene.effects;
   const dark = 1 - black;
+  // The night grade under the night's blue ambience (render.json), dark so the foam, the spray,
+  // the mist and the lantern read against it. In a flash the scene is lit to the lightning's share
+  // of the day grade: drawn in the day's ambience with the gain eased from the night's effective
+  // light (gain x ambient) up to that share, so the bright frames light ship, sea and land alike.
+  const lit = drawing.flash;
+  const night = { gain: [0.46, 0.54, 0.7], lift: [0, 1, 6] };
+  const flashing = lit > 0.001;
+  const gain = night.gain.map((g, i) => {
+    const eff = g * (NIGHT_AMBIENT[i] ?? 1);
+    return (flashing ? eff + (storm.b.flashDayShare - eff) * lit : g) * dark;
+  }) as [number, number, number];
+  const lift = night.lift.map((l) => l * (1 - lit) * dark) as [number, number, number];
+  const strike = strikeNow(t, storm.list);
+  const away = strike === null ? { x: 0, y: 1 } : { x: strike.across < 0.5 ? 1.2 : -1.2, y: 0.9 };
+  const patch = storm.b.lightVaries;
   return {
-    ...scene,
-    sprites: black >= 1 ? [] : sprites,
-    phase: 'night',
-    ...(e === undefined
-      ? {}
-      : {
-          effects: {
-            ...e,
-            flash,
-            fog: Math.max(e.fog, 0.35),
-            wind: { ...e.wind, strength: 1 },
-            grade: {
-              gain: [0.55 * dark, 0.62 * dark, 0.8 * dark],
-              lift: [0, 2 * dark, 8 * dark],
+    drawing,
+    scene: {
+      ...scene,
+      sprites: black >= 1 ? [] : sprites,
+      pools: [...scene.pools, ...(black >= 1 ? [] : drawing.pools)],
+      phase: flashing ? 'day' : 'night',
+      ...(e === undefined
+        ? {}
+        : {
+            effects: {
+              ...e,
+              flash: 0,
+              fog: Math.max(e.fog * 0.3, 0.1),
+              wind: { ...e.wind, strength: 1 },
+              grade: { gain, lift },
+              sun: {
+                x: away.x,
+                y: away.y,
+                strength: drawing.flash >= 1 - 1e-6 ? 0.9 : 0,
+              },
+              shadows: drawing.flash > 0.5 ? [...e.shadows, ...drawing.shadows] : e.shadows,
+              patches: {
+                share: patch.share,
+                size: patch.patchTiles * map.tile,
+                vx: -patch.driftTiles * map.tile,
+                vy: 0,
+              },
             },
-          },
-        }),
+          }),
+    },
   };
 }

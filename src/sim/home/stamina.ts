@@ -9,8 +9,10 @@
  * - Traversal drains spend `current` every tick they last (`traversalTick`): sprinting, heavy
  *   carrying and waist-deep wading. Walking, ordinary carrying and water up to the knee never
  *   drain it. Regeneration waits Book 10's ticks after the last spend, is halved standing waist
- *   deep, and pauses while any drain applies. Running empty stops the sprint, sets a carried
- *   load down and halves a waist-deep wade until Book 10's recoverAt is regained.
+ *   deep, and pauses while any drain applies; exhausted, it waits Book 10's longer pause and runs
+ *   at its slower rate (design addendum 2.5, "Exhausted"). Running empty exhausts the runner (the
+ *   simulation's fighter keeps the flag, decision DF-3), sets a carried load down and halves a
+ *   waist-deep wade until Book 10's heavyCarryEmpty stamina is regained.
  * - Homestead tasks cost only their small stamina, which never empties the bar on its own.
  */
 import type { StaminaBalance } from '../../content/homeBalance.ts';
@@ -113,6 +115,11 @@ export interface TraversalNow {
   readonly inCombat?: boolean;
   /** Stage 9: a shield held up (regeneration is halved, Book 10 section 06 stamina row). */
   readonly blocking?: boolean;
+  /**
+   * Design addendum 2.5: exhausted (Book 10 "Exhausted"): regeneration waits this long after the
+   * bar reached 0, at this rate a second.
+   */
+  readonly exhausted?: { readonly delay: number; readonly rate: number };
 }
 
 /** Which traversals ran the bar empty and wait for Book 10's recoverAt. */
@@ -143,8 +150,12 @@ export function traversalTick(
       if (now.carrying) emptied.carry = true;
       if (now.wadingWaist) emptied.wade = true;
     }
-  } else if (tick - st.spentTick >= sb.regenDelayTicks && st.current < st.max) {
-    const rate = sb.regenPerSecond * (now.inWaist || now.blocking === true ? 0.5 : 1);
+  } else if (
+    tick - st.spentTick >= (now.exhausted?.delay ?? sb.regenDelayTicks) &&
+    st.current < st.max
+  ) {
+    const base = now.exhausted?.rate ?? sb.regenPerSecond;
+    const rate = base * (now.inWaist || now.blocking === true ? 0.5 : 1);
     st.current = Math.min(st.max, st.current + rate / 60);
   }
   if (st.current >= sb.recoverAt) {
@@ -152,7 +163,6 @@ export function traversalTick(
     delete winded.carry;
     delete winded.wade;
   }
-  if (emptied.run === true) winded.run = true;
   if (emptied.carry === true) winded.carry = true;
   if (emptied.wade === true) winded.wade = true;
   return emptied;

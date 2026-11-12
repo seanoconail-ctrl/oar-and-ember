@@ -167,7 +167,10 @@ export function parseStormBalance(json: unknown): StormBalance {
     'lightningFlash',
     '^Bright for N ticks, dim for N, bright for N, then fading over N real seconds$',
   );
-  const red = r('lightningReduced', 'one soft swell of light, N s up and N s down, at half strength');
+  const red = r(
+    'lightningReduced',
+    'one soft swell of light, N s up and N s down, at half strength',
+  );
   const fog = r('fog', 'drifting downwind at N and N tiles a second');
   const lv = r(
     'lightVaries',
@@ -187,11 +190,11 @@ export function parseStormBalance(json: unknown): StormBalance {
       bright2: fl[2] ?? 0,
       fadeSeconds: fl[3] ?? 0,
     },
-    flashesPerSecond: /At most two flashes in any one second/.test(
+    flashesPerSecond: (
       rowsOf(json, 'theOpeningGuidanceAndFeel', 'theStorm').find(
         (x) => x['Key'] === 'lightningFlash',
-      )?.['Notes'] ?? '',
-    )
+      )?.['Notes'] ?? ''
+    ).includes('At most two flashes in any one second')
       ? 2
       : (() => {
           throw new Error('balance.json: theStorm.lightningFlash has no "At most two flashes"');
@@ -208,11 +211,11 @@ export function parseStormBalance(json: unknown): StormBalance {
     swayX: first(r('cameraSway', 'and N px side to side')),
     pitchPx: first(r('pitch', 'up to N px')),
     pitchSeconds: first(r('pitch', 'over N real seconds$')),
-    rollFrames: /three roll frames/.test(
+    rollFrames: (
       rowsOf(json, 'theOpeningGuidanceAndFeel', 'theStorm').find((x) => x['Key'] === 'roll')?.[
         'Value'
-      ] ?? '',
-    )
+      ] ?? ''
+    ).includes('three roll frames')
       ? 3
       : (() => {
           throw new Error('balance.json: theStorm.roll has no "three roll frames"');

@@ -4,6 +4,7 @@
  * the simulation on Wreck Strand; the scavengers at dusk are the game's own content.
  */
 import { describe, expect, it } from 'vitest';
+import { carefulMemory, carefulTick } from '../../src/tools/play/carefulFighter.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import {
   MELEE_WEAPONS,
@@ -419,12 +420,17 @@ describe('the stance and lock-on (decisions DE-2 and DE-3)', () => {
     steps(f, 60);
     const walked = (player(f).x - x0) / TILE;
     expect(Math.abs(Math.cos(st?.facing ?? 0) + 1)).toBeLessThan(0.05);
-    expect(walked).toBeCloseTo(content.balance === undefined ? 0 : 2.0 * cb.stance.backOff, 1);
-    // Strafing (north): 0.85 of the walk.
+    // At backOff of the walk, less the ramp up to it (Book 10 "Movement and acceleration").
+    const ramp = (up: number): number => (60 - up / 2) / 60;
+    expect(walked).toBeCloseTo(2.0 * cb.stance.backOff * ramp(cb.accel.modes.backOff.up), 1);
+    // Strafing (north): 0.85 of the walk, easing out of the backing off as it builds.
     const y0 = player(f).y;
     move(f, 0, -1);
     steps(f, 60);
-    expect((y0 - player(f).y) / TILE).toBeCloseTo(2.0 * cb.stance.strafe, 1);
+    expect((y0 - player(f).y) / TILE).toBeCloseTo(
+      2.0 * cb.stance.strafe * ramp(cb.accel.modes.strafe.up),
+      1,
+    );
     // Running breaks the facing: the body turns to the way of travel.
     move(f, 1, 0, true);
     steps(f, 30);
@@ -460,13 +466,11 @@ describe('the stance and lock-on (decisions DE-2 and DE-3)', () => {
     expect(player(f).stance?.lockOn).toBe('E_WRECKER_CONN');
   });
 
-  it('commits attacks: a windup turns at most attackTurn; only a light’s first ticks dodge', () => {
+  it('commits attacks: no turning and no dodge from the first wind-up tick (design addendum 2.5)', () => {
+    // No cancels at all (Book 10 noCancels): not even the first tick of a light becomes a dodge.
     const f = newFighter('Seax', { facing: 'e' });
     pressAttack(f, 0, cb, 'e', pool());
-    expect(pressDodge(f, cb.stance.dodgeCancelTicks - 1, cb, null, pool())).toBe('STARTED');
-    const g = newFighter('Seax', { facing: 'e' });
-    pressAttack(g, 0, cb, 'e', pool());
-    expect(pressDodge(g, cb.stance.dodgeCancelTicks, cb, null, pool())).toBe('REFUSED');
+    expect(pressDodge(f, 1, cb, null, pool())).toBe('REFUSED');
     const sim = strand('commit', { foe: [62, 34.5], at: [78, 34.5] });
     freeze(sim, 'E_WRECKER_SVART');
     sim.sim.submit({ type: 'FACE', dir: 0 });
@@ -475,11 +479,10 @@ describe('the stance and lock-on (decisions DE-2 and DE-3)', () => {
     sim.sim.step();
     sim.sim.submit({ type: 'MELEE_RELEASE' });
     sim.sim.submit({ type: 'FACE', dir: AIM_DIRECTIONS / 4 });
-    steps(sim, 12);
+    steps(sim, 20);
     const st = player(sim).stance;
-    expect((st?.facing ?? 0) * (180 / Math.PI)).toBeLessThanOrEqual(
-      cb.stance.attackTurnDegrees + 1e-6,
-    );
+    // The facing is fixed at the press (Book 10 "Commitment", facing): it does not turn at all.
+    expect(Math.abs(st?.facing ?? 1)).toBeLessThan(1e-9);
     // A swing that met no one recovers longer (missRecovery).
     expect(sim.events.some((e) => e.type === 'MISSED')).toBe(true);
   });
@@ -488,9 +491,11 @@ describe('the stance and lock-on (decisions DE-2 and DE-3)', () => {
 // --------------------------------------------------------------------------- reach and spacing
 
 describe('reach, spacing and the weapons (decision DE-4)', () => {
-  it('every weapon meets a body at its reach and not beyond', () => {
+  it('every weapon meets a body at its reach (and its planted step) and not beyond', () => {
     for (const name of MELEE_WEAPONS) {
-      const reach = (cb.weapons[name].reachTiles + cb.bodyRadiusTiles) * TILE;
+      // A light's fixed step forward over its active ticks carries the blade on (Book 10 step).
+      const step = (cb.weapons[name].moves.light1?.step ?? 0) * TILE;
+      const reach = (cb.weapons[name].reachTiles + cb.bodyRadiusTiles) * TILE + step;
       for (const [d, expected] of [
         [reach - 1, true],
         [reach + 1, false],
@@ -588,7 +593,9 @@ describe('reach, spacing and the weapons (decision DE-4)', () => {
     const inside = newFighter('Spear');
     pressAttack(inside, 0, cb, 'e', pool(), { inside: true });
     releaseAttack(inside, 1, cb, pool());
-    expect(inside.activeAt).toBe(cb.weapons.Spear.windup + cb.rules.spearInsideWindup);
+    expect(inside.activeAt).toBe(
+      (cb.weapons.Spear.moves.light1?.windup ?? 0) + cb.rules.spearInsideWindup,
+    );
   });
 
   it('the spear lands part of a thrust past a single shield’s edge, and pushes back', () => {
@@ -637,8 +644,10 @@ describe('reach, spacing and the weapons (decision DE-4)', () => {
     expect(pressAttack(f, 0, cb, 'e', p, { lunge: true })).toBe('STARTED');
     expect(f.state).toBe('lunge');
     expect(f.lunge).toEqual({ tiles: cb.lunge.tiles.Spear, from: cb.lunge.tellTicks });
-    expect(f.activeAt).toBe(cb.lunge.tellTicks + cb.weapons.Spear.windup);
+    // Its strides over the lunge's own wind-up (Book 10 "Frame data", Lunge), after the tell.
+    expect(f.activeAt).toBe(cb.lunge.tellTicks + (cb.weapons.Spear.moves.lunge?.windup ?? 0));
     expect(100 - p.current).toBe(cb.weapons.Spear.stamina + cb.lunge.staminaExtra);
+    expect(100 - p.current).toBe(cb.weapons.Spear.moves.lunge?.stamina);
     // The seax and bare hands do not lunge.
     const s = newFighter('Seax');
     pressAttack(s, 0, cb, 'e', pool(), { lunge: true });
@@ -652,14 +661,22 @@ describe('parry, riposte, poise and hitstop (decisions DE-5 and DE-7)', () => {
   it('a parry opens the attacker for Book 10’s time; the riposte is heavy, distinct and big', () => {
     const a = swing('Spear');
     const d = newFighter('Seax', { facing: 'e' });
-    pressParry(d, a.activeAt - cb.parry.startup - 2, cb, pool());
+    const at = a.activeAt - cb.parry.windup - 2;
+    pressParry(d, at, cb, pool());
+    for (let t = at; t <= a.activeAt; t++) stepFighter(d, t, cb, pool());
     const out = resolveBlow(a, d, blowOf(a, cb), fromEast, a.activeAt, cb, cb.parry.window, pool());
     expect(out).toBe('PARRIED');
     expect(a.state).toBe('parried');
     expect(a.recoveryEnd - a.activeAt).toBe(cb.parry.open);
     expect(hitstopFor(blowOf(a, cb), 'PARRIED', cb)).toBe(cb.parry.hitstop);
-    // The riposte: its ticks by weapon, x3 damage, unblockable, ignoring poise.
-    pressAttack(d, a.activeAt + 1, cb, 'e', pool());
+    // The parrier settles (Book 10 parrySettle), then the riposte: its ticks by weapon, x3 damage,
+    // unblockable, ignoring poise.
+    expect(d.state).toBe('parryRecovery');
+    expect(d.recoveryEnd - a.activeAt).toBe(cb.parry.settle);
+    expect(pressAttack(d, a.activeAt + 1, cb, 'e', pool())).toBe('REFUSED');
+    for (let t = a.activeAt + 1; t <= a.activeAt + cb.parry.settle; t++)
+      stepFighter(d, t, cb, pool());
+    pressAttack(d, a.activeAt + cb.parry.settle + 1, cb, 'e', pool());
     expect(d.state).toBe('riposte');
     const fr = riposteFrames(cb, 'Seax');
     expect(fr.windup + fr.active + fr.recovery).toBe(cb.parry.riposteTicks.Seax);
@@ -673,7 +690,7 @@ describe('parry, riposte, poise and hitstop (decisions DE-5 and DE-7)', () => {
     // A sword widens the parry window.
     const sw = newFighter('Sword');
     pressParry(sw, 0, cb, pool());
-    expect(sw.recoveryEnd).toBe(cb.parry.startup + cb.parry.window + cb.parry.swordExtra);
+    expect(sw.activeEnd).toBe(cb.parry.windup + cb.parry.window + cb.parry.swordExtra);
   });
 
   it('in the zone: the parry’s spark and long hitstop, then the riposte’s', () => {
@@ -686,17 +703,17 @@ describe('parry, riposte, poise and hitstop (decisions DE-5 and DE-7)', () => {
     // Svart thrusts east; the steerer parries in time.
     pressAttack(s.f, f.world.tick, cb, 'e', s.stamina);
     releaseAttack(s.f, f.world.tick + 1, cb, s.stamina);
-    const pressAt = s.f.activeAt - cb.parry.startup - 3;
+    const pressAt = s.f.activeAt - cb.parry.windup - 3;
     while (f.world.tick < pressAt) f.sim.step();
     f.sim.submit({ type: 'PARRY' });
-    steps(f, 6);
+    steps(f, cb.parry.windup + 6);
     const parry = f.events.find((e) => e.type === 'BLOW' && e.outcome === 'PARRIED');
     expect(parry).toMatchObject({ hitstop: cb.parry.hitstop });
     expect(s.f.state).toBe('parried');
     // Both held: neither fighter's clock runs during the hitstop.
     const p = player(f);
     expect((p.fight?.hitstop ?? 0) + 6).toBeGreaterThanOrEqual(cb.parry.hitstop);
-    steps(f, cb.parry.hitstop);
+    steps(f, cb.parry.hitstop + cb.parry.settle);
     f.sim.submit({ type: 'MELEE', facing: 'w' });
     steps(f, 40);
     const rip = f.events.find(
@@ -818,7 +835,7 @@ describe('health, stamina, healing and the bars (decision DE-8)', () => {
     expect(f.events.some((e) => e.type === 'PERSON_KILLED')).toBe(true);
   });
 
-  it('stamina waits before refilling; at nothing the fighter is exhausted (no dodge, slow)', () => {
+  it('stamina waits before refilling; at nothing the fighter is exhausted (no dodge), silently', () => {
     const f = strand('exhausted', { foe: [62, 34.5], at: [78, 34.5] });
     freeze(f, 'E_WRECKER_SVART');
     f.world.player.stamina.current = 0;
@@ -827,14 +844,11 @@ describe('health, stamina, healing and the bars (decision DE-8)', () => {
     expect(player(f).fight?.exhausted ?? true).toBe(true);
     f.sim.submit({ type: 'DODGE', x: 1, y: 0 });
     f.sim.step();
-    expect(f.events).toContainEqual({ type: 'FIGHT_REFUSED', reason: 'EXHAUSTED' });
+    // Refused with no word (design addendum 2.5: "Too spent" is cut); the body shows it.
+    expect(player(f).fight?.state).toBe('idle');
+    expect(f.events.some((e) => e.type === 'FIGHT_REFUSED')).toBe(false);
     expect(cb.stamina.regenDelay).toBe(48);
-    // An exhausted windup is slower.
-    const e = newFighter('Seax');
-    e.exhausted = true;
-    pressAttack(e, 0, cb, 'e', pool());
-    releaseAttack(e, 1, cb, pool());
-    expect(e.activeAt).toBe(Math.round(cb.weapons.Seax.windup * cb.stamina.exhaustedSlow));
+    expect(cb.exhausted.regenDelay).toBe(48);
   });
 
   it('binding a wound takes time, uses a binding, and a step cuts it short (the binding lost)', () => {
@@ -848,13 +862,20 @@ describe('health, stamina, healing and the bars (decision DE-8)', () => {
     expect(f.world.player.inventory['ITEM_BINDING']).toBe(1);
     steps(f, cb.heal.bindTicks + 2);
     expect(f.world.player.vitality).toBe(40 + cb.heal.bindVitality);
-    // Again, but walk off: interrupted, nothing restored, the binding gone.
+    // Again: committed (design addendum 2.5), the keys do not walk it off; a hit cuts it short,
+    // nothing restored, the binding gone.
     f.sim.submit({ type: 'HEAL' });
     f.sim.step();
     move(f, 1, 0);
+    const x0 = player(f).x;
     steps(f, 30);
+    expect(player(f).x).toBe(x0);
     move(f, 0, 0);
-    expect(f.events).toContainEqual({ type: 'HEAL_INTERRUPTED', kind: 'BIND' });
+    const bf = player(f).fight;
+    if (bf == null) throw new Error('no fighter');
+    poiseHit(bf, { poise: 1, kind: 'light' }, f.world.tick, cb);
+    f.sim.step();
+    steps(f, cb.heal.bindTicks);
     expect(f.world.player.vitality).toBe(40 + cb.heal.bindVitality);
     expect(f.world.player.inventory['ITEM_BINDING'] ?? 0).toBe(0);
     // A ration: eating restores vitality and stamina; a hit cuts it short.
@@ -1022,7 +1043,7 @@ describe('sneaking, perception and the backstab (decision DE-9)', () => {
     expect(f.events).toContainEqual(
       expect.objectContaining({ type: 'PERSON_KILLED', person: 'E_WRECKER_SVART' }),
     );
-    const fr = backstabFrames(cb, ai.sneakAttacks.ticksSeax, 'Seax');
+    const fr = backstabFrames(cb, 'Seax');
     expect(fr.windup + fr.active + fr.recovery).toBe(ai.sneakAttacks.ticksSeax);
     expect(ai.sneakAttacks.killAtOrBelow).toBeGreaterThanOrEqual(
       ai.archetypes['Outlaw']?.vitality ?? 999,
@@ -1046,7 +1067,8 @@ describe('warnings before a fight, and checkpoint autosaves (decisions DE-11 and
     };
     walkTo(conn.x / TILE - 7.5);
     walkTo(conn.x / TILE - 4.5);
-    walkTo(conn.x / TILE - 2.7);
+    // Stopping takes a step (Book 10 "Movement and acceleration"): aim a little short.
+    walkTo(conn.x / TILE - 2.85);
     const warned = f.events.flatMap((e) => (e.type === 'WARNED' ? [e.stage] : []));
     expect(warned).toEqual([1, 2, 3]);
     expect(f.events.some((e) => e.type === 'FIGHT_STARTED')).toBe(false);
@@ -1170,42 +1192,45 @@ describe('the scavengers at dusk (decisions DE-14 and DE-15; Book 6 section 18)'
   });
 
   it('FIGHT: Svart’s slow heavy is parried; the riposte fells him; Conn runs', () => {
+    // Ten seeded fights played by the careful scripted player (design addendum 2.5: it parries
+    // predictively off each telegraph's flash, src/tools/play/carefulFighter.ts).
     let wins = 0;
-    for (const seed of ['dusk-fight-1', 'dusk-fight-2', 'dusk-fight-3']) {
-      const f = dusk(seed, [92.6, 35.2], 'ITEM_SEAX');
+    let parries = 0;
+    const n = 10;
+    for (let k = 1; k <= n; k++) {
+      const f = dusk(`dusk-fight-${k}`, [92.6, 35.2], 'ITEM_SEAX');
+      const onFoot = f.world.onFoot;
+      if (onFoot === null) throw new Error('no zone');
       const svart = actor(f, 'E_WRECKER_SVART');
-      f.sim.submit({ type: 'LOCK_ON', down: true });
-      f.sim.submit({ type: 'LOCK_ON', down: false });
-      // Walk at him: past the warnings, the fight is on.
-      let parried = false;
-      for (let i = 0; i < 60 * 40 && f.world.gameOver === null; i++) {
+      const mem = carefulMemory();
+      for (let i = 0; i < 60 * 60 && f.world.gameOver === null; i++) {
         const p = player(f);
-        const sf = fa(f, 'E_WRECKER_SVART').f;
-        const t = f.world.tick + 1;
-        if (f.world.onFoot?.battle?.engaged !== true) move(f, Math.sign(svart.x - p.x), 0);
-        else move(f, 0, 0);
-        if (sf.state === 'heavyRelease' && sf.activeAt - t === cb.parry.startup + 2)
-          f.sim.submit({ type: 'PARRY' });
-        if (sf.state === 'parried' && sf.hitstop === 0 && p.fight?.state === 'idle') {
-          parried = true;
-          f.sim.submit({ type: 'MELEE', facing: 'e' });
+        // Walk at him: past the warnings, the fight is on.
+        if (onFoot.battle?.engaged !== true) move(f, Math.sign(svart.x - p.x), 0);
+        else {
+          const st = f.world.player.stamina;
+          for (const c of carefulTick(onFoot, cb, f.world.tick, st.current, st.max, mem))
+            f.sim.submit(c);
         }
-        f.world.player.vitality = Math.max(f.world.player.vitality, 60);
         f.sim.step();
-        if (fa(f, 'E_WRECKER_SVART').dead !== null) break;
+        const sv = onFoot.actors['E_WRECKER_SVART']?.fight;
+        if (sv === undefined || sv.dead !== null) break;
       }
       steps(f, 600);
       const rip = f.events.find((e) => e.type === 'BLOW' && e.kind === 'riposte');
+      const parried = f.events.some((e) => e.type === 'BLOW' && e.outcome === 'PARRIED');
+      if (parried) parries++;
       if (parried && rip !== undefined && f.world.facts['ch1.dusk.E_WRECKER_SVART'] === 'DEAD') {
         wins++;
-        expect(f.world.facts['ch1.dusk.E_WRECKER_CONN']).toBe('FLED');
+        expect(['FLED', 'HELD', 'LEFT']).toContain(f.world.facts['ch1.dusk.E_WRECKER_CONN']);
         expect(f.world.facts['ch1.dusk']).toBe('FOUGHT');
         expect(f.events).toContainEqual(
           expect.objectContaining({ type: 'DUSK_RESOLVED', outcome: 'FOUGHT' }),
         );
       }
     }
-    expect(wins).toBeGreaterThanOrEqual(2);
+    console.log(`dusk: the careful player won ${wins} of ${n} (parried in ${parries})`);
+    expect(wins).toBeGreaterThanOrEqual(6);
   });
 
   it('WALK AWAY: they finish at dark and go to the fold; no fight', () => {

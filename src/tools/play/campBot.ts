@@ -68,6 +68,12 @@ export class CampBot {
   stop(): void {
     this.#sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
     this.step();
+    // Design addendum 2.5: the steerer slows to a stop over Book 10's ticks; wait for it.
+    for (let i = 0; i < 30; i++) {
+      const v = this.#onFoot.player.vel;
+      if (v === undefined || Math.hypot(v.x, v.y) < 1e-6) break;
+      this.step();
+    }
   }
 
   #move(x: number, y: number, run = false): void {
@@ -107,7 +113,10 @@ export class CampBot {
         if (Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
         if (this.ticks > limit) return false;
         const len = Math.hypot(dx, dy);
-        this.#sim.submit({ type: 'MOVE', x: dx / len, y: dy / len, run, sneak });
+        // Design addendum 2.5: speed builds and dies (Book 10 "Movement and acceleration"); near
+        // a waypoint the keys ease off so the steerer does not circle it.
+        const k = len < 10 ? Math.max(0.25, len / 10) : 1;
+        this.#sim.submit({ type: 'MOVE', x: (dx / len) * k, y: (dy / len) * k, run, sneak });
         this.step();
       }
     }

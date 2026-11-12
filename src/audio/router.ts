@@ -36,6 +36,8 @@ export class AudioRouter {
   readonly #sink: AudioSink;
   readonly director: MusicDirector;
   #captions: Caption[] = [];
+  /** Captions made since the last `takeCaptions`, with their string keys (design addendum 2.5). */
+  #fresh: { key: string; text: string }[] = [];
   #ambience: string[] = [];
 
   constructor(
@@ -61,6 +63,8 @@ export class AudioRouter {
         direction: formatString(this.#strings, `caption.direction.${direction}`),
       });
     }
+    this.#fresh.push({ key: cue.captionKey, text });
+    if (this.#fresh.length > 32) this.#fresh.shift();
     this.#captions = this.#captions.filter((c) => c.cue !== cue.id || c.text !== text);
     this.#captions.push({
       text,
@@ -131,6 +135,16 @@ export class AudioRouter {
       this.#sink.ambience(layers, now);
     }
     return ids;
+  }
+
+  /**
+   * The sound captions made since the last call, with their string keys, for the caption view to
+   * judge by the text audit (Book 8 section 10): most are cut, a few kept by class.
+   */
+  takeCaptions(): readonly { key: string; text: string }[] {
+    const out = this.#fresh;
+    this.#fresh = [];
+    return out;
   }
 
   /** Advances music and captions; returns the captions showing at `now`. */

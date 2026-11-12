@@ -12,6 +12,7 @@ import { CaveAmbience } from './synth/repairs.ts';
 import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
 import { HomeAmbience } from './synth/home.ts';
 import { GALE_WIND, SpringAmbience } from './synth/south.ts';
+import { RainClothAmbience, StormAmbience } from './synth/storm.ts';
 import { allInstrumentSamples, SynthEngine, warmSamples } from './synth/engine.ts';
 import { footstep, isSurface } from './synth/footsteps.ts';
 import type { Gait } from './synth/footsteps.ts';
@@ -43,6 +44,9 @@ export class WebAudioEngine implements AudioSink {
   #spring: SpringAmbience | null = null;
   #cave: CaveAmbience | null = null;
   #springLevel = 0;
+  /** Design addendum 2.5: the cold open's storm bed, and rain on the sail cloth under it. */
+  #storm: StormAmbience | null = null;
+  #rain: RainClothAmbience | null = null;
   #gale = false;
   #steps = 0;
   #winter = false;
@@ -114,6 +118,41 @@ export class WebAudioEngine implements AudioSink {
     this.#home?.schedule(until);
     this.#spring?.schedule(until);
     this.#cave?.schedule(until);
+    this.#storm?.schedule(until);
+    this.#rain?.schedule(until);
+  }
+
+  /**
+   * The cold open's storm bed (`AMB_COLD_STORM`): `level` 0 stops it; `pitch` and `roll` are the
+   * ship's periods (Book 10 section 25), so the timber groans and creaks in time with the picture.
+   */
+  setStorm(level: number, pitch = 3.2, roll = 5.4): void {
+    const e = this.#e;
+    if (e === null) return;
+    const t = e.ctx.currentTime;
+    if (level > 0 && this.#storm === null) {
+      this.#storm = new StormAmbience(e, pitch, roll);
+      this.#storm.start(t);
+    } else if (level <= 0 && this.#storm !== null) {
+      this.#storm.stop(t);
+      this.#storm = null;
+    }
+    this.#storm?.setLevel(level, t);
+  }
+
+  /** Rain on the sail cloth (`AMB_RAIN_CLOTH`), heard only under the sail: 0 (none) to 1. */
+  setRainCloth(level: number): void {
+    const e = this.#e;
+    if (e === null) return;
+    const t = e.ctx.currentTime;
+    if (level > 0 && this.#rain === null) {
+      this.#rain = new RainClothAmbience(e, level);
+      this.#rain.start(t);
+    } else if (level <= 0 && this.#rain !== null) {
+      this.#rain.stop(t);
+      this.#rain = null;
+    }
+    this.#rain?.setLevel(level, t);
   }
 
   /** How near the Kelda Spring the listener is, 0 (unheard) to 1 (beside it): Stage 10. */

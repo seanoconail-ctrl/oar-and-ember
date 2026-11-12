@@ -490,20 +490,22 @@ describe('Stage 7 check 5: the bar is its maximum, lowered by named reasons, res
     expect(st.current).toBeCloseTo(low + sb.regenPerSecond / 60, 6);
   });
 
-  it('a sprint run empty drops to a walk until Book 10 recoverAt is regained', () => {
+  it('a sprint run empty exhausts: a walk at half speed until 30% of the bar is regained (DF-3)', () => {
     const { sim } = play('sprint');
     const p = sim.state.onFoot?.player;
     if (p === undefined) throw new Error('not on foot');
     sim.state.player.stamina.current = 0.5;
     sim.submit({ type: 'MOVE', x: 1, y: 0, run: true, sneak: false });
     for (let i = 0; i < 30; i++) sim.step();
-    expect(p.winded?.run).toBe(true);
+    // Design addendum 2.5 (Book 10 "Exhausted"): running out exhausts the runner.
+    expect(p.fight?.exhausted).toBe(true);
     expect(p.gait).toBe('walk');
-    // Standing still, the bar regains Book 10's recoverAt and the sprint comes back.
+    // Standing still, the bar refills after the longer pause at the slower rate, to the threshold.
     sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
-    for (let i = 0; i < 60 * 3; i++) sim.step();
-    expect(sim.state.player.stamina.current).toBeGreaterThanOrEqual(sb.recoverAt);
-    expect(p.winded?.run).toBeUndefined();
+    const max = sim.state.player.stamina.max;
+    for (let i = 0; i < 60 * 3 && p.fight?.exhausted === true; i++) sim.step();
+    expect(p.fight?.exhausted).toBe(false);
+    expect(sim.state.player.stamina.current).toBeGreaterThanOrEqual(0.3 * max - 1e-6);
     sim.submit({ type: 'MOVE', x: 1, y: 0, run: true, sneak: false });
     sim.step();
     expect(p.gait).toBe('run');

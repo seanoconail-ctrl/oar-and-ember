@@ -159,6 +159,8 @@ describe('Book 10 speeds and the carry rules', () => {
       onFoot.carrying = 'C_HILD';
     }
     sim.submit({ type: 'MOVE', x: 1, y: 0, run, sneak });
+    // Design addendum 2.5: speed builds to full over Book 10's ticks; measured once at full.
+    for (let i = 0; i < 30; i++) sim.step();
     const x0 = onFoot.player.x;
     for (let i = 0; i < 60; i++) sim.step();
     return (onFoot.player.x - x0) / 24;

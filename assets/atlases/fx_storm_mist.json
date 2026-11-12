@@ -1,0 +1,51 @@
+{
+  "sheet": "fx_storm_mist",
+  "kind": "decal",
+  "image": "fx_storm_mist.png",
+  "width": 200,
+  "height": 44,
+  "pivot": {
+    "x": 100,
+    "y": 43
+  },
+  "footprint": {
+    "w": 200,
+    "h": 44
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "low": {
+      "frames": 2,
+      "ticks": 60,
+      "loop": true
+    },
+    "high": {
+      "frames": 2,
+      "ticks": 60,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "low/-/0": [
+      0,
+      0
+    ],
+    "low/-/1": [
+      200,
+      0
+    ],
+    "high/-/0": [
+      0,
+      44
+    ],
+    "high/-/1": [
+      200,
+      44
+    ]
+  }
+}

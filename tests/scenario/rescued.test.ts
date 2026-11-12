@@ -16,6 +16,7 @@ import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.t
 import { readSave, writeSave } from '../../src/persist/save.ts';
 import type { SaveFile } from '../../src/persist/save.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
+import { campaignMinute } from '../../src/sim/home/camp.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { findActor } from '../../src/sim/land/zoneLinks.ts';
 import { aboveTideLine, terrainAt, tileBlocks, tileOf } from '../../src/sim/land/zoneMap.ts';
@@ -36,19 +37,19 @@ const balance = loadBalanceJson();
 const b = parseTimeBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
-const campCtx = land.camp;
-const searches = land.searches;
-const repairs = land.repairs;
-const wreck = land.wreck;
-if (campCtx == null || searches == null || repairs == null || wreck == null)
-  throw new Error('no camp, searches, repairs or opening content');
-const camp = campCtx;
+function needed<V>(v: V | null | undefined, what: string): V {
+  if (v == null) throw new Error(`no ${what} content`);
+  return v;
+}
+const camp = needed(land.camp, 'camp');
+const searches = needed(land.searches, 'searches');
+const repairs = needed(land.repairs, 'repairs');
+const wreck = needed(land.wreck, 'opening');
+const people = needed(land.people, 'people');
 const T = 60;
 const CAMP_ZONE = camp.def.zone;
 const fire = wreck.camp?.fire ?? { x: 0, y: 0 };
 const beds = camp.def.shelterBeds ?? [];
-const people = land.people;
-if (people == null) throw new Error('no people content');
 const getUpTicks = wreck.ob.searches.rescueGetUpSeconds * T;
 /** Book 10 section 08 (decision DF-18): at the fire within rescueHome; stuck after rescueStuck. */
 const homeMinutes = wreck.ob.searches.rescueHomeMinutes;
@@ -56,7 +57,21 @@ const stuckTicks = wreck.ob.searches.rescueStuckSeconds * T;
 /** "The camp's fire": as near as the opening counts someone home by it (src/sim/narrative/wreck.ts). */
 const fireTiles = wreck.rw.fireScene.nearTiles + 2;
 /** Minutes since the campaign began, to measure game time across midnight. */
-const gameMinutes = (w: WorldState): number => w.calendar.day * 1440 + w.calendar.minuteOfDay;
+const gameMinutes = (w: WorldState): number => campaignMinute(w, b);
+/**
+ * Game minutes the land was played through: a night passed asleep (or a collapse at Book 10's
+ * collapse hour) runs in one tick with no one walking (Book 2 section 03), so it is not counted.
+ */
+const played = new WeakMap<Seen, { last: number; total: number }>();
+function playedMinutes(s: Seen, w: WorldState): number {
+  const now = gameMinutes(w);
+  const c = played.get(s) ?? { last: now, total: 0 };
+  const d = now - c.last;
+  if (d > 0 && d <= 2) c.total += d;
+  c.last = now;
+  played.set(s, c);
+  return c.total;
+}
 
 type Who = 'C_HILD' | 'C_ODDI' | 'C_BRAN' | 'C_RUNA';
 type After = 'stay' | 'leave' | 'sleep' | 'fight';
@@ -127,7 +142,8 @@ function watch(p: Play): void {
     const s = p.seen;
     const w = p.sim.state;
     if (s.rescuedAt === null) return;
-    if (s.smokeMinute === null && w.facts['ch1.fire_lit'] === true) s.smokeMinute = gameMinutes(w);
+    const playedNow = playedMinutes(s, w);
+    if (s.smokeMinute === null && w.facts['ch1.fire_lit'] === true) s.smokeMinute = playedNow;
     const f = findActor(w.onFoot ?? (null as never), p.who);
     if (f === null) return;
     const pose = f.actor.pose;
@@ -138,7 +154,7 @@ function watch(p: Play): void {
       (f.zone !== s.from.zone || Math.hypot(f.actor.x - s.from.x, f.actor.y - s.from.y) > 24);
     if (s.upAt === null && pose !== 'carried' && (moved || (pose !== 'sit' && pose !== 'down'))) {
       s.upAt = w.tick;
-      s.upMinute = gameMinutes(w);
+      s.upMinute = playedNow;
     }
     if (
       s.campAt === null &&
@@ -146,7 +162,7 @@ function watch(p: Play): void {
       Math.hypot(f.actor.x / 24 - fire.x, f.actor.y / 24 - fire.y) <= fireTiles
     ) {
       s.campAt = w.tick;
-      s.campMinute = gameMinutes(w);
+      s.campMinute = playedNow;
     }
     // Stuck (Book 10 rescueStuck): awake, not talking, held by a scene or carried, away from the
     // place their day asks of them, and neither moving nor changing what they do.
@@ -186,7 +202,7 @@ function watch(p: Play): void {
 function newPlay(who: Who, sim: Simulation): Play {
   const events: SimEvent[] = [];
   sim.events.onAny((e) => events.push(e));
-  const bot = new WreckBot(sim, b, land, camp, searches as never, repairs as never);
+  const bot = new WreckBot(sim, b, land, camp, searches, repairs);
   const play: Play = {
     sim,
     bot,
@@ -283,15 +299,13 @@ function talkOpens(p: Play): boolean {
     }
     settleTalk(p);
   }
-  if (process.env['OE_DEBUG'] !== undefined)
-    console.log('talk failed', describeWho(p), p.bot.onFoot.zone, JSON.stringify(p.events.filter((e) => e.type === 'COMMAND_REFUSED').slice(-3)));
   return false;
 }
 
 /** The person under the shelter: on a bed under the sail at S0, under the roof at S1. */
 function underShelter(p: Play): boolean {
   const f = at(p);
-  if (f === null || f.zone !== CAMP_ZONE) return false;
+  if (f?.zone !== CAMP_ZONE) return false;
   const x = f.actor.x / 24;
   const y = f.actor.y / 24;
   const roofed = world(p).homes[camp.def.home]?.stage === 'S1';
@@ -383,11 +397,8 @@ function hildLifted(p: Play): OpeningBot {
   for (let wait = 0; !ob.walkTo(beside, { maxTicks: T * 40 }); wait++) {
     if (wait > 40) throw new Error('no way to Hild');
     ob.stop();
-    if (process.env['OE_DEBUG'] !== undefined)
-      console.log('no way to Hild at', world(p).calendar.day, hhmm(minute(p)), JSON.stringify(ob.tile()), JSON.stringify(hildTile()), p.sim.state.onFoot?.actors['C_HILD']?.pose);
     p.bot.step(T * 8);
   }
-  if (process.env['OE_DEBUG'] !== undefined) console.log('reached Hild at', hhmm(minute(p)));
   // A click on her where she lies now (Thorkel's chest washes up beside her, nearer to E).
   const click = (): void => {
     const now = p.sim.state.onFoot?.actors['C_HILD'];
@@ -406,7 +417,7 @@ const rescueMinute = (p: Play): number => rescueMinutes.get(p) ?? minute(p);
 
 const HILD = {
   /** The opening's way: up to the first dry shingle and set down there. */
-  firstDry(p: Play): void {
+  firstDry: (p: Play): void => {
     const ob = hildLifted(p);
     const strand = p.bot.map;
     const up = (t: Tile): boolean =>
@@ -417,12 +428,12 @@ const HILD = {
     ob.interact();
   },
   /** Carried all the way up off the strand and set down on the machair. */
-  machair(p: Play): void {
+  machair: (p: Play): void => {
     hildLifted(p);
     carryInto(p, 'C_HILD', CAMP_ZONE, dry(p));
   },
   /** Carried to the camp and set down by the fire. */
-  fire(p: Play): void {
+  fire: (p: Play): void => {
     hildLifted(p);
     carryInto(p, 'C_HILD', CAMP_ZONE, nearFire(p));
   },
@@ -430,18 +441,18 @@ const HILD = {
 
 const ODDI = {
   /** Off the strand at once and set down on the first dry ground of the machair (ODDI_FIRST). */
-  oddiFirst(p: Play): void {
+  oddiFirst: (p: Play): void => {
     p.bot.oddi('ODDI_FIRST');
   },
   /** The ship's silver carried off first, then Oddi (CHEST_FIRST). */
-  chestFirst(p: Play): void {
+  chestFirst: (p: Play): void => {
     p.bot.oddi('CHEST_FIRST');
   },
   /**
    * The playtest's way: lifted, carried up the strand and set down there above the tide line, as
    * Hild was; then (he lies there, to be lifted again) carried off the strand.
    */
-  strandFirst(p: Play): void {
+  strandFirst: (p: Play): void => {
     const bot = p.bot;
     bot.goToZone('ZONE_SK_STRAND');
     bot.lift('C_ODDI');
@@ -459,11 +470,11 @@ const ODDI = {
     carryInto(p, 'C_ODDI', CAMP_ZONE, dry(p));
   },
   /** Carried all the way to the camp's fire. */
-  fire(p: Play): void {
+  fire: (p: Play): void => {
     carryInto(p, 'C_ODDI', CAMP_ZONE, nearFire(p));
   },
   /** Carried past the camp into the cairn's valley (east) and set down there. */
-  cairn(p: Play): void {
+  cairn: (p: Play): void => {
     carryInto(p, 'C_ODDI', 'ZONE_SK_CAIRN', dry(p));
   },
 };
@@ -487,7 +498,9 @@ const BRAN = {
     p.bot.bran('FIGHT');
     broughtHome(p, 'C_BRAN');
   },
-  sneak: (p: Play) => p.bot.bran('SNEAK'),
+  sneak: (p: Play) => {
+    p.bot.bran('SNEAK');
+  },
   /** The fold's price is the ship's silver: Oddi's strongbox brought off his strand first. */
   bargain: (p: Play) => {
     p.bot.oddi('CHEST_FIRST');
@@ -496,8 +509,12 @@ const BRAN = {
 };
 
 const RUNA = {
-  offering: (p: Play) => p.bot.runa('OFFERING'),
-  cliffPath: (p: Play) => p.bot.runa('CLIFF_PATH'),
+  offering: (p: Play) => {
+    p.bot.runa('OFFERING');
+  },
+  cliffPath: (p: Play) => {
+    p.bot.runa('CLIFF_PATH');
+  },
 };
 
 // ---------------------------------------------------------------------------------- the runs
@@ -514,17 +531,23 @@ function play(run: Run, seed: string): Play {
   }
   if (run.who !== 'C_HILD') waitUntil(p, run.at);
 
-  let checkpoint: SaveFile | null = null;
-  let campAutosave: SaveFile | null = null;
+  const saved: { checkpoint: SaveFile | null; campAutosave: SaveFile | null } = {
+    checkpoint: null,
+    campAutosave: null,
+  };
   if (run.save === 'checkpoint')
     p.sim.events.onAny((e) => {
-      if (e.type === 'CHECKPOINT' && e.label === 'search_oddi' && checkpoint === null)
-        checkpoint = saveNow(p, 'search_oddi');
+      if (e.type === 'CHECKPOINT' && e.label === 'search_oddi' && saved.checkpoint === null)
+        saved.checkpoint = saveNow(p, 'search_oddi');
     });
   if (run.save === 'campAutosave')
     p.sim.events.onAny((e) => {
-      if (e.type === 'CAMP_REACHED' && p.bot.onFoot.carrying === run.who && campAutosave === null)
-        campAutosave = saveNow(p, 'camp');
+      if (
+        e.type === 'CAMP_REACHED' &&
+        p.bot.onFoot.carrying === run.who &&
+        saved.campAutosave === null
+      )
+        saved.campAutosave = saveNow(p, 'camp');
     });
 
   run.rescue(p);
@@ -532,14 +555,14 @@ function play(run: Run, seed: string): Play {
   try {
     p.bot.waitFor(() => rescued(p), T * 600);
   } catch (e) {
-    throw new Error(`never rescued: ${describeWho(p)} ${String(world(p).facts['search.bran'])} ${JSON.stringify(world(p).people[run.who]?.status)} carrying=${String(p.bot.onFoot.carrying)}`, { cause: e });
+    throw new Error(
+      `never rescued: ${describeWho(p)} ${String(world(p).facts['search.bran'])} ${JSON.stringify(world(p).people[run.who]?.status)} carrying=${String(p.bot.onFoot.carrying)}`,
+      { cause: e },
+    );
   }
   markRescued(p);
-  if (process.env['OE_DEBUG'] !== undefined) {
-    console.log('rescued', describeWho(p));
-    const id = setInterval(() => undefined, 1000);
-    clearInterval(id);
-  }
+  // A player closes the conversation the rescue ended in (the bargain's words with Ketill).
+  settleTalk(p);
 
   if (run.save === 'load') {
     // Game over's reload into the same simulation (Book 2 section 20), straight after the rescue.
@@ -552,16 +575,16 @@ function play(run: Run, seed: string): Play {
     p = fresh;
   } else if (run.save === 'checkpoint') {
     // Killed after the rescue: back to the checkpoint taken when Oddi called; rescued again.
-    if (checkpoint === null) throw new Error('no checkpoint at Oddi’s call');
-    p.sim.restore(loaded(checkpoint));
+    if (saved.checkpoint === null) throw new Error('no checkpoint at Oddi’s call');
+    p.sim.restore(loaded(saved.checkpoint));
     p.seen.rescuedAt = null;
     expect(world(p).household.residents).not.toContain(run.who);
     ODDI.oddiFirst(p);
     markRescued(p);
   } else if (run.save === 'campAutosave') {
     // Killed after the rescue: back to the camp's autosave, taken while carrying him in.
-    if (campAutosave === null) throw new Error('no camp autosave while carrying');
-    p.sim.restore(loaded(campAutosave));
+    if (saved.campAutosave === null) throw new Error('no camp autosave while carrying');
+    p.sim.restore(loaded(saved.campAutosave));
     p.seen.rescuedAt = null;
     expect(p.bot.onFoot.carrying).toBe(run.who);
     p.bot.walkTo(nearFire(p), false, T * 120);
@@ -575,11 +598,6 @@ function play(run: Run, seed: string): Play {
     const walking = at(p);
     p.sim.restore(loaded(saveNow(p, 'walking')));
     expect(at(p)?.actor.x).toBe(walking?.actor.x);
-    if (process.env['OE_DEBUG'] !== undefined)
-      for (let i = 0; i < 12; i++) {
-        console.log('walkLoad', describeWho(p), JSON.stringify(at(p)?.actor.walk)?.slice(0, 200), at(p)?.actor.carries, at(p)?.visible);
-        p.bot.step(T * 2);
-      }
   }
 
   if (run.after === 'leave') {
@@ -608,7 +626,6 @@ function follow(p: Play, run: Run): void {
   const label = `${run.who} ${run.name}`;
   // 1. Up within a moment of the rescue (Book 10 rescueGetUp), wherever the steerer went.
   if (run.who === 'C_HILD' || run.who === 'C_ODDI') {
-    if (s.upAt === null && process.env['OE_DEBUG'] !== undefined) console.log('not up', describeWho(p), JSON.stringify(Object.fromEntries(Object.entries(world(p).facts).filter(([k]) => k.startsWith('rescue') || k.startsWith('search.') || k.includes('dusk')))), JSON.stringify(world(p).people[p.who]?.status));
     p.bot.waitFor(() => s.upAt !== null, getUpTicks + 10 * T);
     expect(s.upAt, `${label}: up`).not.toBeNull();
   }
@@ -646,13 +663,12 @@ function follow(p: Play, run: Run): void {
       p.bot.step(T * 5);
       settleTalk(p);
     }
-    if (process.env['OE_DEBUG'] !== undefined)
-      console.log('night', night, describeWho(p), s.upMinute, s.campMinute);
     if (!asleep) {
       p.bot.waitFor(() => at(p)?.actor.pose === 'sleep' && underShelter(p), T * 600);
-      expect(underShelter(p), `${label}: under the shelter, night ${night}: ${describeWho(p)}`).toBe(
-        true,
-      );
+      expect(
+        underShelter(p),
+        `${label}: under the shelter, night ${night}: ${describeWho(p)}`,
+      ).toBe(true);
       expect(world(p).people[p.who]?.life.activity, `${label} night ${night}`).toBe('SLEEP');
       // 1. By then at the camp's fire, within Book 10's rescueHome of getting up.
       expect(s.campAt, `${label}: reached the camp`).not.toBeNull();
@@ -711,39 +727,249 @@ const NIGHT = 22 * 60 + 30;
 
 const runs: Run[] = [
   // Hild: the opening's rescue, by its routes, at the times a player might reach her.
-  { who: 'C_HILD', name: 'first dry shingle, morning, stays', at: MORNING, rescue: HILD.firstDry, after: 'stay', save: 'none' },
-  { who: 'C_HILD', name: 'first dry shingle, afternoon, leaves at once', at: AFTERNOON, rescue: HILD.firstDry, after: 'leave', save: 'none' },
-  { who: 'C_HILD', name: 'carried to the machair, evening, saved and loaded', at: 18 * 60, rescue: HILD.machair, after: 'stay', save: 'load' },
-  { who: 'C_HILD', name: 'carried to the fire, night, a fresh load', at: NIGHT, rescue: HILD.fire, after: 'stay', save: 'fresh' },
+  {
+    who: 'C_HILD',
+    name: 'first dry shingle, morning, stays',
+    at: MORNING,
+    rescue: HILD.firstDry,
+    after: 'stay',
+    save: 'none',
+  },
+  {
+    who: 'C_HILD',
+    name: 'first dry shingle, afternoon, leaves at once',
+    at: AFTERNOON,
+    rescue: HILD.firstDry,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_HILD',
+    name: 'carried to the machair, evening, saved and loaded',
+    at: 18 * 60,
+    rescue: HILD.machair,
+    after: 'stay',
+    save: 'load',
+  },
+  {
+    who: 'C_HILD',
+    name: 'carried to the fire, night, a fresh load',
+    at: NIGHT,
+    rescue: HILD.fire,
+    after: 'stay',
+    save: 'fresh',
+  },
   // Oddi: every way off his strand, the playtest's set-down on the strand among them.
-  { who: 'C_ODDI', name: 'set down on the strand first, morning, stays', at: MORNING, rescue: ODDI.strandFirst, after: 'stay', save: 'none' },
-  { who: 'C_ODDI', name: 'set down on the strand first, dusk, leaves at once', at: DUSK, rescue: ODDI.strandFirst, after: 'leave', save: 'none' },
-  { who: 'C_ODDI', name: 'Oddi first, afternoon, leaves at once', at: AFTERNOON, rescue: ODDI.oddiFirst, after: 'leave', save: 'none' },
-  { who: 'C_ODDI', name: 'Oddi first, night, saved and loaded', at: NIGHT, rescue: ODDI.oddiFirst, after: 'stay', save: 'load' },
-  { who: 'C_ODDI', name: 'chest first, morning, a fresh load', at: MORNING, rescue: ODDI.chestFirst, after: 'stay', save: 'fresh' },
-  { who: 'C_ODDI', name: 'chest first, dusk, back to the search checkpoint', at: DUSK, rescue: ODDI.chestFirst, after: 'stay', save: 'checkpoint' },
-  { who: 'C_ODDI', name: 'carried to the fire, afternoon, stays', at: AFTERNOON, rescue: ODDI.fire, after: 'stay', save: 'none' },
-  { who: 'C_ODDI', name: 'carried into the cairn, morning, leaves at once', at: MORNING, rescue: ODDI.cairn, after: 'leave', save: 'none' },
-  { who: 'C_ODDI', name: 'carried to the fire, morning, back to the camp autosave', at: MORNING, rescue: ODDI.fire, after: 'stay', save: 'campAutosave' },
-  { who: 'C_ODDI', name: 'carried to the fire, night, leaves at once', at: NIGHT, rescue: ODDI.fire, after: 'leave', save: 'none' },
-  { who: 'C_ODDI', name: 'Oddi first, morning, then straight off to fight at the fold', at: MORNING, rescue: ODDI.oddiFirst, after: 'fight', save: 'none' },
-  { who: 'C_ODDI', name: 'carried to the fire, night, the steerer straight to bed', at: NIGHT, rescue: ODDI.fire, after: 'sleep', save: 'none' },
-  { who: 'C_ODDI', name: 'Oddi first, afternoon, saved and loaded on the walk home', at: AFTERNOON, rescue: ODDI.oddiFirst, after: 'stay', save: 'walkLoad' },
+  {
+    who: 'C_ODDI',
+    name: 'set down on the strand first, morning, stays',
+    at: MORNING,
+    rescue: ODDI.strandFirst,
+    after: 'stay',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'set down on the strand first, dusk, leaves at once',
+    at: DUSK,
+    rescue: ODDI.strandFirst,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'Oddi first, afternoon, leaves at once',
+    at: AFTERNOON,
+    rescue: ODDI.oddiFirst,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'Oddi first, night, saved and loaded',
+    at: NIGHT,
+    rescue: ODDI.oddiFirst,
+    after: 'stay',
+    save: 'load',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'chest first, morning, a fresh load',
+    at: MORNING,
+    rescue: ODDI.chestFirst,
+    after: 'stay',
+    save: 'fresh',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'chest first, dusk, back to the search checkpoint',
+    at: DUSK,
+    rescue: ODDI.chestFirst,
+    after: 'stay',
+    save: 'checkpoint',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'carried to the fire, afternoon, stays',
+    at: AFTERNOON,
+    rescue: ODDI.fire,
+    after: 'stay',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'carried into the cairn, morning, leaves at once',
+    at: MORNING,
+    rescue: ODDI.cairn,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'carried to the fire, morning, back to the camp autosave',
+    at: MORNING,
+    rescue: ODDI.fire,
+    after: 'stay',
+    save: 'campAutosave',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'carried to the fire, night, leaves at once',
+    at: NIGHT,
+    rescue: ODDI.fire,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'Oddi first, morning, then straight off to fight at the fold',
+    at: MORNING,
+    rescue: ODDI.oddiFirst,
+    after: 'fight',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'carried to the fire, night, the steerer straight to bed',
+    at: NIGHT,
+    rescue: ODDI.fire,
+    after: 'sleep',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'Oddi first, afternoon, saved and loaded on the walk home',
+    at: AFTERNOON,
+    rescue: ODDI.oddiFirst,
+    after: 'stay',
+    save: 'walkLoad',
+  },
   // Bran: the fold's three ways.
-  { who: 'C_BRAN', name: 'fight, morning, stays', at: MORNING, rescue: BRAN.fight, after: 'stay', save: 'none' },
-  { who: 'C_BRAN', name: 'fight, night, the steerer straight to bed', at: NIGHT, rescue: BRAN.fight, after: 'sleep', save: 'none' },
-  { who: 'C_BRAN', name: 'sneak, morning, saved and loaded on the walk home', at: MORNING, rescue: BRAN.sneak, after: 'stay', save: 'walkLoad' },
-  { who: 'C_BRAN', name: 'sneak, afternoon, leaves at once', at: AFTERNOON, rescue: BRAN.sneak, after: 'leave', save: 'none' },
-  { who: 'C_BRAN', name: 'bargain, dusk, saved and loaded', at: DUSK, rescue: BRAN.bargain, after: 'stay', save: 'load' },
-  { who: 'C_BRAN', name: 'bargain, night, a fresh load', at: NIGHT, rescue: BRAN.bargain, after: 'stay', save: 'fresh' },
+  {
+    who: 'C_BRAN',
+    name: 'fight, morning, stays',
+    at: MORNING,
+    rescue: BRAN.fight,
+    after: 'stay',
+    save: 'none',
+  },
+  {
+    who: 'C_BRAN',
+    name: 'fight, night, the steerer straight to bed',
+    at: NIGHT,
+    rescue: BRAN.fight,
+    after: 'sleep',
+    save: 'none',
+  },
+  {
+    who: 'C_BRAN',
+    name: 'sneak, morning, saved and loaded on the walk home',
+    at: MORNING,
+    rescue: BRAN.sneak,
+    after: 'stay',
+    save: 'walkLoad',
+  },
+  {
+    who: 'C_BRAN',
+    name: 'sneak, afternoon, leaves at once',
+    at: AFTERNOON,
+    rescue: BRAN.sneak,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_BRAN',
+    name: 'bargain, dusk, saved and loaded',
+    at: DUSK,
+    rescue: BRAN.bargain,
+    after: 'stay',
+    save: 'load',
+  },
+  {
+    who: 'C_BRAN',
+    name: 'bargain, night, a fresh load',
+    at: NIGHT,
+    rescue: BRAN.bargain,
+    after: 'stay',
+    save: 'fresh',
+  },
   // Runa: the offering or the cliff path.
-  { who: 'C_RUNA', name: 'offering, morning, stays', at: MORNING, rescue: RUNA.offering, after: 'stay', save: 'none' },
-  { who: 'C_RUNA', name: 'cliff path, afternoon, leaves at once', at: AFTERNOON, rescue: RUNA.cliffPath, after: 'leave', save: 'none' },
-  { who: 'C_RUNA', name: 'offering, dusk, a fresh load', at: DUSK, rescue: RUNA.offering, after: 'stay', save: 'fresh' },
-  { who: 'C_RUNA', name: 'offering, morning, saved and loaded on the walk home', at: MORNING, rescue: RUNA.offering, after: 'stay', save: 'walkLoad' },
-  { who: 'C_RUNA', name: 'offering, night, the steerer straight to bed', at: NIGHT, rescue: RUNA.offering, after: 'sleep', save: 'none' },
-  { who: 'C_RUNA', name: 'cliff path, morning, then straight off to fight at the fold', at: MORNING, rescue: RUNA.cliffPath, after: 'fight', save: 'none' },
-  { who: 'C_RUNA', name: 'cliff path, night, saved and loaded', at: NIGHT, rescue: RUNA.cliffPath, after: 'stay', save: 'load' },
+  {
+    who: 'C_RUNA',
+    name: 'offering, morning, stays',
+    at: MORNING,
+    rescue: RUNA.offering,
+    after: 'stay',
+    save: 'none',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'cliff path, afternoon, leaves at once',
+    at: AFTERNOON,
+    rescue: RUNA.cliffPath,
+    after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'offering, dusk, a fresh load',
+    at: DUSK,
+    rescue: RUNA.offering,
+    after: 'stay',
+    save: 'fresh',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'offering, morning, saved and loaded on the walk home',
+    at: MORNING,
+    rescue: RUNA.offering,
+    after: 'stay',
+    save: 'walkLoad',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'offering, night, the steerer straight to bed',
+    at: NIGHT,
+    rescue: RUNA.offering,
+    after: 'sleep',
+    save: 'none',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'cliff path, morning, then straight off to fight at the fold',
+    at: MORNING,
+    rescue: RUNA.cliffPath,
+    after: 'fight',
+    save: 'none',
+  },
+  {
+    who: 'C_RUNA',
+    name: 'cliff path, night, saved and loaded',
+    at: NIGHT,
+    rescue: RUNA.cliffPath,
+    after: 'stay',
+    save: 'load',
+  },
 ];
 
 describe('everyone rescued walks to camp, works, eats, sleeps under the shelter and talks (DE-22, DE-82)', () => {

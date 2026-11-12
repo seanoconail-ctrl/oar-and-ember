@@ -6,8 +6,8 @@
  */
 import type { TimeBalance } from '../../content/balance.ts';
 import { tideAt } from '../../sim/calendar/calendar.ts';
-import { charging, striking } from '../../sim/combat/fighter.ts';
-import { STEERER } from '../../sim/land/missiles.ts';
+import { carefulMemory, carefulTick, foesOf } from './carefulFighter.ts';
+import type { Foe } from './carefulFighter.ts';
 import type { CampContext } from '../../sim/home/camp.ts';
 import { findActor } from '../../sim/land/zoneLinks.ts';
 import { aboveTideLine, terrainAt, tileBlocks, tileOf } from '../../sim/land/zoneMap.ts';
@@ -243,118 +243,31 @@ export class SearchBot extends CampBot {
   }
 
   /** The scavengers still in the fight (not dead, downed, surrendered or fled). */
-  foes(): { id: string; x: number; y: number; d: number }[] {
-    const p = this.onFoot.player;
-    return Object.entries(this.onFoot.actors)
-      .filter(
-        ([, a]) =>
-          a.fight?.side === 'ENEMY' &&
-          a.fight.dead === null &&
-          a.fight.f.state !== 'surrendered' &&
-          a.fight.f.state !== 'downed' &&
-          a.fight.ai.mode !== 'FLEE',
-      )
-      .map(([id, a]) => ({ id, x: a.x, y: a.y, d: Math.hypot(a.x - p.x, a.y - p.y) }))
-      .sort((a, b) => a.d - b.d);
+  foes(): Foe[] {
+    return foesOf(this.onFoot);
   }
 
   /**
-   * Fights every scavenger to the end as a careful player would (Stage 9's scripted player, S9-29):
-   * closes on the nearest, faces whoever is coming and parries just before their blow lands,
-   * ripostes the staggered, dodges an arrow about to land, and strikes only into a foe's recovery
-   * or stagger, never into a guard.
+   * Fights every scavenger to the end as a careful player would (Stage 9's scripted player, S9-29,
+   * rebuilt for design addendum 2.5 in src/tools/play/carefulFighter.ts): locked on, it keeps just
+   * outside the foe's reach, parries predictively off the telegraph's flash, ripostes the stunned,
+   * punishes a foe caught in a recovery, dodges an arrow about to land, and backs off to recover.
    */
   fightAll(maxTicks = 60 * 240): void {
-    const onFoot = this.onFoot;
     const cb = this.land.fight?.cb;
     if (cb === undefined) throw new Error('no fight content');
     const limit = this.ticks + maxTicks;
+    const mem = carefulMemory();
     while (this.ticks < limit && this.sim.state.gameOver === null) {
-      const ranked = this.foes();
-      if (ranked.length === 0) break;
-      const p = onFoot.player;
-      const pf = p.fight;
-      const t = this.sim.state.tick + 1;
-      const facingTo = (a: { x: number; y: number }): 's' | 'n' | 'e' | 'w' => {
-        const dx = a.x - p.x;
-        const dy = a.y - p.y;
-        return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
-      };
-      const ready = pf == null || pf.state === 'idle';
-      const stamina = this.sim.state.player.stamina.current;
-      const still = { type: 'MOVE', x: 0, y: 0, run: false, sneak: false } as const;
-      const nearest = ranked[0];
-      const fighterOf = (id: string) => onFoot.actors[id]?.fight?.f;
-      const arrow = onFoot.projectiles.find(
-        (q) =>
-          q.shooter !== STEERER && Math.hypot(q.x - p.x, q.y - p.y) < (q.length / q.ticks) * 10,
-      );
-      const coming = ranked.find(({ id, d }) => {
-        const fa = onFoot.actors[id]?.fight;
-        return (
-          fa?.ai.target === STEERER &&
-          d < 60 &&
-          (charging(fa.f) || (striking(fa.f) && t < fa.f.activeAt))
-        );
-      });
-      if (pf?.state === 'chargeL0' && this.sim.state.tick - pf.since > 2)
-        this.sim.submit({ type: 'MELEE_RELEASE' });
-      if (arrow !== undefined && stamina >= cb.dodge.stamina && ready) {
-        this.sim.submit({ type: 'DODGE', x: -arrow.uy, y: arrow.ux });
-      } else if (coming !== undefined) {
-        const cf = fighterOf(coming.id);
-        const want = facingTo(coming);
-        if (p.facing !== want && ready) {
-          const [x, y] = ({ e: [1, 0], w: [-1, 0], s: [0, 1], n: [0, -1] } as const)[want];
-          this.sim.submit({ type: 'MOVE', x, y, run: false, sneak: false });
-        } else this.sim.submit(still);
-        if (cf !== undefined && striking(cf) && cf.activeAt - t === cb.parry.startup + 2)
-          this.sim.submit({ type: 'PARRY' });
-      } else if (nearest !== undefined && nearest.d > 26) {
-        this.sim.submit({
-          type: 'MOVE',
-          x: (nearest.x - p.x) / nearest.d,
-          y: (nearest.y - p.y) / nearest.d,
-          run: false,
-          sneak: false,
-        });
-      } else {
-        this.sim.submit(still);
-        // Combat v2: a parried foe reels open ('parried'); one whose poise broke staggers.
-        const staggered = ranked.find(({ id, d }) => {
-          const st = fighterOf(id)?.state;
-          return (st === 'parried' || st === 'stagger') && d < 40;
-        });
-        const punish = ranked.find(({ id, d }) => {
-          const f = fighterOf(id);
-          // Combat v2: one who has not noticed the steerer is struck (a backstab from behind).
-          const unaware = onFoot.actors[id]?.fight?.ai.awareness.state !== 'ALERT';
-          if (d < 26 && unaware) return true;
-          return (
-            d < 34 &&
-            f !== undefined &&
-            (['stagger', 'parried', 'parryRecovery', 'blockStun', 'guardBroken'].includes(
-              f.state,
-            ) ||
-              (striking(f) && t >= f.activeEnd))
-          );
-        });
-        if (
-          pf != null &&
-          pf.riposteUntil > t &&
-          staggered !== undefined &&
-          !charging(pf) &&
-          !striking(pf)
-        )
-          this.sim.submit({ type: 'MELEE', facing: facingTo(staggered) });
-        else if (punish !== undefined && stamina >= 30 && ready)
-          this.sim.submit({ type: 'MELEE', facing: facingTo(punish) });
-      }
+      if (foesOf(this.onFoot).length === 0) break;
+      const st = this.sim.state.player.stamina;
+      for (const c of carefulTick(this.onFoot, cb, this.sim.state.tick, st.current, st.max, mem))
+        this.sim.submit(c);
       this.step();
     }
     this.stop();
-    // Combat v2: a riposte or a blow still under way (and its hitstop) finishes before anything else.
+    // A riposte or a blow still under way (and its hitstop) finishes before anything else.
     if (this.sim.state.gameOver === null)
-      this.waitFor(() => (onFoot.player.fight?.state ?? 'idle') === 'idle', 60 * 5);
+      this.waitFor(() => (this.onFoot.player.fight?.state ?? 'idle') === 'idle', 60 * 5);
   }
 }

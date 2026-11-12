@@ -2788,6 +2788,276 @@ def anim_getup(ch=None):
     return out
 
 
+# ------------------------------------------------------------------ design addendum 2.5 (DF-1 to DF-9)
+def anim_windup_by(ch=None, back=3):
+    """Design addendum 2.5 (Book 7 section 01; Book 10 "Telegraphs", drawBack): the wind-up's tell,
+    the weapon drawn back past its ready pose by `back` px (3 a light, 5 a heavy, 7 a charged
+    attack) with the weight onto the back foot; the second frame is the top of the draw-back, held
+    (still) for the last ticks of a heavy or charged wind-up. A spear is drawn back along the arm."""
+    k = back / 7.0
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.6, -2.0, -3.5), (0.0, 1.0, 0.05), lean=(0, -0.3)),
+                fight_pose((0.6, -2.0 - back, -3.5 + 1.0 * k), (0.0, 1.0, 0.05 + 0.1 * k),
+                           lean=(0, -0.4 - 0.9 * k), pel=(0, -0.4 * k, -1.0 * (back >= 5)),
+                           feet={'R': (-2.5 - 1.5 * k, 0), 'L': (3.0, 0)}, mouth=1 if back >= 7 else 0)]
+    return [fight_pose((1.6, -1.5, 3.5), (0.15, -0.35, 0.92), lean=(0, -0.2)),
+            fight_pose((1.6 + 0.4 * k, -1.5 - back, 3.5 + 3.0 * k), (0.1, -0.5 - 0.3 * k, 0.85),
+                       lean=(0, -0.3 - 0.9 * k), pel=(0, -0.4 * k, -1.0 * (back >= 5)),
+                       feet={'R': (-2.5 - 1.5 * k, 0), 'L': (3.0, 0)}, mouth=1 if back >= 7 else 0)]
+
+
+def anim_parry_windup(ch=None):
+    """The parry's wind-up (DF-4), before its live frames: the guard gathered across the body, the
+    blade (or the shield's edge) brought up and in, the weight settling forward to meet the blow."""
+    if ch is not None and 'shield' in getattr(ch, 'arms', ()):
+        return [fight_pose((1.8, 1.5, -4.0), (0.3, 0.8, 0.4), lh=(0.6, 4.0, -3.5), shield='arm', lean=(0, 0.2)),
+                fight_pose((1.8, 1.8, -3.5), (0.3, 0.8, 0.45), lh=(-0.2, 5.5, -1.0), shield='up', lean=(0, 0.6))]
+    return [fight_pose((0.5, 3.0, 0.5), (-0.3, 0.6, 0.6), lean=(0, 0.3), lh=(1.0, 2.5, -2.0)),
+            fight_pose((-0.8, 5.0, 1.8), (-0.6, 0.5, 0.6), lean=(0, 0.6), lh=(1.0, 3.5, -1.5))]
+
+
+def anim_block_raise(ch=None):
+    """The block's raise (DF-5): the shield from the arm to the front over two frames; the lower
+    plays them back."""
+    return [fight_pose((1.5, 2.0, -5.0), (0.2, 0.9, 0.3), lean=(0, 0.2), lh=(0.8, 3.0, -4.5),
+                       shield='arm', feet={'R': (-2.5, 0), 'L': (3.0, 0)}),
+            fight_pose((1.5, 2.3, -4.5), (0.2, 0.9, 0.3), lean=(0, 0.4), lh=(0.4, 4.5, -2.8),
+                       shield='front', feet={'R': (-3.0, 0), 'L': (3.0, 0)})]
+
+
+def anim_guard_break(ch=None):
+    """A guard broken by an emptied bar (DF-5): the shield arm flung wide, a stagger back off
+    balance, the head thrown back, then catching the weight and hanging open."""
+    out = []
+    for k, (lean, wide, head, foot) in enumerate([(-2.8, 6.0, -1.2, 1.5), (-3.0, 7.0, -1.0, 2.0),
+                                                   (-2.0, 5.5, -0.6, 0.5), (-1.2, 4.0, -0.3, 0.0)]):
+        out.append(fight_pose((3.0, -1.0 + 0.5 * k, -6.0 - 0.5 * k), (0.5, 0.5, -0.7),
+                              lean=(0.3, lean), head=(0, head, 0), mouth=1 if k < 2 else 0,
+                              lh=(-1.0 - wide, 0.5, -3.0 - 0.6 * k), shield='arm',
+                              feet={'R': (-4.0 + 0.5 * k, 0), 'L': (2.0, foot)},
+                              cloth=(1.4 - 0.3 * k, 0), elbow_r=(1.2, -0.4, 0.0)))
+    return out
+
+
+def anim_exhausted(ch=None):
+    """Exhausted (DF-3; Book 7 section 01's exhausted idle): bent, blowing hard, the weapon hanging
+    low, the free hand on the knee; the shoulders heave with each breath."""
+    out = []
+    for k, (b, u) in enumerate([(0, 0.0), (-1, -0.6), (-1, -0.9), (0, -0.3)]):
+        p = fight_pose((1.6, 3.0, -9.5 + u), (0.2, 0.7, -0.7), lean=(0, 2.6 - 0.3 * u),
+                       pel=(0, -0.6, -1.5), lh=(0.6, 3.5, -7.5 + u), head=(0, 0.6, -0.4 + 0.3 * u),
+                       mouth=1, feet={'R': (-2.5, 0), 'L': (2.5, 0)})
+        p.breath = b
+        p.grip = {'R': 'fist', 'L': 'open'}
+        out.append(p)
+    return out
+
+
+def anim_exhausted_walk(ch=None, heavy=False):
+    """The exhausted walk (Book 7 section 01): the walk bent over at half its stride, the weapon
+    hanging, blowing hard."""
+    out = []
+    for p in anim_walk(heavy):
+        q = p.copy(lean=(0, 2.0), hold='held', wdir=(0.2, 0.7, -0.7), mouth=1)
+        q.feet = {k: (v[0] * 0.5, v[1] * 0.6) for k, v in p.feet.items()}
+        q.hands = {'R': (1.6, 2.5, -9.5), 'L': (0.8, 1.5, -10.0)}
+        q.elbow = {'R': (0.8, -0.6, 0.3), 'L': (0.3, -1.0, 0.0)}
+        q.grip = {'R': 'fist', 'L': 'open'}
+        out.append(q)
+    return out
+
+
+def anim_dodge_recover(ch=None):
+    """The dodge's planted recovery (DF-6): landed low, the feet set wide, rising slowly; it holds
+    so the dodge cannot be spammed."""
+    return [fight_pose((1.8, 2.0, -6.5), (0.2, 0.9, 0.3), lean=(0, 1.2), pel=(0, -0.6, -3),
+                       feet={'R': (-3.5, 0), 'L': (3.0, 0)}, cloth=(0.4, 0), mouth=1),
+            fight_pose((1.8, 2.2, -5.0), (0.2, 0.9, 0.3), lean=(0, 0.8), pel=(0, -0.4, -2),
+                       feet={'R': (-3.0, 0), 'L': (3.0, 0)})]
+
+
+def _guarded(p, ch, back=False):
+    held = fight_pose((1.8, 2.0, -3.5), (0.3, 0.8, 0.5), lh=(1.0, 3.5, -3.0),
+                      shield='arm' if ch is not None and 'shield' in getattr(ch, 'arms', ()) else None)
+    if ch is not None and spear_style(ch):
+        held = fight_pose((0.6, -0.5, -3.0), (0.0, 1.0, 0.05))
+    q = p.copy(hold='held', wdir=held.wdir, lean=(0, -0.3 if back else 0.4), shield=held.shield)
+    q.hands = {'R': held.hands['R'], 'L': held.hands['L']}
+    q.elbow = dict(held.elbow)
+    q.grip = {'R': 'fist', 'L': 'fist'}
+    return q
+
+
+def anim_backoff(ch=None, heavy=False):
+    """The stance walk backing off (Book 7 section 01, combat v2; DF-21): facing the foe, the
+    weapon held ready, stepping back heel first at the walk's timing and a shorter stride."""
+    out = []
+    for p in reversed(anim_walk(heavy)):
+        q = _guarded(p, ch, back=True)
+        q.feet = {k: (v[0] * 0.7, v[1]) for k, v in p.feet.items()}
+        out.append(q)
+    return out
+
+
+def anim_strafe(ch=None, heavy=False):
+    """The stance walk strafing (DF-21): facing the foe, the weapon ready, the feet stepping across
+    (out and together), never crossing, at the walk's timing."""
+    out = []
+    side = [(2.5, -0.5), (1.5, 0.5), (0.5, 1.5), (-0.5, 2.5), (0.5, 1.5), (1.5, 0.5)]
+    lift = [(0, 2), (0, 1), (0, 0), (2, 0), (1, 0), (0, 0)]
+    pel = [0, -1, 0, 0, -1, 0]
+    for i in range(6):
+        p = Pose(pel=(0, 0, pel[i] * (2 if heavy else 1)))
+        p.feet = {'R': (-1.5, lift[i][0]), 'L': (2.0, lift[i][1])}
+        p.feet_r = {'R': side[i][0] - 1.5, 'L': side[i][1] - 0.5}
+        p.toe = {'R': 0, 'L': 0}
+        out.append(_guarded(p, ch))
+    return out
+
+
+def anim_flinch(ch=None):
+    """The flinch (Book 10 flinch; DF-21): a hit that does not break poise jerks the body back a
+    moment, the head ducking, without stopping what it was doing."""
+    return [fight_pose((2.2, 1.0, -5.5), (0.3, 0.7, 0.1), lean=(0.2, -1.4), head=(0, -0.6, -0.4),
+                       mouth=1, lh=(1.6, 1.5, -6.0), feet={'R': (-3.0, 0), 'L': (2.5, 0)},
+                       cloth=(0.8, 0), shield='arm'),
+            fight_pose((2.0, 1.5, -5.0), (0.3, 0.8, 0.2), lean=(0.1, -0.6), head=(0, -0.2, 0),
+                       lh=(1.4, 2.0, -5.5), feet={'R': (-2.5, 0), 'L': (2.5, 0)}, shield='arm')]
+
+
+def anim_knockdown(ch=None):
+    """The knockdown (Book 10 knockdown; DF-21), its own frames: struck off the feet, falling
+    back, then on the ground on one elbow (the get-up follows)."""
+    out = []
+    for k, (u, lean, fr) in enumerate([(-2.0, -3.0, -2.0), (-6.0, -2.5, -4.5), (-10.0, -1.5, -6.5)]):
+        p = Pose(pel=(0, -1.0 - 0.5 * k, u), lean=(0.3, lean), breath=-1, hold='held',
+                 wdir=(0.5, 0.4, -0.7), head=(0, -0.8 + 0.3 * k, 0), mouth=1 if k < 2 else 0)
+        p.hands = {'R': (2.8, 1.0 - k, -4.0 - 2.0 * k), 'L': (2.5, -1.5 - k, -5.0 - 2.5 * k)}
+        p.elbow = {'R': (1.2, -0.4, 0.0), 'L': (1.2, -0.4, 0.0)}
+        p.grip = {'R': 'fist', 'L': 'open'}
+        p.feet = {'R': (fr + 3.0, 1.0 + 2.0 * k), 'L': (3.0 + k, 2.0 * k)}
+        p.toe = {'R': 0, 'L': 0}
+        p.shield = 'arm'
+        p.cloth = (1.0, 0)
+        out.append(p)
+    return out
+
+
+def anim_sidestep(ch=None):
+    """The sidestep from a missile (Book 10 awareDodge; DF-21), its own frames: the tell (a glance
+    and the weight dropped onto one foot), the hop across with the feet tucked, the landing."""
+    a = fight_pose((1.8, 2.0, -5.0), (0.2, 0.9, 0.3), lean=(-0.6, 0.4), pel=(-0.4, 0, -2),
+                   head=(0, 0.3, 0), feet={'R': (-2.0, 0), 'L': (2.5, 0)}, shield='arm')
+    a.feet_r = {'R': 0.0, 'L': -1.0}
+    b = fight_pose((1.8, 1.5, -4.0), (0.2, 0.9, 0.3), lean=(-1.2, 0.0), pel=(-1.2, 0, -1),
+                   feet={'R': (-1.5, 3.0), 'L': (1.5, 2.0)}, cloth=(-1.0, 0), shield='arm')
+    b.feet_r = {'R': -1.5, 'L': -2.0}
+    c = fight_pose((1.8, 2.0, -5.5), (0.2, 0.9, 0.3), lean=(0.4, 0.6), pel=(0.4, 0, -2),
+                   feet={'R': (-2.0, 0), 'L': (2.5, 0)}, cloth=(0.6, 0), shield='arm')
+    return [a, b, c]
+
+
+def anim_hop(ch=None):
+    """An archer's hop back (Book 10 dashAway; DF-8): a crouch, a spring back off both feet with
+    the bow (or blade) kept towards the foe, and a landing low."""
+    a = fight_pose((1.6, 2.5, -6.0), (0.2, 0.9, 0.3), lean=(0, 1.2), pel=(0, 0.4, -3),
+                   feet={'R': (-1.5, 0), 'L': (2.0, 0)})
+    b = fight_pose((1.6, 3.0, -4.0), (0.2, 0.9, 0.3), lean=(0, -1.0), pel=(0, -0.8, 1),
+                   feet={'R': (-3.5, 3.0), 'L': (0.5, 4.0)}, cloth=(1.4, 0))
+    c = fight_pose((1.6, 2.5, -6.5), (0.2, 0.9, 0.3), lean=(0, 1.0), pel=(0, -0.4, -3),
+                   feet={'R': (-3.0, 0), 'L': (2.0, 0)}, cloth=(0.6, 0))
+    return [a, b, c]
+
+
+def anim_bind(ch=None):
+    """Binding a wound (Book 10 bindWound; DF-21), its own loop: kneeling, the binding wound round
+    the forearm, hand over hand, pulled tight, the head bowed to it."""
+    out = []
+    for i in range(6):
+        a = math.sin(i * math.pi / 3)
+        c = math.cos(i * math.pi / 3)
+        p = Pose(pel=(0, -1.0, -9), lean=(0, 2.2), breath=(0, -1, -1, 0, 0, -1)[i],
+                 head=(0, 0.6, -0.6), dropped=True)
+        p.hands = {'R': (0.8 + 1.2 * c, 5.0 + 1.0 * a, -6.5 + 0.8 * a), 'L': (-0.5, 5.5, -7.0)}
+        p.elbow = {'R': (0.8, -1.0, 0.0), 'L': (0.6, -0.8, 0.0)}
+        p.grip = {'R': 'fist' if i in (2, 5) else 'open', 'L': 'fist'}
+        p.feet = {'R': (-7.0, 0), 'L': (3.5, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        out.append(p)
+    return out
+
+
+def anim_eat(ch=None):
+    """Eating a ration (Book 10 eat; DF-21), its own loop: kneeling, the hand to the mouth, a bite
+    torn, chewing with the hand lowered."""
+    out = []
+    for i, (hu, hf, m) in enumerate([(-6.0, 4.0, 0), (-1.0, 3.0, 1), (0.0, 2.5, 0), (-4.0, 3.5, 0)]):
+        p = Pose(pel=(0, -1.0, -9), lean=(0, 1.2), breath=(0, -1, 0, -1)[i], mouth=m, dropped=True)
+        p.hands = {'R': (0.2, hf, hu), 'L': (0.8, 4.5, -7.5)}
+        p.elbow = {'R': (1.0, -0.8, 0.2), 'L': (0.8, -1.0, 0.0)}
+        p.grip = {'R': 'fist', 'L': 'open'}
+        p.feet = {'R': (-7.0, 0), 'L': (3.5, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        out.append(p)
+    return out
+
+
+def anim_fall(ch=None, way='back'):
+    """A death fall (Book 7 section 12; DF-21), varied by the hit: forwards (pitching onto the
+    face, the arms going out), backwards (thrown off the feet) or crumpling (the knees going); two
+    frames before the body settles into the lying dead."""
+    out = []
+    if way == 'fwd':
+        seq = [((0, 0.5, -2.0), (0, 2.6), (2.0, 6.0, -4.0)), ((0, 0.8, -7.0), (0, 3.2), (1.5, 6.5, -7.0))]
+    elif way == 'back':
+        seq = [((0, -1.0, -2.0), (0.3, -3.0), (2.5, -1.0, -3.0)), ((0, -2.0, -7.5), (0.3, -3.6), (3.0, -3.0, -5.0))]
+    else:
+        seq = [((0, 0.0, -5.0), (0, 1.5), (1.5, 2.0, -9.0)), ((0, 0.3, -10.0), (0, 2.5), (1.5, 3.0, -12.0))]
+    for k, (pel, lean, hand) in enumerate(seq):
+        p = Pose(pel=pel, lean=lean, breath=-1, dropped=True, head=(0, 0.5 if way == 'fwd' else -0.6, 0),
+                 mouth=1 if k == 0 else 0)
+        p.hands = {'R': hand, 'L': (hand[0] - 0.5, hand[1] - 1.0, hand[2] - 0.5)}
+        p.elbow = {'R': (1.0, -0.6, 0.0), 'L': (1.0, -0.6, 0.0)}
+        p.grip = {'R': 'open', 'L': 'open'}
+        if way == 'crumple':
+            p.feet = {'R': (-4.0 - 2 * k, 0), 'L': (3.0, 0)}
+            p.toe = {'R': 1, 'L': 0}
+        else:
+            p.feet = {'R': (-2.5 - 1.5 * k * (1 if way == 'back' else -1), k * 1.5), 'L': (3.0, 0)}
+        p.cloth = (1.2 if way == 'fwd' else -1.2, 0)
+        out.append(p)
+    return out
+
+
+def fight_states_25(ch, heavy=False):
+    """Design addendum 2.5's states (Book 7 section 01; DF-1 to DF-9, DF-21), for every body that
+    fights, with the same counts and timing for every build."""
+    c = ch
+    N = narrow
+    return [
+        ('windup_l', lambda: N(anim_windup_by(c, 3), c), 6, False),
+        ('windup_h', lambda: N(anim_windup_by(c, 5), c), 6, False),
+        ('windup_c', lambda: N(anim_windup_by(c, 7), c), 6, False),
+        ('parry_windup', lambda: N(anim_parry_windup(c), c), 3, False),
+        ('block_raise', lambda: N(anim_block_raise(c), c), 3, False),
+        ('guard_break', lambda: N(anim_guard_break(c), c), 15, False),
+        ('exhausted', lambda: N(anim_exhausted(c), c), 12, True),
+        ('exhausted_walk', lambda: N(anim_exhausted_walk(c, heavy), c), 8, True),
+        ('dodge_recover', lambda: N(anim_dodge_recover(c), c), 9, False),
+        ('backoff', lambda: N(anim_backoff(c, heavy), c), 6, True),
+        ('strafe', lambda: N(anim_strafe(c, heavy), c), 6, True),
+        ('flinch', lambda: N(anim_flinch(c), c), 4, False),
+        ('knockdown', lambda: N(anim_knockdown(c), c), 6, False),
+        ('sidestep', lambda: N(anim_sidestep(c), c), 5, False),
+        ('hop', lambda: N(anim_hop(c), c), 6, False),
+        ('bind', lambda: N(anim_bind(c), c), 8, True),
+        ('eat_ration', lambda: N(anim_eat(c), c), 10, True),
+        ('fall_fwd', lambda: N(anim_fall(c, 'fwd'), c), 5, False),
+        ('fall_back', lambda: N(anim_fall(c, 'back'), c), 5, False),
+        ('fall_crumple', lambda: N(anim_fall(c, 'crumple'), c), 5, False),
+    ]
+
+
 class Lying:
     """A lying or dismembered state drawn piece by piece (not a standing skeleton)."""
 
@@ -2950,7 +3220,7 @@ def piece_parts(ch, piece, d):
 
 FIGHT_POSES = {'downed': 'lying', 'dead': 'lying', 'dead_head': 'lying', 'dead_arm': 'lying',
                'dead_leg': 'lying', 'piece_head': 'lying', 'piece_arm': 'lying', 'piece_leg': 'lying',
-               'surrender': 'seated', 'getup': 'seated'}
+               'surrender': 'seated', 'getup': 'seated', 'bind': 'seated', 'eat_ration': 'seated'}
 
 
 def narrow(poses, ch):
@@ -2999,7 +3269,7 @@ def fight_states(ch, heavy=False):
         ('piece_head', Lying('piece_head', 1), 60, False),
         ('piece_arm', Lying('piece_arm', 1), 60, False),
         ('piece_leg', Lying('piece_leg', 1), 60, False),
-    ]
+    ] + fight_states_25(ch, heavy)
 
 
 # ---------------------------------------------------------------------------- weapons' colours

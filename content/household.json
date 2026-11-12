@@ -102,6 +102,14 @@
       "nameKey": "job.name.shipwright",
       "task": "TASK_REPAIR_SHIP",
       "needs": "SHIP_WORK",
+      "hurtSpots": [
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 47.4,
+          "y": 28.5,
+          "facing": "w"
+        }
+      ],
       "spots": [
         {
           "zone": "ZONE_SK_STRAND",

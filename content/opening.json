@@ -101,7 +101,7 @@
       }
     },
     "mast": {
-      "about": "The broken mast with the ship's stores lashed at its head (Book 9 section 03): out of reach until an arrow cuts the lashing; the bundle falls into the shallows and is carried up as one load. The lashing is drawn heightPx above its ground point; a missile drawn passing through it (its ground point less its drawn height) within the box cuts it. The bundle falls on the tidal flats off the outcrop's seaward face, which the strand closes at high water: it is waded out for once the tide is off them (decision DE-64).",
+      "about": "The broken mast with the ship's stores lashed at its head (Book 9 section 03): out of reach until an arrow cuts the lashing; the bundle falls into the shallows and is carried up as one load. The lashing is drawn heightPx above its ground point; a missile drawn passing through it (its ground point less its drawn height) within the box cuts it. The bundle drops into the water at the outcrop's foot and the swell carries it round into the stream's mouth on the outcrop's west side, the one spot off its foot that stays ankle deep at every state of the tide and is reached without a swim, so it is waded for at once, never waited for (decision DF-82, superseding DE-64; Book 9 section 03 leaves the tile to the build).",
       "zone": "ZONE_SK_STRAND",
       "foot": {
         "x": 40.4,
@@ -115,8 +115,8 @@
         "h": 10
       },
       "fall": {
-        "x": 41.5,
-        "y": 39.2,
+        "x": 37.5,
+        "y": 37.0,
         "facing": "e"
       },
       "bundle": "ITEM_MAST_STORES",

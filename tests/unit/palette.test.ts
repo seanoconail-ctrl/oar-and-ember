@@ -12,8 +12,10 @@ describe('the Book 7 palette', () => {
 
   it('holds the 24 colours of section 08 and the 4 blood reds of section 12', () => {
     // Book 7's 28 colours keep their places; the art-direction ramps follow (Book 7 section 14).
-    expect(palette.entries).toHaveLength(254);
-    expect(palette.entries.filter((e) => e.ramp === undefined)).toHaveLength(28);
+    expect(palette.entries).toHaveLength(255);
+    // Plus the Cailleach's cold light, the Hag's Stone's own reserved accent (Book 7 section 09;
+    // decision DF-50).
+    expect(palette.entries.filter((e) => e.ramp === undefined)).toHaveLength(29);
     expect(palette.ramps.size).toBe(37);
     expect(palette.entries.filter((e) => e.group === 'blood')).toHaveLength(4);
   });
@@ -26,12 +28,13 @@ describe('the Book 7 palette', () => {
     expect(blood).toEqual(hexes);
   });
 
-  it('reserves exactly the four accents Book 7 section 08 names', () => {
+  it("reserves the four accents Book 7 section 08 names, and the Hag Stone's (section 09)", () => {
     expect(palette.entries.filter((e) => e.reserved).map((e) => e.name)).toEqual([
       'Sea-light (Rán)',
       'Sídhe glamour',
       'Corpse-light',
       'Danger tell',
+      "The Cailleach's cold light",
     ]);
   });
 

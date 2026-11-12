@@ -1982,6 +1982,13 @@
       "group": "ramp:beak",
       "ramp": "beak",
       "step": 2
+    },
+    {
+      "code": "&",
+      "name": "The Cailleach's cold light",
+      "hex": "#9FE8F0",
+      "group": "reserved accents",
+      "reserved": true
     }
   ]
 }

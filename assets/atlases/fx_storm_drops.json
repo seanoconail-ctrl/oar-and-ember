@@ -1,0 +1,101 @@
+{
+  "sheet": "fx_storm_drops",
+  "kind": "decal",
+  "image": "fx_storm_drops.png",
+  "width": 8,
+  "height": 14,
+  "pivot": {
+    "x": 4,
+    "y": 13
+  },
+  "footprint": {
+    "w": 8,
+    "h": 14
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "spray": {
+      "frames": 4,
+      "ticks": 6,
+      "loop": false
+    },
+    "scupper": {
+      "frames": 4,
+      "ticks": 5,
+      "loop": true
+    },
+    "rain": {
+      "frames": 4,
+      "ticks": 3,
+      "loop": true
+    },
+    "lantern": {
+      "frames": 2,
+      "ticks": 20,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "spray/-/0": [
+      0,
+      0
+    ],
+    "spray/-/1": [
+      8,
+      0
+    ],
+    "spray/-/2": [
+      16,
+      0
+    ],
+    "spray/-/3": [
+      24,
+      0
+    ],
+    "scupper/-/0": [
+      0,
+      14
+    ],
+    "scupper/-/1": [
+      8,
+      14
+    ],
+    "scupper/-/2": [
+      16,
+      14
+    ],
+    "scupper/-/3": [
+      24,
+      14
+    ],
+    "rain/-/0": [
+      0,
+      28
+    ],
+    "rain/-/1": [
+      8,
+      28
+    ],
+    "rain/-/2": [
+      16,
+      28
+    ],
+    "rain/-/3": [
+      24,
+      28
+    ],
+    "lantern/-/0": [
+      0,
+      42
+    ],
+    "lantern/-/1": [
+      8,
+      42
+    ]
+  }
+}

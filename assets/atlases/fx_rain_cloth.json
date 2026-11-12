@@ -1,0 +1,78 @@
+{
+  "sheet": "fx_rain_cloth",
+  "kind": "decal",
+  "image": "fx_rain_cloth.png",
+  "width": 78,
+  "height": 91,
+  "pivot": {
+    "x": 39,
+    "y": 90
+  },
+  "footprint": {
+    "w": 78,
+    "h": 91
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "beads": {
+      "frames": 12,
+      "ticks": 10,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "beads/-/0": [
+      0,
+      0
+    ],
+    "beads/-/1": [
+      78,
+      0
+    ],
+    "beads/-/2": [
+      156,
+      0
+    ],
+    "beads/-/3": [
+      234,
+      0
+    ],
+    "beads/-/4": [
+      312,
+      0
+    ],
+    "beads/-/5": [
+      390,
+      0
+    ],
+    "beads/-/6": [
+      468,
+      0
+    ],
+    "beads/-/7": [
+      546,
+      0
+    ],
+    "beads/-/8": [
+      624,
+      0
+    ],
+    "beads/-/9": [
+      702,
+      0
+    ],
+    "beads/-/10": [
+      780,
+      0
+    ],
+    "beads/-/11": [
+      858,
+      0
+    ]
+  }
+}

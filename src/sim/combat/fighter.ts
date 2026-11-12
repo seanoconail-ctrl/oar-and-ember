@@ -1,18 +1,19 @@
 /**
- * The fighter's state machine (Book 2 section 12, "States", "Combat v2" and "Rules"; Book 10
- * section 06): light combos, the charged heavy with its two levels, the lunge, parry and riposte,
- * block with its stamina cost and the broken guard, dodge with its invulnerable ticks, shove,
- * poise with its flinch, stagger and knockdown, the backstab, the sidestep from a missile, healing,
- * hitstop, exhaustion and the terminal states. Pure and deterministic: the caller gives the tick
- * and a stamina pool, and applies what comes back.
+ * The fighter's state machine (Book 2 section 12, "States", "Combat v2" and "Combat by design
+ * addendum 2.5"; Book 10 section 06): light combos, the charged heavy with its two levels, the
+ * lunge, the predictive parry and the riposte, the block with its raise and lower, the dodge with
+ * its invulnerable middle and planted recovery, the shove, poise with its flinch, stagger and
+ * knockdown, the backstab, the sidestep from a missile, healing, hitstop, exhaustion and the
+ * terminal states. Pure and deterministic: the caller gives the tick and a stamina pool, and
+ * applies what comes back.
  *
- * Combat v2 (decisions DE-1 to DE-10): the facing is continuous (`angle`, radians, 0 east, y
- * south), drawn in the nearest of the four facings (`facing`); attacks commit (a windup may turn a
- * little, an active or recovering strike not at all); a hit wears poise rather than staggering;
- * hitstop freezes a fighter's own clock for its ticks (both fighters of a blow), so a replay is
- * exact. How a press becomes a light or a heavy is still Book 10's chargeFromPress: the press
- * starts the charge (the raised weapon is the tell); let go before level1At it is a light attack
- * whose windup counts from the press; held on, it is released as a heavy.
+ * Design addendum 2.5 (decisions DF-1 to DF-10): every action has three strict phases (wind-up,
+ * active, recovery) from Book 10's "Frame data", and from its first wind-up tick to its last
+ * recovery tick the fighter is locked: no moving, turning, dodging, blocking, parrying or starting
+ * another action, and nothing cancels into anything. A missed attack adds its miss recovery, and a
+ * hit on a fighter caught in a miss recovery, a mistimed parry's recovery, a dodge's recovery or a
+ * broken guard is a punish. An enemy's wind-up is never shorter than Book 10's telegraph floor for
+ * its weight. At 0 stamina a fighter is exhausted until stamina is back to Book 10's share.
  *
  * May depend only on core and content (src/sim/combat/README.md).
  */
@@ -20,16 +21,20 @@ import type {
   CombatBalance,
   DamageType,
   MeleeWeaponName,
+  MoveFrames,
+  MoveName,
   WeaponStats,
+  Weight,
 } from '../../content/combatBalance.ts';
 import type { Id } from '../../core/ids.ts';
 
 export type Facing = 's' | 'n' | 'e' | 'w';
 
 /**
- * Book 2 section 12's states, with combat v2's (decisions DE-1 to DE-10). `move` is never stored
- * (a fighter at `idle` who walks is moving), nor is `flinch` (drawn from `flinchUntil`, it never
- * stops what the fighter is doing).
+ * Book 2 section 12's states, with combat v2's (decisions DE-1 to DE-10) and design addendum 2.5's
+ * (`parryWindup`, `blockRaise`, `blockLower`, `dodgeRecovery`; decisions DF-1 to DF-6). `move` is
+ * never stored (a fighter at `idle` who walks is moving), nor is `flinch` (drawn from
+ * `flinchUntil`, it never stops what the fighter is doing). `recovery` is a feint's lowering.
  */
 export const COMBAT_STATES = [
   'idle',
@@ -65,10 +70,14 @@ export const COMBAT_STATES = [
   'getUp',
   'sidestep',
   'heal',
+  'parryWindup',
+  'blockRaise',
+  'blockLower',
+  'dodgeRecovery',
 ] as const;
 export type CombatState = (typeof COMBAT_STATES)[number];
 
-/** States that strike: they have a windup, active ticks and a recovery. */
+/** States that strike: they have a wind-up, active ticks and a recovery. */
 export const STRIKES: readonly CombatState[] = [
   'light1',
   'light2',
@@ -83,17 +92,22 @@ export const CHARGES: readonly CombatState[] = ['chargeL0', 'chargeL1', 'chargeL
 export const OUT_OF_FIGHT: readonly CombatState[] = ['downed', 'surrendered', 'dead'];
 /** Timed states that end at `recoveryEnd`. */
 const TIMED: readonly CombatState[] = [
+  'parryWindup',
   'parry',
   'parryRecovery',
   'stagger',
+  'blockRaise',
   'blockStun',
+  'blockLower',
   'guardBroken',
   'dodge',
+  'dodgeRecovery',
   'parried',
   'knockdown',
   'getUp',
   'sidestep',
   'heal',
+  'recovery',
 ];
 
 export type Armour = 'NONE' | 'PADDED' | 'MAIL';
@@ -104,6 +118,9 @@ export interface HealUnderWay {
   readonly x: number;
   readonly y: number;
 }
+
+/** The move a strike plays (Book 10 "Frame data"), or the shove. */
+export type Move = MoveName | 'shove';
 
 export interface Fighter {
   state: CombatState;
@@ -116,7 +133,7 @@ export interface Fighter {
   /** The melee weapon in hand (a Book 10 row), or null: unarmed, shove and dodge only. */
   weapon: MeleeWeaponName | null;
   shield: boolean;
-  /** The heavy build (Book 10 section 24): more poise, slower windups, heavier hits. */
+  /** The heavy build (Book 10 section 24): more poise, slower wind-ups, heavier hits. */
   heavy: boolean;
   armour: Armour;
   /** The strike's number in its chain (1 to the weapon's combo). */
@@ -137,7 +154,7 @@ export interface Fighter {
   riposte: boolean;
   /** A riposte may follow until this tick (the parried attacker reels open). */
   riposteUntil: number;
-  /** The block key held: a blow taken returns to the block after its stun. */
+  /** The block key held: the guard comes up, and a blow taken returns to it after its stun. */
   guard: boolean;
   /** A dodge's or sidestep's direction (unit vector). */
   dodge: { readonly x: number; readonly y: number } | null;
@@ -146,7 +163,7 @@ export interface Fighter {
   poiseAt: number;
   /** Ticks of hitstop left: the fighter's own clock is frozen (decision DE-7). */
   hitstop: number;
-  /** At 0 stamina until back to Book 10's recoverAt: no dodge or run, slower windups. */
+  /** At 0 stamina until back to Book 10's share (design addendum 2.5, "Exhausted"). */
   exhausted: boolean;
   /** Drawn flinching until this tick (a hit that did not break poise). */
   flinchUntil: number;
@@ -154,22 +171,34 @@ export interface Fighter {
   shieldBreaks: number;
   /** An axe hooked the shield aside: the next block costs double until it is used. */
   hookedUntil: number;
-  /** A lunge's ground: tiles covered over its windup, from `from` (ticks), along `angle`. */
+  /** A lunge's ground: tiles covered over its strides, from `from` (ticks), along `angle`. */
   lunge: { readonly tiles: number; readonly from: number } | null;
   /** The one a riposte or backstab is aimed at, or a sidestep reads (missile number as text). */
   target: Id | null;
   /** A heal under way. */
   heal: HealUnderWay | null;
-  /** Extra windup on the next strike (a spear with a foe inside its reach, Weapon rules). */
+  /** Extra wind-up on the next strike (a spear with a foe inside its reach, Weapon rules). */
   windupExtra: number;
-  /** The facing an attack began at: its windup turns at most Book 10's attackTurn from it. */
-  turnFrom: number;
+  /** Design addendum 2.5: the move in play (its frames: miss recovery, step, weight). */
+  move: Move | null;
+  /** The move's weight, for its telegraph (Book 10 "Telegraphs"). */
+  weight: Weight;
+  /** Its active ticks met no one: the miss recovery was added (a punish window). */
+  missed: boolean;
+  /** Tiles stepped forward evenly over the active ticks (Book 10 "Frame data", Step). */
+  step: number;
+  /** An enemy's telegraph flash tick (Book 10 "Telegraphs", flash), or -1. */
+  flashAt: number;
+  /** Plays by the enemies' telegraph floors (Book 10 "Enemy attacks"). */
+  floors: boolean;
 }
 
 /** A stamina bar the fighter spends from: the steerer's, or a person's own. */
 export interface StaminaPool {
   current: number;
   spentTick: number;
+  /** The bar's maximum now (exhaustion ends at a share of it); Book 10 staminaMax if absent. */
+  max?: number;
 }
 
 /** Book 2 section 12's four facings as an angle (radians, 0 east, y south). */
@@ -211,7 +240,7 @@ export function setAngle(f: Fighter, angle: number): void {
 
 export function newFighter(
   weapon: MeleeWeaponName | null,
-  opts: { shield?: boolean; heavy?: boolean; armour?: Armour; facing?: Facing } = {},
+  opts: { shield?: boolean; heavy?: boolean; armour?: Armour; facing?: Facing; floors?: boolean } = {},
 ): Fighter {
   const facing = opts.facing ?? 's';
   return {
@@ -246,7 +275,12 @@ export function newFighter(
     target: null,
     heal: null,
     windupExtra: 0,
-    turnFrom: FACING_ANGLE[facing],
+    move: null,
+    weight: 'LIGHT',
+    missed: false,
+    step: 0,
+    flashAt: -1,
+    floors: opts.floors ?? false,
   };
 }
 
@@ -254,72 +288,69 @@ export function weaponOf(f: Fighter, cb: CombatBalance): WeaponStats | null {
   return f.weapon === null ? null : cb.weapons[f.weapon];
 }
 
-/** How much longer an exhausted fighter's windups and recoveries are (Book 10 exhausted). */
-function slow(f: Fighter, cb: CombatBalance, ticks: number): number {
-  return f.exhausted ? Math.round(ticks * cb.stamina.exhaustedSlow) : ticks;
-}
-
-/** The windup of a strike by this fighter: the weapon's, the heavy build's extra, exhaustion. */
-export function windupOf(f: Fighter, cb: CombatBalance, extra = 0): number {
-  const w = weaponOf(f, cb);
-  return w === null ? 0 : slow(f, cb, w.windup + (f.heavy ? cb.heavy.windupExtra : 0) + extra);
+/** A weapon's frames for a move (Book 10 "Frame data"), or null if it has no such move. */
+export function movesOf(cb: CombatBalance, weapon: MeleeWeaponName, move: MoveName): MoveFrames | null {
+  return cb.weapons[weapon].moves[move] ?? null;
 }
 
 /**
- * The frame data of an attack kind (Book 10 section 06), with the heavy build's extra windup: the
- * windup, active and recovery ticks, and the tell's lead (ticks from the visible tell to the
- * first active tick, at the soonest).
+ * The wind-up a fighter plays for a move: the frame data's, with the heavy build's extra and, for
+ * an enemy, never below the telegraph floor of its weight (Book 10 "Enemy attacks"). For a heavy
+ * or charged heavy this is the swing after the release (the hold is the AI's, holdFor).
+ */
+export function windupFor(f: Pick<Fighter, 'heavy' | 'floors'>, cb: CombatBalance, m: MoveFrames, lights = true): number {
+  const build = f.heavy ? cb.heavy.windupExtra : 0;
+  if (!f.floors || !lights) return m.windup + build;
+  return Math.max(m.windup, cb.telegraphs.floor[m.weight]) + build;
+}
+
+/**
+ * How long an enemy holds a heavy or charged heavy before its swing, so that hold and swing
+ * together meet the telegraph floor of the move's weight, and the hold reaches its charge level
+ * (Book 10 "Enemy attacks": the rows give the result).
+ */
+export function holdFor(cb: CombatBalance, m: MoveFrames, level: 1 | 2): number {
+  const at = level === 2 ? cb.charge.level2At : cb.charge.level1At;
+  return Math.max(cb.telegraphs.floor[m.weight] - m.windup, at);
+}
+
+/**
+ * The frames of an attack kind (Book 10 "Frame data"), with the heavy build's extra wind-up: the
+ * wind-up, active, recovery and miss recovery ticks.
  */
 export function frameData(
   cb: CombatBalance,
   weapon: MeleeWeaponName,
-  kind: 'light' | 'heavy1' | 'heavy2' | 'riposte',
+  move: MoveName,
   heavyBuild = false,
-): { windup: number; active: number; recovery: number; tellLead: number } {
-  const w = cb.weapons[weapon];
-  if (kind === 'riposte') {
-    const r = riposteFrames(cb, weapon);
-    return { ...r, tellLead: r.windup };
-  }
-  const windup = w.windup + (heavyBuild ? cb.heavy.windupExtra : 0);
-  if (kind === 'light') return { windup, active: w.active, recovery: w.recovery, tellLead: windup };
-  return {
-    windup,
-    active: w.active,
-    recovery: w.recovery + cb.charge.releaseRecoveryExtra,
-    tellLead: windup,
-  };
+): MoveFrames {
+  const m = movesOf(cb, weapon, move);
+  if (m === null) throw new Error(`${weapon} has no ${move}`);
+  return { ...m, windup: m.windup + (heavyBuild ? cb.heavy.windupExtra : 0) };
 }
 
-/** A riposte's frames (Book 10 riposteTicks and riposteFrames): 40% windup, active, the rest. */
-export function riposteFrames(
-  cb: CombatBalance,
-  weapon: MeleeWeaponName,
-): { windup: number; active: number; recovery: number } {
-  return splitFrames(cb, cb.parry.riposteTicks[weapon], cb.weapons[weapon].active);
+/** A riposte's frames (Book 10 "Frame data", Riposte; the same ticks as riposteTicks). */
+export function riposteFrames(cb: CombatBalance, weapon: MeleeWeaponName): MoveFrames {
+  return frameData(cb, weapon, 'riposte');
 }
 
-/** A backstab's frames (Book 10 backstabTicks, backstabFrames). */
-export function backstabFrames(
-  cb: CombatBalance,
-  ticks: number,
-  weapon: MeleeWeaponName,
-): { windup: number; active: number; recovery: number } {
-  return splitFrames(cb, ticks, cb.weapons[weapon].active);
+/** A backstab's frames (Book 10 "Frame data", Backstab). */
+export function backstabFrames(cb: CombatBalance, weapon: MeleeWeaponName): MoveFrames {
+  return frameData(cb, weapon, 'backstab');
 }
 
-function splitFrames(
-  cb: CombatBalance,
-  total: number,
-  active: number,
-): { windup: number; active: number; recovery: number } {
-  const windup = Math.round(total * cb.parry.windupShare);
-  return { windup, active, recovery: Math.max(1, total - windup - active) };
-}
-
-/** Whether a fighter can act on a new press (not mid-strike, not out of the fight). */
+/** Whether a fighter is at ease: free to start an action. */
 export function free(f: Fighter): boolean {
   return f.state === 'idle';
+}
+
+/**
+ * Locked (Book 10 "Commitment", locked): from the first wind-up tick of an action to its last
+ * recovery tick a fighter cannot move, turn, dodge, block, parry or start another action. Only the
+ * idle and a held, live guard are not locked (and the dead, downed and surrendered do nothing).
+ */
+export function locked(f: Fighter): boolean {
+  return f.state !== 'idle' && f.state !== 'block';
 }
 
 export function striking(f: Fighter): boolean {
@@ -330,35 +361,19 @@ export function charging(f: Fighter): boolean {
   return CHARGES.includes(f.state);
 }
 
-/**
- * Attacks commit (Book 10 attackTurn): a windup may turn a little, from the first active tick to
- * the end of recovery not at all; defences and the timed states hold the facing too.
- */
-export function facingLocked(f: Fighter, tick?: number): boolean {
-  if (f.state === 'idle' || f.state === 'block' || f.state === 'heal') return false;
-  if (charging(f)) return false;
-  if (striking(f) && tick !== undefined && tick < f.activeAt) return false;
-  return true;
-}
-
-/** How far a windup may still turn: Book 10 attackTurn, from the facing the strike began at. */
-export function windupTurnLeft(f: Fighter, tick: number): boolean {
-  return (charging(f) || striking(f)) && tick < f.activeAt;
+/** The facing holds while locked (Book 10 "Commitment", facing). */
+export function facingLocked(f: Fighter): boolean {
+  return locked(f);
 }
 
 /**
- * The feet are planted (Book 2: attacks commit), except while charging (a slow walk), dodging or
- * sidestepping (moved by the fight), healing (a step ends it) and at ease.
+ * The feet are planted while locked (Book 10 stopOnAttack), except where the action itself moves
+ * the fighter (a dodge's dash, a sidestep, a lunge's strides, a strike's step: moved by the
+ * fight). A held guard walks at half speed.
  */
 export function feetPlanted(f: Fighter): boolean {
   if (f.hitstop > 0) return true;
-  return (
-    f.state !== 'idle' &&
-    !charging(f) &&
-    f.state !== 'dodge' &&
-    f.state !== 'sidestep' &&
-    f.state !== 'heal'
-  );
+  return locked(f);
 }
 
 /** Which phase of a strike the tick is in. */
@@ -369,23 +384,61 @@ export function strikePhase(f: Fighter, tick: number): 'windup' | 'active' | 're
   return 'recovery';
 }
 
-/** The dodge's invulnerable ticks (Book 10: ticks 4 to 13 of the dodge). */
+/** Which of the three phases any action is in (Book 10 "Commitment", phases), or null at ease. */
+export function phaseOf(f: Fighter, tick: number): 'WINDUP' | 'ACTIVE' | 'RECOVERY' | null {
+  if (striking(f) || f.state === 'shove') {
+    const p = strikePhase(f, tick);
+    return p === 'windup' ? 'WINDUP' : p === 'active' ? 'ACTIVE' : 'RECOVERY';
+  }
+  switch (f.state) {
+    case 'chargeL0':
+    case 'chargeL1':
+    case 'chargeL2':
+    case 'parryWindup':
+    case 'blockRaise':
+      return 'WINDUP';
+    case 'parry':
+      return 'ACTIVE';
+    case 'block':
+    case 'blockStun':
+      return 'ACTIVE';
+    case 'parryRecovery':
+    case 'blockLower':
+    case 'dodgeRecovery':
+    case 'recovery':
+      return 'RECOVERY';
+    case 'dodge':
+      return 'ACTIVE';
+    default:
+      return f.state === 'idle' ? null : 'ACTIVE';
+  }
+}
+
+/** The dodge's invulnerable ticks (Book 10 "Dodge": ticks 8 to 13 of the dodge). */
 export function invulnerable(f: Fighter, tick: number, cb: CombatBalance): boolean {
   if (f.state !== 'dodge') return false;
   const t = tick - f.since;
   return t >= cb.dodge.invulnFrom && t <= cb.dodge.invulnTo;
 }
 
-/** The parry's window: Book 10's (with the option), and the sword's extra ticks. */
+/** The parry's live ticks: Book 10's (with the option), and the sword's extra ticks. */
 export function parryWindowOf(f: Fighter, cb: CombatBalance, window: number): number {
   return window + (f.weapon === 'Sword' ? cb.parry.swordExtra : 0);
 }
 
-/** The parry's active window (startup, then the window). */
-export function parrying(f: Fighter, tick: number, cb: CombatBalance, window: number): boolean {
-  if (f.state !== 'parry') return false;
-  const t = tick - f.since;
-  return t >= cb.parry.startup && t < cb.parry.startup + parryWindowOf(f, cb, window);
+/** The parry is live (Book 10 "Parry": its active ticks, after its wind-up). */
+export function parrying(f: Fighter): boolean {
+  return f.state === 'parry';
+}
+
+/**
+ * A hit now would be a punish (Book 10 "Commitment", punish): the fighter is in a miss recovery,
+ * a mistimed parry's recovery, a dodge's recovery or a broken guard.
+ */
+export function punishable(f: Fighter, tick: number): boolean {
+  if ((striking(f) || f.state === 'shove') && f.missed && tick >= f.activeEnd) return true;
+  if (f.state === 'parryRecovery') return f.riposteUntil <= tick;
+  return f.state === 'dodgeRecovery' || f.state === 'guardBroken';
 }
 
 /** A fighter's whole poise (Book 10 "Poise": by build and armour). */
@@ -395,17 +448,39 @@ export function poiseMax(f: Fighter, cb: CombatBalance): number {
   return base + armour;
 }
 
-export type PressResult = 'STARTED' | 'QUEUED' | 'REFUSED' | 'NO_STAMINA' | 'NO_SHIELD';
+export type PressResult =
+  | 'STARTED'
+  | 'QUEUED'
+  | 'REFUSED'
+  | 'NO_STAMINA'
+  | 'NO_SHIELD'
+  | 'EXHAUSTED';
 
 function spend(pool: StaminaPool, amount: number, tick: number): void {
   pool.current = Math.max(0, pool.current - amount);
   pool.spentTick = tick;
 }
 
-/** Exhaustion follows the bar (Book 10 exhausted): at 0 until back to recoverAt. */
-export function updateExhausted(f: Fighter, pool: StaminaPool, cb: CombatBalance): void {
-  if (pool.current <= 0) f.exhausted = true;
-  else if (f.exhausted && pool.current >= cb.stamina.recoverAt) f.exhausted = false;
+/**
+ * Exhaustion follows the bar (Book 10 "Exhausted"): at 0 until back to its share of the current
+ * maximum. A raised shield drops (lowering), and a held charge comes out as it stands.
+ */
+export function updateExhausted(f: Fighter, pool: StaminaPool, cb: CombatBalance, tick = 0): void {
+  const max = pool.max ?? cb.stamina.max;
+  if (pool.current <= 0) {
+    if (!f.exhausted) {
+      f.exhausted = true;
+      f.guard = false;
+      if (f.state === 'block') enterLower(f, tick, cb);
+    }
+  } else if (f.exhausted && pool.current >= cb.exhausted.until * max - 1e-9) f.exhausted = false;
+}
+
+/** Whether an action that costs stamina may start (Book 10 needsStamina and exhaustedLocks). */
+function canSpend(f: Fighter, pool: StaminaPool): PressResult | null {
+  if (f.exhausted) return 'EXHAUSTED';
+  if (pool.current <= 0) return 'NO_STAMINA';
+  return null;
 }
 
 /** What kind of attack a press makes (decided by the caller from the zone). */
@@ -414,16 +489,17 @@ export interface PressKind {
   readonly lunge?: boolean;
   /** An unaware foe's back within reach (Book 10 "Sneak attacks"). */
   readonly backstab?: Id | null;
-  /** A spear with a foe nearer than spearInside: its windup is longer (Weapon rules). */
+  /** A spear with a foe nearer than spearInside: its wind-up is longer (Weapon rules). */
   readonly inside?: boolean;
   /** The riposte's target, the parried foe in reach. */
   readonly riposteAt?: Id | null;
 }
 
 /**
- * The attack button pressed: the charge begins (its raised weapon is the tell), or in a strike's
- * chain window the next light attack is queued, or after a parry a riposte begins, or on an
- * unaware back a backstab, or running in a lunge.
+ * The attack button pressed (Book 10 chargeFromPress): the charge begins (its raised weapon is the
+ * tell), or in a light's chain window the next light is queued, or after a parry a riposte
+ * begins, or on an unaware back a backstab, or running in a lunge. The facing is fixed at the
+ * press (Book 10 "Commitment", facing) and the fighter stops at once (stopOnAttack).
  */
 export function pressAttack(
   f: Fighter,
@@ -436,52 +512,52 @@ export function pressAttack(
   const angle = typeof facing === 'number' ? facing : FACING_ANGLE[facing];
   const w = weaponOf(f, cb);
   if (w === null) return 'REFUSED';
-  if (striking(f) && f.state !== 'heavyRelease' && !f.riposte && f.state !== 'lunge') {
-    if (f.state === 'backstab') return 'REFUSED';
+  if (f.state === 'light1' || f.state === 'light2') {
     // The chain window: the last chain-window ticks of the recovery (Book 10 "Fight rules").
-    const inWindow = tick >= f.recoveryEnd - w.chainWindow && tick < f.recoveryEnd;
-    if (inWindow && f.combo < w.combo) {
-      if (pool.current < w.stamina) return 'NO_STAMINA';
+    const m = movesOf(cb, w.name, f.state);
+    const next = movesOf(cb, w.name, f.state === 'light1' ? 'light2' : 'light3');
+    const chain = m?.chain ?? null;
+    const inWindow = chain !== null && tick >= f.recoveryEnd - chain && tick < f.recoveryEnd;
+    if (inWindow && next !== null && f.combo < w.combo) {
+      const no = canSpend(f, pool);
+      if (no !== null) return no;
       f.queued = true;
       return 'QUEUED';
     }
     return 'REFUSED';
   }
   if (!free(f)) return 'REFUSED';
-  if (pool.current < w.stamina) return 'NO_STAMINA';
+  const no = canSpend(f, pool);
+  if (no !== null) return no;
   setAngle(f, angle);
   f.target = null;
+  f.flashAt = -1;
   if (tick < f.riposteUntil) {
     // A riposte (Book 10 "Parry and riposte"): heavy, distinct and committed.
     const r = riposteFrames(cb, w.name);
-    beginStrike(f, 'riposte', tick, tick + r.windup, r.active, r.recovery, 0);
+    beginStrike(f, 'riposte', 'riposte', tick, tick + r.windup, r, 0);
     f.target = kind.riposteAt ?? null;
-    spend(pool, w.stamina, tick);
+    spend(pool, r.stamina, tick);
     f.riposteUntil = -1;
     return 'STARTED';
   }
   f.riposteUntil = -1;
-  if (kind.backstab != null) {
-    return pressBackstab(f, tick, cb, kind.backstab, pool);
-  }
+  if (kind.backstab != null) return pressBackstab(f, tick, cb, kind.backstab, pool);
   const lungeTiles = cb.lunge.tiles[w.name];
-  if (kind.lunge === true && lungeTiles > 0) {
-    const cost = w.stamina + cb.lunge.staminaExtra;
-    if (pool.current < cost) return 'NO_STAMINA';
-    // The tell (a step and a dip of the shoulders), then the windup, covering the lunge's ground.
-    const windupStart = tick + cb.lunge.tellTicks;
-    const activeAt = windupStart + windupOf(f, cb);
-    beginStrike(
-      f,
-      'lunge',
-      tick,
-      activeAt,
-      w.active,
-      slow(f, cb, w.recovery + cb.lunge.recoveryExtra),
-      0,
-    );
+  const lm = movesOf(cb, w.name, 'lunge');
+  if (kind.lunge === true && lungeTiles > 0 && lm !== null) {
+    // The tell (a step and a dip of the shoulders), then the strides over its wind-up, covering
+    // the lunge's ground at a fixed distance; an enemy's tell and strides meet its floor.
+    const tell = f.floors ? cb.telegraphs.enemyLungeTell : cb.lunge.tellTicks;
+    const strides = f.floors
+      ? Math.max(lm.windup, cb.telegraphs.floor[lm.weight] - tell)
+      : lm.windup;
+    const windupStart = tick + tell;
+    const activeAt = windupStart + strides + (f.heavy ? cb.heavy.windupExtra : 0);
+    beginStrike(f, 'lunge', 'lunge', tick, activeAt, lm, 0);
+    f.step = 0;
     f.lunge = { tiles: lungeTiles, from: windupStart };
-    spend(pool, cost, tick);
+    spend(pool, lm.stamina, tick);
     return 'STARTED';
   }
   f.state = 'chargeL0';
@@ -490,6 +566,11 @@ export function pressAttack(
   f.level = 0;
   f.combo = 0;
   f.lunge = null;
+  f.missed = false;
+  f.hit = false;
+  f.queued = false;
+  f.move = 'light1';
+  f.weight = movesOf(cb, w.name, 'light1')?.weight ?? 'LIGHT';
   f.windupExtra = kind.inside === true ? cb.rules.spearInsideWindup : 0;
   return 'STARTED';
 }
@@ -501,36 +582,39 @@ export function pressBackstab(
   cb: CombatBalance,
   target: Id,
   pool: StaminaPool,
-  ticks?: number,
 ): PressResult {
   const w = weaponOf(f, cb);
   if (w === null || !free(f)) return 'REFUSED';
-  if (pool.current < w.stamina) return 'NO_STAMINA';
-  const total = ticks ?? 0;
-  const fr = backstabFrames(cb, total, w.name);
-  beginStrike(f, 'backstab', tick, tick + fr.windup, fr.active, fr.recovery, 0);
+  const no = canSpend(f, pool);
+  if (no !== null) return no;
+  const fr = backstabFrames(cb, w.name);
+  beginStrike(f, 'backstab', 'backstab', tick, tick + fr.windup, fr, 0);
   f.target = target;
-  spend(pool, w.stamina, tick);
+  spend(pool, fr.stamina, tick);
   return 'STARTED';
 }
 
 function beginStrike(
   f: Fighter,
   state: CombatState,
+  move: Move,
   tick: number,
   activeAt: number,
-  active: number,
-  recovery: number,
+  m: MoveFrames,
   level: 0 | 1 | 2,
 ): void {
   f.state = state;
   f.since = tick;
   f.activeAt = activeAt;
-  f.activeEnd = activeAt + active;
-  f.recoveryEnd = f.activeEnd + recovery;
+  f.activeEnd = activeAt + m.active;
+  f.recoveryEnd = f.activeEnd + m.recovery;
   f.hit = false;
+  f.missed = false;
   f.queued = false;
   f.level = level;
+  f.move = move;
+  f.weight = m.weight;
+  f.step = m.step;
   f.riposte = state === 'riposte';
   if (state !== 'lunge') f.lunge = null;
   if (state === 'light1' || state === 'riposte' || state === 'lunge' || state === 'backstab')
@@ -538,10 +622,11 @@ function beginStrike(
 }
 
 /**
- * The attack button let go. Before level 1 the charge becomes a light attack (its windup counted
- * from the press: the active ticks come at the windup's end or now, whichever is later); from
- * level 1 it is released as a heavy, spending the level's stamina (a level the pool cannot pay
- * for falls back a level). `extraWindup` lengthens a heavy's windup (Svart at dusk, DE-15).
+ * The attack button let go (a held charge can only be released: Book 10 noCancels). Before level
+ * 1 the charge becomes a light attack (its wind-up counted from the press: the active ticks come
+ * at the wind-up's end or now, whichever is later); from level 1 it is released as a heavy, or at
+ * level 2 a charged heavy, swinging with its own wind-up (Book 10 "Frame data"), spending the
+ * level's stamina. `extraWindup` lengthens a heavy's swing (Svart at dusk, DE-15).
  */
 export function releaseAttack(
   f: Fighter,
@@ -555,46 +640,43 @@ export function releaseAttack(
   const pressed = f.since;
   const inside = f.windupExtra;
   f.windupExtra = 0;
-  let level: 0 | 1 | 2 = f.state === 'chargeL2' ? 2 : f.state === 'chargeL1' ? 1 : 0;
-  if (level === 2 && pool.current < w.stamina * cb.charge.staminaL2) level = 1;
-  if (level === 1 && pool.current < w.stamina * cb.charge.staminaL1) level = 0;
+  const level: 0 | 1 | 2 = f.state === 'chargeL2' ? 2 : f.state === 'chargeL1' ? 1 : 0;
   if (level === 0) {
+    const m = movesOf(cb, w.name, 'light1');
+    if (m === null) return;
     beginStrike(
       f,
       'light1',
+      'light1',
       pressed,
-      Math.max(pressed + windupOf(f, cb, inside), tick),
-      w.active,
-      slow(f, cb, w.recovery),
+      Math.max(pressed + windupFor(f, cb, m) + inside, tick),
+      m,
       0,
     );
-    spend(pool, w.stamina, tick);
+    spend(pool, m.stamina, tick);
     return;
   }
-  beginStrike(
-    f,
-    'heavyRelease',
-    tick,
-    tick + windupOf(f, cb, inside + extraWindup),
-    w.active,
-    slow(f, cb, w.recovery + cb.charge.releaseRecoveryExtra),
-    level,
-  );
-  spend(pool, w.stamina * (level === 2 ? cb.charge.staminaL2 : cb.charge.staminaL1), tick);
+  const m = movesOf(cb, w.name, level === 2 ? 'charged' : 'heavy');
+  if (m === null) return;
+  const swing = m.windup + (f.heavy ? cb.heavy.windupExtra : 0) + inside + extraWindup;
+  beginStrike(f, 'heavyRelease', level === 2 ? 'charged' : 'heavy', tick, tick + swing, m, level);
+  // The press began the wind-up; the strike counts its hold as part of it.
+  f.since = pressed;
+  spend(pool, m.stamina, tick);
 }
 
 /**
- * A feint (Book 10 "Self-preservation", feint): the charge's tell lowered with no swing and no
- * stamina spent.
+ * A feint (Book 10 "Self-preservation", feint): the charge's tell lowered with no swing, no
+ * stamina spent; the lowering is a light's recovery, still committed.
  */
-export function feint(f: Fighter, tick: number): void {
+export function feint(f: Fighter, tick: number, cb?: CombatBalance): void {
   if (!charging(f)) return;
-  f.state = 'idle';
-  f.since = tick;
-  f.lunge = null;
+  const m = cb !== undefined && f.weapon !== null ? movesOf(cb, f.weapon, 'light1') : null;
+  enterTimed(f, 'recovery', tick, m?.recovery ?? 1);
+  f.flashAt = -1;
 }
 
-/** The parry key: a timed press (Book 10: startup, window, recovery on a miss). */
+/** The parry key: its wind-up, its live ticks, its recovery (Book 10 "Parry"; DF-4). */
 export function pressParry(
   f: Fighter,
   tick: number,
@@ -604,52 +686,62 @@ export function pressParry(
 ): PressResult {
   if (!free(f) && f.state !== 'block') return 'REFUSED';
   if (f.weapon === null && !f.shield) return 'REFUSED';
-  if (pool.current < cb.parry.cost) return 'NO_STAMINA';
+  const no = canSpend(f, pool);
+  if (no !== null) return no;
   spend(pool, cb.parry.cost, tick);
-  f.state = 'parry';
+  f.state = 'parryWindup';
   f.since = tick;
-  f.recoveryEnd = tick + cb.parry.startup + parryWindowOf(f, cb, window);
+  f.recoveryEnd = tick + cb.parry.windup;
+  // The live ticks are fixed at the press (the option, the sword's extra).
+  f.activeAt = tick + cb.parry.windup;
+  f.activeEnd = f.activeAt + parryWindowOf(f, cb, window);
+  f.move = null;
+  f.riposteUntil = -1;
   return 'STARTED';
 }
 
+function enterLower(f: Fighter, tick: number, cb: CombatBalance): void {
+  enterTimed(f, 'blockLower', tick, cb.block.lower);
+}
+
 /**
- * The block key held or let go. Only a shield blocks (Book 10 "Fight rules", blockNeedsShield; the
- * Dane axe is two-handed, so never with a shield).
+ * The block key held or let go (Book 10 "Block"; DF-5). Held, the shield comes up over Book 10's
+ * raise and is live from then; let go, it comes down over the lower. Only a shield blocks (Book
+ * 10 "Fight rules", blockNeedsShield); an exhausted fighter cannot raise it.
  */
-export function setBlock(f: Fighter, on: boolean, tick: number): PressResult {
-  f.guard = on && f.shield;
+export function setBlock(f: Fighter, on: boolean, tick: number, cb?: CombatBalance): PressResult {
   if (!on) {
-    if (f.state === 'block') {
+    f.guard = false;
+    if (f.state === 'block' && cb !== undefined) enterLower(f, tick, cb);
+    else if (f.state === 'block') {
       f.state = 'idle';
       f.since = tick;
     }
     return 'STARTED';
   }
   if (!f.shield) return 'NO_SHIELD';
+  if (f.exhausted) return 'EXHAUSTED';
+  f.guard = true;
   if (f.state === 'idle') {
-    f.state = 'block';
-    f.since = tick;
+    if (cb === undefined) {
+      f.state = 'block';
+      f.since = tick;
+    } else enterTimed(f, 'blockRaise', tick, cb.block.raise);
+    f.guard = true;
   }
   return 'STARTED';
 }
 
-/**
- * Whether a dodge may start now: at ease, blocking, or in the first dodgeCancel ticks of a light
- * attack's windup (Book 10 dodgeCancel; a charge held past them, or any other attack, commits).
- */
-export function canDodge(f: Fighter, tick: number, cb: CombatBalance): boolean {
+/** Whether a dodge may start now: at ease or from a held guard, and not exhausted. */
+export function canDodge(f: Fighter): boolean {
   if (f.exhausted) return false;
-  if (free(f) || f.state === 'block') return true;
-  const early = tick - f.since < cb.stance.dodgeCancelTicks;
-  if (f.state === 'chargeL0' && early) return true;
-  return (
-    (f.state === 'light1' || f.state === 'light2' || f.state === 'light3') &&
-    early &&
-    tick < f.activeAt
-  );
+  return free(f) || f.state === 'block';
 }
 
-/** The dodge key: a short committed move with brief invulnerability, along `dir`. */
+/**
+ * The dodge key (Book 10 "Dodge"; DF-6): a dip and push-off, a dash along `dir` with an
+ * invulnerable middle, then a planted recovery; a large stamina cost.
+ */
 export function pressDodge(
   f: Fighter,
   tick: number,
@@ -657,8 +749,10 @@ export function pressDodge(
   dir: { x: number; y: number } | null,
   pool: StaminaPool,
 ): PressResult {
-  if (!canDodge(f, tick, cb)) return 'REFUSED';
-  if (pool.current < cb.dodge.stamina) return 'NO_STAMINA';
+  if (f.exhausted) return 'EXHAUSTED';
+  if (!canDodge(f)) return 'REFUSED';
+  const no = canSpend(f, pool);
+  if (no !== null) return no;
   spend(pool, cb.dodge.stamina, tick);
   const d =
     dir === null || Math.hypot(dir.x, dir.y) < 1e-6
@@ -667,16 +761,29 @@ export function pressDodge(
   const len = Math.hypot(d.x, d.y);
   f.state = 'dodge';
   f.since = tick;
+  f.guard = false;
   f.dodge = { x: d.x / len, y: d.y / len };
-  f.recoveryEnd = tick + cb.dodge.ticks;
+  f.activeAt = tick + cb.dodge.start;
+  f.recoveryEnd = tick + cb.dodge.start + cb.dodge.dash;
   f.queued = false;
   f.lunge = null;
+  f.move = null;
   return 'STARTED';
 }
 
 /**
- * A sidestep from a missile (Book 10 awareDodge, sidestepMove): a tell, then a dodge's move across
- * the missile's path along `dir`. `missile` is the one it reads (it passes the sidestepper).
+ * The ground a dodge (or a sidestep, or an archer's hop) covers on a tick of its dash, eased out:
+ * the distance so far is `tiles` x (1 - (1 - k/dash)^2) (Book 10 dodgeDash).
+ */
+export function dashStep(k: number, dash: number, tiles: number): number {
+  if (k < 0 || k >= dash) return 0;
+  const at = (n: number): number => tiles * (1 - (1 - n / dash) ** 2);
+  return at(k + 1) - at(k);
+}
+
+/**
+ * A sidestep from a missile (Book 10 awareDodge, sidestepMove): a tell, then a dodge's dash across
+ * the missile's path along `dir`, then the dodge's recovery. `missile` is the one it reads.
  */
 export function startSidestep(
   f: Fighter,
@@ -690,12 +797,16 @@ export function startSidestep(
   f.state = 'sidestep';
   f.since = tick;
   f.activeAt = tick + tell;
-  f.recoveryEnd = tick + tell + cb.dodge.ticks;
+  f.recoveryEnd = tick + tell + cb.dodge.dash;
   f.dodge = { x: dir.x / len, y: dir.y / len };
   f.target = `missile:${String(missile)}`;
+  f.guard = false;
 }
 
-/** The shove: breaks a block and makes space (Book 10: stamina, stagger; "Fight rules" timing). */
+/**
+ * The shove (or a shield's bash): breaks a block and makes space (Book 10: its stamina and
+ * stagger; "Frame data", Unarmed Shove and Shield Bash). From a held guard it is the bash.
+ */
 export function pressShove(
   f: Fighter,
   tick: number,
@@ -705,15 +816,13 @@ export function pressShove(
 ): PressResult {
   const angle = typeof facing === 'number' ? facing : FACING_ANGLE[facing];
   if (!free(f) && f.state !== 'block') return 'REFUSED';
-  if (pool.current < cb.shove.stamina) return 'NO_STAMINA';
+  const no = canSpend(f, pool);
+  if (no !== null) return no;
+  const m = f.shield ? cb.shove.bash : cb.shove.frames;
   spend(pool, cb.shove.stamina, tick);
   setAngle(f, angle);
-  f.state = 'shove';
-  f.since = tick;
-  f.activeAt = tick + cb.shove.windup;
-  f.activeEnd = f.activeAt + cb.shove.active;
-  f.recoveryEnd = f.activeEnd + cb.shove.recovery;
-  f.hit = false;
+  f.guard = false;
+  beginStrike(f, 'shove', 'shove', tick, tick + windupFor(f, cb, m), m, 0);
   return 'STARTED';
 }
 
@@ -745,7 +854,18 @@ export function interruptHeal(f: Fighter, tick: number): boolean {
 export function enterTimed(
   f: Fighter,
   state:
-    'stagger' | 'blockStun' | 'guardBroken' | 'parryRecovery' | 'parried' | 'knockdown' | 'getUp',
+    | 'stagger'
+    | 'blockStun'
+    | 'guardBroken'
+    | 'parryRecovery'
+    | 'parried'
+    | 'knockdown'
+    | 'getUp'
+    | 'parry'
+    | 'blockRaise'
+    | 'blockLower'
+    | 'dodgeRecovery'
+    | 'recovery',
   tick: number,
   ticks: number,
 ): void {
@@ -756,6 +876,8 @@ export function enterTimed(
   f.hit = false;
   f.lunge = null;
   f.heal = null;
+  f.flashAt = -1;
+  if (state !== 'parry' && state !== 'parryRecovery') f.move = null;
 }
 
 export type FighterEvent =
@@ -765,11 +887,29 @@ export type FighterEvent =
   | { readonly type: 'MISSED' }
   | { readonly type: 'STATE_ENDED'; readonly state: CombatState; readonly heal?: HealUnderWay };
 
+/** Back to rest after an action. */
+function toIdle(f: Fighter, tick: number): void {
+  f.state = 'idle';
+  f.since = tick;
+  f.combo = 0;
+  f.queued = false;
+  f.lunge = null;
+  f.target = null;
+  f.riposte = false;
+  f.dodge = null;
+  f.heal = null;
+  f.move = null;
+  f.missed = false;
+  f.step = 0;
+  f.flashAt = -1;
+}
+
 /**
  * One tick of the fighter's own clock: the charge's levels and its maximum hold, a strike's active
- * ticks beginning, a swing that met no one recovering longer, a queued chain following its
- * recovery, poise refilling, and timed states ending (a knockdown into the get-up). Hits are the
- * caller's (it knows where everyone stands). A fighter in hitstop does not step: its clock is held.
+ * ticks beginning, a swing that met no one recovering longer (its miss recovery), a queued chain
+ * following its recovery, the parry, block and dodge moving through their phases, poise
+ * refilling, exhaustion following the bar, and timed states ending (a knockdown into the get-up).
+ * Hits are the caller's (it knows where everyone stands). A fighter in hitstop does not step.
  */
 export function stepFighter(
   f: Fighter,
@@ -783,7 +923,7 @@ export function stepFighter(
     hold(f, 1);
     return out;
   }
-  updateExhausted(f, pool, cb);
+  updateExhausted(f, pool, cb, tick);
   // Poise refills after Book 10's pause without a hit.
   if (f.poiseLost > 0 && tick - f.poiseAt >= cb.poise.regenDelay)
     f.poiseLost = Math.max(0, f.poiseLost - cb.poise.regenPerSecond / 60);
@@ -792,10 +932,12 @@ export function stepFighter(
     const held = tick - f.since;
     if (f.state === 'chargeL0' && held >= cb.charge.level1At) {
       f.state = 'chargeL1';
+      f.weight = (w === null ? null : movesOf(cb, w.name, 'heavy'))?.weight ?? 'HEAVY';
       out.push({ type: 'CHARGE_LEVEL', level: 1 });
     }
     if (f.state === 'chargeL1' && held >= cb.charge.level2At) {
       f.state = 'chargeL2';
+      f.weight = (w === null ? null : movesOf(cb, w.name, 'charged'))?.weight ?? 'CHARGED';
       out.push({ type: 'CHARGE_LEVEL', level: 2 });
     }
     if (held >= cb.charge.maxHold) {
@@ -806,29 +948,32 @@ export function stepFighter(
   }
   if (striking(f) || f.state === 'shove') {
     if (tick === f.activeAt) out.push({ type: 'ACTIVE' });
-    // A missed swing matters (Book 10 missRecovery; a spear's spearMiss in its place).
-    if (tick === f.activeEnd && !f.hit && f.state !== 'shove' && w !== null) {
-      const extra = w.name === 'Spear' ? cb.rules.spearMissRecovery : cb.stance.missRecovery;
-      f.recoveryEnd += extra;
-      out.push({ type: 'MISSED' });
+    // A missed attack leaves the attacker highly vulnerable (Book 10 "Commitment", missRecovery).
+    if (tick === f.activeEnd && !f.hit && !f.missed) {
+      const m =
+        f.move === 'shove'
+          ? f.shield
+            ? cb.shove.bash
+            : cb.shove.frames
+          : w !== null && f.move !== null
+            ? movesOf(cb, w.name, f.move)
+            : null;
+      if (m?.miss != null) {
+        f.recoveryEnd += m.miss;
+        f.missed = true;
+        out.push({ type: 'MISSED' });
+      }
     }
     if (tick >= f.recoveryEnd) {
       const ended = f.state;
-      if (f.queued && w !== null && (ended === 'light1' || ended === 'light2')) {
-        const next = ended === 'light1' ? 'light2' : 'light3';
+      const next = ended === 'light1' ? 'light2' : ended === 'light2' ? 'light3' : null;
+      const m = next === null || w === null ? null : movesOf(cb, w.name, next);
+      if (f.queued && m !== null && next !== null && !f.exhausted && pool.current > 0) {
         const combo = f.combo + 1;
-        beginStrike(f, next, tick, tick + windupOf(f, cb), w.active, slow(f, cb, w.recovery), 0);
+        beginStrike(f, next, next, tick, tick + windupFor(f, cb, m), m, 0);
         f.combo = combo;
-        spend(pool, w.stamina, tick);
-      } else {
-        f.state = 'idle';
-        f.since = tick;
-        f.combo = 0;
-        f.queued = false;
-        f.lunge = null;
-        f.target = null;
-        f.riposte = false;
-      }
+        spend(pool, m.stamina, tick);
+      } else toIdle(f, tick);
       out.push({ type: 'STATE_ENDED', state: ended });
     }
     return out;
@@ -836,17 +981,31 @@ export function stepFighter(
   if (TIMED.includes(f.state) && tick >= f.recoveryEnd) {
     const ended = f.state;
     const heal = f.heal;
-    if (ended === 'parry') {
-      // The window passed with nothing parried: the recovery on a miss.
-      enterTimed(f, 'parryRecovery', tick, cb.parry.recoveryOnMiss);
+    if (ended === 'parryWindup') {
+      // The parry is live for its active ticks.
+      f.state = 'parry';
+      f.since = tick;
+      f.recoveryEnd = f.activeEnd;
+    } else if (ended === 'parry') {
+      // Nothing was parried: the mistimed parry's recovery, open to a punish.
+      enterTimed(f, 'parryRecovery', tick, cb.parry.recovery);
     } else if (ended === 'knockdown') {
       enterTimed(f, 'getUp', tick, cb.poise.getUpTicks);
-    } else {
-      f.state = f.guard && f.shield && ended !== 'guardBroken' ? 'block' : 'idle';
-      f.since = tick;
+    } else if (ended === 'dodge') {
+      enterTimed(f, 'dodgeRecovery', tick, cb.dodge.recovery);
       f.dodge = null;
-      f.heal = null;
+    } else if (ended === 'sidestep') {
+      enterTimed(f, 'dodgeRecovery', tick, cb.dodge.recovery);
+      f.dodge = null;
       f.target = null;
+    } else if (ended === 'blockRaise' || ended === 'blockStun') {
+      if (f.guard && f.shield && !f.exhausted) {
+        f.state = 'block';
+        f.since = tick;
+      } else if (f.shield) enterLower(f, tick, cb);
+      else toIdle(f, tick);
+    } else {
+      toIdle(f, tick);
     }
     out.push(
       heal === null
@@ -865,6 +1024,7 @@ export function hold(f: Fighter, ticks: number): void {
   f.recoveryEnd += ticks;
   if (f.riposteUntil >= 0) f.riposteUntil += ticks;
   if (f.flinchUntil >= 0) f.flinchUntil += ticks;
+  if (f.flashAt >= 0) f.flashAt += ticks;
   if (f.lunge !== null) f.lunge = { ...f.lunge, from: f.lunge.from + ticks };
 }
 
@@ -993,8 +1153,8 @@ export function inFront(facing: Facing, dx: number, dy: number, arcDegrees: numb
 }
 
 /**
- * The block's stamina (Book 10 "Guard", blockCost): the factor of the blow's vs-shield damage plus
- * the flat cost, double on a shield the axe hooked aside.
+ * The block's stamina (Book 10 "Guard", blockCost; "Block", blockDrain): the factor of the blow's
+ * vs-shield damage plus the flat cost, double on a shield the axe hooked aside.
  */
 export function blockCost(
   blow: { readonly vsShield: number },
@@ -1018,12 +1178,18 @@ function breakGuard(
   if (split || defender.shieldBreaks >= cb.rules.shieldBreaksAfter) defender.shield = false;
 }
 
+/** Whether the guard is live: the shield up past its raise (Book 10 "Block", blockRaise). */
+export function guardLive(f: Fighter): boolean {
+  return f.shield && (f.state === 'block' || f.state === 'blockStun');
+}
+
 /**
- * Resolves a blow against a defender (Book 2 section 12): a dodge's invulnerable ticks, then a
- * parry in its window from the front, then a raised shield from the front (a guard break breaks it
- * and lands; an axe's heavy hooks it aside; else it costs stamina), else a hit. `attackerDir` is the
- * vector from the defender to the attacker. Changes the defender's state (and, for a parry, the
- * attacker's: it reels open) and returns the outcome. A riposte cannot be parried or blocked.
+ * Resolves a blow against a defender (Book 2 section 12; design addendum 2.5): a dodge's
+ * invulnerable ticks, then a live parry from the front (the overlap rule: this is the blow's first
+ * active tick that meets the parrier), then a live guard from the front (a guard break breaks it
+ * and lands; an axe's heavy hooks it aside; else it drains stamina, and a drain that empties the
+ * bar breaks the guard with Book 10's large stagger), else a hit. `attackerDir` is the vector from
+ * the defender to the attacker. A riposte cannot be parried or blocked.
  */
 export function resolveBlow(
   attacker: Fighter,
@@ -1032,24 +1198,24 @@ export function resolveBlow(
   attackerDir: { readonly x: number; readonly y: number },
   tick: number,
   cb: CombatBalance,
-  parryWindow: number,
+  _parryWindow: number,
   pool: StaminaPool,
 ): Outcome {
   if (invulnerable(defender, tick, cb)) return 'DODGED';
   if (blow.unblockable || blow.kind === 'backstab') return 'HIT';
   const front = (arc: number): boolean =>
     inFrontAngle(defender.angle, attackerDir.x, attackerDir.y, arc);
-  if (parrying(defender, tick, cb, parryWindow) && front(cb.block.arcDegrees)) {
-    // Success: the attacker reels open, the parry's cost comes back, a riposte is open.
+  if (parrying(defender) && front(cb.block.arcDegrees)) {
+    // Success: the attacker is stunned, the parry's cost comes back, and the parrier's remaining
+    // ticks become a settle before the riposte (Book 10 "Parry": parryStun, parrySettle).
     pool.current += cb.parry.cost;
-    defender.state = 'idle';
-    defender.since = tick;
+    enterTimed(defender, 'parryRecovery', tick, cb.parry.settle);
     defender.riposteUntil = tick + cb.parry.open;
     enterTimed(attacker, 'parried', tick, cb.parry.open);
+    attacker.guard = false;
     return 'PARRIED';
   }
-  const raised = defender.shield && (defender.state === 'block' || defender.state === 'blockStun');
-  if (raised && front(cb.block.arcDegrees)) {
+  if (guardLive(defender) && front(cb.block.arcDegrees)) {
     if (blow.guardBreak) {
       breakGuard(defender, tick, cb, cb.block.guardBreak, blow.split);
       return 'GUARD_BROKEN';
@@ -1064,7 +1230,9 @@ export function resolveBlow(
     pool.spentTick = tick;
     if (hooked) defender.hookedUntil = -1;
     if (pool.current <= 0) {
-      breakGuard(defender, tick, cb, cb.block.guardBreak, false);
+      // Emptied: the guard breaks with the large stagger, and the blocker is exhausted.
+      breakGuard(defender, tick, cb, cb.block.breakEmpty, false);
+      defender.exhausted = true;
       return 'GUARD_BROKEN';
     }
     enterTimed(defender, 'blockStun', tick, cb.block.stun);
@@ -1078,8 +1246,9 @@ export type PoiseResult = 'FLINCH' | 'STAGGER' | 'KNOCKDOWN' | 'NONE';
 
 /**
  * After a blow lands (Book 10 "Poise"): it wears the defender's poise by its poise damage; broken,
- * the defender staggers (a big enough hit knocks down) and the poise refills; else a flinch that
- * does not stop what they are doing. A riposte and a backstab ignore poise: they always stagger.
+ * the defender staggers (a big enough hit knocks down) and the poise refills, ending any action
+ * (Book 10 "Commitment", interrupt); else a flinch that does not stop what they are doing. A
+ * riposte and a backstab ignore poise: they always stagger.
  */
 export function poiseHit(
   defender: Fighter,
@@ -1103,6 +1272,9 @@ export function poiseHit(
     enterTimed(defender, 'knockdown', tick, cb.poise.knockdownTicks);
     return 'KNOCKDOWN';
   }
+  // A broken guard keeps its own (longer) stagger.
+  if (defender.state === 'guardBroken' && defender.recoveryEnd - tick > cb.poise.staggerTicks)
+    return 'STAGGER';
   enterTimed(defender, 'stagger', tick, cb.poise.staggerTicks);
   return 'STAGGER';
 }

@@ -1,0 +1,88 @@
+{
+  "sheet": "ship_t1_storm_mast",
+  "kind": "building",
+  "image": "ship_t1_storm_mast.png",
+  "width": 172,
+  "height": 175,
+  "pivot": {
+    "x": 85,
+    "y": 174
+  },
+  "footprint": {
+    "w": 172,
+    "h": 175
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "port": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    },
+    "level": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    },
+    "starboard": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "port/-/0": [
+      0,
+      0
+    ],
+    "port/-/1": [
+      172,
+      0
+    ],
+    "port/-/2": [
+      344,
+      0
+    ],
+    "port/-/3": [
+      516,
+      0
+    ],
+    "level/-/0": [
+      0,
+      175
+    ],
+    "level/-/1": [
+      172,
+      175
+    ],
+    "level/-/2": [
+      344,
+      175
+    ],
+    "level/-/3": [
+      516,
+      175
+    ],
+    "starboard/-/0": [
+      0,
+      350
+    ],
+    "starboard/-/1": [
+      172,
+      350
+    ],
+    "starboard/-/2": [
+      344,
+      350
+    ],
+    "starboard/-/3": [
+      516,
+      350
+    ]
+  }
+}

@@ -37,6 +37,7 @@ import {
   striking,
 } from '../../src/sim/combat/fighter.ts';
 import type { Fighter, StaminaPool } from '../../src/sim/combat/fighter.ts';
+import type { MoveName } from '../../src/content/combatBalance.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { orderShot } from '../../src/sim/land/archer.ts';
 import { crewFight, hurt, inAttack } from '../../src/sim/land/fight.ts';
@@ -52,6 +53,7 @@ import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts
 import { campContext } from '../../src/sim/home/camp.ts';
 import { CampBot } from '../../src/tools/play/campBot.ts';
 import { repoFile } from './books.ts';
+import { carefulMemory, carefulTick } from '../../src/tools/play/carefulFighter.ts';
 
 const balance = loadBalanceJson();
 const b = parseTimeBalance(balance);
@@ -117,37 +119,83 @@ function run(f: Fighter, from: number, to: number, p = pool()): void {
   for (let t = from; t < to; t++) stepFighter(f, t, cb, p);
 }
 
-/** Book 10 section 06's weapon movesets (combat v2), read straight from the book. */
-function bookWeapons(): Record<string, string[]> {
+/** A table of Book 10, read straight from the book: its rows' cells. */
+function bookTable(heading: string): string[][] {
   const book = repoFile('docs/10_balance_sheet.md');
-  const at = book.indexOf('### Weapon movesets');
-  const rows = book.slice(at).split('\n').slice(4, 14);
-  return Object.fromEntries(
-    rows.map((r) => {
-      const cells = r
+  const at = book.indexOf(`### ${heading}`);
+  const lines = book.slice(at).split('\n');
+  const start = lines.findIndex((l) => l.startsWith('|---'));
+  const out: string[][] = [];
+  for (const l of lines.slice(start + 1)) {
+    if (!l.startsWith('|')) break;
+    out.push(
+      l
         .split('|')
-        .map((c) => c.trim())
-        .filter((c) => c !== '');
-      return [cells[0] ?? '', cells.slice(1)];
-    }),
-  );
+        .slice(1, -1)
+        .map((c) => c.trim()),
+    );
+  }
+  return out;
 }
 
+/** Book 10 section 06's weapon movesets (combat v2), read straight from the book. */
+function bookWeapons(): Record<string, string[]> {
+  return Object.fromEntries(bookTable('Weapon movesets').map((c) => [c[0] ?? '', c.slice(1)]));
+}
+
+const MOVE_ROWS: Readonly<Record<string, MoveName>> = {
+  'Light 1': 'light1',
+  'Light 2': 'light2',
+  'Light 3': 'light3',
+  Heavy: 'heavy',
+  'Charged heavy': 'charged',
+  Lunge: 'lunge',
+  Riposte: 'riposte',
+  Backstab: 'backstab',
+};
+
 describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
-  it('matches Book 10 for every melee weapon', () => {
+  it('matches Book 10 for every melee weapon, and every move of design addendum 2.5', () => {
     const book = bookWeapons();
     for (const name of MELEE_WEAPONS) {
       const w = cb.weapons[name];
-      const [reach, , combo, windup, active, recovery, chain, damage, , vsShield, , stamina] =
-        book[name] ?? [];
-      expect([w.reachTiles, w.combo, w.windup, w.active, w.recovery, w.chainWindow]).toEqual(
-        [reach, combo, windup, active, recovery, chain].map(Number),
-      );
+      const [reach, , combo, damage, , vsShield, , stamina] = book[name] ?? [];
+      expect([w.reachTiles, w.combo]).toEqual([reach, combo].map(Number));
       expect([w.damage, w.vsShield, w.stamina]).toEqual([damage, vsShield, stamina].map(Number));
     }
+    // Every row of "Frame data" (decision DF-10), read straight from the book.
+    const dash = (c: string | undefined): number | null => (c === '-' ? null : Number(c));
+    let n = 0;
+    for (const [weapon, move, , windup, active, recovery, miss, step, stamina, chain] of bookTable(
+      'Frame data',
+    )) {
+      const m = MOVE_ROWS[move ?? ''];
+      if (m === undefined || !(MELEE_WEAPONS as readonly string[]).includes(weapon ?? '')) continue;
+      const got = cb.weapons[weapon as (typeof MELEE_WEAPONS)[number]].moves[m];
+      expect(got, `${weapon} ${move}`).toMatchObject({
+        windup: Number(windup),
+        active: Number(active),
+        recovery: Number(recovery),
+        miss: dash(miss),
+        step: Number(step),
+        stamina: Number(stamina),
+        chain: dash(chain),
+      });
+      n++;
+    }
+    expect(n).toBe(44);
     expect(cb.charge).toMatchObject({ level1At: 18, level2At: 45, maxHold: 90 });
-    expect(cb.parry).toMatchObject({ startup: 2, window: 8, recoveryOnMiss: 18, open: 60 });
-    expect(cb.dodge).toMatchObject({ ticks: 20, invulnFrom: 4, invulnTo: 13, tiles: 1.5 });
+    expect(cb.parry).toMatchObject({ windup: 6, window: 8, recovery: 18, settle: 6, open: 60 });
+    expect(cb.dodge).toMatchObject({
+      start: 4,
+      dash: 12,
+      recovery: 18,
+      ticks: 34,
+      invulnFrom: 8,
+      invulnTo: 13,
+      tiles: 1.25,
+      stamina: 30,
+    });
   });
 
   it('gives every attack a tell at least 6 ticks before its active frames', () => {
@@ -161,7 +209,7 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
         expect(light.state).toBe('light1');
         leads.push(`${name} light ${light.activeAt}`);
         expect(light.activeAt - 0).toBeGreaterThanOrEqual(6);
-        expect(light.activeAt - 0).toBe(frameData(cb, name, 'light', heavyBuild).windup);
+        expect(light.activeAt - 0).toBe(frameData(cb, name, 'light1', heavyBuild).windup);
         // Heavies: the level's own tell (glint at level 1, flash and sound at level 2) at least six
         // ticks before the swing's active frames, however soon after it the button is let go.
         for (const level of [1, 2] as const) {
@@ -201,15 +249,17 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
       for (const e of stepFighter(f, t, cb, p))
         if (e.type === 'STATE_ENDED') seen.push(`${e.state}@${t}`);
       // Press in the chain window of each strike's recovery.
-      if (strikePhase(f, t) === 'recovery' && t === f.recoveryEnd - w.chainWindow + 1)
+      const chain = f.state === 'light1' || f.state === 'light2' ? w.moves[f.state]?.chain : null;
+      if (strikePhase(f, t) === 'recovery' && chain != null && t === f.recoveryEnd - chain + 1)
         expect(pressAttack(f, t, cb, 'e', p)).toBe(f.combo < w.combo ? 'QUEUED' : 'REFUSED');
     }
     expect(seen.map((s) => s.split('@')[0])).toEqual(['light1', 'light2', 'light3']);
-    // Each strike ran its full recovery: windup, active, recovery between ends (and a swing that
-    // met no one recovers longer: combat v2's missRecovery).
+    // Each strike ran its full recovery: wind-up, active, recovery between ends (and a swing that
+    // met no one recovers longer: design addendum 2.5's miss recovery).
     const ends = seen.map((s) => Number(s.split('@')[1]));
+    const l2 = must(w.moves.light2);
     expect((ends[1] ?? 0) - (ends[0] ?? 0)).toBe(
-      w.windup + w.active + w.recovery + cb.stance.missRecovery,
+      l2.windup + l2.active + l2.recovery + (l2.miss ?? 0),
     );
     // A press outside the window is refused.
     const g = newFighter('Hand axe');
@@ -225,14 +275,15 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
     expect(f.facing).toBe('e');
     releaseAttack(f, 1, cb, p);
     expect(p.current).toBe(100 - cb.weapons.Seax.stamina);
-    // Too little stamina: refused.
-    expect(pressAttack(newFighter('Seax'), 0, cb, 'e', pool(1))).toBe('NO_STAMINA');
+    // An action needs stamina above 0 (Book 10 needsStamina); its cost may empty the bar.
+    expect(pressAttack(newFighter('Seax'), 0, cb, 'e', pool(0))).toBe('NO_STAMINA');
+    expect(pressAttack(newFighter('Seax'), 0, cb, 'e', pool(1))).toBe('STARTED');
     const h = newFighter('Hand axe');
     const hp = pool(100);
     pressAttack(h, 0, cb, 'w', hp);
     run(h, 0, cb.charge.level2At + 1, hp);
     releaseAttack(h, cb.charge.level2At + 1, cb, hp);
-    expect(hp.current).toBeCloseTo(100 - cb.weapons['Hand axe'].stamina * cb.charge.staminaL2);
+    expect(hp.current).toBeCloseTo(100 - must(cb.weapons['Hand axe'].moves.charged).stamina);
     // Held past the maximum, it lets go by itself.
     const m = newFighter('Seax');
     pressAttack(m, 0, cb, 'e', pool());
@@ -257,10 +308,11 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
       const a = swing('Seax', 0);
       const d = newFighter('Seax', { facing: 'e' });
       const p = pool(50);
-      // Pressed so the active tick falls k ticks into the window.
-      const pressAt = a.activeAt - cb.parry.startup - k;
+      // Pressed so the blow's first active tick falls k ticks into the live ticks (predictive).
+      const pressAt = a.activeAt - cb.parry.windup - k;
       pressParry(d, pressAt, cb, p);
       expect(p.current).toBe(50 - cb.parry.cost);
+      run(d, pressAt, a.activeAt + 1, p);
       const out = resolveBlow(a, d, blowOf(a, cb), fromEast, a.activeAt, cb, cb.parry.window, p);
       expect(out).toBe('PARRIED');
       expect(a.state).toBe('parried');
@@ -268,19 +320,21 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
       expect(p.current).toBe(50);
       expect(d.riposteUntil).toBe(a.activeAt + cb.parry.open);
     }
-    // Outside the window: the blow lands, and the parry's recovery follows.
+    // Outside the live ticks: the blow lands, and the parry's recovery follows.
     const a = swing('Seax', 0);
     const d = newFighter('Seax', { facing: 'e' });
     const p = pool(50);
-    pressParry(d, a.activeAt - cb.parry.startup - cb.parry.window, cb, p);
+    const at = a.activeAt - cb.parry.windup - cb.parry.window;
+    pressParry(d, at, cb, p);
+    run(d, at, a.activeAt + 1, p);
     expect(resolveBlow(a, d, blowOf(a, cb), fromEast, a.activeAt, cb, cb.parry.window, p)).toBe(
       'HIT',
     );
     const late = newFighter('Seax');
     pressParry(late, 0, cb, pool());
-    run(late, 0, cb.parry.startup + cb.parry.window + 1);
+    run(late, 0, cb.parry.windup + cb.parry.window + 1);
     expect(late.state).toBe('parryRecovery');
-    expect(late.recoveryEnd - (cb.parry.startup + cb.parry.window)).toBe(cb.parry.recoveryOnMiss);
+    expect(late.recoveryEnd - (cb.parry.windup + cb.parry.window)).toBe(cb.parry.recovery);
   });
 
   it('a full charge breaks a block but not a parry', () => {
@@ -288,6 +342,7 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     expect(blowOf(full, cb).guardBreak).toBe(true);
     const blocker = newFighter('Seax', { shield: true, facing: 'e' });
     setBlock(blocker, true, 0);
+    expect(blocker.state).toBe('block');
     const p = pool(100);
     expect(
       resolveBlow(full, blocker, blowOf(full, cb), fromEast, full.activeAt, cb, cb.parry.window, p),
@@ -297,7 +352,8 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     // The same blow parried in the window: parried, the attacker staggered.
     const full2 = swing('Hand axe', 2);
     const parrier = newFighter('Seax', { shield: true, facing: 'e' });
-    pressParry(parrier, full2.activeAt - cb.parry.startup - 2, cb, pool());
+    pressParry(parrier, full2.activeAt - cb.parry.windup - 2, cb, pool());
+    run(parrier, full2.activeAt - cb.parry.windup - 2, full2.activeAt + 1);
     expect(
       resolveBlow(
         full2,
@@ -337,13 +393,17 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     const low = pool(1);
     expect(resolveBlow(a, e, blowOf(a, cb), fromEast, a.activeAt, cb, 8, low)).toBe('GUARD_BROKEN');
     expect(e.state).toBe('guardBroken');
+    // Emptied by the drain: Book 10's large stagger, then exhausted (design addendum 2.5).
+    expect(e.recoveryEnd - a.activeAt).toBe(cb.block.breakEmpty);
+    expect(e.exhausted).toBe(true);
     expect(setBlock(newFighter('Seax'), true, 0)).toBe('NO_SHIELD');
   });
 
-  it('dodges with invulnerable ticks 4 to 13, a committed move of Book 10’s length', () => {
+  it('dodges with invulnerable ticks 8 to 13, a committed move of Book 10’s length', () => {
     for (let t = 0; t < cb.dodge.ticks; t++) {
       const d = newFighter('Seax', { facing: 'e' });
       pressDodge(d, 0, cb, null, pool());
+      run(d, 0, t + 1);
       const a = swing('Seax', 0);
       const out = resolveBlow(a, d, blowOf(a, cb), fromEast, t, cb, 8, pool());
       expect(out).toBe(t >= cb.dodge.invulnFrom && t <= cb.dodge.invulnTo ? 'DODGED' : 'HIT');
@@ -360,9 +420,10 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     const p = pool(100);
     expect(pressShove(f, 0, cb, 'e', p)).toBe('STARTED');
     expect(p.current).toBe(100 - cb.shove.stamina);
-    expect(f.activeAt).toBe(cb.shove.windup);
+    const m = cb.shove.frames;
+    expect(f.activeAt).toBe(m.windup);
     expect(f.activeAt).toBeGreaterThanOrEqual(6);
-    expect(f.recoveryEnd).toBe(cb.shove.windup + cb.shove.active + cb.shove.recovery);
+    expect(f.recoveryEnd).toBe(m.windup + m.active + m.recovery);
   });
 
   it('gives the heavy build more poise against light blows, and slower, heavier blows', () => {
@@ -385,7 +446,7 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     const h = newFighter('Hand axe', { heavy: true });
     pressAttack(h, 0, cb, 'e', pool());
     releaseAttack(h, 1, cb, pool());
-    expect(h.activeAt).toBe(cb.weapons['Hand axe'].windup + cb.heavy.windupExtra);
+    expect(h.activeAt).toBe(must(cb.weapons['Hand axe'].moves.light1).windup + cb.heavy.windupExtra);
     expect(blowOf(h, cb).damage).toBeCloseTo(cb.weapons['Hand axe'].damage * cb.heavy.damage);
   });
 });
@@ -619,78 +680,22 @@ const foesOf = (f: Fight) =>
     .map(([id, a]) => ({ id, a }));
 
 /**
- * A steerer who defends, as a careful player would (S9-29): faces whoever is coming, parries a
- * strike just before its active frames, ripostes the one staggered, dodges an arrow about to land,
- * and strikes only into a foe's recovery or stagger, never into a guard.
+ * A steerer who defends, as a careful player would (S9-29; design addendum 2.5's careful player,
+ * src/tools/play/carefulFighter.ts): locked on, it parries predictively off each telegraph's
+ * flash, ripostes the stunned, punishes a foe caught in a recovery, dodges an arrow about to land
+ * and backs off to recover.
  */
+const careful = new WeakMap<Fight, ReturnType<typeof carefulMemory>>();
 function defend(f: Fight): void {
   const onFoot = f.world.onFoot;
   if (onFoot === null) return;
-  const p = onFoot.player;
-  const pf = p.fight;
-  const t = f.world.tick + 1;
-  const facingTo = (a: { x: number; y: number }): 's' | 'n' | 'e' | 'w' => {
-    const dx = a.x - p.x;
-    const dy = a.y - p.y;
-    return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
-  };
-  const ranked = foesOf(f)
-    .map((o) => ({ ...o, d: Math.hypot(o.a.x - p.x, o.a.y - p.y) }))
-    .sort((x, y) => x.d - y.d);
-  const ready = pf == null || pf.state === 'idle';
-  const stamina = f.world.player.stamina.current;
-  const still = { type: 'MOVE', x: 0, y: 0, run: false, sneak: false } as const;
-  const arrow = onFoot.projectiles.find(
-    (q) =>
-      q.shooter !== 'P_STEERER' && Math.hypot(q.x - p.x, q.y - p.y) < (q.length / q.ticks) * 10,
-  );
-  const coming = ranked.find(
-    ({ a, d }) =>
-      a.fight?.ai.target === 'P_STEERER' &&
-      d < 60 &&
-      (charging(a.fight.f) || (striking(a.fight.f) && t < a.fight.f.activeAt)),
-  );
-  if (pf?.state === 'chargeL0' && f.world.tick - pf.since > 2)
-    f.sim.submit({ type: 'MELEE_RELEASE' });
-  if (arrow !== undefined && stamina >= cb.dodge.stamina && ready) {
-    f.sim.submit({ type: 'DODGE', x: -arrow.uy, y: arrow.ux });
-    return;
+  let mem = careful.get(f);
+  if (mem === undefined) {
+    mem = carefulMemory();
+    careful.set(f, mem);
   }
-  if (coming !== undefined) {
-    const cf = coming.a.fight?.f;
-    const want = facingTo(coming.a);
-    if (p.facing !== want && ready) {
-      const [x, y] = ({ e: [1, 0], w: [-1, 0], s: [0, 1], n: [0, -1] } as const)[want];
-      f.sim.submit({ type: 'MOVE', x, y, run: false, sneak: false });
-    } else f.sim.submit(still);
-    if (cf !== undefined && striking(cf) && cf.activeAt - t === cb.parry.startup + 2)
-      f.sim.submit({ type: 'PARRY' });
-    return;
-  }
-  f.sim.submit(still);
-  // Combat v2: a parried foe reels open ('parried'); one whose poise broke staggers.
-  const staggered = ranked.find(
-    ({ a, d }) => (a.fight?.f.state === 'parried' || a.fight?.f.state === 'stagger') && d < 40,
-  );
-  const punish = ranked.find(
-    ({ a, d }) =>
-      d < 34 &&
-      a.fight !== undefined &&
-      (['stagger', 'parried', 'parryRecovery', 'blockStun', 'guardBroken'].includes(
-        a.fight.f.state,
-      ) ||
-        (striking(a.fight.f) && t >= a.fight.f.activeEnd)),
-  );
-  if (
-    pf != null &&
-    pf.riposteUntil > t &&
-    staggered !== undefined &&
-    !charging(pf) &&
-    !striking(pf)
-  )
-    f.sim.submit({ type: 'MELEE', facing: facingTo(staggered.a) });
-  else if (punish !== undefined && stamina >= 30 && ready)
-    f.sim.submit({ type: 'MELEE', facing: facingTo(punish.a) });
+  const st = f.world.player.stamina;
+  for (const c of carefulTick(onFoot, cb, f.world.tick, st.current, st.max, mem)) f.sim.submit(c);
 }
 
 describe('a fight against several, one blow at a time (Book 10 attackTokens; decision S9-29)', () => {
@@ -786,7 +791,10 @@ describe('a fight to its end (Stage 9: blows, morale, surrender, deeds, gore)', 
 
   it('replays identically from a seed, missiles included', () => {
     const play = (seed: string): { hash: string; log: string } => {
-      const f = strandFight(seed, '34,34.7');
+      // From Conn's shooting range (Book 10 "Archers", shootFrom), so he shoots before closing.
+      const f = strandFight(seed, '39,34.2');
+      walkTo(f, 35.5 * TILE, 34.2 * TILE, true, 6, 200);
+      for (let i = 0; i < 300; i++) f.sim.step();
       fightOn(f, 3000);
       const log = f.events
         .filter(
@@ -894,8 +902,9 @@ describe('missiles in a fight (Book 10 section 21; Stage 9 check 3)', () => {
   it('no one moves while drawing: the enemy archer stops, draws for the draw time and looses', () => {
     const f = strandFight('archer', '39,34.2');
     const conn = actor(f, 'E_WRECKER_CONN');
-    // Make them aware: the steerer runs up (heard by its footfalls, combat v2), then stands.
-    walkTo(f, 34.5 * TILE, 34.2 * TILE, true, 6, 200);
+    // Make them aware: the steerer runs up (heard by its footfalls, combat v2), then stands in
+    // Conn's shooting band (design addendum 2.5: an archer within tooClose hops away instead).
+    walkTo(f, 35.5 * TILE, 34.2 * TILE, true, 6, 200);
     let drawingTicks = 0;
     let movedWhileDrawn = 0;
     let loosed = 0;

@@ -177,10 +177,7 @@ test('Oddi set down on his strand lies to be lifted again; carried off it, he wa
     await step(page, 4, 250);
     const now = await oddi(page);
     if (now?.moving === true) walked = true;
-    if (
-      now?.zone === 'ZONE_SK_MACHAIR' &&
-      Math.hypot(now.x - fire.x, now.y - fire.y) <= 8
-    )
+    if (now?.zone === 'ZONE_SK_MACHAIR' && Math.hypot(now.x - fire.x, now.y - fire.y) <= 8)
       home = now;
   }
   expect(walked).toBe(true);

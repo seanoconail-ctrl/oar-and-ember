@@ -13,7 +13,15 @@
  */
 import type { TimeBalance } from '../../content/balance.ts';
 import { parseAiBalance, parseCombatBalance } from '../../content/combatBalance.ts';
-import type { AiBalance, CombatBalance, MeleeWeaponName } from '../../content/combatBalance.ts';
+import type {
+  AiBalance,
+  ArchetypeDistances,
+  CombatBalance,
+  FightStateName,
+  AccelMode,
+  MeleeWeaponName,
+  Weight,
+} from '../../content/combatBalance.ts';
 import type { CombatDef, Content, FighterDef } from '../../content/registry.ts';
 import type { Id } from '../../core/ids.ts';
 import { nextFloat } from '../../core/rng.ts';
@@ -24,19 +32,24 @@ import {
   blowOf,
   charging,
   damageOf,
+  dashStep,
   enterTimed,
   FACING_ANGLE,
   facingOfAngle,
   feetPlanted,
   feint,
   free,
+  guardLive,
   hitstop,
   hitstopFor,
+  holdFor,
   inFrontAngle,
   interruptHeal,
   knockbackFor,
+  locked,
   newFighter,
   OUT_OF_FIGHT,
+  parryWindowOf,
   poiseHit,
   poiseMax,
   pressAttack,
@@ -44,6 +57,7 @@ import {
   pressDodge,
   pressParry,
   pressShove,
+  punishable,
   releaseAttack,
   resolveBlow,
   setAngle,
@@ -55,6 +69,7 @@ import {
   striking,
   turnTowards,
   updateExhausted,
+  windupFor,
   wrapAngle,
 } from '../combat/fighter.ts';
 import type {
@@ -68,7 +83,7 @@ import type {
 } from '../combat/fighter.ts';
 import { orderShot } from './archer.ts';
 import { STEERER } from './missiles.ts';
-import { footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
+import { accelTicks, easeVelocity, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext, OnFootActor, OnFootState } from './onFoot.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import { tilePath } from './path.ts';
@@ -147,6 +162,30 @@ export interface FighterAi {
   sidestep: 1 | -1 | null;
   /** A feint's tell is lowered at this tick (Book 10 feint), or -1. */
   feintAt: number;
+  /** Design addendum 2.5: the fight state machine (Book 2 section 13's FighterMind, DF-7). */
+  mind: FighterMind;
+  /** An archer's hop back under way (Book 10 dashAway): when, and the way, or null. */
+  hop: { readonly since: number; readonly x: number; readonly y: number } | null;
+  /** The tick of its last hop (Book 10 dashOnce), or -1. */
+  hopAt: number;
+  /** The tick it began to draw its sidearm (Book 10 cornered, noArrows), or -1. */
+  sidearmAt: number;
+}
+
+/**
+ * Book 2 section 13's FighterMind (design addendum 2.5, decision DF-7): the fight state, since
+ * when, the next decision, which way it circles (and when it last turned round), until when it
+ * waits for an opening (patience), the attack cooldown, and whether its attack has been struck.
+ */
+export interface FighterMind {
+  state: FightStateName;
+  since: number;
+  next: number;
+  dir: 1 | -1;
+  turnedAt: number;
+  patienceUntil: number;
+  cooldownUntil: number;
+  struck: boolean;
 }
 
 /** A person's part in a fight: their state machine, vitality, stamina, side and mind. */
@@ -189,6 +228,10 @@ export interface ActorFight {
   } | null;
   /** The steerer's last fight tick near them (an order lapses after a quiet hour). */
   quietSince: number;
+  /** Book 10 section 07's archetype (its distances), or absent (the household's: a warrior's). */
+  arch?: string;
+  /** Design addendum 2.5: the velocity eased towards the walk wanted (Book 10 acceleration). */
+  vel?: { x: number; y: number };
 }
 
 /** A group's morale (Book 10 section 07, "Cohesion and surrender"). */
@@ -385,6 +428,8 @@ export type FightEvent =
       readonly shake?: { readonly px: number; readonly ticks: number } | null;
       /** The one hit was unaware (a backstab, or a missile's double damage). */
       readonly unaware?: boolean;
+      /** A punish (Book 10 "Commitment"): the one hit was caught in a recovery or broken guard. */
+      readonly punish?: boolean;
     }
   | { readonly type: 'DODGED'; readonly who: Id }
   | { readonly type: 'SHOVE_LANDED'; readonly who: Id; readonly target: Id }
@@ -434,6 +479,25 @@ export type FightEvent =
   /** Someone sidestepped a missile they saw coming (Book 10 awareDodge); the tell begins. */
   | { readonly type: 'SIDESTEP'; readonly who: Id; readonly missile: number }
   | { readonly type: 'FEINT'; readonly who: Id }
+  /**
+   * Design addendum 2.5 (Book 10 "Telegraphs", decision DF-9): an attack's tell. For an enemy, its
+   * one-frame flash at Book 10's lead before the blow (with its sound by weight); for the steerer,
+   * the breath at the press (no flash). Read by sight and sound only: never a caption.
+   */
+  | {
+      readonly type: 'TELEGRAPH';
+      readonly who: Id;
+      readonly weight: Weight;
+      readonly weapon: string;
+      readonly flash: boolean;
+      readonly lunge?: boolean;
+    }
+  /** An archer hops back once from a foe too close (Book 10 dashAway). */
+  | { readonly type: 'ARCHER_HOP'; readonly who: Id }
+  /** An archer cornered or out of arrows draws its sidearm (Book 10 cornered, noArrows). */
+  | { readonly type: 'SIDEARM_DRAWN'; readonly who: Id }
+  /** A fighter's bar ran empty, or came back (Book 10 "Exhausted": breath and body, no word). */
+  | { readonly type: 'EXHAUSTED'; readonly who: Id; readonly on: boolean }
   | { readonly type: 'MISSED'; readonly who: Id }
   | { readonly type: 'CALLED_FOR_HELP'; readonly person: Id }
   | { readonly type: 'SHIELD_BROKEN'; readonly who: Id }
@@ -511,6 +575,24 @@ function newAi(x: number, y: number, facing: Facing, task?: Id): FighterAi {
     called: false,
     sidestep: null,
     feintAt: -1,
+    mind: newMind(),
+    hop: null,
+    hopAt: -1,
+    sidearmAt: -1,
+  };
+}
+
+/** A fight mind at rest; its first decision is offset on the `ai` stream when it first fights. */
+export function newMind(): FighterMind {
+  return {
+    state: 'IDLE',
+    since: 0,
+    next: -1,
+    dir: 1,
+    turnedAt: -1_000_000,
+    patienceUntil: -1,
+    cooldownUntil: -1,
+    struck: false,
   };
 }
 
@@ -616,7 +698,9 @@ export function spawnEncounters(
           heavy: fd.heavy ?? false,
           armour: arch.armour,
           facing: m.facing,
+          floors: true,
         }),
+        arch: fd.archetype,
         side: 'ENEMY',
         vitality: arch.vitality,
         maxVitality: arch.vitality,
@@ -738,6 +822,8 @@ export interface Stance {
   lockHeld: number | null;
   lostSince: number | null;
   speed: number;
+  /** Moving more than backDegrees off the facing (Book 10 backOff): its acceleration's mode. */
+  backing?: boolean;
 }
 
 export function newStance(facing: Facing): Stance {
@@ -775,12 +861,28 @@ export function inStance(world: WorldState, ctx: FightContext): boolean {
   return weaponRow(ctx, item) !== null || item === 'ITEM_SHIELD' || item === 'ITEM_BOW';
 }
 
-/** The angle the steerer's strikes go at: the stance's facing (or a given facing outside it). */
-function steererAngle(world: WorldState, fallback: Facing): number {
-  const st = world.onFoot?.player.stance;
+/**
+ * The angle the steerer's action goes at, fixed at the press (Book 10 "Commitment", facing): locked
+ * on, straight at the locked enemy (the user's decision DF-81); else the stance's facing towards
+ * the cursor or stick (or a given facing outside the stance).
+ */
+export function steererAngle(world: WorldState, fallback: Facing): number {
+  const onFoot = world.onFoot;
+  const st = onFoot?.player.stance;
+  const t = st?.lockOn == null ? undefined : onFoot?.actors[st.lockOn];
+  if (onFoot != null && t !== undefined) {
+    const p = onFoot.player;
+    if (Math.hypot(t.x - p.x, t.y - p.y) > 1e-6) return Math.atan2(t.y - p.y, t.x - p.x);
+  }
   return st != null && (st.want !== null || st.lockOn !== null)
     ? st.facing
     : FACING_ANGLE[fallback];
+}
+
+/** Turns the steerer's stance to an action's fixed angle (it holds while the action plays). */
+function faceAction(world: WorldState, f: Fighter): void {
+  const st = world.onFoot?.player.stance;
+  if (st != null) st.facing = f.angle;
 }
 
 /** The reach of a person's weapon in hand, in tiles to the near edge of a body (Book 10). */
@@ -856,7 +958,6 @@ export function meleePress(
   const onFoot = world.onFoot;
   if (onFoot === null) return;
   if (f?.weapon == null || onFoot.carrying !== null) return;
-  if (f.state === 'heal') interruptHealOf(world, emit);
   const tick = world.tick;
   const p = onFoot.player;
   const angle = steererAngle(world, facing);
@@ -887,22 +988,22 @@ export function meleePress(
     foeInReach(world, ctx, tile, angle, ctx.cb.rules.spearInsideTiles, () => true) !== null;
   let r;
   if (backstab !== null && tick >= f.riposteUntil) {
-    setAngle(f, angle);
-    const sa = ctx.ai.sneakAttacks;
-    r = pressBackstab(
-      f,
-      tick,
-      ctx.cb,
-      backstab,
-      pool(world),
-      f.weapon === 'Seax' ? sa.ticksSeax : sa.ticks,
-    );
+    if (free(f)) setAngle(f, angle);
+    r = pressBackstab(f, tick, ctx.cb, backstab, pool(world));
   } else {
     r = pressAttack(f, tick, ctx.cb, angle, pool(world), { lunge, inside, riposteAt });
   }
-  f.turnFrom = f.angle;
-  if (r === 'NO_STAMINA') emit({ type: 'FIGHT_REFUSED', reason: 'NO_STAMINA' });
+  // Refused, queued, or with nothing to spend: silently (Book 2 section 12: no word, no caption).
   if (r === 'STARTED') {
+    faceAction(world, f);
+    emit({
+      type: 'TELEGRAPH',
+      who: STEERER,
+      weight: f.weight,
+      weapon: f.weapon,
+      flash: false,
+      ...(f.state === 'lunge' ? { lunge: true } : {}),
+    });
     const kind =
       f.state === 'riposte'
         ? 'riposte'
@@ -938,9 +1039,10 @@ export function steererParry(
 ): void {
   const f = steererFighter(world, ctx);
   if (f === null || world.onFoot?.carrying != null) return;
-  if (f.state === 'heal') interruptHealOf(world, emit);
-  const r = pressParry(f, world.tick, ctx.cb, pool(world), window);
-  if (r === 'NO_STAMINA') emit({ type: 'FIGHT_REFUSED', reason: 'NO_STAMINA' });
+  void emit;
+  const angle = steererAngle(world, world.onFoot?.player.facing ?? 's');
+  if (free(f) || f.state === 'block') setAngle(f, angle);
+  if (pressParry(f, world.tick, ctx.cb, pool(world), window) === 'STARTED') faceAction(world, f);
 }
 
 export function steererBlock(
@@ -951,8 +1053,7 @@ export function steererBlock(
 ): void {
   const f = steererFighter(world, ctx);
   if (f === null || (on && world.onFoot?.carrying != null)) return;
-  if (on && f.state === 'heal') interruptHealOf(world, emit);
-  const r = setBlock(f, on, world.tick);
+  const r = setBlock(f, on, world.tick, ctx.cb);
   if (r === 'NO_SHIELD') emit({ type: 'FIGHT_REFUSED', reason: 'NO_SHIELD' });
 }
 
@@ -964,14 +1065,9 @@ export function steererDodge(
 ): void {
   const f = steererFighter(world, ctx);
   if (f === null) return;
-  if (f.state === 'heal') interruptHealOf(world, emit);
-  updateExhausted(f, pool(world), ctx.cb);
-  if (f.exhausted) {
-    emit({ type: 'FIGHT_REFUSED', reason: 'EXHAUSTED' });
-    return;
-  }
+  updateExhausted(f, pool(world), ctx.cb, world.tick);
+  // Exhausted or locked: refused silently (Book 10 "Exhausted": no word on screen).
   const r = pressDodge(f, world.tick, ctx.cb, dir, pool(world));
-  if (r === 'NO_STAMINA') emit({ type: 'FIGHT_REFUSED', reason: 'NO_STAMINA' });
   if (r === 'STARTED') emit({ type: 'DODGED', who: STEERER });
 }
 
@@ -984,10 +1080,11 @@ export function steererShove(
 ): boolean {
   const f = steererFighter(world, ctx);
   if (f === null) return false;
-  if (f.state === 'heal') interruptHealOf(world, emit);
   const r = pressShove(f, world.tick, ctx.cb, steererAngle(world, facing), pool(world));
-  if (r === 'NO_STAMINA') emit({ type: 'FIGHT_REFUSED', reason: 'NO_STAMINA' });
-  return r === 'STARTED';
+  if (r !== 'STARTED') return false;
+  faceAction(world, f);
+  emit({ type: 'TELEGRAPH', who: STEERER, weight: f.weight, weapon: '', flash: false });
+  return true;
 }
 
 /** The stance's aim (the FACE command): the angle the facing turns to, or none. */
@@ -1156,32 +1253,24 @@ export function stepStance(
     want = t === undefined ? st.want : Math.atan2(t.y - p.y, t.x - p.x);
   } else want = st.want ?? (moving ? travel : null);
   if (p.aim !== null) want = Math.atan2(p.aim.y, p.aim.x);
-  if (f !== null && (f.hitstop > 0 || isCommitted(f, tick))) want = null;
-  if (want !== null) {
-    let next = on || p.aim !== null ? turnTowards(st.facing, want, turn) : wrapAngle(want);
-    if (f !== null && (charging(f) || striking(f)) && tick < f.activeAt) {
-      // A windup turns at most attackTurn from where the attack began.
-      const lim = (sc.attackTurnDegrees * Math.PI) / 180;
-      const off = wrapAngle(next - f.turnFrom);
-      if (Math.abs(off) > lim) next = wrapAngle(f.turnFrom + Math.sign(off) * lim);
-    }
-    st.facing = next;
-  }
-  if (f !== null && !isCommitted(f, tick) && f.hitstop === 0) setAngle(f, st.facing);
+  // Locked in an action (Book 10 "Commitment"): no turning from the first wind-up tick to the
+  // last recovery tick, locked on or not.
+  void tick;
+  if (f !== null && (f.hitstop > 0 || locked(f))) want = null;
+  if (want !== null)
+    st.facing = on || p.aim !== null ? turnTowards(st.facing, want, turn) : wrapAngle(want);
+  if (f !== null && !locked(f) && f.hitstop === 0) setAngle(f, st.facing);
   // The speed share (forward, strafe, back off) by the way moved against the facing.
   st.speed = 1;
+  let backing = false;
   if (on && moving && !running) {
     const off = Math.abs(wrapAngle(travel - st.facing)) * (180 / Math.PI);
     st.speed =
       off <= sc.forwardDegrees ? sc.forward : off <= sc.backDegrees ? sc.strafe : sc.backOff;
+    backing = off > sc.backDegrees;
   }
-}
-
-/** A strike past its windup, a defence or a timed state: the facing holds (attacks commit). */
-function isCommitted(f: Fighter, tick: number): boolean {
-  if (f.state === 'idle' || f.state === 'block' || f.state === 'heal' || charging(f)) return false;
-  if (striking(f) && tick < f.activeAt) return false;
-  return true;
+  // Kept off the state until it first backs off (the stance's shape at rest is unchanged).
+  if (backing || st.backing !== undefined) st.backing = backing;
 }
 
 /**
@@ -1403,6 +1492,7 @@ export function stepFight(fw: FightWorld): void {
   const sf = onFoot.player.fight;
   if (sf != null) {
     const wasHit = sf.hitstop > 0;
+    const wasExhausted = sf.exhausted;
     const ended: { state: string; heal?: { kind: 'BIND' | 'EAT' } }[] = [];
     for (const e of stepFighter(sf, tick, ctx.cb, pool(world))) {
       if (e.type === 'CHARGE_LEVEL')
@@ -1414,7 +1504,9 @@ export function stepFight(fw: FightWorld): void {
         ended.push(e.heal === undefined ? { state: e.state } : { state: e.state, heal: e.heal });
     }
     stepHeal(fw, ended);
-    if (!wasHit) strikeMotion(fw, sf, onFoot.player);
+    if (!wasHit) strikeMotion(fw, sf, onFoot.player, true);
+    if (sf.exhausted !== wasExhausted)
+      fw.emit({ type: 'EXHAUSTED', who: STEERER, on: sf.exhausted });
   }
   if (sf != null)
     onFoot.player.blocking = sf.shield && (sf.state === 'block' || sf.state === 'blockStun');
@@ -1438,18 +1530,33 @@ export function stepFight(fw: FightWorld): void {
       continue;
     }
     if (fa.dead === null && fa.f.state !== 'downed') think(fw, id, a, fa);
+    const wasExhausted = fa.f.exhausted;
     for (const e of stepFighter(fa.f, tick, ctx.cb, fa.stamina)) {
       if (e.type === 'CHARGE_LEVEL') fw.emit({ type: 'CHARGE_LEVEL', who: id, level: e.level });
       if (e.type === 'MISSED') fw.emit({ type: 'MISSED', who: id });
-      // Book 10 stepOut: after its own recovery a fighter steps back out to hold off.
-      if (e.type === 'STATE_ENDED' && STRIKE_ENDS.includes(e.state))
+      // After its own attack a fighter retreats to its circle, and cools down (Book 10 "AI
+      // states", Retreat; "AI decisions", attackCooldown).
+      if (e.type === 'STATE_ENDED' && STRIKE_ENDS.includes(e.state) && !striking(fa.f)) {
         fa.ai.stepOutAt = tick + ctx.ai.self.stepOutTicks;
+        fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
+        if (fa.ai.mind.state === 'ATTACK') {
+          fa.ai.mind.state = 'RETREAT';
+          fa.ai.mind.since = tick;
+        }
+      }
+      if (e.type === 'STATE_ENDED' && e.state === 'recovery' && fa.ai.mind.state === 'ATTACK') {
+        fa.ai.mind.state = 'RETREAT';
+        fa.ai.mind.since = tick;
+        fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
+      }
     }
+    if (fa.f.exhausted !== wasExhausted) fw.emit({ type: 'EXHAUSTED', who: id, on: fa.f.exhausted });
+    telegraph(fw, id, fa.f);
     regen(fa, ctx, tick);
-    a.blocking = fa.f.shield && (fa.f.state === 'block' || fa.f.state === 'blockStun');
+    a.blocking = guardLive(fa.f);
     if (fa.f.state !== 'idle' || fa.dead !== null) a.facing = fa.f.facing;
     walk(fw, id, a, fa);
-    strikeMotion(fw, fa.f, a);
+    strikeMotion(fw, fa.f, a, false);
   }
   // Who is in an attack on whom this tick (Book 10 attackTokens, S9-29).
   if (battle !== null)
@@ -1489,11 +1596,18 @@ const STRIKE_ENDS: readonly string[] = [
 ];
 
 /**
- * A strike that moves the striker (Book 10): a lunge covers its ground over its windup, a
- * riposte steps in over its windup (riposteReach), and a sidestep moves as a dodge after its tell.
- * Never through blocking ground.
+ * The ground an action covers (Book 10 "Commitment", step; "Movement and acceleration"): an
+ * attack's fixed step forward, evenly over its active ticks, drawn as a planted step; a lunge's
+ * strides over its wind-up after its tell, at its fixed distance; a sidestep's dash after its
+ * tell, and (for everyone but the steerer, who moves in stepMovement) a dodge's dash, eased out.
+ * Never through blocking ground; never a slide or a drift.
  */
-function strikeMotion(fw: FightWorld, f: Fighter, at: { x: number; y: number }): void {
+function strikeMotion(
+  fw: FightWorld,
+  f: Fighter,
+  at: { x: number; y: number },
+  steerer: boolean,
+): void {
   const { world, ctx, map } = fw;
   const tick = world.tick;
   const tile = map.tile;
@@ -1502,10 +1616,19 @@ function strikeMotion(fw: FightWorld, f: Fighter, at: { x: number; y: number }):
   let uy = Math.sin(f.angle);
   if (f.state === 'lunge' && f.lunge !== null && tick >= f.lunge.from && tick < f.activeAt) {
     step = (f.lunge.tiles * tile) / Math.max(1, f.activeAt - f.lunge.from);
-  } else if (f.state === 'riposte' && tick < f.activeAt) {
-    step = (ctx.cb.parry.riposteReachExtra * tile) / Math.max(1, f.activeAt - f.since);
+  } else if (
+    (striking(f) || f.state === 'shove') &&
+    f.step > 0 &&
+    tick >= f.activeAt &&
+    tick < f.activeEnd
+  ) {
+    step = (f.step * tile) / Math.max(1, f.activeEnd - f.activeAt);
   } else if (f.state === 'sidestep' && f.dodge !== null && tick >= f.activeAt) {
-    step = (ctx.cb.dodge.tiles * tile) / ctx.cb.dodge.ticks;
+    step = dashStep(tick - f.activeAt, ctx.cb.dodge.dash, ctx.cb.dodge.tiles) * tile;
+    ux = f.dodge.x;
+    uy = f.dodge.y;
+  } else if (!steerer && f.state === 'dodge' && f.dodge !== null) {
+    step = dashStep(tick - f.since - ctx.cb.dodge.start, ctx.cb.dodge.dash, ctx.cb.dodge.tiles) * tile;
     ux = f.dodge.x;
     uy = f.dodge.y;
   }
@@ -1518,12 +1641,39 @@ function strikeMotion(fw: FightWorld, f: Fighter, at: { x: number; y: number }):
   if (ok(at.x, ny)) at.y = ny;
 }
 
-/** Stamina comes back after Book 10's pause, half while blocking. */
+/**
+ * Stamina comes back after Book 10's pause, half while blocking; exhausted, after the longer pause
+ * from 0 and at the exhausted rate (Book 10 "Exhausted"). The dead do not tire.
+ */
 function regen(fa: ActorFight, ctx: FightContext, tick: number): void {
   const s = fa.stamina;
-  if (tick - s.spentTick < ctx.cb.stamina.regenDelay || s.current >= fa.staminaMax) return;
-  const rate = ctx.cb.stamina.regenPerSecond * (fa.f.state === 'block' ? 0.5 : 1);
+  const ex = ctx.cb.exhausted;
+  const delay = fa.f.exhausted ? ex.exhaustedRegenDelay : ex.regenDelay;
+  if (tick - s.spentTick < delay || s.current >= fa.staminaMax) return;
+  const base = fa.f.exhausted ? ex.exhaustedRegenPerSecond : ex.regenPerSecond;
+  const rate = base * (guardLive(fa.f) ? 0.5 : 1);
   s.current = Math.min(fa.staminaMax, s.current + rate / TICKS_PER_SECOND);
+}
+
+/**
+ * An enemy's telegraph (Book 10 "Telegraphs"): its one-frame flash at Book 10's lead before the
+ * blow lands, with its sound by weight. A chained light sets its own flash as it begins.
+ */
+function telegraph(fw: FightWorld, id: Id, f: Fighter): void {
+  const tick = fw.world.tick;
+  if (!f.floors || f.hitstop > 0) return;
+  if (striking(f) && f.flashAt < f.since && f.since === tick)
+    f.flashAt = Math.max(tick, f.activeAt - fw.ctx.cb.telegraphs.flashLead);
+  if (f.flashAt !== tick) return;
+  if (!charging(f) && !striking(f) && f.state !== 'shove') return;
+  fw.emit({
+    type: 'TELEGRAPH',
+    who: id,
+    weight: f.weight,
+    weapon: f.weapon ?? '',
+    flash: true,
+    ...(f.state === 'lunge' ? { lunge: true } : {}),
+  });
 }
 
 /** Everyone in the zone who can be struck, with where they are and their fighter. */
@@ -1627,6 +1777,9 @@ function landBlow(
   const unaware = awarenessOf(onFoot, defender) === 'UNAWARE';
   const healing = df?.state === 'heal' ? (df.heal?.kind ?? null) : null;
   const hadShield = df?.shield === true;
+  // A hit on one caught in a miss recovery, a mistimed parry's recovery, a dodge's recovery or a
+  // broken guard is a punish (Book 10 "Commitment"), judged before the blow changes anything.
+  const punish = df !== null && punishable(df, tick);
   let outcome: Outcome = 'HIT';
   const toAttacker = { x: from.x - pos.x, y: from.y - pos.y };
   if (df !== null && dpool !== undefined)
@@ -1634,8 +1787,11 @@ function landBlow(
   const fa = onFoot.actors[defender]?.fight;
   const armour = df?.armour ?? 'NONE';
   const berserkDef = (fa?.berserkUntil ?? -1) > tick;
+  // A guard emptied by the drain breaks with Book 10's large stagger, and the blow is spent on the
+  // shield; a guard-breaking blow (a level-2 charge, a Dane axe heavy) breaks it and lands.
+  const emptied = outcome === 'GUARD_BROKEN' && !blow.guardBreak;
   let damage = 0;
-  if (outcome === 'HIT' || outcome === 'GUARD_BROKEN')
+  if (outcome === 'HIT' || (outcome === 'GUARD_BROKEN' && !emptied))
     damage = damageOf(blow, armour, ctx.cb, berserkDef);
   // A spear thrust still lands part of itself past a single shield's edge (Book 10 spearEdge).
   if (outcome === 'BLOCKED' && blow.weapon === 'Spear')
@@ -1656,16 +1812,32 @@ function landBlow(
       );
   }
   let reaction: PoiseResult = 'NONE';
-  if (df !== null && (outcome === 'HIT' || outcome === 'GUARD_BROKEN') && !kill)
-    reaction = poiseHit(df, blow, tick, ctx.cb);
-  // Hitstop: both fighters' clocks hold (simulation; Book 10 "Hit reactions").
-  const stop = hitstopFor(blow, outcome, ctx.cb);
+  const landedHit = outcome === 'HIT' || (outcome === 'GUARD_BROKEN' && !emptied);
+  const punished = punish && landedHit;
+  if (df !== null && landedHit && !kill)
+    reaction = poiseHit(
+      df,
+      punished ? { ...blow, poise: blow.poise * ctx.cb.commitment.punishPoise } : blow,
+      tick,
+      ctx.cb,
+    );
+  if (emptied) reaction = 'STAGGER';
+  // Hitstop: both fighters' clocks hold (simulation; Book 10 "Hit reactions"); a punish holds
+  // them as a heavy blow does.
+  const stop = Math.max(
+    hitstopFor(blow, outcome, ctx.cb),
+    punished ? ctx.cb.commitment.punishHitstop : 0,
+  );
   if (stop > 0) {
     hitstop(af, stop);
     if (df !== null) hitstop(df, stop);
   }
-  const landed = outcome === 'HIT' || outcome === 'GUARD_BROKEN';
-  const knockback = landed ? knockbackFor(blow, reaction, ctx.cb) : 0;
+  const landed = landedHit;
+  const knockback = emptied
+    ? ctx.cb.block.breakEmptyPx
+    : landed
+      ? knockbackFor(blow, reaction, ctx.cb)
+      : 0;
   const big = blow.kind === 'riposte' || blow.kind === 'backstab';
   const heavyHit = blow.kind === 'heavy' || blow.kind === 'lunge';
   const shake = !landed
@@ -1703,6 +1875,7 @@ function landBlow(
     knockback,
     shake,
     unaware: blow.kind === 'backstab' || unaware,
+    ...(punished ? { punish: true } : {}),
   });
   if (outcome === 'DODGED') fw.emit({ type: 'DODGED', who: defender });
   if (hadShield && !shieldNow(df)) fw.emit({ type: 'SHIELD_BROKEN', who: defender });
@@ -1763,9 +1936,11 @@ function shoveLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: numb
     if (d > reach || !inFrontAngle(f.angle, dx, dy, ctx.cb.strikeArcDegrees)) continue;
     if (best === null || d < best.d) best = { id: tid, d, f: tf };
   }
-  f.hit = true;
+  // Met no one: its miss recovery follows (Book 10 "Commitment"); the strike stays live.
   if (best?.f == null) return;
+  f.hit = true;
   if (best.f.state !== 'dodge' || !inDodge(best.f, world.tick, ctx)) {
+    best.f.guard = false;
     enterTimed(best.f, 'stagger', world.tick, ctx.cb.shove.stagger);
     // A shove wears poise too (the Unarmed row's, or the shield bash's); its stagger stands.
     best.f.poiseLost += f.shield ? ctx.cb.shieldBash.poiseDamage : ctx.cb.unarmed.poiseDamage;
@@ -2214,7 +2389,7 @@ function perceive(
       dt <= k.nearTiles
         ? k.fillNear
         : k.fillNear + (k.fillFar - k.fillNear) * Math.min(1, (dt - k.nearTiles) / span);
-    level += (rate * ctx.ai.habits.decideEvery) / TICKS_PER_SECOND;
+    level += (rate * ctx.ai.habits.awarenessEvery) / TICKS_PER_SECOND;
     ai.memory = { x: seen.pos.x, y: seen.pos.y, tick, seen: true };
     ai.target = seen.id;
     heard = true;
@@ -2222,7 +2397,7 @@ function perceive(
   // The steerer's footfalls, one noise each Book 10 footfall while moving (by gait and ground).
   const every = Math.max(1, k.footfallTicks);
   const stepped =
-    Math.floor(tick / every) !== Math.floor((tick - ctx.ai.habits.decideEvery) / every);
+    Math.floor(tick / every) !== Math.floor((tick - ctx.ai.habits.awarenessEvery) / every);
   if (p.moving && stepped && p.fight?.state !== 'dead') {
     const r = footstepNoise(fw, sneaking ? 'sneak' : p.gait, p.x, p.y);
     if (hears(p, a, r, tile)) {
@@ -2244,7 +2419,7 @@ function perceive(
       id,
       a,
       fa,
-      ai.awareness.level - (k.decayPerSecond * ctx.ai.habits.decideEvery) / TICKS_PER_SECOND,
+      ai.awareness.level - (k.decayPerSecond * ctx.ai.habits.awarenessEvery) / TICKS_PER_SECOND,
     );
     ai.awareness.heard = heardAt;
   }
@@ -2289,7 +2464,7 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   // A feint lowers its tell; a held charge comes out at its chosen tick.
   if (ai.feintAt >= 0 && tick >= ai.feintAt) {
     if (charging(fa.f)) {
-      feint(fa.f, tick);
+      feint(fa.f, tick, ctx.cb);
       fw.emit({ type: 'FEINT', who: id });
     }
     ai.feintAt = -1;
@@ -2303,12 +2478,23 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     fw.emit({ type: 'SWING', who: id, heavy: fa.f.level > 0, weapon: fa.f.weapon ?? '' });
   }
   react(fw, id, a, fa);
+  // Between perceptions a fighter in a fight carries out its fight state every tick, on its foe's
+  // position now; its choices of state still wait for its decision ticks (Book 10 "AI decisions").
+  if (tick < ai.next) {
+    if (FIGHTING.includes(ai.mode) && ai.target !== null && (fa.side === 'ENEMY' || fa.able)) {
+      const t = whereIs(onFoot, ai.target);
+      const tf = fighterOf(onFoot, ai.target);
+      if (t !== null && (tf === null || !OUT_OF_FIGHT.includes(tf.state)))
+        engage(fw, id, a, fa, ai.target, t, Math.hypot(t.x - a.x, t.y - a.y));
+    }
+    if (fa.side === 'HOUSEHOLD') crewThink(fw, id, a, fa);
+    return;
+  }
   if (fa.side === 'HOUSEHOLD') {
     crewThink(fw, id, a, fa);
     return;
   }
-  if (tick < ai.next) return;
-  ai.next = tick + ctx.ai.habits.decideEvery;
+  ai.next = tick + ctx.ai.habits.awarenessEvery;
   if (ai.mode === 'FLEE' || ai.mode === 'LEAVE') {
     const p = onFoot.player;
     ai.goal = { x: p.x, y: p.y, run: ai.mode === 'FLEE', away: true };
@@ -2408,9 +2594,20 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
 }
 
 /** Turns a fighter's true facing towards a point, at Book 10's turnRate. */
-function faceTowards(fw: FightWorld, fa: ActorFight, a: OnFootActor, x: number, y: number): void {
+/** The modes in which a fighter is in its fight state machine (engage). */
+const FIGHTING: readonly AiMode[] = ['FIGHT', 'HOLD_OFF', 'CIRCLE', 'RETREAT'];
+
+/** Turns a fighter's true facing towards a point, at Book 10's turnRate over `ticks`. */
+function faceTowards(
+  fw: FightWorld,
+  fa: ActorFight,
+  a: OnFootActor,
+  x: number,
+  y: number,
+  ticks = fw.ctx.ai.habits.awarenessEvery,
+): void {
   if (fa.f.state !== 'idle' && fa.f.state !== 'block') return;
-  const turn = (fw.ctx.cb.stance.turnDegreesPerTick * fw.ctx.ai.habits.decideEvery * Math.PI) / 180;
+  const turn = (fw.ctx.cb.stance.turnDegreesPerTick * ticks * Math.PI) / 180;
   setAngle(fa.f, turnTowards(fa.f.angle, Math.atan2(y - a.y, x - a.x), turn));
   a.facing = fa.f.facing;
 }
@@ -2510,11 +2707,15 @@ function friendFell(fw: FightWorld, fallen: Id): void {
 }
 
 /**
- * Self-preservation in a fight (Book 2 section 13; Book 10 "Self-preservation", decision DE-6):
- * an archer keeps its distance and shoots; a melee fighter holds off just outside the reach of the
- * one it faces (further from a longer weapon, closer to a seax), the one or two with the attack's
- * token step in to strike and step out after, and the rest circle; the wounded grow cautious, call
- * once for help and fall back to a friend.
+ * A fighter's fight (Book 2 section 13; Book 10 "AI states", "AI decisions", "Distances by
+ * archetype" and "Self-preservation"; design addendum 2.5, decision DF-7): a state machine with
+ * cooldowns that decides only every decisionInterval (each fighter offset on the `ai` stream), and
+ * between decisions carries out the state it is in, so a fighter never jitters or shuffles. A melee
+ * fighter approaches to its engage distance, circles at its circle radius (just outside its attack
+ * range and the reach it faces), and the one holding the side's attack token waits there for an
+ * opening it can take, or until its patience runs out, then closes one step and strikes, and
+ * retreats after; below its recover-at share it backs off to recover. The wounded grow cautious,
+ * call once for help and fall back to a friend. An archer keeps to "Archers" (DF-8).
  */
 function engage(
   fw: FightWorld,
@@ -2530,71 +2731,53 @@ function engage(
   if (onFoot === null) return;
   const tick = world.tick;
   const tile = map.tile;
-  const h = ctx.ai.habits;
   const self = ctx.ai.self;
   const ai = fa.ai;
-  faceTowards(fw, fa, a, pos.x, pos.y);
-  // An archer backed against something with the foe too close fights with its sidearm.
-  // Backing off and stuck (it tried a whole decision and did not move): the sidearm, once.
-  const cornered =
-    fa.bow &&
-    ai.mode === 'RETREAT' &&
-    ai.goal?.away === true &&
-    a.moving !== true &&
-    fa.f.weapon !== null &&
-    free(fa.f) &&
-    d < h.fallBackFrom * tile;
-  if (cornered) {
-    ai.mode = 'FIGHT';
+  const mind = ai.mind;
+  const k = ctx.ai.states;
+  if (mind.next < 0) mind.next = tick + Math.floor(nextFloat(world.rng.ai) * k.decisionInterval);
+  // Locked in an action (Book 10 "Commitment"): it plays out; the mind waits.
+  if (locked(fa.f) || fa.f.hitstop > 0) {
     ai.goal = null;
-    if (d <= (reachOf(ctx, fa.f) + ctx.cb.bodyRadiusTiles) * tile && tokenFree(fw, id, target))
-      startAttack(fw, id, a, fa, target, pos, {});
-    else ai.goal = { x: pos.x, y: pos.y, run: false };
     return;
   }
-  if (fa.bow && fa.arrows > 0) {
-    // A shot loosed: the order is done; the next is a fresh choice.
-    if (a.archer?.phase === 'moving') delete a.archer;
-    if (a.archer !== undefined || a.aim != null) {
-      ai.goal = null;
+  // Out of the token's way or not, a fighter turns to its foe between actions.
+  faceTowards(fw, fa, a, pos.x, pos.y, 1);
+  if (fa.bow && (fa.arrows > 0 || ai.sidearmAt < 0) && ai.sidearmAt < 0) {
+    if (fa.arrows > 0) {
+      archerFight(fw, id, a, fa, target, pos, d);
       return;
     }
-    if (d < h.fallBackFrom * tile) {
-      ai.mode = 'RETREAT';
-      ai.goal = { x: pos.x, y: pos.y, run: true, away: true };
-      return;
-    }
-    if (d > h.archerRange.max * tile) {
-      ai.goal = { x: pos.x, y: pos.y, run: false };
-      return;
-    }
-    if (!free(fa.f) || tick < ai.nextAttack || !tokenFree(fw, id, target)) return;
-    // Stop, draw, loose, then stand (Book 2 section 13; the archer helper).
+    // Out of arrows: the sidearm (Book 10 noArrows).
+    drawSidearm(fw, id, a, fa);
+    return;
+  }
+  if (ai.sidearmAt >= 0 && tick < ai.sidearmAt + ctx.ai.archers.sidearmTicks) {
     ai.goal = null;
-    orderShot(a, { x: pos.x, y: pos.y }, { x: 0, y: 0, run: false, sneak: false });
-    fa.arrows--;
-    ai.nextAttack = tick + attackGap(fw, fa);
-    ai.lastStruck = tick;
-    say(ctx, id, 'taunt', fw.emit, tick + id.length);
     return;
   }
   const w = fa.f.weapon;
   if (w === null) return;
-  const ws = ctx.cb.weapons[w];
   const body = ctx.cb.bodyRadiusTiles;
-  const reach = (ws.reachTiles + body) * tile;
+  const dist = distancesOf(fw, fa);
+  const ownReach = ctx.cb.weapons[w].reachTiles;
+  const range = (ownReach + body) * tile;
   // The weapon the foe has in hand (the steerer's: the hotbar's, before any blow is struck).
   const tf = fighterOf(onFoot, target);
   const foeWeapon = target === STEERER ? weaponRow(ctx, inHand(world)) : (tf?.weapon ?? null);
   const foeReach =
     foeWeapon === null ? ctx.cb.unarmed.reachTiles : ctx.cb.weapons[foeWeapon].reachTiles;
-  const longer = foeReach >= ws.reachTiles + self.longReachAt;
-  const shortFoe = foeWeapon === null || foeWeapon === 'Seax';
+  const longer = foeReach >= ownReach + self.longReachAt;
   const wounded = fa.vitality < fa.maxVitality * self.woundedAt;
-  // Hold off just outside the foe's reach (further from a longer weapon; wounded, further still).
-  let holdOff = (foeReach + body + self.holdOffExtra + (longer ? self.longReachExtra : 0)) * tile;
-  if (shortFoe) holdOff = Math.min(holdOff, reach * self.shortReach);
-  if (wounded) holdOff += self.woundedBackOff * tile;
+  // The circle radius (Book 10 circleRadius): the larger of its attack range and the reach it
+  // faces, + its margin; never inside holdOff; a longer weapon faced, a further step out; wounded,
+  // further still.
+  const margin = dist.margin ?? self.holdOffExtra;
+  let circle = (Math.max(ownReach, foeReach) + body + margin) * tile;
+  circle = Math.max(circle, (foeReach + body + self.holdOffExtra) * tile);
+  if (longer) circle += self.longReachExtra * tile;
+  if (wounded) circle += self.woundedBackOff * tile;
+  const engageAt = Math.max((dist.engage ?? ctx.ai.archers.shootFrom.max) + body, 0) * tile;
   // Wounded: call once for help (a shout the others hear).
   if (wounded && !ai.called) {
     ai.called = true;
@@ -2609,59 +2792,285 @@ function engage(
       }
     }
   }
-  // Badly hurt: fall back towards the nearest friend (Book 10 retreatAt).
-  if (fa.vitality < fa.maxVitality * self.retreatAt) {
-    const friend = nearestFriend(onFoot, id, fa, a, self.retreatFriendTiles * tile);
-    if (friend !== null && Math.hypot(friend.x - a.x, friend.y - a.y) > 1.5 * tile) {
+  const share = fa.stamina.current / Math.max(1, fa.staminaMax);
+  // Decide (Book 10 decisionInterval), holding each state its least time (a cooldown).
+  if (tick >= mind.next) {
+    mind.next = tick + k.decisionInterval;
+    const want = chooseState(fw, id, a, fa, target, pos, d, { circle, engageAt, range, dist, share });
+    const hard = fa.f.state === 'stagger' || fa.f.state === 'knockdown';
+    if (want !== mind.state && (tick - mind.since >= k.least[mind.state] || hard))
+      enterState(fw, fa, want);
+  }
+  // Carry out the state.
+  switch (mind.state) {
+    case 'APPROACH': {
+      lowerGuard(fw, fa);
+      ai.mode = 'FIGHT';
+      const side = flankSlot(fw, id, target, pos, circle);
+      ai.goal = {
+        x: side?.x ?? pos.x,
+        y: side?.y ?? pos.y,
+        run: d > ctx.ai.habits.runAt * tile,
+      };
+      return;
+    }
+    case 'RETREAT': {
+      lowerGuard(fw, fa);
       ai.mode = 'RETREAT';
-      ai.goal = { x: friend.x, y: friend.y, run: false, face: pos };
+      // Badly hurt: towards the nearest friend (Book 10 retreatAt); else back off to the circle.
+      const friend =
+        fa.vitality < fa.maxVitality * self.retreatAt
+          ? nearestFriend(onFoot, id, fa, a, self.retreatFriendTiles * tile)
+          : null;
+      if (friend !== null && Math.hypot(friend.x - a.x, friend.y - a.y) > 1.5 * tile) {
+        ai.goal = { x: friend.x, y: friend.y, run: false, face: pos };
+        return;
+      }
+      ai.goal =
+        d < circle
+          ? {
+              x: pos.x,
+              y: pos.y,
+              run: false,
+              away: true,
+              face: pos,
+              share: ctx.cb.stance.backOff,
+            }
+          : null;
+      return;
+    }
+    case 'RECOVER_STAMINA': {
+      lowerGuard(fw, fa);
+      ai.mode = 'HOLD_OFF';
+      const far = circle + k.recoverExtraTiles * tile;
+      ai.goal =
+        d < far
+          ? { x: pos.x, y: pos.y, run: false, away: true, face: pos, share: ctx.cb.stance.backOff }
+          : null;
+      return;
+    }
+    case 'WAIT_FOR_OPENING': {
+      ai.mode = 'HOLD_OFF';
+      // Shield up while it waits (Book 10 "AI states"), as a guard holds its post.
+      if (fa.f.shield && free(fa.f) && !fa.f.exhausted) setBlock(fa.f, true, tick, ctx.cb);
+      ai.goal = holdAt(fw, a, pos, d, circle);
+      return;
+    }
+    case 'ATTACK': {
+      lowerGuard(fw, fa);
+      ai.mode = 'FIGHT';
+      if (fa.f.state === 'block' || fa.f.state === 'blockLower') {
+        ai.goal = null;
+        return;
+      }
+      const strikeAt = range * ctx.ai.habits.closeIn;
+      const lungeTiles = ctx.cb.lunge.tiles[w];
+      // A lunge from beyond reach (Book 10 AI states, Attack; longReach), when it would reach.
+      if (
+        d > range &&
+        lungeTiles > 0 &&
+        (longer || d > range + 0.5 * tile) &&
+        d <= range + lungeTiles * tile &&
+        free(fa.f) &&
+        tokenFree(fw, id, target)
+      ) {
+        ai.goal = null;
+        if (startAttack(fw, id, a, fa, target, pos, { lunge: true })) return;
+      }
+      if (d > strikeAt) {
+        // One closing step at walking speed.
+        ai.goal = { x: pos.x, y: pos.y, run: false };
+        return;
+      }
+      ai.goal = null;
+      // Another of its side may have begun an attack meanwhile: it holds (Book 10 attackTokens).
+      if (free(fa.f) && tokenFree(fw, id, target)) startAttack(fw, id, a, fa, target, pos, {});
+      return;
+    }
+    case 'CIRCLE':
+    default: {
+      lowerGuard(fw, fa);
+      ai.mode = 'CIRCLE';
+      // The ones without the token circle further out (Book 10 pressers).
+      const presser = isPresser(fw, id, target);
+      const ring = presser
+        ? circle
+        : Math.min(Math.max(circle, self.circleMin * tile), self.circleMax * tile);
+      ai.goal = circlePoint(fw, a, pos, ring, mind);
       return;
     }
   }
-  if (!free(fa.f) && fa.f.state !== 'block') {
-    ai.goal = null;
-    return;
+}
+
+/** Lowers a raised shield (it comes down over Book 10's blockLower). */
+function lowerGuard(fw: FightWorld, fa: ActorFight): void {
+  if (fa.f.guard || fa.f.state === 'block') setBlock(fa.f, false, fw.world.tick, fw.ctx.cb);
+}
+
+/** The distances of a fighter's archetype (Book 10 "Distances by archetype"). */
+function distancesOf(fw: FightWorld, fa: ActorFight): ArchetypeDistances {
+  const ds = fw.ctx.ai.distances;
+  const name = fa.arch ?? (fa.side === 'HOUSEHOLD' ? HOUSEHOLD_ARCHETYPE : 'Outlaw');
+  return ds[name] ?? ds['Outlaw'] ?? { engage: 5, margin: 0.4, recoverAt: 0.4, patience: null };
+}
+
+/**
+ * The household's fighters keep a warrior's distances (decision DF-27): Book 10 gives distances by
+ * enemy archetype only.
+ */
+const HOUSEHOLD_ARCHETYPE = 'Warrior';
+
+/** Enters a fight state (Book 10 "AI states"), with what it begins with. */
+function enterState(fw: FightWorld, fa: ActorFight, st: FightStateName): void {
+  const mind = fa.ai.mind;
+  const tick = fw.world.tick;
+  mind.state = st;
+  mind.since = tick;
+  if (st === 'ATTACK') mind.struck = false;
+  if (st === 'WAIT_FOR_OPENING') {
+    const p = distancesOf(fw, fa).patience;
+    const wounded = fa.vitality < fa.maxVitality * fw.ctx.ai.self.woundedAt;
+    const span = p === null ? 0 : p.min + nextFloat(fw.world.rng.ai) * (p.max - p.min);
+    mind.patienceUntil = tick + Math.round(span * (wounded ? fw.ctx.ai.self.woundedPatience : 1));
   }
-  // Stepping back out after its own blow (Book 10 stepOut).
-  if (tick < ai.stepOutAt && d < holdOff) {
-    ai.mode = 'HOLD_OFF';
-    ai.goal = {
-      x: pos.x,
-      y: pos.y,
-      run: false,
-      away: true,
-      face: pos,
-      share: ctx.cb.stance.backOff,
-    };
-    return;
+}
+
+/**
+ * The state wanted at a decision (Book 10 "AI states", Enters when): recover stamina below the
+ * archetype's share (until back to recoverTo); approach beyond the engage distance; retreat when
+ * the target steps inside the circle radius; wait for an opening while holding the attack token,
+ * and attack on an opening it can take or when its patience runs out; else circle.
+ */
+function chooseState(
+  fw: FightWorld,
+  id: Id,
+  a: OnFootActor,
+  fa: ActorFight,
+  target: Id,
+  _pos: { x: number; y: number },
+  d: number,
+  g: {
+    circle: number;
+    engageAt: number;
+    range: number;
+    dist: ArchetypeDistances;
+    share: number;
+  },
+): FightStateName {
+  const { world, ctx } = fw;
+  const tick = world.tick;
+  const mind = fa.ai.mind;
+  const k = ctx.ai.states;
+  const self = ctx.ai.self;
+  // Badly hurt with a friend near: fall back (Book 10 retreatAt).
+  if (
+    fa.vitality < fa.maxVitality * self.retreatAt &&
+    world.onFoot !== null &&
+    nearestFriend(world.onFoot, id, fa, a, self.retreatFriendTiles * fw.map.tile) !== null
+  )
+    return 'RETREAT';
+  const rec = g.dist.recoverAt;
+  if (rec !== null) {
+    if (mind.state === 'RECOVER_STAMINA' && g.share < k.recoverTo) return 'RECOVER_STAMINA';
+    if (g.share < rec || fa.f.exhausted) return 'RECOVER_STAMINA';
   }
-  const presser = tokenFree(fw, id, target);
-  if (!presser || tick < ai.nextAttack) {
-    // The one waiting its turn holds off; the rest circle further out (Book 10 pressers).
-    const pressing = presser || isPresser(fw, id, target);
-    const ring = pressing
-      ? holdOff
-      : Math.min(Math.max(d, self.circleMin * tile), self.circleMax * tile);
-    ai.mode = pressing ? 'HOLD_OFF' : 'CIRCLE';
-    ai.sidestep ??= nextFloat(world.rng.ai) < 0.5 ? 1 : -1;
-    ai.goal = circlePoint(fw, a, pos, ring, ai.sidestep);
-    return;
+  if (d > g.engageAt) return 'APPROACH';
+  // An attack under way closes its step and strikes; once struck, it retreats.
+  if (mind.state === 'ATTACK') return mind.struck ? 'RETREAT' : 'ATTACK';
+  const token = tokenFree(fw, id, target);
+  const ready = tick >= mind.cooldownUntil;
+  if (mind.state === 'WAIT_FOR_OPENING' && token && ready) {
+    if (openingTakeable(fw, fa, a, target, d, g.range)) return 'ATTACK';
+    if (tick >= mind.patienceUntil) return 'ATTACK';
   }
-  const lungeTiles = ctx.cb.lunge.tiles[w];
-  const strikeAt = reach * h.closeIn;
-  // Out of reach: close to striking distance (a flank side when two or more), or lunge in.
-  if (d > reach) {
-    // A longer weapon is lunged past (Book 10 longReach), when the lunge would reach.
-    if (longer && lungeTiles > 0 && d <= reach + lungeTiles * tile && free(fa.f)) {
-      if (startAttack(fw, id, a, fa, target, pos, { lunge: true })) return;
-    }
-    const side = flankSlot(fw, id, target, pos, strikeAt);
-    ai.mode = 'FIGHT';
-    ai.goal = { x: side?.x ?? pos.x, y: side?.y ?? pos.y, run: d > h.runAt * tile };
-    return;
+  // The target stepped inside the circle: back off to it (unless taking an opening).
+  if (d < g.circle - 0.35 * fw.map.tile) return 'RETREAT';
+  if (token && ready) return 'WAIT_FOR_OPENING';
+  return 'CIRCLE';
+}
+
+/**
+ * How many ticks an opening has left, judged from what the fighter sees of its target (Book 10
+ * opening): a recovery after a miss, a mistimed parry or a dodge, a broken guard, a stagger, a
+ * knockdown and its getting up (their drawn poses play to their end), exhaustion (the bent,
+ * blowing idle, until the bar is back), healing, a bow drawn, or the back turned. 0: no opening.
+ */
+export function openingLeft(fw: FightWorld, target: Id, from: { x: number; y: number }): number {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return 0;
+  const tick = world.tick;
+  const f = fighterOf(onFoot, target);
+  const where = whereIs(onFoot, target);
+  if (f === null || where === null) return 0;
+  if (f.state === 'stagger' || f.state === 'guardBroken' || f.state === 'heal')
+    return f.recoveryEnd - tick;
+  if (f.state === 'knockdown') return f.recoveryEnd - tick + ctx.cb.poise.getUpTicks;
+  if (f.state === 'getUp' || f.state === 'dodgeRecovery') return f.recoveryEnd - tick;
+  if (f.state === 'parryRecovery' && f.riposteUntil <= tick) return f.recoveryEnd - tick;
+  if ((striking(f) || f.state === 'shove') && f.missed && tick >= f.activeEnd)
+    return f.recoveryEnd - tick;
+  if (f.exhausted) {
+    const pool = target === STEERER ? world.player.stamina : onFoot.actors[target]?.fight?.stamina;
+    const max = pool?.max ?? ctx.cb.stamina.max;
+    const need = ctx.cb.exhausted.until * max - (pool?.current ?? 0);
+    return Math.max(1, Math.round((need / ctx.cb.exhausted.exhaustedRegenPerSecond) * 60));
   }
-  ai.goal = null;
-  startAttack(fw, id, a, fa, target, pos, {});
+  const aim = target === STEERER ? onFoot.player.aim : onFoot.actors[target]?.aim;
+  if (aim != null) return ctx.cb.bowFrames.windup + ctx.cb.bowFrames.recovery;
+  // The back turned: until it could turn round at its turn rate.
+  const toMe = Math.atan2(from.y - where.y, from.x - where.x);
+  const off = Math.abs(wrapAngle(toMe - f.angle));
+  if (f.state === 'idle' && off > Math.PI / 2) {
+    const perTick = (ctx.cb.stance.turnDegreesPerTick * Math.PI) / 180;
+    return Math.round((off - Math.PI / 4) / Math.max(1e-6, perTick));
+  }
+  return 0;
+}
+
+/**
+ * Whether a fighter can take its target's opening (Book 10 takeOpening): walk to its attack range
+ * and finish its wind-up before the opening ends.
+ */
+function openingTakeable(
+  fw: FightWorld,
+  fa: ActorFight,
+  a: OnFootActor,
+  target: Id,
+  d: number,
+  range: number,
+): boolean {
+  const { ctx, map } = fw;
+  const left = openingLeft(fw, target, a);
+  if (left <= 0) return false;
+  const w = fa.f.weapon;
+  if (w === null) return false;
+  const m = ctx.cb.weapons[w].moves.light1;
+  if (m === undefined) return false;
+  const walk = (fw.land.movement.walk * map.tile) / TICKS_PER_SECOND;
+  const close = Math.max(0, d - range * ctx.ai.habits.closeIn);
+  const reach = close / Math.max(1e-6, walk);
+  return reach + windupFor(fa.f, ctx.cb, m) < left;
+}
+
+/** Holds a fighter at its circle radius, a step in or out (never back and forth in a decision). */
+function holdAt(
+  fw: FightWorld,
+  a: OnFootActor,
+  pos: { x: number; y: number },
+  d: number,
+  r: number,
+): FighterAi['goal'] {
+  const tile = fw.map.tile;
+  if (Math.abs(d - r) < 0.3 * tile) return null;
+  const bearing = Math.atan2(a.y - pos.y, a.x - pos.x);
+  return {
+    x: pos.x + Math.cos(bearing) * r,
+    y: pos.y + Math.sin(bearing) * r,
+    run: false,
+    face: pos,
+    share: d < r ? fw.ctx.cb.stance.backOff : fw.ctx.cb.stance.forward,
+  };
 }
 
 /** Whether a fighter holds (or is next for) its side's token on a target (S9-29). */
@@ -2685,32 +3094,34 @@ function isPresser(fw: FightWorld, id: Id, target: Id): boolean {
   return ahead < fw.ctx.ai.habits.attackTokens;
 }
 
-/** A point on a ring round the target, a step round from where the fighter stands. */
+/**
+ * A point on a ring round the target, a step round from where the fighter stands, at strafe speed
+ * facing the target. Its way round turns back at most once each Book 10 turnAround (decision
+ * DF-7), when the way is blocked.
+ */
 function circlePoint(
   fw: FightWorld,
   a: OnFootActor,
   pos: { x: number; y: number },
   r: number,
-  way: 1 | -1,
+  mind: FighterMind,
 ): FighterAi['goal'] {
   const bearing = Math.atan2(a.y - pos.y, a.x - pos.x);
-  const step = (Math.PI / 8) * way;
-  const x = pos.x + Math.cos(bearing + step) * r;
-  const y = pos.y + Math.sin(bearing + step) * r;
-  const ok =
+  const tick = fw.world.tick;
+  const ok = (x: number, y: number): boolean =>
     footprintClear(fw.map, fw.land.rules, x, y, fw.tidalGroundOpen) && fw.avoid?.(x, y) !== true;
-  if (!ok) {
-    const ai = a.fight?.ai;
-    if (ai !== undefined) ai.sidestep = way === 1 ? -1 : 1;
-    return {
-      x: pos.x + Math.cos(bearing) * r,
-      y: pos.y + Math.sin(bearing) * r,
-      run: false,
-      face: pos,
-      share: fw.ctx.cb.stance.strafe,
-    };
+  const at = (way: number): { x: number; y: number } => ({
+    x: pos.x + Math.cos(bearing + (Math.PI / 8) * way) * r,
+    y: pos.y + Math.sin(bearing + (Math.PI / 8) * way) * r,
+  });
+  let p = at(mind.dir);
+  if (!ok(p.x, p.y) && tick - mind.turnedAt >= fw.ctx.ai.states.turnAround) {
+    mind.dir = mind.dir === 1 ? -1 : 1;
+    mind.turnedAt = tick;
+    p = at(mind.dir);
   }
-  return { x, y, run: false, face: pos, share: fw.ctx.cb.stance.strafe };
+  if (!ok(p.x, p.y)) p = at(0);
+  return { x: p.x, y: p.y, run: false, face: pos, share: fw.ctx.cb.stance.strafe };
 }
 
 /** The nearest standing friend of a fighter within a range. */
@@ -2732,9 +3143,11 @@ function nearestFriend(
 }
 
 /**
- * An attack begun on a target: a lunge, or the charge (a light, or a heavy released later at
- * level 1, or level 2 against a raised shield); a share of starts are feints (Book 10 feint). The
- * tutorial's heavy at dusk heavies more (Book 10 svartHeavies).
+ * An attack begun on a target (Book 10 "AI states", Attack): a lunge, or the charge (a light,
+ * released at once and played under its telegraph floor; or a heavy held for its hold, at level 2
+ * against a raised shield); a share of starts are feints (Book 10 feint). The tutorial's heavy at
+ * dusk heavies more (Book 10 svartHeavies) and swings slower (svartWindup). The telegraph's flash
+ * is set at its lead before the planned first active tick (Book 10 "Telegraphs").
  */
 function startAttack(
   fw: FightWorld,
@@ -2761,55 +3174,61 @@ function startAttack(
     'STARTED'
   )
     return false;
-  fa.f.turnFrom = fa.f.angle;
   ai.lastStruck = tick;
+  ai.mind.struck = true;
   a.facing = fa.f.facing;
-  ai.nextAttack = tick + attackGap(fw, fa);
+  const lead = ctx.cb.telegraphs.flashLead;
   if (fa.f.state === 'lunge') {
+    fa.f.flashAt = Math.max(tick, fa.f.activeAt - lead);
     fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: true, kind: 'lunge' });
     return true;
   }
   fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: false });
+  const w = fa.f.weapon;
+  if (w === null) return true;
+  const moves = ctx.cb.weapons[w].moves;
   const enc = encounterOf(ctx, onFoot.battle);
   const teaches = enc?.teaches === id;
+  const light = moves.light1;
   // A feint: the tell, then lowered with no swing.
   if (!teaches && nextFloat(world.rng.ai) < ctx.ai.self.feint) {
     ai.feintAt = tick + ctx.cb.charge.level1At - 1;
+    fa.f.flashAt = tick;
     return true;
   }
   const tf = fighterOf(onFoot, target);
   const chance = teaches ? ctx.ai.dusk.svartHeavies : h.heavyChance;
   const heavy = nextFloat(world.rng.ai) < chance;
-  const shieldUp = tf !== null && tf.shield && (tf.state === 'block' || tf.guard);
-  // Released the tick after the level is reached (the state machine steps after the choice).
-  ai.releaseAt = heavy
-    ? tick + (shieldUp ? ctx.cb.charge.level2At : ctx.cb.charge.level1At) + 1
-    : tick + 1;
+  const shieldUp = tf !== null && tf.shield && (guardLive(tf) || tf.guard);
+  const level: 1 | 2 = shieldUp && moves.charged !== undefined ? 2 : 1;
+  const m = heavy ? (level === 2 ? moves.charged : moves.heavy) : undefined;
+  if (m === undefined) {
+    // A light: released the tick after the press, its wind-up the floor's from the press.
+    ai.releaseAt = tick + 1;
+    if (light !== undefined) fa.f.flashAt = Math.max(tick, tick + windupFor(fa.f, ctx.cb, light) - lead);
+    return true;
+  }
+  // A heavy held for its hold (Book 10 "Enemy attacks"); released the tick it is due.
+  const hold = holdFor(ctx.cb, m, level);
+  ai.releaseAt = tick + hold;
+  const extra = teaches ? ctx.ai.dusk.svartWindup : 0;
+  const swing = m.windup + (fa.f.heavy ? ctx.cb.heavy.windupExtra : 0) + extra;
+  fa.f.flashAt = Math.max(tick, tick + hold + swing - lead);
   return true;
 }
 
 /**
- * The time between one fighter's attacks, drawn on the `ai` stream (Book 10 attackGap; longer
- * when wounded, woundedAt).
- */
-function attackGap(fw: FightWorld, fa?: ActorFight): number {
-  const g = fw.ctx.ai.habits.attackGap;
-  const self = fw.ctx.ai.self;
-  const wounded = fa !== undefined && fa.vitality < fa.maxVitality * self.woundedAt;
-  return Math.round(
-    (g.min + nextFloat(fw.world.rng.ai) * (g.max - g.min)) * (wounded ? self.woundedGap : 1),
-  );
-}
-
-/**
- * Whether a person is in an attack (Book 10 attackTokens): a charge, a strike's windup and active
+ * Whether a person is in an attack (Book 10 attackTokens): a charge, a strike's wind-up and active
  * frames, a bow being drawn or held.
  */
 export function inAttack(a: OnFootActor, tick: number): boolean {
   const f = a.fight?.f;
   if (f === undefined) return false;
   if (charging(f) || (striking(f) && tick < f.activeEnd)) return true;
-  return (a.archer !== undefined && a.archer.phase !== 'moving') || a.aim != null;
+  return (
+    (a.archer !== undefined && a.archer.phase !== 'moving' && a.archer.phase !== 'recovering') ||
+    a.aim != null
+  );
 }
 
 /**
@@ -2832,23 +3251,14 @@ function tokenFree(fw: FightWorld, id: Id, target: Id): boolean {
   // With no one attacking, the side rests a moment after its last attack ended.
   const last = onFoot.battle?.lastAttack?.[`${me.side}:${target}`];
   if (busy === 0 && last !== undefined && tick - last < h.tokenRestTicks) return false;
-  // The token goes to whoever of the side, ready to attack, has waited longest.
-  const pos = whereIs(onFoot, target);
-  if (pos === null) return true;
-  const tile = fw.map.tile;
+  // The token goes to whoever of the side, waiting for an opening, has waited longest.
   const mine = me.ai.lastStruck ?? -1;
   for (const [oid, o] of Object.entries(onFoot.actors)) {
     const of = o.fight;
     if (oid === id || of?.side !== me.side || of.ai.target !== target) continue;
-    if (!fighting(of) || !free(of.f) || tick < of.ai.nextAttack) continue;
+    if (!fighting(of) || !free(of.f) || tick < of.ai.mind.cooldownUntil) continue;
     if ((of.ai.lastStruck ?? -1) >= mine) continue;
-    const d = Math.hypot(pos.x - o.x, pos.y - o.y);
-    const ready =
-      of.bow && of.arrows > 0
-        ? d >= h.fallBackFrom * tile && d <= h.archerRange.max * tile
-        : of.f.weapon !== null &&
-          d <= (fw.ctx.cb.weapons[of.f.weapon].reachTiles + fw.ctx.cb.bodyRadiusTiles) * tile;
-    if (ready) return false;
+    if (of.ai.mind.state === 'WAIT_FOR_OPENING') return false;
   }
   return true;
 }
@@ -2862,9 +3272,9 @@ const SIDES: readonly (readonly [number, number])[] = [
 
 /**
  * Where a melee fighter stands against its target when two or more close on it (Book 2 section 13,
- * "flank"): the four sides of the target at striking distance, taken in name order, each by the
+ * "flank"): the four sides of the target at the distance, taken in name order, each by the
  * nearest fighter still without one; a side that is not open, dry ground is passed over. Null for a
- * lone attacker (or the first to a side it already holds): it strikes from where it is.
+ * lone attacker: it comes straight on.
  */
 function flankSlot(
   fw: FightWorld,
@@ -2904,10 +3314,159 @@ function flankSlot(
   return null;
 }
 
+// ------------------------------------------------------------------------------- archers
+
+/**
+ * An archer's fight (Book 10 "Archers"; design addendum 2.5, decision DF-8): it shoots only from
+ * its band with a clear line of sight, standing completely still to settle, draw and loose and to
+ * recover; brought within tooClose it hops back once, resets, and re-evaluates; cornered (ground it
+ * cannot go back onto, or still too close after the hop, or too close again within dashOnce) it
+ * draws its sidearm and fights in melee for the rest of the fight.
+ */
+function archerFight(
+  fw: FightWorld,
+  id: Id,
+  a: OnFootActor,
+  fa: ActorFight,
+  target: Id,
+  pos: { x: number; y: number },
+  d: number,
+): void {
+  const { world, ctx, map } = fw;
+  const tick = world.tick;
+  const tile = map.tile;
+  const ar = ctx.ai.archers;
+  const ai = fa.ai;
+  const mind = ai.mind;
+  // Shooting, or hopping: standing still, or moved by the hop.
+  if (a.archer !== undefined && a.archer.phase !== 'moving') {
+    ai.goal = null;
+    return;
+  }
+  if (a.archer?.phase === 'moving') delete a.archer;
+  if (ai.hop !== null) {
+    ai.goal = null;
+    const done = tick - ai.hop.since >= ar.dashTicks + ar.reset;
+    if (!done) return;
+    ai.hop = null;
+    // Reset over: re-evaluate (Book 10 reset): still too close is cornered.
+    if (d < ar.tooClose * tile) {
+      drawSidearm(fw, id, a, fa);
+      return;
+    }
+  }
+  if (d < ar.tooClose * tile) {
+    const recent = ai.hopAt >= 0 && tick - ai.hopAt < ar.dashOnceTicks;
+    const away = { x: (a.x - pos.x) / Math.max(1e-6, d), y: (a.y - pos.y) / Math.max(1e-6, d) };
+    const behind = { x: a.x + away.x * ar.corneredTiles * tile, y: a.y + away.y * ar.corneredTiles * tile };
+    const blocked = !groundOpen(fw, behind.x, behind.y) || !groundOpen(fw, (a.x + behind.x) / 2, (a.y + behind.y) / 2);
+    if (recent || blocked || fa.f.exhausted || fa.stamina.current <= 0) {
+      drawSidearm(fw, id, a, fa);
+      return;
+    }
+    // The hop back (Book 10 dashAway): once, its stamina spent; not invulnerable.
+    fa.stamina.current = Math.max(0, fa.stamina.current - ar.dashStamina);
+    fa.stamina.spentTick = tick;
+    ai.hop = { since: tick, x: away.x, y: away.y };
+    ai.hopAt = tick;
+    ai.goal = null;
+    mind.state = 'RETREAT';
+    mind.since = tick;
+    fw.emit({ type: 'ARCHER_HOP', who: id });
+    return;
+  }
+  const clear = lineClear(fw, id, a, pos);
+  if (d > ar.shootFrom.max * tile || !clear) {
+    // To a spot in its band with a clear line.
+    mind.state = 'APPROACH';
+    ai.goal = { x: pos.x, y: pos.y, run: false };
+    return;
+  }
+  if (d < ar.shootFrom.min * tile) {
+    mind.state = 'RETREAT';
+    ai.goal = { x: pos.x, y: pos.y, run: false, away: true, face: pos, share: ctx.cb.stance.backOff };
+    return;
+  }
+  ai.goal = null;
+  if (!free(fa.f) || tick < mind.cooldownUntil || !tokenFree(fw, id, target)) return;
+  // Settle, draw, loose, then recover, standing completely still (Book 10 standStill).
+  mind.state = 'ATTACK';
+  mind.since = tick;
+  orderShot(
+    a,
+    { x: pos.x, y: pos.y },
+    { x: 0, y: 0, run: false, sneak: false },
+    'arrow',
+    { settle: ar.settle, draw: ctx.cb.telegraphs.floorDraw - ar.settle, recover: ar.recover },
+  );
+  fa.arrows--;
+  mind.cooldownUntil = tick + ctx.cb.telegraphs.floorDraw + ar.recover + ctx.ai.states.attackCooldown;
+  ai.lastStruck = tick;
+  say(ctx, id, 'taunt', fw.emit, tick + id.length);
+}
+
+/** Whether ground is open to stand on (no blocking tile, water or cliff kept off). */
+function groundOpen(fw: FightWorld, x: number, y: number): boolean {
+  return (
+    footprintClear(fw.map, fw.land.rules, x, y, fw.tidalGroundOpen) &&
+    fw.avoid?.(x, y) !== true &&
+    fw.wet?.(x, y) !== true
+  );
+}
+
+/**
+ * A clear line from a bow to its target (Book 10 lineOfSight): no blocking ground (rock, a wall or
+ * a closed door's tile) and no friend's body in the way.
+ */
+function lineClear(fw: FightWorld, id: Id, a: OnFootActor, pos: { x: number; y: number }): boolean {
+  const { map } = fw;
+  const onFoot = fw.world.onFoot;
+  if (onFoot === null) return false;
+  const d = Math.hypot(pos.x - a.x, pos.y - a.y);
+  const n = Math.max(1, Math.ceil(d / 4));
+  for (let i = 1; i < n; i++) {
+    const x = a.x + ((pos.x - a.x) * i) / n;
+    const y = a.y + ((pos.y - a.y) * i) / n - 12;
+    const t = tileOf(map, x, y);
+    if (terrainAt(map, t.tx, t.ty) === 'rock' || solidAt(map, t.tx, t.ty)) return false;
+  }
+  const side = a.fight?.side;
+  for (const [oid, o] of Object.entries(onFoot.actors)) {
+    if (oid === id || o.fight?.side !== side || o.pose === 'dead' || o.pose === 'down') continue;
+    const rx = o.x - a.x;
+    const ry = o.y - a.y;
+    const along = (rx * (pos.x - a.x) + ry * (pos.y - a.y)) / Math.max(1e-6, d);
+    if (along <= 0 || along >= d) continue;
+    const across = Math.abs(rx * (pos.y - a.y) - ry * (pos.x - a.x)) / Math.max(1e-6, d);
+    if (across < fw.land.rules.missileHitBox.w) return false;
+  }
+  return true;
+}
+
+/**
+ * An archer cornered, or out of arrows, draws its sidearm (Book 10 "Archers", cornered and
+ * noArrows): it takes Book 10's ticks, standing, and from then fights in melee as an outlaw.
+ */
+function drawSidearm(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
+  const ai = fa.ai;
+  if (ai.sidearmAt >= 0) return;
+  ai.sidearmAt = fw.world.tick;
+  ai.hop = null;
+  ai.goal = null;
+  delete a.archer;
+  a.aim = null;
+  fa.arch = 'Outlaw';
+  ai.mind.state = 'CIRCLE';
+  ai.mind.since = fw.world.tick;
+  fw.emit({ type: 'SIDEARM_DRAWN', who: id });
+}
+
 /**
  * Seeing a blow coming (Book 10 "Fighters' habits"): a fighter who sees an attacker's tell defends
- * with Book 10's chance, no sooner than its reaction time: a shield raised until the blow is past,
- * or a parry timed to the strike's active ticks.
+ * with Book 10's chance, no sooner than its reaction time. A parry follows Book 10 "Parry"'s
+ * predictive frames like anyone's: it is pressed so its live ticks meet the blow, and only when
+ * the blow's wind-up leaves time for that; otherwise a shield is raised if it would be up in time,
+ * else nothing (it backs off at its next decision).
  */
 function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const { world, ctx, map } = fw;
@@ -2917,21 +3476,17 @@ function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ai = fa.ai;
   const h = ctx.ai.habits;
   if (ai.react !== null) {
-    if (
-      tick >= ai.react.at &&
-      ai.react.kind === 'BLOCK' &&
-      fa.f.state === 'idle' &&
-      tick < ai.react.until
-    )
-      setBlock(fa.f, true, tick);
-    if (tick >= ai.react.at && ai.react.kind === 'PARRY' && free(fa.f))
+    if (tick >= ai.react.at && ai.react.kind === 'BLOCK' && free(fa.f) && tick < ai.react.until)
+      setBlock(fa.f, true, tick, ctx.cb);
+    if (tick >= ai.react.at && ai.react.kind === 'PARRY' && (free(fa.f) || fa.f.state === 'block'))
       pressParry(fa.f, tick, ctx.cb, fa.stamina);
     if (tick >= ai.react.until) {
-      if (fa.f.guard) setBlock(fa.f, false, tick);
+      if (fa.f.guard && ai.mind.state !== 'WAIT_FOR_OPENING') setBlock(fa.f, false, tick, ctx.cb);
       ai.react = null;
     }
     return;
   }
+  if (locked(fa.f)) return;
   // The attackers in reach who face this fighter and have shown a tell not yet judged.
   for (const [oid, pos, of] of targets(onFoot)) {
     if (oid === id || of === null || sideOf(onFoot, oid) === fa.side) continue;
@@ -2946,24 +3501,24 @@ function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     const wounded = fa.vitality < fa.maxVitality * ctx.ai.self.woundedAt;
     const chance = h.reactChance + (wounded ? ctx.ai.self.woundedDefend : 0);
     if (nextFloat(world.rng.ai) >= chance) return;
-    const parry = !fa.f.shield || nextFloat(world.rng.ai) < h.parryShare;
-    if (parry && fa.f.weapon === null && !fa.f.shield) return;
-    const soonest = of.since + h.reactTicks;
-    if (parry) {
-      // Timed so the window covers the active ticks if they come at the windup's end.
-      const active = striking(of) ? of.activeAt : of.since + windupFor(of, ctx);
-      const at = Math.max(
-        tick,
-        soonest,
-        active - ctx.cb.parry.startup - Math.floor(fw.options.parryWindow / 2),
-      );
-      ai.react = { kind: 'PARRY', at, until: at + 1 };
-    } else {
+    const soonest = Math.max(tick, of.since + h.reactTicks);
+    // The blow's first active tick as it can be read (a charge's: at the light's soonest).
+    const lightM = of.weapon === null ? null : ctx.cb.weapons[of.weapon].moves.light1;
+    const active = striking(of) ? of.activeAt : of.since + (lightM === null || lightM === undefined ? 0 : windupFor(of, ctx.cb, lightM));
+    const live = ctx.cb.parry.windup;
+    const window = parryWindowOf(fa.f, ctx.cb, ctx.cb.parry.window);
+    // The press that centres the live ticks on the blow's first active tick.
+    const press = active - live - Math.floor(window / 2);
+    const parryOk = (fa.f.weapon !== null || fa.f.shield) && press >= soonest && fa.stamina.current > 0;
+    const blockOk = fa.f.shield && soonest + ctx.cb.block.raise <= active;
+    const parry = parryOk && (!fa.f.shield || nextFloat(world.rng.ai) < h.parryShare || !blockOk);
+    if (parry) ai.react = { kind: 'PARRY', at: press, until: press + 1 };
+    else if (blockOk) {
       const until = striking(of)
         ? of.recoveryEnd
         : of.since + ctx.cb.charge.maxHold + ctx.ai.habits.guardHeld;
-      ai.react = { kind: 'BLOCK', at: Math.max(tick, soonest), until };
-    }
+      ai.react = { kind: 'BLOCK', at: soonest, until };
+    } else return;
     setAngle(fa.f, Math.atan2(pos.y - a.y, pos.x - a.x));
     a.facing = fa.f.facing;
     return;
@@ -2987,12 +3542,6 @@ function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   }
 }
 
-function windupFor(f: Fighter, ctx: FightContext): number {
-  return f.weapon === null
-    ? 0
-    : ctx.cb.weapons[f.weapon].windup + (f.heavy ? ctx.cb.heavy.windupExtra : 0);
-}
-
 /**
  * The crew (Book 2 section 12): an order is carried out (follow, hold, attack the steerer's target,
  * protect, carry the downed to a safe place, withdraw there); with none, an able, armed resident
@@ -3008,7 +3557,9 @@ function crewThink(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void
   const p = onFoot.player;
   const h = ctx.ai.habits;
   if (tick < ai.next) return;
-  ai.next = tick + h.decideEvery;
+  ai.next = tick + h.awarenessEvery;
+  // A fresh choice: in a fight again only if it is chosen again below.
+  if (FIGHTING.includes(ai.mode)) ai.mode = fa.order !== null ? 'ORDER' : 'GUARD';
   // The steerer downed: come and lift them.
   if (onFoot.player.fight?.state === 'downed' && a.pose !== 'carried' && a.carries === undefined) {
     ai.goal = { x: p.x, y: p.y, run: true };
@@ -3237,48 +3788,99 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   if (onFoot === null) return;
   delete a.moving;
   if (a.pose === 'carried' || a.pose === 'down' || a.pose === 'dead') return;
+  // Out of the fight a resident walks by their day (src/sim/people/day.ts), never towards a goal
+  // left over from it (decision DE-84).
+  if (world.household.residents.includes(id) && !heldByFight(world, id, a)) return;
   const f = fa.f;
   const tile = map.tile;
-  // A sidestep, a lunge and a riposte move by strikeMotion; a heal kneels.
-  if (f.state === 'sidestep' || f.state === 'heal') return;
+  const ar = ctx.ai.archers;
   let vx: number;
   let vy: number;
   let speed: number;
-  if (f.state === 'dodge' && f.dodge !== null) {
-    speed = (ctx.cb.dodge.tiles * tile) / ctx.cb.dodge.ticks;
-    vx = f.dodge.x;
-    vy = f.dodge.y;
+  const hop = fa.ai.hop;
+  if (hop !== null && world.tick - hop.since < ar.dashTicks) {
+    // An archer's hop back (Book 10 dashAway): its ground over its ticks, eased out.
+    speed = dashStep(world.tick - hop.since, ar.dashTicks, ar.dashTiles) * tile;
+    vx = hop.x;
+    vy = hop.y;
+    fa.vel = { x: 0, y: 0 };
   } else {
+    // Locked in an action, or moved by it (a dodge, a sidestep, a lunge, a step), or planted to
+    // draw: the speed goes to zero at once (Book 10 "Commitment", stopOnAttack).
     const goal = fa.ai.goal;
-    if (goal === null || feetPlanted(f) || a.aim != null || a.archer?.phase === 'drawing') {
+    const planted =
+      feetPlanted(f) || a.aim != null || (a.archer !== undefined && a.archer.phase !== 'moving');
+    if (planted || hop !== null) {
+      fa.vel = { x: 0, y: 0 };
       if (a.carries !== undefined) carryAlong(onFoot, a);
       return;
     }
-    let dx = goal.x - a.x;
-    let dy = goal.y - a.y;
-    if (goal.away === true) {
-      dx = -dx;
-      dy = -dy;
+    let want = { x: 0, y: 0 };
+    let full = 0;
+    let mode: AccelMode = 'walk';
+    let d = 0;
+    if (goal !== null) {
+      let dx = goal.x - a.x;
+      let dy = goal.y - a.y;
+      if (goal.away === true) {
+        dx = -dx;
+        dy = -dy;
+      }
+      d = Math.hypot(dx, dy);
+      if (d >= 2 || goal.away === true) {
+        // Speed by gait (Book 10 section 02), halved exhausted or with the shield up; no running
+        // then (Book 10 "Exhausted", "Block").
+        const guard = guardLive(f);
+        const run = goal.run && !f.exhausted && !guard;
+        mode =
+          a.carries !== undefined
+            ? 'carry'
+            : f.exhausted
+              ? 'exhausted'
+              : guard
+                ? 'blocking'
+                : run
+                  ? 'run'
+                  : goal.share === ctx.cb.stance.backOff
+                    ? 'backOff'
+                    : goal.share === ctx.cb.stance.strafe
+                      ? 'strafe'
+                      : 'walk';
+        const base =
+          a.carries !== undefined
+            ? land.movement.carry * (f.heavy ? ctx.cb.heavy.carrySpeed : 1)
+            : run
+              ? land.movement.run * (f.heavy ? ctx.cb.heavy.runSpeed : 1)
+              : land.movement.walk * (goal.share ?? 1);
+        const half =
+          (f.exhausted ? ctx.cb.accel.exhaustedSpeed : 1) *
+          (guard ? ctx.cb.accel.blockingSpeed : 1);
+        full = (base * half * tile) / TICKS_PER_SECOND;
+        want = { x: (dx / d) * full, y: (dy / d) * full };
+        if (f.state === 'idle' || f.state === 'block') {
+          // Circling or backing off faces the foe; otherwise the way walked (Book 10 stance).
+          const face = goal.face;
+          if (face !== undefined) setAngle(f, Math.atan2(face.y - a.y, face.x - a.x));
+          else setAngle(f, Math.atan2(dy, dx));
+          a.facing = f.facing;
+        }
+      }
     }
-    const d = Math.hypot(dx, dy);
-    if (d < 2 && goal.away !== true) return;
-    vx = dx / d;
-    vy = dy / d;
-    const base = charging(f)
-      ? ctx.cb.chargeSpeed
-      : a.carries !== undefined
-        ? land.movement.carry * (f.heavy ? ctx.cb.heavy.carrySpeed : 1)
-        : goal.run && !f.exhausted
-          ? land.movement.run * (f.heavy ? ctx.cb.heavy.runSpeed : 1)
-          : land.movement.walk * (goal.share ?? 1);
-    speed = Math.min((base * tile) / TICKS_PER_SECOND, goal.away === true ? Infinity : d);
-    if (f.state === 'idle') {
-      // Circling or backing off faces the foe; otherwise the way walked (Book 10 stance).
-      const face = goal.face;
-      if (face !== undefined) setAngle(f, Math.atan2(face.y - a.y, face.x - a.x));
-      else setAngle(f, Math.atan2(vy, vx));
-      a.facing = f.facing;
+    // Grounded movement (Book 10 "Movement and acceleration"): ease towards the walk wanted.
+    const ticks = accelTicks(ctx.cb.accel, mode, f);
+    const v = easeVelocity(fa.vel ?? { x: 0, y: 0 }, want, Math.max(full, Math.hypot(fa.vel?.x ?? 0, fa.vel?.y ?? 0)), ticks);
+    // Never past the point it walks to.
+    const sp = Math.hypot(v.x, v.y);
+    const cap = goal !== null && goal.away !== true ? d : Infinity;
+    const k = sp > cap ? cap / sp : 1;
+    fa.vel = { x: v.x * k, y: v.y * k };
+    speed = Math.hypot(fa.vel.x, fa.vel.y);
+    if (speed < 1e-9) {
+      if (a.carries !== undefined) carryAlong(onFoot, a);
+      return;
     }
+    vx = fa.vel.x / speed;
+    vy = fa.vel.y / speed;
   }
   const before = { x: a.x, y: a.y };
   // Book 10 avoid: deep water, cliff edges and fire are kept off (unless already in them).
@@ -3291,6 +3893,7 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ny = a.y + vy * speed;
   if (vx !== 0 && clear(nx, a.y)) a.x = nx;
   if (vy !== 0 && clear(a.x, ny)) a.y = ny;
+  if (fa.vel !== undefined && a.x === before.x && a.y === before.y) fa.vel = { x: 0, y: 0 };
   // Stage 10: a wall in the way (the sheepfold's): round it by the tiles, towards the goal.
   const goal = fa.ai.goal;
   const moved = Math.hypot(a.x - before.x, a.y - before.y);
@@ -3333,7 +3936,7 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
       fa.f.hitstop === 0 &&
       fa.f.state === 'idle' &&
       Math.hypot(a.x - p.x, a.y - p.y) <= ctx.ai.habits.fledAt * tile &&
-      world.tick - fa.f.since > ctx.ai.habits.decideEvery;
+      world.tick - fa.f.since > ctx.ai.habits.awarenessEvery;
     if (cornered) {
       surrender(fw, id, a, fa);
       return;

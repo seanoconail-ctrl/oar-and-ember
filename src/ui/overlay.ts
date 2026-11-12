@@ -42,13 +42,17 @@ const STYLE = `
   font-family: system-ui, 'Segoe UI', Roboto, 'Noto Sans', 'DejaVu Sans', sans-serif; font-synthesis: none;
   text-shadow: 0 1px 0 #22313a, 1px 0 0 #22313a, 0 -1px 0 #22313a, -1px 0 0 #22313a; }
 .oe-overlay [data-region] { position: absolute; left: 4%; right: 4%; }
-.oe-overlay [data-region=captions] { bottom: 11%; text-align: center; font-size: 1.1em; }
-.oe-overlay [data-region=captions] p { margin: 0.15em auto; display: table; padding: 0.1em 0.5em;
+.oe-overlay [data-region=captions] { bottom: 9.4%; text-align: center; font-size: 1em; line-height: 1.15; }
+.oe-overlay [data-region=captions] p { margin: 0.1em auto; display: table; padding: 0.05em 0.5em;
   background: rgba(34, 49, 58, 0.85); border-radius: 2px; }
 .oe-overlay [data-region=captions] p.info { font-style: italic; background: rgba(34, 49, 58, 0.7); }
 .oe-overlay [data-region=captions] p.speech { font-style: normal; }
+.oe-overlay [data-region=captions] .oe-slot { position: relative; }
+.oe-overlay [data-region=captions] .oe-slot p.out { position: absolute; left: 50%; top: 0; margin: 0;
+  transform: translateX(-50%); white-space: nowrap; }
 .oe-overlay [data-region=prompt] { bottom: 24%; text-align: center; }
-.oe-overlay [data-region=slot] { bottom: 9%; text-align: center; font-size: 0.85em; }
+.oe-overlay [data-region=slot] { bottom: 2.2%; left: 1%; right: auto; width: 24%; text-align: right;
+  font-size: 0.8em; }
 .oe-overlay [data-region=refusal] { right: auto; font-size: 0.8em; white-space: nowrap;
   transform: translateY(-100%); color: #f2b8a0; }
 .oe-overlay [data-region=menu] { top: 30%; text-align: center; font-size: 1.3em; }
@@ -180,4 +184,74 @@ export function showCaptions(
       return p;
     }),
   );
+}
+
+/** One line of the caption view as it shows now: its words, kind and opacity. */
+export interface CaptionSlotLine {
+  readonly text: string;
+  readonly kind: 'speech' | 'info';
+  readonly alpha: number;
+}
+
+/**
+ * Fills the captions region from the caption view (design addendum 2.5 section 2; Book 2 section
+ * 18): one information line (italic, a real italic face, `font-synthesis: none`) above one speech
+ * line (upright), each in its own slot at the bottom of the view. A line being replaced fades out
+ * over the new one in the same slot (`p.out`), so lines never stack. Rebuilt only when the words
+ * change; opacity is set every frame.
+ */
+export function showCaptionSlots(
+  region: HTMLElement,
+  info: CaptionSlotLine | null,
+  speech: CaptionSlotLine | null,
+  outgoing: readonly CaptionSlotLine[],
+): void {
+  const doc = region.ownerDocument;
+  const slot = (kind: 'info' | 'speech'): HTMLElement => {
+    let el = region.querySelector<HTMLElement>(`.oe-slot[data-slot=${kind}]`);
+    if (el === null) {
+      el = doc.createElement('div');
+      el.className = 'oe-slot';
+      el.dataset['slot'] = kind;
+      if (kind === 'info') region.prepend(el);
+      else region.append(el);
+    }
+    return el;
+  };
+  for (const [kind, line] of [
+    ['info', info],
+    ['speech', speech],
+  ] as const) {
+    const el = slot(kind);
+    const ghosts = outgoing.filter((o) => o.kind === kind && o.alpha > 0.01);
+    const key = `${line?.text ?? ''}\u0000${ghosts.map((g) => g.text).join('\u0001')}`;
+    if (el.dataset['shown'] !== key) {
+      el.dataset['shown'] = key;
+      const parts: HTMLElement[] = [];
+      if (line !== null) {
+        const p = doc.createElement('p');
+        p.className = kind;
+        p.textContent = line.text;
+        parts.push(p);
+      }
+      for (const g of ghosts) {
+        const p = doc.createElement('p');
+        p.className = `${kind} out`;
+        p.setAttribute('aria-hidden', 'true');
+        p.textContent = g.text;
+        parts.push(p);
+      }
+      el.replaceChildren(...parts);
+    }
+    const ps = el.querySelectorAll<HTMLElement>('p');
+    let k = 0;
+    if (line !== null) {
+      const p = ps[k++];
+      if (p !== undefined) p.style.opacity = line.alpha.toFixed(2);
+    }
+    for (const g of ghosts) {
+      const p = ps[k++];
+      if (p !== undefined) p.style.opacity = g.alpha.toFixed(2);
+    }
+  }
 }

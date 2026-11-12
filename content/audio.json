@@ -733,6 +733,46 @@
       "temporary": false
     },
     {
+      "id": "SFX_THUNDER_NEAR",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.cold.thunder",
+      "temporary": false
+    },
+    {
+      "id": "SFX_THUNDER_FAR",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.cold.thunder",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WAVE_HULL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.cold.wave",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GREEN_WATER",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.cold.green_water",
+      "temporary": false
+    },
+    {
+      "id": "AMB_COLD_STORM",
+      "kind": "ambience",
+      "captionKey": "caption.amb.cold_storm",
+      "temporary": false
+    },
+    {
+      "id": "AMB_RAIN_CLOTH",
+      "kind": "ambience",
+      "captionKey": "caption.rain.cloth",
+      "temporary": false
+    },
+    {
       "id": "SFX_COUGH",
       "kind": "sfx",
       "bus": "effects",
@@ -916,6 +956,10 @@
     }
   ],
   "events": {
+    "THUNDER_NEAR": "SFX_THUNDER_NEAR",
+    "THUNDER_FAR": "SFX_THUNDER_FAR",
+    "WAVE_HULL": "SFX_WAVE_HULL",
+    "GREEN_WATER": "SFX_GREEN_WATER",
     "HORN_BLOWN": "SFX_HORN",
     "HEAVY_CHARGE_LEVEL_2": "SFX_CHARGE_LEVEL_2",
     "PARRY": "SFX_PARRY",

@@ -1,0 +1,158 @@
+{
+  "sheet": "fx_storm",
+  "kind": "decal",
+  "image": "fx_storm.png",
+  "width": 64,
+  "height": 120,
+  "pivot": {
+    "x": 32,
+    "y": 119
+  },
+  "footprint": {
+    "w": 64,
+    "h": 120
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "foam": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "crest": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "burst": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": false
+    },
+    "green": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "bolt": {
+      "frames": 3,
+      "ticks": 3,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "foam/-/0": [
+      0,
+      0
+    ],
+    "foam/-/1": [
+      64,
+      0
+    ],
+    "foam/-/2": [
+      128,
+      0
+    ],
+    "foam/-/3": [
+      192,
+      0
+    ],
+    "foam/-/4": [
+      256,
+      0
+    ],
+    "foam/-/5": [
+      320,
+      0
+    ],
+    "crest/-/0": [
+      0,
+      120
+    ],
+    "crest/-/1": [
+      64,
+      120
+    ],
+    "crest/-/2": [
+      128,
+      120
+    ],
+    "crest/-/3": [
+      192,
+      120
+    ],
+    "burst/-/0": [
+      0,
+      240
+    ],
+    "burst/-/1": [
+      64,
+      240
+    ],
+    "burst/-/2": [
+      128,
+      240
+    ],
+    "burst/-/3": [
+      192,
+      240
+    ],
+    "burst/-/4": [
+      256,
+      240
+    ],
+    "burst/-/5": [
+      320,
+      240
+    ],
+    "green/-/0": [
+      0,
+      360
+    ],
+    "green/-/1": [
+      64,
+      360
+    ],
+    "green/-/2": [
+      128,
+      360
+    ],
+    "green/-/3": [
+      192,
+      360
+    ],
+    "green/-/4": [
+      256,
+      360
+    ],
+    "green/-/5": [
+      320,
+      360
+    ],
+    "green/-/6": [
+      384,
+      360
+    ],
+    "green/-/7": [
+      448,
+      360
+    ],
+    "bolt/-/0": [
+      0,
+      480
+    ],
+    "bolt/-/1": [
+      64,
+      480
+    ],
+    "bolt/-/2": [
+      128,
+      480
+    ]
+  }
+}

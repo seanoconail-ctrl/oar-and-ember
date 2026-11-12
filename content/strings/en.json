@@ -4639,5 +4639,33 @@
   },
   "ui.timings.mark.stores": {
     "text": "Stores brought down from the mast"
+  },
+  "ui.refusal.below_tide": {
+    "text": "Below the tide line"
+  },
+  "ui.refusal.no_room": {
+    "text": "No room"
+  },
+  "ui.refusal.hands_full": {
+    "text": "Hands full"
+  },
+  "crew.bark.cannot_fight": {
+    "text": "Can't. Not like this."
+  },
+  "caption.cold.thunder": {
+    "text": "Thunder rolling",
+    "tags": ["INFO"]
+  },
+  "caption.cold.wave": {
+    "text": "A wave breaks over the side",
+    "tags": ["INFO"]
+  },
+  "caption.cold.green_water": {
+    "text": "Green water over the gunwale",
+    "tags": ["INFO"]
+  },
+  "caption.amb.cold_storm": {
+    "text": "Storm wind, rain on the sea",
+    "tags": ["INFO"]
   }
 }

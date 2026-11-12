@@ -96,9 +96,10 @@ export function landContext(
       ? {}
       : {
           combatMove: {
-            chargeSpeed: cb.chargeSpeed,
             dodgeTiles: cb.dodge.tiles,
-            dodgeTicks: cb.dodge.ticks,
+            dodgeStart: cb.dodge.start,
+            dodgeDash: cb.dodge.dash,
+            accel: cb.accel,
           },
         }),
     stamina: parseStaminaBalance(balance),

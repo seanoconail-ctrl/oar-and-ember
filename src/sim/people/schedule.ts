@@ -239,14 +239,18 @@ export function activityOf(
     if (NEEDS_LIGHT.has(job) && (minute < light.lightFrom || minute >= light.darkFrom))
       return { kind: 'DARK', place: at(seat, 'sit'), job };
     const jdef = ctx.household.jobs[job];
-    const spot = jobSpot(world, camp, ctx, id, job);
+    const half = p.wounds.some((w) => w.severity === 'SERIOUS');
+    // Design addendum 2.5 (DF-21, item 8): seriously wounded, a job with seated places is worked
+    // sitting there at half pace, off the steerer's work spot (Runa at the boat with her ankle).
+    const seated = half ? (jdef?.hurtSpots?.[0] ?? null) : null;
+    const spot = seated ?? jobSpot(world, camp, ctx, id, job);
     if (jdef?.task !== undefined && spot !== null)
       return {
         kind: 'WORK',
-        place: at(spot, 'work', jdef.task),
+        place: at(spot, seated === null ? 'work' : 'sit', jdef.task),
         job,
         task: jdef.task,
-        half: p.wounds.some((w) => w.severity === 'SERIOUS'),
+        half,
       };
     return { kind: 'REST', place: at(seat, 'sit'), job };
   }

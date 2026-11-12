@@ -457,9 +457,68 @@ export const MIGRATIONS: readonly Migration[] = [
     // way. An enemy's mind gains an awareness level: alert if it knew of the household, else
     // unaware. A battle gains no warnings given yet. Nothing else of the fight changes.
     // The opening (decisions DE-16 to DE-30): src/persist/openingMigration.ts.
-    up: (state) => migrateOpening(migrateCombatV2(state)),
+    up: (state, ctx) => migrateOpening(migrateCombatV2(state), ctx),
+  },
+  {
+    from: 11,
+    describe:
+      'design addendum 2.5: committed combat (phases, the miss and its punish, telegraphs, the fight state machine, acceleration)',
+    // Decisions DF-1 to DF-10. Every fighter in the save gains 2.5's state at rest: no move in play
+    // (a fighter mid-action plays it out as it stands), a light weight, no miss, no step, no flash
+    // due, and the enemies' telegraph floors for an enemy; the attack-turn origin (`turnFrom`) goes.
+    // Each fighter's mind starts idle, deciding afresh at its first tick in a fight (its offset
+    // drawn then), with no hop, no sidearm drawn and no velocity. The steerer starts at rest.
+    up: (state) => migrateCombat25(state),
   },
 ];
+
+function migrateFighter25(f: Record<string, unknown>, enemy: boolean): Record<string, unknown> {
+  const { turnFrom: _turnFrom, ...rest } = f;
+  void _turnFrom;
+  return { ...rest, move: null, weight: 'LIGHT', missed: false, step: 0, flashAt: -1, floors: enemy };
+}
+
+function migrateActors25(actors: Record<string, Record<string, unknown>> | undefined): void {
+  for (const a of Object.values(actors ?? {})) {
+    const fa = a['fight'] as Record<string, unknown> | undefined;
+    if (fa === undefined) continue;
+    const ai = fa['ai'] as Record<string, unknown>;
+    a['fight'] = {
+      ...fa,
+      f: migrateFighter25(fa['f'] as Record<string, unknown>, fa['side'] === 'ENEMY'),
+      ai: {
+        ...ai,
+        mind: {
+          state: 'IDLE',
+          since: 0,
+          next: -1,
+          dir: 1,
+          turnedAt: -1_000_000,
+          patienceUntil: -1,
+          cooldownUntil: -1,
+          struck: false,
+        },
+        hop: null,
+        hopAt: -1,
+        sidearmAt: -1,
+      },
+    };
+  }
+}
+
+function migrateCombat25(state: Record<string, unknown>): Record<string, unknown> {
+  const onFoot = state['onFoot'] as Record<string, unknown> | null | undefined;
+  if (onFoot == null) return state;
+  const next = structuredClone(onFoot);
+  const player = next['player'] as Record<string, unknown>;
+  const fight = player['fight'] as Record<string, unknown> | null | undefined;
+  if (fight != null) player['fight'] = migrateFighter25(fight, false);
+  migrateActors25(next['actors'] as Record<string, Record<string, unknown>>);
+  const elsewhere = (next['elsewhere'] ?? {}) as Record<string, Record<string, unknown>>;
+  for (const rest of Object.values(elsewhere))
+    migrateActors25(rest['actors'] as Record<string, Record<string, unknown>>);
+  return { ...state, onFoot: next };
+}
 
 /** Book 2 section 12's four facings as an angle (radians, 0 east, y south). */
 const FACING_ANGLE: Readonly<Record<string, number>> = {

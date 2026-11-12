@@ -441,13 +441,25 @@ export function parseMissileBalance(json: unknown): MissileBalance {
   };
   const bowRow = weaponRow(json, 'Hunting bow');
   const spearRow = weaponRow(json, 'Spear, thrown');
+  // Design addendum 2.5 (decision DF-19): the draw is the bow's and the throw's wind-up in
+  // "Frame data".
+  const frame = (weapon: string, move: string): Row => {
+    const r = rows(json, 'combatTimings', 'frameData').find(
+      (x) => x['Weapon'] === weapon && x['Move'] === move,
+    );
+    if (r === undefined) throw new Error(`balance.json: frameData has no ${weapon} ${move}`);
+    return r;
+  };
   const bow: RangedWeapon = {
     reachTiles: number('weaponMovesets.Hunting bow.Reach', bowRow['Reach'] ?? ''),
-    drawTicks: number('weaponMovesets.Hunting bow.Windup', bowRow['Windup'] ?? ''),
+    drawTicks: number(
+      'frameData.Hunting bow.Wind-up',
+      frame('Hunting bow', 'Draw, loose, recover')['Wind-up'] ?? '',
+    ),
   };
   const spear: RangedWeapon = {
     reachTiles: number('weaponMovesets.Spear, thrown.Reach', spearRow['Reach'] ?? ''),
-    drawTicks: number('weaponMovesets.Spear, thrown.Windup', spearRow['Windup'] ?? ''),
+    drawTicks: number('frameData.Spear, thrown.Wind-up', frame('Spear, thrown', 'Throw')['Wind-up'] ?? ''),
   };
   const full = match(
     'spreadFullDraw',

@@ -217,6 +217,7 @@ uniform vec3 u_lift;
 uniform float u_fog;
 uniform vec3 u_fogColour;
 uniform float u_flash;
+uniform vec4 u_patches;   // share either way, patch size (px), drift x, drift y (px)
 uniform bool u_hasElev;
 uniform float u_dryAbove;
 uniform int u_detail;
@@ -276,6 +277,8 @@ void main() {
       if (streak > 0.72 && wisp > 0.42 && g + 0.25 * u_wind.z > 0.3) k *= 1.07;
     }
   }
+  if (u_patches.x > 0.0)
+    k *= 1.0 + u_patches.x * (vnoise((w - u_patches.zw) / u_patches.y) * 2.0 - 1.0);
   vec3 g = c * u_gain + u_lift;
   if (u_fog > 0.0) g = mix(g, u_fogColour, u_fog * (0.55 + 0.45 * vnoise((w - drift * 0.6) / 90.0)));
   vec3 outc = floor(clamp(g * light * k / 255.0, 0.0, 255.0) + 1e-6);

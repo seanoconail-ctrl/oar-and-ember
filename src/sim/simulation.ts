@@ -78,6 +78,7 @@ import {
   startFight,
   steererBlock,
   steererDodge,
+  steererFighter,
   steererParry,
   steererShove,
   stepFight,
@@ -87,6 +88,7 @@ import {
 } from './land/fight.ts';
 import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
+import { updateExhausted } from './combat/fighter.ts';
 import type { MissileEvent } from './land/missiles.ts';
 import { bandAt, isDeep, stillWaterLevel } from './land/water.ts';
 import {
@@ -993,6 +995,18 @@ export function createSimulation(
             ? null
             : Math.max(0, Math.round(command.dist * AIM_DIST_STEPS) / AIM_DIST_STEPS);
         if (p.aim === null) events.emit({ type: 'BOW_DRAWN', item });
+        // Locked on, a bow or a thrown spear goes at the locked enemy (the user's decision DF-81).
+        const locked = p.stance?.lockOn == null ? undefined : onFoot.actors[p.stance.lockOn];
+        const map = land.maps.get(onFoot.zone);
+        if (locked !== undefined && map !== undefined) {
+          const lx = locked.x - p.x;
+          const ly = locked.y - p.y;
+          const ld = Math.hypot(lx, ly);
+          if (ld > 1e-6) {
+            p.aim = { x: lx / ld, y: ly / ld, since: p.aim?.since ?? state.tick, dist: ld / map.tile };
+            return;
+          }
+        }
         p.aim = { x: at[0], y: at[1], since: p.aim?.since ?? state.tick, dist };
         return;
       }
@@ -1703,7 +1717,7 @@ export function createSimulation(
     // The launch scene moves the steerer itself (Stage 12).
     const press = launchActive(state)
       ? null
-      : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+      : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level }, state.tick);
     if (held || waking) p.intent = wanted;
     // "Nothing that way" (decision DE-25): pressing against an edge gives its caption.
     if (land.edgeCaption != null) {
@@ -1750,11 +1764,25 @@ export function createSimulation(
           inWaist: waist,
           inCombat: hostilesAware(onFoot) > 0,
           blocking: p.blocking === true,
+          // Design addendum 2.5 (Book 10 "Exhausted"): the longer pause and slower refill.
+          ...(fightCtx !== null && p.fight?.exhausted === true
+            ? {
+                exhausted: {
+                  delay: fightCtx.cb.exhausted.exhaustedRegenDelay,
+                  rate: fightCtx.cb.exhausted.exhaustedRegenPerSecond,
+                },
+              }
+            : {}),
         },
         state.tick,
         p.winded,
       );
       if (Object.keys(p.winded).length === 0) delete p.winded;
+      // Any cost that empties the bar exhausts (Book 10 "Exhausted", DF-3): running included.
+      if (st.current <= 0 && fightCtx !== null) {
+        const sf = steererFighter(state, fightCtx);
+        if (sf !== null) updateExhausted(sf, st, fightCtx.cb, state.tick);
+      }
       // Empty while carrying: the load is set down where the steerer stands.
       if (emptied.carry === true && onFoot.carrying !== null) {
         const person = onFoot.carrying;

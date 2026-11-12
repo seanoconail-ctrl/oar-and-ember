@@ -103,6 +103,17 @@ export interface SceneEffects {
   readonly flash: number;
   /** Mist 0..1. */
   readonly fog: number;
+  /**
+   * Light varying in drifting patches (design addendum 2.5, the storm: never a flat, uniform
+   * blue): the light is scaled by up to `share` either way, in patches about `size` px across,
+   * drifting at (vx, vy) px a second.
+   */
+  readonly patches?: {
+    readonly share: number;
+    readonly size: number;
+    readonly vx: number;
+    readonly vy: number;
+  };
   /** Effect detail: 2 full, 1 lite, 0 low, stepped down on a machine too slow for full. */
   readonly detail?: 0 | 1 | 2;
 }

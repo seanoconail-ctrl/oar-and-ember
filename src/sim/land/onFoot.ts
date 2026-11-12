@@ -22,12 +22,8 @@ import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, terrainAt, tileBlocks, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
-import {
-  charging,
-  facingLocked,
-  facingOfAngle,
-  feetPlanted as fightPlanted,
-} from '../combat/fighter.ts';
+import { dashStep, facingLocked, facingOfAngle, locked } from '../combat/fighter.ts';
+import type { AccelMode, CombatBalance } from '../../content/combatBalance.ts';
 import type { Fighter } from '../combat/fighter.ts';
 import type { ActorFight, Battle, Stance } from './fight.ts';
 import { doorBlocks } from './doors.ts';
@@ -107,6 +103,13 @@ export interface OnFootPlayer {
   blocking?: boolean;
   /** Combat v2: the stance (facing, lock-on, sneaking; Book 2 section 12, decision DE-2). */
   stance?: Stance;
+  /**
+   * Design addendum 2.5 (Book 2 section 12's Motion; Book 10 "Movement and acceleration",
+   * decision DF-2): the velocity in logical px a tick, eased towards the speed wanted, and the
+   * mode it last moved in (its ticks to stop).
+   */
+  vel?: { x: number; y: number };
+  motion?: AccelMode;
 }
 
 /**
@@ -150,9 +153,20 @@ export interface OnFootActor {
   carries?: Id;
 }
 
-/** Where an archer is in its stop, draw, loose and move. */
+/** An archer's settle, draw and recovery ticks (Book 10 "Archers", standStill; "Enemy attacks", Bow). */
+export interface ArcherTiming {
+  readonly settle: number;
+  readonly draw: number;
+  readonly recover: number;
+}
+
+/** Where an archer is in its stop, settle, draw, loose, recovery and move. */
 export interface ArcherState {
-  phase: 'stopping' | 'drawing' | 'moving';
+  phase: 'stopping' | 'settling' | 'drawing' | 'recovering' | 'moving';
+  /** When its settle or recovery began. */
+  since?: number;
+  /** Its ticks (design addendum 2.5); without, Book 10's draw and no settle or recovery. */
+  readonly timing?: ArcherTiming;
   /** The aim point, in world pixels. */
   readonly target: { readonly x: number; readonly y: number };
   /** The walk it takes once it has loosed. */
@@ -319,9 +333,11 @@ export interface LandContext {
   /** Design addendum 2.4: Book 10's edgeStopAngle (decision DE-25); absent, the old sliding. */
   readonly edgeStopDegrees?: number;
   readonly combatMove?: {
-    readonly chargeSpeed: number;
     readonly dodgeTiles: number;
-    readonly dodgeTicks: number;
+    readonly dodgeStart: number;
+    readonly dodgeDash: number;
+    /** Book 10 "Movement and acceleration" (design addendum 2.5, decision DF-2). */
+    readonly accel: CombatBalance['accel'];
   };
 }
 
@@ -380,10 +396,11 @@ export function placeOnFoot(
 export function gaitFor(state: OnFootState): Gait {
   if (state.carrying !== null) return 'carry';
   if (state.player.intent.sneak || state.player.stance?.sneaking === true) return 'sneak';
-  // Exhausted (combat v2, Book 10 exhausted): no run until the bar recovers.
+  // Exhausted (Book 10 "Exhausted", decision DF-3): no run until the bar recovers; nor with the
+  // shield up (Book 10 "Block").
   if (state.player.fight?.exhausted === true) return 'walk';
-  // A sprint that ran the bar empty drops to a walk until stamina recovers (Book 10 sprintEmpty).
-  if (state.player.intent.run && state.player.winded?.run !== true) return 'run';
+  if (state.player.blocking === true) return 'walk';
+  if (state.player.intent.run) return 'run';
   return 'walk';
 }
 
@@ -452,6 +469,7 @@ export function stepMovement(
     'movement' | 'rules' | 'water' | 'elevations' | 'combatMove' | 'edgeStopDegrees'
   >,
   tide: TideNow,
+  tick?: number,
 ): EdgePress | null {
   const p = state.player;
   p.gait = gaitFor(state);
@@ -460,32 +478,69 @@ export function stepMovement(
   // work loop and lying down to sleep plant the feet too, and so does a blow, a parry, a block
   // or a stagger (Stage 9); a charge walks at Book 10's charge speed, and a dodge moves on its own.
   const fight = p.fight ?? null;
+  const tickNow = tick ?? 0;
+  // A dodge moves on its own over its dash, eased out (Book 10 "Dodge"); a blow, a parry, a block
+  // raised or lowered, a charge or any other action plants the feet at once (Book 10
+  // "Commitment": locked, stopOnAttack). A held guard walks at half speed.
+  const cm = ctx.combatMove;
   const dodging = fight !== null && fight.state === 'dodge' && fight.dodge !== null;
   const planted =
     feetPlanted(p) ||
     p.work != null ||
     p.sleep != null ||
-    (fight !== null && fightPlanted(fight) && !dodging);
-  const { x: ix, y: iy } = dodging
-    ? (fight.dodge ?? { x: 0, y: 0 })
-    : planted
-      ? { x: 0, y: 0 }
-      : p.intent;
+    (fight !== null && (locked(fight) || fight.hitstop > 0) && !dodging);
   // Combat v2: the stance owns the facing (drawn in the nearest of four, decision DE-2).
   const stance = p.stance;
+  const { x: wx, y: wy } = planted || dodging ? { x: 0, y: 0 } : p.intent;
   if (stance !== undefined && (stance.want !== null || stance.lockOn !== null || p.aim !== null))
     p.facing = facingOfAngle(stance.facing);
   else if (fight !== null && facingLocked(fight)) p.facing = fight.facing;
   else
-    p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
+    p.facing = p.aim === null ? facingOf(wx, wy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
   if (fight !== null && !facingLocked(fight) && stance === undefined) fight.facing = p.facing;
-  const cm = ctx.combatMove;
-  // The stance's share: forward, strafe or backing off (Book 10 "Stance and lock-on").
-  let perTick =
-    (speedAt(state, map, ctx, tide.level) * map.tile * (stance?.speed ?? 1)) / TICKS_PER_SECOND;
-  if (dodging && cm !== undefined) perTick = (cm.dodgeTiles * map.tile) / cm.dodgeTicks;
-  else if (fight !== null && charging(fight) && cm !== undefined)
-    perTick = Math.min(perTick, (cm.chargeSpeed * map.tile) / TICKS_PER_SECOND);
+  // The stance's share: forward, strafe or backing off (Book 10 "Stance and lock-on"); half
+  // exhausted or with the shield up (Book 10 "Exhausted", "Block").
+  const exhausted = fight?.exhausted === true;
+  const blocking = p.blocking === true && !dodging;
+  const share =
+    (stance?.speed ?? 1) *
+    (exhausted && cm !== undefined ? cm.accel.exhaustedSpeed : 1) *
+    (blocking && cm !== undefined ? cm.accel.blockingSpeed : 1);
+  const full = (speedAt(state, map, ctx, tide.level) * map.tile * share) / TICKS_PER_SECOND;
+  let ix: number;
+  let iy: number;
+  let perTick: number;
+  if (dodging && cm !== undefined) {
+    // The dash, eased out; the start and the rest of the dodge stand.
+    const k = tickNow - fight.since - cm.dodgeStart;
+    perTick = dashStep(k, cm.dodgeDash, cm.dodgeTiles) * map.tile;
+    ix = fight.dodge?.x ?? 0;
+    iy = fight.dodge?.y ?? 0;
+    if (p.vel !== undefined) p.vel = { x: 0, y: 0 };
+  } else if (cm === undefined) {
+    perTick = full;
+    ix = wx;
+    iy = wy;
+  } else if (planted) {
+    // stopOnAttack: the speed goes to zero at once.
+    if (p.vel !== undefined) p.vel = { x: 0, y: 0 };
+    perTick = 0;
+    ix = 0;
+    iy = 0;
+  } else {
+    // Grounded movement (Book 10 "Movement and acceleration"): ease towards the speed wanted.
+    const mode = accelMode(p, state, exhausted, blocking);
+    const moving = Math.hypot(wx, wy) > 1e-6;
+    const ticks = accelTicks(cm.accel, moving ? mode : (p.motion ?? mode), fight, p);
+    const v = easeVelocity(p.vel ?? { x: 0, y: 0 }, { x: wx * full, y: wy * full }, full, ticks);
+    // At rest with nothing wanted, the state is left as it was (no velocity until it moves).
+    if (p.vel !== undefined || v.x !== 0 || v.y !== 0) p.vel = v;
+    if (moving) p.motion = mode;
+    const sp = Math.hypot(v.x, v.y);
+    perTick = sp;
+    ix = sp < 1e-9 ? 0 : v.x / sp;
+    iy = sp < 1e-9 ? 0 : v.y / sp;
+  }
   const dx = ix * perTick;
   const dy = iy * perTick;
   const before = { x: p.x, y: p.y };
@@ -515,6 +570,8 @@ export function stepMovement(
     p.y = step.y;
   }
   p.moving = p.x !== before.x || p.y !== before.y;
+  // Against a wall the speed is lost (no stored speed to burst out with).
+  if (p.vel !== undefined && !p.moving) p.vel = { x: 0, y: 0 };
   const carried = state.carrying === null ? undefined : state.actors[state.carrying];
   if (carried !== undefined) {
     carried.x = p.x;
@@ -522,6 +579,75 @@ export function stepMovement(
     carried.facing = p.facing;
   }
   return press;
+}
+
+/**
+ * The mode the steerer moves in (Book 10 "Movement and acceleration"): carrying, exhausted, the
+ * shield up, sneaking, running, or in the stance backing off or strafing, else walking.
+ */
+function accelMode(p: OnFootPlayer, state: OnFootState, exhausted: boolean, blocking: boolean): AccelMode {
+  if (state.carrying !== null) return 'carry';
+  if (exhausted) return 'exhausted';
+  if (blocking) return 'blocking';
+  if (p.gait === 'sneak') return 'sneak';
+  if (p.gait === 'run') return 'run';
+  const share = p.stance?.speed ?? 1;
+  const st = p.stance;
+  if (st !== undefined && share !== 1 && st.backing === true) return 'backOff';
+  if (st !== undefined && share !== 1) return 'strafe';
+  return 'walk';
+}
+
+/**
+ * Ticks to full speed and to stop for a mode: x the mail's and the heavy build's factors (both:
+ * Book 10's own); the run from a walk builds over its shorter ticks.
+ */
+export function accelTicks(
+  a: CombatBalance['accel'],
+  mode: AccelMode,
+  f: { readonly armour: string; readonly heavy: boolean } | null,
+  p?: { readonly vel?: { x: number; y: number }; readonly motion?: AccelMode },
+): { up: number; stop: number } {
+  const m = a.modes[mode];
+  const mail = f?.armour === 'MAIL';
+  const heavy = f?.heavy === true;
+  const k = mail && heavy ? a.both : mail ? a.mail : heavy ? a.heavy : 1;
+  const fromWalk =
+    mode === 'run' &&
+    p?.motion === 'walk' &&
+    p.vel !== undefined &&
+    Math.hypot(p.vel.x, p.vel.y) > 1e-6;
+  return { up: (fromWalk ? a.runFromWalk : m.up) * k, stop: m.stop * k };
+}
+
+/**
+ * One tick of grounded movement (Book 10 "Movement and acceleration"): the velocity eases towards
+ * the one wanted, up at the full speed over its ticks to full speed, down over its ticks to stop;
+ * what is across or against the way wanted slows first, so a reversal passes through a stop.
+ */
+export function easeVelocity(
+  v: { readonly x: number; readonly y: number },
+  want: { readonly x: number; readonly y: number },
+  full: number,
+  ticks: { readonly up: number; readonly stop: number },
+): { x: number; y: number } {
+  const up = full / Math.max(1, ticks.up);
+  const down = full / Math.max(1, ticks.stop);
+  const wl = Math.hypot(want.x, want.y);
+  const shrink = (x: number, y: number, by: number): { x: number; y: number } => {
+    const l = Math.hypot(x, y);
+    if (l <= by || l < 1e-9) return { x: 0, y: 0 };
+    return { x: x - (x / l) * by, y: y - (y / l) * by };
+  };
+  if (wl < 1e-9) return shrink(v.x, v.y, down);
+  const ux = want.x / wl;
+  const uy = want.y / wl;
+  let par = v.x * ux + v.y * uy;
+  const perp = shrink(v.x - par * ux, v.y - par * uy, down);
+  if (par < 0) par = Math.min(0, par + down);
+  else if (par < wl) par = Math.min(wl, par + up);
+  else par = Math.max(wl, par - down);
+  return { x: par * ux + perp.x, y: par * uy + perp.y };
 }
 
 /**

@@ -146,13 +146,8 @@ export class WreckBot extends LaunchBot {
     for (let tries = 0; tries < 8; tries++) {
       this.waitFor(() => this.onFoot.player.winded?.carry !== true, 60 * 60);
       if (this.onFoot.carrying !== m.bundle) {
-        // On the flats it waits for the ebb (decision DE-64).
-        try {
-          this.lift(m.bundle);
-        } catch {
-          this.waitForLowWater();
-          this.lift(m.bundle);
-        }
+        // It lies in wading depth at any state of the tide: no wait for the ebb (DF-82).
+        this.lift(m.bundle);
       }
       this.goToZone(c.zone);
       if (this.onFoot.carrying !== m.bundle) continue;

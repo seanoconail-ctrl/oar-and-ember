@@ -44,6 +44,7 @@ import type { Tile } from '../play/openingBot.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { combat2Capture } from './captureCombat2.ts';
 import { openingCapture } from './captureOpening.ts';
+import { stormCapture } from './captureStorm.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
@@ -998,7 +999,7 @@ async function fightBot(page: Page, held: Set<string>): Promise<void> {
     const dy = f.y - at.y;
     return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
   };
-  const { startup, window } = COMBAT.parry;
+  const { windup: startup, window } = COMBAT.parry;
   const coming = list.find((f) => f.toActive >= 0 && dist(f) < 60);
   if (coming !== undefined) {
     await aimAt(coming);
@@ -1709,7 +1710,22 @@ if (import.meta.filename === process.argv[1]) {
     console.error('usage: npm run capture -- <label>   (e.g. stage-07)');
     process.exit(1);
   }
-  if (label === 'rework-2.4-opening') {
+  if (label === 'rework-2.5-storm') {
+    // The storm opening (design addendum 2.5 section 3): docs/art/rework-2.5/storm/ (captureStorm.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5297, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await stormCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'rework-2.4-opening') {
     // The first five minutes (design addendum 2.4): docs/art/rework-2.4/opening/ (captureOpening.ts).
     const server = await createServer({
       root: REPO_ROOT,

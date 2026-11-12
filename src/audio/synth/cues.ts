@@ -8,6 +8,7 @@
  * - Ambience cues name a generated ambience.
  */
 import { OPENING_SOUNDS } from './opening.ts';
+import { STORM_SOUNDS } from './storm.ts';
 import hearthJson from '../../../content/music/hearth.json';
 import combatJson from '../../../content/music/combat.json';
 import raidJson from '../../../content/music/raid.json';
@@ -150,6 +151,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...LAUNCH_SOUNDS,
     ...COMBAT2_SOUNDS,
     ...OPENING_SOUNDS,
+    ...STORM_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 
@@ -234,7 +236,10 @@ export class HearthAmbience {
 
 /** Ambience implementations: the strand bed (wind, sea, gulls), the hearth or home life. */
 export const AMBIENCES: Readonly<
-  Record<string, 'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold' | 'cave'>
+  Record<
+    string,
+    'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold' | 'cave' | 'storm' | 'rain'
+  >
 > = {
   AMB_SURF_SHINGLE: 'strand',
   // Inland heather: the same wind, with the sea far off (the strand bed at low water).
@@ -250,6 +255,10 @@ export const AMBIENCES: Readonly<
   AMB_CAIRN_FOLD: 'fold',
   // Stage 11: Seal Cave, the cove's surf with the cave's drips and booms (repairs.ts).
   AMB_SEALCAVE: 'cave',
+  // Design addendum 2.5: the cold open's storm bed and rain on the sail cloth (storm.ts), played
+  // by the play view directly (setStorm, setRainCloth), never by a zone.
+  AMB_COLD_STORM: 'storm',
+  AMB_RAIN_CLOTH: 'rain',
 };
 
 /** The part of the day each home-life ambience is for (Stage 7). */

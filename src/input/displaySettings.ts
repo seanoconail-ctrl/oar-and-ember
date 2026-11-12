@@ -21,7 +21,9 @@ export interface DisplaySettings {
   readonly gore: 0 | 1 | 2;
   /**
    * Combat v2 (Book 10 marks, decision DE-9): the "?" and "!" over a suspicious or alerted enemy;
-   * on by default, `?marks=off` turns them off.
+   * off by default since design addendum 2.5 (decision DF-9: awareness shows by barks and body
+   * language), `?marks=on` turns them on. A choice saved before 2.5 (setting version 1, when
+   * every save carried the old default) is not kept.
    */
   readonly marks: boolean;
 }
@@ -36,19 +38,23 @@ export function parseDisplaySettings(text: string | null, systemPrefers: boolean
         infoCaptions?: unknown;
         gore?: unknown;
         marks?: unknown;
+        version?: unknown;
       } | null;
       if (typeof raw?.reducedMotion === 'boolean')
         return {
           reducedMotion: raw.reducedMotion,
           infoCaptions: typeof raw.infoCaptions === 'boolean' ? raw.infoCaptions : true,
           gore: raw.gore === 0 || raw.gore === 1 || raw.gore === 2 ? raw.gore : 2,
-          marks: typeof raw.marks === 'boolean' ? raw.marks : true,
+          marks:
+            typeof raw.marks === 'boolean' && typeof raw.version === 'number' && raw.version >= 2
+              ? raw.marks
+              : false,
         };
     } catch {
       // A damaged setting falls back to the system preference.
     }
   }
-  return { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: true };
+  return { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: false };
 }
 
 /** The setting in force: the address first, then the saved choice, then the system preference. */
@@ -61,7 +67,7 @@ export function resolveDisplaySettings(
   try {
     saved = parseDisplaySettings(store.getItem(DISPLAY_KEY), systemPrefers);
   } catch {
-    saved = { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: true };
+    saved = { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: false };
   }
   const params = new URLSearchParams(query);
   const gore = GORE_WORDS[params.get('gore') ?? ''];
@@ -76,7 +82,7 @@ export function resolveDisplaySettings(
 
 export function saveDisplaySettings(store: KeyValueStore, settings: DisplaySettings): boolean {
   try {
-    store.setItem(DISPLAY_KEY, JSON.stringify({ version: 1, ...settings }));
+    store.setItem(DISPLAY_KEY, JSON.stringify({ version: 2, ...settings }));
     return true;
   } catch {
     return false;
