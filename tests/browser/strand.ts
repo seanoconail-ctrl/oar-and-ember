@@ -82,8 +82,9 @@ export async function isStepped(page: Page): Promise<boolean> {
 export async function step(page: Page, frames = 1, ms = STEP_MS): Promise<void> {
   await page.evaluate(
     ({ n, length }) => {
-      const w = window as unknown as { oeStep: (ms: number) => void };
-      for (let i = 0; i < n; i++) w.oeStep(length);
+      const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
+      // Only the last frame is drawn: the simulation and overlay run on every one (DE-81).
+      for (let i = 0; i < n; i++) w.oeStep(length, i === n - 1);
     },
     { n: frames, length: ms },
   );
@@ -102,14 +103,15 @@ export async function stepUntil(
 ): Promise<void> {
   await page.evaluate(
     ({ attribute, exact, source, flags, frames, length }) => {
-      const w = window as unknown as { oeStep: (ms: number) => void };
+      const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
       const o = document.querySelector('.oe-overlay');
       const pattern = source === null ? null : new RegExp(source, flags);
       const ok = (): boolean => {
         const v = o?.getAttribute(attribute) ?? '';
         return pattern === null ? v === exact : pattern.test(v);
       };
-      for (let i = 0; i < frames && !ok(); i++) w.oeStep(length);
+      for (let i = 0; i < frames && !ok(); i++) w.oeStep(length, false);
+      w.oeStep(0);
     },
     {
       attribute: `data-${name}`,
@@ -131,10 +133,11 @@ export async function stepUntilText(
 ): Promise<void> {
   await page.evaluate(
     ({ css, words, frames, length }) => {
-      const w = window as unknown as { oeStep: (ms: number) => void };
+      const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
       const ok = (): boolean =>
         [...document.querySelectorAll(css)].some((e) => e.textContent.includes(words));
-      for (let i = 0; i < frames && !ok(); i++) w.oeStep(length);
+      for (let i = 0; i < frames && !ok(); i++) w.oeStep(length, false);
+      w.oeStep(0);
     },
     { css: selector, words: text, frames: Math.ceil((seconds * 1000) / STEP_MS), length: STEP_MS },
   );
@@ -154,7 +157,7 @@ async function walkAxisStepped(
   await page.keyboard.down(key);
   await page.evaluate(
     ({ name, goal, walk, tick }) => {
-      const w = window as unknown as { oeStep: (ms: number) => void };
+      const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
       const o = document.querySelector('.oe-overlay');
       const now = (): number => Number(o?.getAttribute(name) ?? 0);
       const forward = goal > now();
@@ -165,7 +168,7 @@ async function walkAxisStepped(
         if (left <= 2) break;
         // A walk covers at most 0.8 px a tick, so a frame never carries it past the goal.
         const length = left > 14 ? walk : left > 5 ? 4 * tick : tick;
-        w.oeStep(length);
+        w.oeStep(length, false);
         if (now() === at) {
           still += length;
           if (still > 1000) break;

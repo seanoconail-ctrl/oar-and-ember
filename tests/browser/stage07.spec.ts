@@ -27,8 +27,8 @@ const site = (key: string) => {
 async function step(page: Page, frames = 1, ms = 100): Promise<void> {
   await page.evaluate(
     ([n, d]) => {
-      const w = window as unknown as { oeStep: (ms: number) => void };
-      for (let i = 0; i < n; i++) w.oeStep(d);
+      const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
+      for (let i = 0; i < n; i++) w.oeStep(d, i === n - 1);
     },
     [frames, ms] as const,
   );

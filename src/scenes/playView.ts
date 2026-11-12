@@ -1558,6 +1558,8 @@ export function startPlay(
     parts.push(foot);
     region.replaceChildren(...parts);
   };
+  /** False while a stepped frame runs undrawn (capture mode's `oeStep(ms, false)`). */
+  let drawThis = true;
   const frame = (now: number): void => {
     frameNow = now;
     const workStart = performance.now();
@@ -2019,7 +2021,7 @@ export function startPlay(
               pressed: work.press !== null,
             },
     };
-    hud.draw(hudFull);
+    if (drawThis) hud.draw(hudFull);
     // Stage 12: the sea map fills the frame; the hotbar and clock are not drawn over it.
     hud.canvas.style.visibility = mapMode === null ? '' : 'hidden';
     // The words beside them on the text overlay (Book 8 section 10: the plain reason).
@@ -2203,7 +2205,7 @@ export function startPlay(
         markState(),
         display.reducedMotion,
       );
-      presenter.present(f.rgba);
+      if (drawThis) presenter.present(f.rgba);
       seaMapLabels(f.revealed);
       root.dataset['seamap'] = f.revealed.toFixed(2);
     } else {
@@ -2235,7 +2237,7 @@ export function startPlay(
                 steererSheets: [look.steerer.body, ...Object.values(look.steerer.layers).flat()],
                 bodyModel: choice.bodyModel,
               });
-      renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
+      if (drawThis) renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
       root.dataset['seamap'] = '';
     }
     if (frames < 3) {
@@ -2401,9 +2403,20 @@ export function startPlay(
   const manual = new URLSearchParams(window.location.search).has('capture');
   if (manual) {
     let clock = performance.now();
-    (window as unknown as { oeStep: (ms: number) => void }).oeStep = (ms: number) => {
+    // `draw` false runs the frame (the simulation, the scene and the overlay's attributes) without
+    // drawing it: a stepped test drawing only the last of many frames, as Firefox on CI's macOS
+    // runners draws in software at a few frames a second (decision DE-81).
+    (window as unknown as { oeStep: (ms: number, draw?: boolean) => void }).oeStep = (
+      ms: number,
+      draw = true,
+    ) => {
       clock += ms;
-      frame(clock);
+      drawThis = draw;
+      try {
+        frame(clock);
+      } finally {
+        drawThis = true;
+      }
     };
     // Captures and browser tests only (combat v2): the world, to stage a moment of a fight (a foe
     // frozen in place, aware or not), as the unit tests do.
