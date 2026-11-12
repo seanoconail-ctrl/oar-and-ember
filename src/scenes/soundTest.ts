@@ -70,6 +70,8 @@ export interface RenderSettings {
   readonly wind?: number;
   readonly tide?: number;
   readonly gore?: number;
+  /** For a person's wordless sound (the grunt): the speaker's pitch, Hz (voice.ts). */
+  readonly voice?: number;
   /** For footsteps: the gait and how many steps to walk. */
   readonly gait?: Gait;
   readonly steps?: number;
@@ -275,7 +277,7 @@ export function startItem(
       (d) => d.id === id,
     );
     if (def === undefined) throw new Error(`no sound ${id}`);
-    def.play(e, at, 0, { gore: s.gore ?? 2 });
+    def.play(e, at, 0, { gore: s.gore ?? 2, ...(s.voice === undefined ? {} : { voice: s.voice }) });
     return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'step') {

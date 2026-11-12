@@ -113,3 +113,33 @@ export function steererOwns(
 ): boolean {
   return player.hotbar.slots.includes(item) || (player.inventory[item] ?? 0) > 0;
 }
+
+/** A shield layer and its slung twin (people48.py: layer_shield_back_ beside layer_shield_round_). */
+const SHIELD_LAYER = 'layer_shield_round_';
+
+/**
+ * A fighter's look with the shield slung on the back (decision DE-14: Svart fights the dusk fight
+ * with the spear in both hands): the shield layer swapped for its slung twin where the art has one
+ * (`has`), so what is drawn matches the simulation's shield (none in hand, nothing blocked).
+ */
+export function withSlungShield(look: PersonLook, has: (sheet: string) => boolean): PersonLook {
+  const swap = (sheet: string): string => {
+    if (!sheet.startsWith(SHIELD_LAYER)) return sheet;
+    const slung = `layer_shield_back_${sheet.slice(SHIELD_LAYER.length)}`;
+    return has(slung) ? slung : sheet;
+  };
+  const layers: Record<string, readonly string[]> = {};
+  for (const [facing, sheets] of Object.entries(look.layers)) layers[facing] = sheets.map(swap);
+  return { body: look.body, layers };
+}
+
+/**
+ * Whether a fighter's shield is slung: it has none in hand and never had one broken (a split or
+ * worn-out shield is gone, not slung).
+ */
+export function shieldSlung(f: {
+  readonly shield: boolean;
+  readonly shieldBreaks: number;
+}): boolean {
+  return !f.shield && f.shieldBreaks === 0;
+}

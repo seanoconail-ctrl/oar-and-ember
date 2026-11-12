@@ -30,10 +30,11 @@ export const COMBAT2_SOUNDS: readonly SoundDef[] = [
     id: 'SFX_GRUNT',
     captionKey: 'caption.sfx.grunt',
     bus: 'effects',
-    play: (e, at, pan) => {
+    play: (e, at, pan, opts) => {
       const to = boosted(e, 2.4, 'effects', pan);
-      // A wordless grunt, cut short by the blow.
-      grunt(e, at, to, 150, 0.16, 0.28);
+      // A wordless grunt, cut short by the blow, at the speaker's own pitch (voice.ts): Ketill's
+      // low, Conn's high; 150 Hz (Svart's) when no voice is given.
+      grunt(e, at, to, opts.voice ?? 150, 0.16, 0.28);
       breath(e, at + 0.02, to, 0.12, 0.15, 800);
       return 0.25;
     },

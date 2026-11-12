@@ -224,10 +224,13 @@ export class WebAudioEngine implements AudioSink {
     return this.#cues.get(id);
   }
 
-  oneShot(cue: CueDef, at: number, pan: number): void {
+  oneShot(cue: CueDef, at: number, pan: number, voice?: number): void {
     const e = this.#e;
     if (e === null) return;
-    SOUNDS.get(cue.id)?.play(e, Math.max(at, e.ctx.currentTime), pan, { gore: this.#gore });
+    SOUNDS.get(cue.id)?.play(e, Math.max(at, e.ctx.currentTime), pan, {
+      gore: this.#gore,
+      ...(voice === undefined ? {} : { voice }),
+    });
   }
 
   ambience(cues: readonly CueDef[], at: number): void {

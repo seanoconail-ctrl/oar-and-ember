@@ -2472,8 +2472,9 @@ def axe_head(part, facing, at, d, edge, bias):
 
 def shield(parts, facing, j, pose, ch):
     """A round shield of boards with an iron boss and a hide rim, about 14 px across. On the left
-    forearm (facing out to the left), held up in front (blocking), raised high, or on the back."""
-    mode = pose.shield or ('back' if pose.hold != 'held' else 'arm')
+    forearm (facing out to the left), held up in front (blocking), raised high, or on the back. A
+    slung shield (ch.slung: decision DE-14, Svart's at the dusk fight) stays on the back in every pose."""
+    mode = 'back' if getattr(ch, 'slung', False) else (pose.shield or ('back' if pose.hold != 'held' else 'arm'))
     S = j['S']
     L = j['L']['wrist']
     if mode == 'front':
@@ -3237,7 +3238,13 @@ def sit_kneel():
     return anim_kneel()[:1] * 4
 
 
+# The scavengers whose shield can be slung on the back while they fight (decision DE-14: Svart at
+# the first dusk); each gets a layer_shield_back_ sheet beside its shield layer, and a
+# wrecker_<key>_slung layer file.
+SLUNG = ('svart',)
+
 LAYER_NOTE = dict(LAYER_NOTE, **{
+    'shield_back': 'Slung shield layer (design addendum 2.4, decision DE-14): the same round shield on the back in\n# every state, drawn in place of the shield layer while the fighter fights without it.',
     'weapon': 'Weapon layer (Stage 9): in the right hand to fight, carried at rest otherwise, thrown down in\n# surrender and lying beside the dead; on a larger canvas round the same foot anchor.',
     'shield': 'Shield layer (Stage 9): a round shield on the left forearm, held up to block, slung on the back\n# at rest; on a larger canvas round the same foot anchor.',
     'blood': 'Bloodied layer (Book 7 section 12, Stage 9): drawn over the clothing below half vitality and on\n# the dead; the clothing darkens at the wound side. Only with the gore setting.',
@@ -3503,6 +3510,14 @@ def write_character(key):
     arms_size = ((CW, CH), (OX + PIVOT[0], OY + PIVOT[1]))
     sizes = {'bow': ((48, 56), (24, 51)) if not big else arms_size, 'weapon': arms_size, 'shield': arms_size}
     sheets = render_character(ch, states, mats, order, names, sizes, getattr(ch, 'soft', SOFT))
+    if key in SLUNG:
+        # The same shield slung on the back in every state (decision DE-14): the game draws it in
+        # place of the shield layer while the fighter has no shield in hand.
+        ch.slung = True
+        slung = dict(names, shield=f'layer_shield_back_{nk}')
+        sheets['shield_back'] = render_character(ch, states, mats, order, slung, sizes,
+                                                 getattr(ch, 'soft', SOFT))['shield']
+        ch.slung = False
     anims = {}
     for state, fn, ticks, loop in states:
         anims[state] = (frames_of(state, fn), ticks, loop)
@@ -3556,6 +3571,10 @@ def main():
             layers_json(key, {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
         else:
             layers_json(f'wrecker_{key}', {f: [n[L] for L in ORDER_ARMED[f] if L in n] for f in FACINGS})
+        if key in SLUNG:
+            # The same person with the shield slung (decision DE-14): drawn while fighting without it.
+            slung = dict(n, shield=n['shield'].replace('layer_shield_round_', 'layer_shield_back_'))
+            layers_json(f'wrecker_{key}_slung', {f: [slung[L] for L in ORDER_ARMED[f] if L in slung] for f in FACINGS})
     if CUT:
         for c in sorted(CUT):
             print('cut off by the canvas:', c)

@@ -40,6 +40,11 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "binding": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -68,6 +73,10 @@
     "silver_arm_ring/-/0": [
       0,
       72
+    ],
+    "binding/-/0": [
+      0,
+      90
     ]
   }
 }

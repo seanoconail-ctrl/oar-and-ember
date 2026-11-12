@@ -104,6 +104,8 @@ export interface OpeningBalance {
   readonly camp: {
     /** The stores on the broken mast: salt fish in ration-days (and the ship's cauldron). */
     readonly mastStoresRd: number;
+    /** Linen bindings in the camp's salvage (section 03 bindingsAtCamp; combat v2's healing). */
+    readonly bindingsAtCamp: number;
     /** The steerer's raising of the sail shelter: real seconds, game minutes and stamina. */
     readonly shelterRaise: {
       readonly seconds: number;
@@ -311,6 +313,7 @@ export function parseOpeningBalance(json: unknown): OpeningBalance {
     },
     camp: {
       mastStoresRd: one(camp, 'mastStores', `^${N} rd of salt fish`, '"N rd of salt fish ..."'),
+      bindingsAtCamp: one(camp, 'bindingsAtCamp', `^${N} linen bindings$`, '"N linen bindings"'),
       shelterRaise: { seconds: raiseS ?? 0, minutes: raiseM ?? 0, stamina: raiseSt ?? 0 },
     },
     searches: {

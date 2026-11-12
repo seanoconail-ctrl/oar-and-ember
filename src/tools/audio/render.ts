@@ -41,6 +41,9 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   // backstab, the sidestep, turning alert, binding a wound and eating.
   ['sfx:SFX_STEERER_BREATH', 0.6, {}, 'combat2-steerer-breath'],
   ['sfx:SFX_GRUNT', 0.5, {}, 'combat2-grunt'],
+  // The grunt at each scavenger's own pitch (voice.ts): Ketill 98 Hz, Svart 150, Conn 244.
+  ['sfx:SFX_GRUNT', 0.5, { voice: 98 }, 'combat2-grunt-ketill'],
+  ['sfx:SFX_GRUNT', 0.5, { voice: 244 }, 'combat2-grunt-conn'],
   ['sfx:SFX_PARRY_RING', 1.5, {}, 'combat2-parry-ring'],
   ['sfx:SFX_RIPOSTE', 0.8, {}, 'combat2-riposte'],
   ['sfx:SFX_LUNGE', 0.5, {}, 'combat2-lunge'],

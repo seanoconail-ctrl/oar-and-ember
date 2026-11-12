@@ -25,6 +25,7 @@
  * Every number is Book 10's (src/content/openingBalance.ts); places and lines are content
  * (content/opening.json `rework`). Pure and deterministic: no random stream is drawn here.
  */
+import { BINDING } from '../land/fight.ts';
 import type { OpeningBalance } from '../../content/openingBalance.ts';
 import { parseOpeningBalance } from '../../content/openingBalance.ts';
 import { parseStartingWeapons } from '../../content/balance.ts';
@@ -908,7 +909,9 @@ function openChest(world: WorldState, ctx: WreckContext, hooks: WreckHooks, emit
   });
   for (const thing of c.contents) {
     const took = hooks.give(thing.item, thing.count);
-    if (took === 0)
+    // Things with no hotbar use (the chart, the comb, the whetstone) are kept by number; bindings
+    // are carried up to Book 10 healCarry by the hook (combat v2), any over it left in the chest.
+    if (took === 0 && thing.item !== BINDING)
       world.player.inventory[thing.item] = (world.player.inventory[thing.item] ?? 0) + thing.count;
     if (thing.quiver === true) hooks.give('ITEM_ARROW', ctx.startingArrows);
   }

@@ -3,7 +3,7 @@
 In the Book 2 section 23 format: one heading per report field. This builds design addendum 2.4
 sections 2 to 6 (decisions DE-16 to DE-31, folded into the books) beside combat v2, which another
 session builds in the same working tree at the same time (DE-35 to DE-59). Choices the books leave
-open are DE-60 to DE-78 in `docs/decision-log.md` ("Building the opening"). Nothing is committed by
+open are DE-60 to DE-79 in `docs/decision-log.md` ("Building the opening"). Nothing is committed by
 this session; the main session commits. World state version 11 is the combat session's bump; this
 work adds its fields to that same migration (`src/persist/openingMigration.ts`, chained after
 `migrateCombatV2`). Golden saves were not regenerated (the final pass does that).
@@ -34,6 +34,11 @@ work adds its fields to that same migration (`src/persist/openingMigration.ts`, 
   - Opened at home with the key: the bow and a quiver (Book 10's starting arrows), his chart
     fragment, three bindings (`ITEM_BINDING`, combat v2's, as Book 10 bindingsFound says), a bone
     comb and a whetstone; the bow's tooltip shows at once; Hild's line about the bow.
+- **Bindings in the world** (DE-79): the camp's salvage holds Book 10's bindingsAtCamp (2) linen
+  bindings by the casks (`content/onfoot.json` `camp_bindings`, its count read from Book 10 through
+  `countFrom`; drawn as `prop_pickup` `binding`), and Thorkel's chest three. Bindings and rations
+  are carried by number up to Book 10 healCarry (`src/sim/simulation.ts` `carry`); what will not
+  fit stays lying.
 - **No stern bow**: the bow on the stern and its line are gone (`content/onfoot.json`,
   `c_hild.bark.bow.01` deleted).
 - **Oddi's dilemma over the ship's silver** (`ITEM_SHIP_SILVER`, drawn as `prop_strongbox`; DE-71):
@@ -101,6 +106,11 @@ work adds its fields to that same migration (`src/persist/openingMigration.ts`, 
   11 and 12 unit, scenario and browser tests; the bots (`src/tools/play/wreckBot.ts`
   `playToCamp`, `openingBot.ts`, `chapterRun.ts`); the golden-save scenarios
   (`src/tools/saves/golden.ts`, golden 8 and 9 now through `playToCamp` and the chest, key and mast).
+- **The golden 9 and 10 scenario** plays through again: the repair bot's work at the boat no
+  longer stops when wounded Runa stands by the work spot and the press opens her talk
+  (`src/tools/play/repairBot.ts` `workOnBoat` ends the talk and presses at the work's own tile).
+  Golden saves 1 to 10 are untouched; the tooling writes only golden 10, so a new golden 11 is
+  left for the final pass.
 - **Test hooks** (`src/scenes/camp.ts`; DE-72): `camp=broch` sets what the opening has done by then;
   `shelter=down`, `searches=dusk`, `scene=fire`, `opening=full` and `kit=seax`.
 
@@ -109,14 +119,16 @@ work adds its fields to that same migration (`src/persist/openingMigration.ts`, 
   sheets, 30065 frames, 0 placeholders); Prettier clean on this session's files. ESLint fails on two
   of the combat session's files (`src/tools/art/captureCombat2.ts`, `tests/browser/combat2.spec.ts`:
   `type` for `interface`) and Prettier warns on `tests/browser/combat2.spec.ts`; left alone.
-- `npm test` (last full run): 666 passed, 2 failed, 1 skipped (669 tests in 48 files). The two:
-  golden save 10 "is reproduced exactly by its scenario" (expected until the final pass
-  regenerates the golden saves: the scenario now plays the new opening) and the art test "finds
-  generated sheets and atlases in step with their sources", which timed out at 35 s while two
-  captures ran; alone it passes. Earlier full runs under the same load also failed "save in under
-  200 ms" (passes alone) and the combat session's art frame counts (since fixed by that session).
+- `npm test` (last full run): 668 passed, 2 failed, 1 skipped (671 tests in 48 files). The two:
+  golden save 10 "is reproduced exactly by its scenario" (expected: the frozen file was made from
+  the old opening; the scenario now plays through to the chapter's end) and the art test "passes
+  on every committed sheet", on the combat session's `layer_shield_back_svart` ("belongs to no
+  person"), not this work. Earlier runs under load also timed out "finds generated sheets and
+  atlases in step" and "save in under 200 ms"; both pass alone.
 - `npm run build`: succeeds (the usual chunk-size warning).
-- `npm run test:browser -- --project=chromium`: RESULTS_BROWSER.
+- `npm run test:browser -- --project=chromium`: 65 passed, 0 failed (10.2 min), the last full run.
+  After the bindings change, Stages 7, 8, 11 and 12, `opening2` and `missiles` were run again: 25
+  passed.
 - `tests/browser/standard.spec.ts` now opens the strand straight in play (`view=play`): through
   the naming screen it would measure the cold open at sea, not the strand (DE-67). On the strand:
   96.2% motion with the camera still, 4.58 ms script per frame (budget 5.5); reduced motion and
@@ -125,7 +137,8 @@ work adds its fields to that same migration (`src/persist/openingMigration.ts`, 
   now the cold open's steering oar; the rescue fetches the seax and cuts the net),
   `controls.spec.ts` (the net cut with a held right-click), and Stages 7 and 8 through the camp
   hooks (DE-72).
-- New: `tests/unit/opening2.test.ts` (23 tests, all pass) and `tests/browser/opening2.spec.ts` (5
+- New: `tests/unit/opening2.test.ts` (24 tests, all pass, the camp's bindings and the chest's
+  among them) and `tests/browser/opening2.spec.ts` (5
   tests, stepped and waiting on the game's own state, all pass).
 
 ## Gate checks
@@ -189,7 +202,8 @@ water for the rigging, the oar's bargain or fight), unchanged by this work.
   barred), `prop_flap_sail`, `prop_rockpool`, `prop_cold_figures`, `prop_cold_sail`, `fx_outline`,
   `fx_net` (net 4, cut 3, wave 6), `fx_opening` (fibre, spark, puff, spray, drip, rain, smoke,
   light), `fx_hag_mist`, `fx_hag` (glow 4, figure 2), `fx_shelter_cut` (16 frames); and the
-  arm-ring lying (`prop_pickup` `silver_arm_ring`). No people were drawn or redrawn: the cold
+  arm-ring and the linen bindings lying (`prop_pickup` `silver_arm_ring` and `binding`; in situ in
+  `views/camp-bindings.png`). No people were drawn or redrawn: the cold
   open's rowers and Thorkel use the approved crew and Thorkel sheets, the waking uses the
   steerer's `downed` frames (DE-78). No placeholders.
 - **The first five minutes** (`docs/art/rework-2.4/opening/`, captured from the real game):
@@ -269,6 +283,12 @@ DE-60 to DE-78 in `docs/decision-log.md` ("Building the opening"), each with its
   uses pale sea and sky steps and the grade rather than a reserved accent colour.
 - **The bow at 18 to 19 minutes** (minor, flagged): Book 10 asks for 20 to 30.
 - **Hints for the stores aim** are Hild's until Bran joins (by design, DE-69).
+- **Runa at the boat** (minor): wounded (her ankle) and the shipwright, she stands idle at the
+  boat's work spot on day 4; the bot now works round her, but a player pressing beside her talks
+  to her first. Her day could give her a seated job while hurt.
+- **Old saves and the camp's bindings** (minor, DE-79): saves from before version 11 do not get the
+  camp's two bindings (the migration cannot read Book 10); they get the chest's.
+- **Golden save 11** is not made (the tool writes only golden 10, which is frozen).
 - **The combat session's files** (not this work; left alone): ESLint's two `interface` errors and
   Prettier's warning above.
 - **Golden save 10** "is reproduced exactly by its scenario" fails until the final pass regenerates

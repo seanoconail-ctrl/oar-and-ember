@@ -15,7 +15,8 @@ export type Direction = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 
 export interface AudioSink {
   music(action: MusicAction): void;
-  oneShot(cue: CueDef, at: number, pan: number): void;
+  /** `voice`: the speaker's pitch in Hz, for a sound made by a person (an enemy's grunt). */
+  oneShot(cue: CueDef, at: number, pan: number, voice?: number): void;
   ambience(cues: readonly CueDef[], at: number): void;
   setVolume(bus: Bus, level: number): void;
 }
@@ -76,7 +77,11 @@ export class AudioRouter {
   }
 
   /** Plays a cue by ID: music changes state on the next bar, stingers duck the music. */
-  play(id: string, now: number, options: { direction?: Direction; pan?: number } = {}): void {
+  play(
+    id: string,
+    now: number,
+    options: { direction?: Direction; pan?: number; voice?: number } = {},
+  ): void {
     const cue = this.#cue(id);
     switch (cue.kind) {
       case 'music':
@@ -87,7 +92,7 @@ export class AudioRouter {
         this.#sink.oneShot(cue, now, 0);
         break;
       case 'sfx':
-        this.#sink.oneShot(cue, now, options.pan ?? 0);
+        this.#sink.oneShot(cue, now, options.pan ?? 0, options.voice);
         break;
       case 'ambience':
         return;
@@ -104,7 +109,7 @@ export class AudioRouter {
   event(
     name: string,
     now: number,
-    options: { direction?: Direction; pan?: number } = {},
+    options: { direction?: Direction; pan?: number; voice?: number } = {},
   ): string | null {
     const id = this.#table.events[name];
     if (id === undefined) return null;

@@ -371,6 +371,9 @@ const itemCheck = object(
   ['glyph', 'missile', 'ammo', 'tipKey', 'cast'],
 );
 
+/** The Book 10 counts a pickup may take in place of its own count (design addendum 2.4). */
+export const PICKUP_COUNTS: readonly string[] = ['bindingsAtCamp'];
+
 const pickupCheck = object(
   {
     /** Unique within the zone; stable, as saves record what is still lying there. */
@@ -386,8 +389,13 @@ const pickupCheck = object(
     /** A fact that must be true before it shows. */
     after: text,
     glint: bool,
+    /**
+     * Design addendum 2.4: a Book 10 count in place of `count` ("bindingsAtCamp": the camp's
+     * salvage bindings), so the number lives only in Book 10.
+     */
+    countFrom: text,
   },
-  ['quiver', 'after', 'glint'],
+  ['quiver', 'after', 'glint', 'countFrom'],
 );
 
 const coverCheck = object({
@@ -1500,7 +1508,14 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
         });
     });
     onFoot.pickups.forEach((p, i) => {
-      if (onFoot.items[p.item] === undefined)
+      // A count from Book 10 is combat v2's carried count (bindings), which has no hotbar entry.
+      if (p.countFrom !== undefined && !PICKUP_COUNTS.includes(p.countFrom))
+        issues.push({
+          file: CONTENT_FILES.onFoot,
+          path: `pickups[${i}].countFrom`,
+          reason: `"${p.countFrom}" is not a Book 10 count a pickup can take (${PICKUP_COUNTS.join(', ')})`,
+        });
+      else if (p.countFrom === undefined && onFoot.items[p.item] === undefined)
         issues.push({
           file: CONTENT_FILES.onFoot,
           path: `pickups[${i}].item`,

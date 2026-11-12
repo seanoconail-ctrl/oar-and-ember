@@ -82,6 +82,8 @@ import {
   steererShove,
   stepFight,
   missileStruck,
+  BINDING,
+  RATION,
 } from './land/fight.ts';
 import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
@@ -1109,6 +1111,7 @@ export function createSimulation(
   /** What the opening's uses and works do beyond it. */
   const wreckHooks: WreckHooks = {
     give: (item, count) => {
+      if (carried(item)) return carry(item, count);
       if (land?.rules.items[item] === undefined) return 0;
       return give({ type: 'INTERACT' }, item, count);
     },
@@ -1333,6 +1336,23 @@ export function createSimulation(
     return took;
   };
 
+  /**
+   * Combat v2's carried counts, bindings and rations, up to Book 10 healCarry: taken into the
+   * inventory by number (they have no hotbar slot). Returns how many were taken.
+   */
+  const carry = (item: Id, count: number): number => {
+    const h = fightCtx?.cb.heal;
+    const max = item === BINDING ? h?.maxBindings : item === RATION ? h?.maxRations : undefined;
+    if (max === undefined) return 0;
+    const inv = state.player.inventory;
+    const took = Math.max(0, Math.min(count, max - (inv[item] ?? 0)));
+    if (took === 0) return 0;
+    inv[item] = (inv[item] ?? 0) + took;
+    events.emit({ type: 'ITEM_PICKED_UP', item, count: took, first: false });
+    return took;
+  };
+  const carried = (item: Id): boolean => item === BINDING || item === RATION;
+
   /** Picks up what lies at `key`: an item from the zone, or a missile pulled free. */
   const pickUp = (command: Command, key: string): void => {
     const onFoot = state.onFoot;
@@ -1360,6 +1380,14 @@ export function createSimulation(
       wreckPickUp(state, wreckCtx, camp, found.item, found.x, found.y, emitWreck)
     ) {
       onFoot.items.splice(at, 1);
+      return;
+    }
+    if (carried(found.item)) {
+      // Bindings in the camp's salvage (Book 10 bindingsAtCamp): what will not fit stays there.
+      const took = carry(found.item, found.count);
+      if (took === 0) refuse(command, 'HOTBAR_FULL', found.item);
+      else if (took < found.count) onFoot.items[at] = { ...found, count: found.count - took };
+      else onFoot.items.splice(at, 1);
       return;
     }
     const took = give(command, found.item, found.count);

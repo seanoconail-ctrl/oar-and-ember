@@ -31,6 +31,7 @@ import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import type { DepthBand } from '../content/balance.ts';
 import type { ZoneLife } from '../content/zoneMap.ts';
 import { PLANT_KINDS } from '../content/zoneMap.ts';
+import { shieldSlung, withSlungShield } from './people.ts';
 import type { PeopleLook, PersonLook } from './people.ts';
 import type { Fighter } from '../sim/combat/fighter.ts';
 
@@ -1145,7 +1146,12 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     chargeTell(steererFight, p.x - camera.x, p.y - camera.y);
   const walkers: Walker[] = [{ x: p.x, y: p.y }];
   for (const [id, actor] of Object.entries(onFoot.actors)) {
-    const who = look.people[id];
+    const dressed = look.people[id];
+    // A shield slung on the back while its fighter fights without it (decision DE-14).
+    const who =
+      dressed !== undefined && actor.fight !== undefined && shieldSlung(actor.fight.f)
+        ? withSlungShield(dressed, (sheet) => anims.has(sheet))
+        : dressed;
     const x = actor.x - camera.x;
     const y = actor.y - camera.y;
     const fa = actor.fight;

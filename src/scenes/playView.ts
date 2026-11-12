@@ -14,6 +14,7 @@ import buildingsJson from '../../assets/art/buildings.json';
 import { AudioRouter } from '../audio/router.ts';
 import { PlaceMusic } from '../audio/placeMusic.ts';
 import { WebAudioEngine } from '../audio/webAudio.ts';
+import { voiceOf } from '../audio/synth/voice.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../content/balance.ts';
 import type { Content } from '../content/registry.ts';
 import { formatString } from '../content/strings.ts';
@@ -803,8 +804,11 @@ export function startPlay(
   /** A fight sound by its event, from where the person is (Book 11 section 07). */
   const fightSound = (event: string, person: string | undefined, delay = 0): void => {
     if (audio === null || !engine.unlocked) return;
+    // A person's wordless sounds at their own pitch (voice.ts): the grunt.
+    const voice = person === undefined ? undefined : voiceOf(person)?.pitch;
     audio.event(event, engine.now + delay, {
       pan: person === undefined || person === 'P_STEERER' ? 0 : panOf(person),
+      ...(voice === undefined ? {} : { voice }),
     });
   };
   // ---- Stage 12: the launch's screens, the sea map and the chapter's end.
@@ -1697,7 +1701,13 @@ export function startPlay(
     if (interaction?.kind === 'PICK_UP') {
       const lying = onFoot.items.find((i) => i.key === interaction.key);
       const what = itemOf(lying?.item ?? 'ITEM_ARROW');
-      const item = what === undefined ? '' : t(what.nameKey);
+      // Combat v2's carried bindings have no hotbar entry: named by their own string.
+      const item =
+        what !== undefined
+          ? t(what.nameKey)
+          : lying?.item === 'ITEM_BINDING'
+            ? t('item.name.bindings')
+            : '';
       prompt =
         device === 'mouse'
           ? t('ui.prompt.pick_up_click', { item })

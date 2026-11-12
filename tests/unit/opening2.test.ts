@@ -261,6 +261,10 @@ describe('Thorkel’s chest, its outline and home, his key and the bow (DE-17, D
     expect(world.player.hotbar.slots).toContain('ITEM_BOW');
     expect(world.player.inventory['ITEM_ARROW']).toBe(wreck.startingArrows);
     expect(world.player.inventory['ITEM_CHART_FRAGMENT']).toBe(1);
+    // Three bindings (Book 10 bindingsFound), carried by number for combat v2's healing.
+    expect(world.player.inventory['ITEM_BINDING']).toBe(
+      c.contents.find((t) => t.item === 'ITEM_BINDING')?.count,
+    );
     expect(world.player.inventory[c.key]).toBeUndefined();
     // The bow's pickup shows its tooltip (the first of its kind), and Hild's line.
     expect(events).toContainEqual(
@@ -268,6 +272,29 @@ describe('Thorkel’s chest, its outline and home, his key and the bow (DE-17, D
     );
     expect(spoke(events, 'c_hild.chest.bow')).toBe(true);
     expect(content.onFoot?.items['ITEM_BOW']?.tipKey).toBe('ui.tip.bow');
+  });
+
+  it('the camp’s salvage holds Book 10’s bindingsAtCamp, picked up by number up to healCarry', () => {
+    const { sim, world } = start('bindings');
+    campHooks(world, content, land, new URLSearchParams('camp=broch'));
+    const onFoot = world.onFoot;
+    if (onFoot === null) throw new Error('no onFoot');
+    expect(onFoot.zone).toBe('ZONE_SK_MACHAIR');
+    const lying = onFoot.items.find((i) => i.key === 'camp_bindings');
+    expect(lying?.item).toBe('ITEM_BINDING');
+    expect(lying?.count).toBe(ob.camp.bindingsAtCamp);
+    if (lying === undefined) return;
+    const cap = land.fight?.cb.heal.maxBindings ?? 0;
+    // Nearly full: only what fits is taken, and the rest stays lying.
+    world.player.inventory['ITEM_BINDING'] = cap - 1;
+    onFoot.player.x = lying.x * 24;
+    onFoot.player.y = (lying.y + 0.6) * 24;
+    sim.submit({ type: 'INTERACT_AT', tile: { tx: Math.floor(lying.x), ty: Math.floor(lying.y) } });
+    sim.step();
+    expect(world.player.inventory['ITEM_BINDING']).toBe(cap);
+    expect(onFoot.items.find((i) => i.key === 'camp_bindings')?.count).toBe(
+      ob.camp.bindingsAtCamp - 1,
+    );
   });
 
   it('his key reaches the steerer however Bran’s search ends: from Bran at the bier, or the body', () => {

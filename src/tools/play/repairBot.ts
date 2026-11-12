@@ -244,7 +244,27 @@ export class RepairBot extends SearchBot {
   /** Works on the boat by hand once (a plain "Repair the ship" action). */
   workOnBoat(): void {
     const d = this.repairs.def.boat;
-    this.useAt(d.zone, d.work.x, d.work.y);
+    for (let tries = 0; tries < 6; tries++) {
+      this.useAt(d.zone, d.work.x, d.work.y);
+      if (this.onFoot.player.work != null) break;
+      // Someone stands by the work (Runa at the boat, wounded): the press opened their talk. End
+      // it and press at the work's own tile, as a click on it would.
+      if (this.sim.state.talk !== null) {
+        this.sim.submit({ type: 'TALK_END' });
+        this.step();
+      }
+      this.sim.submit({
+        type: 'INTERACT_AT',
+        tile: { tx: Math.floor(d.work.x), ty: Math.floor(d.work.y) },
+      });
+      this.step();
+      if (this.onFoot.player.work != null) break;
+      if (this.sim.state.talk !== null) {
+        this.sim.submit({ type: 'TALK_END' });
+        this.step();
+      }
+      this.step(60);
+    }
     if (this.onFoot.player.work == null) throw new Error('no work at the boat');
     this.work('none');
   }

@@ -122,6 +122,16 @@
       "x": 38.2,
       "y": 31.5,
       "glint": true
+    },
+    {
+      "key": "camp_bindings",
+      "zone": "ZONE_SK_MACHAIR",
+      "item": "ITEM_BINDING",
+      "count": 1,
+      "countFrom": "bindingsAtCamp",
+      "x": 37.6,
+      "y": 30.4,
+      "glint": true
     }
   ],
   "tipSeconds": 12

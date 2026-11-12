@@ -21,6 +21,8 @@ export interface SoundDef {
 export interface SoundOptions {
   /** Book 2 gore setting: 0 off, 1 reduced, 2 full. */
   readonly gore: number;
+  /** The speaking pitch (Hz) of the person making the sound (voice.ts), for wordless cries. */
+  readonly voice?: number;
 }
 
 export function out(

@@ -7,6 +7,7 @@
  * bargains, powers) are present with their Book 2 shape and start empty.
  */
 import { parseControlsBalance, parseStartingWeapons } from '../content/balance.ts';
+import { parseOpeningBalance } from '../content/openingBalance.ts';
 import { parseStaminaBalance, parseWorkBalance } from '../content/homeBalance.ts';
 import { campContext, setupCamp } from './home/camp.ts';
 import { setReason } from './home/stamina.ts';
@@ -828,7 +829,11 @@ export function zoneItems(content: Pick<Content, 'onFoot' | 'balance'>, zone: Id
     .map((p) => ({
       key: p.key,
       item: p.item,
-      count: p.count,
+      // Book 10's count where content names one (the camp's salvage bindings, bindingsAtCamp).
+      count:
+        p.countFrom === 'bindingsAtCamp'
+          ? parseOpeningBalance(content.balance).camp.bindingsAtCamp
+          : p.count,
       x: p.x,
       y: p.y,
       ...(p.quiver === true ? { arrows: starting.startingArrows } : {}),

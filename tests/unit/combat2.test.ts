@@ -41,10 +41,11 @@ import type { SimEvent, Simulation } from '../../src/sim/simulation.ts';
 import { newCampaign } from '../../src/sim/world.ts';
 import type { WorldState } from '../../src/sim/world.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
+import { zoneScene } from '../../src/scenes/zoneScene.ts';
 import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
 import { visualTuning, ZoneVisuals } from '../../src/scenes/zoneVisuals.ts';
 import { tideAt } from '../../src/sim/calendar/calendar.ts';
-import { loadPalette, loadSheets } from '../../src/tools/art/artFiles.ts';
+import { loadPalette, loadPeopleLook, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 
@@ -1121,6 +1122,51 @@ describe('the scavengers at dusk (decisions DE-14 and DE-15; Book 6 section 18)'
     expect(fa(f, 'E_WRECKER_CONN').bow).toBe(true);
     expect(actor(f, 'E_WRECKER_SVART').pose).toBe('work');
     expect(f.world.onFoot?.actors['E_WRECKER_KETILL']).toBeUndefined();
+  });
+
+  it('draws Svart’s shield slung on his back while he has none in hand, in every state', () => {
+    const f = dusk('dusk-slung', [91, 35.2]);
+    const map = landContext(content, balance).maps.get('ZONE_SK_STRAND');
+    const onFoot = f.world.onFoot;
+    if (map === undefined || onFoot === null) throw new Error('no strand');
+    const sheets = new Map(loadSheets(loadPalette()).map((x) => [x.name, x]));
+    const anims: SheetAnims = new Map([...sheets.values()].map((x) => [x.name, x.anims]));
+    const svartSheets = (): string[] =>
+      zoneScene({
+        map,
+        onFoot,
+        tick: f.world.tick,
+        tideOpen: false,
+        phase: 'day',
+        look: loadPeopleLook('A'),
+        anims,
+        highlight: null,
+      })
+        .sprites.map((x) => x.sheet)
+        .filter((x) => x.endsWith('_svart'));
+    const sv = fa(f, 'E_WRECKER_SVART');
+    // The slung layer has every frame the round one has (every state, all four facings).
+    const back = sheets.get('layer_shield_back_svart');
+    const round = sheets.get('layer_shield_round_svart');
+    expect(back?.placeholder).toBe(false);
+    expect([...(back?.frames.keys() ?? [])].sort()).toEqual(
+      [...(round?.frames.keys() ?? [])].sort(),
+    );
+    // At work, and fighting: on his back, never on his arm.
+    for (const state of ['idle', 'chargeL1', 'heavyRelease', 'parried'] as const) {
+      sv.f.state = state;
+      const drawn = svartSheets();
+      expect(drawn).toContain('layer_shield_back_svart');
+      expect(drawn).not.toContain('layer_shield_round_svart');
+    }
+    // Taken up (a shield in hand), it is drawn on the arm again.
+    sv.f.shield = true;
+    expect(svartSheets()).toContain('layer_shield_round_svart');
+    expect(svartSheets()).not.toContain('layer_shield_back_svart');
+    // Broken, it is not slung (a split shield is gone, not on his back).
+    sv.f.shield = false;
+    sv.f.shieldBreaks = 1;
+    expect(svartSheets()).not.toContain('layer_shield_back_svart');
   });
 
   it('FIGHT: Svart’s slow heavy is parried; the riposte fells him; Conn runs', () => {
