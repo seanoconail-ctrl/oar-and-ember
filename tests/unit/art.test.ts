@@ -175,7 +175,8 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'ui_stamina_reason',
       'ui_timing',
     ]);
-  });
+    // Over a hundred sheets by Stage 11: on a shared CI runner this takes longer than five seconds.
+  }, 30_000);
 
   // It regenerates every sheet and atlas in memory: Stage 7's broch, camp and work loops made that
   // longer than the default five seconds.
