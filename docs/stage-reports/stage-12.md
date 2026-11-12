@@ -1,5 +1,10 @@
 # STAGE 12 REPORT: the launch and the Build 1 gate
 
+> **Design addendum 2.4 came after this report.** The Build 1 gate now covers the 2.4 rework
+> (combat v2 and the new opening): see [rework-2.4.md](rework-2.4.md) for what changed in Stages 7
+> to 12, the checks run again, the new timing, the gate's new captures and the choices flagged for
+> review. What follows is the report as it stood at Stage 12.
+
 In the Book 2 section 23 format: one heading per report field. Decisions are S12-1 to S12-25 in
 `docs/decision-log.md`. Built under DD-11 without waiting for approval of the new art or the new
 screens. **This is a build gate: the user playtests now, and Stage 13 waits for the user.** The

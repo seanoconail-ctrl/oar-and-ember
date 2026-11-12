@@ -10,8 +10,8 @@ and the boat, sail marks, crew and chart in `docs/art/stage-12/`.
 | `launch-ready.png` (and @2x, `-motion.png`) | The boat ready on its skids under the bank at 10:00, the launch open (its gate), the household about the strand |
 | `launch-heave.png` (and @2x, `-motion.png`) | The household sets hands to the boat and heaves, the steerer with them; the boat runs down its skids (the 6.4 s of motion take it to the water) |
 | `launch-sail.png` (and @2x, `-motion.png`) | Afloat: the household at the oars, the steerer at the steering oar, the sail set with its mark (a woad raven), rowing out east along the strand |
-| `camp-sail.png` (and @2x, `-motion.png`) | The camp at 11:00 as addendum 2.4 leaves it: the sail raised between the oars, the fire lit, Thorkel's chest at its home, the household about it |
-| `dusk-stern.png` (and @2x, `-motion.png`) | The first dusk (18:35): Svart, his shield slung on his back, and Conn stripping the wreck's stern at the east end of Wreck Strand, the steerer watching from beyond their warning range |
+| `camp-sail.png` (and @2x, `-motion.png`) | The camp at 11:00 as addendum 2.4 leaves it: the sail raised between the oars, the fire lit, Thorkel's chest at its home, the steerer at the hearth (the household is at its work elsewhere) |
+| `dusk-stern.png` (and @2x, `-motion.png`) | The first dusk (18:35): Svart, his shield slung on his back, and Conn stripping the wreck's stern at the east end of Wreck Strand, the steerer at the edge of the dune grass, both of them alert to it (their marks up) |
 | `screen-readiness.png` (and @2x) | The readiness screen (Book 6 section 15): the boat, the tide, the crew, the stores, the weapons in hand, allies and Thorkel's rites, each with its state, and the point-of-no-return warning |
 | `screen-naming.png` (and @2x) | Naming the boat: the boat on its skids, a field for the name and eight suggestions |
 | `screen-mark.png` (and @2x) | Choosing the sail's mark: the boat afloat with the mark on its sail, the ten patterns and three dyes, and what the coast will make of it |

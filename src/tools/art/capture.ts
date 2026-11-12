@@ -1502,12 +1502,12 @@ const STAGE12_VIEWS: readonly Stage12View[] = [
   // scavengers at the stern at the first dusk (decisions DE-14 to DE-20).
   {
     name: 'camp-sail',
-    what: "The camp at 11:00 as addendum 2.4 leaves it: the sail raised between the oars, the fire lit, Thorkel's chest at its home, the household about it",
+    what: "The camp at 11:00 as addendum 2.4 leaves it: the sail raised between the oars, the fire lit, Thorkel's chest at its home, the steerer at the hearth (the household is at its work elsewhere)",
     query: 'time=11:00&fire=lit&at=35.4,32.2',
   },
   {
     name: 'dusk-stern',
-    what: "The first dusk (18:35): Svart, his shield slung on his back, and Conn stripping the wreck's stern at the east end of Wreck Strand, the steerer watching from beyond their warning range",
+    what: "The first dusk (18:35): Svart, his shield slung on his back, and Conn stripping the wreck's stern at the east end of Wreck Strand, the steerer at the edge of the dune grass, both of them alert to it (their marks up)",
     query: 'time=18:35&zone=ZONE_SK_STRAND&at=84.5,34.2&camera=90.5,34.5',
   },
 ];
