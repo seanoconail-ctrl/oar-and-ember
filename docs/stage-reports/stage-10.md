@@ -98,7 +98,11 @@ new people. Everything for the user's review is listed under **Flagged for the u
     instead of on the strand (S10-16).
 - `npm run audio:render`: every item is rendered and none clips. The southern levels are in
   **Balance**.
-- CI results: see the run for this commit.
+- CI results (run 43131219382 for commit 4811ef1):
+  - Chromium: passed (lint, test, build, browser tests).
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed only after all three. The published-address checks passed in all three browsers.
 
 ## Gate checks
 1. **Each search has at least two viable approaches and records its decision as a fact: PASS.**
