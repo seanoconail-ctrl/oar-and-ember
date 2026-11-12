@@ -1685,11 +1685,11 @@
     },
     {
       "id": "BEAT_1_BROCH",
-      "ref": "Hild leads to the old broch",
+      "ref": "Hild walks up",
       "book": 4,
       "section": "08",
       "origin": "assigned",
-      "note": "Chapter 1 beat 2."
+      "note": "Chapter 1 beat 8 since design addendum 2.4 (decision DE-16): Hild walks up to the camp in the broch once the first fire is lit; before, she led the steerer there (beat 2)."
     },
     {
       "id": "BEAT_1_SEARCHES",

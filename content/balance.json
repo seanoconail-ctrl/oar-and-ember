@@ -1,6 +1,6 @@
 {
  "title": "Oar and Ember balance sheet",
- "revision": "2.4",
+ "revision": "2.5",
  "source": "Book 10",
  "tables": {
   "timeAndTravel": {
@@ -104,7 +104,7 @@
     {
      "Mode": "Sneak",
      "Speed": "1.75",
-     "Notes": "Noise x0.25"
+     "Notes": "Noise x0.25. Combat v2 makes sneaking a slow crouching walk at 1.2, toggled (section 07, \"Sneaking\"; decision DE-9): that value replaces this one when combat v2 is built"
     },
     {
      "Mode": "Walk",
@@ -114,7 +114,7 @@
     {
      "Mode": "Run",
      "Speed": "6.0",
-     "Notes": "The sprint; drains stamina (section 06, Stamina in traversal)"
+     "Notes": "The sprint; drains stamina (section 06, Stamina in traversal). In combat v2 running turns the body to the way of travel and breaks the combat stance's facing (section 06, \"Stance and lock-on\")"
     },
     {
      "Mode": "Carry",
@@ -476,6 +476,21 @@
      "Key": "tutorialGuard",
      "Value": "No starvation and no spoilage before tutorialComplete",
      "Notes": "tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning)"
+    },
+    {
+     "Key": "mastStores",
+     "Value": "4 rd of salt fish and the ship's cauldron",
+     "Notes": "The stores bundle lashed high on the broken mast at the western outcrop (Book 9 section 03), shot down with the bow into the shallows and carried up as one load (decision DE-19). The cauldron goes to the fire as a prop"
+    },
+    {
+     "Key": "shelterRaise",
+     "Value": "One hands-on action by the steerer: 6 real seconds, 30 game minutes, 2 stamina",
+     "Notes": "At Hild's word on walking up to the camp (Book 4 Chapter 1): the sail is hauled up between the oars, the ropes tighten and the cloth fills and settles, and the S0 shelter is up at once. The Buildings row's 1 worker-day is for residents raising one without the steerer (decision DE-20)"
+    },
+    {
+     "Key": "bindingsAtCamp",
+     "Value": "2 linen bindings",
+     "Notes": "In the salvage at the camp (S0), for binding wounds in a fight (section 06, \"Health, stamina and healing\")"
     }
    ],
    "driftwoodFinds": [
@@ -1509,6 +1524,536 @@
      "Reason shown": "",
      "Ends when": ""
     }
+   ],
+   "stanceAndLockOn": [
+    {
+     "Key": "stance",
+     "Value": "A melee weapon, a shield or a bow in hand (selected in the hotbar) puts the steerer in the combat stance, facing the cursor; with a gamepad, the right stick; in keyboard-only play, the way last moved",
+     "Notes": "With nothing in hand, a tool or an item selected, there is no stance and walking turns the body as before"
+    },
+    {
+     "Key": "turnRate",
+     "Value": "720 degrees per second",
+     "Notes": "How fast the stance turns towards the cursor or the locked target"
+    },
+    {
+     "Key": "forward",
+     "Value": "1.0 x walking speed",
+     "Notes": "Moving within 70 degrees of the faced direction"
+    },
+    {
+     "Key": "strafe",
+     "Value": "0.85 x walking speed",
+     "Notes": "Moving 70 to 110 degrees off the faced direction"
+    },
+    {
+     "Key": "backOff",
+     "Value": "0.7 x walking speed",
+     "Notes": "Moving more than 110 degrees off it: backing away while still facing the enemy"
+    },
+    {
+     "Key": "runBreaksFacing",
+     "Value": "Running turns the body to the way of travel; the back is open until the run ends and the stance turns back at turnRate",
+     "Notes": "Running stays the sprint of section 06, \"Stamina in traversal\""
+    },
+    {
+     "Key": "lockOnRange",
+     "Value": "8 tiles",
+     "Notes": "The nearest enemy in front (within lockOnCone) is taken first, else the nearest within range"
+    },
+    {
+     "Key": "lockOnCone",
+     "Value": "90 degrees",
+     "Notes": ""
+    },
+    {
+     "Key": "lockOnSwitch",
+     "Value": "Another press while locked takes the next enemy within range, clockwise from the one locked",
+     "Notes": ""
+    },
+    {
+     "Key": "lockOnRelease",
+     "Value": "Holding the key 0.4 s; the target dead, downed or surrendered; the target beyond 12 tiles, or out of sight for 2 s",
+     "Notes": ""
+    },
+    {
+     "Key": "lockOnFacing",
+     "Value": "While locked, the stance always faces the target; the cursor still aims bows and thrown spears",
+     "Notes": ""
+    },
+    {
+     "Key": "lockOnCamera",
+     "Value": "The look-ahead points at the target and is 0.5 of the way to it, capped at lookAheadAiming (section 21)",
+     "Notes": "The camera centres between the steerer and the target"
+    },
+    {
+     "Key": "attackTurn",
+     "Value": "Up to 30 degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery",
+     "Notes": "Attacks commit. Replaces combat v1's turnLock"
+    },
+    {
+     "Key": "dodgeCancel",
+     "Value": "A light attack can be cancelled into a dodge in the first 4 ticks of its windup",
+     "Notes": "No other attack can be cancelled"
+    },
+    {
+     "Key": "missRecovery",
+     "Value": "+6 ticks of recovery for a swing that meets no one",
+     "Notes": "A missed swing matters (the spear's is longer, Weapon rules)"
+    },
+    {
+     "Key": "drawnFacing",
+     "Value": "The body is drawn in the nearest of the four authored facings; strikes, shields and backs use the true facing",
+     "Notes": "No new sprite directions (decision DE-2)"
+    }
+   ],
+   "weaponMovesets": [
+    {
+     "Weapon": "Unarmed",
+     "Reach": "1.0",
+     "Speed": "Fast",
+     "Combo": "1",
+     "Windup": "6",
+     "Active": "3",
+     "Recovery": "12",
+     "Chain window": "-",
+     "Damage": "0",
+     "Type": "Blow",
+     "vs shield": "0",
+     "Poise damage": "20",
+     "Stamina": "12",
+     "Strength": "The use action is the shove: pushes 0.4 tiles, breaks a block, makes space",
+     "Weakness": "No damage worth having"
+    },
+    {
+     "Weapon": "Seax",
+     "Reach": "0.8",
+     "Speed": "Fast",
+     "Combo": "3",
+     "Windup": "8",
+     "Active": "4",
+     "Recovery": "10",
+     "Chain window": "8",
+     "Damage": "23",
+     "Type": "Cut",
+     "vs shield": "4",
+     "Poise damage": "10",
+     "Stamina": "9",
+     "Strength": "Quick combos; the fastest riposte; the best backstab; cuts ropes, lashings and nets",
+     "Weakness": "Short reach; its charged heavy never breaks a guard"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Reach": "1.1",
+     "Speed": "Medium",
+     "Combo": "3",
+     "Windup": "15",
+     "Active": "6",
+     "Recovery": "20",
+     "Chain window": "10",
+     "Damage": "34",
+     "Type": "Cut",
+     "vs shield": "22",
+     "Poise damage": "20",
+     "Stamina": "15",
+     "Strength": "Its heavy hooks a shield aside and opens the guard",
+     "Weakness": "Short reach"
+    },
+    {
+     "Weapon": "Spear",
+     "Reach": "1.8",
+     "Speed": "Medium",
+     "Combo": "2",
+     "Windup": "14",
+     "Active": "6",
+     "Recovery": "18",
+     "Chain window": "10",
+     "Damage": "30",
+     "Type": "Thrust",
+     "vs shield": "8",
+     "Poise damage": "15",
+     "Stamina": "14",
+     "Strength": "Keeps foes at bay; thrusts past a shield's edge; can be thrown",
+     "Weakness": "Weak once a foe is inside its reach; slow to recover from a miss"
+    },
+    {
+     "Weapon": "Spear, thrown",
+     "Reach": "5",
+     "Speed": "Planted",
+     "Combo": "1",
+     "Windup": "18",
+     "Active": "-",
+     "Recovery": "22",
+     "Chain window": "-",
+     "Damage": "38",
+     "Type": "Thrust",
+     "vs shield": "12",
+     "Poise damage": "25",
+     "Stamina": "16",
+     "Strength": "Reach and a big hit, loosed standing still (section 21)",
+     "Weakness": "The spear is gone until it is picked up"
+    },
+    {
+     "Weapon": "Sword",
+     "Reach": "1.3",
+     "Speed": "Medium to fast",
+     "Combo": "3",
+     "Windup": "11",
+     "Active": "5",
+     "Recovery": "13",
+     "Chain window": "9",
+     "Damage": "30",
+     "Type": "Cut",
+     "vs shield": "10",
+     "Poise damage": "15",
+     "Stamina": "12",
+     "Strength": "Balanced; the widest parry window; the strongest riposte",
+     "Weakness": "Rare and costly"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Reach": "1.6",
+     "Speed": "Slow",
+     "Combo": "2",
+     "Windup": "24",
+     "Active": "7",
+     "Recovery": "30",
+     "Chain window": "12",
+     "Damage": "56",
+     "Type": "Cut",
+     "vs shield": "40",
+     "Poise damage": "45",
+     "Stamina": "26",
+     "Strength": "Huge stagger; its heavy breaks guards and splits shields",
+     "Weakness": "Two hands, no shield; long recovery; easy to punish"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Reach": "1.2",
+     "Speed": "Slow",
+     "Combo": "2",
+     "Windup": "20",
+     "Active": "6",
+     "Recovery": "24",
+     "Chain window": "10",
+     "Damage": "40",
+     "Type": "Blow",
+     "vs shield": "16",
+     "Poise damage": "38",
+     "Stamina": "20",
+     "Strength": "Stagger; works through mail",
+     "Weakness": "Slow; short combos"
+    },
+    {
+     "Weapon": "Shield",
+     "Reach": "0.9",
+     "Speed": "Fast",
+     "Combo": "1",
+     "Windup": "6",
+     "Active": "3",
+     "Recovery": "12",
+     "Chain window": "-",
+     "Damage": "0",
+     "Type": "Blow",
+     "vs shield": "0",
+     "Poise damage": "25",
+     "Stamina": "12",
+     "Strength": "Blocks the front 120 degrees; stops arrows; the bash is the shove, made with the shield",
+     "Weakness": "Each block drains stamina (Guard); can be broken or hooked"
+    },
+    {
+     "Weapon": "Hunting bow",
+     "Reach": "8.3",
+     "Speed": "Planted",
+     "Combo": "1",
+     "Windup": "30",
+     "Active": "-",
+     "Recovery": "20",
+     "Chain window": "-",
+     "Damage": "30",
+     "Type": "Thrust",
+     "vs shield": "6",
+     "Poise damage": "12",
+     "Stamina": "10",
+     "Strength": "Silent (noise 1 tile); x2 against the unaware (Sneak attacks)",
+     "Weakness": "Cannot move while drawn; poor against shields"
+    }
+   ],
+   "weaponRules": [
+    {
+     "Key": "axeHook",
+     "Value": "A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double"
+    },
+    {
+     "Key": "spearEdge",
+     "Value": "A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall)"
+    },
+    {
+     "Key": "spearKeep",
+     "Value": "A spear hit pushes the one struck back 0.3 tiles"
+    },
+    {
+     "Key": "spearInside",
+     "Value": "Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer"
+    },
+    {
+     "Key": "spearMiss",
+     "Value": "A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery"
+    },
+    {
+     "Key": "swordParry",
+     "Value": "A sword widens the parry window by 4 ticks"
+    },
+    {
+     "Key": "daneAxeGuard",
+     "Value": "Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped"
+    },
+    {
+     "Key": "daneAxeHands",
+     "Value": "Two hands: no shield with it; it parries but cannot block"
+    },
+    {
+     "Key": "seaxGuard",
+     "Value": "A seax's level-2 charge does not break a guard"
+    },
+    {
+     "Key": "seaxCuts",
+     "Value": "Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold)"
+    },
+    {
+     "Key": "mailCut",
+     "Value": "Mail: -40% from cuts"
+    },
+    {
+     "Key": "mailThrust",
+     "Value": "Mail: -25% from thrusts and missiles"
+    },
+    {
+     "Key": "mailBlow",
+     "Value": "Mail: -10% from blows"
+    },
+    {
+     "Key": "padded",
+     "Value": "Padded: -10% from everything"
+    },
+    {
+     "Key": "shieldBreaks",
+     "Value": "A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped"
+    }
+   ],
+   "lunge": [
+    {
+     "Key": "lungeWhen",
+     "Value": "An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach"
+    },
+    {
+     "Key": "lungeDistance",
+     "Value": "1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge"
+    },
+    {
+     "Key": "lungeTell",
+     "Value": "A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound"
+    },
+    {
+     "Key": "lungeStamina",
+     "Value": "The attack's stamina + 8"
+    },
+    {
+     "Key": "lungeRecovery",
+     "Value": "+8 ticks of recovery"
+    }
+   ],
+   "parryAndRiposte": [
+    {
+     "Key": "parryWindow",
+     "Value": "As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4"
+    },
+    {
+     "Key": "parryHitstop",
+     "Value": "14 ticks on both fighters, with a bright spark and a sharp ring"
+    },
+    {
+     "Key": "parryOpen",
+     "Value": "The parried attacker reels open for 60 ticks"
+    },
+    {
+     "Key": "riposteReach",
+     "Value": "The weapon's reach + 0.3 tiles: the riposter steps in"
+    },
+    {
+     "Key": "riposteTicks",
+     "Value": "Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead"
+    },
+    {
+     "Key": "riposteDamage",
+     "Value": "x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked"
+    }
+   ],
+   "poise": [
+    {
+     "Key": "poiseOrdinary",
+     "Value": "30: the steerer, the household and most people"
+    },
+    {
+     "Key": "poiseHeavy",
+     "Value": "60: the heavy build (section 24)"
+    },
+    {
+     "Key": "poiseArmour",
+     "Value": "+5 padded; +15 mail"
+    },
+    {
+     "Key": "poiseCharged",
+     "Value": "A charged heavy deals x1.5 its weapon's poise damage at level 1 and x2.0 at level 2"
+    },
+    {
+     "Key": "poiseRegen",
+     "Value": "20 a second, after 90 ticks without a hit"
+    },
+    {
+     "Key": "poiseBreak",
+     "Value": "Stagger for 30 ticks, open to any attack; the poise then refills to full"
+    },
+    {
+     "Key": "knockdown",
+     "Value": "A hit that breaks poise with 40 poise damage or more knocks down: 50 ticks on the ground, then 20 to get up"
+    }
+   ],
+   "guard": [
+    {
+     "Key": "blockCost",
+     "Value": "0.6 x the attack's vs-shield damage + 4 stamina a block"
+    },
+    {
+     "Key": "blockRegen",
+     "Value": "Half regeneration while the shield is up (as combat v1)"
+    },
+    {
+     "Key": "guardBreak",
+     "Value": "Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks"
+    },
+    {
+     "Key": "blockArrows",
+     "Value": "A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock)"
+    }
+   ],
+   "hitReactions": [
+    {
+     "Key": "hitstopClean",
+     "Value": "4 ticks for a clean hit (seax 3; club and Dane axe 5)"
+    },
+    {
+     "Key": "hitstopHeavy",
+     "Value": "7 ticks: a charged heavy, a lunge or a backstab"
+    },
+    {
+     "Key": "hitstopRiposte",
+     "Value": "10 ticks"
+    },
+    {
+     "Key": "hitstopParry",
+     "Value": "14 ticks (Parry and riposte)"
+    },
+    {
+     "Key": "hitstopBlock",
+     "Value": "1 tick"
+    },
+    {
+     "Key": "knockbackLight",
+     "Value": "2 px"
+    },
+    {
+     "Key": "knockbackHeavy",
+     "Value": "4 px: a charged heavy or a lunge"
+    },
+    {
+     "Key": "knockbackRiposte",
+     "Value": "6 px: a riposte, a backstab or a knockdown"
+    },
+    {
+     "Key": "flinch",
+     "Value": "A hit that does not break poise flinches the body for 8 ticks (drawn), without stopping what it is doing"
+    },
+    {
+     "Key": "stagger",
+     "Value": "30 ticks when poise breaks (Poise)"
+    },
+    {
+     "Key": "flash",
+     "Value": "1 frame on the one hit"
+    },
+    {
+     "Key": "shakeHeavy",
+     "Value": "2 px for 8 ticks: a heavy hit, or a hit of 25 damage or more taken by the steerer"
+    },
+    {
+     "Key": "shakeRiposte",
+     "Value": "3 px for 12 ticks: a riposte or a backstab. No shake for light hits, and none with reduced motion"
+    }
+   ],
+   "healthStaminaAndHealing": [
+    {
+     "Key": "steererVitality",
+     "Value": "100 (unchanged)"
+    },
+    {
+     "Key": "residentVitality",
+     "Value": "100 for adult residents (unchanged)"
+    },
+    {
+     "Key": "enemyVitality",
+     "Value": "Each archetype's combat v2 vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte"
+    },
+    {
+     "Key": "staminaMax",
+     "Value": "100"
+    },
+    {
+     "Key": "staminaRegen",
+     "Value": "25 a second after 48 ticks without spending; half while blocking"
+    },
+    {
+     "Key": "exhausted",
+     "Value": "At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5"
+    },
+    {
+     "Key": "bindWound",
+     "Value": "2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds"
+    },
+    {
+     "Key": "eat",
+     "Value": "2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina"
+    },
+    {
+     "Key": "healInterrupt",
+     "Value": "A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost"
+    },
+    {
+     "Key": "healCarry",
+     "Value": "Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores)"
+    },
+    {
+     "Key": "bindingsFound",
+     "Value": "2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest"
+    },
+    {
+     "Key": "afterFight",
+     "Value": "As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15)"
+    }
+   ],
+   "bars": [
+    {
+     "Key": "barsPlace",
+     "Value": "Health above stamina, top left"
+    },
+    {
+     "Key": "barsFade",
+     "Value": "Outside a fight, a bar at full fades out 3 s after it last changed, over 0.5 s; both show at once whenever a fight starts or either changes"
+    },
+    {
+     "Key": "enemyBar",
+     "Value": "A thin health bar over the locked target, and over any enemy for 4 s after it was last hit"
+    }
    ]
   },
   "enemiesWildlifeAndPerception": {
@@ -1518,84 +2063,108 @@
      "Vitality": "60",
      "Armour": "None",
      "Weapons": "Tool or seax",
-     "Behaviour": "Flees, hides, pleads; fights if cornered"
+     "Behaviour": "Flees, hides, pleads; fights if cornered",
+     "Vitality (combat v2)": "45",
+     "Reach (combat v2)": "A tool 1.0; a seax 0.8"
     },
     {
      "Archetype": "Monk",
      "Vitality": "50",
      "Armour": "None",
      "Weapons": "None",
-     "Behaviour": "Flees to tower or church; claims sanctuary"
+     "Behaviour": "Flees to tower or church; claims sanctuary",
+     "Vitality (combat v2)": "38",
+     "Reach (combat v2)": "None"
     },
     {
      "Archetype": "Guard",
      "Vitality": "100",
      "Armour": "Padded",
      "Weapons": "Spear and shield",
-     "Behaviour": "Holds posts, raises alarm"
+     "Behaviour": "Holds posts, raises alarm",
+     "Vitality (combat v2)": "75",
+     "Reach (combat v2)": "Spear 1.8"
     },
     {
      "Archetype": "Warrior",
      "Vitality": "110",
      "Armour": "Padded, sometimes mail",
      "Weapons": "Axe or sword and shield",
-     "Behaviour": "Fights in line, flanks"
+     "Behaviour": "Fights in line, flanks",
+     "Vitality (combat v2)": "82",
+     "Reach (combat v2)": "Hand axe 1.1 or sword 1.3"
     },
     {
      "Archetype": "Raider (Crowwick)",
      "Vitality": "100",
      "Armour": "Padded",
      "Weapons": "Axe, spear",
-     "Behaviour": "Aggressive, loots, rarely surrenders"
+     "Behaviour": "Aggressive, loots, rarely surrenders",
+     "Vitality (combat v2)": "75",
+     "Reach (combat v2)": "Hand axe 1.1 or spear 1.8"
     },
     {
      "Archetype": "Archer",
      "Vitality": "80",
      "Armour": "None",
      "Weapons": "Bow, seax",
-     "Behaviour": "Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back"
+     "Behaviour": "Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back",
+     "Vitality (combat v2)": "60",
+     "Reach (combat v2)": "Bow 8.3; seax 0.8"
     },
     {
      "Archetype": "Huscarl (Orm)",
      "Vitality": "130",
      "Armour": "Mail, helmet",
      "Weapons": "Sword or Dane axe",
-     "Behaviour": "Disciplined, holds formation"
+     "Behaviour": "Disciplined, holds formation",
+     "Vitality (combat v2)": "98",
+     "Reach (combat v2)": "Sword 1.3 or Dane axe 1.6"
     },
     {
      "Archetype": "Outlaw",
      "Vitality": "90",
      "Armour": "None",
      "Weapons": "Mixed",
-     "Behaviour": "Ambushes, flees when hurt"
+     "Behaviour": "Ambushes, flees when hurt",
+     "Vitality (combat v2)": "68",
+     "Reach (combat v2)": "Their weapon's"
     },
     {
      "Archetype": "Draugr",
      "Vitality": "160",
      "Armour": "Resists stagger",
      "Weapons": "Grip and blows",
-     "Behaviour": "Slow, relentless at night; returns until its anchor is resolved"
+     "Behaviour": "Slow, relentless at night; returns until its anchor is resolved",
+     "Vitality (combat v2)": "120",
+     "Reach (combat v2)": "Grip 0.9"
     },
     {
      "Archetype": "Wolf",
      "Vitality": "50",
      "Armour": "None",
      "Weapons": "Bite",
-     "Behaviour": "Packs of 3 to 5; circles; flees at half pack lost"
+     "Behaviour": "Packs of 3 to 5; circles; flees at half pack lost",
+     "Vitality (combat v2)": "38",
+     "Reach (combat v2)": "Bite 0.7"
     },
     {
      "Archetype": "Boar",
      "Vitality": "120",
      "Armour": "Hide",
      "Weapons": "Charge",
-     "Behaviour": "Charges when cornered; drops 40 rd of meat"
+     "Behaviour": "Charges when cornered; drops 40 rd of meat",
+     "Vitality (combat v2)": "90",
+     "Reach (combat v2)": "Charge 1.0"
     },
     {
      "Archetype": "Each-uisce",
      "Vitality": "300",
      "Armour": "Supernatural",
      "Weapons": "Drag into water",
-     "Behaviour": "Avoid or bind; violence only drives it off"
+     "Behaviour": "Avoid or bind; violence only drives it off",
+     "Vitality (combat v2)": "300",
+     "Reach (combat v2)": "Drag 1.2"
     }
    ],
    "perception": [
@@ -1674,6 +2243,26 @@
     {
      "Key": "torchLightRadius",
      "Value": "4 tiles"
+    },
+    {
+     "Key": "surfaceGrass",
+     "Value": "Noise x0.5 (grass, machair and heather: soft; combat v2, decision DE-9)"
+    },
+    {
+     "Key": "surfaceRock",
+     "Value": "Noise x1.0"
+    },
+    {
+     "Key": "surfaceWater",
+     "Value": "Noise x1.3 (wading)"
+    },
+    {
+     "Key": "rainFactor",
+     "Value": "0.7: sight in rain (combat v2)"
+    },
+    {
+     "Key": "rainNoise",
+     "Value": "0.6: noise heard in rain (combat v2)"
     }
    ],
    "cohesionAndSurrender": [
@@ -1866,6 +2455,206 @@
     {
      "Key": "droppedGearPoints",
      "Value": "0.3 per recognisable item"
+    }
+   ],
+   "awareness": [
+    {
+     "Key": "states",
+     "Value": "Unaware, suspicious, alert"
+    },
+    {
+     "Key": "fillNear",
+     "Value": "100 a second while the steerer is seen within 3 tiles"
+    },
+    {
+     "Key": "fillFar",
+     "Value": "20 a second at the edge of sight range, in proportion between"
+    },
+    {
+     "Key": "fillNoise",
+     "Value": "+30 for each noise heard within its radius (Perception: noise by action, x the ground)"
+    },
+    {
+     "Key": "suspiciousAt",
+     "Value": "30: the actor says so (\"Who's there?\"), turns to the last thing seen or heard and goes to look (searchSeconds)"
+    },
+    {
+     "Key": "alertAt",
+     "Value": "100: the actor fights, flees, warns or raises the alarm, by its kind"
+    },
+    {
+     "Key": "decay",
+     "Value": "10 a second after 3 s with nothing seen or heard; an alert actor stays alert for memorySeconds"
+    },
+    {
+     "Key": "marks",
+     "Value": "A small \"?\" over the head while suspicious and a \"!\" for 2 s on turning alert; an option, on by default"
+    }
+   ],
+   "sneaking": [
+    {
+     "Key": "sneakToggle",
+     "Value": "The sneak key toggles the crouching walk; running or a fight ends it"
+    },
+    {
+     "Key": "sneakSpeed",
+     "Value": "1.2 tiles per second (replaces section 02's 1.75 when combat v2 is built)"
+    },
+    {
+     "Key": "sneakNoise",
+     "Value": "noiseSneak (Perception) x the ground: shingle loud, grass soft, as the surface rows"
+    },
+    {
+     "Key": "tallGrass",
+     "Value": "A sneaking actor in tall grass, dune grass or among peat banks is not seen beyond 2 tiles"
+    },
+    {
+     "Key": "shadow",
+     "Value": "A sneaking actor at dusk or night, outside every light pool, is seen at half the sight range"
+    },
+    {
+     "Key": "rain",
+     "Value": "Sight x rainFactor and noise x rainNoise for everyone in rain (Perception)"
+    }
+   ],
+   "sneakAttacks": [
+    {
+     "Key": "backstab",
+     "Value": "A melee strike from within 60 degrees of a target's back, on a target that is unaware, or suspicious and not facing the striker"
+    },
+    {
+     "Key": "backstabKill",
+     "Value": "Kills outright any foe whose combat v2 vitality is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves)"
+    },
+    {
+     "Key": "backstabDamage",
+     "Value": "Otherwise x4 the weapon's damage (seax x6), ignoring poise"
+    },
+    {
+     "Key": "backstabTicks",
+     "Value": "40 ticks (seax 30): a heavy, distinct animation; the striker is committed to it"
+    },
+    {
+     "Key": "backstabNoise",
+     "Value": "4 tiles: a short struggle"
+    },
+    {
+     "Key": "unawareMissile",
+     "Value": "x2 damage from an arrow or thrown spear that strikes an unaware target, which cannot dodge it"
+    }
+   ],
+   "selfPreservation": [
+    {
+     "Key": "holdOff",
+     "Value": "The reach of the one they face + 0.4 tiles: a fighter waits just outside it, circling at strafe speed, steps in to attack and steps out again"
+    },
+    {
+     "Key": "stepOut",
+     "Value": "Within 20 ticks after its own recovery a fighter steps back out to holdOff"
+    },
+    {
+     "Key": "feint",
+     "Value": "10% of a melee fighter's attack starts are feints: the tell with no swing"
+    },
+    {
+     "Key": "longReach",
+     "Value": "Facing a weapon at least 0.5 tiles longer than its own, a fighter waits a further 0.3 tiles out and lunges in"
+    },
+    {
+     "Key": "shortReach",
+     "Value": "Facing a seax or bare hands, a fighter crowds in to 0.7 of its own reach"
+    },
+    {
+     "Key": "woundedAt",
+     "Value": "Below 50% vitality a fighter grows cautious: attackGap x1.5, it defends 20 points more often, backs off 1.5 tiles between attacks, and calls once for help (a shout)"
+    },
+    {
+     "Key": "retreatAt",
+     "Value": "Below 30% vitality it falls back towards the nearest friend within 8 tiles; cohesion still breaks groups (Cohesion and surrender: flee, beg or surrender)"
+    },
+    {
+     "Key": "pressers",
+     "Value": "1 or 2 of a group press the attack (attackTokens: 1, warbands 2); the rest circle 2.5 to 4 tiles out, flank or hang back"
+    },
+    {
+     "Key": "avoid",
+     "Value": "Deep water, cliff edges within 1 tile, and fire within 1.5 tiles"
+    },
+    {
+     "Key": "leash",
+     "Value": "20 tiles from their own ground: they follow no further, and go back"
+    },
+    {
+     "Key": "remember",
+     "Value": "3 days: a group the steerer fought and left greets the steerer again as an enemy, without warnings"
+    },
+    {
+     "Key": "leaveIfStronger",
+     "Value": "Scavengers and thieves leave when the vitality of the steerer's side within 8 tiles is twice theirs or more"
+    },
+    {
+     "Key": "awareDodge",
+     "Value": "25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing"
+    }
+   ],
+   "warnings": [
+    {
+     "Key": "warnAt",
+     "Value": "8 tiles: the first warning, once the steerer is seen"
+    },
+    {
+     "Key": "warnAgain",
+     "Value": "5 tiles: the second"
+    },
+    {
+     "Key": "lastStep",
+     "Value": "3 tiles: the last (\"One more step and you'll bleed.\"); any nearer starts the fight"
+    },
+    {
+     "Key": "drawnWeapon",
+     "Value": "A weapon taken in hand within warnAt starts the fight after one more warning"
+    },
+    {
+     "Key": "warnGap",
+     "Value": "At least 3 real seconds between warnings"
+    },
+    {
+     "Key": "walkAway",
+     "Value": "Beyond 12 tiles the warners go back to what they were doing"
+    }
+   ],
+   "theScavengersAtDusk": [
+    {
+     "Key": "when",
+     "Value": "From 18:30 on day 1 until dark (20:00 in spring); then they leave for the fold"
+    },
+    {
+     "Key": "who",
+     "Value": "Svart (spear) and Conn (bow and seax), at the stern at the strand's east end (Book 9 section 03)"
+    },
+    {
+     "Key": "svartWindup",
+     "Value": "+12 ticks on Svart's charged heavy, with its tell drawn large and sounded, so the first parry lands"
+    },
+    {
+     "Key": "svartHeavies",
+     "Value": "60% of Svart's attacks are charged heavies in this fight"
+    },
+    {
+     "Key": "svartShield",
+     "Value": "His shield stays on his back while he works, so he fights with the spear in both hands until the fold"
+    },
+    {
+     "Key": "connFlees",
+     "Value": "Conn flees to the fold when Svart falls (dead, downed or surrendered), or when Conn is hit"
+    },
+    {
+     "Key": "foodBargain",
+     "Value": "2 rd of salt fish from the camp's stores: they take it and go"
+    },
+    {
+     "Key": "checkpoint",
+     "Value": "An autosave before it (Book 2 section 20)"
     }
    ]
   },
@@ -2620,22 +3409,22 @@
     {
      "Key": "oddiCall",
      "Value": "9 tiles",
-     "Notes": "Oddi calls out when the steerer comes this near him on Wreck Strand and asks for Thorkel's chest, which lies a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it"
+     "Notes": "Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it"
     },
     {
      "Key": "chestSilver",
      "Value": "4 oz",
-     "Notes": "Thorkel's hack-silver in his chest: what the wreck-scavengers take for his body (Book 10 section 04 prices it)"
+     "Notes": "The ship's hack-silver in the strongbox: what the wreck-scavengers take for Thorkel's body, or for the steering oar (Book 10 section 04 prices it)"
     },
     {
      "Key": "chestFirst",
      "Value": "Oddi +3 friendship",
-     "Notes": "The chest carried up before him: the haul saved (Gain)"
+     "Notes": "The strongbox carried up before him: the haul saved (Gain)"
     },
     {
      "Key": "chestLost",
      "Value": "Oddi -3 friendship",
-     "Notes": "The chest left for the scavengers to take"
+     "Notes": "The strongbox left for the scavengers to take"
     },
     {
      "Key": "limp",
@@ -2661,6 +3450,36 @@
      "Key": "cliffPath",
      "Value": "Runa -3 friendship",
      "Notes": "The cliff path taken with the stone still weeping: the rite left undone"
+    },
+    {
+     "Key": "searchesPlaced",
+     "Value": "The first dusk: 19:00 on day 1",
+     "Notes": "Oddi, Bran (with Ketill watching the fold) and Runa are where they are found from then on; Hild names them at the first-night fire, for the morning (decision DE-16)"
+    },
+    {
+     "Key": "keyFromBody",
+     "Value": "Given when Thorkel is laid on his bier, or taken from his body wherever it lies",
+     "Notes": "However Bran's search ends (fight, sneak, bargain or lost), Thorkel's key reaches the steerer: from Bran at the bier, else by interacting with the body (decision DE-18)"
+    },
+    {
+     "Key": "runaSafe",
+     "Value": "The camp, the shelter or the boat",
+     "Notes": "Runa's tool chest set down at any of these lets her ask where it is, the next time the steerer talks to her (decision DE-21)"
+    },
+    {
+     "Key": "runaTruth",
+     "Value": "Runa +2 friendship",
+     "Notes": "The true place told"
+    },
+    {
+     "Key": "runaLie",
+     "Value": "Runa -3 friendship per point of her Word",
+     "Notes": "A false place told is found out when she goes to look, on her next walk past it and at most a day later; it counts against Word (her Word 2: -6)"
+    },
+    {
+     "Key": "rescueGetUp",
+     "Value": "4 real seconds",
+     "Notes": "A rescued person set down gets up after this, walks to the camp (at the limp speed if hurt), takes up work, eats and sleeps under the shelter; no one is left sitting where they were found (decision DE-22)"
     }
    ],
    "thorkelSRites": [
@@ -3189,7 +4008,7 @@
      "Milestone": "Chapter 1 done; boat launched",
      "Residents": "4",
      "Voyages (raids)": "0",
-     "Tools and weapons": "The steerer's seax and hunting bow (found on Wreck Strand, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line",
+     "Tools and weapons": "The steerer's seax (found on Wreck Strand) and Thorkel's hunting bow (from his chest, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line",
      "Ship": "T1, 1 fitting",
      "Buildings": "Sail shelter, fire",
      "Food and stores": "8 to 10 days runway"
@@ -5083,7 +5902,7 @@
     },
     {
      "Key": "meleeAim",
-     "Value": "Towards the cursor, snapped to the nearest of the four facings"
+     "Value": "Towards the cursor, snapped to the nearest of the four facings (combat v1). In combat v2 the stance faces the cursor or the locked target, and is drawn in the nearest facing (section 06, \"Stance and lock-on\")"
     },
     {
      "Key": "missileAim",
@@ -5137,11 +5956,11 @@
     },
     {
      "Key": "seaxFoundBy",
-     "Value": "5 minutes of play: a seax in the wreck's debris on Wreck Strand, a few tiles from where the steerer wakes, marked by a glint"
+     "Value": "5 minutes of play: a seax glinting in the wreckage on the obvious path between the waking place and Hild, found before she is cut free (typically within 1.5 minutes, section 25)"
     },
     {
      "Key": "bowFoundBy",
-     "Value": "15 minutes of play: a hunting bow and a quiver with the starting arrows, in the wreck's stern washed up at the east end of Wreck Strand, named by Hild after the rescue"
+     "Value": "30 minutes of play: a hunting bow and a quiver with the starting arrows in Thorkel's locked chest at the camp, opened with the key from his body (the Bran search); typically 20 to 30 minutes in"
     },
     {
      "Key": "startingArrows",
@@ -5200,6 +6019,14 @@
     {
      "Key": "shadow",
      "Value": "A soft 3 x 1 shadow on the ground under the missile, offset from it by its height"
+    },
+    {
+     "Key": "sweptHits",
+     "Value": "Every tick a missile checks the whole path it travelled against every body, shield and piece of cover, so a fast missile never passes through anyone; it hits whatever it touches first, before, during and after a fight (decision DE-10)"
+    },
+    {
+     "Key": "awareDodge",
+     "Value": "Aware fighters sometimes sidestep a missile (section 07, Self-preservation); the unaware cannot, and take x2 (section 07, Sneak attacks)"
     }
    ],
    "arrows": [
@@ -5435,6 +6262,260 @@
     {
      "Key": "share",
      "Value": "About one in six generated people"
+    }
+   ]
+  },
+  "theOpeningGuidanceAndFeel": {
+   "theFirstMinutes": [
+    {
+     "Key": "coldOpen",
+     "Value": "30 to 45 real seconds",
+     "Notes": "Night and storm, the steerer at the steering oar as the boat breaks: played, with control within 5 s of the naming screen; then black, then waking in the shallows at dawn"
+    },
+    {
+     "Key": "firstInput",
+     "Value": "Within 10 real seconds of waking",
+     "Notes": "Waking coughing in the surf; the first input gets the steerer up"
+    },
+    {
+     "Key": "hildCallBy",
+     "Value": "15 real seconds after waking",
+     "Notes": "Hild's first call from the net, with its direction caption"
+    },
+    {
+     "Key": "seaxBy",
+     "Value": "1.5 minutes",
+     "Notes": "The seax in the wreckage on the way to Hild (section 21, seaxFoundBy is the limit)"
+    },
+    {
+     "Key": "hildFreedBy",
+     "Value": "2.5 minutes",
+     "Notes": "Cut free and carried above the tide line"
+    },
+    {
+     "Key": "chestAtCampBy",
+     "Value": "4 minutes",
+     "Notes": "Thorkel's chest set down at its outline"
+    },
+    {
+     "Key": "firstFireBy",
+     "Value": "5 minutes",
+     "Notes": "Two pieces of driftwood fetched and the fire lit (section 03, fireLight)"
+    },
+    {
+     "Key": "shelterBy",
+     "Value": "6 minutes",
+     "Notes": "Hild walks up, and the sail shelter is raised (section 03, shelterRaise)"
+    },
+    {
+     "Key": "firstFight",
+     "Value": "The first dusk, about 12 minutes in",
+     "Notes": "The scavengers at dusk (section 07); within Book 1's 25 minutes"
+    },
+    {
+     "Key": "hagLight",
+     "Value": "The first dusk",
+     "Notes": "A pale light at the Hag's Seat, seen from the camp and the strand"
+    },
+    {
+     "Key": "bowBy",
+     "Value": "20 to 30 minutes",
+     "Notes": "Thorkel's chest opened (section 21, bowFoundBy is the limit)"
+    },
+    {
+     "Key": "cutHold",
+     "Value": "1.5 real seconds",
+     "Notes": "Holding use with a blade at the net (or a lashing): fibres fly as it goes; letting go keeps what is cut"
+    },
+    {
+     "Key": "netWaves",
+     "Value": "A wave breaks over Hild every 8 real seconds while she is in the net",
+     "Notes": "Spray and a caption; it never harms her"
+    },
+    {
+     "Key": "hildWalksUp",
+     "Value": "When the first fire is lit",
+     "Notes": "Hild sees the smoke and limps up from the strand at the limp speed (section 08); on arriving she gives the shelter aim"
+    },
+    {
+     "Key": "noMenus",
+     "Value": "10 minutes",
+     "Notes": "No menu and nothing longer than a tooltip to read in the first ten minutes of play"
+    }
+   ],
+   "guidance": [
+    {
+     "Key": "stuckFirst",
+     "Value": "90 real seconds",
+     "Notes": "With no progress on the current aim, a nearby person offers the aim's first hint in speech"
+    },
+    {
+     "Key": "stuckSecond",
+     "Value": "90 real seconds more",
+     "Notes": "The aim's second, clearer hint"
+    },
+    {
+     "Key": "stuckRepeat",
+     "Value": "Every 120 real seconds after that, at most 3 times",
+     "Notes": "The second hint again, from whoever is nearest"
+    },
+    {
+     "Key": "hintNear",
+     "Value": "Within barkEarshot (section 08)",
+     "Notes": "With no one that near, the hint comes as a distant call from the speaker, with an information caption naming the caller and the direction, if the speaker is in the steerer's zone or the next; otherwise it waits"
+    },
+    {
+     "Key": "callCarry",
+     "Value": "24 tiles",
+     "Notes": "How far a call is heard, and captioned with its direction"
+    },
+    {
+     "Key": "progress",
+     "Value": "A step towards the aim",
+     "Notes": "Its object picked up, carried nearer or worked, or one of its places reached; walking about alone is not progress, and progress restarts the count"
+    },
+    {
+     "Key": "quiet",
+     "Value": "No hint in a fight, a scene, a conversation or a menu, or while a hostile is suspicious",
+     "Notes": ""
+    },
+    {
+     "Key": "journal",
+     "Value": "The current aim, always, as one plain sentence",
+     "Notes": "In the journal (Book 8 section 13); no quest markers on screen"
+    }
+   ],
+   "worldFeedback": [
+    {
+     "Key": "edgeStopAngle",
+     "Value": "45 degrees: pressing more than this into an edge or impassable ground stops the steerer at it",
+     "Notes": "Pressing along it at a shallower angle moves along it at that angle's share of the speed, so a walk beside a shore is not caught; there is no sliding along an invisible wall"
+    },
+    {
+     "Key": "edgeCaptionAfter",
+     "Value": "0.3 real seconds of pressing against it",
+     "Notes": "Then its information caption: \"Nothing that way\", \"The water's too deep\" or \"Too steep to climb\""
+    },
+    {
+     "Key": "edgeCaptionCooldown",
+     "Value": "4 real seconds",
+     "Notes": "At most one edge caption in this time"
+    },
+    {
+     "Key": "homeOutline",
+     "Value": "10 tiles",
+     "Notes": "A carried thing with a home at the camp shows a faint outline at its home while it is carried within this distance; set down within 1 tile of the outline, it settles into place there"
+    }
+   ],
+   "doors": [
+    {
+     "Key": "openTicks",
+     "Value": "12 ticks (a hide or cloth flap 8)",
+     "Notes": "Swinging open, with its sound"
+    },
+    {
+     "Key": "closeAfter",
+     "Value": "2 real seconds after the doorway is clear",
+     "Notes": ""
+    },
+    {
+     "Key": "closeTicks",
+     "Value": "12 ticks (a flap 8)",
+     "Notes": ""
+    },
+    {
+     "Key": "opensOn",
+     "Value": "Walking into it, interacting with it, or a click on it",
+     "Notes": "Anyone walking through opens it: residents and enemies too"
+    },
+    {
+     "Key": "blocks",
+     "Value": "A closed door blocks movement, sight and missiles; an open one blocks nothing",
+     "Notes": ""
+    },
+    {
+     "Key": "barred",
+     "Value": "A barred door opens only from the side its bar is on",
+     "Notes": "Barring comes with the defences (Stage 19)"
+    }
+   ],
+   "theWeepingStone": [
+    {
+     "Key": "near",
+     "Value": "6 tiles",
+     "Notes": "The effect plays the first time the steerer comes this near the stone while it weeps, and again as an offering is laid; at most once a visit to the headland"
+    },
+    {
+     "Key": "hush",
+     "Value": "1 real second",
+     "Notes": "The wind drops to silence and the birds go quiet"
+    },
+    {
+     "Key": "cold",
+     "Value": "1.5 real seconds",
+     "Notes": "The light shifts to a cold blue-green and the carved marks glow faintly"
+    },
+    {
+     "Key": "hold",
+     "Value": "2.5 to 6.5 real seconds",
+     "Notes": "Mist curls round the stone; a low drone and a whisper rise; the camera eases towards the stone; the hold's length is set by content for each showing (4 by default)"
+    },
+    {
+     "Key": "gust",
+     "Value": "0.5 real seconds",
+     "Notes": "A sudden gust, and everything returns"
+    },
+    {
+     "Key": "settle",
+     "Value": "0.5 real seconds",
+     "Notes": "The wind and the birds back as they were"
+    },
+    {
+     "Key": "cameraPull",
+     "Value": "0.4 of the way to the stone, at most 2 tiles",
+     "Notes": "Eased in over the cold phase and out over the gust"
+    },
+    {
+     "Key": "figure",
+     "Value": "Every second showing",
+     "Notes": "A still figure stands at the edge of the view for 2 s, and is gone if the camera turns towards it"
+    },
+    {
+     "Key": "never",
+     "Value": "In a fight, or with a hostile aware",
+     "Notes": "The effect waits, and no line ever explains it"
+    }
+   ],
+   "musicFades": [
+    {
+     "Key": "fadeIn",
+     "Value": "8 real seconds (6 to 10 by piece)",
+     "Notes": "From silence, on a bar line"
+    },
+    {
+     "Key": "firstLayer",
+     "Value": "One layer",
+     "Notes": "A piece begins with a single layer: a drone or one instrument"
+    },
+    {
+     "Key": "layersJoin",
+     "Value": "Over the first 20 to 30 real seconds",
+     "Notes": "The other layers join one at a time, each on a bar line"
+    },
+    {
+     "Key": "fadeOut",
+     "Value": "6 real seconds (4 to 8 by piece)",
+     "Notes": "Whenever music stops"
+    },
+    {
+     "Key": "crossFade",
+     "Value": "The outgoing piece's fadeOut",
+     "Notes": "A change between pieces cross-fades; the new one still starts with one layer"
+    },
+    {
+     "Key": "stingers",
+     "Value": "No fade",
+     "Notes": "Stingers alone start and stop sharply"
     }
    ]
   }

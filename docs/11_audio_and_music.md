@@ -85,12 +85,19 @@ Modal, mostly Dorian and Aeolian with drones. The Gaelic coast leans pentatonic 
 ### Layers and intensity
 Most states have three to five stems (bed, rhythm, melody, voice, danger). An `intensity` value from 0 to 1, driven by threat awareness, enemy count and the steerer's vitality, mixes the stems. Intensity rises within one bar and falls over four, so music never flickers.
 
+### Fades
+Music arrives gently and leaves gently (design addendum 2.4; decision DE-29; the times are Book 10 section 25, "Music fades"):
+- **Gradual onset.** A piece fades in from silence over about 6 to 10 seconds and starts with a single layer, a drone or one instrument. Its other layers join one at a time, each on a bar line, over the first 20 to 30 seconds.
+- **Fade out.** Whenever music stops it fades out over about 4 to 8 seconds. A change between pieces cross-fades, and the new piece still begins with one layer. Combat music obeys the same fades: its intensity can rise within a bar once it has begun, but it never cuts in or out.
+- **Only stingers** start and stop sharply.
+- **Silence is welcome.** Stretches of ambience alone between pieces, in the Stardew manner, are part of the design, not a gap to fill.
+
 ### Stingers
 Short cues on key events: discovery, a resident's death, a bargain accepted, the horn, the charge level-2 tell (also a sound effect), a level up, a building finished, a chapter end. Stingers duck the music under them.
 
 ### Rules
 - Combat music never starts before the player can see or hear the threat.
-- No music during the first seconds of the opening: wind, surf and Hild's voice only.
+- No music during the first seconds of the opening: the cold open is storm, wind, timber and shouts; the waking is wind, surf and Hild's voice. The music arrives gently with the first fire (design addendum 2.4).
 - At least 30 percent of home time is ambience only.
 - A resident's death silences the music for a bar before the lament.
 
@@ -149,6 +156,8 @@ Layered by zone, season, weather and time: surf on shingle versus sand, wind thr
 ### Foley
 Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber deck, plank road, snow; and splashing through shallow water). Footsteps are **soft and natural**: low and dull, with no sharp click (every step rises over at least 2 ms), a heel and a softer roll onto the toe, and drawn afresh each step so no two sound the same (decision AU-10). Each surface has its own character: a soft thud on grass, a crunch of shifting stones on shingle, a hush on sand, a duller squelch on wet sand, a splash and drops in water, a dull knock on rock. Running is a little louder and quicker, carrying heavier, sneaking much quieter. Footsteps sit at least 10 dB below the effects that matter. Work sounds for every homestead task (adze, hammer, forge, sickle, net, spade, quern, loom).
 
+**The opening's tactile sounds** (design addendum 2.4): the cold open's storm (wind, rain, timber groaning, the crack of the strike); waking coughing in the surf; the net's cords parting under the seax, strand by strand, with Hild's gasp as a voice blip; Thorkel's chest scraping and bumping up the shingle, and set down with a thud; the flint's strike and sparks, the tinder's crackle and the flame taking; the sail hauled up, ropes creaking taut, the cloth flapping then filling with a soft boom and settling; the key in the chest's lock and the lid's creak; the lashing parting under an arrow and the bundle's splash; the arm-ring's small clink from the pool. **Doors:** a driftwood door's creak and knock, a hide or cloth flap's soft slap, a bar dropped into its brackets. **Rain on the sail cloth** inside the shelter is a soft patter with drips from the edge, heard only under it. Each has an information caption (Book 8 section 10).
+
 ### Combat
 | Event | Sound |
 |---|---|
@@ -164,6 +173,11 @@ Footsteps by surface (shingle, sand, machair, heather, peat, mud, stone, timber 
 | Bow string | The creak of the draw growing with it, then the snap of the string on the loose; a thrown spear's grunt and the rush of the throw |
 | Arrow in flight | A short, thin whistle that passes with the arrow, panned and fading with its distance from the listener; a spear's lower rush |
 | Missile strikes | A thunk into timber (a hull, a wall, a tree); a duller thud into earth and turf; a hard knock into a shield, with the board's ring; a crack and a skitter where it breaks on stone; a small splash into water; into a body, the gore set's wet impact |
+| Hits (combat v2) | Every hit is layered: the impact by what it meets (flesh, mail or shield wood) and a grunt or cry from the one hit, pitched to their voice. The steerer's own hurt is a sharp breath, never a voiced cry, so it never hints at a gender (decision DE-7) |
+| Parry and riposte (combat v2) | The parry's sharp, bright ring rides on its long hitstop; the riposte has a heavy, distinct whoosh and impact of its own |
+| Lunge and backstab (combat v2) | The lunge's tell is a scuff of feet and a drawn breath; the backstab is a short struggle, muffled, carrying only a few tiles |
+| Arrow dodge and awareness (combat v2) | A quick scuff for a sidestep; a suspicious enemy's "Who's there?" is a bark with its blip; turning alert, a sharp intake of breath and the weapon drawn |
+| Warnings | Spoken barks with blips, rising as the steerer comes on; a weapon drawn near them rings out of its sheath |
 
 ### Ships and sea
 Oar creak and splash in time with the stroke; sail flap, fill and strain; hull groan in storms; the scrape of beaching; grapnel and boarding-plank impacts; arrows into wood and shields.
@@ -171,13 +185,14 @@ Oar creak and splash in time with the stroke; sail flap, fill and strain; hull g
 Every missile sound (section 07, Combat) has an information caption with its direction where it helps: *Bowstring, to the north*; *Arrow overhead*; *Arrow into timber*; *Arrow into the ground*; *Arrow on a shield*; *Arrow breaks on stone*; *Arrow into the water*. The whistle is captioned only when an arrow passes near the steerer, so a volley does not flood the captions.
 
 ### Supernatural tells
-Each sign has a unique, learnable audio tell, so a careful player can hear danger before seeing it: Rán's sea-light hum under the water, hooves on water for Manannán, hail on stone for the Cailleach, verse from the troughs for the Blue Men, a dripping that follows for the draugr, keening for the bean sí, and the washer's rhythmic slap of cloth on stone. Each tell has a caption.
+Each sign has a unique, learnable audio tell, so a careful player can hear danger before seeing it: Rán's sea-light hum under the water, hooves on water for Manannán, hail on stone for the Cailleach (and at the Hag's Stone, its hush: the wind dropping to nothing and the birds falling silent, a low drone and a whisper rising out of the silence, then a sudden gust and the world's sounds back at once; Book 10 section 25 times it; captioned *The wind drops*, *A whisper by the stone*, *A sudden gust*), verse from the troughs for the Blue Men, a dripping that follows for the draugr, keening for the bean sí, and the washer's rhythmic slap of cloth on stone. Each tell has a caption.
 
 ## 08 / Voice
 *No voice acting. Dialogue and barks are text; each speaker has a short voice blip.*
 
 - **Voice blips:** as a line appears, its speaker "speaks" it in short blips, one per syllable, in their own pitch, timbre and rhythm. The text's vowels colour each blip; punctuation shapes the line (a question rises, an exclamation lifts, a comma pauses). Each speaker's voice follows who they are (Book 5): Hild warm and lively, Bran low and measured, Runa clipped and firm, Oddi quick and jittery.
-- **The steerer** has no voice blip, keeping the steerer's gender unstated.
+- **The steerer** has no voice blip, keeping the steerer's gender unstated. In a fight the steerer's hurt and effort are breath, never a voiced grunt or cry.
+- **Fighters' grunts and cries** (combat v2) are short, wordless sounds in each fighter's own voice, made like the blips; enemies who warn, or turn suspicious, bark in words with their blips (Book 8 sections 07 and 08).
 - **Song** is music: the residents who sing (section 06) are heard as melody lines on the hummed-voice pad or a whistle, with their lyrics as text.
 - Every line has its subtitle; blips are never the only source of required information.
 
@@ -240,7 +255,9 @@ The game generates all of its own audio. No recordings, no commissioned composer
 ### Sound effects and ambience (also generated)
 - Ambience in layers by zone, season, weather and time of day: surf on shingle and sand, wind tied to the game's own wind direction and strength, rain, the hearth fire, seabirds, sheep.
 - Footsteps by surface; work sounds for every homestead task; ship sounds (oars, sail, hull).
-- Combat: distinct sounds for light hits, both charge levels of the heavy, parry (bright and unmistakable), block, guard break, dodge and gore, all scaled by the gore setting; and for every missile, the bow string, the arrow's whistle in flight, and its strike into timber, earth, a shield, stone or water, each with an information caption.
+- Combat: distinct sounds for light hits, both charge levels of the heavy, parry (bright and unmistakable), block, guard break, dodge and gore, all scaled by the gore setting; every hit layered as its impact on flesh, mail or shield wood with a grunt or cry (the steerer's a breath); the riposte, the lunge's tell and the backstab; and for every missile, the bow string, the arrow's whistle in flight, and its strike into timber, earth, a shield, stone or water, each with an information caption.
+- Doors and flaps opening and closing; the opening's tactile actions (section 07).
+- Music fades in gently from a single layer and fades out whenever it stops; only stingers start and stop sharply (section 03, "Fades").
 - Every supernatural sign has its own learnable sound tell (section 07).
 - Every gameplay-relevant sound keeps its caption.
 

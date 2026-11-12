@@ -1,6 +1,6 @@
 # Oar and Ember, Book 10: Balance Sheet
 
-*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer and exploration density.*
+*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer, exploration density, and the opening, guidance and feel of design addendum 2.4 (section 25).*
 
 Numbers drift when they live in seven books. This book is the single source. The tables here are exported as `balance.json`, which the game reads; nothing is hard-coded.
 
@@ -51,9 +51,9 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 ### Movement on foot (tiles per second)
 | Mode | Speed | Notes |
 |---|---|---|
-| Sneak | 1.75 | Noise x0.25 |
+| Sneak | 1.75 | Noise x0.25. Combat v2 makes sneaking a slow crouching walk at 1.2, toggled (section 07, "Sneaking"; decision DE-9): that value replaces this one when combat v2 is built |
 | Walk | 2.0 | Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people) |
-| Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal) |
+| Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal). In combat v2 running turns the body to the way of travel and breaks the combat stance's facing (section 06, "Stance and lock-on") |
 | Carry | 1.8 | Lot or person; attacks disabled |
 | Charge (heavy) | 1.5 | While holding a heavy |
 | Climb | 1.0 | On marked climbing routes; drains stamina |
@@ -155,6 +155,9 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | campFuel | 0 loads | The first fire needs driftwood gathered first (Book 4 Chapter 1 beat 2) |
 | fireLight | 1 load of driftwood | Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house |
 | tutorialGuard | No starvation and no spoilage before tutorialComplete | tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning) |
+| mastStores | 4 rd of salt fish and the ship's cauldron | The stores bundle lashed high on the broken mast at the western outcrop (Book 9 section 03), shot down with the bow into the shallows and carried up as one load (decision DE-19). The cauldron goes to the fire as a prop |
+| shelterRaise | One hands-on action by the steerer: 6 real seconds, 30 game minutes, 2 stamina | At Hild's word on walking up to the camp (Book 4 Chapter 1): the sail is hauled up between the oars, the ropes tighten and the cloth fills and settles, and the S0 shelter is up at once. The Buildings row's 1 worker-day is for residents raising one without the steerer (decision DE-20) |
+| bindingsAtCamp | 2 linen bindings | In the salvage at the camp (S0), for binding wounds in a fight (section 06, "Health, stamina and healing") |
 
 ### Driftwood finds
 *Added from the user's playtest note (decisions PT-2 and PT-3): the steerer does not work driftwood, but finds it. Pieces lie in a variety of spots on Wreck Strand, are picked up with a plain interact and a short stoop, and the sea brings more each dawn. A dawn's pieces bring what one search did (the Driftwood row above: 1 load), more in autumn and winter, so the camp fire (houseFuelPerDay) is kept with some over. Gathering driftwood as a day's work stays a resident's job (driftwoodSearchesPerWorkerDay).*
@@ -339,7 +342,11 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | oarFood | 3 rd | Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk |
 
 ## 06 / Combat timings
+*Two sets of combat numbers live here until combat v2 is built. The tables up to "Stamina capacity" are combat v1, as built at Stage 9, and the game reads them; design addendum 2.4 changes combat to v2 (decisions DE-1 to DE-13), whose tables follow from "Stance and lock-on", with the v2 columns of section 07. Where a v1 row is marked "replaced", the v2 table replaces it when combat v2 is built, and the replaced rows are removed in the same commit (decision DE-13). Rows not marked replaced hold for both.*
+
 ### Weapons (ticks at 60 Hz)
+*Combat v1: replaced by "Weapon movesets" when combat v2 is built.*
+
 | Weapon | Reach tiles | Combo | Windup | Active | Recovery | Chain window | Damage | vs shield | Stamina |
 |---|---|---|---|---|---|---|---|---|---|
 | Spear | 1.7 | 2 | 14 | 6 | 16 | 10 | 22 | 8 | 14 |
@@ -360,6 +367,8 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | staminaCost | Weapon stamina x1.5 (L1), x2.0 (L2) |
 
 ### Defence
+*Combat v1. Combat v2 keeps these rows, except parryStagger (replaced by "Parry and riposte"), blockCost (replaced by "Guard") and turnLock (replaced by "Stance and lock-on", attackTurn).*
+
 | Key | Value |
 |---|---|
 | parryStartup | 2 ticks |
@@ -375,7 +384,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | turnLock | Facing locked from windup start to recovery end |
 
 ### Fight rules
-*How the frame data above is played (Stage 9, decisions S9-2 to S9-6). Starting values, for tuning after playtests.*
+*How the frame data above is played (Stage 9, decisions S9-2 to S9-6). Starting values, for tuning after playtests. Combat v2 keeps them, except hitStagger (replaced by "Poise") and blockNeedsShield, which also covers the Dane axe (Weapon rules, daneAxeHands).*
 
 | Key | Value |
 |---|---|
@@ -393,6 +402,8 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | missileDamage | An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost |
 
 ### Vitality, stamina and armour
+*Combat v1. Combat v2 replaces the stamina row's regeneration delay ("Health, stamina and healing"), padded and mail ("Weapon rules") and hitStop ("Hit reactions"); the other rows hold for both.*
+
 | Key | Value |
 |---|---|
 | vitality | 100 for the steerer and adult residents |
@@ -458,22 +469,175 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | hotMeal | Removes Hungry and Cold | | |
 | warmFire | Removes Cold after 1 game hour within 3 tiles | | |
 
+### Stance and lock-on
+*Combat v2 (design addendum 2.4 section 1; decisions DE-2 and DE-3). Speeds are shares of the walking speed of section 02.*
+
+| Key | Value | Notes |
+|---|---|---|
+| stance | A melee weapon, a shield or a bow in hand (selected in the hotbar) puts the steerer in the combat stance, facing the cursor; with a gamepad, the right stick; in keyboard-only play, the way last moved | With nothing in hand, a tool or an item selected, there is no stance and walking turns the body as before |
+| turnRate | 720 degrees per second | How fast the stance turns towards the cursor or the locked target |
+| forward | 1.0 x walking speed | Moving within 70 degrees of the faced direction |
+| strafe | 0.85 x walking speed | Moving 70 to 110 degrees off the faced direction |
+| backOff | 0.7 x walking speed | Moving more than 110 degrees off it: backing away while still facing the enemy |
+| runBreaksFacing | Running turns the body to the way of travel; the back is open until the run ends and the stance turns back at turnRate | Running stays the sprint of section 06, "Stamina in traversal" |
+| lockOnRange | 8 tiles | The nearest enemy in front (within lockOnCone) is taken first, else the nearest within range |
+| lockOnCone | 90 degrees | |
+| lockOnSwitch | Another press while locked takes the next enemy within range, clockwise from the one locked | |
+| lockOnRelease | Holding the key 0.4 s; the target dead, downed or surrendered; the target beyond 12 tiles, or out of sight for 2 s | |
+| lockOnFacing | While locked, the stance always faces the target; the cursor still aims bows and thrown spears | |
+| lockOnCamera | The look-ahead points at the target and is 0.5 of the way to it, capped at lookAheadAiming (section 21) | The camera centres between the steerer and the target |
+| attackTurn | Up to 30 degrees towards the cursor or target during a windup; none from the first active tick to the end of recovery | Attacks commit. Replaces combat v1's turnLock |
+| dodgeCancel | A light attack can be cancelled into a dodge in the first 4 ticks of its windup | No other attack can be cancelled |
+| missRecovery | +6 ticks of recovery for a swing that meets no one | A missed swing matters (the spear's is longer, Weapon rules) |
+| drawnFacing | The body is drawn in the nearest of the four authored facings; strikes, shields and backs use the true facing | No new sprite directions (decision DE-2) |
+
+### Weapon movesets
+*Combat v2: how every weapon is played (decision DE-4). Ticks at 60 Hz; reach in tiles to the near edge of the body struck (Fight rules, bodyRadius). Damage is before armour; its type is how mail takes it (Weapon rules). Poise damage wears down the target's poise (Poise). Stamina is per swing, per bash or per draw. Replaces the combat v1 "Weapons" table when combat v2 is built.*
+
+| Weapon | Reach | Speed | Combo | Windup | Active | Recovery | Chain window | Damage | Type | vs shield | Poise damage | Stamina | Strength | Weakness |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Unarmed | 1.0 | Fast | 1 | 6 | 3 | 12 | - | 0 | Blow | 0 | 20 | 12 | The use action is the shove: pushes 0.4 tiles, breaks a block, makes space | No damage worth having |
+| Seax | 0.8 | Fast | 3 | 8 | 4 | 10 | 8 | 23 | Cut | 4 | 10 | 9 | Quick combos; the fastest riposte; the best backstab; cuts ropes, lashings and nets | Short reach; its charged heavy never breaks a guard |
+| Hand axe | 1.1 | Medium | 3 | 15 | 6 | 20 | 10 | 34 | Cut | 22 | 20 | 15 | Its heavy hooks a shield aside and opens the guard | Short reach |
+| Spear | 1.8 | Medium | 2 | 14 | 6 | 18 | 10 | 30 | Thrust | 8 | 15 | 14 | Keeps foes at bay; thrusts past a shield's edge; can be thrown | Weak once a foe is inside its reach; slow to recover from a miss |
+| Spear, thrown | 5 | Planted | 1 | 18 | - | 22 | - | 38 | Thrust | 12 | 25 | 16 | Reach and a big hit, loosed standing still (section 21) | The spear is gone until it is picked up |
+| Sword | 1.3 | Medium to fast | 3 | 11 | 5 | 13 | 9 | 30 | Cut | 10 | 15 | 12 | Balanced; the widest parry window; the strongest riposte | Rare and costly |
+| Dane axe | 1.6 | Slow | 2 | 24 | 7 | 30 | 12 | 56 | Cut | 40 | 45 | 26 | Huge stagger; its heavy breaks guards and splits shields | Two hands, no shield; long recovery; easy to punish |
+| Club or hammer | 1.2 | Slow | 2 | 20 | 6 | 24 | 10 | 40 | Blow | 16 | 38 | 20 | Stagger; works through mail | Slow; short combos |
+| Shield | 0.9 | Fast | 1 | 6 | 3 | 12 | - | 0 | Blow | 0 | 25 | 12 | Blocks the front 120 degrees; stops arrows; the bash is the shove, made with the shield | Each block drains stamina (Guard); can be broken or hooked |
+| Hunting bow | 8.3 | Planted | 1 | 30 | - | 20 | - | 30 | Thrust | 6 | 12 | 10 | Silent (noise 1 tile); x2 against the unaware (Sneak attacks) | Cannot move while drawn; poor against shields |
+
+### Weapon rules
+*Combat v2: what each weapon does besides its numbers, and armour against the three kinds of damage (decision DE-4). Weapon choice changes how a fight is played, not just the damage.*
+
+| Key | Value |
+|---|---|
+| axeHook | A hand axe's charged heavy (level 1 or more) that meets a raised shield hooks it aside: the blocker's guard is open for 30 ticks and its next block costs double |
+| spearEdge | A spear thrust blocked by a single shield still lands 40% of its damage past the shield's edge (none against a shield wall) |
+| spearKeep | A spear hit pushes the one struck back 0.3 tiles |
+| spearInside | Against a foe nearer than 0.7 tiles, a spear does x0.5 damage and its windup is 6 ticks longer |
+| spearMiss | A spear thrust that meets no one adds 12 ticks of recovery, in place of missRecovery |
+| swordParry | A sword widens the parry window by 4 ticks |
+| daneAxeGuard | Every Dane axe heavy breaks a guard (as a level-2 charge does); at level 2 it splits the shield it meets, which breaks and is dropped |
+| daneAxeHands | Two hands: no shield with it; it parries but cannot block |
+| seaxGuard | A seax's level-2 charge does not break a guard |
+| seaxCuts | Only a blade cuts ropes, lashings and nets; the seax does it fastest (section 25, cutHold) |
+| mailCut | Mail: -40% from cuts |
+| mailThrust | Mail: -25% from thrusts and missiles |
+| mailBlow | Mail: -10% from blows |
+| padded | Padded: -10% from everything |
+| shieldBreaks | A shield breaks after 3 guard breaks, or at once to a Dane axe's split; a broken shield is dropped |
+
+### Lunge
+*Combat v2: lunging attacks close distance at a cost, with a readable tell (decision DE-4).*
+
+| Key | Value |
+|---|---|
+| lungeWhen | An attack pressed while running towards the faced direction, or at a locked target farther off than the weapon's reach |
+| lungeDistance | 1.2 tiles covered during the windup (spear 1.5; Dane axe and club 1.0); the seax and bare hands do not lunge |
+| lungeTell | A step and a dip of the shoulders, 10 ticks before the windup starts, with its own sound |
+| lungeStamina | The attack's stamina + 8 |
+| lungeRecovery | +8 ticks of recovery |
+
+### Parry and riposte
+*Combat v2: the parry keeps its window, and its reward grows (decision DE-5). Replaces combat v1's parryStagger when combat v2 is built.*
+
+| Key | Value |
+|---|---|
+| parryWindow | As combat v1's Defence table: 8 ticks (option: up to 12); a sword widens it by 4 |
+| parryHitstop | 14 ticks on both fighters, with a bright spark and a sharp ring |
+| parryOpen | The parried attacker reels open for 60 ticks |
+| riposteReach | The weapon's reach + 0.3 tiles: the riposter steps in |
+| riposteTicks | Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead |
+| riposteDamage | x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked |
+
+### Poise
+*Combat v2: every fighter has poise; hits wear it down, and when it breaks they stagger (decision DE-5). Replaces the heavy build's "Light attacks do not stagger a heavy fighter" when combat v2 is built.*
+
+| Key | Value |
+|---|---|
+| poiseOrdinary | 30: the steerer, the household and most people |
+| poiseHeavy | 60: the heavy build (section 24) |
+| poiseArmour | +5 padded; +15 mail |
+| poiseCharged | A charged heavy deals x1.5 its weapon's poise damage at level 1 and x2.0 at level 2 |
+| poiseRegen | 20 a second, after 90 ticks without a hit |
+| poiseBreak | Stagger for 30 ticks, open to any attack; the poise then refills to full |
+| knockdown | A hit that breaks poise with 40 poise damage or more knocks down: 50 ticks on the ground, then 20 to get up |
+
+### Guard
+*Combat v2: blocking costs stamina, and a broken guard leaves the blocker open (decision DE-5).*
+
+| Key | Value |
+|---|---|
+| blockCost | 0.6 x the attack's vs-shield damage + 4 stamina a block |
+| blockRegen | Half regeneration while the shield is up (as combat v1) |
+| guardBreak | Stamina empty while blocking, a level-2 charge, an axe hook or a Dane axe heavy: the guard is broken and the blocker open for 50 ticks |
+| blockArrows | A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock) |
+
+### Hit reactions
+*Combat v2: hits land with weight, on both sides (decision DE-7). Hitstop freezes both fighters' ticks of state together, so it is part of the simulation and replays exactly; everyone else carries on. Knockback is in logical pixels, in the hit's direction. Replaces combat v1's hitStop row when combat v2 is built.*
+
+| Key | Value |
+|---|---|
+| hitstopClean | 4 ticks for a clean hit (seax 3; club and Dane axe 5) |
+| hitstopHeavy | 7 ticks: a charged heavy, a lunge or a backstab |
+| hitstopRiposte | 10 ticks |
+| hitstopParry | 14 ticks (Parry and riposte) |
+| hitstopBlock | 1 tick |
+| knockbackLight | 2 px |
+| knockbackHeavy | 4 px: a charged heavy or a lunge |
+| knockbackRiposte | 6 px: a riposte, a backstab or a knockdown |
+| flinch | A hit that does not break poise flinches the body for 8 ticks (drawn), without stopping what it is doing |
+| stagger | 30 ticks when poise breaks (Poise) |
+| flash | 1 frame on the one hit |
+| shakeHeavy | 2 px for 8 ticks: a heavy hit, or a hit of 25 damage or more taken by the steerer |
+| shakeRiposte | 3 px for 12 ticks: a riposte or a backstab. No shake for light hits, and none with reduced motion |
+
+### Health, stamina and healing
+*Combat v2 (decision DE-8). Less health for most enemies, stamina that pauses before it refills and runs out, and healing that takes time and leaves the healer open.*
+
+| Key | Value |
+|---|---|
+| steererVitality | 100 (unchanged) |
+| residentVitality | 100 for adult residents (unchanged) |
+| enemyVitality | Each archetype's combat v2 vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte |
+| staminaMax | 100 |
+| staminaRegen | 25 a second after 48 ticks without spending; half while blocking |
+| exhausted | At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5 |
+| bindWound | 2.5 real seconds kneeling; uses 1 binding; restores 25 vitality, up to the maximum less wounds |
+| eat | 2 real seconds; uses 1 carried ration; restores 10 vitality and 30 stamina |
+| healInterrupt | A hit, a dodge, a block, a run or a step of more than half a tile ends it, and the binding or ration is lost |
+| healCarry | Up to 5 bindings and 3 carried rations (each 1 rd taken from the stores) |
+| bindingsFound | 2 in the camp's salvage (section 03, bindingsAtCamp) and 3 in Thorkel's chest |
+| afterFight | As combat v1: vitality comes back to its maximum less light wounds when the fight ends and on waking (decision S9-15) |
+
+### Bars
+*Combat v2: health and stamina as two bars (decision DE-8).*
+
+| Key | Value |
+|---|---|
+| barsPlace | Health above stamina, top left |
+| barsFade | Outside a fight, a bar at full fades out 3 s after it last changed, over 0.5 s; both show at once whenever a fight starts or either changes |
+| enemyBar | A thin health bar over the locked target, and over any enemy for 4 s after it was last hit |
+
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
-| Archetype | Vitality | Armour | Weapons | Behaviour |
-|---|---|---|---|---|
-| Civilian (farmer, keeper, trader) | 60 | None | Tool or seax | Flees, hides, pleads; fights if cornered |
-| Monk | 50 | None | None | Flees to tower or church; claims sanctuary |
-| Guard | 100 | Padded | Spear and shield | Holds posts, raises alarm |
-| Warrior | 110 | Padded, sometimes mail | Axe or sword and shield | Fights in line, flanks |
-| Raider (Crowwick) | 100 | Padded | Axe, spear | Aggressive, loots, rarely surrenders |
-| Archer | 80 | None | Bow, seax | Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back |
-| Huscarl (Orm) | 130 | Mail, helmet | Sword or Dane axe | Disciplined, holds formation |
-| Outlaw | 90 | None | Mixed | Ambushes, flees when hurt |
-| Draugr | 160 | Resists stagger | Grip and blows | Slow, relentless at night; returns until its anchor is resolved |
-| Wolf | 50 | None | Bite | Packs of 3 to 5; circles; flees at half pack lost |
-| Boar | 120 | Hide | Charge | Charges when cornered; drops 40 rd of meat |
-| Each-uisce | 300 | Supernatural | Drag into water | Avoid or bind; violence only drives it off |
+*Vitality is combat v1's, which the game reads until combat v2 is built; the combat v2 column then replaces it, about 25% less for every enemy but the each-uisce (decision DE-8). Reach is each archetype's in combat v2: armed people use their weapon's (section 06, "Weapon movesets"), beasts and the dead their own (decision DE-4).*
+
+| Archetype | Vitality | Armour | Weapons | Behaviour | Vitality (combat v2) | Reach (combat v2) |
+|---|---|---|---|---|---|---|
+| Civilian (farmer, keeper, trader) | 60 | None | Tool or seax | Flees, hides, pleads; fights if cornered | 45 | A tool 1.0; a seax 0.8 |
+| Monk | 50 | None | None | Flees to tower or church; claims sanctuary | 38 | None |
+| Guard | 100 | Padded | Spear and shield | Holds posts, raises alarm | 75 | Spear 1.8 |
+| Warrior | 110 | Padded, sometimes mail | Axe or sword and shield | Fights in line, flanks | 82 | Hand axe 1.1 or sword 1.3 |
+| Raider (Crowwick) | 100 | Padded | Axe, spear | Aggressive, loots, rarely surrenders | 75 | Hand axe 1.1 or spear 1.8 |
+| Archer | 80 | None | Bow, seax | Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back | 60 | Bow 8.3; seax 0.8 |
+| Huscarl (Orm) | 130 | Mail, helmet | Sword or Dane axe | Disciplined, holds formation | 98 | Sword 1.3 or Dane axe 1.6 |
+| Outlaw | 90 | None | Mixed | Ambushes, flees when hurt | 68 | Their weapon's |
+| Draugr | 160 | Resists stagger | Grip and blows | Slow, relentless at night; returns until its anchor is resolved | 120 | Grip 0.9 |
+| Wolf | 50 | None | Bite | Packs of 3 to 5; circles; flees at half pack lost | 38 | Bite 0.7 |
+| Boar | 120 | Hide | Charge | Charges when cornered; drops 40 rd of meat | 90 | Charge 1.0 |
+| Each-uisce | 300 | Supernatural | Drag into water | Avoid or bind; violence only drives it off | 300 | Drag 1.2 |
 
 ### Perception (tiles)
 | Key | Value |
@@ -497,6 +661,11 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | surfaceSand | Noise x0.7 |
 | memorySeconds | 20 |
 | torchLightRadius | 4 tiles |
+| surfaceGrass | Noise x0.5 (grass, machair and heather: soft; combat v2, decision DE-9) |
+| surfaceRock | Noise x1.0 |
+| surfaceWater | Noise x1.3 (wading) |
+| rainFactor | 0.7: sight in rain (combat v2) |
+| rainNoise | 0.6: noise heard in rain (combat v2) |
 
 ### Cohesion and surrender
 | Key | Value |
@@ -559,6 +728,89 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | bodyFoundWilderness | 3 to 10 days |
 | offshoreFishermanChance | 25% per daytime raid on a coast |
 | droppedGearPoints | 0.3 per recognisable item |
+
+### Awareness
+*Combat v2: enemies see in a cone from where they face, shortened by darkness and weather, and hear noise; awareness moves from unaware to suspicious to alert (design addendum 2.4 section 1; decision DE-9). Sight ranges and the cone are the Perception rows above.*
+
+| Key | Value |
+|---|---|
+| states | Unaware, suspicious, alert |
+| fillNear | 100 a second while the steerer is seen within 3 tiles |
+| fillFar | 20 a second at the edge of sight range, in proportion between |
+| fillNoise | +30 for each noise heard within its radius (Perception: noise by action, x the ground) |
+| suspiciousAt | 30: the actor says so ("Who's there?"), turns to the last thing seen or heard and goes to look (searchSeconds) |
+| alertAt | 100: the actor fights, flees, warns or raises the alarm, by its kind |
+| decay | 10 a second after 3 s with nothing seen or heard; an alert actor stays alert for memorySeconds |
+| marks | A small "?" over the head while suspicious and a "!" for 2 s on turning alert; an option, on by default |
+
+### Sneaking
+*Combat v2: a toggle for a slow, quiet crouching walk; the ground matters, and tall grass, shadow, night and rain hide (decision DE-9).*
+
+| Key | Value |
+|---|---|
+| sneakToggle | The sneak key toggles the crouching walk; running or a fight ends it |
+| sneakSpeed | 1.2 tiles per second (replaces section 02's 1.75 when combat v2 is built) |
+| sneakNoise | noiseSneak (Perception) x the ground: shingle loud, grass soft, as the surface rows |
+| tallGrass | A sneaking actor in tall grass, dune grass or among peat banks is not seen beyond 2 tiles |
+| shadow | A sneaking actor at dusk or night, outside every light pool, is seen at half the sight range |
+| rain | Sight x rainFactor and noise x rainNoise for everyone in rain (Perception) |
+
+### Sneak attacks
+*Combat v2: striking an unaware enemy from behind (decision DE-9).*
+
+| Key | Value |
+|---|---|
+| backstab | A melee strike from within 60 degrees of a target's back, on a target that is unaware, or suspicious and not facing the striker |
+| backstabKill | Kills outright any foe whose combat v2 vitality is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves) |
+| backstabDamage | Otherwise x4 the weapon's damage (seax x6), ignoring poise |
+| backstabTicks | 40 ticks (seax 30): a heavy, distinct animation; the striker is committed to it |
+| backstabNoise | 4 tiles: a short struggle |
+| unawareMissile | x2 damage from an arrow or thrown spear that strikes an unaware target, which cannot dodge it |
+
+### Self-preservation
+*Combat v2: enemies want to live, and fight like it (design addendum 2.4 section 1; decision DE-6). They work with the attack tokens and flanking of Fighters' habits.*
+
+| Key | Value |
+|---|---|
+| holdOff | The reach of the one they face + 0.4 tiles: a fighter waits just outside it, circling at strafe speed, steps in to attack and steps out again |
+| stepOut | Within 20 ticks after its own recovery a fighter steps back out to holdOff |
+| feint | 10% of a melee fighter's attack starts are feints: the tell with no swing |
+| longReach | Facing a weapon at least 0.5 tiles longer than its own, a fighter waits a further 0.3 tiles out and lunges in |
+| shortReach | Facing a seax or bare hands, a fighter crowds in to 0.7 of its own reach |
+| woundedAt | Below 50% vitality a fighter grows cautious: attackGap x1.5, it defends 20 points more often, backs off 1.5 tiles between attacks, and calls once for help (a shout) |
+| retreatAt | Below 30% vitality it falls back towards the nearest friend within 8 tiles; cohesion still breaks groups (Cohesion and surrender: flee, beg or surrender) |
+| pressers | 1 or 2 of a group press the attack (attackTokens: 1, warbands 2); the rest circle 2.5 to 4 tiles out, flank or hang back |
+| avoid | Deep water, cliff edges within 1 tile, and fire within 1.5 tiles |
+| leash | 20 tiles from their own ground: they follow no further, and go back |
+| remember | 3 days: a group the steerer fought and left greets the steerer again as an enemy, without warnings |
+| leaveIfStronger | Scavengers and thieves leave when the vitality of the steerer's side within 8 tiles is twice theirs or more |
+| awareDodge | 25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing |
+
+### Warnings
+*Combat v2: scavengers, thieves and wary locals warn before they fight (decision DE-11). Guards of a hostile faction still attack on sight (Hostility and evidence).*
+
+| Key | Value |
+|---|---|
+| warnAt | 8 tiles: the first warning, once the steerer is seen |
+| warnAgain | 5 tiles: the second |
+| lastStep | 3 tiles: the last ("One more step and you'll bleed."); any nearer starts the fight |
+| drawnWeapon | A weapon taken in hand within warnAt starts the fight after one more warning |
+| warnGap | At least 3 real seconds between warnings |
+| walkAway | Beyond 12 tiles the warners go back to what they were doing |
+
+### The scavengers at dusk
+*Chapter 1's first fight, built to teach and to feel good (design addendum 2.4 section 6; decisions DE-14 and DE-15). Two of the three wreck-scavengers strip the wreck's stern on Wreck Strand at the first dusk while Ketill watches the fold (Book 6 section 18).*
+
+| Key | Value |
+|---|---|
+| when | From 18:30 on day 1 until dark (20:00 in spring); then they leave for the fold |
+| who | Svart (spear) and Conn (bow and seax), at the stern at the strand's east end (Book 9 section 03) |
+| svartWindup | +12 ticks on Svart's charged heavy, with its tell drawn large and sounded, so the first parry lands |
+| svartHeavies | 60% of Svart's attacks are charged heavies in this fight |
+| svartShield | His shield stays on his back while he works, so he fights with the spear in both hands until the fold |
+| connFlees | Conn flees to the fold when Svart falls (dead, downed or surrendered), or when Conn is hit |
+| foodBargain | 2 rd of salt fish from the camp's stores: they take it and go |
+| checkpoint | An autosave before it (Book 2 section 20) |
 
 ## 08 / People, skills and wounds
 ### Skills
@@ -760,19 +1012,25 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Untended | No recovery | A wound begins to heal only once it has been tended (Tend wounds, section 09); its recovery counts from that day |
 
 ### The three searches
-*Added for Stage 10 (decisions S10-7 to S10-10): the numbers of Chapter 1's three searches (Book 4 section 08, beat 3). Where they move friendship they are the person's own reaction to how they were found, as a reply's are (Conversation replies), besides any deed the ledger weighs.*
+*Added for Stage 10 (decisions S10-7 to S10-10), changed by design addendum 2.4 (decisions DE-16 to DE-22): the numbers of Chapter 1's three searches (Book 4 section 08, beat 13). Where they move friendship they are the person's own reaction to how they were found, as a reply's are (Conversation replies), besides any deed the ledger weighs. Oddi's dilemma is now over the ship's silver, in its strongbox; Thorkel's own chest is locked, and is carried up to the camp on the first day (decision DE-17).*
 
 | Key | Value | Notes |
 |---|---|---|
-| oddiCall | 9 tiles | Oddi calls out when the steerer comes this near him on Wreck Strand and asks for Thorkel's chest, which lies a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it |
-| chestSilver | 4 oz | Thorkel's hack-silver in his chest: what the wreck-scavengers take for his body (Book 10 section 04 prices it) |
-| chestFirst | Oddi +3 friendship | The chest carried up before him: the haul saved (Gain) |
-| chestLost | Oddi -3 friendship | The chest left for the scavengers to take |
+| oddiCall | 9 tiles | Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it |
+| chestSilver | 4 oz | The ship's hack-silver in the strongbox: what the wreck-scavengers take for Thorkel's body, or for the steering oar (Book 10 section 04 prices it) |
+| chestFirst | Oddi +3 friendship | The strongbox carried up before him: the haul saved (Gain) |
+| chestLost | Oddi -3 friendship | The strongbox left for the scavengers to take |
 | limp | 0.9 tiles per second | How fast a rescued person with a serious leg wound walks home under their own power (Runa) |
 | parley | 30 real seconds | Wreck-scavengers who see the steerer come with empty hands, not running, hold and talk this long before they lose patience; a weapon taken in hand, a blow or a threat ends it at once |
 | guard | 3 tiles | Bran fights any foe who comes this near Thorkel's body, and goes back to it between |
 | offering | Runa +5 friendship | The Cailleach given her due at the Hag's Seat (Faith in the old powers) |
 | cliffPath | Runa -3 friendship | The cliff path taken with the stone still weeping: the rite left undone |
+| searchesPlaced | The first dusk: 19:00 on day 1 | Oddi, Bran (with Ketill watching the fold) and Runa are where they are found from then on; Hild names them at the first-night fire, for the morning (decision DE-16) |
+| keyFromBody | Given when Thorkel is laid on his bier, or taken from his body wherever it lies | However Bran's search ends (fight, sneak, bargain or lost), Thorkel's key reaches the steerer: from Bran at the bier, else by interacting with the body (decision DE-18) |
+| runaSafe | The camp, the shelter or the boat | Runa's tool chest set down at any of these lets her ask where it is, the next time the steerer talks to her (decision DE-21) |
+| runaTruth | Runa +2 friendship | The true place told |
+| runaLie | Runa -3 friendship per point of her Word | A false place told is found out when she goes to look, on her next walk past it and at most a day later; it counts against Word (her Word 2: -6) |
+| rescueGetUp | 4 real seconds | A rescued person set down gets up after this, walks to the camp (at the limp speed if hurt), takes up work, eats and sleeps under the shelter; no one is left sitting where they were found (decision DE-22) |
 
 ### Thorkel's rites
 *Added for Stage 11 (decisions S11-13 to S11-16): Thorkel's rites, optional and recommended by Hild (Book 4 section 08, beat 6), once his body lies on its bier by the broch. Like the searches' numbers, these are the household's own reaction to the rite, besides anything the ledger weighs.*
@@ -927,7 +1185,7 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 
 | Day | Milestone | Residents | Voyages (raids) | Tools and weapons | Ship | Buildings | Food and stores |
 |---|---|---|---|---|---|---|---|
-| 6 | Chapter 1 done; boat launched | 4 | 0 | The steerer's seax and hunting bow (found on Wreck Strand, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line | T1, 1 fitting | Sail shelter, fire | 8 to 10 days runway |
+| 6 | Chapter 1 done; boat launched | 4 | 0 | The steerer's seax (found on Wreck Strand) and Thorkel's hunting bow (from his chest, section 21) and its arrows; wreck kit: 2 axes, Runa's tools, 2 spears, 2 shields, Bran's axe, Thorkel's sword (or buried), knives, a line | T1, 1 fitting | Sail shelter, fire | 8 to 10 days runway |
 | 15 | First raid home | 5 (Eithne) | 1 (1) | +1 to 2 iron lots | T1, 1 fitting | Forge marked out | 30 days runway |
 | 30 | Two raids and one trade; plots sown | 6 to 8 (Kolbeinn, Asa) | 3 (2) | Axes 3, adze, 2 sickles, 2 spades, 2 nets; spears for all, 5 shields, 2 axes, 1 sword, 1 helmet | T1, 2 fittings | Forge, racks, longhouse framed; 30 peat loads drying | 150 rd stored; 25 days runway |
 | 45 | The Followers arrive | 12 to 13 | 5 (3) | Spears and shields for all fighters | T1, 3 fittings | Longhouse done, smoke-house; hay cutting begins | 200 rd; runway 15 days (more mouths) |
@@ -1406,7 +1664,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | toolReach | 1.5 tiles: the steerer's tile and the eight around it |
 | interactReach | 2 tiles |
 | castReach | 5 tiles (casting a line, throwing an item) |
-| meleeAim | Towards the cursor, snapped to the nearest of the four facings |
+| meleeAim | Towards the cursor, snapped to the nearest of the four facings (combat v1). In combat v2 the stance faces the cursor or the locked target, and is drawn in the nearest facing (section 06, "Stance and lock-on") |
 | missileAim | Free aim at the cursor with an aim line while drawing a bow or holding a thrown spear |
 | keyboardTarget | The tile in front of the steerer's facing |
 | gamepadDeadZone | 0.2 of the right stick's travel |
@@ -1420,13 +1678,13 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | cameraSnap | The drawn offset is whole logical pixels, changed only when the smoothed offset moves 0.5 px past it (hysteresis), so it never flickers between two pixels |
 
 ### Starting weapons
-*The steerer wakes with nothing in hand (decision DD-6). Unarmed, they can only shove and dodge.*
+*The steerer wakes with nothing in hand (decision DD-6). Unarmed, they can only shove and dodge. Since design addendum 2.4 the seax is found on the way to Hild, and the bow is the reward of the Bran search, from Thorkel's locked chest (decisions DE-17 and DE-18).*
 
 | Key | Value |
 |---|---|
 | startingHotbar | Empty |
-| seaxFoundBy | 5 minutes of play: a seax in the wreck's debris on Wreck Strand, a few tiles from where the steerer wakes, marked by a glint |
-| bowFoundBy | 15 minutes of play: a hunting bow and a quiver with the starting arrows, in the wreck's stern washed up at the east end of Wreck Strand, named by Hild after the rescue |
+| seaxFoundBy | 5 minutes of play: a seax glinting in the wreckage on the obvious path between the waking place and Hild, found before she is cut free (typically within 1.5 minutes, section 25) |
+| bowFoundBy | 30 minutes of play: a hunting bow and a quiver with the starting arrows in Thorkel's locked chest at the camp, opened with the key from his body (the Bran search); typically 20 to 30 minutes in |
 | startingArrows | 6 |
 | pickupTooltip | Shown once per item kind when first picked up, naming its controls for the current input (mouse and keyboard, keyboard only, or gamepad); kept afterwards in the help pages |
 
@@ -1447,6 +1705,8 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | coverBlock | Solid cover stops a missile below its height: rock, walls, the wreck's hull, standing stones and buildings stop every missile; low walls and stakes stop it only at the start and end of its arc (below 0.25 tiles of height) |
 | stuckArrows | Stay where they stuck: in the ground for 1 game day, in props and bodies until the zone is left; at most 40 in a zone (the oldest goes first) |
 | shadow | A soft 3 x 1 shadow on the ground under the missile, offset from it by its height |
+| sweptHits | Every tick a missile checks the whole path it travelled against every body, shield and piece of cover, so a fast missile never passes through anyone; it hits whatever it touches first, before, during and after a fight (decision DE-10) |
+| awareDodge | Aware fighters sometimes sidestep a missile (section 07, Self-preservation); the unaware cannot, and take x2 (section 07, Sneak attacks) |
 
 ### Arrows
 *Arrows are an item with a count, separate from the bow (decision DD-8). No arrows, no shot.*
@@ -1521,7 +1781,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | minorLines | Minor characters: pools of 1 or 2 lines, by culture, season, time of day, weather and the household's deeds |
 
 ## 24 / Heavy build
-*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Starting values, for tuning after playtests.*
+*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Starting values, for tuning after playtests. In combat v2 the poise row is replaced by section 06's "Poise" (poiseHeavy 60), so light attacks rarely stagger a heavy fighter rather than never.*
 
 | Key | Value |
 |---|---|
@@ -1533,3 +1793,90 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | runStamina | Running drains x1.25 |
 | share | About one in six generated people |
 
+
+## 25 / The opening, guidance and feel
+*Design addendum 2.4 sections 2 to 6 (decisions DE-16 to DE-30): the first minutes of Chapter 1, help for a stuck player, the world's feedback, doors, the Hag's Stone and the music's fades. Starting values, for tuning after playtests.*
+
+### The first minutes
+*Targets for a scripted new player, measured by the chapter's telemetry (decision S12-12): a chain of small wins, each with a payoff (design addendum 2.4 section 6).*
+
+| Key | Value | Notes |
+|---|---|---|
+| coldOpen | 30 to 45 real seconds | Night and storm, the steerer at the steering oar as the boat breaks: played, with control within 5 s of the naming screen; then black, then waking in the shallows at dawn |
+| firstInput | Within 10 real seconds of waking | Waking coughing in the surf; the first input gets the steerer up |
+| hildCallBy | 15 real seconds after waking | Hild's first call from the net, with its direction caption |
+| seaxBy | 1.5 minutes | The seax in the wreckage on the way to Hild (section 21, seaxFoundBy is the limit) |
+| hildFreedBy | 2.5 minutes | Cut free and carried above the tide line |
+| chestAtCampBy | 4 minutes | Thorkel's chest set down at its outline |
+| firstFireBy | 5 minutes | Two pieces of driftwood fetched and the fire lit (section 03, fireLight) |
+| shelterBy | 6 minutes | Hild walks up, and the sail shelter is raised (section 03, shelterRaise) |
+| firstFight | The first dusk, about 12 minutes in | The scavengers at dusk (section 07); within Book 1's 25 minutes |
+| hagLight | The first dusk | A pale light at the Hag's Seat, seen from the camp and the strand |
+| bowBy | 20 to 30 minutes | Thorkel's chest opened (section 21, bowFoundBy is the limit) |
+| cutHold | 1.5 real seconds | Holding use with a blade at the net (or a lashing): fibres fly as it goes; letting go keeps what is cut |
+| netWaves | A wave breaks over Hild every 8 real seconds while she is in the net | Spray and a caption; it never harms her |
+| hildWalksUp | When the first fire is lit | Hild sees the smoke and limps up from the strand at the limp speed (section 08); on arriving she gives the shelter aim |
+| noMenus | 10 minutes | No menu and nothing longer than a tooltip to read in the first ten minutes of play |
+
+### Guidance
+*Aims come from people, not markers (design addendum 2.4 section 3; decisions DE-23 and DE-24). The lines are Book 8's (section 13, "Chapter 1 aims").*
+
+| Key | Value | Notes |
+|---|---|---|
+| stuckFirst | 90 real seconds | With no progress on the current aim, a nearby person offers the aim's first hint in speech |
+| stuckSecond | 90 real seconds more | The aim's second, clearer hint |
+| stuckRepeat | Every 120 real seconds after that, at most 3 times | The second hint again, from whoever is nearest |
+| hintNear | Within barkEarshot (section 08) | With no one that near, the hint comes as a distant call from the speaker, with an information caption naming the caller and the direction, if the speaker is in the steerer's zone or the next; otherwise it waits |
+| callCarry | 24 tiles | How far a call is heard, and captioned with its direction |
+| progress | A step towards the aim | Its object picked up, carried nearer or worked, or one of its places reached; walking about alone is not progress, and progress restarts the count |
+| quiet | No hint in a fight, a scene, a conversation or a menu, or while a hostile is suspicious | |
+| journal | The current aim, always, as one plain sentence | In the journal (Book 8 section 13); no quest markers on screen |
+
+### World feedback
+*Design addendum 2.4 section 4 (decisions DE-17 and DE-25).*
+
+| Key | Value | Notes |
+|---|---|---|
+| edgeStopAngle | 45 degrees: pressing more than this into an edge or impassable ground stops the steerer at it | Pressing along it at a shallower angle moves along it at that angle's share of the speed, so a walk beside a shore is not caught; there is no sliding along an invisible wall |
+| edgeCaptionAfter | 0.3 real seconds of pressing against it | Then its information caption: "Nothing that way", "The water's too deep" or "Too steep to climb" |
+| edgeCaptionCooldown | 4 real seconds | At most one edge caption in this time |
+| homeOutline | 10 tiles | A carried thing with a home at the camp shows a faint outline at its home while it is carried within this distance; set down within 1 tile of the outline, it settles into place there |
+
+### Doors
+*Every door and hide flap opens visibly (design addendum 2.4 section 4; decision DE-26). Book 2 section 10 holds the data; Book 9 lists the doors.*
+
+| Key | Value | Notes |
+|---|---|---|
+| openTicks | 12 ticks (a hide or cloth flap 8) | Swinging open, with its sound |
+| closeAfter | 2 real seconds after the doorway is clear | |
+| closeTicks | 12 ticks (a flap 8) | |
+| opensOn | Walking into it, interacting with it, or a click on it | Anyone walking through opens it: residents and enemies too |
+| blocks | A closed door blocks movement, sight and missiles; an open one blocks nothing | |
+| barred | A barred door opens only from the side its bar is on | Barring comes with the defences (Stage 19) |
+
+### The weeping stone
+*The Hag's Stone, the Cailleach's stone at the Hag's Seat: its effect, stronger and never explained (design addendum 2.4 section 4; Book 4 section 07; decision DE-28). The phases run in this order; the whole lasts 6 to 10 seconds.*
+
+| Key | Value | Notes |
+|---|---|---|
+| near | 6 tiles | The effect plays the first time the steerer comes this near the stone while it weeps, and again as an offering is laid; at most once a visit to the headland |
+| hush | 1 real second | The wind drops to silence and the birds go quiet |
+| cold | 1.5 real seconds | The light shifts to a cold blue-green and the carved marks glow faintly |
+| hold | 2.5 to 6.5 real seconds | Mist curls round the stone; a low drone and a whisper rise; the camera eases towards the stone; the hold's length is set by content for each showing (4 by default) |
+| gust | 0.5 real seconds | A sudden gust, and everything returns |
+| settle | 0.5 real seconds | The wind and the birds back as they were |
+| cameraPull | 0.4 of the way to the stone, at most 2 tiles | Eased in over the cold phase and out over the gust |
+| figure | Every second showing | A still figure stands at the edge of the view for 2 s, and is gone if the camera turns towards it |
+| never | In a fight, or with a hostile aware | The effect waits, and no line ever explains it |
+
+### Music fades
+*Music arrives gently and leaves gently (design addendum 2.4 section 5; Book 11 section 03; decision DE-29).*
+
+| Key | Value | Notes |
+|---|---|---|
+| fadeIn | 8 real seconds (6 to 10 by piece) | From silence, on a bar line |
+| firstLayer | One layer | A piece begins with a single layer: a drone or one instrument |
+| layersJoin | Over the first 20 to 30 real seconds | The other layers join one at a time, each on a bar line |
+| fadeOut | 6 real seconds (4 to 8 by piece) | Whenever music stops |
+| crossFade | The outgoing piece's fadeOut | A change between pieces cross-fades; the new one still starts with one layer |
+| stingers | No fade | Stingers alone start and stop sharply |

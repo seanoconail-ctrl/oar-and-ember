@@ -29,7 +29,7 @@ _Specification. Dimensions and statistics are starting values for balancing. His
 > Figure: the adult sprite canvas (drawn in the PDF version of this book).
 
 ### Animation targets
-Idle 4 frames (breathing), with weight-shift and glance idles of 4 and a gust idle of 4 (section 14); walk 6 (right contact, right down, passing, left contact, left down, passing: the torso and head drop exactly 1 px on the two down frames, 1 to 2 px for the heavy build, and the arms swing well forward and back to show weight); run 8 (contact, down, passing, suspension for each leg, as section 17 sets out), with a run start of 1 (the lean into the start) and a run stop of 2 (the skid and settle); sneak 6; light attacks 5 to 7 each with a clear tell frame; charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2); heavy release 6; parry 3; riposte 5; block 3; guard broken 3; stagger 3; dodge 4; shove 4; hurt 2; finisher 8; carry walk 6 (its own heavy gait, also used for carrying a downed ally); row 4; downed 2; surrendered 2; and a work loop of 4 to 8 frames for every homestead task (section 07). Starting targets for the other movement verbs: draw and loose (bow, thrown spear) 4, drawn standing still with no walking variant (section 18), climb 4, slide 2, swim 6, sink 2 (laboured), jump 4, crawl 4, push and pull 4; wading uses the walk with a heavier stride under the water mask. Every body build (the steerer's models A and B, each resident's own body and the heavy build) has the same states, facings, frame counts and timing, so all animation logic is shared (section 16). Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch, splash) live in the manifest and must agree with collision and damage timing.
+Idle 4 frames (breathing), with weight-shift and glance idles of 4 and a gust idle of 4 (section 14); walk 6 (right contact, right down, passing, left contact, left down, passing: the torso and head drop exactly 1 px on the two down frames, 1 to 2 px for the heavy build, and the arms swing well forward and back to show weight); run 8 (contact, down, passing, suspension for each leg, as section 17 sets out), with a run start of 1 (the lean into the start) and a run stop of 2 (the skid and settle); sneak 6; light attacks 5 to 7 each with a clear tell frame; charge hold 4 (looping, with a glint at level 1 and a stronger flash at level 2); heavy release 6; parry 3; riposte 5; block 3; guard broken 3; stagger 3; dodge 4; shove 4; hurt 2; finisher 8; carry walk 6 (its own heavy gait, also used for carrying a downed ally); row 4; downed 2; surrendered 2; and a work loop of 4 to 8 frames for every homestead task (section 07). Starting targets for the other movement verbs: draw and loose (bow, thrown spear) 4, drawn standing still with no walking variant (section 18), climb 4, slide 2, swim 6, sink 2 (laboured), jump 4, crawl 4, push and pull 4; wading uses the walk with a heavier stride under the water mask. Every body build (the steerer's models A and B, each resident's own body and the heavy build) has the same states, facings, frame counts and timing, so all animation logic is shared (section 16). **Combat v2** (design addendum 2.4; decisions DE-2 to DE-9) adds, for every body build: a stance walk facing one way while moving another (back off 6, strafe 6, sharing the walk's timing at their slower speeds), a lunge 5 (the step and dip of the shoulders as its tell), a riposte per weapon class of 6 to 8 (heavy and distinct from any light attack), a backstab 8 (seax 6), a flinch 2, a knockdown 3 and a get-up 4, an arrow sidestep 3 with a 1-frame tell, a bind-a-wound loop 6 and an eat loop 4 (kneeling, the healer open), an exhausted idle 4 (bent, blowing hard) and death falls that vary by weapon and the hit's direction (at least three per build: forwards, backwards and crumpling, each settling over 3 frames). The sneak walk is a low crouch. The hold-to-cut at a net or lashing is a 4-frame sawing loop. Fewer readable frames are acceptable in early stages if the tell, active and recovery frames are distinct. Animation events (hit start, hit end, footstep, oar catch, splash) live in the manifest and must agree with collision and damage timing.
 
 ### Scale
 People are drawn a little larger than the ground's metres, and everything people sit on, walk through, hold or carry is drawn to the 40 px adult, not to the tile. At people scale a metre is about 23 px, close to one tile. Ground, building footprints and hull lengths keep their tile sizes (Book 10 owns the hull tiles); doors, furniture, tools, loads and ship benches follow this table.
@@ -148,6 +148,9 @@ Hulls are built from segments: **bow**, a repeatable **midship** segment (one pe
 ### Beaching, launching and boarding
 Beaching shows the hull tilting onto shingle; launching shows the crew pushing and climbing aboard, part of the extraction in raids. Boarding planks and grapnel lines are drawn objects with collision. When two ships are lashed, their decks form one walkable area with a readable gap.
 
+### The cold open
+Chapter 1 opens with 30 to 45 played seconds aboard Thorkel's boat at night in a storm (Book 4 section 08, beat 1): the steerer at the steering oar in the stern, Thorkel at the bow, the household at the oars, the sail torn, green water coming over the side, lightning showing the skerry ahead, then the strike and black. It is a new scene and starts with a mockup to section 14's standard (Book 3), drawn from the wreck's own hull (the earlier T1 drawing that now lies on the skerry) whole, with the people scale of section 01, night light in blue shadow with lightning, spray and rain slanting in the wind.
+
 ### Sea-map tokens
 Each tier has a 16 x 16 or 24 x 16 token with eight headings, a sail-state frame, a wake and the household's sail colour. Fog dims tokens; unknown ships show a neutral sail until identified.
 
@@ -157,7 +160,7 @@ Each tier has a 16 x 16 or 24 x 16 token with eight headings, a sail-state frame
 ### Skarvholm stages
 | Stage | Appearance |
 |---|---|
-| S0 Wreck camp | Inside the broch (decision DD-19): a fire in a ring of beach stones, a lean-to from the torn sail against the inner wall, salvage in heaps |
+| S0 Wreck camp | Inside the broch (decision DD-19): a fire in a ring of beach stones, salvage in heaps, and Thorkel's chest at its place by the shelter. Before the steerer raises it, the torn sail lies folded beside two oars; raised (design addendum 2.4), it is a lean-to hauled up between the oars against the inner wall, its ropes taut, its cloth filling and settling in the wind, closed by a flap of sail cloth |
 | S1 Broch shelter | Sail roof stretched across the broch's interior, hearth smoke, drying lines, a driftwood door |
 | S2 Steading | A turf-walled longhouse with curved sides, a naust boatshed, fish racks, a small forge, a byre, the residents' shrine |
 | S3 Prosperous | Carved door posts, a smoke-house, a second house, the watch cairn on Rook Hill, coloured cloth, benches outside |
@@ -190,6 +193,11 @@ A designated building appears as a dithered blueprint in undyed tones; cells tha
 ### Interiors
 Doorways, eaves, beds, benches and workstations follow the people scale of section 01: every door is taller than an adult with head room, and eaves clear heads. Buildings use roof cutaways or fades when the player enters. Hearths are the warm centre of every interior. A prosperous home shows hangings, carved benches, chests and clutter; a struggling one shows bare benches and cold corners.
 
+**The sail shelter must be inviting** (design addendum 2.4; decision DE-27), and meets the section 14 standard inside as well as out. When the steerer steps under it, the cloth fades back to show: warm firelight and its glow on the cloth's underside; the sail's weave, its patches and seams, and the wind moving its loose edges; hides and furs laid for bedding, one per sleeper; the salvaged chests and casks, Thorkel's chest among them; oars and gear stowed along the wall; clothes and a net hung to dry, dripping in the first days; smoke curling up from the fire and out under the cloth's edge; and in rain, drops beading and running on the cloth, with their sound (Book 11). Sleepers lie under it at night, and a resident awake mends or eats there. At S1 the sail roof over the whole court keeps the same warmth.
+
+### Doors
+Every door and hide flap opens visibly (design addendum 2.4; decision DE-26): a timber door swings on its hinge over 3 frames, a hide or cloth flap lifts and drops over 2, and each closes behind after a moment (Book 10 section 25, "Doors"), with its sound. A door is drawn in each building's own language (a driftwood door on rope hinges at the broch, plank doors on iron strap hinges in a longhouse, a hide over a roundhouse's door), at the people scale, with a sort line so people pass in front of and behind it, and a bar drawn across when barred. A closed door hides what is behind it. Chapter 1's doors are listed in Book 9 section 04.
+
 ## 07 / People sprites
 *People are distinguished by silhouette, clothing and carried tools, not by colour alone. They move with weight, wear what they own, and are shown at their work.*
 
@@ -205,7 +213,7 @@ Doorways, eaves, beds, benches and workstations follow the people scale of secti
 ### Equipment layers (paper doll)
 - Body, clothing, cloak, helmet, armour, shield and weapon are separate layered sheets that share the body's frames and foot anchor, so whatever a person wears or carries is visible and changes when it changes. Book 2 section 19 owns the format and the draw order per facing.
 - Weapon and shield layers may use a larger canvas round the same anchor for long weapons (spears, Dane axes, bows), so nothing is cut off. Weapons are carried distinctly: spears upright or sloped, axes at the belt or shoulder, swords at the hip, seaxes across the front, bows on the back or in hand.
-- A layer is drawn only for what a person owns and carries. The steerer wakes with nothing in hand: no weapon layer and no bow on the back until the seax and the bow are picked up on Wreck Strand (section 18).
+- A layer is drawn only for what a person owns and carries. The steerer wakes with nothing in hand: no weapon layer until the seax is picked up on Wreck Strand, and no bow on the back until it is taken from Thorkel's chest (section 18). A club or hammer is carried at the belt or over the shoulder; a broken shield is dropped, split, where it broke.
 - **Iron helmets are rare.** Leaders and veterans wear them; most people do not; Orm's men have the most. The steerer starts with none.
 - Every layer the steerer can wear is drawn for both body models, and every layer a heavy person wears is drawn for the heavy build (section 16).
 
@@ -233,7 +241,7 @@ Two body models, A and B, offered side by side without labels. Both share the fu
 - **Depth bands** (Book 10 section 02, "Water depth bands"): **wet**, no change; **ankle**, feet hidden; **knee**, the sprite masked below a waterline at the band's height; **waist**, masked higher, with the arms held up when carrying; **deep**, swimming only where allowed, head and shoulders above the water.
 - Where the water cuts the sprite it draws a **waterline** with a highlight that moves with the small waves. **Ripple rings** expand from the feet on every step and slowly while standing; **splashes** burst on entering the water and when running in it; movement is visibly slower.
 - After leaving the water, people are **darkened and dripping** for a few seconds, leaving wet prints.
-- **Hild in the opening** stands knee to waist deep in the shallows, partly submerged, calling, with ripples and spray round her.
+- **Hild in the opening** is tangled in a net from the wreck, waist deep among the rocks, partly submerged, calling, with ripples and spray round her and a wave washing over her every few seconds: the wading art with a net drawn over her (its cords and floats from the palette, wet and dark), which parts in pieces as it is cut, fibres flying.
 
 ### Work loops and particles
 Every homestead task has a readable work loop of 4 to 8 frames, the same for the steerer and residents (Book 2 section 07), with its tool drawn to the scale of section 01:
@@ -251,7 +259,7 @@ Every homestead task has a readable work loop of 4 to 8 frames, the same for the
 | Herding, milking, shearing | Walking the flock with a staff; seated at the cow with a pail; the shears along a held sheep | Wool tufts |
 | Cooking and tending wounds | Stirring at the hearth, ladling; kneeling and binding | Steam, hearth smoke |
 
-Other particles: dust kicked up when running on sand and dry earth, footprints in sand and snow, and splashes in shallows and streams.
+Other particles: dust kicked up when running on sand and dry earth, footprints in sand and snow, and splashes in shallows and streams. **Every action in the opening is tactile** (design addendum 2.4): rope and net fibres flying from a cut, sparks from the flint and the flame catching, sand puffing where the chest is set down or dragged (a drag furrow behind it), spray where the stores bundle falls into the shallows, and the sail's ropes creaking taut as it fills.
 
 ### Rules
 - No horned helmets. No generic fantasy plate. No modern props.
@@ -259,6 +267,8 @@ Other particles: dust kicked up when running on sand and dry earth, footprints i
 - Faction markers use shape and clothing as well as colour.
 - Ally, enemy, surrendered and downed actors are distinguishable without relying on colour: surrendered actors kneel with empty hands; downed actors lie flat but alive (a slow breath, a hand that moves), unlike the still dead; enemies carry their weapon on the far side; allies show a small shape-coded marker when selected.
 - **The finishing warning:** a berserker or a named cruel enemy about to finish a downed ally stands over them with the weapon raised high for the whole warning (Book 10 section 06, "Downed and carried"), a pose no other attack uses, with a shout and its information caption, so the player sees it in time.
+- **Awareness reads in the body** (combat v2): an unaware actor goes about its work; a suspicious one stops, straightens, turns its head and peers, then walks towards the sound; an alert one takes its weapon in hand and squares up. A small "?" or "!" over the head (an option, on by default) confirms it, drawn as shapes, never colour alone (section 10).
+- **Enemies who want to live show it**: a wounded fighter guards higher and backs off; one who flees runs bent with a glance behind; a feint is a full tell that stops short.
 - Readable at 1x and 2x scale.
 
 ## 08 / Palette, light and weather
@@ -279,7 +289,7 @@ Rain is a light overlay that never hides an actionable threat. Fog uses layered 
 |---|---|---|
 | Rán | Ripples moving against the current | Pale green sea-light below the surface; nets of light; the drowned standing in the shallows |
 | Manannán | Fog moving against the wind | A grey-cloaked figure in a small boat; foam shaped like horses |
-| The Cailleach | Frost on one stone only | A hag-shaped cloud over the Cauldron; hail out of season |
+| The Cailleach | Frost on one stone only; at the Hag's Seat, a pale light by the stone on the first evening | A hag-shaped cloud over the Cauldron; hail out of season; the Hag's Stone's hush (below) |
 | The Blue Men | Blue shapes in the wave troughs | Blue-skinned figures riding the swell, speaking verse |
 | Aos sí and landvættir | Flowers out of season; shadows falling the wrong way | Tall figures at the edge of light, too still |
 | Draugr | Wet footprints with no one there | Dripping figures hung with weed, colder palette, no gore |
@@ -292,6 +302,8 @@ Rain is a light overlay that never hides an actionable threat. Fog uses layered 
 | Manannán's Cup | A plain grey cup that holds no reflection | Mist rising from it; the sea-light around it dims |
 
 Supernatural actors still obey collision, visibility and attack timing unless a specific signalled ability says otherwise.
+
+**The Hag's Stone** (Book 4 section 07; timings in Book 10 section 25; decision DE-28). Stronger, and never explained. As the hush begins every plant in view eases to stillness and the birds settle or go; the grade shifts over the cold phase to a cold blue-green (a reserved accent, kept to this and to nothing ordinary), and the carved marks on the stone glow faintly from within; mist curls round the stone's foot in drifting layers; the view eases towards the stone; on every second showing a still, tall figure stands at the very edge of the view, half in the mist, and is gone if the view turns to it. Then a gust runs across the headland from the sea, the plants spring back together and the light and the birds return. With reduced motion the gust and the camera's ease are calmer and the figure stays; the effect never flashes.
 
 ## 10 / Interface and sea map style
 *The interface should feel like wood, cloth and carved bone, and stay easy to read.*
@@ -314,7 +326,11 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 - **Target tile:** the tile the next action will work is outlined with a one-pixel rim in the interactive highlight of section 13, with corner ticks, and a faint fill; it shows the selected tool's action as a small icon (axe, spade, seed, pail, hammer, hook, sword).
 - **Out of reach:** the cursor tile dims and its rim turns to a broken red edge, and a short refusal word appears beside it ("Too far", "Nothing to cut"); it is never shown by sound alone or by colour alone (the broken edge is a shape cue).
 - **Aim line:** while drawing a bow or aiming a spear, a dotted line runs from the hand towards the cursor, its dots spaced wider as the draw grows, ending in a small cross; it never passes through solid tiles in a way that lies about the shot.
-- **Melee facing:** when a melee attack is aimed with the cursor, a small arrow at the steerer's feet shows which of the four facings it will take.
+- **Combat stance and lock-on:** with a weapon in hand, a small arrow at the steerer's feet shows the way the stance faces (the true facing, though the body is drawn in the nearest of four). A locked target has a small carved-bone mark under its feet, with corner ticks, that follows it; it is a shape, never a colour alone.
+- **Health and stamina bars** (combat v2): two bars, top left, in carved-wood frames, health above stamina, shown in a fight and fading out a few seconds after they are full outside one (Book 10 section 06, "Bars"); the stamina bar keeps its reasons and groove (below). A thin, frameless health bar shows over the locked or recently hit enemy.
+- **Awareness marks:** a small "?" over a suspicious actor and a "!" when it turns alert, drawn in the interactive highlight with an ink edge (an option, on by default).
+- **No quest markers.** Nothing on screen points to an aim. The journal (J) holds the current aim as one sentence on a page of cloth or vellum, with the morning report below it.
+- **A home outline:** a carried thing with a home at camp (Thorkel's chest) shows a faint dotted outline of itself where it belongs, in the undyed tones of the designation blueprint (section 06), while it is carried near.
 - **Pickups and tooltips:** a thing worth picking up shows its glint, and the first pickup of each kind shows its tooltip; arrows have their own icon and count (section 18).
 - **Work:** a menial task shows only its work loop over the worker. The **timing ring**, a ring closing on a mark over the work, shows only on a timed task (Book 10 `timedTasks`: fishing from the shore, where it closes over the water the line went into); it never shows on a plain action (decision PT-1). Driftwood lying on the strand is common stuff, not an item worth a glint: it has no glint, and the interact prompt names it when it is in reach.
 
@@ -377,7 +393,11 @@ Supernatural actors still obey collision, visibility and attack timing unless a 
 | Element | Specification |
 |---|---|
 | Blood palette | Fresh `#B32424`, dark `#8E1B1B`, dried `#5A0F12`, highlight `#D9483B` |
-| Hit spray | 4 to 10 particles of 1 to 2 px, direction from the blow, heavier for heavy and riposte hits |
+| Hit spray | 4 to 10 particles of 1 to 2 px, direction from the blow, heavier for heavy and riposte hits, with a decal where they land |
+| Hit flash | A one-frame flash on the one hit (a palette-lightened frame, never pure white; none with reduced flashes) |
+| Sparks | Sparks off mail and off a shield's boss or rim, and splinters off shield wood, in the blow's direction |
+| Hit reactions | Hitstop, flinch, knockback of 2 to 6 px in the hit's direction, stagger and knockdown frames (Book 10 section 06, "Hit reactions"); the steerer the same |
+| Deaths | Falls that vary by weapon and the hit's direction; bodies settle naturally over a few frames, never snapping to a pose |
 | Decals | Drops, pools under the downed and dead, smears and drag trails when bodies or wounded are carried |
 | Bloodied state | Overlay on actors below half vitality; clothing darkens at the wound side |
 | Dismemberment | Separate pieces (arm, leg, head) for killing blows from heavy cutting weapons; pieces bounce once and settle; the body uses a matching corpse pose |
@@ -479,7 +499,7 @@ The mockups' sources and their notes are in `docs/art/` (`README.md`, `mockup-sr
 - Cloud shadows drift across land and sea with the wind; shafts of light fall through broken cloud when the sun is low; fire and lanterns flicker and throw light pools; lightning flashes in storms; fog and mist drift in layers.
 
 ### Camera feel
-- The camera follows smoothly with a look-ahead towards the mouse cursor (capped at about 3 tiles, more while aiming a bow or spear; Book 10 section 21 "Controls and camera"), or in the direction of travel without a pointer. It is smoothed below the pixel, springing its point in the world rather than its offset from the steerer, so a turn or a stop eases out and back in rather than jolting (decision PT-0); without a pointer, the lead in the direction of travel swings round and fades smoothly. Only the final view snaps to whole logical pixels, with a dead zone and hysteresis, so nothing jitters, the steerer holds still on screen on a steady walk, and the view never steps one pixel back and forth. Hits shake it briefly.
+- The camera follows smoothly with a look-ahead towards the mouse cursor (capped at about 3 tiles, more while aiming a bow or spear; Book 10 section 21 "Controls and camera"), or in the direction of travel without a pointer. It is smoothed below the pixel, springing its point in the world rather than its offset from the steerer, so a turn or a stop eases out and back in rather than jolting (decision PT-0); without a pointer, the lead in the direction of travel swings round and fades smoothly. Only the final view snaps to whole logical pixels, with a dead zone and hysteresis, so nothing jitters, the steerer holds still on screen on a steady walk, and the view never steps one pixel back and forth. Only heavy hits, ripostes, backstabs and big hits on the steerer shake it, briefly (Book 10 section 06, "Hit reactions"). While locked on, it centres between the steerer and the target.
 
 ### Accessibility
 - **Reduced motion** (from the system's preference, `?motion=reduced`, or the system menu): no camera shake or flashes, calmer plant sway, half the blown sand and insects. The world still moves (at least 50% of cells with the camera still).
@@ -563,14 +583,14 @@ The mainland's sites are explored on foot; between them, road legs pass off scre
 - **Drawn for every shot** (Book 1 section 09; Book 2 section 12, Missiles). An arrow and a thrown spear each have a flight sprite in **16 directions**, rotated along the line of flight; the arrow about 10 px long with a pale fletching and a dark head, the spear about 24 px with its iron head catching the light. They are drawn from the palette, with the ink outline, never as a line or a dot.
 - **The arc and the shadow.** The missile is drawn raised above the ground by its height in the simulation, with a soft 3 x 1 px ground shadow under it (Book 10 section 21, `shadow`), so its arc reads by the gap between the two: wide at mid-flight, closing as it comes down. The sprite tips nose-down on the falling half of the arc (the nearer of the 16 directions with the drop).
 - **Speed reads.** At the Book 10 speeds an arrow moves about a quarter of a tile a frame; it is drawn every frame, with a faint one-frame streak behind it (none with reduced motion), so the eye never loses it. A spear is slower and flies point first, never tumbling.
-- **Stuck missiles** stay where they struck, at the angle they struck, with sprites for each surface: **in the ground** (the shaft standing out of sand, turf or earth, leaning back along its line, with a small kick of sand or turf), **in timber** (a hull, a wall, a door, a tree), **in a shield** (the shaft standing out of the board, moving with the shield and its bearer) and **in a body** (the shaft standing out of a person or animal, moving with them; drawn with the gore setting, section 12). A **broken** arrow lies as two pieces with a splinter; one that strikes stone glances and lies broken at its foot; one into water vanishes with a small splash ring. Whole arrows that can be picked up show the interactive highlight edge in reach (section 13).
+- **Stuck missiles** stay where they struck, at the angle they struck, with sprites for each surface: **in the ground** (the shaft standing out of sand, turf or earth, leaning back along its line, with a small kick of sand or turf), **in timber** (a hull, a wall, a door, a tree), **in a shield** (the shaft standing out of the board with a thunk, moving with the shield and its bearer) and **in a body** (the shaft standing out of a person or animal, moving with them; drawn with the gore setting, section 12). A **broken** arrow lies as two pieces with a splinter; one that strikes stone glances and lies broken at its foot; one into water vanishes with a small splash ring. Whole arrows that can be picked up show the interactive highlight edge in reach (section 13).
 - **Against the standard** (section 14): missiles and stuck shafts have shadows like every prop; stuck shafts in a breeze stay still (they are solid), but their fletching stirs in a strong gust; a hit raises the dust, splinters or spray of what it hit.
 
 ### The draw
 - **Drawing plants the feet**, so the draw and loose (section 01) has **no walking variant**: the archer stands square, turns to the aim with the cursor, and the legs stay planted while the bow is drawn. Any facing turns the whole body, never the legs alone. Crew and enemy archers use the same frames: a stop, the draw, the loose, then movement again.
-- The steerer's bow is a weapon layer like any other (section 07) and is drawn **only once the bow is owned**: until it is picked up on Wreck Strand there is no bow on the steerer's back or in hand, and no quiver. Once owned, it is carried on the back with the quiver at the hip, and in hand while selected. The seax likewise appears at the front of the belt only once found.
+- The steerer's bow is a weapon layer like any other (section 07) and is drawn **only once the bow is owned**: until it is taken from Thorkel's chest there is no bow on the steerer's back or in hand, and no quiver. Once owned, it is carried on the back with the quiver at the hip, and in hand while selected. The seax likewise appears at the front of the belt only once found.
 
 ### Pickups and their glint
-- A thing worth picking up that the player might miss (the seax in the wreck's debris, the bow in the stern, a cache, a dead archer's quiver) shows a **glint**: a small four-pointed sparkle from the highlight of its material, two or three frames every few seconds, brighter in low sun, kept under the strong luminous accents reserved for the supernatural (section 09). It is a light on the object, not an icon over it, and it stops once the thing is taken.
+- A thing worth picking up that the player might miss (the seax in the wreckage on the way to Hild, the arm-ring in the rock pool, a cache, a dead archer's quiver) shows a **glint**: a small four-pointed sparkle from the highlight of its material, two or three frames every few seconds, brighter in low sun, kept under the strong luminous accents reserved for the supernatural (section 09). It is a light on the object, not an icon over it, and it stops once the thing is taken.
 - **Item icons** for the hotbar and the inventory are drawn for every item (section 10): the seax, the bow, and **arrows** (a small bundle of three shafts with their fletching; bone heads pale, iron heads dark), with the count in the slot's corner. Arrows show their count on the bow's slot.
 - **The pickup tooltip** (Book 2 section 21; Book 8 section 10) sits in a carved-wood panel beside the item's icon, above the hotbar, with each control drawn as its key, mouse button or pad button in a small frame, never as a colour alone.

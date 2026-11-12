@@ -73,6 +73,7 @@ Write specific oaths rooted in each culture rather than generic Viking shouting.
 - When speaking about the steerer in the third person, use the name or "the steerer", or "they" if unavoidable.
 - Neutral kinship terms are allowed: cousin and kin. Instead of nephew or niece, say "Thorkel's sister's child".
 - Content lint (Book 2) flags any string tagged `ADDRESS_STEERER` or `ABOUT_STEERER` that contains a word from the banned list.
+- **A gendered word for someone else** in a line addressed to the steerer (Hild's "He wore the key round his neck" of her father, or "her" of a boat) is allowed only when the string also carries `REFERS:<id>` naming whom the word means (`REFERS:c_thorkel`, `REFERS:ship`), and never in a string that names the steerer (`{steerer}`). Content lint then allows only the words that fit that referent; a reviewer reads every such line. Write round it where the line reads as well without (decision DE-31).
 - Period attitudes to women and men exist in the world and may be spoken (Eithne's marriage, Órlaith's), but no line applies them to the steerer or reveals the steerer's gender (section 16).
 
 | Instead of | Write |
@@ -134,7 +135,26 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Áine | Boastful, funny, deadly | "Name a crow. I'll put it down." / "You protect my cattle, I'll protect your neck. Fair?" |
 | Senán | Gentle, bilingual, wryly devout | "Pax vobiscum. Mind the step. The heathen broke it in my grandfather's time." |
 
-**Hild names the bow.** After the rescue, once she is sitting above the tide line, Hild tells the steerer what the wreck may still hold: `Hild: Father's hunting bow was in the stern. If it came ashore, look east.` When the steerer comes back with it: `Hild: That's his bow. He'd want it drawn, not mourned.` Her lines name the bow and the stern, never the steerer's gender (section 03).
+**Hild in the opening** (Book 4 section 08, beats 3 to 12; design addendum 2.4). Her lines carry the chapter's first aims, and she jokes when it is worst:
+
+| Moment | Line |
+|---|---|
+| Calling from the net (her direction in an information caption) | `Hild: Here! Over here, past the rocks!` / `Hild: I'm caught in the net! The water's coming in!` / `Hild: Over here! I'd come to you, but the net has other ideas.` |
+| Reached without a blade | `Hild: The net, I can't get out of it. Find something sharp! Father's seax was in the stern.` |
+| As a wave breaks over her | `Hild: That one went up my nose.` |
+| Cut free | `Hild: Oh, thank the gods. Thank you.` then `Hild: Next time, cut the net before the swim.` |
+| Set down above the tide line | `Hild: That'll do. The sea's not having either of us today.` |
+| First sight of Thorkel's chest | `Hild: Father's chest. Get it up to the camp. He wore the key round his neck.` (`REFERS:c_thorkel`) |
+| Arriving at the camp, after the first fire | `Hild: Get the sail up between those oars, before the rain comes.` |
+| By the old boat under the bank | `Hild: Father would've had her floating by the next tide.` (`REFERS:ship`) |
+| The shelter up | `Hild: There. A roof. Of sorts.` |
+| The first night's fire, ending | `Hild: Oddi was by the stern when she broke. Bran went after Father.` (`REFERS:ship`) then `Hild: And Runa will have gone after that light. Of course she has.` |
+| The chest opened | `Hild: That's his bow. He'd want it drawn, not mourned.` (`REFERS:c_thorkel`) |
+| The stores on the mast | `Hild: That's our salt fish up the mast. An arrow through the rope would bring it down.` |
+
+**Runa's tool chest** (Book 4 section 08, beat 13; decision DE-21). Once the chest has been set down somewhere safe, the next talk with Runa opens on it: `Runa: My chest. Where have you put it?` The steerer's answers name a place: "By the fire." / "In the shelter." / "By the boat." Told the truth: `Runa: Good. Off the wet ground, I hope.` Told a lie, she finds it out when she goes to look: `Runa: It's not where you said. Why say it, then?`, and it counts against Word.
+
+The first night's fire scene is fire talk (section 09) with Hild alone: her grief comes through in short sentences between the jokes ("He'd have hated being carried. He'd have hated all of it."), and it ends on the morning's aims. Her lines name the people and things they mean and never the steerer's gender (section 03).
 
 ## 06 / Voices of the coast
 | Speaker | Voice | Sample lines |
@@ -168,6 +188,9 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Kolgrím the Burner | Orm's garrison chief on Skarvholm; coarse, proud of fire | "Nice island. Your well's gone salt. I've been drinking ale. Want some?" |
 | Gróa | Heid's apprentice at the cairn; eager, frightened, devout | "She said the door would open if I gave it enough. I gave it everything." |
 
+### Scavengers, thieves and wary locals
+They want loot, not a death, and warn before they fight (Book 1 section 09; Book 10 section 07, "Warnings"). A warning is short and plain, rising as the steerer comes on, and a walk away ends it. The wreck-scavengers at the stern, in turn: `Svart: Keep out of this.` / `Svart: This wreck is ours. Walk on.` / `Svart: One more step and you'll bleed.` Offered food: `Conn: Fish? Svart, it's fish.` / `Svart: Leave it there. Now go.` When one falls, the other's flight: `Conn: Not for a wreck. Not for this.` Wary farmers on the mainland: "That's far enough." / "We've nothing worth your trouble." / "Go round. Go round, I said."
+
 ### Supernatural voices
 - **The Blue Men** speak in rhymed couplets. They give two lines and wait for two more. The player's choices are four couplets: one bold and fitting (success), one clever but slow (partial), one timid (failure), one insulting (they laugh, then attack). Write new couplets each time; never use well-known verses.
 - **The Ferryman** says very little, slowly, in complete sentences. He asks; he never threatens. "Tell me something true, and I will tell you the way."
@@ -200,6 +223,8 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Idle and evening | "Sing the one about the goat." / "Dry feet. I'd forgotten." / "Pass the ale before Kári sees it." |
 | Weather and season | "Smell that? Snow." / "Gulls inland. Storm tomorrow." / "Long light. Too long to sleep." |
 | Supernatural signs | "The water's moving wrong." / "Footprints. Wet ones." / "That fog's going against the wind." |
+| Awareness (enemies) | Suspicious: "Who's there?" / "Thought I heard something." / "Show yourself." Alert: "There!" / "Up! Up, we've company!" Losing the trail: "Wind in the grass. That's all." |
+| Wounded enemies | "I'm cut! To me!" / "Back, back, give me room." / "Enough. Enough, I yield." |
 | Reactions to brutality | "That wasn't a fight." (Bran) / "Farmers. No name to be won off farmers." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) / "No need of that. Bad luck, that." (Kolla) |
 | Assault | "Horn! More coming." / "Lock shields!" / "Hold the beach!" / "Archers on the roof!" / "Fall back to the ships!" |
 | Return to Skarvholm | "That's our roof. Their smoke." / "They've salted the spring." / "Father's stones are still there." (Hild) |
@@ -245,6 +270,8 @@ Subtitles show two kinds of line, and they look different:
 | Rule | Detail |
 |---|---|
 | Information lines | Under eight words, in the present tense, with a direction when it helps the player find the source. Plain, modern-neutral English: no glossary words, no slang, no period voice |
+| Edges | Walking into an edge gives one of three information lines, at most once in a few seconds (Book 10 section 25): *Nothing that way*; *The water's too deep*; *Too steep to climb*. They say why, never that the steerer "cannot" |
+| Actions | The opening's tactile moments have their captions: *The net parts*; *Sparks from the flint*; *The flame takes*; *The sail fills and settles*; *The lashing parts*; *A splash in the shallows*; *A door creaks open* |
 | Unmet speakers | A speaker the player has not met is named by what they appear to be ("Monk:", "Stranger:", "Ardcarn guard:") until introduced |
 | Hidden identities | A subtitle name never gives away a hidden identity: Nessa's secret, a disguised enemy, an outlaw prince |
 | Both at once | The information line sits above the speech line |
@@ -346,8 +373,36 @@ Choices: "Give Kári the ring." / "Give Oddi the ring." / "Sell it and split the
 - The steerer's answers are short choices: "I'll do it." / "No. Not that." / "After the harvest."
 
 ### The quest journal
-- The current goal is one plain line, fitting one subtitle line (section 10): "Find the man Áine names in Saltvik."
+- The current goal, or aim, is one plain line, fitting one subtitle line (section 10): "Find the man Áine names in Saltvik." It is always in the journal (J), for the player who wants it; there are no quest markers on screen (decision DE-23).
 - Goals are written as instructions with no pronoun for the steerer.
+- **Aims come from people first.** Each aim is given in speech by someone the steerer meets, and has two hints: the first offered by a nearby person after a spell with no progress, the second clearer, after a while longer (Book 10 section 25, "Guidance"). Hints are speech in the speaker's own voice and period English, never an instruction about controls, and never name a key. With no one near, a hint can come as a distant call with an information caption giving the direction.
+
+### Chapter 1 aims
+Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The journal line is plain interface English; the hints are speech. The speaker in brackets is the default: when they are not near, the nearest resident of the household who knows of the aim speaks the hint in their own voice.
+
+| Aim | Journal | First hint | Second hint |
+|---|---|---|---|
+| Find who is calling | Find who is calling beyond the rocks. | (Hild, calling) "Over here! Past the rocks, to the west!" | (Hild, calling) "West! Follow the shore round the rocks!" |
+| Free Hild | Cut Hild free of the net. | (Hild) "Something sharp. A blade. Look in the wreckage." | (Hild) "There was a glint on the shingle, back the way you came. Hurry." |
+| Bring Hild ashore | Carry Hild above the tide line. | (Hild) "Higher. The tide comes this far." | (Hild) "Up past the weed. The dry stones. There." |
+| Carry the chest to the camp | Carry Thorkel's chest up to the old tower on the bank. | (Hild) "The old tower. Up the bank, past the stream." | (Hild) "Up the bank, then north. Set it down where the shelter goes." |
+| Light a fire | Light a fire in the old tower. | (Hild, calling) "Wood! It's all along the tideline!" | (Hild, calling) "Two good pieces will do. Then the flint." |
+| Raise the shelter | Raise the sail between the oars. | (Hild) "The sail, and those two oars. Before the rain." | (Hild) "Lash it high on the oars and peg the foot." |
+| See to Hild's leg | See to Hild's leg. | (Hild) "My leg could use a look, when you've a moment." | (Hild) "Talk to me. I'll show you where it hurts." |
+| The scavengers at the stern | See who is at the stern. | (Hild) "Someone's down at the stern. Hear that? Iron on wood." | (Hild) "Take care. Folk who strip wrecks don't like to be watched." |
+| Sit at the fire | Sit with Hild by the fire. | (Hild) "Come and sit. It's been a long day." | (Hild) "The fire's warm. Come on." |
+| Find Oddi | Find Oddi near the wreck. | (Hild) "Oddi was by the stern. Try the west end, by the wreck." | (Hild) "West end of the strand. Listen for him." |
+| Find Bran | Find Bran and Father's body. | (Hild) "Bran went after Father. Up by the old mound, maybe." | (Hild) "East, past the machair. The sheepfold under the mound." |
+| Find Runa | Find Runa at the Hag's Seat. | (Hild) "That light was out on the Hag's Seat. West." | (Hild) "West, out along the headland. Mind the wind on the neck." |
+| Open Thorkel's chest | Open Thorkel's chest with the key. | (Hild) "You've the key. Father's chest is by the shelter." | (Hild) "Go on. Open it. He'd want it opened." (`REFERS:c_thorkel`) |
+| Bring down the stores | Shoot down the stores from the broken mast. | (Hild) "That's our salt fish up the mast. An arrow through the rope would bring it down." | (Bran) "Stand still. Aim at the rope, not the bundle." |
+| Patch the hull | Patch the old boat's hull with the boards. | (Runa) "The boards are on the shingle by the boat. Bring them." | (Runa) "Boards by the boat, then work. I'll help." |
+| Cut the rigging free | Bring the rigging from the wreck at low water. | (Runa) "The rigging's on the skerry. Low water, or you swim." | (Runa) "Wait for the ebb. Then out over the flats." |
+| Get a steering oar | Get a steering oar. | (Runa) "The scavengers had a skiff. Seal Cave, north-east." | (Runa) "Take theirs, buy theirs, or I carve one. Two days." |
+| Thorkel's rites | Give Thorkel his rites, if the household will. | (Hild) "Father should have his rites before we sail." | (Hild) "Stones on the machair, or the sea. Talk to me." |
+| Launch the boat | Launch the boat when the tide is in. | (Runa) "She's sound. Wait for the water and we'll run her down." (`REFERS:ship`) | (Hild) "Tide's in. Look the boat over and we'll go." |
+
+The fire and shelter hints come as distant calls while Hild is still on the strand. The Runa and Bran hints wait until they are in the household; until then Hild speaks them in her own words.
 - A revenge quest words every other way out as plainly as the killing: "Kill him." / "Offer him a duel." / "Make him leave the coast." / "Ask his kin for the blood-price." / "Tell Áine who ordered it."
 - The one who asked speaks the ending by their values. Áine, after an exile: "He's gone. It's not what I wanted. It's something."
 

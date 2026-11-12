@@ -4,7 +4,7 @@
 
 If these nine scenarios are fun, fair and different from each other, the game works. Each one is specified completely enough to build, test and balance before the map grows. Every raid can be a stealth raid or an all-out assault (section 12). The mainland's dungeons (section 13) and the revenge quests (section 14) run on the same machinery of deeds, carriers and delayed consequences. The scenarios that move the story are story gates the player chooses to start (section 15); the downed are carried home, not bled out (section 16); and a few deaths are written in (section 17).
 
-**How to use:** Build Scenario 1 for Build 2, Scenarios 2 and 3 for Build 3, and the rest during the campaign stages; assaults, dungeons and revenge quests follow the stage plan (Book 3). Each scenario lists its hidden true state, what the player can know, approaches, complications, extraction, outcome bands, consequences and the tests that prove it. Quantities are starting values for balancing, not final numbers.
+**How to use:** Build Chapter 1's encounters (section 18) with Build 1 and its rework, Scenario 1 for Build 2, Scenarios 2 and 3 for Build 3, and the rest during the campaign stages; assaults, dungeons and revenge quests follow the stage plan (Book 3). Each scenario lists its hidden true state, what the player can know, approaches, complications, extraction, outcome bands, consequences and the tests that prove it. Quantities are starting values for balancing, not final numbers.
 
 _Specification, not implemented content. All places and people are fictional. Violence is graphic and the player can kill civilians and the surrendered; consequences depend on witnesses and evidence. No children appear as actors in any scene; families are implied by homes, belongings and adults. Numbers here are illustrative; Book 10 is authoritative._
 
@@ -87,7 +87,7 @@ Everyone judges by the ethics of their own culture around AD 900, the household 
 *Chapter 2. The first raid. Small, readable, and full of choices. A storehouse and landing on the Irish coast that serves Ardcarn, open to a stealth raid by night or an assault by day.*
 
 ### Lead
-After the launch, the sea map shows smoke on the Irish coast. Oddi's chart fragment, salvaged from Thorkel's chest, marks a landing called Carrick with the note "grain, iron, few spears". The island needs provisions and iron for nails and tools. **Confidence:** likely.
+After the launch, the sea map shows smoke on the Irish coast. Thorkel's chart fragment, from his locked chest (opened in Chapter 1 with the key from his body, section 18), marks a landing called Carrick with the note "grain, iron, few spears". The island needs provisions and iron for nails and tools. **Confidence:** likely.
 
 ### The place
 A shingle beach with a timber jetty, a stone-footed storehouse, the keeper's house, a byre, a drying rack for fish and a watch post on the headland. A cart track leads inland to Ardcarn. A runner who gets off the map brings Fiachra's riders, quartered at Ardcarn, back in about two minutes (Book 9 section 07). Low tide doubles the carry from the storehouse to a boat on the beach; high tide lets the boat lie at the jetty.
@@ -414,6 +414,9 @@ Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground f
 | A challenge refused | The challenger's men, and the poet | Níð spoken of the household; a satire sung where it hurts; the Glory-minded ashamed at the fire | Kári's anger; the satire at Saltvik |
 | A killing hidden, then found out | A body found, or one of the household's own who will not keep the secret | The killing judged as murder, worse than if it had been declared, with éraic or vengeance owed | The accusation; who told |
 | A resident left behind | The enemy who took them | A ransom demand, a rescue, or word of their death | Their empty place at the fire; the enemy's envoy |
+| The scavengers fought at the first dusk (Chapter 1) | Conn, running to Ketill | One fewer at the sheepfold and at Seal Cave; the band warned (section 18) | Svart's body on the strand, or Svart kneeling; fewer men at the fold's gate |
+| The scavengers paid off with food at the first dusk | Svart and Conn, fed | All three at the fold, and a parley there that starts warmer | Less salt fish in the morning report |
+| Runa lied to about her tool chest | Runa, when she goes to look | Her friendship falls by her Word; she checks the steerer's word again later | Her line at the empty place; her cooler greeting |
 
 ### Propagation rules
 - News travels only with carriers: survivors, traders, monks, rival crews, seals for the Keepers, and on the mainland the travellers on its roads, the ford-keeper at the River Ford and the pedlar. Each carrier has a route and a delay. Places and travellers are simulated at low detail while off screen, so things happen while the household is away and the news reaches it the same way, by people (Book 10 section 17).
@@ -640,3 +643,39 @@ Every one is announced by the scene before it can happen, and every death that f
 ### Proof tests
 1. Each scripted death can be avoided on at least one path the player can see before it happens.
 2. Each death that happens leaves a grave, grief at home and at least one closed or changed story branch.
+
+
+## 18 / Chapter 1: The Wreck's encounters
+*Chapter 1 is the tutorial, but its few choices are scenarios in small, built on the same template and carried by the same people (design addendum 2.4; Book 4 section 08; decisions DE-14 to DE-22). Book 10 sections 07, 08 and 25 hold the numbers; Book 9 section 03 holds the places.*
+
+### The scavengers at dusk
+| Part | Contents |
+|---|---|
+| **Lead** | At the first dusk, iron on wood from the east end of the strand; Hild hears it at the camp ("Someone's down at the stern."), and the aim is to see who it is |
+| **True state** | Three wreck-scavengers, outlaws who take no captives: Ketill (the heavy build, axe and shield, their leader) watches the sheepfold, where Bran holds Thorkel's body; Svart (spear, his shield on his back while he works) and Conn (young, bow and seax, cowardly) strip the wreck's stern. They want loot, not a death |
+| **Mode** | A small fight, or none |
+| **Approaches** | **Fight:** they warn first ("Keep out of this." "This wreck is ours. Walk on." "One more step and you'll bleed."); Svart's heavy thrust has a slow, obvious wind-up, so the first parry lands and earns a big riposte with its hitstop. **Walk away:** they finish at dark and go to the fold. **Bargain:** offer salt fish from the camp's stores; they take it and go. **Sneak:** through the dune grass on the bank behind them for a backstab on Conn or Svart |
+| **Complication** | When one falls (dead, downed or surrendered), the other runs: self-preservation shown at once. Conn runs if he is hit at all |
+| **Outcome bands** | Both gone with food; both gone at dark; one dead and one fled; one spared and one fled; both dead (rare: Conn runs) |
+| **Evidence** | A body on the strand, which the household see and remark on; the stern stripped or not |
+| **Consequences** | Whoever of the band is neither dead nor held goes to Ketill at the fold (the fold has one, two or three to face), and after the fold, to their skiff in Seal Cave (decision S11-10). A killing is a `KILLING` deed with the household's witnesses; a surrender let go is `SPARED`; the food is gone from the stores |
+| **Gate** | Not a gate. A checkpoint autosave before it |
+| **Proof tests** | Every approach ends the encounter; a scripted new player who parries Svart's first heavy wins with a riposte; Conn flees when Svart falls; walking away never starts the fight; the fold's band matches what happened at dusk |
+
+### Thorkel's chest, his key and the bow
+| Part | Contents |
+|---|---|
+| **The chest** | Thorkel's own sea chest, locked, found in the wash by Hild on the first morning and carried, or dragged, up to its outline in the camp. Hild: "Father's chest. Get it up to the camp. He wore the key round his neck." |
+| **The key** | On Thorkel's body, which Bran holds at the sheepfold. However Bran's search ends (fight, sneak, bargain, or lost), the key comes to the steerer: from Bran when he lays Thorkel on his bier, or taken from the body wherever it lies |
+| **Inside** | His hunting bow and a quiver of six arrows (the reward of the Bran search, about twenty to thirty minutes in), his chart fragment (Carrick, section 02), three linen bindings, a bone comb and a whetstone. Hild may keep the comb |
+| **The ship's silver** | Not in this chest: the ship's hack-silver is in its iron-bound strongbox by Oddi, which is what Oddi's dilemma saves or loses, what buys Bran's way out at the fold, and what can trade for the steering oar |
+| **The bow's first use** | The ship's stores (salt fish and the cauldron) hang lashed high on the broken mast, wedged in the western rocks, out of reach and in sight since the first morning; an arrow through the lashing drops them into the shallows to wade out for. It teaches aiming and loosing from a standing position, and pays in food |
+| **Proof tests** | The chest cannot be opened without the key; the key reaches the steerer on every outcome of Bran's search; the bow is first owned only from the chest; the bundle falls only to a missile through its lashing, and can always be reached after |
+
+### Runa's tool chest
+| Part | Contents |
+|---|---|
+| **Choice** | Runa asks for her tool chest to be moved to safety. Once it is set down anywhere safe (the camp, the shelter, the boat), she asks "Where have you put it?" |
+| **Approaches** | Tell the truth, or name another place |
+| **Consequences** | The truth satisfies her (her friendship rises a little). A lie is found out when she goes to look, and counts against Word: her friendship falls by her Word (Book 10 section 08, `runaLie`), and it is remembered |
+| **Proof tests** | Each answer is offered whatever the truth; a lie is always found out within a day; the truth never is |

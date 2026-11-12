@@ -27,9 +27,9 @@ it one stage at a time, following `docs/03_stage_plan.md`.
 | 11 | docs/11_audio_and_music.md | Music, sound and voice |
 
 PDF copies for people are in `docs/pdf/`. The markdown files are the source of truth. Design
-addenda 2.2 and 2.3 (`docs/design-addendum-2.2.md`, `docs/design-addendum-2.3.md`) are folded into
-the books (decision log DA-1 to DA-16 and DC-1 to DC-16); they are kept as a record only, and the
-books win over them from now on.
+addenda 2.2, 2.3 and 2.4 (`docs/design-addendum-2.2.md`, `docs/design-addendum-2.3.md`,
+`docs/design-addendum-2.4.md`) are folded into the books (decision log DA-1 to DA-16, DC-1 to DC-16
+and DE-1 to DE-34); they are kept as a record only, and the books win over them from now on.
 
 ## Authority when books disagree
 The user's latest instruction > Book 1 > Books 4 to 11 > Book 2 > Book 3.
