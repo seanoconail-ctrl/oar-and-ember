@@ -131,7 +131,14 @@ Thorkel's chest dragged home, the first fire, Hild walking up, the sail raised, 
   failed** (3.9 min).
 - No failure under load in this pass, and no threshold, standard or budget was changed. No probe or
   scratch tests were left in the tree (none were made).
-- Firefox and WebKit were not run here. CI results: see the run for this commit.
+- CI results (run 43287393422 for commit 9b18423, which carries the whole 2.4 rework):
+  - Chromium: passed (lint, test, build, browser tests).
+  - WebKit (Linux): passed.
+  - Firefox (macOS): passed. This was its last run before the user dropped it (BR-9).
+  - Published to Pages at 19:22 UTC. The published-address checks passed in all three.
+  - On the way there:
+    - Run 43271284179 (commit 4deb0ec) failed on Firefox only: the cold-open and rescue specs ran past 240 s. Fixed by DE-81.
+    - Commit 5cf8744 then removed Firefox (BR-9). Its run tests Chromium and WebKit only.
 
 **The tests the user asked for** (all pass):
 
@@ -253,9 +260,9 @@ measures Book 10's first minutes; the golden saves follow the new opening (DE-12
    0 placeholders.
 4. **The Book 7 section 14 standard: PASS** for every in-world view of the gate capture (see **Art
    check**: 82.8% to 93.9% against 80%) and the rework's own views (82.3% to 96.4%).
-5. **Firefox and WebKit block publishing: PASS by configuration.** `.github/workflows/ci.yml`'s
-   `deploy` still `needs: [check, browsers-firefox, browsers-webkit]`. CI results: see the run for
-   this commit.
+5. **The browsers block publishing: PASS.**
+   - At this rework's publish (run 43287393422), Chromium, Firefox and WebKit all passed and all blocked.
+   - Since BR-9, `deploy` `needs: [check, browsers-webkit]`, and Firefox is no longer tested.
 6. **Audio: PASS.** Every new sound and the music's fades render under the ceiling (see
    **Balance**); every music cue fades in and out through the game's router and only stingers are
    sharp (the new test). I cannot hear the renders: the user should listen in the sound test.
@@ -412,7 +419,7 @@ each with its reason. None departs from Book 1's intent.
   meet the fold's band before the dusk's survivors join it.
 - **The heave has no pushing pose**, the sea map has no ambience, and the Ship theme does not sing
   the boat's name (as at Stage 12).
-- Firefox and WebKit were not run locally. CI results: see the run for this commit.
+- Firefox and WebKit were not run locally. CI results: see above (run 43287393422, all green).
 
 ## Flagged for the user's review
 Every choice from DE-1 to DE-80 that wants the user's look, short and grouped. The earlier list
