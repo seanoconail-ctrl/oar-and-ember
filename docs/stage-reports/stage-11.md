@@ -69,7 +69,16 @@ was built. Everything for the user's review is listed under **Flagged for the us
   the boat and its work offered; the drawn boat by its repairs; Seal Cave's parley and the oar
   bought with silver and lifted; the boat's words offering the fitting and the carving.
 - `npm run audio:render`: every item renders and none clips (see **Balance**).
-- CI results: see the run for this commit.
+- CI results (run 43166105211 for commit 2e01b51, which carries Stages 11 and 12):
+  - Chromium: passed (lint, test, build, browser tests).
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed only after all three. The published-address checks passed in all three browsers.
+  - Earlier failures on the way, none in the game itself:
+    - 318ee10: a Firefox race in the Stage 7 fire test, where Hild's talk prompt came first. Fixed in c978e71.
+    - The art lint test timed out. Fixed in 610d47e.
+    - 74b9e37: the frame budget measured 4.09 ms under CI load. It is now timed alone (1184e5b, S12-26).
+    - 1184e5b: three scenario tests ran past vitest's 5 s default. They now have a 60 s default limit (S12-27).
 
 ## Gate checks
 1. **Each repair visibly changes the boat sprite: PASS.** `shipArt.test.ts` composites the drawn

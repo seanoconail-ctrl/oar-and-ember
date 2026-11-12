@@ -81,7 +81,16 @@ playtest script is `docs/playtest/build-1.md`. Everything for the user's review,
   leaving the gate open; a launch begun with no name asking for it (braces dropped); the timings in
   the system menu.
 - `npm run audio:render`: every item renders and none clips (see **Balance**).
-- CI results: see the run for this commit.
+- CI results (run 43166105211 for commit 2e01b51, which carries Stages 11 and 12):
+  - Chromium: passed (lint, test, build, browser tests).
+  - Firefox (macOS): passed.
+  - WebKit (Linux, Playwright image): passed.
+  - Pages deployed only after all three. The published-address checks passed in all three browsers.
+  - Earlier failures on the way, none in the game itself:
+    - 318ee10: a Firefox race in the Stage 7 fire test, where Hild's talk prompt came first. Fixed in c978e71.
+    - The art lint test timed out. Fixed in 610d47e.
+    - 74b9e37: the frame budget measured 4.09 ms under CI load. It is now timed alone (1184e5b, S12-26).
+    - 1184e5b: three scenario tests ran past vitest's 5 s default. They now have a 60 s default limit (S12-27).
 
 ## Gate checks
 1. **Chapter 1 takes 45 to 60 minutes for a new player, with combat inside 25 minutes (by
