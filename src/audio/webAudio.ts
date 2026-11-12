@@ -180,12 +180,16 @@ export class WebAudioEngine implements AudioSink {
             : null;
         const player = new PiecePlayer(e, piece, variant);
         for (const [layer, on] of Object.entries(cue?.layers ?? {})) player.setLayer(layer, on);
-        player.start(Math.max(action.at, e.ctx.currentTime + 0.05));
+        player.start(
+          Math.max(action.at, e.ctx.currentTime + 0.05),
+          action.fadeIn ?? 0,
+          action.layersJoin ?? 0,
+        );
         this.#players.set(action.cue, player);
         return;
       }
       case 'stop': {
-        this.#players.get(action.cue)?.stop();
+        this.#players.get(action.cue)?.stop(action.fadeOut ?? 0);
         return;
       }
       case 'gains': {

@@ -198,6 +198,13 @@ export class OpeningBot {
     }
     this.face(at.tx - this.tile().tx, at.ty - this.tile().ty);
     this.interact();
+    // Design addendum 2.4: caught in the net, she is cut free first (a hold-to-cut with the
+    // seax), then lifted.
+    const facts = this.#sim.state.facts;
+    if (facts['ch1.phase'] !== undefined && facts['ch1.net_free'] !== true) {
+      this.waitFor(() => this.#sim.state.facts['ch1.net_free'] === true, 60 * 10);
+      this.interact();
+    }
     // On the wet stones: the tide line refuses.
     this.face(0, 1);
     this.interact();

@@ -3,6 +3,7 @@
  * version, build, seed, day, chapter and state hash. Loading verifies the hash, refuses unknown
  * future versions and runs the migration chain.
  */
+import { migrateOpening } from './openingMigration.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { parsePeopleBasics, parseStartingWeapons, parseTimeBalance } from '../content/balance.ts';
 import { parseWorkBalance } from '../content/homeBalance.ts';
@@ -16,7 +17,8 @@ import type { HouseholdDef, PersonDef } from '../content/registry.ts';
 export const SAVE_FORMAT = 'oar-and-ember-save';
 
 export type SaveKind = 'manual' | 'autosave' | 'checkpoint';
-export type AutosaveReason = 'WAKING' | 'DEPARTURE' | 'LANDING';
+/** Why an autosave was written; CAMP: the camp reached the first time in a day (decision DE-12). */
+export type AutosaveReason = 'WAKING' | 'DEPARTURE' | 'LANDING' | 'CAMP';
 
 export interface SaveHeader {
   readonly schemaVersion: number;
@@ -444,7 +446,96 @@ export const MIGRATIONS: readonly Migration[] = [
       ),
     }),
   },
+  {
+    from: 10,
+    describe:
+      'design addendum 2.4: combat v2 (the stance, poise, hitstop, awareness, warnings, healing) and the Chapter 1 opening changes',
+    // Combat v2 (decisions DE-1 to DE-15). Every fighter in the save (the steerer's, and anyone's
+    // in this zone or another) gains combat v2's state at rest: a continuous facing from its four-way
+    // one, its poise whole (`poiseLost` 0), no hitstop, not exhausted, no flinch, no shield broken.
+    // The steerer gains the stance (facing as drawn, no lock-on, not sneaking) and no heal under
+    // way. An enemy's mind gains an awareness level: alert if it knew of the household, else
+    // unaware. A battle gains no warnings given yet. Nothing else of the fight changes.
+    // The opening (decisions DE-16 to DE-30): src/persist/openingMigration.ts.
+    up: (state) => migrateOpening(migrateCombatV2(state)),
+  },
 ];
+
+/** Book 2 section 12's four facings as an angle (radians, 0 east, y south). */
+const FACING_ANGLE: Readonly<Record<string, number>> = {
+  e: 0,
+  s: Math.PI / 2,
+  w: Math.PI,
+  n: -Math.PI / 2,
+};
+
+function migrateFighter(f: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...f,
+    angle: FACING_ANGLE[String(f['facing'])] ?? Math.PI / 2,
+    poiseLost: 0,
+    poiseAt: -1,
+    hitstop: 0,
+    exhausted: false,
+    flinchUntil: -1,
+    shieldBreaks: 0,
+    hookedUntil: -1,
+    lunge: null,
+    target: null,
+    heal: null,
+    windupExtra: 0,
+    turnFrom: FACING_ANGLE[String(f['facing'])] ?? Math.PI / 2,
+  };
+}
+
+function migrateActors(actors: Record<string, Record<string, unknown>>): void {
+  for (const a of Object.values(actors)) {
+    const fa = a['fight'] as Record<string, unknown> | undefined;
+    if (fa === undefined) continue;
+    const ai = fa['ai'] as Record<string, unknown>;
+    const aware = ai['aware'] === true;
+    a['fight'] = {
+      ...fa,
+      f: migrateFighter(fa['f'] as Record<string, unknown>),
+      ai: {
+        ...ai,
+        awareness: { level: aware ? 100 : 0, state: aware ? 'ALERT' : 'UNAWARE', heard: -1 },
+        stepOutAt: -1,
+        called: false,
+        sidestep: null,
+        feintAt: -1,
+      },
+    };
+  }
+}
+
+function migrateCombatV2(state: Record<string, unknown>): Record<string, unknown> {
+  const onFoot = state['onFoot'] as Record<string, unknown> | null | undefined;
+  if (onFoot == null) return state;
+  const next = structuredClone(onFoot);
+  const player = next['player'] as Record<string, unknown>;
+  const fight = player['fight'] as Record<string, unknown> | null | undefined;
+  if (fight != null) player['fight'] = migrateFighter(fight);
+  player['stance'] = {
+    facing: FACING_ANGLE[String(player['facing'])] ?? Math.PI / 2,
+    lockOn: null,
+    sneaking: false,
+    want: null,
+    lockHeld: null,
+    lostSince: null,
+    speed: 1,
+  };
+  migrateActors(next['actors'] as Record<string, Record<string, unknown>>);
+  const battle = next['battle'] as Record<string, unknown> | null | undefined;
+  if (battle != null) battle['warn'] = null;
+  const elsewhere = (next['elsewhere'] ?? {}) as Record<string, Record<string, unknown>>;
+  for (const rest of Object.values(elsewhere)) {
+    migrateActors(rest['actors'] as Record<string, Record<string, unknown>>);
+    const b = rest['battle'] as Record<string, unknown> | null | undefined;
+    if (b != null) b['warn'] = null;
+  }
+  return { ...state, onFoot: next };
+}
 
 export interface ReadOptions {
   readonly migrations?: readonly Migration[];

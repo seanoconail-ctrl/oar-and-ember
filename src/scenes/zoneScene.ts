@@ -503,7 +503,27 @@ export interface ZoneSceneInput {
   readonly steererBloodied?: boolean;
   /** Stage 9: ticks a corpse takes to fade with the gore setting low (and off). */
   readonly corpseFade?: { readonly low: number; readonly off: number };
+  /**
+   * Combat v2 (Book 7 sections 10 and 12; decisions DE-3, DE-7, DE-8, DE-9), presentation only:
+   * each person's knockback offset in px (P_STEERER too), the one-frame flash on those just hit,
+   * the awareness marks, the thin bars over enemies (0 to 1), the locked target, and the hits'
+   * sparks and stars in world pixels.
+   */
+  readonly combat?: CombatOverlay;
 }
+
+export interface CombatOverlay {
+  readonly offsets: Readonly<Record<string, { readonly dx: number; readonly dy: number }>>;
+  readonly flash: readonly string[];
+  readonly marks: Readonly<Record<string, '?' | '!'>>;
+  readonly bars: Readonly<Record<string, number>>;
+  readonly lockOn: string | null;
+  readonly fx: readonly { readonly frame: string; readonly x: number; readonly y: number }[];
+}
+
+/** Combat v2's interface pieces in the world, and its hit effects (combat24_ui.py). */
+export const UI_COMBAT_SHEET = 'ui_combat';
+export const FX_COMBAT_SHEET = 'fx_combat';
 
 /** Stage 9: the gore sheet (Book 7 section 12) and the crew's order icons. */
 export const GORE_SHEET = 'fx_gore';
@@ -551,10 +571,42 @@ export function fightAnim(
     case 'light1':
     case 'light2':
     case 'light3':
-    case 'riposte': {
-      const s = f.state === 'riposte' ? 'light1' : f.state;
-      return has(s) ? { state: s, frame: phase3() } : null;
+      return has(f.state) ? { state: f.state, frame: phase3() } : null;
+    // Combat v2 (decisions DE-4, DE-5, DE-9): the riposte and the backstab, heavy and distinct;
+    // the lunge's tell (the step and the dip) and then its reach.
+    case 'riposte':
+      return has('riposte')
+        ? { state: 'riposte', frame: phase3() }
+        : has('light1')
+          ? { state: 'light1', frame: phase3() }
+          : null;
+    case 'backstab':
+      return has('backstab') ? { state: 'backstab', frame: phase3() } : null;
+    case 'lunge':
+      return has('lunge')
+        ? {
+            state: 'lunge',
+            frame: f.lunge !== null && tick < f.lunge.from ? 0 : tick < f.activeAt ? 0 : 1,
+          }
+        : null;
+    case 'parried': {
+      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
+      return has('parried') ? { state: 'parried', frame: t < 0.4 ? 0 : 1 } : null;
     }
+    case 'knockdown':
+      return has('downed') ? { state: 'downed', frame: 0 } : null;
+    case 'getUp': {
+      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
+      return has('getup') ? { state: 'getup', frame: t < 0.5 ? 0 : 1 } : null;
+    }
+    case 'sidestep': {
+      // The tell is the crouch; then the dodge's push and landing.
+      if (tick < f.activeAt) return has('dodge') ? { state: 'dodge', frame: 0 } : null;
+      const t = (tick - f.activeAt) / Math.max(1, f.recoveryEnd - f.activeAt);
+      return has('dodge') ? { state: 'dodge', frame: t < 0.6 ? 1 : 2 } : null;
+    }
+    case 'heal':
+      return has('kneel') ? { state: 'kneel', frame: loop('kneel') } : null;
     case 'heavyRelease':
       return has('heavy') ? { state: 'heavy', frame: phase3() } : null;
     case 'shove':
@@ -1058,13 +1110,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   }
   const steererLook =
     gore > 0 && input.steererBloodied === true ? look.steerer : withoutBlood(look.steerer);
+  const combat = input.combat;
+  const kick = (id: string): { dx: number; dy: number } => combat?.offsets[id] ?? { dx: 0, dy: 0 };
   if (input.hidePeople !== true && input.launch?.steererHidden !== true)
     person(
       steererLook,
       `${state}/${p.facing}/${stepFrame}`,
       p.facing,
-      p.x - camera.x,
-      p.y - camera.y,
+      p.x - camera.x + kick('P_STEERER').dx,
+      p.y - camera.y + kick('P_STEERER').dy,
       visual?.water['P_STEERER'],
       { focus: true },
     );
@@ -1159,8 +1213,8 @@ export function zoneScene(input: ZoneSceneInput): Scene {
           drawn,
           `${fightPose.state}/${actor.facing}/${fightPose.frame}`,
           actor.facing,
-          x,
-          y,
+          x + kick(id).dx,
+          y + kick(id).dy,
           visual?.water[id],
           {},
         );
@@ -1218,6 +1272,43 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         });
       // The charge's tells (Book 10: a glint at level 1, a flash at level 2) on the weapon.
       if (fa !== undefined) chargeTell(fa.f, x, y);
+      // Combat v2: the mark over the head, the thin bar, the lock-on brackets at the feet.
+      const mark = combat?.marks[id];
+      if (mark !== undefined)
+        sprites.push({
+          sheet: UI_COMBAT_SHEET,
+          frame:
+            mark === '?'
+              ? `mark_q/-/${Math.floor(tick / 12) % 2}`
+              : `mark_x/-/${Math.floor(tick / 4) % 2}`,
+          x: x - 6,
+          y: y - 54,
+          layer: 'actor',
+          sort: y + 0.95,
+        });
+      const bar = combat?.bars[id];
+      if (bar !== undefined) {
+        const w = 14;
+        const filled = Math.max(0, Math.min(w, Math.round(bar * w)));
+        for (let k = -1; k <= w; k++)
+          sprites.push({
+            sheet: UI_COMBAT_SHEET,
+            frame:
+              k < 0 || k === w ? 'ebar_end/-/0' : k < filled ? 'ebar_fill/-/0' : 'ebar_empty/-/0',
+            x: x - 7 + k,
+            y: y - 45,
+            layer: 'actor',
+            sort: y + 0.96,
+          });
+      }
+      if (combat?.lockOn === id)
+        sprites.push({
+          sheet: UI_COMBAT_SHEET,
+          frame: `lock/-/${Math.floor(tick / 20) % 2}`,
+          x: x - 6,
+          y: y - 7,
+          layer: 'decal',
+        });
     }
     if (input.highlight === id && actor.pose !== 'carried') {
       const bob = frameIndex(anims, MARKER_SHEET, 'bob', tick);
@@ -1232,6 +1323,29 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       });
     }
   }
+  // Combat v2 (decision DE-7): a one-frame flash on whoever was just hit; the sparks, splinters
+  // and the parry's star where blows met.
+  for (const id of combat?.flash ?? []) {
+    const who = id === 'P_STEERER' ? p : onFoot.actors[id];
+    if (who === undefined) continue;
+    sprites.push({
+      sheet: GORE_SHEET,
+      frame: 'flash/-/0',
+      x: who.x - camera.x + kick(id).dx,
+      y: who.y - camera.y - 20 + kick(id).dy,
+      layer: 'actor',
+      sort: who.y - camera.y + 0.97,
+    });
+  }
+  for (const fx of combat?.fx ?? [])
+    sprites.push({
+      sheet: FX_COMBAT_SHEET,
+      frame: fx.frame,
+      x: fx.x - camera.x - 8,
+      y: fx.y - camera.y - 8,
+      layer: 'actor',
+      sort: fx.y - camera.y + 30,
+    });
   // Items lying to be picked up, with a glint every few seconds.
   const facts = input.facts ?? {};
   for (const item of onFoot.items) {

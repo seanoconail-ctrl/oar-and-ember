@@ -6,7 +6,14 @@ import { TERRAIN } from '../../content/zoneMap.ts';
 import type { Terrain, TerrainCode, ZoneMap } from '../../content/zoneMap.ts';
 
 export { FACINGS, TERRAIN, checkZoneMap, parseZoneMap } from '../../content/zoneMap.ts';
-export type { Facing, Terrain, TerrainCode, ZoneMap, ZoneProp } from '../../content/zoneMap.ts';
+export type {
+  DoorDef,
+  Facing,
+  Terrain,
+  TerrainCode,
+  ZoneMap,
+  ZoneProp,
+} from '../../content/zoneMap.ts';
 
 const solidCache = new WeakMap<ZoneMap, Set<number>>();
 

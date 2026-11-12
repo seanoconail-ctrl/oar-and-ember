@@ -32,6 +32,9 @@ export const ACTIONS = [
   'dodge',
   'shove',
   'finisher',
+  /** Combat v2 (decision DE-3): lock-on, and binding a wound or eating. */
+  'lockOn',
+  'heal',
   'commandRing',
   'quick1',
   'quick2',
@@ -78,7 +81,8 @@ export const SLOT_ACTIONS = [
 export type Bindings = Readonly<Record<Action, readonly Binding[]>>;
 
 /** Hold actions that the accessibility option can turn into press-to-toggle (Book 2 section 21). */
-export const TOGGLEABLE: readonly Action[] = ['run', 'sneak', 'block', 'commandRing'];
+/** Sneak is always a toggle in combat v2 (Book 10 sneakToggle), so it is not among them. */
+export const TOGGLEABLE: readonly Action[] = ['run', 'block', 'commandRing'];
 
 const key = (code: string): Binding => ({ device: 'key', code });
 const mouse = (button: number): Binding => ({ device: 'mouse', button });
@@ -93,7 +97,8 @@ export const DEFAULT_BINDINGS: Bindings = {
   moveLeft: [key('KeyA'), key('ArrowLeft'), axis(0, -1)],
   moveRight: [key('KeyD'), key('ArrowRight'), axis(0, 1)],
   run: [key('ShiftLeft'), pad(10)],
-  sneak: [key('KeyC'), pad(11)],
+  // Combat v2 (decision DE-3): sneak moves on the pad from R3 to the d-pad's down.
+  sneak: [key('KeyC'), pad(13)],
   // Right-click interacts at the cursor's tile; the key and the pad interact at the target tile.
   interact: [key('KeyE'), mouse(2), pad(0)],
   // Left-click uses the item in hand (attack with a weapon, hold to draw a bow or charge a heavy).
@@ -117,9 +122,14 @@ export const DEFAULT_BINDINGS: Bindings = {
   dodge: [key('Space'), pad(1)],
   shove: [key('KeyR'), pad(2)],
   finisher: [key('KeyV')],
+  // Combat v2 (decision DE-3): lock-on on Z, the middle mouse button and R3; heal on H (in the
+  // command ring on a gamepad).
+  lockOn: [key('KeyZ'), mouse(1), pad(11)],
+  heal: [key('KeyH')],
   commandRing: [key('Tab'), pad(12)],
   // The number keys choose hotbar slots (Book 2 section 21), so quick commands are F1 to F6.
-  quick1: [key('F1'), pad(13)],
+  // Quick command 1 left the pad for the command ring (decision DE-3).
+  quick1: [key('F1')],
   quick2: [key('F2'), pad(14)],
   quick3: [key('F3'), pad(15)],
   quick4: [key('F4')],

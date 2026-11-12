@@ -2711,6 +2711,82 @@ def anim_surrender(ch=None):
     return out
 
 
+def anim_riposte(ch=None):
+    """Combat v2 (Book 7 section 12, decision DE-5): the riposte, a heavy distinct blow into the
+    reeling foe. The step in with the weapon coiled low and back, the long drive up through the
+    body (a spear: a full-length thrust), then held at the end of it."""
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.6, -6.0, -3.5), (0.0, 1.0, 0.1), lean=(0, -1.4), pel=(0, -1.0, -2),
+                           feet={'R': (-5.0, 0), 'L': (4.0, 0)}),
+                fight_pose((0.2, 9.5, -1.0), (0.0, 1.0, 0.05), lean=(0, 2.6), pel=(0, 1.0, -2),
+                           feet={'R': (-5.0, 0), 'L': (5.0, 0)}, cloth=(1.4, 0), mouth=1),
+                fight_pose((0.4, 7.5, -2.5), (0.0, 1.0, -0.1), lean=(0, 2.0), pel=(0, 0.8, -2),
+                           feet={'R': (-5.0, 0), 'L': (5.0, 0)}, cloth=(0.6, 0))]
+    return [fight_pose((2.8, -3.0, -6.5), (0.3, 0.6, -0.5), lean=(0, -1.0), pel=(0, -1.0, -3),
+                       lh=(1.5, 5.0, -1.0), feet={'R': (-5.0, 0), 'L': (3.5, 0)}),
+            fight_pose((0.8, 8.5, 1.5), (0.1, 0.8, 0.6), lean=(0, 2.6), pel=(0, 1.0, -2),
+                       lh=(1.2, 6.5, -4.0), feet={'R': (-5.0, 0), 'L': (5.0, 0)}, cloth=(1.4, 0),
+                       mouth=1),
+            fight_pose((0.6, 7.5, 3.0), (0.1, 0.6, 0.8), lean=(0, 2.0), pel=(0, 0.8, -2),
+                       lh=(1.4, 5.5, -3.5), feet={'R': (-5.0, 0), 'L': (5.0, 0)}, cloth=(0.6, 0))]
+
+
+def anim_backstab(ch=None):
+    """Combat v2 (decision DE-9): the backstab, heavy and distinct. The left hand reaches high to
+    take the shoulder while the blade is drawn back at the hip, the drive in low under the ribs
+    with the left hand pulling the foe back onto it, and the wrench free."""
+    return [fight_pose((2.6, -2.5, -5.0), (0.1, 0.9, 0.4), lean=(0, 1.0), lh=(0.0, 9.0, 3.0),
+                       feet={'R': (-3.5, 0), 'L': (4.5, 0)}),
+            fight_pose((0.4, 9.5, -4.0), (0.0, 1.0, 0.2), lean=(0, 2.8), lh=(-0.5, 6.0, 4.0),
+                       pel=(0, 1.0, -1), feet={'R': (-5.0, 0), 'L': (5.5, 0)}, cloth=(1.0, 0)),
+            fight_pose((2.0, 5.0, -5.5), (0.4, 0.8, -0.3), lean=(0, 1.2), lh=(-0.5, 7.5, 2.0),
+                       pel=(0, 0.5, -1), feet={'R': (-4.5, 0), 'L': (5.0, 0)}, cloth=(0.4, 0))]
+
+
+def anim_lunge(ch=None):
+    """Combat v2 (decision DE-4): the lunge's tell, a step and a dip of the shoulders with the
+    weapon held back, then the long reach at the end of the ground covered."""
+    if ch is not None and spear_style(ch):
+        return [fight_pose((0.6, -4.5, -4.5), (0.0, 1.0, 0.05), lean=(0, 1.6), pel=(0, 0.5, -3),
+                           feet={'R': (-4.0, 0), 'L': (5.0, 0)}),
+                fight_pose((0.3, 9.5, -2.0), (0.0, 1.0, 0.0), lean=(0, 2.4), pel=(0, 1.0, -2),
+                           feet={'R': (-5.5, 1.0), 'L': (5.0, 0)}, cloth=(1.2, 0))]
+    return [fight_pose((2.4, -2.0, 4.0), (0.2, -0.4, 0.88), lean=(0, 1.6), pel=(0, 0.5, -3),
+                       feet={'R': (-4.0, 0), 'L': (5.0, 0)}),
+            fight_pose((-1.0, 8.5, -3.0), (-0.3, 0.8, -0.5), lean=(0, 2.4), pel=(0, 1.0, -2),
+                       feet={'R': (-5.5, 1.0), 'L': (5.0, 0)}, cloth=(1.2, 0))]
+
+
+def anim_parried(ch=None):
+    """Combat v2 (decision DE-5): parried, the weapon thrown up and out of line, the body reeling
+    back and open, the head snapped back; then swaying, still open."""
+    up = (0.6, -1.5, 9.5) if ch is None or not spear_style(ch) else (0.8, -2.5, 7.5)
+    a = fight_pose(up, (0.3, -0.6, 0.75), lean=(0.4, -2.8), head=(0, -1.2, 0), mouth=1,
+                   lh=(3.0, 1.0, -2.0), feet={'R': (-4.0, 0), 'L': (2.0, 1.5)}, cloth=(-1.2, 0),
+                   elbow_r=(1.2, -0.4, 0.6), shield='arm')
+    b = fight_pose((up[0] + 0.6, up[1] + 1.0, up[2] - 2.5), (0.4, -0.3, 0.85), lean=(0.2, -2.0),
+                   head=(0, -0.6, 0), lh=(3.2, 1.5, -3.5), feet={'R': (-4.5, 0), 'L': (2.0, 0)},
+                   cloth=(-0.4, 0), elbow_r=(1.2, -0.4, 0.4), shield='arm')
+    return [a, b]
+
+
+def anim_getup(ch=None):
+    """Combat v2 (decision DE-7): getting up after a knockdown, one knee and a hand on the ground,
+    then rising into a crouch with the weapon gathered."""
+    out = []
+    for k, (u, lean) in enumerate([(-8.0, 2.4), (-4.0, 1.4)]):
+        p = Pose(pel=(0, -0.5, u), lean=(0, lean), breath=-1, hold='held', wdir=(0.3, 0.6, -0.6))
+        p.hands = {'R': (1.8, 4.0, -2.0 - 3 * (1 - k)), 'L': (0.6, 5.5, -9.0 + 4 * k)}
+        p.elbow = {'R': (1.0, -0.6, 0.0), 'L': (1.0, -0.4, 0.0)}
+        p.grip = {'R': 'fist', 'L': 'open'}
+        p.feet = {'R': (-6.5 + 2 * k, 0), 'L': (3.5, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        p.head = (0, 0.2, -0.3)
+        p.shield = 'arm'
+        out.append(p)
+    return out
+
+
 class Lying:
     """A lying or dismembered state drawn piece by piece (not a standing skeleton)."""
 
@@ -2873,7 +2949,7 @@ def piece_parts(ch, piece, d):
 
 FIGHT_POSES = {'downed': 'lying', 'dead': 'lying', 'dead_head': 'lying', 'dead_arm': 'lying',
                'dead_leg': 'lying', 'piece_head': 'lying', 'piece_arm': 'lying', 'piece_leg': 'lying',
-               'surrender': 'seated'}
+               'surrender': 'seated', 'getup': 'seated'}
 
 
 def narrow(poses, ch):
@@ -2906,6 +2982,12 @@ def fight_states(ch, heavy=False):
         ('dodge', lambda: N(anim_dodge(c), c), 7, False),
         ('shove', lambda: N(anim_shove(c), c), 7, False),
         ('stagger', lambda: N(anim_stagger(c), c), 9, False),
+        # Combat v2 (design addendum 2.4, decisions DE-4, DE-5, DE-7, DE-9).
+        ('riposte', lambda: N(anim_riposte(c), c), 7, False),
+        ('backstab', lambda: N(anim_backstab(c), c), 9, False),
+        ('lunge', lambda: N(anim_lunge(c), c), 8, False),
+        ('parried', lambda: N(anim_parried(c), c), 10, False),
+        ('getup', lambda: N(anim_getup(c), c), 10, False),
         ('finish', lambda: N(anim_finish(c), c), 30, False),
         ('surrender', lambda: N(anim_surrender(c), c), 40, True),
         ('downed', Lying('downed', 2), 40, True),

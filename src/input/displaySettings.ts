@@ -19,6 +19,11 @@ export interface DisplaySettings {
    * Presentation only: the simulation never reads it.
    */
   readonly gore: 0 | 1 | 2;
+  /**
+   * Combat v2 (Book 10 marks, decision DE-9): the "?" and "!" over a suspicious or alerted enemy;
+   * on by default, `?marks=off` turns them off.
+   */
+  readonly marks: boolean;
 }
 
 const GORE_WORDS: Readonly<Record<string, 0 | 1 | 2>> = { off: 0, low: 1, full: 2 };
@@ -30,18 +35,20 @@ export function parseDisplaySettings(text: string | null, systemPrefers: boolean
         reducedMotion?: unknown;
         infoCaptions?: unknown;
         gore?: unknown;
+        marks?: unknown;
       } | null;
       if (typeof raw?.reducedMotion === 'boolean')
         return {
           reducedMotion: raw.reducedMotion,
           infoCaptions: typeof raw.infoCaptions === 'boolean' ? raw.infoCaptions : true,
           gore: raw.gore === 0 || raw.gore === 1 || raw.gore === 2 ? raw.gore : 2,
+          marks: typeof raw.marks === 'boolean' ? raw.marks : true,
         };
     } catch {
       // A damaged setting falls back to the system preference.
     }
   }
-  return { reducedMotion: systemPrefers, infoCaptions: true, gore: 2 };
+  return { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: true };
 }
 
 /** The setting in force: the address first, then the saved choice, then the system preference. */
@@ -54,11 +61,13 @@ export function resolveDisplaySettings(
   try {
     saved = parseDisplaySettings(store.getItem(DISPLAY_KEY), systemPrefers);
   } catch {
-    saved = { reducedMotion: systemPrefers, infoCaptions: true, gore: 2 };
+    saved = { reducedMotion: systemPrefers, infoCaptions: true, gore: 2, marks: true };
   }
   const params = new URLSearchParams(query);
   const gore = GORE_WORDS[params.get('gore') ?? ''];
   if (gore !== undefined) saved = { ...saved, gore };
+  const marks = params.get('marks');
+  if (marks === 'off' || marks === 'on') saved = { ...saved, marks: marks === 'on' };
   const motion = params.get('motion');
   if (motion === 'reduced') return { ...saved, reducedMotion: true };
   if (motion === 'full') return { ...saved, reducedMotion: false };

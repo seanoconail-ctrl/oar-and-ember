@@ -432,13 +432,21 @@ export function parseStaminaBalance(json: unknown): StaminaBalance {
     new RegExp(`^${N} while in combat$`),
     '"N while in combat"',
   );
-  const vitality = keyed(json, 'combatTimings', 'vitalityStaminaAndArmour');
-  const stamina = match(
-    'vitalityStaminaAndArmour.stamina',
-    vitality('stamina'),
-    new RegExp(`^${N}; regenerates ${N} per second after (\\d+) ticks without spending`),
-    '"N; regenerates N per second after N ticks without spending ..."',
+  // Combat v2 (decision DE-13): "Health, stamina and healing", staminaMax and staminaRegen.
+  const health = keyed(json, 'combatTimings', 'healthStaminaAndHealing');
+  const max = match(
+    'healthStaminaAndHealing.staminaMax',
+    health('staminaMax'),
+    new RegExp(`^${N}$`),
+    '"N"',
   );
+  const regen = match(
+    'healthStaminaAndHealing.staminaRegen',
+    health('staminaRegen'),
+    new RegExp(`^${N} a second after (\\d+) ticks without spending`),
+    '"N a second after N ticks without spending ..."',
+  );
+  const stamina = [max[0], max[1], regen[1], regen[2]] as const;
   const out = keyed(json, 'combatTimings', 'runningOutOfStamina');
   const recover = match(
     'runningOutOfStamina.sprintEmpty',

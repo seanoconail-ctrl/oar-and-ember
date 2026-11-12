@@ -65,7 +65,14 @@ export function tilesFromSteerer(world: WorldState, id: Id, tile: number): numbe
 
 /** Residents whose day the opening still runs: Hild until she has led the steerer to the broch. */
 function inOpening(world: WorldState, id: Id, opener: Id | null): boolean {
-  if (id === opener && world.facts[FACT_AT_BROCH] !== true) return true;
+  // Before design addendum 2.4 Hild's day began at the broch; since it, once she is safe (her
+  // walk up at the first fire is the opening's: src/sim/narrative/wreck.ts, decision DE-22).
+  if (
+    id === opener &&
+    world.facts[FACT_AT_BROCH] !== true &&
+    world.facts['ch1.phase'] === undefined
+  )
+    return true;
   const actor = world.onFoot === null ? undefined : findActor(world.onFoot, id)?.actor;
   return actor?.pose === 'carried' || actor?.pose === 'down' || actor?.pose === 'call';
 }
@@ -96,6 +103,8 @@ export function stepPeopleTick(
   opener: Id | null,
   /** Residents something else moves for now (Stage 10: Bran carrying Thorkel home). */
   held: (id: Id) => boolean = () => false,
+  /** Design addendum 2.4 (DE-22): the speed someone hurt walks at (Book 10 section 08, limp). */
+  limp?: number,
 ): void {
   const onFoot = world.onFoot;
   if (onFoot === null) return;
@@ -120,7 +129,21 @@ export function stepPeopleTick(
       }
       continue;
     }
-    stepResident(onFoot, id, act.place, land.maps, land, tidalGroundOpen);
+    // Book 10 section 08's limp is the walk home of someone rescued hurt (decision DE-22).
+    const hurt =
+      world.people[id]?.wounds.some((w) => w.severity !== 'LIGHT') === true &&
+      world.facts[`rescue.${id}.up`] === true &&
+      world.facts[`rescue.${id}.home`] !== true;
+    stepResident(
+      onFoot,
+      id,
+      act.place,
+      land.maps,
+      land,
+      tidalGroundOpen,
+      false,
+      hurt && limp !== undefined ? Math.min(limp, land.movement.walk) : undefined,
+    );
   }
 }
 

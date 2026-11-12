@@ -28,6 +28,7 @@
  * where the zones meet (their `links`).
  */
 import { cyrb53 } from '../../core/hash.ts';
+import type { DoorDef } from '../../content/zoneMap.ts';
 
 export const TILE_CODES = ['~', '-', '_', '.', ',', 'b', 'w', 'r', ':'] as const;
 export type TileCode = (typeof TILE_CODES)[number];
@@ -96,6 +97,8 @@ export interface ZonePlan {
   readonly paths?: readonly (readonly (readonly [number, number])[])[];
   /** Edges where the steerer walks on into a neighbouring zone (Book 2 section 10, FootLink). */
   readonly links?: readonly ZoneLink[];
+  /** Design addendum 2.4 (decision DE-26; Book 9 section 04): its doors and hide flaps. */
+  readonly doors?: readonly DoorDef[];
   /**
    * Stage 10: how this zone reads Book 9's block characters where they differ from the default
    * (the Hag's Seat headland's cliffs, `#`, are rock).
@@ -218,6 +221,7 @@ export interface ZoneMap {
   readonly props: readonly ZoneProp[];
   readonly life: readonly ZoneLife[];
   readonly links?: readonly ZoneLink[];
+  readonly doors?: readonly DoorDef[];
   readonly broch?: ZonePlan['broch'];
   /** Sheet and frame of each decoration index ("decal_strand pebbles/-/3"). */
   readonly decalFrames: readonly string[];
@@ -447,6 +451,7 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
     props: [...plan.props, ...furnished.props],
     life: plan.life,
     ...(plan.links === undefined ? {} : { links: plan.links }),
+    ...(plan.doors === undefined ? {} : { doors: plan.doors }),
     ...(plan.broch === undefined ? {} : { broch: plan.broch }),
     decalFrames: DECAL_FRAMES,
     decals: furnished.decals,

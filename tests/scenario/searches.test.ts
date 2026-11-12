@@ -45,28 +45,23 @@ function start(seed: string, hooks = 'camp=broch&time=10:00') {
 const resolved = (events: SimEvent[]) =>
   events.flatMap((e) => (e.type === 'SEARCH_RESOLVED' ? [`${e.search}:${e.outcome}`] : []));
 
-describe('the searches open once Hild has led to the broch (Book 4 Chapter 1 beat 3)', () => {
-  it('places Oddi and the chest by the wreck, Bran and Thorkel in the fold, Runa and her tools at the Hag’s Seat, and Hild tells of them', () => {
-    const { world, bot, events } = start('open');
-    bot.step(60 * 6);
+describe('the searches’ people are placed at the first dusk (Book 4 Chapter 1 beat 12; DE-16)', () => {
+  it('places Oddi and the ship’s silver by the wreck, Bran and Thorkel in the fold, Runa and her tools at the Hag’s Seat at 19:00 on day 1', () => {
+    const { world, bot } = start('open', 'camp=broch&time=18:50&searches=dusk');
     const onFoot = world.onFoot;
     if (onFoot === null) throw new Error('not on foot');
     const where = (id: string) => findActor(onFoot, id)?.zone;
+    expect(where('C_ODDI')).toBeUndefined();
+    bot.waitUntil(19 * 60 + 1);
     expect(where('C_ODDI')).toBe('ZONE_SK_STRAND');
-    expect(where('ITEM_THORKEL_CHEST')).toBe('ZONE_SK_STRAND');
+    // Oddi's dilemma is over the ship's silver in its strongbox (DE-17).
+    expect(where('ITEM_SHIP_SILVER')).toBe('ZONE_SK_STRAND');
     expect(where('C_BRAN')).toBe('ZONE_SK_CAIRN');
     expect(where('C_THORKEL')).toBe('ZONE_SK_CAIRN');
     expect(where('C_RUNA')).toBe('ZONE_SK_HAGSEAT');
     expect(where('ITEM_RUNA_TOOLS')).toBe('ZONE_SK_HAGSEAT');
     expect(world.people['C_ODDI']?.wounds[0]?.severity).toBe('SERIOUS');
     expect(world.people['C_RUNA']?.wounds[0]?.severity).toBe('SERIOUS');
-    expect(events).toContainEqual(
-      expect.objectContaining({
-        type: 'PERSON_SPOKE',
-        person: 'C_HILD',
-        lineKey: 'c_hild.search.tell',
-      }),
-    );
     expect(world.household.residents).toEqual(['C_HILD']);
   });
 });
@@ -77,6 +72,7 @@ describe('Oddi near the wreck: the chest now, or Oddi home first', () => {
     bot.oddi('CHEST_FIRST');
     expect(world.facts['search.oddi']).toBe('CHEST_FIRST');
     expect(world.facts['ch1.chest']).toBe('SAVED');
+    expect(findActor(world.onFoot ?? (null as never), 'ITEM_SHIP_SILVER')).not.toBeNull();
     expect(world.household.residents).toContain('C_ODDI');
     expect(events).toContainEqual(
       expect.objectContaining({ type: 'RESIDENT_JOINED', person: 'C_ODDI' }),

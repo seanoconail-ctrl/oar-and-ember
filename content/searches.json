@@ -1,6 +1,6 @@
 {
   "about": "Chapter 1 beat 3, the three searches (Book 4 section 08; Book 5 section 02; Stage 10, decisions S10-1 to S10-24). They open once Hild has led the steerer to the broch. Oddi lies hurt on the shingle at the strand's west end by the wreck, too hurt to walk, with Thorkel's chest in the wash below him: carry Oddi home first and the wreck-scavengers have the chest while you are gone, or carry the chest off the strand first and leave him lying in the cold. Bran keeps Thorkel's body in the sheepfold under the Hollow Cairn against the three wreck-scavengers: fight them, come round unseen and take the body away over the back wall, or walk up with open hands and buy the body with Thorkel's silver. Runa sits hurt by the Hag's Seat with her tool chest, after following a light; the stone weeps and the gale holds the neck: leave the Cailleach an offering, or take the slower cliff path. Every number is Book 10's (section 08, The three searches); positions are tiles in each zone's own map. Each search's outcome is a fact (search.oddi, search.bran, search.runa).",
-  "opensAfter": "ch1.at_broch",
+  "opensAfter": "ch1.searches_placed",
   "beat": "BEAT_1_SEARCHES",
   "tell": "c_hild.search.tell",
   "oddi": {
@@ -14,7 +14,7 @@
     },
     "wound": "leg",
     "chest": {
-      "id": "ITEM_THORKEL_CHEST",
+      "id": "ITEM_SHIP_SILVER",
       "x": 21.3,
       "y": 36.7,
       "facing": "e"
@@ -220,6 +220,27 @@
         {
           "key": "ui.talk.leave",
           "do": "LEAVE"
+        }
+      ]
+    },
+    {
+      "id": "runa.where",
+      "with": "C_RUNA",
+      "reachTiles": 2,
+      "promptKey": "ui.prompt.talk",
+      "open": "c_runa.chest.where",
+      "choices": [
+        {
+          "key": "ui.talk.runa.place.fire",
+          "do": "RUNA_FIRE"
+        },
+        {
+          "key": "ui.talk.runa.place.shelter",
+          "do": "RUNA_SHELTER"
+        },
+        {
+          "key": "ui.talk.runa.place.boat",
+          "do": "RUNA_BOAT"
         }
       ]
     }

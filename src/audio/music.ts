@@ -51,9 +51,39 @@ export function stemGains(stems: number, intensity: number): number[] {
   });
 }
 
+/**
+ * Design addendum 2.4 (decision DE-29; Book 10 section 25, "Music fades"): a piece fades in over
+ * `fadeIn` from one layer, its other layers joining over `layersJoin`; music fades out over
+ * `fadeOut` whenever it stops; a change cross-fades. Only stingers are sharp.
+ */
+export interface MusicFades {
+  readonly fadeIn: number;
+  readonly fadeOut: number;
+  readonly layersJoin: number;
+}
+
+/** The master gain of a piece `t` seconds after its start (fading in) or its stop (fading out). */
+export function fadeGain(kind: 'in' | 'out', t: number, seconds: number): number {
+  if (seconds <= 0) return kind === 'in' ? (t >= 0 ? 1 : 0) : t >= 0 ? 0 : 1;
+  const f = Math.max(0, Math.min(1, t / seconds));
+  return kind === 'in' ? f : 1 - f;
+}
+
+/** The second after a piece's start at which its `i`-th layer of `n` joins, on a bar line. */
+export function layerJoinAt(i: number, n: number, layersJoin: number, bar: number): number {
+  if (i <= 0 || n <= 1 || layersJoin <= 0) return 0;
+  return Math.ceil(((i / (n - 1)) * layersJoin) / bar - 1e-9) * bar;
+}
+
 export type MusicAction =
-  | { readonly type: 'start'; readonly cue: string; readonly at: number }
-  | { readonly type: 'stop'; readonly cue: string; readonly at: number }
+  | {
+      readonly type: 'start';
+      readonly cue: string;
+      readonly at: number;
+      readonly fadeIn?: number;
+      readonly layersJoin?: number;
+    }
+  | { readonly type: 'stop'; readonly cue: string; readonly at: number; readonly fadeOut?: number }
   | {
       readonly type: 'gains';
       readonly cue: string;
@@ -77,8 +107,23 @@ export class MusicDirector {
   #target = 0;
   #lastUpdate: number | null = null;
 
-  constructor(cues: Iterable<MusicCue>) {
+  readonly #fades: MusicFades | null;
+
+  constructor(cues: Iterable<MusicCue>, fades: MusicFades | null = null) {
     this.#cues = new Map([...cues].map((c) => [c.id, c]));
+    this.#fades = fades;
+  }
+
+  #stop(cue: string, at: number): MusicAction {
+    return this.#fades === null
+      ? { type: 'stop', cue, at }
+      : { type: 'stop', cue, at, fadeOut: this.#fades.fadeOut };
+  }
+
+  #start(cue: string, at: number): MusicAction {
+    return this.#fades === null
+      ? { type: 'start', cue, at }
+      : { type: 'start', cue, at, fadeIn: this.#fades.fadeIn, layersJoin: this.#fades.layersJoin };
   }
 
   /** The cue playing now (or due to start). */
@@ -132,15 +177,16 @@ export class MusicDirector {
   update(now: number): MusicAction[] {
     const actions: MusicAction[] = [];
     if (this.#stopAt !== null && this.#playing !== null && now >= this.#stopAt - 0.25) {
-      actions.push({ type: 'stop', cue: this.#playing.cue.id, at: this.#stopAt });
+      actions.push(this.#stop(this.#playing.cue.id, this.#stopAt));
       this.#playing = null;
       this.#stopAt = null;
     }
     if (this.#pending !== null && now >= this.#pending.at - 0.25) {
       // Schedule slightly ahead so the switch lands exactly on the bar line.
       const { cue, at } = this.#pending;
-      if (this.#playing !== null) actions.push({ type: 'stop', cue: this.#playing.cue.id, at });
-      actions.push({ type: 'start', cue: cue.id, at });
+      // A change cross-fades: the old piece fades out as the new one fades in (DE-29).
+      if (this.#playing !== null) actions.push(this.#stop(this.#playing.cue.id, at));
+      actions.push(this.#start(cue.id, at));
       this.#playing = { cue, startedAt: at };
       this.#pending = null;
     }

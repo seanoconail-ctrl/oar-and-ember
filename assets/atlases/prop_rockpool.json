@@ -1,0 +1,49 @@
+{
+  "sheet": "prop_rockpool",
+  "kind": "prop",
+  "image": "prop_rockpool.png",
+  "width": 24,
+  "height": 14,
+  "pivot": {
+    "x": 12,
+    "y": 12
+  },
+  "footprint": {
+    "w": 16,
+    "h": 3
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "pool": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 16,
+    "h": 3
+  },
+  "placeholder": false,
+  "frames": {
+    "pool/-/0": [
+      0,
+      0
+    ],
+    "pool/-/1": [
+      24,
+      0
+    ],
+    "pool/-/2": [
+      48,
+      0
+    ],
+    "pool/-/3": [
+      72,
+      0
+    ]
+  }
+}

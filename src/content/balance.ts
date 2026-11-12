@@ -158,9 +158,10 @@ export function parsePeopleBasics(json: unknown): PeopleBasics {
       '"N for the steerer and adult residents"',
     );
   }
-  const staminaText = table('stamina');
-  const stamina = /^(\d+);/.exec(staminaText);
-  if (stamina === null) fail('vitalityStaminaAndArmour.stamina', staminaText, '"N; ..."');
+  // Combat v2 (decision DE-13): the bar's size is "Health, stamina and healing", staminaMax.
+  const staminaText = keyed(json, 'combatTimings', 'healthStaminaAndHealing')('staminaMax');
+  const stamina = /^(\d+)$/.exec(staminaText);
+  if (stamina === null) fail('healthStaminaAndHealing.staminaMax', staminaText, '"N"');
   return { vitality: Number(vitality[1]), stamina: Number(stamina[1]) };
 }
 
@@ -422,9 +423,10 @@ export interface MissileBalance {
   readonly shadow: { readonly w: number; readonly h: number };
 }
 
+/** A row of Book 10 section 06's "Weapon movesets" (combat v2, decision DE-13). */
 function weaponRow(json: unknown, weapon: string): Row {
-  const row = rows(json, 'combatTimings', 'weapons').find((r) => r['Weapon'] === weapon);
-  if (row === undefined) throw new Error(`balance.json: weapons has no ${weapon} row`);
+  const row = rows(json, 'combatTimings', 'weaponMovesets').find((r) => r['Weapon'] === weapon);
+  if (row === undefined) throw new Error(`balance.json: weaponMovesets has no ${weapon} row`);
   return row;
 }
 
@@ -437,18 +439,15 @@ export function parseMissileBalance(json: unknown): MissileBalance {
     if (m === null) fail(`missiles.${key}`, text, expected);
     return m;
   };
-  const bowRow = weaponRow(json, 'Bow');
-  const spearRow = weaponRow(json, 'Thrown spear');
-  const drawText = bowRow['Windup'] ?? '';
-  const draw = /^(\d+) draw$/.exec(drawText);
-  if (draw === null) fail('weapons.Bow.Windup', drawText, '"N draw"');
+  const bowRow = weaponRow(json, 'Hunting bow');
+  const spearRow = weaponRow(json, 'Spear, thrown');
   const bow: RangedWeapon = {
-    reachTiles: number('weapons.Bow.Reach tiles', bowRow['Reach tiles'] ?? ''),
-    drawTicks: Number(draw[1]),
+    reachTiles: number('weaponMovesets.Hunting bow.Reach', bowRow['Reach'] ?? ''),
+    drawTicks: number('weaponMovesets.Hunting bow.Windup', bowRow['Windup'] ?? ''),
   };
   const spear: RangedWeapon = {
-    reachTiles: number('weapons.Thrown spear.Reach tiles', spearRow['Reach tiles'] ?? ''),
-    drawTicks: number('weapons.Thrown spear.Windup', spearRow['Windup'] ?? ''),
+    reachTiles: number('weaponMovesets.Spear, thrown.Reach', spearRow['Reach'] ?? ''),
+    drawTicks: number('weaponMovesets.Spear, thrown.Windup', spearRow['Windup'] ?? ''),
   };
   const full = match(
     'spreadFullDraw',

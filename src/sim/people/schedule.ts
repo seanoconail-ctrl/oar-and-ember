@@ -74,6 +74,13 @@ export function seatOf(world: WorldState, camp: CampContext, ctx: PeopleContext,
 /** Where a resident sleeps at the camp's stage. */
 export function bedOf(world: WorldState, camp: CampContext, ctx: PeopleContext, id: Id): Spot {
   const stage = homeOf(world, camp)?.stage === 'S1' ? 'S1' : 'S0';
+  // Design addendum 2.4 (DE-22): once the lean-to is raised, everyone sleeps under it.
+  const under = camp.def.shelterBeds;
+  if (stage === 'S0' && world.facts['ch1.shelter_raised'] === true && under !== undefined) {
+    const i = Math.max(0, [...world.household.residents].sort().indexOf(id));
+    const bed = under[i % under.length];
+    if (bed !== undefined) return { zone: camp.def.zone, ...bed };
+  }
   const own = camp.def.people[id]?.sleep[stage];
   if (own !== undefined) return { zone: camp.def.zone, ...own };
   const beds = ctx.household.beds[stage];
@@ -218,7 +225,12 @@ export function activityOf(
   }
   if (block === 'WORK' || block === 'MEAL') {
     // Beat 2: Hild shows the steerer the camp before she goes off to work.
-    if (world.facts[FACT_AT_BROCH] === true && world.facts[FACT_ARRIVED_SAID] !== true)
+    // (Before design addendum 2.4 only: since it she walks up at the first fire, DE-16.)
+    if (
+      world.facts[FACT_AT_BROCH] === true &&
+      world.facts[FACT_ARRIVED_SAID] !== true &&
+      world.facts['ch1.phase'] === undefined
+    )
       return { kind: 'SIT', place: at(seat, 'sit') };
     const job = jobToday(world, camp, ctx, p);
     if (p.life.refuses.includes(job)) return { kind: 'REFUSE', place: at(seat, 'sit'), job };

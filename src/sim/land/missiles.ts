@@ -44,8 +44,15 @@ export interface MissileContext {
   readonly arrows: ArrowBalance;
   readonly water: WaterBalance;
   readonly elevations: ReadonlyMap<Id, Elevation>;
-  /** Stage 9: a person a missile passes through (a dodge's invulnerable ticks, Book 10). */
-  readonly passes?: (id: Id) => boolean;
+  /**
+   * Combat v2: a person a missile passes, by its number (a sidestep that read it, Book 10
+   * sidestepMove). Nothing else lets a missile through a body (decision DE-10).
+   */
+  readonly passes?: (id: Id, n: number) => boolean;
+  /** Where each person stood at the start of the tick, for the swept test (Book 10 sweptHits). */
+  readonly before?: (id: Id) => { readonly x: number; readonly y: number } | undefined;
+  /** A raised shield's true facing (radians), where it is not one of the four (combat v2). */
+  readonly shieldAngle?: (id: Id) => number | undefined;
 }
 
 /** The nearest of the 16 directions to a vector. */
@@ -190,46 +197,130 @@ export function gameMinute(calendar: {
  * the missile travels along (ux, uy), so it comes from (-ux, -uy).
  */
 export function shieldStops(
-  facing: 's' | 'n' | 'e' | 'w',
+  facing: 's' | 'n' | 'e' | 'w' | number,
   ux: number,
   uy: number,
   arcDegrees: number,
 ): boolean {
-  const [fx, fy] = { s: [0, 1], n: [0, -1], e: [1, 0], w: [-1, 0] }[facing] as [number, number];
+  const a =
+    typeof facing === 'number'
+      ? facing
+      : { e: 0, s: Math.PI / 2, w: Math.PI, n: -Math.PI / 2 }[facing];
+  const [fx, fy] = [Math.cos(a), Math.sin(a)];
   const cos = -(fx * ux + fy * uy) / Math.max(1e-9, Math.hypot(ux, uy));
   return cos >= Math.cos(((arcDegrees / 2) * Math.PI) / 180) - 1e-9;
 }
 
-/** What a missile at (x, y), arc height z, meets there, if anything (people first, then cover). */
-function strikeAt(
+/**
+ * Where along a segment a moving box is first touched (Book 10 sweptHits): the segment from `a`
+ * to `b` relative to the box's own motion (from where it stood to where it stands), against the
+ * box `|x| <= hw`, `-h <= y <= d` round the feet. Returns the fraction of the segment, or null.
+ */
+export function sweptBox(
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  hw: number,
+  h: number,
+  d: number,
+): number | null {
+  let t0 = 0;
+  let t1 = 1;
+  const slab = (p: number, q: number, lo: number, hi: number): boolean => {
+    if (Math.abs(q) < 1e-12) return p >= lo && p <= hi;
+    let u0 = (lo - p) / q;
+    let u1 = (hi - p) / q;
+    if (u0 > u1) [u0, u1] = [u1, u0];
+    t0 = Math.max(t0, u0);
+    t1 = Math.min(t1, u1);
+    return t0 <= t1;
+  };
+  if (!slab(ax, bx - ax, -hw, hw)) return null;
+  if (!slab(ay, by - ay, -h, d)) return null;
+  return t0;
+}
+
+/** Everyone a missile may meet: the steerer (unless the shooter) and the people in the zone. */
+function bodies(
   onFoot: OnFootState,
-  map: ZoneMap,
+  p: Projectile,
+): [
+  Id,
+  { x: number; y: number; facing: 's' | 'n' | 'e' | 'w'; blocking?: boolean; pose?: string },
+][] {
+  const out: [
+    Id,
+    { x: number; y: number; facing: 's' | 'n' | 'e' | 'w'; blocking?: boolean; pose?: string },
+  ][] = [];
+  if (p.shooter !== STEERER) out.push([STEERER, onFoot.player]);
+  for (const [id, a] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1)))
+    if (id !== p.shooter && a.pose !== 'carried') out.push([id, a]);
+  return out;
+}
+
+/**
+ * The first body a missile's path this tick touches (Book 10 sweptHits, decision DE-10): the
+ * whole path swept against each body's box, its own motion this tick taken into account, so a
+ * fast missile never passes through anyone, whatever their state. The box stands round the feet
+ * (the content's breadth, and its depth both ways). A body lying down (downed or
+ * dead) is met only near the ground (below Book 10's low-cover height). A raised shield facing
+ * the missile stops it.
+ */
+function bodyStrike(
+  onFoot: OnFootState,
   ctx: MissileContext,
   p: Projectile,
+  from: { readonly x: number; readonly y: number; readonly z: number },
+  to: { readonly x: number; readonly y: number; readonly z: number },
+  heightAt: (s: number, z: number) => number,
+  tile: number,
+): { s: number; strike: Strike } | null {
+  const box = ctx.rules.missileHitBox;
+  let best: { s: number; strike: Strike } | null = null;
+  for (const [id, who] of bodies(onFoot, p)) {
+    if (ctx.passes?.(id, p.n) === true) continue;
+    const was = ctx.before?.(id) ?? who;
+    const s = sweptBox(
+      from.x - was.x,
+      from.y - was.y,
+      to.x - who.x,
+      to.y - who.y,
+      box.w / 2,
+      box.h,
+      box.h,
+    );
+    if (s === null) continue;
+    const z = from.z + (to.z - from.z) * s;
+    const h = heightAt(s, z);
+    const lying = who.pose === 'down' || who.pose === 'dead';
+    if (lying && h > ctx.missiles.lowCoverTiles * tile) continue;
+    if (best !== null && s >= best.s) continue;
+    const x = from.x + (to.x - from.x) * s;
+    const y = from.y + (to.y - from.y) * s;
+    const bx = was.x + (who.x - was.x) * s;
+    const by = was.y + (who.y - was.y) * s;
+    const facing = ctx.shieldAngle?.(id) ?? who.facing;
+    const blocked =
+      who.blocking === true && shieldStops(facing, p.ux, p.uy, ctx.missiles.shieldArcDegrees);
+    const at = lying ? Math.max(1, Math.min(4, h)) : Math.max(6, Math.min(34, h));
+    best = {
+      s,
+      strike: { strike: blocked ? 'shield' : 'body', x: x - bx, y: y - by, h: at, target: id },
+    };
+  }
+  return best;
+}
+
+/** What cover a missile at (x, y), arc height z, meets there, if any. */
+function coverAt(
+  map: ZoneMap,
+  ctx: MissileContext,
   x: number,
   y: number,
   z: number,
-  h: number,
   before: { readonly x: number; readonly y: number },
 ): Strike | null {
-  const box = ctx.rules.missileHitBox;
-  const people: [
-    Id,
-    { x: number; y: number; facing: 's' | 'n' | 'e' | 'w'; blocking?: boolean },
-  ][] = [];
-  if (p.shooter !== STEERER) people.push([STEERER, onFoot.player]);
-  for (const [id, a] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1)))
-    // The lying (downed, dead) are flown over.
-    if (id !== p.shooter && a.pose !== 'carried' && a.pose !== 'down' && a.pose !== 'dead')
-      people.push([id, a]);
-  for (const [id, who] of people) {
-    if (Math.abs(x - who.x) > box.w / 2 || y > who.y + 0.5 || y < who.y - box.h) continue;
-    if (ctx.passes?.(id) === true) continue;
-    const blocked =
-      who.blocking === true && shieldStops(who.facing, p.ux, p.uy, ctx.missiles.shieldArcDegrees);
-    const at = Math.max(6, Math.min(34, h));
-    return { strike: blocked ? 'shield' : 'body', x: x - who.x, y: y - who.y, h: at, target: id };
-  }
   // Cover: stone and banks in the terrain, and props that stop missiles.
   const { tx, ty } = tileOf(map, x, y);
   const terrain = terrainAt(map, tx, ty);
@@ -244,7 +335,7 @@ function strikeAt(
     if (Math.abs(x - px) > cover.w / 2 || y > py || y < py - cover.h) continue;
     return cover.material === 'stone'
       ? { strike: 'stone', x: before.x, y: before.y, h: 0 }
-      : { strike: 'wood', x, y, h: Math.max(2, Math.min(18, h)) };
+      : { strike: 'wood', x, y, h: 0 };
   }
   return null;
 }
@@ -280,20 +371,29 @@ export function stepProjectiles(
     p.x = at.x;
     p.y = at.y;
     p.z = at.z;
-    // Sample the tick's path every 2 px or less, so nothing thin is flown through.
-    const steps = Math.max(1, Math.ceil(Math.hypot(at.x - before.x, at.y - before.y) / 2));
+    const heightAt = (s: number, z: number): number => {
+      const f = (p.t - 1 + s) / p.ticks;
+      return z + ctx.rules.releaseHeightPx * (1 - f);
+    };
+    // Bodies: the whole path swept (Book 10 sweptHits).
+    const body = bodyStrike(onFoot, ctx, p, before, at, heightAt, map.tile);
+    // Cover: sampled every pixel or less along the path, up to any body met.
+    const len = Math.hypot(at.x - before.x, at.y - before.y);
+    const steps = Math.max(1, Math.ceil(len));
     let hit: Strike | null = null;
     let last = { x: before.x, y: before.y };
     for (let k = 1; k <= steps && hit === null; k++) {
       const s = k / steps;
+      if (body !== null && s > body.s) break;
       const x = before.x + (at.x - before.x) * s;
       const y = before.y + (at.y - before.y) * s;
       const z = before.z + (at.z - before.z) * s;
-      const f = (p.t - 1 + s) / p.ticks;
-      const h = z + ctx.rules.releaseHeightPx * (1 - f);
-      hit = strikeAt(onFoot, map, ctx, p, x, y, z, h, last);
+      const c = coverAt(map, ctx, x, y, z, last);
+      if (c !== null)
+        hit = c.strike === 'wood' ? { ...c, h: Math.max(2, Math.min(18, heightAt(s, z))) } : c;
       last = { x, y };
     }
+    if (hit === null && body !== null) hit = body.strike;
     if (hit === null && p.t >= p.ticks) hit = landAt(map, ctx, level, at.x, at.y);
     if (hit === null) {
       flying.push(p);

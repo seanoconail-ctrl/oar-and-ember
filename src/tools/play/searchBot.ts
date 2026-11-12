@@ -320,13 +320,22 @@ export class SearchBot extends CampBot {
         });
       } else {
         this.sim.submit(still);
-        const staggered = ranked.find(({ id, d }) => fighterOf(id)?.state === 'stagger' && d < 40);
+        // Combat v2: a parried foe reels open ('parried'); one whose poise broke staggers.
+        const staggered = ranked.find(({ id, d }) => {
+          const st = fighterOf(id)?.state;
+          return (st === 'parried' || st === 'stagger') && d < 40;
+        });
         const punish = ranked.find(({ id, d }) => {
           const f = fighterOf(id);
+          // Combat v2: one who has not noticed the steerer is struck (a backstab from behind).
+          const unaware = onFoot.actors[id]?.fight?.ai.awareness.state !== 'ALERT';
+          if (d < 26 && unaware) return true;
           return (
             d < 34 &&
             f !== undefined &&
-            (['stagger', 'parryRecovery', 'blockStun', 'guardBroken'].includes(f.state) ||
+            (['stagger', 'parried', 'parryRecovery', 'blockStun', 'guardBroken'].includes(
+              f.state,
+            ) ||
               (striking(f) && t >= f.activeEnd))
           );
         });
@@ -344,5 +353,8 @@ export class SearchBot extends CampBot {
       this.step();
     }
     this.stop();
+    // Combat v2: a riposte or a blow still under way (and its hitstop) finishes before anything else.
+    if (this.sim.state.gameOver === null)
+      this.waitFor(() => (onFoot.player.fight?.state ?? 'idle') === 'idle', 60 * 5);
   }
 }

@@ -70,6 +70,12 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       dodge: 3,
       shove: 3,
       stagger: 2,
+      // Combat v2 (decisions DE-4, DE-5, DE-9): the riposte, backstab, lunge, parried and get-up.
+      riposte: 3,
+      backstab: 3,
+      lunge: 2,
+      parried: 2,
+      getup: 2,
       finish: 1,
       surrender: 2,
       downed: 2,

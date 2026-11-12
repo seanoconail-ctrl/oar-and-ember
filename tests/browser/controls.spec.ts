@@ -122,7 +122,8 @@ test.describe('the mouse-first controls', () => {
   test('the rescue is finished with the mouse: right-click Hild, then right-click dry ground', async ({
     page,
   }) => {
-    await startPlay(page, 'A', 'capture');
+    // Design addendum 2.4: the seax in hand (the net is cut with a held right-click).
+    await startPlay(page, 'A', 'kit=seax&capture');
     await step(page, 2);
     // Hild stands in the shallows, cut at her waterline.
     expect(['12', '22']).toContain(await attr(page, 'hild-mask'));
@@ -140,6 +141,11 @@ test.describe('the mouse-first controls', () => {
     // Right-click on her body (the tile above her feet).
     const body = await pointAt(page, hildSpawn.x * 24, hildSpawn.y * 24 - 20);
     await expect(overlay(page)).toHaveAttribute('data-reach', 'in');
+    await page.mouse.move(body.x, body.y);
+    await page.mouse.down({ button: 'right' });
+    await stepUntil(page, 'opening', /net_free/, 5);
+    await page.mouse.up({ button: 'right' });
+    await step(page, 2);
     await page.mouse.click(body.x, body.y, { button: 'right' });
     await step(page, 2);
     await expect(overlay(page)).toHaveAttribute('data-carrying', 'C_HILD');

@@ -1,8 +1,11 @@
 /**
- * Stage 6 in the browser: control within five seconds of the naming screen (check 1), and the
- * whole rescue played with real key presses, taught only by Hild's call, the prompt for the next
- * thing to do and the tide line's refusal, with no control list (check 2).
+ * Stage 6 in the browser: control within five seconds of the naming screen (check 1: since design
+ * addendum 2.4, the steering oar of the cold open), and the whole rescue played with real key
+ * presses, taught only by Hild's call, the prompt for the next thing to do and the tide line's
+ * refusal, with no control list (check 2). Since 2.4 Hild is caught in a net: the prompt says a
+ * blade is needed, the seax is picked up from the wreck's debris, and a held E cuts her free.
  */
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { aboveTideLine, terrainAt, tileOf } from '../../src/sim/land/zoneMap.ts';
 import { findPath } from '../../src/tools/play/openingBot.ts';
@@ -22,6 +25,10 @@ import {
 } from './strand.ts';
 
 const CAPTIONS = '.oe-overlay [data-region=captions] p';
+const onfoot = JSON.parse(readFileSync('content/onfoot.json', 'utf8')) as {
+  pickups: { key: string; x: number; y: number }[];
+};
+const seax = onfoot.pickups.find((p) => p.key === 'wreck_seax') ?? { x: 0, y: 0 };
 
 test('control within five seconds of the naming screen, with the chosen name and body', async ({
   page,
@@ -64,8 +71,11 @@ test('control within five seconds of the naming screen, with the chosen name and
   lap('woke');
   await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play');
   lap('play');
+  // Design addendum 2.4 (decision DE-16): the naming screen opens on the played cold open, where
+  // the control is the steering oar; it answers the key at once.
+  await expect(overlay(page)).toHaveAttribute('data-phase', 'COLD_OPEN');
   await page.keyboard.down('KeyD');
-  await expect(overlay(page)).toHaveAttribute('data-moving', 'true');
+  await expect.poll(async () => Number(await attr(page, 'coldoar'))).toBeGreaterThan(0.1);
   const ms = Date.now() - shown;
   // Where the time went, for a slow machine: the test's steps, and the game's start-up marks
   // (ms since Wake: world, renderer, height field, first frames).
@@ -158,6 +168,41 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
   await walkPath(page, toHild);
   // Close the last few pixels to stand beside her.
   await approach(page, (hildAt.tx + 1.5) * 24, (hildAt.ty + 0.7) * 24);
+  // Design addendum 2.4: she is caught in the net, and bare hands will not do.
+  await stepUntil(page, 'prompt', 'need_blade', 5);
+  await expect(page.locator('[data-region=prompt]')).toContainText('Something sharp');
+  // The seax lies in the wreck's debris on the way; picked up, it is back to Hild.
+  const seaxAt = tileOf(map, seax.x * 24, seax.y * 24);
+  const toSeax = findPath(
+    map,
+    false,
+    await here(page),
+    (t) => t.tx === seaxAt.tx && t.ty === seaxAt.ty,
+    wadeable,
+  );
+  if (toSeax === null) throw new Error('no path to the seax');
+  await walkPath(page, toSeax);
+  await approach(page, seax.x * 24, seax.y * 24 + 6);
+  await stepUntil(page, 'prompt', 'pick_up', 5);
+  await expect(overlay(page)).toHaveAttribute('data-prompt', 'pick_up');
+  await page.keyboard.press('KeyE');
+  await step(page);
+  await expect(overlay(page)).toHaveAttribute('data-hotbar', /^ITEM_SEAX,/);
+  const again = findPath(
+    map,
+    false,
+    await here(page),
+    (t) => Math.abs(t.tx - hildAt.tx) + Math.abs(t.ty - hildAt.ty) === 1 && t.tx > hildAt.tx,
+    wadeable,
+  );
+  if (again === null) throw new Error('no path back to Hild');
+  await walkPath(page, again);
+  await approach(page, (hildAt.tx + 1.5) * 24, (hildAt.ty + 0.7) * 24);
+  await stepUntil(page, 'prompt', 'cut_net', 5);
+  await expect(page.locator('[data-region=prompt]')).toContainText('Hold E  Cut the net');
+  await page.keyboard.down('KeyE');
+  await stepUntil(page, 'opening', /net_free/, 5);
+  await page.keyboard.up('KeyE');
   await stepUntil(page, 'prompt', 'lift', 5);
   await expect(overlay(page)).toHaveAttribute('data-prompt', 'lift');
   await expect(page.locator('[data-region=prompt]')).toContainText('E  Lift Hild');
@@ -208,7 +253,18 @@ test('the rescue, played with the keys and taught by the moment', async ({ page 
   );
   console.log(`prompts seen: ${seen.prompts.join(', ')}`);
   for (const p of seen.prompts)
-    expect(['', 'lift', 'set_down', 'below_tide', 'notice', 'move']).toContain(p);
+    expect([
+      '',
+      'lift',
+      'set_down',
+      'below_tide',
+      'notice',
+      'move',
+      // Design addendum 2.4: the net, the seax.
+      'need_blade',
+      'pick_up',
+      'cut_net',
+    ]).toContain(p);
   for (const t of seen.texts) expect(t).not.toMatch(/Shift|Ctrl|Space|Tab|Mouse/);
   await expect(page.locator('[data-region=panel]')).toHaveCount(0);
 });

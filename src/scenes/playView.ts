@@ -24,6 +24,8 @@ import { attachBrowserInput } from '../input/browserInput.ts';
 import { InputMapper } from '../input/inputState.ts';
 import { browserStorage, loadSettings } from '../input/settingsStore.ts';
 import { resolveDisplaySettings, saveDisplaySettings } from '../input/displaySettings.ts';
+import { CombatFx } from './combatFx.ts';
+import { saveFor } from '../persist/checkpoints.ts';
 import { bakeElevation } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
@@ -52,7 +54,7 @@ import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import { striking } from '../sim/combat/fighter.ts';
-import { parseCombatBalance } from '../content/combatBalance.ts';
+import { parseAiBalance, parseCombatBalance } from '../content/combatBalance.ts';
 import { finisherTarget, hostilesAware } from '../sim/land/fight.ts';
 import type { FightContext } from '../sim/land/fight.ts';
 import {
@@ -74,6 +76,36 @@ import type { HudView } from './hud.ts';
 import { peopleLook } from './people.ts';
 import { Session } from './session.ts';
 import { zoneScene } from './zoneScene.ts';
+import {
+  coldBoat,
+  coldOpenScene,
+  decorate,
+  hagCamera,
+  OpeningFx,
+  openingProps,
+  stagePropsNow,
+} from './openingView.ts';
+import { bladeOf, hagNow, netted } from '../sim/narrative/wreck.ts';
+import type { WreckWhat } from '../sim/narrative/wreck.ts';
+
+/** The opening's sounds by what happened (content/audio.json events; Book 11 section 07). */
+const WRECK_SOUNDS: Partial<Record<WreckWhat, string>> = {
+  COLD_STRIKE: 'COLD_STRIKE',
+  WOKE: 'COUGH',
+  NET_WAVE: 'WADE_SPLASH',
+  NET_CUT: 'NET_CUT',
+  LOAD_DOWN: 'LOAD_DOWN',
+  CHEST_HOME: 'LOAD_DOWN',
+  KEY_TAKEN: 'ITEM_PICKED_UP',
+  CHEST_OPENED: 'CHEST_OPEN',
+  LASHING_CUT: 'LASHING_CUT',
+  BUNDLE_SPLASH: 'BUNDLE_SPLASH',
+  STORES_BROUGHT: 'LOAD_DOWN',
+  SHELTER_RAISED: 'SAIL_RAISE',
+  RING_FOUND: 'RING_FOUND',
+  HAG_HOLD: 'HAG_DRONE',
+  HAG_GUST: 'HAG_GUST',
+};
 import type { CampScene } from './zoneScene.ts';
 import { campHooks, campUseLabel, interactionPoint, reportSentences } from './camp.ts';
 import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
@@ -284,7 +316,13 @@ export function startPlay(
   const mark = (name: string): void => {
     marks[name] = Math.round(performance.now() - options.wokeAt);
   };
-  const world = newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice);
+  // Design addendum 2.4 (decision DE-30): a new game from the naming screen opens with the played
+  // cold open and the waking; `?view=play` starts awake on the strand unless `opening=full`.
+  const startParams = new URLSearchParams(window.location.search);
+  const coldOpen = startParams.get('view') !== 'play' || startParams.get('opening') === 'full';
+  const world = newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice, {
+    coldOpen,
+  });
   const land = landContext(content, content.balance);
   const opening = content.opening;
   if (opening === null || world.onFoot === null) throw new Error('No opening to play');
@@ -331,6 +369,9 @@ export function startPlay(
   let checkpointDue: string | null = null;
   const fightCtx: FightContext | null = land.fight ?? null;
   const combatB = parseCombatBalance(content.balance);
+  const aiB = parseAiBalance(content.balance);
+  /** Combat v2 (decision DE-12): an autosave on reaching camp, written once the frame's steps end. */
+  let autosaveDue: 'CAMP' | null = null;
   const steererVitality = parsePeopleBasics(content.balance).vitality;
 
   const settings = loadSettings(browserStorage());
@@ -414,6 +455,12 @@ export function startPlay(
       sim.submit({ type: 'SET_OPTIONS', secondWind: !sim.state.options.secondWind });
       return;
     }
+    if (e.code === 'KeyA') {
+      // Combat v2: the awareness marks over enemies, on or off (Book 10 marks).
+      display = { ...display, marks: !display.marks };
+      saveDisplaySettings(store, display);
+      return;
+    }
     if (e.code === 'KeyH') {
       helpOpen = !helpOpen;
       return;
@@ -463,7 +510,18 @@ export function startPlay(
   WebAudioEngine.prepare();
   const engine = new WebAudioEngine(audioTable?.cues ?? []);
   engine.setGore(display.gore);
-  const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine);
+  // Book 10 section 25's music fades (decision DE-29).
+  const fades = ((): { fadeIn: number; fadeOut: number; layersJoin: number } | null => {
+    const m = land.wreck?.ob.music;
+    return m === undefined
+      ? null
+      : {
+          fadeIn: m.fadeInSeconds,
+          fadeOut: m.fadeOutSeconds,
+          layersJoin: (m.layersJoin[0] + m.layersJoin[1]) / 2,
+        };
+  })();
+  const audio = audioTable === null ? null : new AudioRouter(audioTable, strings, engine, fades);
   const captionMs = (audioTable?.captionSeconds ?? 3) * 1000;
   const wireVisuals = (v: ZoneVisuals): void => {
     // Stage 9: the gore setting and how long stains last (content/combat.json gore).
@@ -606,7 +664,11 @@ export function startPlay(
           : inFight
             ? 'MUS_COMBAT_1'
             : (placeMusic?.want(engine.now, {
-                allowed: sim.state.facts[FACT_HILD_SAFE] === true,
+                // Design addendum 2.4: the music arrives gently with the first fire.
+                allowed:
+                  sim.state.facts['ch1.phase'] === undefined
+                    ? sim.state.facts[FACT_HILD_SAFE] === true
+                    : sim.state.facts['ch1.fire_lit'] === true,
                 home: atHome,
                 phase,
               }) ?? null);
@@ -692,7 +754,11 @@ export function startPlay(
     if (home === undefined) return undefined;
     const here = map.zone === campDef.zone;
     const fireSite = campDef.sites.find((s) => s.kind === 'FIRE' && s.zone === map.zone);
-    const stageProps = home.stage === 'S1' ? campDef.props.S1 : campDef.props.S0;
+    const stageAll = home.stage === 'S1' ? campDef.props.S1 : campDef.props.S0;
+    // Design addendum 2.4: the lean-to only once raised; the mast, the pool, the sail, the doors.
+    const stageProps = stagePropsNow(sim.state, stageAll, sim.state.tick);
+    const opening =
+      wreckCtx === null ? [] : openingProps(sim.state, wreckCtx, map, stageAll, sim.state.tick);
     // Stage 11: the boat and its repairs, the wreck's rigging, the skiff, the ship of stones.
     const repairDef = content.repairs;
     const extra =
@@ -700,7 +766,7 @@ export function startPlay(
         ? []
         : repairProps(sim.state, { def: repairDef }, map.zone, content.launch);
     return {
-      props: [...(here ? stageProps : []), ...extra],
+      props: [...(here ? stageProps : []), ...extra, ...opening],
       stage: home.stage,
       fire:
         fireSite === undefined
@@ -718,6 +784,12 @@ export function startPlay(
   };
   /** The morning report, shown in Report mode until closed (Book 2 section 02). */
   let reportShown: string[] | null = null;
+  /** Design addendum 2.4: the journal's current aim, hints and edge captions heard (tests). */
+  let journal: string | null = null;
+  let hintsHeard = 0;
+  let edgeCaptions = 0;
+  const openingFx = new OpeningFx();
+  const wreckCtx = land.wreck ?? null;
   /** The fade in from dark on waking and on entering a zone (frame clock, ms). */
   let fadeInFrom = -1;
   let workCue: { since: number; ticks: number; mark: number | null } | null = null;
@@ -726,6 +798,8 @@ export function startPlay(
   /** A pan for a point in the world, left or right of the steerer. */
   const panAt = (x: number): number =>
     Math.max(-1, Math.min(1, (x - (sim.state.onFoot?.player.x ?? x)) / 200));
+  /** Combat v2's presentation: hit reactions, marks, the enemy's bar, the bars' fade. */
+  const combatFx = new CombatFx(combatB.bars, aiB.awareness.markAlertTicks);
   /** A fight sound by its event, from where the person is (Book 11 section 07). */
   const fightSound = (event: string, person: string | undefined, delay = 0): void => {
     if (audio === null || !engine.unlocked) return;
@@ -786,7 +860,9 @@ export function startPlay(
       case 'PERSON_CALLED':
         say(
           t('caption.format.with_direction', {
-            caption: t('caption.voice.hild_calling'),
+            caption: has(`caption.voice.${e.person.slice(2).toLowerCase()}_calling`)
+              ? t(`caption.voice.${e.person.slice(2).toLowerCase()}_calling`)
+              : t('caption.voice.hild_calling'),
             direction: t(`caption.direction.${e.direction}`),
           }),
           now,
@@ -1005,10 +1081,64 @@ export function startPlay(
         // The island theme enters once Hild is safe (placeAudio): the opening has no music.
         beat = e.beat;
         return;
-      case 'FIRE_LIT':
-        // The hearth theme starts at the first fire (Book 11 section 04).
+      case 'FIRE_LIT': {
+        // The hearth theme starts at the first fire (Book 11 section 04), gently (decision DE-29);
+        // sparks from the flint and the flame taking (design addendum 2.4).
         placeMusic?.begin(engine.now);
+        const site = campDef?.sites.find((x) => x.kind === 'FIRE' && x.zone === map.zone);
+        if (site !== undefined)
+          openingFx.burst('spark', site.x * map.tile, site.y * map.tile, 10, 4);
+        if (audio !== null && engine.unlocked) audio.event('FLINT', engine.now, { pan: 0 });
+        say(t('caption.action.sparks'), now, 'info');
+        say(t('caption.action.flame'), now + 600, 'info');
         return;
+      }
+      // ---- Design addendum 2.4: the opening, the aims, the edges and the doors.
+      case 'WRECK': {
+        const at = e.x === undefined ? null : { x: e.x, y: e.y ?? 0 };
+        const sound = WRECK_SOUNDS[e.what];
+        if (sound !== undefined && audio !== null && engine.unlocked)
+          audio.event(sound, engine.now, { pan: at === null ? 0 : panAt(at.x) });
+        if (e.key !== undefined && e.what !== 'COLD_SHOUT' && has(e.key))
+          say(t(e.key), now, 'info');
+        if (e.what === 'COLD_SHOUT') say(t('caption.cold.shout'), now, 'info');
+        if (at !== null) {
+          if (e.what === 'NET_CUT') openingFx.burst('fibre', at.x, at.y, 14, 18);
+          if (e.what === 'LASHING_CUT') openingFx.burst('fibre', at.x, at.y + 60, 8, 60);
+          if (e.what === 'BUNDLE_SPLASH' || e.what === 'NET_WAVE')
+            openingFx.burst('spray', at.x, at.y, 9, 6);
+          if (e.what === 'LOAD_DOWN' || e.what === 'CHEST_HOME' || e.what === 'STORES_BROUGHT')
+            openingFx.burst('puff', at.x, at.y, 6);
+          if (e.what === 'RING_FOUND')
+            openingFx.burst('drip', at.x * map.tile, at.y * map.tile, 4, 4);
+        }
+        if (e.what === 'COLD_STRIKE') visuals.shake(3);
+        if (e.what === 'WOKE') fadeInFrom = now;
+        return;
+      }
+      case 'AIM_CHANGED':
+        journal = e.journalKey;
+        return;
+      case 'AIM_HINT':
+        hintsHeard++;
+        return;
+      case 'EDGE_CAPTION':
+        say(t(e.key), now, 'info');
+        edgeCaptions++;
+        return;
+      case 'DOOR': {
+        if (e.what === 'OPENING') {
+          say(t(e.kind === 'FLAP' ? 'caption.door.flap' : 'caption.door.open'), now, 'info');
+          if (audio !== null && engine.unlocked)
+            audio.event(e.kind === 'FLAP' ? 'FLAP_OPEN' : 'DOOR_OPEN', engine.now, {
+              pan: panAt(e.x),
+            });
+        } else if (e.what === 'SHUT' && audio !== null && engine.unlocked)
+          audio.event(e.kind === 'FLAP' ? 'FLAP_OPEN' : 'DOOR_SHUT', engine.now, {
+            pan: panAt(e.x),
+          });
+        return;
+      }
       // ---- Stage 9: the fight's sounds, sprays and words (Book 11 section 07, Book 7 section 12).
       case 'ENCOUNTER_STARTED':
         checkpointDue = e.checkpoint;
@@ -1021,13 +1151,25 @@ export function startPlay(
         return;
       case 'BLOW': {
         const who = e.defender;
+        // Combat v2 (decision DE-7): the hit's reactions, its shake (heavy hits only) and the
+        // hurt sound under the impact: a grunt, or for the steerer a sharp breath, never a cry.
+        combatFx.blow(e, sim.state.tick, display.reducedMotion);
+        if (e.shake != null) visuals.shake(e.shake.px);
+        const landed = e.outcome === 'HIT' || e.outcome === 'GUARD_BROKEN';
+        if (landed && e.damage > 0)
+          fightSound(who === 'P_STEERER' ? 'STEERER_HURT' : 'GRUNT', who, 0.04);
+        if (e.kind === 'riposte' && landed) fightSound('RIPOSTE_HIT', who);
+        if (e.kind === 'backstab' && landed) fightSound('BACKSTAB', who);
+        if (e.kind === 'missile' && e.outcome === 'BLOCKED') {
+          fightSound('ARROW_SHIELD', who);
+          return;
+        }
         if (e.outcome === 'PARRIED') {
           fightSound('PARRY', who);
-          visuals.shake(1);
+          fightSound('PARRY_RING', who);
         } else if (e.outcome === 'BLOCKED') fightSound('BLOCKED', who);
-        else if (e.outcome === 'GUARD_BROKEN') {
+        else if (e.outcome === 'GUARD_BROKEN' || e.outcome === 'HOOKED') {
           fightSound('GUARD_BROKEN', who);
-          visuals.shake(2);
         } else if (e.outcome === 'DODGED') fightSound('DODGED', who);
         else {
           fightSound(
@@ -1093,8 +1235,38 @@ export function startPlay(
         return;
       case 'FIGHT_REFUSED':
         if (e.reason === 'NO_SHIELD') refuseHere('no_shield', t('ui.refusal.no_shield'), now);
+        else if (e.reason === 'NO_BINDING')
+          refuseHere('no_binding', t('ui.refusal.no_binding'), now);
+        else if (e.reason === 'NO_RATION') refuseHere('no_ration', t('ui.refusal.no_ration'), now);
+        else if (e.reason === 'EXHAUSTED') refuseHere('exhausted', t('ui.refusal.exhausted'), now);
         else refuseHere('too_tired', t('ui.refusal.too_tired'), now);
         return;
+      // ---- Combat v2 (design addendum 2.4): awareness, sidesteps, lunges, healing, the camp.
+      case 'AWARENESS':
+        combatFx.awareness(e.person, e.state, sim.state.tick);
+        if (e.state === 'ALERT') fightSound('ALERT_STING', e.person);
+        return;
+      case 'SIDESTEP': {
+        const a = sim.state.onFoot?.actors[e.who];
+        if (a !== undefined) combatFx.sidestep(a.x, a.y, sim.state.tick);
+        fightSound('SIDESTEP', e.who);
+        return;
+      }
+      case 'ATTACK_STARTED':
+        if (e.kind === 'lunge') fightSound('LUNGE_TELL', e.who);
+        return;
+      case 'HEAL_STARTED':
+        fightSound(e.kind === 'BIND' ? 'BIND_WOUND' : 'EAT_RATION', 'P_STEERER');
+        say(t(e.kind === 'BIND' ? 'ui.heal.bind' : 'ui.heal.eat'), now, 'info');
+        return;
+      case 'HEAL_INTERRUPTED':
+        say(t('ui.heal.interrupted'), now, 'info');
+        return;
+      case 'CAMP_REACHED': {
+        const call = saveFor(e);
+        if (call?.kind === 'autosave' && call.reason === 'CAMP') autosaveDue = 'CAMP';
+        return;
+      }
       default:
         return;
     }
@@ -1428,6 +1600,10 @@ export function startPlay(
       saves.checkpoint(sim.state, checkpointDue);
       checkpointDue = null;
     }
+    if (autosaveDue !== null) {
+      saves.autosave(sim.state, autosaveDue);
+      autosaveDue = null;
+    }
     // Walked on into another zone (Book 2 section 10): its map, height field and visuals.
     const zoneNow = sim.state.onFoot?.zone;
     if (zoneNow !== undefined && (zoneNow !== map.zone || restored)) {
@@ -1486,6 +1662,16 @@ export function startPlay(
       anims,
       steererSheet: look.steerer.body,
       lead: ((): CameraLead => {
+        // Locked on: the view sits between the steerer and the target (PT-0's smoothing kept).
+        const locked = onFoot.player.stance?.lockOn ?? null;
+        const target = locked === null ? undefined : onFoot.actors[locked];
+        if (target !== undefined)
+          return {
+            kind: 'target',
+            x: target.x,
+            y: target.y,
+            share: combatB.stance.lockCameraShare,
+          };
         if (device === 'mouse' && pointer !== null) return { kind: 'cursor', ...pointer };
         if (device === 'pad') return { kind: 'stick', ...result.stick };
         return { kind: 'travel' };
@@ -1517,6 +1703,20 @@ export function startPlay(
           ? t('ui.prompt.pick_up_click', { item })
           : t('ui.prompt.pick_up', { key: interactKey, item });
       promptKind = 'pick_up';
+    } else if (
+      interaction?.kind === 'LIFT' &&
+      wreckCtx !== null &&
+      interaction.target === wreckCtx.caller &&
+      netted(sim.state)
+    ) {
+      // Design addendum 2.4: Hild in the net, cut free with a blade (a hold), or needing one.
+      const blade = bladeOf(sim.state, wreckCtx) !== null;
+      prompt = !blade
+        ? t('ui.refusal.need_blade')
+        : device === 'mouse'
+          ? t('ui.prompt.cut_net_click')
+          : t('ui.prompt.cut_net', { key: interactKey });
+      promptKind = blade ? 'cut_net' : 'need_blade';
     } else if (interaction?.kind === 'LIFT') {
       prompt =
         device === 'mouse'
@@ -1595,15 +1795,22 @@ export function startPlay(
     // The ambience follows the game's own wind at the steerer and the drawn tide, four times a second.
     if (engine.unlocked && now - lastAmbienceAt > 250) {
       lastAmbienceAt = now;
+      // Design addendum 2.4: the cold open is a night's storm at sea, the wind at its full.
+      const storm = sim.state.facts['ch1.phase'] === 'COLD_OPEN';
       engine.setWind(
-        STRAND_WIND.strength,
-        gustAt(STRAND_WIND, onFoot.player.x, onFoot.player.y, visuals.seconds),
+        storm ? 1 : STRAND_WIND.strength,
+        storm
+          ? 0.7 + 0.3 * Math.sin(visuals.seconds * 1.7)
+          : gustAt(STRAND_WIND, onFoot.player.x, onFoot.player.y, visuals.seconds),
         -STRAND_WIND.dirX,
       );
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
       placeAudio();
     }
-    const soundCaptions = audio === null ? [] : audio.update(engine.now);
+    // A sound captioned with the same words as a line already shown is not shown twice.
+    const soundCaptions = (audio === null ? [] : audio.update(engine.now)).filter(
+      (c) => !subtitles.some((s) => s.text === c.text),
+    );
     showCaptions(
       overlay.region('captions'),
       [...subtitles, ...soundCaptions],
@@ -1639,11 +1846,22 @@ export function startPlay(
         ? ''
         : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
             open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })} ${t('ui.system.timings', { key: 'T' })}`
+              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })} ${t('ui.system.marks', { state: t(display.marks ? 'ui.marks.on' : 'ui.marks.off'), key: 'A' })} ${t('ui.system.timings', { key: 'T' })}`
               : ''
           }`;
 
-    const view = visuals.view(frameInput);
+    const view0 = visuals.view(frameInput);
+    const coldBoatAt = wreckCtx === null ? null : coldBoat(sim.state, wreckCtx, map.tile);
+    const view = {
+      ...view0,
+      camera:
+        wreckCtx === null
+          ? view0.camera
+          : coldBoatAt !== null
+            ? { x: Math.round(coldBoatAt.x - 320), y: Math.round(coldBoatAt.y - 200) }
+            : hagCamera(sim.state, wreckCtx, map, view0.camera, display.reducedMotion),
+    };
+    openingFx.update(Math.min(0.1, frameInput.dt));
     const camp = campScene();
     const scene = zoneScene({
       map,
@@ -1656,7 +1874,7 @@ export function startPlay(
       shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
       visual: view,
-      hidePeople,
+      hidePeople: hidePeople || coldBoatAt !== null,
       facts: sim.state.facts,
       stoneWeeps: stoneWeeps(sim.state),
       missiles: missileLook,
@@ -1668,6 +1886,7 @@ export function startPlay(
           .map(([id, o]) => [id, o.order]),
       ),
       steererBloodied: steererBloodied(),
+      combat: combatFx.overlay(onFoot, sim.state.tick, display.marks),
       ...((): {
         launch?: { hidden: string[]; steererHidden: boolean; steererLoop: string | null };
       } => {
@@ -1753,8 +1972,24 @@ export function startPlay(
     const st = staminaView(sim.state.player.stamina);
     const light = lightPhase(sim.state.calendar, b);
     const cue = work == null || workCue?.mark == null ? null : { ...workCue, mark: workCue.mark };
+    // Combat v2 (decision DE-8): the health and stamina bars, faded out when full outside a fight.
+    const inFight = hostilesAware(sim.state.onFoot) > 0;
+    const barsAlpha = combatFx.bars(
+      { current: sim.state.player.vitality, max: steererVitality },
+      { current: st.current, max: st.max },
+      inFight,
+      sim.state.tick,
+    );
     const hudFull: HudView = {
       ...hudView,
+      health: {
+        current: sim.state.player.vitality,
+        max: steererVitality,
+        alpha: barsAlpha.health,
+        bindings: sim.state.player.inventory['ITEM_BINDING'] ?? 0,
+        rations: sim.state.player.inventory['ITEM_RATION'] ?? 0,
+      },
+      staminaAlpha: barsAlpha.stamina,
       clock: { minuteOfDay: sim.state.calendar.minuteOfDay, light },
       stamina: {
         current: st.current,
@@ -1826,14 +2061,25 @@ export function startPlay(
     root.dataset['gameOver'] = over === null ? '' : over.cause;
     // The morning report in Report mode (time stopped until it is closed).
     const reportRegion = overlay.region('report');
-    const reportOpen = session.menus.open === 'report' && reportShown !== null;
-    if (reportOpen && reportRegion.dataset['shown'] !== reportShown?.join('|')) {
+    const aimLine = journal === null ? null : t(journal);
+    const reportOpen =
+      session.menus.open === 'report' && (reportShown !== null || aimLine !== null);
+    const shownKey = `${aimLine ?? ''}|${reportShown?.join('|') ?? ''}`;
+    if (reportOpen && reportRegion.dataset['shown'] !== shownKey) {
       const title = document.createElement('h2');
-      title.textContent = t('ui.report.title', {
-        day: String(sim.state.calendar.day),
-        season: t(`ui.season.${season.toLowerCase()}`),
-      });
-      const body = (reportShown ?? []).map((l) => {
+      title.textContent =
+        reportShown === null
+          ? t('ui.journal.title')
+          : t('ui.report.title', {
+              day: String(sim.state.calendar.day),
+              season: t(`ui.season.${season.toLowerCase()}`),
+            });
+      // Design addendum 2.4 (DE-23): the current aim, one plain sentence, first.
+      const aim = document.createElement('p');
+      aim.className = 'oe-journal-aim';
+      aim.textContent = aimLine ?? t('ui.journal.none');
+      const body = [aim, ...(reportShown ?? [])].map((l) => {
+        if (typeof l !== 'string') return l;
         const para = document.createElement('p');
         para.textContent = l;
         return para;
@@ -1841,7 +2087,7 @@ export function startPlay(
       const close = document.createElement('p');
       close.textContent = t('ui.report.close', { key: keys('report') });
       reportRegion.replaceChildren(title, ...body, close);
-      reportRegion.dataset['shown'] = reportShown?.join('|') ?? '';
+      reportRegion.dataset['shown'] = shownKey;
     } else if (!reportOpen && reportRegion.childElementCount > 0) {
       reportRegion.replaceChildren();
       reportRegion.dataset['shown'] = '';
@@ -1915,6 +2161,22 @@ export function startPlay(
       .join(',');
     root.dataset['steererFight'] = p.fight?.state ?? '';
     root.dataset['vitality'] = String(Math.round(sim.state.player.vitality));
+    // Combat v2 (tests and captures): the stance (facing in degrees, the locked target, sneaking),
+    // each enemy's awareness and hitstop, the steerer's hitstop and heal, the dusk's outcome.
+    const st2 = p.stance;
+    root.dataset['stance'] =
+      st2 === undefined
+        ? ''
+        : `${Math.round((st2.facing * 180) / Math.PI)}:${st2.lockOn ?? ''}:${st2.sneaking ? 1 : 0}`;
+    root.dataset['aware'] = Object.entries(onFoot.actors)
+      .flatMap(([id, a]) =>
+        a.fight?.side === 'ENEMY'
+          ? [`${id}:${a.fight.ai.awareness.state}:${a.fight.f.hitstop}`]
+          : [],
+      )
+      .join(',');
+    root.dataset['steererHitstop'] = String(p.fight?.hitstop ?? 0);
+    root.dataset['dusk'] = String(sim.state.facts['ch1.dusk'] ?? '');
     root.dataset['saves'] = saves
       .headers()
       .map((h) => `${h.kind}:${h.label ?? h.reason ?? ''}:${h.day}`)
@@ -1935,7 +2197,35 @@ export function startPlay(
       seaMapLabels(f.revealed);
       root.dataset['seamap'] = f.revealed.toFixed(2);
     } else {
-      renderer.render(scene, buildDrawList(scene, geometry, style.cutawayFade));
+      // Design addendum 2.4: the opening's drawing over the zone, or the cold open in its place.
+      const drawn =
+        wreckCtx === null
+          ? scene
+          : coldBoatAt !== null
+            ? coldOpenScene(
+                scene,
+                sim.state,
+                wreckCtx,
+                map,
+                view.camera,
+                visuals.seconds,
+                choice.bodyModel,
+                display.reducedMotion,
+              )
+            : decorate(scene, {
+                world: sim.state,
+                ctx: wreckCtx,
+                map,
+                onFoot,
+                camera: view.camera,
+                seconds: visuals.seconds,
+                tick: sim.state.tick,
+                reducedMotion: display.reducedMotion,
+                fx: openingFx,
+                steererSheets: [look.steerer.body, ...Object.values(look.steerer.layers).flat()],
+                bodyModel: choice.bodyModel,
+              });
+      renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
       root.dataset['seamap'] = '';
     }
     if (frames < 3) {
@@ -1964,6 +2254,32 @@ export function startPlay(
         : driftwoodPieces(sim.state, { def: campDef }, map.zone).length.toString();
     root.dataset['sleeping'] = String(sleeping != null);
     root.dataset['report'] = reportOpen ? (reportShown ?? []).join('|') : '';
+    // Design addendum 2.4: the journal's aim, the opening's phase, hints and edge captions heard.
+    root.dataset['journal'] = aimLine ?? '';
+    root.dataset['aim'] = sim.state.aims?.current ?? '';
+    root.dataset['phase'] = String(sim.state.facts['ch1.phase'] ?? '');
+    root.dataset['coldoar'] = String(sim.state.facts['ch1.cold_oar'] ?? '');
+    root.dataset['opening'] = [
+      'ch1.hild_reached',
+      'ch1.net_free',
+      'ch1.hild_safe',
+      'ch1.chest_named',
+      'ch1.chest_home',
+      'ch1.fire_lit',
+      'ch1.hild_walked_up',
+      'ch1.shelter_raised',
+      'ch1.chest_opened',
+      'ch1.lashing_cut',
+    ]
+      .filter((k) => sim.state.facts[k] === true)
+      .map((k) => k.slice(4))
+      .join(' ');
+    root.dataset['hints'] = String(hintsHeard);
+    root.dataset['edges'] = String(edgeCaptions);
+    root.dataset['doors'] = (onFoot.doors ?? [])
+      .map((d) => `${d.id}:${d.open.toFixed(2)}`)
+      .join(',');
+    root.dataset['hag'] = wreckCtx === null ? '' : (hagNow(sim.state, wreckCtx)?.what ?? '');
     const homeNow = campDef === null ? undefined : sim.state.homes[campDef.home];
     root.dataset['fire'] = homeNow?.fire.lit === true ? 'lit' : 'out';
     root.dataset['stage'] = homeNow?.stage ?? '';
@@ -2079,6 +2395,14 @@ export function startPlay(
       clock += ms;
       frame(clock);
     };
+    // Captures and browser tests only (combat v2): the world, to stage a moment of a fight (a foe
+    // frozen in place, aware or not), as the unit tests do.
+    (window as unknown as { oeWorld: unknown }).oeWorld = sim.state;
+    // Captures only (design addendum 2.4, the first five minutes): the simulation and its land,
+    // for a bot to play the opening through the same commands a player's input sends.
+    Object.assign(window as unknown as Record<string, unknown>, {
+      oePlay: { sim, land, b, content },
+    });
     frame(clock);
   } else requestAnimationFrame(frame);
   canvas.dataset['state'] = 'play';

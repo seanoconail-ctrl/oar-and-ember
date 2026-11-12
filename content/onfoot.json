@@ -7,7 +7,7 @@
   },
   "setDownReach": 14,
   "hotbar": {
-    "about": "The steerer wakes with nothing in hand (Book 10 section 21, startingHotbar: Empty; decision DD-6). The seax is found in the wreck's debris and the bow with its quiver by the wreck's stern (pickups below).",
+    "about": "The steerer wakes with nothing in hand (Book 10 section 21, startingHotbar: Empty; decision DD-6). The seax is found in the wreckage on the way to Hild; the bow and its quiver are in Thorkel's locked chest, opened with the key from his body (decisions DE-17 and DE-18).",
     "start": [],
     "selected": 0
   },
@@ -44,6 +44,12 @@
       "refusalKey": "ui.refusal.no_water",
       "tipKey": "ui.tip.line",
       "cast": true
+    },
+    "ITEM_SILVER_ARM_RING": {
+      "nameKey": "item.name.arm_ring",
+      "icon": "silver_arm_ring",
+      "use": "VALUABLE",
+      "refusalKey": "ui.refusal.nothing_there"
     }
   },
   "releaseHeightPx": 26,
@@ -95,19 +101,17 @@
       "zone": "ZONE_SK_STRAND",
       "item": "ITEM_SEAX",
       "count": 1,
-      "x": 72.6,
-      "y": 36.8,
+      "x": 65.5,
+      "y": 34.5,
       "glint": true
     },
     {
-      "key": "stern_bow",
+      "key": "pool_arm_ring",
       "zone": "ZONE_SK_STRAND",
-      "item": "ITEM_BOW",
+      "item": "ITEM_SILVER_ARM_RING",
       "count": 1,
-      "quiver": true,
-      "x": 89.6,
-      "y": 35.3,
-      "after": "ch1.hild_safe",
+      "x": 63.4,
+      "y": 35.6,
       "glint": true
     },
     {

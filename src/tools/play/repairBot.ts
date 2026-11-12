@@ -165,7 +165,8 @@ export class RepairBot extends SearchBot {
     const d = this.repairs.def.oar;
     this.goToZone(d.zone);
     this.waitForLowWater();
-    this.useAt(d.zone, d.take.x, d.take.y);
+    // Close enough to reach it from wherever the fight ended (a riposte steps in, combat v2).
+    this.useAt(d.zone, d.take.x, d.take.y, 1.0);
     if (this.sim.state.facts['repair.oar'] === undefined) throw new Error('could not take the oar');
   }
 

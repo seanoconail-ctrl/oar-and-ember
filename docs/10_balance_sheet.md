@@ -51,9 +51,9 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 ### Movement on foot (tiles per second)
 | Mode | Speed | Notes |
 |---|---|---|
-| Sneak | 1.75 | Noise x0.25. Combat v2 makes sneaking a slow crouching walk at 1.2, toggled (section 07, "Sneaking"; decision DE-9): that value replaces this one when combat v2 is built |
+| Sneak | 1.2 | A slow crouching walk, toggled (combat v2: section 07, "Sneaking"; decision DE-9); its noise is section 07's noiseSneak by the ground |
 | Walk | 2.0 | Default (2.0 since the art-direction pass: 3.5 read as running on 32 x 40 people) |
-| Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal). In combat v2 running turns the body to the way of travel and breaks the combat stance's facing (section 06, "Stance and lock-on") |
+| Run | 6.0 | The sprint; drains stamina (section 06, Stamina in traversal). Running turns the body to the way of travel and breaks the combat stance's facing (section 06, "Stance and lock-on") |
 | Carry | 1.8 | Lot or person; attacks disabled |
 | Charge (heavy) | 1.5 | While holding a heavy |
 | Climb | 1.0 | On marked climbing routes; drains stamina |
@@ -342,20 +342,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | oarFood | 3 rd | Salt fish the wreck-scavengers take for their steering oar at Seal Cave, if they will talk |
 
 ## 06 / Combat timings
-*Two sets of combat numbers live here until combat v2 is built. The tables up to "Stamina capacity" are combat v1, as built at Stage 9, and the game reads them; design addendum 2.4 changes combat to v2 (decisions DE-1 to DE-13), whose tables follow from "Stance and lock-on", with the v2 columns of section 07. Where a v1 row is marked "replaced", the v2 table replaces it when combat v2 is built, and the replaced rows are removed in the same commit (decision DE-13). Rows not marked replaced hold for both.*
-
-### Weapons (ticks at 60 Hz)
-*Combat v1: replaced by "Weapon movesets" when combat v2 is built.*
-
-| Weapon | Reach tiles | Combo | Windup | Active | Recovery | Chain window | Damage | vs shield | Stamina |
-|---|---|---|---|---|---|---|---|---|---|
-| Spear | 1.7 | 2 | 14 | 6 | 16 | 10 | 22 | 8 | 14 |
-| Axe | 1.1 | 3 | 16 | 6 | 20 | 10 | 26 | 22 | 18 |
-| Sword | 1.25 | 3 | 11 | 5 | 13 | 9 | 22 | 10 | 12 |
-| Seax | 0.75 | 3 | 8 | 4 | 9 | 8 | 14 | 4 | 8 |
-| Dane axe | 1.4 | 2 | 24 | 7 | 26 | 12 | 40 | 35 | 26 |
-| Bow | 8.3 | 1 | 30 draw | - | 20 | - | 18 | 6 | 10 |
-| Thrown spear | 5 | 1 | 18 | - | 22 | - | 24 | 12 | 16 |
+*Combat v2 (design addendum 2.4; decisions DE-1 to DE-13), built in the 2.4 rework: the combat v1 rows it replaced (the Weapons table, parryStagger, blockCost, turnLock, hitStagger, the stamina row's regeneration, padded, mail and hitStop) were removed in the same change, with the parsers moved to the v2 keys (decision DE-13). The tables from "Charged heavy" to "Stamina capacity" hold from Stage 9; those from "Stance and lock-on" are combat v2's.*
 
 ### Charged heavy
 | Key | Value |
@@ -367,7 +354,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | staminaCost | Weapon stamina x1.5 (L1), x2.0 (L2) |
 
 ### Defence
-*Combat v1. Combat v2 keeps these rows, except parryStagger (replaced by "Parry and riposte"), blockCost (replaced by "Guard") and turnLock (replaced by "Stance and lock-on", attackTurn).*
+*From Stage 9. The parry's reward is "Parry and riposte", the block's cost and the guard break "Guard", and the facing "Stance and lock-on" (combat v2).*
 
 | Key | Value |
 |---|---|
@@ -375,22 +362,17 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | parryWindow | 8 ticks (option: up to 12) |
 | parryRecoveryOnMiss | 18 ticks |
 | parryCost | 8 stamina, refunded on success |
-| parryStagger | Attacker staggered 36 ticks; riposte damage x1.5 |
 | blockArc | 120 degrees front |
-| blockCost | 0.6 x the attack's shield damage |
-| guardBreak | Stamina empty while blocking: 40 ticks broken |
 | dodge | 20 stamina; 20 ticks; invulnerable ticks 4 to 13; 1.5 tiles |
 | shove | 12 stamina; breaks block; target staggered 20 ticks |
-| turnLock | Facing locked from windup start to recovery end |
 
 ### Fight rules
-*How the frame data above is played (Stage 9, decisions S9-2 to S9-6). Starting values, for tuning after playtests. Combat v2 keeps them, except hitStagger (replaced by "Poise") and blockNeedsShield, which also covers the Dane axe (Weapon rules, daneAxeHands).*
+*How the frame data is played (Stage 9, decisions S9-2 to S9-6; the frames are "Weapon movesets"). Starting values, for tuning after playtests. A hit wears poise rather than staggering ("Poise"); blockNeedsShield also covers the Dane axe (Weapon rules, daneAxeHands).*
 
 | Key | Value |
 |---|---|
 | strikeArc | 100 degrees in front: a strike meets everyone within its reach there |
 | bodyRadius | 0.3 tiles: reach is measured to the near edge of the body a strike meets |
-| hitStagger | 14 ticks: a hit staggers anyone without poise |
 | blockStun | 10 ticks: a blow taken on the shield rocks the guard |
 | chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |
 | heavySwing | A released charge swings with the weapon's windup before its active ticks |
@@ -402,21 +384,17 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | missileDamage | An arrow or thrown spear that strikes a body deals its weapon's damage (section 06; iron heads as listed, bone heads x0.85); one stopped by a shield costs the block its vs-shield damage x the block cost |
 
 ### Vitality, stamina and armour
-*Combat v1. Combat v2 replaces the stamina row's regeneration delay ("Health, stamina and healing"), padded and mail ("Weapon rules") and hitStop ("Hit reactions"); the other rows hold for both.*
+*From Stage 9. Stamina is "Health, stamina and healing", armour "Weapon rules" and the hitstop "Hit reactions" (combat v2).*
 
 | Key | Value |
 |---|---|
 | vitality | 100 for the steerer and adult residents |
-| stamina | 100; regenerates 25 per second after 36 ticks without spending; half while blocking |
-| padded | -10% all damage |
-| mail | -30% cut, -15% thrust and missiles |
 | helmet | Head-blow critical chance halved |
 | bloodiedBelow | 50% vitality |
 | downed | Downed allies do not bleed out (design addendum 2.3 section 7); see Downed and carried |
 | secondWind | 5 seconds; adjacent ally lifts the steerer to 25 vitality; once per scene |
 | dismemberChance | 35% on killing blows from heavy axe, Dane axe or sword |
 | finisherHold | 24 ticks |
-| hitStop | 3 ticks |
 
 ### Downed and carried
 | Key | Value |
@@ -492,7 +470,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | drawnFacing | The body is drawn in the nearest of the four authored facings; strikes, shields and backs use the true facing | No new sprite directions (decision DE-2) |
 
 ### Weapon movesets
-*Combat v2: how every weapon is played (decision DE-4). Ticks at 60 Hz; reach in tiles to the near edge of the body struck (Fight rules, bodyRadius). Damage is before armour; its type is how mail takes it (Weapon rules). Poise damage wears down the target's poise (Poise). Stamina is per swing, per bash or per draw. Replaces the combat v1 "Weapons" table when combat v2 is built.*
+*Combat v2: how every weapon is played (decision DE-4). Ticks at 60 Hz; reach in tiles to the near edge of the body struck (Fight rules, bodyRadius). Damage is before armour; its type is how mail takes it (Weapon rules). Poise damage wears down the target's poise (Poise). Stamina is per swing, per bash or per draw.*
 
 | Weapon | Reach | Speed | Combo | Windup | Active | Recovery | Chain window | Damage | Type | vs shield | Poise damage | Stamina | Strength | Weakness |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -540,7 +518,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | lungeRecovery | +8 ticks of recovery |
 
 ### Parry and riposte
-*Combat v2: the parry keeps its window, and its reward grows (decision DE-5). Replaces combat v1's parryStagger when combat v2 is built.*
+*Combat v2: the parry keeps its window, and its reward grows (decision DE-5).*
 
 | Key | Value |
 |---|---|
@@ -550,9 +528,10 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | riposteReach | The weapon's reach + 0.3 tiles: the riposter steps in |
 | riposteTicks | Seax 18, sword 24, spear 26, hand axe 28, club 32, Dane axe 34: a heavy, distinct animation that cannot be interrupted; bare hands give a shove instead |
 | riposteDamage | x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked |
+| riposteFrames | The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37) |
 
 ### Poise
-*Combat v2: every fighter has poise; hits wear it down, and when it breaks they stagger (decision DE-5). Replaces the heavy build's "Light attacks do not stagger a heavy fighter" when combat v2 is built.*
+*Combat v2: every fighter has poise; hits wear it down, and when it breaks they stagger (decision DE-5).*
 
 | Key | Value |
 |---|---|
@@ -575,7 +554,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | blockArrows | A raised shield stops arrows and thrown spears from the front 120 degrees; they stick in the board (section 21, shieldBlock) |
 
 ### Hit reactions
-*Combat v2: hits land with weight, on both sides (decision DE-7). Hitstop freezes both fighters' ticks of state together, so it is part of the simulation and replays exactly; everyone else carries on. Knockback is in logical pixels, in the hit's direction. Replaces combat v1's hitStop row when combat v2 is built.*
+*Combat v2: hits land with weight, on both sides (decision DE-7). Hitstop freezes both fighters' ticks of state together, so it is part of the simulation and replays exactly; everyone else carries on. Knockback is in logical pixels, in the hit's direction.*
 
 | Key | Value |
 |---|---|
@@ -600,7 +579,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 |---|---|
 | steererVitality | 100 (unchanged) |
 | residentVitality | 100 for adult residents (unchanged) |
-| enemyVitality | Each archetype's combat v2 vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte |
+| enemyVitality | Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte |
 | staminaMax | 100 |
 | staminaRegen | 25 a second after 48 ticks without spending; half while blocking |
 | exhausted | At 0 stamina: exhausted until back to 30; no dodge and no run, and attack windups and recoveries x1.5 |
@@ -622,22 +601,22 @@ food 563 rd   fuel 75 loads   hay 25 loads
 
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
-*Vitality is combat v1's, which the game reads until combat v2 is built; the combat v2 column then replaces it, about 25% less for every enemy but the each-uisce (decision DE-8). Reach is each archetype's in combat v2: armed people use their weapon's (section 06, "Weapon movesets"), beasts and the dead their own (decision DE-4).*
+*Vitality is combat v2's, about 25% less than combat v1 gave every enemy but the each-uisce (decision DE-8). Reach is each archetype's: armed people use their weapon's (section 06, "Weapon movesets"), beasts and the dead their own (decision DE-4).*
 
-| Archetype | Vitality | Armour | Weapons | Behaviour | Vitality (combat v2) | Reach (combat v2) |
-|---|---|---|---|---|---|---|
-| Civilian (farmer, keeper, trader) | 60 | None | Tool or seax | Flees, hides, pleads; fights if cornered | 45 | A tool 1.0; a seax 0.8 |
-| Monk | 50 | None | None | Flees to tower or church; claims sanctuary | 38 | None |
-| Guard | 100 | Padded | Spear and shield | Holds posts, raises alarm | 75 | Spear 1.8 |
-| Warrior | 110 | Padded, sometimes mail | Axe or sword and shield | Fights in line, flanks | 82 | Hand axe 1.1 or sword 1.3 |
-| Raider (Crowwick) | 100 | Padded | Axe, spear | Aggressive, loots, rarely surrenders | 75 | Hand axe 1.1 or spear 1.8 |
-| Archer | 80 | None | Bow, seax | Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back | 60 | Bow 8.3; seax 0.8 |
-| Huscarl (Orm) | 130 | Mail, helmet | Sword or Dane axe | Disciplined, holds formation | 98 | Sword 1.3 or Dane axe 1.6 |
-| Outlaw | 90 | None | Mixed | Ambushes, flees when hurt | 68 | Their weapon's |
-| Draugr | 160 | Resists stagger | Grip and blows | Slow, relentless at night; returns until its anchor is resolved | 120 | Grip 0.9 |
-| Wolf | 50 | None | Bite | Packs of 3 to 5; circles; flees at half pack lost | 38 | Bite 0.7 |
-| Boar | 120 | Hide | Charge | Charges when cornered; drops 40 rd of meat | 90 | Charge 1.0 |
-| Each-uisce | 300 | Supernatural | Drag into water | Avoid or bind; violence only drives it off | 300 | Drag 1.2 |
+| Archetype | Vitality | Armour | Weapons | Behaviour | Reach |
+|---|---|---|---|---|---|
+| Civilian (farmer, keeper, trader) | 45 | None | Tool or seax | Flees, hides, pleads; fights if cornered | A tool 1.0; a seax 0.8 |
+| Monk | 38 | None | None | Flees to tower or church; claims sanctuary | None |
+| Guard | 75 | Padded | Spear and shield | Holds posts, raises alarm | Spear 1.8 |
+| Warrior | 82 | Padded, sometimes mail | Axe or sword and shield | Fights in line, flanks | Hand axe 1.1 or sword 1.3 |
+| Raider (Crowwick) | 75 | Padded | Axe, spear | Aggressive, loots, rarely surrenders | Hand axe 1.1 or spear 1.8 |
+| Archer | 60 | None | Bow, seax | Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back | Bow 8.3; seax 0.8 |
+| Huscarl (Orm) | 98 | Mail, helmet | Sword or Dane axe | Disciplined, holds formation | Sword 1.3 or Dane axe 1.6 |
+| Outlaw | 68 | None | Mixed | Ambushes, flees when hurt | Their weapon's |
+| Draugr | 120 | Resists stagger | Grip and blows | Slow, relentless at night; returns until its anchor is resolved | Grip 0.9 |
+| Wolf | 38 | None | Bite | Packs of 3 to 5; circles; flees at half pack lost | Bite 0.7 |
+| Boar | 90 | Hide | Charge | Charges when cornered; drops 40 rd of meat | Charge 1.0 |
+| Each-uisce | 300 | Supernatural | Drag into water | Avoid or bind; violence only drives it off | Drag 1.2 |
 
 ### Perception (tiles)
 | Key | Value |
@@ -738,6 +717,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | fillNear | 100 a second while the steerer is seen within 3 tiles |
 | fillFar | 20 a second at the edge of sight range, in proportion between |
 | fillNoise | +30 for each noise heard within its radius (Perception: noise by action, x the ground) |
+| footfall | 0.5 s: a moving actor's footsteps are one noise each half second, heard within its radius (Perception, by gait and ground) (decision DE-38) |
 | suspiciousAt | 30: the actor says so ("Who's there?"), turns to the last thing seen or heard and goes to look (searchSeconds) |
 | alertAt | 100: the actor fights, flees, warns or raises the alarm, by its kind |
 | decay | 10 a second after 3 s with nothing seen or heard; an alert actor stays alert for memorySeconds |
@@ -749,7 +729,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Key | Value |
 |---|---|
 | sneakToggle | The sneak key toggles the crouching walk; running or a fight ends it |
-| sneakSpeed | 1.2 tiles per second (replaces section 02's 1.75 when combat v2 is built) |
+| sneakSpeed | 1.2 tiles per second (section 02, Sneak) |
 | sneakNoise | noiseSneak (Perception) x the ground: shingle loud, grass soft, as the surface rows |
 | tallGrass | A sneaking actor in tall grass, dune grass or among peat banks is not seen beyond 2 tiles |
 | shadow | A sneaking actor at dusk or night, outside every light pool, is seen at half the sight range |
@@ -761,9 +741,10 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Key | Value |
 |---|---|
 | backstab | A melee strike from within 60 degrees of a target's back, on a target that is unaware, or suspicious and not facing the striker |
-| backstabKill | Kills outright any foe whose combat v2 vitality is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves) |
+| backstabKill | Kills outright any foe whose vitality (Archetypes) is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves) |
 | backstabDamage | Otherwise x4 the weapon's damage (seax x6), ignoring poise |
 | backstabTicks | 40 ticks (seax 30): a heavy, distinct animation; the striker is committed to it |
+| backstabFrames | As riposteFrames: 40% of its ticks wind up, then the weapon's active ticks, the rest recovery (decision DE-37) |
 | backstabNoise | 4 tiles: a short struggle |
 | unawareMissile | x2 damage from an arrow or thrown spear that strikes an unaware target, which cannot dodge it |
 
@@ -785,6 +766,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | remember | 3 days: a group the steerer fought and left greets the steerer again as an enemy, without warnings |
 | leaveIfStronger | Scavengers and thieves leave when the vitality of the steerer's side within 8 tiles is twice theirs or more |
 | awareDodge | 25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing |
+| sidestepMove | After its tell a sidestep moves across the missile's path as a dodge does (section 06, Defence: its distance and ticks), and the missile it reads passes it (decision DE-39) |
 
 ### Warnings
 *Combat v2: scavengers, thieves and wary locals warn before they fight (decision DE-11). Guards of a hostile faction still attack on sight (Hostility and evidence).*
@@ -1664,7 +1646,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | toolReach | 1.5 tiles: the steerer's tile and the eight around it |
 | interactReach | 2 tiles |
 | castReach | 5 tiles (casting a line, throwing an item) |
-| meleeAim | Towards the cursor, snapped to the nearest of the four facings (combat v1). In combat v2 the stance faces the cursor or the locked target, and is drawn in the nearest facing (section 06, "Stance and lock-on") |
+| meleeAim | The combat stance faces the cursor or the locked target, and is drawn in the nearest of the four facings (section 06, "Stance and lock-on") |
 | missileAim | Free aim at the cursor with an aim line while drawing a bow or holding a thrown spear |
 | keyboardTarget | The tile in front of the steerer's facing |
 | gamepadDeadZone | 0.2 of the right stick's travel |
@@ -1781,11 +1763,10 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | minorLines | Minor characters: pools of 1 or 2 lines, by culture, season, time of day, weather and the household's deeds |
 
 ## 24 / Heavy build
-*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Starting values, for tuning after playtests. In combat v2 the poise row is replaced by section 06's "Poise" (poiseHeavy 60), so light attacks rarely stagger a heavy fighter rather than never.*
+*Some residents and enemies, never the steerer (design addendum 2.3 section 11; Book 7). Starting values, for tuning after playtests. Their poise is section 06's "Poise" (poiseHeavy 60), so light attacks rarely stagger a heavy fighter.*
 
 | Key | Value |
 |---|---|
-| poise | Light attacks do not stagger a heavy fighter |
 | windup | +4 ticks on every attack |
 | damage | x1.2 |
 | runSpeed | x0.9 |

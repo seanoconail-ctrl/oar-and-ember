@@ -54,6 +54,9 @@ export const CARRIED_LOOKS: Readonly<Record<Id, string>> = {
   ITEM_BOARDS: 'prop_boards',
   ITEM_RIGGING: 'prop_rigging',
   ITEM_STEERING_OAR: 'prop_steering_oar',
+  // Design addendum 2.4: the ship's silver in its strongbox, and the stores from the mast.
+  ITEM_SHIP_SILVER: 'prop_strongbox',
+  ITEM_MAST_STORES: 'prop_stores_bundle',
 };
 
 export function personLook(file: LayerFile): PersonLook {

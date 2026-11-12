@@ -1,12 +1,12 @@
 {
-  "about": "Combat content (Stage 9; Book 2 sections 12 and 13). Numbers come from balance.json (Book 10 sections 06 and 07), never from here: this file says which Book 10 weapon row each item is, who fights with what, where the three wreck-scavengers stand (at the sheepfold under the Hollow Cairn since Stage 10, decision S10-5; on the strand at Stage 9, S9-11), which places are safe for a downed ally, and the lines people shout.",
+  "about": "Combat content (Stage 9; Book 2 sections 12 and 13). Numbers come from balance.json (Book 10 sections 06 and 07), never from here: this file says which Book 10 weapon row each item is, who fights with what, where the three wreck-scavengers stand (at the sheepfold under the Hollow Cairn since Stage 10, decision S10-5; on the strand at Stage 9, S9-11), which places are safe for a downed ally, the ground that hides a sneaker (combat v2, Book 10 Sneaking), the scavengers at the first dusk (decisions DE-14 and DE-15), and the lines people shout.",
   "weapons": {
     "ITEM_SEAX": {
       "row": "Seax",
       "layer": "seax"
     },
     "ITEM_AXE": {
-      "row": "Axe",
+      "row": "Hand axe",
       "layer": "axe",
       "dismember": "HEAVY"
     },
@@ -74,6 +74,33 @@
   },
   "encounters": [
     {
+      "id": "SCN_SK_DUSK",
+      "zone": "ZONE_SK_STRAND",
+      "takesCaptives": false,
+      "checkpoint": "dusk",
+      "warns": true,
+      "dusk": true,
+      "shieldOnBack": ["E_WRECKER_SVART"],
+      "teaches": "E_WRECKER_SVART",
+      "runsWhenFriendFalls": "E_WRECKER_CONN",
+      "members": [
+        {
+          "person": "E_WRECKER_SVART",
+          "x": 93.8,
+          "y": 35.2,
+          "facing": "w",
+          "task": "TASK_GATHER_DRIFTWOOD"
+        },
+        {
+          "person": "E_WRECKER_CONN",
+          "x": 90.2,
+          "y": 34.8,
+          "facing": "e",
+          "task": "TASK_GATHER_DRIFTWOOD"
+        }
+      ]
+    },
+    {
       "id": "SCN_SK_WRECKERS",
       "zone": "ZONE_SK_CAIRN",
       "after": "ch1.at_broch",
@@ -100,7 +127,8 @@
           "y": 33.9,
           "facing": "e"
         }
-      ]
+      ],
+      "warns": false
     },
     {
       "id": "SCN_SK_SEALCAVE",
@@ -129,7 +157,8 @@
           "facing": "s",
           "task": "TASK_GATHER_DRIFTWOOD"
         }
-      ]
+      ],
+      "warns": false
     }
   ],
   "safePlaces": [
@@ -142,6 +171,16 @@
       "r": 4.6
     }
   ],
+  "hides": [
+    {
+      "zone": "ZONE_SK_STRAND",
+      "kind": "dune grass",
+      "x0": 84,
+      "y0": 29,
+      "x1": 90,
+      "y1": 33
+    }
+  ],
   "barks": {
     "E_WRECKER_KETILL": {
       "alarm": ["e_wrecker_ketill.bark.alarm.01", "e_wrecker_ketill.bark.alarm.02"],
@@ -150,7 +189,10 @@
       "plead": ["e_wrecker_ketill.bark.plead.01"],
       "flee": ["e_wrecker_ketill.bark.flee.01"],
       "fallen": ["e_wrecker_ketill.bark.fallen.01"],
-      "parley": ["e_wrecker_ketill.bark.parley.01"]
+      "parley": ["e_wrecker_ketill.bark.parley.01"],
+      "suspicious": ["e_wrecker_ketill.bark.suspicious.01"],
+      "help": ["e_wrecker_ketill.bark.help.01"],
+      "lost": ["e_wrecker_ketill.bark.lost.01"]
     },
     "E_WRECKER_SVART": {
       "alarm": ["e_wrecker_svart.bark.alarm.01"],
@@ -158,7 +200,17 @@
       "hurt": ["e_wrecker_svart.bark.hurt.01"],
       "plead": ["e_wrecker_svart.bark.plead.01"],
       "flee": ["e_wrecker_svart.bark.flee.01"],
-      "fallen": ["e_wrecker_svart.bark.fallen.01"]
+      "fallen": ["e_wrecker_svart.bark.fallen.01"],
+      "warn": [
+        "e_wrecker_svart.bark.warn.01",
+        "e_wrecker_svart.bark.warn.02",
+        "e_wrecker_svart.bark.warn.03"
+      ],
+      "suspicious": ["e_wrecker_svart.bark.suspicious.01"],
+      "help": ["e_wrecker_svart.bark.help.01"],
+      "lost": ["e_wrecker_svart.bark.lost.01"],
+      "bargain": ["e_wrecker_svart.bark.bargain.01"],
+      "leave": ["e_wrecker_svart.bark.leave.01"]
     },
     "E_WRECKER_CONN": {
       "alarm": ["e_wrecker_conn.bark.alarm.01"],
@@ -166,7 +218,12 @@
       "hurt": ["e_wrecker_conn.bark.hurt.01"],
       "plead": ["e_wrecker_conn.bark.plead.01", "e_wrecker_conn.bark.plead.02"],
       "flee": ["e_wrecker_conn.bark.flee.01"],
-      "fallen": ["e_wrecker_conn.bark.fallen.01"]
+      "fallen": ["e_wrecker_conn.bark.fallen.01"],
+      "suspicious": ["e_wrecker_conn.bark.suspicious.01"],
+      "help": ["e_wrecker_conn.bark.help.01"],
+      "lost": ["e_wrecker_conn.bark.lost.01"],
+      "bargain": ["e_wrecker_conn.bark.bargain.01"],
+      "runs": ["e_wrecker_conn.bark.runs.01"]
     },
     "C_HILD": {
       "danger": ["c_hild.bark.combat.danger.01"],

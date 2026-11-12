@@ -31,6 +31,7 @@ import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
 import type { CalendarState } from './calendar/calendar.ts';
 import { placeOnFoot } from './land/onFoot.ts';
+import { beginOpening } from './narrative/wreck.ts';
 import { shipDefsOf, wreckedBoat, FLAGSHIP } from './ship/ship.ts';
 import type { ShipInstance } from './ship/ship.ts';
 import type { GroundItem, OnFootState } from './land/onFoot.ts';
@@ -69,8 +70,12 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * Version 10 (Stage 12: the launch and the Build 1 gate) adds the story gates' state (`gates`,
  * Book 2 section 16's GateState), the chapter's telemetry (`telemetry`: when each beat was reached,
  * in ticks and the time a menu held the game) and the boat's own name (`ShipInstance.name`).
+ * Version 11 (design addendum 2.4) adds combat v2's state (decisions DE-1 to DE-15): each fighter's
+ * continuous facing, poise, hitstop, exhaustion, flinch and shield, the steerer's stance (facing,
+ * lock-on, sneaking) and a heal under way, each enemy's awareness, and a battle's warnings; and the
+ * Chapter 1 opening changes (decisions DE-16 to DE-32).
  */
-export const WORLD_STATE_VERSION = 10;
+export const WORLD_STATE_VERSION = 11;
 
 /** Book 2 section 16. */
 export interface GateState {
@@ -498,6 +503,11 @@ export interface HomeState {
   fire: { lit: boolean; fuel: number };
   /** A building going up: worker-minutes of labour done. */
   building: { id: Id; progress: number } | null;
+  /**
+   * Carried things set down at their home here (version 11, decision DE-17): Thorkel's chest at its
+   * outline by the shelter. Absent in a save from before version 11 until migrated.
+   */
+  placed?: Id[];
   /** Fish hooked but not yet landed: a share of one fish. */
   catch: number;
   /** The day the day's ration was last served, and the days the stores fell short since. */
@@ -584,6 +594,21 @@ export interface WorldState {
   gates: Record<Id, GateState>;
   /** The chapter's telemetry (version 10). */
   telemetry: Telemetry;
+  /**
+   * Book 2 section 16, AimState (version 11; decisions DE-23 and DE-24): the current aim, the tick
+   * of the last progress on it, the hints given since, and the progress steps already taken.
+   * Absent in a save from before version 11 until migrated.
+   */
+  aims?: AimState;
+}
+
+/** Book 2 section 16: the aim the journal shows and its stuck clock. */
+export interface AimState {
+  current: string | null;
+  since: number;
+  hintsGiven: number;
+  /** The progress steps of the current aim already taken (each counts once). */
+  reached: string[];
 }
 
 /** A new steerer's stamina: full, at Book 10's base. */
@@ -644,6 +669,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     gameOver: null,
     gates: {},
     telemetry: { start: 0, heldMs: 0, marks: {} },
+    aims: { current: null, since: 0, hintsGiven: 0, reached: [] },
   };
 }
 
@@ -672,6 +698,11 @@ export function newCampaign(
     name: '',
     bodyModel: null,
   },
+  /**
+   * Design addendum 2.4 (decision DE-30): a new game from the naming screen begins with the played
+   * cold open and the waking in the surf; tests, bots and `?view=play` begin awake on the strand.
+   */
+  options: { readonly coldOpen?: boolean } = {},
 ): WorldState {
   const world = emptyWorld(seed, b);
   world.player.name = steerer.name;
@@ -736,6 +767,7 @@ export function newCampaign(
     catch: 0,
     rationDay: 1,
     shortDays: 0,
+    placed: [],
   };
   if (camp !== null) setupCamp(world, camp);
   // Stage 11: the household's coastal boat lies wrecked on the strand (Book 4 Chapter 1 beat 4).
@@ -780,6 +812,7 @@ export function newCampaign(
     // Washed ashore wet through on a spring morning: the steerer wakes cold (decision S7-9).
     if (camp !== null)
       setReason(world.player.stamina, parseStaminaBalance(content.balance), 'COLD', 0, 'wet');
+    beginOpening(world, options.coldOpen === true);
   }
   return world;
 }

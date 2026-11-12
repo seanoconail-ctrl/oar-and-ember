@@ -9,6 +9,7 @@ import type { IdRegistry } from './idRegistry.ts';
 import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './schema.ts';
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
 import { steererWordingProblems } from './steererWords.ts';
+import { aimCondition } from './aimSchema.ts';
 import { captionProblems, isDialogueKey, modernMoralWordsIn, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
@@ -356,7 +357,7 @@ const itemCheck = object(
      */
     icon: text,
     glyph: text,
-    use: oneOf(['AIM', 'MELEE', 'TOOL', 'AMMO'] as const),
+    use: oneOf(['AIM', 'MELEE', 'TOOL', 'AMMO', 'VALUABLE'] as const),
     /** The refusal word when there is nothing to use it on ("Nothing to cut", "No arrows"). */
     refusalKey: ref('string'),
     /** An aimed item's missile and the item each shot spends (Book 10 section 21). */
@@ -417,7 +418,7 @@ const onFootCheck = object({
 });
 
 /** Stage 9 (Book 2 sections 12 and 13): weapons, fighters, encounters, safe places and barks. */
-const MELEE_ROWS = ['Spear', 'Axe', 'Sword', 'Seax', 'Dane axe'] as const;
+const MELEE_ROWS = ['Seax', 'Hand axe', 'Spear', 'Sword', 'Dane axe', 'Club or hammer'] as const;
 const combatWeaponCheck = object(
   {
     row: oneOf(MELEE_ROWS),
@@ -466,6 +467,23 @@ const encounterCheck = object(
     parley: bool,
     /** Stage 10: people who fight on the household's side once it starts (Bran at the fold). */
     allies: arrayOf(ref('person')),
+    /**
+     * Combat v2 (Book 10 "Warnings", decision DE-11): scavengers, thieves and wary locals warn
+     * before they fight, and leave when the steerer's side is clearly stronger.
+     */
+    warns: bool,
+    /**
+     * Combat v2 (Book 10 "The scavengers at dusk", decision DE-15): the encounter is the first
+     * dusk's, there from its time until dark; its people go to the fold after it. Its bargain
+     * is the camp's food.
+     */
+    dusk: bool,
+    /** Who carries a shield on the back while working, and so fights without it (Svart at dusk). */
+    shieldOnBack: arrayOf(ref('person')),
+    /** Who is the tutorial's slow heavy (Svart at dusk: Book 10 svartWindup, svartHeavies). */
+    teaches: ref('person'),
+    /** Who runs when another of the band falls, or when hit at all (Conn at dusk: connFlees). */
+    runsWhenFriendFalls: ref('person'),
     members: arrayOf(
       object(
         {
@@ -479,8 +497,20 @@ const encounterCheck = object(
       ),
     ),
   },
-  ['after', 'parley', 'allies'],
+  ['after', 'parley', 'allies', 'warns', 'dusk', 'shieldOnBack', 'teaches', 'runsWhenFriendFalls'],
 );
+/**
+ * Combat v2 (Book 10 "Sneaking", tallGrass): ground that hides a sneaking actor beyond Book 10's
+ * distance (tall grass, dune grass, peat banks), as tile rectangles in a zone.
+ */
+const hideCheck = object({
+  zone: ref('zone'),
+  kind: oneOf(['tall grass', 'dune grass', 'peat banks'] as const),
+  x0: int(0, 512),
+  y0: int(0, 512),
+  x1: int(0, 512),
+  y1: int(0, 512),
+});
 const safePlaceCheck = object({
   key: text,
   about: text,
@@ -496,6 +526,7 @@ const combatCheck = object({
   crew: recordOf(text, crewArmsCheck),
   encounters: arrayOf(encounterCheck),
   safePlaces: arrayOf(safePlaceCheck),
+  hides: arrayOf(hideCheck),
   barks: recordOf(ref('person'), recordOf(text, arrayOf(ref('string')))),
   /** Presentation only (Book 7 section 12): corpse fading and stains by the gore setting. */
   gore: object({
@@ -505,6 +536,11 @@ const combatCheck = object({
   }),
 });
 
+const facingAtR = object({
+  x: fraction(0, 512),
+  y: fraction(0, 512),
+  facing: oneOf(['s', 'n', 'e', 'w'] as const),
+});
 const openingCheck = object({
   about: text,
   beat: id(['BEAT']),
@@ -519,9 +555,134 @@ const openingCheck = object({
   foundLine: ref('string'),
   safeLine: ref('string'),
   refusedLine: ref('string'),
-  /** Once she is safe, Hild names the bow in the wreck's stern, after this many seconds. */
-  bowLine: ref('string'),
-  bowLineSeconds: int(0, 60),
+  /** Design addendum 2.4's opening (decisions DE-16 to DE-30): src/sim/narrative/wreck.ts. */
+  rework: object({
+    coldOpen: object({
+      about: text,
+      seconds: int(1, 120),
+      strikeSeconds: int(1, 120),
+      blackSeconds: int(1, 120),
+      shoutEverySeconds: int(1, 60),
+      shouts: arrayOf(ref('string')),
+      captions: recordOf(text, ref('string')),
+    }),
+    waking: object({ about: text, getUpTicks: int(1, 600), coughCaption: ref('string') }),
+    net: object({
+      about: text,
+      blades: arrayOf(id(['ITEM'])),
+      lines: recordOf(text, ref('string')),
+      captions: recordOf(text, ref('string')),
+      promptKey: ref('string'),
+      refusalKey: ref('string'),
+      jokeSeconds: int(0, 60),
+    }),
+    chest: object({
+      about: text,
+      id: id(['ITEM']),
+      zone: ref('zone'),
+      at: facingAtR,
+      home: object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), facing: text }),
+      key: id(['ITEM']),
+      lineAfterSafeSeconds: int(0, 60),
+      line: ref('string'),
+      lockedKey: ref('string'),
+      openPromptKey: ref('string'),
+      keyPromptKey: ref('string'),
+      contents: arrayOf(
+        object({ item: id(['ITEM']), count: int(1, 99), quiver: bool }, ['quiver']),
+      ),
+      bowLine: ref('string'),
+      keyLine: ref('string'),
+      captions: recordOf(text, ref('string')),
+    }),
+    mast: object({
+      about: text,
+      zone: ref('zone'),
+      foot: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+      lashing: object({
+        x: fraction(0, 512),
+        y: fraction(0, 512),
+        heightPx: int(0, 400),
+        w: int(1, 64),
+        h: int(1, 64),
+      }),
+      fall: facingAtR,
+      bundle: id(['ITEM']),
+      line: ref('string'),
+      lineAfterSeconds: int(0, 60),
+      captions: recordOf(text, ref('string')),
+      campTiles: fraction(0.5, 20),
+    }),
+    camp: object({
+      about: text,
+      reachTiles: fraction(0.5, 30),
+      walkUp: ref('string'),
+      walkUpTiles: fraction(0.5, 10),
+      shelterUp: ref('string'),
+      oldBoat: ref('string'),
+      oldBoatTiles: fraction(0.5, 20),
+      raisePromptKey: ref('string'),
+      captions: recordOf(text, ref('string')),
+      /** Where the folded sail and the two oars lie (Book 9 section 04), and Hild's seat. */
+      sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+      hildSeat: facingAtR,
+    }),
+    fireScene: object({
+      about: text,
+      fromMinute: int(0, 1439),
+      nearTiles: fraction(0.5, 10),
+      lines: arrayOf(ref('string')),
+    }),
+    hagLight: object({
+      about: text,
+      fromMinute: int(0, 1439),
+      untilMinute: int(0, 1439),
+      caption: ref('string'),
+    }),
+    hagStone: object({
+      about: text,
+      holds: arrayOf(fraction(0, 60)),
+      captions: recordOf(text, ref('string')),
+    }),
+    runa: object({
+      about: text,
+      talk: text,
+      places: recordOf(
+        text,
+        object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), r: fraction(0, 40) }),
+      ),
+      checkTiles: fraction(0.5, 20),
+      truth: ref('string'),
+      lie: ref('string'),
+    }),
+    rescue: object({ about: text, people: arrayOf(ref('person')) }),
+    life: object({ about: text, sealSinkTiles: fraction(0, 40), gullLiftTiles: fraction(0, 40) }),
+  }),
+  /** Every aim of Chapter 1 (Book 2 section 16, AimDef; Book 8 section 13). */
+  aims: arrayOf(
+    object(
+      {
+        id: text,
+        journalKey: ref('string'),
+        opensWhen: arrayOf(aimCondition),
+        doneWhen: arrayOf(aimCondition),
+        progress: arrayOf(aimCondition),
+        givenBy: object({ speaker: ref('person'), textKey: ref('string'), call: bool }, ['call']),
+        hints: arrayOf(
+          object(
+            {
+              speaker: ref('person'),
+              textKey: ref('string'),
+              canCall: bool,
+              alt: object({ speaker: ref('person'), textKey: ref('string'), canCall: bool }),
+            },
+            ['alt'],
+          ),
+        ),
+      },
+      ['givenBy'],
+    ),
+  ),
 });
 
 const placeAt = object({ x: fraction(0, 512), y: fraction(0, 512) });
@@ -586,23 +747,28 @@ const campPersonCheck = object({
   }),
   leadWaitTiles: fraction(1, 20),
 });
-const campCheck = object({
-  about: text,
-  home: ref('place'),
-  zone: ref('zone'),
-  beat: id(['BEAT']),
-  shelter: object({ building: id(['BLD']), balanceRow: text }),
-  sleepSeconds: fraction(0, 10),
-  /** The region whose resource nodes keep the driftwood picked up (decision PT-4). */
-  region: ref('region'),
-  tasks: recordOf(id(['TASK']), taskCheck),
-  sites: arrayOf(siteCheck),
-  props: object({ S0: arrayOf(campPropCheck), S1: arrayOf(campPropCheck) }),
-  woodpile: placeAt,
-  people: recordOf(id(['C']), campPersonCheck),
-  lines: recordOf(text, ref('string')),
-  leadAfterSeconds: int(0, 60),
-});
+const campCheck = object(
+  {
+    about: text,
+    home: ref('place'),
+    zone: ref('zone'),
+    beat: id(['BEAT']),
+    shelter: object({ building: id(['BLD']), balanceRow: text }),
+    sleepSeconds: fraction(0, 10),
+    /** The region whose resource nodes keep the driftwood picked up (decision PT-4). */
+    region: ref('region'),
+    tasks: recordOf(id(['TASK']), taskCheck),
+    sites: arrayOf(siteCheck),
+    props: object({ S0: arrayOf(campPropCheck), S1: arrayOf(campPropCheck) }),
+    woodpile: placeAt,
+    people: recordOf(id(['C']), campPersonCheck),
+    lines: recordOf(text, ref('string')),
+    leadAfterSeconds: int(0, 60),
+    /** Design addendum 2.4 (DE-22, DE-27): the beds under the raised lean-to, a fur each. */
+    shelterBeds: arrayOf(facingAt),
+  },
+  ['shelterBeds'],
+);
 
 const spotCheck = object({
   zone: ref('zone'),
@@ -795,6 +961,10 @@ export const SEARCH_ACTIONS = [
   'RITES_SEA',
   // Stage 12: the launch's readiness screen, from looking the boat over.
   'LAUNCH',
+  // Design addendum 2.4 (decision DE-21): where the steerer says Runa's tool chest is.
+  'RUNA_FIRE',
+  'RUNA_SHELTER',
+  'RUNA_BOAT',
 ] as const;
 export const SEARCH_WHEN = [
   'UNSEEN',
@@ -1214,6 +1384,15 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
 
   const onFoot = onFootCheck(files.onFoot, '', ctx(CONTENT_FILES.onFoot));
   const opening = openingCheck(files.opening, '', ctx(CONTENT_FILES.opening));
+  // Book 8 section 13 (decision DE-24): every Chapter 1 aim has a journal line and two hints.
+  (opening?.aims ?? []).forEach((a, i) => {
+    if (a.hints.length !== 2)
+      issues.push({
+        file: CONTENT_FILES.opening,
+        path: `aims[${i}].hints`,
+        reason: `aim "${a.id}" has ${a.hints.length} hints; Book 8 section 13 gives each two`,
+      });
+  });
   const camp = campCheck(files.camp, '', ctx(CONTENT_FILES.camp));
   const household = householdCheck(files.household, '', ctx(CONTENT_FILES.household));
   const talk = talkCheck(files.talk, '', ctx(CONTENT_FILES.talk));

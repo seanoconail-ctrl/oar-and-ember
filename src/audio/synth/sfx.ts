@@ -127,7 +127,7 @@ export function breath(
 }
 
 /** A short voiced grunt (a formant buzz with a falling pitch). */
-function grunt(
+export function grunt(
   e: SynthEngine,
   at: number,
   to: AudioNode,
@@ -999,7 +999,7 @@ export const MISSILES: readonly SoundDef[] = [
 ];
 
 /** The output with a fixed gain before it: a quiet sound brought up to its place in the mix. */
-function boosted(
+export function boosted(
   e: SynthEngine,
   k: number,
   bus: 'effects' | 'tells' | 'music',

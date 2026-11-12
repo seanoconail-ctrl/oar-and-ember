@@ -1,6 +1,6 @@
 /**
- * Chapter 1 beat 1 (Book 4 section 08): wake on Wreck Strand, control in seconds; Hild is calling
- * beyond the rocks; carry her above the tide line. Nothing here is a control list: her calls give
+ * Chapter 1 beats 2 to 5 (Book 4 section 08): wake on Wreck Strand, control in seconds; Hild is calling
+ * beyond the rocks (in the net, cut free by src/sim/narrative/wreck.ts); carry her above the tide line. Nothing here is a control list: her calls give
  * a direction to walk in, finding her offers the lift, and the tide line refuses a wet set-down
  * with its reason (Book 3 Stage 6 check 2). The beat's one-shot fires when she is safe.
  */
@@ -16,7 +16,10 @@ export const FACT_HILD_FOUND = 'ch1.hild_found';
 export const FACT_HILD_SAFE = 'ch1.hild_safe';
 /** The tick Hild was set down safe, for the line that follows. */
 export const FACT_HILD_SAFE_AT = 'ch1.hild_safe_at';
-/** Hild has named the bow in the wreck's stern (Book 10 section 21, bowFoundBy). */
+/**
+ * Before design addendum 2.4, Hild named the bow in the wreck's stern (decision DD-12); the bow is
+ * now in Thorkel's chest (decision DE-18), and the fact is kept only as older saves wrote it.
+ */
 export const FACT_BOW_NAMED = 'ch1.bow_named';
 
 export type OpeningEvent =
@@ -55,7 +58,12 @@ export function stepOpening(
   if (caller === undefined || !NEEDS_LIFT.includes(caller.pose)) return;
   if (caller.pose === 'call') keepFooting(caller, map, land, level);
   if (world.facts[FACT_HILD_FOUND] === true) return;
-  const first = opening.firstCallSeconds * TICKS_PER_SECOND;
+  // Design addendum 2.4: once reached at the net she stops calling; calls count from the waking.
+  if (world.facts['ch1.hild_reached'] === true) return;
+  const woke = world.facts['ch1.woke_at'];
+  if (world.facts['ch1.phase'] !== undefined && world.facts['ch1.phase'] !== 'PLAY') return;
+  const from = typeof woke === 'number' ? woke : 0;
+  const first = from + opening.firstCallSeconds * TICKS_PER_SECOND;
   const every = opening.callEverySeconds * TICKS_PER_SECOND;
   if (world.tick < first || (world.tick - first) % every !== 0) return;
   const n = (world.tick - first) / every;
@@ -114,21 +122,4 @@ export function onSetDown(
     emit({ type: 'PERSON_SPOKE', person, lineKey: opening.safeLine });
     emit({ type: 'BEAT_COMPLETED', beat: opening.beat });
   });
-}
-
-/**
- * Once Hild is safe and has caught her breath, she names the bow in the wreck's stern, once
- * (Book 10 section 21, bowFoundBy: named by Hild after the rescue). The bow shows from then.
- */
-export function stepOpeningAfter(
-  world: WorldState,
-  opening: OpeningDef,
-  emit: (event: OpeningEvent) => void,
-): void {
-  if (world.facts[FACT_HILD_SAFE] !== true || world.facts[FACT_BOW_NAMED] === true) return;
-  const at = world.facts[FACT_HILD_SAFE_AT];
-  const since = typeof at === 'number' ? world.tick - at : Infinity;
-  if (since < opening.bowLineSeconds * TICKS_PER_SECOND) return;
-  setFact(world, FACT_BOW_NAMED, true);
-  emit({ type: 'PERSON_SPOKE', person: opening.caller, lineKey: opening.bowLine });
 }

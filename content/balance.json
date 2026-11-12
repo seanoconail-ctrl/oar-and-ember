@@ -103,8 +103,8 @@
    "movementOnFoot": [
     {
      "Mode": "Sneak",
-     "Speed": "1.75",
-     "Notes": "Noise x0.25. Combat v2 makes sneaking a slow crouching walk at 1.2, toggled (section 07, \"Sneaking\"; decision DE-9): that value replaces this one when combat v2 is built"
+     "Speed": "1.2",
+     "Notes": "A slow crouching walk, toggled (combat v2: section 07, \"Sneaking\"; decision DE-9); its noise is section 07's noiseSneak by the ground"
     },
     {
      "Mode": "Walk",
@@ -114,7 +114,7 @@
     {
      "Mode": "Run",
      "Speed": "6.0",
-     "Notes": "The sprint; drains stamina (section 06, Stamina in traversal). In combat v2 running turns the body to the way of travel and breaks the combat stance's facing (section 06, \"Stance and lock-on\")"
+     "Notes": "The sprint; drains stamina (section 06, Stamina in traversal). Running turns the body to the way of travel and breaks the combat stance's facing (section 06, \"Stance and lock-on\")"
     },
     {
      "Mode": "Carry",
@@ -1100,92 +1100,6 @@
    ]
   },
   "combatTimings": {
-   "weapons": [
-    {
-     "Weapon": "Spear",
-     "Reach tiles": "1.7",
-     "Combo": "2",
-     "Windup": "14",
-     "Active": "6",
-     "Recovery": "16",
-     "Chain window": "10",
-     "Damage": "22",
-     "vs shield": "8",
-     "Stamina": "14"
-    },
-    {
-     "Weapon": "Axe",
-     "Reach tiles": "1.1",
-     "Combo": "3",
-     "Windup": "16",
-     "Active": "6",
-     "Recovery": "20",
-     "Chain window": "10",
-     "Damage": "26",
-     "vs shield": "22",
-     "Stamina": "18"
-    },
-    {
-     "Weapon": "Sword",
-     "Reach tiles": "1.25",
-     "Combo": "3",
-     "Windup": "11",
-     "Active": "5",
-     "Recovery": "13",
-     "Chain window": "9",
-     "Damage": "22",
-     "vs shield": "10",
-     "Stamina": "12"
-    },
-    {
-     "Weapon": "Seax",
-     "Reach tiles": "0.75",
-     "Combo": "3",
-     "Windup": "8",
-     "Active": "4",
-     "Recovery": "9",
-     "Chain window": "8",
-     "Damage": "14",
-     "vs shield": "4",
-     "Stamina": "8"
-    },
-    {
-     "Weapon": "Dane axe",
-     "Reach tiles": "1.4",
-     "Combo": "2",
-     "Windup": "24",
-     "Active": "7",
-     "Recovery": "26",
-     "Chain window": "12",
-     "Damage": "40",
-     "vs shield": "35",
-     "Stamina": "26"
-    },
-    {
-     "Weapon": "Bow",
-     "Reach tiles": "8.3",
-     "Combo": "1",
-     "Windup": "30 draw",
-     "Active": "-",
-     "Recovery": "20",
-     "Chain window": "-",
-     "Damage": "18",
-     "vs shield": "6",
-     "Stamina": "10"
-    },
-    {
-     "Weapon": "Thrown spear",
-     "Reach tiles": "5",
-     "Combo": "1",
-     "Windup": "18",
-     "Active": "-",
-     "Recovery": "22",
-     "Chain window": "-",
-     "Damage": "24",
-     "vs shield": "12",
-     "Stamina": "16"
-    }
-   ],
    "chargedHeavy": [
     {
      "Key": "level1At",
@@ -1226,20 +1140,8 @@
      "Value": "8 stamina, refunded on success"
     },
     {
-     "Key": "parryStagger",
-     "Value": "Attacker staggered 36 ticks; riposte damage x1.5"
-    },
-    {
      "Key": "blockArc",
      "Value": "120 degrees front"
-    },
-    {
-     "Key": "blockCost",
-     "Value": "0.6 x the attack's shield damage"
-    },
-    {
-     "Key": "guardBreak",
-     "Value": "Stamina empty while blocking: 40 ticks broken"
     },
     {
      "Key": "dodge",
@@ -1248,10 +1150,6 @@
     {
      "Key": "shove",
      "Value": "12 stamina; breaks block; target staggered 20 ticks"
-    },
-    {
-     "Key": "turnLock",
-     "Value": "Facing locked from windup start to recovery end"
     }
    ],
    "fightRules": [
@@ -1262,10 +1160,6 @@
     {
      "Key": "bodyRadius",
      "Value": "0.3 tiles: reach is measured to the near edge of the body a strike meets"
-    },
-    {
-     "Key": "hitStagger",
-     "Value": "14 ticks: a hit staggers anyone without poise"
     },
     {
      "Key": "blockStun",
@@ -1310,18 +1204,6 @@
      "Value": "100 for the steerer and adult residents"
     },
     {
-     "Key": "stamina",
-     "Value": "100; regenerates 25 per second after 36 ticks without spending; half while blocking"
-    },
-    {
-     "Key": "padded",
-     "Value": "-10% all damage"
-    },
-    {
-     "Key": "mail",
-     "Value": "-30% cut, -15% thrust and missiles"
-    },
-    {
      "Key": "helmet",
      "Value": "Head-blow critical chance halved"
     },
@@ -1344,10 +1226,6 @@
     {
      "Key": "finisherHold",
      "Value": "24 ticks"
-    },
-    {
-     "Key": "hitStop",
-     "Value": "3 ticks"
     }
    ],
    "downedAndCarried": [
@@ -1887,6 +1765,10 @@
     {
      "Key": "riposteDamage",
      "Value": "x3.0 the weapon's damage (sword x3.5); it ignores poise and cannot be blocked"
+    },
+    {
+     "Key": "riposteFrames",
+     "Value": "The riposte's ticks are 40% windup (the riposter steps in over it), then the weapon's active ticks, then the rest as recovery (decision DE-37)"
     }
    ],
    "poise": [
@@ -2002,7 +1884,7 @@
     },
     {
      "Key": "enemyVitality",
-     "Value": "Each archetype's combat v2 vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte"
+     "Value": "Each archetype's vitality (section 07, Archetypes): about 25% less than combat v1, so the first scavengers (Outlaw, 68) fall to three clean seax hits or one riposte"
     },
     {
      "Key": "staminaMax",
@@ -2060,102 +1942,91 @@
    "archetypes": [
     {
      "Archetype": "Civilian (farmer, keeper, trader)",
-     "Vitality": "60",
+     "Vitality": "45",
      "Armour": "None",
      "Weapons": "Tool or seax",
      "Behaviour": "Flees, hides, pleads; fights if cornered",
-     "Vitality (combat v2)": "45",
-     "Reach (combat v2)": "A tool 1.0; a seax 0.8"
+     "Reach": "A tool 1.0; a seax 0.8"
     },
     {
      "Archetype": "Monk",
-     "Vitality": "50",
+     "Vitality": "38",
      "Armour": "None",
      "Weapons": "None",
      "Behaviour": "Flees to tower or church; claims sanctuary",
-     "Vitality (combat v2)": "38",
-     "Reach (combat v2)": "None"
+     "Reach": "None"
     },
     {
      "Archetype": "Guard",
-     "Vitality": "100",
+     "Vitality": "75",
      "Armour": "Padded",
      "Weapons": "Spear and shield",
      "Behaviour": "Holds posts, raises alarm",
-     "Vitality (combat v2)": "75",
-     "Reach (combat v2)": "Spear 1.8"
+     "Reach": "Spear 1.8"
     },
     {
      "Archetype": "Warrior",
-     "Vitality": "110",
+     "Vitality": "82",
      "Armour": "Padded, sometimes mail",
      "Weapons": "Axe or sword and shield",
      "Behaviour": "Fights in line, flanks",
-     "Vitality (combat v2)": "82",
-     "Reach (combat v2)": "Hand axe 1.1 or sword 1.3"
+     "Reach": "Hand axe 1.1 or sword 1.3"
     },
     {
      "Archetype": "Raider (Crowwick)",
-     "Vitality": "100",
+     "Vitality": "75",
      "Armour": "Padded",
      "Weapons": "Axe, spear",
      "Behaviour": "Aggressive, loots, rarely surrenders",
-     "Vitality (combat v2)": "75",
-     "Reach (combat v2)": "Hand axe 1.1 or spear 1.8"
+     "Reach": "Hand axe 1.1 or spear 1.8"
     },
     {
      "Archetype": "Archer",
-     "Vitality": "80",
+     "Vitality": "60",
      "Armour": "None",
      "Weapons": "Bow, seax",
      "Behaviour": "Keeps distance; stops, draws and looses, then moves (section 21, Missiles); falls back",
-     "Vitality (combat v2)": "60",
-     "Reach (combat v2)": "Bow 8.3; seax 0.8"
+     "Reach": "Bow 8.3; seax 0.8"
     },
     {
      "Archetype": "Huscarl (Orm)",
-     "Vitality": "130",
+     "Vitality": "98",
      "Armour": "Mail, helmet",
      "Weapons": "Sword or Dane axe",
      "Behaviour": "Disciplined, holds formation",
-     "Vitality (combat v2)": "98",
-     "Reach (combat v2)": "Sword 1.3 or Dane axe 1.6"
+     "Reach": "Sword 1.3 or Dane axe 1.6"
     },
     {
      "Archetype": "Outlaw",
-     "Vitality": "90",
+     "Vitality": "68",
      "Armour": "None",
      "Weapons": "Mixed",
      "Behaviour": "Ambushes, flees when hurt",
-     "Vitality (combat v2)": "68",
-     "Reach (combat v2)": "Their weapon's"
+     "Reach": "Their weapon's"
     },
     {
      "Archetype": "Draugr",
-     "Vitality": "160",
+     "Vitality": "120",
      "Armour": "Resists stagger",
      "Weapons": "Grip and blows",
      "Behaviour": "Slow, relentless at night; returns until its anchor is resolved",
-     "Vitality (combat v2)": "120",
-     "Reach (combat v2)": "Grip 0.9"
+     "Reach": "Grip 0.9"
     },
     {
      "Archetype": "Wolf",
-     "Vitality": "50",
+     "Vitality": "38",
      "Armour": "None",
      "Weapons": "Bite",
      "Behaviour": "Packs of 3 to 5; circles; flees at half pack lost",
-     "Vitality (combat v2)": "38",
-     "Reach (combat v2)": "Bite 0.7"
+     "Reach": "Bite 0.7"
     },
     {
      "Archetype": "Boar",
-     "Vitality": "120",
+     "Vitality": "90",
      "Armour": "Hide",
      "Weapons": "Charge",
      "Behaviour": "Charges when cornered; drops 40 rd of meat",
-     "Vitality (combat v2)": "90",
-     "Reach (combat v2)": "Charge 1.0"
+     "Reach": "Charge 1.0"
     },
     {
      "Archetype": "Each-uisce",
@@ -2163,8 +2034,7 @@
      "Armour": "Supernatural",
      "Weapons": "Drag into water",
      "Behaviour": "Avoid or bind; violence only drives it off",
-     "Vitality (combat v2)": "300",
-     "Reach (combat v2)": "Drag 1.2"
+     "Reach": "Drag 1.2"
     }
    ],
    "perception": [
@@ -2475,6 +2345,10 @@
      "Value": "+30 for each noise heard within its radius (Perception: noise by action, x the ground)"
     },
     {
+     "Key": "footfall",
+     "Value": "0.5 s: a moving actor's footsteps are one noise each half second, heard within its radius (Perception, by gait and ground) (decision DE-38)"
+    },
+    {
      "Key": "suspiciousAt",
      "Value": "30: the actor says so (\"Who's there?\"), turns to the last thing seen or heard and goes to look (searchSeconds)"
     },
@@ -2498,7 +2372,7 @@
     },
     {
      "Key": "sneakSpeed",
-     "Value": "1.2 tiles per second (replaces section 02's 1.75 when combat v2 is built)"
+     "Value": "1.2 tiles per second (section 02, Sneak)"
     },
     {
      "Key": "sneakNoise",
@@ -2524,7 +2398,7 @@
     },
     {
      "Key": "backstabKill",
-     "Value": "Kills outright any foe whose combat v2 vitality is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves)"
+     "Value": "Kills outright any foe whose vitality (Archetypes) is 75 or less (civilians, monks, guards, raiders, archers, outlaws, wolves)"
     },
     {
      "Key": "backstabDamage",
@@ -2533,6 +2407,10 @@
     {
      "Key": "backstabTicks",
      "Value": "40 ticks (seax 30): a heavy, distinct animation; the striker is committed to it"
+    },
+    {
+     "Key": "backstabFrames",
+     "Value": "As riposteFrames: 40% of its ticks wind up, then the weapon's active ticks, the rest recovery (decision DE-37)"
     },
     {
      "Key": "backstabNoise",
@@ -2595,6 +2473,10 @@
     {
      "Key": "awareDodge",
      "Value": "25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing"
+    },
+    {
+     "Key": "sidestepMove",
+     "Value": "After its tell a sidestep moves across the missile's path as a dodge does (section 06, Defence: its distance and ticks), and the missile it reads passes it (decision DE-39)"
     }
    ],
    "warnings": [
@@ -5902,7 +5784,7 @@
     },
     {
      "Key": "meleeAim",
-     "Value": "Towards the cursor, snapped to the nearest of the four facings (combat v1). In combat v2 the stance faces the cursor or the locked target, and is drawn in the nearest facing (section 06, \"Stance and lock-on\")"
+     "Value": "The combat stance faces the cursor or the locked target, and is drawn in the nearest of the four facings (section 06, \"Stance and lock-on\")"
     },
     {
      "Key": "missileAim",
@@ -6235,10 +6117,6 @@
   },
   "heavyBuild": {
    "table": [
-    {
-     "Key": "poise",
-     "Value": "Light attacks do not stagger a heavy fighter"
-    },
     {
      "Key": "windup",
      "Value": "+4 ticks on every attack"

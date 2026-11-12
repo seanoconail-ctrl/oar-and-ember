@@ -83,13 +83,20 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'decal_blood_01',
       'decal_broch',
       'decal_strand',
+      'fx_combat',
       'fx_fire',
       'fx_glint',
       'fx_gore',
+      'fx_hag',
+      'fx_hag_mist',
       'fx_missile',
+      'fx_net',
+      'fx_opening',
+      'fx_outline',
       'fx_people',
       'fx_sealcave',
       'fx_seamap',
+      'fx_shelter_cut',
       'fx_south',
       'fx_strand',
       'layer_blood_wound_a',
@@ -140,23 +147,34 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'prop_boards',
       'prop_boulder',
       'prop_camp',
+      'prop_chest_open',
       'prop_chest_runa',
       'prop_chest_thorkel',
+      'prop_cold_figures',
+      'prop_cold_sail',
       'prop_debris',
+      'prop_door_broch',
       'prop_driftwood',
+      'prop_flap_sail',
       'prop_greymen_stone',
       'prop_hagstone',
       'prop_heather',
+      'prop_mast_broken',
       'prop_pickup',
       'prop_rigging',
       'prop_rigging_tangle',
       'prop_rock_strand',
+      'prop_rockpool',
       'prop_sail_leanto',
+      'prop_sail_raise',
       'prop_sail_roof',
+      'prop_shelter_inside',
       'prop_shipsetting',
       'prop_skiff',
       'prop_steering_oar',
       'prop_stones',
+      'prop_stores_bundle',
+      'prop_strongbox',
       'prop_wreck_stern',
       'prop_wreck_t1',
       'ship_t1',
@@ -169,6 +187,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'token_t1',
       'ui_aim',
       'ui_clock',
+      'ui_combat',
       'ui_cursor',
       'ui_cursor_glyph',
       'ui_digits',
@@ -185,10 +204,12 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
   }, 30_000);
 
   // It regenerates every sheet and atlas in memory: Stage 7's broch, camp and work loops made that
-  // longer than the default five seconds.
+  // longer than the default five seconds, and combat v2's five new states on every body sheet
+  // (about 22 s alone) take it past 30 s while the whole suite runs in parallel. A time limit,
+  // not an art threshold: what it checks is unchanged.
   it('finds generated sheets and atlases in step with their sources', () => {
     expect(staleArtFiles()).toEqual([]);
-  }, 30_000);
+  }, 60_000);
 
   const lint = (body: string, header = HEADER) =>
     lintSheet(compileSheet(`${header}\n${body}`, 't.txt', palette), palette).map((i) => i.reason);
@@ -288,7 +309,8 @@ describe('atlases', () => {
     if (steerer === undefined) throw new Error('missing');
     const { image, manifest } = packSheet(steerer);
     // Stage 9's fighting states (Book 10 frame data) take the steerer to 38 states, 152 rows of
-    // 48 px: past MAX_ATLAS, so its 484 frames pack in reading order, 22 across.
+    // 48 px: past MAX_ATLAS, so its frames pack in reading order (combat v2's five new states
+    // make 532 frames, 24 across).
     const perFacing =
       4 +
       4 +
@@ -306,13 +328,14 @@ describe('atlases', () => {
       6 +
       6 +
       2 + // Stages 4 to 7
-      (2 + 3 + 3 + 3 + 2 + 6 + 3 + 2 + 2 + 3 + 3 + 2 + 1 + 2 + 2 + 1 + 3 + 3); // Stage 9
+      (2 + 3 + 3 + 3 + 2 + 6 + 3 + 2 + 2 + 3 + 3 + 2 + 1 + 2 + 2 + 1 + 3 + 3) + // Stage 9
+      (3 + 3 + 2 + 2 + 2); // combat v2: riposte, backstab, lunge, parried, get-up
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
-    expect([image.width, image.height]).toEqual([22 * 32, 22 * 48]);
+    expect([image.width, image.height]).toEqual([24 * 32, 23 * 48]);
     expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
     expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
-    expect(manifest.frames['run/s/7']).toEqual([7 * 32, 4 * 48]);
+    expect(manifest.frames['run/s/7']).toEqual([23 * 32, 3 * 48]);
   });
 });
 

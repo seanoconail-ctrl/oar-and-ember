@@ -107,6 +107,8 @@ export class Session {
   /** Stage 9: a melee press held (its release is sent), the block and the finisher held. */
   #meleeHeld = false;
   #blockHeld = false;
+  /** The stance's last aim sent (combat v2: FACE), one of AIM_DIRECTIONS. */
+  #faceDir: number | null = null;
   #finisherHeld = false;
   /** USE_AT and INTERACT_AT commands sent (the tests check a refused click sends none). */
   tileCommands = 0;
@@ -221,7 +223,8 @@ export class Session {
         x: input.move.x,
         y: input.move.y,
         run: input.held.has('run'),
-        sneak: input.held.has('sneak'),
+        // Combat v2: sneak is a toggle in the simulation (Book 10 sneakToggle; SNEAK below).
+        sneak: false,
       };
       const key = `${move.x},${move.y},${move.run},${move.sneak}`;
       if (key !== this.#lastMove) {
@@ -308,6 +311,10 @@ export class Session {
     const ok = inReach(p, at, { ...query, reach });
     let refused: 'TOO_FAR' | null = null;
 
+    // Design addendum 2.4: the hold-to-cut at the net goes on only while Interact is held; let go,
+    // it stops and keeps what is cut (Book 10 section 25, cutHold).
+    if (input.released.has('interact') && onFoot.player.work?.task === 'TASK_CUT_NET')
+      this.sim.submit({ type: 'CANCEL_WORK' });
     // Interact: right-click at the cursor's tile; the key and the pad at the nearest in reach.
     if (input.pressed.has('interact')) {
       if (input.byMouse.has('interact') && pointing.pointer !== null) {
@@ -354,6 +361,18 @@ export class Session {
       this.sim.submit({ type: 'MELEE_RELEASE' });
       this.#meleeHeld = false;
     }
+    // Combat v2 (decisions DE-2, DE-3, DE-8, DE-9): the stance faces the cursor (or the stick, or
+    // the way last moved on the keyboard alone); lock-on pressed and let go (a tap switches, a hold
+    // releases); sneak toggles; heal binds a wound or eats.
+    const face = this.#stanceDirection(input, pointing);
+    if (face !== this.#faceDir) {
+      this.sim.submit({ type: 'FACE', dir: face });
+      this.#faceDir = face;
+    }
+    if (input.pressed.has('lockOn')) this.sim.submit({ type: 'LOCK_ON', down: true });
+    if (input.released.has('lockOn')) this.sim.submit({ type: 'LOCK_ON', down: false });
+    if (input.pressed.has('sneak')) this.sim.submit({ type: 'SNEAK' });
+    if (input.pressed.has('heal') && !handsFull) this.sim.submit({ type: 'HEAL' });
     // Parry, block and dodge on their own keys; the finisher held (Book 2 section 21).
     if (input.pressed.has('parry') && !handsFull) this.sim.submit({ type: 'PARRY' });
     const block = input.held.has('block') && !handsFull;
@@ -398,6 +417,33 @@ export class Session {
       aimDir,
       refused,
     };
+  }
+
+  /**
+   * The stance's aim as one of AIM_DIRECTIONS (combat v2, decision DE-2): towards the cursor from
+   * the body's middle, the right stick past its dead zone, or in keyboard-only play the way last
+   * moved; null with none.
+   */
+  #stanceDirection(input: InputFrame, pointing: TargetInput): number | null {
+    const p = this.sim.state.onFoot?.player;
+    if (p == null) return null;
+    let x: number;
+    let y: number;
+    if (pointing.device === 'mouse' && pointing.pointer !== null) {
+      x = pointing.pointer.x - p.x;
+      y = pointing.pointer.y - (p.y - BODY_HEIGHT / 2);
+    } else if (
+      pointing.device === 'pad' &&
+      Math.hypot(input.stick.x, input.stick.y) > (this.land?.controls.gamepadDeadZone ?? 0)
+    ) {
+      x = input.stick.x;
+      y = input.stick.y;
+    } else if (input.move.x !== 0 || input.move.y !== 0) {
+      x = input.move.x;
+      y = input.move.y;
+    } else return this.#faceDir;
+    if (Math.hypot(x, y) < 1e-6) return this.#faceDir;
+    return aimDirection(x, y, AIM_DIRECTIONS);
   }
 
   /** The facing a melee blow goes towards: the cursor, the right stick, else the way one faces. */

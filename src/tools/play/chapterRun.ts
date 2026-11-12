@@ -22,8 +22,8 @@ import type { Simulation } from '../../sim/simulation.ts';
 import { newCampaign } from '../../sim/world.ts';
 import type { WorldState } from '../../sim/world.ts';
 import { loadContentFromDisk } from '../content/loadContentFiles.ts';
-import { LaunchBot } from './launchBot.ts';
 import { OpeningBot } from './openingBot.ts';
+import { WreckBot } from './wreckBot.ts';
 
 /** How a player's own time is added (real seconds). */
 export interface Pace {
@@ -58,7 +58,7 @@ export const HUMAN_PACE: Pace = {
 };
 
 /** A launch bot that takes a person's time over its choices and arrivals. */
-class PacedBot extends LaunchBot {
+class PacedBot extends WreckBot {
   pace: Pace = BOT_PACE;
   readonly #seen = new Set<string>();
 
@@ -72,6 +72,20 @@ class PacedBot extends LaunchBot {
     for (let k = 0; ; k++) {
       try {
         super.lookAtBoat();
+        return;
+      } catch (error) {
+        if (k >= 4) throw error;
+        if (this.sim.state.talk !== null) this.sim.submit({ type: 'TALK_END' });
+        this.step(60);
+      }
+    }
+  }
+
+  /** The same for work at the boat: a resident there may be talked to instead; try again. */
+  override workOnBoat(): void {
+    for (let k = 0; ; k++) {
+      try {
+        super.workOnBoat();
         return;
       } catch (error) {
         if (k >= 4) throw error;
@@ -126,24 +140,27 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   const opening = new OpeningBot(sim, strand, b, land);
   opening.pickUp('wreck_seax');
   opening.rescue('C_HILD');
-  opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
-  opening.pickUp('stern_bow');
   const bot = new PacedBot(sim, b, land, camp, land.searches, land.repairs);
   bot.pace = pace;
-  // The broch, driftwood for the first fire, the fire, Hild's leg.
-  bot.goToZone('ZONE_SK_MACHAIR');
-  bot.goToSite('stores');
-  bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  // Design addendum 2.4: Thorkel's chest up to its outline at the camp, driftwood and the first
+  // fire, Hild walking up, the sail raised between the oars, her leg tended.
+  bot.waitFor(() => sim.state.facts['ch1.chest_named'] === true, 60 * 30);
+  bot.chestToCamp();
   bot.goToZone('ZONE_SK_STRAND');
-  bot.pickUp('drift_east_rocks');
-  bot.pickUp('drift_east_tide');
-  bot.pickUp('drift_east_bank');
-  bot.goToZone('ZONE_SK_MACHAIR');
-  bot.doAt('fire');
+  bot.firstFire(['drift_west_rocks', 'drift_west_bank']);
+  bot.waitForHild();
+  bot.raiseShelter();
   bot.tend('C_HILD');
+  // The first dusk: the scavengers at the stern are left alone (they go to the fold at dark), and
+  // the first night's fire with Hild gives the morning's aims; then sleep.
+  bot.waitUntil(19 * 60 + 40);
+  bot.fireScene();
+  bot.doAt('bed_s0');
   // The three searches; Bran's by fighting the scavengers at the fold (the first combat).
   bot.oddi('CHEST_FIRST');
   bot.runa('OFFERING');
+  bot.runaChestToCamp();
+  bot.answerRuna('FIRE');
   const retries = fightForBran(sim, bot);
   // Bran downed in the fight is carried home to the fire, as a player must (Book 1 section 09).
   const bran = sim.state.onFoot === null ? null : findActor(sim.state.onFoot, 'C_BRAN');
@@ -152,6 +169,14 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
     bot.carryHome('C_BRAN');
   }
   bot.waitFor(() => sim.state.facts['ch1.thorkel_body'] === 'CAMP', 60 * 600);
+  // His key (from Bran at the bier, or from his body), his chest opened: the bow.
+  bot.goToZone('ZONE_SK_MACHAIR');
+  bot.waitFor(() => sim.state.facts['ch1.key'] !== undefined || bot.ticks % 600 === 599, 60 * 30);
+  bot.takeKey();
+  bot.openChest();
+  // The bow's first use: the stores on the broken mast.
+  bot.shootLashing({ x: 41.5, y: 27.5 });
+  bot.storesToCamp();
   // The repairs, a fitting, the rites, the launch.
   const trace = (what: string): void => {
     if (process.env['TRACE'] !== undefined)

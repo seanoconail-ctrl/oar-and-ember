@@ -1,0 +1,201 @@
+{
+  "sheet": "fx_opening",
+  "kind": "decal",
+  "image": "fx_opening.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 8,
+    "y": 15
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "fibre": {
+      "frames": 3,
+      "ticks": 5,
+      "loop": false
+    },
+    "spark": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "puff": {
+      "frames": 4,
+      "ticks": 5,
+      "loop": false
+    },
+    "spray": {
+      "frames": 4,
+      "ticks": 5,
+      "loop": false
+    },
+    "drip": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "rain": {
+      "frames": 4,
+      "ticks": 3,
+      "loop": false
+    },
+    "smoke": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": false
+    },
+    "light": {
+      "frames": 8,
+      "ticks": 6,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "fibre/-/0": [
+      0,
+      0
+    ],
+    "fibre/-/1": [
+      16,
+      0
+    ],
+    "fibre/-/2": [
+      32,
+      0
+    ],
+    "spark/-/0": [
+      0,
+      16
+    ],
+    "spark/-/1": [
+      16,
+      16
+    ],
+    "spark/-/2": [
+      32,
+      16
+    ],
+    "puff/-/0": [
+      0,
+      32
+    ],
+    "puff/-/1": [
+      16,
+      32
+    ],
+    "puff/-/2": [
+      32,
+      32
+    ],
+    "puff/-/3": [
+      48,
+      32
+    ],
+    "spray/-/0": [
+      0,
+      48
+    ],
+    "spray/-/1": [
+      16,
+      48
+    ],
+    "spray/-/2": [
+      32,
+      48
+    ],
+    "spray/-/3": [
+      48,
+      48
+    ],
+    "drip/-/0": [
+      0,
+      64
+    ],
+    "drip/-/1": [
+      16,
+      64
+    ],
+    "rain/-/0": [
+      0,
+      80
+    ],
+    "rain/-/1": [
+      16,
+      80
+    ],
+    "rain/-/2": [
+      32,
+      80
+    ],
+    "rain/-/3": [
+      48,
+      80
+    ],
+    "smoke/-/0": [
+      0,
+      96
+    ],
+    "smoke/-/1": [
+      16,
+      96
+    ],
+    "smoke/-/2": [
+      32,
+      96
+    ],
+    "smoke/-/3": [
+      48,
+      96
+    ],
+    "smoke/-/4": [
+      64,
+      96
+    ],
+    "smoke/-/5": [
+      80,
+      96
+    ],
+    "light/-/0": [
+      0,
+      112
+    ],
+    "light/-/1": [
+      16,
+      112
+    ],
+    "light/-/2": [
+      32,
+      112
+    ],
+    "light/-/3": [
+      48,
+      112
+    ],
+    "light/-/4": [
+      64,
+      112
+    ],
+    "light/-/5": [
+      80,
+      112
+    ],
+    "light/-/6": [
+      96,
+      112
+    ],
+    "light/-/7": [
+      112,
+      112
+    ]
+  }
+}

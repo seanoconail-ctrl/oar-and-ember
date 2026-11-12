@@ -221,7 +221,7 @@
       },
       {
         "sheet": "prop_camp",
-        "frame": "chest/-/0",
+        "frame": "cask/-/0",
         "x": 38.3,
         "y": 29.7
       },
@@ -272,12 +272,6 @@
       },
       {
         "sheet": "prop_camp",
-        "frame": "chest/-/0",
-        "x": 32.2,
-        "y": 31.4
-      },
-      {
-        "sheet": "prop_camp",
         "frame": "cask/-/0",
         "x": 32.6,
         "y": 32.3
@@ -312,12 +306,6 @@
         "frame": "pot/-/0",
         "x": 36.25,
         "y": 31.35
-      },
-      {
-        "sheet": "prop_camp",
-        "frame": "door/-/0",
-        "x": 35.5,
-        "y": 36.95
       }
     ]
   },
@@ -366,5 +354,27 @@
     "shelter": "c_hild.bark.shelter.01",
     "evening": "c_hild.bark.evening.01"
   },
-  "leadAfterSeconds": 6
+  "leadAfterSeconds": 6,
+  "shelterBeds": [
+    {
+      "x": 31.9,
+      "y": 30.15,
+      "facing": "e"
+    },
+    {
+      "x": 32.75,
+      "y": 30.3,
+      "facing": "e"
+    },
+    {
+      "x": 33.6,
+      "y": 30.15,
+      "facing": "w"
+    },
+    {
+      "x": 34.45,
+      "y": 30.3,
+      "facing": "w"
+    }
+  ]
 }

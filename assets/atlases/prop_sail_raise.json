@@ -1,0 +1,103 @@
+{
+  "sheet": "prop_sail_raise",
+  "kind": "prop",
+  "image": "prop_sail_raise.png",
+  "width": 78,
+  "height": 91,
+  "pivot": {
+    "x": 39,
+    "y": 90
+  },
+  "footprint": {
+    "w": 78,
+    "h": 91
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "folded": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "raise": {
+      "frames": 8,
+      "ticks": 9,
+      "loop": false
+    },
+    "fill": {
+      "frames": 6,
+      "ticks": 10,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 60,
+    "h": 8
+  },
+  "placeholder": false,
+  "frames": {
+    "folded/-/0": [
+      0,
+      0
+    ],
+    "raise/-/0": [
+      0,
+      91
+    ],
+    "raise/-/1": [
+      78,
+      91
+    ],
+    "raise/-/2": [
+      156,
+      91
+    ],
+    "raise/-/3": [
+      234,
+      91
+    ],
+    "raise/-/4": [
+      312,
+      91
+    ],
+    "raise/-/5": [
+      390,
+      91
+    ],
+    "raise/-/6": [
+      468,
+      91
+    ],
+    "raise/-/7": [
+      546,
+      91
+    ],
+    "fill/-/0": [
+      0,
+      182
+    ],
+    "fill/-/1": [
+      78,
+      182
+    ],
+    "fill/-/2": [
+      156,
+      182
+    ],
+    "fill/-/3": [
+      234,
+      182
+    ],
+    "fill/-/4": [
+      312,
+      182
+    ],
+    "fill/-/5": [
+      390,
+      182
+    ]
+  }
+}

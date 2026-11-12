@@ -133,7 +133,12 @@ export function visualTuning(balance: unknown, palette: Palette): VisualTuning {
 export type CameraLead =
   | { readonly kind: 'cursor'; readonly x: number; readonly y: number }
   | { readonly kind: 'stick'; readonly x: number; readonly y: number }
-  | { readonly kind: 'travel' };
+  | { readonly kind: 'travel' }
+  /**
+   * Locked on (Book 10 "Stance and lock-on", lockOnCamera): the look-ahead points at the target,
+   * `share` of the way to it, capped at lookAheadAiming, so the view sits between the two.
+   */
+  | { readonly kind: 'target'; readonly x: number; readonly y: number; readonly share: number };
 
 export interface FrameInput {
   readonly dt: number;
@@ -307,13 +312,13 @@ export class ZoneVisuals {
   /**
    * A blow landed (Book 7 section 12): 4 to 10 drops of blood fly from it in the blow's direction
    * (more for a heavy blow), falling to leave drops on the ground; with the gore setting low fewer
-   * and darker, off only a flash; the camera shakes briefly.
+   * and darker, off only a flash. The camera's shake is the blow's own (combat v2: heavy hits only,
+   * Book 10 shakeHeavy and shakeRiposte), not the spray's.
    */
   blood(x: number, y: number, dx: number, dy: number, heavy: boolean): void {
     const l = Math.hypot(dx, dy) || 1;
     const ux = dx / l;
     const uy = dy / l;
-    this.shake(heavy ? 2 : 1);
     if (this.gore === 0) {
       this.#emit({ kind: 'flash', x, y, vx: 0, vy: 0, z: 22, vz: 0, life: 0.15 });
       return;
@@ -699,6 +704,14 @@ export class ZoneVisuals {
         lx = dx * k;
         ly = dy * k;
       }
+    } else if (lead.kind === 'target') {
+      const dx = (lead.x - p.x) * lead.share;
+      const dy = (lead.y - p.y) * lead.share;
+      const d = Math.hypot(dx, dy);
+      const most = c.lookAheadAiming * TILE;
+      const k = d > most ? most / d : 1;
+      lx = dx * k;
+      ly = dy * k;
     } else if (lead.kind === 'stick') {
       const d = Math.hypot(lead.x, lead.y);
       if (d > c.gamepadDeadZone) {

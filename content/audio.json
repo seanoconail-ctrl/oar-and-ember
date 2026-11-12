@@ -724,6 +724,195 @@
       "lengthBeats": 8,
       "captionKey": "caption.stinger.chapter_end",
       "temporary": false
+    },
+    {
+      "id": "SFX_COLD_STRIKE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.cold.strike",
+      "temporary": false
+    },
+    {
+      "id": "SFX_COUGH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.wake.cough",
+      "temporary": false
+    },
+    {
+      "id": "SFX_NET_CUT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.action.net_parts",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CHEST_DRAG",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.chest.drag",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CHEST_THUD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.chest.thud",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FLINT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.action.sparks",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_RAISE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.action.sail",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CHEST_OPEN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.chest.key",
+      "temporary": false
+    },
+    {
+      "id": "SFX_LASHING",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.action.lashing",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BUNDLE_SPLASH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.action.splash",
+      "temporary": false
+    },
+    {
+      "id": "SFX_RING_CLINK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.ring.clink",
+      "temporary": false
+    },
+    {
+      "id": "SFX_DOOR_CREAK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.door.open",
+      "temporary": false
+    },
+    {
+      "id": "SFX_DOOR_KNOCK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.door.close",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FLAP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.door.flap",
+      "temporary": false
+    },
+    {
+      "id": "SFX_DOOR_BAR",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.door.close",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HAG_DRONE",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.hag.whisper",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HAG_GUST",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.hag.gust",
+      "temporary": false
+    },
+    {
+      "id": "SFX_STEERER_BREATH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.steerer_breath",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GRUNT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.grunt",
+      "temporary": false
+    },
+    {
+      "id": "SFX_PARRY_RING",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.parry_ring",
+      "temporary": false
+    },
+    {
+      "id": "SFX_RIPOSTE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.riposte",
+      "temporary": false
+    },
+    {
+      "id": "SFX_LUNGE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.lunge",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BACKSTAB",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.backstab",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SIDESTEP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sidestep",
+      "temporary": false
+    },
+    {
+      "id": "SFX_ALERT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.alert",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BIND_WOUND",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.bind_wound",
+      "temporary": false
+    },
+    {
+      "id": "SFX_EAT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.eat",
+      "temporary": false
     }
   ],
   "events": {
@@ -799,7 +988,34 @@
     "OAR_STROKE": "SFX_OAR_SPLASH",
     "OAR_CREAK": "SFX_OAR_CREAK",
     "SEA_MAP_REVEALED": "MUS_STINGER_DISCOVERY",
-    "CHAPTER_ENDED": "MUS_STINGER_CHAPTER_END"
+    "CHAPTER_ENDED": "MUS_STINGER_CHAPTER_END",
+    "COLD_STRIKE": "SFX_COLD_STRIKE",
+    "COUGH": "SFX_COUGH",
+    "NET_CUT": "SFX_NET_CUT",
+    "LOAD_DOWN": "SFX_CHEST_THUD",
+    "CHEST_DRAG": "SFX_CHEST_DRAG",
+    "FLINT": "SFX_FLINT",
+    "SAIL_RAISE": "SFX_SAIL_RAISE",
+    "CHEST_OPEN": "SFX_CHEST_OPEN",
+    "LASHING_CUT": "SFX_LASHING",
+    "BUNDLE_SPLASH": "SFX_BUNDLE_SPLASH",
+    "RING_FOUND": "SFX_RING_CLINK",
+    "DOOR_OPEN": "SFX_DOOR_CREAK",
+    "DOOR_SHUT": "SFX_DOOR_KNOCK",
+    "FLAP_OPEN": "SFX_FLAP",
+    "DOOR_BARRED": "SFX_DOOR_BAR",
+    "HAG_DRONE": "SFX_HAG_DRONE",
+    "HAG_GUST": "SFX_HAG_GUST",
+    "STEERER_HURT": "SFX_STEERER_BREATH",
+    "GRUNT": "SFX_GRUNT",
+    "PARRY_RING": "SFX_PARRY_RING",
+    "RIPOSTE_HIT": "SFX_RIPOSTE",
+    "LUNGE_TELL": "SFX_LUNGE",
+    "BACKSTAB": "SFX_BACKSTAB",
+    "SIDESTEP": "SFX_SIDESTEP",
+    "ALERT_STING": "SFX_ALERT",
+    "BIND_WOUND": "SFX_BIND_WOUND",
+    "EAT_RATION": "SFX_EAT"
   },
   "home": {
     "restSeconds": 90,

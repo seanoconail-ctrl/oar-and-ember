@@ -8,6 +8,7 @@ import type { SynthEngine } from './engine.ts';
 import { modeClasses, parseLayer, stepSeconds, stepUp } from './notation.ts';
 import type { ParsedNote, Piece, Variant } from './notation.ts';
 import { rng } from './samples.ts';
+import { layerJoinAt } from '../music.ts';
 
 interface LiveLayer {
   readonly id: string;
@@ -36,6 +37,9 @@ export class PiecePlayer {
   #anchorTime = 0;
   #nextBar = 0;
   #stopped = false;
+  /** Design addendum 2.4 (DE-29): when a fade-out ends, and the bar each layer joins at. */
+  #fadeEnd: number | null = null;
+  #joinBar = new Map<string, number>();
   #pending: (() => void)[] = [];
   readonly #jitter = rng(77);
 
@@ -90,13 +94,32 @@ export class PiecePlayer {
     return this.#anchorTime + (this.#nextBar - this.#anchorBar) * this.barSeconds;
   }
 
-  start(at: number): void {
+  /**
+   * Starts at `at`. With a fade (decision DE-29) the piece rises from silence over `fadeIn` seconds
+   * and begins with one layer, the others joining one at a time on bar lines over `layersJoin`.
+   */
+  start(at: number, fadeIn = 0, layersJoin = 0): void {
     this.#start = at;
     this.#anchorBar = 0;
     this.#anchorTime = at;
     this.#nextBar = 0;
     this.#stopped = false;
-    for (const l of this.#layers) l.gain.gain.setValueAtTime(l.on ? l.level : 0, at);
+    this.#fadeEnd = null;
+    const g = this.#out.gain;
+    g.setValueAtTime(fadeIn > 0 ? 0 : 1, at);
+    if (fadeIn > 0) g.linearRampToValueAtTime(1, at + fadeIn);
+    this.#joinBar.clear();
+    const on = this.#layers.filter((l) => l.on);
+    on.forEach((l, i) => {
+      const t = layerJoinAt(i, on.length, layersJoin, this.barSeconds);
+      this.#joinBar.set(l.id, Math.round(t / this.barSeconds));
+    });
+    for (const l of this.#layers) l.gain.gain.setValueAtTime(this.#playing(l, 0) ? l.level : 0, at);
+  }
+
+  /** Whether a layer sounds in bar `bar` (on, and joined). */
+  #playing(l: LiveLayer, bar: number): boolean {
+    return l.on && bar >= (this.#joinBar.get(l.id) ?? 0);
   }
 
   /** Switches a layer (or every layer of a group) on or off at the next bar line. */
@@ -121,11 +144,21 @@ export class PiecePlayer {
     });
   }
 
-  /** Stops at the next bar line, letting the last notes ring. */
-  stop(): void {
+  /**
+   * Stops at the next bar line, letting the last notes ring; with a fade (decision DE-29) it
+   * plays on while it fades out over `fadeOut` seconds.
+   */
+  stop(fadeOut = 0): void {
     this.#pending.push(() => {
-      this.#stopped = true;
       const t = this.nextBarTime();
+      if (fadeOut > 0) {
+        const g = this.#out.gain;
+        g.setValueAtTime(1, t);
+        g.linearRampToValueAtTime(0, t + fadeOut);
+        this.#fadeEnd = t + fadeOut;
+        return;
+      }
+      this.#stopped = true;
       this.#out.gain.setTargetAtTime(0, t, 0.4);
     });
   }
@@ -158,14 +191,19 @@ export class PiecePlayer {
         if (this.stopped) break;
       }
       const t0 = this.nextBarTime();
+      // Faded out: it stops here.
+      if (this.#fadeEnd !== null && t0 >= this.#fadeEnd) {
+        this.#stopped = true;
+        break;
+      }
       for (const l of this.#layers) {
-        l.gain.gain.setTargetAtTime(l.on ? l.level : 0, t0, 0.05);
+        l.gain.gain.setTargetAtTime(this.#playing(l, this.#nextBar) ? l.level : 0, t0, 0.05);
       }
       const barInPiece = this.#nextBar % this.piece.bars;
       const step = stepSeconds(this.piece, this.#tempo);
       const from = barInPiece * perBar;
       for (const l of this.#layers) {
-        if (!l.on || l.rest.has(barInPiece + 1)) continue;
+        if (!this.#playing(l, this.#nextBar) || l.rest.has(barInPiece + 1)) continue;
         for (const n of l.notes) {
           if (n.step < from || n.step >= from + perBar) continue;
           // A little human looseness on plucked and struck notes (a few milliseconds).

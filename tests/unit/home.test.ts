@@ -42,6 +42,7 @@ import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 import { CampBot } from '../../src/tools/play/campBot.ts';
 import { OpeningBot } from '../../src/tools/play/openingBot.ts';
+import { playToCamp } from '../../src/tools/play/wreckBot.ts';
 
 const balance = loadBalanceJson();
 const b = parseTimeBalance(balance);
@@ -70,21 +71,20 @@ function play(seed = 'home'): { sim: Simulation; events: SimEvent[]; bot: CampBo
   return { sim, events, bot: new CampBot(sim, b, land, camp) };
 }
 
-/** The opening and beat 2 as a new player plays them: rescue, the bow, follow Hild to the broch. */
-function toTheBroch(seed = 'home'): { sim: Simulation; events: SimEvent[]; bot: CampBot } {
+/**
+ * The opening as a new player plays it since design addendum 2.4: the seax, Hild cut free and
+ * carried up, Thorkel's chest carried to the camp (reaching it opens its work), the sail raised.
+ */
+function toTheBroch(
+  seed = 'home',
+  raise = true,
+): { sim: Simulation; events: SimEvent[]; bot: CampBot } {
   const run = play(seed);
-  const strand = land.maps.get('ZONE_SK_STRAND');
-  if (strand === undefined) throw new Error('no strand');
-  const opening = new OpeningBot(run.sim, strand, b, land);
-  opening.rescue('C_HILD');
-  opening.waitFor(() => run.sim.state.facts['ch1.lead_started'] === true, 60 * 60);
-  run.bot.goToZone('ZONE_SK_MACHAIR');
-  run.bot.goToSite('stores');
-  run.bot.waitFor(() => run.sim.state.facts[FACT_AT_BROCH] === true, 60 * 300);
-  return run;
+  const bot = playToCamp(run.sim, b, land, camp, { raise });
+  return { ...run, bot };
 }
 
-describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
+describe('beats 7 to 9: the camp, the first fire and Hild walking up (Book 4 Chapter 1)', () => {
   it('offers no camp work during the opening, only once at the broch (decision S7-26)', () => {
     const { sim } = play('gate');
     const onFoot = sim.state.onFoot;
@@ -95,17 +95,22 @@ describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
     expect(campUses(sim.state, camp, strand, onFoot.actors).length).toBeGreaterThan(0);
   });
 
-  it('leads up from the strand, says what is needed at the fire ring, and goes to work (Stage 8)', () => {
-    const { sim, events } = toTheBroch();
-    expect(sim.state.onFoot?.zone).toBe('ZONE_SK_MACHAIR');
-    // Stage 8 check 1: from the camp she goes straight to useful work, her wound or no.
+  it('opens the camp when the steerer first reaches it; Hild walks up at the first fire (DE-16)', () => {
+    const { sim, events, bot } = toTheBroch('walkup', false);
+    expect(sim.state.facts[FACT_AT_BROCH]).toBe(true);
+    // She is still on the strand, waiting, until the fire's smoke.
+    expect(sim.state.onFoot?.actors['C_HILD']).toBeUndefined();
+    bot.goToZone('ZONE_SK_STRAND');
+    bot.pickUp('drift_west_rocks');
+    bot.pickUp('drift_west_bank');
+    bot.doAt('fire');
+    expect(home(sim.state).fire.lit).toBe(true);
+    bot.waitFor(() => sim.state.facts['ch1.hild_walked_up'] === true, 60 * 240);
     const said = (key: string) =>
       events.some((e) => e.type === 'PERSON_SPOKE' && e.lineKey === key);
-    while (!said('c_hild.bark.broch.03')) sim.step();
+    expect(said('c_hild.camp.walk_up')).toBe(true);
+    // By the fire with her leg untended on the first day, then about her work (Stage 8).
     for (let i = 0; i < 60 * 3; i++) sim.step();
-    expect(sim.state.people['C_HILD']?.life.activity).toBe('WORK');
-    const lines = events.flatMap((e) => (e.type === 'PERSON_SPOKE' ? [e.lineKey] : []));
-    expect(lines).toContain('c_hild.bark.broch.01');
     expect(home(sim.state).stage).toBe('S0');
     expect(sim.state.people['C_HILD']?.wounds).toMatchObject([
       { severity: 'SERIOUS', where: 'leg' },
@@ -115,11 +120,13 @@ describe('beat 2: Hild leads to the broch (Book 4 Chapter 1)', () => {
   it('completes once the fire is lit and her leg tended; she fishes from the next morning', () => {
     const { sim, events, bot } = toTheBroch('beat2');
     // Driftwood picked up where it lies on the strand (PT-2), then back up to light the fire.
+    bot.goToZone('ZONE_SK_STRAND');
     bot.pickUp('drift_east_rocks');
     bot.pickUp('drift_east_tide');
     expect(home(sim.state).stores['RES_DRIFTWOOD']).toBeGreaterThanOrEqual(work.fireLightLoads);
     bot.doAt('fire');
     expect(home(sim.state).fire.lit).toBe(true);
+    bot.waitFor(() => sim.state.facts['ch1.hild_walked_up'] === true, 60 * 240);
     // Tend her leg: interacting next to her.
     bot.tend('C_HILD', 'good');
     expect(sim.state.people['C_HILD']?.wounds[0]?.tendedDay).toBe(sim.state.calendar.day);
@@ -232,6 +239,7 @@ describe('Stage 7 check 3: the action adds output at skill; only fishing is time
   const buildWith = (press: 'good' | 'late' | 'none', skill = 1) => {
     const { sim, events, bot } = play(`build-${press}-${skill}`);
     sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
+    sim.state.facts['ch1.shelter_raised'] = true; // the lean-to up: the work goes on to the roof
     sim.state.player.skills['building'] = skill as 0;
     bot.goToSite('shelter');
     bot.interact();
@@ -372,6 +380,7 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
   it('never empties the bar on its own, and counts the hours towards a hard day', () => {
     const { sim, bot } = play('hard');
     sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
+    sim.state.facts['ch1.shelter_raised'] = true; // the lean-to up: the work goes on to the roof
     sim.state.player.stamina.current = 1;
     // Seventeen half-hours raising the shelter: more than Book 10's hard day, short of the roof.
     for (let i = 0; i < 17; i++) bot.doAt('shelter', 'none');
@@ -502,6 +511,9 @@ describe('Stage 7 check 5: the bar is its maximum, lowered by named reasons, res
 
   it('carrying a person till the bar is empty sets them down', () => {
     const { sim, events } = play('carry');
+    // Design addendum 2.4: cut free of the net already, so she can be lifted.
+    sim.state.facts['ch1.hild_reached'] = true;
+    sim.state.facts['ch1.net_free'] = true;
     const strand = land.maps.get('ZONE_SK_STRAND');
     if (strand === undefined) throw new Error('no strand');
     const opening = new OpeningBot(sim, strand, b, land);

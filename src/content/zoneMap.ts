@@ -84,6 +84,26 @@ export interface ZoneMap {
   readonly solid?: readonly (readonly [number, number])[];
   /** How hard the place's wind blows, against the strand's (Stage 10: the Hag's Seat, the windiest). */
   readonly wind?: number;
+  /** Design addendum 2.4 (decision DE-26; Book 9 section 04): the zone's doors and hide flaps. */
+  readonly doors?: readonly DoorDef[];
+}
+
+/** Book 2 section 10, DoorDef (positions in tiles of its zone; `fact` a fact it waits for). */
+export interface DoorDef {
+  readonly id: string;
+  readonly zone: Id;
+  readonly pos: { readonly x: number; readonly y: number };
+  /** The way the doorway faces (a south doorway faces s); a door swings that way. */
+  readonly facing: Facing;
+  readonly width: number;
+  readonly kind: 'DOOR' | 'FLAP' | 'GATE';
+  readonly sheet: string;
+  /** The camp's or building's stages it exists at (absent: always). */
+  readonly stages?: readonly string[];
+  /** A fact that must hold for it to exist (the shelter's flap, once the sail is raised). */
+  readonly fact?: string;
+  readonly barrable: boolean;
+  readonly barSide?: Facing;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -148,6 +168,22 @@ export function checkZoneMap(json: unknown): { map: ZoneMap | null; problems: st
   const solid = json['solid'];
   if (solid !== undefined && !triples(solid, 2)) problems.push('solid must be [x, y] tiles');
   if (!Array.isArray(life)) problems.push('life must be a list');
+  const doors = json['doors'];
+  if (
+    doors !== undefined &&
+    !(
+      Array.isArray(doors) &&
+      doors.every(
+        (d) =>
+          isRecord(d) &&
+          typeof d['id'] === 'string' &&
+          isRecord(d['pos']) &&
+          typeof d['width'] === 'number' &&
+          (d['kind'] === 'DOOR' || d['kind'] === 'FLAP' || d['kind'] === 'GATE'),
+      )
+    )
+  )
+    problems.push('doors must be DoorDefs (id, pos, width, kind)');
   return { map: problems.length === 0 ? (json as unknown as ZoneMap) : null, problems };
 }
 

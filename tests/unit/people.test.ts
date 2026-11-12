@@ -170,7 +170,9 @@ describe('Stage 8 check 3: friendship and fear deltas by deed (Book 10 section 0
     const sim = createSimulation(b, world, land);
     const strand = land.maps.get('ZONE_SK_STRAND');
     if (strand === undefined) throw new Error('no strand');
-    new OpeningBot(sim, strand, b, land).rescue('C_HILD');
+    const opening = new OpeningBot(sim, strand, b, land);
+    opening.pickUp('wreck_seax');
+    opening.rescue('C_HILD');
     const rescue = sim.state.ledger.find((d) => d.tag === 'RESCUE');
     expect(rescue).toMatchObject({ doer: 'HOUSEHOLD', victims: ['C_HILD'] });
     const h = person(sim.state, 'C_HILD');
@@ -366,7 +368,7 @@ describe('Stage 8 check 3: band transitions and the warning flow, two days apart
 });
 
 describe('Stage 8 check 1: Hild starts useful work after her rescue and is always doing something', () => {
-  it('leads to the broch, shows the camp, and goes straight to work, a wound or no', () => {
+  it('goes straight to work once safe, a wound or no, and walks up at the first fire (DE-16, DE-22)', () => {
     const world = newCampaign('useful', b, parsePeopleBasics(balance), content, {
       name: 'Ash',
       bodyModel: 'A',
@@ -377,23 +379,17 @@ describe('Stage 8 check 1: Hild starts useful work after her rescue and is alway
     const strand = land.maps.get('ZONE_SK_STRAND');
     if (strand === undefined) throw new Error('no strand');
     const opening = new OpeningBot(sim, strand, b, land);
+    opening.pickUp('wreck_seax');
     opening.rescue('C_HILD');
-    opening.waitFor(() => sim.state.facts['ch1.lead_started'] === true, 60 * 60);
-    const bot = new CampBot(sim, b, land, camp);
-    bot.goToZone('ZONE_SK_MACHAIR');
-    bot.goToSite('stores');
-    const said = (key: string) =>
-      events.findIndex((e) => e.type === 'PERSON_SPOKE' && e.lineKey === key);
-    bot.waitFor(() => said('c_hild.bark.broch.03') >= 0, 60 * 300);
-    const shown = sim.state.calendar;
-    // Within a game minute of showing the camp she is at her work: fishing, at half pace.
-    bot.waitFor(() => person(sim.state, 'C_HILD').life.activity === 'WORK', 60 * 3);
-    expect(person(sim.state, 'C_HILD').life.activity).toBe('WORK');
-    expect(sim.state.calendar.minuteOfDay - shown.minuteOfDay).toBeLessThanOrEqual(2);
+    const safeAt = sim.state.calendar;
+    // Within a few game minutes of being set down safe she is at her work: fishing, at half pace.
+    opening.waitFor(() => person(sim.state, 'C_HILD').life.activity === 'WORK', 60 * 60);
+    expect(sim.state.calendar.minuteOfDay - safeAt.minuteOfDay).toBeLessThanOrEqual(3);
     expect(person(sim.state, 'C_HILD').wounds[0]?.tendedDay).toBeUndefined();
     const act = activityOf(sim.state, camp, people, 'C_HILD');
     expect(act).toMatchObject({ kind: 'WORK', job: 'FISHER', half: true });
     // And she lands fish that morning.
+    const bot = new CampBot(sim, b, land, camp);
     bot.waitFor(() => events.some((e) => e.type === 'FISH_LANDED' && e.by === 'C_HILD'), 60 * 600);
     expect(events.some((e) => e.type === 'FISH_LANDED' && e.by === 'C_HILD')).toBe(true);
   });
@@ -418,8 +414,9 @@ describe('Stage 8 check 1: Hild starts useful work after her rescue and is alway
     expect(idleStill.slice(0, 5)).toEqual([]);
     for (const k of ['WORK', 'MEAL', 'EVENING', 'TENDENCY', 'SLEEP']) expect(kinds).toContain(k);
     // Every activity is one the household's day knows, with its reason.
+    // (TALK: the first night's fire with Hild, design addendum 2.4.)
     for (const k of kinds)
-      expect(['WORK', 'MEAL', 'EVENING', 'TENDENCY', 'SLEEP', 'DARK', 'SIT']).toContain(k);
+      expect(['WORK', 'MEAL', 'EVENING', 'TENDENCY', 'SLEEP', 'DARK', 'SIT', 'TALK']).toContain(k);
   });
 
   it('gives a reason for everything: the dark, rest when told, a refusal, a grave wound', () => {

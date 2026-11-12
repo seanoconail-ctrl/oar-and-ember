@@ -55,11 +55,21 @@ import type {
 import { stepArcher } from './land/archer.ts';
 import {
   broughtTo,
+  campReached,
+  duskBargain,
+  duskBargainAt,
+  seeMissile,
+  sidestepsMissile,
+  steererFace,
+  steererHeal,
+  steererLockOn,
+  steererSneak,
+  stepDuskAway,
+  stepStance,
   crewOrder,
   finisherTarget,
   hostilesAware,
   hurt,
-  inDodge,
   leaveZone,
   meleePress,
   meleeRelease,
@@ -71,14 +81,15 @@ import {
   steererParry,
   steererShove,
   stepFight,
+  missileStruck,
 } from './land/fight.ts';
 import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
-import { damageOf } from './combat/fighter.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import type { MissileEvent } from './land/missiles.ts';
-import { bandAt, stillWaterLevel } from './land/water.ts';
+import { bandAt, isDeep, stillWaterLevel } from './land/water.ts';
 import {
   byTheFire,
+  homeOf,
   campaignMinute,
   campUseAt,
   campUseNear,
@@ -134,13 +145,35 @@ import {
 } from './narrative/launch.ts';
 import type { LaunchContext, LaunchEvent } from './narrative/launch.ts';
 import { addHeld, stepTelemetry } from './narrative/telemetry.ts';
+import { onLifted, onSetDown, onTideRefusal, stepOpening } from './narrative/opening.ts';
 import {
-  onLifted,
-  onSetDown,
-  onTideRefusal,
-  stepOpening,
-  stepOpeningAfter,
-} from './narrative/opening.ts';
+  chestInteract,
+  finishWreckWork,
+  isWreckWork,
+  netInteract,
+  runaAnswer,
+  runaAsks,
+  startHagStone,
+  stepMast,
+  stepWreck,
+  stepWreckPhase,
+  wreckCommand,
+  wreckHolds,
+  wreckLifted,
+  wreckPhase,
+  wreckPickUp,
+  wreckPlacedUses,
+  wreckSetDown,
+  wreckUse,
+  wreckWorkCancelled,
+} from './narrative/wreck.ts';
+import type { WreckContext, WreckEvent, WreckHooks } from './narrative/wreck.ts';
+import { stepAims } from './narrative/aims.ts';
+import type { AimEvent, AimsContext } from './narrative/aims.ts';
+import { edgeKindAt, stepEdges } from './land/edges.ts';
+import type { EdgeEvent } from './land/edges.ts';
+import { doorAt, doorsHere, openDoor, stepDoors } from './land/doors.ts';
+import type { DoorEvent, DoorTimings } from './land/doors.ts';
 import type { OpeningEvent } from './narrative/opening.ts';
 import type { PeopleContext } from './people/context.ts';
 import { joinNew, peopleDawn, peopleMinute, residents, stepPeopleTick } from './people/day.ts';
@@ -202,6 +235,16 @@ export type Command =
   | { readonly type: 'BLOCK'; readonly on: boolean }
   | { readonly type: 'DODGE'; readonly x: number; readonly y: number }
   | { readonly type: 'FINISHER'; readonly on: boolean }
+  /**
+   * Combat v2 (Book 2 section 12, decisions DE-2, DE-3, DE-8 and DE-9): the stance's aim towards
+   * one of AIM_DIRECTIONS (null: none; keyboard-only play sends the way last moved); the lock-on
+   * key pressed or let go (a tap switches, a hold releases); the sneak key (a toggle); binding a
+   * wound or eating.
+   */
+  | { readonly type: 'FACE'; readonly dir: number | null }
+  | { readonly type: 'LOCK_ON'; readonly down: boolean }
+  | { readonly type: 'SNEAK' }
+  | { readonly type: 'HEAL' }
   /** The difficulty options that change the simulation (Book 1 section 15), from the menu. */
   | { readonly type: 'SET_OPTIONS'; readonly secondWind?: boolean; readonly ransMercy?: boolean }
   /** Stage 8: talk to a resident; choose an option in the conversation or scene; leave it. */
@@ -314,10 +357,17 @@ export type SimEvent =
   | SearchEvent
   | RepairEvent
   | LaunchEvent
+  /** Design addendum 2.4: the opening, the aims, the edges' captions and the doors. */
+  | WreckEvent
+  | AimEvent
+  | EdgeEvent
+  | DoorEvent
   /** The held finisher has begun on someone (Book 10 finisherHold). */
   | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
   | { readonly type: 'ZONE_ENTERED'; readonly zone: Id; readonly from: Id }
+  /** Combat v2 (decision DE-12): the camp reached the first time in a day: a checkpoint is due. */
+  | { readonly type: 'CAMP_REACHED'; readonly day: number }
   /** The steerer lay down in a bed; the night passes after the camp's sleepSeconds. */
   | { readonly type: 'FELL_ASLEEP'; readonly site: string }
   /** The bar ran empty carrying someone: they are set down where the steerer stands. */
@@ -390,6 +440,12 @@ export interface SimWorldContext extends LandContext {
   readonly repairs?: RepairsContext | null;
   /** Chapter 1's gate, the launch (Stage 12). */
   readonly launch?: LaunchContext | null;
+  /** Design addendum 2.4: the opening (src/sim/narrative/wreck.ts) and Chapter 1's aims. */
+  readonly wreck?: WreckContext | null;
+  readonly aims?: AimsContext | null;
+  /** Book 10 section 25's doors and edge captions (decisions DE-25 and DE-26). */
+  readonly doors?: DoorTimings | null;
+  readonly edgeCaption?: { readonly afterSeconds: number; readonly cooldownSeconds: number } | null;
 }
 
 export function createSimulation(
@@ -409,6 +465,8 @@ export function createSimulation(
   const searchCtx = land?.searches ?? null;
   const repairCtx = land?.repairs ?? null;
   const launchCtx = land?.launch ?? null;
+  const wreckCtx = land?.wreck ?? null;
+  const aimsCtx = land?.aims ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
@@ -442,7 +500,19 @@ export function createSimulation(
   /** Hild's lines at the camp (the opening's caller). */
   const sayHild = (lineKey: string): void => {
     const who = land?.opening?.caller;
-    if (who !== undefined) events.emit({ type: 'PERSON_SPOKE', person: who, lineKey });
+    if (who === undefined) return;
+    // Design addendum 2.4: Hild is not always at the camp now; she speaks only in earshot.
+    const wc = land?.wreck ?? null;
+    const onFoot = state.onFoot;
+    if (wc !== null && onFoot !== null) {
+      const a = onFoot.actors[who];
+      if (
+        a === undefined ||
+        Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y) > wc.earshotTiles * 24
+      )
+        return;
+    }
+    events.emit({ type: 'PERSON_SPOKE', person: who, lineKey });
   };
   /** Where the steerer is, for the fire's warmth. */
   const steererAt = (): { zone: Id; x: number; y: number; tile: number } | null => {
@@ -564,6 +634,8 @@ export function createSimulation(
       ].includes(command.type)
     )
       return;
+    // Design addendum 2.4: in the cold open MOVE steers the oar; waking, any input gets up.
+    if (wreckCtx !== null && wreckCommand(state, command)) return;
     switch (command.type) {
       case 'TIME_HELD':
         addHeld(state, command.ms);
@@ -635,6 +707,8 @@ export function createSimulation(
       case 'CANCEL_WORK': {
         const p = state.onFoot?.player;
         if (p?.work == null) return;
+        // The hold-to-cut keeps what is cut (Book 10 cutHold).
+        wreckWorkCancelled(state, p.work.task, p.work.since);
         events.emit({ type: 'WORK_CANCELLED', task: p.work.task });
         p.work = null;
         return;
@@ -668,7 +742,28 @@ export function createSimulation(
       case 'MELEE':
         if (fightCtx === null || fallen() || busy()) return;
         if (state.onFoot?.player.aim != null) return;
-        meleePress(state, fightCtx, command.facing, emitFight);
+        meleePress(state, fightCtx, command.facing, emitFight, tileSize());
+        return;
+      case 'FACE': {
+        if (state.onFoot === null) return;
+        const dir =
+          command.dir === null
+            ? null
+            : ((Math.round(command.dir) % AIM_DIRECTIONS) + AIM_DIRECTIONS) % AIM_DIRECTIONS;
+        steererFace(state, dir === null ? null : (dir / AIM_DIRECTIONS) * 2 * Math.PI);
+        return;
+      }
+      case 'LOCK_ON':
+        if (fightCtx === null || fallen()) return;
+        steererLockOn(state, fightCtx, command.down, emitFight, tileSize());
+        return;
+      case 'SNEAK':
+        if (state.onFoot === null || fallen()) return;
+        steererSneak(state);
+        return;
+      case 'HEAL':
+        if (fightCtx === null || fallen() || busy()) return;
+        steererHeal(state, fightCtx, emitFight);
         return;
       case 'MELEE_RELEASE':
         if (fightCtx === null || fallen()) return;
@@ -676,7 +771,15 @@ export function createSimulation(
         return;
       case 'PARRY':
         if (fightCtx === null || fallen() || busy()) return;
-        steererParry(state, fightCtx, emitFight);
+        steererParry(
+          state,
+          fightCtx,
+          emitFight,
+          Math.min(
+            fightCtx.cb.parry.windowMax,
+            state.options.parryWindow ?? fightCtx.cb.parry.window,
+          ),
+        );
         return;
       case 'BLOCK':
         if (fightCtx === null || fallen()) return;
@@ -733,6 +836,17 @@ export function createSimulation(
           return;
         }
         if (busy()) return;
+        // Combat v2: food offered to the scavengers at dusk while they warn (Book 10 foodBargain).
+        const warner =
+          fightCtx === null
+            ? null
+            : duskBargainAt(state, fightCtx, map.tile, land.rules.interactRadiusTiles);
+        if (warner !== null) {
+          const fw = fightWorld();
+          if (fw !== null && !duskBargain(fw, warner))
+            refuse(command, 'NO_FOOD', 'RES_SALTED_FISH');
+          return;
+        }
         const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
         const interaction = interactionNow(onFoot, map, land.rules, tideOpen, state.facts);
         const reach = land.rules.interactRadiusTiles * map.tile;
@@ -775,6 +889,14 @@ export function createSimulation(
           const use = onFoot.carrying === null ? campUseAt(usesHere(), map, command.tile) : null;
           if (use !== null) {
             applyUse(command, use.use, use);
+            return;
+          }
+          // A door clicked opens (decision DE-26).
+          const door = doorAt(doorsNow(map), map.tile, command.tile);
+          const ds = door === null ? undefined : onFoot.doors?.find((d) => d.id === door.id);
+          if (door !== null && ds !== undefined && land.doors != null) {
+            if (!openDoor(ds, door, onFoot.player, map.tile, events.emit.bind(events)))
+              refuse(command, 'NOTHING_THERE', 'barred');
             return;
           }
           refuse(command, 'NOTHING_THERE');
@@ -882,6 +1004,11 @@ export function createSimulation(
       case 'TALK': {
         if (people === null || camp === null) return;
         if (busy()) return;
+        // Runa asks where her tool chest is, the next time she is talked to (decision DE-21).
+        if (wreckCtx !== null && searchCtx !== null && runaAsks(state, wreckCtx, command.person)) {
+          startSearchTalk(state, searchCtx, wreckCtx.rw.runa.talk, emitSearch);
+          return;
+        }
         const why = startTalk(state, people, camp, command.person, emitPeople);
         if (why !== null) refuse(command, why, command.person);
         return;
@@ -958,6 +1085,58 @@ export function createSimulation(
   /** A search's events (Stage 10): onto the bus, and a resolved search is remembered. */
   const emitSearch = (e: SearchEvent): void => {
     events.emit(e);
+    // An offering laid at the Hag's Stone: its effect plays (decision DE-28).
+    if (e.type === 'OMEN_ANSWERED' && wreckCtx !== null) {
+      startHagStone(state, wreckCtx);
+      events.emit({
+        type: 'WRECK',
+        what: 'HAG_HUSH',
+        key: wreckCtx.rw.hagStone.captions['hush'] ?? '',
+      });
+    }
+  };
+  /** The opening's and the aims' events (design addendum 2.4): onto the bus. */
+  const emitWreck = (e: WreckEvent | AimEvent | EdgeEvent | DoorEvent): void => {
+    events.emit(e);
+  };
+  /** The doors of the zone in view that exist now. */
+  const doorsNow = (
+    map: { readonly doors?: readonly import('./land/zoneMap.ts').DoorDef[] } & Parameters<
+      typeof doorsHere
+    >[0],
+  ) =>
+    doorsHere(map, camp === null ? null : (state.homes[camp.def.home]?.stage ?? null), state.facts);
+  /** What the opening's uses and works do beyond it. */
+  const wreckHooks: WreckHooks = {
+    give: (item, count) => {
+      if (land?.rules.items[item] === undefined) return 0;
+      return give({ type: 'INTERACT' }, item, count);
+    },
+    advance: (minutes) => {
+      advanceBy(minutes);
+    },
+    work: (task, site, at, ticks, target) => {
+      const onFoot = state.onFoot;
+      if (onFoot === null) return;
+      const p = onFoot.player;
+      p.aim = null;
+      p.work = {
+        task,
+        site,
+        since: state.tick,
+        ticks,
+        press: null,
+        at,
+        ...(target === undefined ? {} : { target }),
+      };
+      p.facing = facingOf(at.x - p.x, at.y - p.y, p.facing);
+      events.emit({ type: 'WORK_STARTED', task, site, ticks, markTick: null });
+    },
+    spend: (stamina) => {
+      const st = state.player.stamina;
+      st.current = Math.max(Math.min(st.current, 1), st.current - stamina);
+      st.spentTick = state.tick;
+    },
   };
   /** The repairs' events (Stage 11): onto the bus. */
   const emitRepair = (e: RepairEvent): void => {
@@ -996,6 +1175,9 @@ export function createSimulation(
     repair: (action: string): void => {
       if (repairCtx !== null) chooseRepair(state, repairCtx, action, repairHooks, emitRepair);
     },
+    runa: (place: string): void => {
+      if (wreckCtx !== null) runaAnswer(state, wreckCtx, place, emitWreck);
+    },
   };
   /** What the repairs' choices do beyond them (Stage 11). */
   const repairHooks = {
@@ -1030,6 +1212,21 @@ export function createSimulation(
         if (elevation === undefined) return false;
         return (
           bandAt(land.water, elevation, x, y, stillWaterLevel(tideAt(state.calendar, b))) !== null
+        );
+      },
+      // Combat v2 (Book 10 avoid): deep water, and a lit fire within its distance.
+      avoid: (x, y) => {
+        const elevation = land.elevations.get(onFoot.zone);
+        const level = stillWaterLevel(tideAt(state.calendar, b));
+        if (elevation !== undefined && isDeep(bandAt(land.water, elevation, x, y, level)))
+          return true;
+        const fire = camp?.def.sites.find((f) => f.kind === 'FIRE' && f.zone === onFoot.zone);
+        const lit = camp === null ? false : homeOf(state, camp)?.fire.lit === true;
+        return (
+          fire !== undefined &&
+          lit &&
+          Math.hypot(x - fire.x * map.tile, y - fire.y * map.tile) <=
+            fightCtx.ai.self.avoidFireTiles * map.tile
         );
       },
       emit: emitFight,
@@ -1096,6 +1293,8 @@ export function createSimulation(
     }
     const p = onFoot.player;
     const shot = launch(onFoot, state.rng.combat, land, map.tile, STEERER, p, aim, kind, drawTicks);
+    const fwl = fightWorld();
+    if (fwl !== null) seeMissile(fwl, shot.n, STEERER, p, shot.ux, shot.uy, shot.length);
     events.emit({ type: 'BOW_LOOSED', item, drawTicks, n: shot.n });
     events.emit({ type: 'MISSILE_LOOSED', n: shot.n, kind, shooter: STEERER });
   };
@@ -1156,6 +1355,13 @@ export function createSimulation(
       refuse(command, 'NOTHING_THERE');
       return;
     }
+    if (
+      wreckCtx !== null &&
+      wreckPickUp(state, wreckCtx, camp, found.item, found.x, found.y, emitWreck)
+    ) {
+      onFoot.items.splice(at, 1);
+      return;
+    }
     const took = give(command, found.item, found.count);
     if (took === 0) return;
     onFoot.items.splice(at, 1);
@@ -1180,6 +1386,8 @@ export function createSimulation(
     const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
     if (onFoot === null || map === undefined) return [];
     const uses = camp === null ? [] : campUses(state, camp, map, onFoot.actors);
+    // Design addendum 2.4: Thorkel's key and chest, and the sail to raise (before others on a tile).
+    if (wreckCtx !== null) uses.unshift(...wreckPlacedUses(state, wreckCtx, map, camp));
     // Stage 10: a search's words to open (Bran, Ketill, Runa, the stone).
     if (searchCtx !== null) uses.push(...searchPlacedUses(state, searchCtx, map));
     // Stage 11: the boat, the wreck's rigging, the skiff's oar, the words at the cave and the bier.
@@ -1253,6 +1461,10 @@ export function createSimulation(
       if (use.site === 'boat.look' && repairCtx !== null) boatLooked(state, repairCtx);
       return;
     }
+    if (use.kind === 'OPENING') {
+      if (wreckCtx !== null) wreckUse(state, wreckCtx, use.site, wreckHooks, emitWreck);
+      return;
+    }
     if (use.kind === 'REPAIR') {
       if (repairCtx !== null && use.site === 'take_oar')
         takeOar(state, repairCtx, repairHooks, emitRepair);
@@ -1288,6 +1500,11 @@ export function createSimulation(
         return;
       case 'TALK': {
         if (people === null) return;
+        // Runa asks where her tool chest is, the next time she is talked to (decision DE-21).
+        if (wreckCtx !== null && searchCtx !== null && runaAsks(state, wreckCtx, use.target)) {
+          startSearchTalk(state, searchCtx, wreckCtx.rw.runa.talk, emitSearch);
+          return;
+        }
         const why = startTalk(state, people, camp, use.target, emitPeople);
         if (why !== null) refuse(command, why, use.target);
         return;
@@ -1318,6 +1535,14 @@ export function createSimulation(
       refuse(command, 'TOO_TIRED', interaction.target);
       return;
     }
+    // Hild in the net: the hold-to-cut, or her word that she needs a blade (decision DE-16).
+    if (
+      interaction.kind === 'LIFT' &&
+      wreckCtx !== null &&
+      (netInteract(state, wreckCtx, interaction.target, wreckHooks, emitWreck) ||
+        chestInteract(state, wreckCtx, interaction.target, wreckHooks, emitWreck))
+    )
+      return;
     // Lifting someone puts a drawn bow away.
     onFoot.player.aim = null;
     applyInteraction(onFoot, interaction);
@@ -1326,6 +1551,7 @@ export function createSimulation(
       events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
       if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
       if (searchCtx !== null) searchLifted(state, searchCtx, interaction.target, emitSearch);
+      if (wreckCtx !== null) wreckLifted(state, wreckCtx, interaction.target, emitWreck);
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
       // A downed ally set down: safe at the camp, or downed again where they lie (Stage 9).
@@ -1333,6 +1559,10 @@ export function createSimulation(
       const setDown = onFoot.actors[interaction.target];
       if (fw !== null && setDown !== undefined) broughtTo(fw, interaction.target, setDown);
       if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
+      // Design addendum 2.4: a thing at its home, the stores at the camp, Runa's chest, a rescue.
+      const there = land.maps.get(onFoot.zone);
+      if (wreckCtx !== null && there !== undefined)
+        wreckSetDown(state, wreckCtx, camp, interaction.target, there, emitWreck);
       // Stage 10: Oddi safe (he joins), Thorkel's chest saved, Runa's tools past the neck.
       const zoneMap = land.maps.get(onFoot.zone);
       if (searchCtx !== null && zoneMap !== undefined)
@@ -1366,6 +1596,26 @@ export function createSimulation(
     const tide = tideAt(state.calendar, b);
     const level = stillWaterLevel(tide);
     const p = onFoot.player;
+    // The opening's own hands-on actions (the cut, the sail raised) end (design addendum 2.4).
+    if (
+      p.work != null &&
+      wreckCtx !== null &&
+      isWreckWork(p.work.task) &&
+      state.tick - p.work.since >= p.work.ticks
+    ) {
+      const task = p.work.task;
+      p.work = null;
+      events.emit({
+        type: 'WORK_DONE',
+        task,
+        site: 'opening',
+        minutes: 0,
+        stamina: 0,
+        bonus: 0,
+        output: 1,
+      });
+      finishWreckWork(state, wreckCtx, camp, task, wreckHooks, emitWreck);
+    }
     // A hands-on action ends: its work counts and its game time passes (Book 2 section 07).
     if (p.work != null && camp !== null && state.tick - p.work.since >= p.work.ticks) {
       const work = p.work;
@@ -1395,6 +1645,10 @@ export function createSimulation(
     if (state.gameOver !== null) return;
     const fw = fightWorld();
     if (fw !== null) spawnEncounters(state, fw.ctx, map, emitFight);
+    // Where everyone stood as the tick began (the missiles' swept test, Book 10 sweptHits).
+    const starts = new Map<Id, { x: number; y: number }>([[STEERER, { x: p.x, y: p.y }]]);
+    for (const [id, a] of Object.entries(onFoot.actors)) starts.set(id, { x: a.x, y: a.y });
+    if (fw !== null) stepStance(state, fw.ctx, map.tile, emitFight);
     if (fallen()) {
       p.intent = { x: 0, y: 0, run: false, sneak: false };
       p.aim = null;
@@ -1409,12 +1663,28 @@ export function createSimulation(
         galeRefused(state, emitSearch, searchCtx);
       }
     }
+    // Design addendum 2.4: the zone's doors swing for whoever walks at them (decision DE-26).
+    if (land.doors != null)
+      stepDoors(onFoot, map, doorsNow(map), state.tick, land.doors, emitWreck);
+    // Waking in the surf, the steerer lies until up (decision DE-30).
+    const waking = wreckCtx !== null && wreckPhase(state) !== 'PLAY';
+    if (waking) p.intent = { ...p.intent, x: 0, y: 0 };
     // The launch scene moves the steerer itself (Stage 12).
-    if (!launchActive(state))
-      stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
-    if (held) p.intent = wanted;
+    const press = launchActive(state)
+      ? null
+      : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level });
+    if (held || waking) p.intent = wanted;
+    // "Nothing that way" (decision DE-25): pressing against an edge gives its caption.
+    if (land.edgeCaption != null) {
+      const kind = press === null ? null : edgeKindAt(map, press, land.maps, tide.tidalGroundOpen);
+      stepEdges(state, kind === null || kind === 'LINK' ? null : kind, land.edgeCaption, emitWreck);
+    }
     if (fw !== null) {
       stepFight(fw);
+      stepDuskAway(fw);
+      // Combat v2 (decision DE-12): reaching camp the first time in a day calls for a checkpoint.
+      if (campReached(state, fw.ctx, map.tile))
+        events.emit({ type: 'CAMP_REACHED', day: state.calendar.day });
       // The held finisher (Book 10 finisherHold): a kill, and a deed.
       if (finishing !== null) {
         const t = onFoot.actors[finishing.target];
@@ -1470,9 +1740,11 @@ export function createSimulation(
       const deep = band !== null && band.band !== 'WET' && band.band !== 'ANKLE';
       if (deep && seasonOf(state.calendar.day) !== 'Summer') addReason('COLD', 'wet');
     }
+    // Design addendum 2.4: the opening's beats and Chapter 1's aims.
+    if (wreckCtx !== null) stepWreck(state, wreckCtx, land, tide.tidalGroundOpen, emitWreck);
+    if (aimsCtx !== null) stepAims(state, aimsCtx, land.maps, emitWreck);
     if (land.opening !== null) {
       stepOpening(state, land.opening, map, land, level, emit);
-      stepOpeningAfter(state, land.opening, emit);
       if (camp !== null) stepBroch(state, camp, land.opening, land, tide.tidalGroundOpen, emit);
     }
     // Chapter 1 beat 3, the three searches (Stage 10).
@@ -1503,7 +1775,9 @@ export function createSimulation(
         (id) =>
           searchHolds(state, searchCtx, id) ||
           repairsHold(state, repairCtx, id) ||
-          launchHolds(state, id),
+          launchHolds(state, id) ||
+          (wreckCtx !== null && wreckHolds(state, wreckCtx, id)),
+        wreckCtx?.limp,
       );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
       if (!launchActive(state))
@@ -1527,58 +1801,36 @@ export function createSimulation(
             state.tick - aim.since,
           );
           emit({ type: 'MISSILE_LOOSED', n: shot.n, kind, shooter: id });
+          if (fw !== null) seeMissile(fw, shot.n, id, actor, shot.ux, shot.uy, shot.length);
         });
       }
       stepActor(actor, map, land, tide.tidalGroundOpen);
     }
     const now = gameMinute(state.calendar);
-    // A dodge's invulnerable ticks let a missile pass (Book 10 dodge; decision S9-29).
-    const passes = (id: Id): boolean => {
+    // Combat v2 (decision DE-10): only a sidestep that read a missile lets it pass; every
+    // missile's path is swept against where each body stood and stands this tick.
+    const passes = (id: Id, n: number): boolean => {
       const f = id === STEERER ? onFoot.player.fight : onFoot.actors[id]?.fight?.f;
-      return fightCtx !== null && f != null && inDodge(f, state.tick, fightCtx);
+      return sidestepsMissile(f, n, state.tick);
     };
-    stepProjectiles(onFoot, state.rng.combat, map, { ...land, passes }, level, now, (e) => {
-      emit(e);
-      // Stage 9: a missile in a body hurts; on a shield it costs the block (Book 10 "Fight rules").
-      if (fw === null || e.target === undefined) return;
-      const cb = fw.ctx.cb;
-      const dmg = e.kind === 'arrow' ? cb.arrow : cb.thrownSpear;
-      const from =
-        e.shooter === undefined ? null : e.shooter === STEERER ? p : onFoot.actors[e.shooter];
-      if (e.strike === 'body') {
-        const target = e.target === STEERER ? null : onFoot.actors[e.target]?.fight;
-        const f = e.target === STEERER ? p.fight : target?.f;
-        const armour = f?.armour ?? 'NONE';
-        const damage = damageOf({ damage: dmg.damage, cut: false }, armour, cb);
-        hurt(fw, e.target, damage, e.shooter ?? STEERER, {
-          heavyKill: false,
-          weapon: null,
-          dx: e.x - (from?.x ?? e.x),
-          dy: e.y - (from?.y ?? e.y),
-          missile: true,
-        });
-        emitFight({
-          type: 'BLOW',
-          attacker: e.shooter ?? STEERER,
-          defender: e.target,
-          outcome: 'HIT',
-          damage,
-          heavy: false,
-          x: e.x,
-          y: e.y,
-          dx: e.x - (from?.x ?? e.x),
-          dy: e.y - (from?.y ?? e.y),
-          material: 'FLESH',
-        });
-      } else if (e.strike === 'shield') {
-        const pool =
-          e.target === STEERER ? state.player.stamina : onFoot.actors[e.target]?.fight?.stamina;
-        if (pool !== undefined) {
-          pool.current = Math.max(0, pool.current - cb.block.costFactor * dmg.vsShield);
-          pool.spentTick = state.tick;
-        }
-      }
-    });
+    const before = (id: Id): { x: number; y: number } | undefined => starts.get(id);
+    const shieldAngle = (id: Id): number | undefined =>
+      (id === STEERER ? onFoot.player.fight : onFoot.actors[id]?.fight?.f)?.angle;
+    // The stores' lashing on the broken mast: a missile through it cuts it (decision DE-19).
+    if (wreckCtx !== null) stepMast(state, wreckCtx, map, land.rules.releaseHeightPx, emitWreck);
+    stepProjectiles(
+      onFoot,
+      state.rng.combat,
+      map,
+      { ...land, passes, before, shieldAngle },
+      level,
+      now,
+      (e) => {
+        emit(e);
+        // A missile in a body hurts; on a shield it costs the block (Book 10 "Fight rules").
+        if (fw !== null) missileStruck(fw, e);
+      },
+    );
     expireStuck(onFoot, land, now);
     // Walking off an edge that leads on: into the next zone (Book 2 section 10, FootLink).
     if (p.work == null && p.sleep == null) {
@@ -1662,6 +1914,12 @@ export function createSimulation(
       const pending = queue;
       queue = [];
       for (const command of pending) apply(command);
+      // The played cold open (decision DE-30): the land waits and the calendar does not run.
+      if (wreckCtx !== null && stepWreckPhase(state, wreckCtx, emitWreck) === 'COLD') {
+        stepTelemetry(state);
+        state.tick++;
+        return;
+      }
       stepLand();
       stepTelemetry(state);
       state.clock.subMinute += TICK_UNITS;

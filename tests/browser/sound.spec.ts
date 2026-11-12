@@ -52,8 +52,10 @@ test('the sound test page offers every item, with captions and sliders', async (
   await expect(page.locator('[data-variant]')).toHaveCount(2);
   await expect(page.locator('[data-alarm]')).toHaveCount(1);
   // Starting weapons and missiles add eight: the arrow in flight and its five strikes, the empty
-  // quiver and a pickup.
-  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3 + 8);
+  // quiver and a pickup. Combat v2 adds ten (design addendum 2.4): the steerer's breath, the
+  // grunt, the parry's ring, the riposte, the lunge, the backstab, the sidestep, the alert, binding
+  // a wound and eating.
+  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3 + 8 + 10);
   await expect(page.locator('[data-voice]')).toHaveCount(4);
   await expect(page.locator('[data-step]')).toHaveCount(6);
   await expect(page.locator('[data-step-all]')).toHaveCount(1);

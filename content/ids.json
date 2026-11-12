@@ -1368,6 +1368,22 @@
       "origin": "assigned"
     },
     {
+      "id": "ITEM_BINDING",
+      "ref": "bindings",
+      "book": 10,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Combat v2 (decision DE-8): a linen binding, carried (up to Book 10 healCarry) and used to bind a wound."
+    },
+    {
+      "id": "ITEM_RATION",
+      "ref": "carried rations",
+      "book": 10,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Combat v2 (decision DE-8): a carried ration, 1 rd taken from the camp stores, eaten in a fight (decision DE-45)."
+    },
+    {
       "id": "ITEM_BOW",
       "ref": "Bow and arrows",
       "book": 10,
@@ -2750,6 +2766,86 @@
       "origin": "assigned"
     },
     {
+      "id": "SFX_STEERER_BREATH",
+      "ref": "a sharp breath",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_GRUNT",
+      "ref": "a grunt or cry",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_PARRY_RING",
+      "ref": "sharp, bright ring",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_RIPOSTE",
+      "ref": "heavy, distinct whoosh",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_LUNGE",
+      "ref": "scuff of feet and a drawn breath",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_BACKSTAB",
+      "ref": "short struggle, muffled",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_SIDESTEP",
+      "ref": "quick scuff for a sidestep",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_ALERT",
+      "ref": "sharp intake of breath and the weapon drawn",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_BIND_WOUND",
+      "ref": "bindWound",
+      "book": 10,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
+      "id": "SFX_EAT",
+      "ref": "eat",
+      "book": 10,
+      "section": "06",
+      "origin": "assigned",
+      "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
+    },
+    {
       "id": "SFX_GORE_WET_IMPACT",
       "ref": "Wet impacts",
       "book": 11,
@@ -3391,11 +3487,11 @@
     },
     {
       "id": "ITEM_THORKEL_CHEST",
-      "ref": "recover a chest now",
+      "ref": "Thorkel's chest",
       "book": 4,
       "section": "08",
       "origin": "assigned",
-      "note": "Stage 10: Thorkel's sea chest in the wash by the wreck (his silver; Book 6 section 03's chart fragment is Oddi's)."
+      "note": "Thorkel's own sea chest, locked (design addendum 2.4, decisions DE-17 and DE-18): found in the wash by Hild on the first morning and carried up to its outline at the camp; his key opens it (the bow, a quiver, his chart fragment and his things). Oddi's dilemma is over ITEM_SHIP_SILVER."
     },
     {
       "id": "ITEM_RUNA_TOOLS",
@@ -3468,6 +3564,14 @@
       "section": "02",
       "origin": "assigned",
       "note": "Stage 11: the wreck-scavengers at their skiff in Seal Cave after the sheepfold (the steering oar's encounter)."
+    },
+    {
+      "id": "SCN_SK_DUSK",
+      "ref": "The scavengers at dusk",
+      "book": 6,
+      "section": "18",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decisions DE-14 and DE-15): Svart and Conn strip the wreck's stern on Wreck Strand at the first dusk; Chapter 1's first fight."
     },
     {
       "id": "SFX_WORK_REPAIR",
@@ -3564,6 +3668,222 @@
       "section": "02",
       "origin": "assigned",
       "note": "Stage 11: Seal Cave's ambience."
+    },
+    {
+      "id": "ITEM_SHIP_SILVER",
+      "ref": "iron-bound strongbox",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-17): the ship's hack-silver in its strongbox by Oddi, which his dilemma saves or loses (it was Thorkel's chest before the rework)."
+    },
+    {
+      "id": "ITEM_THORKEL_KEY",
+      "ref": "He wore the key round his neck",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-18): the key to Thorkel's chest, on his body; it reaches the steerer however Bran's search ends."
+    },
+    {
+      "id": "ITEM_CHART_FRAGMENT",
+      "ref": "his chart fragment",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-18): Thorkel's chart fragment from his chest, marking Carrick for Chapter 2."
+    },
+    {
+      "id": "ITEM_BONE_COMB",
+      "ref": "a bone comb",
+      "book": 6,
+      "section": "18",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-18): one of Thorkel's things in his chest (Hild may keep it)."
+    },
+    {
+      "id": "ITEM_WHETSTONE",
+      "ref": "a whetstone",
+      "book": 6,
+      "section": "18",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-18): one of Thorkel's things in his chest."
+    },
+    {
+      "id": "ITEM_MAST_STORES",
+      "ref": "stores bundle",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-19): the ship's stores (salt fish and the cauldron) lashed on the broken mast, carried up as one load once shot down."
+    },
+    {
+      "id": "TASK_CUT_NET",
+      "ref": "a short hold-to-cut",
+      "book": 4,
+      "section": "08",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-16): cutting Hild free of the net with a blade."
+    },
+    {
+      "id": "TASK_RAISE_SHELTER",
+      "ref": "One hands-on action by the steerer",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-20): the steerer raising the sail shelter between the oars (shelterRaise)."
+    },
+    {
+      "id": "SFX_NET_CUT",
+      "ref": "the net's cords parting under the seax",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the hold-to-cut at the net, strand by strand."
+    },
+    {
+      "id": "SFX_CHEST_DRAG",
+      "ref": "Thorkel's chest scraping and bumping up the shingle",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): carrying the chest up the beach."
+    },
+    {
+      "id": "SFX_CHEST_THUD",
+      "ref": "set down with a thud",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the chest (or any heavy load) set down."
+    },
+    {
+      "id": "SFX_FLINT",
+      "ref": "the flint's strike and sparks",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the flint struck for the first fire, before the flame takes."
+    },
+    {
+      "id": "SFX_SAIL_RAISE",
+      "ref": "the sail hauled up, ropes creaking taut",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-20): raising the sail shelter between the oars."
+    },
+    {
+      "id": "SFX_CHEST_OPEN",
+      "ref": "the key in the chest's lock and the lid's creak",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-18): Thorkel's chest opened with his key."
+    },
+    {
+      "id": "SFX_LASHING",
+      "ref": "the lashing parting under an arrow",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-19): the stores' lashing on the broken mast cut by an arrow."
+    },
+    {
+      "id": "SFX_BUNDLE_SPLASH",
+      "ref": "the bundle's splash",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-19): the stores bundle falling into the shallows."
+    },
+    {
+      "id": "SFX_RING_CLINK",
+      "ref": "the arm-ring's small clink from the pool",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the silver arm-ring taken from the rock pool."
+    },
+    {
+      "id": "SFX_DOOR_CREAK",
+      "ref": "a driftwood door's creak and knock",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-26): a timber door swinging open, and its knock shut."
+    },
+    {
+      "id": "SFX_FLAP",
+      "ref": "a hide or cloth flap's soft slap",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-26): a hide or cloth flap lifting and dropping."
+    },
+    {
+      "id": "SFX_DOOR_BAR",
+      "ref": "a bar dropped into its brackets",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-26): a door barred (from Stage 19)."
+    },
+    {
+      "id": "SFX_COUGH",
+      "ref": "waking coughing in the surf",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the steerer waking (a breath and a cough, never a voiced cry)."
+    },
+    {
+      "id": "SFX_COLD_STRIKE",
+      "ref": "the crack of the strike",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): the cold open's hull striking the skerry."
+    },
+    {
+      "id": "SFX_HAG_DRONE",
+      "ref": "a low drone and a whisper rising out of the silence",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-28): the Hag's Stone's hold."
+    },
+    {
+      "id": "SFX_HAG_GUST",
+      "ref": "then a sudden gust",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-28): the Hag's Stone's end, the world's sounds back at once."
+    },
+    {
+      "id": "AMB_COLD_STORM",
+      "ref": "the cold open's storm",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-30): wind, rain and timber groaning in the cold open."
+    },
+    {
+      "id": "AMB_RAIN_CLOTH",
+      "ref": "Rain on the sail cloth",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-27): a soft patter with drips from the edge, heard only under the shelter."
+    },
+    {
+      "id": "SFX_DOOR_KNOCK",
+      "ref": "a driftwood door's creak and knock",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.4 (decision DE-26): a timber door's knock as it shuts (SFX_DOOR_CREAK is its creak opening)."
     }
   ],
   "families": [

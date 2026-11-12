@@ -256,5 +256,37 @@
       "width": 2.0,
       "rough": 0.15
     }
+  ],
+  "doors": [
+    {
+      "id": "broch_door",
+      "zone": "ZONE_SK_MACHAIR",
+      "pos": {
+        "x": 35.5,
+        "y": 36.95
+      },
+      "facing": "s",
+      "width": 1.25,
+      "kind": "DOOR",
+      "sheet": "prop_door_broch",
+      "stages": ["S1"],
+      "barrable": true,
+      "barSide": "n"
+    },
+    {
+      "id": "shelter_flap",
+      "zone": "ZONE_SK_MACHAIR",
+      "pos": {
+        "x": 34.55,
+        "y": 30.05
+      },
+      "facing": "e",
+      "width": 1.0,
+      "kind": "FLAP",
+      "sheet": "prop_flap_sail",
+      "stages": ["S0"],
+      "fact": "ch1.shelter_raised",
+      "barrable": false
+    }
   ]
 }

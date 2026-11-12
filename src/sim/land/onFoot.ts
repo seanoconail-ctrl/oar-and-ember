@@ -22,9 +22,18 @@ import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
 import { aboveTideLine, terrainAt, tileBlocks, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
-import { charging, feetPlanted as fightPlanted, facingLocked } from '../combat/fighter.ts';
+import {
+  charging,
+  facingLocked,
+  facingOfAngle,
+  feetPlanted as fightPlanted,
+} from '../combat/fighter.ts';
 import type { Fighter } from '../combat/fighter.ts';
-import type { ActorFight, Battle } from './fight.ts';
+import type { ActorFight, Battle, Stance } from './fight.ts';
+import { doorBlocks } from './doors.ts';
+import type { DoorState } from './doors.ts';
+import { edgePressAt, edgeStep } from './edges.ts';
+import type { EdgePress } from './edges.ts';
 
 export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
 /**
@@ -96,6 +105,8 @@ export interface OnFootPlayer {
   fight?: Fighter | null;
   /** A shield held up: it stops missiles from the front (as for anyone, Book 10 shieldBlock). */
   blocking?: boolean;
+  /** Combat v2: the stance (facing, lock-on, sneaking; Book 2 section 12, decision DE-2). */
+  stance?: Stance;
 }
 
 /**
@@ -238,6 +249,8 @@ export interface OnFootState {
   elsewhere?: Record<Id, ZoneRest>;
   /** Stage 9: the fight under way in this zone (its morale, Second wind, whether it is over). */
   battle?: Battle | null;
+  /** Design addendum 2.4 (version 11, decision DE-26): the doors of the zone in view. */
+  doors?: DoorState[];
 }
 
 export interface ZoneRest {
@@ -284,9 +297,10 @@ export interface CoverRule {
 
 /**
  * AIM: drawn and aimed freely (a bow); MELEE: struck towards a facing; TOOL: used at a tile; AMMO:
- * carried in the inventory and spent by another item (arrows).
+ * carried in the inventory and spent by another item (arrows); VALUABLE: worth silver, it goes
+ * into the household's silver when picked up (design addendum 2.4: the arm-ring in the rock pool).
  */
-export type ItemUse = 'AIM' | 'MELEE' | 'TOOL' | 'AMMO';
+export type ItemUse = 'AIM' | 'MELEE' | 'TOOL' | 'AMMO' | 'VALUABLE';
 
 export interface LandContext {
   readonly maps: ReadonlyMap<Id, ZoneMap>;
@@ -302,6 +316,8 @@ export interface LandContext {
   readonly missiles: MissileBalance;
   readonly arrows: ArrowBalance;
   /** Stage 9: how fighting moves the steerer (Book 10 Charge (heavy) speed; the dodge). */
+  /** Design addendum 2.4: Book 10's edgeStopAngle (decision DE-25); absent, the old sliding. */
+  readonly edgeStopDegrees?: number;
   readonly combatMove?: {
     readonly chargeSpeed: number;
     readonly dodgeTiles: number;
@@ -341,6 +357,15 @@ export function placeOnFoot(
       moving: false,
       intent: { x: 0, y: 0, run: false, sneak: false },
       aim: null,
+      stance: {
+        facing: { e: 0, s: Math.PI / 2, w: Math.PI, n: -Math.PI / 2 }[steerer.facing],
+        lockOn: null,
+        sneaking: false,
+        want: null,
+        lockHeld: null,
+        lostSince: null,
+        speed: 1,
+      },
     },
     actors,
     carrying: null,
@@ -354,7 +379,9 @@ export function placeOnFoot(
 /** The gait the steerer moves at: carrying overrides running and sneaking. */
 export function gaitFor(state: OnFootState): Gait {
   if (state.carrying !== null) return 'carry';
-  if (state.player.intent.sneak) return 'sneak';
+  if (state.player.intent.sneak || state.player.stance?.sneaking === true) return 'sneak';
+  // Exhausted (combat v2, Book 10 exhausted): no run until the bar recovers.
+  if (state.player.fight?.exhausted === true) return 'walk';
   // A sprint that ran the bar empty drops to a walk until stamina recovers (Book 10 sprintEmpty).
   if (state.player.intent.run && state.player.winded?.run !== true) return 'run';
   return 'walk';
@@ -420,9 +447,12 @@ export function speedAt(
 export function stepMovement(
   state: OnFootState,
   map: ZoneMap,
-  ctx: Pick<LandContext, 'movement' | 'rules' | 'water' | 'elevations' | 'combatMove'>,
+  ctx: Pick<
+    LandContext,
+    'movement' | 'rules' | 'water' | 'elevations' | 'combatMove' | 'edgeStopDegrees'
+  >,
   tide: TideNow,
-): void {
+): EdgePress | null {
   const p = state.player;
   p.gait = gaitFor(state);
   // While drawing, the steerer faces the aim (snapped to the nearest facing) and stands still:
@@ -441,12 +471,18 @@ export function stepMovement(
     : planted
       ? { x: 0, y: 0 }
       : p.intent;
-  if (fight !== null && facingLocked(fight)) p.facing = fight.facing;
+  // Combat v2: the stance owns the facing (drawn in the nearest of four, decision DE-2).
+  const stance = p.stance;
+  if (stance !== undefined && (stance.want !== null || stance.lockOn !== null || p.aim !== null))
+    p.facing = facingOfAngle(stance.facing);
+  else if (fight !== null && facingLocked(fight)) p.facing = fight.facing;
   else
     p.facing = p.aim === null ? facingOf(ix, iy, p.facing) : facingOf(p.aim.x, p.aim.y, p.facing);
-  if (fight !== null && !facingLocked(fight)) fight.facing = p.facing;
+  if (fight !== null && !facingLocked(fight) && stance === undefined) fight.facing = p.facing;
   const cm = ctx.combatMove;
-  let perTick = (speedAt(state, map, ctx, tide.level) * map.tile) / TICKS_PER_SECOND;
+  // The stance's share: forward, strafe or backing off (Book 10 "Stance and lock-on").
+  let perTick =
+    (speedAt(state, map, ctx, tide.level) * map.tile * (stance?.speed ?? 1)) / TICKS_PER_SECOND;
   if (dodging && cm !== undefined) perTick = (cm.dodgeTiles * map.tile) / cm.dodgeTicks;
   else if (fight !== null && charging(fight) && cm !== undefined)
     perTick = Math.min(perTick, (cm.chargeSpeed * map.tile) / TICKS_PER_SECOND);
@@ -462,10 +498,22 @@ export function stepMovement(
     if (!isDeep(to)) return true;
     return isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level));
   };
+  // Design addendum 2.4: a closed door's doorway blocks like a wall (decision DE-26).
   const clear = (x: number, y: number): boolean =>
-    footprintClear(map, ctx.rules, x, y, tide.open) && depthOk(x, y);
-  if (dx !== 0 && clear(p.x + dx, p.y)) p.x += dx;
-  if (dy !== 0 && clear(p.x, p.y + dy)) p.y += dy;
+    footprintClear(map, ctx.rules, x, y, tide.open) &&
+    depthOk(x, y) &&
+    !doorBlocks(state, map, x, y, ctx.rules.footprint);
+  let press: EdgePress | null = null;
+  if (ctx.edgeStopDegrees === undefined) {
+    if (dx !== 0 && clear(p.x + dx, p.y)) p.x += dx;
+    if (dy !== 0 && clear(p.x, p.y + dy)) p.y += dy;
+  } else {
+    // Edges stop the steerer cleanly, with no sliding along an invisible wall (decision DE-25).
+    const step = edgeStep(p.x, p.y, dx, dy, clear, ctx.edgeStopDegrees);
+    if (step.blocked && !dodging) press = edgePressAt(map, ctx.rules, p, dx, dy, depthOk);
+    p.x = step.x;
+    p.y = step.y;
+  }
   p.moving = p.x !== before.x || p.y !== before.y;
   const carried = state.carrying === null ? undefined : state.actors[state.carrying];
   if (carried !== undefined) {
@@ -473,6 +521,7 @@ export function stepMovement(
     carried.y = p.y;
     carried.facing = p.facing;
   }
+  return press;
 }
 
 /**

@@ -14,12 +14,17 @@ export const MILESTONES: readonly {
   readonly key: string;
   readonly reached: (w: WorldState) => boolean;
 }[] = [
+  // Design addendum 2.4 (decision DE-30): the cold open played, the steerer up in the surf.
+  { key: 'woke', reached: (w) => w.facts['ch1.woke_at'] !== undefined },
   { key: 'seax', reached: (w) => owns(w, 'ITEM_SEAX') },
+  { key: 'hild_freed', reached: (w) => w.facts['ch1.net_free'] === true },
   { key: 'hild_safe', reached: (w) => w.facts['ch1.hild_safe'] === true },
-  { key: 'bow', reached: (w) => owns(w, 'ITEM_BOW') },
   { key: 'at_broch', reached: (w) => w.facts['ch1.at_broch'] === true },
+  { key: 'chest_at_camp', reached: (w) => w.facts['ch1.chest_home'] === true },
   { key: 'fire', reached: (w) => w.facts['ch1.fire_lit'] === true },
+  { key: 'shelter', reached: (w) => w.facts['ch1.shelter_raised'] === true },
   { key: 'hild_tended', reached: (w) => w.facts['ch1.hild_tended'] === true },
+  { key: 'dusk_fight', reached: (w) => w.facts['ch1.dusk'] !== undefined },
   { key: 'first_night', reached: (w) => w.calendar.day >= 2 },
   {
     key: 'first_fish',
@@ -29,6 +34,9 @@ export const MILESTONES: readonly {
   { key: 'search_oddi', reached: (w) => w.facts['search.oddi'] !== undefined },
   { key: 'search_runa', reached: (w) => w.facts['search.runa'] !== undefined },
   { key: 'search_bran', reached: (w) => w.facts['search.bran'] !== undefined },
+  // The bow is the reward of the Bran search, from Thorkel's chest (decision DE-18).
+  { key: 'bow', reached: (w) => owns(w, 'ITEM_BOW') },
+  { key: 'stores', reached: (w) => w.facts['ch1.mast_stores'] === 'CAMP' },
   { key: 'first_combat', reached: (w) => w.onFoot?.battle?.engaged === true },
   { key: 'hull', reached: (w) => w.ships['flagship']?.repairs.HULL.stage === 'DONE' },
   { key: 'rigging', reached: (w) => w.ships['flagship']?.repairs.RIGGING.stage === 'DONE' },

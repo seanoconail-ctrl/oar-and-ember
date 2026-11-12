@@ -1,9 +1,9 @@
 {
-  "about": "Chapter 1 beat 1 (Book 4 section 08): wake on Wreck Strand; Hild stands knee to waist deep in the shallows beyond the rocks, calling; wade out, lift her and carry her above the tide line.",
+  "about": "Chapter 1 beats 1 to 15 (Book 4 section 08; design addendum 2.4, decisions DE-16 to DE-30): the played cold open; waking in the surf; Hild tangled in the net, waist deep in the shallows beyond the rocks, cut free with the seax and carried above the tide line; Thorkel's locked chest carried up to its outline at the camp; Hild walking up when the first fire is lit; the shelter raised; the first night's fire; his key, his chest opened and the stores on the mast; the Hag's Stone; and the aims of Chapter 1 with their journal lines and hints (Book 8 section 13). Positions are in tiles of their zone (Book 9 sections 03 and 04); every tuning number is in Book 10 section 25.",
   "beat": "BEAT_1_WAKE",
   "zone": "ZONE_SK_STRAND",
   "caller": "C_HILD",
-  "firstCallSeconds": 1,
+  "firstCallSeconds": 4,
   "callEverySeconds": 6,
   "callLines": ["c_hild.bark.call.01", "c_hild.bark.call.02", "c_hild.bark.call.03"],
   "foundLine": "c_hild.bark.found.01",
@@ -11,6 +11,1090 @@
   "refusedLine": "c_hild.bark.tide.01",
   "moveHintSeconds": 8,
   "callerPose": "call",
-  "bowLine": "c_hild.bark.bow.01",
-  "bowLineSeconds": 4
+  "rework": {
+    "coldOpen": {
+      "about": "The played cold open (Book 7 section 05): night and storm aboard Thorkel's boat, the steerer at the steering oar; the strike on the skerry at strikeSeconds, then black, then the waking. Its script is 38 s, inside Book 10's coldOpen.",
+      "seconds": 38,
+      "strikeSeconds": 31,
+      "blackSeconds": 34,
+      "shoutEverySeconds": 7,
+      "shouts": ["c_thorkel.cold.shout.01", "c_thorkel.cold.shout.02", "c_thorkel.cold.shout.03"],
+      "captions": {
+        "storm": "caption.cold.storm",
+        "shout": "caption.cold.shout",
+        "timber": "caption.cold.timber",
+        "strike": "caption.cold.strike"
+      }
+    },
+    "waking": {
+      "about": "Waking coughing in the surf at the edge of the shallows (Book 9 section 03): the first input gets the steerer up.",
+      "getUpTicks": 40,
+      "coughCaption": "caption.wake.cough"
+    },
+    "net": {
+      "about": "Hild tangled in the net (Book 7 section 07): a hold-to-cut with a blade frees her; reached without one, she says so.",
+      "blades": ["ITEM_SEAX"],
+      "lines": {
+        "noBlade": "c_hild.net.no_blade",
+        "wave": "c_hild.net.wave",
+        "cut": "c_hild.net.cut",
+        "joke": "c_hild.net.joke"
+      },
+      "captions": {
+        "wave": "caption.net.wave",
+        "parts": "caption.action.net_parts"
+      },
+      "promptKey": "ui.prompt.cut_net",
+      "refusalKey": "ui.refusal.need_blade",
+      "jokeSeconds": 3
+    },
+    "chest": {
+      "about": "Thorkel's locked chest (Book 6 section 18; Book 9 sections 03 and 04): placed in the wash once the steerer reaches Hild; its home is against the broch's inner wall by the shelter.",
+      "id": "ITEM_THORKEL_CHEST",
+      "zone": "ZONE_SK_STRAND",
+      "at": {
+        "x": 29.5,
+        "y": 35.0,
+        "facing": "e"
+      },
+      "home": {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 32.2,
+        "y": 31.4,
+        "facing": "e"
+      },
+      "key": "ITEM_THORKEL_KEY",
+      "lineAfterSafeSeconds": 3,
+      "line": "c_hild.chest.first",
+      "lockedKey": "ui.refusal.locked",
+      "openPromptKey": "ui.prompt.open_chest",
+      "keyPromptKey": "ui.prompt.take_key",
+      "contents": [
+        {
+          "item": "ITEM_BOW",
+          "count": 1,
+          "quiver": true
+        },
+        {
+          "item": "ITEM_CHART_FRAGMENT",
+          "count": 1
+        },
+        {
+          "item": "ITEM_BINDING",
+          "count": 3
+        },
+        {
+          "item": "ITEM_BONE_COMB",
+          "count": 1
+        },
+        {
+          "item": "ITEM_WHETSTONE",
+          "count": 1
+        }
+      ],
+      "bowLine": "c_hild.chest.bow",
+      "keyLine": "c_bran.search.key",
+      "captions": {
+        "key": "caption.chest.key",
+        "thud": "caption.chest.thud",
+        "settled": "caption.chest.settled"
+      }
+    },
+    "mast": {
+      "about": "The broken mast with the ship's stores lashed at its head (Book 9 section 03): out of reach until an arrow cuts the lashing; the bundle falls into the shallows and is carried up as one load. The lashing is drawn heightPx above its ground point; a missile drawn passing through it (its ground point less its drawn height) within the box cuts it. The bundle falls on the tidal flats off the outcrop's seaward face, which the strand closes at high water: it is waded out for once the tide is off them (decision DE-64).",
+      "zone": "ZONE_SK_STRAND",
+      "foot": {
+        "x": 40.4,
+        "y": 37.6
+      },
+      "lashing": {
+        "x": 41.3,
+        "y": 38.6,
+        "heightPx": 60,
+        "w": 12,
+        "h": 10
+      },
+      "fall": {
+        "x": 41.5,
+        "y": 39.2,
+        "facing": "e"
+      },
+      "bundle": "ITEM_MAST_STORES",
+      "line": "c_hild.mast.stores",
+      "lineAfterSeconds": 6,
+      "captions": {
+        "lashing": "caption.action.lashing",
+        "splash": "caption.action.splash",
+        "stores": "caption.mast.stores"
+      },
+      "campTiles": 4
+    },
+    "camp": {
+      "about": "The camp opens when the steerer first reaches it (decision DE-16); Hild walks up when the first fire is lit; the shelter is raised in one visible action (decision DE-20).",
+      "reachTiles": 6,
+      "walkUp": "c_hild.camp.walk_up",
+      "walkUpTiles": 2.5,
+      "shelterUp": "c_hild.camp.shelter_up",
+      "oldBoat": "c_hild.camp.old_boat",
+      "oldBoatTiles": 5,
+      "raisePromptKey": "ui.prompt.raise_shelter",
+      "captions": {
+        "sail": "caption.action.sail",
+        "sparks": "caption.action.sparks",
+        "flame": "caption.action.flame"
+      },
+      "sail": {
+        "x": 33.1,
+        "y": 29.3
+      },
+      "hildSeat": {
+        "x": 34.1,
+        "y": 31.9,
+        "facing": "e"
+      }
+    },
+    "fireScene": {
+      "about": "The first night's fire (Book 8 section 05): Hild alone, her grief between the jokes, ending on the morning's aims.",
+      "fromMinute": 1170,
+      "nearTiles": 2.5,
+      "lines": [
+        "c_hild.fire.night.01",
+        "c_hild.fire.night.02",
+        "c_hild.fire.night.03",
+        "c_hild.bark.grief.01",
+        "c_hild.fire.night.04",
+        "c_hild.fire.aims.01",
+        "c_hild.fire.aims.02"
+      ]
+    },
+    "hagLight": {
+      "about": "A pale light at the Hag's Seat on the first evening (Book 7 section 09), seen from the camp and the strand, until full dark.",
+      "fromMinute": 1140,
+      "untilMinute": 1290,
+      "caption": "caption.hag.light"
+    },
+    "hagStone": {
+      "about": "The Hag's Stone's effect (Book 10 section 25, theWeepingStone): the hold's length by showing (2.5 to 6.5 s, 4 by default).",
+      "holds": [4, 5.5, 3, 6.5],
+      "captions": {
+        "hush": "caption.hag.hush",
+        "whisper": "caption.hag.whisper",
+        "gust": "caption.hag.gust"
+      }
+    },
+    "runa": {
+      "about": "Runa's tool chest set down somewhere safe (decision DE-21): her next talk asks where it is.",
+      "talk": "runa.where",
+      "places": {
+        "FIRE": {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 35.4,
+          "y": 31.75,
+          "r": 4.5
+        },
+        "SHELTER": {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 33.1,
+          "y": 29.9,
+          "r": 1.6
+        },
+        "BOAT": {
+          "zone": "ZONE_SK_STRAND",
+          "x": 42.0,
+          "y": 27.0,
+          "r": 5
+        }
+      },
+      "checkTiles": 3,
+      "truth": "c_runa.chest.truth",
+      "lie": "c_runa.chest.lie"
+    },
+    "rescue": {
+      "about": "Everyone rescued gets up after a moment and walks to the camp (decision DE-22).",
+      "people": ["C_HILD", "C_ODDI", "C_BRAN", "C_RUNA"]
+    },
+    "life": {
+      "about": "Curiosity rewarded (Book 9 section 03): the seal sinks when the steerer comes near and rises again; standing gulls lift within their distance and settle further along.",
+      "sealSinkTiles": 6,
+      "gullLiftTiles": 3
+    }
+  },
+  "aims": [
+    {
+      "id": "find_hild",
+      "journalKey": "ui.journal.aim.find_hild",
+      "opensWhen": [
+        {
+          "fact": "ch1.phase",
+          "is": "PLAY"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.hild_reached"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 64.5,
+            "y": 34.6,
+            "r": 2
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 56,
+            "y": 34,
+            "r": 2
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 48,
+            "y": 34,
+            "r": 2
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 40,
+            "y": 34,
+            "r": 2.5
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 34,
+            "y": 34.5,
+            "r": 2.5
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_hild.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_hild.2",
+          "canCall": true
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.bark.call.01"
+      }
+    },
+    {
+      "id": "free_hild",
+      "journalKey": "ui.journal.aim.free_hild",
+      "opensWhen": [
+        {
+          "fact": "ch1.hild_reached"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.net_free"
+        }
+      ],
+      "progress": [
+        {
+          "has": "ITEM_SEAX"
+        },
+        {
+          "working": "TASK_CUT_NET"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.free_hild.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.free_hild.2",
+          "canCall": true
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.net.no_blade"
+      }
+    },
+    {
+      "id": "bring_hild",
+      "journalKey": "ui.journal.aim.bring_hild",
+      "opensWhen": [
+        {
+          "fact": "ch1.net_free"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.hild_safe"
+        }
+      ],
+      "progress": [
+        {
+          "carrying": "C_HILD"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 31.5,
+            "y": 34.2,
+            "r": 1
+          },
+          "carrying": "C_HILD"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 31.5,
+            "y": 33.2,
+            "r": 1
+          },
+          "carrying": "C_HILD"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.bring_hild.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.bring_hild.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "chest_to_camp",
+      "journalKey": "ui.journal.aim.chest_to_camp",
+      "opensWhen": [
+        {
+          "fact": "ch1.chest_named"
+        }
+      ],
+      "doneWhen": [
+        {
+          "home": "ITEM_THORKEL_CHEST"
+        }
+      ],
+      "progress": [
+        {
+          "carrying": "ITEM_THORKEL_CHEST"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 29.6,
+            "y": 31.5,
+            "r": 2
+          },
+          "carrying": "ITEM_THORKEL_CHEST"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 34,
+            "y": 40,
+            "r": 3
+          },
+          "carrying": "ITEM_THORKEL_CHEST"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 35.5,
+            "y": 36,
+            "r": 2
+          },
+          "carrying": "ITEM_THORKEL_CHEST"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 33,
+            "y": 32,
+            "r": 2
+          },
+          "carrying": "ITEM_THORKEL_CHEST"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.chest_to_camp.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.chest_to_camp.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.chest.first"
+      }
+    },
+    {
+      "id": "light_fire",
+      "journalKey": "ui.journal.aim.light_fire",
+      "opensWhen": [
+        {
+          "fact": "ch1.at_broch"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.fire_lit"
+        }
+      ],
+      "progress": [
+        {
+          "store": "RES_DRIFTWOOD"
+        },
+        {
+          "working": "TASK_LIGHT_FIRE"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.light_fire.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.light_fire.2",
+          "canCall": true
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.hint.light_fire.1",
+        "call": true
+      }
+    },
+    {
+      "id": "raise_shelter",
+      "journalKey": "ui.journal.aim.raise_shelter",
+      "opensWhen": [
+        {
+          "fact": "ch1.fire_lit"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.shelter_raised"
+        }
+      ],
+      "progress": [
+        {
+          "working": "TASK_RAISE_SHELTER"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.raise_shelter.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.raise_shelter.2",
+          "canCall": true
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.camp.walk_up"
+      }
+    },
+    {
+      "id": "hild_leg",
+      "journalKey": "ui.journal.aim.hild_leg",
+      "opensWhen": [
+        {
+          "fact": "ch1.shelter_raised"
+        },
+        {
+          "fact": "ch1.hild_walked_up"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.hild_tended"
+        }
+      ],
+      "progress": [
+        {
+          "talking": "C_HILD"
+        },
+        {
+          "working": "TASK_CARE"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.hild_leg.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.hild_leg.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "scavengers",
+      "journalKey": "ui.journal.aim.scavengers",
+      "opensWhen": [
+        {
+          "after": {
+            "day": 1,
+            "minute": 1110
+          }
+        },
+        {
+          "not": {
+            "fact": "ch1.dusk_over"
+          }
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.dusk_over"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 90,
+            "y": 34,
+            "r": 6
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.scavengers.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.scavengers.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "sit_fire",
+      "journalKey": "ui.journal.aim.sit_fire",
+      "opensWhen": [
+        {
+          "fact": "ch1.dusk_over"
+        },
+        {
+          "fact": "ch1.fire_lit"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 35.4,
+            "y": 31.75,
+            "r": 4
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.sit_fire.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.sit_fire.2",
+          "canCall": true
+        }
+      ]
+    },
+    {
+      "id": "find_oddi",
+      "journalKey": "ui.journal.aim.find_oddi",
+      "opensWhen": [
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "search.oddi"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 30,
+            "y": 35,
+            "r": 4
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 23.6,
+            "y": 35.4,
+            "r": 3
+          }
+        },
+        {
+          "carrying": "C_ODDI"
+        },
+        {
+          "carrying": "ITEM_SHIP_SILVER"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_oddi.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_oddi.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.fire.aims.01"
+      }
+    },
+    {
+      "id": "find_bran",
+      "journalKey": "ui.journal.aim.find_bran",
+      "opensWhen": [
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "search.bran"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_CAIRN",
+            "x": 30,
+            "y": 30,
+            "r": 6
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_CAIRN",
+            "x": 38.6,
+            "y": 35.3,
+            "r": 5
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_bran.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_bran.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.fire.aims.01"
+      }
+    },
+    {
+      "id": "find_runa",
+      "journalKey": "ui.journal.aim.find_runa",
+      "opensWhen": [
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "search.runa"
+        }
+      ],
+      "progress": [
+        {
+          "zone": "ZONE_SK_HAGSEAT"
+        },
+        {
+          "carrying": "ITEM_RUNA_TOOLS"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_runa.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.find_runa.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.fire.aims.02"
+      }
+    },
+    {
+      "id": "open_chest",
+      "journalKey": "ui.journal.aim.open_chest",
+      "opensWhen": [
+        {
+          "has": "ITEM_THORKEL_KEY"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.chest_opened"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 32.2,
+            "y": 31.4,
+            "r": 3
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.open_chest.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.open_chest.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "stores",
+      "journalKey": "ui.journal.aim.stores",
+      "opensWhen": [
+        {
+          "fact": "ch1.chest_opened"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.mast_stores",
+          "is": "CAMP"
+        }
+      ],
+      "progress": [
+        {
+          "fact": "ch1.lashing_cut"
+        },
+        {
+          "carrying": "ITEM_MAST_STORES"
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 41,
+            "y": 35,
+            "r": 4
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.stores.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_BRAN",
+          "textKey": "c_bran.hint.stores.2",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.stores.2_alt",
+            "canCall": false
+          }
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.mast.stores"
+      }
+    },
+    {
+      "id": "hull",
+      "journalKey": "ui.journal.aim.hull",
+      "opensWhen": [
+        {
+          "fact": "repair.open"
+        },
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "repair": "HULL"
+        }
+      ],
+      "progress": [
+        {
+          "carrying": "ITEM_BOARDS"
+        },
+        {
+          "working": "TASK_REPAIR_SHIP"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.hull.1",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.hull.1_alt",
+            "canCall": false
+          }
+        },
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.hull.2",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.hull.2_alt",
+            "canCall": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "rigging",
+      "journalKey": "ui.journal.aim.rigging",
+      "opensWhen": [
+        {
+          "fact": "repair.open"
+        },
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "repair": "RIGGING"
+        }
+      ],
+      "progress": [
+        {
+          "fact": "repair.rigging_cut"
+        },
+        {
+          "carrying": "ITEM_RIGGING"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.rigging.1",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.rigging.1_alt",
+            "canCall": false
+          }
+        },
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.rigging.2",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.rigging.2_alt",
+            "canCall": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "oar",
+      "journalKey": "ui.journal.aim.oar",
+      "opensWhen": [
+        {
+          "fact": "repair.open"
+        },
+        {
+          "fact": "ch1.fire_scene"
+        }
+      ],
+      "doneWhen": [
+        {
+          "repair": "STEERING_OAR"
+        }
+      ],
+      "progress": [
+        {
+          "zone": "ZONE_SK_SEALCAVE"
+        },
+        {
+          "carrying": "ITEM_STEERING_OAR"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.oar.1",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.oar.1_alt",
+            "canCall": false
+          }
+        },
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.oar.2",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.oar.2_alt",
+            "canCall": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "rites",
+      "journalKey": "ui.journal.aim.rites",
+      "opensWhen": [
+        {
+          "fact": "ch1.thorkel_body",
+          "is": "CAMP"
+        }
+      ],
+      "doneWhen": [
+        {
+          "any": [
+            {
+              "fact": "ch1.rites",
+              "is": "SHIP_SETTING"
+            },
+            {
+              "fact": "ch1.rites",
+              "is": "SEA_BURIAL"
+            }
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "talking": "C_HILD"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.rites.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.rites.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "launch",
+      "journalKey": "ui.journal.aim.launch",
+      "opensWhen": [
+        {
+          "fact": "ch1.boat_ready"
+        }
+      ],
+      "doneWhen": [
+        {
+          "gateStarted": "BEAT_1_LAUNCH"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 42,
+            "y": 27,
+            "r": 5
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.launch.1",
+          "canCall": false,
+          "alt": {
+            "speaker": "C_HILD",
+            "textKey": "c_hild.hint.launch.1_alt",
+            "canCall": false
+          }
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.launch.2",
+          "canCall": false
+        }
+      ]
+    }
+  ]
 }

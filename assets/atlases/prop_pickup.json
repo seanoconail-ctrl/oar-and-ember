@@ -35,6 +35,11 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "silver_arm_ring": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -59,6 +64,10 @@
     "fishing_line/-/0": [
       0,
       54
+    ],
+    "silver_arm_ring/-/0": [
+      0,
+      72
     ]
   }
 }

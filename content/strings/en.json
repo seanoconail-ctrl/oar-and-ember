@@ -476,11 +476,11 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.bark.call.02": {
-    "text": "Is that you? I'm by the rocks. The water's coming in!",
+    "text": "I'm caught in the net! The water's coming in!",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.bark.call.03": {
-    "text": "Over here! I'd come to you, but my leg has other ideas.",
+    "text": "Over here! I'd come to you, but the net has other ideas.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.bark.found.01": {
@@ -999,10 +999,6 @@
   },
   "ui.help.close": {
     "text": "Press {key} to go back."
-  },
-  "c_hild.bark.bow.01": {
-    "text": "Father's hunting bow was in the stern. The stern came ashore east. Fetch it.",
-    "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "caption.sfx.arrow_flight": {
     "text": "An arrow whistles past",
@@ -2718,6 +2714,70 @@
     "text": "They have killed him!",
     "tags": ["VOICED"]
   },
+  "e_wrecker_svart.bark.warn.01": {
+    "text": "Keep out of this.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.warn.02": {
+    "text": "This wreck is ours. Walk on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.warn.03": {
+    "text": "One more step and you'll bleed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.bark.suspicious.01": {
+    "text": "Who's there?",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.suspicious.01": {
+    "text": "Thought I heard something.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.suspicious.01": {
+    "text": "Show yourself.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.lost.01": {
+    "text": "Wind in the grass. That's all.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.lost.01": {
+    "text": "Nothing. Nothing there.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.lost.01": {
+    "text": "Gone. Keep your eyes open.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.help.01": {
+    "text": "I'm cut! To me!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.help.01": {
+    "text": "Svart! To me, Svart!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.bark.help.01": {
+    "text": "To me! Both of you, to me!",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.bark.bargain.01": {
+    "text": "Fish? Svart, it's fish.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.bargain.01": {
+    "text": "Leave it there. Now go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.bark.runs.01": {
+    "text": "Not for a wreck. Not for this.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.bark.leave.01": {
+    "text": "We're done here. Come on.",
+    "tags": ["VOICED"]
+  },
   "c_hild.bark.combat.danger.01": {
     "text": "Men at the wreck, Steerer. Armed.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
@@ -2784,6 +2844,46 @@
   },
   "caption.sfx.dodge": {
     "text": "A quick step aside",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.steerer_breath": {
+    "text": "A sharp breath",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.grunt": {
+    "text": "A grunt of pain",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.parry_ring": {
+    "text": "Steel rings",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.riposte": {
+    "text": "A heavy blow driven home",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.lunge": {
+    "text": "A scuff of feet, a breath drawn",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.backstab": {
+    "text": "A short, muffled struggle",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sidestep": {
+    "text": "A quick scuff aside",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.alert": {
+    "text": "A sharp breath, a blade drawn",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.bind_wound": {
+    "text": "Linen torn and wound tight",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.eat": {
+    "text": "Chewing",
     "tags": ["INFO"]
   },
   "caption.sfx.shove": {
@@ -2879,6 +2979,36 @@
   "ui.refusal.cannot_fight": {
     "text": "Cannot fight"
   },
+  "ui.refusal.no_binding": {
+    "text": "No bindings"
+  },
+  "ui.refusal.no_ration": {
+    "text": "Nothing to eat"
+  },
+  "ui.refusal.exhausted": {
+    "text": "Too spent"
+  },
+  "ui.prompt.bargain": {
+    "text": "{key}  Offer them salt fish"
+  },
+  "ui.heal.bind": {
+    "text": "Binding the wound"
+  },
+  "ui.heal.eat": {
+    "text": "Eating"
+  },
+  "ui.heal.interrupted": {
+    "text": "Cut short"
+  },
+  "ui.system.marks": {
+    "text": "Awareness marks: {state}. Press {key} to change."
+  },
+  "ui.marks.on": {
+    "text": "on"
+  },
+  "ui.marks.off": {
+    "text": "off"
+  },
   "ui.system.gore": {
     "text": "Gore: {level}. Press {key} to change."
   },
@@ -2929,11 +3059,11 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_oddi.search.call": {
-    "text": "Steerer! Here, by the wreck! Thorkel's chest is down there in the wash. Leave it and the scavengers will have it. They've picked at the wreck all morning.",
+    "text": "Steerer! Here, by the wreck! The ship's silver is down there in the wash, in its strongbox. Leave it and the scavengers will have it. They've picked at the wreck all morning.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_oddi.search.lifted_first": {
-    "text": "Me first? Then the chest's as good as theirs. Fine. Fine.",
+    "text": "Me first? Then the silver's as good as theirs. Fine. Fine.",
     "tags": ["VOICED"]
   },
   "c_oddi.search.chest_saved": {
@@ -2941,15 +3071,15 @@
     "tags": ["VOICED"]
   },
   "c_oddi.search.safe_chest": {
-    "text": "The chest and me both. That's a good day's salvage.",
+    "text": "The silver and me both. That's a good day's salvage.",
     "tags": ["VOICED"]
   },
   "c_oddi.search.safe_no_chest": {
-    "text": "Thanks for the carry. Thorkel's chest is gone, mind. The scavengers will have it by now.",
+    "text": "Thanks for the carry. The ship's silver is gone, mind. The scavengers will have it by now.",
     "tags": ["VOICED"]
   },
   "caption.search.chest_lost": {
-    "text": "The chest is gone from the strand",
+    "text": "The strongbox is gone from the strand",
     "tags": ["INFO"]
   },
   "caption.search.oddi_calling": {
@@ -2991,7 +3121,7 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "p_steerer.search.ketill.silver": {
-    "text": "Thorkel's silver for his body, and you go. Take it, or fight for it."
+    "text": "The ship's silver for Thorkel's body, and you go. Take it, or fight for it."
   },
   "e_wrecker_ketill.search.silver": {
     "text": "Silver. Now that's talking. Lads, we're done here.",
@@ -3266,7 +3396,7 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "p_steerer.cave.silver": {
-    "text": "The silver in Thorkel's chest, for your steering oar."
+    "text": "The ship's silver, for your steering oar."
   },
   "p_steerer.cave.food": {
     "text": "Three days of salt fish, for your steering oar."
@@ -3755,7 +3885,7 @@
     "text": "Hild carried to safety"
   },
   "ui.timings.mark.bow": {
-    "text": "Bow found"
+    "text": "Bow from Thorkel's chest"
   },
   "ui.timings.mark.at_broch": {
     "text": "At the broch"
@@ -3914,5 +4044,600 @@
   },
   "ui.gate.launch.stores.one": {
     "text": "Food for only one day in store."
+  },
+  "c_hild.net.no_blade": {
+    "text": "The net, I can't get out of it. Find something sharp! Father's seax was in the stern.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.net.wave": {
+    "text": "That one went up my nose.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.net.cut": {
+    "text": "Oh, thank the gods. Thank you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.net.joke": {
+    "text": "Next time, cut the net before the swim.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.chest.first": {
+    "text": "Father's chest. Get it up to the camp. He wore the key round his neck.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.camp.walk_up": {
+    "text": "Get the sail up between those oars, before the rain comes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.old_boat": {
+    "text": "Father would've had her floating by the next tide.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.camp.shelter_up": {
+    "text": "There. A roof. Of sorts.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.night.01": {
+    "text": "Sit. You've earned the warm side.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.night.02": {
+    "text": "Bran will be with Father somewhere. Bran never lets go of anything.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.night.03": {
+    "text": "He'd have hated being carried. He'd have hated all of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.fire.night.04": {
+    "text": "Still. A fire, a roof of sorts, and fish nobody's caught yet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.aims.01": {
+    "text": "Oddi was by the stern when she broke. Bran went after Father.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.fire.aims.02": {
+    "text": "And Runa will have gone after that light. Of course she has.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_runa"]
+  },
+  "c_hild.chest.bow": {
+    "text": "That's his bow. He'd want it drawn, not mourned.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.mast.stores": {
+    "text": "That's our salt fish up the mast. An arrow through the rope would bring it down.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.search.key": {
+    "text": "His key. It was round his neck. It's yours to turn now.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_thorkel.cold.shout.01": {
+    "text": "Hold her head to the sea! Hold her!",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_thorkel.cold.shout.02": {
+    "text": "Rocks! Rocks to starboard! Pull, all of you!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_thorkel.cold.shout.03": {
+    "text": "Steerer! Bring her round! Round!",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_runa.chest.where": {
+    "text": "My chest. Where have you put it?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.chest.truth": {
+    "text": "Good. Off the wet ground, I hope.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.chest.lie": {
+    "text": "It's not where you said. Why say it, then?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.talk.runa.place.fire": {
+    "text": "By the fire."
+  },
+  "ui.talk.runa.place.shelter": {
+    "text": "In the shelter."
+  },
+  "ui.talk.runa.place.boat": {
+    "text": "By the boat."
+  },
+  "ui.prompt.runa_where": {
+    "text": "{key}  Talk to Runa"
+  },
+  "caption.edge.nothing": {
+    "text": "Nothing that way",
+    "tags": ["INFO"]
+  },
+  "caption.edge.deep": {
+    "text": "The water's too deep",
+    "tags": ["INFO"]
+  },
+  "caption.edge.steep": {
+    "text": "Too steep to climb",
+    "tags": ["INFO"]
+  },
+  "caption.action.net_parts": {
+    "text": "The net parts",
+    "tags": ["INFO"]
+  },
+  "caption.action.sparks": {
+    "text": "Sparks from the flint",
+    "tags": ["INFO"]
+  },
+  "caption.action.flame": {
+    "text": "The flame takes",
+    "tags": ["INFO"]
+  },
+  "caption.action.sail": {
+    "text": "The sail fills and settles",
+    "tags": ["INFO"]
+  },
+  "caption.action.lashing": {
+    "text": "The lashing parts",
+    "tags": ["INFO"]
+  },
+  "caption.action.splash": {
+    "text": "A splash in the shallows",
+    "tags": ["INFO"]
+  },
+  "caption.door.open": {
+    "text": "A door creaks open",
+    "tags": ["INFO"]
+  },
+  "caption.door.flap": {
+    "text": "The cloth flap lifts",
+    "tags": ["INFO"]
+  },
+  "caption.door.close": {
+    "text": "A door knocks shut",
+    "tags": ["INFO"]
+  },
+  "caption.net.wave": {
+    "text": "A wave breaks over Hild",
+    "tags": ["INFO"]
+  },
+  "caption.wake.cough": {
+    "text": "Coughing up seawater",
+    "tags": ["INFO"]
+  },
+  "caption.cold.storm": {
+    "text": "Wind screaming in the rigging",
+    "tags": ["INFO"]
+  },
+  "caption.cold.shout": {
+    "text": "Thorkel, shouting from the bow",
+    "tags": ["INFO"]
+  },
+  "caption.cold.timber": {
+    "text": "Timber groaning",
+    "tags": ["INFO"]
+  },
+  "caption.cold.strike": {
+    "text": "The hull strikes rock",
+    "tags": ["INFO"]
+  },
+  "caption.chest.key": {
+    "text": "A key turns in the lock",
+    "tags": ["INFO"]
+  },
+  "caption.chest.thud": {
+    "text": "The chest thuds down",
+    "tags": ["INFO"]
+  },
+  "caption.chest.settled": {
+    "text": "The chest is home",
+    "tags": ["INFO"]
+  },
+  "caption.chest.drag": {
+    "text": "A chest scraping up the shingle",
+    "tags": ["INFO"]
+  },
+  "caption.mast.stores": {
+    "text": "The stores, high on the mast",
+    "tags": ["INFO"]
+  },
+  "caption.ring.clink": {
+    "text": "A small clink from the pool",
+    "tags": ["INFO"]
+  },
+  "caption.rain.cloth": {
+    "text": "Rain pattering on the sail cloth",
+    "tags": ["INFO"]
+  },
+  "caption.hag.light": {
+    "text": "A pale light, far off",
+    "tags": ["INFO"]
+  },
+  "caption.hag.hush": {
+    "text": "The wind drops",
+    "tags": ["INFO"]
+  },
+  "caption.hag.whisper": {
+    "text": "A whisper by the stone",
+    "tags": ["INFO"]
+  },
+  "caption.hag.gust": {
+    "text": "A sudden gust",
+    "tags": ["INFO"]
+  },
+  "caption.seal.sinks": {
+    "text": "A seal slips under",
+    "tags": ["INFO"]
+  },
+  "caption.gulls.lift": {
+    "text": "Gulls lifting",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.cut_net": {
+    "text": "Hold {key}  Cut the net"
+  },
+  "ui.prompt.cut_net_click": {
+    "text": "Hold right-click  Cut the net"
+  },
+  "ui.prompt.open_chest": {
+    "text": "{key}  Open the chest"
+  },
+  "ui.prompt.open_chest_click": {
+    "text": "Right-click  Open the chest"
+  },
+  "ui.prompt.take_key": {
+    "text": "{key}  Take the key"
+  },
+  "ui.prompt.take_key_click": {
+    "text": "Right-click  Take the key"
+  },
+  "ui.prompt.raise_shelter": {
+    "text": "{key}  Raise the sail"
+  },
+  "ui.prompt.raise_shelter_click": {
+    "text": "Right-click  Raise the sail"
+  },
+  "ui.prompt.door": {
+    "text": "{key}  Open the door"
+  },
+  "ui.prompt.door_click": {
+    "text": "Right-click  Open the door"
+  },
+  "ui.refusal.need_blade": {
+    "text": "Something sharp"
+  },
+  "ui.refusal.locked": {
+    "text": "Locked"
+  },
+  "ui.refusal.door_barred": {
+    "text": "Barred"
+  },
+  "task.name.cut_net": {
+    "text": "Cut the net"
+  },
+  "task.name.raise_shelter": {
+    "text": "Raise the sail"
+  },
+  "item.name.strongbox": {
+    "text": "the strongbox"
+  },
+  "item.name.thorkel_chest": {
+    "text": "Thorkel's chest"
+  },
+  "item.name.key": {
+    "text": "Thorkel's key"
+  },
+  "item.name.chart": {
+    "text": "chart fragment"
+  },
+  "item.name.bindings": {
+    "text": "linen bindings"
+  },
+  "item.name.comb": {
+    "text": "bone comb"
+  },
+  "item.name.whetstone": {
+    "text": "whetstone"
+  },
+  "item.name.stores": {
+    "text": "the stores"
+  },
+  "item.name.arm_ring": {
+    "text": "silver arm-ring"
+  },
+  "ui.journal.title": {
+    "text": "Journal"
+  },
+  "ui.journal.aim": {
+    "text": "{aim}"
+  },
+  "ui.journal.none": {
+    "text": "Nothing pressing."
+  },
+  "ui.journal.open": {
+    "text": "J  Journal"
+  },
+  "ui.cold.steer": {
+    "text": "{keys}  Steer"
+  },
+  "ui.wake.up": {
+    "text": "Any key  Get up"
+  },
+  "ui.journal.aim.find_hild": {
+    "text": "Find who is calling beyond the rocks."
+  },
+  "ui.journal.aim.free_hild": {
+    "text": "Cut Hild free of the net."
+  },
+  "ui.journal.aim.bring_hild": {
+    "text": "Carry Hild above the tide line."
+  },
+  "ui.journal.aim.chest_to_camp": {
+    "text": "Carry Thorkel's chest up to the old tower on the bank."
+  },
+  "ui.journal.aim.light_fire": {
+    "text": "Light a fire in the old tower."
+  },
+  "ui.journal.aim.raise_shelter": {
+    "text": "Raise the sail between the oars."
+  },
+  "ui.journal.aim.hild_leg": {
+    "text": "See to Hild's leg."
+  },
+  "ui.journal.aim.scavengers": {
+    "text": "See who is at the stern."
+  },
+  "ui.journal.aim.sit_fire": {
+    "text": "Sit with Hild by the fire."
+  },
+  "ui.journal.aim.find_oddi": {
+    "text": "Find Oddi near the wreck."
+  },
+  "ui.journal.aim.find_bran": {
+    "text": "Find Bran and Father's body."
+  },
+  "ui.journal.aim.find_runa": {
+    "text": "Find Runa at the Hag's Seat."
+  },
+  "ui.journal.aim.open_chest": {
+    "text": "Open Thorkel's chest with the key."
+  },
+  "ui.journal.aim.stores": {
+    "text": "Shoot down the stores from the broken mast."
+  },
+  "ui.journal.aim.hull": {
+    "text": "Patch the old boat's hull with the boards."
+  },
+  "ui.journal.aim.rigging": {
+    "text": "Bring the rigging from the wreck at low water."
+  },
+  "ui.journal.aim.oar": {
+    "text": "Get a steering oar."
+  },
+  "ui.journal.aim.rites": {
+    "text": "Give Thorkel his rites, if the household will."
+  },
+  "ui.journal.aim.launch": {
+    "text": "Launch the boat when the tide is in."
+  },
+  "c_hild.hint.find_hild.1": {
+    "text": "Over here! Past the rocks, to the west!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_hild.2": {
+    "text": "West! Follow the shore round the rocks!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.free_hild.1": {
+    "text": "Something sharp. A blade. Look in the wreckage.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.free_hild.2": {
+    "text": "There was a glint on the shingle, back the way you came. Hurry.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.bring_hild.1": {
+    "text": "Higher. The tide comes this far.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.bring_hild.2": {
+    "text": "Up past the weed. The dry stones. There.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.chest_to_camp.1": {
+    "text": "The old tower. Up the bank, past the stream.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.chest_to_camp.2": {
+    "text": "Up the bank, then north. Set it down where the shelter goes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.light_fire.1": {
+    "text": "Wood! It's all along the tideline!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.light_fire.2": {
+    "text": "Two good pieces will do. Then the flint.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.raise_shelter.1": {
+    "text": "The sail, and those two oars. Before the rain.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.raise_shelter.2": {
+    "text": "Lash it high on the oars and peg the foot.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.hild_leg.1": {
+    "text": "My leg could use a look, when you've a moment.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.hild_leg.2": {
+    "text": "Talk to me. I'll show you where it hurts.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.scavengers.1": {
+    "text": "Someone's down at the stern. Hear that? Iron on wood.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.scavengers.2": {
+    "text": "Take care. Folk who strip wrecks don't like to be watched.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.sit_fire.1": {
+    "text": "Come and sit. It's been a long day.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.sit_fire.2": {
+    "text": "The fire's warm. Come on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_oddi.1": {
+    "text": "Oddi was by the stern. Try the west end, by the wreck.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_oddi.2": {
+    "text": "West end of the strand. Listen for him.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_oddi"]
+  },
+  "c_hild.hint.find_bran.1": {
+    "text": "Bran went after Father. Up by the old mound, maybe.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_bran.2": {
+    "text": "East, past the machair. The sheepfold under the mound.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_runa.1": {
+    "text": "That light was out on the Hag's Seat. West.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.find_runa.2": {
+    "text": "West, out along the headland. Mind the wind on the neck.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.open_chest.1": {
+    "text": "You've the key. Father's chest is by the shelter.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.open_chest.2": {
+    "text": "Go on. Open it. He'd want it opened.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.hint.stores.1": {
+    "text": "That's our salt fish up the mast. An arrow through the rope would bring it down.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.hint.stores.2": {
+    "text": "Stand still. Aim at the rope, not the bundle.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.hull.1": {
+    "text": "The boards are on the shingle by the boat. Bring them.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.hull.2": {
+    "text": "Boards by the boat, then work. I'll help.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.rigging.1": {
+    "text": "The rigging's on the skerry. Low water, or you swim.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.rigging.2": {
+    "text": "Wait for the ebb. Then out over the flats.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.oar.1": {
+    "text": "The scavengers had a skiff. Seal Cave, north-east.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.oar.2": {
+    "text": "Take theirs, buy theirs, or I carve one. Two days.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.rites.1": {
+    "text": "Father should have his rites before we sail.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.hint.rites.2": {
+    "text": "Stones on the machair, or the sea. Talk to me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.hint.launch.1": {
+    "text": "She's sound. Wait for the water and we'll run her down.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.hint.launch.2": {
+    "text": "Tide's in. Look the boat over and we'll go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.stores.2_alt": {
+    "text": "Stand still to loose. Aim at the rope, not the fish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.hull.1_alt": {
+    "text": "Runa would want boards. They're on the shingle by the boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.hull.2_alt": {
+    "text": "Bring the boards to the boat and set to work.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.rigging.1_alt": {
+    "text": "The rigging's fouled on the skerry. Low water, or you swim.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.rigging.2_alt": {
+    "text": "Wait for the ebb, then walk out over the flats.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.oar.1_alt": {
+    "text": "Whoever stripped the wreck came in a skiff. Seal Cave, north-east.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.oar.2_alt": {
+    "text": "Take their oar, or buy it. Runa could carve one, given time.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.launch.1_alt": {
+    "text": "She's sound enough. Wait for the water and we'll run her down.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "caption.voice.runa_calling": {
+    "text": "Runa, calling",
+    "tags": ["INFO"]
+  },
+  "caption.voice.bran_calling": {
+    "text": "Bran, calling",
+    "tags": ["INFO"]
+  },
+  "caption.voice.oddi_calling": {
+    "text": "Oddi, calling",
+    "tags": ["INFO"]
+  },
+  "person.short.item_ship_silver": {
+    "text": "The ship's silver"
+  },
+  "person.short.item_mast_stores": {
+    "text": "The stores"
+  },
+  "ui.timings.mark.woke": {
+    "text": "Woke in the surf"
+  },
+  "ui.timings.mark.hild_freed": {
+    "text": "Hild cut free"
+  },
+  "ui.timings.mark.chest_at_camp": {
+    "text": "Thorkel's chest at the camp"
+  },
+  "ui.timings.mark.shelter": {
+    "text": "Sail shelter raised"
+  },
+  "ui.timings.mark.dusk_fight": {
+    "text": "The scavengers at dusk"
+  },
+  "ui.timings.mark.stores": {
+    "text": "Stores brought down from the mast"
   }
 }

@@ -31,7 +31,7 @@ import {
   releaseAttack,
   resolveBlow,
   setBlock,
-  staggerOnHit,
+  poiseHit,
   stepFighter,
   strikePhase,
   striking,
@@ -117,11 +117,11 @@ function run(f: Fighter, from: number, to: number, p = pool()): void {
   for (let t = from; t < to; t++) stepFighter(f, t, cb, p);
 }
 
-/** Book 10 section 06's weapons table, read straight from the book. */
+/** Book 10 section 06's weapon movesets (combat v2), read straight from the book. */
 function bookWeapons(): Record<string, string[]> {
   const book = repoFile('docs/10_balance_sheet.md');
-  const at = book.indexOf('### Weapons (ticks at 60 Hz)');
-  const rows = book.slice(at).split('\n').slice(3, 10);
+  const at = book.indexOf('### Weapon movesets');
+  const rows = book.slice(at).split('\n').slice(4, 14);
   return Object.fromEntries(
     rows.map((r) => {
       const cells = r
@@ -138,7 +138,7 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
     const book = bookWeapons();
     for (const name of MELEE_WEAPONS) {
       const w = cb.weapons[name];
-      const [reach, combo, windup, active, recovery, chain, damage, vsShield, stamina] =
+      const [reach, , combo, windup, active, recovery, chain, damage, , vsShield, , stamina] =
         book[name] ?? [];
       expect([w.reachTiles, w.combo, w.windup, w.active, w.recovery, w.chainWindow]).toEqual(
         [reach, combo, windup, active, recovery, chain].map(Number),
@@ -146,7 +146,7 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
       expect([w.damage, w.vsShield, w.stamina]).toEqual([damage, vsShield, stamina].map(Number));
     }
     expect(cb.charge).toMatchObject({ level1At: 18, level2At: 45, maxHold: 90 });
-    expect(cb.parry).toMatchObject({ startup: 2, window: 8, recoveryOnMiss: 18, stagger: 36 });
+    expect(cb.parry).toMatchObject({ startup: 2, window: 8, recoveryOnMiss: 18, open: 60 });
     expect(cb.dodge).toMatchObject({ ticks: 20, invulnFrom: 4, invulnTo: 13, tiles: 1.5 });
   });
 
@@ -190,11 +190,11 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
   });
 
   it('chains light attacks up to the combo, each after its recovery (none is skipped)', () => {
-    const f = newFighter('Axe');
+    const f = newFighter('Hand axe');
     const p = pool();
     pressAttack(f, 0, cb, 'e', p);
     releaseAttack(f, 1, cb, p);
-    const w = cb.weapons.Axe;
+    const w = cb.weapons['Hand axe'];
     const seen: string[] = [];
     let t = 1;
     for (; t < 400 && seen.length < 4; t++) {
@@ -205,11 +205,14 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
         expect(pressAttack(f, t, cb, 'e', p)).toBe(f.combo < w.combo ? 'QUEUED' : 'REFUSED');
     }
     expect(seen.map((s) => s.split('@')[0])).toEqual(['light1', 'light2', 'light3']);
-    // Each strike ran its full recovery: windup, active, recovery between ends.
+    // Each strike ran its full recovery: windup, active, recovery between ends (and a swing that
+    // met no one recovers longer: combat v2's missRecovery).
     const ends = seen.map((s) => Number(s.split('@')[1]));
-    expect((ends[1] ?? 0) - (ends[0] ?? 0)).toBe(w.windup + w.active + w.recovery);
+    expect((ends[1] ?? 0) - (ends[0] ?? 0)).toBe(
+      w.windup + w.active + w.recovery + cb.stance.missRecovery,
+    );
     // A press outside the window is refused.
-    const g = newFighter('Axe');
+    const g = newFighter('Hand axe');
     pressAttack(g, 0, cb, 'e', p);
     releaseAttack(g, 1, cb, p);
     expect(pressAttack(g, g.activeEnd + 1, cb, 'e', p)).toBe('REFUSED');
@@ -224,12 +227,12 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
     expect(p.current).toBe(100 - cb.weapons.Seax.stamina);
     // Too little stamina: refused.
     expect(pressAttack(newFighter('Seax'), 0, cb, 'e', pool(1))).toBe('NO_STAMINA');
-    const h = newFighter('Axe');
+    const h = newFighter('Hand axe');
     const hp = pool(100);
     pressAttack(h, 0, cb, 'w', hp);
     run(h, 0, cb.charge.level2At + 1, hp);
     releaseAttack(h, cb.charge.level2At + 1, cb, hp);
-    expect(hp.current).toBeCloseTo(100 - cb.weapons.Axe.stamina * cb.charge.staminaL2);
+    expect(hp.current).toBeCloseTo(100 - cb.weapons['Hand axe'].stamina * cb.charge.staminaL2);
     // Held past the maximum, it lets go by itself.
     const m = newFighter('Seax');
     pressAttack(m, 0, cb, 'e', pool());
@@ -239,7 +242,7 @@ describe('frame data (Book 10 section 06; Book 3 Stage 9 check 1)', () => {
 });
 
 describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', () => {
-  const swing = (weapon: 'Seax' | 'Axe', level: 0 | 1 | 2): Fighter => {
+  const swing = (weapon: 'Seax' | 'Hand axe' | 'Spear', level: 0 | 1 | 2): Fighter => {
     const a = newFighter(weapon);
     pressAttack(a, 0, cb, 'e', pool());
     const at = level === 0 ? 1 : level === 1 ? cb.charge.level1At : cb.charge.level2At;
@@ -249,7 +252,7 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
   };
   const fromEast = { x: 1, y: 0 };
 
-  it('a parry inside its window staggers the attacker, refunds its cost and opens a riposte', () => {
+  it('a parry inside its window opens the attacker, refunds its cost and opens a riposte', () => {
     for (let k = 0; k < cb.parry.window; k++) {
       const a = swing('Seax', 0);
       const d = newFighter('Seax', { facing: 'e' });
@@ -260,10 +263,10 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
       expect(p.current).toBe(50 - cb.parry.cost);
       const out = resolveBlow(a, d, blowOf(a, cb), fromEast, a.activeAt, cb, cb.parry.window, p);
       expect(out).toBe('PARRIED');
-      expect(a.state).toBe('stagger');
-      expect(a.recoveryEnd - a.activeAt).toBe(cb.parry.stagger);
+      expect(a.state).toBe('parried');
+      expect(a.recoveryEnd - a.activeAt).toBe(cb.parry.open);
       expect(p.current).toBe(50);
-      expect(d.riposteUntil).toBe(a.activeAt + cb.parry.stagger);
+      expect(d.riposteUntil).toBe(a.activeAt + cb.parry.open);
     }
     // Outside the window: the blow lands, and the parry's recovery follows.
     const a = swing('Seax', 0);
@@ -281,7 +284,7 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
   });
 
   it('a full charge breaks a block but not a parry', () => {
-    const full = swing('Axe', 2);
+    const full = swing('Hand axe', 2);
     expect(blowOf(full, cb).guardBreak).toBe(true);
     const blocker = newFighter('Seax', { shield: true, facing: 'e' });
     setBlock(blocker, true, 0);
@@ -292,7 +295,7 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     expect(blocker.state).toBe('guardBroken');
     expect(blocker.recoveryEnd - full.activeAt).toBe(cb.block.guardBreak);
     // The same blow parried in the window: parried, the attacker staggered.
-    const full2 = swing('Axe', 2);
+    const full2 = swing('Hand axe', 2);
     const parrier = newFighter('Seax', { shield: true, facing: 'e' });
     pressParry(parrier, full2.activeAt - cb.parry.startup - 2, cb, pool());
     expect(
@@ -307,9 +310,9 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
         pool(),
       ),
     ).toBe('PARRIED');
-    expect(full2.state).toBe('stagger');
-    // A level-1 charge is blocked: the shield's cost, and the stun.
-    const half = swing('Axe', 1);
+    expect(full2.state).toBe('parried');
+    // A level-1 charge (a spear's: an axe's hooks the shield) is blocked: Guard's cost, the stun.
+    const half = swing('Spear', 1);
     const b2 = newFighter('Seax', { shield: true, facing: 'e' });
     setBlock(b2, true, 0);
     const p2 = pool(100);
@@ -317,20 +320,22 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
       resolveBlow(half, b2, blowOf(half, cb), fromEast, half.activeAt, cb, cb.parry.window, p2),
     ).toBe('BLOCKED');
     expect(p2.current).toBeCloseTo(
-      100 - cb.block.costFactor * cb.weapons.Axe.vsShield * cb.charge.level1.vsShield,
+      100 -
+        (cb.block.costFactor * cb.weapons.Spear.vsShield * cb.charge.level1.vsShield +
+          cb.block.costFlat),
     );
     expect(b2.state).toBe('blockStun');
   });
 
   it('blocks only from the front, breaks the guard when the bar empties, and needs a shield', () => {
-    const a = swing('Axe', 0);
+    const a = swing('Hand axe', 0);
     const d = newFighter('Seax', { shield: true, facing: 'w' });
     setBlock(d, true, 0);
     expect(resolveBlow(a, d, blowOf(a, cb), fromEast, a.activeAt, cb, 8, pool())).toBe('HIT');
     const e = newFighter('Seax', { shield: true, facing: 'e' });
     setBlock(e, true, 0);
     const low = pool(1);
-    expect(resolveBlow(a, e, blowOf(a, cb), fromEast, a.activeAt, cb, 8, low)).toBe('BLOCKED');
+    expect(resolveBlow(a, e, blowOf(a, cb), fromEast, a.activeAt, cb, 8, low)).toBe('GUARD_BROKEN');
     expect(e.state).toBe('guardBroken');
     expect(setBlock(newFighter('Seax'), true, 0)).toBe('NO_SHIELD');
   });
@@ -360,20 +365,28 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     expect(f.recoveryEnd).toBe(cb.shove.windup + cb.shove.active + cb.shove.recovery);
   });
 
-  it('gives the heavy build poise against light blows, and slower, heavier blows', () => {
-    const light = swing('Seax', 0);
-    const heavy = newFighter('Axe', { heavy: true });
-    expect(staggerOnHit(heavy, blowOf(light, cb), 10, cb)).toBe(false);
-    const big = newFighter('Seax');
+  it('gives the heavy build more poise against light blows, and slower, heavier blows', () => {
+    // Combat v2 (decision DE-5): three light seax blows break ordinary poise, not a heavy's.
+    const light = blowOf(swing('Seax', 0), cb);
+    const heavy = newFighter('Hand axe', { heavy: true });
+    const ordinary = newFighter('Hand axe');
+    for (let k = 0; k < 2; k++) {
+      expect(poiseHit(heavy, light, 10 + k, cb)).toBe('FLINCH');
+      expect(poiseHit(ordinary, light, 10 + k, cb)).toBe('FLINCH');
+    }
+    expect(poiseHit(heavy, light, 12, cb)).toBe('FLINCH');
+    expect(poiseHit(ordinary, light, 12, cb)).toBe('STAGGER');
+    // A big enough blow staggers even the heavy build.
+    const big = newFighter('Dane axe');
     pressAttack(big, 0, cb, 'e', pool());
-    run(big, 0, cb.charge.level1At + 1);
-    releaseAttack(big, cb.charge.level1At, cb, pool());
-    expect(staggerOnHit(heavy, blowOf(big, cb), 10, cb)).toBe(true);
-    const h = newFighter('Axe', { heavy: true });
+    run(big, 0, cb.charge.level2At + 1);
+    releaseAttack(big, cb.charge.level2At, cb, pool());
+    expect(poiseHit(heavy, blowOf(big, cb), 13, cb)).toBe('KNOCKDOWN');
+    const h = newFighter('Hand axe', { heavy: true });
     pressAttack(h, 0, cb, 'e', pool());
     releaseAttack(h, 1, cb, pool());
-    expect(h.activeAt).toBe(cb.weapons.Axe.windup + cb.heavy.windupExtra);
-    expect(blowOf(h, cb).damage).toBeCloseTo(cb.weapons.Axe.damage * cb.heavy.damage);
+    expect(h.activeAt).toBe(cb.weapons['Hand axe'].windup + cb.heavy.windupExtra);
+    expect(blowOf(h, cb).damage).toBeCloseTo(cb.weapons['Hand axe'].damage * cb.heavy.damage);
   });
 });
 
@@ -479,8 +492,9 @@ function fightOn(f: Fight, max = 6000, stop: () => boolean = () => false): void 
       if (i % 14 === 0) f.sim.submit({ type: 'MELEE', facing });
       if (i % 14 === 1) f.sim.submit({ type: 'MELEE_RELEASE' });
     }
-    // Keep the steerer standing: vitality topped up so the fight runs its course.
-    f.world.player.vitality = Math.max(f.world.player.vitality, 60);
+    // Keep the steerer standing: vitality topped up so the fight runs its course (combat v2's
+    // heavies hit for more than half of it, decision DE-8).
+    f.world.player.vitality = 100;
     f.world.player.stamina.current = Math.max(f.world.player.stamina.current, 60);
     f.sim.step();
   }
@@ -527,7 +541,7 @@ describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decisions S9-11, S10-5)
     expect(ketill).toMatchObject({
       vitality: ai.archetypes['Outlaw']?.vitality,
       leader: true,
-      f: { weapon: 'Axe', shield: true, heavy: true },
+      f: { weapon: 'Hand axe', shield: true, heavy: true },
     });
     expect(actor(f, 'E_WRECKER_CONN').fight).toMatchObject({
       vitality: ai.archetypes['Archer']?.vitality,
@@ -654,12 +668,17 @@ function defend(f: Fight): void {
     return;
   }
   f.sim.submit(still);
-  const staggered = ranked.find(({ a, d }) => a.fight?.f.state === 'stagger' && d < 40);
+  // Combat v2: a parried foe reels open ('parried'); one whose poise broke staggers.
+  const staggered = ranked.find(
+    ({ a, d }) => (a.fight?.f.state === 'parried' || a.fight?.f.state === 'stagger') && d < 40,
+  );
   const punish = ranked.find(
     ({ a, d }) =>
       d < 34 &&
       a.fight !== undefined &&
-      (['stagger', 'parryRecovery', 'blockStun', 'guardBroken'].includes(a.fight.f.state) ||
+      (['stagger', 'parried', 'parryRecovery', 'blockStun', 'guardBroken'].includes(
+        a.fight.f.state,
+      ) ||
         (striking(a.fight.f) && t >= a.fight.f.activeEnd)),
   );
   if (
@@ -675,7 +694,7 @@ function defend(f: Fight): void {
 }
 
 describe('a fight against several, one blow at a time (Book 10 attackTokens; decision S9-29)', () => {
-  it('an undefended steerer facing all three lives at least 8 s; never more than the tokens attack at once', () => {
+  it('an undefended steerer facing all three lives at least 4 s; never more than the tokens attack at once', () => {
     for (const seed of ['token-a', 'token-b', 'token-c']) {
       const f = strandFight(seed, '31.5,34.6');
       const onFoot = f.world.onFoot;
@@ -703,7 +722,10 @@ describe('a fight against several, one blow at a time (Book 10 attackTokens; dec
       expect(first, seed).not.toBeNull();
       expect(f.world.gameOver, seed).not.toBeNull();
       const seconds = ((f.world.gameOver?.tick ?? 0) - (first ?? 0)) / 60;
-      expect(seconds, seed).toBeGreaterThanOrEqual(8);
+      // Combat v2 (decision DE-8): enemies hit hard, so the undefended fall in three or four
+      // blows; one at a time still, so not in the first moments (combat v1 measured about 10 s).
+      console.log(`undefended ${seed}: ${seconds.toFixed(1)} s`);
+      expect(seconds, seed).toBeGreaterThanOrEqual(4);
       // More than one of them strikes: the token passes round.
       const hitters = new Set(
         f.events.flatMap((e) =>
@@ -717,7 +739,7 @@ describe('a fight against several, one blow at a time (Book 10 attackTokens; dec
   it('a steerer who parries, ripostes and dodges can beat all three', () => {
     // Ten seeded fights played by a careful scripted player (no help, no option). A script is a
     // poorer player than a person (it never retreats, uses the ground or picks its moment), yet it
-    // wins some: 4 of these 10 when written.
+    // wins some: 4 of these 10 when written (combat v1), 8 with combat v2's parry and riposte.
     let won = 0;
     let parried = 0;
     for (let n = 1; n <= 10; n++) {
@@ -733,8 +755,11 @@ describe('a fight against several, one blow at a time (Book 10 attackTokens; dec
       if (f.world.gameOver === null && foesOf(f).length === 0) won++;
       parried += f.events.filter((e) => e.type === 'BLOW' && e.outcome === 'PARRIED').length;
     }
+    console.log(`careful: won ${won} of 10, ${parried} parries`);
     expect(won).toBeGreaterThanOrEqual(3);
-    expect(parried).toBeGreaterThan(30);
+    // Combat v2 (decision DE-5): a parry opens a riposte that ends most fights at once, so a
+    // win takes fewer parries than combat v1's long trades did; still at least one a win.
+    expect(parried).toBeGreaterThanOrEqual(won);
   });
 });
 
@@ -811,7 +836,7 @@ describe('a fight to its end (Stage 9: blows, morale, surrender, deeds, gore)', 
       a.fight.dead = null;
       a.fight.vitality = 1;
       a.fight.f.state = 'idle';
-      hurt(fw, id, 10, 'P_STEERER', { heavyKill: true, weapon: 'Axe', dx: 1, dy: 0 });
+      hurt(fw, id, 10, 'P_STEERER', { heavyKill: true, weapon: 'Hand axe', dx: 1, dy: 0 });
       if (actor(f, id).fight?.dead?.piece != null) pieces++;
     }
     expect(pieces).toBeGreaterThan(40 * cb.dismemberChance - 10);
@@ -867,9 +892,9 @@ function fightWorldOf(f: Fight): FightWorld {
 
 describe('missiles in a fight (Book 10 section 21; Stage 9 check 3)', () => {
   it('no one moves while drawing: the enemy archer stops, draws for the draw time and looses', () => {
-    const f = strandFight('archer', '36,34.2');
+    const f = strandFight('archer', '39,34.2');
     const conn = actor(f, 'E_WRECKER_CONN');
-    // Make them aware: the steerer runs up, then stands.
+    // Make them aware: the steerer runs up (heard by its footfalls, combat v2), then stands.
     walkTo(f, 34.5 * TILE, 34.2 * TILE, true, 6, 200);
     let drawingTicks = 0;
     let movedWhileDrawn = 0;
@@ -927,6 +952,9 @@ describe('missiles in a fight (Book 10 section 21; Stage 9 check 3)', () => {
     const f = strandFight('arrow-body', '36,34.2');
     const svart = actor(f, 'E_WRECKER_SVART');
     const before = svart.fight?.vitality ?? 0;
+    // Aware of the steerer: an unaware target takes double (combat v2, tested in combat2.test.ts).
+    if (svart.fight !== undefined)
+      svart.fight.ai.awareness = { level: ai.awareness.alertAt, state: 'ALERT', heard: 0 };
     // A target that stands where it is for the shot: the three make no decisions (heard, they
     // would close on the steerer from three sides, off the arrow's line).
     for (const id of ['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN']) {
@@ -999,7 +1027,7 @@ describe('the steerer’s death (Book 2 section 12; Stage 9 check 4)', () => {
     const saved = stateHash(f.world);
     hurt(fightWorldOf(f), 'P_STEERER', 999, 'E_WRECKER_KETILL', {
       heavyKill: false,
-      weapon: 'Axe',
+      weapon: 'Hand axe',
       dx: 1,
       dy: 0,
     });
@@ -1039,7 +1067,7 @@ describe('the steerer’s death (Book 2 section 12; Stage 9 check 4)', () => {
     crewFight(f.world, must(land.fight), 'C_ODDI');
     hurt(fightWorldOf(f), 'P_STEERER', 999, 'E_WRECKER_KETILL', {
       heavyKill: false,
-      weapon: 'Axe',
+      weapon: 'Hand axe',
       dx: 1,
       dy: 0,
     });
@@ -1055,7 +1083,7 @@ describe('the steerer’s death (Book 2 section 12; Stage 9 check 4)', () => {
     // Once a scene: the next fall is death.
     hurt(fightWorldOf(f), 'P_STEERER', 999, 'E_WRECKER_KETILL', {
       heavyKill: false,
-      weapon: 'Axe',
+      weapon: 'Hand axe',
       dx: 1,
       dy: 0,
     });
@@ -1065,7 +1093,7 @@ describe('the steerer’s death (Book 2 section 12; Stage 9 check 4)', () => {
     must(must(g.world.onFoot).battle).engaged = true;
     hurt(fightWorldOf(g), 'P_STEERER', 999, 'E_WRECKER_KETILL', {
       heavyKill: false,
-      weapon: 'Axe',
+      weapon: 'Hand axe',
       dx: 1,
       dy: 0,
     });
@@ -1224,7 +1252,7 @@ describe('crew orders on the quick keys (Book 2 section 12)', () => {
       if (f.events.some((e) => e.type === 'BLOW' && e.attacker === 'C_BRAN')) break;
     }
     expect(f.events.some((e) => e.type === 'BLOW' && e.attacker === 'C_BRAN')).toBe(true);
-    expect(actor(f, 'C_BRAN').fight?.f).toMatchObject({ weapon: 'Axe', heavy: true });
+    expect(actor(f, 'C_BRAN').fight?.f).toMatchObject({ weapon: 'Hand axe', heavy: true });
   });
 });
 
@@ -1239,7 +1267,7 @@ describe('berserk (Book 10 section 08, Traits)', () => {
       const fa = must(crewFight(f.world, must(land.fight), 'C_KARI'));
       hurt(fightWorldOf(f), 'C_KARI', 5, 'E_WRECKER_KETILL', {
         heavyKill: false,
-        weapon: 'Axe',
+        weapon: 'Hand axe',
         dx: 1,
         dy: 0,
       });
@@ -1251,11 +1279,11 @@ describe('berserk (Book 10 section 08, Traits)', () => {
     expect(went).toBeGreaterThan(60 * cb.berserk.onWounded - 12);
     expect(went).toBeLessThan(60 * cb.berserk.onWounded + 12);
     // And deals x1.3.
-    const k = newFighter('Axe');
+    const k = newFighter('Hand axe');
     pressAttack(k, 0, cb, 'e', pool());
     releaseAttack(k, 1, cb, pool());
     expect(blowOf(k, cb, { berserk: true }).damage).toBeCloseTo(
-      cb.weapons.Axe.damage * cb.berserk.damage,
+      cb.weapons['Hand axe'].damage * cb.berserk.damage,
     );
   });
 });

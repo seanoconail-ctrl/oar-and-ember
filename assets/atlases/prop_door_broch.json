@@ -1,0 +1,58 @@
+{
+  "sheet": "prop_door_broch",
+  "kind": "prop",
+  "image": "prop_door_broch.png",
+  "width": 36,
+  "height": 52,
+  "pivot": {
+    "x": 18,
+    "y": 50
+  },
+  "footprint": {
+    "w": 30,
+    "h": 4
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "door": {
+      "frames": 4,
+      "ticks": 3,
+      "loop": false
+    },
+    "barred": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 30,
+    "h": 4
+  },
+  "placeholder": false,
+  "frames": {
+    "door/-/0": [
+      0,
+      0
+    ],
+    "door/-/1": [
+      36,
+      0
+    ],
+    "door/-/2": [
+      72,
+      0
+    ],
+    "door/-/3": [
+      108,
+      0
+    ],
+    "barred/-/0": [
+      0,
+      52
+    ]
+  }
+}

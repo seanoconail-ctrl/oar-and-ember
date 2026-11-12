@@ -221,10 +221,18 @@ describe('use and interact at a tile', () => {
     const own = tileOf(strand, onFoot.player.x, onFoot.player.y);
     /**
      * The world without the clock, which moves on each tick whatever happens, and the telemetry
-     * (Stage 12), which marks on any tick the milestones already reached (the kit's seax).
+     * (Stage 12), which marks on any tick the milestones already reached (the kit's seax), and the
+     * aims (design addendum 2.4), whose journal line is set on the first tick.
      */
     const world = (): string =>
-      JSON.stringify({ ...sim.state, tick: 0, clock: null, calendar: null, telemetry: null });
+      JSON.stringify({
+        ...sim.state,
+        tick: 0,
+        clock: null,
+        calendar: null,
+        telemetry: null,
+        aims: null,
+      });
     const before = world();
     sim.submit({ type: 'INTERACT_AT', tile: { tx: own.tx - 5, ty: own.ty } });
     sim.submit({ type: 'USE_AT', slot: 1, tile: { tx: own.tx + 4, ty: own.ty } });
@@ -236,16 +244,23 @@ describe('use and interact at a tile', () => {
     expect(world()).toBe(before);
   });
 
-  it('finishes the rescue with the mouse: right-click Hild, carry her up, right-click dry shingle', () => {
-    const { world, input, session, events, onFoot } = play();
+  it('finishes the rescue with the mouse: right-click Hild, cut, carry her up, right-click dry shingle', () => {
+    const { world, input, session, events, onFoot } = play('controls', true);
     const hild = onFoot.actors['C_HILD'];
     if (hild === undefined) throw new Error('no Hild');
     // Stand on the dry sand just above her, as a player wading out would.
     onFoot.player.x = hild.x;
     onFoot.player.y = hild.y - 24;
     const at = tileOf(strand, hild.x, hild.y);
+    // Design addendum 2.4: she is in the net. The click lands on her body (the tile above her
+    // feet) and the seax cuts her free (a hold-to-cut); a second click lifts her.
     input.mouseDown(2);
-    // The click lands on her body: the tile above her feet.
+    session.frame(FRAME, undefined, over(at.tx, at.ty - 1));
+    for (let i = 0; i < 100; i++) session.frame(FRAME, undefined, over(at.tx, at.ty - 1));
+    input.mouseUp(2);
+    session.frame(FRAME, undefined, over(at.tx, at.ty - 1));
+    expect(world.facts['ch1.net_free']).toBe(true);
+    input.mouseDown(2);
     session.frame(FRAME, undefined, over(at.tx, at.ty - 1));
     input.mouseUp(2);
     session.frame(FRAME, undefined, over(at.tx, at.ty - 1));

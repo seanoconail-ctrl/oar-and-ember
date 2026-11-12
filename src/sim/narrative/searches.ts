@@ -44,7 +44,10 @@ export const FACT_SEARCHES_OPEN = 'search.open';
 export const FACT_ODDI = 'search.oddi';
 export const FACT_BRAN = 'search.bran';
 export const FACT_RUNA = 'search.runa';
-/** Thorkel's chest: SAVED (carried above the tide line), LOST (to the sea), GIVEN (the bargain). */
+/**
+ * The ship's silver in its strongbox by Oddi (Thorkel's chest before design addendum 2.4, decision
+ * DE-17): SAVED (carried off the strand), LOST (to the scavengers), GIVEN (the bargain).
+ */
 export const FACT_CHEST = 'ch1.chest';
 /** The wreck-scavengers after the sheepfold: BEATEN, SEALCAVE (gone unaware) or PAID. */
 export const FACT_WRECKERS = 'ch1.wreckers';
@@ -360,6 +363,8 @@ export interface SearchHooks {
   readonly bargain: () => void;
   /** Stage 11: a repairs' choice (a fitting, the carving, a trade, the rites). */
   readonly repair?: (action: string) => void;
+  /** Design addendum 2.4 (decision DE-21): the place named for Runa's tool chest. */
+  readonly runa?: (place: string) => void;
 }
 
 /** The steerer chooses option `index` of a search's words. */
@@ -414,6 +419,12 @@ export function chooseSearch(
     case 'LAUNCH':
       end();
       hooks.repair?.(choice.do);
+      return;
+    case 'RUNA_FIRE':
+    case 'RUNA_SHELTER':
+    case 'RUNA_BOAT':
+      end();
+      hooks.runa?.(choice.do.slice('RUNA_'.length));
       return;
     case 'OFFER_CONFESSION':
     case 'OFFER_SEAX':
@@ -619,7 +630,13 @@ export function stepSearches(
   const map = land.maps.get(onFoot.zone);
   const tile = map?.tile ?? 24;
   // Hild tells of the three a few seconds after she has shown the camp.
-  if (world.facts[FACT_TOLD] !== true && hild !== null && world.facts[FACT_ARRIVED_SAID] === true) {
+  // (Before design addendum 2.4: since it she names them at the first night's fire, DE-16.)
+  if (
+    world.facts[FACT_TOLD] !== true &&
+    hild !== null &&
+    world.facts[FACT_ARRIVED_SAID] === true &&
+    world.facts['ch1.phase'] === undefined
+  ) {
     const at = world.facts[FACT_ARRIVED_AT];
     if (typeof at !== 'number') setFact(world, FACT_ARRIVED_AT, world.tick);
     else if (world.tick - at >= 5 * TICKS_PER_SECOND) {
@@ -743,7 +760,9 @@ function stepRuna(
   delete runa.walk;
   delete runa.moving;
   runa.pose = 'idle';
-  remove(onFoot, d.tools.id);
+  // Design addendum 2.4 (decision DE-21): her tool chest stays where it was set down past the
+  // neck, for the steerer to bring somewhere safe; she walks home and asks where it went.
+  if (world.facts['ch1.phase'] === undefined) remove(onFoot, d.tools.id);
   const c = cailleach(world);
   const outcome = c.stone === 'DRY' ? 'OFFERING' : 'CLIFF_PATH';
   if (outcome === 'CLIFF_PATH') c.passedBy = true;

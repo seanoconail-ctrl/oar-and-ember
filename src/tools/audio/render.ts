@@ -37,6 +37,54 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_PARRY', 1, {}, 'sfx-parry'],
   ['sfx:SFX_BLOCK', 1, {}, 'sfx-block'],
   ['sfx:SFX_GUARD_BREAK', 1.2, {}, 'sfx-guard-break'],
+  // Combat v2 (design addendum 2.4): the hurt, the parry's ring, the riposte, the lunge, the
+  // backstab, the sidestep, turning alert, binding a wound and eating.
+  ['sfx:SFX_STEERER_BREATH', 0.6, {}, 'combat2-steerer-breath'],
+  ['sfx:SFX_GRUNT', 0.5, {}, 'combat2-grunt'],
+  ['sfx:SFX_PARRY_RING', 1.5, {}, 'combat2-parry-ring'],
+  ['sfx:SFX_RIPOSTE', 0.8, {}, 'combat2-riposte'],
+  ['sfx:SFX_LUNGE', 0.5, {}, 'combat2-lunge'],
+  ['sfx:SFX_BACKSTAB', 0.8, {}, 'combat2-backstab'],
+  ['sfx:SFX_SIDESTEP', 0.4, {}, 'combat2-sidestep'],
+  ['sfx:SFX_ALERT', 0.8, {}, 'combat2-alert'],
+  ['sfx:SFX_BIND_WOUND', 2.8, {}, 'combat2-bind-wound'],
+  ['sfx:SFX_EAT', 2.0, {}, 'combat2-eat'],
+  ['call:SFX_ARROW_SHIELD', 0.8, {}, 'combat2-arrow-shield'],
+  // Design addendum 2.4, the opening: the cold open, the net, the chest, the fire, the sail, the
+  // mast, the ring, the doors and the Hag's Stone; the music's fade in, layers joining and fade out
+  // (DE-29: Book 10 section 25, fadeIn 8 s, layers over 20 to 30 s, fadeOut 6 s).
+  ...(
+    [
+      ['SFX_COLD_STRIKE', 3],
+      ['SFX_COUGH', 1.5],
+      ['SFX_NET_CUT', 2],
+      ['SFX_CHEST_DRAG', 2],
+      ['SFX_CHEST_THUD', 1],
+      ['SFX_FLINT', 1.5],
+      ['SFX_SAIL_RAISE', 3],
+      ['SFX_CHEST_OPEN', 2],
+      ['SFX_LASHING', 1.5],
+      ['SFX_BUNDLE_SPLASH', 2],
+      ['SFX_RING_CLINK', 1],
+      ['SFX_DOOR_CREAK', 2],
+      ['SFX_DOOR_KNOCK', 1],
+      ['SFX_FLAP', 1.5],
+      ['SFX_DOOR_BAR', 1.5],
+      ['SFX_HAG_DRONE', 6],
+      ['SFX_HAG_GUST', 3],
+    ] as const
+  ).map(([id, s]): [string, number, Record<string, unknown>, string] => [
+    `sfx:${id}`,
+    s,
+    {},
+    `opening-${id.slice(4).toLowerCase().replace(/_/g, '-')}`,
+  ]),
+  [
+    'music:hearth',
+    44,
+    { fade: { fadeIn: 8, layersJoin: 25, stopAt: 34, fadeOut: 6 } },
+    'opening-hearth-fades',
+  ],
   ['tell:SFX_TELL_RAN', 6, {}, 'tell-ran'],
   ['tell:SFX_TELL_MANANNAN', 7, {}, 'tell-manannan'],
   ['tell:SFX_TELL_DRAUGR', 6.5, {}, 'tell-draugr'],

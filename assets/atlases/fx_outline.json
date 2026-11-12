@@ -1,0 +1,49 @@
+{
+  "sheet": "fx_outline",
+  "kind": "decal",
+  "image": "fx_outline.png",
+  "width": 28,
+  "height": 48,
+  "pivot": {
+    "x": 14,
+    "y": 47
+  },
+  "footprint": {
+    "w": 28,
+    "h": 48
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "chest": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "chest/s/0": [
+      0,
+      0
+    ],
+    "chest/n/0": [
+      0,
+      48
+    ],
+    "chest/e/0": [
+      0,
+      96
+    ],
+    "chest/w/0": [
+      0,
+      144
+    ]
+  }
+}

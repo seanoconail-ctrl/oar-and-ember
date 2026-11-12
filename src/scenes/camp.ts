@@ -66,6 +66,9 @@ export function campUseLabel(
     case 'REPAIR':
       // Stage 11: the steering oar taken from the scavengers' skiff.
       return { text: click('ui.prompt.take_oar'), kind: 'take_oar' };
+    case 'OPENING':
+      // Design addendum 2.4: Thorkel's key and chest, and the sail raised between the oars.
+      return { text: click(`ui.prompt.${use.site}`), kind: use.site };
     case 'FEED_FIRE':
       return { text: click('ui.prompt.feed_fire'), kind: 'feed_fire' };
     case 'SLEEP':
@@ -100,7 +103,8 @@ export function campUseLabel(
 }
 
 /**
- * Tests and captures only: start at the broch after beat 2's lead (`?camp=broch`), and set the
+ * Tests and captures only: start at the broch with Hild there (`?camp=broch`; the lean-to up unless
+ * `shelter=down`), and set the
  * hour (`time=HH:MM`), the day (`day=N`), the fire (`fire=lit`), Hild's leg tended (`tended=1`),
  * the camp's stage (`stage=S1`), its driftwood (`wood=N`), the hand line in hand (`line=1`), Oddi
  * in the household (`oddi=1`, or `oddi=theft`: his theft due that evening; Stage 8), the zone to
@@ -130,8 +134,20 @@ export function campHooks(
       FACT_LEAD_STARTED,
       FACT_AT_BROCH,
       'ch1.arrived_said',
+      // Design addendum 2.4: cut free of the net, walked up to the camp at the first fire.
+      'ch1.hild_reached',
+      'ch1.net_free',
+      'ch1.chest_named',
+      'ch1.hild_walked_up',
     ])
       world.facts[fact] = true;
+    // The lean-to stands as before the rework, unless asked for down (`shelter=down`).
+    world.facts['ch1.shelter_raised'] = params.get('shelter') !== 'down';
+    // The searches' people are out there as Stage 10's tests found them at the broch, unless
+    // asked to wait for the first dusk (`searches=dusk`; decision DE-16).
+    if (params.get('searches') !== 'dusk') world.facts['ch1.searches_placed'] = true;
+    // The first night's fire scene has been sat through, unless asked to play it (`scene=fire`).
+    if (params.get('scene') !== 'fire') world.facts['ch1.fire_scene'] = true;
     world.facts[FACT_HILD_SAFE_AT] = 0;
     fireOneShot(world, 'BEAT_1_WAKE', () => undefined);
     if (!world.household.residents.includes(hild)) world.household.residents.push(hild);

@@ -1,0 +1,49 @@
+{
+  "sheet": "prop_cold_figures",
+  "kind": "prop",
+  "image": "prop_cold_figures.png",
+  "width": 20,
+  "height": 34,
+  "pivot": {
+    "x": 10,
+    "y": 32
+  },
+  "footprint": {
+    "w": 8,
+    "h": 2
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "thorkel": {
+      "frames": 4,
+      "ticks": 8,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 8,
+    "h": 2
+  },
+  "placeholder": false,
+  "frames": {
+    "thorkel/-/0": [
+      0,
+      0
+    ],
+    "thorkel/-/1": [
+      20,
+      0
+    ],
+    "thorkel/-/2": [
+      40,
+      0
+    ],
+    "thorkel/-/3": [
+      60,
+      0
+    ]
+  }
+}

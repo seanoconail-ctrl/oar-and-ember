@@ -152,12 +152,17 @@ describe('the chapter telemetry (Book 3 Stage 12 check 1)', () => {
     world.player.hotbar.slots[0] = 'ITEM_SEAX';
     for (let i = 0; i < 120; i++) sim.step();
     expect(world.telemetry.marks['seax']).toMatchObject({ tick: 0, day: 1 });
+    // Design addendum 2.4: awake on the strand from the first tick (no cold open in this world).
+    expect(world.telemetry.marks['woke']).toMatchObject({ tick: 0, day: 1 });
     sim.submit({ type: 'TIME_HELD', ms: 4500 });
     sim.step();
     expect(world.telemetry.heldMs).toBe(4500);
     const rep = telemetryReport(world);
     expect(rep.now).toBeCloseTo(world.tick / 60 + 4.5, 5);
-    expect(rep.marks).toEqual([{ key: 'seax', seconds: 0 }]);
+    expect(rep.marks).toEqual([
+      { key: 'woke', seconds: 0 },
+      { key: 'seax', seconds: 0 },
+    ]);
     const { state } = readSave(
       writeSave(world, { build: 't', kind: 'manual', slot: 'manual-1', sequence: 1, savedAt: 'n' }),
     );

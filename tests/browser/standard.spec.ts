@@ -21,14 +21,12 @@ const FRAME_SCRIPT_MS = 5.5;
 
 async function standStill(page: Page, query: string): Promise<void> {
   await page.setViewportSize({ width: 640, height: 360 });
-  await page.goto(`./${query}`);
-  await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'title', {
+  // Straight to the strand, awake: since design addendum 2.4 the naming screen opens on the cold
+  // open at sea (decision DE-67), and this is the strand's standard.
+  await page.goto(`./${query}&view=play&name=Ash&body=A`);
+  await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play', {
     timeout: 15_000,
   });
-  await page.keyboard.press('Enter');
-  await page.keyboard.type('Ash');
-  await page.locator('.oe-naming input').press('Enter');
-  await expect(page.locator('canvas#screen')).toHaveAttribute('data-state', 'play');
   // Captions and prompts are interface, not the world: hide them for the measure.
   await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
   await page.waitForTimeout(2500);

@@ -64,9 +64,8 @@ import { REPO_ROOT } from '../art/loadTitleArt.ts';
 import { loadBalanceJson } from '../content/loadBalance.ts';
 import { loadContentFromDisk } from '../content/loadContentFiles.ts';
 import { CampBot } from '../play/campBot.ts';
-import { OpeningBot } from '../play/openingBot.ts';
+import { playToCamp, WreckBot } from '../play/wreckBot.ts';
 import { SearchBot } from '../play/searchBot.ts';
-import { RepairBot } from '../play/repairBot.ts';
 import { LaunchBot } from '../play/launchBot.ts';
 
 export const GOLDEN_01 = 'tests/golden-saves/golden-01.json';
@@ -123,15 +122,11 @@ export function goldenWorld08(): WorldState {
   if (strand === undefined || camp === null || searches == null)
     throw new Error('no Wreck Strand, camp or searches');
   const sim = createSimulation(b, world, land);
-  const opening = new OpeningBot(sim, strand, b, land);
-  opening.pickUp('wreck_seax');
-  opening.rescue('C_HILD');
-  opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
-  opening.pickUp('stern_bow');
+  // Design addendum 2.4: the seax, Hild cut free, Thorkel's chest to the camp, the sail raised;
+  // the searches' people are out there from the first dusk (decision DE-16).
+  playToCamp(sim, b, land, camp);
   const bot = new SearchBot(sim, b, land, camp, searches);
-  bot.goToZone('ZONE_SK_MACHAIR');
-  bot.goToSite('stores');
-  bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  bot.waitUntil(19 * 60 + 5);
   bot.oddi('CHEST_FIRST');
   bot.runa('OFFERING');
   bot.bran('BARGAIN');
@@ -150,7 +145,14 @@ export function goldenWorld09(): WorldState {
     throw new Error('no camp, searches or repairs');
   const world = goldenWorld08();
   const sim = createSimulation(b, world, land);
-  const bot = new RepairBot(sim, b, land, camp, land.searches, land.repairs);
+  const bot = new WreckBot(sim, b, land, camp, land.searches, land.repairs);
+  // Design addendum 2.4: his key, his chest opened on the bow, and the stores shot down from the
+  // mast (Book 4 beats 14 and 15), before the repairs.
+  bot.goToZone('ZONE_SK_MACHAIR');
+  bot.takeKey();
+  bot.openChest();
+  bot.shootLashing({ x: 41.5, y: 27.5 });
+  bot.storesToCamp();
   bot.boards();
   bot.rigging();
   bot.oar('TRADE');
@@ -235,23 +237,18 @@ function goldenDay(
   const strand = land.maps.get('ZONE_SK_STRAND');
   if (strand === undefined || camp === null) throw new Error('no Wreck Strand or camp');
   const sim = createSimulation(b, world, land);
-  const opening = new OpeningBot(sim, strand, b, land);
-  opening.pickUp('wreck_seax');
-  opening.rescue('C_HILD');
-  opening.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
-  opening.pickUp('stern_bow');
-  const bot = new CampBot(sim, b, land, camp);
-  // Up to the broch Hild has led to, back down to pick up driftwood where it lies (decision PT-2:
-  // two pieces make the first fire's load, a third for the stack), and up again.
-  bot.goToZone('ZONE_SK_MACHAIR');
-  bot.goToSite('stores');
-  bot.waitFor(() => sim.state.facts['ch1.at_broch'] === true);
+  // Design addendum 2.4: the seax, Hild cut free, Thorkel's chest carried up to the camp and the
+  // sail raised; back down to pick up driftwood where it lies (decision PT-2: two pieces make the
+  // first fire's load, a third for the stack), and up again.
+  const bot: CampBot = playToCamp(sim, b, land, camp);
   bot.goToZone('ZONE_SK_STRAND');
   bot.pickUp('drift_east_rocks');
   bot.pickUp('drift_east_tide');
   bot.pickUp('drift_east_bank');
   bot.goToZone('ZONE_SK_MACHAIR');
   bot.doAt('fire');
+  // Hild walks up at the fire's smoke (decision DE-16), and her leg is seen to.
+  bot.waitFor(() => sim.state.facts['ch1.hild_walked_up'] === true, 60 * 240);
   bot.tend('C_HILD');
   bot.doAt('fire');
   // The hand line in the salvage, and a start on the sail shelter.

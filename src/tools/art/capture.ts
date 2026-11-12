@@ -42,6 +42,8 @@ import { parseZoneMap, tileOf } from '../../sim/land/zoneMap.ts';
 import { findPath } from '../play/openingBot.ts';
 import type { Tile } from '../play/openingBot.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
+import { combat2Capture } from './captureCombat2.ts';
+import { openingCapture } from './captureOpening.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
@@ -1692,9 +1694,39 @@ function stage12Readme(label: string, strand: number, c: Stage12Result): string 
 
 if (import.meta.filename === process.argv[1]) {
   const label = process.argv[2];
-  if (label === undefined || !/^[a-z0-9-]+$/.test(label)) {
+  if (label === undefined || !/^[a-z0-9.-]+$/.test(label)) {
     console.error('usage: npm run capture -- <label>   (e.g. stage-07)');
     process.exit(1);
   }
-  console.log(await capture(label));
+  if (label === 'rework-2.4-opening') {
+    // The first five minutes (design addendum 2.4): docs/art/rework-2.4/opening/ (captureOpening.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5297, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await openingCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'rework-2.4-combat') {
+    // Combat v2's clips (design addendum 2.4): docs/art/rework-2.4/combat/ (captureCombat2.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5287, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await combat2Capture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else console.log(await capture(label));
 }

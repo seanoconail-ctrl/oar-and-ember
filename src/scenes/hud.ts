@@ -51,6 +51,18 @@ export interface HudView {
     readonly base: number;
     readonly reasons: readonly { readonly reason: string; readonly amount: number }[];
   };
+  /**
+   * Combat v2 (Book 10 "Bars", decision DE-8): the health bar above the stamina bar, both with an
+   * opacity (they fade out when full outside a fight), and the bindings and rations carried.
+   */
+  readonly health?: {
+    readonly current: number;
+    readonly max: number;
+    readonly alpha: number;
+    readonly bindings: number;
+    readonly rations: number;
+  };
+  readonly staminaAlpha?: number;
   /** A hands-on action's timing ring over the work, in world pixels (Book 2 section 07). */
   readonly timing?: {
     readonly x: number;
@@ -116,30 +128,63 @@ export function createHud(doc: Document, atlases: ReadonlyMap<string, LoadedAtla
           view.clock.light === 'day' ? 'sun' : view.clock.light === 'dusk' ? 'dusk' : 'moon';
         put('ui_clock', `${icon}/-/0`, CLOCK.x, CLOCK.y);
       }
-      // The stamina bar: as long as its maximum; the groove of what is lost, a segment a reason.
-      const st = view.stamina;
-      if (st !== undefined) {
+      // Combat v2: the health bar above the stamina bar (Book 10 barsPlace), red, its length the
+      // steerer's vitality; the bindings and rations carried after it.
+      const hp = view.health;
+      const barY = hp === undefined ? BAR.y : BAR.y + 11;
+      if (hp !== undefined && hp.alpha > 0) {
+        ctx.globalAlpha = hp.alpha;
         const x0 = BAR.x;
         put('ui_stamina', 'cap_left/-/0', x0, BAR.y);
+        const max = Math.round(hp.max);
+        const cur = Math.max(0, Math.min(max, Math.round(hp.current)));
+        // The bar's frame and groove (the stamina bar's), the red fill over it.
+        for (let i = 0; i < max; i++) {
+          put('ui_stamina', 'spent/-/0', x0 + 4 + i, BAR.y);
+          if (i < cur) put('ui_combat', 'hfill/-/0', x0 + 4 + i, BAR.y);
+        }
+        if (cur > 0) put('ui_combat', 'hend/-/0', x0 + 3 + cur, BAR.y);
+        let gx = x0 + 4 + max;
+        put('ui_stamina', 'cap_right/-/0', gx, BAR.y);
+        gx += 6;
+        for (const [icon, n] of [
+          ['binding', hp.bindings],
+          ['ration', hp.rations],
+        ] as const) {
+          if (n <= 0) continue;
+          put('ui_combat', `${icon}/-/0`, gx - 3, BAR.y - 2);
+          put('ui_digits', `count/-/${String(Math.min(9, n))}`, gx + 6, BAR.y + 2);
+          gx += 14;
+        }
+        ctx.globalAlpha = 1;
+      }
+      // The stamina bar: as long as its maximum; the groove of what is lost, a segment a reason.
+      const st = view.stamina;
+      if (st !== undefined && (view.staminaAlpha ?? 1) > 0) {
+        ctx.globalAlpha = view.staminaAlpha ?? 1;
+        const x0 = BAR.x;
+        const BAR_Y = barY;
+        put('ui_stamina', 'cap_left/-/0', x0, BAR_Y);
         const max = Math.round(st.max);
         const cur = Math.max(0, Math.min(max, Math.round(st.current)));
         for (let i = 0; i < max; i++)
-          put('ui_stamina', `${i < cur ? 'fill' : 'spent'}/-/0`, x0 + 4 + i, BAR.y);
+          put('ui_stamina', `${i < cur ? 'fill' : 'spent'}/-/0`, x0 + 4 + i, BAR_Y);
         let gx = x0 + 4 + max;
-        put('ui_stamina', 'cap_right/-/0', gx, BAR.y);
+        put('ui_stamina', 'cap_right/-/0', gx, BAR_Y);
         gx += 4;
         for (const r of st.reasons) {
           const w = Math.round(r.amount);
           for (let i = 0; i < w; i++)
-            put('ui_stamina', `${i === 0 ? 'notch' : 'groove'}/-/0`, gx + i, BAR.y);
+            put('ui_stamina', `${i === 0 ? 'notch' : 'groove'}/-/0`, gx + i, BAR_Y);
           put(
             'ui_stamina',
             `icon_${r.reason.toLowerCase()}/-/0`,
             gx + Math.floor(w / 2) - 6,
-            BAR.y + 10,
+            BAR_Y + 10,
           );
           gx += w;
         }
+        ctx.globalAlpha = 1;
       }
       // The timing ring closing on the mark over the work.
       const tm = view.timing;

@@ -1,4 +1,7 @@
 /** Builds what the on-foot systems need from loaded content and balance.json. */
+import { parseOpeningBalance } from '../../content/openingBalance.ts';
+import { aimsContext } from '../narrative/aims.ts';
+import { wreckContext } from '../narrative/wreck.ts';
 import {
   parseTimeBalance,
   parseArrowBalance,
@@ -23,6 +26,12 @@ import { bakeElevation } from '../../content/terrain/elevation.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 import type { Id } from '../../core/ids.ts';
 import type { SimWorldContext } from '../simulation.ts';
+
+/** Whether balance.json has a section (tests may give a trimmed balance). */
+function hasTable(balance: unknown, section: string): boolean {
+  const t = (balance as { tables?: Record<string, unknown> } | null)?.tables;
+  return t?.[section] !== undefined;
+}
 
 export function landContext(
   content: Pick<Content, 'onFoot' | 'opening' | 'zoneMaps'> &
@@ -100,6 +109,30 @@ export function landContext(
         : searchContext({ searches: content.searches, balance }, repairs),
     repairs,
     launch,
+    // Design addendum 2.4: the opening, the aims, the doors and the edges (Book 10 section 25).
+    ...((): Partial<SimWorldContext> => {
+      const ok = content.opening !== null && hasTable(balance, 'theOpeningGuidanceAndFeel');
+      if (!ok) return {};
+      const ob = parseOpeningBalance(balance);
+      const full = {
+        opening: content.opening,
+        balance,
+        camp: content.camp ?? null,
+        searches: content.searches ?? null,
+        repairs: content.repairs ?? null,
+        zoneMaps: content.zoneMaps,
+      };
+      return {
+        wreck: wreckContext(full),
+        aims: aimsContext(full),
+        doors: ob.doors,
+        edgeCaption: {
+          afterSeconds: ob.feedback.edgeCaptionAfterSeconds,
+          cooldownSeconds: ob.feedback.edgeCaptionCooldownSeconds,
+        },
+        edgeStopDegrees: ob.feedback.edgeStopDegrees,
+      };
+    })(),
     people:
       content.household == null || content.people === undefined
         ? null

@@ -1,0 +1,52 @@
+{
+  "sheet": "prop_chest_open",
+  "kind": "prop",
+  "image": "prop_chest_open.png",
+  "width": 28,
+  "height": 48,
+  "pivot": {
+    "x": 14,
+    "y": 47
+  },
+  "footprint": {
+    "w": 16,
+    "h": 5
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "open": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 16,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "open/s/0": [
+      0,
+      0
+    ],
+    "open/n/0": [
+      0,
+      48
+    ],
+    "open/e/0": [
+      0,
+      96
+    ],
+    "open/w/0": [
+      0,
+      144
+    ]
+  }
+}

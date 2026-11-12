@@ -221,37 +221,49 @@ describe('check 2: the rescue teaches by doing', () => {
     sim.events.onAny((e) => {
       if (e.type === 'PERSON_CALLED') calls.push({ lineKey: e.lineKey, tick: sim.state.tick });
     });
-    for (let i = 0; i < 60 * 14; i++) sim.step();
+    for (let i = 0; i < 60 * 17; i++) sim.step();
     expect(calls.length).toBe(3);
     expect(events.find((e) => e.type === 'PERSON_CALLED')).toMatchObject({
       person: 'C_HILD',
       direction: 'w',
     });
-    // Three different lines, the first a second after waking (Book 4: control in seconds).
+    // Three different lines, the first within Book 10's hildCallBy of waking (15 s; DE-30).
     expect(new Set(calls.map((c) => c.lineKey)).size).toBe(3);
-    expect(calls.map((c) => c.tick)).toEqual([60, 420, 780]);
+    expect(calls.map((c) => c.tick)).toEqual([240, 600, 960]);
+    expect(calls[0]?.tick).toBeLessThanOrEqual(15 * 60);
   });
 
   it('is played through by doing: walk to the voice, lift, the tide refuses, carry up, set down', () => {
     const { sim, events } = start();
     const bot = new OpeningBot(sim, map, b, land);
+    // Design addendum 2.4: the seax on the way, the net cut, then the carry.
+    bot.pickUp('wreck_seax');
     bot.rescue('C_HILD');
-    const types = events.map((e) => e.type).filter((t) => t !== 'WATCH_STARTED');
-    // She calls until she is reached (how many times depends on the walking pace), then the rest.
-    const calls = types.filter((t) => t === 'PERSON_CALLED').length;
-    expect(calls).toBeGreaterThanOrEqual(3);
-    expect(types.slice(0, calls).every((t) => t === 'PERSON_CALLED')).toBe(true);
-    expect(types.slice(calls)).toEqual([
+    const what = (e: SimEvent): string =>
+      e.type === 'WRECK'
+        ? `WRECK:${e.what}`
+        : e.type === 'ITEM_PICKED_UP'
+          ? `PICKED:${e.item}`
+          : e.type;
+    const types = events.map(what);
+    // She calls until she is reached (how many times depends on the walking pace).
+    expect(types.filter((t) => t === 'PERSON_CALLED').length).toBeGreaterThanOrEqual(3);
+    // Then, in order: the seax, her reached (the chest placed), the cut, the lift, the tide's
+    // refusal, set down above it, the beat, and Stage 8's joining.
+    const order = [
+      'PICKED:ITEM_SEAX',
+      'WRECK:CHEST_PLACED',
+      'WORK_STARTED',
+      'WRECK:NET_CUT',
       'PERSON_LIFTED',
-      'PERSON_SPOKE',
       'COMMAND_REFUSED',
-      'PERSON_SPOKE',
       'PERSON_SET_DOWN',
-      'PERSON_SPOKE',
       'BEAT_COMPLETED',
-      // Stage 8: safe, Hild joins the household's day.
       'RESIDENT_JOINED',
-    ]);
+    ];
+    let at = 0;
+    for (const t of types) if (t === order[at]) at++;
+    expect(order.slice(at)).toEqual([]);
     expect(events.find((e) => e.type === 'COMMAND_REFUSED')).toMatchObject({
       reason: 'BELOW_TIDE_LINE',
       detail: 'C_HILD',
@@ -283,8 +295,25 @@ describe('check 2: the rescue teaches by doing', () => {
       kind: 'LIFT',
       target: 'C_HILD',
     });
+    // In the net, with no blade: she says what she needs, and stays where she is.
+    const said: string[] = [];
+    sim.events.onAny((e) => {
+      if (e.type === 'PERSON_SPOKE') said.push(e.lineKey);
+    });
     sim.submit({ type: 'INTERACT' });
     sim.step();
+    expect(onFoot.carrying).toBeNull();
+    expect(said).toContain('c_hild.net.no_blade');
+    // With the seax, a hold-to-cut frees her (Book 10 cutHold), then she is lifted.
+    sim.state.player.hotbar.slots[0] = 'ITEM_SEAX';
+    sim.submit({ type: 'INTERACT' });
+    sim.step();
+    expect(onFoot.player.work?.task).toBe('TASK_CUT_NET');
+    for (let i = 0; i < 95; i++) sim.step();
+    expect(sim.state.facts['ch1.net_free']).toBe(true);
+    sim.submit({ type: 'INTERACT' });
+    sim.step();
+    expect(onFoot.carrying).toBe('C_HILD');
     onFoot.player.facing = 's';
     expect(interactionNow(onFoot, map, land.rules, false)).toMatchObject({
       kind: 'SET_DOWN',
@@ -311,6 +340,7 @@ describe('check 2: the rescue teaches by doing', () => {
       submit(command);
     };
     const bot = new OpeningBot(sim, map, b, land);
+    bot.pickUp('wreck_seax');
     bot.rescue('C_HILD');
     const recording = record(b, startState, inputs, bot.ticks, 60, land);
     expect(recording.final.facts[FACT_HILD_SAFE]).toBe(true);

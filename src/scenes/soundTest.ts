@@ -27,6 +27,8 @@ import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
 import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
 import { LAUNCH_SOUNDS } from '../audio/synth/launch.ts';
+import { COMBAT2_SOUNDS } from '../audio/synth/combat2.ts';
+import { OPENING_SOUNDS } from '../audio/synth/opening.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -58,6 +60,13 @@ export interface RenderSettings {
   readonly variant?: string | null;
   /** For music: switch these layers at this bar (to hear a change land on a bar line). */
   readonly change?: { readonly atBar: number; readonly layers: Readonly<Record<string, boolean>> };
+  /** For music (design addendum 2.4, DE-29): its fade in and layers joining, then a fade out. */
+  readonly fade?: {
+    readonly fadeIn: number;
+    readonly layersJoin: number;
+    readonly stopAt: number;
+    readonly fadeOut: number;
+  };
   readonly wind?: number;
   readonly tide?: number;
   readonly gore?: number;
@@ -88,8 +97,9 @@ export function startItem(
     if (piece === undefined) throw new Error(`no piece ${id}`);
     const player = new PiecePlayer(e, piece, s.variant ?? null);
     for (const [layer, on] of Object.entries(s.layers ?? {})) player.setLayer(layer, on);
-    player.start(at);
+    player.start(at, s.fade?.fadeIn ?? 0, s.fade?.layersJoin ?? 0);
     let changed = s.change === undefined;
+    let stopped = s.fade === undefined;
     return {
       player,
       schedule: (until) => {
@@ -101,6 +111,11 @@ export function startItem(
             for (const [layer, on] of Object.entries(s.change.layers)) player.setLayer(layer, on);
             changed = true;
           }
+        }
+        if (!stopped && s.fade !== undefined && until > at + s.fade.stopAt) {
+          player.schedule(at + s.fade.stopAt);
+          player.stop(s.fade.fadeOut);
+          stopped = true;
         }
         player.schedule(until);
       },
@@ -256,7 +271,9 @@ export function startItem(
     };
   }
   if (kind === 'sfx' || kind === 'tell') {
-    const def = [...COMBAT, ...TELLS].find((d) => d.id === id);
+    const def = [...COMBAT, ...COMBAT2_SOUNDS, ...OPENING_SOUNDS, ...TELLS].find(
+      (d) => d.id === id,
+    );
     if (def === undefined) throw new Error(`no sound ${id}`);
     def.play(e, at, 0, { gore: s.gore ?? 2 });
     return { schedule: () => undefined, stop: () => undefined };
@@ -648,6 +665,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     SFX_GUARD_BREAK: 'ui.sound.sfx.guard_break',
   };
   for (const def of COMBAT) soundButton(combat, def, combatKeys[def.id] ?? def.id, 'sfx');
+  // Combat v2 (design addendum 2.4): each by its caption.
+  for (const def of COMBAT2_SOUNDS) soundButton(combat, def, def.captionKey, 'sfx');
   root.append(combat);
 
   // Tells.

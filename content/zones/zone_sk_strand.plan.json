@@ -76,20 +76,14 @@
     {
       "sheet": "prop_debris",
       "frame": "planks/-/0",
-      "x": 77,
-      "y": 34.4
+      "x": 66.4,
+      "y": 34.0
     },
     {
       "sheet": "prop_debris",
       "frame": "barrel/-/0",
       "x": 34,
       "y": 33.0
-    },
-    {
-      "sheet": "prop_debris",
-      "frame": "net/-/0",
-      "x": 74,
-      "y": 36.0
     },
     {
       "sheet": "prop_debris",
@@ -177,11 +171,6 @@
       "r": 5
     },
     {
-      "kind": "gull_standing",
-      "x": 58.4,
-      "y": 33.5
-    },
-    {
       "kind": "cormorant",
       "x": 40.2,
       "y": 36.2
@@ -200,6 +189,48 @@
       "kind": "crab",
       "x": 37,
       "y": 38.9
+    },
+    {
+      "kind": "gull",
+      "x": 31.5,
+      "y": 34.4,
+      "r": 2.5
+    },
+    {
+      "kind": "gull",
+      "x": 21.5,
+      "y": 49.5,
+      "r": 3
+    },
+    {
+      "kind": "gull_standing",
+      "x": 67.5,
+      "y": 35.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 58.4,
+      "y": 33.5
+    },
+    {
+      "kind": "gull_standing",
+      "x": 56.0,
+      "y": 31.0
+    },
+    {
+      "kind": "gull_standing",
+      "x": 44.5,
+      "y": 30.5
+    },
+    {
+      "kind": "crab",
+      "x": 66.8,
+      "y": 36.9
+    },
+    {
+      "kind": "seal",
+      "x": 50.5,
+      "y": 41.5
     }
   ],
   "links": [

@@ -39,13 +39,15 @@ import { loadLayerDefs, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { NO_PIXEL } from '../../src/render/indexedImage.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
-import { OpeningBot } from '../../src/tools/play/openingBot.ts';
+import { findPath, OpeningBot } from '../../src/tools/play/openingBot.ts';
+import { parseOpeningBalance } from '../../src/content/openingBalance.ts';
 
 const balance = loadBalanceJson();
 const b = parseTimeBalance(balance);
 const missiles = parseMissileBalance(balance);
 const arrows = parseArrowBalance(balance);
 const starting = parseStartingWeapons(balance);
+const opening = parseOpeningBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
 const strandMap = land.maps.get('ZONE_SK_STRAND');
@@ -119,53 +121,83 @@ function fly(onFoot: OnFootState, map: ZoneMap, rng = seedStream('fly', 'combat'
 const east = (dist: number | null, since = 0): Aim => ({ x: 1, y: 0, since, dist });
 
 describe('starting weapons (Book 10 section 21, "Starting weapons")', () => {
-  it('wakes with nothing in hand; the seax lies in the debris and the bow waits for the rescue', () => {
+  it('wakes with nothing in hand; the seax lies on the path to Hild, and no bow on the strand', () => {
     const { world, onFoot } = campaign();
     expect(world.player.hotbar.slots.every((s) => s === null)).toBe(true);
     expect(world.player.inventory).toEqual({});
     const seax = onFoot.items.find((i) => i.item === 'ITEM_SEAX');
-    const bow = onFoot.items.find((i) => i.item === 'ITEM_BOW');
     expect(seax).toMatchObject({ glint: true });
     expect(seax?.after).toBeUndefined();
-    expect(bow).toMatchObject({ arrows: starting.startingArrows, after: 'ch1.hild_safe' });
-    // The seax a few tiles from where the steerer wakes; the bow at the east end of the strand.
+    // Design addendum 2.4 (DE-18): the stern holds nothing; the bow is in Thorkel's chest.
+    const everywhere = [
+      ...onFoot.items,
+      ...Object.values(onFoot.elsewhere ?? {}).flatMap((r) => r.items),
+    ];
+    expect(everywhere.some((i) => i.item === 'ITEM_BOW')).toBe(false);
+    // The seax within 2 tiles of the shortest walk from the waking place to Hild (Book 9 section 13).
     const p = onFoot.player;
-    const d = Math.hypot((seax?.x ?? 0) * TILE - p.x, (seax?.y ?? 0) * TILE - p.y) / TILE;
-    expect(d).toBeLessThan(5);
-    expect(bow?.x ?? 0).toBeGreaterThan(strand.width * 0.9);
+    const hild = onFoot.actors['C_HILD'];
+    if (seax === undefined || hild === undefined) throw new Error('no seax or Hild');
+    const from = { tx: Math.floor(p.x / TILE), ty: Math.floor(p.y / TILE) };
+    const to = { tx: Math.floor(hild.x / TILE), ty: Math.floor(hild.y / TILE) };
+    const path = findPath(
+      strand,
+      false,
+      from,
+      (t) => Math.abs(t.tx - to.tx) + Math.abs(t.ty - to.ty) <= 1,
+    );
+    if (path === null) throw new Error('no path to Hild');
+    const near = Math.min(...path.map((t) => Math.hypot(t.tx + 0.5 - seax.x, t.ty + 0.5 - seax.y)));
+    expect(near).toBeLessThanOrEqual(2);
   });
 
-  it('a scripted player finds the seax within 5 minutes and the bow within 15', () => {
+  it('a scripted player finds the seax within its limit; the bow and arrows come from the chest', () => {
     const { sim, events } = campaign('found-by');
     const bot = new OpeningBot(sim, strand, b, land);
     bot.pickUp('wreck_seax');
     const seaxAt = bot.ticks;
-    bot.rescue('C_HILD');
-    // Hild names the bow once she is safe; it cannot be taken before.
-    expect(sim.state.onFoot?.items.find((i) => i.key === 'stern_bow')).toBeDefined();
-    bot.waitFor(() => sim.state.facts['ch1.bow_named'] === true);
-    expect(events).toContainEqual(
-      expect.objectContaining({ type: 'PERSON_SPOKE', lineKey: 'c_hild.bark.bow.01' }),
-    );
-    bot.pickUp('stern_bow');
-    const bowAt = bot.ticks;
-    console.log(`seax after ${(seaxAt / 60).toFixed(1)} s, bow after ${(bowAt / 60).toFixed(1)} s`);
+    console.log(`seax after ${(seaxAt / 60).toFixed(1)} s`);
     expect(seaxAt).toBeLessThan(starting.seaxFoundByMinutes * 60 * 60);
-    expect(bowAt).toBeLessThan(starting.bowFoundByMinutes * 60 * 60);
-    expect(sim.state.player.hotbar.slots.slice(0, 2)).toEqual(['ITEM_SEAX', 'ITEM_BOW']);
-    expect(sim.state.player.inventory['ITEM_ARROW']).toBe(starting.startingArrows);
-  });
-
-  it('the bow cannot be picked up before Hild is safe', () => {
-    const { sim, events, onFoot } = campaign();
-    const bow = onFoot.items.find((i) => i.key === 'stern_bow');
-    if (bow === undefined) throw new Error('no bow');
-    onFoot.player.x = bow.x * TILE;
-    onFoot.player.y = bow.y * TILE + 4;
+    expect(seaxAt).toBeLessThan(opening.firstMinutes.seaxBy * 60 * 60);
+    bot.rescue('C_HILD');
+    // His chest is placed by Hild, locked; with his key it opens on the bow and a quiver.
+    const onFoot = sim.state.onFoot;
+    const chest = onFoot?.actors['ITEM_THORKEL_CHEST'];
+    if (onFoot == null || chest === undefined) throw new Error('no chest');
+    onFoot.player.x = chest.x + 20;
+    onFoot.player.y = chest.y;
+    sim.state.player.inventory['ITEM_THORKEL_KEY'] = 1;
     sim.submit({ type: 'INTERACT' });
     sim.step();
+    expect(sim.state.facts['ch1.chest_opened']).toBe(true);
+    expect(sim.state.player.hotbar.slots.slice(0, 2)).toEqual(['ITEM_SEAX', 'ITEM_BOW']);
+    expect(sim.state.player.inventory['ITEM_ARROW']).toBe(starting.startingArrows);
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'ITEM_PICKED_UP', item: 'ITEM_BOW', first: true }),
+    );
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'PERSON_SPOKE', lineKey: 'c_hild.chest.bow' }),
+    );
+  });
+
+  it('the bow cannot be had before the chest is opened with the key', () => {
+    const { sim, onFoot } = campaign();
+    // Hild reached in the net: the chest washes into place by her.
+    const hild = onFoot.actors['C_HILD'];
+    if (hild === undefined) throw new Error('no Hild');
+    onFoot.player.x = hild.x + 30;
+    onFoot.player.y = hild.y;
+    for (let i = 0; i < 3; i++) sim.step();
+    const chest = onFoot.actors['ITEM_THORKEL_CHEST'];
+    if (chest === undefined) throw new Error('no chest placed');
+    // Without the key, Interact lifts it as a load; it does not open.
+    onFoot.player.x = chest.x + 20;
+    onFoot.player.y = chest.y;
+    sim.submit({ type: 'INTERACT' });
+    sim.step();
+    expect(onFoot.carrying).toBe('ITEM_THORKEL_CHEST');
+    expect(sim.state.facts['ch1.chest_opened']).toBeUndefined();
     expect(sim.state.player.hotbar.slots).not.toContain('ITEM_BOW');
-    expect(events.some((e) => e.type === 'COMMAND_REFUSED')).toBe(true);
   });
 
   it('draws the steerer’s bow layer only once the bow is owned', () => {

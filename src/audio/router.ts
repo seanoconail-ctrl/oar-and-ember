@@ -8,7 +8,7 @@ import type { AudioTable, CueDef } from '../content/registry.ts';
 import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
 import { MusicDirector, musicCues } from './music.ts';
-import type { MusicAction } from './music.ts';
+import type { MusicAction, MusicFades } from './music.ts';
 
 export type Bus = 'master' | 'music' | 'ambience' | 'effects' | 'voice' | 'tells';
 export type Direction = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
@@ -37,12 +37,18 @@ export class AudioRouter {
   #captions: Caption[] = [];
   #ambience: string[] = [];
 
-  constructor(table: AudioTable, strings: StringTable, sink: AudioSink) {
+  constructor(
+    table: AudioTable,
+    strings: StringTable,
+    sink: AudioSink,
+    /** Book 10 section 25's music fades (decision DE-29); none: changes are sharp, as before. */
+    fades: MusicFades | null = null,
+  ) {
     this.#table = table;
     this.#cues = new Map(table.cues.map((c) => [c.id, c]));
     this.#strings = strings;
     this.#sink = sink;
-    this.director = new MusicDirector(musicCues(table.cues));
+    this.director = new MusicDirector(musicCues(table.cues), fades);
   }
 
   #caption(cue: CueDef, now: number, direction?: Direction): void {

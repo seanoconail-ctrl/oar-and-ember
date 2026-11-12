@@ -58,6 +58,11 @@ export const FACT_FIRE_LIT = 'ch1.fire_lit';
 export const FACT_HILD_TENDED = 'ch1.hild_tended';
 /** Hild has shown the steerer the camp at the broch (beat 2's arrival line). */
 export const FACT_ARRIVED_SAID = 'ch1.arrived_said';
+/**
+ * Design addendum 2.4 (decision DE-20): whether the sail lean-to is up (false until the steerer
+ * raises it in a world begun with the rework's opening; absent in an older world, as drawn up).
+ */
+export const FACT_SHELTER_UP = 'ch1.shelter_raised';
 
 /** Everything the camp reads: its content and Book 10's numbers. */
 export interface CampContext {
@@ -236,6 +241,11 @@ export type SiteUse =
   | { readonly kind: 'SEARCH'; readonly site: string; readonly target: Id }
   /** Stage 11: a repair's own act (site: take_oar, taking the steering oar from the skiff). */
   | { readonly kind: 'REPAIR'; readonly site: string; readonly target: Id }
+  /**
+   * Design addendum 2.4's opening (src/sim/narrative/wreck.ts): take Thorkel's key, open his
+   * chest, raise the sail between the oars.
+   */
+  | { readonly kind: 'OPENING'; readonly site: string; readonly target: Id }
   | {
       readonly kind: 'REFUSE';
       readonly site: string;
@@ -283,7 +293,11 @@ export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): Si
         ? { kind: 'SLEEP', site: site.key }
         : { kind: 'REFUSE', site: site.key, reason: 'TOO_EARLY_TO_SLEEP' };
     case 'BUILD':
-      return home.stage === 'S0' ? { kind: 'TASK', task: 'TASK_BUILD', site: site.key } : null;
+      // Before the steerer raises the lean-to (one action: src/sim/narrative/wreck.ts), the sail
+      // and the oars are the opening's; once it is up, the work goes on towards the S1 roof.
+      return home.stage === 'S0' && world.facts[FACT_SHELTER_UP] !== false
+        ? { kind: 'TASK', task: 'TASK_BUILD', site: site.key }
+        : null;
     case 'STORES':
       if (ateSinceWaking(world)) return null;
       return foodRd(home) > 0
@@ -362,11 +376,16 @@ export function campUseAt(
   map: ZoneMap,
   tile: { readonly tx: number; readonly ty: number },
 ): PlacedUse | null {
+  // Something that can be done before a reason why something cannot (as campUseNear).
+  let refusal: PlacedUse | null = null;
   for (const u of uses) {
     const t = tileOf(map, u.x, u.y - 0.001);
-    if (t.tx === tile.tx && (t.ty === tile.ty || t.ty === tile.ty + 1)) return u;
+    if (t.tx === tile.tx && (t.ty === tile.ty || t.ty === tile.ty + 1)) {
+      if (u.use.kind !== 'REFUSE') return u;
+      refusal ??= u;
+    }
   }
-  return null;
+  return refusal;
 }
 
 export type CampEvent =

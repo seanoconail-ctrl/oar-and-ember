@@ -16,7 +16,8 @@ export type StringTable = ReadonlyMap<string, StringEntry>;
 
 export const STRING_KEY = /^[a-z][a-z0-9_]*(\.[a-z0-9_]+){2,}$/;
 const VARIABLE = /\{([a-z][a-z0-9_]*)\}/g;
-const TAG = /^(ADDRESS_STEERER|ABOUT_STEERER|VOICED|GLOSSARY:\S+|SPEECH|INFO)$/;
+const TAG =
+  /^(ADDRESS_STEERER|ABOUT_STEERER|VOICED|GLOSSARY:\S+|REFERS:[a-z][a-z0-9_]*|SPEECH|INFO)$/;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
