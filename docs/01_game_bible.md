@@ -267,7 +267,7 @@ Sea battles emphasise manoeuvring into an approach, an exchange of missiles and 
 - **Block**: hold to raise the shield over a frontal arc. A raised shield halves movement speed, and every hit on it drains stamina by the blow's power. A block that empties the bar breaks the guard with a large stagger; a full charge, an axe's hook or a Dane axe also break it.
 - **Dodge**: a short, stamina-heavy dash with a brief invulnerable moment in the middle, followed by a punishing recovery, so it cannot be spammed.
 - **Shove**: breaks a block and makes space.
-- **Lock-on**: a key (and the middle mouse button) locks onto the nearest enemy in front; another press switches targets.
+- **Lock-on**: a key (and the middle mouse button) locks onto the nearest enemy in front; another press switches targets. While locked, every attack goes towards the locked enemy.
 - **Unarmed**, the steerer can only shove and dodge. They wake with nothing in hand; the seax lies in the wreckage on Wreck Strand, and the bow is in Thorkel's locked chest (section 15).
 - **Stamina** governs everything: swinging, dodging and taking hits on a block all cost it, in combat and out of it (section 18). It pauses briefly before refilling. At zero a fighter is **exhausted**: no attacking, dodging or blocking, and movement at half speed, until stamina refills to a threshold. Fights take a rhythm: engage, back away to recover, engage again.
 

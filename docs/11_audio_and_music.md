@@ -263,7 +263,7 @@ The game generates all of its own audio. No recordings, no commissioned composer
 - Doors and flaps opening and closing; the opening's tactile actions (section 07).
 - Music fades in gently from a single layer and fades out whenever it stops; only stingers start and stop sharply (section 03, "Fades").
 - Every supernatural sign has its own learnable sound tell (section 07).
-- Every gameplay-relevant sound that the picture does not show has its caption; combat sounds have a drawn twin instead and are captioned only with the accessibility option (section 09).
+- Every gameplay-relevant sound that the picture does not show has its caption; combat sounds have a drawn twin instead and are never captioned, in any mode (decision DF-80).
 - Every enemy attack has its telegraph sound, told apart by weight; the exhausted breathe hard; the cold open's storm has thunder after the lightning, wind, rain, breaking waves and timber rocking with the ship (sections 07 and "Ships and sea").
 
 ### Voice
