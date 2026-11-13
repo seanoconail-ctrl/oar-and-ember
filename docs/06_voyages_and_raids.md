@@ -46,7 +46,7 @@ Outcomes write **deeds** to the coast's memory. A deed records what happened, wh
 | `CIVILIAN_KILLED` | Non-combatants killed: farmers, monks, traders, keepers, servants |
 | `SURRENDERED_KILLED` | People killed after surrendering or while downed |
 | `SACRILEGE` | Blood spilled or goods taken at a sacred place |
-| `SPARED` | Defenders or people spared when they could have been killed |
+| `SPARED` | Defenders or people spared when they could have been killed. Written by letting a beaten foe go with the spare shout (reeling, downed or begging: Book 1 section 09), by a surrender still left alive when a fight ends, and by stopping a killing that was under way (the Crows at Carrick). Each person spared is remembered with a hidden fate: some ambush the household later, some return the favour, some are never seen again (section 11; Book 10 section 17) |
 | `BURNING` | Buildings, boats or stores burned |
 | `SEED_TAKEN` / `SEED_LEFT` | Winter or seed stores taken or knowingly left |
 | `SACRED_TAKEN` | A relic, offering or grave good removed |
@@ -77,6 +77,7 @@ Everyone judges by the ethics of their own culture around AD 900, the household 
 | A promise broken (`PROMISE_BROKEN`) | Shameful (cynics shrug if it was to an enemy) | Shameful; sureties are ruined | A sin | The worst of crimes |
 | Rites denied (`RITES_DENIED`) | Invites draugar; shame on the kin | Shame | The soul denied | Angers the sea |
 | A challenge refused (`CHALLENGE_REFUSED`) | Cowardice; níð | Shame, unless a king forbids it | Righteous | No matter |
+| A beaten foe let go (`SPARED`) | A lord's right to give; the Glory-minded call it soft, and a man spared before his own side may feel the shame of it | The mercy of a strong hand, and a debt the spared one owes | Mercy, a Christian work | The sea gives back as well as takes |
 
 - **Saltvik** judges mainly by the bargain: a fair weight and a paid debt are honoured, cheating at the scale is the great shame, and killing is bad for trade more than it is wrong.
 - **People of mixed birth** (Bran, Senán, Áine and much of Saltvik) carry both codes, and judge and are judged by either.
@@ -409,7 +410,9 @@ Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground f
 | Barrow mail worn | Hrolf's draugar; Saltvik's gossip | The dead come to the camp and the steading at night; Ottar's family claim the mail (section 13) | Wet footprints at the door; Ottar's envoy |
 | The Frankish sword worn at Dún Fiach | Fiachra's household | An accusation of theft, or the proof of who Faolán is (section 13) | Fiachra's face when he sees the hilt |
 | A revenge killing in a town | The town's guards and the dead person's kin | A feud and a blood-price demand (section 14) | Guards on sight in that town; the kin's envoy |
-| Someone spared in an early raid | The survivor | They return at the worst moment, to help or to repay a different debt | Their name in the deed record; a face the player may remember |
+| Someone spared in an early raid | The survivor | They return at the worst moment, to help or to repay a different debt (Book 4 section 12, twist 8: the first spared person whose favour is unpaid) | Their name in the deed record; a face the player may remember |
+| A beaten foe let go with the spare shout (any fight) | The spared person, and the fate drawn when they were spared (Book 10 section 17): about a third repay, a quarter ambush, the rest are gone, moved by whether they begged, whether their friends died in that fight, whether they were shamed before their own side, and what was taken | 10 to 40 days later, after a rumour: an ambush on a road, a route or the strand at night, the spared one speaking first; or help in a fight going badly, a warning of an attack, a gift left at the home, or standing aside from a later fight | Their returned line; the rumour before it; the weapon they dropped |
+| A wreck-scavenger let go at the first dusk or the fold (Chapter 1) | Svart, Conn or Ketill | First on the island: standing aside at the fold or in Seal Cave (and Conn or Svart telling where the oar lies), or fighting on, or gone over the hill; then, if still owed, after the launch like any spared foe | Their line at the fold or the cave; an empty place in the band |
 | A promise made to a traveller | The traveller, and the road | Help, or a grievance, from someone the player forgot | The promise in the bargains panel |
 | A challenge refused | The challenger's men, and the poet | Níð spoken of the household; a satire sung where it hurts; the Glory-minded ashamed at the fire | Kári's anger; the satire at Saltvik |
 | A killing hidden, then found out | A body found, or one of the household's own who will not keep the secret | The killing judged as murder, worse than if it had been declared, with éraic or vengeance owed | The accusation; who told |
@@ -617,7 +620,7 @@ Other raids, land attacks, sea-borne attacks and defences are gates when they ar
 | Outlaws in a hurry, wolves, the dead | Killed |
 
 - **Enemies do not finish off the downed**, except berserkers and a few named cruel enemies (Ulf the Crow and Kolgrím the Burner; Book 5 section 19). They always give a visible warning first, a raised weapon and a shout (Book 10 section 06), so the player has a moment to answer.
-- **The household's own finisher** on a downed enemy writes `SURRENDERED_KILLED`; taking a downed enemy captive is `HOSTAGE_TAKEN`, ordinary dealing to most of the coast (section 01).
+- **The household's own finisher** on a downed or begging enemy writes `SURRENDERED_KILLED`, and on a foe reeling from a beaten stagger `KILLING` (the fight was still on); letting a beaten foe go with the spare shout writes `SPARED` (section 01; the user's third playtest). A finisher is one quick killing blow, never torture (Book 1 section 01). Taking a downed enemy captive is `HOSTAGE_TAKEN`, ordinary dealing to most of the coast (section 01).
 - *Rán's mercy* still turns unscripted crew deaths into grave wounds; scripted deaths (section 17) still happen.
 
 ### Proof tests
@@ -654,13 +657,22 @@ Every one is announced by the scene before it can happen, and every death that f
 | **Lead** | At the first dusk, iron on wood from the east end of the strand; Hild hears it at the camp ("Someone's down at the stern."), and the aim is to see who it is |
 | **True state** | Three wreck-scavengers, outlaws who take no captives: Ketill (the heavy build, axe and shield, their leader) watches the sheepfold, where Bran holds Thorkel's body; Svart (spear, his shield on his back while he works) and Conn (young, bow and seax, cowardly) strip the wreck's stern. They want loot, not a death |
 | **Mode** | A small fight, or none |
-| **Approaches** | **Fight:** they warn first ("Keep out of this." "This wreck is ours. Walk on." "One more step and you'll bleed."); Svart's heavy thrust has a slow, obvious wind-up, so the first parry lands and earns a big riposte with its hitstop. **Walk away:** they finish at dark and go to the fold. **Bargain:** offer salt fish from the camp's stores; they take it and go. **Sneak:** through the dune grass on the bank behind them for a backstab on Conn or Svart |
+| **Approaches** | **Fight:** on first seeing the steerer they speak before anything else: two of them, so a threat (Book 8 section 07, first sight), then a pause; then they warn the steerer off as the steerer comes on ("This wreck is ours. Walk on." "One more step and you'll bleed."). **Svart is the parry-teaching foe** (decision DG-9): every blow is turned on his spear's shaft, and only a parry opens him; his heavy thrust has a slow, obvious wind-up, so the first parry lands and earns a big riposte with its hitstop. His boasts and the parry prompt guide it. **Walk away:** they finish at dark and go to the fold. **Bargain:** offer salt fish from the camp's stores; they take it and go. **Sneak:** through the dune grass on the bank behind them (the sneak hint shows on the way, Book 10 section 21) for a backstab on Conn; Svart turns even a backstab, and is on guard at once |
 | **Complication** | When one falls (dead, downed or surrendered), the other runs: self-preservation shown at once. Conn runs if he is hit at all |
-| **Outcome bands** | Both gone with food; both gone at dark; one dead and one fled; one spared and one fled; both dead (rare: Conn runs) |
+| **Outcome bands** | Both gone with food; both gone at dark; one dead and one fled; one spared and one fled; both spared; both dead (rare: Conn runs). A beaten one can be finished or let go with the spare shout |
 | **Evidence** | A body on the strand, which the household see and remark on; the stern stripped or not |
-| **Consequences** | Whoever of the band is neither dead nor held goes to Ketill at the fold (the fold has one, two or three to face), and after the fold, to their skiff in Seal Cave (decision S11-10). A killing is a `KILLING` deed with the household's witnesses; a surrender let go is `SPARED`; the food is gone from the stores |
+| **Consequences** | Whoever of the band is neither dead nor held goes to Ketill at the fold (the fold has one, two or three to face), and after the fold, to their skiff in Seal Cave (decision S11-10). A killing is a `KILLING` deed with the household's witnesses (a finisher on a begging or downed foe `SURRENDERED_KILLED`); one let go is `SPARED`, and plays the fate it drew at the fold or in the cave first (Book 10 section 17, chapter1); the food is gone from the stores |
 | **Gate** | Not a gate. A checkpoint autosave before it |
-| **Proof tests** | Every approach ends the encounter; a scripted new player who parries Svart's first heavy wins with a riposte; Conn flees when Svart falls; walking away never starts the fight; the fold's band matches what happened at dusk |
+| **Proof tests** | Every approach ends the encounter; a scripted new player who parries Svart's first heavy wins with a riposte; no other way harms Svart; both speak before either attacks; Conn flees when Svart falls; walking away never starts the fight; the fold's band matches what happened at dusk, and a spared one there stands aside or fights by its fate |
+
+### Bran at the fold
+| Part | Contents |
+|---|---|
+| **Lead** | Hild's word at the first night's fire ("Bran went after Father."), and the first hint ("Up by the old mound, maybe.") |
+| **On arrival** | While none of them is aware of the steerer, Bran and the scavengers are in the middle of a running exchange over Thorkel's body (decision DG-26; Book 8 section 07; Book 10 section 07, "At the fold"): Ketill wants the ring and the key on its cord, or the ship's silver for the body; Bran refuses, his leg bleeding through; who stands where (Ketill and Svart at the gate, Conn on the mound with his bow, the east wall unwatched); that at dark they take the skiff round to the cave. Heard from cover, it shows the sneak route (the east wall), the bargain (the silver) and where they go after (Seal Cave). The sneak hint shows on the approach, if it has shows left. The talk stops the moment any of them sees the steerer, and their first-sight lines follow |
+| **Approaches** | **Fight**, beside Bran: **Ketill is the dodge-teaching foe** (decision DG-9): his only blow is the red blow (a red glint along his axe's edge, steel scraping on his shield's rim), which a shield or a parry cannot stop; he is hurt only while he recovers from it. Bran's shouts guide it, and the dodge prompt shows until a red blow has been avoided. **Sneak:** while unseen, Bran climbs out over the east wall with the body. **Bargain:** the ship's silver, in Ketill's parley |
+| **Consequences** | As before (decisions S10-8 and S11-10). If the fold passes without a fight, Ketill teaches the dodge in Seal Cave |
+| **Proof tests** | The talk plays only while all are unaware and stops at the first suspicion; no other way harms Ketill; a scripted player who dodges his red blow and strikes in its recovery beats him beside Bran and alone in the cave |
 
 ### Thorkel's chest, his key and the bow
 | Part | Contents |

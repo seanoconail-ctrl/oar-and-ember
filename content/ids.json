@@ -4004,6 +4004,86 @@
       "section": "07",
       "origin": "assigned",
       "note": "Design addendum 2.4 (decision DE-26): a timber door's knock as it shuts (SFX_DOOR_CREAK is its creak opening)."
+    },
+    {
+      "id": "TASK_SHELTER_FRAME",
+      "ref": "Stage 1, the frame, on day 1",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-12): the first stage of the sail shelter, the oars stood and lashed (shelterFrame)."
+    },
+    {
+      "id": "TASK_SHELTER_SAIL",
+      "ref": "Stage 2, the sail and lashings, on day 1",
+      "book": 10,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-12): the sail lashed over the frame (shelterSail). The finishing on day 2 is TASK_BUILD on the shelter's building."
+    },
+    {
+      "id": "SFX_SHELTER_FRAME",
+      "ref": "oars knocked together and the lashing drawn tight with a creak",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-12): the shelter's frame and lashings."
+    },
+    {
+      "id": "SFX_FINISHER",
+      "ref": "One heavy, distinct blow for each weapon and variant",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-3): a finisher's blow, by weapon and variant."
+    },
+    {
+      "id": "SFX_SPARE",
+      "ref": "The steerer's sharp breath with the shout (no blip)",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-4): the spare shout's breath and the dropped weapon."
+    },
+    {
+      "id": "SFX_GUARD_TURN",
+      "ref": "A dry clack of the shaft turning a blow",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-9): a teaching foe's guard turning a blow."
+    },
+    {
+      "id": "SFX_RED_SCRAPE",
+      "ref": "the axe's beard drawn along the shield's iron rim from the wind-up's first tick",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decisions DG-9 and DG-10): the red blow's scrape and its hiss at the flash."
+    },
+    {
+      "id": "SFX_BODY_TAKEN",
+      "ref": "the surf's wash rising wave by wave",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-14): the waves rising over Thorkel's bier at the sea burial."
+    },
+    {
+      "id": "SFX_BODY_SINK",
+      "ref": "a deep swallowing gulp and a fizz of bubbles",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-14): Thorkel's body sinking."
+    },
+    {
+      "id": "SFX_MENU_CLICK",
+      "ref": "The pause menu's items make a soft wooden click",
+      "book": 11,
+      "section": "09",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-15): the pause menu's interface sounds (opening, a muted thump; items, a click)."
     }
   ],
   "families": [

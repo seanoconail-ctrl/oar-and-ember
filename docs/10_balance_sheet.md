@@ -1,6 +1,6 @@
 # Oar and Ember, Book 10: Balance Sheet
 
-*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer, exploration density, the opening, guidance and feel of design addendum 2.4 (section 25), and the commitment, frame data, AI, on-screen text and storm of design addendum 2.5 (sections 06, 07, 21 and 25).*
+*Every tuning number in one place: time, food, fuel, cargo, ships, combat, stamina, perception, people, buildings, the ideal progression, the homestead threat schedule, the mainland, the wilderness, dungeons, the living world, assaults, the home without the steerer, exploration density, the opening, guidance and feel of design addendum 2.4 (section 25), and the commitment, frame data, AI, on-screen text and storm of design addendum 2.5 (sections 06, 07, 21 and 25), and the user's third playtest: the finisher and the spare, first-sight lines, the teaching foes, the spared remembered, combat prompts, the shelter's stages, the sea burial, menus and saves, the intro, the developer menu and the no-trap rule (sections 03, 06, 07, 08, 17, 21 and 25).*
 
 Numbers drift when they live in seven books. This book is the single source. The tables here are exported as `balance.json`, which the game reads; nothing is hard-coded.
 
@@ -155,7 +155,11 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | fireLight | 1 load of driftwood | Laid and lit in the fire ring; the camp fire then burns houseFuelPerDay (Fuel and hay) like a heated house |
 | tutorialGuard | No starvation and no spoilage before tutorialComplete | tutorialComplete is set at the launch, the end of Chapter 1 (Book 1 section 03: no starvation timer while the player is learning) |
 | mastStores | 4 rd of salt fish and the ship's cauldron | The stores bundle lashed high on the broken mast at the western outcrop (Book 9 section 03), shot down with the bow into the shallows (wadeable at any tide, decision DF-82) and carried up as one load (decision DE-19). The cauldron goes to the fire as a prop |
-| shelterRaise | One hands-on action by the steerer: 6 real seconds, 30 game minutes, 2 stamina | At Hild's word on walking up to the camp (Book 4 Chapter 1): the sail is hauled up between the oars, the ropes tighten and the cloth fills and settles, and the S0 shelter is up at once. The Buildings row's 1 worker-day is for residents raising one without the steerer (decision DE-20) |
+| shelterRaise | One hands-on action by the steerer: 6 real seconds, 30 game minutes, 2 stamina | Superseded by the user's third playtest (decision DG-12), removed when built: the raise is now shelterFrame and shelterSail, and the finished shelter is shelterFinish. Kept while the built game reads it (decision DE-20) |
+| shelterFrame | Stage 1, the frame, on day 1: one hands-on action by the steerer, 5 real seconds, 15 game minutes, 1 stamina | At Hild's word when she walks up at the first fire's smoke (Book 4 Chapter 1, beat 9): two oars stood up as shears against the broch's inner wall and lashed at the crossing, a third oar laid across as the ridge, the guy ropes pegged. Hild steadies the oars beside the steerer (decision DG-12) |
+| shelterSail | Stage 2, the sail and lashings, on day 1, once the frame stands: one hands-on action by the steerer, 5 real seconds, 15 game minutes, 1 stamina | At Hild's word as the frame is done: the sail hauled over the ridge, lashed along it and pegged at the foot with stones, the ropes creaking taut and the cloth filling and settling. The lean-to is up: the household sleeps under it from this night (decision DE-68), and the first rain (section 25, firstRain) falls on it. The two stages together keep shelterRaise's 30 game minutes and 2 stamina |
+| shelterFinish | Stage 3, the finished shelter, on day 2: the Buildings row's 1 worker-day (8 game hours of work), opened at 06:00 on day 2 and not before | At Hild's word on the second morning: the lashings, stretched by the night's rain, tightened; the sail spread on across the broch's court over the oars and the wall-heads; the weather side turfed; drying lines and the driftwood door hung. It is the S1 broch shelter (Book 7 section 06). Hild works it as her day's job at her wound's pace, others join as they come home, and the steerer's Build actions add to it as any build does (section 09). Finished, it ends the two-day job |
+| shelterHildLines | Hild speaks each stage's line when it opens: at her walk-up (the frame), when the frame stands (the sail), when the lean-to is up (the night's word), on the second morning within 10 tiles of the steerer at the camp or on waking there (the finishing), and when it is finished | Her stage lines are Book 8 section 05's. A stage's aim has two hints (Book 8 section 13); the frame and sail hints call from the camp if the steerer is away |
 | bindingsAtCamp | 2 linen bindings | In the salvage at the camp (S0), for binding wounds in a fight (section 06, "Health, stamina and healing") |
 
 ### Driftwood finds
@@ -696,7 +700,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | sound | At the flash, panned to the attacker, louder with the weight | A sharp breath (light); steel scraping (a bladed heavy or charged); a grunt and a creak of wood (an axe, club or Dane axe heavy); the charge's creak (level 1) and ring (level 2); a scuff and a drawn breath (lunge); the bow's creak (draw); a growl, a snort and pawing, a wet rattle or a gurgle for the beasts and the dead (Book 11 section 07) |
 | enemyStrings | One attack per opening; warriors, raiders and huscarls may follow with a second light, which has its own full telegraph | No enemy chains three |
 | steererTells | The steerer's own attacks use "Frame data" without the floors; they are drawn with the same draw-back, and their sound is a breath | The steerer has no voice (Book 11 section 08) |
-| noText | No caption, number, word or log entry reports a hit, a block, a parry, damage or a state in a fight | The bars, the lock-on mark and the hit reactions are the only interface in a fight (Book 8 section 10) |
+| noText | No caption, number, word or log entry reports a hit, a block, a parry, damage or a state in a fight | The bars, the lock-on mark and the hit reactions are the only interface in a fight (Book 8 section 10), with one limited exception since the user's third playtest: input prompts naming a control and its verb, at the screen's edge, by section 21's "Combat prompts" (decision DG-7) |
 
 ### Movement and acceleration
 *Grounded, weighty movement (design addendum 2.5 section 1.2; decision DF-2). No instant starts or stops: speed eases towards the speed wanted at full speed divided by the ticks to full speed each tick, and down at full speed divided by the ticks to stop, so a reversal slows through a stop. Speeds are section 02's and "Stance and lock-on"'s.*
@@ -773,6 +777,47 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | dodgeTotal | 34 ticks | |
 | dodgeStamina | 30 | |
 
+### Finishing a beaten foe
+*The user's third playtest (decision DG-2): a beaten enemy offers a choice, a finisher or a spare. A finisher is one quick killing blow, never torture (Book 1 section 01). Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| beaten | An enemy downed, begging (pleading or surrendered), or staggered while beaten | The three states that offer the choice |
+| beatenBelow | 30% of its vitality: a stagger (poise broken) at or below this is a beaten stagger | Above it a stagger is an ordinary opening (Poise), with no choice offered |
+| reel | 90 ticks: a beaten stagger is held as a reel (on one knee, the weapon low) instead of Poise's 30-tick stagger | Long enough to choose. If neither is chosen, it ends as cohesion and wounds decide: flight, begging or surrender (section 07) |
+| offerReach | 1.2 tiles from the steerer to the beaten foe's near edge, within the strike arc (Fight rules, strikeArc) | Downed and begging foes keep the choice until the scene ends or someone else kills them |
+| finishKey | Hold the finisher (V; on a gamepad, Y while the choice is offered) for finisherHold (24 ticks, "Vitality, stamina and armour") | Let go sooner and nothing happens: the hold is a choosing, not an action (no stamina, no lock). A hit taken during the hold ends it |
+| spareKey | Press let go (G; on a gamepad, A while the choice is offered) | One press; the shout follows at once |
+| padContext | On a gamepad, Y and A mean finish and let go only while the choice is offered and no other foe within its attack range of the steerer is in a wind-up; otherwise they parry and interact as ever | Both actions are remappable on every device (Book 2 section 21) |
+| finisherCommits | Once the hold completes, the finisher plays its wind-up, active and recovery ticks ("Finishers") under "Commitment": nothing cancels it, and other foes may strike the steerer meanwhile | The foe is held still for the finisher's ticks |
+| finisherKills | The finisher kills; there is no damage roll | Dismemberment follows Vitality's dismemberChance and the gore setting (Book 7 section 12) |
+| finisherDeed | On a downed or begging foe: SURRENDERED_KILLED (Book 6 section 16). On a beaten stagger: KILLING (the fight was still on) | With noQuarterAfter (section 07) as before |
+| spareShout | The steerer's shout: a speech line under the steerer's name with no voice blip (the steerer has no voice; Book 11 section 08), a breath, and the weapon swept aside towards the way out | Book 8 section 07's lines, never one twice running |
+| spareReply | 0.8 real seconds after the shout, the spared foe's reply in their own voice | Book 8 section 07 |
+| spareLeave | The spared foe drops their weapon, gets up (downed: after getUp's 20 ticks) and leaves the zone at a run by the way furthest from the steerer; they never rejoin this fight | Their weapon lies where it fell, as loot |
+| spareDeed | SPARED, with the spared person, the place, the witnesses and how they were beaten | Its chain is section 17, "The spared remembered" |
+| spareStamina | 0 | The shout costs nothing; it is not an action under "Commitment" (it plays no ticks of the steerer's own) |
+
+### Finishers
+*One quick killing blow per weapon, in two variants: on a foe still on their feet (a beaten stagger's reel, or kneeling to beg) and on a foe lying (downed, or flat to beg). Ticks at 60 Hz, after finisherHold. Weight is Heavy for the telegraph's draw-back (the steerer's own attacks have no flash). Hitstop holds both bodies (Hit reactions); the shake is shakeRiposte's 3 px for 12 ticks, none with reduced motion. No slow motion, no camera cut and no zoom (Book 7 section 12). Unarmed, the steerer takes up the foe's own weapon from their hand or from the ground and strikes once with it (decision DG-3).*
+
+| Weapon | Variant | Wind-up | Active | Recovery | Hitstop | Step | Shake |
+|---|---|---|---|---|---|---|---|
+| Seax | Standing | 14 | 4 | 16 | 10 | 0.2 | 3 px, 12 ticks |
+| Seax | Lying | 16 | 4 | 18 | 10 | 0.15 | 3 px, 12 ticks |
+| Hand axe | Standing | 18 | 5 | 20 | 12 | 0.25 | 3 px, 12 ticks |
+| Hand axe | Lying | 20 | 5 | 22 | 12 | 0.2 | 3 px, 12 ticks |
+| Spear | Standing | 18 | 5 | 20 | 12 | 0.3 | 3 px, 12 ticks |
+| Spear | Lying | 20 | 6 | 22 | 12 | 0.1 | 3 px, 12 ticks |
+| Sword | Standing | 16 | 5 | 18 | 12 | 0.25 | 3 px, 12 ticks |
+| Sword | Lying | 18 | 5 | 20 | 12 | 0.15 | 3 px, 12 ticks |
+| Dane axe | Standing | 26 | 6 | 28 | 16 | 0.3 | 3 px, 12 ticks |
+| Dane axe | Lying | 28 | 6 | 30 | 16 | 0.2 | 3 px, 12 ticks |
+| Club or hammer | Standing | 24 | 6 | 26 | 14 | 0.25 | 3 px, 12 ticks |
+| Club or hammer | Lying | 26 | 6 | 28 | 14 | 0.2 | 3 px, 12 ticks |
+| Unarmed (the foe's weapon) | Standing | 20 | 4 | 22 | 10 | 0.2 | 3 px, 12 ticks |
+| Unarmed (the foe's weapon) | Lying | 18 | 4 | 20 | 10 | 0.15 | 3 px, 12 ticks |
+
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
 *Vitality is combat v2's, about 25% less than combat v1 gave every enemy but the each-uisce (decision DE-8). Reach is each archetype's: armed people use their weapon's (section 06, "Weapon movesets"), beasts and the dead their own (decision DE-4).*
@@ -832,6 +877,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | surrenderBelow | 30 |
 | fleeBelow | 20 |
 | noQuarterAfter | 2 known `SURRENDERED_KILLED` deeds by the household |
+| allySpared | -10: a member of the group is spared and runs (decision DG-2); a finisher counts as allyKilled |
 
 ### Fighters' habits
 *How the enemy and the crew fight (Stage 9, decision S9-7; design addendum 2.5, decision DF-7): perception 10 times a second and fighting choices by "AI states" and "AI decisions", on the `ai` stream. Starting values, for tuning after playtests.*
@@ -940,8 +986,25 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | awareDodge | 25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing |
 | sidestepMove | After its tell a sidestep moves across the missile's path as a dodge does (section 06, Defence: its distance and ticks), and the missile it reads passes it (decision DE-39) |
 
+### First sight
+*The user's third playtest (decision DG-8): enemies speak when they first see the steerer. Every enemy in Chapter 1, and most later enemies, says a line on first turning alert to the steerer in an encounter, before any attack. Alone, weak or outnumbered, it is a warning to leave; confident or in a group, a taunt or a threat. It replaces the "warn first" rule of design addendum 2.4 as the general rule; the Warnings table below keeps the distances for those who go on warning. Book 8 section 07 holds the lines and Book 2 section 13 the rule.*
+
+| Key | Value | Notes |
+|---|---|---|
+| when | The first time in an encounter an enemy turns alert to the steerer (Awareness, alertAt), before it starts any attack | An enemy struck while unaware (a backstab, an arrow) speaks no first line; its friends do |
+| who | In a group, the first to turn alert speaks; one other may add a line of the other kind or a short bark 1.0 real second after, never more | So two lines at most, never a chorus |
+| warning | Speaks a warning if alone (no friend within 8 tiles), wounded (below woundedAt, Self-preservation), or outnumbered (fewer of its side than of the steerer's within 8 tiles, by count) | Cowardly enemies (Book 10 section 08, Traits) always warn |
+| taunt | Otherwise a taunt or threat: two or more of its side within 8 tiles, not outnumbered | Brave and hot-tempered enemies taunt even when alone, unless wounded |
+| lineDelay | 0.3 real seconds after turning alert | The turn of the head and the weapon squared up come first |
+| pauseWarning | 2.5 real seconds after a warning before the speaker or its group may start an attack | The moment to back off, bargain or strike first. Warners then keep the Warnings distances below |
+| pauseTaunt | 1.5 real seconds after a taunt before an attack | A step within the speaker's reach ends either pause at once |
+| strikeFirst | A blow that lands on the speaker during its pause lands as on a fighter caught open: hitstopHeavy and x1.5 its poise damage ("Commitment", punish) | It is not a backstab and does not kill outright. The pause then ends for the whole group |
+| noRepeat | A line is not used again until every other line of its pool has been used since; no two enemies in a row use the same line; a speaker never repeats its own last line | Pools by speaker (the named enemies) and by voice (Book 8 section 07's generic pools) |
+| exceptions | Beasts, the dead (the draugr mutter, Book 8 section 07), a berserker (a wordless roar), a sentry whose first act is the alarm (its shout or horn is its line) | Guards who attack on sight still speak a threat first, with pauseTaunt |
+| lineWords | Under eight words where it can be; at most two subtitle lines | Book 8 section 08's bark length |
+
 ### Warnings
-*Combat v2: scavengers, thieves and wary locals warn before they fight (decision DE-11). Guards of a hostile faction still attack on sight (Hostility and evidence).*
+*Combat v2: scavengers, thieves and wary locals warn before they fight (decision DE-11). Since the user's third playtest (decision DG-8) the first-sight line above is the first warning, whether it was a warning or a threat: it is spoken on turning alert, and for those who warn, if the steerer is first seen further off than warnAt, it waits until warnAt. Those who warn then keep these distances. Guards of a hostile faction speak a threat and attack (Hostility and evidence).*
 
 | Key | Value |
 |---|---|
@@ -965,8 +1028,45 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | connFlees | Conn flees to the fold when Svart falls (dead, downed or surrendered), or when Conn is hit |
 | foodBargain | 2 rd of salt fish from the camp's stores: they take it and go |
 | checkpoint | An autosave before it (Book 2 section 20) |
+| teaching | Svart is the parry-teaching foe (Teaching foes, below) in this fight and in every Chapter 1 fight he is in (decision DG-9) |
+
+### Teaching foes
+*The user's third playtest (decision DG-9): two Chapter 1 enemies each teach one defence and can be beaten only that way, with guidance in speech (Book 8 section 07) and a short prompt at the screen's edge (section 21, "Combat prompts"). Svart, the spearman at the stern at the first dusk, teaches the parry; Ketill, the band's leader at the sheepfold (or in Seal Cave if the fold passes without a fight), teaches the dodge. The rule holds in every Chapter 1 fight they are in; met again after Chapter 1 (section 17, "The spared remembered") they fight as ordinary outlaws.*
+
+| Key | Value | Notes |
+|---|---|---|
+| svartStats | Outlaw (Archetypes): vitality 68, no armour, the spear (both hands at the dusk, svartShield; with his shield at the fold and in the cave), poise 30 | Outlaw distances ("Distances by archetype"); svartWindup and svartHeavies as "The scavengers at dusk" |
+| svartGuard | Outside his opening every blow, arrow, thrown spear, shove and backstab that reaches Svart is turned: on the shaft held across him (the dusk) or on his shield (the fold, the cave). It costs him no stamina and no poise, and nothing breaks it: not a level-2 charge, an axe hook, a Dane axe, a shove or an empty bar | Drawn as a turn of the shaft or the board with a clack and sparks, hitstopBlock (1 tick). An unaware Svart turns at the last moment, catches the blow and is alert at once |
+| svartOpening | A parry of any of his attacks: he is parried for parryOpen (60 ticks, "Parry"), and in that time every blow lands, the riposte best | One riposte with the seax (23 x 3.0 = 69) beats him from full vitality |
+| svartGuidance | His own boasts: the first blow turned brings his first guidance line, the third his second (Book 8 section 07); at the fold, if he was not fought at the dusk, Bran's line comes instead on the first blow turned | At most one guidance line in 6 real seconds |
+| svartPrompt | The parry prompt (section 21, teachParry) shows from his first telegraph in a fight, at each of his telegraphs, until a parry has landed on him once | Outside the three-fight count of "Combat prompts": it shows whenever he fights the steerer until the lesson is done |
+| ketillStats | Outlaw, heavy build (section 24): vitality 68, no armour, hand axe and shield, poise 60 | Outlaw distances; the heavy build's +4 wind-up is inside the red blow's ticks below |
+| ketillRedShare | 100%: in a Chapter 1 fight every attack Ketill makes is the red blow | He never strikes a light, so nothing of his can be parried for an opening |
+| redBlow | Wind-up 56 (hold 38, swing 18), active 7, recovery 30, miss recovery 44, step 0.5 tiles, stamina 30, reach the hand axe's 1.1 + the step | An overhead axe blow, two hands on the haft behind the shield's rim. Weight Charged (its draw-back 7 px, held still for the last 6 wind-up ticks), and over floorCharged ("Telegraphs") |
+| redUnblockable | It cannot be blocked or parried: a raised shield takes the full blow and the guard breaks (guardBreakEmpty's 60-tick stagger), and a parry is beaten (the blow lands as a punish) | Only a dodge, or stepping out of its reach, avoids it |
+| redGlint | At the flash, 28 ticks before the first active tick (Telegraphs, flash): a red glint runs along the axe's edge over 6 frames, in the Danger tell accent (Book 7 section 08) | The red glint marks an unblockable weapon blow and nothing else, in this game and every later one |
+| redScrape | A scraping sound from the wind-up's first tick to the swing: the axe's beard drawn along the shield's iron rim, rising to the flash | Book 11 section 07; panned to Ketill |
+| ketillGuard | Outside his opening every blow, arrow, thrown spear, shove and backstab is turned on his shield, as svartGuard | His shield turns blows from every side while he is not in the red blow |
+| ketillOpening | The red blow's miss recovery and recovery (74 ticks after a miss): every blow lands, from any side | Two avoided red blows beat him with the seax (three clean hits); fewer with Bran's help at the fold |
+| ketillGuidance | At the fold, Bran's lines at Ketill's first red blow and at the first guard broken through; in Seal Cave, Ketill's own boast at his first red blow (Book 8 section 07) | At most one guidance line in 6 real seconds |
+| ketillPrompt | The dodge prompt (section 21, teachDodge) shows at each red blow's first wind-up tick until a red blow has been avoided once | Outside the three-fight count, as svartPrompt |
+| lessonDone | A parry landed on Svart, and a red blow avoided by Ketill, are each recorded once in the campaign | Each prompt goes for good once its lesson is done |
+
+### At the fold
+*The user's third playtest (decision DG-26): arriving at the sheepfold while Bran and the wreck-scavengers are unaware of the steerer, they are in the middle of an exchange: Bran over Thorkel's body, Ketill (and whoever came from the dusk) at the gate and on the mound. It can be overheard from cover, and it says things worth knowing. Book 8 section 07 holds the lines.*
+
+| Key | Value | Notes |
+|---|---|---|
+| talkWhile | From searchesPlaced (section 08) until the fold's encounter starts, while none of them is aware of the steerer | Played in view only; out of view it is not run |
+| overhearRange | 12 tiles from the speaker: a line is shown as speech, with its blip, when the steerer is within this | Beyond it, only a murmur of blips (no subtitle), heard to 20 tiles |
+| lineGap | 1.6 real seconds after a line's subtitle ends before the answer | Each exchange is two to four lines |
+| exchangeGap | 5 real seconds between exchanges | |
+| order | The exchanges play in a shuffled order drawn on the presentation's own seeded stream at each arrival; an exchange whose speaker is absent (dead, held or gone) is left out; after the last, a new order is drawn whose first is never the one just heard | No exchange twice in a row, and no line twice running |
+| stops | When any of them turns suspicious or alert to the steerer, the line under way is cut off and the talk stops for good; their first-sight lines take over (First sight) | A suspicious "Who's there?" comes first if they are only suspicious |
+| resumes | Never in that visit; at the next arrival, while all are unaware, a new order starts | |
 
 ### AI states
+
 *AI with intent and distance (design addendum 2.5 section 1.5; decision DF-7). A fighter runs a state machine with cooldowns and decides at intervals ("AI decisions"), never every tick, so enemies never jitter or shuffle. Melee enemies circle just outside their attack range and wait for the steerer to miss before stepping in; they never swarm. It works with the attack tokens of "Fighters' habits" and the rules of "Self-preservation", and Book 2 section 13 holds the contract. The last column is the least time in the state (its cooldown) unless the fighter is hit hard (staggered or knocked down) or its target falls.*
 
 | State | Enters when | Does | Least time |
@@ -1100,6 +1200,7 @@ Revision 2.3 (decision DC-6): taking captives in a fight is ordinary dealing (Me
 | `PROMISE_BROKEN` | x1.5 against | x2.0 against (sureties ruined) | x1.5 against (a sin) | x3.0 against | x2.0 against |
 | `RITES_DENIED` | x1.5 against (invites draugar) | x1.0 against | x2.0 against (the soul denied) | x1.5 against | x1.0 against |
 | `CHALLENGE_REFUSED` | x1.5 against (cowardice; níð) | x1.0 against | x1.0 for (righteous) | x0 | x0 |
+| `SPARED` | x0.8 for (a lord may give a beaten foe his life; the Glory-minded call it soft) | x1.2 for (the mercy of a strong hand) | x1.5 for (mercy, a Christian work) | x1.0 for (the sea gives back too) | x1.0 for (a man let go may trade) |
 
 People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger of their two cultures' factors.
 
@@ -1259,6 +1360,16 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | seaGold | -1 friendship per point | Each resident's Gain points, when Thorkel's gold ring goes into the sea with him |
 | settingStones | 2 game hours | The household lays the stones of the ship-setting on the machair before the rite begins |
 | riteLength | 60 game minutes | The rite itself, from the gathering to the last word |
+| seaBier | The sea burial: once the last word is said, Bran and Oddi (or whoever can carry) bear Thorkel down on a bier of the wreck's planks, wrapped in his cloak with his ring on his hand, and set it at the water's edge below the gathering place, wherever the tide stands; 4 real seconds | The user's third playtest (decision DG-14): the water must rise over the body, submerge it and carry it away in the scene. The rite is a scene that takes control (section 25, cursorHidden) |
+| seaWaves | A set of three waves, bigger than the day's surf, 2.6 real seconds apart, the first 1.5 real seconds after the bier is set down | The swell drawn in from the sea in the camera's view, each wave's foam line further up the shingle |
+| seaFirstWave | The first wave washes round the bier to both sides and 0.5 tiles past it, foaming, and draws back | The cloak's hem lifts and darkens |
+| seaSecondWave | The second comes over the bier: the body is under the foam to the shoulders for 1.2 real seconds, then shows again, streaming | Foam over the whole bier |
+| seaThirdWave | The third lifts the bier off the shingle; the backwash carries it 3 tiles out over 2.5 real seconds | The planks knock on the stones, then go quiet |
+| seaDrift | It drifts out to 6 tiles from the water's edge over 4 real seconds, turning 30 to 60 degrees with the swell and riding lower, drawn 1 px lower every 0.5 real seconds | Foam trails from it |
+| seaSink | Then it sinks over 2 real seconds: the cloak goes dark, the body goes under, the planks tilt and slide after it; a ring of foam and bubbles stays 1.5 real seconds and spreads | Nothing floats back |
+| seaAfter | Hild's last line 1.5 real seconds after the sink; control returns 2 real seconds after that | Gulls cross over the place |
+| seaCamera | The camera holds the bier in view and eases out to sea with it, at most 3 tiles from where it began, no cut and no zoom | Calmer with reduced motion |
+| seaLength | About 17 real seconds from the bier set down to control returning | The rite's 60 game minutes come before it |
 
 ### The household day and talk
 *Added for Stage 8 (decisions S8-1 to S8-30): barks, conversation, schedules and the warning flow. Starting values, for tuning after playtests.*
@@ -1806,6 +1917,30 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | forgotten | At least one in three delayed consequences comes from a person the household met only once |
 | warning | A precursor 3 days before, when the steerer would know it (Book 1 section 06, Fairness) |
 
+### The spared remembered
+*The user's third playtest (decisions DG-5 and DG-6): spared enemies are remembered. Some come back to ambush the household, some to return the favour, and some are never seen again. The fate is drawn once, hidden, on the `world` stream at the moment the SPARED deed is written, and never shown or hinted at by the reply. It is the chain of Book 6 section 11 ("Someone spared...") and the grateful survivor of Book 4 section 12 (twist 8).*
+
+| Key | Value | Notes |
+|---|---|---|
+| baseOdds | Favour 35%, ambush 25%, gone 40% | Before the conditions below |
+| begged | Favour +10, ambush -5 | They asked for their life (begging or surrendered), not only beaten |
+| kinKilled | Ambush +20, favour -15 | Someone of their own group was killed by the household in the same fight (a finisher or any killing) |
+| shamed | Ambush +5 | Spared in front of their own side (a friend of theirs within 8 tiles saw it) |
+| robbed | Ambush +5 | The household took goods or loot at that place in the same visit |
+| clamp | Favour 10 to 60%, ambush 10 to 50%; gone takes the rest, never below 20% | |
+| due | 10 to 40 days after the deed (Delayed consequences, delay), drawn with the fate | A Chapter 1 spared person is due no sooner than 10 days after the launch |
+| precursor | 3 days before, when the steerer would know it (Delayed consequences, warning): a rumour of someone asking after the household's sail, or a face seen on a road | Never says which way it will go |
+| ambushWhere | The next road leg, wilderness route or Skarvholm strand at night the steerer passes on or after the due day, within 40 days of it, else gone | With 1 to 3 outlaws of their kind; the ambush's sign shows first (Book 2 section 25), and the spared one speaks first (Book 8 section 07, the returned lines) |
+| ambushFight | They fight as ordinary foes of their archetype (no teaching rule), and can be spared again | A second spare draws a new fate with kinKilled and shamed as they stand |
+| favourForms | Help in a fight 40%, a warning 25%, a gift 20%, standing aside 15% | Drawn with the fate |
+| favourHelp | They come into a fight in the steerer's zone on or after the due day when the steerer is below 35% vitality or a resident is downed, fight on the household's side until it ends, then go | Their returned line on arrival |
+| favourWarning | Word of the next attack, ambush or raid on the household, brought 1 to 3 days before it | Delivered as news by them in person at the camp or the home (Book 2 section 25) |
+| favourGift | Left at the household's home with word: 4 rd of food, or 2 oz of silver, or a lead with "likely" confidence (Book 6 section 01) | |
+| favourStandAside | Met again among the enemy in a later fight, they speak their returned line, drop their weapon and walk off before it starts | One fewer foe |
+| noQuarterTurns | If the household's known SURRENDERED_KILLED deeds reach noQuarterAfter (section 07) before a favour is paid, half of the unpaid favours turn to gone | Drawn on the `world` stream |
+| gratefulSurvivor | The first spared person with a favour still unpaid when a worst moment comes (the defence of Skarvholm, the Return to Skarvholm, the final battle, or any fight in which the steerer is below 25% vitality with no ally standing) comes then instead, on the household's side | Book 4 section 12, twist 8; at most once a campaign |
+| chapter1 | The wreck-scavengers spared in Chapter 1 play their fate on the island first. Favour: at the fold or in Seal Cave they will not fight the steerer: they stand aside with their returned line (in the cave they say the oar is in the skiff and walk off). Ambush: they fight at the fold or in the cave as before, with their returned line. Gone: they are not seen again on the island | The living carry their fate on after the launch: an unpaid favour or an ambush not yet made is still due, by due |
+
 ### Event deck
 | Key | Value |
 |---|---|
@@ -1960,6 +2095,68 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | tipHold | A pickup tooltip shows for 8 real seconds of play, or until its controls have been used twice, then fades | Kept in the help pages (Book 2 section 21) |
 | refusalHold | A refusal word beside the cursor shows for 1.2 real seconds | One at a time; a new one replaces it |
 
+### Combat prompts
+*The user's third playtest (decisions DG-7, DG-11 and DG-25): short input prompts come back for the steerer's first fights and then fade away for good. They are a deliberate, limited exception to "no combat text" (section 06, Telegraphs, noText): they name a control and its verb, nothing else. Never damage, a hit, a block, a state, a number or a log. Book 2 section 21 holds the rules and Book 8 section 10 the wording.*
+
+| Key | Value | Notes |
+|---|---|---|
+| promptFights | The steerer's first 3 fights in the campaign | A fight counts from its start (a hostile alert to the steerer and a blow struck or a telegraph begun against the steerer) to its end (section 21, inFight, no longer holding). The prompts fade out as the third fight ends and do not come back, unless the display option says always |
+| promptSet | Lock on; strike (hold for a heavy); parry; dodge; block (with a shield in hand) | Each with its control as bound for the input in use |
+| promptWhen | Lock on and strike as the fight starts; parry and dodge, on one line, at each enemy telegraph aimed at the steerer; block when a shield is in hand and a telegraph begins | The finish-or-let-go choice and the teaching prompts have their own rules (below) |
+| promptHold | 2.5 real seconds, then a promptFade (0.5 s) fade | A prompt shown again in the same fight waits 6 real seconds |
+| promptRetire | A prompt goes for the rest of the campaign once its action has been done 3 times in fights | Lock on: locked; strike: a blow struck; parry: a parry pressed; dodge: a dodge; block: a block raised |
+| promptPlace | The right edge of the view: right-aligned 12 px in from the edge, in the band from 45% to 78% of the view's height, above the hotbar and clear of the caption area (On-screen text, captionPlace) | At most 2 prompt lines at once, each at most 28 characters |
+| promptClear | A prompt fades out (promptFade) while any fighter, missile or the locked target's drawn box overlaps its box, and comes back when clear | Never drawn over the action |
+| promptOption | A display setting: combat prompts for the first fights (the default), always, or off | Book 2 section 21 |
+| finishChoice | The finish-or-let-go prompt shows whenever the choice is offered (section 06, "Finishing a beaten foe"), in every fight, at the same place | An interaction prompt, not a teaching one: it is never retired |
+| teachParry | Svart's parry prompt (section 07, Teaching foes, svartPrompt) | Not counted in promptFights |
+| teachDodge | Ketill's dodge prompt (section 07, Teaching foes, ketillPrompt) | Not counted in promptFights |
+| healPrompt | The heal prompt shows when the steerer is hit and left below 75% of the vitality maximum, or takes a new wound, while carrying a binding or a ration | In or out of a fight, at promptPlace; it names binding (a binding carried) or eating (a ration selected) |
+| healPromptHold | 5 real seconds, or until a heal starts | Shown again at the next such hit |
+| healPromptUntil | 3 heals finished in the campaign | Then it is gone for good. A heal cut short does not count |
+| sneakHint | The sneak prompt shows when the steerer, not sneaking and not in a fight, first comes within 16 tiles of enemies none of whom is aware of the steerer: the scavengers at the stern at the first dusk, and the fold | Cued in speech first: Hild's dusk aim line names the dune grass, and at the fold Bran's voice carries (Book 8 section 05). The prompt names the sneak control |
+| sneakHintHold | 6 real seconds, or until the steerer sneaks | |
+| sneakHintTimes | At most 3 showings in the campaign | One showing per approach to an unaware group |
+| sneakDone | Gone for good once the steerer has sneaked 2 tiles | As promptDone's moving |
+| quiet | All of these fade (promptFade) during story beats, scenes, talk and speech lines that are not fight barks, and come back 2 real seconds after, unless done (promptQuiet) | A fight bark does not hide a combat prompt |
+
+### Menus and saves
+*The user's third playtest (decisions DG-15 to DG-18): the pause menu, three manual save slots and the autosave, each with its day, time, place and a small screenshot, and resetting to the start of the day. Book 2 sections 02, 20 and 21 hold the rules.*
+
+| Key | Value | Notes |
+|---|---|---|
+| saveSlots | 3 manual slots, plus the autosave shown as one slot | The autosave slot shows the newest of the three rotating autosaves and checkpoints (Book 2 section 20); it can be loaded, not saved to |
+| thumbnail | 160 x 90 pixels: the logical view (640 x 360) at a quarter, each pixel the mean of its 4 x 4 block, from the last frame drawn before the menu opened | Without the menu, the captions or the prompts |
+| thumbnailBytes | 24 KB at most, as a PNG in base64 | Re-encoded with fewer colours if larger |
+| slotShows | The day and season, the time of day (to the minute, 24-hour), the place's name, the screenshot, and how long ago it was saved | An empty slot says so |
+| pauseDuck | Music and ambience fall 12 dB over 0.25 real seconds while the menu holds time; effects and voice blips pause | Back over 0.25 s on resume |
+| overlayAware | With a hostile aware, the menu opens as an overlay and time runs (Book 2 section 02) | Save is refused with its reason; the rest stays open |
+| dayStart | The start of the day is the waking at 06:00 (day 1: the waking in the surf, after the cold open), saved to its own slot, kept until the next waking | Reset to the start of this day loads it |
+| confirm | Load, reset to the start of the day and quit to title ask once, naming how long ago the progress being lost was saved | Saving over a used slot asks too |
+
+### The intro
+*The user's third playtest (decision DG-19): the cold open can be skipped once it has been seen.*
+
+| Key | Value | Notes |
+|---|---|---|
+| skipAfter | Once the cold open has been seen to its end once on this device (a per-viewer setting) | Before then it cannot be skipped by holding, only by the title screen setting |
+| skipHold | Any key or pad button held for 1.0 real second, or a click on the Skip button | A ring fills round the Skip button as the hold grows |
+| skipShows | The Skip button and "Hold any key to skip" show at the bottom right 1.0 real second into the cold open, and fade after 4 real seconds until a key is pressed | The cursor shows for the button while it is up |
+| skipTo | The black, then the waking in the surf | The world is the same as after a cold open played through |
+| titleSetting | Intro: play, or skip | In the title screen's settings; skip leaves the cold open out of every new game on this device |
+
+### Developer menu
+*The user's third playtest (decision DG-21): a menu for the developer, never shown to players otherwise.*
+
+| Key | Value | Notes |
+|---|---|---|
+| devOnly | In a debug build, or with ?dev in the address | F3 toggles it; nothing of it shows otherwise |
+| devSkipHours | 6 game hours | Run through the low-detail steps like any time advance (Book 2 section 03), whatever the safe rule; refused while a fight is under way or a scene has control |
+| devTeleport | To the clicked tile in the zone in view, if the steerer's footprint is clear there, else the nearest clear tile within 2 tiles, else refused | A carried person comes too |
+| devKill | The clicked hostile dies at once; no deed is written | |
+| devReadout | The current aim (its journal line), the day and the time, frames per second averaged over 1 real second with the slowest frame's time, the zone and the steerer's tile | Top left, under the bars |
+| devMarked | A save made after any developer command carries a dev mark in its header; the chapter's telemetry ignores such a run | So timings stay honest |
+
 ## 22 / Story gates
 *The story moves only through major events the player chooses to start; the calendar keeps running (design addendum 2.3 section 4; Book 4 section 08). Typical days are a guide for a well-paced player, never a deadline. The one exception is the defence of Skarvholm, which comes on a fixed night (decision DD-3).*
 
@@ -2045,7 +2242,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | hildFreedBy | 2.5 minutes | Cut free and carried above the tide line |
 | chestAtCampBy | 4 minutes | Thorkel's chest set down at its outline |
 | firstFireBy | 5 minutes | Two pieces of driftwood fetched and the fire lit (section 03, fireLight) |
-| shelterBy | 6 minutes | Hild walks up, and the sail shelter is raised (section 03, shelterRaise) |
+| shelterBy | 6 minutes | Hild walks up, and the frame and the sail are up (section 03, shelterFrame and shelterSail; decision DG-12). The finished shelter is the second day's work (shelterFinish) |
 | firstFight | The first dusk, about 12 minutes in | The scavengers at dusk (section 07); within Book 1's 25 minutes |
 | hagLight | The first dusk | A pale light at the Hag's Seat, seen from the camp and the strand |
 | bowBy | 20 to 30 minutes | Thorkel's chest opened (section 21, bowFoundBy is the limit) |
@@ -2077,6 +2274,22 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | edgeCaptionAfter | 0.3 real seconds of pressing against it | Then its information caption: "Nothing that way", "The water's too deep" or "Too steep to climb" |
 | edgeCaptionCooldown | 4 real seconds | At most one edge caption in this time |
 | homeOutline | 10 tiles | A carried thing with a home at the camp shows a faint outline at its home while it is carried within this distance; set down within 1 tile of the outline, it settles into place there |
+
+### No trap
+*The user's third playtest (decision DG-20): the steerer was stuck in the water by the western outcrop with the broken mast and the stores' lashing, at night. No collision shape may trap anyone: every edge has a way out, and a test walks the edges of every collision shape to prove it (Book 2 section 23; Book 9 section 13).*
+
+| Key | Value | Notes |
+|---|---|---|
+| neverFrozen | A body whose footprint already overlaps blocking ground (tidal ground closed by the tide, deep water risen round it, a door shut on it, a prop or a body set on it) may move in any direction that does not deepen the overlap | It is never held still by what it already stands in |
+| tideClosing | When the tidal window closes (section 02, tidalGroundWindow) under someone on tidal ground, that ground counts as wading water of its depth band for them until they leave it | The flats flood round them; they wade off |
+| narrowest | No gap between collision shapes (solid tiles, props' footprints, deep water at any tide) narrower than the steerer's footprint + 0.25 tiles may be a dead end the steerer can walk into | Close it or widen it |
+| probeStep | 0.25 tiles along every edge of every collision shape in every zone | Solid tiles, props, doors (closed), deep water and closed tidal ground |
+| probeOut | Each probe point is 0.1 tiles outside the edge, with the steerer's footprint set there if it fits | Probe points where the footprint does not fit are skipped (they cannot be stood on) |
+| probeTides | At low water, half tide rising, high water and half tide falling, with the tidal window open and closed | And with every door open and shut |
+| escapeDirs | 16 directions | |
+| escapeDistance | 0.5 tiles | |
+| escapeTime | 1 real second of walking (or wading, at its band's speed) | The steerer must reach escapeDistance from the probe point in at least one direction within it, at every probe point and every tide |
+| escapeEdgeRule | With the edge stop (World feedback, edgeStopAngle) as built | The test drives the real movement step, not a geometric check alone |
 
 ### Doors
 *Every door and hide flap opens visibly (design addendum 2.4 section 4; decision DE-26). Book 2 section 10 holds the data; Book 9 lists the doors.*

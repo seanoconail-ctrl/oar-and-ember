@@ -396,7 +396,7 @@ They travel the roads and the coast and are simulated like other travellers (Boo
 | The grateful survivor | Someone spared in an early raid | Below; Book 6 section 11 |
 
 ### The grateful survivor
-Someone the household spared in an early raid (a guard who was let go, a keeper left alive, a fisherman not drowned) comes back at the worst moment, to help or to repay a different debt. They are a real person from the deed record, named and remembered, and what they do depends on what they saw. Book 4 holds the other twist seeds and the event deck.
+Someone the household spared in an early raid (a guard who was let go, a keeper left alive, a fisherman not drowned) comes back at the worst moment, to help or to repay a different debt. They are a real person from the deed record, named and remembered, and what they do depends on what they saw. Every foe the steerer lets go with the spare shout is such a person (the user's third playtest): the fate drawn when they are spared decides whether they come back to repay the favour (help in a fight, a warning, a gift, or standing aside), to ambush the household, or not at all, and when (Book 10 section 17, "The spared remembered"). The grateful survivor is the first unpaid favour when a worst moment comes. Those who ambush still have their reasons: a friend killed in the same fight, the shame of being spared before their own side, goods taken. Book 4 holds the other twist seeds and the event deck.
 
 ## 15 / The cruelty of every tradition
 *Every tradition is shown with its cruelty as well as its comfort, even-handedly, through what its believers do. No tradition is the good one.*

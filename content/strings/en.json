@@ -4711,5 +4711,652 @@
   "caption.amb.cold_storm": {
     "text": "Storm wind, rain on the sea",
     "tags": ["INFO"]
+  },
+  "e_wrecker_svart.sight.warn.01": {
+    "text": "Walk away while you can.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.warn.02": {
+    "text": "Turn round. There's nothing here for you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.warn.03": {
+    "text": "This is ours. Go back the way you came.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.warn.04": {
+    "text": "Leave it. You don't want this.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.taunt.01": {
+    "text": "Another one for the crabs.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.taunt.02": {
+    "text": "Come on, then. The spear's long enough.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.taunt.03": {
+    "text": "You'll float back out on the tide.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.sight.taunt.04": {
+    "text": "Two of us, and you half drowned.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.warn.01": {
+    "text": "Go away! I mean it!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.warn.02": {
+    "text": "Stay back. I've an arrow on the string.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.warn.03": {
+    "text": "We don't want trouble. Just go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.warn.04": {
+    "text": "Please. Walk on. It's only salvage.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.taunt.01": {
+    "text": "I'll put one through your eye.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.taunt.02": {
+    "text": "Svart'll have you. Won't you, Svart?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.taunt.03": {
+    "text": "Run, and I'll not waste an arrow.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.sight.taunt.04": {
+    "text": "Look at the state of you. Easy.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.warn.01": {
+    "text": "Get out of here. This is ours.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.warn.02": {
+    "text": "Walk away. I'll not say it twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.warn.03": {
+    "text": "Back the way you came, castaway.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.warn.04": {
+    "text": "Nothing on this hill for you but a grave.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.taunt.01": {
+    "text": "I'll gut you like a herring.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.taunt.02": {
+    "text": "Come here. I've dug graves before.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.taunt.03": {
+    "text": "The sea spat you out. I'll finish its work.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.sight.taunt.04": {
+    "text": "One more for the fold, then.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.warn.01": {
+    "text": "Not one step more. Go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.warn.02": {
+    "text": "Turn round, and you live.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.warn.03": {
+    "text": "This ground's spoken for. Off it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.warn.04": {
+    "text": "Nothing here worth bleeding for. Go home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.warn.05": {
+    "text": "Leave now, and we'll forget your face.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.taunt.01": {
+    "text": "Feed the gulls, then.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.taunt.02": {
+    "text": "Good. I've not had a fight in days.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.taunt.03": {
+    "text": "Your bones will whiten on this shingle.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.taunt.04": {
+    "text": "Come on. Make it a tale worth telling.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.sight.taunt.05": {
+    "text": "Odin's watching. Make it a good one.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.warn.01": {
+    "text": "That's far enough, stranger.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.warn.02": {
+    "text": "Turn back. This is our ground.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.warn.03": {
+    "text": "Leave us be, and go in peace.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.warn.04": {
+    "text": "Not a step nearer. God sees you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.warn.05": {
+    "text": "Go back to your boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.taunt.01": {
+    "text": "Come on, then, sea-thief.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.taunt.02": {
+    "text": "The poets will laugh at how you died.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.taunt.03": {
+    "text": "The ravens are hungry today.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.taunt.04": {
+    "text": "We've buried better than you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.sight.taunt.05": {
+    "text": "Come and meet a Gael's spear.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.spare.01": {
+    "text": "Get out of here."
+  },
+  "p_steerer.spare.02": {
+    "text": "Go. Before I change my mind."
+  },
+  "p_steerer.spare.03": {
+    "text": "Up. Go. Don't come back."
+  },
+  "p_steerer.spare.04": {
+    "text": "Take your life and go."
+  },
+  "p_steerer.spare.05": {
+    "text": "Run. And keep running."
+  },
+  "p_steerer.spare.06": {
+    "text": "Go home. Leave this be."
+  },
+  "e_wrecker_svart.spared.01": {
+    "text": "Huh. I'll remember that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.spared.02": {
+    "text": "Fine. Fine. I'm going.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.spared.01": {
+    "text": "Thank you. Gods, thank you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.spared.02": {
+    "text": "I'm gone. I'm gone.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.spared.01": {
+    "text": "You'll be sorry for that, or you won't.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.spared.02": {
+    "text": "A life. I'll not forget whose.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.spared.01": {
+    "text": "I'll not forget this.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.spared.02": {
+    "text": "A life owed. I'll pay it, one way or another.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.spared.03": {
+    "text": "The gods keep you. I'm gone.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.spared.01": {
+    "text": "God reward you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.spared.02": {
+    "text": "I'll remember your face.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.spared.03": {
+    "text": "May you never need the like.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.returned.favour.01": {
+    "text": "I'll stand out of this one. Call it square.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.returned.ambush.01": {
+    "text": "Letting me go was a mistake.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.returned.favour.01": {
+    "text": "The oar's in the skiff. Take it. I never saw you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.returned.ambush.01": {
+    "text": "I'm sorry. I've no choice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.returned.favour.01": {
+    "text": "You let me walk. I'll let you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.returned.ambush.01": {
+    "text": "Mercy's for fools. Come on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.returned.favour.01": {
+    "text": "I owe you a life. Here's some of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.returned.favour.02": {
+    "text": "Told you I'd pay. Now we're square.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.returned.ambush.01": {
+    "text": "You let me go once. Not twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_norse.returned.ambush.02": {
+    "text": "Remember me? I've thought of nothing else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.returned.favour.01": {
+    "text": "God sent me back to you. Stand easy.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.returned.favour.02": {
+    "text": "A life for a life. Take it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.returned.ambush.01": {
+    "text": "You shamed me before my own. No more.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_generic_gael.returned.ambush.02": {
+    "text": "I prayed for you. Then I stopped.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.teach.01": {
+    "text": "Nobody gets past this shaft.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.teach.02": {
+    "text": "Only one ever did. Turned my own thrust aside.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.teach.03": {
+    "text": "Lucky. Do it again, then.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.teach.svart": {
+    "text": "Svart's guard won't break. Turn the spear aside, then strike.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.teach.red.01": {
+    "text": "Not on the shield! Step out from under it!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.teach.red.02": {
+    "text": "That blow goes through wood. Get clear, then hit.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.teach.red.03": {
+    "text": "Wait for the swing. Then go in.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.teach.01": {
+    "text": "No shield ever stopped this one.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.teach.02": {
+    "text": "Stand there, then. It's quicker.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.open.broch": {
+    "text": "There's an old tower up on the bank, north of here. Go and see if it'll keep the wind off us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.see_tower.1": {
+    "text": "North. Up the bank, past the stream.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.see_tower.2": {
+    "text": "The old round tower. You can see the top of it from the shingle.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.frame": {
+    "text": "Oars first. Stand two up against the wall and lash them where they cross.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.sail": {
+    "text": "Now the sail over the top. Lash it down tight, and stones on the foot.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.shelter_night": {
+    "text": "We'll make it a proper one in the morning.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.finish": {
+    "text": "The lashings stretched in the wet. Help me tighten them, then we'll turf the weather side.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.camp.finished": {
+    "text": "Now that's a shelter. Father would've slept the night through under that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_frame.1": {
+    "text": "Two oars up against the wall. Lash them where they cross.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_frame.2": {
+    "text": "The third oar goes across the top. Then peg the ropes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_sail.1": {
+    "text": "The sail over the oars, before the rain.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_sail.2": {
+    "text": "Lash it along the top, and weigh the foot down with stones.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_finish.1": {
+    "text": "The shelter wants finishing. Come and lend a hand.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.shelter_finish.2": {
+    "text": "Tighten the lashings, then turf on the weather side.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.dusk.sneak": {
+    "text": "Keep low in the dune grass. See them before they see you.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.rites.sea_taken": {
+    "text": "Gone. Rán has you now, Father. Be kind to her.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.key.1": {
+    "text": "The key on his neck, Bran. Hand it over.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.key.2": {
+    "text": "No. He's done. Leave him be.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.wound.1": {
+    "text": "Your leg's bleeding through. How long can you stand?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.wound.2": {
+    "text": "Longer than you can wait, Ketill.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.silver.1": {
+    "text": "There was silver aboard. Bring us the box and keep your dead.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.silver.2": {
+    "text": "The silver's not mine to give.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.posts.1": {
+    "text": "Conn's on the mound with his bow. Svart and I have the gate.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.posts.2": {
+    "text": "I can count, Ketill.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.gate.1": {
+    "text": "I've the gate, Bran. You'll not walk out past me.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.gate.2": {
+    "text": "I'm not walking anywhere.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.skiff.1": {
+    "text": "At dark we take the skiff round to the cave, with him or without.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.skiff.2": {
+    "text": "Then go at dark.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.kin.1": {
+    "text": "Nobody's coming for you. They're all drowned.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.kin.2": {
+    "text": "Not all. Thorkel's kin don't leave their dead.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.fold.finish.1": {
+    "text": "Let me finish it, Ketill. One thrust.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.finish.2": {
+    "text": "And have his kin on us? Wait.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.fold.prayer.1": {
+    "text": "He's praying again, Ketill.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.prayer.2": {
+    "text": "Christ keep him. Christ keep all of us.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.prayer.3": {
+    "text": "Pray quieter.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.ring.1": {
+    "text": "That ring's gold. Gold's no use to the dead.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.ring.2": {
+    "text": "It's Thorkel's. It goes with him.",
+    "tags": ["VOICED"]
+  },
+  "ui.prompt.combat.lock_on": {
+    "text": "{key}  Lock on"
+  },
+  "ui.prompt.combat.strike": {
+    "text": "{key}  Strike   Hold: heavy"
+  },
+  "ui.prompt.combat.parry_dodge": {
+    "text": "{parry}  Parry   {dodge}  Dodge"
+  },
+  "ui.prompt.combat.block": {
+    "text": "Hold {key}  Block"
+  },
+  "ui.prompt.heal_bind": {
+    "text": "{key}  Bind the wound"
+  },
+  "ui.prompt.heal_eat": {
+    "text": "{key}  Eat"
+  },
+  "ui.prompt.sneak": {
+    "text": "{key}  Sneak"
+  },
+  "ui.prompt.teach_parry": {
+    "text": "{key}  Parry the spear as it comes"
+  },
+  "ui.prompt.teach_dodge": {
+    "text": "{key}  Dodge the red blow"
+  },
+  "ui.prompt.finish_or_spare": {
+    "text": "Hold {finish}  Finish   {spare}  Let go"
+  },
+  "ui.pause.title": {
+    "text": "Paused"
+  },
+  "ui.pause.running": {
+    "text": "The world runs on: an enemy is aware of you."
+  },
+  "ui.pause.resume": {
+    "text": "Resume"
+  },
+  "ui.pause.save": {
+    "text": "Save"
+  },
+  "ui.pause.load": {
+    "text": "Load"
+  },
+  "ui.pause.settings": {
+    "text": "Settings"
+  },
+  "ui.pause.fullscreen_on": {
+    "text": "Fullscreen: on"
+  },
+  "ui.pause.fullscreen_off": {
+    "text": "Fullscreen: off"
+  },
+  "ui.pause.reset_day": {
+    "text": "Reset to the start of this day"
+  },
+  "ui.pause.controls": {
+    "text": "Controls"
+  },
+  "ui.pause.quit": {
+    "text": "Quit to title"
+  },
+  "ui.save.slot_auto": {
+    "text": "Autosave"
+  },
+  "ui.save.slot_manual": {
+    "text": "Slot {count}"
+  },
+  "ui.save.empty": {
+    "text": "Empty"
+  },
+  "ui.save.when": {
+    "text": "Day {day}, {season}, {time}"
+  },
+  "ui.save.ago": {
+    "text": "Saved {ago} ago"
+  },
+  "ui.save.refused": {
+    "text": "Not while an enemy is aware of you."
+  },
+  "ui.save.saved": {
+    "text": "Saved"
+  },
+  "ui.save.confirm_overwrite": {
+    "text": "Save over this slot?"
+  },
+  "ui.save.confirm_load": {
+    "text": "Load this save? Progress since {ago} ago will be lost."
+  },
+  "ui.save.confirm_reset": {
+    "text": "Go back to this morning? Today's progress will be lost."
+  },
+  "ui.save.confirm_quit": {
+    "text": "Quit to the title? The last save was {ago} ago."
+  },
+  "ui.save.yes": {
+    "text": "Yes"
+  },
+  "ui.save.no": {
+    "text": "No"
+  },
+  "ui.title.new_game": {
+    "text": "New game"
+  },
+  "ui.title.continue": {
+    "text": "Continue"
+  },
+  "ui.title.load": {
+    "text": "Load"
+  },
+  "ui.title.settings": {
+    "text": "Settings"
+  },
+  "ui.title.fullscreen_on": {
+    "text": "Fullscreen: on"
+  },
+  "ui.title.fullscreen_off": {
+    "text": "Fullscreen: off"
+  },
+  "ui.settings.intro_play": {
+    "text": "Intro: play"
+  },
+  "ui.settings.intro_skip": {
+    "text": "Intro: skip"
+  },
+  "ui.settings.prompts_first": {
+    "text": "Combat prompts: first fights"
+  },
+  "ui.settings.prompts_always": {
+    "text": "Combat prompts: always"
+  },
+  "ui.settings.prompts_off": {
+    "text": "Combat prompts: off"
+  },
+  "ui.intro.skip": {
+    "text": "Skip"
+  },
+  "ui.intro.hold": {
+    "text": "Hold any key to skip"
+  },
+  "ui.dev.title": {
+    "text": "Developer"
+  },
+  "ui.dev.skip": {
+    "text": "Skip 6 hours"
+  },
+  "ui.dev.teleport": {
+    "text": "Teleport: click a tile"
+  },
+  "ui.dev.kill": {
+    "text": "Kill: click an enemy"
+  },
+  "ui.dev.aim": {
+    "text": "Aim: {aim}"
+  },
+  "ui.dev.time": {
+    "text": "Day {day}, {time}"
+  },
+  "ui.dev.fps": {
+    "text": "{fps} fps, slowest frame {ms} ms"
+  },
+  "ui.dev.where": {
+    "text": "{zone} ({x}, {y})"
   }
 }

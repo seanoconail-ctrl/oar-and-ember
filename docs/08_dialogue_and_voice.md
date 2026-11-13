@@ -143,11 +143,16 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 | Reached without a blade | `Hild: The net, I can't get out of it. Find something sharp! Father's seax was in the stern.` |
 | As a wave breaks over her | `Hild: That one went up my nose.` |
 | Cut free | `Hild: Oh, thank the gods. Thank you.` then `Hild: Next time, cut the net before the swim.` |
-| Set down above the tide line | `Hild: That'll do. The sea's not having either of us today.` |
+| Set down above the tide line | `Hild: That'll do. The sea's not having either of us today.` then, looking up the bank, `Hild: There's an old tower up on the bank, north of here. Go and see if it'll keep the wind off us.` (the user's third playtest, decision DG-13) |
 | First sight of Thorkel's chest | `Hild: Father's chest. Get it up to the camp. He wore the key round his neck.` (`REFERS:c_thorkel`) |
-| Arriving at the camp, after the first fire | `Hild: Get the sail up between those oars, before the rain comes.` |
+| Arriving at the camp, after the first fire | `Hild: Get the sail up between those oars, before the rain comes.` then the first stage, `Hild: Oars first. Stand two up against the wall and lash them where they cross.` (decision DG-12) |
+| The frame stands | `Hild: Now the sail over the top. Lash it down tight, and stones on the foot.` |
 | By the old boat under the bank | `Hild: Father would've had her floating by the next tide.` (`REFERS:ship`) |
-| The shelter up | `Hild: There. A roof. Of sorts.` |
+| The lean-to up (the first night) | `Hild: There. A roof. Of sorts.` then `Hild: We'll make it a proper one in the morning.` |
+| The second morning, at the camp | `Hild: The lashings stretched in the wet. Help me tighten them, then we'll turf the weather side.` |
+| The shelter finished | `Hild: Now that's a shelter. Father would've slept the night through under that.` |
+| Giving the dusk aim | After `Hild: Someone's down at the stern. Hear that? Iron on wood.`, the cue for the sneak hint (Book 10 section 21, sneakHint): `Hild: Keep low in the dune grass. See them before they see you.` (decision DG-25) |
+| Thorkel taken by the sea | As the ring of foam fades (Book 10 section 08, seaAfter), to her father: `Hild: Gone. Rán has you now, Father. Be kind to her.` (decision DG-14) |
 | The first night's fire, ending | `Hild: Oddi was by the stern when she broke. Bran went after Father.` (`REFERS:ship`) then `Hild: And Runa will have gone after that light. Of course she has.` |
 | The chest opened | `Hild: That's his bow. He'd want it drawn, not mourned.` (`REFERS:c_thorkel`) |
 | The stores on the mast | `Hild: That's our salt fish up the mast. An arrow through the rope would bring it down.` |
@@ -189,7 +194,71 @@ The first night's fire scene is fire talk (section 09) with Hild alone: her grie
 | Gróa | Heid's apprentice at the cairn; eager, frightened, devout | "She said the door would open if I gave it enough. I gave it everything." |
 
 ### Scavengers, thieves and wary locals
-They want loot, not a death, and warn before they fight (Book 1 section 09; Book 10 section 07, "Warnings"). A warning is short and plain, rising as the steerer comes on, and a walk away ends it. The wreck-scavengers at the stern, in turn: `Svart: Keep out of this.` / `Svart: This wreck is ours. Walk on.` / `Svart: One more step and you'll bleed.` Offered food: `Conn: Fish? Svart, it's fish.` / `Svart: Leave it there. Now go.` When one falls, the other's flight: `Conn: Not for a wreck. Not for this.` Wary farmers on the mainland: "That's far enough." / "We've nothing worth your trouble." / "Go round. Go round, I said."
+They want loot, not a death (Book 1 section 09; Book 10 section 07, "Warnings"). Since the user's third playtest they, like most enemies, speak first (below); those who warn then warn again as the steerer comes on, short and plain, and a walk away ends it. The wreck-scavengers at the stern, as the steerer comes on: `Svart: This wreck is ours. Walk on.` / `Svart: One more step and you'll bleed.` (and `Svart: Keep out of this.` if a weapon is drawn). Offered food: `Conn: Fish? Svart, it's fish.` / `Svart: Leave it there. Now go.` When one falls, the other's flight: `Conn: Not for a wreck. Not for this.` Wary farmers on the mainland: "That's far enough." / "We've nothing worth your trouble." / "Go round. Go round, I said."
+
+### First sight
+*The user's third playtest (decision DG-8; Book 10 section 07, "First sight"). Every enemy in Chapter 1, and most later enemies, speaks on first noticing the steerer, before any attack. Alone, weak or outnumbered, it is a **warning** to leave; confident or in a group, a **taunt or threat**. It replaces design addendum 2.4's "warn first" as the general rule.*
+- Lines follow the speaker's culture and period voice (section 04): Norse outlaws are blunt and boastful, with the gods and the gulls in their mouths; Gaels speak of God, the poets and their own ground; a scavenger talks like someone who wants the loot, not the fight.
+- Short: under eight words where it can be, never more than two subtitle lines. Addressed to the steerer, so never a gendered word for the steerer (section 03): "you", "stranger", "castaway", "sea-thief".
+- They vary: each named enemy has a pool of its own, and everyone else draws from their voice's pool; no line follows itself, no two enemies in a row say the same line, and no line comes again until its pool has been used through.
+- In a group one speaks first; one other may add a line or a bark a moment later. Beasts, the dead, berserkers and a sentry whose first act is the alarm have none. A first line is never a hint and never a lie about the fight to come.
+- The pause after it (Book 10, pauseWarning and pauseTaunt) is for the player: back off, bargain or strike first.
+
+| Speaker or voice | Warnings (alone, weak or outnumbered) | Taunts and threats (confident, or in a group) |
+|---|---|---|
+| Svart (`e_wrecker_svart`) | "Walk away while you can." / "Turn round. There's nothing here for you." / "This is ours. Go back the way you came." / "Leave it. You don't want this." | "Another one for the crabs." / "Come on, then. The spear's long enough." / "You'll float back out on the tide." / "Two of us, and you half drowned." |
+| Conn (`e_wrecker_conn`) | "Go away! I mean it!" / "Stay back. I've an arrow on the string." / "We don't want trouble. Just go." / "Please. Walk on. It's only salvage." | "I'll put one through your eye." / "Svart'll have you. Won't you, Svart?" / "Run, and I'll not waste an arrow." / "Look at the state of you. Easy." |
+| Ketill (`e_wrecker_ketill`) | "Get out of here. This is ours." / "Walk away. I'll not say it twice." / "Back the way you came, castaway." / "Nothing on this hill for you but a grave." | "I'll gut you like a herring." / "Come here. I've dug graves before." / "The sea spat you out. I'll finish its work." / "One more for the fold, then." |
+| Norse outlaws and raiders (`e_generic_norse`) | "Not one step more. Go." / "Turn round, and you live." / "This ground's spoken for. Off it." / "Nothing here worth bleeding for. Go home." / "Leave now, and we'll forget your face." | "Feed the gulls, then." / "Good. I've not had a fight in days." / "Your bones will whiten on this shingle." / "Come on. Make it a tale worth telling." / "Odin's watching. Make it a good one." |
+| Gaelic farmers, guards and outlaws (`e_generic_gael`) | "That's far enough, stranger." / "Turn back. This is our ground." / "Leave us be, and go in peace." / "Not a step nearer. God sees you." / "Go back to your boat." | "Come on, then, sea-thief." / "The poets will laugh at how you died." / "The ravens are hungry today." / "We've buried better than you." / "Come and meet a Gael's spear." |
+
+The user's own lines are Ketill's and Svart's first: "Get out of here. This is ours." and "I'll gut you like a herring." (Ketill); "Walk away while you can." and "Another one for the crabs." (Svart). Keys: `<speaker>.sight.warn.NN` and `<speaker>.sight.taunt.NN`; the generic pools speak under the enemy's own subtitle name ("Outlaw:", "Ardcarn guard:").
+
+### Let go: the spare shout and the reply
+*Decision DG-4. When the steerer lets a beaten foe go (Book 1 section 09), the steerer shouts and the foe answers as they go. The shout is speech under the steerer's name, with no voice blip (the steerer has no voice; Book 11 section 08); it never names who is spared and carries no gendered word. No shout follows itself.*
+
+`{steerer}:` "Get out of here." / "Go. Before I change my mind." / "Up. Go. Don't come back." / "Take your life and go." / "Run. And keep running." / "Go home. Leave this be." (keys `p_steerer.spare.NN`)
+
+The reply comes from the spared foe's own pool, or their voice's. It never gives away the fate the spare drew (Book 10 section 17): a grateful word may be followed by an ambush, and a sour one by a favour. When a spared person comes back, they speak first with one of the returned lines, before anything else happens (an ambush still shows its sign first).
+
+| Speaker or voice | Spared, as they go | Back to repay the favour | Back to ambush |
+|---|---|---|---|
+| `e_wrecker_svart` | "Huh. I'll remember that." / "Fine. Fine. I'm going." | "I'll stand out of this one. Call it square." | "Letting me go was a mistake." |
+| `e_wrecker_conn` | "Thank you. Gods, thank you." / "I'm gone. I'm gone." | "The oar's in the skiff. Take it. I never saw you." | "I'm sorry. I've no choice." |
+| `e_wrecker_ketill` | "You'll be sorry for that, or you won't." / "A life. I'll not forget whose." | "You let me walk. I'll let you." | "Mercy's for fools. Come on." |
+| `e_generic_norse` | "I'll not forget this." / "A life owed. I'll pay it, one way or another." / "The gods keep you. I'm gone." | "I owe you a life. Here's some of it." / "Told you I'd pay. Now we're square." | "You let me go once. Not twice." / "Remember me? I've thought of nothing else." |
+| `e_generic_gael` | "God reward you." / "I'll remember your face." / "May you never need the like." | "God sent me back to you. Stand easy." / "A life for a life. Take it." | "You shamed me before my own. No more." / "I prayed for you. Then I stopped." |
+
+### The teaching foes' guidance
+*Decision DG-9; Book 10 section 07, "Teaching foes". The guidance is speech: a boast from the foe or a shout from Bran, never an instruction about keys (the prompt at the screen's edge does that).*
+
+| Foe | When | Line |
+|---|---|---|
+| Svart (parry) | His first blow turned on his guard | `Svart: Nobody gets past this shaft.` |
+| Svart | His third blow turned | `Svart: Only one ever did. Turned my own thrust aside.` |
+| Svart | The first time he is parried | `Svart: Lucky. Do it again, then.` |
+| Svart, first met at the fold | His first blow turned, with Bran beside the steerer | `Bran: Svart's guard won't break. Turn the spear aside, then strike.` |
+| Ketill (dodge), at the fold | His first red blow | `Bran: Not on the shield! Step out from under it!` |
+| Ketill, at the fold | The first guard broken through, or the first parry beaten | `Bran: That blow goes through wood. Get clear, then hit.` |
+| Ketill, at the fold | The second red blow taken | `Bran: Wait for the swing. Then go in.` |
+| Ketill, in Seal Cave | His first red blow | `Ketill: No shield ever stopped this one.` |
+| Ketill, in Seal Cave | The steerer's first blow turned on his shield | `Ketill: Stand there, then. It's quicker.` |
+
+### At the fold: Bran and the scavengers
+*Decision DG-26; Book 10 section 07, "At the fold". Arriving while they are all unaware of the steerer, the steerer finds them in the middle of it: Bran over Thorkel's body, the scavengers wanting what is on it. Heard from cover, it rewards sneaking up: the key on its cord, the bargain they want (the ship's silver), Bran's wound, who stands where (Ketill and Svart at the gate, Conn on the mound, so the east wall is unwatched) and that they will take the skiff round to the cave at dark. Bran speaks slowly, refuses quietly and finally, and says grace; Ketill is a hard, tired leader who would rather be paid than fight; Svart wants it over; Conn is frightened. The exchanges loop in a shuffled order with no exchange twice in a row, leave out anyone absent (dead, held or gone), and stop the moment any of them notices the steerer, when their first-sight lines take over. These lines are not addressed to the steerer.*
+
+| Exchange | Lines, in order | Plays |
+|---|---|---|
+| key | `Ketill: The key on his neck, Bran. Hand it over.` / `Bran: No. He's done. Leave him be.` | always |
+| wound | `Ketill: Your leg's bleeding through. How long can you stand?` / `Bran: Longer than you can wait, Ketill.` | always |
+| silver | `Ketill: There was silver aboard. Bring us the box and keep your dead.` / `Bran: The silver's not mine to give.` | always |
+| posts | `Ketill: Conn's on the mound with his bow. Svart and I have the gate.` / `Bran: I can count, Ketill.` | only with Conn and Svart there |
+| gate | `Ketill: I've the gate, Bran. You'll not walk out past me.` / `Bran: I'm not walking anywhere.` | always |
+| skiff | `Ketill: At dark we take the skiff round to the cave, with him or without.` / `Bran: Then go at dark.` | always |
+| kin | `Ketill: Nobody's coming for you. They're all drowned.` / `Bran: Not all. Thorkel's kin don't leave their dead.` | always |
+| finish | `Svart: Let me finish it, Ketill. One thrust.` / `Ketill: And have his kin on us? Wait.` | only with Svart there |
+| prayer | `Conn: He's praying again, Ketill.` / `Bran: Christ keep him. Christ keep all of us.` / `Ketill: Pray quieter.` | only with Conn there |
+| ring | `Ketill: That ring's gold. Gold's no use to the dead.` / `Bran: It's Thorkel's. It goes with him.` | always |
 
 ### Supernatural voices
 - **The Blue Men** speak in rhymed couplets. They give two lines and wait for two more. The player's choices are four couplets: one bold and fitting (success), one clever but slow (partial), one timid (failure), one insulting (they laugh, then attack). Write new couplets each time; never use well-known verses.
@@ -209,6 +278,7 @@ They want loot, not a death, and warn before they fight (Book 1 section 09; Book
 - No identical bark from the same speaker within ten minutes; no two speakers repeating the same line within a minute.
 - Priority: danger, orders, wounds, discoveries, reactions, idle.
 - Barks are text; as one appears its speaker's voice blip plays (Book 11 section 08). Nothing is voice-acted, and the steerer has no blip.
+- **First sight** (decision DG-8): an enemy's first line on noticing the steerer comes before any attack, and follows the pool rules of section 07: no line twice running from anyone, none again before its pool is used through.
 - **In a fight, barks are the only lines on screen** (design addendum 2.5; section 10, "On-screen text: less of it"). One speech line shows at a time, so a new bark replaces the last; a fight's barks are short (under six words) so they read at a glance. Enemies' awareness is shown by their barks and bodies ("Who's there?", then "There!"), not by marks or words.
 
 ### Samples by category
@@ -324,6 +394,11 @@ Every kind of message the game showed when design addendum 2.5 was written (`con
 | The slot's name | an item's `item.name.*` | Above the hotbar, 1.5 s | Keep | |
 | Panels the player opens or the day brings | the clock, the stamina bar's reasons, the journal and morning report, the talk panel, the help pages, menus, game over, the launch's readiness, naming and mark panels, the chapter's end, the sea map's labels, the timings readout | Their own panels | Keep | Never in a fight (the safe rule closes menus); the morning report opens on waking only |
 | Marks over the world | the awareness "?" and "!", a crew order's icon, the lock-on mark, the stance arrow, the bars | The pixel layer | Keep; the awareness marks off by default | Drawn shapes, not text |
+| Combat prompts (the user's third playtest; decisions DG-7, DG-9, DG-11, DG-25) | `ui.prompt.combat.lock_on`, `.strike`, `.parry_dodge`, `.block`; `ui.prompt.heal_bind`, `.heal_eat`; `ui.prompt.sneak`; `ui.prompt.teach_parry`, `.teach_dodge`; `ui.prompt.finish_or_spare` (which replaces `ui.prompt.finish` in a fight) | New: the right edge of the view (Book 10 section 21, promptPlace) | Keep: the one exception to "no text in a fight" | Input prompts only: a control and a verb, never a hit, damage, a state or a log. The first five only in the first three fights; the heal prompt until three heals; the sneak hint at most three times; the teaching prompts until each lesson is done; the finish-or-let-go choice whenever offered. Faded while a fighter is drawn under them and during story beats, scenes and talk |
+| First-sight lines, the spare shout and replies, the returned lines, the teaching foes' guidance, the fold's talk | `*.sight.*`, `p_steerer.spare.*`, `*.spared.*`, `*.returned.*`, `*.teach.*`, `*.fold.*` | Captions (speech) | Keep | One speech line; in a fight they are barks. The steerer's shout is the only speech line under the steerer's name, with no blip |
+| The pause menu, saves, the title screen and settings | `ui.pause.*`, `ui.save.*`, `ui.title.new_game` and the rest, `ui.settings.*` | Their own panels | Keep | Panels the player opens; a refused save shows its reason in the panel (`ui.save.refused`) |
+| Skipping the intro | `ui.intro.skip`, `ui.intro.hold` | The cold open's bottom right | Keep | Only once the cold open has been seen; fades after a few seconds until a key is pressed |
+| The developer menu | `ui.dev.*` | Top left, in developer mode only | Keep out of play | Never shown in a player's game: only in a debug build or with `?dev` (Book 2 section 21) |
 | Strings never shown in play | `ui.activity.*`, `ui.work.result.*`, `ui.work.good`, `ui.play.zone.*`; `ui.play.label` (the canvas's screen-reader label only) | Nowhere on screen | Keep out | Not to be shown; the screen-reader label stays |
 
 ### Interface wording
@@ -433,9 +508,12 @@ Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The 
 | Find who is calling | Find who is calling beyond the rocks. | (Hild, calling) "Over here! Past the rocks, to the west!" | (Hild, calling) "West! Follow the shore round the rocks!" |
 | Free Hild | Cut Hild free of the net. | (Hild) "Something sharp. A blade. Look in the wreckage." | (Hild) "There was a glint on the shingle, back the way you came. Hurry." |
 | Bring Hild ashore | Carry Hild above the tide line. | (Hild) "Higher. The tide comes this far." | (Hild) "Up past the weed. The dry stones. There." |
+| See the old tower | Go up to the old tower to the north. | (Hild) "North. Up the bank, past the stream." | (Hild) "The old round tower. You can see the top of it from the shingle." |
 | Carry the chest to the camp | Carry Thorkel's chest up to the old tower on the bank. | (Hild) "The old tower. Up the bank, past the stream." | (Hild) "Up the bank, then north. Set it down where the shelter goes." |
 | Light a fire | Light a fire in the old tower. | (Hild, calling) "Wood! It's all along the tideline!" | (Hild, calling) "Two good pieces will do. Then the flint." |
-| Raise the shelter | Raise the sail between the oars. | (Hild) "The sail, and those two oars. Before the rain." | (Hild) "Lash it high on the oars and peg the foot." |
+| Raise the frame | Stand the oars up and lash them for the shelter's frame. | (Hild) "Two oars up against the wall. Lash them where they cross." | (Hild) "The third oar goes across the top. Then peg the ropes." |
+| Raise the shelter | Raise the sail over the frame, before the rain. | (Hild) "The sail over the oars, before the rain." | (Hild) "Lash it along the top, and weigh the foot down with stones." |
+| Finish the shelter | Help Hild finish the shelter. | (Hild) "The shelter wants finishing. Come and lend a hand." | (Hild) "Tighten the lashings, then turf on the weather side." |
 | See to Hild's leg | See to Hild's leg. | (Hild) "My leg could use a look, when you've a moment." | (Hild) "Talk to me. I'll show you where it hurts." |
 | The scavengers at the stern | See who is at the stern. | (Hild) "Someone's down at the stern. Hear that? Iron on wood." | (Hild) "Take care. Folk who strip wrecks don't like to be watched." |
 | Sit at the fire | Sit with Hild by the fire. | (Hild) "Come and sit. It's been a long day." | (Hild) "The fire's warm. Come on." |
@@ -450,7 +528,7 @@ Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The 
 | Thorkel's rites | Give Thorkel his rites, if the household will. | (Hild) "Father should have his rites before we sail." | (Hild) "Stones on the machair, or the sea. Talk to me." |
 | Launch the boat | Launch the boat when the tide is in. | (Runa) "She's sound. Wait for the water and we'll run her down." (`REFERS:ship`) | (Hild) "Tide's in. Look the boat over and we'll go." |
 
-The fire and shelter hints come as distant calls while Hild is still on the strand. The Runa and Bran hints wait until they are in the household; until then Hild speaks them in her own words.
+The fire and shelter hints come as distant calls while Hild is still on the strand; the frame and sail hints call from the camp if the steerer is away. "See the old tower" is given by Hild's line on being set down (section 05) and is done on reaching the broch, or with the chest set at its outline; "Finish the shelter" opens at 06:00 on the second day (the user's third playtest, decisions DG-12 and DG-13). The Runa and Bran hints wait until they are in the household; until then Hild speaks them in her own words.
 - A revenge quest words every other way out as plainly as the killing: "Kill him." / "Offer him a duel." / "Make him leave the coast." / "Ask his kin for the blood-price." / "Tell Áine who ordered it."
 - The one who asked speaks the ending by their values. Áine, after an exile: "He's gone. It's not what I wanted. It's something."
 
