@@ -17,6 +17,10 @@ const palette = loadPalette();
 const style = loadRenderStyle();
 const sheets = new Map(loadSheets(palette).map((s) => [s.name, s]));
 
+// Each test may wait up to 60 s for the art view on a cold start (below), so its own limit must be
+// longer than Playwright's default 30 s, or that wait is cut short (decision DG-96).
+test.describe.configure({ timeout: 90_000 });
+
 async function open(
   page: Page,
   query: string,
