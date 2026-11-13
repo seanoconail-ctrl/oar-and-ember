@@ -169,10 +169,14 @@ describe('work loops in the scene (Book 7 section 07; Stage 7 check 4)', () => {
     sim.submit({ type: 'SLEEP' });
     sim.step();
     expect(sim.state.onFoot?.player.sleep).not.toBeNull();
-    const frames = framesOf(sim, look.steerer.body, 60);
+    // The user's fourth playtest (request 15; DH-105): the sleeper lies under their own blanket in
+    // the bed (prop_sleepers), the head to the wall, breathing over four frames; the standing body
+    // is not drawn while asleep.
+    expect(framesOf(sim, look.steerer.body, 1)).toEqual([]);
+    const frames = framesOf(sim, 'prop_sleepers', 170);
     expect(frames.length).toBeGreaterThan(0);
-    expect(frames.every((f) => f.startsWith('sleep/'))).toBe(true);
-    expect(new Set(frames).size).toBe(2);
+    expect(frames.every((f) => /^steerer_[ab]_w\//.test(f))).toBe(true);
+    expect(new Set(frames).size).toBeGreaterThanOrEqual(2);
   });
 
   it('draws a lit fire with flames and a flickering warm pool, larger at night', () => {
