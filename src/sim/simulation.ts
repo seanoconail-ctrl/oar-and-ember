@@ -1364,7 +1364,7 @@ export function createSimulation(
             witnesses: witnesses.map((person) => ({ person, escaped: false })),
             identification: 1,
             marksSeen: [],
-          } as (typeof state.ledger)[number]);
+          });
           return id;
         }
         return householdDeed(

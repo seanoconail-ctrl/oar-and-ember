@@ -1080,8 +1080,7 @@ export type Outcome =
   | 'TURNED';
 
 /** The kind of a blow, for its hitstop, knockback, poise and shake (Book 10 "Hit reactions"). */
-export type BlowKind =
-  'light' | 'heavy' | 'lunge' | 'riposte' | 'backstab' | 'shove' | 'finisher';
+export type BlowKind = 'light' | 'heavy' | 'lunge' | 'riposte' | 'backstab' | 'shove' | 'finisher';
 
 export interface Blow {
   /** Damage before armour (the defender's armour and berserk apply in `damageOf`). */
@@ -1256,7 +1255,10 @@ export function resolveBlow(
   if (blow.red === true) {
     // Neither a parry nor a shield stops it: the parry is beaten (it lands), and a live guard from
     // the front takes the whole blow and breaks with Book 10's large stagger (guardBreakEmpty).
-    if (guardLive(defender) && inFrontAngle(defender.angle, attackerDir.x, attackerDir.y, cb.block.arcDegrees)) {
+    if (
+      guardLive(defender) &&
+      inFrontAngle(defender.angle, attackerDir.x, attackerDir.y, cb.block.arcDegrees)
+    ) {
       breakGuard(defender, tick, cb, cb.block.breakEmpty, false);
       return 'GUARD_BROKEN';
     }

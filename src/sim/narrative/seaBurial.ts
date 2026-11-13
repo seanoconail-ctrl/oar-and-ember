@@ -474,7 +474,7 @@ export function stepSeaBurial(
       p.y = (s.steerer.y + (stand.y - s.steerer.y) * e) * T;
       p.facing = 's';
       p.moving = Math.hypot(stand.x - s.steerer.x, stand.y - s.steerer.y) > 0.5;
-    } else if (p.moving === true) {
+    } else if (p.moving) {
       p.x = stand.x * T;
       p.y = stand.y * T;
       p.facing = 's';

@@ -268,11 +268,15 @@ export class Clip {
   }
 
   /** The GIF at 1x (the middle 320 x 180) and the key moment at 4x; returns the GIF's bytes. */
-  write(from = 0): number {
+  write(
+    from = 0,
+    size: readonly [number, number] = [320, 180],
+    still: { readonly x: number; readonly y: number } = this.focus,
+  ): number {
     const gif = join(this.out, `${this.name}.gif`);
-    const crop = (w: number, h: number): string => {
-      const x = Math.round(Math.min(Math.max(this.focus.x - w / 2, 0), 640 - w)) * 2;
-      const y = Math.round(Math.min(Math.max(this.focus.y - h / 2, 0), 360 - h)) * 2;
+    const crop = (w: number, h: number, at = this.focus): string => {
+      const x = Math.round(Math.min(Math.max(at.x - w / 2, 0), 640 - w)) * 2;
+      const y = Math.round(Math.min(Math.max(at.y - h / 2, 0), 360 - h)) * 2;
       return `crop=${String(w * 2)}:${String(h * 2)}:${String(x)}:${String(y)}`;
     };
     execFileSync('ffmpeg', [
@@ -286,7 +290,7 @@ export class Clip {
       '-i',
       join(this.#dir, '%04d.png'),
       '-vf',
-      `${crop(320, 180)},scale=320:180:flags=neighbor,split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=none`,
+      `${crop(size[0], size[1])},scale=${String(size[0])}:${String(size[1])}:flags=neighbor,split[a][b];[a]palettegen=max_colors=128:stats_mode=full[p];[b][p]paletteuse=dither=none`,
       gif,
     ]);
     if (this.#key !== null)
@@ -297,7 +301,7 @@ export class Clip {
         '-i',
         this.#key,
         '-vf',
-        `${crop(160, 90)},scale=640:360:flags=neighbor`,
+        `${crop(160, 90, still)},scale=640:360:flags=neighbor`,
         join(this.out, `${this.name}@4x.png`),
       ]);
     rmSync(this.#dir, { recursive: true, force: true });

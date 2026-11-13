@@ -363,8 +363,8 @@ describe('Thorkel taken by the sea (DG-14)', () => {
       if (e.type === 'SEA_TAKEN') stepWatch();
     });
     const origStep = bot.step.bind(bot);
-    bot.step = (n = 1) => {
-      for (let i = 0; i < n; i++) {
+    bot.step = (n) => {
+      for (let i = 0; i < (n ?? 1); i++) {
         origStep(1);
         stepWatch();
       }
@@ -372,9 +372,7 @@ describe('Thorkel taken by the sea (DG-14)', () => {
     bot.rites('SEA');
     expect(begun).toBeGreaterThan(0);
     // The marks in Book 10's order and at its times (seconds after the bier is lifted).
-    const marks = events.flatMap((e) =>
-      e.type === 'SEA_TAKEN' ? [`${e.what}${e.n === undefined ? '' : e.n}`] : [],
-    );
+    const marks = events.flatMap((e) => (e.type === 'SEA_TAKEN' ? [`${e.what}${e.n ?? ''}`] : []));
     expect(marks).toEqual([
       'BIER',
       'SET',

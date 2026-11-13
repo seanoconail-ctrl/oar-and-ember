@@ -2609,6 +2609,7 @@ export function startPlay(
         region: overlay.region('combat'),
       });
       root.dataset['combatPrompts'] = shown.map((l) => l.id).join(',');
+      root.dataset['combatWanted'] = teach.prompts.chosen.join(',');
     }
     // The ambience follows the game's own wind at the steerer and the drawn tide, four times a second.
     if (engine.unlocked && now - lastAmbienceAt > 250) {

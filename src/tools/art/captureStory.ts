@@ -214,12 +214,12 @@ async function shelter(browser: Browser, cw: number, ch: number): Promise<Played
         oePlay: { sim: Record<string, unknown>; land: Record<string, unknown>; b: unknown };
       };
       const { sim, land, b } = w.oePlay;
-      type St = {
+      interface St {
         tick: number;
         facts: Record<string, unknown>;
         calendar: { day: number; minuteOfDay: number };
         onFoot: { player: { work?: { task: string } | null } } | null;
-      };
+      }
       const state = (): St => sim['state'] as St;
       const { WreckBot } = (await import(['/src/tools/play/wreckBot', 'ts'].join('.'))) as {
         WreckBot: new (...a: unknown[]) => {
@@ -263,7 +263,8 @@ async function shelter(browser: Browser, cw: number, ch: number): Promise<Played
               else (target as { step: () => void }).step();
               if ((busy && n % every === 0) || (!busy && n % 60 === 0))
                 w.oeFrame('frame', '', grab(cw0, ch0), '');
-              const stage = String(state().facts['ch1.shelter'] ?? '');
+              const fact = state().facts['ch1.shelter'];
+              const stage = typeof fact === 'string' ? fact : '';
               if (stage !== last) {
                 last = stage;
                 w.oeFrame('key', stage, grab(cw0, ch0), grab(640, 360));

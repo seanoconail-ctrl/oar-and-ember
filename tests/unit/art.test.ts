@@ -214,11 +214,12 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
 
   // It regenerates every sheet and atlas in memory: Stage 7's broch, camp and work loops made that
   // longer than the default five seconds, and combat v2's five new states on every body sheet
-  // (about 22 s alone) take it past 30 s while the whole suite runs in parallel. A time limit,
+  // (about 22 s alone) take it past 30 s while the whole suite runs in parallel, and the third
+  // playtest's 114 frames a facing past 60 s. A time limit,
   // not an art threshold: what it checks is unchanged.
   it('finds generated sheets and atlases in step with their sources', () => {
     expect(staleArtFiles()).toEqual([]);
-  }, 60_000);
+  }, 120_000);
 
   const lint = (body: string, header = HEADER) =>
     lintSheet(compileSheet(`${header}\n${body}`, 't.txt', palette), palette).map((i) => i.reason);
@@ -345,14 +346,17 @@ describe('atlases', () => {
       // hop, bind, eat and the three falls.
       (2 + 2 + 2 + 2 + 2 + 4 + 4 + 6 + 2 + 6 + 6 + 2 + 3 + 3 + 3 + 6 + 4 + 2 + 2 + 2) +
       // DF-83: the walk's start and stop, the block walk forward, backing off and strafing, and
-      // a miss’s overbalance (892 frames, 30 across).
-      (2 + 2 + 6 + 6 + 6 + 2);
+      // a miss’s overbalance (892 frames).
+      (2 + 2 + 6 + 6 + 6 + 2) +
+      // The user's third playtest (DG-2 to DG-10): the reel, a guard turned, the let-go gesture,
+      // the red blow and its miss, and twelve finishers of eight frames (1348 frames).
+      (3 + 3 + 4 + 4 + 4 + 12 * 8);
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
-    expect([image.width, image.height]).toEqual([30 * 32, 30 * 48]);
+    expect([image.width, image.height]).toEqual([37 * 32, 37 * 48]);
     expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
     expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
-    expect(manifest.frames['run/s/7']).toEqual([5 * 32, 3 * 48]);
+    expect(manifest.frames['run/s/7']).toEqual([21 * 32, 2 * 48]);
   });
 });
 

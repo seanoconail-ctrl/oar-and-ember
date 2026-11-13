@@ -9,7 +9,8 @@ import type { CombatDef } from '../../src/content/registry.ts';
 
 export function plainFighters(fighters: CombatDef['fighters']): CombatDef['fighters'] {
   return fighters.map((f) => {
-    const { teaching: _teaching, ...rest } = f;
+    const rest = { ...f };
+    delete rest.teaching;
     return rest;
   });
 }

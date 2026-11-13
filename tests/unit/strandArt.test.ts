@@ -119,6 +119,24 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       block_backoff: 6,
       block_strafe: 6,
       overbalance: 2,
+      // The user's third playtest (Book 7 section 01; DG-2 to DG-10).
+      reel: 3,
+      guard_turn: 3,
+      spare: 4,
+      red: 4,
+      red_miss: 4,
+      fin_seax_s: 8,
+      fin_seax_l: 8,
+      fin_axe_s: 8,
+      fin_axe_l: 8,
+      fin_spear_s: 8,
+      fin_spear_l: 8,
+      fin_sword_s: 8,
+      fin_sword_l: 8,
+      fin_dane_s: 8,
+      fin_dane_l: 8,
+      fin_club_s: 8,
+      fin_club_l: 8,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);

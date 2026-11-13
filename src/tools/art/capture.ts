@@ -44,6 +44,7 @@ import type { Tile } from '../play/openingBot.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { combat2Capture } from './captureCombat2.ts';
 import { combat25Capture } from './captureCombat25.ts';
+import { pt3CombatCapture } from './capturePt3Combat.ts';
 import { openingCapture } from './captureOpening.ts';
 import { stormCapture } from './captureStorm.ts';
 import { STORY_PORT, storyCapture } from './captureStory.ts';
@@ -1753,6 +1754,21 @@ if (import.meta.filename === process.argv[1]) {
     const browser = await chromium.launch();
     try {
       console.log(await openingCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'playtest-3-combat') {
+    // The user's third playtest's combat clips: docs/art/playtest-3/combat/ (capturePt3Combat.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5287, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await pt3CombatCapture(browser));
     } finally {
       await browser.close();
       await server.close();

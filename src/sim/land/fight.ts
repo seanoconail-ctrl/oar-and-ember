@@ -84,13 +84,7 @@ import type {
 } from '../combat/fighter.ts';
 import { orderShot } from './archer.ts';
 import { STEERER } from './missiles.ts';
-import {
-  accelTicks,
-  easeVelocity,
-  footprintClear,
-  stepClear,
-  TICKS_PER_SECOND,
-} from './onFoot.ts';
+import { accelTicks, easeVelocity, footprintClear, stepClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext, OnFootActor, OnFootState } from './onFoot.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import { tilePath } from './path.ts';
@@ -1642,7 +1636,7 @@ export interface FightWorld {
     victims: readonly Id[],
     witnesses: readonly Id[],
     context?: Record<string, string>,
-  ) => Id | null | void;
+  ) => Id | null | undefined;
   /** Rán's mercy and Second wind (the campaign's options). */
   readonly options: {
     readonly secondWind: boolean;
@@ -2127,7 +2121,12 @@ function landBlow(
   // The teaching foes' lessons (Book 10 lessonDone) and their guidance (Book 8 section 07).
   const afa = onFoot.actors[attacker]?.fight;
   const arule = teachRule(world, afa);
-  if (afa?.teach !== undefined && arule === 'PARRY' && outcome === 'PARRIED' && defender === STEERER) {
+  if (
+    afa?.teach !== undefined &&
+    arule === 'PARRY' &&
+    outcome === 'PARRIED' &&
+    defender === STEERER
+  ) {
     afa.teach.parried++;
     lessonDone(fw, 'PARRY');
     if (afa.teach.parried === 1) guide(fw, afa, attacker, 'e_wrecker_svart.teach.03');
@@ -2139,8 +2138,7 @@ function landBlow(
     if (outcome === 'DODGED' && !af.missed && ctx.cb.redBlow?.miss != null) {
       af.recoveryEnd += ctx.cb.redBlow.miss;
       af.missed = true;
-    }
-    else if (atFold && (parryBeaten || outcome === 'GUARD_BROKEN'))
+    } else if (atFold && (parryBeaten || outcome === 'GUARD_BROKEN'))
       guide(fw, afa, 'C_BRAN', 'c_bran.teach.red.02');
     if (atFold && outcome !== 'DODGED') {
       afa.teach.taken = (afa.teach.taken ?? 0) + 1;
@@ -4459,7 +4457,12 @@ export function leaveZone(fw: Pick<FightWorld, 'world' | 'ctx' | 'emit' | 'deed'
     }
     // The beaten left alive (begging or downed) go their way, spared (Book 2 section 12, LEFT),
     // each with a record and its fate (decisions DG-5 and DG-6).
-    if (fa.side === 'ENEMY' && fa.dead === null && fa.spared === undefined && (fa.f.state === 'surrendered' || fa.f.state === 'downed')) {
+    if (
+      fa.side === 'ENEMY' &&
+      fa.dead === null &&
+      fa.spared === undefined &&
+      (fa.f.state === 'surrendered' || fa.f.state === 'downed')
+    ) {
       const deed = fw.deed('SPARED', [id], [], { how: 'LEFT' });
       const g = fa.group === null ? undefined : battle?.groups[fa.group];
       addSpared(world, fw.ctx, {
@@ -4995,7 +4998,12 @@ export function missileStruck(
     if (fa?.dead != null || onFoot.actors[target]?.pose === 'dead') return;
     // A teaching foe turns arrows and thrown spears too (Book 10 svartGuard): it falls at his feet.
     const rule = teachRule(world, fa);
-    if (rule !== null && tf !== null && fa?.teach !== undefined && !teachOpen(tf, rule, world.tick)) {
+    if (
+      rule !== null &&
+      tf !== null &&
+      fa?.teach !== undefined &&
+      !teachOpen(tf, rule, world.tick)
+    ) {
       turnBlow(fw, by, target, from ?? { x: e.x, y: e.y }, 'missile');
       if (e.n !== undefined) (fa.teach.deflect ??= []).push(e.n);
       return;
@@ -5173,9 +5181,13 @@ export function beatenOf(fa: ActorFight | undefined): BeatenState | null {
  * while the steerer is at ease (not in an action, not carrying). STANDING for a reeling or kneeling
  * foe, LYING for a downed one.
  */
-export function finishOffer(world: WorldState, ctx: FightContext, tile: number): FinishOffer | null {
+export function finishOffer(
+  world: WorldState,
+  ctx: FightContext,
+  tile: number,
+): FinishOffer | null {
   const onFoot = world.onFoot;
-  if (onFoot == null || onFoot.carrying !== null || world.gameOver !== null) return null;
+  if (onFoot?.carrying !== null || world.gameOver !== null) return null;
   const p = onFoot.player;
   const f = p.fight ?? null;
   if (f !== null && !free(f) && f.state !== 'block') return null;
@@ -5265,8 +5277,8 @@ function finisherLands(fw: FightWorld, f: Fighter): void {
   f.hit = true;
   if (onFoot === null || id === null) return;
   const a = onFoot.actors[id];
-  const fa = a?.fight;
-  if (a === undefined || fa === undefined || fa.dead !== null) return;
+  if (a?.fight?.dead !== null) return;
+  const fa = a.fight;
   const state = beatenOf(fa);
   const fin = f.finish ?? { weapon: finisherRow(f), variant: 'STANDING' as const, drawn: f.weapon };
   const fr = ctx.pt3.finishers[fin.weapon][fin.variant];
@@ -5366,8 +5378,7 @@ export function steererSpare(fw: FightWorld, offer: FinishOffer): boolean {
     const o = onFoot.actors[m];
     return (
       m !== id &&
-      o?.fight !== undefined &&
-      o.fight.dead === null &&
+      o?.fight?.dead === null &&
       o.fight.spared === undefined &&
       Math.hypot(o.x - a.x, o.y - a.y) <= sp.shamedTiles * fw.map.tile
     );
@@ -5545,7 +5556,8 @@ export function sparedDay(
       r.heard = true;
       emit({ type: 'SPARED_DUE', person: r.person, fate: r.fate, precursor: true });
     }
-    if (day === r.due) emit({ type: 'SPARED_DUE', person: r.person, fate: r.fate, precursor: false });
+    if (day === r.due)
+      emit({ type: 'SPARED_DUE', person: r.person, fate: r.fate, precursor: false });
     if (r.fate === 'AMBUSH' && day > r.due + b.ambushWithinDays) {
       r.fate = 'GONE';
       r.paid = true;
@@ -5658,7 +5670,8 @@ function turnBlow(
   const src = whereIs(onFoot, attacker);
   if (src !== null) {
     fa.ai.memory = { x: src.x, y: src.y, tick, seen: true };
-    if (fa.ai.awareness.state !== 'ALERT') setAwareness(fw, defender, a, fa, ctx.ai.awareness.alertAt);
+    if (fa.ai.awareness.state !== 'ALERT')
+      setAwareness(fw, defender, a, fa, ctx.ai.awareness.alertAt);
   }
   if (sideOf(onFoot, attacker) === 'HOUSEHOLD') {
     const battle = onFoot.battle ?? null;
@@ -5673,7 +5686,12 @@ function turnBlow(
     const atFold = encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') === true;
     const bran = atFold && world.facts['ch1.dusk'] !== 'FOUGHT' && onFoot.actors['C_BRAN'] != null;
     if (fa.teach.turned === 1)
-      guide(fw, fa, bran ? 'C_BRAN' : defender, bran ? 'c_bran.teach.svart' : 'e_wrecker_svart.teach.01');
+      guide(
+        fw,
+        fa,
+        bran ? 'C_BRAN' : defender,
+        bran ? 'c_bran.teach.svart' : 'e_wrecker_svart.teach.01',
+      );
     if (fa.teach.turned === 3) guide(fw, fa, defender, 'e_wrecker_svart.teach.02');
   } else if (encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') !== true) {
     // In Seal Cave, Ketill's own boast at the first blow turned on his shield.
@@ -5733,12 +5751,20 @@ function startRed(
   fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: true, kind: 'red' });
   const atFold = encounterOf(ctx, world.onFoot?.battle)?.allies?.includes('C_BRAN') === true;
   if (fa.teach?.reds === 1)
-    guide(fw, fa, atFold ? 'C_BRAN' : id, atFold ? 'c_bran.teach.red.01' : 'e_wrecker_ketill.teach.01');
+    guide(
+      fw,
+      fa,
+      atFold ? 'C_BRAN' : id,
+      atFold ? 'c_bran.teach.red.01' : 'e_wrecker_ketill.teach.01',
+    );
   return true;
 }
 
 /** Whether a fighter has first-sight lines (Book 10 "First sight", exceptions: beasts and the dead). */
-function sightPool(ctx: FightContext, id: Id): { warn: readonly string[]; taunt: readonly string[] } | null {
+function sightPool(
+  ctx: FightContext,
+  id: Id,
+): { warn: readonly string[]; taunt: readonly string[] } | null {
   const sight = ctx.def.sight;
   if (sight === undefined) return null;
   const own = sight.people[id];
@@ -5749,7 +5775,9 @@ function sightPool(ctx: FightContext, id: Id): { warn: readonly string[]; taunt:
 
 /** The pool's fact key (its lines used since it was last used through). */
 function poolKey(ctx: FightContext, id: Id): string {
-  return ctx.def.sight?.people[id] !== undefined ? id : `VOICE_${ctx.fighters.get(id)?.voice ?? ''}`;
+  return ctx.def.sight?.people[id] !== undefined
+    ? id
+    : `VOICE_${ctx.fighters.get(id)?.voice ?? ''}`;
 }
 
 /**
@@ -5808,7 +5836,8 @@ function sightKind(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): 'WAR
     if (Math.hypot(o.x - a.x, o.y - a.y) <= near) friends++;
   }
   let theirs = 0;
-  for (const [, pos] of foes(onFoot, fa.side)) if (Math.hypot(pos.x - a.x, pos.y - a.y) <= near) theirs++;
+  for (const [, pos] of foes(onFoot, fa.side))
+    if (Math.hypot(pos.x - a.x, pos.y - a.y) <= near) theirs++;
   const traits = world.people[id]?.traits.map((t) => t.trait) ?? [];
   const wounded = fa.vitality < fa.maxVitality * ctx.ai.self.woundedAt;
   if (traits.includes('COWARDLY') || wounded) return 'WARNING';
@@ -5853,7 +5882,9 @@ function scheduleSight(
     return m !== id && o?.fight !== undefined && fighting(o.fight);
   };
   // One spared and come back to ambush speaks its returned line second (Book 10 chapter1).
-  const ambusher = members.find((m) => standing(m) && world.onFoot?.actors[m]?.fight?.returned === 'AMBUSH');
+  const ambusher = members.find(
+    (m) => standing(m) && world.onFoot?.actors[m]?.fight?.returned === 'AMBUSH',
+  );
   const second =
     ambusher ??
     members.find((m) => {
@@ -5874,7 +5905,8 @@ function scheduleSight(
     key: null,
     second: second ?? null,
     secondAt: at + ctx.pt3.sight.secondLineTicks,
-    until: at + (kind === 'WARNING' ? ctx.pt3.sight.pauseWarningTicks : ctx.pt3.sight.pauseTauntTicks),
+    until:
+      at + (kind === 'WARNING' ? ctx.pt3.sight.pauseWarningTicks : ctx.pt3.sight.pauseTauntTicks),
   };
 }
 
@@ -5919,10 +5951,10 @@ function sightStep(fw: FightWorld, battle: Battle): void {
       }
     }
     s.key = key ?? '';
-    if (battle.warn != null && battle.warn.stage === 0) {
+    if (battle.warn?.stage === 0) {
       battle.warn.stage = 1;
       battle.warn.last = tick;
-      battle.warn.at = Math.hypot((a?.x ?? 0) - onFoot.player.x, (a?.y ?? 0) - onFoot.player.y);
+      battle.warn.at = Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y);
       fw.emit({ type: 'WARNED', person: s.speaker, stage: 1 });
     }
   }
@@ -6012,17 +6044,19 @@ function sparedStep(fw: FightWorld): void {
   const tick = world.tick;
   for (const [id, a] of Object.entries(onFoot.actors).sort(ORDERLY)) {
     const sp = a.fight?.spared;
-    if (sp === undefined || sp.replied || tick < sp.at + ctx.pt3.finishing.spareReplyTicks) continue;
+    if (sp === undefined || sp.replied || tick < sp.at + ctx.pt3.finishing.spareReplyTicks)
+      continue;
     sp.replied = true;
     fw.emit({ type: 'SPARED_REPLY', person: id });
   }
   // An arrow or spear a teaching foe turned is not stuck in him: it lies at his feet.
   for (let i = 0; i < onFoot.stuck.length; i++) {
     const st = onFoot.stuck[i];
-    if (st === undefined || st.in !== 'body' || st.target === undefined) continue;
+    if (st?.in !== 'body' || st.target === undefined) continue;
     const fa = onFoot.actors[st.target]?.fight;
     if (fa?.teach?.deflect?.includes(st.n) !== true) continue;
-    const { target: _t, ...rest } = st;
+    const rest: Omit<typeof st, 'target'> & { target?: Id } = { ...st };
+    delete rest.target;
     onFoot.stuck[i] = { ...rest, in: 'ground', h: 0 };
     fa.teach.deflect = fa.teach.deflect.filter((n) => n !== st.n);
   }
@@ -6034,7 +6068,7 @@ function sparedStep(fw: FightWorld): void {
  */
 function islandFate(world: WorldState, person: Id): 'GONE' | 'FAVOUR' | 'AMBUSH' | null {
   const r = sparedRecordOf(world, person);
-  if (r === null || r.island !== true || r.paid) return null;
+  if (r?.island !== true || r.paid) return null;
   if (r.fate === 'GONE') r.paid = true;
   return r.fate;
 }
@@ -6059,7 +6093,9 @@ function standAside(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): voi
 /** A fighter's teaching rule from its content (Book 2 section 12, TeachingRule), if any. */
 function teachFor(fd: FighterDef): { teach?: TeachState } {
   if (fd.teaching === undefined) return {};
-  return { teach: { rule: fd.teaching, turned: 0, reds: 0, parried: 0, lineAt: -1_000_000, said: [] } };
+  return {
+    teach: { rule: fd.teaching, turned: 0, reds: 0, parried: 0, lineAt: -1_000_000, said: [] },
+  };
 }
 
 /** One spared and come back to ambush speaks its returned line first (Book 10 chapter1). */

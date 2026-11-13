@@ -179,8 +179,7 @@ const FINISHER_ROWS: Readonly<Record<string, FinisherWeapon>> = {
 };
 
 function parseFinishers(json: unknown): Pt3Balance['finishers'] {
-  const out: Partial<Record<FinisherWeapon, Partial<Record<FinisherVariant, FinisherFrames>>>> =
-    {};
+  const out: Partial<Record<FinisherWeapon, Partial<Record<FinisherVariant, FinisherFrames>>>> = {};
   for (const r of rows(json, 'combatTimings', 'finishers')) {
     const w = FINISHER_ROWS[r['Weapon'] ?? ''];
     const v = r['Variant'] === 'Standing' ? 'STANDING' : r['Variant'] === 'Lying' ? 'LYING' : null;
@@ -224,7 +223,11 @@ export function parsePt3Balance(json: unknown): Pt3Balance {
     `^Favour ${N}%, ambush ${N}%, gone ${N}%$`,
   );
   const begged = grab(sp('begged'), 'theSparedRemembered.begged', `^Favour \\+${N}, ambush -${N}$`);
-  const kin = grab(sp('kinKilled'), 'theSparedRemembered.kinKilled', `^Ambush \\+${N}, favour -${N}$`);
+  const kin = grab(
+    sp('kinKilled'),
+    'theSparedRemembered.kinKilled',
+    `^Ambush \\+${N}, favour -${N}$`,
+  );
   const clamp = grab(
     sp('clamp'),
     'theSparedRemembered.clamp',
@@ -368,10 +371,18 @@ export function parsePt3Balance(json: unknown): Pt3Balance {
         'combatPrompts.sneakHintHold',
         `^${N} real seconds`,
       ),
-      sneakTimes: one(cp('sneakHintTimes'), 'combatPrompts.sneakHintTimes', `At most ${N} showings`),
+      sneakTimes: one(
+        cp('sneakHintTimes'),
+        'combatPrompts.sneakHintTimes',
+        `At most ${N} showings`,
+      ),
       sneakDoneTiles: one(cp('sneakDone'), 'combatPrompts.sneakDone', `sneaked ${N} tiles`),
       sneakCueSeconds: one(cp('sneakCue'), 'combatPrompts.sneakCue', `^${N} real seconds after`),
-      quietBackSeconds: one(cp('quiet'), 'combatPrompts.quiet', `come back ${N} real seconds after`),
+      quietBackSeconds: one(
+        cp('quiet'),
+        'combatPrompts.quiet',
+        `come back ${N} real seconds after`,
+      ),
     },
   };
 }

@@ -171,7 +171,7 @@ function fightWorldOf(f: Fight): FightWorld {
     land: f.land,
     map,
     tidalGroundOpen: false,
-    emit: (e) => f.events.push(e as SimEvent),
+    emit: (e) => f.events.push(e),
     deed: () => undefined,
     options: { secondWind: false, ransMercy: false, parryWindow: cb.parry.window },
   };
@@ -358,14 +358,14 @@ describe('spared enemies are recorded (asked; decisions DG-4 to DG-6)', () => {
     };
     for (let day = 1; day <= 60; day++) {
       w.calendar = { ...w.calendar, day };
-      sparedDay(w, ctx, emit as never, null);
+      sparedDay(w, ctx, emit, null);
     }
     // Before the launch nothing comes due: it plays on the island first.
     expect(out).toEqual([]);
     const launch = 61;
     for (let day = launch; day <= launch + 60; day++) {
       w.calendar = { ...w.calendar, day };
-      sparedDay(w, ctx, emit as never, launch);
+      sparedDay(w, ctx, emit, launch);
     }
     expect(r.due).toBeGreaterThanOrEqual(launch + pt3.spared.afterLaunchDays);
     expect(out).toEqual([
@@ -530,7 +530,10 @@ function closeTo(f: Fight, foe: string, tiles: number, out: Command[]): boolean 
 }
 
 /** The opening a teaching foe's lesson gives (Book 10 svartOpening, ketillOpening). */
-function lessonOpen(f: Fight, k: { state: string; move: string | null; activeEnd: number }): boolean {
+function lessonOpen(
+  f: Fight,
+  k: { state: string; move: string | null; activeEnd: number },
+): boolean {
   return k.state === 'parried' || (k.move === 'red' && f.world.tick >= k.activeEnd);
 }
 
@@ -606,7 +609,7 @@ function spears(f: Fight, foe: string, n: number): void {
     y: a.y,
     n: 9000 + n,
   });
-  void p;
+  expect(p.fight?.state).not.toBe('dead');
 }
 
 describe('the two teaching foes are beatable only their intended way (asked; decision DG-9)', () => {
@@ -813,8 +816,7 @@ describe('every tutorial enemy speaks before attacking (asked; decision DG-8)', 
     const one = fight('kind-one', [CONN], { plain: true, away: 9 });
     const three = fight('kind-three', [KETILL, SVART, CONN], { plain: true, away: 9 });
     for (const f of [one, three])
-      steps(f, 60 * 12, () =>
-        f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }),
+      steps(f, 60 * 12, () => { f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }); },
       );
     expect(one.events.find((e) => e.type === 'FIRST_SIGHT')).toMatchObject({ kind: 'WARNING' });
     expect(three.events.find((e) => e.type === 'FIRST_SIGHT')).toMatchObject({ kind: 'TAUNT' });
@@ -915,7 +917,7 @@ describe('combat prompts (decisions DG-7, DG-11 and DG-25)', () => {
     }
     expect(f.world.player.teaching?.fights).toBe(1);
     expect(f.events.filter((e) => e.type === 'FIGHT_COUNTED')).toHaveLength(1);
-    expect(f.world.player.teaching?.uses['LOCK_ON'] ?? 0).toBeGreaterThan(0);
+    expect(f.world.player.teaching?.uses.LOCK_ON ?? 0).toBeGreaterThan(0);
   });
 
   it('the heal prompt shows on a hit below the threshold with a binding carried, and stops after 3 heals', () => {
@@ -943,12 +945,12 @@ describe('combat prompts (decisions DG-7, DG-11 and DG-25)', () => {
     const f = fight('sneak', [SVART, CONN], { plain: true, away: 14 });
     for (const a of Object.values(f.world.onFoot?.actors ?? {}))
       if (a.fight !== undefined) a.fight.f.angle = Math.PI;
-    steps(f, 30, () => f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }));
+    steps(f, 30, () => { f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }); });
     expect(f.events.filter((e) => e.type === 'SNEAK_HINT')).toHaveLength(1);
     expect(f.world.player.teaching?.sneakShown).toBe(1);
     // Sneaking its tiles retires it for good.
     f.sim.submit({ type: 'SNEAK' });
-    steps(f, 200, () => f.sim.submit({ type: 'MOVE', x: 1, y: 0, run: false, sneak: true }));
+    steps(f, 200, () => { f.sim.submit({ type: 'MOVE', x: 1, y: 0, run: false, sneak: true }); });
     expect(f.world.player.teaching?.retired).toContain('SNEAK');
     // At most sneakHintTimes in the campaign.
     const t = f.world.player.teaching ?? never();

@@ -288,7 +288,11 @@ export class SearchBot extends CampBot {
       if (stuck > 90 && foe !== undefined) {
         const map = this.map;
         const at = { tx: Math.floor(foe.x / map.tile), ty: Math.floor(foe.y / map.tile) };
-        this.walkTo((t) => Math.abs(t.tx - at.tx) <= 1 && Math.abs(t.ty - at.ty) <= 1, false, 60 * 6);
+        this.walkTo(
+          (t) => Math.abs(t.tx - at.tx) <= 1 && Math.abs(t.ty - at.ty) <= 1,
+          false,
+          60 * 6,
+        );
         stuck = 0;
       }
     }

@@ -112,6 +112,8 @@ export class CombatPrompts {
   readonly #until = new Map<CombatPromptId, number>();
   readonly #shownAt = new Map<CombatPromptId, number>();
   #heal: 'BIND' | 'EAT' = 'BIND';
+  /** The prompts wanted at the last frame, before their fades (the browser tests read it). */
+  chosen: readonly CombatPromptId[] = [];
   #now = 0;
 
   constructor(b: Pt3Balance['prompts']) {
@@ -210,6 +212,7 @@ export class CombatPrompts {
       return true;
     };
     const chosen = ORDER.filter(wanted).slice(0, this.#b.maxLines);
+    this.chosen = chosen;
     const out: CombatPromptLine[] = [];
     for (const id of ORDER) {
       let fade = this.#fades.get(id);

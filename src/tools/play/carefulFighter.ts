@@ -259,10 +259,12 @@ export function carefulTick(
   // A teaching foe of the red blow is let come from outside his circle: he strikes only when he has
   // waited for his opening there (Book 10 "AI states").
   const red = fa?.teach?.rule === 'RED';
-  if (ranked.some(({ id }) => {
-    const ff = fighterOf(id);
-    return ff !== undefined && (charging(ff) || striking(ff));
-  }))
+  if (
+    ranked.some(({ id }) => {
+      const ff = fighterOf(id);
+      return ff !== undefined && (charging(ff) || striking(ff));
+    })
+  )
     mem.busyAt = tick;
   // A long lull (a foe held at a wall inside its own circle, say): stand further off to let it
   // come round and choose its moment.
@@ -280,7 +282,10 @@ export function carefulTick(
   // A lull longer still, or the foe at someone else (Bran): go and strike, to bring the fight to
   // the steerer.
   const elsewhere = fa?.ai.target != null && fa.ai.target !== STEERER;
-  if (tick - (mem.busyAt ?? tick) > 60 * 15 || (elsewhere && tick - (mem.busyAt ?? tick) > 60 * 4)) {
+  if (
+    tick - (mem.busyAt ?? tick) > 60 * 15 ||
+    (elsewhere && tick - (mem.busyAt ?? tick) > 60 * 4)
+  ) {
     out.push(nearest.d > reachPx * 0.95 ? towards(nearest) : still);
     if (nearest.d <= reachPx && ready && tick - mem.pressedAt > 4) {
       out.push({ type: 'MELEE', facing: p.facing });

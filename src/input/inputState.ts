@@ -147,7 +147,11 @@ export class InputMapper {
         byMouse.add(action);
     const byPad = new Set<Action>();
     for (const action of held)
-      if (this.#bindings[action].some((b) => b.device === 'pad' && this.#padButtons[b.button] === true))
+      if (
+        this.#bindings[action].some(
+          (b) => b.device === 'pad' && this.#padButtons[b.button] === true,
+        )
+      )
         byPad.add(action);
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();

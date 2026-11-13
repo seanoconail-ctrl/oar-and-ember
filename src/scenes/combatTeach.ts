@@ -174,7 +174,7 @@ export class CombatTeach {
         return;
       case 'FINISHER_LANDED': {
         const drawn = world.onFoot?.player.fight?.finish?.drawn ?? e.weapon;
-        h.sound('FINISHER', e.target, FINISH_KIND[drawn ?? 'Seax'] ?? 0);
+        h.sound('FINISHER', e.target, FINISH_KIND[drawn] ?? 0);
         return;
       }
       case 'STEERER_SHOUTED': {
@@ -259,10 +259,10 @@ export class CombatTeach {
       .map((l) => {
         const vars: Record<string, string> = { ...caps, key: h.key(keyOf[l.id] ?? '') };
         const marked: Record<string, string> = {};
-        for (const [k, v] of Object.entries(vars)) marked[k] = `\u0001${v}\u0002`;
+        for (const [k, v] of Object.entries(vars)) marked[k] = `[[cap]]${v}[[/cap]]`;
         const text = esc(h.t(l.textKey, marked))
-          .replace(/\u0001/g, '<span class="cap">')
-          .replace(/\u0002/g, '</span>');
+          .replaceAll('[[cap]]', '<span class="cap">')
+          .replaceAll('[[/cap]]', '</span>');
         return `<p data-prompt="${l.id}" style="opacity:${l.alpha.toFixed(2)}">${text}</p>`;
       })
       .join('');

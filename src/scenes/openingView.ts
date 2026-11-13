@@ -690,7 +690,7 @@ function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput): void {
   // His drawn body (its sheet and layers) gives way to the bier.
   for (let i = sprites.length - 1; i >= 0; i--) {
     const sp = sprites[i];
-    if (sp === undefined || !/thorkel/.test(sp.sheet)) continue;
+    if (sp?.sheet.includes('thorkel') !== true) continue;
     if (Math.abs(sp.x - sx) <= 1.5 && Math.abs(sp.y - sy) <= 1.5) sprites.splice(i, 1);
   }
   const ramp = input.seaRamp ?? SEA_FALLBACK;
@@ -809,7 +809,7 @@ export function seaCamera(
   const sea = ctx.sea;
   const ss = seaBurialState(world);
   const body = world.onFoot?.actors[ctx.bran?.body ?? 'C_THORKEL'];
-  if (sea === null || ss === null || ss.zone !== map.zone || body === undefined) return camera;
+  if (sea === null || ss?.zone !== map.zone || body === undefined) return camera;
   const tl = seaTimeline(seaBalanceFor(ss, sea));
   const t = (world.tick - ss.at) / TICKS_PER_SECOND;
   const ease0 = Math.max(0, Math.min(1, t / 1.5, (tl.control - t) / 1.5));

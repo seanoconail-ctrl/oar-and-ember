@@ -111,11 +111,14 @@ export function jobToday(
   }
   // The jobs they take up first while there is such work (Hild finishing the shelter on the
   // second day, DG-12), unless the steerer has given them another than their own.
-  // Only while the stores hold the day's food for every mouth: feeding the household comes first.
+  // A fisher leaves the nets for it only while the stores hold the next day's food for every
+  // mouth: feeding the household comes first (DG-56).
   const own = ctx.household.people[p.id];
   const home = homeOf(world, camp);
   const mouths = 1 + world.household.residents.length;
-  const fed = home !== undefined && foodRd(home) >= mouths * camp.work.foodPerPersonPerDay;
+  const fed =
+    own?.job !== 'FISHER' ||
+    (home !== undefined && foodRd(home) >= mouths * camp.work.foodPerPersonPerDay);
   if (job.kind === own?.job && fed)
     for (const first of own.first ?? [])
       if (jobOpen(world, camp, ctx.household.jobs[first], p.id)) return first;
