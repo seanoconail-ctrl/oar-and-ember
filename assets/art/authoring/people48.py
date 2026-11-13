@@ -458,6 +458,9 @@ class Pose:
         self.wdir = None
         self.shield = None
         self.dropped = False
+        # The user's third playtest (Book 7 section 01): the weapon a finisher is drawn with (seax,
+        # axe, spear, sword, dane or club), drawn on the weapon layer in place of the one carried.
+        self.wkind = None
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -2458,6 +2461,11 @@ def draw_arms(parts, facing, j, pose, ch):
     if pose.dropped:
         dropped_arms(parts, facing, j, pose, ch)
         return
+    melee = ('seax', 'axe', 'spear')
+    if combat and pose.wkind is not None and any(k in melee for k in arms):
+        # A finisher with another weapon (the foe's, taken up; or one not carried): drawn in place of
+        # the melee weapon carried, on the same layer.
+        arms = [k for k in arms if k not in melee] + [pose.wkind]
     for kind in arms:
         if kind in ('bow',):
             continue
@@ -2465,6 +2473,10 @@ def draw_arms(parts, facing, j, pose, ch):
             shield(parts, facing, j, pose, ch)
             continue
         wp = Part('weapon', 0, kind, side=0)
+        if kind in ('sword', 'dane', 'club'):
+            finisher_weapon(wp, facing, R, pose, kind)
+            parts.append(wp)
+            continue
         if kind == 'seax':
             if combat:
                 d = vnorm(pose.wdir or (0.0, 1.0, 0.0))
@@ -2512,6 +2524,42 @@ def draw_arms(parts, facing, j, pose, ch):
             t = P2(facing, add(tip, vscale(d, -1.0)))
             wp.put(t[0], t[1], 'edge', t[2] + 0.35)
         parts.append(wp)
+
+
+def finisher_weapon(wp, facing, R, pose, kind):
+    """The user's third playtest (Book 7 section 01): the weapons a finisher is drawn with that no
+    one carries in Chapter 1: a sword (a long blade, its crossguard), a Dane axe (a long haft, a broad
+    bearded head) and a club (a thick haft swelling to a studded knob)."""
+    d = vnorm(pose.wdir or (0.0, 1.0, 0.0))
+    if kind == 'sword':
+        grip = add(R, vscale(d, 0.5))
+        blade_line(wp, facing, add(grip, vscale(d, -2.5)), grip, 1, 'haft', 0.2)
+        side = vnorm(vcross(d, (0.0, 0.0, 1.0))) if abs(d[2]) < 0.9 else (1.0, 0.0, 0.0)
+        blade_line(wp, facing, add(grip, vscale(side, -2.0)), add(grip, vscale(side, 2.0)), 1, 'iron', 0.3)
+        blade_line(wp, facing, add(grip, vscale(d, 0.8)), add(grip, vscale(d, 12.0)), 2 if facing in 'e w' else 1, 'blade', 0.25)
+        tip = P2(facing, add(grip, vscale(d, 11.0)))
+        wp.put(tip[0], tip[1], 'edge', tip[2] + 0.3)
+    elif kind == 'dane':
+        butt = add(R, vscale(d, -6.0))
+        end = add(R, vscale(d, 14.0))
+        blade_line(wp, facing, butt, end, 2, 'haft', 0.2)
+        edge = vnorm(vcross(d, (1.0, 0.0, 0.0))) if abs(d[0]) < 0.8 else vnorm(vcross(d, (0.0, 1.0, 0.0)))
+        if edge[1] < 0 and abs(d[1]) < 0.6:
+            edge = vscale(edge, -1)
+        for k in range(0, 7):
+            a = add(end, vscale(d, -k * 0.8))
+            b = add(a, vscale(edge, 5.0 - 0.45 * k))
+            blade_line(wp, facing, a, b, 1, 'blade' if k < 6 else 'iron', 0.3)
+        e0 = P2(facing, add(end, vscale(edge, 3.4)))
+        wp.put(e0[0], e0[1], 'edge', e0[2] + 0.4)
+    else:
+        butt = add(R, vscale(d, -2.0))
+        end = add(R, vscale(d, 9.5))
+        blade_line(wp, facing, butt, add(R, vscale(d, 6.0)), 2, 'haft', 0.2)
+        blade_line(wp, facing, add(R, vscale(d, 6.0)), end, 3, 'haft', 0.25)
+        for k in (7.0, 8.5):
+            st = P2(facing, add(R, vscale(d, k)))
+            wp.put(st[0], st[1], 'iron', st[2] + 0.4)
 
 
 def axe_head(part, facing, at, d, edge, bias):
@@ -2841,6 +2889,169 @@ def anim_getup(ch=None):
         p.shield = 'arm'
         out.append(p)
     return out
+
+
+# ------------------------------------------------- the user's third playtest (DG-2 to DG-10)
+def anim_reel(ch=None):
+    """A beaten stagger held as a reel (Book 7 section 01; decision DG-2): down on one knee, the
+    weapon low, the head hanging, breathing hard; three frames of the heaving breath."""
+    out = []
+    for k, bob in enumerate((0.0, -0.6, -0.2)):
+        p = Pose(pel=(0, -0.5, -8.0 + bob * 0.5), lean=(0, 2.0 + bob * 0.3), breath=-1 + bob,
+                 hold='held', wdir=(0.25, 0.7, -0.65))
+        p.hands = {'R': (2.4, 3.5, -7.5 + bob), 'L': (0.4, 4.5, -6.0 + bob)}
+        p.elbow = {'R': (1.0, -0.4, 0.0), 'L': (1.0, -0.4, 0.0)}
+        p.grip = {'R': 'fist', 'L': 'open'}
+        p.feet = {'R': (-6.0, 0), 'L': (3.0, 0)}
+        p.toe = {'R': 1, 'L': 0}
+        p.head = (0, 0.6, -0.9 + bob * 0.3)
+        p.mouth = 1 if k == 1 else 0
+        p.shield = 'arm'
+        out.append(p)
+    return out
+
+
+def anim_guard_turn(ch=None):
+    """Svart's guard turning a blow (Book 7 section 01; decision DG-9): the shaft brought across
+    and turned against the blow (or the board, with a shield), then back to guard; three frames."""
+    if ch is not None and 'shield' in getattr(ch, 'arms', ()):
+        return [fight_pose((2.0, 2.0, -3.5), (0.3, 0.8, 0.4), lh=(-0.5, 5.5, 0.5), shield='up', lean=(0, 0.4)),
+                fight_pose((2.2, 1.5, -4.0), (0.3, 0.8, 0.4), lh=(-1.2, 5.0, 1.5), shield='up',
+                           lean=(-0.3, -0.6), head=(0, -0.3, 0)),
+                fight_pose((2.0, 2.0, -3.5), (0.3, 0.8, 0.4), lh=(0.2, 5.0, -1.0), shield='front', lean=(0, 0.2))]
+    return [fight_pose((-1.0, 4.0, 0.5), (1.0, 0.25, 0.4), lh=(3.0, 4.0, 0.0), lean=(0, 0.4)),
+            fight_pose((-1.8, 3.5, 1.5), (1.0, 0.1, 0.55), lh=(2.6, 3.5, 1.0), lean=(-0.3, -0.6),
+                       head=(0, -0.3, 0)),
+            fight_pose((-0.5, 4.0, -0.5), (0.9, 0.35, 0.25), lh=(3.2, 4.0, -0.5), lean=(0, 0.2))]
+
+
+def anim_spare(ch=None):
+    """The let-go gesture (Book 7 section 01; decision DG-4): the weapon swept aside towards the way
+    out and the head jerked: go. Four frames, then back to the stance."""
+    return [fight_pose((2.0, 3.0, -3.5), (0.3, 0.9, 0.2), lean=(0, 0.4)),
+            fight_pose((5.0, 2.5, -2.5), (0.9, 0.3, -0.2), lean=(0.3, 0.2), head=(0.4, 0, 0.2),
+                       cloth=(0.4, 0)),
+            fight_pose((5.4, 1.2, -2.2), (1.0, 0.0, -0.3), lean=(0.3, 0.0), head=(0.5, 0.2, 0.3),
+                       mouth=1, cloth=(0.6, 0)),
+            fight_pose((3.5, 2.0, -3.5), (0.6, 0.6, 0.0), lean=(0.1, 0.2), cloth=(0.2, 0))]
+
+
+FINISHER_KINDS = ['seax', 'axe', 'spear', 'sword', 'dane', 'club']
+
+
+def anim_finisher(kind, lying, ch=None):
+    """A finisher (Book 7 section 01; decision DG-3): one quick killing blow in 8 frames: a held first
+    frame for the hold, the wind-up and its held top, one active frame on the blow, the follow-
+    through and the recovery settling. Standing (a reeling or kneeling foe) or lying (a downed one).
+    Never a second blow and nothing drawn out."""
+    two = kind in ('spear', 'dane', 'club') or lying
+    lh_on = lambda r: (r[0] - 2.2, r[1] - 1.0, r[2] - 1.0) if two else None
+    crouch = (0, 0.4, -3.5) if lying else (0, 0, 0)
+    step = {'R': (-4.5, 0), 'L': (5.0, 0)}
+    if kind == 'seax':
+        if not lying:
+            # A hand on the foe's shoulder, one short thrust under the ribs.
+            keys = [((2.0, 2.0, -4.0), (0.2, 0.9, 0.3), (0.5, 7.0, 3.0), 0.4),
+                    ((2.6, -1.5, -5.0), (0.1, 0.9, 0.4), (0.4, 7.5, 3.0), -0.4),
+                    ((2.8, -3.0, -5.5), (0.1, 0.9, 0.45), (0.3, 7.5, 3.0), -0.8),
+                    ((2.8, -3.2, -5.6), (0.1, 0.9, 0.45), (0.3, 7.5, 3.0), -0.9),
+                    ((0.4, 9.5, -3.0), (0.0, 1.0, 0.2), (0.0, 7.0, 3.5), 2.6),
+                    ((0.6, 8.0, -4.0), (0.1, 1.0, 0.0), (0.4, 6.5, 2.5), 2.0),
+                    ((1.6, 4.0, -4.5), (0.2, 0.9, 0.1), (1.6, 4.0, -4.0), 1.0),
+                    ((2.0, 2.5, -4.0), (0.2, 0.9, 0.3), (1.6, 4.2, -6.5), 0.5)]
+        else:
+            # Kneeling, one thrust down.
+            keys = [((2.0, 3.0, -2.0), (0.1, 0.5, -0.8), (0.6, 6.0, -6.0), 1.4),
+                    ((2.2, 1.5, 3.0), (0.1, 0.3, -0.9), (0.6, 6.0, -6.5), 1.0),
+                    ((2.2, 1.0, 4.5), (0.1, 0.25, -0.95), (0.6, 6.0, -6.5), 0.8),
+                    ((2.2, 1.0, 4.6), (0.1, 0.25, -0.95), (0.6, 6.0, -6.5), 0.8),
+                    ((0.8, 6.5, -8.0), (0.0, 0.2, -1.0), (0.6, 6.5, -7.0), 2.6),
+                    ((0.8, 6.5, -9.0), (0.0, 0.2, -1.0), (0.8, 6.0, -7.0), 2.4),
+                    ((1.6, 4.5, -5.0), (0.1, 0.6, -0.6), (1.2, 4.5, -6.0), 1.6),
+                    ((2.0, 3.0, -3.5), (0.2, 0.9, 0.0), (1.6, 4.2, -6.5), 1.0)]
+    elif kind in ('spear',) or (lying and kind == 'sword'):
+        if not lying:
+            # One thrust through, the foot set.
+            keys = [((0.6, -2.0, -3.5), (0.0, 1.0, 0.05), None, 0.0),
+                    ((0.6, -4.0, -3.0), (0.0, 1.0, 0.1), None, -0.6),
+                    ((0.8, -5.5, -2.5), (0.0, 1.0, 0.15), None, -1.0),
+                    ((0.8, -5.7, -2.4), (0.0, 1.0, 0.15), None, -1.1),
+                    ((0.3, 9.5, -2.0), (0.0, 1.0, -0.05), None, 2.6),
+                    ((0.4, 8.0, -3.0), (0.0, 1.0, -0.15), None, 2.0),
+                    ((0.6, 4.0, -3.5), (0.0, 1.0, -0.05), None, 1.0),
+                    ((0.6, 0.0, -3.5), (0.0, 1.0, 0.05), None, 0.3)]
+        else:
+            # Both hands, one downward thrust (a sword: the point driven down).
+            keys = [((0.6, 3.0, 2.0), (0.0, 0.3, -0.95), None, 1.2),
+                    ((0.6, 2.5, 6.0), (0.0, 0.25, -0.97), None, 0.6),
+                    ((0.6, 2.0, 8.5), (0.0, 0.2, -0.98), None, 0.2),
+                    ((0.6, 2.0, 8.6), (0.0, 0.2, -0.98), None, 0.2),
+                    ((0.5, 5.0, -4.0), (0.0, 0.2, -0.98), None, 2.6),
+                    ((0.5, 5.0, -5.5), (0.0, 0.2, -0.98), None, 2.6),
+                    ((0.6, 4.0, -1.0), (0.0, 0.4, -0.9), None, 1.6),
+                    ((0.6, 2.0, -3.0), (0.0, 0.9, -0.3), None, 0.8)]
+    elif kind == 'sword':
+        # One cut across the throat.
+        keys = [((2.2, 2.0, -3.0), (0.3, 0.9, 0.3), None, 0.4),
+                ((2.6, -0.5, 4.0), (0.3, -0.2, 0.9), None, -0.2),
+                ((2.6, -1.0, 6.0), (0.3, -0.3, 0.9), None, -0.6),
+                ((2.6, -1.1, 6.1), (0.3, -0.3, 0.9), None, -0.6),
+                ((-3.5, 8.0, 1.0), (-0.6, 0.8, 0.0), None, 2.4),
+                ((-5.0, 5.0, -1.0), (-0.8, 0.5, -0.2), None, 1.8),
+                ((-2.0, 4.0, -4.0), (-0.3, 0.8, -0.4), None, 1.0),
+                ((1.6, 2.5, -4.0), (0.2, 0.9, 0.3), None, 0.4)]
+    else:
+        # The axes and the club: one overhead blow (standing, to the neck or the head), or one blow
+        # straight down (lying). The Dane axe and the club in both hands.
+        lo = -10.5 if lying else -2.0
+        keys = [((1.6, 2.0, -3.0), (0.2, 0.8, 0.4), None, 0.4),
+                ((2.0, -1.0, 6.5), (0.1, -0.5, 0.85), None, -0.4),
+                ((2.2, -2.5, 9.5), (0.1, -0.7, 0.7), None, -1.0),
+                ((2.2, -2.6, 9.6), (0.1, -0.7, 0.7), None, -1.0),
+                ((0.4, 8.5 if not lying else 6.5, lo), (0.0, 0.6, -0.8), None, 2.8),
+                ((-0.5, 7.0 if not lying else 6.0, lo - 3.0), (-0.1, 0.4, -0.9), None, 2.4),
+                ((0.6, 4.0, -5.0), (0.1, 0.6, -0.6), None, 1.2),
+                ((1.4, 2.5, -4.0), (0.2, 0.8, 0.3), None, 0.5)]
+    out = []
+    for i, (rh, wdir, lh, lean) in enumerate(keys):
+        hold_l = lh if lh is not None else lh_on(rh)
+        p = fight_pose(rh, wdir, lean=(0, lean), pel=crouch if (lying or i in (4, 5)) else (0, 0, 0),
+                       lh=hold_l, feet=step if i in (4, 5, 6) else None,
+                       cloth=(0.9, 0) if i == 4 else (0.4, 0) if i == 5 else (0.0, 0.0),
+                       mouth=1 if i == 4 else 0, shield='arm')
+        if lying:
+            p.feet = {'R': (-6.0, 0), 'L': (3.5, 0)}
+            p.toe = {'R': 1, 'L': 0}
+            p.pel = (0, -0.5, -7.5 if i not in (1, 2, 3) else -5.0)
+        if hold_l is not None:
+            p.grip = {'R': 'fist', 'L': 'fist'}
+        p.wkind = kind
+        out.append(p)
+    return out
+
+
+def anim_red(ch=None):
+    """Ketill's red blow (Book 7 section 01; decisions DG-9 and DG-10): the hand axe's charged heavy
+    with both hands on the haft over the shield's rim, the beard of the axe drawn along the rim through
+    its wind-up (two frames), held at the top, then the blow and its recovery."""
+    return [fight_pose((0.6, 1.5, 3.0), (0.0, -0.2, 0.98), lh=(-0.4, 3.5, 1.5), lean=(0, -0.4), shield='front'),
+            fight_pose((0.6, -1.0, 8.0), (0.0, -0.5, 0.85), lh=(-0.4, 1.5, 6.0), lean=(0, -1.0), shield='arm'),
+            fight_pose((0.0, 9.5, -3.5), (0.0, 0.6, -0.8), lh=(-1.0, 8.5, -2.5), lean=(0, 3.0), pel=(0, 1.0, -2),
+                       feet={'R': (-5.0, 0), 'L': (6.0, 0)}, cloth=(1.0, 0), mouth=1, shield='arm'),
+            fight_pose((0.4, 6.0, -8.0), (0.0, 0.3, -0.95), lh=(-0.6, 5.5, -7.0), lean=(0, 2.2), pel=(0, 0.5, -2),
+                       shield='arm')]
+
+
+def anim_red_miss(ch=None):
+    """The red blow missed: an overbalanced recovery of four frames, the axe bitten into the turf
+    and the shield arm flung wide, then wrenched free (Book 7 section 01)."""
+    return [fight_pose((0.4, 8.0, -12.0), (0.0, 0.2, -1.0), lh=(4.5, 1.0, -3.0), lean=(0, 3.4), pel=(0, 1.0, -3),
+                       feet={'R': (-5.5, 0), 'L': (6.0, 0)}, shield='arm', mouth=1),
+            fight_pose((0.4, 8.0, -12.0), (0.0, 0.2, -1.0), lh=(5.0, 0.0, -2.0), lean=(0.4, 3.2), pel=(0, 1.0, -3),
+                       feet={'R': (-5.5, 0), 'L': (6.0, 0)}, shield='arm'),
+            fight_pose((0.8, 6.0, -9.0), (0.0, 0.4, -0.9), lh=(4.0, 1.5, -3.0), lean=(0.2, 2.4), pel=(0, 0.5, -2),
+                       feet={'R': (-4.5, 0), 'L': (5.0, 0)}, shield='arm'),
+            fight_pose((1.6, 3.0, -5.0), (0.2, 0.7, -0.4), lh=(2.0, 3.5, -4.5), lean=(0, 1.2), shield='arm')]
 
 
 # ------------------------------------------------------------------ design addendum 2.5 (DF-1 to DF-9)
@@ -3189,7 +3400,27 @@ def fight_states_25(ch, heavy=False):
         ('fall_fwd', lambda: N(anim_fall(c, 'fwd'), c), 5, False),
         ('fall_back', lambda: N(anim_fall(c, 'back'), c), 5, False),
         ('fall_crumple', lambda: N(anim_fall(c, 'crumple'), c), 5, False),
+    ] + fight_states_pt3(ch, heavy)
+
+
+def fight_states_pt3(ch, heavy=False):
+    """The user's third playtest's states (Book 7 section 01; decisions DG-2 to DG-10), for every
+    body that fights, with the same counts and timing for every build: the reel, a guard turned, the
+    let-go gesture, the red blow and its miss, and a finisher per weapon, standing and lying."""
+    c = ch
+    N = narrow
+    out = [
+        ('reel', lambda: N(anim_reel(c), c), 12, True),
+        ('guard_turn', lambda: N(anim_guard_turn(c), c), 4, False),
+        ('spare', lambda: N(anim_spare(c), c), 6, False),
+        ('red', lambda: N(anim_red(c), c), 14, False),
+        ('red_miss', lambda: N(anim_red_miss(c), c), 11, False),
     ]
+    for kind in FINISHER_KINDS:
+        for lying in (False, True):
+            name = f"fin_{kind}_{'l' if lying else 's'}"
+            out.append((name, (lambda k=kind, ly=lying: N(anim_finisher(k, ly, c), c)), 5, False))
+    return out
 
 
 class Lying:
@@ -3356,7 +3587,12 @@ FIGHT_POSES = {'downed': 'lying', 'dead': 'lying', 'dead_head': 'lying', 'dead_a
                'dead_leg': 'lying', 'piece_head': 'lying', 'piece_arm': 'lying', 'piece_leg': 'lying',
                'surrender': 'seated', 'getup': 'seated', 'bind': 'seated', 'eat_ration': 'seated',
                'knockdown': 'seated', 'fall_fwd': 'seated', 'fall_back': 'seated',
-               'fall_crumple': 'seated'}
+               'fall_crumple': 'seated',
+               # The user's third playtest: the reel (one knee) and the finishers on a lying foe
+               # (kneeling or stooping over it).
+               'reel': 'seated', 'fin_seax_l': 'seated', 'fin_axe_l': 'seated',
+               'fin_spear_l': 'seated', 'fin_sword_l': 'seated', 'fin_dane_l': 'seated',
+               'fin_club_l': 'seated'}
 
 
 def narrow(poses, ch):

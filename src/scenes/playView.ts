@@ -64,7 +64,9 @@ import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
 import { striking } from '../sim/combat/fighter.ts';
 import { parseAiBalance, parseCombatBalance } from '../content/combatBalance.ts';
-import { finisherTarget, hostilesAware } from '../sim/land/fight.ts';
+import { finishOffer, hostilesAware } from '../sim/land/fight.ts';
+import { STRIKES as STRIKING } from '../sim/combat/fighter.ts';
+import { CombatTeach, promptsCovered } from './combatTeach.ts';
 import type { FightContext } from '../sim/land/fight.ts';
 import { attachWakingAutosave, DAY_START_SLOT } from '../persist/manager.ts';
 import { browserSaves } from '../persist/browserSaves.ts';
@@ -964,6 +966,12 @@ export function startPlay(
       vars: { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`) },
     },
     { id: 'marks', group: 'display', textKey: 'ui.settings.marks', vars: onOff(display.marks) },
+    // The user's third playtest (Book 10 promptOption; DG-7): combat prompts first fights, always, off.
+    {
+      id: 'prompts',
+      group: 'display',
+      textKey: `ui.settings.prompts_${(display.combatPrompts ?? 'FIRST').toLowerCase()}`,
+    },
     ...MIX_BUSES.map((bus): SettingRow => ({
       id: `mix.${bus}`,
       group: 'audio',
@@ -996,7 +1004,11 @@ export function startPlay(
       visuals.reducedMotion = display.reducedMotion;
     } else if (id === 'info') display = { ...display, infoCaptions: !display.infoCaptions };
     else if (id === 'marks') display = { ...display, marks: !display.marks };
-    else if (id === 'gore') {
+    else if (id === 'prompts') {
+      const order = ['FIRST', 'ALWAYS', 'OFF'] as const;
+      const at = order.indexOf(display.combatPrompts ?? 'FIRST');
+      display = { ...display, combatPrompts: order[(at + (dir > 0 ? 1 : 2)) % 3] ?? 'FIRST' };
+    } else if (id === 'gore') {
       const gore = ((display.gore + (dir > 0 ? 2 : 1)) % 3) as 0 | 1 | 2;
       display = { ...display, gore };
       visuals.gore = gore;
@@ -1313,10 +1325,21 @@ export function startPlay(
   /** The token's state for the household's mark (Book 7 section 05: a sail in its colours). */
   const markState = (): string =>
     (sim.state.ships['flagship']?.marks.sail ?? 'plain').replace(':', '_');
+  /** The user's third playtest's combat presentation (src/scenes/combatTeach.ts), made below. */
+  let teach: CombatTeach | null = null;
+  /** The tick the steerer last let a foe go: the gesture is drawn from it (DG-4). */
+  let spareTick: number | null = null;
   const onEvent = (e: SimEvent): void => {
     // The cold open run unseen (DG-19): nothing of it is shown or heard.
     if (fastForward) return;
     const now = frameNow;
+    // The user's third playtest: the combat prompts, the let-go lines and their sounds (DG-2 to DG-11).
+    teach?.event(e, now, sim.state, display.combatPrompts ?? 'FIRST', fightCtx);
+    if (e.type === 'STEERER_SHOUTED') spareTick = sim.state.tick;
+    if (e.type === 'GUARD_TURNED') {
+      const a = sim.state.onFoot?.actors[e.who];
+      if (a !== undefined) combatFx.guardTurn(a.x, a.y, sim.state.tick);
+    }
     switch (e.type) {
       case 'PERSON_CALLED': {
         // Direction class: the caller and where from; the words are the speech line.
@@ -1820,6 +1843,11 @@ export function startPlay(
       // flash and a sound by weight; the steerer's own is a breath. Never a caption.
       case 'TELEGRAPH': {
         if (e.flash) combatFx.telegraph(e.who, sim.state.tick, display.reducedMotion);
+        // The red blow's flash: the red glint along the edge (DG-10); its hiss is in the scrape.
+        if (e.flash && e.red === true) {
+          combatFx.redGlint(e.who, sim.state.tick, display.reducedMotion);
+          return;
+        }
         if (e.lunge === true) return;
         const blade = e.weapon === 'Seax' || e.weapon === 'Sword' || e.weapon === 'Spear';
         fightSound(
@@ -1975,6 +2003,62 @@ export function startPlay(
       .map(bindingLabel)
       .join('');
   const moveKeys = (['moveUp', 'moveLeft', 'moveDown', 'moveRight'] as const).map(keys).join(' ');
+  teach =
+    fightCtx === null
+      ? null
+      : new CombatTeach(
+          fightCtx.pt3,
+          content.combat,
+          {
+            t: (key, vars) => t(key, vars ?? {}),
+            has: (key) => strings.has(key),
+            steererName: () => world.player.name,
+            nameOf,
+            say,
+            voice: (person, text, pan, level) => {
+              engine.voice(person, text, pan, level);
+            },
+            pan: panOf,
+            sound: (event, person, variant) => {
+              if (audio === null || !engine.unlocked) return;
+              const voice = voiceOf(person)?.pitch;
+              audio.event(event, engine.now, {
+                pan: person === 'P_STEERER' ? 0 : panOf(person),
+                ...(voice === undefined ? {} : { voice }),
+                ...(variant === undefined ? {} : { variant }),
+              });
+            },
+            key: (action) => (ACTIONS.includes(action as Action) ? keys(action as Action) : ''),
+            speechSeconds: (text) =>
+              Math.min(
+                textB.speechHold.max,
+                Math.max(
+                  textB.speechHold.min,
+                  textB.speechHold.base + textB.speechHold.perChar * text.length,
+                ),
+              ),
+          },
+          sim.state.seed,
+        );
+  // The pad's Y and A finish and let go while the choice is offered and no other foe in reach is
+  // winding up (Book 10 padContext; decision DG-2).
+  session.finishChoice = () => {
+    const onFoot = sim.state.onFoot;
+    if (fightCtx === null || onFoot === null) return false;
+    const offer = finishOffer(sim.state, fightCtx, map.tile);
+    if (offer === null) return false;
+    const p = onFoot.player;
+    return !Object.entries(onFoot.actors).some(([id, a]) => {
+      const f = a.fight?.f;
+      if (id === offer.foe || a.fight?.side !== 'ENEMY' || f === undefined) return false;
+      const reach = (fightCtx.cb.weapons[f.weapon ?? 'Seax'].reachTiles + 1) * map.tile;
+      return (
+        Math.hypot(a.x - p.x, a.y - p.y) <= reach &&
+        (f.state.startsWith('charge') ||
+          (STRIKING.includes(f.state) && sim.state.tick < f.activeAt))
+      );
+    });
+  };
   const keyCodes = (action: Action): string[] =>
     settings.bindings[action].flatMap((x) => (x.device === 'key' ? [x.code] : []));
   /** Game over's reload (Book 2 section 20): the latest autosave or checkpoint, into this sim. */
@@ -2455,15 +2539,8 @@ export function startPlay(
       prompt = label.text;
       promptKind = label.kind;
     }
-    // Stage 9: a downed foe within reach can be finished (Book 2 section 12), held.
-    const finishable = fightCtx === null ? null : finisherTarget(sim.state, fightCtx, map.tile);
-    if (finishable !== null) {
-      prompt = t(device === 'mouse' ? 'ui.prompt.finish_click' : 'ui.prompt.finish', {
-        key: keys('finisher'),
-        name: nameOf(finishable),
-      });
-      promptKind = 'finish';
-    }
+    // A beaten foe's finish-or-let-go choice is a combat prompt at the screen's edge (DG-7; Book 8
+    // section 10: ui.prompt.finish_or_spare replaces ui.prompt.finish), drawn by `teach` below.
     const work = onFoot.player.work;
     // Only a timed task asks for the press (decision PT-1); plain work just plays its loop.
     if (work != null && campCtx !== null && isTimed(campCtx, work.task)) {
@@ -2505,6 +2582,34 @@ export function startPlay(
     const promptOpacity = promptAlpha.toFixed(2);
     if (promptRegion.style.opacity !== promptOpacity) promptRegion.style.opacity = promptOpacity;
     root.dataset['promptAlpha'] = promptOpacity;
+    // The combat prompts at the right edge, faded over the action and in story beats (DG-7), and the
+    // talk at the fold (DG-26).
+    if (teach !== null) {
+      const shown = teach.frame(now, sim.state, fightCtx, map.tile, {
+        option: display.combatPrompts ?? 'FIRST',
+        inFight: fightHolds(
+          Object.values(onFoot.actors).flatMap((a) =>
+            a.fight?.side === 'ENEMY' && a.fight.vitality > 0
+              ? [
+                  {
+                    alert: a.fight.ai.awareness.state === 'ALERT',
+                    tiles: Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y) / map.tile,
+                  },
+                ]
+              : [],
+          ),
+          (now - lastBlowAt) / 1000,
+          textB,
+        ),
+        quiet: storyBeat || talkOpen || (narrativeShowing && hostilesAware(onFoot) === 0),
+        covered: promptsCovered(onFoot, viewCamera, fightCtx?.pt3.prompts, {
+          w: LOGICAL_WIDTH,
+          h: LOGICAL_HEIGHT,
+        }),
+        region: overlay.region('combat'),
+      });
+      root.dataset['combatPrompts'] = shown.map((l) => l.id).join(',');
+    }
     // The ambience follows the game's own wind at the steerer and the drawn tide, four times a second.
     if (engine.unlocked && now - lastAmbienceAt > 250) {
       lastAmbienceAt = now;
@@ -2720,6 +2825,7 @@ export function startPlay(
           .map(([id, o]) => [id, o.order]),
       ),
       steererBloodied: steererBloodied(),
+      ...(spareTick === null ? {} : { steererSpare: spareTick }),
       combat: combatFx.overlay(onFoot, sim.state.tick, display.marks),
       walkPerTick: (land.movement.walk * map.tile) / TICKS_PER_SECOND,
       ...((): {
@@ -3164,15 +3270,16 @@ export function startPlay(
         // The last frame before the pause menu opened: its backdrop and the save's thumbnail.
         pauseView.afterRender(presenter.gl, presenter.viewport, session.menus.timeStopped);
         // An autosave, checkpoint or day-start written since the last frame: its screenshot.
+        // The frame is read now (before the browser composites it); the PNG is made after it.
         if (saves.unpictured.length > 0) {
-          const shot = makeThumbnail(
-            readLogicalFrame(presenter.gl, presenter.viewport),
-            uiB.menu.thumbnail,
-            uiB.menu.thumbnailBytes,
-            (img) => canvasPngBase64(document, img),
-          );
-          for (const slot of saves.unpictured.splice(0))
-            if (shot !== null) saves.attachThumbnail(slot, shot);
+          const read = readLogicalFrame(presenter.gl, presenter.viewport);
+          const slots = saves.unpictured.splice(0);
+          setTimeout(() => {
+            const shot = makeThumbnail(read, uiB.menu.thumbnail, uiB.menu.thumbnailBytes, (img) =>
+              canvasPngBase64(document, img),
+            );
+            if (shot !== null) for (const slot of slots) saves.attachThumbnail(slot, shot);
+          }, 0);
         }
       }
       root.dataset['seamap'] = '';

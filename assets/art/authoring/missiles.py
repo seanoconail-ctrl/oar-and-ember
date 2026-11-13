@@ -434,13 +434,44 @@ def binding_lying():
     return ground(g, PFOOT - 1)
 
 
+def spear_lying():
+    """The user's third playtest (decision DG-4: the spared foe's weapon lies where it fell, as
+    loot): Svart's spear on the ground, its ash shaft across the canvas and its iron head."""
+    g = blank(PW, PH)
+    for x in range(3, 31):
+        y = 12 - (x - 3) // 9
+        g[y][x] = 'S'
+    for x in range(31, 37):
+        g[9][x] = 'I'
+        if x < 35:
+            g[10][x] = 'I'
+    g[9][37] = 'e'
+    g[11][30] = 'M'
+    return ground(g, PFOOT - 1)
+
+
+def axe_lying():
+    """Ketill's hand axe on the ground (decision DG-4), its haft across and the bearded head up."""
+    g = blank(PW, PH)
+    for x in range(10, 29):
+        g[12 - (x - 10) // 10][x] = 'H'
+    for y in range(6, 12):
+        for x in range(28, 32 + (y > 8)):
+            if not (y < 8 and x > 30):
+                g[y][x] = 'I'
+    g[6][28] = 'e'
+    g[11][32] = 'e'
+    return ground(g, PFOOT - 1)
+
+
 def write_pickups():
     def frame(state, g):
         return f'frame {state} - 0\n{text(g)}\nend'
     body = '\n\n'.join([frame('seax', seax_lying()), frame('bow', bow_lying()),
                          frame('arrow', arrows_lying()), frame('fishing_line', line_lying()),
                          frame('silver_arm_ring', ring_lying()),
-                         frame('binding', binding_lying())])
+                         frame('binding', binding_lying()),
+                         frame('spear', spear_lying()), frame('axe', axe_lying())])
     with open(os.path.join(MAPS, 'prop_pickup.map.txt'), 'w', encoding='utf8') as f:
         f.write(f"""# The starting weapons lying on Wreck Strand (Book 10 section 21, \"Starting weapons\"): the seax
 # across a tarred plank in the wreck's debris, the hunting bow strung with its quiver by the
@@ -462,6 +493,8 @@ anim.arrow: frames 1, ticks 1
 anim.fishing_line: frames 1, ticks 1
 anim.silver_arm_ring: frames 1, ticks 1
 anim.binding: frames 1, ticks 1
+anim.spear: frames 1, ticks 1
+anim.axe: frames 1, ticks 1
 outline: ink 0 4
 material.P: tar 1 3 4
 material.W: bracken 2 3 4

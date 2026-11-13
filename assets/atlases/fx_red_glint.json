@@ -1,0 +1,63 @@
+{
+  "sheet": "fx_red_glint",
+  "kind": "decal",
+  "image": "fx_red_glint.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "run": {
+      "frames": 6,
+      "ticks": 2,
+      "loop": false
+    },
+    "held": {
+      "frames": 1,
+      "ticks": 12,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "run/-/0": [
+      0,
+      0
+    ],
+    "run/-/1": [
+      16,
+      0
+    ],
+    "run/-/2": [
+      32,
+      0
+    ],
+    "run/-/3": [
+      48,
+      0
+    ],
+    "run/-/4": [
+      64,
+      0
+    ],
+    "run/-/5": [
+      80,
+      0
+    ],
+    "held/-/0": [
+      0,
+      16
+    ]
+  }
+}

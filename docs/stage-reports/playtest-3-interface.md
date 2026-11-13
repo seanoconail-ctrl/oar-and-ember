@@ -82,7 +82,53 @@ skipShows, devSkipHours, devTeleport, devReadout, and No trap's probeStep, probe
 escapeDistance, escapeTime, narrowest).
 
 ## Tests
-TESTS_PLACEHOLDER
+Run in the shared tree while the combat and story parts were still being built, so some failures
+below are theirs; each is named.
+
+- **New tests of this part**: `tests/unit/noTrap.test.ts` 11 tests (the numbers, one edge walk per
+  zone, narrowest, and three on the user's spot), about 10 s in all; `tests/unit/pt3ui.test.ts` 30
+  tests; `tests/browser/pt3ui.spec.ts` 10 tests (stepped). **All pass.**
+- `npm run lint`: my files are clean (ESLint, Prettier, content lint: 1628 strings, 532 IDs). The
+  whole tree's lint does not pass yet: ESLint and Prettier findings in the combat and story parts'
+  files in progress (`fight.ts`, `simulation.ts` line 1356, `openingView.ts`, `pt3Balance.ts`,
+  `inputState.ts`, `fighter.ts`, `combatPrompts.ts`, `captureStory.ts`, `plainFoes.ts`,
+  `pt3combat.test.ts`, `pt3story.test.ts`), and art lint's 20 findings in the story part's
+  `prop_shelter_frame`.
+- `npm run build`: **builds** (the usual large-chunk warning only).
+- `npm test` (whole suite, one run): **909 tests: 898 passed, 10 failed, 1 skipped.** Two of the ten
+  were mine and are fixed since (re-run, passing): the controls page lacked a name for the combat
+  part's new `spare` action (`ui.action.spare` added), and "autosave on waking" now also counts the
+  day-start save written with it (`tests/unit/saves.test.ts`, its expectation updated for DG-17).
+  The other eight are not this part's: golden save 11's two tests (version 13 and the other parts'
+  changes; the main session regenerates golden 11), "save in under 200 ms" (992 ms under the full
+  parallel run's load; it passes run alone), the launch scenario's two telemetry tests (they fail in
+  the story part's rites, `repairBot.ts`; with only this part's simulation changes on a clean copy
+  of the tree the launch scenario passes 10 of 10), art lint's two (`prop_shelter_frame`) and the ID
+  registry's `TASK_RAISE_SHELTER` ref (story).
+- **Golden save 11 with this part alone**: on a clean copy of HEAD with only the no-trap change
+  applied, golden 11 loads and its scenario reproduces it exactly (2 of 2): the movement fix
+  changes nothing a played chapter does.
+- `npm run test:browser -- --project=chromium` (one full run, 12.5 min): **88 passed, 3 failed.**
+  - `sound.spec.ts` counted 44 sound buttons and found 49: one is this part's menu click (the count
+    now adds it); the other four are the other parts' new sounds, for them to count.
+  - `standard.spec.ts` (Wreck Strand, 6.59 ms of script a frame against 5.5) and `storm.spec.ts`
+    (the cold open, 17.85 ms). **On this machine the budget fails without this part too**: a clean
+    copy of HEAD with only the movement fix measured 7.17 ms and 8.96 ms in the same specs. Re-run
+    alone, the tree measured 5.91 ms on the strand (within the baseline's noise) and 20.08 ms in
+    the cold open. A CPU profile of the cold open shows the frame is almost all native (WebGL
+    drawing in software), with script below 1%; removing this part's two canvases changes nothing
+    (13.9 against 13.5 ms); the cold open's cost rose with the shared tree's rendering (the combat
+    part regenerating every person's sheets during this run). The skip button now writes its styles
+    only when they change, and the autosave screenshot's PNG is made after the frame. No threshold
+    was changed. CI's Chromium run is the measure.
+- WebKit was not run here: its browser cannot be downloaded in this environment. CI runs Chromium
+  and WebKit, and both block publishing. CI results for this part: none yet (not committed by this
+  session; the main session commits and publishes).
+- The menu's sounds rendered: `npm run audio:render -- sfx-menu` (`sfx-menu-click` peak 0.096, rms
+  0.012; `sfx-menu-open` peak 0.125, rms 0.016): soft, short knocks, as Book 11 asks of interface
+  sounds. Measured, not heard (no speakers here).
+- No probe tests are left: the temporary probes made for the in-game screenshots and the profile
+  were deleted.
 
 ## Gate checks
 The tests the user asked for, all passing:
@@ -139,7 +185,19 @@ DG-70 to DG-89 in `docs/decision-log.md`. To flag for the user:
 - **DG-88**: the menu's opening knock is the click's low variant, not a second sound ID.
 
 ## Known issues
-KNOWN_PLACEHOLDER
+- **Frame budget** (medium): see Tests. Both budget specs fail on this machine with or without
+  this part; the cold open's doubling comes from the shared tree's rendering, to be measured again
+  once the other parts settle, on CI.
+- **Pad remapping** (low): the controls page remaps keys and mouse buttons; pad buttons are shown
+  but remapped only by the existing means (DG-83).
+- **Saves from before this build** (low): kept per campaign seed, they are not listed by the new
+  device-wide store (DG-78).
+- **The combat prompts option** (low): not in Settings yet; the combat part owns it (DG-82).
+- **Fullscreen in headless browsers**: the request is made and the menu updates from the browser's
+  answer; headless Chromium may refuse it, so the browser test checks the offer and the toggle's
+  path, not the fullscreen state itself.
+- **The thumbnail's first frame**: a slot's screenshot draws once its PNG has decoded, a frame or two
+  after the page opens (seen as a dark frame in a stepped screenshot taken at once).
 
 ## Next stage ready
 NO: this is one part of the third playtest's rework; the user playtests the whole of it at the

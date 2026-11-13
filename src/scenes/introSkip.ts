@@ -20,6 +20,7 @@ export class IntroSkipView {
   readonly #art: MenuArt;
   readonly #words: { skip: string; hold: string };
   #drawn = -1;
+  #shown = '';
   /** The button's place in logical pixels (bottom right). */
   readonly box = { x: 640 - W - 8, y: 360 - H - 8, w: W, h: H };
 
@@ -57,6 +58,10 @@ export class IntroSkipView {
 
   /** Draws the button at `alpha` with its ring `ring` full, placed over the viewport. */
   update(alpha: number, ring: number, vp: Viewport, dpr: number): void {
+    // Nothing to do while it is hidden and stays hidden (every frame of play after the intro).
+    const key = `${alpha.toFixed(2)}|${ring.toFixed(2)}|${vp.x}|${vp.y}|${vp.scale}|${dpr}`;
+    if (key === this.#shown) return;
+    this.#shown = key;
     const s = vp.scale / dpr;
     Object.assign(this.canvas.style, {
       left: `${vp.x / dpr + this.box.x * s}px`,

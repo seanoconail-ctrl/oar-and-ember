@@ -106,8 +106,17 @@ export class RepairBot extends SearchBot {
   rigging(): void {
     const d = this.repairs.def.rigging;
     this.goToZone(d.zone);
-    this.waitForLowWater();
-    this.useAt(d.zone, d.cut.x, d.cut.y);
+    // At low water; a tide that closes on the walk out sends the bot back for the next ebb.
+    for (let tries = 0; ; tries++) {
+      this.waitForLowWater();
+      try {
+        this.useAt(d.zone, d.cut.x, d.cut.y);
+        break;
+      } catch (e) {
+        if (tries >= 3) throw e;
+        this.waitFor(() => !this.tideOpen, 60 * 60 * 60);
+      }
+    }
     if (this.onFoot.player.work == null) throw new Error('could not cut the rigging');
     this.work('none');
     if (this.sim.state.facts['repair.rigging_cut'] !== true) throw new Error('rigging not cut');

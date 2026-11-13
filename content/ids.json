@@ -3814,14 +3814,6 @@
       "note": "Design addendum 2.4 (decision DE-16): cutting Hild free of the net with a blade."
     },
     {
-      "id": "TASK_RAISE_SHELTER",
-      "ref": "One hands-on action by the steerer",
-      "book": 10,
-      "section": "03",
-      "origin": "assigned",
-      "note": "Design addendum 2.4 (decision DE-20): the steerer raising the sail shelter between the oars (shelterRaise)."
-    },
-    {
       "id": "SFX_NET_CUT",
       "ref": "the net's cords parting under the seax",
       "book": 11,

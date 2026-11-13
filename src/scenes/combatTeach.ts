@@ -316,3 +316,37 @@ export class CombatTeach {
     h.voice(line.person, text, h.pan(line.person), line.murmur ? 0.35 : 1);
   }
 }
+
+/** The prompts' box on the logical view (Book 10 promptPlace): its right edge and band. */
+const PROMPT_WIDTH = 150;
+
+/**
+ * Whether a fighter, a missile or the locked target is drawn under the prompts' box (Book 10
+ * promptClear), on the 640 x 360 logical view with its camera.
+ */
+export function promptsCovered(
+  onFoot: import('../sim/land/onFoot.ts').OnFootState,
+  camera: { readonly x: number; readonly y: number },
+  b: Pt3Balance['prompts'] | undefined,
+  view: { readonly w: number; readonly h: number },
+): boolean {
+  if (b === undefined) return false;
+  const x1 = view.w - b.rightPx;
+  const x0 = x1 - PROMPT_WIDTH;
+  const y0 = view.h * b.bandTop;
+  const y1 = view.h * b.bandBottom;
+  const over = (ax0: number, ay0: number, ax1: number, ay1: number): boolean =>
+    ax1 >= x0 && ax0 <= x1 && ay1 >= y0 && ay0 <= y1;
+  const body = (x: number, y: number): boolean =>
+    over(x - camera.x - 12, y - camera.y - 46, x - camera.x + 12, y - camera.y + 2);
+  const p = onFoot.player;
+  if (body(p.x, p.y)) return true;
+  for (const a of Object.values(onFoot.actors))
+    if (a.fight !== undefined && a.pose !== 'dead' && body(a.x, a.y)) return true;
+  for (const q of onFoot.projectiles) {
+    const x = q.x - camera.x;
+    const y = q.y - q.z - camera.y;
+    if (over(x - 4, y - 4, x + 4, y + 4)) return true;
+  }
+  return false;
+}

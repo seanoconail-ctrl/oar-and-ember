@@ -34,6 +34,7 @@ import { PLANT_KINDS } from '../content/zoneMap.ts';
 import { shieldGone, shieldSlung, withoutShield, withSlungShield } from './people.ts';
 import type { PeopleLook, PersonLook } from './people.ts';
 import type { Fighter } from '../sim/combat/fighter.ts';
+import { locked } from '../sim/combat/fighter.ts';
 
 export type { PeopleLook, PersonLook } from './people.ts';
 
@@ -502,6 +503,8 @@ export interface ZoneSceneInput {
   readonly orders?: Readonly<Record<string, string>>;
   /** Stage 9: the steerer below Book 10's bloodiedBelow (drawn with the blood layer). */
   readonly steererBloodied?: boolean;
+  /** The user's third playtest (DG-4): the tick the steerer let a foe go (the gesture's start). */
+  readonly steererSpare?: number;
   /** Stage 9: ticks a corpse takes to fade with the gore setting low (and off). */
   readonly corpseFade?: { readonly low: number; readonly off: number };
   /**
@@ -550,6 +553,8 @@ export interface CombatOverlay {
     readonly y: number;
     /** On the ground (a broken shield), drawn under people. */
     readonly decal?: boolean;
+    /** Its sheet, if not the combat fx sheet (the red glint's, DG-10). */
+    readonly sheet?: string;
   }[];
 }
 
@@ -584,6 +589,9 @@ export function fightAnim(
     readonly hop?: number | null;
     /** Walking up to speed or slowing to a stop: its frame (rampFrame). */
     readonly ramp?: PersonAnim | null;
+    /** The user's third playtest: ticks since a guard turned a blow (DG-9), or a let-go (DG-4). */
+    readonly turned?: number | null;
+    readonly spare?: number | null;
   } = {},
 ): PersonAnim | null {
   const has = (s: string): boolean => own[s] !== undefined;
@@ -622,8 +630,38 @@ export function fightAnim(
   // The crouch, the spring (while it moves), the landing low.
   if (extra.hop != null && has('hop'))
     return { state: 'hop', frame: extra.hop < 3 ? 0 : moving ? 1 : 2 };
+  // A teaching foe's guard turning a blow (Book 7 section 01, DG-9): three frames, at ease or guarded.
+  const turned = extra.turned ?? null;
+  if (turned !== null && turned >= 0 && turned < 12 && has('guard_turn') && !locked(f))
+    return { state: 'guard_turn', frame: Math.min(2, Math.floor(turned / 4)) };
   switch (f.state) {
+    case 'reel':
+      // A beaten stagger held (DG-2): on one knee, breathing hard.
+      return has('reel')
+        ? { state: 'reel', frame: loop('reel') }
+        : has('stagger')
+          ? { state: 'stagger', frame: 1 }
+          : null;
+    case 'finisher': {
+      // One quick killing blow (DG-3): the wind-up and its held top, the blow, the follow-through
+      // and the settle, by its weapon and variant (frame 0, the hold, is not shown: the hold is a
+      // choosing, not an action).
+      const kind = FINISH_ANIM[f.finish?.drawn ?? 'Seax'] ?? 'seax';
+      const s = `fin_${kind}_${f.finish?.variant === 'LYING' ? 'l' : 's'}`;
+      if (!has(s)) return phase3('light1');
+      if (tick < f.activeAt) {
+        const k = (tick - f.since) / Math.max(1, f.activeAt - f.since);
+        return { state: s, frame: k < 1 / 3 ? 1 : k < 2 / 3 ? 2 : 3 };
+      }
+      if (tick < f.activeEnd) return { state: s, frame: 4 };
+      const k = (tick - f.activeEnd) / Math.max(1, f.recoveryEnd - f.activeEnd);
+      return { state: s, frame: k < 0.3 ? 5 : k < 0.75 ? 6 : 7 };
+    }
     case 'idle': {
+      // The let-go gesture (DG-4): the weapon swept aside, the head jerked: go.
+      const spare = extra.spare ?? null;
+      if (spare !== null && spare >= 0 && spare < 24 && has('spare'))
+        return { state: 'spare', frame: Math.min(3, Math.floor(spare / 6)) };
       // Exhausted (Book 10 "Exhausted"): bent, blowing hard; the stance walk; a flinch.
       if (f.flinchUntil > tick && has('flinch'))
         return { state: 'flinch', frame: f.flinchUntil - tick > 4 ? 0 : 1 };
@@ -686,6 +724,16 @@ export function fightAnim(
       return has(s) ? { state: s, frame: loop(s) } : null;
     }
     case 'heavyRelease':
+      // Ketill's red blow (DG-9, DG-10): two hands on the haft over the rim, held, the blow, and
+      // an overbalanced miss with the axe in the turf.
+      if (f.move === 'red' && has('red')) {
+        if (tick < f.activeAt)
+          return { state: 'red', frame: f.activeAt - tick > 6 && tick - f.since < 20 ? 0 : 1 };
+        if (tick < f.activeEnd) return { state: 'red', frame: 2 };
+        if (f.missed && has('red_miss'))
+          return { state: 'red_miss', frame: through('red_miss', f.activeEnd, f.recoveryEnd) };
+        return { state: 'red', frame: 3 };
+      }
       return phase3('heavy');
     case 'shove':
       return phase3('shove');
@@ -787,6 +835,16 @@ export function fallOf(
   if (weapon === 'Club or hammer' || Math.abs(d) < 0.4) return 'fall_crumple';
   return d > 0 ? 'fall_fwd' : 'fall_back';
 }
+
+/** A finisher's weapon (its Book 10 row) as its state's name on the people sheets (people48.py). */
+const FINISH_ANIM: Readonly<Record<string, string>> = {
+  Seax: 'seax',
+  'Hand axe': 'axe',
+  Spear: 'spear',
+  Sword: 'sword',
+  'Dane axe': 'dane',
+  'Club or hammer': 'club',
+};
 
 /** Whether a person is bloodied (Book 10 bloodiedBelow), and so drawn with their blood layer. */
 function withoutBlood(look: PersonLook): PersonLook {
@@ -1248,6 +1306,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     const st = p.stance;
     const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {}, {
       gait: st === undefined || st.speed === 1 ? null : st.backing === true ? 'backoff' : 'strafe',
+      spare: input.steererSpare === undefined ? null : tick - input.steererSpare,
     });
     if (fa !== null) {
       state = fa.state;
@@ -1330,6 +1389,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
                   ? fallOf(fa.f.angle, fa.dead.dir, fa.f.weapon)
                   : null,
               hop: fa.ai.hop === null ? null : tick - fa.ai.hop.since,
+              turned: fa.turnedAt === undefined ? null : tick - fa.turnedAt,
               ramp: ((): PersonAnim | null => {
                 const goal = fa.ai.goal;
                 if (input.walkPerTick === undefined || goal?.run === true) return null;
@@ -1514,14 +1574,14 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     sprites.push(
       fx.decal === true
         ? {
-            sheet: FX_COMBAT_SHEET,
+            sheet: fx.sheet ?? FX_COMBAT_SHEET,
             frame: fx.frame,
             x: fx.x - camera.x - 8,
             y: fx.y - camera.y - 8,
             layer: 'decal',
           }
         : {
-            sheet: FX_COMBAT_SHEET,
+            sheet: fx.sheet ?? FX_COMBAT_SHEET,
             frame: fx.frame,
             x: fx.x - camera.x - 8,
             y: fx.y - camera.y - 8,

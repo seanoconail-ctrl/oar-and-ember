@@ -7,7 +7,7 @@
  * input sends. It writes:
  *   thorkel-taken.gif          the sea burial at 1x, 10 frames a second, from the lament's last word
  *                              to control returning: the bier borne down, the three waves, the drift,
- *                              the sink and the ring of foam (the middle 480 x 270 of the view)
+ *                              the sink and the ring of foam (320 x 180 of the view's lower middle)
  *   thorkel-taken@4x.png       the second wave over the bier, the whole view at 4x
  *   thorkel-taken-strip.png    its key frames at 1x (and @2x)
  *   shelter-stages.gif         the shelter's three stages: the frame going up with Hild steadying
@@ -36,10 +36,13 @@ const BASE = `http://localhost:${PORT}/?capture&quality=full&view=play&name=Ash&
 const pct = (v: number): string => `${(v * 100).toFixed(1)}%`;
 const fromDataUrl = (url: string): Buffer => Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
 
-/** Advances `ticks` (a drawn frame each 6) and returns the last frame's middle `w` x `h`. */
-async function advance(page: Page, ticks: number, w: number, h: number): Promise<string> {
+/**
+ * Advances `ticks` (a drawn frame each 6) and returns the last frame's middle `w` x `h`, its centre
+ * `dy` pixels below the view's.
+ */
+async function advance(page: Page, ticks: number, w: number, h: number, dy = 0): Promise<string> {
   return page.evaluate(
-    ([k, ms, cw, ch]) => {
+    ([k, ms, cw, ch, oy]) => {
       const win = window as unknown as { oeStep: (ms: number) => void };
       for (let left = k; left > 0; left -= 6) win.oeStep(Math.min(6, left) * ms);
       const c = document.querySelector<HTMLCanvasElement>('canvas#screen');
@@ -50,10 +53,10 @@ async function advance(page: Page, ticks: number, w: number, h: number): Promise
       const g = out.getContext('2d');
       if (g === null) return '';
       g.imageSmoothingEnabled = false;
-      g.drawImage(c, (c.width - cw) / 2, (c.height - ch) / 2, cw, ch, 0, 0, cw, ch);
+      g.drawImage(c, (c.width - cw) / 2, (c.height - ch) / 2 + oy, cw, ch, 0, 0, cw, ch);
       return out.toDataURL('image/png');
     },
-    [ticks, TICK, w, h] as const,
+    [ticks, TICK, w, h, dy] as const,
   );
 }
 
@@ -142,99 +145,48 @@ interface Played {
 }
 
 /**
- * The sea burial (DG-14): the household brings the rite to the strand; from the lament's last
- * word a frame every 6 ticks (10 a second) until control has been back a moment.
+ * The sea burial (DG-14), from the lament's last word (`rites=taken`: the scene begins at once, the
+ * steerer by the gathering place): a frame every 6 ticks (10 a second) until a moment after
+ * control returns, and a still of each of its moments.
  */
 async function burial(browser: Browser, cw: number, ch: number): Promise<Played> {
-  const page = await open(browser, 'camp=broch&crew=1&ship=hull,rig,oar&time=17:45');
-  const played: Played = { frames: [], keys: [], log: [] };
-  await page.exposeFunction('oeFrame', (kind: string, name: string, a: string, b: string) => {
-    if (kind === 'frame') played.frames.push(a);
-    else if (kind === 'key') played.keys.push({ name, frame: a, full: b });
-    else played.log.push(`${name} ${a}`);
-  });
-  await page.evaluate(
-    async ([cw0, ch0]) => {
-      const w = window as unknown as {
-        oeStep: (ms: number) => void;
-        oeFrame: (kind: string, name: string, a: string, b: string) => void;
-        oePlay: { sim: Record<string, unknown>; land: Record<string, unknown>; b: unknown };
-      };
-      const { sim, land, b } = w.oePlay;
-      const state = (): { tick: number; facts: Record<string, unknown> } =>
-        sim['state'] as { tick: number; facts: Record<string, unknown> };
-      const { RepairBot } = (await import(['/src/tools/play/repairBot', 'ts'].join('.'))) as {
-        RepairBot: new (...a: unknown[]) => { rites(f: string): void; step(n?: number): void };
-      };
-      const canvas = document.querySelector<HTMLCanvasElement>('canvas#screen');
-      const grab = (gw: number, gh: number): string => {
-        const out = document.createElement('canvas');
-        out.width = gw;
-        out.height = gh;
-        const g = out.getContext('2d');
-        if (canvas === null || g === null) return '';
-        g.imageSmoothingEnabled = false;
-        g.drawImage(
-          canvas,
-          (canvas.width - gw) / 2,
-          (canvas.height - gh) / 2,
-          gw,
-          gh,
-          0,
-          0,
-          gw,
-          gh,
-        );
-        return out.toDataURL('image/png');
-      };
-      // The scene's moments to keep as stills, seconds after the bier is lifted.
-      const keysAt: [string, number][] = [
-        ['the bier borne down', 2.0],
-        ['set at the water', 4.8],
-        ['the first wave round it', 6.1],
-        ['the second over it', 8.6],
-        ['the third lifts it', 11.4],
-        ['drifting, riding lower', 15.0],
-        ['sinking', 18.4],
-        ['the ring of foam', 19.9],
-      ];
-      let n = 0;
-      let after = -1;
-      const proxy = new Proxy(sim, {
-        get(target, prop) {
-          if (prop === 'step')
-            return () => {
-              n++;
-              const at = state().facts['rites.taken_at'];
-              const dense = typeof at === 'number' || (after >= 0 && after < 120);
-              if (dense) w.oeStep(1000 / 60);
-              else (target as { step: () => void }).step();
-              if (typeof at === 'number') {
-                const t = state().tick - at;
-                if (t % 6 === 0) w.oeFrame('frame', '', grab(cw0, ch0), '');
-                for (const [name, s] of keysAt)
-                  if (t === Math.round(s * 60))
-                    w.oeFrame('key', name, grab(cw0, ch0), grab(640, 360));
-                if (t === 0) w.oeFrame('log', 'the bier lifted at tick', String(state().tick), '');
-              } else if (after >= 0) {
-                after++;
-                if (after % 6 === 0) w.oeFrame('frame', '', grab(cw0, ch0), '');
-              } else if (state().facts['rites.stage'] === 'DONE') after = 0;
-            };
-          const v = Reflect.get(target, prop) as unknown;
-          return typeof v === 'function' ? (v as (...a: unknown[]) => unknown).bind(target) : v;
-        },
-      });
-      console.log('story: the rites begin');
-      const bot = new RepairBot(proxy, b, land, land['camp'], land['searches'], land['repairs']);
-      bot.rites('SEA');
-      console.log('story: the rites done');
-      after = Math.max(after, 0);
-      for (let i = 0; i < 120; i++) (proxy as { step: () => void }).step();
-      w.oeFrame('log', 'the rite done, tick', String(state().tick), '');
-    },
-    [cw, ch] as const,
+  const page = await open(
+    browser,
+    'camp=broch&crew=1&ship=hull,rig,oar&time=17:45&rites=taken&zone=ZONE_SK_STRAND&at=31.6,34.4',
   );
+  const played: Played = { frames: [], keys: [], log: [] };
+  // The scene's moments to keep as stills: the phase it is in and how far into it (seconds).
+  const wanted: [string, (p: string, wave: number, mask: number) => boolean][] = [
+    ['the bier borne down', (p) => p === 'BIER'],
+    ['set at the water', (p) => p === 'SET'],
+    ['the first wave round it', (_p, w) => w === 1],
+    ['the second over it', (_p, w, mask) => w === 2 && mask >= 10],
+    ['the third lifts it', (p) => p === 'BACKWASH'],
+    ['drifting, riding lower', (p, _w, mask) => p === 'DRIFT' && mask >= 8],
+    ['sinking', (p, _w, mask) => p === 'SINK' && mask >= 15],
+    ['the ring of foam', (p) => p === 'GONE'],
+  ];
+  const kept = new Set<string>();
+  let after = 0;
+  for (let i = 0; i < 800 && after < 20; i++) {
+    // The view's lower middle: the water's edge and the bier going out (the camera holds it in
+    // view within Book 10's 3 tiles, below the household at the edge).
+    const frame = await advance(page, 6, cw, ch, 50);
+    const sea = (await page.locator('.oe-overlay').getAttribute('data-sea')) ?? '';
+    played.frames.push(frame);
+    if (sea === '') {
+      after++;
+      continue;
+    }
+    const [phase = '', t = '0', , mask = '0', wave = '0'] = sea.split(' ');
+    for (const [name, ok] of wanted)
+      if (!kept.has(name) && ok(phase, Number(wave), Number(mask))) {
+        kept.add(name);
+        // Hold a moment into it before the still is taken (the first frame of a phase is its edge).
+        played.keys.push({ name, frame, full: await advance(page, 1, W, H) });
+        played.log.push(`${name} at ${t} s`);
+      }
+  }
   await page.close();
   return played;
 }
@@ -299,7 +251,7 @@ async function shelter(browser: Browser, cw: number, ch: number): Promise<Played
       };
       let every = 6;
       let n = 0;
-      let last = '';
+      let last = 'FOLDED';
       const proxy = new Proxy(sim, {
         get(target, prop) {
           if (prop === 'step')
@@ -322,6 +274,9 @@ async function shelter(browser: Browser, cw: number, ch: number): Promise<Played
         },
       });
       const bot = new WreckBot(proxy, b, land, land['camp'], land['searches'], land['repairs']);
+      // The sail folded with its three oars, a moment in, before the first stage.
+      for (let i = 0; i < 12; i++) (proxy as { step: () => void }).step();
+      w.oeFrame('key', 'FOLDED', grab(cw0, ch0), grab(640, 360));
       bot.raiseShelter('SAIL');
       for (let i = 0; i < 90; i++) (proxy as { step: () => void }).step();
       // The second morning (the night between is not shown: the clock is set to the dawn).
@@ -385,9 +340,9 @@ export async function storyCapture(browser: Browser): Promise<string> {
   const out = join(REPO_ROOT, 'docs/art/playtest-3/story');
   mkdirSync(out, { recursive: true });
   // Thorkel taken by the sea.
-  const sea = await burial(browser, 480, 270);
+  const sea = await burial(browser, 320, 180);
   const seaGif = join(out, 'thorkel-taken.gif');
-  const seaSize = gif(sea.frames, join(out, '.frames'), seaGif, 10, 64);
+  const seaSize = gif(sea.frames, join(out, '.frames'), seaGif, 10, 40);
   const under = sea.keys.find((k) => k.name === 'the second over it') ?? sea.keys[0];
   if (under !== undefined)
     writeFileSync(
@@ -397,8 +352,8 @@ export async function storyCapture(browser: Browser): Promise<string> {
   const seaStrip = strip(
     sea.keys.map((k) => k.frame),
     4,
-    480,
-    270,
+    320,
+    180,
   );
   writeFileSync(join(out, 'thorkel-taken-strip.png'), encodePng(seaStrip));
   writeFileSync(join(out, 'thorkel-taken-strip@2x.png'), encodePng(scale(seaStrip, 2)));
@@ -421,7 +376,7 @@ export async function storyCapture(browser: Browser): Promise<string> {
     'Written by `npm run capture -- playtest-3-story` (src/tools/art/captureStory.ts). The bots play',
     "in the page through a player's commands; every kept frame is a real frame of the game.",
     '',
-    `- \`thorkel-taken.gif\`: ${sea.frames.length} frames at 10 a second (${(sea.frames.length / 10).toFixed(1)} s), ${(seaSize / 1e6).toFixed(2)} MB; the middle 480 x 270 of the view at 1x, from the bier lifted at the rite's place to a moment after control returns. ${sea.log.join('; ')}.`,
+    `- \`thorkel-taken.gif\`: ${sea.frames.length} frames at 10 a second (${(sea.frames.length / 10).toFixed(1)} s), ${(seaSize / 1e6).toFixed(2)} MB; 320 x 180 of the view's lower middle at 1x, from the bier lifted at the rite's place to a moment after control returns. ${sea.log.join('; ')}.`,
     `- \`thorkel-taken@4x.png\`: the second wave over the bier, the whole view at 4x.`,
     `- \`thorkel-taken-strip.png\` (and @2x): ${sea.keys.map((k) => k.name).join(', ')}.`,
     `- \`shelter-stages.gif\`: ${sh.frames.length} frames at 10 a second, ${(shSize / 1e6).toFixed(2)} MB; the middle 320 x 180 at 1x: the frame and the sail at their own pace (a frame every 6 ticks), the second day's finishing sped up (a frame every 30 ticks of its work). The night between is skipped by setting the clock to the second dawn. ${sh.log.join('; ')}.`,

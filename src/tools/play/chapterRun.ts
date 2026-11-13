@@ -143,7 +143,7 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   const bot = new PacedBot(sim, b, land, camp, land.searches, land.repairs);
   bot.pace = pace;
   // Design addendum 2.4: Thorkel's chest up to its outline at the camp, driftwood and the first
-  // fire, Hild walking up, the sail raised between the oars, her leg tended.
+  // fire, Hild walking up, the shelter's frame and the sail over it (DG-12), her leg tended.
   bot.waitFor(() => sim.state.facts['ch1.chest_named'] === true, 60 * 30);
   bot.chestToCamp();
   bot.goToZone('ZONE_SK_STRAND');
@@ -156,6 +156,10 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   bot.waitUntil(19 * 60 + 40);
   bot.fireScene();
   bot.doAt('bed_s0');
+  // The second morning: Hild's word on finishing the shelter, and a hand with it (DG-12, DG-66).
+  bot.waitFor(() => sim.state.player.awake, 60 * 120);
+  bot.step(60 * 3);
+  bot.finishShelter(4);
   // The three searches; Bran's by fighting the scavengers at the fold (the first combat).
   bot.oddi('CHEST_FIRST');
   bot.runa('OFFERING');

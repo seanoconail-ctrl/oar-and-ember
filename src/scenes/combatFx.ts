@@ -41,6 +41,10 @@ export interface BlowLook {
   readonly knockback?: number;
 }
 
+/** The red glint's sheet and its run (combat24_ui.py, fx_red_glint: 6 frames of 2 ticks). */
+const RED_GLINT_SHEET = 'fx_red_glint';
+const RED_GLINT = { frames: 6, ticks: 2 } as const;
+
 export class CombatFx {
   readonly #k: BarsBalance;
   readonly #markAlertTicks: number;
@@ -51,6 +55,8 @@ export class CombatFx {
   #fx: { kind: string; x: number; y: number; from: number }[] = [];
   /** Design addendum 2.5: telegraph flashes due (who, the tick, reduced to the edge). */
   #tells = new Map<Id, { tick: number; soft: boolean }>();
+  /** The red glints running (the user's third playtest, DG-10): who, from when, reduced. */
+  #reds = new Map<Id, { tick: number; soft: boolean }>();
   /** Broken shields lying where they broke (Book 10 shieldBreaks: it is dropped). */
   #broken: { x: number; y: number }[] = [];
   #health = { value: -1, changed: 0 };
@@ -103,6 +109,20 @@ export class CombatFx {
    */
   telegraph(who: Id, tick: number, reducedFlashes: boolean): void {
     this.#tells.set(who, { tick, soft: reducedFlashes });
+  }
+
+  /**
+   * The red glint of an unblockable blow (Book 7 sections 08 and 12; Book 10 redGlint; DG-10): at
+   * the flash a glint in the Danger tell accent runs along the axe's edge over six frames; with
+   * reduced flashes the edge holds the accent for those frames without the run.
+   */
+  redGlint(who: Id, tick: number, reducedFlashes: boolean): void {
+    this.#reds.set(who, { tick, soft: reducedFlashes });
+  }
+
+  /** A teaching foe's guard turned a blow: sparks off the shaft or the board (DG-9). */
+  guardTurn(x: number, y: number, tick: number): void {
+    this.#fx.push({ kind: 'sparks', x, y: y - 24, from: tick });
   }
 
   /** A shield broke: its halves lie where it broke for the scene (DF-21). */
@@ -161,7 +181,7 @@ export class CombatFx {
       );
       if (shown) bars[id] = Math.max(0, fa.vitality / Math.max(1, fa.maxVitality));
     }
-    const fx: { frame: string; x: number; y: number; decal?: boolean }[] = [];
+    const fx: { frame: string; x: number; y: number; decal?: boolean; sheet?: string }[] = [];
     for (const b of this.#broken)
       fx.push({ frame: 'shield_broken/-/0', x: b.x, y: b.y - 4, decal: true });
     for (const [id, t] of this.#tells) {
@@ -173,6 +193,23 @@ export class CombatFx {
       if (who === undefined) continue;
       const side = who.facing === 'w' ? 3 : who.facing === 'e' ? -3 : 0;
       fx.push({ frame: `tell/-/${t.soft ? 1 : 0}`, x: who.x + side, y: who.y - 26 });
+    }
+    for (const [id, r] of this.#reds) {
+      const i = Math.floor((tick - r.tick) / RED_GLINT.ticks);
+      if (i >= RED_GLINT.frames) {
+        this.#reds.delete(id);
+        continue;
+      }
+      const who = onFoot.actors[id];
+      if (who === undefined || i < 0) continue;
+      // Along the raised axe, over the shoulder on the side it is held.
+      const side = who.facing === 'w' ? -6 : who.facing === 'e' ? 6 : who.facing === 'n' ? -3 : 3;
+      fx.push({
+        frame: r.soft ? 'held/-/0' : `run/-/${i}`,
+        x: who.x + side,
+        y: who.y - 38,
+        sheet: RED_GLINT_SHEET,
+      });
     }
     this.#fx = this.#fx.filter((f) => {
       const d = FX[f.kind];

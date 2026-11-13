@@ -5557,6 +5557,9 @@
   "ui.action.let_go": {
     "text": "Let go"
   },
+  "ui.action.spare": {
+    "text": "Let go (spare)"
+  },
   "ui.action.lock_on": {
     "text": "Lock on"
   },
