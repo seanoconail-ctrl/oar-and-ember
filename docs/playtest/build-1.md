@@ -1,8 +1,10 @@
 # Build 1 playtest: The Wreck
 
 Thank you for playing. This is the whole of Chapter 1, from the storm at sea to launching the
-boat, as design addendum 2.4 rebuilt it (combat v2 and the new opening). It should take about 45 minutes to an hour. Play it the way you would play any game: there is
-no wrong way, and getting lost or stuck is useful to know about.
+boat, as design addendum 2.5 rebuilt it: committed, methodical combat, far less text on screen, a
+rougher storm at the start, and Oddi's rescue fixed. It should take about 45 minutes to an hour.
+Play it the way you would play any game: there is no wrong way, and getting lost or stuck is useful
+to know about.
 
 ## Before you start
 
@@ -27,7 +29,7 @@ no wrong way, and getting lost or stuck is useful to know about.
 | Choose a hotbar slot | 1 to 0, - and =, or the mouse wheel | LB / RB |
 | Parry / block / dodge / shove | Q / left Ctrl / Space / R | Y / LT / B / X |
 | Lock on to an enemy (press again to switch, hold to let go) | Z, or the middle mouse button | R3 |
-| Bind a wound or eat a ration | H | |
+| Bind a wound or eat a ration | H | Let the command ring go at its centre |
 | Crew orders (hold to open the ring) | Tab | D-pad up |
 | Journal (the current aim, and the morning report) | J | |
 | Sea map (after the launch) | M | Back |
@@ -35,9 +37,30 @@ no wrong way, and getting lost or stuck is useful to know about.
 
 In the system menu: **H** shows the help (every item's controls), **T** shows your **timings**,
 **G** changes the gore setting, **K** turns Second wind on or off, **I** turns sound captions on or
-off, **M** reduces motion, **A** turns the "?" and "!" marks over enemies on or off.
+off (sounds in a fight are never captioned: you see and hear them), **M** reduces motion, **A**
+turns the "?" and "!" marks over enemies on (they are off at first).
 
 There is no pause in a fight. Menus and the report stop time only when no enemy has seen you.
+
+## Fighting
+
+Every action commits: once you start a swing, a parry, a dodge or raising the shield, you cannot
+move, turn or do anything else until it has finished. A swing that misses leaves you stumbling
+forward and open, and so does an enemy's: that is the moment to strike. Read your enemies, not the
+screen: there are no words or numbers in a fight.
+
+- **Watch the wind-up.** Every enemy blow is drawn back first, with a brief glint on the weapon and
+  a sound (a sharp breath, steel scraping, a grunt and a creak); heavier blows are drawn back
+  further and held longer.
+- **Parry early.** A parry takes a moment to come up, so press it during the enemy's wind-up, a
+  little after the glint, not when the blow lands. A good parry leaves them reeling for a riposte.
+- **Block** holds the shield up and halves your speed; each blow on it costs stamina, and if it
+  empties, your guard breaks.
+- **Dodge** is a short, costly dash with a moment of safety in the middle and a slow recovery.
+- **Stamina** pays for everything. Run it to nothing and you are spent: no attack, parry, dodge or
+  block, at half speed, until you have your breath back. Step away to recover, then go in again.
+- **Enemies** keep their distance and wait for you to make a mistake; archers stand still to shoot
+  and back away if you close in.
 
 ## What to do, with rough times
 
@@ -55,9 +78,9 @@ list is only here so you can tell if you are badly stuck.
    sees the smoke and walks up, and asks you to raise the sail between the oars as a shelter.
    See to her leg (talk to her).
 3. **The first dusk (about 10 to 12 minutes in).** Two scavengers strip the stern of the wreck at
-   the east end of the beach. You can fight them (the big one's slow heavy blow is there to be
-   parried), walk away (they leave at dark), offer them salt fish from the camp, or creep through
-   the dune grass for a strike from behind. A pale light shows at the Hag's Seat. That night by the
+   the east end of the beach. You can fight them (the big one's slow, heavy blow, with its long
+   wind-up, is there to be parried), walk away (they leave at dark), offer them salt fish from the
+   camp, or creep through the dune grass for a strike from behind. A pale light shows at the Hag's Seat. That night by the
    fire Hild names the searches.
 4. **The three searches, in any order (15 to 25 minutes).** Oddi is hurt on the beach near the
    wreck, with the ship's silver in a strongbox; Bran guards Thorkel's body at the sheepfold by the
@@ -65,7 +88,9 @@ list is only here so you can tell if you are badly stuck.
    standing stone is doing something strange. Each can be done more than one way: fight, sneak,
    bargain, leave an offering, take the long way round. Thorkel's key comes to you whichever way
    Bran's search ends: it opens his chest at the camp, and his hunting bow is inside. Its first use
-   is the stores lashed to the broken mast on the western rocks.
+   is the stores lashed to the broken mast on the western rocks; they drop into the shallows, where
+   you can wade out for them at any tide. Anyone you rescue can be set down anywhere above the tide
+   line: they get up and make their own way to the camp.
 5. **Nights.** After 6 in the evening you can sleep under the sail shelter. Each morning a
    short report tells you how the household is doing (J opens it again).
 6. **The boat (15 to 30 minutes).** An old boat lies under the bank on the beach. Look it over (E):
@@ -90,11 +115,15 @@ Please note anything, but these questions matter most:
 - **Did you want to launch the boat?** Did the end feel like an ending, and did you want to see
   what is across the water?
 - **Was the next thing to do always clear?** Where did you get lost or stuck, and for how long?
-- **The first fight:** did it come early enough, and did it feel fair? Did you understand parry,
-  block and dodge, lock-on and backing away? Did hits feel heavy? Did enemies feel like they wanted
-  to live?
-- **The first five minutes:** did the storm, the net and the camp pull you in? Did you always know
-  what to do next without markers?
+- **The fighting:** did it feel heavy, deliberate and fair rather than stiff? Could you read an
+  enemy's wind-up by sight and sound, and time a parry from it? Did a miss (yours or theirs) feel
+  punished? Did running out of stamina push you to back off and come again? Did enemies wait for
+  an opening rather than crowd you?
+- **Text on screen:** was there ever too much, or something you missed because it was gone?
+- **The first five minutes:** did the storm (the lightning, the mist, the sea and the pitching
+  boat), the net and the camp pull you in? Did you always know what to do next without markers?
+- **Oddi and the others you rescue:** did each one get up, walk to the camp, work, eat, sleep under
+  the shelter and talk to you?
 - **The people:** can you name one of the household you care about? Did anyone's words land?
 - **The searches and repairs:** did the different ways feel like real choices? Did any task feel like
   a chore?
@@ -117,9 +146,9 @@ before the next stage is built.
 
 ## Choices made for you to judge
 
-These were decided while building Stages 7 to 12 and the addendum 2.4 rework without waiting for
-you; the reports (`docs/stage-reports/stage-12.md` and `rework-2.4.md`) list them all. The ones you
-will meet in this playtest:
+These were decided while building Stages 7 to 12 and the addendum 2.4 and 2.5 reworks without
+waiting for you; the reports (`docs/stage-reports/stage-12.md`, `rework-2.4.md` and
+`rework-2.5.md`) list them all. The ones you will meet in this playtest:
 
 - The boat that is repaired is an old boat under the bank, not Thorkel's wreck.
 - The launch waits for the tide, and for everyone to be found.
@@ -130,5 +159,11 @@ will meet in this playtest:
 - The scavengers at dusk are Svart and Conn, with Ketill at the fold; Svart's first heavy blows are
   slow, to teach the parry.
 - Oddi's choice is over the ship's silver in a strongbox; Thorkel's own chest holds the bow.
-- The mast stores fall on the flats and are fetched at low water.
-- Healing is on H; rations are packed from the camp's salt fish when you reach camp.
+- The mast stores drop into shallows you can wade at any tide (your choice, DF-82).
+- Healing is on H; rations are packed from the camp's salt fish when you reach camp. Healing is a
+  committed action too: only a blow stops it.
+- Exhaustion lasts until stamina is back to 30%; an enemy that waits too long attacks anyway.
+- The parry's glint always comes the same time before the blow, so a parry can be learned by
+  rhythm; enemy blows are slower to come than yours.
+- Oddi is rescued wherever you set him down above the tide line, but the scavengers then take the
+  ship's silver if it is still on the beach.

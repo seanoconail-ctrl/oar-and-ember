@@ -2862,6 +2862,38 @@
       "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
     },
     {
+      "id": "SFX_PARRY_RASP",
+      "ref": "A parry's wind-up is a short rasp of the guard coming up",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5, commitment and stamina (decision DF-83)."
+    },
+    {
+      "id": "SFX_BLOCK_CREAK",
+      "ref": "a block raised, a soft leather creak",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5, commitment and stamina (decision DF-83)."
+    },
+    {
+      "id": "SFX_DODGE_LAND",
+      "ref": "a dodge, cloth, a push-off and a heavy landing",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5, commitment and stamina (decision DF-83)."
+    },
+    {
+      "id": "SFX_WHIFF_SCUFF",
+      "ref": "a missed attack, the whoosh carrying on into an overbalanced scuff",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5, commitment and stamina (decision DF-83)."
+    },
+    {
       "id": "SFX_BACKSTAB",
       "ref": "short struggle, muffled",
       "book": 11,

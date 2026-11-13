@@ -46,8 +46,12 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       idlewind: 4,
       walk: 6,
       run: 8,
-      runstart: 1,
+      // Design addendum 2.5 (Book 7 section 01; DF-83): the run start's two frames, and the
+      // walk's start and stop, so speed builds and dies.
+      runstart: 2,
       runstop: 2,
+      walkstart: 2,
+      walkstop: 2,
       sneak: 6,
       carry: 6,
       draw: 4,
@@ -110,6 +114,11 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       fall_fwd: 2,
       fall_back: 2,
       fall_crumple: 2,
+      // DF-83: the block walk (forward, backing off, strafing) and a miss's overbalance.
+      block_walk: 6,
+      block_backoff: 6,
+      block_strafe: 6,
+      overbalance: 2,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);

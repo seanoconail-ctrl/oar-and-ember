@@ -61,6 +61,12 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_EXHAUSTED_BREATH', 2.8, {}, 'combat25-exhausted-breath'],
   ['sfx:SFX_SIDEARM', 0.5, {}, 'combat25-sidearm'],
   ['sfx:SFX_SHIELD_SPLIT', 0.8, {}, 'combat25-shield-split'],
+  // Book 11 "Commitment and stamina" (DF-83): the parry's rasp, the block's creak, the dodge's
+  // landing and the whiff's scuff.
+  ['sfx:SFX_PARRY_RASP', 0.4, {}, 'combat25-parry-rasp'],
+  ['sfx:SFX_BLOCK_CREAK', 0.4, {}, 'combat25-block-creak'],
+  ['sfx:SFX_DODGE_LAND', 0.5, {}, 'combat25-dodge-land'],
+  ['sfx:SFX_WHIFF_SCUFF', 0.6, {}, 'combat25-whiff-scuff'],
   ['call:SFX_ARROW_SHIELD', 0.8, {}, 'combat2-arrow-shield'],
   // Design addendum 2.4, the opening: the cold open, the net, the chest, the fire, the sail, the
   // mast, the ring, the doors and the Hag's Stone; the music's fade in, layers joining and fade out

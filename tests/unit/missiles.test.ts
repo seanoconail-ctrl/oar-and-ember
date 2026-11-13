@@ -190,14 +190,40 @@ describe('starting weapons (Book 10 section 21, "Starting weapons")', () => {
     for (let i = 0; i < 3; i++) sim.step();
     const chest = onFoot.actors['ITEM_THORKEL_CHEST'];
     if (chest === undefined) throw new Error('no chest placed');
-    // Without the key, Interact lifts it as a load; it does not open.
     onFoot.player.x = chest.x + 20;
     onFoot.player.y = chest.y;
+    // While Hild is in the net, Interact goes to her first (decision DE-86): no chest, no bow.
     sim.submit({ type: 'INTERACT' });
+    sim.step();
+    expect(onFoot.carrying).toBeNull();
+    expect(sim.state.facts['ch1.chest_opened']).toBeUndefined();
+    expect(sim.state.player.hotbar.slots).not.toContain('ITEM_BOW');
+    // Clicked on its own tile without the key, the chest is lifted as a load; it does not open.
+    sim.submit({
+      type: 'INTERACT_AT',
+      tile: { tx: Math.floor(chest.x / TILE), ty: Math.floor(chest.y / TILE) },
+    });
     sim.step();
     expect(onFoot.carrying).toBe('ITEM_THORKEL_CHEST');
     expect(sim.state.facts['ch1.chest_opened']).toBeUndefined();
     expect(sim.state.player.hotbar.slots).not.toContain('ITEM_BOW');
+    // Nor once Hild is free: Interact then lifts the chest, and still it does not open.
+    const free = campaign();
+    const hild2 = free.onFoot.actors['C_HILD'];
+    if (hild2 === undefined) throw new Error('no Hild');
+    free.onFoot.player.x = hild2.x + 30;
+    free.onFoot.player.y = hild2.y;
+    for (let i = 0; i < 3; i++) free.sim.step();
+    const chest2 = free.onFoot.actors['ITEM_THORKEL_CHEST'];
+    if (chest2 === undefined) throw new Error('no chest placed');
+    free.sim.state.facts['ch1.net_free'] = true;
+    free.onFoot.player.x = chest2.x + 20;
+    free.onFoot.player.y = chest2.y;
+    free.sim.submit({ type: 'INTERACT' });
+    free.sim.step();
+    expect(free.onFoot.carrying).toBe('ITEM_THORKEL_CHEST');
+    expect(free.sim.state.facts['ch1.chest_opened']).toBeUndefined();
+    expect(free.sim.state.player.hotbar.slots).not.toContain('ITEM_BOW');
   });
 
   it('draws the steerer’s bow layer only once the bow is owned', () => {

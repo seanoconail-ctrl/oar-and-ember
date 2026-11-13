@@ -499,6 +499,15 @@ export type FightEvent =
   /** A fighter's bar ran empty, or came back (Book 10 "Exhausted": breath and body, no word). */
   | { readonly type: 'EXHAUSTED'; readonly who: Id; readonly on: boolean }
   | { readonly type: 'MISSED'; readonly who: Id }
+  /**
+   * Book 11 "Commitment and stamina" (decision DF-83): a parry's wind-up begun, a shield raised, a
+   * dodge landed into its recovery. Heard only (each with its drawn twin), never captioned.
+   */
+  | {
+      readonly type: 'COMMIT_SOUND';
+      readonly who: Id;
+      readonly what: 'PARRY_WINDUP' | 'BLOCK_RAISE' | 'DODGE_LAND';
+    }
   | { readonly type: 'CALLED_FOR_HELP'; readonly person: Id }
   | { readonly type: 'SHIELD_BROKEN'; readonly who: Id }
   /** Binding a wound or eating (Book 10 "Health, stamina and healing"). */
@@ -1512,6 +1521,7 @@ export function stepFight(fw: FightWorld): void {
         ended.push(e.heal === undefined ? { state: e.state } : { state: e.state, heal: e.heal });
     }
     stepHeal(fw, ended);
+    commitSound(fw, STEERER, sf);
     if (!wasHit) strikeMotion(fw, sf, onFoot.player, true);
     if (sf.exhausted !== wasExhausted)
       fw.emit({ type: 'EXHAUSTED', who: STEERER, on: sf.exhausted });
@@ -1560,7 +1570,9 @@ export function stepFight(fw: FightWorld): void {
     }
     if (fa.f.exhausted !== wasExhausted)
       fw.emit({ type: 'EXHAUSTED', who: id, on: fa.f.exhausted });
+    secondLight(fw, fa);
     telegraph(fw, id, fa.f);
+    commitSound(fw, id, fa.f);
     regen(fa, ctx, tick);
     a.blocking = guardLive(fa.f);
     if (fa.f.state !== 'idle' || fa.dead !== null) a.facing = fa.f.facing;
@@ -1669,6 +1681,41 @@ function regen(fa: ActorFight, ctx: FightContext, tick: number): void {
  * An enemy's telegraph (Book 10 "Telegraphs"): its one-frame flash at Book 10's lead before the
  * blow lands, with its sound by weight. A chained light sets its own flash as it begins.
  */
+/** The archetypes Book 10's enemyStrings lets follow with a second light (decision DF-84). */
+const STRINGERS = /^(Warrior|Raider|Huscarl)\b/;
+
+/**
+ * An enemy's second light (Book 10 "Telegraphs", enemyStrings; "AI states", Attack; decision
+ * DF-84): a warrior, raider or huscarl whose first light met its target (struck or blocked, not
+ * missed and not parried) presses again in the light's chain window, so a second light follows its
+ * recovery with its own wind-up under the telegraph floor and its own flash. Never a third.
+ */
+function secondLight(fw: FightWorld, fa: ActorFight): void {
+  const f = fa.f;
+  if (fa.side !== 'ENEMY' || fa.arch === undefined || !STRINGERS.test(fa.arch)) return;
+  if (f.state !== 'light1' || f.queued || !f.hit || f.missed || f.hitstop > 0) return;
+  if (fa.ai.mind.state !== 'ATTACK') return;
+  pressAttack(f, fw.world.tick, fw.ctx.cb, f.angle, fa.stamina);
+}
+
+/**
+ * The sounds of commitment (Book 11 section 07; decision DF-83), on the tick a phase begins: the
+ * parry's wind-up (its rasp), the shield's raise (its creak) and the dodge's landing (into its
+ * planted recovery). A press is applied before the fight's tick, so it begins on this tick too.
+ */
+function commitSound(fw: FightWorld, id: Id, f: Fighter): void {
+  if (f.since !== fw.world.tick || f.hitstop > 0) return;
+  const what =
+    f.state === 'parryWindup'
+      ? 'PARRY_WINDUP'
+      : f.state === 'blockRaise'
+        ? 'BLOCK_RAISE'
+        : f.state === 'dodgeRecovery'
+          ? 'DODGE_LAND'
+          : null;
+  if (what !== null) fw.emit({ type: 'COMMIT_SOUND', who: id, what });
+}
+
 function telegraph(fw: FightWorld, id: Id, f: Fighter): void {
   const tick = fw.world.tick;
   if (!f.floors || f.hitstop > 0) return;

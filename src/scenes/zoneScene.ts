@@ -511,6 +511,31 @@ export interface ZoneSceneInput {
    * sparks and stars in world pixels.
    */
   readonly combat?: CombatOverlay;
+  /**
+   * Design addendum 2.5: the walk's full speed in logical px a tick (Book 10 walk), against which a
+   * fighter's eased speed picks its walk start and stop frames (rampFrame).
+   */
+  readonly walkPerTick?: number;
+}
+
+/**
+ * The walk's start and stop frames (Book 7 section 01; Book 10 "Movement and acceleration";
+ * decision DF-83): speeding up towards a walk wanted, the start's two frames by how near full
+ * speed it is; with no walk wanted and still sliding, the stop's two. Null at full speed or still.
+ */
+export function rampFrame(
+  speed: number,
+  full: number,
+  wanting: boolean,
+  own: Readonly<Record<string, Anim>>,
+): PersonAnim | null {
+  if (full <= 0 || speed <= 1e-6) return null;
+  const k = speed / full;
+  if (wanting && k < 0.8 && own['walkstart'] !== undefined)
+    return { state: 'walkstart', frame: k < 0.4 ? 0 : 1 };
+  if (!wanting && own['walkstop'] !== undefined)
+    return { state: 'walkstop', frame: k > 0.5 ? 0 : 1 };
+  return null;
 }
 
 export interface CombatOverlay {
@@ -557,6 +582,8 @@ export function fightAnim(
     readonly fall?: 'fall_fwd' | 'fall_back' | 'fall_crumple' | null;
     /** An archer's hop back under way: its ticks so far (Book 10 dashAway). */
     readonly hop?: number | null;
+    /** Walking up to speed or slowing to a stop: its frame (rampFrame). */
+    readonly ramp?: PersonAnim | null;
   } = {},
 ): PersonAnim | null {
   const has = (s: string): boolean => own[s] !== undefined;
@@ -583,8 +610,14 @@ export function fightAnim(
         return { state: wind, frame: tick - f.since < (f.activeAt - f.since) / 3 ? 0 : 1 };
       return { state: s, frame: 0 };
     }
-    // A miss recovery shows the body overbalanced: the follow-through held (frame 2).
-    return { state: s, frame: tick < f.activeEnd ? 1 : 2 };
+    if (tick < f.activeEnd) return { state: s, frame: 1 };
+    // A miss recovery (Book 7 section 01; decision DF-83): the overbalance's two frames, the
+    // stagger forward that shows the punish window, then the follow-through to recover.
+    if (f.missed && has('overbalance')) {
+      const t = (tick - f.activeEnd) / Math.max(1, f.recoveryEnd - f.activeEnd);
+      if (t < 0.7) return { state: 'overbalance', frame: t < 0.35 ? 0 : 1 };
+    }
+    return { state: s, frame: 2 };
   };
   // The crouch, the spring (while it moves), the landing low.
   if (extra.hop != null && has('hop'))
@@ -599,6 +632,10 @@ export function fightAnim(
       if (f.exhausted && has('exhausted')) return { state: 'exhausted', frame: loop('exhausted') };
       if (moving && extra.gait != null && has(extra.gait))
         return { state: extra.gait, frame: loop(extra.gait) };
+      // Speed building and dying (Book 7 section 01; Book 10 "Movement and acceleration"): the
+      // walk's start and stop frames by how far the walk is from full speed.
+      const ramp = extra.ramp ?? null;
+      if (moving && ramp !== null && has(ramp.state)) return ramp;
       return null;
     }
     case 'chargeL0':
@@ -676,8 +713,17 @@ export function fightAnim(
               through('block_raise', f.since, f.recoveryEnd),
           }
         : null;
-    case 'block':
+    case 'block': {
+      // The block walk (Book 7 section 01; DF-83): forward, backing off or strafing, shield up.
+      const walk =
+        extra.gait === 'backoff'
+          ? 'block_backoff'
+          : extra.gait === 'strafe'
+            ? 'block_strafe'
+            : 'block_walk';
+      if (moving && has(walk)) return { state: walk, frame: loop(walk) };
       return has('block') ? { state: 'block', frame: 0 } : null;
+    }
     case 'blockStun':
       return has('block') ? { state: 'block', frame: 1 } : null;
     case 'dodge': {
@@ -1284,6 +1330,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
                   ? fallOf(fa.f.angle, fa.dead.dir, fa.f.weapon)
                   : null,
               hop: fa.ai.hop === null ? null : tick - fa.ai.hop.since,
+              ramp: ((): PersonAnim | null => {
+                const goal = fa.ai.goal;
+                if (input.walkPerTick === undefined || goal?.run === true) return null;
+                const wanting =
+                  goal !== null &&
+                  (goal.away === true || Math.hypot(goal.x - actor.x, goal.y - actor.y) >= 2);
+                const speed = Math.hypot(fa.vel?.x ?? 0, fa.vel?.y ?? 0);
+                return rampFrame(speed, input.walkPerTick * (goal?.share ?? 1), wanting, own);
+              })(),
             });
       if (fa?.dead != null && gore > 0) {
         // The pool under the dead grows (Book 7 section 12): fewer and darker with gore low.

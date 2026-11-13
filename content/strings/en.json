@@ -2887,6 +2887,18 @@
   "ui.sound.sfx.shield_split": {
     "text": "A shield splitting"
   },
+  "ui.sound.sfx.parry_rasp": {
+    "text": "A parry's wind-up: the guard coming up"
+  },
+  "ui.sound.sfx.block_creak": {
+    "text": "A shield raised: the grip creaking"
+  },
+  "ui.sound.sfx.dodge_land": {
+    "text": "A dodge's heavy landing"
+  },
+  "ui.sound.sfx.whiff_scuff": {
+    "text": "A missed blow: the overbalanced scuff"
+  },
   "caption.sfx.backstab": {
     "text": "A short, muffled struggle",
     "tags": ["INFO"]

@@ -18,7 +18,7 @@ tests are in `tests/unit/saves.test.ts`; the scenarios and the writer are in
 | golden-08.json | 8      | Stage 10         | The opening and the three searches                      | Frozen: loads through the migration chain                   |
 | golden-09.json | 9      | Stage 11         | The repairs, the oar and a fitting                      | Frozen: loads through the migration chain                   |
 | golden-10.json | 10     | Stage 12         | The rites and the launch: the chapter-end save          | Frozen from addendum 2.4: loads through the migration chain |
-| golden-11.json | 11     | Addendum 2.4     | Chapter 1 as 2.4 plays it, to its end (the chapter run) | Reproduced exactly by its scenario                          |
+| golden-11.json | 12     | Addendum 2.5     | Chapter 1 as 2.5 plays it, to its end (the chapter run) | Reproduced exactly by its scenario                          |
 
 Only the newest is written: `npm run golden` rewrites `golden-11.json` and nothing else. A frozen
 file is never rewritten; when the world state's version goes up, the new version's migration must
@@ -28,3 +28,8 @@ Golden save 10 was frozen early, by design addendum 2.4 (decision DE-80): its sc
 the opening that 2.4 replaced, so it could no longer be made again. Golden save 11 is the new
 chapter-end save: the world of `playChapter('chapter-1')` in `src/tools/play/chapterRun.ts` at the
 scripted pace, the same run whose telemetry the rework report gives.
+
+Design addendum 2.5 raised the world state to version 12 (decision DF-46) without freezing golden
+save 11: the 2.5 rework was still in progress, and the chapter run plays differently under it.
+Once 2.5 was complete, golden save 11 was regenerated at schema 12 (decision DF-86), so its file
+name no longer matches its schema. The step from 11 to 12 is still exercised by goldens 1 to 10.

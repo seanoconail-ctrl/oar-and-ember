@@ -300,11 +300,12 @@ describe('atlases', () => {
     const hild = byName.get('actor_c_hild');
     if (hild === undefined) throw new Error('missing');
     const { image, manifest } = packSheet(hild);
-    // Nineteen states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 1, runstop 2,
-    // call 6, down 2, carried 6, sit 4, eat 4; from Stage 7 the work loops gather, fish, kneel and
-    // build 6 each, and sleep 2; from Stage 9 stagger 2) in four facings: 76 rows of up to 8.
+    // Nineteen states (idle, shift, glance, idlewind 4 each, walk 6, run 8, runstart 2 (design
+    // addendum 2.5, DF-83), runstop 2, call 6, down 2, carried 6, sit 4, eat 4; from Stage 7 the
+    // work loops gather, fish, kneel and build 6 each, and sleep 2; from Stage 9 stagger 2) in
+    // four facings: 76 rows of up to 8.
     expect([image.width, image.height]).toEqual([8 * 32, 76 * 48]);
-    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 1 + 2 + 6 + 2 + 6 + 4 + 4 + 6 + 6 + 6 + 6 + 2 + 2;
+    const perFacing = 4 + 4 + 4 + 4 + 6 + 8 + 2 + 2 + 6 + 2 + 6 + 4 + 4 + 6 + 6 + 6 + 6 + 2 + 2;
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
     expect(manifest.frames['idle/w/3']).toEqual([96, 3 * 48]);
@@ -325,7 +326,7 @@ describe('atlases', () => {
       4 +
       6 +
       8 +
-      1 +
+      2 + // the run start's two frames (design addendum 2.5, DF-83)
       2 +
       6 +
       6 +
@@ -339,14 +340,17 @@ describe('atlases', () => {
       (3 + 3 + 2 + 2 + 2) + // combat v2: riposte, backstab, lunge, parried, get-up
       // Design addendum 2.5: the wind-ups by weight, parry wind-up, block raise, guard break,
       // exhausted idle and walk, dodge recovery, back off, strafe, flinch, knockdown, sidestep,
-      // hop, bind, eat and the three falls (792 frames, 29 across).
-      (2 + 2 + 2 + 2 + 2 + 4 + 4 + 6 + 2 + 6 + 6 + 2 + 3 + 3 + 3 + 6 + 4 + 2 + 2 + 2);
+      // hop, bind, eat and the three falls.
+      (2 + 2 + 2 + 2 + 2 + 4 + 4 + 6 + 2 + 6 + 6 + 2 + 3 + 3 + 3 + 6 + 4 + 2 + 2 + 2) +
+      // DF-83: the walk's start and stop, the block walk forward, backing off and strafing, and
+      // a miss’s overbalance (892 frames, 30 across).
+      (2 + 2 + 6 + 6 + 6 + 2);
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
-    expect([image.width, image.height]).toEqual([29 * 32, 28 * 48]);
+    expect([image.width, image.height]).toEqual([30 * 32, 30 * 48]);
     expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
     expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
-    expect(manifest.frames['run/s/7']).toEqual([8 * 32, 3 * 48]);
+    expect(manifest.frames['run/s/7']).toEqual([5 * 32, 3 * 48]);
   });
 });
 

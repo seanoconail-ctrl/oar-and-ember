@@ -38,7 +38,7 @@ import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
-import { interactionNow } from '../sim/land/onFoot.ts';
+import { interactionNow, TICKS_PER_SECOND } from '../sim/land/onFoot.ts';
 import { parseStartingWeapons } from '../content/balance.ts';
 import type { Id } from '../core/ids.ts';
 import { steererOwns, withOwned } from './people.ts';
@@ -1433,6 +1433,14 @@ export function startPlay(
       case 'SIDEARM_DRAWN':
         fightSound('SIDEARM_DRAWN', e.who);
         return;
+      // Book 11 "Commitment and stamina" (DF-83): the parry's rasp, the block's creak, the dodge's
+      // landing, and a whiff's overbalanced scuff. Heard and seen, never captioned (DF-80).
+      case 'COMMIT_SOUND':
+        fightSound(e.what, e.who);
+        return;
+      case 'MISSED':
+        fightSound('WHIFF', e.who);
+        return;
       case 'SHIELD_BROKEN': {
         const at =
           e.who === 'P_STEERER' ? sim.state.onFoot?.player : sim.state.onFoot?.actors[e.who];
@@ -2196,6 +2204,7 @@ export function startPlay(
       ),
       steererBloodied: steererBloodied(),
       combat: combatFx.overlay(onFoot, sim.state.tick, display.marks),
+      walkPerTick: (land.movement.walk * map.tile) / TICKS_PER_SECOND,
       ...((): {
         launch?: { hidden: string[]; steererHidden: boolean; steererLoop: string | null };
       } => {

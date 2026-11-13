@@ -1401,7 +1401,10 @@ def anim_run(heavy=False):
 
 
 def anim_runstart(heavy=False):
-    """One frame leaning into the start: low, tipped forward, the back foot pushing off."""
+    """Leaning into the start (design addendum 2.5 lengthens it to two frames, Book 7 section 01,
+    so speed visibly builds): low, tipped forward, the back foot pushing off; then the first drive,
+    the push-off knee coming through high, the planted foot going back under the body and the
+    arms pumping the other way. The cloak and hair begin to trail."""
     p = Pose(pel=(0, 0, -3 if heavy else -2), lean=(0, 3.0), head=(0, 1.0, 0))
     p.feet = {'R': (-6, 0), 'L': (3, 0)}
     p.toe = {'R': 1, 'L': 0}
@@ -1410,7 +1413,56 @@ def anim_runstart(heavy=False):
     p.grip = {'R': 'fist', 'L': 'fist'}
     p.cloth = (-1.4, 0)
     p.hair = p.cloth
-    return [p]
+    q = Pose(pel=(0, 0, -2 if heavy else -1), lean=(0, 2.6), head=(0, 1.0, 0))
+    q.feet = {'R': (1, 5 if heavy else 6), 'L': (-3, 0)}
+    q.toe = {'R': 0, 'L': 1}
+    q.hands = {'R': run_arm(-0.7, heavy), 'L': run_arm(0.7, heavy)}
+    q.elbow = {'R': (0.3, -1.0, 0.4), 'L': (0.3, -1.0, 0.4)}
+    q.grip = {'R': 'fist', 'L': 'fist'}
+    q.cloth = (-2.0, 0)
+    q.hair = q.cloth
+    return [p, q]
+
+
+def anim_walkstart(heavy=False):
+    """The walk's start (design addendum 2.5; Book 7 section 01; Book 10 "Movement and
+    acceleration"): from standing, the weight tips onto the front of the planted foot and the
+    first foot lifts in a short step; then the first contact at half the stride, the arms only
+    beginning to swing, the hem starting to trail. The heavy build sinks a little deeper."""
+    k = 0.85 if heavy else 1.0
+    a = Pose(pel=(0, 0.4, 0), lean=(0, 1.3))
+    a.feet = {'R': (-1.5, 0), 'L': (2.0, 2)}
+    a.toe = {'R': 1, 'L': 0}
+    a.hands = {'R': swing(-1.5 * k), 'L': swing(1.5 * k)}
+    a.cloth = (-0.3, 0)
+    a.hair = a.cloth
+    b = Pose(pel=(0, 0.6, -(2 if heavy else 1)), lean=(0, 1.0))
+    b.feet = {'R': (-3.5, 0), 'L': (3.5, 0)}
+    b.toe = {'R': 1, 'L': -1}
+    b.hands = {'R': swing(-3.5 * k), 'L': swing(3.5 * k)}
+    b.cloth = (-0.8, 0)
+    b.hair = b.cloth
+    return [a, b]
+
+
+def anim_walkstop(heavy=False):
+    """The walk's stop (Book 7 section 01): the front foot planted and braking, the body checked
+    back over it while the arms and the hem swing on forward past it; then the back foot brought
+    up beside it and the weight settling, the arms coming back to hang."""
+    k = 0.85 if heavy else 1.0
+    a = Pose(pel=(0, -0.3, -(2 if heavy else 1)), lean=(0, -0.4))
+    a.feet = {'R': (3.5, 0), 'L': (-3.0, 2)}
+    a.toe = {'R': -1, 'L': 1}
+    a.hands = {'R': swing(3.0 * k), 'L': swing(-3.0 * k)}
+    a.cloth = (0.9, 0)
+    a.hair = a.cloth
+    b = Pose(pel=(0, 0, 0), lean=(0, 0.2))
+    b.feet = {'R': (1.5, 0), 'L': (-1.0, 0)}
+    b.toe = {'R': 0, 'L': 0}
+    b.hands = {'R': swing(1.0 * k), 'L': swing(-1.0 * k)}
+    b.cloth = (0.4, 0)
+    b.hair = b.cloth
+    return [a, b]
 
 
 def anim_runstop(heavy=False):
@@ -1686,6 +1738,9 @@ def states_for(heavy=False, bow=True):
         ('run', lambda: anim_run(h), 3, True),
         ('runstart', lambda: anim_runstart(h), 4, False),
         ('runstop', lambda: anim_runstop(h), 6, False),
+        # Design addendum 2.5 (Book 7 section 01): speed builds and dies over two frames each.
+        ('walkstart', lambda: anim_walkstart(h), 5, False),
+        ('walkstop', lambda: anim_walkstop(h), 4, False),
         ('sneak', anim_sneak, 6, True),
         ('carry', anim_carry, 5, True),
     ]
@@ -2916,6 +2971,78 @@ def anim_strafe(ch=None, heavy=False):
     return out
 
 
+def _shield_up(p, ch, lean=0.6):
+    """The block's pose (anim_block's first frame) on a walking frame: the shield (or the guard)
+    up in front and braced, the weapon held behind it."""
+    held = anim_block(ch)[0]
+    q = p.copy(hold='held', wdir=held.wdir, lean=(0, lean), shield=held.shield)
+    q.hands = {'R': held.hands['R'], 'L': held.hands['L']}
+    q.elbow = dict(held.elbow)
+    q.grip = {'R': 'fist', 'L': 'fist'}
+    return q
+
+
+def anim_block_walk(ch=None, heavy=False):
+    """The block walk forward (design addendum 2.5; Book 7 section 01): the shield up and braced,
+    stepping in at half the stride length (Book 10 blockSpeed, half speed), the down frames a
+    little shallower because the knees stay bent."""
+    out = []
+    for p in anim_walk(heavy):
+        q = _shield_up(p, ch, 0.8)
+        q.feet = {k: (v[0] * 0.5, v[1] * 0.6) for k, v in p.feet.items()}
+        q.pel = (p.pel[0], p.pel[1], p.pel[2] - 0.5)
+        out.append(q)
+    return out
+
+
+def anim_block_backoff(ch=None, heavy=False):
+    """The block walk backing off: the shield up towards the foe, stepping back heel first at
+    half the stance walk's stride, the weight kept on the front foot."""
+    out = []
+    for p in anim_backoff(ch, heavy):
+        q = _shield_up(p, ch, 0.2)
+        q.feet = {k: (v[0] * 0.5, v[1] * 0.6) for k, v in p.feet.items()}
+        q.pel = (p.pel[0], p.pel[1], p.pel[2] - 0.5)
+        out.append(q)
+    return out
+
+
+def anim_block_strafe(ch=None, heavy=False):
+    """The block walk strafing: the shield up towards the foe, the feet stepping out and together
+    at half the stance strafe's width, never crossing."""
+    out = []
+    for p in anim_strafe(ch, heavy):
+        q = _shield_up(p, ch, 0.6)
+        q.feet_r = {k: v * 0.5 for k, v in p.feet_r.items()}
+        q.feet = {k: (v[0], v[1] * 0.6) for k, v in p.feet.items()}
+        q.pel = (p.pel[0], p.pel[1], p.pel[2] - 0.5)
+        out.append(q)
+    return out
+
+
+def anim_overbalance(ch=None):
+    """A missed attack's overbalance (design addendum 2.5; Book 7 section 01: "an overbalanced
+    follow-through, 2 more frames"), the stagger forward that sells the punish window: the weapon
+    carried on low past where the body should have been, the body pitched out over the front
+    foot, the back foot dragged up off the ground and the free arm thrown out; then the weight
+    caught on a further step, still bent over and open, the head down."""
+    if ch is not None and spear_style(ch):
+        a = fight_pose((0.4, 8.5, -4.5), (0.0, 1.0, -0.3), lean=(0, 3.0), pel=(0, 1.0, -2),
+                       lh=(2.8, 1.5, -5.5), head=(0, 1.4, -0.6), mouth=1,
+                       feet={'R': (-6.5, 2.0), 'L': (6.0, 0)}, cloth=(1.4, 0))
+        b = fight_pose((0.5, 7.0, -6.5), (0.0, 0.9, -0.45), lean=(0, 2.4), pel=(0, 1.4, -2),
+                       lh=(2.2, 2.5, -7.0), head=(0, 1.0, -0.8),
+                       feet={'R': (-2.5, 1.5), 'L': (7.0, 0)}, cloth=(0.9, 0))
+        return [a, b]
+    a = fight_pose((-5.5, 7.5, -10.0), (-0.45, 0.6, -0.9), lean=(0, 3.4), pel=(0, 1.4, -2),
+                   lh=(3.0, 1.0, -5.0), head=(0, 1.4, -0.6), mouth=1,
+                   feet={'R': (-6.5, 2.0), 'L': (6.0, 0)}, cloth=(1.4, 0), elbow_r=(0.4, -0.2, 0.2))
+    b = fight_pose((-4.5, 6.0, -11.0), (-0.3, 0.5, -0.95), lean=(0, 2.6), pel=(0, 1.8, -2),
+                   lh=(2.4, 2.0, -6.5), head=(0, 1.0, -0.8),
+                   feet={'R': (-2.5, 1.5), 'L': (7.0, 0)}, cloth=(0.9, 0), elbow_r=(0.4, -0.2, 0.2))
+    return [a, b]
+
+
 def anim_flinch(ch=None):
     """The flinch (Book 10 flinch; DF-21): a hit that does not break poise jerks the body back a
     moment, the head ducking, without stopping what it was doing."""
@@ -3047,6 +3174,12 @@ def fight_states_25(ch, heavy=False):
         ('dodge_recover', lambda: N(anim_dodge_recover(c), c), 9, False),
         ('backoff', lambda: N(anim_backoff(c, heavy), c), 6, True),
         ('strafe', lambda: N(anim_strafe(c, heavy), c), 6, True),
+        # Book 7 section 01 (design addendum 2.5; decision DF-83): the block walk forward, backing
+        # off and strafing at half the stride, and a miss's overbalance.
+        ('block_walk', lambda: N(anim_block_walk(c, heavy), c), 5, True),
+        ('block_backoff', lambda: N(anim_block_backoff(c, heavy), c), 6, True),
+        ('block_strafe', lambda: N(anim_block_strafe(c, heavy), c), 6, True),
+        ('overbalance', lambda: N(anim_overbalance(c), c), 6, False),
         ('flinch', lambda: N(anim_flinch(c), c), 4, False),
         ('knockdown', lambda: N(anim_knockdown(c), c), 6, False),
         ('sidestep', lambda: N(anim_sidestep(c), c), 5, False),

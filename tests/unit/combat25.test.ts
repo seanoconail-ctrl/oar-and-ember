@@ -40,6 +40,9 @@ import type { SimEvent, Simulation } from '../../src/sim/simulation.ts';
 import { newCampaign } from '../../src/sim/world.ts';
 import type { WorldState } from '../../src/sim/world.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
+import { fightAnim, rampFrame } from '../../src/scenes/zoneScene.ts';
+import type { Anim } from '../../src/render/sheet.ts';
+import { COMBAT2_SOUNDS } from '../../src/audio/synth/combat2.ts';
 import { easeVelocity } from '../../src/sim/land/onFoot.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
@@ -949,5 +952,184 @@ describe('heal on the gamepad’s command ring (DF-21)', () => {
     ring.update(frame(true) as never, { x: 0, y: -1 });
     expect(ring.update(frame(false) as never, { x: 0, y: -1 })).toEqual(['FOLLOW']);
     expect(ring.takeHeal()).toBe(false);
+  });
+});
+
+// ------------------------------------------------------------- finishing 2.5 (DF-83, DF-84)
+
+describe('the sounds of commitment (Book 11 section 07, "Commitment and stamina"; DF-83)', () => {
+  it('a parry’s wind-up, a shield raised, a dodge landing and a whiff each send their sound', () => {
+    const f = strand('commit-sounds', { foe: [52, 34.5], at: [66, 34.5] });
+    freeze(f, 'E_WRECKER_SVART');
+    f.world.player.hotbar.slots[2] = 'ITEM_SHIELD';
+    const commit = (what: string) =>
+      f.events.filter((e) => e.type === 'COMMIT_SOUND' && e.who === 'P_STEERER' && e.what === what);
+    // The parry's rasp on the tick its wind-up begins.
+    f.sim.submit({ type: 'PARRY' });
+    f.sim.step();
+    expect(player(f).fight?.state).toBe('parryWindup');
+    expect(commit('PARRY_WINDUP')).toHaveLength(1);
+    steps(f, 60);
+    // The shield's creak as it is raised (once, not every tick it is held).
+    f.sim.submit({ type: 'BLOCK', on: true });
+    f.sim.step();
+    expect(player(f).fight?.state).toBe('blockRaise');
+    steps(f, 30);
+    expect(commit('BLOCK_RAISE')).toHaveLength(1);
+    f.sim.submit({ type: 'BLOCK', on: false });
+    steps(f, 60);
+    // The dodge's landing as its dash ends in the planted recovery.
+    f.sim.submit({ type: 'DODGE', x: 0, y: 1 });
+    let landed = -1;
+    for (let i = 0; i < 60 && landed < 0; i++) {
+      f.sim.step();
+      if (player(f).fight?.state === 'dodgeRecovery') landed = f.world.tick - 1;
+    }
+    expect(landed).toBeGreaterThan(0);
+    expect(commit('DODGE_LAND')).toHaveLength(1);
+    steps(f, 60);
+    // A whiff: the overbalanced scuff (MISSED) at the end of its active ticks.
+    f.sim.submit({ type: 'MELEE', facing: 'e' });
+    f.sim.step();
+    f.sim.submit({ type: 'MELEE_RELEASE' });
+    steps(f, 40);
+    expect(f.events.filter((e) => e.type === 'MISSED' && e.who === 'P_STEERER')).toHaveLength(1);
+  });
+
+  it('each is a generated cue with its drawn twin and no caption (DF-80)', () => {
+    const audio = JSON.parse(repoFile('content/audio.json')) as {
+      cues: { id: string; drawn?: string; captionKey?: string }[];
+      events: Record<string, string>;
+    };
+    const want = {
+      PARRY_WINDUP: 'SFX_PARRY_RASP',
+      BLOCK_RAISE: 'SFX_BLOCK_CREAK',
+      DODGE_LAND: 'SFX_DODGE_LAND',
+      WHIFF: 'SFX_WHIFF_SCUFF',
+    };
+    for (const [event, cue] of Object.entries(want)) {
+      expect(audio.events[event]).toBe(cue);
+      const c = audio.cues.find((x) => x.id === cue);
+      expect(c?.drawn, cue).toBeTruthy();
+      expect(c?.captionKey, cue).toBeUndefined();
+      expect(COMBAT2_SOUNDS.some((d) => d.id === cue)).toBe(true);
+    }
+  });
+});
+
+describe('the frames that finish 2.5 (Book 7 section 01; DF-83)', () => {
+  const own: Record<string, Anim> = Object.fromEntries(
+    (
+      [
+        ['light1', 3],
+        ['windup_l', 2],
+        ['overbalance', 2],
+        ['block', 2],
+        ['block_walk', 6],
+        ['block_backoff', 6],
+        ['block_strafe', 6],
+        ['walkstart', 2],
+        ['walkstop', 2],
+      ] as const
+    ).map(([k, n]) => [k, { frames: n, ticks: 6, loop: false }]),
+  );
+
+  it('a whiff shows the overbalance’s two frames in its miss recovery, then the follow-through', () => {
+    const f = swing('Seax');
+    for (let t = 2; !f.missed && t < 200; t++) stepFighter(f, t, cb, pool());
+    expect(f.missed).toBe(true);
+    const seen: string[] = [];
+    for (let k = f.activeEnd; k < f.recoveryEnd; k++) {
+      const a = fightAnim(f, k, false, own);
+      const key = `${a?.state}:${a?.frame}`;
+      if (seen.at(-1) !== key) seen.push(key);
+    }
+    expect(seen).toEqual(['overbalance:0', 'overbalance:1', 'light1:2']);
+    // A blow that met someone recovers without the overbalance.
+    const g = swing('Seax');
+    g.hit = true;
+    for (let k = 2; k < 200 && g.state !== 'idle'; k++) {
+      if (k >= g.activeEnd) expect(fightAnim(g, k, false, own)?.state).not.toBe('overbalance');
+      stepFighter(g, k, cb, pool());
+    }
+  });
+
+  it('a raised shield walked is the block walk: forward, backing off or strafing', () => {
+    const f = newFighter('Spear', { facing: 'e', shield: true });
+    f.state = 'block';
+    expect(fightAnim(f, 10, false, own)?.state).toBe('block');
+    expect(fightAnim(f, 10, true, own)?.state).toBe('block_walk');
+    expect(fightAnim(f, 10, true, own, { gait: 'backoff' })?.state).toBe('block_backoff');
+    expect(fightAnim(f, 10, true, own, { gait: 'strafe' })?.state).toBe('block_strafe');
+  });
+
+  it('speed builds through the walk start’s two frames and dies through the stop’s', () => {
+    const full = 1;
+    expect(rampFrame(0.2, full, true, own)).toEqual({ state: 'walkstart', frame: 0 });
+    expect(rampFrame(0.6, full, true, own)).toEqual({ state: 'walkstart', frame: 1 });
+    expect(rampFrame(0.9, full, true, own)).toBeNull();
+    expect(rampFrame(0.7, full, false, own)).toEqual({ state: 'walkstop', frame: 0 });
+    expect(rampFrame(0.3, full, false, own)).toEqual({ state: 'walkstop', frame: 1 });
+    expect(rampFrame(0, full, false, own)).toBeNull();
+    // A fighter walking up to speed in the zone is drawn with them.
+    const f = newFighter('Spear', { facing: 'e' });
+    const ramp = rampFrame(0.2, full, true, own);
+    expect(fightAnim(f, 10, true, own, { ramp })).toEqual({ state: 'walkstart', frame: 0 });
+  });
+});
+
+describe('an enemy’s second light (Book 10 "Telegraphs", enemyStrings; DF-84)', () => {
+  /** Svart fights as `arch`; the strike states he plays, in order, and his flashes by tick. */
+  function strings(arch: string, seed: string) {
+    const f = strand(seed, { foe: [72, 34.5], at: [73.4, 34.5] });
+    alert(f, 'E_WRECKER_SVART');
+    const s = fa(f, 'E_WRECKER_SVART');
+    s.ai.mode = 'FIGHT';
+    s.arch = arch;
+    const strikes: { state: string; since: number }[] = [];
+    const flashes: number[] = [];
+    let prev = '';
+    f.sim.events.onAny((e) => {
+      if (e.type === 'TELEGRAPH' && e.who === 'E_WRECKER_SVART' && e.flash)
+        flashes.push(f.world.tick);
+    });
+    steps(f, 60 * 25, () => {
+      f.world.player.vitality = 100;
+      f.world.player.stamina.current = 100;
+      const st = s.f.state;
+      if ((st === 'light1' || st === 'light2' || st === 'light3') && st !== prev)
+        strikes.push({ state: st, since: f.world.tick - 1 });
+      prev = st;
+    });
+    return { strikes, flashes };
+  }
+
+  it('a warrior, raider or huscarl follows a light that met its target with a second, told again', () => {
+    let seconds = 0;
+    for (const [arch, seed] of [
+      ['Warrior', 'strings-w'],
+      ['Raider (Crowwick)', 'strings-r'],
+      ['Huscarl (Orm)', 'strings-h'],
+    ] as const) {
+      const { strikes, flashes } = strings(arch, seed);
+      expect(
+        strikes.some((x) => x.state === 'light3'),
+        arch,
+      ).toBe(false);
+      for (const [i, x] of strikes.entries()) {
+        if (x.state !== 'light2') continue;
+        seconds++;
+        expect(strikes[i - 1]?.state).toBe('light1');
+        // Its own flash, after its own wind-up began.
+        expect(flashes.some((t) => t >= x.since)).toBe(true);
+      }
+    }
+    expect(seconds).toBeGreaterThan(0);
+  });
+
+  it('an outlaw (the scavengers) never strings two', () => {
+    const { strikes } = strings('Outlaw', 'strings-o');
+    expect(strikes.length).toBeGreaterThan(0);
+    expect(strikes.every((x) => x.state === 'light1')).toBe(true);
   });
 });

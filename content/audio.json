@@ -1002,6 +1002,34 @@
       "bus": "effects",
       "temporary": false,
       "drawn": "The board split and its halves on the ground"
+    },
+    {
+      "id": "SFX_PARRY_RASP",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The parry's wind-up, the guard coming up"
+    },
+    {
+      "id": "SFX_BLOCK_CREAK",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The shield's raise"
+    },
+    {
+      "id": "SFX_DODGE_LAND",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The dodge's planted landing and recovery"
+    },
+    {
+      "id": "SFX_WHIFF_SCUFF",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The miss overbalance, the stagger forward after a whiff"
     }
   ],
   "events": {
@@ -1115,7 +1143,11 @@
     "TELL_STEERER": "SFX_TELL_STEERER",
     "EXHAUSTED_BREATH": "SFX_EXHAUSTED_BREATH",
     "SIDEARM_DRAWN": "SFX_SIDEARM",
-    "SHIELD_SPLIT": "SFX_SHIELD_SPLIT"
+    "SHIELD_SPLIT": "SFX_SHIELD_SPLIT",
+    "PARRY_WINDUP": "SFX_PARRY_RASP",
+    "BLOCK_RAISE": "SFX_BLOCK_CREAK",
+    "DODGE_LAND": "SFX_DODGE_LAND",
+    "WHIFF": "SFX_WHIFF_SCUFF"
   },
   "home": {
     "restSeconds": 90,

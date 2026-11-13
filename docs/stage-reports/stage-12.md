@@ -1,5 +1,10 @@
 # STAGE 12 REPORT: the launch and the Build 1 gate
 
+> **Design addendum 2.5 came after the 2.4 rework.** The Build 1 gate now covers the 2.5 rework
+> too (committed combat, less on-screen text, the storm opening and the rescue fix): see
+> [rework-2.5.md](rework-2.5.md) for what 2.5 changed in Stages 7 to 12, the checks run again,
+> the timing, the captures and the choices flagged for review.
+
 > **Design addendum 2.4 came after this report.** The Build 1 gate now covers the 2.4 rework
 > (combat v2 and the new opening): see [rework-2.4.md](rework-2.4.md) for what changed in Stages 7
 > to 12, the checks run again, the new timing, the gate's new captures and the choices flagged for

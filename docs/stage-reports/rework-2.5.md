@@ -1,0 +1,305 @@
+# REWORK 2.5 REPORT: committed combat, less text, the storm and the rescue fix, before the Build 1 gate
+
+In the Book 2 section 23 format: one heading per report field. This is the combined report for the
+design addendum 2.5 rework (decisions DF-1 to DF-86 and DE-82 to DE-88 in `docs/decision-log.md`),
+a second change request after the Build 1 gate and before Stage 13 (DF-20). It was built in four
+parts, three with their own report or log section, and closed by a final pass:
+
+- **Oddi and every rescued person** (addendum section 4; DF-18 folded, DE-82 to DE-88 built): the
+  decision log's "Building the rescue fix (Oddi on the sand)", summarised under **Implemented**.
+- **Committed combat** (addendum section 1; DF-1 to DF-10 folded, DF-23 to DF-49 built):
+  [rework-2.5-combat.md](rework-2.5-combat.md).
+- **On-screen text and the storm opening** (addendum sections 2 and 3, and 2.4's unbuilt items;
+  DF-11 to DF-17 and DF-21 folded, DF-50 to DF-70 built):
+  [rework-2.5-text-storm.md](rework-2.5-text-storm.md).
+- **The final pass** (DF-83 to DF-86): what 2.5 asked for that the combat build left out, the cause
+  of the longer chapter, golden save 11, the full checks, the gate's captures and this report.
+
+**The Build 1 gate now covers this rework** (see [stage-12.md](stage-12.md)): the user playtests
+Chapter 1 as 2.5 plays it, and Stage 13 waits for the user.
+
+## Implemented
+**Oddi and every rescued person** (DE-82 to DE-88). The cause of Oddi standing unanswering on the
+sand: the get-up clock started at *any* set-down of a rescued person, but Oddi was rescued only when
+set down *off* his strand, so set down above the tide line on Wreck Strand (as the opening teaches
+with Hild) he stood up without joining the household: no day moved him, talk refused him and,
+standing, he could no longer be lifted (DE-82). Now he is rescued wherever he is set down safe,
+including when a winded steerer drops him above the tide line; the moment he is, the
+wreck-scavengers take the strongbox if it still lies on the strand, so the dilemma stands (DE-85).
+The rescue scenario test found three more faults, all fixed: a resident downed and carried home kept
+the fight's walking goal and hovered by its bed (DE-84); residents could not route through a zone
+that shares no edge with their place (DE-88); and Hild in the net followed the tide out onto the
+flats, out of reach for 45 minutes in the evening (DE-87). Interact goes to Hild first while she is
+in the net (DE-86), and Hild's walk home is counted from the first fire's smoke (DE-83).
+
+**Committed combat** (full list in [rework-2.5-combat.md](rework-2.5-combat.md)): wind-up, active
+and recovery for every action with no cancels, player and AI alike; a missed attack adds its miss
+recovery and a blow in any recovery is a punish; acceleration and deceleration, and no movement while
+attacking; exhausted at an empty bar (no attack, parry, dodge, block or run, half speed, until 30%);
+the predictive parry with its own frames; the slower block at half speed and its guard break at an
+empty bar; the costly dodge with its mid-dash invulnerability and planted recovery; the AI on a state
+machine deciding every 15 ticks, circling outside its reach and waiting for an opening; archers that
+stand still to shoot, hop back once and draw a sidearm when cornered; telegraphs by weight (draw-back,
+a one-frame flash 28 ticks before the blow, a sound by weight); no combat text, the awareness marks
+off by default; locked-on attacks going at the enemy (the user's DF-81); save version 12.
+
+**On-screen text and the storm** (full list in
+[rework-2.5-text-storm.md](rework-2.5-text-storm.md)): at most one information line and one speech
+line, replacing and never stacking, repeats suppressed, bottom centre above the hotbar; in a fight
+only speech and safety lines; the text audit of every message; tutorial prompts that fade in story
+beats and go once done; the cursor hidden in cinematic moments; the storm's lightning, thunder, two
+layers of mist, light varying in patches, camera sway, swells with foam, waves breaking on the hull,
+spray, green water and a pitching, rolling ship; rain on the sail cloth in the first rain; the Hag's
+Stone's own reserved accent; Runa seated at the boat while wounded; the mast stores in wadeable
+shallows at any tide (the user's DF-82).
+
+**The final pass** (this session):
+- **The four commitment sounds of Book 11 section 07** (DF-83; `src/audio/synth/combat2.ts`): the
+  parry's wind-up rasp (the guard coming up, no ring), the block's soft leather creak as the shield
+  is raised, the dodge's heavy landing into its planted recovery, and a whiff's whoosh carrying on
+  into an overbalanced scuff. A new fight event, `COMMIT_SOUND`, carries the first three on the tick
+  their phase begins; the whiff plays on `MISSED`. Each cue has its drawn twin and no caption
+  (DF-80); they are on the sound test page and in the renders.
+- **The missing frames** (DF-83; `assets/art/authoring/people48.py`, palette-indexed, compiled
+  through `art:adopt`, `art:sheets` and `art:compile`): a walk start of 2 and a walk stop of 2, the
+  run start lengthened to 2, the block walk forward, backing off and strafing (6 frames each at half
+  the stride, shield or guard up), and a miss's overbalance of 2 (pitched over the front foot, the
+  weapon low past the line, then the weight caught on a further step), with a spear's own drawing.
+  They are on the steerer's two bodies, the heavy build and the three scavengers, and on Oddi and
+  Bran (the same states for every fighting build); Hild and Runa gain only the run start's second
+  frame. In play: the overbalance fills the first 70% of a miss recovery, the block walk shows
+  whenever a raised shield moves, the steerer's start and stop play from the keys and a fighter's
+  from its eased speed against Book 10's walk (`rampFrame`, `src/scenes/zoneScene.ts`;
+  `src/scenes/zoneVisuals.ts`). They replace DF-38's stand-ins.
+- **The enemy's second light** (DF-84; `secondLight` in `src/sim/land/fight.ts`): Book 10's
+  enemyStrings is built. A warrior, raider or huscarl whose first light met its target presses
+  again in the light's chain window, so a second light follows with its own wind-up under the floor
+  and its own flash; never after a whiff or a parry, never a third. No Chapter 1 enemy strings
+  lights (the scavengers fight as outlaws); it waits for Stage 13's warbands in play.
+- **The timing regression, found** (DF-85; see **Timing**): a bot artefact, already fixed in the
+  tree before this pass. Nothing was changed for timing.
+- **Tests fixed**: `missiles.test.ts` "the bow cannot be had before the chest is opened with the
+  key" now proves its point under DE-86 (Interact goes to Hild in the net and lifts nothing; the
+  chest clicked on its own tile is lifted, unopened; with Hild free, Interact lifts it, unopened; no
+  bow at any point). The Seal Cave theft scenarios in `tests/scenario/repairs.test.ts` pass as they
+  are (13 of 13).
+- **Golden save 11 regenerated** at schema 12 (DF-86): `npm run golden`; its test checks the 2.5
+  chapter's end and that its scenario reproduces it exactly. Goldens 1 to 10 are untouched.
+
+## GIFs
+Captured from the real game, each at 1x and under 4 MB. The combat clips were captured again in this
+pass (`npm run capture -- rework-2.5-combat`) so they show the final frames, the overbalance
+included; the storm clip is the text-and-storm session's (`npm run capture -- rework-2.5-storm`).
+
+GIF_TABLE
+
+## Tests
+TESTS_BLOCK
+
+**The tests the user asked for** (all pass):
+
+| Asked for | File | Test |
+|---|---|---|
+| Actions can't be cancelled | `tests/unit/combat25.test.ts` | "commitment: three phases, no cancels (Book 10 \"Commitment\"; DF-1)": "the steerer: a light / heavy / charged / lunge / riposte / backstab / shove / parry / dodge / heal plays wind-up, active and recovery, and no press changes it" and the same twenty for "an enemy (the AI)"; "a block raise and lower commit; the held guard is live and walks"; "in the zone: during an attack the keys neither move nor turn the steerer, and a dodge is refused". In the browser: `tests/browser/combat25.spec.ts` "locked on, an attack goes at the enemy with the cursor elsewhere; and it commits" |
+| Missed attacks leave a punishable window | `tests/unit/combat25.test.ts` | "a missed attack is punished (Book 10 missRecovery, punish; DF-1)": "a whiff adds its move’s miss recovery for every weapon", "in the zone: an attack landed in the miss recovery is a punish (heavier hitstop and poise)"; "the AI state machine": "a whiff is an opening as long as its recovery and miss recovery last, read from the drawn pose"; and new, "the frames that finish 2.5": "a whiff shows the overbalance’s two frames in its miss recovery, then the follow-through" (clip: `punish-miss.gif`) |
+| The exhausted rules apply | `tests/unit/combat25.test.ts` | "exhausted at an empty bar (Book 10 \"Exhausted\"; DF-3)": "no attack, parry, dodge, block or shove at zero", "in the zone: half speed, its pause and slower refill, and back at the threshold"; `tests/browser/combat25.spec.ts` "exhausted at an empty bar: no dodge, and half speed until the bar is back" |
+| Parry timing works | `tests/unit/combat25.test.ts` | "the predictive parry (Book 10 \"Parry\"; DF-4)": "started in the attacker’s wind-up with its live ticks over the blow, it parries", "too early it recovers open; too late its wind-up is hit: both leave the parrier open"; `tests/browser/combat25.spec.ts` "the predictive parry: pressed in Svart’s wind-up off his tell, it stuns him" (clip: `parry-predictive.gif`) |
+| A guard breaks at zero stamina | `tests/unit/combat25.test.ts` | "blocking (Book 10 \"Block\"; DF-5)": "a hit that empties the bar breaks the guard with the large stagger, then exhausted" (clip: `guard-break.gif`) |
+| No more than two text lines show at once | `tests/unit/text25.test.ts`; `tests/browser/text25.spec.ts` | "the caption view (DF-11)": "shows at most one information line and one speech line, however many arrive at once", "never shows more than one of each, nor a non-safety line in a fight, over random streams" (a property test); in the browser: "a burst of messages leaves one information line and one speech line, never stacked" (checked every frame for 2 s) |
+| The Oddi scenario passes | `tests/scenario/rescued.test.ts`; `tests/browser/rescued.spec.ts` | "everyone rescued walks to camp, works, eats, sleeps under the shelter and talks (DE-22, DE-82)": 32 runs, 15 of them Oddi's (each time of day, both search choices, set down on his strand or off it, the steerer staying, leaving, sleeping or fighting, across a save and load); "Oddi’s rescue and the opening’s reach (DE-85 to DE-88)": "Oddi dropped by a winded steerer above the tide line is rescued there, and limps home"; in the browser, played with the keys as the user did: "Oddi set down on his strand is rescued there: he limps home to the camp and talks" |
+
+**New in this pass** (`tests/unit/combat25.test.ts`, 7 tests): "the sounds of commitment": "a
+parry’s wind-up, a shield raised, a dodge landing and a whiff each send their sound", "each is a
+generated cue with its drawn twin and no caption (DF-80)"; "the frames that finish 2.5": the
+overbalance test above, "a raised shield walked is the block walk: forward, backing off or
+strafing", "speed builds through the walk start’s two frames and dies through the stop’s"; "an
+enemy’s second light": "a warrior, raider or huscarl follows a light that met its target with a
+second, told again", "an outlaw (the scavengers) never strings two". Updated: `water.test.ts` (the
+steerer's walk begins with the start's two frames and ends with the stop's; the run's lean is two
+frames and a run let go skids), `strandArt.test.ts` and `art.test.ts` (the new frame counts and
+atlas packing), `saves.test.ts` (golden 11 at schema 12), `missiles.test.ts` (above), and
+`sound.spec.ts` (four more buttons).
+
+**Golden saves** (`tests/unit/saves.test.ts`, 30 tests): goldens 1 to 10 load through the
+migration chain to version 12 and play on; golden 11 "loads, matches its hash and holds Chapter 1 as
+2.5 plays it, ended" and "is reproduced exactly by its scenario".
+
+## Stages 7 to 12 redone
+STAGES_BLOCK
+
+## Gate checks
+GATE_BLOCK
+
+## Timing
+Measured by the telemetry, the scripted player playing the whole chapter through the simulation's
+commands (`node src/tools/play/chapterRun.ts chapter-1 [human]`, seed chapter-1; the bot route is
+golden save 11). The clock starts at the waking.
+
+**The cause of the 82 minutes** (DF-85). The figure came from the shared tree mid-rework. Run at
+each commit of the rework, the human pace gives:
+
+| Commit | Chapter's end | The bow | The stores | The hull |
+|---|---|---|---|---|
+| 34d66b6, 512afaf | 82:16 | 22:09 | 23:48 (day 2 20:15) | 69:22 (day 6) |
+| 5e1df63, 5227ad5 | 61:33 | 19:35 | 20:47 | 49:05 (day 5) |
+| 291a6c3 and this pass | 61:33 | 19:55 | 21:07 | 49:05 (day 5) |
+| 291a6c3 with the bots' old path loop put back | **82:16** | 22:39 | 24:18 | 69:22 (day 6) |
+
+Between 512afaf and 5e1df63 the simulation changed in one place, a fight's cliff-edge avoidance
+taken out (DF-42), and the scripted players changed (`openingBot.ts`, `campBot.ts`). Once acceleration came in, they eased off the keys
+near *every* waypoint of their path, which is every tile, so they walked most of the way at a
+fraction of the walk; 5e1df63 lets them pass a waypoint where the path runs straight on at full
+speed. Putting the old loop back on 291a6c3 alone, with the simulation as it is now, gives 82:16 to the
+second, so the bots' loop is the whole cause. The 20 minutes are one
+whole game day: the slow walking pushed the stores past dark on day 2 and the hull's work, which
+waits on the tide and the day, to day 6. **It was a bot artefact, and it was already fixed.** The
+suspects in real play barely move the run: the chest reaches the camp 6 s later than in 2.4 (the
+carry eases up and down and can end winded), the stores are fetched 1:12 after the bow (2.4: 1:26,
+now in the shallows at any tide), the first rain is presentation only, and the bots' fights end
+when they did. Nothing was changed for timing, and nothing was padded or cut.
+
+| Mark | Bot pace | Human pace | 2.4 human | Book 10 target |
+|---|---|---|---|---|
+| seax | 0:05 | 0:05 | 0:05 | seaxBy 1:30 |
+| Hild cut free and safe | 0:39 / 0:40 | 0:39 / 0:40 | 0:37 | hildFreedBy 2:30 |
+| the chest at the camp | 1:13 | 1:19 | 1:13 | chestAtCampBy 4:00 |
+| the first fire | 2:19 | 2:31 | 2:22 | firstFireBy 5:00 |
+| the sail raised | 3:08 | 3:20 | 3:11 | shelterBy 6:00 |
+| Hild's leg tended | 4:11 | 4:31 | 4:19 | |
+| the dusk over (the scavengers left alone) | 10:42 | 10:42 | 10:42 | firstFight "about 12 minutes" |
+| the first night | 11:25 | 11:25 | 11:24 | |
+| Oddi / Runa / Bran | 13:05 / 14:50 / 17:39 | 13:20 / 15:24 / 18:23 | 13:12 / 15:10 / 17:23 | |
+| the first fight (the fold) | 16:55 | 17:39 | 17:16 | Book 1: inside 25 minutes |
+| the bow (the chest opened) | 19:10 | 19:55 | 18:50 | bowBy 20 to 30 |
+| the mast stores | 20:22 | 21:07 | 20:16 | |
+| the hull, rigging and oar | 48:05 to 48:41 | 49:05 to 49:41 | 51:12 to 51:52 | |
+| the fitting | 49:32 | 50:49 | 52:57 | |
+| the rites | 58:10 | 59:29 | 60:16 | |
+| the launch | 58:20 | 60:55 | 61:41 | |
+| **the chapter's end** | **58:38** | **61:33** (2:50 of it held by menus) | 62:19 | **45 to 60 minutes** |
+
+Stated honestly against Book 10:
+- **The chapter's length**: 58:38 at the bot's pace, inside the range; **61:33 at the human pace,
+  1:33 over it**, 46 s shorter than 2.4's. The bots walk straight to every goal and never search,
+  and about 28 minutes of the run is the wait from the stores (day 2) to the repairs (day 5) with the
+  bot awake through the nights, which a player who works the boat by hand and sleeps through the
+  nights cuts. My estimate for a new player stays about 50 to 65 minutes; the playtest will tell.
+- **The first minutes** are all inside their targets.
+- **The bow** comes at 19:10 and 19:55, a few seconds before bowBy's 20 to 30 (as in 2.4; Book 10's
+  limit of 30 holds).
+- **Combat inside 25 minutes**: the dusk fight is on offer at about 10 minutes and the bot's first
+  fight at the fold comes at 16:55 to 17:39. A player can still avoid every fight (Stage 12's flag).
+- This pass's own changes leave the run unchanged to the second (run again after them).
+
+## Art check
+ART_BLOCK
+
+## Balance
+- Every number is read from `content/balance.json` (Book 10 revision 2.6). This pass added no Book
+  10 row: the block walk's half stride follows Book 10's blockSpeed (half speed at the walk's
+  timing), the start and stop frames are read against Book 10's walk, and the second light uses
+  the existing chain windows, telegraph floors and flash lead. The frame splits (the overbalance
+  over the first 70% of a miss recovery, the start and stop by 40%, 80% and 50% of full speed) are
+  drawing splits like the dodge's and the parried's, not tuning (DF-83).
+- **Listening back** (`npm run audio:render -- combat25`; peak / RMS, linear; the ceiling is about
+  0.89). I cannot hear the renders; I measured them and compared them with the sounds beside them:
+
+  | Sound | Peak | RMS | Length | Centroid | Drawn twin |
+  |---|---|---|---|---|---|
+  | The parry's rasp (`SFX_PARRY_RASP`) | 0.111 | 0.0152 | 0.12 s | 3.3 kHz | the parry's wind-up |
+  | The block's creak (`SFX_BLOCK_CREAK`) | 0.160 | 0.0268 | 0.17 s | 1.0 kHz | the shield's raise |
+  | The dodge's landing (`SFX_DODGE_LAND`) | 0.233 | 0.0412 | 0.15 s | 1.4 kHz | the planted recovery |
+  | The whiff's scuff (`SFX_WHIFF_SCUFF`) | 0.200 | 0.0198 | 0.30 s | 3.8 kHz | the overbalance |
+
+  Two were changed after the first render: the landing came out at 0.711 peak (as loud as the
+  riposte; brought down to 0.233, with its sine thump the low end), and the creak sat on the block
+  thud's own centroid (705 Hz against 700; raised to about 1 kHz so a raise and a hit on the shield
+  are told apart). The rasp has no ring and sits well below the parry's ring (0.265); the
+  landing's centroid is far below the dodge's push-off (7.4 kHz), so the push-off and the landing
+  read as two sounds. The 2.5 combat sounds from the combat pass render as before.
+
+## Deviations
+DF-1 to DF-86 and DE-82 to DE-88 in `docs/decision-log.md` (the addendum's fold and its four
+building sections), each with its reason. None departs from Book 1's intent. This pass's are DF-83
+(the finishing frames and sounds), DF-84 (the second light), DF-85 (the timing's cause) and DF-86
+(golden save 11 at schema 12).
+
+## Known issues
+- **The chapter runs a little long at a human pace** (61:33 against 45 to 60) and **the bow comes
+  a few seconds early** (19:10 to 19:55 against 20 to 30). See **Timing**.
+- **A fight can still be avoided** in all of Chapter 1 (as at Stage 12).
+- **The second light is not seen in Chapter 1** (DF-84): no Chapter 1 enemy is a warrior, raider or
+  huscarl; it is tested, and plays from Stage 13.
+- **A seax's whiff is too short for an enemy to take in practice** (DF-29): an enemy light's
+  28-tick floor is longer than a seax light's miss recovery, so the AI takes heavier whiffs, a
+  mistimed parry, a dodge's recovery and exhaustion. The overbalance now shows every whiff.
+- **The steerer's sheet has no shield layer**, so the steerer's block walk (and block) draws the
+  guard with the arms; Svart and Ketill carry their shields in it.
+- **The browser rescue spec plays Oddi's rescue only**; Hild's is played in the browser by the
+  opening specs. Book 2 section 23 asks one browser rescue of each person; Bran's and Runa's are
+  covered headless by the 32-run scenario test, not yet in the browser.
+- **Cliff edges are not modelled** (DF-42): banks are walls in every zone.
+- **The first rain is presentation only** (DF-60); **no bracing frames** for the people on deck in
+  the storm (DF-62); **the skerry shows faintly between flashes**.
+- **The sound test page names combat sounds** on its buttons (it is a listening page, not play); to
+  be decided with the user whether DF-80's "any mode" covers it.
+- **Cut caption strings stay** in the strings table, never shown (DF-69).
+- **WebKit was not run locally**: its browser cannot be downloaded in this environment. CI runs it
+  and it blocks publishing.
+- **`docs/art/stage-06-rework`**: the eight `composite_wrecker_*` sheets added by commit 8a43138
+  during 2.5 are still there (they did not exist when the folder was frozen); keep or remove.
+- CI results: see the run for this commit.
+
+## Flagged for the user's review
+Every choice from DF-1 to DF-86 and DE-82 to DE-88 that wants the user's look, short and grouped.
+Left out: DF-80, DF-81 and DF-82, which the user decided. The earlier lists in
+[rework-2.4.md](rework-2.4.md) and [stage-12.md](stage-12.md) stand where 2.5 did not replace them.
+
+**Combat: the feel**
+- The punish: a blow on someone in any recovery or a broken guard gets the heavier hitstop and x1.5
+  poise damage (DF-1).
+- Exhausted until 30% of the bar (DF-3).
+- An enemy's patience: after it, it attacks or feints without an opening (DF-7).
+- The flash always 28 ticks before the blow, and the telegraph floors: an enemy seax light winds up
+  for 28 ticks against the steerer's 10 (DF-9); the lights a little slower than combat v2's (DF-10).
+- Healing is locked like any action; only a blow ends it (DF-25).
+- How long an opening lasts as an enemy sees it, so a seax whiff is rarely punished by the AI
+  (DF-29).
+- The second light: only after a first light that met its target (DF-84).
+
+**Combat: the look and the controls**
+- The wind-up's frames: three draw-back states, the held top (DF-38).
+- The new frames of this pass: walk start and stop, the run start's second frame (Hild and Runa
+  too), the block walk three ways and the overbalance (DF-83;
+  `docs/art/rework-2.5/finish/sheets/`).
+- The combat pass's new frames and clips (`docs/art/rework-2.5/combat/sheets/`).
+- Heal on the gamepad's command ring: let it go at its centre (DF-41).
+- Light pools built into sight; cliff edges not modelled (DF-42).
+
+**Text and the storm**
+- The audit's cuts, chiefly the healing, door and opening-action captions (DF-13).
+- The slot's name beside the hotbar, not above it (DF-57).
+- The Hag's Stone's fifth reserved accent, *The Cailleach's cold light* (DF-50).
+- The first rain's hours, 20:00 on day 1 to 04:00 on day 2, presentation only (DF-60).
+- No bracing frames for the people on deck in the storm (DF-62).
+- Where the mast stores land: carried by the swell to the stream's mouth, 4 tiles from under the
+  lashing (DF-53).
+
+**The rescues**
+- Oddi rescued wherever he is set down safe, and the scavengers taking the silver at that moment
+  (DE-85, the coordinator's ruling on DE-82's flag).
+- Interact goes to Hild first while she is in the net (DE-86).
+- Hild's walk home counted from the first fire's smoke (DE-83).
+
+**Timing and bookkeeping**
+- The chapter at 61:33 at a human pace, left as it is: the 82 minutes were a bot artefact (DF-85,
+  replacing DF-70).
+- Golden save 11 now holds schema 12, so its name no longer matches its schema (DF-86).
+- The playtest script (`docs/playtest/build-1.md`) was brought up to 2.5 in this pass, with a short
+  "Fighting" section.
+- The `composite_wrecker_*` sheets in `docs/art/stage-06-rework` (see **Known issues**).
+
+## Next stage ready
+No. This rework comes before the Build 1 gate, which now covers it: the user playtests Chapter 1
+as 2.5 plays it (`docs/playtest/build-1.md`), and Stage 13 (sea-map travel) waits for the user's
+word.

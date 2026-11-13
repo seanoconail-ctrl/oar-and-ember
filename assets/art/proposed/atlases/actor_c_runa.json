@@ -50,7 +50,7 @@
       "loop": true
     },
     "runstart": {
-      "frames": 1,
+      "frames": 2,
       "ticks": 4,
       "loop": false
     },
@@ -608,16 +608,32 @@
       0,
       1152
     ],
+    "runstart/s/1": [
+      32,
+      1152
+    ],
     "runstart/n/0": [
       0,
+      1200
+    ],
+    "runstart/n/1": [
+      32,
       1200
     ],
     "runstart/e/0": [
       0,
       1248
     ],
+    "runstart/e/1": [
+      32,
+      1248
+    ],
     "runstart/w/0": [
       0,
+      1296
+    ],
+    "runstart/w/1": [
+      32,
       1296
     ],
     "runstop/s/0": [

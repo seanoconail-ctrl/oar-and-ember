@@ -1,7 +1,8 @@
 /**
  * Stage 3 acceptance check 2: save under 200 ms; reload reproduces the hash; the migration chain.
- * Golden saves 1 to 10 are frozen and load through it; golden save 11 (design addendum 2.4: Chapter
- * 1 played to its end by the chapter run) is reproduced by its scenario (decision DE-80).
+ * Golden saves 1 to 10 are frozen and load through it; golden save 11 (Chapter 1 played to its end
+ * by the chapter run; DE-80), regenerated at schema 12 for design addendum 2.5 (DF-86), is
+ * reproduced by its scenario.
  */
 import { describe, expect, it } from 'vitest';
 import { parseOpeningBalance } from '../../src/content/openingBalance.ts';
@@ -592,13 +593,14 @@ describe('golden save 10 (schema 10, frozen)', () => {
   });
 });
 
-describe('golden save 11 (schema 11): the chapter-end save of design addendum 2.4', () => {
+describe('golden save 11 (schema 12): the chapter-end save, regenerated for design addendum 2.5', () => {
   const golden = JSON.parse(repoFile(GOLDEN_11)) as SaveFile;
 
-  it('loads, matches its hash and holds Chapter 1 as 2.4 plays it, ended', () => {
+  it('loads, matches its hash and holds Chapter 1 as 2.5 plays it, ended', () => {
     const { state, migratedFrom } = readSave(golden);
-    // Design addendum 2.5 (version 12) migrates it; it is regenerated when 2.5 is complete.
-    expect(migratedFrom).toBe(11);
+    // Regenerated once 2.5 was complete (DF-46, DF-86): written at version 12, no migration.
+    expect(golden.header.schemaVersion).toBe(12);
+    expect(migratedFrom).toBeNull();
     expect(state.version).toBe(12);
     expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
     expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
@@ -636,7 +638,7 @@ describe('golden save 11 (schema 11): the chapter-end save of design addendum 2.
     expect(state.knowledge.places['SITE_CARRICK']).toBe('RUMOURED');
     for (const mark of ['first_combat', 'bow', 'stores', 'chapter_end'])
       expect(state.telemetry.marks[mark], mark).toBeDefined();
-    // The migration to 12 (design addendum 2.5): every fighter at rest in 2.5's terms.
+    // Saved at the chapter's end (design addendum 2.5): every fighter at rest in 2.5's terms.
     const fighters = [
       state.onFoot?.player.fight,
       ...Object.values(state.onFoot?.actors ?? {}).map((a) => a.fight?.f),

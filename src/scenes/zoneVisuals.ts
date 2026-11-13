@@ -244,6 +244,11 @@ export class ZoneVisuals {
   #runStartUntil = -1;
   #runStopUntil = -1;
   #wasRunning = false;
+  /** Design addendum 2.5: the tick a walk began building speed, and the tick a stop began. */
+  #walkStartFrom = -1;
+  #stopFrom = -1;
+  #settleFrom = -1;
+  #wasStill = true;
   #looseUntil = -1;
   #shoveFrom = -1;
   #wasAiming = false;
@@ -803,6 +808,31 @@ export class ZoneVisuals {
     if (!running && this.#wasRunning && !p.moving && a?.['runstop'] !== undefined)
       this.#runStopUntil = t + (a['runstop'].frames * a['runstop'].ticks) / 60;
     this.#wasRunning = running;
+    // Design addendum 2.5 (Book 7 section 01; Book 10 "Movement and acceleration"; DF-83): speed
+    // builds and dies, so a walk begins with its start's two frames, and letting go of the keys
+    // slides into the stop's two (the run's skid when it was a run).
+    const wanting = Math.hypot(p.intent.x, p.intent.y) > 1e-6;
+    if (p.moving && this.#wasStill && wanting) this.#walkStartFrom = input.tick;
+    if (wanting) {
+      this.#stopFrom = -1;
+      this.#settleFrom = -1;
+    } else if (p.moving && this.#stopFrom < 0) this.#stopFrom = input.tick;
+    // Once still, the stop's last frame holds for its ticks, then the idles take over.
+    if (!p.moving && !wanting && this.#stopFrom >= 0) {
+      if (this.#settleFrom < 0) this.#settleFrom = input.tick;
+      if (input.tick - this.#settleFrom >= (a?.['walkstop']?.ticks ?? 0)) {
+        this.#stopFrom = -1;
+        this.#settleFrom = -1;
+      }
+    }
+    this.#wasStill = !p.moving;
+    const sliding = p.moving && !wanting;
+    const startFrame = (name: string, from: number): PersonAnim | null => {
+      const s0 = a?.[name];
+      if (s0 === undefined || from < 0) return null;
+      const k = Math.floor((input.tick - from) / s0.ticks);
+      return k < s0.frames ? { state: name, frame: k } : null;
+    };
     const aiming = p.aim !== null;
     if (!aiming && this.#wasAiming && a?.['draw'] !== undefined)
       this.#looseUntil = t + (a['draw'].ticks * 2) / 60;
@@ -845,10 +875,27 @@ export class ZoneVisuals {
         if (frame !== this.#frame && frame % half === 0)
           this.#footfall(p, frame / half, gait, level);
         this.#frame = frame;
+        const runStart = a?.['runstart'];
+        const walkStart = gait === 'walk' ? startFrame('walkstart', this.#walkStartFrom) : null;
         this.#anim =
-          gait === 'run' && t < this.#runStartUntil
-            ? { state: 'runstart', frame: 0 }
-            : { state: gait, frame };
+          sliding && p.motion === 'run' && a?.['runstop'] !== undefined
+            ? { state: 'runstop', frame: 0 }
+            : sliding && p.motion === 'walk' && a?.['walkstop'] !== undefined
+              ? { state: 'walkstop', frame: 0 }
+              : gait === 'run' && t < this.#runStartUntil && runStart !== undefined
+                ? {
+                    state: 'runstart',
+                    frame: Math.min(
+                      runStart.frames - 1,
+                      Math.max(
+                        0,
+                        runStart.frames -
+                          1 -
+                          Math.floor(((this.#runStartUntil - t) * 60) / runStart.ticks),
+                      ),
+                    ),
+                  }
+                : (walkStart ?? { state: gait, frame });
       } else this.#anim = { state: gait, frame: 0 };
     } else {
       this.#gait = null;
@@ -858,6 +905,9 @@ export class ZoneVisuals {
         const left = (this.#runStopUntil - t) * 60;
         const frame = Math.min(stop.frames - 1, stop.frames - 1 - Math.floor(left / stop.ticks));
         this.#anim = { state: 'runstop', frame: Math.max(0, frame) };
+      } else if (this.#stopFrom >= 0 && a?.['walkstop'] !== undefined) {
+        // Settled out of a walk: the stop's second frame, the back foot brought up beside.
+        this.#anim = { state: 'walkstop', frame: a['walkstop'].frames - 1 };
       } else if (input.onFoot.carrying !== null) {
         this.#anim = { state: 'carry', frame: 0 };
       } else this.#anim = this.#idle(p, input.anims, input.steererSheet);

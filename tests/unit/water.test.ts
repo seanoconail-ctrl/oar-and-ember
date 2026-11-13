@@ -335,7 +335,13 @@ describe('Hild in the opening (Book 1 section 15; Book 9)', () => {
 
 describe('the steerer’s gait in the game (Book 7 section 06)', () => {
   /** Walks or runs the steerer north from where they wake, as the game does, frame by frame. */
-  function gaitFrames(run: boolean): { states: Set<string>; frames: Set<number>; steps: number } {
+  function gaitFrames(run: boolean): {
+    states: Set<string>;
+    frames: Set<number>;
+    steps: number;
+    order: string[];
+    stop: string[];
+  } {
     const world = campaign();
     const sim = createSimulation(b, world, land);
     const onFoot = world.onFoot;
@@ -356,21 +362,39 @@ describe('the steerer’s gait in the game (Book 7 section 06)', () => {
     });
     for (let i = 0; i < 10; i++) visuals.update(look(i));
     sim.submit({ type: 'MOVE', x: 0, y: -1, run, sneak: false });
+    const order: string[] = [];
     for (let i = 10; i < 10 + 60 * 2; i++) {
       sim.step();
       visuals.update(look(i));
       const anim = visuals.view(look(i)).steerer;
       if (anim !== null && onFoot.player.moving) {
         states.add(anim.state);
+        const key = `${anim.state}:${anim.frame}`;
+        if (anim.state !== order.at(-1)?.split(':')[0] || !order.includes(key)) order.push(key);
         if (anim.state === (run ? 'run' : 'walk')) frames.add(anim.frame);
       }
     }
-    return { states, frames, steps };
+    // The keys let go: the slide to a stop and the settle (design addendum 2.5, DF-83).
+    sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+    const stop: string[] = [];
+    for (let i = 10 + 60 * 2; i < 10 + 60 * 3; i++) {
+      sim.step();
+      visuals.update(look(i));
+      const anim = visuals.view(look(i)).steerer;
+      const key = anim === null ? 'none' : `${anim.state}:${anim.frame}`;
+      if (stop.at(-1) !== key) stop.push(key);
+    }
+    return { states, frames, steps, order, stop };
   }
 
   it('steps through every walk frame while walking, with footfalls', () => {
     const walk = gaitFrames(false);
-    expect(walk.states).toEqual(new Set(['walk']));
+    // Speed builds (design addendum 2.5; Book 7 section 01; DF-83): the walk start's two frames,
+    // then the cycle; let go, the stop's two frames as it slides and settles, then the idle.
+    expect(walk.states).toEqual(new Set(['walkstart', 'walk']));
+    expect(walk.order.slice(0, 2)).toEqual(['walkstart:0', 'walkstart:1']);
+    expect(walk.stop.slice(0, 2)).toEqual(['walkstop:0', 'walkstop:1']);
+    expect(walk.stop.at(-1)?.startsWith('idle')).toBe(true);
     expect(walk.frames.size).toBe(anims.get('actor_p_steerer_a')?.['walk']?.frames);
     expect(walk.steps).toBeGreaterThan(2);
   });
@@ -378,6 +402,9 @@ describe('the steerer’s gait in the game (Book 7 section 06)', () => {
   it('steps through every run frame while running, after the lean into it', () => {
     const run = gaitFrames(true);
     expect(run.states.has('run')).toBe(true);
+    // The lean into it is two frames now (design addendum 2.5, DF-83), and a run let go skids.
+    expect(run.order.slice(0, 2)).toEqual(['runstart:0', 'runstart:1']);
+    expect(run.stop[0]).toBe('runstop:0');
     expect(run.frames.size).toBe(anims.get('actor_p_steerer_a')?.['run']?.frames);
     expect(run.steps).toBeGreaterThan(4);
   });

@@ -386,4 +386,148 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
 ];
 
-export const COMBAT2_SOUNDS: readonly SoundDef[] = [...COMBAT24_SOUNDS, ...COMBAT25_SOUNDS];
+/**
+ * Book 11 section 07, "Commitment and stamina" (design addendum 2.5; decision DF-83): the parry's
+ * wind-up, the block raised, the dodge's landing and a missed attack's overbalance. Each has its
+ * drawn twin (the parry's guard coming up, the shield's raise, the dodge's planted recovery, the
+ * overbalance frames); none is ever captioned in play (DF-80).
+ */
+const COMMITMENT_SOUNDS: readonly SoundDef[] = [
+  {
+    id: 'SFX_PARRY_RASP',
+    captionKey: 'ui.sound.sfx.parry_rasp',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2.2, 'effects', pan);
+      // The guard coming up: a short dry rasp of iron along wood and leather, rising, with no
+      // ring (the parry's ring is its own sound, and comes only on a parry).
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        1500,
+        3.5,
+        [
+          [0, 0],
+          [0.02, 0.32],
+          [0.07, 0.22],
+          [0.11, 0],
+        ],
+        3400,
+      );
+      // The grip tightening: a small dull knock at the top of the rise.
+      noiseHit(e, at + 0.09, to, 'lowpass', 700, 1, [
+        [0, 0],
+        [0.004, 0.2],
+        [0.04, 0],
+      ]);
+      return 0.15;
+    },
+  },
+  {
+    id: 'SFX_BLOCK_CREAK',
+    captionKey: 'ui.sound.sfx.block_creak',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2.6, 'effects', pan);
+      // A shield raised: the soft creak of its leather grip and strap taking the weight, three
+      // narrow rubs falling a little in pitch, then the board settling against the arm.
+      for (let k = 0; k < 3; k++)
+        noiseHit(e, at + k * 0.03, to, 'bandpass', 1150 - k * 110, 14, [
+          [0, 0],
+          [0.012, 0.26 - k * 0.04],
+          [0.05, 0],
+        ]);
+      tone(
+        e,
+        at + 0.08,
+        to,
+        'triangle',
+        [
+          [0, 180],
+          [0.08, 140],
+        ],
+        [
+          [0, 0],
+          [0.006, 0.12],
+          [0.1, 0],
+        ],
+      );
+      return 0.2;
+    },
+  },
+  {
+    id: 'SFX_DODGE_LAND',
+    captionKey: 'ui.sound.sfx.dodge_land',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 1.8, 'effects', pan);
+      // The dash's heavy landing: both feet planting, a low thump and a grind of grit under them.
+      tone(
+        e,
+        at,
+        to,
+        'sine',
+        [
+          [0, 110],
+          [0.1, 55],
+        ],
+        [
+          [0, 0],
+          [0.004, 0.2],
+          [0.14, 0],
+        ],
+      );
+      noiseHit(e, at, to, 'lowpass', 600, 0.8, [
+        [0, 0],
+        [0.005, 0.3],
+        [0.08, 0],
+      ]);
+      noiseHit(e, at + 0.05, to, 'bandpass', 1000, 1.2, [
+        [0, 0],
+        [0.02, 0.12],
+        [0.16, 0],
+      ]);
+      return 0.25;
+    },
+  },
+  {
+    id: 'SFX_WHIFF_SCUFF',
+    captionKey: 'ui.sound.sfx.whiff_scuff',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      const to = boosted(e, 2.2, 'effects', pan);
+      // A swing that meets nothing: the whoosh carries on past where the body should have been,
+      // falling, then the front foot scuffs and slides as the weight goes over it.
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        900,
+        1.1,
+        [
+          [0, 0.18],
+          [0.1, 0.1],
+          [0.16, 0],
+        ],
+        380,
+      );
+      noiseHit(e, at + 0.12, to, 'bandpass', 1250, 0.9, [
+        [0, 0],
+        [0.008, 0.42],
+        [0.05, 0.18],
+        [0.2, 0],
+      ]);
+      breath(e, at + 0.16, to, 0.12, 0.12, 900);
+      return 0.35;
+    },
+  },
+];
+
+export const COMBAT2_SOUNDS: readonly SoundDef[] = [
+  ...COMBAT24_SOUNDS,
+  ...COMBAT25_SOUNDS,
+  ...COMMITMENT_SOUNDS,
+];
