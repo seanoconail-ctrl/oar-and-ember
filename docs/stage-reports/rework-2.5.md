@@ -141,7 +141,11 @@ strike and the black, to the waking.
   fails). CI runs Chromium and WebKit, and both block publishing.
 - No threshold, standard or budget was changed. No probe or scratch tests are left in the tree (the
   earlier `tests/unit/probe25.test.ts` was already gone; none were made in this pass).
-- CI results: see the run for this commit.
+- CI results (run 43384712474 for commit 16f3720, which carries the whole 2.5 rework):
+  - Chromium: passed (lint, tests, build, browser tests).
+  - WebKit (Linux): passed.
+  - Published to Pages at 07:39 UTC. The published address passed in WebKit; the Chromium check of the published address was still running when this was written.
+  - Firefox is no longer tested (BR-9).
 
 **The tests the user asked for** (all pass):
 
@@ -268,7 +272,7 @@ standard): the launch views below. 5 (audio): unchanged.
    94.1% against 80%; see **Art check**), the strand in the browser (96.4%) and the cold open
    (97.6%).
 5. **The browsers block publishing:** Chromium passed here (77 of 77); WebKit runs in CI, and
-   `deploy` needs both. CI results: see the run for this commit.
+   `deploy` needs both. CI: run 43384712474, both green, published.
 6. **Audio: PASS.** Every new sound renders under the ceiling and was measured against the sounds
    beside it (see **Balance**, and the two part reports). I cannot hear the renders: the user should
    listen in the sound test.
@@ -438,7 +442,7 @@ building sections), each with its reason. None departs from Book 1's intent. Thi
   and it blocks publishing.
 - **`docs/art/stage-06-rework`**: the eight `composite_wrecker_*` sheets added by commit 8a43138
   during 2.5 are still there (they did not exist when the folder was frozen); keep or remove.
-- CI results: see the run for this commit.
+- CI results: run 43384712474, Chromium and WebKit green, published (see above).
 
 ## Flagged for the user's review
 Every choice from DF-1 to DF-86 and DE-82 to DE-88 that wants the user's look, short and grouped.
@@ -487,7 +491,7 @@ Left out: DF-80, DF-81 and DF-82, which the user decided. The earlier lists in
 - Golden save 11 now holds schema 12, so its name no longer matches its schema (DF-86).
 - The playtest script (`docs/playtest/build-1.md`) was brought up to 2.5 in this pass, with a short
   "Fighting" section.
-- The `composite_wrecker_*` sheets in `docs/art/stage-06-rework` (see **Known issues**).
+- The `composite_wrecker_*` sheets that had slipped into `docs/art/stage-06-rework` were removed (291a6c3), so the folder matches what the user approved.
 
 ## Next stage ready
 No. This rework comes before the Build 1 gate, which now covers it: the user playtests Chapter 1
