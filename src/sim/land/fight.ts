@@ -4289,9 +4289,8 @@ function duskAway(world: WorldState, ctx: FightContext, person: Id): boolean {
   const enc = duskEncounter(ctx);
   if (enc === undefined || world.facts['ch1.dusk'] !== undefined) return false;
   if (!enc.members.some((m) => m.person === person)) return false;
-  const k = ctx.ai.dusk;
-  const day = world.calendar.day;
-  return day < k.day || (day === k.day && world.calendar.minuteOfDay < darkAt(world, ctx));
+  // From Book 10's time on its day until dark (before it they are with the fold's band).
+  return duskOpen(world, ctx);
 }
 
 /**

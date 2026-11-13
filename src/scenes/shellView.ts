@@ -8,6 +8,7 @@
 import audioJson from '../../content/audio.json';
 import balanceJson from '../../content/balance.json';
 import { AudioRouter } from '../audio/router.ts';
+import { auditInfo } from '../ui/textAudit.ts';
 import { WebAudioEngine } from '../audio/webAudio.ts';
 import { parseTimeBalance } from '../content/balance.ts';
 import { parseAudioTable } from '../content/registry.ts';
@@ -79,6 +80,8 @@ export function showShellView(
   });
   WebAudioEngine.prepare();
   const audioTable = parseAudioTable(audioJson);
+  /** Each cue's caption key, for the text audit (no combat sound is captioned, DF-80). */
+  const audioCues = new Map(audioTable.cues.map((c) => [c.id, c.captionKey ?? '']));
   const engine = new WebAudioEngine(audioTable.cues);
   const audio = new AudioRouter(audioTable, strings, engine);
   const overlay = createOverlay(document);
@@ -172,7 +175,11 @@ export function showShellView(
       else notice = '';
     }
     if (result.orders.length > 0) lastOrder = result.orders.at(-1) ?? null;
-    const captions = audio.update(engine.now);
+    // No combat sound is ever captioned, in any view (design addendum 2.5; DF-80).
+    const captions = audio.update(engine.now).filter((c) => {
+      const v = auditInfo(audioCues.get(c.cue) ?? '');
+      return v.show || v.why !== 'COMBAT';
+    });
 
     const open = session.menus.open;
     overlay.region('menu').textContent =

@@ -86,6 +86,30 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       piece_head: 1,
       piece_arm: 1,
       piece_leg: 1,
+      // Design addendum 2.5 (Book 7 section 01; DF-1 to DF-9, DF-21): the wind-up draw-backs by
+      // weight, the parry's wind-up, the block's raise, the guard broken by an empty bar, the
+      // exhausted idle and walk, the dodge's recovery, the stance walk, the flinch, the knockdown,
+      // the sidestep, the archer's hop, binding and eating, and the three death falls.
+      windup_l: 2,
+      windup_h: 2,
+      windup_c: 2,
+      parry_windup: 2,
+      block_raise: 2,
+      guard_break: 4,
+      exhausted: 4,
+      exhausted_walk: 6,
+      dodge_recover: 2,
+      backoff: 6,
+      strafe: 6,
+      flinch: 2,
+      knockdown: 3,
+      sidestep: 3,
+      hop: 3,
+      bind: 6,
+      eat_ration: 4,
+      fall_fwd: 2,
+      fall_back: 2,
+      fall_crumple: 2,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);
