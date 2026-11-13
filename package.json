@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "test": "vitest run && OE_BUDGET=1 vitest run tests/unit/standard.test.ts -t \"Book 2 budget\"",
     "test:watch": "vitest",
-    "test:browser": "playwright test",
+    "test:browser": "node src/tools/test/browser.ts",
     "lint": "eslint . && prettier --check . && node src/tools/content/lint.ts && node src/tools/art/lint.ts",
     "format": "prettier --write .",
     "art:check": "node src/tools/art/render-title-check.ts && node src/tools/art/render-check.ts",

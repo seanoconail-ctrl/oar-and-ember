@@ -45,7 +45,7 @@ test.describe('the Book 7 standard on Wreck Strand', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'measured in Chromium');
   test.setTimeout(120_000);
 
-  test(`with the camera still, at least ${MOTION_THRESHOLD * 100}% of the screen keeps moving`, async ({
+  test(`with the camera still, at least ${MOTION_THRESHOLD * 100}% of the screen keeps moving @budget`, async ({
     page,
   }) => {
     // The full effects, as a capable machine shows them (a slow one steps them down, AP-16).

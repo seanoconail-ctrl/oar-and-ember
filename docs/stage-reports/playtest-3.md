@@ -124,7 +124,11 @@ Also in the story folder: the shelter's three stages (`shelter-stages.gif`, 1.67
   3.83 ms. No threshold, standard or budget was changed.
 - WebKit was not run here: its browser cannot be downloaded in this environment. CI runs Chromium
   and WebKit, and both block publishing. Firefox is not tested (BR-9).
-- **CI results: see the run for this commit.**
+- **CI on GitHub, run 43460340385 (commit ab99f7d): WebKit passed; Chromium 93 of 95** — the two
+  frame-budget measures read 6.05 to 7.18 ms beside other browsers on the two-core runner (2.5's
+  published build failed the same two checks the same way). They are now timed alone (DG-95): 4.55 ms
+  (strand) and 2.77 ms (cold open) here, limit unchanged. **The CI run for the DG-95 commit: see
+  the end of this report.**
 - No probe or scratch tests are left in the tree.
 
 ### Test counts
@@ -381,9 +385,10 @@ first-frame stall) and DG-94 (golden save 11 at schema 13; fight minds at rest a
   the playtest will tell.
 - **The shelter's margin**: begun after about 09:00 by every slow way and with no help, the finishing
   runs into the next morning by about half an hour of work (DG-90). Low.
-- **The frame budget in the cold open is near its limit under load** (5.58 ms in the full parallel
-  run, 3.13 ms alone); the strand's 2.5 s reading is over 5.5 on this machine for 2.5 as well. CI's
-  Chromium run is the measure.
+- **The frame budget under load**: in the full parallel run the browser's budget measures read over
+  5.5 ms (here 5.58; on CI 6.05 to 7.18, as 2.5's published build did). They are now timed alone
+  (DG-95). Alone, the strand reads 3.8 to 6.0 ms across this pass's runs on this machine, so the
+  strand is the one closest to its limit; the cold open reads about 2.8 ms.
 - **The budget unit test** (`standard.test.ts`) failed once straight after the suite on a loaded
   machine and passed three times alone.
 - **The spared remembered after the launch** (Stage 13's hooks), **no `world` stream**, **dropped
@@ -453,6 +458,7 @@ where the third playtest did not replace them.
   (DG-91), and sleeps through a night of waiting (DG-92).
 - The autosave screenshots read back without stalling the frame (DG-93).
 - Golden save 11 at schema 13 (DG-94).
+- The browser's two frame-budget measures timed alone after the parallel run, limit unchanged (DG-95).
 
 ## Next stage ready
 No. The third playtest's build comes before the Build 1 gate, which now covers it: the user

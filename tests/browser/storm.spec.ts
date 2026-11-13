@@ -98,7 +98,7 @@ test('the storm: lightning and thunder, the sway, the pitch and the roll, rain a
 test.describe('the storm against the Book 7 standard', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'measured in Chromium');
 
-  test(`with the camera still, ${MOTION_THRESHOLD * 100}% of the cold open keeps moving, within the frame budget`, async ({
+  test(`with the camera still, ${MOTION_THRESHOLD * 100}% of the cold open keeps moving, within the frame budget @budget`, async ({
     page,
   }) => {
     test.setTimeout(120_000);
