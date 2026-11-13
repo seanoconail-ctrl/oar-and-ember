@@ -14,6 +14,10 @@ views by `npm run capture -- playtest-4-world-before`, run once before the rewor
 
 | View | Moving cells |
 |---|---|
+| broch-after-s0-day | 87.2% |
+| broch-after-s0-night | 91.7% |
+| broch-after-s1-day | 85.8% |
+| broch-after-s1-night | 89.8% |
 | bed-s0-day | 84.5% |
 | bed-s0-night | 92.9% |
 | bed-s1-day | 86.3% |
