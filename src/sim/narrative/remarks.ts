@@ -91,6 +91,8 @@ export function bodyRemarkUses(world: WorldState, ctx: RemarksContext, map: Zone
     const a = onFoot.actors[id];
     if (a === undefined || !speakable(world, ctx, id) || remarkFor(world, ctx, id) === null)
       continue;
+    // An arrow still in the body is pulled first (Interact takes it); the word comes after.
+    if (onFoot.stuck.some((s) => s.target === id && !s.broken)) continue;
     out.push({
       use: { kind: 'OPENING', site: 'remark', target: id },
       x: a.x,
