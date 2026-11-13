@@ -127,8 +127,8 @@ Also in the story folder: the shelter's three stages (`shelter-stages.gif`, 1.67
 - **CI on GitHub, run 43460340385 (commit ab99f7d): WebKit passed; Chromium 93 of 95** — the two
   frame-budget measures read 6.05 to 7.18 ms beside other browsers on the two-core runner (2.5's
   published build failed the same two checks the same way). They are now timed alone (DG-95): 4.55 ms
-  (strand) and 2.77 ms (cold open) here, limit unchanged. **The CI run for the DG-95 commit: see
-  the end of this report.**
+  (strand) and 2.77 ms (cold open) here, limit unchanged. The later runs are under **CI results** at the
+  end of this report: the last, run 43470967986, is green in both browsers and published.
 - No probe or scratch tests are left in the tree.
 
 ### Test counts
@@ -231,8 +231,8 @@ the intro's skip and the developer menu (DG-15 to DG-21, DG-75 to DG-89); golden
    93.9% against 80%; see **Art check**), the strand in the browser (96.2% to 96.4%) and the cold
    open (97.2% to 97.6%).
 5. **The browsers block publishing:** Chromium passed here (94 of 95 in the full run, the 95th, the
-   cold open's budget under load, passed alone); WebKit runs in CI and `deploy` needs both. **CI
-   results: see the run for this commit.**
+   cold open's budget under load, passed alone); WebKit runs in CI and `deploy` needs both. **CI:
+   run 43470967986 green in Chromium and WebKit, published (see **CI results**).**
 6. **Audio: PASS.** Every new sound of the three parts renders under the ceiling (their reports;
    see **Balance**). This pass adds no sound. I cannot hear the renders: the user should listen in
    the sound test.
@@ -459,6 +459,21 @@ where the third playtest did not replace them.
 - The autosave screenshots read back without stalling the frame (DG-93).
 - Golden save 11 at schema 13 (DG-94).
 - The browser's two frame-budget measures timed alone after the parallel run, limit unchanged (DG-95).
+
+## CI results
+
+- **Run 43460340385 (commit ab99f7d):** WebKit passed. Chromium passed lint, `npm test` and the
+  build, and 93 of 95 browser tests: the strand's and the cold open's frame-budget measures read 6.05
+  to 7.18 ms beside other browsers on the two-core runner (2.5's published build failed the same two
+  checks after publishing, at 6.88 ms). Not published.
+- **Run 43464940118 (commit e8c1137, DG-95, the budget measures timed alone):** Chromium and WebKit
+  passed; published to Pages at 16:58 UTC. The published address passed in Chromium; in WebKit 87
+  passed and the art spec's "front" scene was stopped by Playwright's default 30 s limit inside its
+  own 60 s cold-start wait. A re-run of that job passed. The limit is fixed by DG-96.
+- **Run 43470967986 (commit 6b1ab87, DG-96): all green.** Chromium (lint, `npm test`, build, every
+  browser test, then the two budget measures alone) and WebKit passed; **published to Pages at 17:37
+  UTC**; the smoke tests of the published address passed in Chromium and WebKit. Firefox is not
+  tested (BR-9).
 
 ## Next stage ready
 No. The third playtest's build comes before the Build 1 gate, which now covers it: the user
