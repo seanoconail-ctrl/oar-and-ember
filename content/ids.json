@@ -2806,6 +2806,62 @@
       "note": "Combat v2 (design addendum 2.4; decisions DE-5, DE-7, DE-9, DE-10)."
     },
     {
+      "id": "SFX_TELL_LIGHT",
+      "ref": "a sharp breath (a light attack's tell)",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_TELL_SCRAPE",
+      "ref": "steel scraping (a bladed heavy's tell)",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_TELL_CREAK",
+      "ref": "a grunt and the haft's creak (an axe or club heavy's tell)",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_TELL_STEERER",
+      "ref": "the steerer's quiet breath at a press",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_EXHAUSTED_BREATH",
+      "ref": "hard breathing, exhausted",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_SIDEARM",
+      "ref": "a seax drawn from its sheath",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
+      "id": "SFX_SHIELD_SPLIT",
+      "ref": "a shield splitting",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Design addendum 2.5 (decisions DF-3, DF-8, DF-9, DF-21; DF-48)."
+    },
+    {
       "id": "SFX_BACKSTAB",
       "ref": "short struggle, muffled",
       "book": 11,

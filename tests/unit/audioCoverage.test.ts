@@ -42,6 +42,8 @@ describe('audio coverage (Book 11 section 12; every stage, Book 3)', () => {
     for (const [event, id] of Object.entries(table?.events ?? {})) {
       const cue = cues.get(id);
       expect(cue, event).toBeDefined();
+      // Design addendum 2.5 (DF-80): a combat sound has its drawn twin instead of a caption.
+      if (cue?.drawn !== undefined) continue;
       expect(cue?.captionKey, event).toBeDefined();
       expect(content.strings.has(cue?.captionKey ?? ''), event).toBe(true);
     }

@@ -2866,33 +2866,26 @@
     "text": "A scuff of feet, a breath drawn",
     "tags": ["INFO"]
   },
-  "caption.sfx.tell_light": {
-    "text": "A sharp breath",
-    "tags": ["INFO"]
+  "ui.sound.sfx.tell_light": {
+    "text": "Tell: a sharp breath"
   },
-  "caption.sfx.tell_scrape": {
-    "text": "Steel scraping",
-    "tags": ["INFO"]
+  "ui.sound.sfx.tell_scrape": {
+    "text": "Tell: steel scraping"
   },
-  "caption.sfx.tell_creak": {
-    "text": "A grunt and a creak of wood",
-    "tags": ["INFO"]
+  "ui.sound.sfx.tell_creak": {
+    "text": "Tell: a grunt and a creak"
   },
-  "caption.sfx.tell_steerer": {
-    "text": "A breath",
-    "tags": ["INFO"]
+  "ui.sound.sfx.tell_steerer": {
+    "text": "The steerer's breath at a press"
   },
-  "caption.sfx.exhausted_breath": {
-    "text": "Hard breathing",
-    "tags": ["INFO"]
+  "ui.sound.sfx.exhausted_breath": {
+    "text": "Hard breathing"
   },
-  "caption.sfx.sidearm": {
-    "text": "A blade drawn",
-    "tags": ["INFO"]
+  "ui.sound.sfx.sidearm": {
+    "text": "A seax drawn"
   },
-  "caption.sfx.shield_split": {
-    "text": "A shield splits",
-    "tags": ["INFO"]
+  "ui.sound.sfx.shield_split": {
+    "text": "A shield splitting"
   },
   "caption.sfx.backstab": {
     "text": "A short, muffled struggle",

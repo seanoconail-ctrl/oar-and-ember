@@ -242,7 +242,7 @@ const COMBAT24_SOUNDS: readonly SoundDef[] = [
 const COMBAT25_SOUNDS: readonly SoundDef[] = [
   {
     id: 'SFX_TELL_LIGHT',
-    captionKey: 'caption.sfx.tell_light',
+    captionKey: 'ui.sound.sfx.tell_light',
     bus: 'tells',
     play: (e, at, pan, opts) => {
       const to = boosted(e, 1.5, 'tells', pan);
@@ -267,7 +267,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_TELL_SCRAPE',
-    captionKey: 'caption.sfx.tell_scrape',
+    captionKey: 'ui.sound.sfx.tell_scrape',
     bus: 'tells',
     play: (e, at, pan) => {
       const to = boosted(e, 1.6, 'tells', pan);
@@ -293,7 +293,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_TELL_CREAK',
-    captionKey: 'caption.sfx.tell_creak',
+    captionKey: 'ui.sound.sfx.tell_creak',
     bus: 'tells',
     play: (e, at, pan, opts) => {
       const to = boosted(e, 1.8, 'tells', pan);
@@ -310,7 +310,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_TELL_STEERER',
-    captionKey: 'caption.sfx.tell_steerer',
+    captionKey: 'ui.sound.sfx.tell_steerer',
     bus: 'effects',
     play: (e, at, pan) => {
       // The steerer's own tell: a quiet breath, no voice (Book 11 section 08).
@@ -321,7 +321,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_EXHAUSTED_BREATH',
-    captionKey: 'caption.sfx.exhausted_breath',
+    captionKey: 'ui.sound.sfx.exhausted_breath',
     bus: 'effects',
     play: (e, at, pan) => {
       // Blowing hard (Book 10 exhaustedLook): three ragged breaths in and out, slowing.
@@ -336,7 +336,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_SIDEARM',
-    captionKey: 'caption.sfx.sidearm',
+    captionKey: 'ui.sound.sfx.sidearm',
     bus: 'effects',
     play: (e, at, pan) => {
       // A seax drawn from its sheath: leather and a short steel slide.
@@ -365,7 +365,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
   },
   {
     id: 'SFX_SHIELD_SPLIT',
-    captionKey: 'caption.sfx.shield_split',
+    captionKey: 'ui.sound.sfx.shield_split',
     bus: 'effects',
     play: (e, at, pan) => {
       // Boards splitting: a dry crack and the halves clattering down.

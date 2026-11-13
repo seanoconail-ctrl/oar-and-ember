@@ -277,6 +277,8 @@ const cueCheck = object(
     zones: arrayOf(ref('zone')),
     phases: arrayOf(oneOf(['dawn', 'day', 'dusk', 'night'] as const)),
     captionKey: ref('string'),
+    /** Design addendum 2.5 (DF-80): a combat sound's drawn twin, in place of a caption. */
+    drawn: text,
     temporary: bool,
     piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship'] as const),
     layers: recordOf(text, bool),
@@ -290,6 +292,7 @@ const cueCheck = object(
     'zones',
     'phases',
     'captionKey',
+    'drawn',
     'piece',
     'layers',
   ],
@@ -1367,7 +1370,9 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     if (cue.kind === 'stinger') need('lengthBeats', 'a length');
     if (cue.kind === 'sfx') need('bus', 'a bus');
     // Book 11 section 09: a caption for every gameplay-relevant sound.
-    if (cue.kind !== 'ambience') need('captionKey', 'a caption (Book 11 section 09)');
+    // Design addendum 2.5 (DF-80): a combat sound is never captioned; its drawn twin stands in.
+    if (cue.kind !== 'ambience' && cue.drawn === undefined)
+      need('captionKey', 'a caption (Book 11 section 09)');
   });
   for (const [event, cue] of Object.entries(audio?.events ?? {})) {
     if (!cues.has(cue))

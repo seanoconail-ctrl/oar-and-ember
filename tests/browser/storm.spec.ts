@@ -110,6 +110,10 @@ test.describe('the storm against the Book 7 standard', () => {
     });
     await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
     await page.waitForTimeout(2500);
+    // The script's share of a frame, smoothed over the cold open's first seconds (Book 2 budget).
+    const ms = Number(await page.locator('.oe-overlay').getAttribute('data-frame-ms'));
+    console.log(`cold open, script per frame: ${ms.toFixed(2)} ms`);
+    expect(await page.locator('.oe-overlay').getAttribute('data-phase')).toBe('COLD_OPEN');
     const shots: Uint8Array[] = [];
     for (let i = 0; i < 33; i++) {
       shots.push(decodePng(await page.screenshot()).data);
@@ -118,9 +122,6 @@ test.describe('the storm against the Book 7 standard', () => {
     const share = continuousMotion(shots, 640, 360).share;
     console.log(`cold open, continuous motion: ${(share * 100).toFixed(1)}%`);
     expect(share).toBeGreaterThanOrEqual(MOTION_THRESHOLD);
-    const ms = Number(await page.locator('.oe-overlay').getAttribute('data-frame-ms'));
-    console.log(`cold open, script per frame: ${ms.toFixed(2)} ms`);
-    expect(await page.locator('.oe-overlay').getAttribute('data-phase')).toBe('COLD_OPEN');
     expect(ms).toBeGreaterThan(0);
     expect(ms).toBeLessThan(5.5);
   });

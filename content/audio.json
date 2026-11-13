@@ -958,50 +958,50 @@
       "id": "SFX_TELL_LIGHT",
       "kind": "sfx",
       "bus": "tells",
-      "captionKey": "caption.sfx.tell_light",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The draw-back of a light attack and its flash"
     },
     {
       "id": "SFX_TELL_SCRAPE",
       "kind": "sfx",
       "bus": "tells",
-      "captionKey": "caption.sfx.tell_scrape",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The blade drawn back high and held, and its flash"
     },
     {
       "id": "SFX_TELL_CREAK",
       "kind": "sfx",
       "bus": "tells",
-      "captionKey": "caption.sfx.tell_creak",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The axe or club raised and held, and its flash"
     },
     {
       "id": "SFX_TELL_STEERER",
       "kind": "sfx",
       "bus": "effects",
-      "captionKey": "caption.sfx.tell_steerer",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The steerer's own draw-back"
     },
     {
       "id": "SFX_EXHAUSTED_BREATH",
       "kind": "sfx",
       "bus": "effects",
-      "captionKey": "caption.sfx.exhausted_breath",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The exhausted idle and walk, bent and blowing"
     },
     {
       "id": "SFX_SIDEARM",
       "kind": "sfx",
       "bus": "effects",
-      "captionKey": "caption.sfx.sidearm",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The archer's hand at the sheath and the seax in hand"
     },
     {
       "id": "SFX_SHIELD_SPLIT",
       "kind": "sfx",
       "bus": "effects",
-      "captionKey": "caption.sfx.shield_split",
-      "temporary": false
+      "temporary": false,
+      "drawn": "The board split and its halves on the ground"
     }
   ],
   "events": {
