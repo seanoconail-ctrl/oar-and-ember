@@ -1246,23 +1246,13 @@ export function createSimulation(
           bandAt(land.water, elevation, x, y, stillWaterLevel(tideAt(state.calendar, b))) !== null
         );
       },
-      // Combat v2 (Book 10 avoid): deep water, a cliff's edge (a steep bank within its tiles;
-      // design addendum 2.5, DF-21) and a lit fire within its distance.
+      // Combat v2 (Book 10 avoid): deep water, and a lit fire within its distance. Cliff edges
+      // are not modelled: no zone has ground that drops away (its banks and rock are walls; DF-42).
       avoid: (x, y) => {
         const elevation = land.elevations.get(onFoot.zone);
         const level = stillWaterLevel(tideAt(state.calendar, b));
         if (elevation !== undefined && isDeep(bandAt(land.water, elevation, x, y, level)))
           return true;
-        const edge = fightCtx.ai.self.avoidCliffTiles * map.tile;
-        for (const [ox, oy] of [
-          [edge, 0],
-          [-edge, 0],
-          [0, edge],
-          [0, -edge],
-        ] as const) {
-          const t = tileOf(map, x + ox, y + oy);
-          if (terrainAt(map, t.tx, t.ty) === 'bank') return true;
-        }
         const fire = camp?.def.sites.find((f) => f.kind === 'FIRE' && f.zone === onFoot.zone);
         const lit = camp === null ? false : homeOf(state, camp)?.fire.lit === true;
         return (

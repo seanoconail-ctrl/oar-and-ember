@@ -270,7 +270,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
     captionKey: 'ui.sound.sfx.tell_scrape',
     bus: 'tells',
     play: (e, at, pan) => {
-      const to = boosted(e, 1.6, 'tells', pan);
+      const to = boosted(e, 3.0, 'tells', pan);
       // Steel scraping as a blade is drawn back for a heavy blow: a long rasp, then a thin ring.
       noiseHit(
         e,
@@ -296,7 +296,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
     captionKey: 'ui.sound.sfx.tell_creak',
     bus: 'tells',
     play: (e, at, pan, opts) => {
-      const to = boosted(e, 1.8, 'tells', pan);
+      const to = boosted(e, 4.0, 'tells', pan);
       // A grunt of effort and the haft's creak as an axe or club goes up and back.
       grunt(e, at, to, opts.voice ?? 150, 0.3, 0.2);
       for (let k = 0; k < 4; k++)
@@ -315,7 +315,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
     play: (e, at, pan) => {
       // The steerer's own tell: a quiet breath, no voice (Book 11 section 08).
       const to = out(e, 'effects', pan);
-      breath(e, at, to, 0.14, 0.12, 1500);
+      breath(e, at, to, 0.14, 0.25, 1500);
       return 0.15;
     },
   },
@@ -325,7 +325,7 @@ const COMBAT25_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Blowing hard (Book 10 exhaustedLook): three ragged breaths in and out, slowing.
-      const to = boosted(e, 1.3, 'effects', pan);
+      const to = boosted(e, 2.0, 'effects', pan);
       for (let k = 0; k < 3; k++) {
         const t = at + k * 0.78;
         breath(e, t, to, 0.3, 0.32 - k * 0.05, 700);

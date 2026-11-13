@@ -82,8 +82,14 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
   const caption = (key: string) => formatString(content.strings, key);
 
   it('every test cue produces its caption', () => {
-    const gameplay = table.cues.filter((c) => c.kind !== 'ambience');
+    // Design addendum 2.5 (DF-80): a combat sound with its drawn twin has no caption at all.
+    const gameplay = table.cues.filter((c) => c.kind !== 'ambience' && c.drawn === undefined);
     expect(gameplay.length).toBeGreaterThan(10);
+    for (const cue of table.cues.filter((c) => c.drawn !== undefined)) {
+      const router = new AudioRouter(table, content.strings, new RecordingSink());
+      router.play(cue.id, 1);
+      expect(router.update(1), cue.id).toEqual([]);
+    }
     for (const cue of gameplay) {
       const router = new AudioRouter(table, content.strings, new RecordingSink());
       router.play(cue.id, 1);

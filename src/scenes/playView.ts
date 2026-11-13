@@ -298,6 +298,26 @@ export function* preparePlay(
     prepared.renderer.render(scene, buildDrawList(scene, prepared.geometry, style.cutawayFade));
     finish();
     yield `draw${body}`;
+    // Design addendum 2.5: the cold open's storm sheets, drawn once so their textures are on the
+    // card before the first frame of the storm (the cold open follows the naming screen).
+    if (body === 'B') {
+      const storm = [
+        ['ship_t1_storm', 'level/-/0'],
+        ['ship_t1_storm_mast', 'level/-/0'],
+        ['fx_storm', 'crest/-/0'],
+        ['fx_storm_drops', 'rain/-/0'],
+        ['fx_storm_mist', 'low/-/0'],
+      ] as const;
+      const warm = {
+        ...scene,
+        sprites: storm
+          .filter(([sheet]) => prepared.geometry.has(sheet))
+          .map(([sheet, frame]) => ({ sheet, frame, x: -200, y: -200, layer: 'actor' as const })),
+      };
+      prepared.renderer.render(warm, buildDrawList(warm, prepared.geometry, style.cutawayFade));
+      finish();
+      yield 'storm';
+    }
   }
   return prepared;
 }

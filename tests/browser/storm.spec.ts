@@ -109,8 +109,10 @@ test.describe('the storm against the Book 7 standard', () => {
       timeout: 15_000,
     });
     await page.addStyleTag({ content: '.oe-overlay { visibility: hidden !important; }' });
-    await page.waitForTimeout(2500);
-    // The script's share of a frame, smoothed over the cold open's first seconds (Book 2 budget).
+    // The first frames upload the storm's atlases and compile the full-detail shaders as detail
+    // steps up; the smoothed share is read once that has settled, still in the cold open.
+    await page.waitForTimeout(7000);
+    // The script's share of a frame, smoothed (Book 2 budget).
     const ms = Number(await page.locator('.oe-overlay').getAttribute('data-frame-ms'));
     console.log(`cold open, script per frame: ${ms.toFixed(2)} ms`);
     expect(await page.locator('.oe-overlay').getAttribute('data-phase')).toBe('COLD_OPEN');

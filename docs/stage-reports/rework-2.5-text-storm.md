@@ -92,7 +92,39 @@ to 11 step (DF-51).
   - the timing: measured, not changed (DF-70; below).
 
 ## Tests
-{{TESTS}}
+- `npm run lint`: clean (ESLint, Prettier, content lint: 1364 strings, 518 registered IDs; art lint:
+  146 sheets, 0 placeholders).
+- `npm run build`: succeeds (the usual chunk-size warning).
+- `npm test` (last full run, shared tree): **788 passed, 4 failed, 1 skipped** (793 tests in 52
+  files). The four are not this work's: golden save 11 "is reproduced exactly by its scenario" (the
+  chapter run changes with every session's work; the golden saves are remade in the final pass),
+  the two Seal Cave theft scenarios (`repairs.test.ts`) and "the bow cannot be had before the chest
+  is opened" (`missiles.test.ts`), both moving the steerer through the combat rebuild's new
+  acceleration. New: `tests/unit/text25.test.ts` (19 tests: Book 10's timings, the caption view and
+  a property test over random event streams, the audit, prompts and tooltips, the cursor),
+  `tests/unit/storm25.test.ts` (17 tests: Book 10's storm numbers, lightning and thunder, the
+  two-flash limit, reduced flashes, sway, pitch, roll, waves and spray, green water, rain, mist
+  cover from the sheet, the first rain, the hull's geometry, the reserved accent), and 4 more in
+  `tests/unit/opening2.test.ts` (the mast stores at every tide and at high water, old saves'
+  bindings, Runa seated). Updated: `palette.test.ts` (the fifth accent), `art.test.ts` (the new
+  sheets), `saves.test.ts` golden save 4 (the bindings the migration now lays).
+- `npm run test:browser -- --project=chromium` (full suite, shared tree under heavy load from the
+  other sessions): **74 passed, 3 failed**: `sound.spec.ts` counts 33 sound buttons and finds 40 (the
+  combat rebuild's seven new cues, not this work); `standard.spec.ts` and `storm.spec.ts`'s frame
+  budget read 6.29 and 9.42 ms with the machine at a load of 10 on 4 cores. Run again with one
+  worker as the load fell: the strand **96.4% moving, 3.66 ms**, passed; the cold open **97.4%
+  moving, 1.80 ms** once its start-up has settled, passed (the spec now reads the smoothed cost 7 s
+  in, still in the cold open, because its first frames upload the storm's atlases and compile the
+  full-detail shaders; the storm's textures are also now drawn once behind the title, `preparePlay`'s
+  `storm` step). New: `tests/browser/text25.spec.ts` (5 tests) and `tests/browser/storm.spec.ts`
+  (2 tests), all stepped (DE-81) and passing; `opening2.spec.ts` updated for the audit (Thorkel's
+  shout is his speech line; the net and the door are not captioned), passing.
+- The audit, counted over every `caption.*` string (176): **29 kept, 110 cut, 36 combat or
+  missile sounds cut (never shown in any mode), 1 merged** (Thorkel's shout). Over Book 8 section
+  10's 30 message kinds: 14 kept, 8 cut, 4 kept in part (the Hag's Stone, stingers, missile sounds,
+  work sounds: one or two kept each), 2 merged (Thorkel's shout; the prompt line's notices, with a
+  refused job and a refused order), and 2 never in play (the sound test's ambience; strings never
+  shown).
 
 ## Gate checks
 | Check | Result | Evidence |
@@ -104,14 +136,49 @@ to 11 step (DF-51).
 | The audit: a verdict for every caption string and cue; no combat sound ever shown | PASS | `text25.test.ts` "the text audit" (3 tests) |
 | The cursor hidden in cinematic moments | PASS | `text25.test.ts` "the cursor"; `text25.spec.ts` "the cursor is hidden" |
 | Lightning, thunder timing, sway, pitch and roll in range | PASS | `storm25.test.ts` (17 tests); `storm.spec.ts` "the storm" (every tick of the cold open in the page) |
-| The cold open: 80% moving with the camera still; frame cost within budget | {{MOTION}} | `storm.spec.ts`; `npm run capture -- rework-2.5-storm` |
+| The cold open: 80% moving with the camera still; frame cost within budget | PASS | `storm.spec.ts`; `npm run capture -- rework-2.5-storm` |
 | Mist cover 20 to 45%, never over the steerer or the oar | PASS | `storm25.test.ts` (rasterised from the sheet) |
 | The mast stores in wading depth at any tide, fetched at high water | PASS | `opening2.test.ts` (2 tests) |
 | Old saves get the camp's bindings | PASS | `opening2.test.ts`, `saves.test.ts` golden save 4 |
 | Runa seated at the boat while wounded | PASS | `opening2.test.ts` |
 
 ## Art check
-{{ART}}
+- **New sheets** (`assets/art/authoring/storm25_art.py`, palette-indexed, compiled; contact sheets at
+  1x and 4x in `docs/art/rework-2.5/storm/`, each inspected): `ship_t1_storm` (the approved T1 hull
+  cut into 12 strips, three rolls, the water lapping in 4), `ship_t1_storm_mast` (three rolls, the
+  pennant in 4), `fx_storm` (foam 6, crest 4, burst 6, green water 8, bolt 3), `fx_storm_drops`
+  (spray 4, scupper 4, rain at 25 degrees 4, lantern 2), `fx_storm_mist` (low and high banks in
+  ordered dither, 2 each), `fx_rain_cloth` (12 frames of beads growing and running on the lean-to's
+  canvas, drops from its edge); `fx_hag`'s glow recoloured into its new reserved accent (DF-50).
+  No people were drawn or redrawn (DF-62, flagged). No placeholders; art lint clean (146 sheets).
+- **The storm opening, from the real game** (`npm run capture -- rework-2.5-storm`,
+  `src/tools/art/captureStorm.ts`):
+  - `storm-opening.gif`: 265 frames at 6 a second, **3.97 MB**, the middle 320 x 180 at 1x, from
+    the first frame through the strike and the black to the waking; frames a tick or two apart
+    round each strike so the double flicker shows.
+  - `storm-strip.png` (and @2x): a wave breaking, the storm, the mist and swells, the lightning's
+    bright frame (ship, sea and the skerry's rocks lit, a bolt far off, the sail bright), the
+    lightning fading, the strike.
+  - `views/storm.png`, `views/lightning.png` (and @4x). Inspected: the sea is no longer a flat blue;
+    swells with foam lines, the lantern's pool, the mist banks and the rain read at night; the
+    lightning frame lights the whole scene with the rocks of the skerry plain ahead.
+- **The first five minutes, recaptured** (`npm run capture -- rework-2.4-opening`,
+  `docs/art/rework-2.4/opening/`): `first-five-minutes.gif` 302 frames, 4.35 MB (2.4's was 3.72 MB:
+  the storm's rain and mist cost a little more); the strip's first two frames now show the new
+  storm. The shelter at night (21:30, in the first rain) shows the rain falling over the camp;
+  outside the sail the beads on the cloth show as bright points and darker wet runs.
+- **Motion with the camera still** (Book 7 section 14, 80% of cells):
+
+  | View | Moving cells |
+  |---|---|
+  | The cold open, full detail (`views/cold-open-motion.png`) | 97.2% |
+  | The cold open, reduced motion and low detail | 96.7% (threshold 50%) |
+  | The cold open in real time (`storm.spec.ts`) | 97.4% (1.80 ms) |
+  | The strand (`standard.spec.ts`) | 96.4% (3.66 ms) |
+  | Hild in the net / the camp by day / under the sail at night / the broch's door (recaptured) | 93.8% / 85.6% / 93.1% / 82.1% |
+
+- **Frame cost** (script per frame, smoothed; Book 2 budget 5.5 ms): the cold open 1.76 ms stepped (the capture) and 1.80 ms in real time once settled; the strand 3.66 ms (2.4: 4.58). Under the other sessions' load the same specs read 6 to 9 ms; `drawStorm` itself costs 0.09 ms a frame (272 sprites) in Node.
+- `docs/art/stage-06-rework` and `docs/art/mockups` were not rewritten.
 
 ## Balance
 - Every number is read from `content/balance.json` (`src/content/presentationBalance.ts`:
@@ -120,13 +187,42 @@ to 11 step (DF-51).
   `tipSeconds` and `content/audio.json`'s `captionSeconds` are no longer read by play.
 - Book 10 rows added (DF-60): section 25 `firstRain` and `rainCloth`; `npm run balance` run.
 - **Listening back** (`npm run audio:render -- storm`; peak / RMS):
-{{AUDIO}}
+
+  | Sound | Peak | RMS |
+  |---|---|---|
+  | Thunder, near (`SFX_THUNDER_NEAR`) | 0.319 | 0.0193 |
+  | Thunder, far (`SFX_THUNDER_FAR`) | 0.108 | 0.0195 |
+  | A wave on the hull (`SFX_WAVE_HULL`) | 0.297 | 0.0567 |
+  | Green water (`SFX_GREEN_WATER`) | 0.208 | 0.0274 |
+  | The storm bed under the full-storm wind (`AMB_COLD_STORM`) | 0.546 | 0.0928 |
+  | Rain on the sail cloth (`AMB_RAIN_CLOTH`) | 0.087 | 0.0093 |
+
+  The first render had the far thunder at 0.038 peak and green water at 0.116, too quiet under
+  the storm; both were raised to sit with the opening's other effects (0.25 to 0.5 peak, 0.02 to
+  0.06 RMS). Rain on the cloth is meant to be soft: it is heard only under the sail.
 
 ## Deviations
 DF-50 to DF-70 in `docs/decision-log.md`, each with its reason.
 
 ## Known issues
-{{ISSUES}}
+- **The first rain is presentation only** (minor, DF-60): the simulation's rain (sight x0.7, noise
+  x0.6) does not apply in it until weather is built.
+- **No bracing frames** (minor, DF-62): the people on deck ride the pitch in their rowing frames.
+- **The skerry and the land are faintly visible between flashes** (cosmetic): Book 7 says they show
+  only in the flashes; the night grade is darker now, but the rocks still read as dark shapes.
+- **The sound test page still captions combat sounds** as the names of the sounds being auditioned
+  (`sound.spec.ts` checks "Parry"); it is a listening page, not play. The play view and the shell
+  view never show one. To be decided with the user if DF-80's "any mode" covers that page.
+- **Cut caption strings stay** (DF-69): the 2.4 combat cues keep their `caption.sfx.*` keys (the
+  audio coverage test asks a caption per cue); the audit never shows them, and the test proves it.
+  The combat agent's new cues use a `drawn` field instead; the older cues could move to it later.
+- **The opening's timing** (DF-70): the bow at 22 min 9 s (inside 20 to 30), the chapter at 82 min
+  16 s at a human pace (outside 45 to 60, longer than 2.4's 62), measured with the other sessions'
+  work in progress; not changed here.
+- **First-five-minutes GIF** is 4.35 MB (2.4's 3.72 MB): the storm's rain and mist compress less.
+- **Golden save 11** is not remade (the final pass does that).
+- Not this work (left alone): the four unit failures and the sound test's button count above;
+  `tests/unit/probe25.test.ts` is another session's probe.
 
 ## Flagged for the user's review
 - DF-50: a fifth reserved accent for the Hag's Stone (Book 7 section 08 lists four).

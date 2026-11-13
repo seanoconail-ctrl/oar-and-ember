@@ -910,16 +910,18 @@ describe('the fold met during the dusk (DF-21)', () => {
     switchZone(onFoot, 'ZONE_SK_CAIRN', { x: 10 * TILE, y: 30 * TILE });
     const sim = createSimulation(b, world, land);
     sim.step();
-    expect(Object.keys(onFoot.actors).filter((id) => id.startsWith('E_WRECKER_')).sort()).toEqual([
-      'E_WRECKER_KETILL',
-    ]);
+    expect(
+      Object.keys(onFoot.actors)
+        .filter((id) => id.startsWith('E_WRECKER_'))
+        .sort(),
+    ).toEqual(['E_WRECKER_KETILL']);
     for (let i = 0; i < 60 * 60 && world.facts['ch1.dusk'] === undefined; i++) sim.step();
     expect(world.facts['ch1.dusk']).toBe('DARK');
-    expect(Object.keys(onFoot.actors).filter((id) => id.startsWith('E_WRECKER_')).sort()).toEqual([
-      'E_WRECKER_CONN',
-      'E_WRECKER_KETILL',
-      'E_WRECKER_SVART',
-    ]);
+    expect(
+      Object.keys(onFoot.actors)
+        .filter((id) => id.startsWith('E_WRECKER_'))
+        .sort(),
+    ).toEqual(['E_WRECKER_CONN', 'E_WRECKER_KETILL', 'E_WRECKER_SVART']);
     expect(onFoot.battle?.groups['SCN_SK_WRECKERS']?.members.sort()).toEqual([
       'E_WRECKER_CONN',
       'E_WRECKER_KETILL',

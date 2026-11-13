@@ -104,18 +104,27 @@ export class CampBot {
     const path = findPath(map, tide.tidalGroundOpen, tileOf(map, p.x, p.y), goal, passable);
     if (path === null) return false;
     const limit = this.ticks + maxTicks;
-    for (const waypoint of path.slice(1)) {
+    const steps = path.slice(1);
+    for (const [n, waypoint] of steps.entries()) {
       const { x: cx, y: cy } = spot(waypoint);
+      // Design addendum 2.5: speed builds and dies (Book 10 "Movement and acceleration"). A
+      // waypoint where the path runs straight on is passed at speed; at a turn or the last one the
+      // keys ease off near it, so the steerer neither cuts the corner nor circles it.
+      const prev = n === 0 ? path[0] : steps[n - 1];
+      const next = steps[n + 1];
+      const straight =
+        prev !== undefined &&
+        next !== undefined &&
+        next.tx - waypoint.tx === waypoint.tx - prev.tx &&
+        next.ty - waypoint.ty === waypoint.ty - prev.ty;
       for (;;) {
         const pl = this.#onFoot.player;
         const dx = cx - pl.x;
         const dy = cy - pl.y;
-        if (Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
-        if (this.ticks > limit) return false;
         const len = Math.hypot(dx, dy);
-        // Design addendum 2.5: speed builds and dies (Book 10 "Movement and acceleration"); near
-        // a waypoint the keys ease off so the steerer does not circle it.
-        const k = len < 10 ? Math.max(0.25, len / 10) : 1;
+        if (straight ? len < 6 : Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
+        if (this.ticks > limit) return false;
+        const k = !straight && len < 10 ? Math.max(0.25, len / 10) : 1;
         this.#sim.submit({ type: 'MOVE', x: (dx / len) * k, y: (dy / len) * k, run, sneak });
         this.step();
       }

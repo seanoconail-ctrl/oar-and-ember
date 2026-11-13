@@ -212,7 +212,7 @@ export async function stormCapture(browser: Browser): Promise<string> {
       '-i',
       join(framesDir, 'f%04d.png'),
       '-vf',
-      'split[a][b];[a]palettegen=max_colors=40:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
+      'split[a][b];[a]palettegen=max_colors=32:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
       gif,
     ],
     { stdio: 'inherit' },

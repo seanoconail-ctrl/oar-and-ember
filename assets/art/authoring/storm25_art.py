@@ -350,8 +350,12 @@ def write_rain_cloth():
                 # Growing: a pin of light, then a bead with its highlight.
                 s.px(x, y, C('sky', 4 if ph < 3 else 5))
                 if ph >= 3:
-                    s.px(x + 1, y, C('sky', 3))
-                    s.px(x, y + 1, C('sea', 6))
+                    # A full bead: its highlight, its body and the dark shadow it casts below.
+                    s.px(x + 1, y, C('sky', 4))
+                    s.px(x, y + 1, C('sea', 7))
+                    s.px(x + 1, y + 1, C('sea', 6))
+                    if cloth[min(size[1] - 1, y + 2), x]:
+                        s.px(x, y + 2, C('wool', 1))
             elif ph < 10:
                 # Running down the cloth, leaving a darker wet line.
                 run = (ph - 5) * 3

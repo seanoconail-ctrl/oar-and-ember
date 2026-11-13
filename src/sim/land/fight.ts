@@ -4313,13 +4313,19 @@ function joinLate(fw: Pick<FightWorld, 'world' | 'ctx' | 'land'>): void {
     const fd = ctx.fighters.get(person);
     const p = world.people[person];
     const map = enc === undefined ? undefined : fw.land.maps.get(enc.zone);
-    if (enc === undefined || m === undefined || fd === undefined || p === undefined || map === undefined)
+    if (
+      enc === undefined ||
+      m === undefined ||
+      fd === undefined ||
+      p === undefined ||
+      map === undefined
+    )
       continue;
     const here = onFoot.zone === enc.zone;
     const rest = here ? null : onFoot.elsewhere?.[enc.zone];
     const battle = here ? onFoot.battle : rest?.battle;
     const actors = here ? onFoot.actors : rest?.actors;
-    if (actors === undefined || battle == null || battle.scene !== enc.id || battle.over) continue;
+    if (actors === undefined || battle?.scene !== enc.id || battle.over) continue;
     const arch = ctx.ai.archetypes[fd.archetype] ?? { vitality: ctx.cb.vitality, armour: 'NONE' };
     const x = m.x * map.tile;
     const y = m.y * map.tile;

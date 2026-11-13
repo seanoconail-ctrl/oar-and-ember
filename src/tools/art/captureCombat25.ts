@@ -100,6 +100,27 @@ function landsAt(s: Seen): number | null {
   return null;
 }
 
+/** Svart's patience run out whenever he waits: he comes on (for clips that need his attack). */
+async function impatient(page: Page, who = SVART): Promise<void> {
+  await page.evaluate((id) => {
+    const w = (
+      window as unknown as {
+        oeWorld: {
+          tick: number;
+          onFoot: {
+            actors: Record<
+              string,
+              { fight?: { ai: { mind: { state: string; patienceUntil: number } } } }
+            >;
+          };
+        };
+      }
+    ).oeWorld;
+    const m = w.onFoot.actors[id]?.fight?.ai.mind;
+    if (m?.state === 'WAIT_FOR_OPENING') m.patienceUntil = Math.min(m.patienceUntil, w.tick);
+  }, who);
+}
+
 async function heal(page: Page): Promise<void> {
   await page.evaluate(() => {
     (window as unknown as { oeWorld: { player: { vitality: number } } }).oeWorld.player.vitality =
@@ -117,19 +138,76 @@ async function strikeAt(page: Page, s: Seen): Promise<void> {
 }
 
 async function punishMiss(browser: Browser, out: string): Promise<string> {
-  const page = await open(browser, [92.0, 35.1], [93, 35]);
-  await stage(page, { x: 93.6, y: 35.1, alert: true, engaged: true, angle: Math.PI });
+  // Conn with his seax drawn (out of arrows): a short blade a dodge back can leave short.
+  const page = await open(browser, [89.0, 35.4], [90, 35]);
+  await stage(page, { x: 97.5, y: 36.0, held: true, able: false });
+  await page.evaluate((id) => {
+    const w = (
+      window as unknown as {
+        oeWorld: {
+          tick: number;
+          onFoot: {
+            player: { x: number; y: number };
+            battle: { engaged: boolean } | null;
+            actors: Record<
+              string,
+              {
+                x: number;
+                y: number;
+                pose: string;
+                task?: string;
+                fight?: {
+                  able: boolean;
+                  arrows: number;
+                  arch?: string;
+                  ai: {
+                    next: number;
+                    aware: boolean;
+                    target: string | null;
+                    mode: string;
+                    sidearmAt: number;
+                    memory: unknown;
+                    awareness: { level: number; state: string; heard: number };
+                    home: { x: number; y: number; facing: string };
+                  };
+                };
+              }
+            >;
+          };
+        };
+      }
+    ).oeWorld;
+    const a = w.onFoot.actors[id];
+    if (a?.fight === undefined) return;
+    a.x = 90.8 * 24;
+    a.y = 35.4 * 24;
+    a.fight.ai.home = { ...a.fight.ai.home, x: a.x, y: a.y };
+    a.fight.able = true;
+    a.fight.arrows = 0;
+    a.fight.arch = 'Outlaw';
+    a.fight.ai.sidearmAt = w.tick - 100;
+    a.fight.ai.next = w.tick;
+    a.fight.ai.awareness = { level: 100, state: 'ALERT', heard: w.tick };
+    a.fight.ai.aware = true;
+    a.fight.ai.target = 'P_STEERER';
+    a.fight.ai.mode = 'FIGHT';
+    a.fight.ai.memory = { x: w.onFoot.player.x, y: w.onFoot.player.y, tick: w.tick, seen: true };
+    delete a.task;
+    a.pose = 'idle';
+    if (w.onFoot.battle !== null) w.onFoot.battle.engaged = true;
+  }, CONN);
   const clip = new Clip(page, 'punish-miss', out);
-  await clip.aim();
-  await lockSvart(page);
+  const c0 = await look(page, CONN);
+  clip.focus = await screen(page, (c0.x + c0.px) / 2, (c0.y + c0.py) / 2 - 16);
   let dodged = false;
   let struck = false;
   let after = 0;
-  for (let i = 0; i < FPS * 14 && after < FPS * 2; i++) {
-    const s = await look(page, SVART);
+  for (let i = 0; i < FPS * 16 && after < FPS * 2; i++) {
+    await impatient(page, CONN);
+    const s = await look(page, CONN);
     const at = landsAt(s);
     // In his wind-up, a dodge straight back out of his reach.
-    if (!dodged && at !== null && at - s.tick <= 16 && at - s.tick >= 8) {
+    if (!dodged && at !== null && at - s.tick <= 14 && at - s.tick >= 6) {
       await page.keyboard.down('KeyA');
       await page.keyboard.press('Space');
       await tick(page, 2);
@@ -139,14 +217,16 @@ async function punishMiss(browser: Browser, out: string): Promise<string> {
     // He missed: step in on him and strike while he recovers.
     if (dodged && !struck && s.missed && s.mine === 'idle') {
       const d = Math.hypot(s.x - s.px, s.y - s.py);
-      if (d > 26) await page.keyboard.down('KeyD');
+      if (d > 24) await page.keyboard.down('KeyD');
       else {
         await page.keyboard.up('KeyD');
         await strikeAt(page, s);
         struck = true;
+        // The crops centred on the two where the punish lands.
+        clip.focus = await screen(page, (s.x + s.px) / 2, (s.y + s.py) / 2 - 16);
       }
     }
-    if (dodged && s.state === 'idle' && !struck && !s.missed && i > FPS * 6) dodged = false;
+    if (dodged && !struck && s.state === 'idle' && !s.missed && s.mine === 'idle') dodged = false;
     if (struck) after++;
     await clip.frame(struck && after > 6 && after < 12);
     await heal(page);
@@ -207,7 +287,8 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
     shield: true,
     angle: Math.PI,
   });
-  // His shield raised, his bar nearly spent: the next blow on it empties it.
+  // His shield raised (his own defence held up, as against a drawn bow), his bar nearly spent:
+  // the next blow on it empties it.
   await page.evaluate((id) => {
     const w = (
       window as unknown as {
@@ -218,7 +299,8 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
               string,
               {
                 fight?: {
-                  f: { state: string; guard: boolean; since: number };
+                  able: boolean;
+                  ai: { react: unknown };
                   stamina: { current: number; spentTick: number };
                 };
               }
@@ -229,10 +311,9 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
     ).oeWorld;
     const fa = w.onFoot.actors[id]?.fight;
     if (fa === undefined) return;
-    fa.f.state = 'block';
-    fa.f.guard = true;
-    fa.f.since = w.tick;
-    fa.stamina.current = 6;
+    fa.able = true;
+    fa.ai.react = { kind: 'BLOCK', at: w.tick, until: w.tick + 100_000 };
+    fa.stamina.current = 3;
     fa.stamina.spentTick = w.tick + 1e9;
   }, SVART);
   const clip = new Clip(page, 'guard-break', out);
@@ -241,9 +322,11 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
   let broke = false;
   let after = 0;
   let pressed = false;
+  const states: string[] = [];
   for (let i = 0; i < FPS * 6 && after < FPS * 2.5; i++) {
     const s = await look(page, SVART);
-    if (!pressed && i > 8) {
+    if (states.at(-1) !== `${s.state}/${s.mine}`) states.push(`${s.state}/${s.mine}`);
+    if (!pressed && i > 12 && s.state === 'block') {
       await strikeAt(page, s);
       pressed = true;
     }
@@ -252,9 +335,10 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
     await clip.frame(broke && after > 8);
     await heal(page);
   }
+  const last = await look(page, SVART);
   const bytes = clip.write();
   await page.close();
-  return `guard-break.gif ${(bytes / 1e6).toFixed(2)} MB (broken ${String(broke)})`;
+  return `guard-break.gif ${(bytes / 1e6).toFixed(2)} MB (broken ${String(broke)}; Svart ${last.state}, the steerer ${last.mine}; ${states.join(' ')})`;
 }
 
 async function circleWait(browser: Browser, out: string): Promise<string> {
@@ -392,6 +476,8 @@ async function archerBacksOff(browser: Browser, out: string): Promise<string> {
       ).oeWorld.onFoot.actors[id]?.fight?.ai;
       return { hop: a?.hop != null, sidearm: (a?.sidearmAt ?? -1) >= 0 };
     }, CONN);
+    if (hop.hop && !hopped)
+      clip.focus = await screen(page, (s.x + s.px) / 2, (s.y + s.py) / 2 - 16);
     if (hop.hop) hopped = true;
     if (hop.sidearm) sidearm = true;
     if (sidearm) after++;

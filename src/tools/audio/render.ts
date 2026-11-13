@@ -52,6 +52,15 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_ALERT', 0.8, {}, 'combat2-alert'],
   ['sfx:SFX_BIND_WOUND', 2.8, {}, 'combat2-bind-wound'],
   ['sfx:SFX_EAT', 2.0, {}, 'combat2-eat'],
+  // Design addendum 2.5 (DF-48): the tells by weight, the steerer's breath, hard breathing, the
+  // sidearm drawn and a shield splitting.
+  ['sfx:SFX_TELL_LIGHT', 0.5, { voice: 150 }, 'combat25-tell-light'],
+  ['sfx:SFX_TELL_SCRAPE', 0.9, {}, 'combat25-tell-scrape'],
+  ['sfx:SFX_TELL_CREAK', 0.7, { voice: 98 }, 'combat25-tell-creak'],
+  ['sfx:SFX_TELL_STEERER', 0.4, {}, 'combat25-tell-steerer'],
+  ['sfx:SFX_EXHAUSTED_BREATH', 2.8, {}, 'combat25-exhausted-breath'],
+  ['sfx:SFX_SIDEARM', 0.5, {}, 'combat25-sidearm'],
+  ['sfx:SFX_SHIELD_SPLIT', 0.8, {}, 'combat25-shield-split'],
   ['call:SFX_ARROW_SHIELD', 0.8, {}, 'combat2-arrow-shield'],
   // Design addendum 2.4, the opening: the cold open, the net, the chest, the fire, the sail, the
   // mast, the ring, the doors and the Hag's Stone; the music's fade in, layers joining and fade out

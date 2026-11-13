@@ -1251,7 +1251,10 @@ describe('the scavengers at dusk (decisions DE-14 and DE-15; Book 6 section 18)'
       if (parried) parries++;
       if (parried && rip !== undefined && f.world.facts['ch1.dusk.E_WRECKER_SVART'] === 'DEAD') {
         wins++;
-        expect(['FLED', 'HELD', 'LEFT']).toContain(f.world.facts['ch1.dusk.E_WRECKER_CONN']);
+        // Conn runs when Svart falls or he is hit; a careful player sometimes fells him first.
+        expect(['FLED', 'HELD', 'LEFT', 'DEAD']).toContain(
+          f.world.facts['ch1.dusk.E_WRECKER_CONN'],
+        );
         expect(f.world.facts['ch1.dusk']).toBe('FOUGHT');
         expect(f.events).toContainEqual(
           expect.objectContaining({ type: 'DUSK_RESOLVED', outcome: 'FOUGHT' }),

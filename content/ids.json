@@ -2807,7 +2807,7 @@
     },
     {
       "id": "SFX_TELL_LIGHT",
-      "ref": "a sharp breath (a light attack's tell)",
+      "ref": "a sharp breath for a light attack",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2815,7 +2815,7 @@
     },
     {
       "id": "SFX_TELL_SCRAPE",
-      "ref": "steel scraping (a bladed heavy's tell)",
+      "ref": "steel scraping for a bladed heavy or charged attack",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2823,7 +2823,7 @@
     },
     {
       "id": "SFX_TELL_CREAK",
-      "ref": "a grunt and the haft's creak (an axe or club heavy's tell)",
+      "ref": "a grunt and a creak of wood for an axe, club or Dane axe heavy",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2831,7 +2831,7 @@
     },
     {
       "id": "SFX_TELL_STEERER",
-      "ref": "the steerer's quiet breath at a press",
+      "ref": "the steerer's as breath, like every steerer sound",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2839,7 +2839,7 @@
     },
     {
       "id": "SFX_EXHAUSTED_BREATH",
-      "ref": "hard breathing, exhausted",
+      "ref": "hard, ragged breathing until stamina is back to the threshold",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2847,7 +2847,7 @@
     },
     {
       "id": "SFX_SIDEARM",
-      "ref": "a seax drawn from its sheath",
+      "ref": "a weapon drawn near them rings out of its sheath",
       "book": 11,
       "section": "07",
       "origin": "assigned",
@@ -2855,7 +2855,7 @@
     },
     {
       "id": "SFX_SHIELD_SPLIT",
-      "ref": "a shield splitting",
+      "ref": "a splintering crack and a stagger grunt",
       "book": 11,
       "section": "07",
       "origin": "assigned",

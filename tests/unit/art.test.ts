@@ -336,13 +336,17 @@ describe('atlases', () => {
       6 +
       2 + // Stages 4 to 7
       (2 + 3 + 3 + 3 + 2 + 6 + 3 + 2 + 2 + 3 + 3 + 2 + 1 + 2 + 2 + 1 + 3 + 3) + // Stage 9
-      (3 + 3 + 2 + 2 + 2); // combat v2: riposte, backstab, lunge, parried, get-up
+      (3 + 3 + 2 + 2 + 2) + // combat v2: riposte, backstab, lunge, parried, get-up
+      // Design addendum 2.5: the wind-ups by weight, parry wind-up, block raise, guard break,
+      // exhausted idle and walk, dodge recovery, back off, strafe, flinch, knockdown, sidestep,
+      // hop, bind, eat and the three falls (792 frames, 29 across).
+      (2 + 2 + 2 + 2 + 2 + 4 + 4 + 6 + 2 + 6 + 6 + 2 + 3 + 3 + 3 + 6 + 4 + 2 + 2 + 2);
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
-    expect([image.width, image.height]).toEqual([24 * 32, 23 * 48]);
+    expect([image.width, image.height]).toEqual([29 * 32, 28 * 48]);
     expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
     expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
-    expect(manifest.frames['run/s/7']).toEqual([23 * 32, 3 * 48]);
+    expect(manifest.frames['run/s/7']).toEqual([8 * 32, 3 * 48]);
   });
 });
 
