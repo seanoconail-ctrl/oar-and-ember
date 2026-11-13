@@ -300,7 +300,7 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
               {
                 fight?: {
                   able: boolean;
-                  ai: { react: unknown };
+                  ai: { react: unknown; goal: unknown; mode: string };
                   stamina: { current: number; spentTick: number };
                 };
               }
@@ -312,6 +312,9 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
     const fa = w.onFoot.actors[id]?.fight;
     if (fa === undefined) return;
     fa.able = true;
+    // Standing his ground: no fight state to walk him off it.
+    fa.ai.mode = 'GUARD';
+    fa.ai.goal = null;
     fa.ai.react = { kind: 'BLOCK', at: w.tick, until: w.tick + 100_000 };
     fa.stamina.current = 3;
     fa.stamina.spentTick = w.tick + 1e9;
@@ -323,10 +326,33 @@ async function guardBreak(browser: Browser, out: string): Promise<string> {
   let after = 0;
   let pressed = false;
   const states: string[] = [];
+  const at = await look(page, SVART);
   for (let i = 0; i < FPS * 6 && after < FPS * 2.5; i++) {
+    // He holds his ground for the clip until the guard breaks (the knockback then plays freely).
+    if (!broke)
+      await page.evaluate(
+        ([id, x, y]) => {
+          const w = (
+            window as unknown as {
+              oeWorld: {
+                onFoot: {
+                  actors: Record<string, { x: number; y: number; fight?: { vel?: unknown } }>;
+                };
+              };
+            }
+          ).oeWorld;
+          const a = w.onFoot.actors[id];
+          if (a === undefined) return;
+          a.x = x;
+          a.y = y;
+          if (a.fight !== undefined) delete a.fight.vel;
+        },
+        [SVART, at.x, at.y] as const,
+      );
     const s = await look(page, SVART);
-    if (states.at(-1) !== `${s.state}/${s.mine}`) states.push(`${s.state}/${s.mine}`);
-    if (!pressed && i > 12 && s.state === 'block') {
+    const tag = `${s.state}/${s.mine}/${String(Math.round(s.x - s.px))},${String(Math.round(s.y - s.py))}`;
+    if (states.at(-1) !== tag) states.push(tag);
+    if (!pressed && i > 3 && s.state === 'block') {
       await strikeAt(page, s);
       pressed = true;
     }

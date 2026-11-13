@@ -2933,6 +2933,8 @@ function engage(
 
 /** Lowers a raised shield (it comes down over Book 10's blockLower). */
 function lowerGuard(fw: FightWorld, fa: ActorFight): void {
+  // A shield raised against a blow seen coming stays up until that defence ends (react).
+  if (fa.ai.react !== null) return;
   if (fa.f.guard || fa.f.state === 'block') setBlock(fa.f, false, fw.world.tick, fw.ctx.cb);
 }
 
