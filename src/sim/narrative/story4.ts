@@ -257,7 +257,25 @@ export function stepSnatch(
   const onFoot = world.onFoot;
   const o = ctx.oddi;
   const sn = ctx.snatch;
-  if (onFoot === null || o === null || sn === null || onFoot.zone !== o.zone) return;
+  if (onFoot === null || o === null || sn === null) return;
+  // The steerer gone off the strand while he runs (seen taking it): he is away with it, or, run
+  // down already, away empty-handed.
+  if (onFoot.zone !== o.zone) {
+    const s = snatchStage(world);
+    const by = world.facts[FACT_BY];
+    if ((s === 'AWAY' || s === 'FLEE') && typeof by === 'string') {
+      removeActor(onFoot, by);
+      setFact(world, FACT_STAGE, 'DONE');
+      if (s === 'AWAY') {
+        removeActor(onFoot, o.chest);
+        setFact(world, FACT_CHEST, 'LOST');
+        setFact(world, FACT_SILVER_SNATCH, 'TAKEN');
+        setFact(world, FACT_SILVER_TAKEN_BY, by);
+        emit({ type: 'SNATCH', what: 'AWAY', by, x: 0, y: 0 });
+      }
+    }
+    return;
+  }
   if (map.zone !== o.zone) return;
   const stage = snatchStage(world);
   const p = onFoot.player;

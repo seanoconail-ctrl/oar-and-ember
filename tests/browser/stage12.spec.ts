@@ -59,7 +59,9 @@ test.describe('Stage 12: the launch and the Build 1 gate', () => {
     const ready = page.locator('[data-panel=readiness]');
     await expect(ready).toBeVisible();
     expect(await attr(page, 'menu')).toBe('planning');
-    await expect(ready.locator('tr')).toHaveCount(7);
+    // Eight since the council at the fire's line (a reason for the first raid, DH-141).
+    await expect(ready.locator('tr')).toHaveCount(8);
+    await expect(ready.locator('tr[data-measure=COUNCIL]')).toHaveAttribute('data-state', 'READY');
     await expect(ready.locator('tr[data-measure=TIDE]')).toHaveAttribute('data-state', 'READY');
     await expect(ready.locator('.warning')).toContainText('no going back');
     const tick = await attr(page, 'tick');
