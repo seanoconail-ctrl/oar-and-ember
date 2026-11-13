@@ -2472,8 +2472,8 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | snatchRun | 4.0 tiles a second | His run down to the box, unladen |
 | snatchStoop | 0.5 real seconds | Hauling the box up by its handles |
 | snatchHold | Until the box is up, at most 3 real seconds | The brief scene: the steerer stops where they stand (still carrying Oddi) and turns to him; nothing else can be done until it ends |
-| snatchCarry | 2.4 tiles a second | Off up the dunes with the box to the strand's north edge, where he is gone (to the fold) |
-| snatchCatch | 1.2 tiles | The steerer that close, hands free (Oddi set down), while he carries it: he drops the box and runs on empty-handed, and does not come back for it |
+| snatchCarry | 2.4 tiles a second | Off up the dunes with the box to the strand's north edge, where he is gone (to the fold); he makes for a point on it snatchStart tiles to the side away from the steerer. With the steerer off the strand meanwhile, he is away with it |
+| snatchCatch | 1.2 tiles | The steerer that close, hands free (Oddi set down) and on the move after him, while he carries it: he drops the box and runs on empty-handed, and does not come back for it |
 | remarkReach | 1.4 tiles | The steerer's word over a body (the interaction's reach for it) |
 | sightView | 13 tiles across and 7 tiles up and down from the steerer | "In view": inside this, with no wall, rock or solid ground on the straight line between the steerer's eyes and the person |
 | runaRemindAfter | 20 real seconds after Runa is home at the camp | With the steerer awake within earshot (barkEarshot, section 08) and her tool chest not yet at one of her safe places |

@@ -9132,12 +9132,12 @@
     {
      "Key": "snatchCarry",
      "Value": "2.4 tiles a second",
-     "Notes": "Off up the dunes with the box to the strand's north edge, where he is gone (to the fold)"
+     "Notes": "Off up the dunes with the box to the strand's north edge, where he is gone (to the fold); he makes for a point on it snatchStart tiles to the side away from the steerer. With the steerer off the strand meanwhile, he is away with it"
     },
     {
      "Key": "snatchCatch",
      "Value": "1.2 tiles",
-     "Notes": "The steerer that close, hands free (Oddi set down), while he carries it: he drops the box and runs on empty-handed, and does not come back for it"
+     "Notes": "The steerer that close, hands free (Oddi set down) and on the move after him, while he carries it: he drops the box and runs on empty-handed, and does not come back for it"
     },
     {
      "Key": "remarkReach",
