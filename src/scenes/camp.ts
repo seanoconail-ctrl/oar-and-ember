@@ -138,11 +138,17 @@ export function campHooks(
       'ch1.hild_reached',
       'ch1.net_free',
       'ch1.chest_named',
+      'ch1.hild_walking_up',
       'ch1.hild_walked_up',
+      // The user's third playtest (DG-13): she has pointed the way to the old tower.
+      'ch1.broch_said',
     ])
       world.facts[fact] = true;
-    // The lean-to stands as before the rework, unless asked for down (`shelter=down`).
-    world.facts['ch1.shelter_raised'] = params.get('shelter') !== 'down';
+    // The lean-to stands as before the rework, unless asked for down (`shelter=down`: the sail
+    // folded) or at another stage (`shelter=frame`, the frame standing; DG-12).
+    const shelter = params.get('shelter');
+    world.facts['ch1.shelter'] =
+      shelter === 'down' ? 'FOLDED' : shelter === 'frame' ? 'FRAME' : 'SAIL';
     // The searches' people are out there as Stage 10's tests found them at the broch, unless
     // asked to wait for the first dusk (`searches=dusk`; decision DE-16).
     if (params.get('searches') !== 'dusk') world.facts['ch1.searches_placed'] = true;
@@ -184,6 +190,7 @@ export function campHooks(
   }
   if (params.get('stage') === 'S1') {
     home.stage = 'S1';
+    if (world.facts['ch1.shelter'] !== undefined) world.facts['ch1.shelter'] = 'FINISHED';
     if (!home.buildings.includes(camp.shelter.building)) home.buildings.push(camp.shelter.building);
   }
   const wood = Number(params.get('wood') ?? '');
@@ -372,6 +379,25 @@ function seedShip(world: WorldState, content: Content, params: URLSearchParams):
       onFoot.actors = Object.fromEntries(
         Object.entries(onFoot.actors).filter(([k]) => k !== repairs.rites.body),
       );
+  }
+  // `rites=taken` (the user's third playtest, DG-14; tests and captures): the sea rite's last word
+  // just said, Thorkel laid at the water's place, so the sea takes him from the next tick.
+  if (rites === 'taken') {
+    const r = repairs.rites;
+    const onFoot = world.onFoot;
+    world.facts['rites.pending'] = 'SEA';
+    world.facts['rites.stage'] = 'RITE';
+    world.facts['rites.since'] = 0;
+    world.facts['rites.line'] = r.lines.sea.length;
+    world.facts['rites.laid'] = true;
+    world.facts['rites.raised'] = true;
+    if (onFoot !== null)
+      placeActor(onFoot, r.body, r.sea.zone, {
+        x: r.sea.x * 24,
+        y: r.sea.y * 24,
+        facing: 'e',
+        pose: 'dead',
+      });
   }
   const fit = params.get('fit');
   if (fit === 'hold') ship.fittings['MIDSHIP'] = 'FIT_EXTENDED_HOLD';

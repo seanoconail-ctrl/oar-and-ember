@@ -56,6 +56,8 @@ export interface FrameResult {
   readonly target: TargetView | null;
   /** The right stick this frame (the camera leads towards it with a gamepad). */
   readonly stick: { readonly x: number; readonly y: number };
+  /** The frame's input, for the pause menu's navigation while it is open (decision DG-15). */
+  readonly input: InputFrame;
 }
 
 /** What the controls need of the zone: its map, Book 10's reach, and how each item is used. */
@@ -118,6 +120,17 @@ export class Session {
   searches: SearchContext | null = null;
   /** The option highlighted in a conversation (the wheel and the pad move it). */
   talkCursor = 0;
+  /**
+   * The pause menu's back (decision DG-15): the system key on one of its pages goes back to its
+   * list rather than closing it. Returns true when it did.
+   */
+  systemBack: (() => boolean) | null = null;
+  /**
+   * The user's third playtest (decision DG-2; Book 10 padContext): whether the finish-or-let-go
+   * choice is offered with no other foe in reach winding up, so the pad's parry button (Y) held
+   * finishes and its interact button (A) lets go. Set by the play view; null: never.
+   */
+  finishChoice: (() => boolean) | null = null;
 
   constructor(
     sim: Simulation,
@@ -137,7 +150,7 @@ export class Session {
     aim: { x: number; y: number } = { x: 0, y: 0 },
     pointing: TargetInput = { device: 'key', pointer: null },
   ): FrameResult {
-    let input = this.input.sample();
+    let input = padChoice(this.input.sample(), this.finishChoice?.() === true);
     const menuResults: OpenResult[] = [];
     // Lowering a drawn bow comes before everything those keys would otherwise do.
     const drawn = this.#aimDir !== null || this.sim.state.onFoot?.player.aim != null;
@@ -154,11 +167,14 @@ export class Session {
     // The system key comes first and closes whatever is open, so "close, then open another" works
     // even when both presses land in one frame (slow frames do this).
     if (input.pressed.has('systemMenu')) {
-      if (this.menus.open !== null) this.menus.close();
+      if (this.menus.open === 'system' && this.systemBack?.() === true) {
+        // A page of the pause menu went back to its list.
+      } else if (this.menus.open !== null) this.menus.close();
       else menuResults.push(this.menus.request('system'));
     }
     for (const [action, menu] of MENU_ACTIONS) {
-      if (!input.pressed.has(action)) continue;
+      // The pause menu's own keys are its pages' (DG-15): no other menu opens over it.
+      if (!input.pressed.has(action) || this.menus.open === 'system') continue;
       if (this.menus.open === menu) this.menus.close();
       else menuResults.push(this.menus.request(menu));
     }
@@ -259,6 +275,7 @@ export class Session {
       refusedActions,
       target,
       stick: input.stick,
+      input,
     };
   }
 
@@ -389,6 +406,8 @@ export class Session {
       this.sim.submit({ type: 'FINISHER', on: finisher });
       this.#finisherHeld = finisher;
     }
+    // Let go (decision DG-2): one press; the shout follows at once.
+    if (input.pressed.has('spare')) this.sim.submit({ type: 'SPARE' });
     if (
       use !== 'AIM' &&
       use !== 'MELEE' &&
@@ -521,3 +540,25 @@ const AHEAD_VECTOR: Readonly<Record<'s' | 'n' | 'e' | 'w', { x: number; y: numbe
   e: { x: 1, y: 0 },
   w: { x: -1, y: 0 },
 };
+
+/**
+ * The pad in the finish-or-let-go context (Book 10 padContext): its parry button held is the
+ * finisher held, and its interact button pressed is let go; the keyboard's own keys are untouched.
+ */
+export function padChoice(input: InputFrame, offered: boolean): InputFrame {
+  const pad = input.byPad;
+  if (!offered || pad === undefined || pad.size === 0) return input;
+  const swap = (set: ReadonlySet<Action>, from: Action, to: Action): Set<Action> => {
+    const out = new Set(set);
+    if (pad.has(from) && out.has(from)) {
+      out.delete(from);
+      out.add(to);
+    }
+    return out;
+  };
+  return {
+    ...input,
+    held: swap(swap(input.held, 'parry', 'finisher'), 'interact', 'spare'),
+    pressed: swap(swap(input.pressed, 'parry', 'finisher'), 'interact', 'spare'),
+  };
+}

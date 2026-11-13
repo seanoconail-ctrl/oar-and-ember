@@ -16,6 +16,11 @@ export interface InputFrame {
   readonly stick: { readonly x: number; readonly y: number };
   /** Actions held through a mouse button this frame (right-click interacts at the cursor). */
   readonly byMouse: ReadonlySet<Action>;
+  /**
+   * Actions held through a pad button this frame (the user's third playtest, DG-2: the pad's parry
+   * and interact buttons finish and let go while the choice is offered). Absent: none.
+   */
+  readonly byPad?: ReadonlySet<Action>;
 }
 
 /** Stick deflection below this counts as centred. */
@@ -140,6 +145,10 @@ export class InputMapper {
         )
       )
         byMouse.add(action);
+    const byPad = new Set<Action>();
+    for (const action of held)
+      if (this.#bindings[action].some((b) => b.device === 'pad' && this.#padButtons[b.button] === true))
+        byPad.add(action);
     this.#tappedKeys.clear();
     this.#tappedMouse.clear();
     this.#wheel.clear();
@@ -168,6 +177,6 @@ export class InputMapper {
       y /= length;
     }
     const stick = { x: this.#padAxes[2] ?? 0, y: this.#padAxes[3] ?? 0 };
-    return { held, pressed, released, move: { x, y }, stick, byMouse };
+    return { held, pressed, released, move: { x, y }, stick, byMouse, byPad };
   }
 }

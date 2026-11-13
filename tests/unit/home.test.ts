@@ -239,7 +239,9 @@ describe('Stage 7 check 3: the action adds output at skill; only fishing is time
   const buildWith = (press: 'good' | 'late' | 'none', skill = 1) => {
     const { sim, events, bot } = play(`build-${press}-${skill}`);
     sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
-    sim.state.facts['ch1.shelter_raised'] = true; // the lean-to up: the work goes on to the roof
+    // The lean-to up and the second day begun: the finishing is open (DG-12).
+    sim.state.facts['ch1.shelter'] = 'SAIL';
+    sim.state.calendar = { ...sim.state.calendar, day: 2 };
     sim.state.player.skills['building'] = skill as 0;
     bot.goToSite('shelter');
     bot.interact();
@@ -325,6 +327,11 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
     const h = home(sim.state);
     h.stores['RES_DRIFTWOOD'] = 5;
     if (task === 'TASK_COOK') h.fire = { lit: true, fuel: 2 };
+    // Building is the shelter's finishing, from the second day with the lean-to up (DG-12).
+    if (task === 'TASK_BUILD') {
+      sim.state.facts['ch1.shelter'] = 'SAIL';
+      sim.state.calendar = { ...sim.state.calendar, day: 2 };
+    }
     sim.state.player.stamina.current = 50;
     const before = minutesIntoDay(sim.state.calendar, b);
     const was = sim.state.player.stamina.current;
@@ -380,7 +387,9 @@ describe('Stage 7 check 4: each task takes its Book 10 time and only its Book 10
   it('never empties the bar on its own, and counts the hours towards a hard day', () => {
     const { sim, bot } = play('hard');
     sim.state.facts[FACT_AT_BROCH] = true; // the camp's work is open (S7-26)
-    sim.state.facts['ch1.shelter_raised'] = true; // the lean-to up: the work goes on to the roof
+    // The lean-to up and the second day begun: the finishing is open (DG-12).
+    sim.state.facts['ch1.shelter'] = 'SAIL';
+    sim.state.calendar = { ...sim.state.calendar, day: 2 };
     sim.state.player.stamina.current = 1;
     // Seventeen half-hours raising the shelter: more than Book 10's hard day, short of the roof.
     for (let i = 0; i < 17; i++) bot.doAt('shelter', 'none');

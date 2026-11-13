@@ -8,6 +8,10 @@
  * never mashes: every press is one committed action, judged from what a player sees (the flash,
  * the drawn poses), which the simulation exposes as the fighters' state.
  *
+ * The user's third playtest (decisions DG-2 and DG-9): a beaten foe within reach is let go (or,
+ * with `mercy: 'FINISH'`, finished with the held finisher); Ketill's red blow is dodged, never
+ * parried, and he is struck in its recovery.
+ *
  * Used by the scenario tests (the fold, Seal Cave), the combat tests and the captures.
  */
 import type { CombatBalance } from '../../content/combatBalance.ts';
@@ -52,10 +56,21 @@ export function blowLandsAt(f: Fighter, cb: CombatBalance): number | null {
 export interface CarefulMemory {
   lockedAt: number;
   pressedAt: number;
+  /** What it does with a beaten foe in reach: let it go, finish it, or neither (DG-2). */
+  mercy?: 'SPARE' | 'FINISH' | 'NONE';
+  /** The finisher held since this tick (-1: not held). */
+  holdFrom?: number;
+  /** The last tick a foe was attacking (a long lull: it stands further off, to let them come). */
+  busyAt?: number;
 }
 
-export function carefulMemory(): CarefulMemory {
-  return { lockedAt: -1_000, pressedAt: -1_000 };
+export function carefulMemory(mercy: CarefulMemory['mercy'] = 'SPARE'): CarefulMemory {
+  return { lockedAt: -1_000, pressedAt: -1_000, mercy, holdFrom: -1 };
+}
+
+/** Whether a foe is in its red blow's recovery: open to every blow (Book 10 ketillOpening). */
+function redOpen(f: Fighter, t: number): boolean {
+  return f.move === 'red' && striking(f) && t >= f.activeEnd;
 }
 
 /**
@@ -77,10 +92,40 @@ export function carefulTick(
   const pf = p.fight ?? null;
   const t = tick + 1;
   const still: SimCommand = { type: 'MOVE', x: 0, y: 0, run: false, sneak: false };
-  const nearest = ranked[0];
-  if (nearest === undefined) return [still];
   const fighterOf = (id: string): Fighter | undefined => onFoot.actors[id]?.fight?.f;
   const ready = pf == null || free(pf);
+  // A beaten foe within the offer's reach (Book 10 offerReach): let it go, or hold to finish it.
+  const mercy = mem.mercy ?? 'SPARE';
+  if ((mem.holdFrom ?? -1) >= 0) {
+    if (tick - (mem.holdFrom ?? 0) > cb.finisherHold + 1) {
+      mem.holdFrom = -1;
+      return [still, { type: 'FINISHER', on: false }];
+    }
+    return [still];
+  }
+  if (mercy !== 'NONE' && ready) {
+    const beaten = Object.values(onFoot.actors).find((a) => {
+      const st = a.fight?.f.state;
+      return (
+        a.fight?.side === 'ENEMY' &&
+        a.fight.dead === null &&
+        a.fight.spared === undefined &&
+        (st === 'reel' || st === 'downed' || st === 'surrendered') &&
+        Math.hypot(a.x - p.x, a.y - p.y) <= (1.1 + cb.bodyRadiusTiles) * tile
+      );
+    });
+    if (beaten !== undefined) {
+      const face: SimCommand = {
+        type: 'FACE',
+        dir: Math.round((Math.atan2(beaten.y - p.y, beaten.x - p.x) / (2 * Math.PI)) * 64),
+      };
+      if (mercy === 'SPARE') return [still, face, { type: 'SPARE' }];
+      mem.holdFrom = tick;
+      return [still, face, { type: 'FINISHER', on: true }];
+    }
+  }
+  const nearest = ranked[0];
+  if (nearest === undefined) return [still];
   // A light pressed is let go at once (chargeFromPress: released before level 1, a light).
   if (pf?.state === 'chargeL0') out.push({ type: 'MELEE_RELEASE' });
   // Locked on to the nearest foe (its attacks aim at it, DF-81).
@@ -125,6 +170,18 @@ export function carefulTick(
   if (coming !== undefined) {
     const cf = fighterOf(coming.id);
     const at = cf === undefined ? null : blowLandsAt(cf, cb);
+    // The red blow cannot be parried or blocked: dodge so its first active tick falls in the
+    // dodge's invulnerable ticks (Book 10 "Dodge"), straight away from it.
+    if (cf?.move === 'red') {
+      out.push(still);
+      const lead = Math.floor((cb.dodge.invulnFrom + cb.dodge.invulnTo) / 2);
+      // Across the blow's line and a little past him, so his recovery is in reach after the dash.
+      const ux = (p.x - coming.x) / coming.d;
+      const uy = (p.y - coming.y) / coming.d;
+      if (at !== null && at - t === lead && ready && stamina > 0 && pf?.exhausted !== true)
+        out.push({ type: 'DODGE', x: -uy - ux * 0.4, y: ux - uy * 0.4 });
+      return out;
+    }
     out.push(still);
     const lead = cb.parry.windup + Math.floor(cb.parry.window / 2);
     if (at !== null && at - t === lead && (ready || pf.state === 'block') && stamina > 0)
@@ -153,7 +210,7 @@ export function carefulTick(
   // A foe open to a punish, near: strike it.
   const open = ranked.find(({ id, d }) => {
     const f = fighterOf(id);
-    if (f === undefined || d > reachPx * 1.6) return false;
+    if (f === undefined || d > reachPx * (redOpen(f, t) ? 2.6 : 1.6)) return false;
     const unaware = onFoot.actors[id]?.fight?.ai.awareness.state !== 'ALERT';
     return (
       unaware ||
@@ -161,6 +218,7 @@ export function carefulTick(
       f.state === 'knockdown' ||
       f.state === 'getUp' ||
       punishable(f, t) ||
+      redOpen(f, t) ||
       f.exhausted
     );
   });
@@ -175,12 +233,54 @@ export function carefulTick(
     }
     return out;
   }
+  // An archer still shooting is closed on first, whoever else is near (its arrows wear the steerer
+  // down while the others circle; the first-sight pause of decision DG-8 gives it the time).
+  const shooter = ranked.find(({ id, d }) => {
+    const af = onFoot.actors[id]?.fight;
+    return (
+      af?.bow === true &&
+      af.arrows > 0 &&
+      af.ai.sidearmAt < 0 &&
+      af.ai.awareness.state === 'ALERT' &&
+      d < 9 * tile
+    );
+  });
+  if (shooter !== undefined && shooter.id !== nearest.id) {
+    out.push(shooter.d > reachPx * 0.95 ? towards(shooter) : still);
+    if (shooter.d <= reachPx && ready && tick - mem.pressedAt > 4) {
+      out.push({ type: 'MELEE', facing: p.facing });
+      mem.pressedAt = tick;
+    }
+    return out;
+  }
   // Otherwise keep just outside the reach of the nearest foe and let it come.
   const fa = onFoot.actors[nearest.id]?.fight;
   const theirs = fa?.f.weapon == null ? cb.unarmed.reachTiles : cb.weapons[fa.f.weapon].reachTiles;
-  const hold = (theirs + cb.bodyRadiusTiles + 0.6) * tile;
+  // A teaching foe of the red blow is let come from outside his circle: he strikes only when he has
+  // waited for his opening there (Book 10 "AI states").
+  const red = fa?.teach?.rule === 'RED';
+  if (ranked.some(({ id }) => {
+    const ff = fighterOf(id);
+    return ff !== undefined && (charging(ff) || striking(ff));
+  }))
+    mem.busyAt = tick;
+  // A long lull (a foe held at a wall inside its own circle, say): stand further off to let it
+  // come round and choose its moment.
+  const lull = tick - (mem.busyAt ?? tick) > 60 * 8 ? 1.4 : 0;
+  const hold = (theirs + cb.bodyRadiusTiles + (red ? 1.8 : 0.6) + lull) * tile;
   if (fa?.bow === true && (fa.arrows > 0 || fa.ai.sidearmAt < 0)) {
     // An archer: close on it.
+    out.push(nearest.d > reachPx * 0.95 ? towards(nearest) : still);
+    if (nearest.d <= reachPx && ready && tick - mem.pressedAt > 4) {
+      out.push({ type: 'MELEE', facing: p.facing });
+      mem.pressedAt = tick;
+    }
+    return out;
+  }
+  // A lull longer still, or the foe at someone else (Bran): go and strike, to bring the fight to
+  // the steerer.
+  const elsewhere = fa?.ai.target != null && fa.ai.target !== STEERER;
+  if (tick - (mem.busyAt ?? tick) > 60 * 15 || (elsewhere && tick - (mem.busyAt ?? tick) > 60 * 4)) {
     out.push(nearest.d > reachPx * 0.95 ? towards(nearest) : still);
     if (nearest.d <= reachPx && ready && tick - mem.pressedAt > 4) {
       out.push({ type: 'MELEE', facing: p.facing });

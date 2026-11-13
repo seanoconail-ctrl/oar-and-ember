@@ -1,6 +1,6 @@
 /**
  * A scripted player for design addendum 2.4's opening (Book 4 section 08, beats 1 to 15): the
- * chest carried up to its outline, the first fire, the sail raised, the first night's fire, his
+ * chest carried up to its outline, the first fire, the shelter's frame and sail, the first night's fire, his
  * key and his chest, the stores shot down from the mast, and Runa's chest. Built on the launch
  * bot, so it plays the whole chapter (src/tools/play/chapterRun.ts).
  */
@@ -51,19 +51,38 @@ export class WreckBot extends LaunchBot {
     this.waitFor(() => this.sim.state.facts['ch1.hild_walked_up'] === true, maxTicks);
   }
 
-  /** Raises the sail between the oars (one hands-on action). */
-  raiseShelter(): void {
+  /**
+   * The shelter's two day-1 stages (the user's third playtest, decision DG-12): the oars stood up
+   * and lashed for the frame, then the sail lashed over it. Each is one hands-on action at its
+   * place; `stages` stops after the frame.
+   */
+  raiseShelter(stages: 'FRAME' | 'SAIL' = 'SAIL'): void {
     const c = this.land.wreck?.camp;
     if (c === null || c === undefined) throw new Error('no camp');
-    this.goToZone(c.zone);
-    const at = { tx: Math.floor(c.shelter.x), ty: Math.floor(c.shelter.y) };
-    if (!this.walkTo((t: Tile) => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) <= 1))
-      throw new Error('no way to the sail');
-    this.sim.submit({ type: 'INTERACT_AT', tile: at });
-    this.step();
-    if (this.onFoot.player.work == null) throw new Error('the sail was not taken up');
-    this.waitFor(() => this.onFoot.player.work == null, 60 * 30);
-    if (this.sim.state.facts['ch1.shelter_raised'] !== true) throw new Error('no shelter');
+    const want = stages === 'FRAME' ? ['FRAME'] : ['FRAME', 'SAIL'];
+    for (const stage of want) {
+      if (stage === 'FRAME' && this.sim.state.facts['ch1.shelter'] !== 'FOLDED') continue;
+      this.goToZone(c.zone);
+      const at = { tx: Math.floor(c.shelter.x), ty: Math.floor(c.shelter.y) };
+      if (!this.walkTo((t: Tile) => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) <= 1))
+        throw new Error('no way to the sail');
+      this.sim.submit({ type: 'INTERACT_AT', tile: at });
+      this.step();
+      if (this.onFoot.player.work == null)
+        throw new Error(`the ${stage.toLowerCase()} was not begun`);
+      this.waitFor(() => this.onFoot.player.work == null, 60 * 30);
+      if (this.sim.state.facts['ch1.shelter'] !== stage)
+        throw new Error(`no ${stage.toLowerCase()}`);
+    }
+  }
+
+  /**
+   * Lends a hand finishing the shelter on the second morning (DG-12): `actions` Build actions at
+   * its site, or until it is finished.
+   */
+  finishShelter(actions: number): void {
+    for (let k = 0; k < actions && this.sim.state.facts['ch1.shelter'] === 'SAIL'; k++)
+      this.doAt('shelter', 'none');
   }
 
   /** Sits with Hild by the fire on the first night (the scene plays to its end). */

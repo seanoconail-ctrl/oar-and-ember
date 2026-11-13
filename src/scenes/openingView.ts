@@ -31,6 +31,14 @@ import {
 } from '../sim/narrative/wreck.ts';
 import type { WreckContext } from '../sim/narrative/wreck.ts';
 import type { WorldState } from '../sim/world.ts';
+import { leanToUp, shelterStage } from '../sim/home/camp.ts';
+import {
+  seaBalanceFor,
+  seaBurialState,
+  seaMoment,
+  seaTimeline,
+} from '../sim/narrative/seaBurial.ts';
+import type { SeaPhase } from '../sim/narrative/seaBurial.ts';
 import type { StormBalance } from '../content/presentationBalance.ts';
 import { drawStorm, greenWater, strikeNow, strikes, waves } from './storm.ts';
 import type { Strike, StormDrawing, Wave } from './storm.ts';
@@ -61,38 +69,57 @@ export function openingProps(
   }
   const camp = ctx.camp;
   if (camp?.zone !== zone) return out;
-  const raised = world.facts['ch1.shelter_raised'];
-  const raising =
-    world.onFoot?.player.work?.task === 'TASK_RAISE_SHELTER' ? world.onFoot.player.work : null;
-  const raisedAt = Number(world.facts['ch1.shelter_raised_at'] ?? -1e9);
+  // The shelter's stages (the user's third playtest, decision DG-12; Book 7 section 06): the sail
+  // folded with three oars; the oars stood and lashed (the steerer's build loop, frame by frame);
+  // the frame standing, its guys stirring; the sail hauled over the ridge and lashed along it; the
+  // cloth filling and settling into the lean-to; and the second day's finishing going on beside it.
+  const stage = shelterStage(world);
+  const work = world.onFoot?.player.work ?? null;
+  const stageAt = Number(world.facts['ch1.shelter_at'] ?? -1e9);
+  const share = (task: string): number =>
+    work?.task === task ? Math.min(0.999, Math.max(0, (tick - work.since) / work.ticks)) : -1;
   const sail = ctx.rw.camp.sail;
   for (const p of stageProps) {
     if (p.sheet !== 'prop_sail_leanto') continue;
-    if (raised === false) {
-      // The torn sail folded beside the two oars, or being hauled up between them.
-      const k =
-        raising === null
-          ? -1
-          : Math.min(7, Math.floor(((tick - raising.since) / raising.ticks) * 8));
+    const at = { x: p.x, y: p.y, fixed: true };
+    if (stage === 'FOLDED') {
+      const k = share('TASK_SHELTER_FRAME');
       out.push({
-        sheet: 'prop_sail_raise',
-        frame: k < 0 ? 'folded/-/0' : `raise/-/${k}`,
-        x: p.x,
-        y: p.y,
-        fixed: true,
+        sheet: SHELTER_SHEET,
+        frame: k < 0 ? 'folded/-/0' : `raise/-/${Math.floor(k * SHELTER_RAISE_FRAMES)}`,
+        ...at,
       });
-    } else if (tick - raisedAt < 60) {
+    } else if (stage === 'FRAME') {
+      const k = share('TASK_SHELTER_SAIL');
+      out.push({
+        sheet: SHELTER_SHEET,
+        frame:
+          k < 0
+            ? `frame/-/${Math.floor(tick / 12) % SHELTER_FRAME_FRAMES}`
+            : `haul/-/${Math.floor(k * SHELTER_HAUL_FRAMES)}`,
+        ...at,
+      });
+    } else if ((stage === null || stage === 'SAIL') && tick - stageAt < 60) {
       // The cloth filling and settling.
       out.push({
         sheet: 'prop_sail_raise',
-        frame: `fill/-/${Math.min(5, Math.floor((tick - raisedAt) / 10))}`,
-        x: p.x,
-        y: p.y,
-        fixed: true,
+        frame: `fill/-/${Math.min(5, Math.floor((tick - stageAt) / 10))}`,
+        ...at,
       });
     }
+    // The second day's finishing (shelterFinish): turves cut and stacked on the weather side, a
+    // mallet and pegs, as the work goes on (by its share of Book 10's worker-days).
+    const building = world.homes['ISLE_SKARV']?.building;
+    if (stage === 'SAIL' && building != null && building.progress > 0)
+      out.push({
+        sheet: SHELTER_SHEET,
+        frame: `turf/-/${Math.min(SHELTER_TURF_FRAMES - 1, Math.floor((building.progress / Math.max(1, ctx.shelterNeedMinutes)) * SHELTER_TURF_FRAMES))}`,
+        x: p.x - 2.1,
+        y: p.y + 0.6,
+        fixed: true,
+      });
   }
-  if (raised !== false) {
+  if (leanToUp(world)) {
     // Inside the shelter: a fur for each sleeper, the gear stowed, clothes and a net drying.
     const beds = ctx.campBeds;
     const n = Math.max(1, world.household.residents.length);
@@ -120,8 +147,8 @@ export function openingProps(
     });
   }
   // The doors at their opening (Book 7 section 06): a door over 3 frames, a flap over 2.
-  const stage = world.homes['ISLE_SKARV']?.stage ?? 'S0';
-  for (const d of doorsHere(map, stage, world.facts)) {
+  const campStage = world.homes['ISLE_SKARV']?.stage ?? 'S0';
+  for (const d of doorsHere(map, campStage, world.facts)) {
     const s = world.onFoot?.doors?.find((x) => x.id === d.id);
     const open = s?.open ?? 0;
     const flap = d.kind === 'FLAP';
@@ -144,12 +171,18 @@ export function stagePropsNow<T extends { readonly sheet: string }>(
   props: readonly T[],
   tick: number,
 ): T[] {
-  const raised = world.facts['ch1.shelter_raised'];
-  const raisedAt = Number(world.facts['ch1.shelter_raised_at'] ?? -1e9);
+  const stageAt = Number(world.facts['ch1.shelter_at'] ?? -1e9);
   return props.filter(
-    (p) => p.sheet !== 'prop_sail_leanto' || (raised !== false && tick - raisedAt >= 60),
+    (p) => p.sheet !== 'prop_sail_leanto' || (leanToUp(world) && tick - stageAt >= 60),
   );
 }
+
+/** The shelter's stages' sheet (DG-12) and its states' frame counts (assets/art/sheets). */
+export const SHELTER_SHEET = 'prop_shelter_frame';
+export const SHELTER_RAISE_FRAMES = 8;
+export const SHELTER_FRAME_FRAMES = 4;
+export const SHELTER_HAUL_FRAMES = 8;
+export const SHELTER_TURF_FRAMES = 4;
 
 // ---------------------------------------------------------------------------- particles
 
@@ -253,6 +286,8 @@ export interface DecorateInput {
    * lashing (`from`, world px) round into the stream's mouth where they lie.
    */
   readonly bundleDrift?: { readonly k: number; readonly from: { x: number; y: number } } | null;
+  /** The sea's colour ramp, shallow to deep reversed as the water shader shades it (DG-14). */
+  readonly seaRamp?: readonly (readonly [number, number, number])[];
 }
 
 /** Whether the steerer stands under the raised sail (its cloth cut away, the rain heard on it). */
@@ -263,7 +298,7 @@ export function underSail(
   p: { x: number; y: number },
 ): boolean {
   const camp = ctx.camp;
-  if (camp?.zone !== map.zone || world.facts['ch1.shelter_raised'] === false) return false;
+  if (camp?.zone !== map.zone || !leanToUp(world)) return false;
   const sail = ctx.rw.camp.sail;
   return (
     Math.abs(p.x / map.tile - (sail.x - 0.2)) < 1.9 &&
@@ -336,7 +371,7 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
     }
   // Under the lean-to, its cloth cut away and the inside warm (Book 7 section 06).
   const camp = ctx.camp;
-  if (camp !== null && map.zone === camp.zone && world.facts['ch1.shelter_raised'] !== false) {
+  if (camp !== null && map.zone === camp.zone && leanToUp(world)) {
     const sail = ctx.rw.camp.sail;
     const under = underSail(world, ctx, map, p);
     const raining = input.rain != null && input.rain.drops > 0;
@@ -512,6 +547,7 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
       });
     }
   }
+  drawSeaBurial(sprites, input);
   sprites.push(...input.fx.sprites(camera));
   // The first rain: a light overlay slanting downwind that never hides a threat (Book 7 section 08).
   const rain = input.rain;
@@ -530,6 +566,263 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
       });
     }
   return { ...scene, sprites, pools, ...(effects === undefined ? {} : { effects }) };
+}
+
+// ------------------------------------------------------------------------- the sea burial
+
+/** The sea burial's water: a ramp index by how deep it has gone (shallow wash to deeper sea). */
+const SEA_FALLBACK: readonly (readonly [number, number, number])[] = [
+  [15, 29, 46],
+  [20, 42, 60],
+  [25, 55, 74],
+  [32, 70, 90],
+  [41, 86, 105],
+  [53, 104, 119],
+  [74, 125, 136],
+  [106, 151, 156],
+];
+/** The mask that has the whole bier under (px up from its anchor, taller than its drawing). */
+const SEA_FULL_MASK = 26;
+/** Afloat, the waterline rides this far up the bier from its anchor. */
+const SEA_FLOAT_MASK = 4;
+
+/** How the sea burial is drawn now (DG-14), or null when it is not on (also for tests). */
+export interface SeaBurialView {
+  readonly phase: SeaPhase | 'LAID';
+  readonly t: number;
+  /** The bier's frame, its lift off the ground (carried), its water mask and where it is. */
+  readonly frame: string;
+  readonly lift: number;
+  readonly mask: number;
+  readonly x: number;
+  readonly y: number;
+  readonly wave: number;
+  readonly sinceWave: number;
+  readonly underFoam: boolean;
+  readonly ring: number;
+}
+
+export function seaBurialView(
+  world: WorldState,
+  ctx: WreckContext,
+  map: ZoneMap,
+  seconds: number,
+): SeaBurialView | null {
+  const sea = ctx.sea;
+  const bodyId = ctx.bran?.body ?? 'C_THORKEL';
+  const body = world.onFoot?.actors[bodyId];
+  if (sea === null || body === undefined) return null;
+  const ss = seaBurialState(world);
+  const laid = world.facts['rites.pending'] === 'SEA' && world.facts['rites.laid'] === true;
+  if (ss === null && !laid) return null;
+  if (ss !== null && ss.zone !== map.zone) return null;
+  if (ss === null)
+    return {
+      phase: 'LAID',
+      t: 0,
+      frame: 'bier/-/0',
+      lift: 0,
+      mask: 0,
+      x: body.x,
+      y: body.y,
+      wave: 0,
+      sinceWave: 0,
+      underFoam: false,
+      ring: 0,
+    };
+  const t = (world.tick - ss.at) / TICKS_PER_SECOND;
+  const own = seaBalanceFor(ss, sea);
+  const m = seaMoment(own, t);
+  const turn = Math.abs(ss.turn) * m.turn;
+  const frame =
+    m.phase === 'BIER' || m.phase === 'SET' || m.phase === 'WAVES'
+      ? m.wave === 0
+        ? 'bier/-/0'
+        : m.wave === 1
+          ? 'bier/-/1'
+          : `bier/-/${2 + (Math.floor(seconds * 4) % 2)}`
+      : m.phase === 'BACKWASH' || m.phase === 'DRIFT'
+        ? `float/-/${Math.max(0, Math.min(4, Math.round(turn / 15)))}`
+        : `tilt/-/${Math.min(3, Math.floor(m.sink * 4))}`;
+  const bier = own.bierSeconds;
+  const lift =
+    m.phase === 'BIER' ? Math.round(20 * Math.max(0, Math.min(1, t / 0.5, (bier - t) / 0.5))) : 0;
+  let mask = 0;
+  if (m.phase === 'SET' || m.phase === 'WAVES') {
+    if (m.wave === 1 && m.sinceWave < 1.4)
+      mask = Math.round(3 * Math.sin((Math.PI * m.sinceWave) / 1.4));
+    if (m.wave === 2)
+      mask = m.underFoam ? 10 : Math.max(0, Math.round(10 - (m.sinceWave - sea.underSeconds) * 16));
+  } else if (m.phase === 'BACKWASH') mask = SEA_FLOAT_MASK;
+  else if (m.phase === 'DRIFT') mask = SEA_FLOAT_MASK + m.lowerPx;
+  else if (m.phase === 'SINK') {
+    const from = SEA_FLOAT_MASK + m.lowerPx;
+    mask = Math.round(from + (SEA_FULL_MASK - from) * m.sink);
+  } else if (m.phase === 'GONE') mask = SEA_FULL_MASK;
+  return {
+    phase: m.phase,
+    t,
+    frame,
+    lift,
+    mask,
+    x: body.x,
+    y: body.y,
+    wave: m.wave,
+    sinceWave: m.sinceWave,
+    underFoam: m.underFoam,
+    ring: m.ring,
+  };
+}
+
+/**
+ * Thorkel on his bier at the sea's edge and the sea taking him (Book 7 section 07; DG-14): the
+ * bier in place of his drawn body, carried, washed round, under the foam, afloat and turning,
+ * riding lower, sinking under the water's mask (never faded), the waves' foam bands up the
+ * shingle, the trail, the bubbles and the ring of foam where it went, and the gulls after.
+ */
+function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput): void {
+  const { world, ctx, map, camera, seconds } = input;
+  const v = seaBurialView(world, ctx, map, seconds);
+  const sea = ctx.sea;
+  if (v === null || sea === null) return;
+  const sx = Math.round(v.x - camera.x);
+  const sy = Math.round(v.y - camera.y);
+  // His drawn body (its sheet and layers) gives way to the bier.
+  for (let i = sprites.length - 1; i >= 0; i--) {
+    const sp = sprites[i];
+    if (sp === undefined || !/thorkel/.test(sp.sheet)) continue;
+    if (Math.abs(sp.x - sx) <= 1.5 && Math.abs(sp.y - sy) <= 1.5) sprites.splice(i, 1);
+  }
+  const ramp = input.seaRamp ?? SEA_FALLBACK;
+  const deep = v.phase === 'SINK' || v.phase === 'GONE' ? 4 : v.phase === 'DRIFT' ? 5 : 6;
+  const colour = ramp[Math.max(0, Math.min(ramp.length - 1, deep))] ?? [53, 104, 119];
+  const bob =
+    !input.reducedMotion && (v.phase === 'BACKWASH' || v.phase === 'DRIFT')
+      ? Math.round(Math.sin(seconds * 2.4))
+      : 0;
+  sprites.push({
+    sheet: 'fx_sea_burial',
+    frame: v.frame,
+    x: sx,
+    y: sy - v.lift + bob,
+    layer: 'actor',
+    sort: sy,
+    ...(v.mask > 0 ? { wade: { mask: v.mask, colour } } : {}),
+  });
+  if (v.phase === 'LAID') return;
+  const ss = seaBurialState(world);
+  if (ss === null) return;
+  const tl = seaTimeline(seaBalanceFor(ss, sea));
+  const T = map.tile;
+  // The three waves' foam bands rushing up the shingle and drawing back, each further up.
+  tl.waves.forEach((at, i) => {
+    const s = v.t - at;
+    if (s < 0 || s >= 1.6) return;
+    const k =
+      s < 0.6 ? Math.floor((s / 0.6) * 4) : 4 + Math.min(3, Math.floor(((s - 0.6) / 1.0) * 4));
+    const reach = ss.edge.y - (sea.firstWashTiles + 0.5 * i);
+    const from = ss.edge.y + 2.5;
+    const e = s < 0.6 ? Math.sin(((s / 0.6) * Math.PI) / 2) : 1 - (s - 0.6) / 1.0;
+    const y = (from + (reach - from) * e) * T;
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `wave/-/${k}`,
+      x: Math.round(ss.edge.x * T - camera.x),
+      y: Math.round(y - camera.y) + 14,
+      layer: 'decal',
+    });
+  });
+  // The first wave washing round the bier; the second's foam over it.
+  if (v.wave === 1 && v.sinceWave < 1.2)
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `wash/-/${Math.min(5, Math.floor((v.sinceWave / 1.2) * 6))}`,
+      x: sx,
+      y: sy,
+      layer: 'actor',
+      sort: sy + 0.5,
+    });
+  if (v.wave === 2 && v.sinceWave < sea.underSeconds + 0.4)
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `over/-/${Math.min(5, Math.floor((v.sinceWave / (sea.underSeconds + 0.4)) * 6))}`,
+      x: sx,
+      y: sy,
+      layer: 'actor',
+      sort: sy + 0.6,
+    });
+  // Foam trailing from it as it drifts; bubbles as it sinks; the ring of foam where it went.
+  if (v.phase === 'BACKWASH' || v.phase === 'DRIFT')
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `trail/-/${Math.floor(seconds * 8) % 4}`,
+      x: sx,
+      y: sy - 6,
+      layer: 'actor',
+      sort: sy - 1,
+    });
+  if (v.phase === 'SINK')
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `bubble/-/${Math.floor(seconds * 10) % 4}`,
+      x: sx,
+      y: sy,
+      layer: 'actor',
+      sort: sy + 0.7,
+    });
+  if (v.phase === 'GONE' && v.ring < 1)
+    sprites.push({
+      sheet: 'fx_sea_burial',
+      frame: `ring/-/${Math.min(7, Math.floor(v.ring * 8))}`,
+      x: sx,
+      y: sy,
+      layer: 'actor',
+      sort: sy + 0.7,
+    });
+  // Gulls cross over the place after (Book 10 seaAfter).
+  if (v.t >= tl.line)
+    for (let g = 0; g < 2; g++) {
+      const k = (v.t - tl.line) / 3.5 - g * 0.18;
+      if (k < 0 || k > 1) continue;
+      sprites.push({
+        sheet: 'actor_gull',
+        frame: `fly/e/${Math.floor(seconds * 10 + g) % 4}`,
+        x: Math.round(sx - 200 + k * 400),
+        y: Math.round(sy - 60 - g * 14 + Math.sin(k * 6 + g) * 4),
+        layer: 'actor',
+        sort: sy + 100,
+      });
+    }
+}
+
+/**
+ * The camera holds the bier in view and eases out to sea with it, at most Book 10's seaCamera
+ * from where it began, no cut and no zoom; calmer with reduced motion (DG-14).
+ */
+export function seaCamera(
+  world: WorldState,
+  ctx: WreckContext,
+  map: ZoneMap,
+  camera: { readonly x: number; readonly y: number },
+  reducedMotion: boolean,
+): { x: number; y: number } {
+  const sea = ctx.sea;
+  const ss = seaBurialState(world);
+  const body = world.onFoot?.actors[ctx.bran?.body ?? 'C_THORKEL'];
+  if (sea === null || ss === null || ss.zone !== map.zone || body === undefined) return camera;
+  const tl = seaTimeline(seaBalanceFor(ss, sea));
+  const t = (world.tick - ss.at) / TICKS_PER_SECOND;
+  const ease0 = Math.max(0, Math.min(1, t / 1.5, (tl.control - t) / 1.5));
+  const k = ease0 * ease0 * (3 - 2 * ease0) * (reducedMotion ? 0.5 : 1);
+  let dx = (body.x - (camera.x + W / 2)) * k;
+  let dy = (body.y - 30 - (camera.y + H / 2)) * k;
+  const max = sea.cameraTiles * map.tile;
+  const len = Math.hypot(dx, dy);
+  if (len > max) {
+    dx = (dx / len) * max;
+    dy = (dy / len) * max;
+  }
+  return { x: Math.round(camera.x + dx), y: Math.round(camera.y + dy) };
 }
 
 /** Where the Hag's Stone pulls the view (decision DE-28): a share of the way, at most 2 tiles. */

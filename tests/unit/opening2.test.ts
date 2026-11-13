@@ -210,7 +210,9 @@ describe('Thorkel’s chest, its outline and home, his key and the bow (DE-17, D
     bot.firstFire(['drift_west_rocks', 'drift_west_bank']);
     bot.waitForHild();
     expect(spoke(events, 'c_hild.camp.walk_up')).toBe(true);
-    // The shelter, raised in one visible action: the sail hauled up, filling, then the lean-to.
+    // The shelter (the user's third playtest, DG-12; tests/unit/pt3story.test.ts has its stages):
+    // the sail folded with three oars, then the frame and the sail lashed over it, filling, then the
+    // lean-to.
     const home = world.homes['ISLE_SKARV'];
     if (home === undefined) throw new Error('no home');
     const s0 = camp.def.props.S0;
@@ -221,19 +223,22 @@ describe('Thorkel’s chest, its outline and home, his key and the bow (DE-17, D
       false,
     );
     const frames = new Set<string>();
-    sim.events.onAny(() => undefined);
     const site = wreck.camp?.shelter ?? { x: 0, y: 0 };
     bot.walkTo(
       (t) => Math.abs(t.tx - Math.floor(site.x)) + Math.abs(t.ty - Math.floor(site.y)) <= 1,
     );
-    sim.submit({ type: 'INTERACT_AT', tile: { tx: Math.floor(site.x), ty: Math.floor(site.y) } });
-    for (let i = 0; i < ob.camp.shelterRaise.seconds * T + 70; i++) {
-      sim.step();
-      for (const p of openingProps(world, wreck, machair, s0, world.tick))
-        if (p.sheet === 'prop_sail_raise') frames.add(p.frame.split('/')[0] ?? '');
+    for (const stage of [ob.camp.shelterFrame, ob.camp.shelterSail]) {
+      sim.submit({ type: 'INTERACT_AT', tile: { tx: Math.floor(site.x), ty: Math.floor(site.y) } });
+      for (let i = 0; i < stage.seconds * T + 70; i++) {
+        sim.step();
+        for (const p of openingProps(world, wreck, machair, s0, world.tick))
+          frames.add(p.frame.split('/')[0] ?? '');
+      }
     }
-    expect([...frames].sort()).toEqual(['fill', 'raise']);
-    expect(world.facts['ch1.shelter_raised']).toBe(true);
+    expect(
+      [...frames].filter((f) => ['raise', 'frame', 'haul', 'fill'].includes(f)).sort(),
+    ).toEqual(['fill', 'frame', 'haul', 'raise']);
+    expect(world.facts['ch1.shelter']).toBe('SAIL');
     expect(stagePropsNow(world, s0, world.tick).some((p) => p.sheet === 'prop_sail_leanto')).toBe(
       true,
     );
@@ -531,7 +536,8 @@ describe('everyone rescued gets up and joins the household (DE-22)', () => {
         expect(a?.pose).toBe('sleep');
         expect(world.people[id]?.life.activity).toBe('SLEEP');
       }
-      bot.doAt('bed_s0');
+      // The finished shelter has its own beds (the second day's work, DG-12).
+      bot.doAt(world.homes['ISLE_SKARV']?.stage === 'S1' ? 'bed_s1' : 'bed_s0');
       bot.waitFor(
         () => world.calendar.minuteOfDay >= 6 * 60 && world.calendar.minuteOfDay < 7 * 60,
         T * 120,
@@ -546,7 +552,8 @@ describe('everyone rescued gets up and joins the household (DE-22)', () => {
 
 describe('aims, the journal and stuck help (DE-23, DE-24; Book 8 section 13)', () => {
   it('every Chapter 1 aim has its journal line and two hints in the strings', () => {
-    expect(aims.aims.length).toBe(20);
+    // The user's third playtest adds the old tower's and the shelter's three stages (DG-12, DG-13).
+    expect(aims.aims.length).toBe(23);
     for (const a of aims.aims) {
       expect(content.strings.has(a.journalKey), a.id).toBe(true);
       expect(a.hints).toHaveLength(2);
@@ -658,7 +665,9 @@ describe('"Nothing that way" (DE-25)', () => {
   it('gives STEEP at rock and NOTHING at the zone’s end with no link', () => {
     const rock = press('edge-steep', 63, 34.6, 0, 1, 2);
     expect(rock.edge[0]?.kind).toBe('STEEP');
-    const end = press('edge-nothing', 94.5, 30, 1, 0, 2);
+    // On the shingle beside the zone's east end (decision DG-20: a footprint set over the bank
+    // above would now walk out along it rather than stand frozen pressing).
+    const end = press('edge-nothing', 95.5, 30.5, 1, 0, 2);
     expect(end.edge[0]?.kind).toBe('NOTHING');
   });
 
@@ -711,7 +720,10 @@ describe('doors (DE-26)', () => {
     campHooks(world, content, land, new URLSearchParams('camp=broch&shelter=down'));
     sim.step();
     expect(world.onFoot?.doors ?? []).toEqual([]);
-    world.facts['ch1.shelter_raised'] = true;
+    world.facts['ch1.shelter'] = 'FRAME';
+    sim.step();
+    expect(world.onFoot?.doors ?? []).toEqual([]);
+    world.facts['ch1.shelter'] = 'SAIL';
     sim.step();
     expect(world.onFoot?.doors?.map((d) => d.id)).toEqual(['shelter_flap']);
   });

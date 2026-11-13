@@ -16,7 +16,12 @@ import type { DeedReading } from './measures.ts';
 export function householdDeed(
   world: WorldState,
   ctx: PeopleContext,
-  deed: DeedReading & { readonly placeId: Id; readonly victims?: readonly Id[] },
+  deed: DeedReading & {
+    readonly placeId: Id;
+    readonly victims?: readonly Id[];
+    /** What the deed's context records (SPARED's `how`, decision DG-5). */
+    readonly context?: Readonly<Record<string, string>>;
+  },
   witnesses: readonly Id[],
   emit: Emit,
 ): Id {
@@ -27,7 +32,7 @@ export function householdDeed(
     day: world.calendar.day,
     placeId: deed.placeId,
     doer: 'HOUSEHOLD',
-    context: {},
+    context: { ...(deed.context ?? {}) },
     victims: [...(deed.victims ?? [])],
     witnesses: witnesses.map((person) => ({ person, escaped: false })),
     identification: 1,

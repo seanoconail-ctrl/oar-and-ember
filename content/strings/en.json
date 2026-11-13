@@ -6,7 +6,7 @@
     "text": "Build {build}"
   },
   "ui.title.screen_label": {
-    "text": "Oar and Ember title screen. Build {build}. Press any key to begin."
+    "text": "Oar and Ember title screen. Build {build}. Choose New game to begin."
   },
   "ui.boot.webgl2_missing": {
     "text": "Oar and Ember needs WebGL2, which this browser has turned off or does not support. Current versions of Chrome, Edge and Safari all support it."
@@ -1023,6 +1023,13 @@
   "caption.sfx.arrow_water": {
     "text": "An arrow splashes into water",
     "tags": ["INFO"]
+  },
+  "caption.sfx.menu_click": {
+    "text": "A wooden click",
+    "tags": ["INFO"]
+  },
+  "ui.sound.call.menu_click": {
+    "text": "The pause menu's click"
   },
   "caption.sfx.quiver_empty": {
     "text": "An empty quiver",
@@ -3590,6 +3597,22 @@
     "text": "A swell breaks over the shallows",
     "tags": ["INFO"]
   },
+  "caption.sfx.shelter_frame": {
+    "text": "Oars knocked together, a lashing drawn tight",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.body_taken": {
+    "text": "The surf washes up over the bier",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.body_sink": {
+    "text": "A deep gulp of water, and bubbles",
+    "tags": ["INFO"]
+  },
+  "caption.music.lament_sea": {
+    "text": "Thorkel's lament, a last held note",
+    "tags": ["INFO"]
+  },
   "caption.stinger.boat_ready": {
     "text": "The boat made whole",
     "tags": ["INFO"]
@@ -4324,11 +4347,17 @@
   "ui.prompt.take_key_click": {
     "text": "Right-click  Take the key"
   },
-  "ui.prompt.raise_shelter": {
-    "text": "{key}  Raise the sail"
+  "ui.prompt.shelter_frame": {
+    "text": "{key}  Stand up the oars"
   },
-  "ui.prompt.raise_shelter_click": {
-    "text": "Right-click  Raise the sail"
+  "ui.prompt.shelter_frame_click": {
+    "text": "Right-click  Stand up the oars"
+  },
+  "ui.prompt.shelter_sail": {
+    "text": "{key}  Lash the sail over"
+  },
+  "ui.prompt.shelter_sail_click": {
+    "text": "Right-click  Lash the sail over"
   },
   "ui.prompt.door": {
     "text": "{key}  Open the door"
@@ -4348,8 +4377,11 @@
   "task.name.cut_net": {
     "text": "Cut the net"
   },
-  "task.name.raise_shelter": {
-    "text": "Raise the sail"
+  "task.name.shelter_frame": {
+    "text": "Stand up the oars"
+  },
+  "task.name.shelter_sail": {
+    "text": "Lash the sail over"
   },
   "item.name.strongbox": {
     "text": "the strongbox"
@@ -4411,8 +4443,17 @@
   "ui.journal.aim.light_fire": {
     "text": "Light a fire in the old tower."
   },
-  "ui.journal.aim.raise_shelter": {
-    "text": "Raise the sail between the oars."
+  "ui.journal.aim.see_tower": {
+    "text": "Go up to the old tower to the north."
+  },
+  "ui.journal.aim.shelter_frame": {
+    "text": "Stand the oars up and lash them for the shelter's frame."
+  },
+  "ui.journal.aim.shelter_sail": {
+    "text": "Raise the sail over the frame, before the rain."
+  },
+  "ui.journal.aim.shelter_finish": {
+    "text": "Help Hild finish the shelter."
   },
   "ui.journal.aim.hild_leg": {
     "text": "See to Hild's leg."
@@ -4494,14 +4535,6 @@
   },
   "c_hild.hint.light_fire.2": {
     "text": "Two good pieces will do. Then the flint.",
-    "tags": ["ADDRESS_STEERER", "VOICED"]
-  },
-  "c_hild.hint.raise_shelter.1": {
-    "text": "The sail, and those two oars. Before the rain.",
-    "tags": ["ADDRESS_STEERER", "VOICED"]
-  },
-  "c_hild.hint.raise_shelter.2": {
-    "text": "Lash it high on the oars and peg the foot.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.hint.hild_leg.1": {
@@ -4677,6 +4710,9 @@
   },
   "ui.timings.mark.shelter": {
     "text": "Sail shelter raised"
+  },
+  "ui.timings.mark.shelter_finished": {
+    "text": "Shelter finished"
   },
   "ui.timings.mark.dusk_fight": {
     "text": "The scavengers at dusk"
@@ -5358,5 +5394,218 @@
   },
   "ui.dev.where": {
     "text": "{zone} ({x}, {y})"
+  },
+  "ui.pause.back": {
+    "text": "Back"
+  },
+  "ui.save.failed": {
+    "text": "The save could not be written."
+  },
+  "ui.save.ago_moments": {
+    "text": "moments"
+  },
+  "ui.save.ago_minute": {
+    "text": "a minute"
+  },
+  "ui.save.ago_minutes": {
+    "text": "{count} minutes"
+  },
+  "ui.save.ago_hour": {
+    "text": "an hour"
+  },
+  "ui.save.ago_hours": {
+    "text": "{count} hours"
+  },
+  "ui.save.ago_day": {
+    "text": "a day"
+  },
+  "ui.save.ago_days": {
+    "text": "{count} days"
+  },
+  "ui.settings.group.display": {
+    "text": "Display"
+  },
+  "ui.settings.group.audio": {
+    "text": "Sound"
+  },
+  "ui.settings.group.gameplay": {
+    "text": "Play"
+  },
+  "ui.settings.group.intro": {
+    "text": "The intro"
+  },
+  "ui.settings.on": {
+    "text": "on"
+  },
+  "ui.settings.off": {
+    "text": "off"
+  },
+  "ui.settings.motion": {
+    "text": "Reduced motion: {state}"
+  },
+  "ui.settings.info": {
+    "text": "Information captions: {state}"
+  },
+  "ui.settings.gore": {
+    "text": "Gore: {level}"
+  },
+  "ui.settings.marks": {
+    "text": "Awareness marks: {state}"
+  },
+  "ui.settings.fullscreen": {
+    "text": "Fullscreen: {state}"
+  },
+  "ui.settings.master": {
+    "text": "All sound: {level}"
+  },
+  "ui.settings.music": {
+    "text": "Music: {level}"
+  },
+  "ui.settings.ambience": {
+    "text": "The world around: {level}"
+  },
+  "ui.settings.effects": {
+    "text": "Effects: {level}"
+  },
+  "ui.settings.voice": {
+    "text": "Voices: {level}"
+  },
+  "ui.settings.tells": {
+    "text": "Uncanny sounds: {level}"
+  },
+  "ui.settings.mono": {
+    "text": "Mono: {state}"
+  },
+  "ui.settings.second_wind": {
+    "text": "Second wind: {state}"
+  },
+  "ui.settings.rans_mercy": {
+    "text": "Rán's mercy: {state}"
+  },
+  "ui.settings.timings": {
+    "text": "Chapter timings: {state}"
+  },
+  "ui.settings.locked": {
+    "text": "Changed only while the game is paused."
+  },
+  "ui.controls.keys": {
+    "text": "Keys and mouse"
+  },
+  "ui.controls.pad": {
+    "text": "Pad"
+  },
+  "ui.controls.change": {
+    "text": "Choose an action to change its key or button. Help pages: {key}."
+  },
+  "ui.controls.press": {
+    "text": "Press a key or button for {action}. Escape keeps it as it is."
+  },
+  "ui.controls.moved": {
+    "text": "{action} lost that binding."
+  },
+  "ui.controls.none": {
+    "text": "none"
+  },
+  "ui.action.move_up": {
+    "text": "Move up"
+  },
+  "ui.action.move_down": {
+    "text": "Move down"
+  },
+  "ui.action.move_left": {
+    "text": "Move left"
+  },
+  "ui.action.move_right": {
+    "text": "Move right"
+  },
+  "ui.action.run": {
+    "text": "Run"
+  },
+  "ui.action.sneak": {
+    "text": "Sneak"
+  },
+  "ui.action.interact": {
+    "text": "Interact"
+  },
+  "ui.action.use_item": {
+    "text": "Use what is in hand"
+  },
+  "ui.action.slot": {
+    "text": "Hotbar slot {count}"
+  },
+  "ui.action.slot_next": {
+    "text": "Next slot"
+  },
+  "ui.action.slot_prev": {
+    "text": "Previous slot"
+  },
+  "ui.action.parry": {
+    "text": "Parry"
+  },
+  "ui.action.block": {
+    "text": "Block"
+  },
+  "ui.action.dodge": {
+    "text": "Dodge"
+  },
+  "ui.action.shove": {
+    "text": "Shove"
+  },
+  "ui.action.finisher": {
+    "text": "Finish (hold)"
+  },
+  "ui.action.let_go": {
+    "text": "Let go"
+  },
+  "ui.action.lock_on": {
+    "text": "Lock on"
+  },
+  "ui.action.heal": {
+    "text": "Bind a wound or eat"
+  },
+  "ui.action.command_ring": {
+    "text": "Command ring"
+  },
+  "ui.action.quick": {
+    "text": "Quick command {count}"
+  },
+  "ui.action.map": {
+    "text": "Map"
+  },
+  "ui.action.inventory": {
+    "text": "Inventory"
+  },
+  "ui.action.build_menu": {
+    "text": "Build"
+  },
+  "ui.action.report": {
+    "text": "Journal"
+  },
+  "ui.action.system_menu": {
+    "text": "Pause menu"
+  },
+  "ui.dev.teleport_refused": {
+    "text": "No clear ground there."
+  },
+  "ui.dev.kill_refused": {
+    "text": "No enemy there."
+  },
+  "ui.dev.skip_refused": {
+    "text": "Not in a fight or a scene."
+  },
+  "ui.title.load_none": {
+    "text": "No saves yet."
+  },
+  "ui.sound.sfx.finisher": {
+    "text": "Finisher"
+  },
+  "ui.sound.sfx.spare": {
+    "text": "Let go"
+  },
+  "ui.sound.sfx.guard_turn": {
+    "text": "Guard turned"
+  },
+  "ui.sound.sfx.red_scrape": {
+    "text": "The red blow's scrape"
   }
 }

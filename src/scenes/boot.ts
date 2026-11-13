@@ -20,6 +20,13 @@ import type { PreparedPlay } from './playView.ts';
 import { bundledStrings, bundledTitleArt } from './bundledArt.ts';
 import { shellViewRequested, showShellView } from './shellView.ts';
 import { composeTitleFrame } from './title.ts';
+import { TitleMenuView } from './titleMenu.ts';
+import { browserSaves } from '../persist/browserSaves.ts';
+import { parseInterfaceBalance } from '../content/interfaceBalance.ts';
+import { loadInterfaceSettings, saveInterfaceSettings } from '../input/interfaceSettings.ts';
+import type { KeyValueStore } from '../input/settingsStore.ts';
+import { isFullscreen, toggleFullscreen } from '../ui/fullscreen.ts';
+import type { WorldState } from '../sim/world.ts';
 
 export interface BootElements {
   readonly canvas: HTMLCanvasElement;
@@ -169,20 +176,45 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
   let prepared: PreparedPlay | null = null;
   // Set on waking: preparation still unfinished then stops, so it never competes with play.
   let woken = false;
-  const play = (choice: NamingChoice, wokeAt: number): void => {
+  const play = (choice: NamingChoice, wokeAt: number, load: WorldState | null = null): void => {
     woken = true;
     step('atlases');
     loadAtlases().then((atlases) => {
       step('play');
       startPlay(canvas, presenter, art.palette, strings, contentNow(), atlases, choice, {
-        seed: `campaign-${Math.floor(wokeAt)}`,
+        seed: load?.seed ?? `campaign-${Math.floor(wokeAt)}`,
         wokeAt,
         prepared,
+        load,
       });
     }, fail);
   };
+  const t = (key: string, vars: Readonly<Record<string, string>> = {}): string =>
+    formatString(strings, key, { ...vars });
+  // The device's save slots (DG-16): Continue, Load, and a load across campaigns (`?load=`).
+  const saves = browserSaves(buildId);
+  const loadSlot = (slot: string): void => {
+    try {
+      const { state } = saves.load(slot, { context: { balance: contentNow().balance } });
+      step('frame');
+      canvas.dataset['state'] = 'loading';
+      play(
+        { name: state.player.name, bodyModel: state.player.bodyModel ?? 'A' },
+        performance.now(),
+        state,
+      );
+    } catch (error) {
+      fail(error);
+    }
+  };
 
   const params = new URLSearchParams(location.search);
+  const loadParam = params.get('load');
+  if (loadParam !== null) {
+    trackSize(canvas, presenter);
+    loadSlot(loadParam);
+    return;
+  }
   if (params.get('view') === 'play') {
     step('frame');
     trackSize(canvas, presenter);
@@ -212,14 +244,6 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     });
   });
 
-  // Any key or click leaves the title for the naming screen.
-  const press = document.createElement('p');
-  press.className = 'oe-press';
-  press.textContent = formatString(strings, 'ui.title.start');
-  press.style.cssText =
-    'position:fixed;left:0;right:0;bottom:8%;margin:0;text-align:center;color:#f4efe4;' +
-    'font-family:system-ui,sans-serif;font-size:1.1em;text-shadow:0 1px 0 #22313a;pointer-events:none';
-  document.body.append(press);
   // The atlases load while the title shows, so waking needs no wait.
   const atlasesReady = loadAtlases();
   // Once the title is painted, the play renderer is prepared behind it (AP-18): drawn once, then
@@ -265,13 +289,16 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
     };
     setTimeout(next, 0);
   }, fail);
-  const leave = (e: Event): void => {
-    if (e instanceof KeyboardEvent && (e.repeat || e.key === 'Tab')) return;
-    // The key that leaves the title must not also act on the naming screen it opens.
-    e.preventDefault();
-    window.removeEventListener('keydown', leave);
-    canvas.removeEventListener('pointerdown', leave);
-    press.remove();
+  // The title's menu (DG-18): New game, Continue, Load, Settings and Fullscreen.
+  const store = ((): KeyValueStore => {
+    try {
+      return localStorage;
+    } catch {
+      return { getItem: () => null, setItem: () => undefined };
+    }
+  })();
+  let iface = loadInterfaceSettings(store);
+  const startNew = (): void => {
     onTitle = false;
     step('naming');
     canvas.dataset['state'] = 'naming';
@@ -283,6 +310,37 @@ function start(elements: BootElements, buildId: string, step: (name: BootStep) =
       fail,
     );
   };
-  window.addEventListener('keydown', leave);
-  canvas.addEventListener('pointerdown', leave);
+  const menu = new TitleMenuView(document, {
+    palette: art.palette,
+    t,
+    saves,
+    saveSlots: parseInterfaceBalance(contentNow().balance).menu.saveSlots,
+    fullscreen: () => isFullscreen(document),
+    introSkip: () => iface.introSkip,
+    newGame: startNew,
+    load: (slot) => {
+      onTitle = false;
+      loadSlot(slot);
+    },
+    toggleFullscreen: () => {
+      void toggleFullscreen(document).then((on) => {
+        iface = { ...iface, fullscreen: on };
+        saveInterfaceSettings(store, iface);
+        menu.draw();
+      });
+    },
+    toggleIntro: () => {
+      iface = { ...iface, introSkip: !iface.introSkip };
+      saveInterfaceSettings(store, iface);
+    },
+    click: () => undefined,
+  });
+  menu.draw();
+  const keepFitted = (): void => {
+    if (!onTitle) return;
+    menu.fit(presenter.viewport, window.devicePixelRatio);
+    menu.pollPad();
+    requestAnimationFrame(keepFitted);
+  };
+  keepFitted();
 }

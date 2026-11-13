@@ -70,7 +70,24 @@ export function doorsHere(
   return (map.doors ?? []).filter(
     (d) =>
       (d.stages === undefined || (stage !== null && d.stages.includes(stage))) &&
-      (d.fact === undefined || facts[d.fact] === true),
+      (d.fact === undefined || factHolds(facts, d.fact)),
+  );
+}
+
+/**
+ * A door's fact: `key` holds when the fact is true; `key=A|B` when it is one of those values (the
+ * shelter's flap hangs once the sail is lashed over the frame, `ch1.shelter=SAIL|FINISHED`, DG-12).
+ */
+function factHolds(facts: Readonly<Record<string, FactValue>>, fact: string): boolean {
+  const eq = fact.indexOf('=');
+  if (eq < 0) return facts[fact] === true;
+  const v = facts[fact.slice(0, eq)];
+  return (
+    typeof v === 'string' &&
+    fact
+      .slice(eq + 1)
+      .split('|')
+      .includes(v)
   );
 }
 
@@ -110,6 +127,35 @@ export function doorBlocks(
     if (right > r.x0 && left < r.x1 && y > r.y0 && top < r.y1) return true;
   }
   return false;
+}
+
+/**
+ * How much of a footprint at (x, y) stands in closed doorways, in square pixels (Book 10 "No
+ * trap", neverFrozen: a door shut on someone never holds them; they may move any way that does not
+ * deepen the overlap).
+ */
+export function doorOverlap(
+  onFoot: { readonly doors?: readonly DoorState[] },
+  map: ZoneMap,
+  x: number,
+  y: number,
+  footprint: { readonly w: number; readonly h: number },
+): number {
+  const states = onFoot.doors ?? [];
+  if (states.length === 0) return 0;
+  const left = x - footprint.w / 2;
+  const right = x + footprint.w / 2;
+  const top = y - footprint.h;
+  let area = 0;
+  for (const d of map.doors ?? []) {
+    const s = states.find((t) => t.id === d.id);
+    if (s === undefined || !doorClosed(s)) continue;
+    const r = doorRect(d, map.tile);
+    const w = Math.min(right, r.x1) - Math.max(left, r.x0);
+    const h = Math.min(y, r.y1) - Math.max(top, r.y0);
+    if (w > 0 && h > 0) area += w * h;
+  }
+  return area;
 }
 
 /** Whether a point (sight, a missile's path) is in a closed door's doorway. */

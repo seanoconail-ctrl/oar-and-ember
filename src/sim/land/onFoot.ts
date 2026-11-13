@@ -26,7 +26,7 @@ import { dashStep, facingLocked, facingOfAngle, locked } from '../combat/fighter
 import type { AccelMode, CombatBalance } from '../../content/combatBalance.ts';
 import type { Fighter } from '../combat/fighter.ts';
 import type { ActorFight, Battle, Stance } from './fight.ts';
-import { doorBlocks } from './doors.ts';
+import { doorOverlap } from './doors.ts';
 import type { DoorState } from './doors.ts';
 import { edgePressAt, edgeStep } from './edges.ts';
 import type { EdgePress } from './edges.ts';
@@ -411,7 +411,7 @@ export function speedTilesPerSecond(gait: Gait, movement: MovementBalance): numb
 /** Whether a footprint centred on foot (x, y) is clear of blocking terrain. */
 export function footprintClear(
   map: ZoneMap,
-  rules: OnFootRules,
+  rules: Pick<OnFootRules, 'footprint'>,
   x: number,
   y: number,
   tidalGroundOpen: boolean,
@@ -434,6 +434,86 @@ export function footprintClear(
   return true;
 }
 
+/**
+ * How much of a footprint centred on foot (x, y) lies over blocking ground, in square pixels:
+ * blocking tiles under the tide, built things, and anything past the zone's edge (Book 10 "No
+ * trap"). Zero exactly when footprintClear holds.
+ */
+export function blockedArea(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+  tidalGroundOpen: boolean,
+): number {
+  const left = x - rules.footprint.w / 2;
+  const right = x + rules.footprint.w / 2;
+  const top = y - rules.footprint.h;
+  const t = map.tile;
+  let area = 0;
+  for (let ty = Math.floor(top / t); ty <= Math.floor((y - 0.001) / t); ty++)
+    for (let tx = Math.floor(left / t); tx <= Math.floor((right - 0.001) / t); tx++) {
+      const out = tx < 0 || ty < 0 || tx >= map.width || ty >= map.height;
+      if (!out && !tileBlocks(map, tx, ty, tidalGroundOpen)) continue;
+      const w = Math.min(right, (tx + 1) * t) - Math.max(left, tx * t);
+      const h = Math.min(y, (ty + 1) * t) - Math.max(top, ty * t);
+      if (w > 0 && h > 0) area += w * h;
+    }
+  return area;
+}
+
+/** Whether any of a footprint stands on the tidal flats (the corners footprintClear reads). */
+export function onTidalGround(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+): boolean {
+  const left = x - rules.footprint.w / 2;
+  const right = x + rules.footprint.w / 2 - 0.001;
+  const top = y - rules.footprint.h;
+  const bottom = y - 0.001;
+  for (const [cx, cy] of [
+    [left, top],
+    [right, top],
+    [left, bottom],
+    [right, bottom],
+  ] as const) {
+    const { tx, ty } = tileOf(map, cx, cy);
+    if (terrainAt(map, tx, ty) === 'flats') return true;
+  }
+  return false;
+}
+
+/**
+ * Whether a step from `from` to (x, y) may be taken: the no-trap rule (Book 2 section 10; Book 10
+ * section 25, "No trap"; decision DG-20). The footprint must be clear there, as ever, except that
+ *
+ * - **tideClosing**: tidal ground that closed under someone counts for them as wading water (it
+ *   is open to them) until their footprint has left it; and
+ * - **neverFrozen**: a body already overlapping blocking ground (and closed doorways, through
+ *   `doorArea`) may move any way that does not deepen the overlap.
+ *
+ * A step that footprintClear allowed before is allowed still, so nothing that never overlapped
+ * moves differently. Pure and deterministic.
+ */
+export function stepClear(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  from: { readonly x: number; readonly y: number },
+  x: number,
+  y: number,
+  tidalGroundOpen: boolean,
+  doorArea?: (x: number, y: number) => number,
+): boolean {
+  const open = tidalGroundOpen || onTidalGround(map, rules, from.x, from.y);
+  const doors = doorArea ?? ((): number => 0);
+  if (footprintClear(map, rules, x, y, open) && doors(x, y) <= 0) return true;
+  const was = blockedArea(map, rules, from.x, from.y, open) + doors(from.x, from.y);
+  if (was <= 0) return false;
+  return blockedArea(map, rules, x, y, open) + doors(x, y) <= was + 1e-6;
+}
+
 /** The nearest of the four facings to a direction (melee and aim facing, Book 10 section 21). */
 export function facingOf(x: number, y: number, current: Facing): Facing {
   if (x === 0 && y === 0) return current;
@@ -453,7 +533,10 @@ export function speedAt(
   const band = elevation === undefined ? null : bandAt(ctx.water, elevation, p.x, p.y, level);
   const inWater = band !== null && band.band !== 'WET';
   const base = p.gait === 'walk' && inWater ? ctx.movement.wade : ctx.movement[p.gait];
-  const factor = band?.speedFactor ?? 1;
+  // Deep water has no wading pace of its own: whoever is in it (risen round them, decision
+  // DG-20) moves at the deepest wading band's.
+  const deepest = ctx.water.bands.find((x) => x.band === 'WAIST')?.speedFactor ?? 1;
+  const factor = band?.band === 'DEEP' ? deepest : (band?.speedFactor ?? 1);
   const carry = band?.band === 'WAIST' && p.gait === 'carry' ? ctx.water.waistCarryFactor : 1;
   // Waist deep with the bar run empty: the band's factor again (Book 10 waistWadeEmpty).
   const tired = band?.band === 'WAIST' && p.winded?.wade === true ? (band.speedFactor ?? 1) : 1;
@@ -546,18 +629,24 @@ export function stepMovement(
   const before = { x: p.x, y: p.y };
   const elevation = ctx.elevations.get(map.zone);
   // Deep water is the edge of the walkable ground (no scene allows swimming yet); someone already
-  // in it may still move towards the shallows.
+  // in it may still move towards the shallows. Caught on tidal ground by the closing tide, its
+  // water is wading water for them until they leave it, however deep the flood has risen round
+  // them (Book 10 "No trap", tideClosing; decision DG-20).
+  const caught = !tide.open && onTidalGround(map, ctx.rules, p.x, p.y);
   const depthOk = (x: number, y: number): boolean => {
     if (elevation === undefined) return true;
     const to = bandAt(ctx.water, elevation, x, y, tide.level);
     if (!isDeep(to)) return true;
-    return isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level));
+    if (isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level))) return true;
+    return caught && onTidalGround(map, ctx.rules, x, y);
   };
-  // Design addendum 2.4: a closed door's doorway blocks like a wall (decision DE-26).
+  // Design addendum 2.4: a closed door's doorway blocks like a wall (decision DE-26). No shape
+  // ever traps the steerer (decision DG-20): ground that closed under them, or a door shut on
+  // them, never holds them where they stand (stepClear).
+  const doorArea = (x: number, y: number): number =>
+    doorOverlap(state, map, x, y, ctx.rules.footprint);
   const clear = (x: number, y: number): boolean =>
-    footprintClear(map, ctx.rules, x, y, tide.open) &&
-    depthOk(x, y) &&
-    !doorBlocks(state, map, x, y, ctx.rules.footprint);
+    stepClear(map, ctx.rules, before, x, y, tide.open, doorArea) && depthOk(x, y);
   let press: EdgePress | null = null;
   if (ctx.edgeStopDegrees === undefined) {
     if (dx !== 0 && clear(p.x + dx, p.y)) p.x += dx;
@@ -726,9 +815,10 @@ export function stepActor(
   const before = { x: actor.x, y: actor.y };
   const dx = intent.x * perTick;
   const dy = intent.y * perTick;
-  if (dx !== 0 && footprintClear(map, ctx.rules, actor.x + dx, actor.y, tidalGroundOpen))
+  // No shape traps anyone (decision DG-20): stepClear, as for the steerer.
+  if (dx !== 0 && stepClear(map, ctx.rules, actor, actor.x + dx, actor.y, tidalGroundOpen))
     actor.x += dx;
-  if (dy !== 0 && footprintClear(map, ctx.rules, actor.x, actor.y + dy, tidalGroundOpen))
+  if (dy !== 0 && stepClear(map, ctx.rules, actor, actor.x, actor.y + dy, tidalGroundOpen))
     actor.y += dy;
   actor.facing = facingOf(intent.x, intent.y, actor.facing);
   if (actor.x !== before.x || actor.y !== before.y) actor.moving = true;

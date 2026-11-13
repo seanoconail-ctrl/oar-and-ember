@@ -59,10 +59,48 @@ export const FACT_HILD_TENDED = 'ch1.hild_tended';
 /** Hild has shown the steerer the camp at the broch (beat 2's arrival line). */
 export const FACT_ARRIVED_SAID = 'ch1.arrived_said';
 /**
- * Design addendum 2.4 (decision DE-20): whether the sail lean-to is up (false until the steerer
- * raises it in a world begun with the rework's opening; absent in an older world, as drawn up).
+ * The user's third playtest (decisions DG-12 and DG-23): the shelter's stage, FOLDED (the sail and
+ * three oars lying at its place), FRAME (the oars stood and lashed), SAIL (the lean-to, slept under
+ * from the first night) and FINISHED (the S1 broch shelter, from the second day). Absent in a world
+ * from before design addendum 2.4, where the lean-to is drawn up from the start.
  */
-export const FACT_SHELTER_UP = 'ch1.shelter_raised';
+export const FACT_SHELTER = 'ch1.shelter';
+export type ShelterStage = 'FOLDED' | 'FRAME' | 'SAIL' | 'FINISHED';
+const SHELTER_STAGES: readonly ShelterStage[] = ['FOLDED', 'FRAME', 'SAIL', 'FINISHED'];
+
+/** The shelter's stage, or null in a world from before the rework's opening (drawn up). */
+export function shelterStage(world: WorldState): ShelterStage | null {
+  const v = world.facts[FACT_SHELTER];
+  return typeof v === 'string' && (SHELTER_STAGES as readonly string[]).includes(v)
+    ? (v as ShelterStage)
+    : null;
+}
+
+/** Whether the lean-to (or the finished shelter) is up: the household sleeps under it. */
+export function leanToUp(world: WorldState): boolean {
+  const s = shelterStage(world);
+  return s === null || s === 'SAIL' || s === 'FINISHED';
+}
+
+/**
+ * Whether the shelter's finishing is open (Book 10 section 03, shelterFinish): the lean-to up and
+ * the camp still at S0, from 06:00 on day 2 and not before (`from`; DG-12). In an older world the
+ * work towards the S1 roof was open as soon as the lean-to stood, as before.
+ */
+export function shelterFinishOpen(
+  world: WorldState,
+  from: { readonly day: number; readonly minute: number } | null,
+  dayStart: number,
+): boolean {
+  const s = shelterStage(world);
+  if (s === null) return true;
+  if (s !== 'SAIL') return false;
+  if (from === null) return true;
+  // Minutes since the campaign's first dawn, now and at the opening (a day begins at dayStart).
+  const since = (day: number, minute: number): number =>
+    (day - 1) * 1440 + ((minute - dayStart + 1440) % 1440);
+  return since(world.calendar.day, world.calendar.minuteOfDay) >= since(from.day, from.minute);
+}
 
 /** Everything the camp reads: its content and Book 10's numbers. */
 export interface CampContext {
@@ -74,6 +112,8 @@ export interface CampContext {
   readonly time: TimeBalance;
   /** Worker-days to raise the sail shelter (Book 10 section 09, Buildings). */
   readonly shelterWorkerDays: number;
+  /** When the shelter's finishing opens (Book 10 section 03, shelterFinish; null: no opening). */
+  readonly shelterFinishFrom: { readonly day: number; readonly minute: number } | null;
   /** Ticks of a hands-on action, and of lying down before the night passes. */
   readonly actionTicks: number;
   readonly sleepTicks: number;
@@ -87,7 +127,8 @@ export interface CampContext {
 /** The camp task a piece of driftwood is picked up with (decision PT-2). */
 export const TASK_PICK_UP_DRIFTWOOD = 'TASK_GATHER_DRIFTWOOD';
 
-function buildingWorkerDays(balance: unknown, row: string): number {
+/** A Buildings row's worker-days (Book 10 section 09). */
+export function buildingWorkerDays(balance: unknown, row: string): number {
   const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
   const list = tables?.['buildingsToolsAndCrafting']?.['buildings'];
   const found = Array.isArray(list)
@@ -97,6 +138,19 @@ function buildingWorkerDays(balance: unknown, row: string): number {
   if (!/^\d+(\.\d+)?$/.test(text))
     throw new Error(`balance.json: buildings "${row}" Worker-days is "${text}"`);
   return Number(text);
+}
+
+/** Book 10 section 03 shelterFinish's opening ("opened at HH:MM on day N"), if the row is there. */
+function finishFrom(balance: unknown): { day: number; minute: number } | null {
+  const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  const list = tables?.['foodFuelAndSeasons']?.['workAndTheWreckCamp'];
+  const row = Array.isArray(list)
+    ? (list as Record<string, string>[]).find((r) => r['Key'] === 'shelterFinish')
+    : undefined;
+  if (row === undefined) return null;
+  const m = /opened at (\d{2}):(\d{2}) on day (\d+) and not before$/.exec(row['Value'] ?? '');
+  if (m === null) throw new Error(`balance.json: shelterFinish is "${row['Value'] ?? ''}"`);
+  return { day: Number(m[3]), minute: Number(m[1]) * 60 + Number(m[2]) };
 }
 
 export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampContext | null {
@@ -125,6 +179,7 @@ export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampCon
     stamina: parseStaminaBalance(content.balance),
     time: parseTimeBalance(content.balance),
     shelterWorkerDays: buildingWorkerDays(content.balance, def.shelter.balanceRow),
+    shelterFinishFrom: finishFrom(content.balance),
     actionTicks: Math.round(taskBalance.action.actionSeconds * TICKS_PER_SECOND),
     sleepTicks: Math.round(def.sleepSeconds * TICKS_PER_SECOND),
   };
@@ -293,9 +348,10 @@ export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): Si
         ? { kind: 'SLEEP', site: site.key }
         : { kind: 'REFUSE', site: site.key, reason: 'TOO_EARLY_TO_SLEEP' };
     case 'BUILD':
-      // Before the steerer raises the lean-to (one action: src/sim/narrative/wreck.ts), the sail
-      // and the oars are the opening's; once it is up, the work goes on towards the S1 roof.
-      return home.stage === 'S0' && world.facts[FACT_SHELTER_UP] !== false
+      // The frame and the sail are the opening's own actions (src/sim/narrative/wreck.ts); the
+      // finishing is building work from 06:00 on the second day (DG-12), towards the S1 roof.
+      return home.stage === 'S0' &&
+        shelterFinishOpen(world, ctx.shelterFinishFrom, ctx.time.dayStart)
         ? { kind: 'TASK', task: 'TASK_BUILD', site: site.key }
         : null;
     case 'STORES':

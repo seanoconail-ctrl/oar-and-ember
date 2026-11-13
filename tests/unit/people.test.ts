@@ -423,6 +423,8 @@ describe('Stage 8 check 1: Hild starts useful work after her rescue and is alway
     const { world } = atBroch('reasons', { time: '05:00', tended: '1', day: '2' });
     const h = person(world, 'C_HILD');
     world.facts['ch1.arrived_said'] = true;
+    // The shelter finished: her day is her fishing (the finishing has its own test, pt3story).
+    world.facts['ch1.shelter'] = 'FINISHED';
     world.player.awake = true;
     world.calendar = { ...world.calendar, minuteOfDay: 6 * 60 + 10 };
     expect(activityOf(world, camp, people, 'C_HILD').kind).toBe('DARK');

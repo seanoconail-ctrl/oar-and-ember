@@ -34,6 +34,8 @@ import { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor } from '../ship/work.ts';
 import type { RepairKind, ShipDefs, ShipInstance } from '../ship/ship.ts';
 import type { WorldState } from '../world.ts';
 import { GATE_LAUNCH } from './gates.ts';
+import { beginSeaBurial, seaBurialActive, stepSeaBurial } from './seaBurial.ts';
+import type { SeaBurialBalance, SeaEvent } from './seaBurial.ts';
 
 export { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor };
 export const FACT_REPAIRS_OPEN = 'repair.open';
@@ -64,12 +66,18 @@ export interface RepairsContext {
   readonly talks: ReadonlyMap<string, SearchTalkDef>;
   /** Book 10 workerDay, in game minutes. */
   readonly workerDayMinutes: number;
+  /** Book 10 section 08's sea burial: the body taken by the sea in sight (DG-14). */
+  readonly sea: SeaBurialBalance | null;
 }
+
+/** The water's edge for the sea burial: whether ground is awash at the tide now (tiles). */
+export type WetAt = (zone: Id, xTiles: number, yTiles: number) => boolean;
 
 export function repairsContext(
   def: RepairsDef | null | undefined,
   ship: ShipDefs,
   workerDayMinutes: number,
+  sea: SeaBurialBalance | null = null,
 ): RepairsContext | null {
   if (def == null) return null;
   return {
@@ -78,6 +86,7 @@ export function repairsContext(
     b: ship.balance,
     talks: new Map(def.talks.map((t) => [t.id, t])),
     workerDayMinutes,
+    sea,
   };
 }
 
@@ -104,6 +113,8 @@ export type RepairEvent =
   | { readonly type: 'RITES_BEGAN'; readonly form: 'SETTING' | 'SEA' }
   | { readonly type: 'RITES_DONE'; readonly form: 'SETTING' | 'SEA' }
   | { readonly type: 'CHECKPOINT'; readonly label: string }
+  /** The sea burial's moments (DG-14): the bier borne down, the waves, the lift, the sink. */
+  | Extract<SeaEvent, { type: 'SEA_TAKEN' }>
   /** Stage 12: launching the boat was chosen at the boat: the readiness screen opens. */
   | { readonly type: 'READINESS_ASKED'; readonly gate: Id };
 
@@ -657,6 +668,8 @@ function minuteNow(world: WorldState): number {
 export function repairsHold(world: WorldState, ctx: RepairsContext | null, id: Id): boolean {
   if (ctx === null || world.facts[FACT_PENDING] === undefined) return false;
   if (!world.household.residents.includes(id)) return false;
+  // The sea taking Thorkel holds everyone at the water's edge, whatever else (DG-14).
+  if (seaBurialActive(world)) return true;
   return world.player.awake && world.onFoot?.player.sleep == null;
 }
 
@@ -670,6 +683,7 @@ export function stepRepairs(
   land: Pick<LandContext, 'rules' | 'movement' | 'maps'>,
   tidalGroundOpen: boolean,
   emit: RepairEmit,
+  wet: WetAt = () => false,
 ): void {
   const onFoot = world.onFoot;
   if (onFoot === null) return;
@@ -705,7 +719,7 @@ export function stepRepairs(
       });
     }
   }
-  stepRites(world, ctx, land, tidalGroundOpen, emit);
+  stepRites(world, ctx, land, tidalGroundOpen, emit, wet);
 }
 
 /** The rites under way: everyone to their place, the stones, the gathering, the rite, the end. */
@@ -715,11 +729,29 @@ function stepRites(
   land: Pick<LandContext, 'rules' | 'movement' | 'maps'>,
   tidalGroundOpen: boolean,
   emit: RepairEmit,
+  wet: WetAt,
 ): void {
   const onFoot = world.onFoot;
   const form = world.facts[FACT_PENDING];
   if (onFoot === null || (form !== 'SETTING' && form !== 'SEA')) return;
   const r = ctx.def.rites;
+  // The sea takes him (DG-14): the scene plays to its end, then the rite is done.
+  if (world.facts[FACT_STAGE] === 'TAKEN') {
+    if (ctx.sea === null || !seaBurialActive(world)) {
+      finishRites(world, ctx, 'SEA', emit);
+      return;
+    }
+    const over = stepSeaBurial(
+      world,
+      ctx.sea,
+      { body: r.body, guard: r.guard, caller: r.recommends, line: r.seaTaken },
+      land,
+      tidalGroundOpen,
+      emit,
+    );
+    if (over) finishRites(world, ctx, 'SEA', emit);
+    return;
+  }
   const place = form === 'SETTING' ? r.setting : r.sea;
   const T = 24;
   const stage = world.facts[FACT_STAGE];
@@ -863,6 +895,18 @@ function stepRites(
   }
   if (due > spoken) setFact(world, FACT_LINE, due);
   if (now - since < length) return;
+  // Given to the sea: the last word said, he is borne down to the water and taken (DG-14).
+  if (form === 'SEA' && ctx.sea !== null) {
+    setFact(world, FACT_STAGE, 'TAKEN');
+    beginSeaBurial(
+      world,
+      ctx.sea,
+      { zone: place.zone, x: place.x, y: place.y },
+      (x, y) => wet(place.zone, x, y),
+      land.movement.carry,
+    );
+    return;
+  }
   finishRites(world, ctx, form, emit);
 }
 

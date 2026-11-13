@@ -61,6 +61,16 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_EXHAUSTED_BREATH', 2.8, {}, 'combat25-exhausted-breath'],
   ['sfx:SFX_SIDEARM', 0.5, {}, 'combat25-sidearm'],
   ['sfx:SFX_SHIELD_SPLIT', 0.8, {}, 'combat25-shield-split'],
+  // The user's third playtest (DG-29): the finisher by its weapon's kind (a thrust, a chop, a
+  // crushing blow; the foe's breath out at Svart's pitch), the spare, Svart's guard on the shaft
+  // and on the shield, and the red blow's scrape and hiss.
+  ['sfx:SFX_FINISHER', 1.0, { voice: 150, sfxVariant: 0 }, 'pt3-finisher-thrust'],
+  ['sfx:SFX_FINISHER', 1.0, { voice: 150, sfxVariant: 1 }, 'pt3-finisher-chop'],
+  ['sfx:SFX_FINISHER', 1.0, { voice: 150, sfxVariant: 2 }, 'pt3-finisher-crush'],
+  ['sfx:SFX_SPARE', 0.8, {}, 'pt3-spare'],
+  ['sfx:SFX_GUARD_TURN', 0.5, { sfxVariant: 0 }, 'pt3-guard-turn-shaft'],
+  ['sfx:SFX_GUARD_TURN', 0.5, { sfxVariant: 1 }, 'pt3-guard-turn-shield'],
+  ['sfx:SFX_RED_SCRAPE', 1.1, {}, 'pt3-red-scrape'],
   // Book 11 "Commitment and stamina" (DF-83): the parry's rasp, the block's creak, the dodge's
   // landing and the whiff's scuff.
   ['sfx:SFX_PARRY_RASP', 0.4, {}, 'combat25-parry-rasp'],
@@ -97,6 +107,12 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     `opening-${id.slice(4).toLowerCase().replace(/_/g, '-')}`,
   ]),
+  // The user's third playtest (DG-12, DG-14, DG-29): the shelter's frame; Thorkel taken by the
+  // sea, the wash wave by wave, the sinking, and the lament's held note ending with the sink.
+  ['sfx:SFX_SHELTER_FRAME', 5.5, {}, 'story3-shelter-frame'],
+  ['sfx:SFX_BODY_TAKEN', 12.5, {}, 'story3-body-taken'],
+  ['sfx:SFX_BODY_SINK', 3, {}, 'story3-body-sink'],
+  ['sfx:MUS_LAMENT_SEA', 20, {}, 'story3-lament-sea'],
   [
     'music:hearth',
     44,
@@ -223,6 +239,9 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['call:SFX_ARROW_STONE', 1, {}, 'sfx-arrow-stone'],
   ['call:SFX_ARROW_WATER', 1, {}, 'sfx-arrow-water'],
   ['call:SFX_QUIVER_EMPTY', 1, {}, 'sfx-quiver-empty'],
+  // The user's third playtest (DG-29): the pause menu's click, and its knock as it opens.
+  ['call:SFX_MENU_CLICK', 0.5, {}, 'sfx-menu-click'],
+  ['call:SFX_MENU_CLICK', 0.5, { voice: 180 }, 'sfx-menu-open'],
   ['call:SFX_PICKUP', 1, {}, 'sfx-pickup'],
   ['ambience:hearth', 12, {}, 'hearth-fire'],
   // Stage 7: the hearth theme by time of day (the layers of MUS_HOME_DAWN/DAY/DUSK/NIGHT in

@@ -118,6 +118,7 @@
       ],
       "sea": ["c_hild.rites.sea", "c_bran.rites.sea", "c_runa.rites.sea", "c_oddi.rites.sea"]
     },
+    "seaTaken": "c_hild.rites.sea_taken",
     "info": {
       "gather": "caption.rites.gather",
       "stones": "caption.rites.stones",

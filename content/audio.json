@@ -288,6 +288,13 @@
       "temporary": false
     },
     {
+      "id": "SFX_MENU_CLICK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.menu_click",
+      "temporary": false
+    },
+    {
       "id": "SFX_QUIVER_EMPTY",
       "kind": "sfx",
       "bus": "effects",
@@ -643,6 +650,34 @@
       "kind": "sfx",
       "bus": "effects",
       "captionKey": "caption.sfx.sea_burial",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SHELTER_FRAME",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.shelter_frame",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BODY_TAKEN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.body_taken",
+      "temporary": false
+    },
+    {
+      "id": "SFX_BODY_SINK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.body_sink",
+      "temporary": false
+    },
+    {
+      "id": "MUS_LAMENT_SEA",
+      "kind": "stinger",
+      "lengthBeats": 15,
+      "captionKey": "caption.music.lament_sea",
       "temporary": false
     },
     {
@@ -1030,6 +1065,34 @@
       "bus": "effects",
       "temporary": false,
       "drawn": "The miss overbalance, the stagger forward after a whiff"
+    },
+    {
+      "id": "SFX_FINISHER",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The finisher's one blow, its hitstop and the body falling"
+    },
+    {
+      "id": "SFX_SPARE",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The steerer's weapon swept aside towards the way out"
+    },
+    {
+      "id": "SFX_GUARD_TURN",
+      "kind": "sfx",
+      "bus": "effects",
+      "temporary": false,
+      "drawn": "The shaft or the board turned across the blow, with sparks"
+    },
+    {
+      "id": "SFX_RED_SCRAPE",
+      "kind": "sfx",
+      "bus": "tells",
+      "temporary": false,
+      "drawn": "The axe's beard drawn along the shield rim, and the red glint along its edge"
     }
   ],
   "events": {
@@ -1117,6 +1180,10 @@
     "CHEST_DRAG": "SFX_CHEST_DRAG",
     "FLINT": "SFX_FLINT",
     "SAIL_RAISE": "SFX_SAIL_RAISE",
+    "SHELTER_FRAME": "SFX_SHELTER_FRAME",
+    "BODY_TAKEN": "SFX_BODY_TAKEN",
+    "BODY_SINK": "SFX_BODY_SINK",
+    "SEA_LAMENT": "MUS_LAMENT_SEA",
     "CHEST_OPEN": "SFX_CHEST_OPEN",
     "LASHING_CUT": "SFX_LASHING",
     "BUNDLE_SPLASH": "SFX_BUNDLE_SPLASH",
@@ -1147,7 +1214,11 @@
     "PARRY_WINDUP": "SFX_PARRY_RASP",
     "BLOCK_RAISE": "SFX_BLOCK_CREAK",
     "DODGE_LAND": "SFX_DODGE_LAND",
-    "WHIFF": "SFX_WHIFF_SCUFF"
+    "WHIFF": "SFX_WHIFF_SCUFF",
+    "FINISHER": "SFX_FINISHER",
+    "SPARE": "SFX_SPARE",
+    "GUARD_TURN": "SFX_GUARD_TURN",
+    "RED_SCRAPE": "SFX_RED_SCRAPE"
   },
   "home": {
     "restSeconds": 90,

@@ -185,6 +185,8 @@ export function hintQuiet(world: WorldState): boolean {
   if (onFoot === null || wreckPhase(world) !== 'PLAY') return true;
   if (world.talk !== null || !world.player.awake || onFoot.player.sleep != null) return true;
   if (world.gameOver !== null) return true;
+  // The sea taking Thorkel is a scene: no hint over it (DG-14).
+  if (world.facts['rites.taken_at'] !== undefined) return true;
   return fightNear(world);
 }
 

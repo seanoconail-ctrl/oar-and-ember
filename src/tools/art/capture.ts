@@ -46,6 +46,7 @@ import { combat2Capture } from './captureCombat2.ts';
 import { combat25Capture } from './captureCombat25.ts';
 import { openingCapture } from './captureOpening.ts';
 import { stormCapture } from './captureStorm.ts';
+import { STORY_PORT, storyCapture } from './captureStory.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
@@ -1711,7 +1712,22 @@ if (import.meta.filename === process.argv[1]) {
     console.error('usage: npm run capture -- <label>   (e.g. stage-07)');
     process.exit(1);
   }
-  if (label === 'rework-2.5-storm') {
+  if (label === 'playtest-3-story') {
+    // The user's third playtest's story (DG-12, DG-14): docs/art/playtest-3/story/ (captureStory.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: STORY_PORT, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await storyCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'rework-2.5-storm') {
     // The storm opening (design addendum 2.5 section 3): docs/art/rework-2.5/storm/ (captureStorm.ts).
     const server = await createServer({
       root: REPO_ROOT,

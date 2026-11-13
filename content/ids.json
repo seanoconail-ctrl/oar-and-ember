@@ -4078,6 +4078,14 @@
       "note": "The user's third playtest (decision DG-14): Thorkel's body sinking."
     },
     {
+      "id": "MUS_LAMENT_SEA",
+      "ref": "holds a single keening note as the bier is borne down",
+      "book": 11,
+      "section": "03",
+      "origin": "assigned",
+      "note": "The user's third playtest (decision DG-14; DG-55): the lament's ending at the sea burial, its last note ending with the sink."
+    },
+    {
       "id": "SFX_MENU_CLICK",
       "ref": "The pause menu's items make a soft wooden click",
       "book": 11,

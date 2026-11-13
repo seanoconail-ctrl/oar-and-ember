@@ -298,13 +298,27 @@ export function voiceOf(speaker: string): VoiceProfile | undefined {
   return VOICES[speaker] ?? OTHER_VOICES[speaker];
 }
 
-export function speak(e: SynthEngine, at: number, speaker: string, text: string, pan = 0): number {
+export function speak(
+  e: SynthEngine,
+  at: number,
+  speaker: string,
+  text: string,
+  pan = 0,
+  level = 1,
+): number {
   const v = voiceOf(speaker);
   if (v === undefined) return 0;
   const c = e.ctx;
   const out = c.createStereoPanner();
   out.pan.value = pan;
-  out.connect(e.buses.voice);
+  // A murmur heard from further off (the fold's talk beyond its overhearing range, DG-26) is the
+  // same blips, quieter.
+  if (level !== 1) {
+    const lv = c.createGain();
+    lv.gain.value = level;
+    out.connect(lv);
+    lv.connect(e.buses.voice);
+  } else out.connect(e.buses.voice);
   const r = rng(text.length * 31 + speaker.length);
   const syl = syllables(text);
   const exclaim = text.includes('!');

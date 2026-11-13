@@ -11,12 +11,14 @@
  * finisher, perception, crew orders, berserk, the cruel enemy's warning, gore's rolls.
  */
 import { describe, expect, it } from 'vitest';
+import { plainFighters } from './plainFoes.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import {
   MELEE_WEAPONS,
   parseAiBalance,
   parseCombatBalance,
 } from '../../src/content/combatBalance.ts';
+import { parsePt3Balance } from '../../src/content/pt3Balance.ts';
 import { MemoryStore, SaveManager } from '../../src/persist/manager.ts';
 import { hears, lightAt, sees, sightRange, stepNoise } from '../../src/sim/ai/perception.ts';
 import {
@@ -72,6 +74,7 @@ const stage9 = {
       ? null
       : {
           ...content.combat,
+          fighters: plainFighters(content.combat.fighters),
           encounters: [
             {
               id: 'SCN_SK_WRECKERS',
@@ -507,6 +510,21 @@ function strandFight(seed: string, at = '36,34.2', extra = ''): Fight {
   return { world, sim, events };
 }
 
+/**
+ * Conn alone of the band (Ketill and Svart taken off before they are seen): the archer's tests
+ * need his line clear of his friends' bodies, which the first-sight pause (decision DG-8) gives
+ * them time to walk into.
+ */
+function onlyConn(f: Fight): void {
+  const onFoot = f.world.onFoot;
+  if (onFoot === null) return;
+  for (const id of ['E_WRECKER_KETILL', 'E_WRECKER_SVART']) {
+    Reflect.deleteProperty(onFoot.actors, id);
+    for (const g of Object.values(onFoot.battle?.groups ?? {}))
+      g.members = g.members.filter((m) => m !== id);
+  }
+}
+
 const actor = (f: Fight, id: string) => {
   const a = f.world.onFoot?.actors[id];
   if (a === undefined) throw new Error(`no ${id}`);
@@ -622,10 +640,11 @@ describe('the wreck-scavengers (Book 4 Chapter 1 beat 3; decisions S9-11, S10-5)
     for (let i = 0; i < 60; i++) f.sim.step();
     expect(f.events.some((e) => e.type === 'ENEMY_AWARE')).toBe(true);
     expect(f.events.some((e) => e.type === 'FIGHT_STARTED')).toBe(true);
+    // Since the user's third playtest the first-sight line is the shout (decision DG-8).
     expect(
       f.events.some(
         (e) =>
-          e.type === 'PERSON_SPOKE' && e.lineKey.startsWith('e_wrecker_') && e.bark === 'alarm',
+          e.type === 'PERSON_SPOKE' && e.lineKey.startsWith('e_wrecker_') && e.bark === 'sight',
       ),
     ).toBe(true);
     expect(actor(f, 'E_WRECKER_KETILL').fight?.ai.aware).toBe(true);
@@ -793,6 +812,7 @@ describe('a fight to its end (Stage 9: blows, morale, surrender, deeds, gore)', 
     const play = (seed: string): { hash: string; log: string } => {
       // From Conn's shooting range (Book 10 "Archers", shootFrom), so he shoots before closing.
       const f = strandFight(seed, '39,34.2');
+      onlyConn(f);
       walkTo(f, 35.5 * TILE, 34.2 * TILE, true, 6, 200);
       for (let i = 0; i < 300; i++) f.sim.step();
       fightOn(f, 3000);
@@ -828,7 +848,9 @@ describe('a fight to its end (Stage 9: blows, morale, surrender, deeds, gore)', 
     f.sim.submit({ type: 'MELEE_RELEASE' });
     for (let i = 0; i < 60; i++) f.sim.step();
     f.sim.submit({ type: 'FINISHER', on: true });
-    for (let i = 0; i <= cb.finisherHold + 2; i++) f.sim.step();
+    // The hold, then the finisher's own ticks (decision DG-3): it lands on its first active tick.
+    const fin = parsePt3Balance(balance).finishers.Seax.STANDING;
+    for (let i = 0; i <= cb.finisherHold + fin.windup + 2; i++) f.sim.step();
     expect(conn.fight?.dead).not.toBeNull();
     expect(f.world.ledger.map((d) => d.tag)).toContain('SURRENDERED_KILLED');
   });
@@ -901,6 +923,7 @@ function fightWorldOf(f: Fight): FightWorld {
 describe('missiles in a fight (Book 10 section 21; Stage 9 check 3)', () => {
   it('no one moves while drawing: the enemy archer stops, draws for the draw time and looses', () => {
     const f = strandFight('archer', '39,34.2');
+    onlyConn(f);
     const conn = actor(f, 'E_WRECKER_CONN');
     // Make them aware: the steerer runs up (heard by its footfalls, combat v2), then stands in
     // Conn's shooting band (design addendum 2.5: an archer within tooClose hops away instead).

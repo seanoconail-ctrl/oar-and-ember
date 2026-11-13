@@ -1,7 +1,8 @@
 /**
  * Book 10 section 25, "The opening, guidance and feel" (design addendum 2.4 sections 2 to 6;
  * decisions DE-16 to DE-30), with the rows the addendum added to sections 03 ("Work and the wreck
- * camp": mastStores, shelterRaise) and 08 ("The three searches": searchesPlaced, runaTruth,
+ * camp": mastStores; and the user's third playtest's staged shelter, shelterFrame, shelterSail,
+ * shelterFinish and shelterHildLines, decision DG-12) and 08 ("The three searches": searchesPlaced, runaTruth,
  * runaLie, rescueGetUp), read from content/balance.json as the book writes them. Every number the
  * opening, the guidance, the world's feedback, the doors, the Hag's Stone and the music's fades
  * use comes from here.
@@ -106,12 +107,16 @@ export interface OpeningBalance {
     readonly mastStoresRd: number;
     /** Linen bindings in the camp's salvage (section 03 bindingsAtCamp; combat v2's healing). */
     readonly bindingsAtCamp: number;
-    /** The steerer's raising of the sail shelter: real seconds, game minutes and stamina. */
-    readonly shelterRaise: {
-      readonly seconds: number;
-      readonly minutes: number;
-      readonly stamina: number;
-    };
+    /**
+     * The shelter's first two stages on day 1 (the user's third playtest, decision DG-12): the
+     * frame and the sail, each one hands-on action: real seconds, game minutes and stamina.
+     */
+    readonly shelterFrame: ShelterAction;
+    readonly shelterSail: ShelterAction;
+    /** The finishing on day 2: opened at this day and minute of the day (06:00 is 360). */
+    readonly shelterFinishFrom: { readonly day: number; readonly minute: number };
+    /** Hild's second-morning line comes within this of the steerer at the camp (tiles). */
+    readonly shelterHildTiles: number;
   };
   readonly searches: {
     /** The searches' people are placed at this minute of day 1 (19:00 is 1140). */
@@ -126,6 +131,13 @@ export interface OpeningBalance {
     /** The rescue scenario test: idle, unmoved and unchanged this long is stuck (real seconds). */
     readonly rescueStuckSeconds: number;
   };
+}
+
+/** One hands-on stage of the shelter (Book 10 section 03, shelterFrame and shelterSail). */
+export interface ShelterAction {
+  readonly seconds: number;
+  readonly minutes: number;
+  readonly stamina: number;
 }
 
 export function parseOpeningBalance(json: unknown): OpeningBalance {
@@ -203,11 +215,20 @@ export function parseOpeningBalance(json: unknown): OpeningBalance {
   const firstLayer = music('firstLayer');
   if (firstLayer !== 'One layer')
     throw new Error(`balance.json: musicFades.firstLayer is "${firstLayer}"`);
-  const [raiseS, raiseM, raiseSt] = read(
+  const action = (key: string): ShelterAction => {
+    const [seconds, minutes, stamina] = read(
+      camp,
+      key,
+      new RegExp(`${N} real seconds, ${N} game minutes, ${N} stamina`),
+      '"... N real seconds, N game minutes, N stamina"',
+    );
+    return { seconds: seconds ?? 0, minutes: minutes ?? 0, stamina: stamina ?? 0 };
+  };
+  const [finishH, finishM, finishDay] = read(
     camp,
-    'shelterRaise',
-    new RegExp(`${N} real seconds, ${N} game minutes, ${N} stamina`),
-    '"... N real seconds, N game minutes, N stamina"',
+    'shelterFinish',
+    /opened at (\d{2}):(\d{2}) on day (\d+) and not before$/,
+    '"... opened at HH:MM on day N and not before"',
   );
   const placed = read(
     search,
@@ -318,7 +339,15 @@ export function parseOpeningBalance(json: unknown): OpeningBalance {
     camp: {
       mastStoresRd: one(camp, 'mastStores', `^${N} rd of salt fish`, '"N rd of salt fish ..."'),
       bindingsAtCamp: one(camp, 'bindingsAtCamp', `^${N} linen bindings$`, '"N linen bindings"'),
-      shelterRaise: { seconds: raiseS ?? 0, minutes: raiseM ?? 0, stamina: raiseSt ?? 0 },
+      shelterFrame: action('shelterFrame'),
+      shelterSail: action('shelterSail'),
+      shelterFinishFrom: { day: finishDay ?? 2, minute: (finishH ?? 0) * 60 + (finishM ?? 0) },
+      shelterHildTiles: one(
+        camp,
+        'shelterHildLines',
+        `within ${N} tiles of the steerer`,
+        '"... within N tiles of the steerer ..."',
+      ),
     },
     searches: {
       placedMinute: (placed[0] ?? 0) * 60 + (placed[1] ?? 0),

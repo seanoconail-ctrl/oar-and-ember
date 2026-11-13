@@ -24,17 +24,22 @@ import type { AudioSink, Bus } from './router.ts';
 /** How far ahead of the audio clock notes and waves are scheduled, seconds. */
 const LOOKAHEAD = 0.6;
 
+/** Each bus's level as the game starts (the pause menu's sliders scale these, DG-18). */
+const DEFAULT_LEVELS: ReadonlyMap<Bus, number> = new Map<Bus, number>([
+  ['master', 0.8],
+  ['music', 0.6],
+  ['ambience', 0.6],
+  ['effects', 0.85],
+  ['voice', 0.9],
+  ['tells', 0.9],
+]);
+
 export class WebAudioEngine implements AudioSink {
   #ctx: AudioContext | null = null;
   #e: SynthEngine | null = null;
-  readonly #volumes = new Map<Bus, number>([
-    ['master', 0.8],
-    ['music', 0.6],
-    ['ambience', 0.6],
-    ['effects', 0.85],
-    ['voice', 0.9],
-    ['tells', 0.9],
-  ]);
+  readonly #volumes = new Map<Bus, number>(DEFAULT_LEVELS);
+  #mono = false;
+  #paused = false;
   readonly #players = new Map<string, PiecePlayer>();
   #strand: StrandAmbience | null = null;
   #hearth: HearthAmbience | null = null;
@@ -93,6 +98,7 @@ export class WebAudioEngine implements AudioSink {
         for (const action of this.#waiting.splice(0)) this.music(action);
       });
       for (const [bus, level] of this.#volumes) this.#e.setVolume(bus, level);
+      this.#e.setMono(this.#mono);
       // Keep the music and ambience scheduled ahead of the clock.
       this.#timer = setInterval(() => {
         this.#schedule();
@@ -176,6 +182,47 @@ export class WebAudioEngine implements AudioSink {
   setVolume(bus: Bus, level: number): void {
     this.#volumes.set(bus, level);
     this.#e?.setVolume(bus, level);
+  }
+
+  /** Each bus's level as a share of its default (the pause menu's sliders, DG-18), and mono. */
+  setMix(mix: Readonly<Partial<Record<Bus, number>>>, mono: boolean): void {
+    for (const [bus, base] of DEFAULT_LEVELS) {
+      const share = mix[bus];
+      if (share !== undefined) this.setVolume(bus, base * Math.max(0, Math.min(1, share)));
+    }
+    this.#mono = mono;
+    this.#e?.setMono(mono);
+  }
+
+  /**
+   * The pause duck (Book 10 pauseDuck, DG-15): while the menu holds time, music and ambience fall
+   * `db` over `seconds` and effects and voice blips pause (silenced); back over the same on resume.
+   */
+  setPaused(paused: boolean, db: number, seconds: number): void {
+    const e = this.#e;
+    this.#paused = paused;
+    if (e === null) return;
+    const now = e.ctx.currentTime;
+    const k = Math.pow(10, -Math.abs(db) / 20);
+    for (const bus of ['music', 'ambience', 'effects', 'voice', 'tells'] as const) {
+      const level = this.#volumes.get(bus) ?? 0;
+      const to = !paused ? level : bus === 'music' || bus === 'ambience' ? level * k : 0;
+      e.buses[bus].gain.setTargetAtTime(to, now, Math.max(0.01, seconds / 4));
+    }
+  }
+
+  get paused(): boolean {
+    return this.#paused;
+  }
+
+  /** The pause menu's wooden click (SFX_MENU_CLICK), or its knock as it opens; never captioned. */
+  click(opening = false): void {
+    const e = this.#e;
+    if (e === null) return;
+    SOUNDS.get('SFX_MENU_CLICK')?.play(e, e.ctx.currentTime, 0, {
+      gore: this.#gore,
+      ...(opening ? { voice: 180 } : {}),
+    });
   }
 
   /** Winter switches the island theme to its winter variant from the next bar line. */
@@ -267,12 +314,13 @@ export class WebAudioEngine implements AudioSink {
     return this.#cues.get(id);
   }
 
-  oneShot(cue: CueDef, at: number, pan: number, voice?: number): void {
+  oneShot(cue: CueDef, at: number, pan: number, voice?: number, variant?: number): void {
     const e = this.#e;
     if (e === null) return;
     SOUNDS.get(cue.id)?.play(e, Math.max(at, e.ctx.currentTime), pan, {
       gore: this.#gore,
       ...(voice === undefined ? {} : { voice }),
+      ...(variant === undefined ? {} : { variant }),
     });
   }
 
@@ -343,11 +391,11 @@ export class WebAudioEngine implements AudioSink {
   }
 
   /** A line spoken in the speaker's voice blips (Book 11 section 08), if they have a voice. */
-  voice(speaker: string, text: string, pan: number): void {
+  voice(speaker: string, text: string, pan: number, level = 1): void {
     const e = this.#e;
     if (e === null || voiceOf(speaker) === undefined) return;
     const at = e.ctx.currentTime + 0.03;
-    const length = speak(e, at, speaker, text, pan);
+    const length = speak(e, at, speaker, text, pan, level);
     // Music ducks under the voice.
     e.duck.gain.setTargetAtTime(0.6, at, 0.05);
     e.duck.gain.setTargetAtTime(1, at + length, 0.3);

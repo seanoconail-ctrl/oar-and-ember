@@ -83,11 +83,17 @@ for (const size of SIZES) {
     const letterbox = art.palette.entries[paletteIndex(art.palette, art.layout.letterbox)]?.rgb;
     if (letterbox === undefined) throw new Error('letterbox colour missing');
 
-    // The "press any key" line is HTML text over the frame (decision S5-5): check it, then set it
-    // aside so the screenshot holds only the pixel frame being compared.
-    await expect(target.locator('.oe-press')).toHaveText(formatString(strings, 'ui.title.start'));
+    // The title's menu (the user's third playtest, DG-18) is drawn on its own canvas over the
+    // frame: New game, Continue and Load (offered once there is a save), Settings, Fullscreen.
+    // Check it, then set it aside so the screenshot holds only the pixel frame being compared.
+    await expect(target.locator('canvas.oe-title-menu')).toHaveAttribute(
+      'data-items',
+      'newGame,continue-,load-,settings,fullscreen',
+    );
     await target.evaluate(() => {
-      document.querySelector<HTMLElement>('.oe-press')?.style.setProperty('visibility', 'hidden');
+      document
+        .querySelector<HTMLElement>('.oe-title-menu')
+        ?.style.setProperty('visibility', 'hidden');
     });
 
     // Screenshots are in device pixels: CSS size times the page's pixel ratio.

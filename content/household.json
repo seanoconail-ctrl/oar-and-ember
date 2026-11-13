@@ -65,6 +65,7 @@
       "nameKey": "job.name.builder",
       "task": "TASK_BUILD",
       "stages": ["S0"],
+      "needs": "SHELTER_FINISH",
       "spots": [
         {
           "zone": "ZONE_SK_MACHAIR",
@@ -220,6 +221,7 @@
   "people": {
     "C_HILD": {
       "job": "FISHER",
+      "first": ["BUILDER"],
       "memories": [
         {
           "kind": "EVENT",

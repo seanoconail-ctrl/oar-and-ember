@@ -257,6 +257,11 @@ export interface CombatBalance {
   readonly secondWind: { readonly ticks: number; readonly liftTo: number };
   readonly dismemberChance: number;
   readonly finisherHold: number;
+  /**
+   * Ketill's red blow (Book 10 "Teaching foes", redBlow; decision DG-9): set by the fight from
+   * src/content/pt3Balance.ts, so the fighter's miss recovery finds it.
+   */
+  readonly redBlow?: MoveFrames;
   readonly finishWarningTicks: number;
   readonly heavy: {
     readonly windupExtra: number;

@@ -26,7 +26,18 @@ export interface DisplaySettings {
    * every save carried the old default) is not kept.
    */
   readonly marks: boolean;
+  /**
+   * The user's third playtest (Book 10 promptOption; decision DG-7): combat prompts for the first
+   * fights (the default), always, or off. `?prompts=first|always|off` sets it.
+   */
+  readonly combatPrompts?: 'FIRST' | 'ALWAYS' | 'OFF';
 }
+
+const PROMPT_WORDS: Readonly<Record<string, 'FIRST' | 'ALWAYS' | 'OFF'>> = {
+  first: 'FIRST',
+  always: 'ALWAYS',
+  off: 'OFF',
+};
 
 const GORE_WORDS: Readonly<Record<string, 0 | 1 | 2>> = { off: 0, low: 1, full: 2 };
 
@@ -39,6 +50,7 @@ export function parseDisplaySettings(text: string | null, systemPrefers: boolean
         gore?: unknown;
         marks?: unknown;
         version?: unknown;
+        combatPrompts?: unknown;
       } | null;
       if (typeof raw?.reducedMotion === 'boolean')
         return {
@@ -49,6 +61,9 @@ export function parseDisplaySettings(text: string | null, systemPrefers: boolean
             typeof raw.marks === 'boolean' && typeof raw.version === 'number' && raw.version >= 2
               ? raw.marks
               : false,
+          ...(raw.combatPrompts === 'ALWAYS' || raw.combatPrompts === 'OFF'
+            ? { combatPrompts: raw.combatPrompts }
+            : {}),
         };
     } catch {
       // A damaged setting falls back to the system preference.
@@ -72,6 +87,8 @@ export function resolveDisplaySettings(
   const params = new URLSearchParams(query);
   const gore = GORE_WORDS[params.get('gore') ?? ''];
   if (gore !== undefined) saved = { ...saved, gore };
+  const prompts = PROMPT_WORDS[params.get('prompts') ?? ''];
+  if (prompts !== undefined) saved = { ...saved, combatPrompts: prompts };
   const marks = params.get('marks');
   if (marks === 'off' || marks === 'on') saved = { ...saved, marks: marks === 'on' };
   const motion = params.get('motion');

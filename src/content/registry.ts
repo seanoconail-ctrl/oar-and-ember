@@ -452,8 +452,29 @@ const fighterCheck = object(
     /** Named cruel enemies who finish the downed after a warning (Book 2 section 12). */
     finishesDowned: bool,
     look: text,
+    /**
+     * The user's third playtest (decision DG-9; Book 2 section 12's TeachingRule): a Chapter 1
+     * teaching foe, beaten only by its lesson: PARRY (Svart) or RED, the red blow dodged (Ketill).
+     */
+    teaching: oneOf(['PARRY', 'RED'] as const),
+    /** The voice pool their first-sight lines come from when they have none of their own (DG-8). */
+    voice: oneOf(['NORSE', 'GAELIC'] as const),
   },
-  ['shield', 'bow', 'heavy', 'leader', 'finishesDowned'],
+  ['shield', 'bow', 'heavy', 'leader', 'finishesDowned', 'teaching', 'voice'],
+);
+/** First-sight lines (decision DG-8; Book 8 section 07): a pool of warnings and one of taunts. */
+const sightPoolCheck = object({ warn: arrayOf(ref('string')), taunt: arrayOf(ref('string')) });
+/**
+ * Overheard talk (decision DG-26; Book 10 "At the fold"): the exchanges a group plays while none of
+ * them is aware of the steerer, each its speakers' lines in order, and who must be there for it.
+ */
+const talkExchangeCheck = object(
+  {
+    id: text,
+    lines: arrayOf(object({ person: ref('person'), key: ref('string') })),
+    needs: arrayOf(ref('person')),
+  },
+  ['needs'],
 );
 const crewArmsCheck = object({ weapon: id(['ITEM']), shield: bool, bow: bool, heavy: bool }, [
   'weapon',
@@ -530,22 +551,39 @@ const safePlaceCheck = object({
   y: fraction(0, 512),
   r: fraction(0.5, 40),
 });
-const combatCheck = object({
-  about: text,
-  weapons: recordOf(id(['ITEM']), combatWeaponCheck),
-  fighters: arrayOf(fighterCheck),
-  crew: recordOf(text, crewArmsCheck),
-  encounters: arrayOf(encounterCheck),
-  safePlaces: arrayOf(safePlaceCheck),
-  hides: arrayOf(hideCheck),
-  barks: recordOf(ref('person'), recordOf(text, arrayOf(ref('string')))),
-  /** Presentation only (Book 7 section 12): corpse fading and stains by the gore setting. */
-  gore: object({
+const combatCheck = object(
+  {
     about: text,
-    corpseFadeSeconds: object({ low: int(0, 3600), off: int(0, 3600) }),
-    stainSeconds: object({ low: int(0, 3600), full: int(0, 36000) }),
-  }),
-});
+    weapons: recordOf(id(['ITEM']), combatWeaponCheck),
+    fighters: arrayOf(fighterCheck),
+    crew: recordOf(text, crewArmsCheck),
+    encounters: arrayOf(encounterCheck),
+    safePlaces: arrayOf(safePlaceCheck),
+    hides: arrayOf(hideCheck),
+    barks: recordOf(ref('person'), recordOf(text, arrayOf(ref('string')))),
+    /** Presentation only (Book 7 section 12): corpse fading and stains by the gore setting. */
+    gore: object({
+      about: text,
+      corpseFadeSeconds: object({ low: int(0, 3600), off: int(0, 3600) }),
+      stainSeconds: object({ low: int(0, 3600), full: int(0, 36000) }),
+    }),
+    /**
+     * The user's third playtest: first-sight pools by named enemy and by voice (decision DG-8), and
+     * an encounter's overheard talk (decision DG-26).
+     */
+    sight: object({
+      about: text,
+      people: recordOf(ref('person'), sightPoolCheck),
+      voices: recordOf(text, sightPoolCheck),
+    }),
+    talk: object({
+      about: text,
+      encounter: id(['SCN']),
+      exchanges: arrayOf(talkExchangeCheck),
+    }),
+  },
+  ['sight', 'talk'],
+);
 
 const facingAtR = object({
   x: fraction(0, 512),
@@ -594,7 +632,7 @@ const openingCheck = object({
       at: facingAtR,
       home: object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), facing: text }),
       key: id(['ITEM']),
-      lineAfterSafeSeconds: int(0, 60),
+      lineAfterSafeSeconds: fraction(0, 60),
       line: ref('string'),
       lockedKey: ref('string'),
       openPromptKey: ref('string'),
@@ -632,12 +670,26 @@ const openingCheck = object({
       shelterUp: ref('string'),
       oldBoat: ref('string'),
       oldBoatTiles: fraction(0.5, 20),
-      raisePromptKey: ref('string'),
       captions: recordOf(text, ref('string')),
-      /** Where the folded sail and the two oars lie (Book 9 section 04), and Hild's seat. */
+      /** Where the folded sail and the three oars lie (Book 9 section 04), and Hild's seat. */
       sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
       hildSeat: facingAtR,
+      /**
+       * The user's third playtest (DG-12): Hild's word for each stage of the shelter (the frame
+       * after her walk-up, the sail once it stands, the night's word under the lean-to, the second
+       * morning's finishing and the finished shelter), how long a second line waits behind a
+       * first (real seconds), and where she steadies the oars while the frame goes up.
+       */
+      frame: ref('string'),
+      sailLine: ref('string'),
+      night: ref('string'),
+      finish: ref('string'),
+      finished: ref('string'),
+      nextLineSeconds: fraction(0.5, 20),
+      steady: facingAtR,
     }),
+    /** The user's third playtest (DG-13): Hild points up the bank to the old tower, once safe. */
+    broch: object({ about: text, line: ref('string'), afterSafeSeconds: fraction(0, 30) }),
     fireScene: object({
       about: text,
       fromMinute: int(0, 1439),
@@ -798,8 +850,11 @@ const jobCheck = object(
     task: id(['TASK']),
     /** The camp stages it can be done at (raising the shelter: S0 only). */
     stages: arrayOf(oneOf(STAGES)),
-    /** Stage 11: open only while there is such work (the boat's repairs and fitting). */
-    needs: oneOf(['SHIP_WORK'] as const),
+    /**
+     * Stage 11: open only while there is such work (the boat's repairs and fitting); the user's
+     * third playtest (DG-12): the shelter's finishing, from 06:00 on the second day.
+     */
+    needs: oneOf(['SHIP_WORK', 'SHELTER_FINISH'] as const),
     spots: arrayOf(spotCheck),
     /**
      * Design addendum 2.5 (DF-21, item 8): where a seriously wounded worker does this job seated,
@@ -827,6 +882,11 @@ const householdCheck = object({
         job: oneOf(JOBS),
         /** Stage 11: the jobs they take up, in order, when their own has no work. */
         then: arrayOf(oneOf(JOBS)),
+        /**
+         * The jobs they take up first while there is such work and the stores hold the day's food
+         * (DG-12, DG-56: Hild finishes the shelter on the second day, unless she must fish).
+         */
+        first: arrayOf(oneOf(JOBS)),
         memories: arrayOf(
           object({ kind: oneOf(MEMORY_KINDS), about: text, day: int(1, 999), tie: bool }, [
             'day',
@@ -834,7 +894,7 @@ const householdCheck = object({
           ]),
         ),
       },
-      ['then', 'memories'],
+      ['then', 'first', 'memories'],
     ),
   ),
 });
@@ -1140,6 +1200,8 @@ const repairsCheck = object({
     sea: riteCheck,
     reachTiles: fraction(1, 20),
     lines: object({ setting: arrayOf(ref('string')), sea: arrayOf(ref('string')) }),
+    /** Hild's last word as the ring of foam fades (the user's third playtest, DG-14). */
+    seaTaken: ref('string'),
     info: recordOf(text, ref('string')),
   }),
   lines: recordOf(text, ref('string')),

@@ -269,12 +269,28 @@ export class SearchBot extends CampBot {
     if (cb === undefined) throw new Error('no fight content');
     const limit = this.ticks + maxTicks;
     const mem = carefulMemory();
+    // Held against a wall walking at a foe (the fold's walls, a foe inside with Bran): the way
+    // round by the tiles, a few steps at a time (the careful player itself walks straight).
+    let stuck = 0;
+    let last = { x: this.onFoot.player.x, y: this.onFoot.player.y };
     while (this.ticks < limit && this.sim.state.gameOver === null) {
-      if (foesOf(this.onFoot).length === 0) break;
+      const foes = foesOf(this.onFoot);
+      if (foes.length === 0) break;
       const st = this.sim.state.player.stamina;
-      for (const c of carefulTick(this.onFoot, cb, this.sim.state.tick, st.current, st.max, mem))
-        this.sim.submit(c);
+      const cmds = carefulTick(this.onFoot, cb, this.sim.state.tick, st.current, st.max, mem);
+      for (const c of cmds) this.sim.submit(c);
       this.step();
+      const p = this.onFoot.player;
+      const walking = cmds.some((c) => c.type === 'MOVE' && (c.x !== 0 || c.y !== 0));
+      stuck = walking && Math.hypot(p.x - last.x, p.y - last.y) < 0.05 ? stuck + 1 : 0;
+      last = { x: p.x, y: p.y };
+      const foe = foes[0];
+      if (stuck > 90 && foe !== undefined) {
+        const map = this.map;
+        const at = { tx: Math.floor(foe.x / map.tile), ty: Math.floor(foe.y / map.tile) };
+        this.walkTo((t) => Math.abs(t.tx - at.tx) <= 1 && Math.abs(t.ty - at.ty) <= 1, false, 60 * 6);
+        stuck = 0;
+      }
     }
     this.stop();
     // A riposte or a blow still under way (and its hitstop) finishes before anything else.

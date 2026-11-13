@@ -27,6 +27,7 @@ import type {
   Weight,
 } from '../../content/combatBalance.ts';
 import type { Id } from '../../core/ids.ts';
+import type { FinisherVariant, FinisherWeapon } from '../../content/pt3Balance.ts';
 
 export type Facing = 's' | 'n' | 'e' | 'w';
 
@@ -74,6 +75,10 @@ export const COMBAT_STATES = [
   'blockRaise',
   'blockLower',
   'dodgeRecovery',
+  // The user's third playtest (decisions DG-2 and DG-3): a beaten stagger held as a reel, and the
+  // steerer's finisher (one quick killing blow, under Book 10's "Commitment").
+  'reel',
+  'finisher',
 ] as const;
 export type CombatState = (typeof COMBAT_STATES)[number];
 
@@ -86,6 +91,7 @@ export const STRIKES: readonly CombatState[] = [
   'riposte',
   'lunge',
   'backstab',
+  'finisher',
 ];
 export const CHARGES: readonly CombatState[] = ['chargeL0', 'chargeL1', 'chargeL2'];
 /** States that end the fight for this person. */
@@ -108,6 +114,7 @@ const TIMED: readonly CombatState[] = [
   'sidestep',
   'heal',
   'recovery',
+  'reel',
 ];
 
 export type Armour = 'NONE' | 'PADDED' | 'MAIL';
@@ -119,8 +126,11 @@ export interface HealUnderWay {
   readonly y: number;
 }
 
-/** The move a strike plays (Book 10 "Frame data"), or the shove. */
-export type Move = MoveName | 'shove';
+/**
+ * The move a strike plays (Book 10 "Frame data"), the shove, or Ketill's red blow (Book 10
+ * "Teaching foes", redBlow; decision DG-9).
+ */
+export type Move = MoveName | 'shove' | 'red';
 
 export interface Fighter {
   state: CombatState;
@@ -191,6 +201,15 @@ export interface Fighter {
   flashAt: number;
   /** Plays by the enemies' telegraph floors (Book 10 "Enemy attacks"). */
   floors: boolean;
+  /**
+   * The finisher under way (decision DG-3): its Book 10 row and variant, and the weapon it is drawn
+   * with (bare hands: the foe's own, taken up).
+   */
+  finish?: {
+    readonly weapon: FinisherWeapon;
+    readonly variant: FinisherVariant;
+    readonly drawn: MeleeWeaponName | null;
+  } | null;
 }
 
 /** A stamina bar the fighter spends from: the steerer's, or a person's own. */
@@ -605,7 +624,8 @@ export function pressBackstab(
   return 'STARTED';
 }
 
-function beginStrike(
+/** Begins a strike's three phases (its frames from the caller: a move, or the red blow). */
+export function beginStrike(
   f: Fighter,
   state: CombatState,
   move: Move,
@@ -876,7 +896,8 @@ export function enterTimed(
     | 'blockRaise'
     | 'blockLower'
     | 'dodgeRecovery'
-    | 'recovery',
+    | 'recovery'
+    | 'reel',
   tick: number,
   ticks: number,
 ): void {
@@ -913,6 +934,7 @@ function toIdle(f: Fighter, tick: number): void {
   f.missed = false;
   f.step = 0;
   f.flashAt = -1;
+  if (f.finish != null) f.finish = null;
 }
 
 /**
@@ -966,9 +988,11 @@ export function stepFighter(
           ? f.shield
             ? cb.shove.bash
             : cb.shove.frames
-          : w !== null && f.move !== null
-            ? movesOf(cb, w.name, f.move)
-            : null;
+          : f.move === 'red'
+            ? (cb.redBlow ?? null)
+            : w !== null && f.move !== null
+              ? movesOf(cb, w.name, f.move)
+              : null;
       if (m?.miss != null) {
         f.recoveryEnd += m.miss;
         f.missed = true;
@@ -1045,10 +1069,19 @@ export function hitstop(f: Fighter, ticks: number): void {
 }
 
 /** What a blow did. */
-export type Outcome = 'DODGED' | 'PARRIED' | 'BLOCKED' | 'GUARD_BROKEN' | 'HOOKED' | 'HIT';
+export type Outcome =
+  | 'DODGED'
+  | 'PARRIED'
+  | 'BLOCKED'
+  | 'GUARD_BROKEN'
+  | 'HOOKED'
+  | 'HIT'
+  /** A teaching foe's guard turned it (decision DG-9): nothing landed. */
+  | 'TURNED';
 
 /** The kind of a blow, for its hitstop, knockback, poise and shake (Book 10 "Hit reactions"). */
-export type BlowKind = 'light' | 'heavy' | 'lunge' | 'riposte' | 'backstab' | 'shove';
+export type BlowKind =
+  'light' | 'heavy' | 'lunge' | 'riposte' | 'backstab' | 'shove' | 'finisher';
 
 export interface Blow {
   /** Damage before armour (the defender's armour and berserk apply in `damageOf`). */
@@ -1071,6 +1104,11 @@ export interface Blow {
   readonly light: boolean;
   /** Kept for missiles' and gore's callers: a cutting blow. */
   readonly cut: boolean;
+  /**
+   * The red blow (Book 10 redUnblockable; decision DG-9): a raised shield takes it in full and its
+   * guard breaks, and a parry is beaten (the blow lands as a punish).
+   */
+  readonly red?: boolean;
 }
 
 /** The blow of an attacker's current strike (Book 10 section 06 and the charged heavy). */
@@ -1126,6 +1164,7 @@ export function blowOf(f: Fighter, cb: CombatBalance, opts: { berserk?: boolean 
     unblockable: f.riposte,
     light: kind === 'light',
     cut: w.type === 'CUT',
+    ...(f.move === 'red' ? { red: true, guardBreak: true, hook: false } : {}),
   };
 }
 
@@ -1214,6 +1253,15 @@ export function resolveBlow(
 ): Outcome {
   if (invulnerable(defender, tick, cb)) return 'DODGED';
   if (blow.unblockable || blow.kind === 'backstab') return 'HIT';
+  if (blow.red === true) {
+    // Neither a parry nor a shield stops it: the parry is beaten (it lands), and a live guard from
+    // the front takes the whole blow and breaks with Book 10's large stagger (guardBreakEmpty).
+    if (guardLive(defender) && inFrontAngle(defender.angle, attackerDir.x, attackerDir.y, cb.block.arcDegrees)) {
+      breakGuard(defender, tick, cb, cb.block.breakEmpty, false);
+      return 'GUARD_BROKEN';
+    }
+    return 'HIT';
+  }
   const front = (arc: number): boolean =>
     inFrontAngle(defender.angle, attackerDir.x, attackerDir.y, arc);
   if (parrying(defender) && front(cb.block.arcDegrees)) {

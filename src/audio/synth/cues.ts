@@ -7,8 +7,10 @@
  * - Effects, tells and stingers are generated graphs (sfx.ts and the three below).
  * - Ambience cues name a generated ambience.
  */
+import { INTERFACE_SOUNDS } from './interface.ts';
 import { OPENING_SOUNDS } from './opening.ts';
 import { STORM_SOUNDS } from './storm.ts';
+import { STORY3_SOUNDS } from './story3.ts';
 import hearthJson from '../../../content/music/hearth.json';
 import combatJson from '../../../content/music/combat.json';
 import raidJson from '../../../content/music/raid.json';
@@ -25,6 +27,7 @@ import { SOUTH } from './south.ts';
 import { REPAIR_SOUNDS } from './repairs.ts';
 import { LAUNCH_SOUNDS } from './launch.ts';
 import { COMBAT2_SOUNDS } from './combat2.ts';
+import { COMBAT3_SOUNDS } from './combat3.ts';
 import type { SoundDef } from './sfx.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
@@ -150,8 +153,11 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...REPAIR_SOUNDS,
     ...LAUNCH_SOUNDS,
     ...COMBAT2_SOUNDS,
+    ...COMBAT3_SOUNDS,
     ...OPENING_SOUNDS,
     ...STORM_SOUNDS,
+    ...STORY3_SOUNDS,
+    ...INTERFACE_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 

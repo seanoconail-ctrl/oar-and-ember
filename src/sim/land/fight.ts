@@ -29,6 +29,7 @@ import { hears, lightAt, remembered, sees, sightRange } from '../ai/perception.t
 import type { Memory } from '../ai/perception.ts';
 import { seasonOf } from '../calendar/calendar.ts';
 import {
+  beginStrike,
   blowOf,
   charging,
   damageOf,
@@ -83,11 +84,21 @@ import type {
 } from '../combat/fighter.ts';
 import { orderShot } from './archer.ts';
 import { STEERER } from './missiles.ts';
-import { accelTicks, easeVelocity, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
+import {
+  accelTicks,
+  easeVelocity,
+  footprintClear,
+  stepClear,
+  TICKS_PER_SECOND,
+} from './onFoot.ts';
 import type { LandContext, OnFootActor, OnFootState } from './onFoot.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import { tilePath } from './path.ts';
 import { parseSearchBalance } from '../../content/searchBalance.ts';
+import { parsePt3Balance } from '../../content/pt3Balance.ts';
+import type { FinisherVariant, FinisherWeapon, Pt3Balance } from '../../content/pt3Balance.ts';
+import { activeChapter, freshTeaching } from '../world.ts';
+import type { CombatPromptId, SparedRecord, Teaching } from '../world.ts';
 import type { ZoneMap } from './zoneMap.ts';
 import type { WorldState } from '../world.ts';
 
@@ -170,6 +181,8 @@ export interface FighterAi {
   hopAt: number;
   /** The tick it began to draw its sidearm (Book 10 cornered, noArrows), or -1. */
   sidearmAt: number;
+  /** Struck while unaware: it speaks no first-sight line (Book 10 "First sight", when). */
+  silent?: boolean;
 }
 
 /**
@@ -232,6 +245,33 @@ export interface ActorFight {
   arch?: string;
   /** Design addendum 2.5: the velocity eased towards the walk wanted (Book 10 acceleration). */
   vel?: { x: number; y: number };
+  /**
+   * The user's third playtest (decision DG-9): a Chapter 1 teaching foe's rule and its count of
+   * blows turned, red blows made, and the tick of its last guidance line.
+   */
+  teach?: TeachState;
+  /** The tick a teaching foe's guard last turned a blow (the turn is drawn from it). */
+  turnedAt?: number;
+  /** Let go (decision DG-4): when, and whether the reply has been spoken. */
+  spared?: { readonly at: number; replied: boolean };
+  /** Spared before and met again on the island (Book 10 chapter1): to repay it, or to ambush. */
+  returned?: 'FAVOUR' | 'AMBUSH' | undefined;
+}
+
+/** A teaching foe's lesson under way (Book 2 section 12, TeachingRule; Book 10 "Teaching foes"). */
+export interface TeachState {
+  readonly rule: 'PARRY' | 'RED';
+  turned: number;
+  reds: number;
+  parried: number;
+  /** The tick of the last guidance line (Book 10: at most one in guidanceGap). */
+  lineAt: number;
+  /** Guidance given once each: by its key. */
+  said: string[];
+  /** Missiles it turned, to be set down at its feet (they did not stick in it). */
+  deflect?: number[];
+  /** Red blows that landed on the steerer (Bran's third word at the fold). */
+  taken?: number;
 }
 
 /** A group's morale (Book 10 section 07, "Cohesion and surrender"). */
@@ -270,6 +310,34 @@ export interface Battle {
    * last, and whether the one for a weapon taken in hand has been given; null with none yet.
    */
   warn?: WarnState | null;
+  /**
+   * The user's third playtest (decision DG-8): the first-sight line of this encounter: who speaks,
+   * which kind, the tick it is spoken (and its key once spoken), the second speaker's line, and
+   * until when the group holds its attacks (the pause), or null before anyone turned alert.
+   */
+  sight?: SightState | null;
+  /** Counted as one of the steerer's fights for the combat prompts (Book 10 promptFights). */
+  counted?: boolean;
+  /** The sneak hint was shown for this approach (Book 10 sneakHintTimes: one an approach). */
+  sneakHinted?: boolean;
+  /** The household took loot here during it (Book 10 "The spared remembered", robbed). */
+  looted?: boolean;
+  /** Its members the household killed (Book 10 kinKilled). */
+  killed?: Id[];
+}
+
+/** An encounter's first-sight line (Book 10 "First sight"). */
+export interface SightState {
+  readonly speaker: Id;
+  readonly kind: 'WARNING' | 'TAUNT';
+  readonly at: number;
+  key: string | null;
+  second: Id | null;
+  readonly secondAt: number;
+  /** The parley's words to follow it, by whom (they take the second line's place). */
+  parley?: Id | null;
+  /** The pause's end; -1 once it is over for the whole group. */
+  until: number;
 }
 
 /** The warnings under way before a fight (Book 10 "Warnings"). */
@@ -292,6 +360,8 @@ export interface FightContext {
   /** Stage 10 (Book 10 The three searches): a parley's ticks, and an ally's guard in tiles. */
   readonly parleyTicks: number;
   readonly guardTiles: number;
+  /** The user's third playtest's rows (src/content/pt3Balance.ts). */
+  readonly pt3: Pt3Balance;
 }
 
 export function fightContext(
@@ -302,8 +372,23 @@ export function fightContext(
   const def = content.combat;
   if (def == null) return null;
   const searches = parseSearchBalance(balance);
+  const pt3 = parsePt3Balance(balance);
+  const red = pt3.teaching.red;
   return {
-    cb: parseCombatBalance(balance),
+    cb: {
+      ...parseCombatBalance(balance),
+      redBlow: {
+        weight: 'CHARGED',
+        windup: red.windup,
+        active: red.active,
+        recovery: red.recovery,
+        miss: red.miss,
+        step: red.step,
+        stamina: red.stamina,
+        chain: null,
+      },
+    },
+    pt3,
     ai: parseAiBalance(balance),
     def,
     fighters: new Map(def.fighters.map((f) => [f.person, f])),
@@ -359,7 +444,12 @@ export function startFight(fw: FightWorld): void {
       delete a.task;
       a.pose = 'idle';
       fw.emit({ type: 'ENEMY_AWARE', person: id });
+      if (fa.returned === 'FAVOUR') {
+        standAside(fw, id, a, fa);
+        continue;
+      }
     }
+    scheduleSight(fw, id, a, fa);
     fa.ai.next = fw.world.tick;
   }
   if (!battle.engaged) {
@@ -402,8 +492,11 @@ export type FightEvent =
       readonly type: 'ATTACK_STARTED';
       readonly who: Id;
       readonly heavy: boolean;
-      /** Combat v2: a lunge's tell, a riposte or a backstab begun (their own sounds). */
-      readonly kind?: 'lunge' | 'riposte' | 'backstab';
+      /**
+       * Combat v2: a lunge's tell, a riposte or a backstab begun (their own sounds); the user's
+       * third playtest: a finisher (DG-3) and the red blow's first wind-up tick (DG-9, DG-10).
+       */
+      readonly kind?: 'lunge' | 'riposte' | 'backstab' | 'finisher' | 'red';
     }
   | { readonly type: 'CHARGE_LEVEL'; readonly who: Id; readonly level: 1 | 2 }
   | { readonly type: 'SWING'; readonly who: Id; readonly heavy: boolean; readonly weapon: string }
@@ -491,6 +584,10 @@ export type FightEvent =
       readonly weapon: string;
       readonly flash: boolean;
       readonly lunge?: boolean;
+      /** The red blow's flash: the red glint and the hiss (decision DG-10). */
+      readonly red?: boolean;
+      /** Whom it is aimed at (the combat prompts show at a telegraph aimed at the steerer). */
+      readonly at?: Id | null;
     }
   /** An archer hops back once from a foe too close (Book 10 dashAway). */
   | { readonly type: 'ARCHER_HOP'; readonly who: Id }
@@ -526,11 +623,61 @@ export type FightEvent =
    * bargain), `DARK` (they finished and went to the fold, or were never met), `FOUGHT` (with
    * what became of each); `ch1.dusk` holds the outcome, `ch1.dusk.<person>` each one's fate.
    */
+  /**
+   * The user's third playtest. A foe beaten (DG-2): reeling from a beaten stagger, downed, or
+   * begging. The steerer's finisher landed (DG-3). The let-go shout and the spared foe's reply
+   * (DG-4; the lines are chosen by the presentation on its own stream). A teaching foe's guard
+   * turned a blow (DG-9). A first-sight line (DG-8). A teaching foe's lesson done (DG-9). The sneak
+   * hint due (DG-25). A fight counted towards the combat prompts (DG-7). A spared person's fate
+   * coming due or heard of beforehand, and one met again (DG-6).
+   */
+  | { readonly type: 'FOE_BEATEN'; readonly person: Id; readonly how: BeatenState }
+  | {
+      readonly type: 'FINISHER_LANDED';
+      readonly target: Id;
+      readonly weapon: FinisherWeapon;
+      readonly variant: FinisherVariant;
+    }
+  | { readonly type: 'STEERER_SHOUTED'; readonly foe: Id }
+  | { readonly type: 'SPARED_REPLY'; readonly person: Id }
+  | { readonly type: 'WEAPON_DROPPED'; readonly person: Id; readonly item: Id | null }
+  | { readonly type: 'GUARD_TURNED'; readonly who: Id; readonly by: Id; readonly shield: boolean }
+  | {
+      readonly type: 'FIRST_SIGHT';
+      readonly person: Id;
+      readonly kind: 'WARNING' | 'TAUNT';
+      readonly lineKey: string;
+    }
+  | { readonly type: 'LESSON_DONE'; readonly lesson: 'PARRY' | 'RED' }
+  | { readonly type: 'SNEAK_HINT'; readonly shown: number }
+  | { readonly type: 'FIGHT_COUNTED'; readonly fights: number }
+  | {
+      readonly type: 'SPARED_DUE';
+      readonly person: Id;
+      readonly fate: SparedRecord['fate'];
+      readonly precursor: boolean;
+    }
+  | {
+      readonly type: 'SPARED_RETURNED';
+      readonly person: Id;
+      readonly fate: SparedRecord['fate'];
+      readonly lineKey: string;
+    }
   | {
       readonly type: 'DUSK_RESOLVED';
       readonly outcome: 'FOOD' | 'DARK' | 'FOUGHT';
       readonly fates: Readonly<Record<Id, DuskFate>>;
     };
+
+/** Book 2 section 12's BeatenState: a beaten stagger held as a reel, downed, or begging. */
+export type BeatenState = 'REELING' | 'DOWNED' | 'BEGGING';
+
+/** Book 2 section 12's FinishOffer: the beaten foe the choice is offered on, and its finisher. */
+export interface FinishOffer {
+  readonly foe: Id;
+  readonly state: BeatenState;
+  readonly variant: FinisherVariant;
+}
 
 /** What became of one of the scavengers at dusk. */
 export type DuskFate = 'DEAD' | 'SPARED' | 'FLED' | 'LEFT' | 'DOWNED' | 'HELD';
@@ -692,6 +839,9 @@ export function spawnEncounters(
         world.facts[`enc.join.${m.person}`] = enc.id;
         continue;
       }
+      // Spared before (Book 10 chapter1): one whose fate is gone is not seen again on the island.
+      const fate = islandFate(world, m.person);
+      if (fate === 'GONE') continue;
       const arch = ctx.ai.archetypes[fd.archetype] ?? { vitality: ctx.cb.vitality, armour: 'NONE' };
       const x = m.x * map.tile;
       const y = m.y * map.tile;
@@ -734,6 +884,8 @@ export function spawnEncounters(
         dead: null,
         order: null,
         quietSince: world.tick,
+        ...teachFor(fd),
+        ...(fate === 'FAVOUR' || fate === 'AMBUSH' ? { returned: fate } : {}),
       };
       person.vitality = arch.vitality;
       person.status = 'alive';
@@ -1009,6 +1161,7 @@ export function meleePress(
   }
   // Refused, queued, or with nothing to spend: silently (Book 2 section 12: no word, no caption).
   if (r === 'STARTED') {
+    promptUsed(world, ctx, 'STRIKE');
     faceAction(world, f);
     emit({
       type: 'TELEGRAPH',
@@ -1055,7 +1208,10 @@ export function steererParry(
   if (f === null || world.onFoot?.carrying != null) return;
   const angle = steererAngle(world, world.onFoot?.player.facing ?? 's');
   if (free(f) || f.state === 'block') setAngle(f, angle);
-  if (pressParry(f, world.tick, ctx.cb, pool(world), window) === 'STARTED') faceAction(world, f);
+  if (pressParry(f, world.tick, ctx.cb, pool(world), window) === 'STARTED') {
+    promptUsed(world, ctx, 'PARRY');
+    faceAction(world, f);
+  }
 }
 
 export function steererBlock(
@@ -1066,8 +1222,10 @@ export function steererBlock(
 ): void {
   const f = steererFighter(world, ctx);
   if (f === null || (on && world.onFoot?.carrying != null)) return;
+  const wasIdle = f.state === 'idle';
   const r = setBlock(f, on, world.tick, ctx.cb);
   if (r === 'NO_SHIELD') emit({ type: 'FIGHT_REFUSED', reason: 'NO_SHIELD' });
+  if (on && wasIdle && r === 'STARTED') promptUsed(world, ctx, 'BLOCK');
 }
 
 export function steererDodge(
@@ -1081,7 +1239,10 @@ export function steererDodge(
   updateExhausted(f, pool(world), ctx.cb, world.tick);
   // Exhausted or locked: refused silently (Book 10 "Exhausted": no word on screen).
   const r = pressDodge(f, world.tick, ctx.cb, dir, pool(world));
-  if (r === 'STARTED') emit({ type: 'DODGED', who: STEERER });
+  if (r === 'STARTED') {
+    promptUsed(world, ctx, 'DODGE');
+    emit({ type: 'DODGED', who: STEERER });
+  }
 }
 
 /** The shove (Book 10: its stamina, its timing and reach, the stagger it gives). */
@@ -1142,6 +1303,7 @@ export function steererLockOn(
         st.lockOn = t;
         st.lostSince = null;
         emit({ type: 'LOCK_ON', target: t });
+        promptUsed(world, ctx, 'LOCK_ON');
       }
       st.lockHeld = null;
     } else st.lockHeld = tick;
@@ -1360,6 +1522,7 @@ function stepHeal(
       world.player.vitality = Math.min(healMax(world, ctx), world.player.vitality + h.eatVitality);
       st.current = Math.min(st.max, st.current + h.eatStamina);
     }
+    teachingOf(world).heals++;
     fw.emit({
       type: 'HEALED',
       kind: e.heal.kind,
@@ -1373,21 +1536,9 @@ function stepHeal(
   if (stepped || ran) interruptHealOf(world, fw.emit);
 }
 
-/** The held finisher (Book 10 finisherHold) on the downed or surrendered within reach. */
+/** The beaten foe the finish-or-let-go choice is offered on (finishOffer), or null. */
 export function finisherTarget(world: WorldState, ctx: FightContext, tile: number): Id | null {
-  const onFoot = world.onFoot;
-  const f = onFoot?.player.fight;
-  if (onFoot === null || f?.weapon == null) return null;
-  const reach = (ctx.cb.weapons[f.weapon].reachTiles + ctx.cb.bodyRadiusTiles + 0.5) * tile;
-  let best: { id: Id; d: number } | null = null;
-  for (const [id, a] of Object.entries(onFoot.actors).sort(([x], [y]) => (x < y ? -1 : 1))) {
-    const fa = a.fight;
-    if (fa?.side !== 'ENEMY' || fa.dead !== null) continue;
-    if (fa.f.state !== 'surrendered' && fa.f.state !== 'downed') continue;
-    const d = Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y);
-    if (d <= reach && (best === null || d < best.d)) best = { id, d };
-  }
-  return best?.id ?? null;
+  return finishOffer(world, ctx, tile)?.foe ?? null;
 }
 
 /**
@@ -1482,8 +1633,16 @@ export interface FightWorld {
   readonly rain?: boolean;
   /** Time balance (daylight). */
   readonly emit: FightEmit;
-  /** Applies a household deed (KILLING, SURRENDERED_KILLED) through the people's measures. */
-  readonly deed: (tag: string, victims: readonly Id[], witnesses: readonly Id[]) => void;
+  /**
+   * Applies a household deed (KILLING, SURRENDERED_KILLED, SPARED) through the people's measures,
+   * with its context (SPARED's `how`); returns the deed's ID (null if none was written).
+   */
+  readonly deed: (
+    tag: string,
+    victims: readonly Id[],
+    witnesses: readonly Id[],
+    context?: Record<string, string>,
+  ) => Id | null | void;
   /** Rán's mercy and Second wind (the campaign's options). */
   readonly options: {
     readonly secondWind: boolean;
@@ -1567,6 +1726,11 @@ export function stepFight(fw: FightWorld): void {
         fa.ai.mind.since = tick;
         fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
       }
+      // A reel neither finished nor let go (Book 10 reel): flight or begging.
+      if (e.type === 'STATE_ENDED' && e.state === 'reel') endReel(fw, id, a, fa);
+      // A red blow that met no one at the steerer: the dodge's lesson is done (Book 10 lessonDone).
+      if (e.type === 'MISSED' && fa.f.move === 'red' && fa.ai.target === STEERER)
+        lessonDone(fw, 'RED');
     }
     if (fa.f.exhausted !== wasExhausted)
       fw.emit({ type: 'EXHAUSTED', who: id, on: fa.f.exhausted });
@@ -1593,15 +1757,19 @@ export function stepFight(fw: FightWorld): void {
   for (const [id, a] of actors) if (a.fight !== undefined) strikers.push([id, a.fight.f, a]);
   for (const [id, f, at] of strikers) {
     if (f.hitstop > 0 || strikePhase(f, tick) !== 'active' || f.hit) continue;
-    if (f.state === 'shove') shoveLands(fw, id, f, at);
+    if (f.state === 'finisher') finisherLands(fw, f);
+    else if (f.state === 'shove') shoveLands(fw, id, f, at);
     else strikeLands(fw, id, f, at);
   }
   finishWarnings(fw);
   secondWind(fw);
   if (battle !== null) {
     warnStep(fw, battle);
+    sightStep(fw, battle);
     morale(fw, battle);
   }
+  sparedStep(fw);
+  teachStep(fw);
   stepDusk(fw);
 }
 
@@ -1730,6 +1898,8 @@ function telegraph(fw: FightWorld, id: Id, f: Fighter): void {
     weapon: f.weapon ?? '',
     flash: true,
     ...(f.state === 'lunge' ? { lunge: true } : {}),
+    ...(f.move === 'red' ? { red: true } : {}),
+    at: fw.world.onFoot?.actors[id]?.fight?.ai.target ?? null,
   });
 }
 
@@ -1834,9 +2004,27 @@ function landBlow(
   const unaware = awarenessOf(onFoot, defender) === 'UNAWARE';
   const healing = df?.state === 'heal' ? (df.heal?.kind ?? null) : null;
   const hadShield = df?.shield === true;
+  // A teaching foe's guard turns everything outside its opening (Book 10 svartGuard, ketillGuard).
+  const dfa = onFoot.actors[defender]?.fight;
+  const rule = teachRule(world, dfa);
+  if (rule !== null && df !== null && !teachOpen(df, rule, tick)) {
+    turnBlow(fw, attacker, defender, from, blow.kind);
+    noise(fw, pos, ctx.ai.noise.combat, attacker);
+    return;
+  }
+  // The first-sight pause (Book 10 strikeFirst): a blow landing on its speaker in it is a punish.
+  const sight = onFoot.battle?.sight ?? null;
+  const caughtOpen =
+    sight !== null &&
+    sight.speaker === defender &&
+    sight.key !== null &&
+    sight.until > tick &&
+    sideOf(onFoot, attacker) === 'HOUSEHOLD';
   // A hit on one caught in a miss recovery, a mistimed parry's recovery, a dodge's recovery or a
-  // broken guard is a punish (Book 10 "Commitment"), judged before the blow changes anything.
-  const punish = df !== null && punishable(df, tick);
+  // broken guard is a punish (Book 10 "Commitment"), judged before the blow changes anything; and a
+  // parry the red blow beats (Book 10 redUnblockable).
+  const parryBeaten = blow.red === true && df !== null && df.state === 'parry';
+  const punish = df !== null && (punishable(df, tick) || parryBeaten || caughtOpen);
   let outcome: Outcome = 'HIT';
   const toAttacker = { x: from.x - pos.x, y: from.y - pos.y };
   if (df !== null && dpool !== undefined)
@@ -1936,6 +2124,31 @@ function landBlow(
   });
   if (outcome === 'DODGED') fw.emit({ type: 'DODGED', who: defender });
   if (hadShield && !shieldNow(df)) fw.emit({ type: 'SHIELD_BROKEN', who: defender });
+  // The teaching foes' lessons (Book 10 lessonDone) and their guidance (Book 8 section 07).
+  const afa = onFoot.actors[attacker]?.fight;
+  const arule = teachRule(world, afa);
+  if (afa?.teach !== undefined && arule === 'PARRY' && outcome === 'PARRIED' && defender === STEERER) {
+    afa.teach.parried++;
+    lessonDone(fw, 'PARRY');
+    if (afa.teach.parried === 1) guide(fw, afa, attacker, 'e_wrecker_svart.teach.03');
+  }
+  if (afa?.teach !== undefined && arule === 'RED' && blow.red === true && defender === STEERER) {
+    const atFold = encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') === true;
+    if (outcome === 'DODGED') lessonDone(fw, 'RED');
+    // A dodged red blow met no one: its miss recovery follows (Book 10 ketillOpening: 74 ticks).
+    if (outcome === 'DODGED' && !af.missed && ctx.cb.redBlow?.miss != null) {
+      af.recoveryEnd += ctx.cb.redBlow.miss;
+      af.missed = true;
+    }
+    else if (atFold && (parryBeaten || outcome === 'GUARD_BROKEN'))
+      guide(fw, afa, 'C_BRAN', 'c_bran.teach.red.02');
+    if (atFold && outcome !== 'DODGED') {
+      afa.teach.taken = (afa.teach.taken ?? 0) + 1;
+      if (afa.teach.taken === 2) guide(fw, afa, 'C_BRAN', 'c_bran.teach.red.03');
+    }
+  }
+  // A household blow landing on the first-sight speaker's group ends the pause for all of them.
+  if (sight !== null && sideOf(onFoot, attacker) === 'HOUSEHOLD' && landedHit) sight.until = -1;
   if (healing !== null && !inState(df, 'heal'))
     fw.emit({ type: 'HEAL_INTERRUPTED', kind: healing });
   // The spear keeps a foe at bay (Book 10 spearKeep): a hit pushes them back.
@@ -1966,6 +2179,8 @@ function landBlow(
       dx: pos.x - from.x,
       dy: pos.y - from.y,
     });
+    // Beaten (Book 10 beatenBelow): a stagger at or below its share is held as a reel.
+    beatenAfter(fw, defender, reaction);
   }
   // Heard: a fight is loud (Book 10 noiseCombat); a backstab a short struggle (backstabNoise).
   noise(
@@ -1996,6 +2211,11 @@ function shoveLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: numb
   // Met no one: its miss recovery follows (Book 10 "Commitment"); the strike stays live.
   if (best?.f == null) return;
   f.hit = true;
+  const rule = teachRule(world, onFoot.actors[best.id]?.fight);
+  if (rule !== null && !teachOpen(best.f, rule, world.tick)) {
+    turnBlow(fw, id, best.id, at, 'shove');
+    return;
+  }
   if (best.f.state !== 'dodge' || !inDodge(best.f, world.tick, ctx)) {
     best.f.guard = false;
     enterTimed(best.f, 'stagger', world.tick, ctx.cb.shove.stagger);
@@ -2035,6 +2255,8 @@ export function hurt(
     dx: number;
     dy: number;
     missile?: boolean;
+    /** The deed a household killing writes, if not by the foe's state (a finisher's: DG-3). */
+    deed?: 'KILLING' | 'SURRENDERED_KILLED';
   },
 ): void {
   const { world, ctx } = fw;
@@ -2066,9 +2288,11 @@ export function hurt(
   if (fa.vitality > 0) {
     if (fa.side === 'ENEMY' && fighting(fa)) say(ctx, id, 'hurt', fw.emit, tick);
     if (fa.side === 'HOUSEHOLD') maybeBerserk(fw, id, fa, ctx.cb.berserk.onWounded);
-    // The struck know where the blow came from: alert at once.
+    // The struck know where the blow came from: alert at once. One struck while unaware speaks
+    // no first-sight line (Book 10 "First sight", when); its friends do.
     const src = whereIs(onFoot, by);
     if (src !== null && fa.side === 'ENEMY') {
+      if (fa.ai.awareness.state === 'UNAWARE') fa.ai.silent = true;
       fa.ai.memory = { x: src.x, y: src.y, tick, seen: true };
       setAwareness(fw, id, a, fa, ctx.ai.awareness.alertAt);
       // The one who runs at dusk runs when hit at all (Book 10 connFlees).
@@ -2123,6 +2347,8 @@ export function hurt(
   }
   // A killing by the household is a deed; witnessed by the residents who saw it.
   if (sideOf(onFoot, by) === 'HOUSEHOLD') {
+    const battle = onFoot.battle ?? null;
+    if (battle !== null) (battle.killed ??= []).push(id);
     const witnesses = world.household.residents.filter((r) => {
       const ra = onFoot.actors[r];
       return (
@@ -2131,7 +2357,7 @@ export function hurt(
         Math.hypot(ra.x - a.x, ra.y - a.y) <= ctx.ai.sight.day * fw.map.tile
       );
     });
-    fw.deed(surrendered ? 'SURRENDERED_KILLED' : 'KILLING', [id], witnesses);
+    fw.deed(how.deed ?? (surrendered ? 'SURRENDERED_KILLED' : 'KILLING'), [id], witnesses);
   }
 }
 
@@ -2332,9 +2558,17 @@ function becomeAlert(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): vo
   delete a.task;
   a.pose = 'idle';
   fw.emit({ type: 'ENEMY_AWARE', person: id });
+  // Spared before and come back to repay it: stands aside (Book 10 chapter1).
+  if (fa.returned === 'FAVOUR') {
+    standAside(fw, id, a, fa);
+    return;
+  }
+  // The first-sight line comes before anything else (Book 10 "First sight").
+  scheduleSight(fw, id, a, fa);
   if (ai.shouted) return;
   ai.shouted = true;
-  say(ctx, id, 'alarm', fw.emit, world.tick);
+  // Its first-sight line is its shout; those with none raise the alarm (Book 10 exceptions).
+  if (sightPool(ctx, id) === null) say(ctx, id, 'alarm', fw.emit, world.tick);
   // A shout raises the others in earshot (Book 10 noiseShout).
   for (const [oid, o] of Object.entries(onFoot.actors).sort(ORDERLY)) {
     const of = o.fight;
@@ -2592,7 +2826,9 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     ) {
       battle.parley = { until: tick + ctx.parleyTicks, done: false };
       const leader = Object.entries(onFoot.actors).find(([, o]) => o.fight?.leader === true)?.[0];
-      say(ctx, leader ?? id, 'parley', fw.emit, tick);
+      // The first-sight line comes first, then the parley's own words, as its second line.
+      if (battle.sight == null) say(ctx, leader ?? id, 'parley', fw.emit, tick);
+      else battle.sight.parley = leader ?? id;
       for (const [oid, o] of Object.entries(onFoot.actors).sort(ORDERLY)) {
         const of = o.fight;
         if (of?.side !== 'ENEMY') continue;
@@ -3242,6 +3478,11 @@ function startAttack(
   const tick = world.tick;
   const h = ctx.ai.habits;
   const ai = fa.ai;
+  // Not before its encounter's first line, nor in the pause after it (Book 10 "First sight").
+  if (!sightAllows(world, fa)) return false;
+  // Ketill in Chapter 1: every attack is the red blow (Book 10 ketillRedShare).
+  if (teachRule(world, fa) === 'RED' && nextFloat(world.rng.ai) < ctx.pt3.teaching.redShare)
+    return startRed(fw, id, a, fa, pos);
   const angle = Math.atan2(pos.y - a.y, pos.x - a.x);
   const inside =
     fa.f.weapon === 'Spear' &&
@@ -3480,6 +3721,7 @@ function archerFight(
   }
   ai.goal = null;
   if (!free(fa.f) || tick < mind.cooldownUntil || !tokenFree(fw, id, target)) return;
+  if (!sightAllows(world, fa)) return;
   // Settle, draw, loose, then recover, standing completely still (Book 10 standStill).
   mind.state = 'ATTACK';
   mind.since = tick;
@@ -3983,8 +4225,9 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const before = { x: a.x, y: a.y };
   // Book 10 avoid: deep water, cliff edges and fire are kept off (unless already in them).
   const avoid = (x: number, y: number): boolean => fw.avoid?.(x, y) === true && !fw.avoid(a.x, a.y);
+  // No shape traps anyone (decision DG-20): stepClear, as for the steerer.
   const clear = (x: number, y: number): boolean =>
-    footprintClear(map, land.rules, x, y, fw.tidalGroundOpen) &&
+    stepClear(map, land.rules, a, x, y, fw.tidalGroundOpen) &&
     !crowded(onFoot, id, a, x, y) &&
     !avoid(x, y);
   const nx = a.x + vx * speed;
@@ -4031,6 +4274,7 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     const cornered =
       !a.moving &&
       fa.ai.mode === 'FLEE' &&
+      fa.spared === undefined &&
       fa.f.hitstop === 0 &&
       fa.f.state === 'idle' &&
       Math.hypot(a.x - p.x, a.y - p.y) <= ctx.ai.habits.fledAt * tile &&
@@ -4113,6 +4357,8 @@ function morale(fw: FightWorld, battle: Battle): void {
       const a = onFoot.actors[m];
       const fa = a?.fight;
       if (a === undefined || fa === undefined || fa.berserkUntil > tick) continue;
+      // A reeling foe's own end decides it (Book 10 reel).
+      if (fa.f.state === 'reel') continue;
       const coward = world.people[m]?.traits.some((t) => t.trait === 'COWARDLY') === true;
       const breakAt = coward ? ctx.ai.cowardBreak : c.surrenderBelow;
       if (g.cohesion >= breakAt) continue;
@@ -4211,8 +4457,20 @@ export function leaveZone(fw: Pick<FightWorld, 'world' | 'ctx' | 'emit' | 'deed'
       fw.emit({ type: 'LEFT_BEHIND', person: id, fate });
       if (fate === 'CAPTURED') Reflect.deleteProperty(onFoot.actors, id);
     }
-    if (fa.side === 'ENEMY' && fa.f.state === 'surrendered') {
-      fw.deed('SPARED', [id], []);
+    // The beaten left alive (begging or downed) go their way, spared (Book 2 section 12, LEFT),
+    // each with a record and its fate (decisions DG-5 and DG-6).
+    if (fa.side === 'ENEMY' && fa.dead === null && fa.spared === undefined && (fa.f.state === 'surrendered' || fa.f.state === 'downed')) {
+      const deed = fw.deed('SPARED', [id], [], { how: 'LEFT' });
+      const g = fa.group === null ? undefined : battle?.groups[fa.group];
+      addSpared(world, fw.ctx, {
+        person: id,
+        deed: deed ?? '',
+        how: 'LEFT',
+        begged: fa.f.state === 'surrendered',
+        kinKilled: (battle?.killed ?? []).some((k) => g?.members.includes(k) === true),
+        shamed: false,
+        robbed: battle?.looted === true,
+      });
       Reflect.deleteProperty(onFoot.actors, id);
       person.status = 'missing';
     }
@@ -4299,13 +4557,24 @@ function warnStep(fw: FightWorld, battle: Battle): void {
   }
   const w = (battle.warn ??= { stage: 0, last: -1_000_000, armed: false, by });
   const gapOk = tick - w.last >= k.gapTicks;
-  const give = (stage: number): void => {
+  // The first-sight line is the first warning (decision DG-8): "This wreck is ours" and "One more
+  // step" are the second and the last; "Keep out of this" the one for a weapon taken in hand.
+  const give = (stage: number, line: number): void => {
     w.stage = stage;
     w.last = tick;
     w.at = d;
-    sayLine(ctx, w.by, 'warn', Math.min(stage, 3) - 1, fw.emit);
+    sayLine(ctx, w.by, 'warn', line, fw.emit);
     fw.emit({ type: 'WARNED', person: w.by, stage });
   };
+  // Waiting for the first-sight line (sightStep sets stage 1 when it is spoken).
+  if (w.stage === 0) {
+    if (d <= k.warnAt * tile && battle.sight == null) {
+      const speaker = alert.includes(w.by) ? w.by : (alert[0] ?? w.by);
+      const sa = onFoot.actors[speaker];
+      if (sa?.fight !== undefined) scheduleSight(fw, speaker, sa, sa.fight, true);
+    }
+    return;
+  }
   const near = onFoot.actors[nearest]?.fight;
   const theirReach = (reachOf(ctx, near?.f ?? null) + ctx.cb.bodyRadiusTiles) * tile;
   // Within their reach: no more words.
@@ -4316,9 +4585,9 @@ function warnStep(fw: FightWorld, battle: Battle): void {
   // A weapon taken in hand within warnAt: one more warning, then the fight.
   if (armed(world, ctx) && d <= k.warnAt * tile) {
     if (!w.armed) {
-      if (w.stage === 0 || gapOk) {
+      if (gapOk) {
         w.armed = true;
-        give(Math.min(3, w.stage + 1));
+        give(Math.min(3, w.stage + 1), 0);
       }
       return;
     }
@@ -4327,9 +4596,8 @@ function warnStep(fw: FightWorld, battle: Battle): void {
       return;
     }
   }
-  if (w.stage === 0 && d <= k.warnAt * tile) give(1);
-  else if (w.stage === 1 && d <= k.again * tile && gapOk) give(2);
-  else if (w.stage === 2 && d <= k.lastStep * tile && gapOk) give(3);
+  if (w.stage === 1 && d <= k.again * tile && gapOk) give(2, 1);
+  else if (w.stage === 2 && d <= k.lastStep * tile && gapOk) give(3, 2);
   else if (w.stage === 3 && d < (w.at ?? d) - ctx.cb.bodyRadiusTiles * tile) startFight(fw);
 }
 
@@ -4412,6 +4680,7 @@ function joinLate(fw: Pick<FightWorld, 'world' | 'ctx' | 'land'>): void {
         dead: null,
         order: null,
         quietSince: world.tick,
+        ...teachFor(fd),
       },
     };
     p.vitality = arch.vitality;
@@ -4706,6 +4975,7 @@ export function missileStruck(
     readonly target?: Id;
     readonly x: number;
     readonly y: number;
+    readonly n?: number;
   },
 ): void {
   const { world, ctx } = fw;
@@ -4723,6 +4993,13 @@ export function missileStruck(
   const fa = onFoot.actors[target]?.fight;
   if (e.strike === 'body') {
     if (fa?.dead != null || onFoot.actors[target]?.pose === 'dead') return;
+    // A teaching foe turns arrows and thrown spears too (Book 10 svartGuard): it falls at his feet.
+    const rule = teachRule(world, fa);
+    if (rule !== null && tf !== null && fa?.teach !== undefined && !teachOpen(tf, rule, world.tick)) {
+      turnBlow(fw, by, target, from ?? { x: e.x, y: e.y }, 'missile');
+      if (e.n !== undefined) (fa.teach.deflect ??= []).push(e.n);
+      return;
+    }
     const unaware = awarenessOf(onFoot, target) === 'UNAWARE';
     const armour = tf?.armour ?? 'NONE';
     const mult = unaware ? ctx.ai.sneakAttacks.unawareMissile : 1;
@@ -4825,4 +5102,973 @@ function inState(f: Fighter | null, state: Fighter['state']): boolean {
 /** Whether a fighter still has a shield (read afresh after a blow may have broken it). */
 function shieldNow(f: Fighter | null): boolean {
   return f?.shield === true;
+}
+
+// ---------------------------------------------- the user's third playtest (DG-2 to DG-11, DG-25)
+
+/** What the campaign has taught, made on first need (Book 2 section 05, `player.teaching`). */
+export function teachingOf(world: WorldState): Teaching {
+  world.player.teaching ??= freshTeaching();
+  return world.player.teaching;
+}
+
+/** Whether a fight is under way in the zone in view (a battle engaged and not over). */
+function fightOn(world: WorldState): boolean {
+  const b = world.onFoot?.battle ?? null;
+  return b !== null && b.engaged && !b.over;
+}
+
+/**
+ * A combat prompt's action done (Book 10 promptRetire): counted only in a fight; at Book 10's
+ * uses it retires for the campaign. Parry and dodge share a line: it retires once each is done.
+ */
+export function promptUsed(
+  world: WorldState,
+  ctx: FightContext,
+  what: 'LOCK_ON' | 'STRIKE' | 'PARRY' | 'DODGE' | 'BLOCK',
+): void {
+  if (!fightOn(world)) return;
+  const t = teachingOf(world);
+  const uses = t.uses as Record<string, number>;
+  uses[what] = (uses[what] ?? 0) + 1;
+  const n = ctx.pt3.prompts.retireUses;
+  const retire = (id: CombatPromptId): void => {
+    if (!t.retired.includes(id)) t.retired.push(id);
+  };
+  if (what === 'PARRY' || what === 'DODGE') {
+    if ((uses['PARRY'] ?? 0) >= n && (uses['DODGE'] ?? 0) >= n) retire('PARRY_DODGE');
+  } else if ((uses[what] ?? 0) >= n) retire(what);
+}
+
+/** A teaching foe's rule, while it holds (Book 10 "Teaching foes": Chapter 1 only). */
+export function teachRule(world: WorldState, fa: ActorFight | undefined): 'PARRY' | 'RED' | null {
+  if (fa?.teach === undefined || fa.side !== 'ENEMY') return null;
+  const ch = activeChapter(world);
+  if (ch !== null && ch !== 'CH_1_WRECK') return null;
+  return fa.teach.rule;
+}
+
+/**
+ * Whether a teaching foe is in its opening now (Book 10 svartOpening, ketillOpening): Svart
+ * parried; Ketill in his red blow's recovery (and its miss recovery). Beaten, any blow lands.
+ */
+export function teachOpen(f: Fighter, rule: 'PARRY' | 'RED', tick: number): boolean {
+  if (f.state === 'reel' || OUT_OF_FIGHT.includes(f.state)) return true;
+  if (rule === 'PARRY') return f.state === 'parried';
+  return f.move === 'red' && striking(f) && tick >= f.activeEnd;
+}
+
+/** The beaten state a foe is in (Book 2 section 12, BeatenState), or null. */
+export function beatenOf(fa: ActorFight | undefined): BeatenState | null {
+  if (fa?.side !== 'ENEMY' || fa.dead !== null || fa.spared !== undefined) return null;
+  if (fa.f.state === 'reel') return 'REELING';
+  if (fa.f.state === 'downed') return 'DOWNED';
+  if (fa.f.state === 'surrendered') return 'BEGGING';
+  return null;
+}
+
+/**
+ * The finish-or-let-go choice (Book 10 "Finishing a beaten foe"; Book 2 section 12, FinishOffer):
+ * the nearest beaten foe within offerReach of the steerer (to its near edge), in the strike arc,
+ * while the steerer is at ease (not in an action, not carrying). STANDING for a reeling or kneeling
+ * foe, LYING for a downed one.
+ */
+export function finishOffer(world: WorldState, ctx: FightContext, tile: number): FinishOffer | null {
+  const onFoot = world.onFoot;
+  if (onFoot == null || onFoot.carrying !== null || world.gameOver !== null) return null;
+  const p = onFoot.player;
+  const f = p.fight ?? null;
+  if (f !== null && !free(f) && f.state !== 'block') return null;
+  if (p.aim != null || p.work != null) return null;
+  const angle = steererAngle(world, p.facing);
+  const reach = (ctx.pt3.finishing.offerReachTiles + ctx.cb.bodyRadiusTiles) * tile;
+  let best: { id: Id; d: number; state: BeatenState } | null = null;
+  for (const [id, a] of Object.entries(onFoot.actors).sort(ORDERLY)) {
+    const state = beatenOf(a.fight);
+    if (state === null) continue;
+    const dx = a.x - p.x;
+    const dy = a.y - p.y;
+    const d = Math.hypot(dx, dy);
+    if (d > reach || !inFrontAngle(angle, dx, dy, ctx.cb.strikeArcDegrees)) continue;
+    if (best === null || d < best.d) best = { id, d, state };
+  }
+  if (best === null) return null;
+  return {
+    foe: best.id,
+    state: best.state,
+    variant: best.state === 'DOWNED' ? 'LYING' : 'STANDING',
+  };
+}
+
+/** The finisher's row (Book 10 "Finishers"): the weapon in hand, or bare hands. */
+export function finisherRow(f: Fighter | null): FinisherWeapon {
+  return f?.weapon ?? 'Unarmed';
+}
+
+/**
+ * The finisher begins (Book 10 finisherCommits; decision DG-3): the hold is done, so the steerer
+ * plays its wind-up, active and recovery ticks under "Commitment", facing the foe, who is held
+ * still. Unarmed, the foe's own weapon is taken up and used once (it is drawn with it).
+ */
+export function startFinisher(fw: FightWorld, offer: FinishOffer): boolean {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  const f = steererFighter(world, ctx);
+  const a = onFoot?.actors[offer.foe];
+  const fa = a?.fight;
+  if (onFoot == null || f === null || a === undefined || fa === undefined) return false;
+  if (!free(f) && f.state !== 'block') return false;
+  const tick = world.tick;
+  const row = finisherRow(f);
+  const fr = ctx.pt3.finishers[row][offer.variant];
+  const p = onFoot.player;
+  setAngle(f, Math.atan2(a.y - p.y, a.x - p.x));
+  f.guard = false;
+  f.state = 'finisher';
+  f.since = tick;
+  f.activeAt = tick + fr.windup;
+  f.activeEnd = f.activeAt + fr.active;
+  f.recoveryEnd = f.activeEnd + fr.recovery;
+  f.hit = false;
+  f.missed = false;
+  f.queued = false;
+  f.move = null;
+  f.weight = 'HEAVY';
+  f.step = fr.step;
+  f.target = offer.foe;
+  f.lunge = null;
+  f.riposte = false;
+  const foeWeapon = fa.f.weapon;
+  f.finish = {
+    weapon: row,
+    variant: offer.variant,
+    drawn: row === 'Unarmed' ? foeWeapon : f.weapon,
+  };
+  const st = p.stance;
+  if (st != null) st.facing = f.angle;
+  // The foe is held still for the finisher's ticks (a reel lasts until it lands).
+  if (fa.f.state === 'reel') fa.f.recoveryEnd = Math.max(fa.f.recoveryEnd, f.activeEnd + 1);
+  fw.emit({ type: 'TELEGRAPH', who: STEERER, weight: 'HEAVY', weapon: row, flash: false });
+  fw.emit({ type: 'ATTACK_STARTED', who: STEERER, heavy: true, kind: 'finisher' });
+  return true;
+}
+
+/**
+ * The finisher's first active tick (Book 10 finisherKills, finisherDeed): it kills, with no damage
+ * roll; SURRENDERED_KILLED on a downed or begging foe, KILLING on a reeling one. Its hitstop holds
+ * both bodies, with the riposte's shake; nothing lingers (Book 7 section 12).
+ */
+function finisherLands(fw: FightWorld, f: Fighter): void {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  const id = f.target;
+  f.hit = true;
+  if (onFoot === null || id === null) return;
+  const a = onFoot.actors[id];
+  const fa = a?.fight;
+  if (a === undefined || fa === undefined || fa.dead !== null) return;
+  const state = beatenOf(fa);
+  const fin = f.finish ?? { weapon: finisherRow(f), variant: 'STANDING' as const, drawn: f.weapon };
+  const fr = ctx.pt3.finishers[fin.weapon][fin.variant];
+  const p = onFoot.player;
+  hitstop(f, fr.hitstop);
+  hitstop(fa.f, fr.hitstop);
+  fw.emit({
+    type: 'BLOW',
+    attacker: STEERER,
+    defender: id,
+    outcome: 'HIT',
+    damage: fa.vitality,
+    heavy: true,
+    x: a.x,
+    y: a.y,
+    dx: a.x - p.x,
+    dy: a.y - p.y,
+    material: fa.f.armour === 'MAIL' ? 'MAIL' : 'FLESH',
+    kind: 'finisher',
+    reaction: 'NONE',
+    hitstop: fr.hitstop,
+    knockback: 0,
+    shake: { px: fr.shake.px, ticks: fr.shake.ticks },
+  });
+  fw.emit({ type: 'FINISHER_LANDED', target: id, weapon: fin.weapon, variant: fin.variant });
+  hurt(fw, id, 9999, STEERER, {
+    heavyKill: true,
+    weapon: fin.drawn,
+    dx: a.x - p.x,
+    dy: a.y - p.y,
+    deed: state === 'REELING' ? 'KILLING' : 'SURRENDERED_KILLED',
+  });
+}
+
+/** The residents in the zone who see a point (a deed's witnesses). */
+function witnessesAt(fw: FightWorld, at: { x: number; y: number }): Id[] {
+  const onFoot = fw.world.onFoot;
+  if (onFoot === null) return [];
+  return fw.world.household.residents.filter((r) => {
+    const ra = onFoot.actors[r];
+    return (
+      ra !== undefined &&
+      ra.pose !== 'down' &&
+      Math.hypot(ra.x - at.x, ra.y - at.y) <= fw.ctx.ai.sight.day * fw.map.tile
+    );
+  });
+}
+
+/** The item a fighter's weapon is (combat.json), for the spared foe's dropped weapon. */
+function weaponItem(ctx: FightContext, id: Id): Id | null {
+  return ctx.fighters.get(id)?.weapon ?? null;
+}
+
+/**
+ * A foe drops its weapon where it stands (Book 10 spareLeave: as loot), and the bow with it.
+ */
+function dropWeapon(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
+  const { world, ctx, map } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  const item = fa.f.weapon === null ? null : weaponItem(ctx, id);
+  if (item !== null)
+    onFoot.items.push({
+      key: `dropped.${id}.${String(world.tick)}`,
+      item,
+      count: 1,
+      x: Math.round((a.x / map.tile) * 100) / 100,
+      y: Math.round((a.y / map.tile + 0.2) * 100) / 100,
+    });
+  fa.f.weapon = null;
+  fa.bow = false;
+  fa.arrows = 0;
+  delete a.archer;
+  a.aim = null;
+  fw.emit({ type: 'WEAPON_DROPPED', person: id, item });
+}
+
+/**
+ * Let go (Book 10 spareShout to spareDeed; decision DG-4): the steerer's shout, then the foe's reply
+ * (spareReply later); the foe drops its weapon, gets up (downed: after getUp's ticks) and runs from
+ * the steerer, never to rejoin the fight; its group's cohesion takes allySpared. SPARED is written
+ * with how it was beaten, and a SparedRecord with its hidden fate (decisions DG-5 and DG-6).
+ */
+export function steererSpare(fw: FightWorld, offer: FinishOffer): boolean {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  const a = onFoot?.actors[offer.foe];
+  const fa = a?.fight;
+  if (onFoot == null || a === undefined || fa === undefined) return false;
+  const tick = world.tick;
+  const id = offer.foe;
+  const battle = onFoot.battle ?? null;
+  const g = fa.group === null ? undefined : battle?.groups[fa.group];
+  // Seen by their own: a friend still standing within Book 10's tiles (shamed).
+  const sp = ctx.pt3.spared;
+  const shamed = (g?.members ?? []).some((m) => {
+    const o = onFoot.actors[m];
+    return (
+      m !== id &&
+      o?.fight !== undefined &&
+      o.fight.dead === null &&
+      o.fight.spared === undefined &&
+      Math.hypot(o.x - a.x, o.y - a.y) <= sp.shamedTiles * fw.map.tile
+    );
+  });
+  const how = offer.state;
+  const deed = fw.deed('SPARED', [id], witnessesAt(fw, a), { how });
+  addSpared(world, ctx, {
+    person: id,
+    deed: deed ?? '',
+    how,
+    begged: how === 'BEGGING',
+    kinKilled: (battle?.killed ?? []).some((k) => g?.members.includes(k) === true),
+    shamed,
+    robbed: battle?.looted === true,
+  });
+  if (g !== undefined) g.cohesion += ctx.pt3.allySpared;
+  fw.emit({ type: 'STEERER_SHOUTED', foe: id });
+  dropWeapon(fw, id, a, fa);
+  fa.spared = { at: tick, replied: false };
+  fa.finishing = null;
+  if (how === 'DOWNED') enterTimed(fa.f, 'getUp', tick, ctx.pt3.finishing.getUpTicks);
+  else {
+    fa.f.state = 'idle';
+    fa.f.since = tick;
+  }
+  fa.ai.mode = 'FLEE';
+  fa.ai.goal = null;
+  fa.ai.target = null;
+  delete a.task;
+  a.pose = 'idle';
+  if (encounterOf(ctx, battle)?.dusk === true) world.facts[`ch1.dusk.${id}`] = 'SPARED';
+  friendFell(fw, id);
+  return true;
+}
+
+/** The odds of a spared person's fate (Book 10 "The spared remembered"), in percent. */
+export function sparedOdds(
+  b: Pt3Balance['spared'],
+  c: { begged: boolean; kinKilled: boolean; shamed: boolean; robbed: boolean },
+): { favour: number; ambush: number; gone: number } {
+  let favour = b.base.favour;
+  let ambush = b.base.ambush;
+  if (c.begged) {
+    favour += b.begged.favour;
+    ambush += b.begged.ambush;
+  }
+  if (c.kinKilled) {
+    favour += b.kinKilled.favour;
+    ambush += b.kinKilled.ambush;
+  }
+  if (c.shamed) ambush += b.shamed;
+  if (c.robbed) ambush += b.robbed;
+  favour = Math.min(b.favourRange[1], Math.max(b.favourRange[0], favour));
+  ambush = Math.min(b.ambushRange[1], Math.max(b.ambushRange[0], ambush));
+  // Gone takes the rest, never below its floor: favour and ambush give way in proportion.
+  const room = 100 - b.goneAtLeast;
+  if (favour + ambush > room) {
+    const k = room / (favour + ambush);
+    favour *= k;
+    ambush *= k;
+  }
+  return { favour, ambush, gone: 100 - favour - ambush };
+}
+
+/** The stream a spared person's fate is drawn on (decision DG-30: the living world's). */
+function fateStream(world: WorldState): import('../../core/rng.ts').RngState {
+  return world.rng.encounters;
+}
+
+/**
+ * A spared person's record, with the fate drawn now (hidden) on the living world's stream, its
+ * favour's form, its due day and the precursor's (Book 10 "The spared remembered").
+ */
+export function addSpared(
+  world: WorldState,
+  ctx: FightContext,
+  c: {
+    person: Id;
+    deed: Id;
+    how: SparedRecord['how'];
+    begged: boolean;
+    kinKilled: boolean;
+    shamed: boolean;
+    robbed: boolean;
+  },
+): SparedRecord {
+  const b = ctx.pt3.spared;
+  const odds = sparedOdds(b, c);
+  const rng = fateStream(world);
+  const r = nextFloat(rng) * 100;
+  const fate: SparedRecord['fate'] =
+    r < odds.favour ? 'FAVOUR' : r < odds.favour + odds.ambush ? 'AMBUSH' : 'GONE';
+  const formRoll = nextFloat(rng) * 100;
+  const fm = b.forms;
+  const favour: SparedRecord['favour'] =
+    formRoll < fm.help
+      ? 'HELP'
+      : formRoll < fm.help + fm.warning
+        ? 'WARNING'
+        : formRoll < fm.help + fm.warning + fm.gift
+          ? 'GIFT'
+          : 'STAND_ASIDE';
+  const [lo, hi] = b.dueDays;
+  const due = world.calendar.day + lo + Math.floor(nextFloat(rng) * (hi - lo + 1));
+  const island = activeChapter(world) === 'CH_1_WRECK';
+  const rec: SparedRecord = {
+    person: c.person,
+    deed: c.deed,
+    day: world.calendar.day,
+    placeId: world.onFoot?.zone ?? '',
+    how: c.how,
+    begged: c.begged,
+    kinKilled: c.kinKilled,
+    shamed: c.shamed,
+    robbed: c.robbed,
+    fate,
+    ...(fate === 'FAVOUR' ? { favour } : {}),
+    due,
+    precursorDay: due - b.precursorDays,
+    paid: false,
+    ...(island ? { island: true } : {}),
+  };
+  world.spared ??= [];
+  world.spared.push(rec);
+  return rec;
+}
+
+/** The newest record of a person spared, if any. */
+export function sparedRecordOf(world: WorldState, person: Id): SparedRecord | null {
+  const all = world.spared ?? [];
+  for (let i = all.length - 1; i >= 0; i--) if (all[i]?.person === person) return all[i] ?? null;
+  return null;
+}
+
+/**
+ * The scheduler's daily entry for the spared (Book 10 "The spared remembered"; Book 2 section 15):
+ * a Chapter 1 record waits for the launch, then is due no sooner than Book 10's days after it;
+ * once the household's known SURRENDERED_KILLED deeds reach noQuarterAfter, half of the unpaid
+ * favours turn to gone (once); the precursor is sent on its day, and on the due day the fate comes
+ * due (SPARED_DUE). Stage 13's living world turns these into the ambush on a road leg or strand,
+ * or the favour; until it exists the record stays unpaid, and an ambush not made within Book 10's
+ * days of its due day is gone.
+ */
+export function sparedDay(
+  world: WorldState,
+  ctx: FightContext,
+  emit: FightEmit,
+  launchDay: number | null,
+): void {
+  const all = world.spared ?? [];
+  if (all.length === 0) return;
+  const b = ctx.pt3.spared;
+  const day = world.calendar.day;
+  const known = world.ledger.filter(
+    (d) => d.tag === 'SURRENDERED_KILLED' && d.doer === 'HOUSEHOLD',
+  ).length;
+  if (known >= ctx.ai.cohesion.noQuarterAfter && world.facts['spared.noQuarter'] !== true) {
+    world.facts['spared.noQuarter'] = true;
+    for (const r of all)
+      if (!r.paid && r.fate === 'FAVOUR' && nextFloat(fateStream(world)) < 0.5) r.fate = 'GONE';
+  }
+  for (const r of all) {
+    if (r.paid) continue;
+    if (r.island === true && r.launched !== true) {
+      if (launchDay === null) continue;
+      r.launched = true;
+      r.due = Math.max(r.due, launchDay + b.afterLaunchDays);
+      r.precursorDay = r.due - b.precursorDays;
+    }
+    if (r.fate === 'GONE') {
+      if (day >= r.due) r.paid = true;
+      continue;
+    }
+    if (r.heard !== true && day >= r.precursorDay) {
+      r.heard = true;
+      emit({ type: 'SPARED_DUE', person: r.person, fate: r.fate, precursor: true });
+    }
+    if (day === r.due) emit({ type: 'SPARED_DUE', person: r.person, fate: r.fate, precursor: false });
+    if (r.fate === 'AMBUSH' && day > r.due + b.ambushWithinDays) {
+      r.fate = 'GONE';
+      r.paid = true;
+    }
+  }
+}
+
+/** The records due now for the living world to play (Stage 13's hook): due, unpaid, not gone. */
+export function sparedDueNow(world: WorldState): SparedRecord[] {
+  const day = world.calendar.day;
+  return (world.spared ?? []).filter(
+    (r) => !r.paid && r.fate !== 'GONE' && day >= r.due && (r.island !== true || r.launched),
+  );
+}
+
+/**
+ * A foe beaten by a blow (Book 10 beatenBelow and reel): a stagger at or below Book 10's share of
+ * vitality is held as a reel (one knee, the weapon low); a knockdown there leaves them downed.
+ */
+function beatenAfter(fw: FightWorld, id: Id, reaction: PoiseResult): void {
+  const onFoot = fw.world.onFoot;
+  const a = onFoot?.actors[id];
+  const fa = a?.fight;
+  if (onFoot == null || a === undefined || fa === undefined) return;
+  if (fa.side !== 'ENEMY' || fa.dead !== null || fa.spared !== undefined || !fighting(fa)) return;
+  if (fa.vitality > fa.maxVitality * fw.ctx.pt3.finishing.beatenBelow) return;
+  const tick = fw.world.tick;
+  if (reaction === 'STAGGER' || (reaction === 'NONE' && fa.f.state === 'stagger')) {
+    enterTimed(fa.f, 'reel', tick, fw.ctx.pt3.finishing.reelTicks);
+    fa.ai.goal = null;
+    fw.emit({ type: 'FOE_BEATEN', person: id, how: 'REELING' });
+  } else if (reaction === 'KNOCKDOWN') {
+    fa.f.state = 'downed';
+    fa.f.since = tick;
+    fa.ai.goal = null;
+    const g = fa.group === null ? undefined : onFoot.battle?.groups[fa.group];
+    if (g !== undefined) g.cohesion += fw.ctx.ai.cohesion.allyDowned;
+    fw.emit({ type: 'FOE_BEATEN', person: id, how: 'DOWNED' });
+    friendFell(fw, id);
+  }
+}
+
+/**
+ * A reel neither finished nor let go ends as cohesion and wounds decide (Book 10 reel): flight
+ * (cohesion below fleeBelow, no quarter known, or a coward), else begging.
+ */
+function endReel(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
+  const { world, ctx } = fw;
+  const g = fa.group === null ? undefined : world.onFoot?.battle?.groups[fa.group];
+  const c = ctx.ai.cohesion;
+  const noQuarter =
+    world.ledger.filter((d) => d.tag === 'SURRENDERED_KILLED' && d.doer === 'HOUSEHOLD').length >=
+    c.noQuarterAfter;
+  const coward = world.people[id]?.traits.some((t) => t.trait === 'COWARDLY') === true;
+  if (noQuarter || coward || (g !== undefined && g.cohesion < c.fleeBelow)) {
+    fa.ai.mode = 'FLEE';
+    fa.ai.goal = null;
+    say(ctx, id, 'flee', fw.emit, world.tick);
+    return;
+  }
+  surrender(fw, id, a, fa);
+}
+
+/**
+ * A teaching foe's guard turns a blow (Book 10 svartGuard, ketillGuard; decision DG-9): no damage,
+ * no stamina, no poise; hitstopBlock on both; the clack (GUARD_TURNED). An unaware one turns and is
+ * alert at once. Its guidance follows (Book 8 section 07).
+ */
+function turnBlow(
+  fw: FightWorld,
+  attacker: Id,
+  defender: Id,
+  from: { x: number; y: number },
+  kind: BlowKind | 'missile',
+): void {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  const a = onFoot?.actors[defender];
+  const fa = a?.fight;
+  if (onFoot == null || a === undefined || fa?.teach === undefined) return;
+  const tick = world.tick;
+  const stop = ctx.cb.hit.hitstopBlock;
+  const af = fighterOf(onFoot, attacker);
+  if (kind !== 'missile') {
+    if (af !== null) hitstop(af, stop);
+    hitstop(fa.f, stop);
+  }
+  fa.turnedAt = tick;
+  fa.teach.turned++;
+  fw.emit({
+    type: 'BLOW',
+    attacker,
+    defender,
+    outcome: 'TURNED',
+    damage: 0,
+    heavy: false,
+    x: a.x,
+    y: a.y,
+    dx: a.x - from.x,
+    dy: a.y - from.y,
+    material: fa.f.shield ? 'SHIELD' : 'NONE',
+    kind,
+    reaction: 'NONE',
+    hitstop: kind === 'missile' ? 0 : stop,
+    knockback: 0,
+    shake: null,
+  });
+  fw.emit({ type: 'GUARD_TURNED', who: defender, by: attacker, shield: fa.f.shield });
+  // He turns to the blow and is on guard at once (an unaware one is not silenced: he speaks).
+  const src = whereIs(onFoot, attacker);
+  if (src !== null) {
+    fa.ai.memory = { x: src.x, y: src.y, tick, seen: true };
+    if (fa.ai.awareness.state !== 'ALERT') setAwareness(fw, defender, a, fa, ctx.ai.awareness.alertAt);
+  }
+  if (sideOf(onFoot, attacker) === 'HOUSEHOLD') {
+    const battle = onFoot.battle ?? null;
+    if (battle !== null && !battle.engaged) startFight(fw);
+    if (battle?.sight != null) battle.sight.until = -1;
+  }
+  if (attacker !== STEERER) return;
+  const rule = fa.teach.rule;
+  if (rule === 'PARRY') {
+    // Svart's boasts at his first and third blows turned, or Bran's word at the fold if Svart was
+    // not fought at the dusk (Book 8 section 07).
+    const atFold = encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') === true;
+    const bran = atFold && world.facts['ch1.dusk'] !== 'FOUGHT' && onFoot.actors['C_BRAN'] != null;
+    if (fa.teach.turned === 1)
+      guide(fw, fa, bran ? 'C_BRAN' : defender, bran ? 'c_bran.teach.svart' : 'e_wrecker_svart.teach.01');
+    if (fa.teach.turned === 3) guide(fw, fa, defender, 'e_wrecker_svart.teach.02');
+  } else if (encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') !== true) {
+    // In Seal Cave, Ketill's own boast at the first blow turned on his shield.
+    if (fa.teach.turned === 1) guide(fw, fa, defender, 'e_wrecker_ketill.teach.02');
+  }
+}
+
+/** A guidance line (Book 10 svartGuidance, ketillGuidance): once each, one in guidanceGap. */
+function guide(fw: FightWorld, fa: ActorFight, speaker: Id, key: string): void {
+  const t = fa.teach;
+  if (t === undefined || t.said.includes(key)) return;
+  const tick = fw.world.tick;
+  if (tick - t.lineAt < fw.ctx.pt3.teaching.guidanceGapTicks) return;
+  if (fw.world.onFoot?.actors[speaker] === undefined) return;
+  t.said.push(key);
+  t.lineAt = tick;
+  fw.emit({ type: 'PERSON_SPOKE', person: speaker, lineKey: key, bark: 'teach' });
+}
+
+/** A teaching foe's lesson done (Book 10 lessonDone): recorded once; its prompt stops. */
+function lessonDone(fw: FightWorld, lesson: 'PARRY' | 'RED'): void {
+  const t = teachingOf(fw.world);
+  if (t.lessons.includes(lesson)) return;
+  t.lessons.push(lesson);
+  fw.emit({ type: 'LESSON_DONE', lesson });
+}
+
+/**
+ * Ketill's red blow begun (Book 10 redBlow; decisions DG-9 and DG-10): an overhead axe blow with
+ * the wind-up's hold and swing in one, its flash at the telegraph's lead (drawn as the red glint),
+ * and Bran's or Ketill's guidance at the first.
+ */
+function startRed(
+  fw: FightWorld,
+  id: Id,
+  a: OnFootActor,
+  fa: ActorFight,
+  pos: { x: number; y: number },
+): boolean {
+  const { world, ctx } = fw;
+  const r = ctx.cb.redBlow;
+  const f = fa.f;
+  const tick = world.tick;
+  if (r === undefined || f.weapon === null || !free(f)) return false;
+  if (f.exhausted || fa.stamina.current <= 0) return false;
+  setAngle(f, Math.atan2(pos.y - a.y, pos.x - a.x));
+  f.guard = false;
+  beginStrike(f, 'heavyRelease', 'red', tick, tick + r.windup, r, 2);
+  f.target = null;
+  fa.stamina.current = Math.max(0, fa.stamina.current - r.stamina);
+  fa.stamina.spentTick = tick;
+  f.flashAt = Math.max(tick, f.activeAt - ctx.cb.telegraphs.flashLead);
+  a.facing = f.facing;
+  fa.ai.lastStruck = tick;
+  fa.ai.mind.struck = true;
+  if (fa.teach !== undefined) fa.teach.reds++;
+  fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: true, kind: 'red' });
+  const atFold = encounterOf(ctx, world.onFoot?.battle)?.allies?.includes('C_BRAN') === true;
+  if (fa.teach?.reds === 1)
+    guide(fw, fa, atFold ? 'C_BRAN' : id, atFold ? 'c_bran.teach.red.01' : 'e_wrecker_ketill.teach.01');
+  return true;
+}
+
+/** Whether a fighter has first-sight lines (Book 10 "First sight", exceptions: beasts and the dead). */
+function sightPool(ctx: FightContext, id: Id): { warn: readonly string[]; taunt: readonly string[] } | null {
+  const sight = ctx.def.sight;
+  if (sight === undefined) return null;
+  const own = sight.people[id];
+  if (own !== undefined) return own;
+  const voice = ctx.fighters.get(id)?.voice;
+  return voice === undefined ? null : (sight.voices[voice] ?? null);
+}
+
+/** The pool's fact key (its lines used since it was last used through). */
+function poolKey(ctx: FightContext, id: Id): string {
+  return ctx.def.sight?.people[id] !== undefined ? id : `VOICE_${ctx.fighters.get(id)?.voice ?? ''}`;
+}
+
+/**
+ * A first-sight line drawn (Book 10 noRepeat): not used again until its pool is used through, not
+ * the line said last by anyone, never the speaker's own last; on the `ai` stream.
+ */
+function sightLine(fw: FightWorld, id: Id, kind: 'WARNING' | 'TAUNT'): string | null {
+  return drawSightLine(fw.world, fw.ctx, id, kind);
+}
+
+/** A first-sight line drawn for a speaker by Book 10 noRepeat (see sightLine). */
+export function drawSightLine(
+  world: WorldState,
+  ctx: FightContext,
+  id: Id,
+  kind: 'WARNING' | 'TAUNT',
+): string | null {
+  const pool = sightPool(ctx, id);
+  if (pool === null) return null;
+  const lines = kind === 'WARNING' ? pool.warn : pool.taunt;
+  if (lines.length === 0) return null;
+  const usedKey = `sight.used.${poolKey(ctx, id)}.${kind}`;
+  const usedRaw = world.facts[usedKey];
+  let used = typeof usedRaw === 'string' && usedRaw !== '' ? usedRaw.split(',') : [];
+  let fresh = lines.filter((l) => !used.includes(l));
+  if (fresh.length === 0) {
+    used = [];
+    fresh = [...lines];
+  }
+  const last = world.facts['sight.last'];
+  const own = world.facts[`sight.last.${id}`];
+  const pick = fresh.filter((l) => l !== last && l !== own);
+  const from = pick.length > 0 ? pick : fresh;
+  const key = from[Math.floor(nextFloat(world.rng.ai) * from.length)] ?? from[0] ?? '';
+  used.push(key);
+  world.facts[usedKey] = used.join(',');
+  world.facts['sight.last'] = key;
+  world.facts[`sight.last.${id}`] = key;
+  return key;
+}
+
+/**
+ * Warning or taunt (Book 10 "First sight"): a warning if alone (no friend within Book 10's tiles),
+ * wounded or outnumbered, or cowardly; else a taunt; the brave and hot-tempered taunt even alone,
+ * unless wounded.
+ */
+function sightKind(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): 'WARNING' | 'TAUNT' {
+  const { world, ctx, map } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return 'WARNING';
+  const near = ctx.pt3.sight.aloneTiles * map.tile;
+  let friends = 0;
+  for (const [oid, o] of Object.entries(onFoot.actors)) {
+    const of = o.fight;
+    if (oid === id || of?.side !== fa.side || !fighting(of)) continue;
+    if (Math.hypot(o.x - a.x, o.y - a.y) <= near) friends++;
+  }
+  let theirs = 0;
+  for (const [, pos] of foes(onFoot, fa.side)) if (Math.hypot(pos.x - a.x, pos.y - a.y) <= near) theirs++;
+  const traits = world.people[id]?.traits.map((t) => t.trait) ?? [];
+  const wounded = fa.vitality < fa.maxVitality * ctx.ai.self.woundedAt;
+  if (traits.includes('COWARDLY') || wounded) return 'WARNING';
+  if (traits.includes('BRAVE') || traits.includes('HOT_TEMPERED')) return 'TAUNT';
+  if (friends === 0 || friends + 1 < theirs) return 'WARNING';
+  return 'TAUNT';
+}
+
+/**
+ * First sight scheduled (Book 10 "First sight"; decision DG-8): the first enemy of the encounter to
+ * turn alert to the steerer speaks after lineDelay, unless it was struck unaware (silent) or has no
+ * lines. One spared earlier and come back to ambush speaks its returned line instead.
+ */
+function scheduleSight(
+  fw: FightWorld,
+  id: Id,
+  a: OnFootActor,
+  fa: ActorFight,
+  fromWarn = false,
+): void {
+  const { world, ctx } = fw;
+  const battle = world.onFoot?.battle ?? null;
+  if (battle === null || battle.over || fa.side !== 'ENEMY' || battle.sight != null) return;
+  if (fa.ai.silent === true || fa.spared !== undefined || fa.berserkUntil > world.tick) return;
+  if (fa.returned === 'FAVOUR') return;
+  if (fa.returned === undefined && sightPool(ctx, id) === null) return;
+  // Those who warn wait until the steerer is within warnAt (warnStep schedules them).
+  const enc = encounterOf(ctx, battle);
+  if (
+    !fromWarn &&
+    enc?.warns === true &&
+    !remembers(world, ctx, enc.id) &&
+    !battle.engaged &&
+    (battle.warn?.stage ?? 0) === 0
+  )
+    return;
+  const tick = world.tick;
+  const kind = fa.returned === 'AMBUSH' ? 'TAUNT' : sightKind(fw, id, a, fa);
+  const members = battle.groups[fa.group ?? '']?.members ?? [];
+  const standing = (m: Id): boolean => {
+    const o = world.onFoot?.actors[m];
+    return m !== id && o?.fight !== undefined && fighting(o.fight);
+  };
+  // One spared and come back to ambush speaks its returned line second (Book 10 chapter1).
+  const ambusher = members.find((m) => standing(m) && world.onFoot?.actors[m]?.fight?.returned === 'AMBUSH');
+  const second =
+    ambusher ??
+    members.find((m) => {
+      const o = world.onFoot?.actors[m];
+      return (
+        standing(m) &&
+        o !== undefined &&
+        o.fight?.returned === undefined &&
+        ctx.def.barks[m]?.['taunt'] !== undefined &&
+        Math.hypot(o.x - a.x, o.y - a.y) <= ctx.pt3.sight.aloneTiles * fw.map.tile
+      );
+    });
+  const at = tick + ctx.pt3.sight.lineDelayTicks;
+  battle.sight = {
+    speaker: id,
+    kind,
+    at,
+    key: null,
+    second: second ?? null,
+    secondAt: at + ctx.pt3.sight.secondLineTicks,
+    until: at + (kind === 'WARNING' ? ctx.pt3.sight.pauseWarningTicks : ctx.pt3.sight.pauseTauntTicks),
+  };
+}
+
+/**
+ * Whether an enemy may start an attack (Book 10 "First sight"): not before its encounter's first
+ * line is spoken, nor in the pause after it (unless ended); one with no line to speak (struck
+ * unaware, a beast) may.
+ */
+export function sightAllows(world: WorldState, fa: ActorFight): boolean {
+  if (fa.side !== 'ENEMY') return true;
+  const battle = world.onFoot?.battle ?? null;
+  if (battle === null) return true;
+  const s = battle.sight ?? null;
+  if (s === null) return fa.ai.silent === true || battle.engaged;
+  if (s.key === null) return false;
+  return s.until < 0 || world.tick >= s.until;
+}
+
+/** The first-sight line spoken, its second, and the pause kept or ended (each tick). */
+function sightStep(fw: FightWorld, battle: Battle): void {
+  const { world, ctx, map } = fw;
+  const onFoot = world.onFoot;
+  const s = battle.sight ?? null;
+  if (onFoot === null || s === null) return;
+  const tick = world.tick;
+  const a = onFoot.actors[s.speaker];
+  const fa = a?.fight;
+  if (s.key === null && tick >= s.at) {
+    if (a === undefined || fa === undefined || !fighting(fa)) {
+      battle.sight = null;
+      return;
+    }
+    let key: string | null;
+    if (fa.returned === 'AMBUSH') {
+      key = returnedAmbush(fw, s.speaker, fa);
+      fw.emit({ type: 'FIRST_SIGHT', person: s.speaker, kind: s.kind, lineKey: key });
+    } else {
+      key = sightLine(fw, s.speaker, s.kind);
+      if (key !== null) {
+        fw.emit({ type: 'FIRST_SIGHT', person: s.speaker, kind: s.kind, lineKey: key });
+        fw.emit({ type: 'PERSON_SPOKE', person: s.speaker, lineKey: key, bark: 'sight' });
+      }
+    }
+    s.key = key ?? '';
+    if (battle.warn != null && battle.warn.stage === 0) {
+      battle.warn.stage = 1;
+      battle.warn.last = tick;
+      battle.warn.at = Math.hypot((a?.x ?? 0) - onFoot.player.x, (a?.y ?? 0) - onFoot.player.y);
+      fw.emit({ type: 'WARNED', person: s.speaker, stage: 1 });
+    }
+  }
+  if (s.parley != null && s.key !== null && tick >= s.secondAt) {
+    say(ctx, s.parley, 'parley', fw.emit, tick);
+    s.parley = null;
+    s.second = null;
+  }
+  if (s.second !== null && s.key !== null && tick >= s.secondAt) {
+    const o = onFoot.actors[s.second];
+    if (o?.fight !== undefined && fighting(o.fight)) {
+      if (o.fight.returned === 'AMBUSH') returnedAmbush(fw, s.second, o.fight);
+      else say(ctx, s.second, 'taunt', fw.emit, tick);
+    }
+    s.second = null;
+  }
+  // The pause ends at once when the steerer steps within the speaker's reach.
+  if (s.until >= 0 && a !== undefined && fa !== undefined) {
+    const p = onFoot.player;
+    const reach = (reachOf(ctx, fa.f) + ctx.cb.bodyRadiusTiles) * map.tile;
+    if (Math.hypot(a.x - p.x, a.y - p.y) <= reach) s.until = -1;
+  }
+}
+
+/** Fights counted for the combat prompts (Book 10 promptFights), the sneak hint, the cue. */
+function teachStep(fw: FightWorld): void {
+  const { world, ctx, map } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  const tick = world.tick;
+  const t = teachingOf(world);
+  const p = onFoot.player;
+  const battle = onFoot.battle ?? null;
+  // A fight counts from a hostile alert and a blow struck or a telegraph begun against the steerer.
+  if (battle !== null && battle.engaged && !battle.over && battle.counted !== true) {
+    const sf = p.fight ?? null;
+    const struck = sf !== null && (striking(sf) || charging(sf) || sf.state === 'shove');
+    const aimed = Object.values(onFoot.actors).some(
+      (o) => o.fight?.side === 'ENEMY' && o.fight.ai.target === STEERER && inAttack(o, tick),
+    );
+    if (struck || aimed || battle.lastBlow >= 0) {
+      battle.counted = true;
+      t.fights++;
+      fw.emit({ type: 'FIGHT_COUNTED', fights: t.fights });
+    }
+  }
+  // The tiles sneaked (Book 10 sneakDone).
+  const sneaking = p.gait === 'sneak' || p.stance?.sneaking === true;
+  if (sneaking && p.moving && !t.retired.includes('SNEAK')) {
+    t.sneakTiles += Math.hypot(p.vel?.x ?? 0, p.vel?.y ?? 0) / map.tile;
+    if (t.sneakTiles >= ctx.pt3.prompts.sneakDoneTiles) t.retired.push('SNEAK');
+  }
+  // Hild's cue for it, after her dusk aim's first word (Book 8 section 05, "Giving the dusk aim").
+  const cue = world.facts['ch1.dusk.sneakCueAt'];
+  if (typeof cue === 'number' && cue >= 0 && tick >= cue) {
+    world.facts['ch1.dusk.sneakCueAt'] = -1;
+    fw.emit({ type: 'PERSON_SPOKE', person: 'C_HILD', lineKey: 'c_hild.dusk.sneak' });
+  }
+  // The sneak hint (Book 10 sneakHint): not sneaking, not in a fight, within its tiles of a group
+  // none of whom is aware of the steerer; once an approach, at most sneakHintTimes.
+  if (tick % ctx.ai.habits.awarenessEvery !== 0) return;
+  if (battle === null || battle.over || battle.engaged || battle.sneakHinted === true) return;
+  if (sneaking || t.retired.includes('SNEAK') || t.sneakShown >= ctx.pt3.prompts.sneakTimes) return;
+  const members = Object.values(battle.groups).flatMap((g) => g.members);
+  let near = false;
+  for (const m of members) {
+    const o = onFoot.actors[m];
+    const of = o?.fight;
+    if (o === undefined || of === undefined || !fighting(of)) continue;
+    if (of.ai.awareness.state !== 'UNAWARE') return;
+    if (Math.hypot(o.x - p.x, o.y - p.y) <= ctx.pt3.prompts.sneakTiles * map.tile) near = true;
+  }
+  if (!near) return;
+  battle.sneakHinted = true;
+  t.sneakShown++;
+  fw.emit({ type: 'SNEAK_HINT', shown: t.sneakShown });
+}
+
+/**
+ * The spared each tick: the reply spareReply after the shout (decision DG-4); turned missiles fall
+ * from a teaching foe to the ground.
+ */
+function sparedStep(fw: FightWorld): void {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  const tick = world.tick;
+  for (const [id, a] of Object.entries(onFoot.actors).sort(ORDERLY)) {
+    const sp = a.fight?.spared;
+    if (sp === undefined || sp.replied || tick < sp.at + ctx.pt3.finishing.spareReplyTicks) continue;
+    sp.replied = true;
+    fw.emit({ type: 'SPARED_REPLY', person: id });
+  }
+  // An arrow or spear a teaching foe turned is not stuck in him: it lies at his feet.
+  for (let i = 0; i < onFoot.stuck.length; i++) {
+    const st = onFoot.stuck[i];
+    if (st === undefined || st.in !== 'body' || st.target === undefined) continue;
+    const fa = onFoot.actors[st.target]?.fight;
+    if (fa?.teach?.deflect?.includes(st.n) !== true) continue;
+    const { target: _t, ...rest } = st;
+    onFoot.stuck[i] = { ...rest, in: 'ground', h: 0 };
+    fa.teach.deflect = fa.teach.deflect.filter((n) => n !== st.n);
+  }
+}
+
+/**
+ * Those spared before, met again on the island (Book 10 chapter1): one whose fate is gone is not
+ * placed; favour and ambush are placed and marked, and the record is paid as it plays.
+ */
+function islandFate(world: WorldState, person: Id): 'GONE' | 'FAVOUR' | 'AMBUSH' | null {
+  const r = sparedRecordOf(world, person);
+  if (r === null || r.island !== true || r.paid) return null;
+  if (r.fate === 'GONE') r.paid = true;
+  return r.fate;
+}
+
+/** One spared and come back to repay it stands aside (Book 10 chapter1, favourStandAside). */
+function standAside(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
+  const key = `${id.toLowerCase()}.returned.favour.01`;
+  const r = sparedRecordOf(fw.world, id);
+  if (r !== null) r.paid = true;
+  fw.emit({ type: 'SPARED_RETURNED', person: id, fate: 'FAVOUR', lineKey: key });
+  fw.emit({ type: 'PERSON_SPOKE', person: id, lineKey: key, bark: 'returned' });
+  dropWeapon(fw, id, a, fa);
+  fa.returned = undefined;
+  fa.ai.mode = 'LEAVE';
+  fa.ai.goal = null;
+  delete a.task;
+  a.pose = 'idle';
+  const g = fa.group === null ? undefined : fw.world.onFoot?.battle?.groups[fa.group];
+  if (g !== undefined) g.members = g.members.filter((m) => m !== id);
+}
+
+/** A fighter's teaching rule from its content (Book 2 section 12, TeachingRule), if any. */
+function teachFor(fd: FighterDef): { teach?: TeachState } {
+  if (fd.teaching === undefined) return {};
+  return { teach: { rule: fd.teaching, turned: 0, reds: 0, parried: 0, lineAt: -1_000_000, said: [] } };
+}
+
+/** One spared and come back to ambush speaks its returned line first (Book 10 chapter1). */
+function returnedAmbush(fw: FightWorld, id: Id, fa: ActorFight): string {
+  const key = `${id.toLowerCase()}.returned.ambush.01`;
+  const r = sparedRecordOf(fw.world, id);
+  if (r !== null) r.paid = true;
+  fa.returned = undefined;
+  fw.emit({ type: 'SPARED_RETURNED', person: id, fate: 'AMBUSH', lineKey: key });
+  fw.emit({ type: 'PERSON_SPOKE', person: id, lineKey: key, bark: 'returned' });
+  return key;
 }

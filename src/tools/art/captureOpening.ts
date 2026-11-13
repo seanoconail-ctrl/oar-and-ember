@@ -160,7 +160,7 @@ async function botPlay(page: Page, clip: Clip): Promise<{ ticks: number; marks: 
         goToZone(z: string): void;
         firstFire(p: string[]): void;
         waitForHild(n?: number): void;
-        raiseShelter(): void;
+        raiseShelter(stages?: string): void;
         tend(id: string): void;
       };
     };
@@ -227,8 +227,14 @@ async function botPlay(page: Page, clip: Clip): Promise<{ ticks: number; marks: 
         keyAt: 30,
       },
       {
-        name: 'the sail raised',
-        on: () => state().onFoot?.player.work?.task === 'TASK_RAISE_SHELTER',
+        name: 'the frame stood up',
+        on: () => state().onFoot?.player.work?.task === 'TASK_SHELTER_FRAME',
+        ticks: 300,
+        keyAt: 290,
+      },
+      {
+        name: 'the sail lashed over it',
+        on: () => state().onFoot?.player.work?.task === 'TASK_SHELTER_SAIL',
         ticks: 300,
         keyAt: 290,
       },

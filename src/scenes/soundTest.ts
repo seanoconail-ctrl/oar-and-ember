@@ -27,8 +27,11 @@ import { COMBAT, FIGHT, MISSILES, PEOPLE, TELLS } from '../audio/synth/sfx.ts';
 import { GALE_WIND, SOUTH, SpringAmbience } from '../audio/synth/south.ts';
 import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
 import { LAUNCH_SOUNDS } from '../audio/synth/launch.ts';
+import { INTERFACE_SOUNDS } from '../audio/synth/interface.ts';
 import { COMBAT2_SOUNDS } from '../audio/synth/combat2.ts';
+import { COMBAT3_SOUNDS } from '../audio/synth/combat3.ts';
 import { OPENING_SOUNDS } from '../audio/synth/opening.ts';
+import { STORY3_SOUNDS } from '../audio/synth/story3.ts';
 import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
@@ -71,6 +74,8 @@ export interface RenderSettings {
   readonly wind?: number;
   readonly tide?: number;
   readonly gore?: number;
+  /** For a sound with variants (a finisher by its weapon's kind, a guard on shaft or shield). */
+  readonly sfxVariant?: number;
   /** For a person's wordless sound (the grunt): the speaker's pitch, Hz (voice.ts). */
   readonly voice?: number;
   /** For footsteps: the gait and how many steps to walk. */
@@ -268,11 +273,16 @@ export function startItem(
     return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'call') {
-    const def = [...CALLS, ...PEOPLE, ...MISSILES, ...DISPUTES, ...ENDINGS].find(
-      (d) => d.id === id,
-    );
+    const def = [
+      ...CALLS,
+      ...PEOPLE,
+      ...MISSILES,
+      ...DISPUTES,
+      ...ENDINGS,
+      ...INTERFACE_SOUNDS,
+    ].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no call ${id}`);
-    def.play(e, at, 0, { gore: 2 });
+    def.play(e, at, 0, { gore: 2, ...(s.voice === undefined ? {} : { voice: s.voice }) });
     return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'ambience') {
@@ -296,11 +306,21 @@ export function startItem(
     };
   }
   if (kind === 'sfx' || kind === 'tell') {
-    const def = [...COMBAT, ...COMBAT2_SOUNDS, ...OPENING_SOUNDS, ...STORM_SOUNDS, ...TELLS].find(
-      (d) => d.id === id,
-    );
+    const def = [
+      ...COMBAT,
+      ...COMBAT2_SOUNDS,
+      ...COMBAT3_SOUNDS,
+      ...OPENING_SOUNDS,
+      ...STORM_SOUNDS,
+      ...STORY3_SOUNDS,
+      ...TELLS,
+    ].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no sound ${id}`);
-    def.play(e, at, 0, { gore: s.gore ?? 2, ...(s.voice === undefined ? {} : { voice: s.voice }) });
+    def.play(e, at, 0, {
+      gore: s.gore ?? 2,
+      ...(s.voice === undefined ? {} : { voice: s.voice }),
+      ...(s.sfxVariant === undefined ? {} : { variant: s.sfxVariant }),
+    });
     return { schedule: () => undefined, stop: () => undefined };
   }
   if (kind === 'step') {
@@ -692,6 +712,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   for (const def of COMBAT) soundButton(combat, def, combatKeys[def.id] ?? def.id, 'sfx');
   // Combat v2 (design addendum 2.4): each by its caption.
   for (const def of COMBAT2_SOUNDS) soundButton(combat, def, def.captionKey, 'sfx');
+  // The user's third playtest (DG-29): the finisher, the spare, Svart's guard and the red blow.
+  for (const def of COMBAT3_SOUNDS) soundButton(combat, def, def.captionKey, 'sfx');
   root.append(combat);
 
   // Tells.
@@ -722,9 +744,10 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
     SFX_ARROW_STONE: 'ui.sound.call.arrow_stone',
     SFX_ARROW_WATER: 'ui.sound.call.arrow_water',
     SFX_QUIVER_EMPTY: 'ui.sound.call.quiver_empty',
+    SFX_MENU_CLICK: 'ui.sound.call.menu_click',
     SFX_PICKUP: 'ui.sound.call.pickup',
   };
-  for (const def of [...CALLS, ...PEOPLE, ...MISSILES])
+  for (const def of [...CALLS, ...PEOPLE, ...MISSILES, ...INTERFACE_SOUNDS])
     soundButton(calls, def, callKeys[def.id] ?? def.id, 'call');
   const firePlay = el('button', { 'data-play': 'ambience:hearth' }, t('ui.sound.call.hearth'));
   firePlay.addEventListener('click', () => {

@@ -22,8 +22,13 @@ export const MILESTONES: readonly {
   { key: 'at_broch', reached: (w) => w.facts['ch1.at_broch'] === true },
   { key: 'chest_at_camp', reached: (w) => w.facts['ch1.chest_home'] === true },
   { key: 'fire', reached: (w) => w.facts['ch1.fire_lit'] === true },
-  { key: 'shelter', reached: (w) => w.facts['ch1.shelter_raised'] === true },
+  // The user's third playtest (DG-12): the lean-to up on day 1, the shelter finished on day 2.
+  {
+    key: 'shelter',
+    reached: (w) => w.facts['ch1.shelter'] === 'SAIL' || w.facts['ch1.shelter'] === 'FINISHED',
+  },
   { key: 'hild_tended', reached: (w) => w.facts['ch1.hild_tended'] === true },
+  { key: 'shelter_finished', reached: (w) => w.facts['ch1.shelter'] === 'FINISHED' },
   { key: 'dusk_fight', reached: (w) => w.facts['ch1.dusk'] !== undefined },
   { key: 'first_night', reached: (w) => w.calendar.day >= 2 },
   {
@@ -65,6 +70,8 @@ function owns(w: WorldState, item: Id): boolean {
 
 /** Marks every milestone reached for the first time this tick. */
 export function stepTelemetry(world: WorldState): void {
+  // A run a developer command has touched is not timed (Book 10 devMarked; decision DG-21).
+  if (world.facts['dev.used'] === true) return;
   const tel = world.telemetry;
   // A save from before version 10: its play is timed from when it was loaded.
   tel.start ??= world.tick;

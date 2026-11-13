@@ -121,3 +121,22 @@ export function migrateOpening(
     aims: { current: null, since: tick, hintsGiven: 0, reached: [] },
   };
 }
+
+/**
+ * World state version 13's shelter (the user's third playtest; decisions DG-12 and DG-23): the
+ * fact `ch1.shelter_raised` gives way to the shelter's stage, `ch1.shelter`. A raised lean-to is
+ * `SAIL` (or `FINISHED` with the camp at S1); one not yet raised is the sail lying `FOLDED`.
+ */
+export function migrateShelter13(state: Record<string, unknown>): Record<string, unknown> {
+  const facts = { ...((state['facts'] ?? {}) as Record<string, unknown>) };
+  const raised = facts['ch1.shelter_raised'];
+  if (raised === undefined) return state;
+  const homes = (state['homes'] ?? {}) as Record<string, { stage?: string } | undefined>;
+  const s1 = Object.values(homes).some((h) => h?.stage !== undefined && h.stage !== 'S0');
+  facts['ch1.shelter'] = raised === true ? (s1 ? 'FINISHED' : 'SAIL') : 'FOLDED';
+  const at = facts['ch1.shelter_raised_at'];
+  if (typeof at === 'number') facts['ch1.shelter_at'] = at;
+  Reflect.deleteProperty(facts, 'ch1.shelter_raised');
+  Reflect.deleteProperty(facts, 'ch1.shelter_raised_at');
+  return { ...state, facts };
+}

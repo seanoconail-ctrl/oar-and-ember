@@ -4,6 +4,7 @@
  * the simulation on Wreck Strand; the scavengers at dusk are the game's own content.
  */
 import { describe, expect, it } from 'vitest';
+import { plainFighters } from './plainFoes.ts';
 import { carefulMemory, carefulTick } from '../../src/tools/play/carefulFighter.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import {
@@ -109,6 +110,7 @@ function strand(
         ? null
         : {
             ...content.combat,
+            fighters: plainFighters(content.combat.fighters),
             // A club for the tests (no club is in Chapter 1's content).
             weapons: {
               ...content.combat.weapons,

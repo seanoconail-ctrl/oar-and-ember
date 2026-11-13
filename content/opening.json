@@ -64,7 +64,7 @@
         "facing": "e"
       },
       "key": "ITEM_THORKEL_KEY",
-      "lineAfterSafeSeconds": 3,
+      "lineAfterSafeSeconds": 9,
       "line": "c_hild.chest.first",
       "lockedKey": "ui.refusal.locked",
       "openPromptKey": "ui.prompt.open_chest",
@@ -100,6 +100,11 @@
         "settled": "caption.chest.settled"
       }
     },
+    "broch": {
+      "about": "The user's third playtest (decision DG-13): set down safe, after her first line, Hild points up the bank to the old tower (the broch); she names Thorkel's chest after it.",
+      "line": "c_hild.open.broch",
+      "afterSafeSeconds": 3.5
+    },
     "mast": {
       "about": "The broken mast with the ship's stores lashed at its head (Book 9 section 03): out of reach until an arrow cuts the lashing; the bundle falls into the shallows and is carried up as one load. The lashing is drawn heightPx above its ground point; a missile drawn passing through it (its ground point less its drawn height) within the box cuts it. The bundle drops into the water at the outcrop's foot and the swell carries it round into the stream's mouth on the outcrop's west side, the one spot off its foot that stays ankle deep at every state of the tide and is reached without a swim, so it is waded for at once, never waited for (decision DF-82, superseding DE-64; Book 9 section 03 leaves the tile to the build).",
       "zone": "ZONE_SK_STRAND",
@@ -130,14 +135,13 @@
       "campTiles": 4
     },
     "camp": {
-      "about": "The camp opens when the steerer first reaches it (decision DE-16); Hild walks up when the first fire is lit; the shelter is raised in one visible action (decision DE-20).",
+      "about": "The camp opens when the steerer first reaches it (decision DE-16); Hild walks up when the first fire is lit; the shelter goes up over two days in three visible stages, Hild's word at each (the user's third playtest, decision DG-12): the frame and the sail are the steerer's actions on day 1, Hild steadying the oars at `steady`; the finishing is the camp's building work from 06:00 on day 2.",
       "reachTiles": 6,
       "walkUp": "c_hild.camp.walk_up",
       "walkUpTiles": 2.5,
       "shelterUp": "c_hild.camp.shelter_up",
       "oldBoat": "c_hild.camp.old_boat",
       "oldBoatTiles": 5,
-      "raisePromptKey": "ui.prompt.raise_shelter",
       "captions": {
         "sail": "caption.action.sail",
         "sparks": "caption.action.sparks",
@@ -151,6 +155,17 @@
         "x": 34.1,
         "y": 31.9,
         "facing": "e"
+      },
+      "frame": "c_hild.camp.frame",
+      "sailLine": "c_hild.camp.sail",
+      "night": "c_hild.camp.shelter_night",
+      "finish": "c_hild.camp.finish",
+      "finished": "c_hild.camp.finished",
+      "nextLineSeconds": 4,
+      "steady": {
+        "x": 34.6,
+        "y": 29.95,
+        "facing": "w"
       }
     },
     "fireScene": {
@@ -381,6 +396,69 @@
       ]
     },
     {
+      "id": "see_tower",
+      "journalKey": "ui.journal.aim.see_tower",
+      "opensWhen": [
+        {
+          "fact": "ch1.broch_said"
+        }
+      ],
+      "doneWhen": [
+        {
+          "any": [
+            {
+              "fact": "ch1.at_broch"
+            },
+            {
+              "home": "ITEM_THORKEL_CHEST"
+            }
+          ]
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_STRAND",
+            "x": 29.6,
+            "y": 31.5,
+            "r": 2
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 34,
+            "y": 40,
+            "r": 3
+          }
+        },
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 35.5,
+            "y": 36,
+            "r": 2
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.see_tower.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.see_tower.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.open.broch"
+      }
+    },
+    {
       "id": "chest_to_camp",
       "journalKey": "ui.journal.aim.chest_to_camp",
       "opensWhen": [
@@ -491,8 +569,8 @@
       }
     },
     {
-      "id": "raise_shelter",
-      "journalKey": "ui.journal.aim.raise_shelter",
+      "id": "shelter_frame",
+      "journalKey": "ui.journal.aim.shelter_frame",
       "opensWhen": [
         {
           "fact": "ch1.fire_lit"
@@ -500,29 +578,87 @@
       ],
       "doneWhen": [
         {
-          "fact": "ch1.shelter_raised"
+          "not": {
+            "fact": "ch1.shelter",
+            "is": "FOLDED"
+          }
         }
       ],
       "progress": [
         {
-          "working": "TASK_RAISE_SHELTER"
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 33.1,
+            "y": 30.0,
+            "r": 2.5
+          }
+        },
+        {
+          "working": "TASK_SHELTER_FRAME"
         }
       ],
       "hints": [
         {
           "speaker": "C_HILD",
-          "textKey": "c_hild.hint.raise_shelter.1",
+          "textKey": "c_hild.hint.shelter_frame.1",
           "canCall": true
         },
         {
           "speaker": "C_HILD",
-          "textKey": "c_hild.hint.raise_shelter.2",
+          "textKey": "c_hild.hint.shelter_frame.2",
           "canCall": true
         }
       ],
       "givenBy": {
         "speaker": "C_HILD",
-        "textKey": "c_hild.camp.walk_up"
+        "textKey": "c_hild.camp.frame"
+      }
+    },
+    {
+      "id": "shelter_sail",
+      "journalKey": "ui.journal.aim.shelter_sail",
+      "opensWhen": [
+        {
+          "fact": "ch1.shelter",
+          "is": "FRAME"
+        }
+      ],
+      "doneWhen": [
+        {
+          "not": {
+            "fact": "ch1.shelter",
+            "is": "FRAME"
+          }
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 33.1,
+            "y": 30.0,
+            "r": 2.5
+          }
+        },
+        {
+          "working": "TASK_SHELTER_SAIL"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.shelter_sail.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.shelter_sail.2",
+          "canCall": true
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.camp.sail"
       }
     },
     {
@@ -530,7 +666,16 @@
       "journalKey": "ui.journal.aim.hild_leg",
       "opensWhen": [
         {
-          "fact": "ch1.shelter_raised"
+          "any": [
+            {
+              "fact": "ch1.shelter",
+              "is": "SAIL"
+            },
+            {
+              "fact": "ch1.shelter",
+              "is": "FINISHED"
+            }
+          ]
         },
         {
           "fact": "ch1.hild_walked_up"
@@ -905,6 +1050,46 @@
       "givenBy": {
         "speaker": "C_HILD",
         "textKey": "c_hild.mast.stores"
+      }
+    },
+    {
+      "id": "shelter_finish",
+      "journalKey": "ui.journal.aim.shelter_finish",
+      "opensWhen": [
+        {
+          "fact": "ch1.shelter_finish_said"
+        },
+        {
+          "fact": "ch1.shelter",
+          "is": "SAIL"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.shelter",
+          "is": "FINISHED"
+        }
+      ],
+      "progress": [
+        {
+          "working": "TASK_BUILD"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.shelter_finish.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.shelter_finish.2",
+          "canCall": false
+        }
+      ],
+      "givenBy": {
+        "speaker": "C_HILD",
+        "textKey": "c_hild.camp.finish"
       }
     },
     {

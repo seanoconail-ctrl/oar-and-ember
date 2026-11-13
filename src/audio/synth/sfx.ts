@@ -23,6 +23,11 @@ export interface SoundOptions {
   readonly gore: number;
   /** The speaking pitch (Hz) of the person making the sound (voice.ts), for wordless cries. */
   readonly voice?: number;
+  /**
+   * Which of a sound's variants (the user's third playtest: a finisher by its weapon's kind, 0 a
+   * thrust, 1 a chop, 2 a crushing blow; a guard turned on the shaft 0 or the shield 1).
+   */
+  readonly variant?: number;
 }
 
 export function out(

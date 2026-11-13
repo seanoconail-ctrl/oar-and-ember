@@ -33,21 +33,26 @@
       "shield": true,
       "heavy": true,
       "leader": true,
-      "look": "wrecker_ketill"
+      "look": "wrecker_ketill",
+      "teaching": "RED",
+      "voice": "NORSE"
     },
     {
       "person": "E_WRECKER_SVART",
       "archetype": "Outlaw",
       "weapon": "ITEM_SPEAR",
       "shield": true,
-      "look": "wrecker_svart"
+      "look": "wrecker_svart",
+      "teaching": "PARRY",
+      "voice": "NORSE"
     },
     {
       "person": "E_WRECKER_CONN",
       "archetype": "Archer",
       "weapon": "ITEM_SEAX",
       "bow": true,
-      "look": "wrecker_conn"
+      "look": "wrecker_conn",
+      "voice": "GAELIC"
     }
   ],
   "crew": {
@@ -252,5 +257,227 @@
       "low": 60,
       "full": 600
     }
+  },
+  "sight": {
+    "about": "First-sight lines (the user's third playtest, decision DG-8; Book 8 section 07): every enemy speaks on first turning alert to the steerer, a warning if alone, wounded or outnumbered, else a taunt. Named enemies have their own pools; everyone else speaks from their voice's.",
+    "people": {
+      "E_WRECKER_SVART": {
+        "warn": [
+          "e_wrecker_svart.sight.warn.01",
+          "e_wrecker_svart.sight.warn.02",
+          "e_wrecker_svart.sight.warn.03",
+          "e_wrecker_svart.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_svart.sight.taunt.01",
+          "e_wrecker_svart.sight.taunt.02",
+          "e_wrecker_svart.sight.taunt.03",
+          "e_wrecker_svart.sight.taunt.04"
+        ]
+      },
+      "E_WRECKER_CONN": {
+        "warn": [
+          "e_wrecker_conn.sight.warn.01",
+          "e_wrecker_conn.sight.warn.02",
+          "e_wrecker_conn.sight.warn.03",
+          "e_wrecker_conn.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_conn.sight.taunt.01",
+          "e_wrecker_conn.sight.taunt.02",
+          "e_wrecker_conn.sight.taunt.03",
+          "e_wrecker_conn.sight.taunt.04"
+        ]
+      },
+      "E_WRECKER_KETILL": {
+        "warn": [
+          "e_wrecker_ketill.sight.warn.01",
+          "e_wrecker_ketill.sight.warn.02",
+          "e_wrecker_ketill.sight.warn.03",
+          "e_wrecker_ketill.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_ketill.sight.taunt.01",
+          "e_wrecker_ketill.sight.taunt.02",
+          "e_wrecker_ketill.sight.taunt.03",
+          "e_wrecker_ketill.sight.taunt.04"
+        ]
+      }
+    },
+    "voices": {
+      "NORSE": {
+        "warn": [
+          "e_generic_norse.sight.warn.01",
+          "e_generic_norse.sight.warn.02",
+          "e_generic_norse.sight.warn.03",
+          "e_generic_norse.sight.warn.04",
+          "e_generic_norse.sight.warn.05"
+        ],
+        "taunt": [
+          "e_generic_norse.sight.taunt.01",
+          "e_generic_norse.sight.taunt.02",
+          "e_generic_norse.sight.taunt.03",
+          "e_generic_norse.sight.taunt.04",
+          "e_generic_norse.sight.taunt.05"
+        ]
+      },
+      "GAELIC": {
+        "warn": [
+          "e_generic_gael.sight.warn.01",
+          "e_generic_gael.sight.warn.02",
+          "e_generic_gael.sight.warn.03",
+          "e_generic_gael.sight.warn.04",
+          "e_generic_gael.sight.warn.05"
+        ],
+        "taunt": [
+          "e_generic_gael.sight.taunt.01",
+          "e_generic_gael.sight.taunt.02",
+          "e_generic_gael.sight.taunt.03",
+          "e_generic_gael.sight.taunt.04",
+          "e_generic_gael.sight.taunt.05"
+        ]
+      }
+    }
+  },
+  "talk": {
+    "about": "Bran and the scavengers at the fold (the user's third playtest, decision DG-26; Book 8 section 07; Book 10 \"At the fold\"): exchanges played while none of them is aware of the steerer, overheard within Book 10's range, stopping for good when any of them notices the steerer. `needs`: who must be there besides the speakers.",
+    "encounter": "SCN_SK_WRECKERS",
+    "exchanges": [
+      {
+        "id": "key",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.key.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.key.2"
+          }
+        ]
+      },
+      {
+        "id": "wound",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.wound.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.wound.2"
+          }
+        ]
+      },
+      {
+        "id": "silver",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.silver.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.silver.2"
+          }
+        ]
+      },
+      {
+        "id": "posts",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.posts.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.posts.2"
+          }
+        ],
+        "needs": ["E_WRECKER_CONN", "E_WRECKER_SVART"]
+      },
+      {
+        "id": "gate",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.gate.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.gate.2"
+          }
+        ]
+      },
+      {
+        "id": "skiff",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.skiff.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.skiff.2"
+          }
+        ]
+      },
+      {
+        "id": "kin",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.kin.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.kin.2"
+          }
+        ]
+      },
+      {
+        "id": "finish",
+        "lines": [
+          {
+            "person": "E_WRECKER_SVART",
+            "key": "e_wrecker_svart.fold.finish.1"
+          },
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.finish.2"
+          }
+        ]
+      },
+      {
+        "id": "prayer",
+        "lines": [
+          {
+            "person": "E_WRECKER_CONN",
+            "key": "e_wrecker_conn.fold.prayer.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.prayer.2"
+          },
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.prayer.3"
+          }
+        ]
+      },
+      {
+        "id": "ring",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.ring.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.ring.2"
+          }
+        ]
+      }
+    ]
   }
 }

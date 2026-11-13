@@ -32,6 +32,8 @@ export const ACTIONS = [
   'dodge',
   'shove',
   'finisher',
+  /** The user's third playtest (decision DG-2): let a beaten foe go. */
+  'spare',
   /** Combat v2 (decision DE-3): lock-on, and binding a wound or eating. */
   'lockOn',
   'heal',
@@ -122,6 +124,8 @@ export const DEFAULT_BINDINGS: Bindings = {
   dodge: [key('Space'), pad(1)],
   shove: [key('KeyR'), pad(2)],
   finisher: [key('KeyV')],
+  // Let go on G (DG-22); on a pad, A lets go while the choice is offered (the session's context).
+  spare: [key('KeyG')],
   // Combat v2 (decision DE-3): lock-on on Z, the middle mouse button and R3; heal on H (in the
   // command ring on a gamepad).
   lockOn: [key('KeyZ'), mouse(1), pad(11)],
@@ -139,7 +143,8 @@ export const DEFAULT_BINDINGS: Bindings = {
   inventory: [key('KeyI')],
   buildMenu: [key('KeyB')],
   report: [key('KeyJ')],
-  systemMenu: [key('Escape'), pad(9)],
+  // The pause menu also on P (the user's third playtest, DG-22).
+  systemMenu: [key('Escape'), key('KeyP'), pad(9)],
 };
 
 export function sameBinding(a: Binding, b: Binding): boolean {

@@ -33,7 +33,8 @@ export interface Overlay {
       | 'fade'
       | 'launch'
       | 'seamap'
-      | 'timings',
+      | 'timings'
+      | 'combat',
   ): HTMLElement;
 }
 
@@ -110,6 +111,13 @@ const STYLE = `
   background: rgba(34, 49, 58, 0.85); }
 .oe-overlay [data-region=seamap] button { font: inherit; pointer-events: auto; cursor: pointer; padding: 0.2em 1em;
   background: #c98f3a; color: #22313a; border: 0; font-weight: 600; }
+.oe-overlay [data-region=combat] { top: 45%; bottom: 22%; left: auto; right: 1.875%; display: flex;
+  flex-direction: column; justify-content: flex-end; align-items: flex-end; font-size: 0.9em; }
+.oe-overlay [data-region=combat] p { margin: 0.18em 0 0; padding: 0.08em 0.45em; white-space: nowrap;
+  background: rgba(20, 24, 30, 0.72); }
+.oe-overlay [data-region=combat] .cap { display: inline-block; min-width: 1.1em; padding: 0 0.3em;
+  margin: 0 0.3em 0 0.15em; text-align: center; font-weight: 600; color: #2a2118; background: #e8dcc0;
+  border-radius: 0.25em; border-bottom: 0.12em solid #a89676; }
 .oe-overlay [data-region=fade] { top: 0; bottom: 0; left: 0; right: 0; background: #0b0e16; opacity: 0; }
 `;
 

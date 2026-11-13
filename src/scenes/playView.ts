@@ -48,7 +48,15 @@ import type { TipContext } from './tips.ts';
 import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
-import { campUseNear, campUses, driftwoodPieces, isTimed } from '../sim/home/camp.ts';
+import {
+  campUseNear,
+  campUses,
+  driftwoodPieces,
+  isTimed,
+  leanToUp,
+  shelterStage,
+} from '../sim/home/camp.ts';
+import { seaBurialActive } from '../sim/narrative/seaBurial.ts';
 import { boatLayers, repairProps } from './repairsScene.ts';
 import { boatOf, repairPlacedUses } from '../sim/narrative/repairs.ts';
 import { staminaView } from '../sim/home/stamina.ts';
@@ -58,13 +66,29 @@ import { striking } from '../sim/combat/fighter.ts';
 import { parseAiBalance, parseCombatBalance } from '../content/combatBalance.ts';
 import { finisherTarget, hostilesAware } from '../sim/land/fight.ts';
 import type { FightContext } from '../sim/land/fight.ts';
+import { attachWakingAutosave, DAY_START_SLOT } from '../persist/manager.ts';
+import { browserSaves } from '../persist/browserSaves.ts';
+import { parseInterfaceBalance } from '../content/interfaceBalance.ts';
+import { ACTIONS, rebind } from '../input/actions.ts';
+import type { Binding } from '../input/actions.ts';
+import { saveSettings } from '../input/settingsStore.ts';
 import {
-  attachWakingAutosave,
-  LocalStorageStore,
-  MemoryStore,
-  SaveManager,
-} from '../persist/manager.ts';
-import type { SaveStore } from '../persist/manager.ts';
+  loadInterfaceSettings,
+  MIX_BUSES,
+  saveInterfaceSettings,
+} from '../input/interfaceSettings.ts';
+import type { InterfaceSettings } from '../input/interfaceSettings.ts';
+import { actionLabel, agoText, controlLabel, PAUSE_ITEMS } from '../ui/pauseMenu.ts';
+import type { PauseEnv, SettingRow } from '../ui/pauseMenu.ts';
+import { isFullscreen, toggleFullscreen } from '../ui/fullscreen.ts';
+import { PauseMenuView } from './pauseMenuView.ts';
+import { itemText, slotLines } from './pauseMenuArt.ts';
+import { IntroSkipView } from './introSkip.ts';
+import { SkipHold } from '../ui/introSkip.ts';
+import { canvasPngBase64, menuFont, readLogicalFrame } from './pauseMenuView.ts';
+import { makeThumbnail } from '../ui/thumbnail.ts';
+import { coldOpenSeconds } from '../sim/narrative/wreck.ts';
+import { DevMenu, devModeOn } from './devMenu.ts';
 import type { SimEvent } from '../sim/simulation.ts';
 import { newCampaign } from '../sim/world.ts';
 import { createOverlay, showCaptionSlots } from '../ui/overlay.ts';
@@ -88,6 +112,8 @@ import {
   coldOpenScene,
   coldStorm,
   underSail,
+  seaCamera,
+  seaBurialView,
   decorate,
   hagCamera,
   OpeningFx,
@@ -117,7 +143,11 @@ const WRECK_SOUNDS: Partial<Record<WreckWhat, string>> = {
   LASHING_CUT: 'LASHING_CUT',
   BUNDLE_SPLASH: 'BUNDLE_SPLASH',
   STORES_BROUGHT: 'LOAD_DOWN',
-  SHELTER_RAISED: 'SAIL_RAISE',
+  // The shelter's stages (DG-12): the sail's cloth filling as it is lashed; the finished
+  // shelter's driftwood door creaking on its first swing. The frame's and the haul's own sounds
+  // play across their work loops (SHELTER_WORK).
+  SHELTER_RAISED: 'SAIL_SET',
+  SHELTER_FINISHED: 'DOOR_OPEN',
   RING_FOUND: 'RING_FOUND',
   HAG_HOLD: 'HAG_DRONE',
   HAG_GUST: 'HAG_GUST',
@@ -159,7 +189,7 @@ import {
 } from './launchPanels.ts';
 import type { PanelWords } from './launchPanels.ts';
 import { SeaMapView } from './seaMap.ts';
-import type { BodyModel } from '../sim/world.ts';
+import type { BodyModel, WorldState } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
 function facingTowards(
@@ -179,6 +209,8 @@ export interface PlayOptions {
   readonly wokeAt: number;
   /** The renderer prepared while the title showed (preparePlay), if it is ready. */
   readonly prepared?: PreparedPlay | null;
+  /** A saved world to play from (the title's Continue and Load, or a load across campaigns). */
+  readonly load?: WorldState | null;
 }
 
 /** The scene renderer for a zone, with every atlas and the zone's height field registered. */
@@ -356,9 +388,11 @@ export function startPlay(
   // cold open and the waking; `?view=play` starts awake on the strand unless `opening=full`.
   const startParams = new URLSearchParams(window.location.search);
   const coldOpen = startParams.get('view') !== 'play' || startParams.get('opening') === 'full';
-  const world = newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice, {
-    coldOpen,
-  });
+  const world =
+    options.load ??
+    newCampaign(options.seed, b, parsePeopleBasics(content.balance), content, choice, {
+      coldOpen,
+    });
   const land = landContext(content, content.balance);
   const opening = content.opening;
   if (opening === null || world.onFoot === null) throw new Error('No opening to play');
@@ -387,19 +421,14 @@ export function startPlay(
   campHooks(world, content, land, new URLSearchParams(window.location.search));
   const sim = createSimulation(b, world, land);
   // Saves (Book 2 section 20; Stage 9): the rotating autosaves and the checkpoints game over
-  // reloads, kept under this campaign's own name. The first is written as the steerer wakes on
-  // the strand (decision S9-20); storage that is blocked falls back to memory for the session.
-  const saveStore = ((): SaveStore => {
-    try {
-      localStorage.setItem('oar-and-ember:probe', '1');
-      localStorage.removeItem('oar-and-ember:probe');
-      return new LocalStorageStore(`oar-and-ember:save:${options.seed}:`);
-    } catch {
-      return new MemoryStore();
-    }
-  })();
-  const saves = new SaveManager(saveStore, canvas.dataset['build'] ?? 'dev');
-  saves.autosave(sim.state, 'WAKING');
+  // reloads, the three manual slots and the day-start save, in the device's one store (the title
+  // sees them too, DG-16). The first is written as the steerer wakes on the strand (decision
+  // S9-20); storage that is blocked falls back to memory for the session.
+  const saves = browserSaves(canvas.dataset['build'] ?? 'dev');
+  if (options.load == null) saves.autosave(sim.state, 'WAKING');
+  // The start of the day (DG-17): the waking in the surf on day 1 (after the cold open, below),
+  // and every waking after.
+  if (options.load == null && wreckPhase(sim.state) !== 'COLD_OPEN') saves.dayStart(sim.state);
   attachWakingAutosave(sim, saves);
   /** A checkpoint asked for while the simulation stepped, written once the frame's steps end. */
   let checkpointDue: string | null = null;
@@ -410,7 +439,7 @@ export function startPlay(
   let autosaveDue: 'CAMP' | null = null;
   const steererVitality = parsePeopleBasics(content.balance).vitality;
 
-  const settings = loadSettings(browserStorage());
+  let settings = loadSettings(browserStorage());
   const input = new InputMapper(settings.bindings, settings.toggle);
   const session = new Session(
     sim,
@@ -489,12 +518,6 @@ export function startPlay(
     }
     if (e.code === 'KeyK') {
       sim.submit({ type: 'SET_OPTIONS', secondWind: !sim.state.options.secondWind });
-      return;
-    }
-    if (e.code === 'KeyA') {
-      // Combat v2: the awareness marks over enemies, on or off (Book 10 marks).
-      display = { ...display, marks: !display.marks };
-      saveDisplaySettings(store, display);
       return;
     }
     if (e.code === 'KeyH') {
@@ -898,6 +921,370 @@ export function startPlay(
   let heldMs = 0;
   let timingsOpen = new URLSearchParams(window.location.search).has('timings');
   let timingsShown = '';
+  // ------------------------------------------------------------------------- the pause menu
+  // The user's third playtest (Book 2 sections 02, 20 and 21; decisions DG-15 to DG-18).
+  const uiB = parseInterfaceBalance(content.balance);
+  let iface: InterfaceSettings = loadInterfaceSettings(store);
+  engine.setMix(
+    Object.fromEntries(MIX_BUSES.map((bus) => [bus, iface.mix[bus] / 100])),
+    iface.mono,
+  );
+  const setIface = (next: InterfaceSettings): void => {
+    iface = next;
+    saveInterfaceSettings(store, iface);
+    engine.setMix(
+      Object.fromEntries(MIX_BUSES.map((bus) => [bus, iface.mix[bus] / 100])),
+      iface.mono,
+    );
+  };
+  /** Options chosen while the menu holds time, not yet applied (the first tick applies them). */
+  let pendingOptions: { secondWind?: boolean; ransMercy?: boolean } = {};
+  const optionNow = (id: 'secondWind' | 'ransMercy'): boolean =>
+    pendingOptions[id] ?? sim.state.options[id];
+  const onOff = (on: boolean): Record<string, string> => ({
+    state: t(on ? 'ui.settings.on' : 'ui.settings.off'),
+  });
+  const pauseSettings = (): SettingRow[] => [
+    {
+      id: 'motion',
+      group: 'display',
+      textKey: 'ui.settings.motion',
+      vars: onOff(display.reducedMotion),
+    },
+    {
+      id: 'info',
+      group: 'display',
+      textKey: 'ui.settings.info',
+      vars: onOff(display.infoCaptions),
+    },
+    {
+      id: 'gore',
+      group: 'display',
+      textKey: 'ui.settings.gore',
+      vars: { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`) },
+    },
+    { id: 'marks', group: 'display', textKey: 'ui.settings.marks', vars: onOff(display.marks) },
+    ...MIX_BUSES.map((bus): SettingRow => ({
+      id: `mix.${bus}`,
+      group: 'audio',
+      textKey: `ui.settings.${bus}`,
+      vars: { level: `${iface.mix[bus]}%` },
+    })),
+    { id: 'mono', group: 'audio', textKey: 'ui.settings.mono', vars: onOff(iface.mono) },
+    {
+      id: 'secondWind',
+      group: 'gameplay',
+      textKey: 'ui.settings.second_wind',
+      vars: onOff(optionNow('secondWind')),
+    },
+    {
+      id: 'ransMercy',
+      group: 'gameplay',
+      textKey: 'ui.settings.rans_mercy',
+      vars: onOff(optionNow('ransMercy')),
+    },
+    { id: 'timings', group: 'gameplay', textKey: 'ui.settings.timings', vars: onOff(timingsOpen) },
+    {
+      id: 'intro',
+      group: 'intro',
+      textKey: iface.introSkip ? 'ui.settings.intro_skip' : 'ui.settings.intro_play',
+    },
+  ];
+  const applySetting = (id: string, dir: 1 | -1): void => {
+    if (id === 'motion') {
+      display = { ...display, reducedMotion: !display.reducedMotion };
+      visuals.reducedMotion = display.reducedMotion;
+    } else if (id === 'info') display = { ...display, infoCaptions: !display.infoCaptions };
+    else if (id === 'marks') display = { ...display, marks: !display.marks };
+    else if (id === 'gore') {
+      const gore = ((display.gore + (dir > 0 ? 2 : 1)) % 3) as 0 | 1 | 2;
+      display = { ...display, gore };
+      visuals.gore = gore;
+      engine.setGore(gore);
+    } else if (id.startsWith('mix.')) {
+      const bus = id.slice(4) as (typeof MIX_BUSES)[number];
+      const now = iface.mix[bus];
+      const next = Math.max(0, Math.min(100, now + dir * 10));
+      setIface({ ...iface, mix: { ...iface.mix, [bus]: next } });
+      return;
+    } else if (id === 'mono') {
+      setIface({ ...iface, mono: !iface.mono });
+      return;
+    } else if (id === 'intro') {
+      setIface({ ...iface, introSkip: !iface.introSkip });
+      return;
+    } else if (id === 'timings') {
+      timingsOpen = !timingsOpen;
+      return;
+    } else if (id === 'secondWind' || id === 'ransMercy') {
+      // The campaign's options are world state: changed only while the menu holds time.
+      if (!session.menus.timeStopped) {
+        pauseView.model.note = { key: 'ui.settings.locked', refused: true };
+        return;
+      }
+      // Sent now, applied on the first tick after the menu lets time run (a pause runs no tick);
+      // the row shows the choice made meanwhile.
+      const next = !optionNow(id);
+      pendingOptions = { ...pendingOptions, [id]: next };
+      sim.submit(
+        id === 'secondWind'
+          ? { type: 'SET_OPTIONS', secondWind: next }
+          : { type: 'SET_OPTIONS', ransMercy: next },
+      );
+      return;
+    }
+    saveDisplaySettings(store, display);
+  };
+  /** The controls page: every action, its keys and mouse, its pad (Book 2 section 21). */
+  let remapping: (typeof ACTIONS)[number] | null = null;
+  let remapNote = '';
+  const controlRows = (): {
+    rows: { name: string; keys: string; pad: string }[];
+    note: string;
+  } => ({
+    rows: ACTIONS.map((a) => {
+      const l = actionLabel(a);
+      const list = settings.bindings[a];
+      const keysOf = list
+        .filter((x) => x.device === 'key' || x.device === 'mouse' || x.device === 'wheel')
+        .map(controlLabel);
+      const padOf = list.filter((x) => x.device === 'pad' || x.device === 'axis').map(controlLabel);
+      return {
+        name: t(l.key, l.vars),
+        keys: keysOf.length === 0 ? t('ui.controls.none') : keysOf.join(', '),
+        pad: padOf.length === 0 ? t('ui.controls.none') : padOf.join(', '),
+      };
+    }),
+    note:
+      remapping !== null
+        ? t('ui.controls.press', {
+            action: t(actionLabel(remapping).key, actionLabel(remapping).vars),
+          })
+        : remapNote !== ''
+          ? remapNote
+          : t('ui.controls.change', { key: 'H' }),
+  });
+  const bindNow = (binding: Binding): void => {
+    const action = remapping;
+    remapping = null;
+    if (action === null) return;
+    const { bindings, displaced } = rebind(settings.bindings, action, binding);
+    settings = { ...settings, bindings };
+    input.setBindings(bindings);
+    saveSettings(browserStorage(), settings);
+    remapNote = displaced
+      .map((a) => t('ui.controls.moved', { action: t(actionLabel(a).key, actionLabel(a).vars) }))
+      .join(' ');
+  };
+  window.addEventListener(
+    'keydown',
+    (e) => {
+      if (remapping === null) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (e.code === 'Escape') remapping = null;
+      else bindNow({ device: 'key', code: e.code });
+    },
+    { capture: true },
+  );
+  window.addEventListener(
+    'mousedown',
+    (e) => {
+      if (remapping === null) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      bindNow({ device: 'mouse', button: e.button });
+    },
+    { capture: true },
+  );
+  /** Seconds since the newest save (any kind), for the confirmations. */
+  const lastSavedSeconds = (): number => {
+    const newest = saves.headers().at(-1);
+    const at = newest === undefined ? NaN : Date.parse(newest.savedAt);
+    return Number.isFinite(at) ? Math.max(0, (Date.now() - at) / 1000) : 0;
+  };
+  const pauseEnv = (): PauseEnv => ({
+    safe: hostilesAware(sim.state.onFoot) === 0,
+    fullscreen: isFullscreen(document),
+    slots: saves.slotViews(uiB.menu.saveSlots, Date.now()),
+    hasDayStart: saves.dayStartHeader() !== null,
+    lastSavedAgo: agoText(lastSavedSeconds(), t),
+    settings: pauseSettings(),
+    controlRows: ACTIONS.length,
+  });
+  /** Loads a slot into this game (a save of another campaign's steerer reloads the page with it). */
+  const loadSlot = (slot: string): void => {
+    let loaded: ReturnType<typeof saves.load>;
+    try {
+      loaded = saves.load(slot, { context: { balance: content.balance } });
+    } catch {
+      pauseView.model.note = { key: 'ui.save.failed', refused: true };
+      return;
+    }
+    const was = sim.state.player;
+    if (loaded.state.player.bodyModel !== was.bodyModel || loaded.state.player.name !== was.name) {
+      const url = new URL(window.location.href);
+      url.search = `?load=${encodeURIComponent(slot)}`;
+      window.location.href = url.toString();
+      return;
+    }
+    session.menus.close();
+    sim.restore(loaded.state);
+    restored = true;
+    lookOwns = null;
+    captions.clear();
+    fadeInFrom = frameNow;
+  };
+  const pauseView = new PauseMenuView(document, {
+    palette,
+    t: (key, vars) => t(key, { ...vars }),
+    ago: (seconds) => agoText(seconds, t),
+    env: pauseEnv,
+    controls: controlRows,
+    thumbnail: uiB.menu.thumbnail,
+    thumbnailBytes: uiB.menu.thumbnailBytes,
+    click: () => {
+      engine.click();
+    },
+    close: () => {
+      session.menus.close();
+    },
+    remap: (row) => {
+      remapping = ACTIONS[row] ?? null;
+      remapNote = '';
+    },
+    act: (action, thumbnail) => {
+      switch (action.kind) {
+        case 'save': {
+          const safety = { awareHostiles: hostilesAware(sim.state.onFoot) };
+          const result = saves.manualSave(
+            sim.state,
+            `manual-${action.slot}`,
+            safety,
+            thumbnail ?? undefined,
+          );
+          pauseView.model.saved(result.ok, !result.ok && result.reason === 'NOT_SAFE');
+          return;
+        }
+        case 'load':
+          loadSlot(action.storeSlot);
+          return;
+        case 'resetDay':
+          loadSlot(DAY_START_SLOT);
+          return;
+        case 'quit':
+          window.location.href = window.location.pathname;
+          return;
+        case 'fullscreen':
+          void toggleFullscreen(document).then((on) => {
+            setIface({ ...iface, fullscreen: on });
+          });
+          return;
+        case 'setting':
+          applySetting(action.id, action.dir);
+          return;
+        default:
+          return;
+      }
+    },
+  });
+  session.systemBack = () => pauseView.systemBack();
+  // WebKit: Escape leaves fullscreen rather than reaching the page; leaving it in play opens the
+  // pause menu (DG-18). In Chromium the key is locked and opens the menu itself.
+  let wasFullscreen = isFullscreen(document);
+  document.addEventListener('fullscreenchange', () => {
+    const now = isFullscreen(document);
+    if (wasFullscreen && !now && session.menus.open === null && sim.state.gameOver === null)
+      session.menus.request('system');
+    wasFullscreen = now;
+  });
+  /** Whether the menu held time last frame (the pause duck follows it). */
+  let ducked = false;
+  // --------------------------------------------------------------------- skipping the intro
+  // DG-19: once seen, holding any key or button for skipHold, or the Skip button, runs the cold
+  // open unseen to its end: the world is exactly as after it (it writes nothing the waking needs).
+  /** True while the cold open is run unseen: its sounds, shakes and lines are not presented. */
+  let fastForward = false;
+  const skipHold = new SkipHold({
+    holdSeconds: uiB.intro.skipHoldSeconds,
+    showSeconds: uiB.intro.skipShowSeconds,
+    fadeSeconds: uiB.intro.skipFadeSeconds,
+  });
+  let skipClicked = false;
+  const skipView = new IntroSkipView(
+    document,
+    { palette, font: menuFont(palette) },
+    { skip: t('ui.intro.skip'), hold: t('ui.intro.hold') },
+    () => {
+      skipClicked = true;
+    },
+  );
+  const keysDown = new Set<string>();
+  window.addEventListener('keydown', (e) => {
+    if (!e.repeat) keysDown.add(e.code);
+  });
+  window.addEventListener('keyup', (e) => {
+    keysDown.delete(e.code);
+  });
+  window.addEventListener('blur', () => {
+    keysDown.clear();
+  });
+  let anyHeldBefore = false;
+  const skipColdOpen = (): void => {
+    if (wreckPhase(sim.state) !== 'COLD_OPEN') return;
+    fastForward = true;
+    try {
+      // The oar let go, as when nothing is held; then the cold open's remaining ticks.
+      sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+      for (let i = 0; i < 1_000_000 && wreckPhase(sim.state) === 'COLD_OPEN'; i++) sim.step();
+    } finally {
+      fastForward = false;
+    }
+    saves.dayStart(sim.state);
+    fadeInFrom = frameNow;
+  };
+  // ------------------------------------------------------------------- the developer menu
+  // DG-21: a debug build or `?dev` only; never built otherwise. F3 is its key there (DG-22).
+  const devOn = devModeOn(window.location.search, import.meta.env.DEV);
+  if (devOn) {
+    const quick3 = settings.bindings.quick3.filter((x) => !(x.device === 'key' && x.code === 'F3'));
+    settings = { ...settings, bindings: { ...settings.bindings, quick3 } };
+    input.setBindings(settings.bindings);
+  }
+  const dev = !devOn
+    ? null
+    : new DevMenu(document, {
+        t: (key, vars) => t(key, vars ?? {}),
+        submit: (command) => {
+          sim.submit(command);
+        },
+        worldAt: (clientX, clientY) => {
+          const r = canvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio;
+          const vp = presenter.viewport;
+          const lx = ((clientX - r.left) * dpr - vp.x) / vp.scale;
+          const ly = ((clientY - r.top) * dpr - vp.y) / vp.scale;
+          if (lx < 0 || ly < 0 || lx >= LOGICAL_WIDTH || ly >= LOGICAL_HEIGHT) return null;
+          return { x: viewCamera.x + lx, y: viewCamera.y + ly };
+        },
+        enemyAt: (x, y) => {
+          let best: string | null = null;
+          let bestD = 1.5 * map.tile;
+          for (const [id, a] of Object.entries(sim.state.onFoot?.actors ?? {})) {
+            if (a.fight?.side !== 'ENEMY' || a.fight.dead !== null) continue;
+            const d = Math.hypot(a.x - x, a.y - 14 - y);
+            if (d < bestD) {
+              bestD = d;
+              best = id;
+            }
+          }
+          return best;
+        },
+        tileSize: () => map.tile,
+        skipMinutes: uiB.dev.skipHours * 60,
+        teleportTiles: uiB.dev.teleportTiles,
+        fpsSeconds: uiB.dev.fpsSeconds,
+      });
   /** The chapter's figures when it ended (played seconds and the first fight's). */
   let chapterEnd: { played: number; fight: number | null } | null = null;
   const words: PanelWords = {
@@ -927,6 +1314,8 @@ export function startPlay(
   const markState = (): string =>
     (sim.state.ships['flagship']?.marks.sail ?? 'plain').replace(':', '_');
   const onEvent = (e: SimEvent): void => {
+    // The cold open run unseen (DG-19): nothing of it is shown or heard.
+    if (fastForward) return;
     const now = frameNow;
     switch (e.type) {
       case 'PERSON_CALLED': {
@@ -1124,6 +1513,21 @@ export function startPlay(
       case 'RITES_STONES':
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
+      // Thorkel taken by the sea (DG-14): the lament's held note as the bier is borne down, the
+      // wash rising wave by wave with the planks knocking, the gulp and bubbles as it sinks.
+      case 'SEA_TAKEN': {
+        const cue =
+          e.what === 'BIER'
+            ? 'SEA_LAMENT'
+            : e.what === 'WAVE' && e.n === 1
+              ? 'BODY_TAKEN'
+              : e.what === 'SINK'
+                ? 'BODY_SINK'
+                : null;
+        if (cue !== null && audio !== null && engine.unlocked)
+          audio.event(cue, engine.now, { pan: 0 });
+        return;
+      }
       case 'RITES_DONE':
         ritesScene = false;
         if (audio !== null && engine.unlocked)
@@ -1205,7 +1609,12 @@ export function startPlay(
       // ---- Design addendum 2.4: the opening, the aims, the edges and the doors.
       case 'WRECK': {
         const at = e.x === undefined ? null : { x: e.x, y: e.y ?? 0 };
-        const sound = WRECK_SOUNDS[e.what];
+        const sound =
+          e.what === 'SHELTER_WORK'
+            ? e.key === 'FRAME'
+              ? 'SHELTER_FRAME'
+              : 'SAIL_RAISE'
+            : WRECK_SOUNDS[e.what];
         if (sound !== undefined && audio !== null && engine.unlocked)
           audio.event(sound, engine.now, { pan: at === null ? 0 : panAt(at.x) });
         // The audit: the opening's actions and moments are cut; the pale light gains its
@@ -1236,7 +1645,12 @@ export function startPlay(
             openingFx.burst('drip', at.x * map.tile, at.y * map.tile, 4, 4);
         }
         if (e.what === 'COLD_STRIKE') visuals.shake(3);
-        if (e.what === 'WOKE') fadeInFrom = now;
+        if (e.what === 'WOKE') {
+          fadeInFrom = now;
+          // The start of day 1 (DG-17), and the cold open seen to its end on this device (DG-19).
+          saves.dayStart(sim.state);
+          if (!iface.introSeen) setIface({ ...iface, introSeen: true });
+        }
         return;
       }
       case 'AIM_CHANGED':
@@ -1807,6 +2221,37 @@ export function startPlay(
     const deviceChanged = device !== lastDevice;
     lastDevice = device;
     const result = session.frame(now - last, browser.aim(), { device, pointer });
+    if (!session.menus.timeStopped) pendingOptions = {};
+    // The Skip button and the hold (DG-19).
+    const anyHeld = keysDown.size > 0 || result.input.held.size > 0;
+    if (anyHeld && !anyHeldBefore) skipHold.press(now / 1000);
+    if (!anyHeld) skipHold.releaseAll();
+    anyHeldBefore = anyHeld;
+    const sv = skipHold.update(
+      now / 1000,
+      coldOpenSeconds(sim.state),
+      iface.introSeen,
+      skipClicked,
+    );
+    skipClicked = false;
+    skipView.update(sv.alpha, sv.ring, presenter.viewport, window.devicePixelRatio);
+    root.dataset['skip'] = sv.alpha > 0 ? sv.ring.toFixed(2) : '';
+    if (sv.skip) skipColdOpen();
+    // The pause menu (DG-15): drawn over the frame it paused, or over a running world.
+    pauseView.frame(
+      session.menus.open === 'system',
+      !session.menus.timeStopped,
+      result.input,
+      presenter.viewport,
+      window.devicePixelRatio,
+    );
+    // Book 10 pauseDuck: music and ambience fall while the menu holds time; effects pause.
+    const duck = session.menus.open === 'system' && session.menus.timeStopped;
+    if (duck !== ducked) {
+      ducked = duck;
+      engine.setPaused(duck, uiB.menu.pauseDuckDb, uiB.menu.pauseDuckSeconds);
+      if (duck) engine.click(true);
+    }
     // Stage 12, telemetry: real time a menu held the game is sent once time runs again.
     if (session.menus.timeStopped) heldMs += now - last;
     else if (heldMs > 0) {
@@ -2040,6 +2485,7 @@ export function startPlay(
       wreckPhase(sim.state) !== 'PLAY' ||
       (wreckCtx !== null && hagNow(sim.state, wreckCtx) !== null) ||
       ritesScene ||
+      seaBurialActive(sim.state) ||
       launchPlaying;
     const quiet = narrativeShowing || storyBeat || talkOpen;
     const secs = now / 1000;
@@ -2107,7 +2553,7 @@ export function startPlay(
       phase: wreckPhase(sim.state),
       gettingUp: sim.state.facts['ch1.getting_up'] !== undefined,
       scene: sim.state.talk?.kind === 'SCENE' || sim.state.talk?.scene != null,
-      rites: ritesScene,
+      rites: ritesScene || seaBurialActive(sim.state),
       launch: launchPlaying,
     });
     const pointerOffered =
@@ -2144,14 +2590,79 @@ export function startPlay(
     }
     root.dataset['help'] = helpOpen ? String(sim.state.player.tipsSeen.length) : '';
     root.dataset['tipsSeen'] = sim.state.player.tipsSeen.join(',');
-    overlay.region('menu').textContent =
+    // The other menus' line; the pause menu is drawn as pixel art (DG-15), so its region holds
+    // only a text mirror of it for screen readers, kept out of sight.
+    const menuRegion = overlay.region('menu');
+    const pauseMirror = (): string => {
+      const env = pauseEnv();
+      const m = pauseView.model;
+      const rows =
+        m.page === 'main'
+          ? PAUSE_ITEMS.map((item) => itemText(item, env, t))
+          : m.page === 'settings'
+            ? []
+            : m.page === 'controls'
+              ? [controlRows().note]
+              : env.slots.map((slot) =>
+                  [
+                    slot.slot === 'AUTO'
+                      ? t('ui.save.slot_auto')
+                      : t('ui.save.slot_manual', { count: slot.slot.slice('MANUAL_'.length) }),
+                    ...slotLines(slot, t, (sec) => agoText(sec, t)),
+                  ].join(', '),
+                );
+      const settingsText = env.settings.map((r) => t(r.textKey, r.vars ?? {}));
+      const note = m.note === null ? [] : [t(m.note.key, m.note.vars ?? {})];
+      const confirm = m.confirm === null ? [] : [t(m.confirm.key, m.confirm.vars ?? {})];
+      return [
+        t(session.menus.timeStopped ? 'ui.pause.title' : 'ui.pause.running'),
+        ...confirm,
+        ...note,
+        ...rows,
+        ...settingsText,
+      ].join('. ');
+    };
+    const menuText =
       open === null || mapMode !== null || launchUi !== 'none'
         ? ''
-        : `${t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) })}${
-            open === 'system'
-              ? ` ${t(display.reducedMotion ? 'ui.system.motion_on' : 'ui.system.motion_off', { key: 'M' })} ${t(display.infoCaptions ? 'ui.system.info_on' : 'ui.system.info_off', { key: 'I' })} ${t('ui.system.help', { key: 'H' })} ${t('ui.system.gore', { level: t(`ui.gore.${['off', 'low', 'full'][display.gore] ?? 'full'}`), key: 'G' })} ${t(sim.state.options.secondWind ? 'ui.system.second_wind_on' : 'ui.system.second_wind_off', { key: 'K' })} ${t('ui.system.marks', { state: t(display.marks ? 'ui.marks.on' : 'ui.marks.off'), key: 'A' })} ${t('ui.system.timings', { key: 'T' })}`
-              : ''
-          }`;
+        : open === 'system'
+          ? pauseMirror()
+          : t('ui.menu.open', { menu: t(`ui.menu.name.${open}`) });
+    if (menuRegion.textContent !== menuText) menuRegion.textContent = menuText;
+    const hidden = open === 'system';
+    if ((menuRegion.dataset['mirror'] === '1') !== hidden) {
+      menuRegion.dataset['mirror'] = hidden ? '1' : '';
+      Object.assign(
+        menuRegion.style,
+        hidden
+          ? {
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              overflow: 'hidden',
+              clipPath: 'inset(50%)',
+              whiteSpace: 'nowrap',
+            }
+          : { position: '', width: '', height: '', overflow: '', clipPath: '', whiteSpace: '' },
+      );
+    }
+    root.dataset['pause'] = pauseView.isOpen ? pauseView.model.page : '';
+    root.dataset['paused'] = session.menus.timeStopped ? '1' : '';
+    root.dataset['pauseNote'] = pauseView.model.note?.key ?? '';
+    root.dataset['pauseConfirm'] = pauseView.model.confirm?.key ?? '';
+    root.dataset['pauseCursor'] = String(pauseView.model.cursor);
+    root.dataset['fullscreen'] = isFullscreen(document) ? '1' : '';
+    root.dataset['camx'] = String(viewCamera.x);
+    root.dataset['camy'] = String(viewCamera.y);
+    root.dataset['slots'] = pauseView.isOpen
+      ? saves
+          .slotViews(uiB.menu.saveSlots, Date.now())
+          .map(
+            (v) =>
+              `${v.slot}:${v.empty ? '' : `${v.header?.day ?? ''}@${v.header?.minuteOfDay ?? ''}@${v.header?.placeKey ?? ''}@${v.thumbnail?.data.length ?? 0}`}`,
+          )
+          .join(',')
+      : '';
 
     const view0 = visuals.view(frameInput);
     const coldBoatAt = wreckCtx === null ? null : coldBoat(sim.state, wreckCtx, map.tile);
@@ -2176,7 +2687,13 @@ export function startPlay(
                   y: Math.round(coldBoatAt.y - 200) + sway.y,
                 };
               })()
-            : hagCamera(sim.state, wreckCtx, map, view0.camera, display.reducedMotion),
+            : seaCamera(
+                sim.state,
+                wreckCtx,
+                map,
+                hagCamera(sim.state, wreckCtx, map, view0.camera, display.reducedMotion),
+                display.reducedMotion,
+              ),
     };
     openingFx.update(Math.min(0.1, frameInput.dt));
     const camp = campScene();
@@ -2380,6 +2897,14 @@ export function startPlay(
     // The morning report in Report mode (time stopped until it is closed).
     const reportRegion = overlay.region('report');
     const aimLine = journal === null ? null : t(journal);
+    dev?.frame(now, {
+      aim: aimLine ?? '',
+      day: sim.state.calendar.day,
+      time: clockText(sim.state.calendar.minuteOfDay),
+      zone: map.zone,
+      tile: tileOf(map, onFoot.player.x, onFoot.player.y),
+    });
+    root.dataset['dev'] = dev === null ? '' : dev.open ? 'open' : 'closed';
     const reportOpen =
       session.menus.open === 'report' && (reportShown !== null || aimLine !== null);
     const shownKey = `${aimLine ?? ''}|${reportShown?.join('|') ?? ''}`;
@@ -2520,7 +3045,7 @@ export function startPlay(
       const rainDrops = firstRainDrops(
         sim.state.calendar.day,
         sim.state.calendar.minuteOfDay,
-        sim.state.facts['ch1.shelter_raised'] === true,
+        leanToUp(sim.state),
         stormB,
         visuals.seconds,
       );
@@ -2613,6 +3138,7 @@ export function startPlay(
                 tick: sim.state.tick,
                 reducedMotion: display.reducedMotion,
                 fx: openingFx,
+                seaRamp: tuning.sea,
                 steererSheets: [look.steerer.body, ...Object.values(look.steerer.layers).flat()],
                 bodyModel: choice.bodyModel,
                 bundleDrift:
@@ -2633,7 +3159,22 @@ export function startPlay(
                       }
                     : null,
               });
-      if (drawThis) renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
+      if (drawThis) {
+        renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
+        // The last frame before the pause menu opened: its backdrop and the save's thumbnail.
+        pauseView.afterRender(presenter.gl, presenter.viewport, session.menus.timeStopped);
+        // An autosave, checkpoint or day-start written since the last frame: its screenshot.
+        if (saves.unpictured.length > 0) {
+          const shot = makeThumbnail(
+            readLogicalFrame(presenter.gl, presenter.viewport),
+            uiB.menu.thumbnail,
+            uiB.menu.thumbnailBytes,
+            (img) => canvasPngBase64(document, img),
+          );
+          for (const slot of saves.unpictured.splice(0))
+            if (shot !== null) saves.attachThumbnail(slot, shot);
+        }
+      }
       root.dataset['seamap'] = '';
     }
     if (frames < 3) {
@@ -2667,6 +3208,15 @@ export function startPlay(
     root.dataset['aim'] = sim.state.aims?.current ?? '';
     root.dataset['phase'] = String(sim.state.facts['ch1.phase'] ?? '');
     root.dataset['coldoar'] = String(sim.state.facts['ch1.cold_oar'] ?? '');
+    // The user's third playtest (tests and captures): the shelter's stage (DG-12) and how the
+    // sea burial is drawn (DG-14): its phase, seconds, frame, mask and the wave.
+    root.dataset['shelter'] = shelterStage(sim.state) ?? '';
+    const seaNow =
+      wreckCtx === null ? null : seaBurialView(sim.state, wreckCtx, map, visuals.seconds);
+    root.dataset['sea'] =
+      seaNow === null
+        ? ''
+        : `${seaNow.phase} ${seaNow.t.toFixed(2)} ${seaNow.frame} ${seaNow.mask} ${seaNow.wave}`;
     root.dataset['opening'] = [
       'ch1.hild_reached',
       'ch1.net_free',
@@ -2675,7 +3225,6 @@ export function startPlay(
       'ch1.chest_home',
       'ch1.fire_lit',
       'ch1.hild_walked_up',
-      'ch1.shelter_raised',
       'ch1.chest_opened',
       'ch1.lashing_cut',
     ]
@@ -2824,5 +3373,7 @@ export function startPlay(
     });
     frame(clock);
   } else requestAnimationFrame(frame);
+  // The title's "Intro: skip" (DG-19): a new game starts at the waking.
+  if (options.load == null && iface.introSkip) skipColdOpen();
   canvas.dataset['state'] = 'play';
 }

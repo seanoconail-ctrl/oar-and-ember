@@ -285,7 +285,7 @@
       "kind": "FLAP",
       "sheet": "prop_flap_sail",
       "stages": ["S0"],
-      "fact": "ch1.shelter_raised",
+      "fact": "ch1.shelter=SAIL|FINISHED",
       "barrable": false
     }
   ]

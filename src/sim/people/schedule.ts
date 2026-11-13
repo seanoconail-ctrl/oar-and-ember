@@ -19,7 +19,14 @@ import type { Id } from '../../core/ids.ts';
 import { TILE } from '../../content/terrain/autotile.ts';
 import { seasonOf } from '../calendar/calendar.ts';
 import type { CampContext } from '../home/camp.ts';
-import { FACT_ARRIVED_SAID, FACT_AT_BROCH, foodRd, homeOf } from '../home/camp.ts';
+import {
+  FACT_ARRIVED_SAID,
+  FACT_AT_BROCH,
+  foodRd,
+  homeOf,
+  shelterFinishOpen,
+  shelterStage,
+} from '../home/camp.ts';
 import { shipWorkFor } from '../ship/work.ts';
 import type { ResidentPlace } from './residents.ts';
 import type { ActivityKind, JobKind, Person, WorldState } from '../world.ts';
@@ -74,9 +81,11 @@ export function seatOf(world: WorldState, camp: CampContext, ctx: PeopleContext,
 /** Where a resident sleeps at the camp's stage. */
 export function bedOf(world: WorldState, camp: CampContext, ctx: PeopleContext, id: Id): Spot {
   const stage = homeOf(world, camp)?.stage === 'S1' ? 'S1' : 'S0';
-  // Design addendum 2.4 (DE-22): once the lean-to is raised, everyone sleeps under it.
+  // Design addendum 2.4 (DE-22): once the lean-to is up (the sail lashed over the frame, DG-12),
+  // everyone sleeps under it until the finished shelter has its beds.
   const under = camp.def.shelterBeds;
-  if (stage === 'S0' && world.facts['ch1.shelter_raised'] === true && under !== undefined) {
+  const lean = shelterStage(world);
+  if (stage === 'S0' && (lean === 'SAIL' || lean === 'FINISHED') && under !== undefined) {
     const i = Math.max(0, [...world.household.residents].sort().indexOf(id));
     const bed = under[i % under.length];
     if (bed !== undefined) return { zone: camp.def.zone, ...bed };
@@ -100,6 +109,16 @@ export function jobToday(
     // Rest was for that day: back to the work they had before, or the household's first job.
     return ctx.household.people[p.id]?.job ?? 'CAMP';
   }
+  // The jobs they take up first while there is such work (Hild finishing the shelter on the
+  // second day, DG-12), unless the steerer has given them another than their own.
+  // Only while the stores hold the day's food for every mouth: feeding the household comes first.
+  const own = ctx.household.people[p.id];
+  const home = homeOf(world, camp);
+  const mouths = 1 + world.household.residents.length;
+  const fed = home !== undefined && foodRd(home) >= mouths * camp.work.foodPerPersonPerDay;
+  if (job.kind === own?.job && fed)
+    for (const first of own.first ?? [])
+      if (jobOpen(world, camp, ctx.household.jobs[first], p.id)) return first;
   if (jobOpen(world, camp, ctx.household.jobs[job.kind], p.id)) return job.kind;
   // Stage 11: the first of their next jobs with work (Runa to the boat once the shelter is up).
   for (const next of ctx.household.people[p.id]?.then ?? [])
@@ -121,6 +140,8 @@ export function jobOpen(
   const stage = homeOf(world, camp)?.stage ?? 'S0';
   if (def.stages !== undefined && !(def.stages as string[]).includes(stage)) return false;
   if (def.needs === 'SHIP_WORK') return shipWorkFor(world, who ?? '') !== null;
+  if (def.needs === 'SHELTER_FINISH')
+    return shelterFinishOpen(world, camp.shelterFinishFrom, camp.time.dayStart);
   return true;
 }
 
@@ -141,7 +162,9 @@ export function jobSpot(
     const q = world.people[r];
     return q !== undefined && q.job?.kind === job && camp.def.people[r]?.work.task !== def?.task;
   });
-  return spots[Math.max(0, same.indexOf(id)) % spots.length] ?? null;
+  // Someone working it as their first job (not their own) takes the next spot along.
+  const i = same.indexOf(id);
+  return spots[(i < 0 ? same.length : i) % spots.length] ?? null;
 }
 
 /** The tendency's window today, in minutes after midnight (Book 5 section 17). */

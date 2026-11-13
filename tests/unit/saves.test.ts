@@ -122,7 +122,7 @@ describe('save files', () => {
       day: 1,
       chapter: 'CH_1_WRECK',
       seed: 'save-test',
-      schemaVersion: 12,
+      schemaVersion: 13,
     });
     const resumed = createSimulation(b, state);
     for (let i = 0; i < 50_000; i++) {
@@ -133,8 +133,8 @@ describe('save files', () => {
   });
 
   it('migrate a save through the chain', () => {
-    const v13: Migration = {
-      from: 12,
+    const v14: Migration = {
+      from: 13,
       describe: 'test: move player.name into player.identity.name',
       up: (s) => {
         const player = s['player'] as Record<string, unknown>;
@@ -145,11 +145,11 @@ describe('save files', () => {
     const world = campaign();
     world.player.name = 'Ingrid';
     const { state, migratedFrom } = readSave(writeSave(world, meta), {
-      migrations: [v13],
-      currentVersion: 13,
+      migrations: [v14],
+      currentVersion: 14,
     });
-    expect(migratedFrom).toBe(12);
-    expect(state.version).toBe(13);
+    expect(migratedFrom).toBe(13);
+    expect(state.version).toBe(14);
     expect((state.player as unknown as { identity: { name: string } }).identity.name).toBe(
       'Ingrid',
     );
@@ -168,10 +168,10 @@ describe('save files', () => {
       }
     };
     expectReason(
-      () => readSave({ ...file, header: { ...file.header, schemaVersion: 14 } }),
+      () => readSave({ ...file, header: { ...file.header, schemaVersion: 15 } }),
       'FUTURE_VERSION',
     );
-    expectReason(() => readSave(file, { migrations: [], currentVersion: 13 }), 'NO_MIGRATION');
+    expectReason(() => readSave(file, { migrations: [], currentVersion: 14 }), 'NO_MIGRATION');
     // Schema 3 to 4 needs balance.json: without it the load says so rather than guessing.
     expectReason(() => readSave(JSON.parse(repoFile(GOLDEN_03)) as SaveFile), 'NO_MIGRATION');
     expectReason(
@@ -235,7 +235,9 @@ describe('save slots', () => {
     while (sim.state.calendar.minuteOfDay !== 18 * 60) sim.step();
     sim.submit({ type: 'SLEEP' });
     sim.step();
-    expect(order).toEqual(['WOKE:1', 'MORNING_REPORT_DUE:1']);
+    // The waking autosave and, with it, the day-start save (the user's third playtest, DG-17).
+    expect(order).toEqual(['WOKE:2', 'MORNING_REPORT_DUE:2']);
+    expect(saves.dayStartHeader()).toMatchObject({ kind: 'day-start', day: 2 });
     expect(saves.latestRestorePoint()).toMatchObject({
       kind: 'autosave',
       reason: 'WAKING',
@@ -251,7 +253,7 @@ describe('golden save 1 (schema 1, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(1);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(1);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.onFoot).toBeNull();
     expect(state.player.hotbar).toEqual({ slots: [], selected: 0 });
     expect(state.player.inventory).toEqual({});
@@ -274,7 +276,7 @@ describe('golden save 2 (schema 2, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(2);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(2);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.onFoot?.items).toEqual([]);
     expect(state.onFoot?.projectiles).toEqual([]);
     expect(state.onFoot?.stuck).toEqual([]);
@@ -295,7 +297,7 @@ describe('golden save 3 (schema 3, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(3);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(3);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_BOW', 'ITEM_SEAX', null]);
     expect(state.player.inventory).toEqual({
@@ -326,7 +328,7 @@ describe('golden save 4 (schema 4, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(4);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(4);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_SEAX', 'ITEM_BOW', null]);
     expect(state.player.inventory).toEqual({
@@ -384,7 +386,7 @@ describe('golden save 5 (schema 5, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(5);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(5);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.homes['ISLE_SKARV']?.building?.id).toBe('BLD_SAIL_SHELTER');
     expect(state.oneShots['BEAT_1_BROCH']).toBe(1);
@@ -422,7 +424,7 @@ describe('golden save 6 (schema 6, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(6);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(6);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.facts).toMatchObject({
       'ch1.at_broch': true,
@@ -468,7 +470,7 @@ describe('golden save 7 (schema 7, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(7);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(7);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.options.secondWind).toBe(true);
     expect(state.gameOver).toBeNull();
@@ -496,7 +498,7 @@ describe('golden save 8 (schema 8, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(8);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(8);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.facts['search.oddi']).toBe('CHEST_FIRST');
     expect(state.facts['search.runa']).toBe('OFFERING');
     expect(state.facts['search.bran']).toBe('BARGAIN');
@@ -528,7 +530,7 @@ describe('golden save 9 (schema 9, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(9);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(9);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(state.facts['repair.oar']).toBe('TRADE');
     expect(state.facts['ch1.boat_ready']).toBe(true);
     const ship = state.ships['flagship'];
@@ -566,7 +568,7 @@ describe('golden save 10 (schema 10, frozen)', () => {
     // Frozen from design addendum 2.4 (decision DE-80): it loads through combat v2's step and the
     // opening's (decisions DE-1 to DE-79).
     expect(migratedFrom).toBe(10);
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(golden.header.chapter).toBe('CH_2_FIRST_RAID');
     expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
     expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');
@@ -601,7 +603,7 @@ describe('golden save 11 (schema 12): the chapter-end save, regenerated for desi
     // Regenerated once 2.5 was complete (DF-46, DF-86): written at version 12, no migration.
     expect(golden.header.schemaVersion).toBe(12);
     expect(migratedFrom).toBeNull();
-    expect(state.version).toBe(12);
+    expect(state.version).toBe(13);
     expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
     expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
     expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');

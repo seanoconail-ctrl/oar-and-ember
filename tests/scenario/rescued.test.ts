@@ -321,6 +321,14 @@ function underShelter(p: Play): boolean {
     : beds.some((bd) => Math.hypot(x - bd.x, y - bd.y) < 0.5);
 }
 
+/**
+ * The steerer's bed: under the lean-to at S0, under the finished shelter's roof once it is built on
+ * the second day (the user's third playtest, DG-12).
+ */
+function bedSite(p: Play): string {
+  return world(p).homes[camp.def.home]?.stage === 'S1' ? 'bed_s1' : 'bed_s0';
+}
+
 /** The rescue has completed this tick: the person is of the household and not carried. */
 function rescued(p: Play): boolean {
   return (
@@ -630,7 +638,7 @@ function play(run: Run, seed: string): Play {
   } else if (run.after === 'sleep') {
     // Straight to bed under the sail (the rescue is at night; after Book 10's collapse hour the
     // night has already passed, and it is day).
-    p.bot.doAt('bed_s0');
+    p.bot.doAt(bedSite(p));
     p.slept = p.bot.onFoot.player.sleep != null;
   } else if (run.after === 'fight') {
     // Straight off to fight the scavengers at the fold (Bran's search by a fight).
@@ -678,7 +686,7 @@ function follow(p: Play, run: Run): void {
       // 4. At night, under the shelter. A scene that evening (Oddi's theft) is judged first.
       const nightCheck =
         night === 0 && minute(p) >= 22 * 60 ? (minute(p) + 120) % 1440 : 23 * 60 + 40;
-      p.bot.goToSite('bed_s0');
+      p.bot.goToSite(bedSite(p));
       waitUntil(p, nightCheck);
       settleTalk(p);
       p.bot.step(T * 5);
@@ -702,7 +710,7 @@ function follow(p: Play, run: Run): void {
         homeMinutes,
       );
     if (!asleep) {
-      p.bot.doAt('bed_s0');
+      p.bot.doAt(bedSite(p));
       p.bot.waitFor(() => minute(p) >= 6 * 60 && minute(p) < 7 * 60, T * 1200);
     }
     // 2. and 3. The day: at work, fed, and talking at the fire in the evening.
@@ -726,11 +734,13 @@ function follow(p: Play, run: Run): void {
   );
 }
 
-/** The rest of the opening after Hild's rescue: the chest home, the sail up, the first fire. */
+/** The rest of the opening after Hild's rescue: the chest home, the lean-to up, the first fire. */
 function hildCamp(p: Play): void {
   const bot = p.bot;
   if (world(p).facts['ch1.chest_home'] !== true) bot.chestToCamp();
-  if (world(p).facts['ch1.shelter_raised'] !== true) bot.raiseShelter();
+  // The frame and the sail lashed over it on day 1 (DG-12): the lean-to for the first night.
+  const shelter = world(p).facts['ch1.shelter'];
+  if (shelter === 'FOLDED' || shelter === 'FRAME') bot.raiseShelter();
   if (world(p).facts['ch1.fire_lit'] !== true) {
     bot.goToZone('ZONE_SK_STRAND');
     bot.firstFire(['drift_west_rocks', 'drift_west_bank']);

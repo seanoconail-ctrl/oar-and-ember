@@ -12,8 +12,13 @@
  *   is safe; carried to its home by the shelter, where it settles (its outline is presentation of
  *   this state); **his key** reaches the steerer however Bran's search ends; **opened** (beat 14),
  *   it gives his bow, a quiver, his chart fragment and his things.
+ * - **Hild points north** once set down safe (the user's third playtest, decision DG-13): the old
+ *   tower up on the bank, before she names the chest.
  * - **The camp** opens when the steerer first reaches it; **Hild walks up** when the first fire is
- *   lit (she sees the smoke); **the shelter** is raised in one visible action (beats 7 to 9).
+ *   lit (she sees the smoke); **the shelter** goes up over two days in three visible stages (beats 7
+ *   to 9; decision DG-12): the frame and the sail are the steerer's hands-on actions on day 1, Hild
+ *   steadying the oars; the finishing is the camp's building work from 06:00 on day 2. Hild speaks
+ *   each stage.
  * - **The first dusk** (beats 10 to 12): the Hag's light; the scavengers' fight is the combat code's
  *   (src/sim/land/fight.ts), and this module only waits for it to be over; then the first night's
  *   fire, Hild's grief and the morning's aims; the searches' people are placed at 19:00.
@@ -33,7 +38,19 @@ import { parsePeopleBalance } from '../../content/peopleBalance.ts';
 import { parseSearchBalance } from '../../content/searchBalance.ts';
 import type { CampDef, Content, OpeningDef } from '../../content/registry.ts';
 import type { Id } from '../../core/ids.ts';
-import { FACT_AT_BROCH, FACT_FIRE_LIT, homeOf } from '../home/camp.ts';
+import { parseWorkBalance } from '../../content/homeBalance.ts';
+import { parseSeaBurialBalance } from './seaBurial.ts';
+import type { SeaBurialBalance } from './seaBurial.ts';
+import {
+  buildingWorkerDays,
+  FACT_AT_BROCH,
+  FACT_FIRE_LIT,
+  FACT_SHELTER,
+  homeOf,
+  leanToUp,
+  shelterFinishOpen,
+  shelterStage,
+} from '../home/camp.ts';
 import type { CampContext, PlacedUse } from '../home/camp.ts';
 import { setFact } from '../ledger/ledger.ts';
 import { compass, NEEDS_LIFT, TICKS_PER_SECOND } from '../land/onFoot.ts';
@@ -68,7 +85,15 @@ export const FACT_LASHING_CUT = 'ch1.lashing_cut';
 export const FACT_MAST_STORES = 'ch1.mast_stores';
 export const FACT_HILD_WALKING = 'ch1.hild_walking_up';
 export const FACT_HILD_WALKED_UP = 'ch1.hild_walked_up';
-export const FACT_SHELTER_RAISED = 'ch1.shelter_raised';
+/** The tick the shelter last changed stage (its cloth filling and settling is drawn from it). */
+export const FACT_SHELTER_AT = 'ch1.shelter_at';
+/** Hild's word on the old tower is said (DG-13): the aim to see it opens. */
+export const FACT_BROCH_SAID = 'ch1.broch_said';
+/** Hild's second-morning word on finishing the shelter is said (DG-12). */
+export const FACT_FINISH_SAID = 'ch1.shelter_finish_said';
+/** A line of Hild's waiting a moment behind the one just said: its key and its tick. */
+const FACT_NEXT_LINE = 'ch1.next_line';
+const FACT_NEXT_LINE_AT = 'ch1.next_line_at';
 export const FACT_OLD_BOAT_SAID = 'ch1.old_boat_said';
 export const FACT_SEARCHES_PLACED = 'ch1.searches_placed';
 export const FACT_DUSK_OVER = 'ch1.dusk_over';
@@ -95,8 +120,10 @@ const FACT_BODY = 'ch1.thorkel_body';
 const STONE_SHEET = 'prop_hagstone';
 
 export const TASK_CUT_NET = 'TASK_CUT_NET';
-export const TASK_RAISE_SHELTER = 'TASK_RAISE_SHELTER';
-const WRECK_TASKS = [TASK_CUT_NET, TASK_RAISE_SHELTER] as const;
+/** The shelter's two hands-on stages on day 1 (Book 10 shelterFrame and shelterSail; DG-12). */
+export const TASK_SHELTER_FRAME = 'TASK_SHELTER_FRAME';
+export const TASK_SHELTER_SAIL = 'TASK_SHELTER_SAIL';
+const WRECK_TASKS = [TASK_CUT_NET, TASK_SHELTER_FRAME, TASK_SHELTER_SAIL] as const;
 
 export type WreckPhase = 'COLD_OPEN' | 'WAKING' | 'PLAY';
 
@@ -118,7 +145,10 @@ export type WreckWhat =
   | 'BUNDLE_SPLASH'
   | 'STORES_BROUGHT'
   | 'CAMP_REACHED'
+  | 'SHELTER_WORK'
+  | 'SHELTER_FRAME'
   | 'SHELTER_RAISED'
+  | 'SHELTER_FINISHED'
   | 'RING_FOUND'
   | 'HAG_LIGHT'
   | 'HAG_HUSH'
@@ -190,6 +220,10 @@ export interface WreckContext {
   readonly runa: { readonly person: Id; readonly tools: Id } | null;
   /** The arm-ring's worth in silver (Book 10 section 04), and the item. */
   readonly ring: { readonly item: Id; readonly oz: number };
+  /** The shelter's finishing in worker-minutes (Book 10 Buildings, the S1 sail shelter). */
+  readonly shelterNeedMinutes: number;
+  /** Book 10 section 08's sea burial, for its drawing (DG-14). */
+  readonly sea: SeaBurialBalance | null;
 }
 
 export function wreckContext(
@@ -238,6 +272,12 @@ export function wreckContext(
     runa: s === null ? null : { person: s.runa.person, tools: s.runa.tools.id },
     campBeds: camp?.shelterBeds ?? [],
     ring: { item: 'ITEM_SILVER_ARM_RING', oz: ringOz },
+    shelterNeedMinutes:
+      camp === null
+        ? 0
+        : buildingWorkerDays(content.balance, camp.shelter.balanceRow) *
+          parseWorkBalance(content.balance).workerDayMinutes,
+    sea: parseSeaBurialBalance(content.balance),
   };
 }
 
@@ -256,9 +296,9 @@ export function beginOpening(world: WorldState, coldOpen: boolean): void {
   setFact(world, FACT_WOKE_AT, world.tick);
 }
 
-/** Facts every world begun with the rework's opening starts with. */
+/** Facts every world begun with the rework's opening starts with: the sail lies folded (DG-12). */
 function beginFacts(world: WorldState): void {
-  setFact(world, FACT_SHELTER_RAISED, false);
+  setFact(world, FACT_SHELTER, 'FOLDED');
 }
 
 /** The opening's phase (a world from before the rework is awake). */
@@ -489,8 +529,18 @@ export function stepWreck(
   const freeAt = world.facts[FACT_NET_FREE_AT];
   if (typeof freeAt === 'number' && world.tick - freeAt === ctx.rw.net.jokeSeconds * T)
     say(ctx.caller, ctx.rw.net.lines['joke'] ?? '');
-  // Safe above the tide line: a moment later, she names Thorkel's chest (once).
+  // Safe above the tide line: after her first line she points up the bank to the old tower
+  // (DG-13), and a moment later names Thorkel's chest (once).
   const safeAt = world.facts[FACT_HILD_SAFE_AT];
+  if (
+    world.facts[FACT_BROCH_SAID] !== true &&
+    world.facts[FACT_HILD_SAFE] === true &&
+    typeof safeAt === 'number' &&
+    world.tick - safeAt >= Math.round(ctx.rw.broch.afterSafeSeconds * T)
+  ) {
+    setFact(world, FACT_BROCH_SAID, true);
+    say(ctx.caller, ctx.rw.broch.line);
+  }
   if (
     world.facts[FACT_CHEST_NAMED] !== true &&
     world.facts[FACT_CHEST_PLACED] === true &&
@@ -527,11 +577,7 @@ export function stepWreck(
     setFact(world, FACT_OLD_BOAT_SAID, true);
     say(ctx.caller, ctx.rw.camp.oldBoat);
   }
-  // Residents who raised the S1 roof themselves have put a shelter up too.
-  if (world.facts[FACT_SHELTER_RAISED] === false && camp !== null) {
-    const stage = world.homes['ISLE_SKARV']?.stage;
-    if (stage !== undefined && stage !== 'S0') setFact(world, FACT_SHELTER_RAISED, true);
-  }
+  stepShelter(world, ctx, emit);
   stepDusk(world, ctx, emit);
   stepFireScene(world, ctx, emit);
   stepKey(world, ctx, emit);
@@ -552,6 +598,73 @@ export function stepWreck(
   stepRescues(world, ctx);
   stepRunaLie(world, ctx, land, emit);
   stepHagStone(world, ctx, land, emit);
+}
+
+/**
+ * The shelter's stages that are not the steerer's own actions (DG-12): Hild's word waiting behind
+ * the one just said; her call to finish it on the second morning, near the steerer at the camp;
+ * and the finished shelter (the camp at S1, by anyone's work), with her word on it.
+ */
+function stepShelter(world: WorldState, ctx: WreckContext, emit: WreckEmit): void {
+  const onFoot = world.onFoot;
+  const camp = ctx.camp;
+  if (onFoot === null) return;
+  const hild = findActor(onFoot, ctx.caller);
+  const p = onFoot.player;
+  const near = (tiles: number): boolean =>
+    hild !== null &&
+    hild.visible &&
+    hild.actor.pose !== 'carried' &&
+    hild.actor.pose !== 'down' &&
+    distTiles(hild.actor, p, 24) <= tiles;
+  const quiet = world.talk === null && !fightNear(world) && world.player.awake;
+  // The line waiting behind the one just said (her walk-up's frame, the lean-to's night word).
+  const next = world.facts[FACT_NEXT_LINE];
+  const nextAt = world.facts[FACT_NEXT_LINE_AT];
+  if (typeof next === 'string' && typeof nextAt === 'number' && world.tick >= nextAt) {
+    Reflect.deleteProperty(world.facts, FACT_NEXT_LINE);
+    Reflect.deleteProperty(world.facts, FACT_NEXT_LINE_AT);
+    if (near(ctx.earshotTiles)) emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: next });
+  }
+  const stage = shelterStage(world);
+  if (stage === null || camp === null) return;
+  // The camp at S1, by anyone's hands: the shelter is finished.
+  const home = world.homes['ISLE_SKARV'];
+  if (stage !== 'FINISHED' && home !== undefined && home.stage !== 'S0') {
+    setFact(world, FACT_SHELTER, 'FINISHED');
+    setFact(world, FACT_SHELTER_AT, world.tick);
+    emit({ type: 'WRECK', what: 'SHELTER_FINISHED' });
+    const line = ctx.rw.camp.finished;
+    if (near(ctx.earshotTiles) && quiet)
+      emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: line });
+    else world.people[ctx.caller]?.life.owed.push(line);
+    return;
+  }
+  // The second morning, at the camp near the steerer (or on waking there): her call to finish it.
+  if (
+    stage === 'SAIL' &&
+    world.facts[FACT_FINISH_SAID] !== true &&
+    shelterFinishOpen(world, ctx.ob.camp.shelterFinishFrom, 360) &&
+    onFoot.zone === camp.zone &&
+    hild?.zone === camp.zone &&
+    hild.actor.pose !== 'sleep' &&
+    quiet &&
+    onFoot.player.sleep == null &&
+    near(ctx.ob.camp.shelterHildTiles)
+  ) {
+    setFact(world, FACT_FINISH_SAID, true);
+    emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: ctx.rw.camp.finish });
+  }
+}
+
+/** Hild says a line a moment after the one she has just said (one waits at a time). */
+function sayNext(world: WorldState, ctx: WreckContext, lineKey: string): void {
+  setFact(world, FACT_NEXT_LINE, lineKey);
+  setFact(
+    world,
+    FACT_NEXT_LINE_AT,
+    world.tick + Math.round(ctx.rw.camp.nextLineSeconds * TICKS_PER_SECOND),
+  );
 }
 
 /** Thorkel's chest washes into place by Hild once she is reached (Book 9 section 03). */
@@ -600,9 +713,32 @@ function stepWalkUp(
   const camp = ctx.camp;
   if (onFoot === null || camp === null) return;
   if (world.facts[FACT_HILD_WALKED_UP] === true) {
-    // By the fire until the sail is up, then her day takes her (Stage 8: to her work).
-    if (world.facts[FACT_SHELTER_RAISED] !== false) return;
+    // By the fire until the sail is up, then her day takes her (Stage 8: to her work); while the
+    // steerer stands the oars up, she steadies them beside the frame (DG-12).
+    if (leanToUp(world)) return;
     if (world.talk?.with === ctx.caller) return;
+    const steadying = onFoot.player.work?.task === TASK_SHELTER_FRAME;
+    if (steadying) {
+      const st = ctx.rw.camp.steady;
+      stepResident(
+        onFoot,
+        ctx.caller,
+        {
+          zone: camp.zone,
+          x: st.x * 24,
+          y: st.y * 24,
+          facing: st.facing,
+          pose: 'work',
+          task: 'TASK_BUILD',
+        },
+        land.maps,
+        land,
+        tidalGroundOpen,
+        false,
+        Math.min(land.movement.walk, ctx.limp),
+      );
+      return;
+    }
     const seat = ctx.rw.camp.hildSeat;
     stepResident(
       onFoot,
@@ -651,6 +787,8 @@ function stepWalkUp(
     now.actor.facing = p.x < now.actor.x ? 'w' : 'e';
     setFact(world, FACT_HILD_WALKED_UP, true);
     emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: ctx.rw.camp.walkUp });
+    // Then the first step (DG-12), unless the frame already stands.
+    if (shelterStage(world) === 'FOLDED') sayNext(world, ctx, ctx.rw.camp.frame);
   }
 }
 
@@ -785,7 +923,10 @@ function giveKey(
   emit({ type: 'WRECK', what: 'KEY_TAKEN', item: key, key: ctx.rw.chest.captions['key'] ?? '' });
 }
 
-/** What the steerer can do here that is the opening's: take the key, open the chest, raise the sail. */
+/**
+ * What the steerer can do here that is the opening's: take the key, open the chest, stand the
+ * shelter's frame and lash the sail over it.
+ */
 export function wreckPlacedUses(
   world: WorldState,
   ctx: WreckContext,
@@ -826,18 +967,23 @@ export function wreckPlacedUses(
       x: chest.x,
       y: chest.y - 1,
     });
-  // The sail and the oars, at the camp, before the shelter is up.
+  // The sail and the oars at the camp: the frame first, then the sail over it (DG-12).
   const c = ctx.camp;
   const home = camp === null ? undefined : homeOf(world, camp);
+  const stage = shelterStage(world);
   if (
     c !== null &&
     map.zone === c.zone &&
     world.facts[FACT_AT_BROCH] === true &&
-    world.facts[FACT_SHELTER_RAISED] === false &&
+    (stage === 'FOLDED' || stage === 'FRAME') &&
     home?.stage === 'S0'
   )
     out.push({
-      use: { kind: 'OPENING', site: 'raise_shelter', target: 'SHELTER' },
+      use: {
+        kind: 'OPENING',
+        site: stage === 'FOLDED' ? 'shelter_frame' : 'shelter_sail',
+        target: 'SHELTER',
+      },
       x: c.shelter.x * T,
       y: c.shelter.y * T,
     });
@@ -879,16 +1025,28 @@ export function wreckUse(
     case 'open_chest':
       openChest(world, ctx, hooks, emit);
       return;
-    case 'raise_shelter': {
+    case 'shelter_frame':
+    case 'shelter_sail': {
       const c = ctx.camp;
-      if (c === null) return;
-      const r = ctx.ob.camp.shelterRaise;
+      const stage = shelterStage(world);
+      const frame = site === 'shelter_frame';
+      if (c === null || stage !== (frame ? 'FOLDED' : 'FRAME')) return;
+      const r = frame ? ctx.ob.camp.shelterFrame : ctx.ob.camp.shelterSail;
       hooks.work(
-        TASK_RAISE_SHELTER,
+        frame ? TASK_SHELTER_FRAME : TASK_SHELTER_SAIL,
         'shelter',
         { x: c.shelter.x * 24, y: c.shelter.y * 24 },
-        r.seconds * TICKS_PER_SECOND,
+        Math.round(r.seconds * TICKS_PER_SECOND),
       );
+      // The stage's work begins: its sound plays across the work loop.
+      if (onFoot.player.work?.task === (frame ? TASK_SHELTER_FRAME : TASK_SHELTER_SAIL))
+        emit({
+          type: 'WRECK',
+          what: 'SHELTER_WORK',
+          x: c.shelter.x * 24,
+          y: c.shelter.y * 24,
+          key: frame ? 'FRAME' : 'SAIL',
+        });
       return;
     }
   }
@@ -971,16 +1129,29 @@ export function finishWreckWork(
     emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: ctx.rw.net.lines['cut'] ?? '' });
     return;
   }
-  if (task === TASK_RAISE_SHELTER) {
-    const r = ctx.ob.camp.shelterRaise;
-    setFact(world, FACT_SHELTER_RAISED, true);
-    setFact(world, 'ch1.shelter_raised_at', world.tick);
+  if (task === TASK_SHELTER_FRAME || task === TASK_SHELTER_SAIL) {
+    const frame = task === TASK_SHELTER_FRAME;
+    const r = frame ? ctx.ob.camp.shelterFrame : ctx.ob.camp.shelterSail;
+    if (shelterStage(world) !== (frame ? 'FOLDED' : 'FRAME')) return;
+    setFact(world, FACT_SHELTER, frame ? 'FRAME' : 'SAIL');
+    setFact(world, FACT_SHELTER_AT, world.tick);
     hooks.spend(r.stamina);
     world.player.condition.workedMinutes += r.minutes;
-    emit({ type: 'WRECK', what: 'SHELTER_RAISED', key: ctx.rw.camp.captions['sail'] ?? '' });
+    emit(
+      frame
+        ? { type: 'WRECK', what: 'SHELTER_FRAME' }
+        : { type: 'WRECK', what: 'SHELTER_RAISED', key: ctx.rw.camp.captions['sail'] ?? '' },
+    );
+    // Hild's word for the next step (the sail), or on the lean-to and the morning (DG-12).
     const h = findActor(onFoot, ctx.caller);
-    if (h?.visible === true && distTiles(h.actor, onFoot.player, 24) <= ctx.earshotTiles)
-      emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: ctx.rw.camp.shelterUp });
+    if (h?.visible === true && distTiles(h.actor, onFoot.player, 24) <= ctx.earshotTiles) {
+      emit({
+        type: 'PERSON_SPOKE',
+        person: ctx.caller,
+        lineKey: frame ? ctx.rw.camp.sailLine : ctx.rw.camp.shelterUp,
+      });
+      if (!frame) sayNext(world, ctx, ctx.rw.camp.night);
+    }
     hooks.advance(r.minutes);
   }
 }
@@ -1293,7 +1464,7 @@ export function wreckHolds(world: WorldState, ctx: WreckContext, id: Id): boolea
   if (
     id === ctx.caller &&
     world.facts[FACT_HILD_WALKING] === true &&
-    (world.facts[FACT_HILD_WALKED_UP] !== true || world.facts[FACT_SHELTER_RAISED] === false)
+    (world.facts[FACT_HILD_WALKED_UP] !== true || !leanToUp(world))
   )
     return true;
   const down = world.facts[`rescue.${id}.down`];

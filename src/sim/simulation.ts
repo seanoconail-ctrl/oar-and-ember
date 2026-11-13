@@ -12,6 +12,8 @@
  * with happiness, friendship and fear, schedules, jobs and delegation, conversation, barks, the
  * warning flow and scenes (Stage 8).
  */
+import { applyDev } from './dev.ts';
+import type { DevCommand } from './dev.ts';
 import type { TimeBalance } from '../content/balance.ts';
 import type { StaminaBalance } from '../content/homeBalance.ts';
 import { EventBus } from '../core/events.ts';
@@ -42,6 +44,7 @@ import {
   stepActor,
   stepMovement,
   stuckRecoverable,
+  TICKS_PER_SECOND,
 } from './land/onFoot.ts';
 import type {
   Aim,
@@ -67,9 +70,11 @@ import {
   stepDuskAway,
   stepStance,
   crewOrder,
-  finisherTarget,
+  finishOffer,
+  sparedDay,
+  startFinisher,
+  steererSpare,
   hostilesAware,
-  hurt,
   leaveZone,
   meleePress,
   meleeRelease,
@@ -92,6 +97,7 @@ import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './lan
 import { updateExhausted } from './combat/fighter.ts';
 import type { MissileEvent } from './land/missiles.ts';
 import { bandAt, isDeep, stillWaterLevel } from './land/water.ts';
+import { seaBurialActive } from './narrative/seaBurial.ts';
 import {
   byTheFire,
   homeOf,
@@ -141,6 +147,7 @@ import {
 import type { RepairEvent, RepairsContext } from './narrative/repairs.ts';
 import {
   closeSeaMap,
+  FACT_LAUNCHED,
   launchActive,
   launchHolds,
   markSail,
@@ -242,6 +249,8 @@ export type Command =
   | { readonly type: 'BLOCK'; readonly on: boolean }
   | { readonly type: 'DODGE'; readonly x: number; readonly y: number }
   | { readonly type: 'FINISHER'; readonly on: boolean }
+  /** The user's third playtest (decision DG-2): let a beaten foe go (G; a pad's A in context). */
+  | { readonly type: 'SPARE' }
   /**
    * Combat v2 (Book 2 section 12, decisions DE-2, DE-3, DE-8 and DE-9): the stance's aim towards
    * one of AIM_DIRECTIONS (null: none; keyboard-only play sends the way last moved); the lock-on
@@ -268,7 +277,9 @@ export type Command =
   /** The sea map shown at the launch is closed: Chapter 1 ends. */
   | { readonly type: 'CLOSE_SEA_MAP' }
   /** Real milliseconds a menu held the game (time stopped), for the telemetry. */
-  | { readonly type: 'TIME_HELD'; readonly ms: number };
+  | { readonly type: 'TIME_HELD'; readonly ms: number }
+  /** The developer menu's commands (decision DG-21; src/sim/dev.ts), recorded like any other. */
+  | DevCommand;
 
 /** Aim vectors are quantised to this many directions, so replays are exact. */
 export const AIM_DIRECTIONS = 64;
@@ -589,6 +600,13 @@ export function createSimulation(
       state.report = morningReport(state, camp, night, (id) => id, plans);
     }
     events.emit({ type: 'WOKE', day, at: clockText(state.calendar.minuteOfDay), cause });
+    // The scheduler's daily entry for the spared (decision DG-6; src/sim/land/fight.ts).
+    if (fightCtx !== null) {
+      if (state.facts[FACT_LAUNCHED] === true && state.facts['spared.launchDay'] === undefined)
+        state.facts['spared.launchDay'] = state.chapters['CH_1_WRECK']?.resolvedDay ?? day;
+      const launchDay = state.facts['spared.launchDay'];
+      sparedDay(state, fightCtx, emitFight, typeof launchDay === 'number' ? launchDay : null);
+    }
     if (seasonDay(day) === 1) {
       events.emit({ type: 'SEASON_STARTED', day, season: seasonOf(day), year: yearOf(day) });
     }
@@ -627,6 +645,13 @@ export function createSimulation(
   const sleepFrom = (b.sleepAfter - b.dayStart + 1440) % 1440;
 
   const apply = (command: Command): void => {
+    // The sea taking Thorkel (DG-14) is a scene that takes control: only the options and the
+    // telemetry are taken until it ends.
+    if (
+      seaBurialActive(state) &&
+      !['TIME_HELD', 'SET_OPTIONS', 'SET_DAY_LENGTH'].includes(command.type)
+    )
+      return;
     // Stage 12: while the launch scene has the household, the steerer is part of it: only the
     // launch's own commands, the options and the telemetry are taken.
     if (
@@ -647,6 +672,20 @@ export function createSimulation(
       case 'TIME_HELD':
         addHeld(state, command.ms);
         return;
+      case 'DEV_SKIP':
+      case 'DEV_TELEPORT':
+      case 'DEV_KILL': {
+        const done = applyDev(state, command, {
+          advanceBy: (m) => {
+            advanceBy(m);
+          },
+          land,
+          tidalGroundOpen: tideAt(state.calendar, b).tidalGroundOpen,
+          fightWorld,
+        });
+        if (done !== 'DONE') refuse(command, done === 'BUSY' ? 'BUSY' : 'NOTHING_THERE');
+        return;
+      }
       case 'START_GATE': {
         if (launchCtx === null || land === null || command.gate !== launchCtx.def.gate) return;
         const why = startLaunch(state, launchCtx, land, b, launchHooks, emitLaunch);
@@ -808,19 +847,34 @@ export function createSimulation(
         return;
       }
       case 'FINISHER': {
+        // The finisher held (Book 10 finishKey): a choosing, not an action (no stamina, no lock);
+        // let go sooner and nothing happens (decision DG-2).
         const p = state.onFoot?.player;
         if (fightCtx === null || p == null || fallen()) return;
         if (!command.on) {
           finishing = null;
           return;
         }
-        const target = finisherTarget(state, fightCtx, tileSize());
-        if (target === null) {
+        const offer = finishOffer(state, fightCtx, tileSize());
+        if (offer === null) {
           refuse(command, 'NOTHING_IN_REACH');
           return;
         }
-        finishing = { target, since: state.tick };
-        events.emit({ type: 'FINISHER_STARTED', target });
+        finishing = { target: offer.foe, since: state.tick };
+        events.emit({ type: 'FINISHER_STARTED', target: offer.foe });
+        return;
+      }
+      case 'SPARE': {
+        // Let go (Book 10 spareKey): one press; the shout follows at once (decision DG-4).
+        if (fightCtx === null || fallen()) return;
+        const offer = finishOffer(state, fightCtx, tileSize());
+        const fw = fightWorld();
+        if (offer === null || fw === null) {
+          refuse(command, 'NOTHING_IN_REACH');
+          return;
+        }
+        finishing = null;
+        steererSpare(fw, offer);
         return;
       }
       case 'MOVE': {
@@ -1111,6 +1165,14 @@ export function createSimulation(
   /** The held finisher under way (Book 10 finisherHold). */
   let finishing: { target: Id; since: number } | null = null;
   const emitFight = (e: Parameters<FightWorld['emit']>[0]): void => {
+    // A hit taken during the finisher's hold ends it (Book 10 finishKey).
+    if (
+      finishing !== null &&
+      e.type === 'BLOW' &&
+      e.defender === STEERER &&
+      (e.outcome === 'HIT' || e.outcome === 'GUARD_BROKEN')
+    )
+      finishing = null;
     events.emit(e);
   };
   /** A search's events (Stage 10): onto the bus, and a resolved search is remembered. */
@@ -1128,6 +1190,18 @@ export function createSimulation(
   };
   /** The opening's and the aims' events (design addendum 2.4): onto the bus. */
   const emitWreck = (e: WreckEvent | AimEvent | EdgeEvent | DoorEvent): void => {
+    // Hild's dusk aim, spoken in earshot, is followed by her word on the dune grass: the sneak
+    // hint's cue (Book 8 section 05; decision DG-25), a few seconds later (src/sim/land/fight.ts).
+    if (
+      e.type === 'AIM_HINT' &&
+      e.aim === 'scavengers' &&
+      e.hint === 0 &&
+      !e.called &&
+      state.facts['ch1.dusk.sneakCueAt'] === undefined &&
+      fightCtx !== null
+    )
+      state.facts['ch1.dusk.sneakCueAt'] =
+        state.tick + Math.round(fightCtx.pt3.prompts.sneakCueSeconds * TICKS_PER_SECOND);
     events.emit(e);
   };
   /** The doors of the zone in view that exist now. */
@@ -1274,9 +1348,32 @@ export function createSimulation(
         );
       },
       emit: emitFight,
-      deed: (tag, victims, witnesses) => {
-        if (people === null) return;
-        householdDeed(state, people, { tag, placeId: onFoot.zone, victims }, witnesses, emitPeople);
+      deed: (tag, victims, witnesses, context) => {
+        const placeId = onFoot.zone;
+        if (people === null) {
+          // No people to judge it (a world without the household's content): the ledger only.
+          const id = `DEED_${state.ledger.length + 1}`;
+          state.ledger.push({
+            id,
+            tag,
+            day: state.calendar.day,
+            placeId,
+            doer: 'HOUSEHOLD',
+            context: { ...(context ?? {}) },
+            victims: [...victims],
+            witnesses: witnesses.map((person) => ({ person, escaped: false })),
+            identification: 1,
+            marksSeen: [],
+          } as (typeof state.ledger)[number]);
+          return id;
+        }
+        return householdDeed(
+          state,
+          people,
+          { tag, placeId, victims, ...(context === undefined ? {} : { context }) },
+          witnesses,
+          emitPeople,
+        );
       },
       options: {
         secondWind: state.options.secondWind,
@@ -1373,6 +1470,9 @@ export function createSimulation(
     }
     const first = !state.player.tipsSeen.includes(item);
     if (first) state.player.tipsSeen.push(item);
+    // Loot taken where a fight is held (Book 10 "The spared remembered", robbed).
+    const battle = state.onFoot?.battle;
+    if (battle != null) battle.looted = true;
     events.emit({ type: 'ITEM_PICKED_UP', item, count: took, first });
     return took;
   };
@@ -1752,9 +1852,10 @@ export function createSimulation(
     const waking = wreckCtx !== null && wreckPhase(state) !== 'PLAY';
     if (waking) p.intent = { ...p.intent, x: 0, y: 0 };
     // The launch scene moves the steerer itself (Stage 12).
-    const press = launchActive(state)
-      ? null
-      : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level }, state.tick);
+    const press =
+      launchActive(state) || seaBurialActive(state)
+        ? null
+        : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level }, state.tick);
     if (held || waking) p.intent = wanted;
     // "Nothing that way" (decision DE-25): pressing against an edge gives its caption.
     if (land.edgeCaption != null) {
@@ -1767,19 +1868,12 @@ export function createSimulation(
       // Combat v2 (decision DE-12): reaching camp the first time in a day calls for a checkpoint.
       if (campReached(state, fw.ctx, map.tile))
         events.emit({ type: 'CAMP_REACHED', day: state.calendar.day });
-      // The held finisher (Book 10 finisherHold): a kill, and a deed.
-      if (finishing !== null) {
-        const t = onFoot.actors[finishing.target];
-        if (t?.fight?.dead !== null) finishing = null;
-        else if (state.tick - finishing.since >= fw.ctx.cb.finisherHold) {
-          hurt(fw, finishing.target, 9999, STEERER, {
-            heavyKill: true,
-            weapon: p.fight?.weapon ?? null,
-            dx: t.x - p.x,
-            dy: t.y - p.y,
-          });
-          finishing = null;
-        }
+      // The held finisher (Book 10 finisherHold): the hold done, the finisher plays its ticks
+      // under "Commitment" (decisions DG-2 and DG-3), on the foe still offered.
+      if (finishing !== null && state.tick - finishing.since >= fw.ctx.cb.finisherHold) {
+        const offer = finishOffer(state, fw.ctx, map.tile);
+        if (offer !== null && offer.foe === finishing.target) startFinisher(fw, offer);
+        finishing = null;
       }
     }
     const emit = events.emit.bind(events);
@@ -1859,7 +1953,13 @@ export function createSimulation(
         emitSearch,
       );
     // Chapter 1 beats 4 to 6: the repairs, the fitting and Thorkel's rites (Stage 11).
-    if (repairCtx !== null) stepRepairs(state, repairCtx, land, tide.tidalGroundOpen, emitRepair);
+    if (repairCtx !== null)
+      stepRepairs(state, repairCtx, land, tide.tidalGroundOpen, emitRepair, (zone, x, y) => {
+        // The sea burial's water's edge (DG-14): ground awash at the tide now.
+        const el = land.elevations.get(zone);
+        const t = land.maps.get(zone)?.tile ?? 24;
+        return el !== undefined && bandAt(land.water, el, x * t, y * t, level) !== null;
+      });
     // Chapter 1 beat 8, the launch and its gate (Stage 12).
     if (launchCtx !== null) stepLaunch(state, launchCtx, emitLaunch);
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
@@ -1881,7 +1981,7 @@ export function createSimulation(
         wreckCtx?.limp,
       );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
-      if (!launchActive(state))
+      if (!launchActive(state) && !seaBurialActive(state))
         barkTick(state, people, camp, map.tile, residents(state), emitPeople);
     }
     // Other people: an archer's stop, draw, loose and move, then their own walk.

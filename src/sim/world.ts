@@ -80,7 +80,7 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * plays by the enemies' floors (the attack-turn origin goes); each fighter's mind (the fight state
  * machine), an archer's hop and sidearm, and an eased velocity; the steerer's velocity and motion.
  */
-export const WORLD_STATE_VERSION = 12;
+export const WORLD_STATE_VERSION = 13;
 
 /** Book 2 section 16. */
 export interface GateState {
@@ -398,6 +398,75 @@ export interface PlayerState {
   inventory: Record<Id, number>;
   /** Item kinds whose pickup tooltip has been shown; the help pages list them. */
   tipsSeen: Id[];
+  /**
+   * The user's third playtest (version 13, decision DG-23): what the campaign has taught (Book 2
+   * section 05). Absent in a save from before version 13 until migrated.
+   */
+  teaching?: Teaching;
+}
+
+/** A combat prompt (Book 2 section 18, CombatPromptId). */
+export type CombatPromptId =
+  | 'LOCK_ON'
+  | 'STRIKE'
+  | 'PARRY_DODGE'
+  | 'BLOCK'
+  | 'HEAL'
+  | 'SNEAK'
+  | 'TEACH_PARRY'
+  | 'TEACH_DODGE'
+  | 'FINISH_OR_SPARE';
+
+/**
+ * What the campaign has taught (Book 2 section 05, `player.teaching`; decisions DG-7, DG-9, DG-11,
+ * DG-23 and DG-25): the fights counted towards Book 10's promptFights, the heals finished towards
+ * healPromptUntil, the sneak hint's showings, each combat prompt's uses in fights and those retired
+ * (the sneak hint once the steerer has sneaked its tiles), the tiles sneaked so far, and the
+ * teaching foes' lessons done.
+ */
+export interface Teaching {
+  fights: number;
+  heals: number;
+  sneakShown: number;
+  /** Tiles sneaked, until Book 10's sneakDone retires the hint (then no longer counted). */
+  sneakTiles: number;
+  uses: Partial<Record<CombatPromptId, number>>;
+  retired: CombatPromptId[];
+  lessons: ('PARRY' | 'RED')[];
+}
+
+/** A campaign's teaching at its start (and a save that predates version 13 as migrated). */
+export function freshTeaching(fights = 0): Teaching {
+  return { fights, heals: 0, sneakShown: 0, sneakTiles: 0, uses: {}, retired: [], lessons: [] };
+}
+
+/**
+ * Book 2 section 15's SparedRecord (version 13; decisions DG-5 and DG-6): one let go, the deed, the
+ * conditions of the spare, and the fate drawn then (hidden: never shown, never read by the
+ * interface), with its favour's form, its due day and the precursor's, and whether it has played.
+ * `island`: spared in Chapter 1, so it plays on the island first and is due no sooner than Book 10's
+ * days after the launch (`due` is moved on then, once).
+ */
+export interface SparedRecord {
+  readonly person: Id;
+  readonly deed: Id;
+  readonly day: number;
+  readonly placeId: Id;
+  readonly how: 'REELING' | 'DOWNED' | 'BEGGING' | 'LEFT';
+  readonly begged: boolean;
+  readonly kinKilled: boolean;
+  readonly shamed: boolean;
+  readonly robbed: boolean;
+  fate: 'FAVOUR' | 'AMBUSH' | 'GONE';
+  readonly favour?: 'HELP' | 'WARNING' | 'GIFT' | 'STAND_ASIDE';
+  due: number;
+  precursorDay: number;
+  paid: boolean;
+  readonly island?: boolean;
+  /** The launch's due-day rule applied (Book 10 due, Notes). */
+  launched?: boolean;
+  /** The precursor has been sent. */
+  heard?: boolean;
 }
 
 export interface Hotbar {
@@ -605,6 +674,8 @@ export interface WorldState {
    * Absent in a save from before version 11 until migrated.
    */
   aims?: AimState;
+  /** The spared (version 13; Book 2 section 15, decisions DG-5 and DG-6): never removed. */
+  spared?: SparedRecord[];
 }
 
 /** Book 2 section 16: the aim the journal shows and its stuck clock. */
@@ -649,6 +720,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
       hotbar: { slots: [], selected: 0 },
       inventory: {},
       tipsSeen: [],
+      teaching: freshTeaching(),
     },
     household: { residents: [], hostages: [], guests: [] },
     people: {},
@@ -675,6 +747,7 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     gates: {},
     telemetry: { start: 0, heldMs: 0, marks: {} },
     aims: { current: null, since: 0, hintsGiven: 0, reached: [] },
+    spared: [],
   };
 }
 

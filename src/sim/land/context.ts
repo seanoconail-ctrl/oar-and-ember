@@ -18,6 +18,7 @@ import { fightContext } from './fight.ts';
 import { peopleContext } from '../people/context.ts';
 import { searchContext } from '../narrative/searches.ts';
 import { repairsContext } from '../narrative/repairs.ts';
+import { parseSeaBurialBalance } from '../narrative/seaBurial.ts';
 import { launchContext } from '../narrative/launch.ts';
 import { parseLaunchBalance } from '../../content/launchBalance.ts';
 import { shipDefsOf } from '../ship/ship.ts';
@@ -70,6 +71,7 @@ export function landContext(
           content.repairs,
           shipDefsOf({ hulls: content.hulls, fittings: content.fittings, balance }),
           parseWorkBalance(balance).workerDayMinutes,
+          parseSeaBurialBalance(balance),
         );
   // Stage 12: the launch, Chapter 1's gate.
   const launch =

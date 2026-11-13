@@ -3,20 +3,29 @@
  * version, build, seed, day, chapter and state hash. Loading verifies the hash, refuses unknown
  * future versions and runs the migration chain.
  */
-import { migrateOpening } from './openingMigration.ts';
+import { migrateOpening, migrateShelter13 } from './openingMigration.ts';
+import { migrateCombat13 } from './combat13.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { parsePeopleBasics, parseStartingWeapons, parseTimeBalance } from '../content/balance.ts';
 import { parseWorkBalance } from '../content/homeBalance.ts';
 import { hashValue } from '../core/hash.ts';
 import { activeChapter, WORLD_STATE_VERSION } from '../sim/world.ts';
 import type { Person, WorldState } from '../sim/world.ts';
+import { seasonOf } from '../sim/calendar/calendar.ts';
+import type { Season } from '../content/balance.ts';
+import type { Id } from '../core/ids.ts';
+import { FACT_DEV as FACT_DEV_USED } from '../sim/dev.ts';
 import { joinPerson, newPerson } from '../sim/people/person.ts';
 import { parsePeopleBalance } from '../content/peopleBalance.ts';
 import type { HouseholdDef, PersonDef } from '../content/registry.ts';
 
 export const SAVE_FORMAT = 'oar-and-ember-save';
 
-export type SaveKind = 'manual' | 'autosave' | 'checkpoint';
+/**
+ * The user's third playtest (decision DG-17): `day-start` is the save written at every waking, to
+ * its own slot, that "Reset to the start of this day" loads; never offered as the autosave.
+ */
+export type SaveKind = 'manual' | 'autosave' | 'checkpoint' | 'day-start';
 /** Why an autosave was written; CAMP: the camp reached the first time in a day (decision DE-12). */
 export type AutosaveReason = 'WAKING' | 'DEPARTURE' | 'LANDING' | 'CAMP';
 
@@ -35,13 +44,51 @@ export interface SaveHeader {
   readonly sequence: number;
   /** Wall-clock time, for people to read only. */
   readonly savedAt: string;
+  /**
+   * What a slot shows without unpacking the world (Book 2 section 20; decision DG-16): the minute
+   * of the day, the season, the zone and the place's name string. Absent in saves made before.
+   */
+  readonly minuteOfDay?: number;
+  readonly season?: Season;
+  readonly zone?: Id | null;
+  readonly placeKey?: string;
+  /** Made after a developer command (decision DG-21). */
+  readonly dev?: true;
+}
+
+/** A slot's screenshot (Book 10 thumbnail): beside the header, never hashed or read by the sim. */
+export interface Thumbnail {
+  readonly w: number;
+  readonly h: number;
+  readonly format: 'png';
+  /** The PNG, in base64. */
+  readonly data: string;
 }
 
 export interface SaveFile {
   readonly format: typeof SAVE_FORMAT;
   readonly header: SaveHeader;
+  readonly thumbnail?: Thumbnail;
   /** The world state as JSON, deflated, in base64. */
   readonly data: string;
+}
+
+/** The fact a developer command sets (decision DG-21): later saves carry the dev mark. */
+export { FACT_DEV_USED };
+
+/** The place-name string a zone's slot shows (Book 2 section 20, `placeKey`). */
+export const ZONE_PLACE_KEYS: Readonly<Record<string, string>> = {
+  ZONE_SK_STRAND: 'place.name.sk_wreck_strand',
+  ZONE_SK_MACHAIR: 'place.name.sk_machair',
+  ZONE_SK_HAGSEAT: 'place.name.sk_hagseat',
+  ZONE_SK_CAIRN: 'place.name.sk_cairn',
+  ZONE_SK_SEALCAVE: 'place.name.sk_tidecave',
+};
+
+/** The place's name string for a world: its zone's, else the home island's. */
+export function placeKeyOf(world: WorldState): string {
+  const zone = world.onFoot?.zone;
+  return (zone === undefined ? undefined : ZONE_PLACE_KEYS[zone]) ?? 'place.name.isle_skarv';
 }
 
 export class SaveError extends Error {
@@ -97,6 +144,7 @@ export interface SaveMeta {
   readonly savedAt: string;
   readonly label?: string;
   readonly reason?: AutosaveReason;
+  readonly thumbnail?: Thumbnail;
 }
 
 export function writeSave(world: WorldState, meta: SaveMeta): SaveFile {
@@ -114,8 +162,16 @@ export function writeSave(world: WorldState, meta: SaveMeta): SaveFile {
     savedAt: meta.savedAt,
     ...(meta.label === undefined ? {} : { label: meta.label }),
     ...(meta.reason === undefined ? {} : { reason: meta.reason }),
+    minuteOfDay: world.calendar.minuteOfDay,
+    season: seasonOf(world.calendar.day),
+    zone: world.onFoot?.zone ?? null,
+    placeKey: placeKeyOf(world),
+    ...(world.facts[FACT_DEV_USED] === true ? { dev: true as const } : {}),
   };
-  return { format: SAVE_FORMAT, header, data: toBase64(deflateSync(strToU8(json), { level: 6 })) };
+  const data = toBase64(deflateSync(strToU8(json), { level: 6 }));
+  return meta.thumbnail === undefined
+    ? { format: SAVE_FORMAT, header, data }
+    : { format: SAVE_FORMAT, header, thumbnail: meta.thumbnail, data };
 }
 
 /** What a migration may read besides the save: balance.json (a step that needs a Book 10 number). */
@@ -469,6 +525,15 @@ export const MIGRATIONS: readonly Migration[] = [
     // Each fighter's mind starts idle, deciding afresh at its first tick in a fight (its offset
     // drawn then), with no hop, no sidearm drawn and no velocity. The steerer starts at rest.
     up: (state) => migrateCombat25(state),
+  },
+  {
+    from: 12,
+    describe:
+      "the user's third playtest: what the campaign has taught, the spared, and the shelter's stage",
+    // Decision DG-23. The combat fields (src/persist/combat13.ts): an older save's fights count as
+    // three (no prompt comes back mid-campaign), nothing else taught, `spared` empty. The shelter
+    // (src/persist/openingMigration.ts): a raised lean-to is SAIL, or FINISHED at S1.
+    up: (state) => migrateShelter13(migrateCombat13(state)),
   },
 ];
 

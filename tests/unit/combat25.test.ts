@@ -7,6 +7,7 @@
  * at the enemy. Every number is Book 10's (content/balance.json).
  */
 import { describe, expect, it } from 'vitest';
+import { plainFighters } from './plainFoes.ts';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import {
   MELEE_WEAPONS,
@@ -106,6 +107,7 @@ function strand(
         ? null
         : {
             ...content.combat,
+            fighters: plainFighters(content.combat.fighters),
             // A club for the tests (no club is in Chapter 1's content).
             weapons: {
               ...content.combat.weapons,
