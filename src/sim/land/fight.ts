@@ -4232,6 +4232,28 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ny = a.y + vy * speed;
   if (vx !== 0 && clear(nx, a.y)) a.x = nx;
   if (vy !== 0 && clear(a.x, ny)) a.y = ny;
+  if (a.x === before.x && a.y === before.y && fa.ai.goal?.away === true && speed > 0) {
+    // Running away and blocked straight ahead (rock, deep water): slide along it, on the side
+    // that takes them further from the steerer, rather than stand at it in sight for good.
+    const p = onFoot.player;
+    const sides = [
+      { x: -vy, y: vx },
+      { x: vy, y: -vx },
+    ].sort(
+      (s, t) =>
+        Math.hypot(a.x + t.x * speed - p.x, a.y + t.y * speed - p.y) -
+        Math.hypot(a.x + s.x * speed - p.x, a.y + s.y * speed - p.y),
+    );
+    for (const side of sides) {
+      const sx = a.x + side.x * speed;
+      const sy = a.y + side.y * speed;
+      if (clear(sx, sy)) {
+        a.x = sx;
+        a.y = sy;
+        break;
+      }
+    }
+  }
   if (a.x === before.x && a.y === before.y) fa.vel = { x: 0, y: 0 };
   // Stage 10: a wall in the way (the sheepfold's): round it by the tiles, towards the goal.
   const goal = fa.ai.goal;
@@ -5407,6 +5429,8 @@ export function steererSpare(fw: FightWorld, offer: FinishOffer): boolean {
   fa.ai.mode = 'FLEE';
   fa.ai.goal = null;
   fa.ai.target = null;
+  // The run is chosen at once (not at the next look round).
+  fa.ai.next = tick;
   delete a.task;
   a.pose = 'idle';
   if (encounterOf(ctx, battle)?.dusk === true) world.facts[`ch1.dusk.${id}`] = 'SPARED';

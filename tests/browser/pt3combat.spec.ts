@@ -107,6 +107,8 @@ async function faceWest(page: Page): Promise<void> {
 }
 
 test.describe('the user’s third playtest: finish or let go, prompts, the teaching foes', () => {
+  // Stepped play waits on the page for each frame: a minute and a half for the longer fights.
+  test.setTimeout(90_000);
   test('a beaten foe: the choice at the right edge; G lets go, with the shout, the reply and the run', async ({
     page,
   }) => {
@@ -136,7 +138,7 @@ test.describe('the user’s third playtest: finish or let go, prompts, the teach
       if (line !== '' && lines.at(-1) !== line) lines.push(line);
     }
     const shout = lines.findIndex((l) => l.startsWith('Ash:'));
-    expect(shout).toBeGreaterThanOrEqual(0);
+    expect(lines.join(' | ')).toContain('Ash:');
     expect(lines.slice(shout + 1).some((l) => !l.startsWith('Ash:'))).toBe(true);
     const after = await page.evaluate(() => {
       const w = (window as unknown as { oeWorld: W }).oeWorld;
@@ -190,7 +192,16 @@ test.describe('the user’s third playtest: finish or let go, prompts, the teach
     let prompt = false;
     for (let i = 0; i < 60 * 10 && !(turned && prompt); i += 6) {
       // A blow now and then, never after a parry: each one is turned and he takes no harm.
-      if (i % 30 === 0) {
+      if (i % 30 === 0 && !turned) {
+        // Beside him again (he steps back between blows), still facing west at him.
+        await page.evaluate(() => {
+          const w = (window as unknown as { oeWorld: W }).oeWorld;
+          const a = w.onFoot.actors['E_WRECKER_SVART'];
+          if (a !== undefined && a.fight?.f.state === 'idle') {
+            w.onFoot.player.x = a.x + 22;
+            w.onFoot.player.y = a.y;
+          }
+        });
         await page.mouse.down();
         await step(page, 1);
         await page.mouse.up();

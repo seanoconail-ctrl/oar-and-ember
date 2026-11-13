@@ -34,7 +34,7 @@ import { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor } from '../ship/work.ts';
 import type { RepairKind, ShipDefs, ShipInstance } from '../ship/ship.ts';
 import type { WorldState } from '../world.ts';
 import { GATE_LAUNCH } from './gates.ts';
-import { beginSeaBurial, seaBurialActive, stepSeaBurial } from './seaBurial.ts';
+import { beginSeaBurial, seaBurialActive, settleForCarry, stepSeaBurial } from './seaBurial.ts';
 import type { SeaBurialBalance, SeaEvent } from './seaBurial.ts';
 
 export { boatOf, FACT_CARVING, FACT_OAR, shipWorkFor };
@@ -798,9 +798,12 @@ function stepRites(
           Math.hypot(g.actor.x - bodySpot.x, g.actor.y - bodySpot.y) < 2
         ) {
           g.actor.carries = r.body;
+          settleForCarry(g.actor);
           body.actor.pose = 'carried';
         }
       } else {
+        // Carrying, the fight's walking holds him: no goal left over from the fold moves him.
+        settleForCarry(guard.actor);
         stepResident(
           onFoot,
           r.guard,

@@ -29,8 +29,9 @@ const CONN = 'E_WRECKER_CONN';
 const KETILL = 'E_WRECKER_KETILL';
 /** The clips' crop at 1x: the fighters, the prompts at the right edge and the speech line below. */
 const VIEW: readonly [number, number] = [480, 270];
-/** Book 10 "Parry": the press that centres the live ticks on the blow (wind-up 6 + 8 / 2). */
-const PARRY_LEAD = 10;
+/** The parry pressed this many ticks before a blow lands (as the dusk fight's parry clip). */
+const PARRY_LEAD_MIN = 3;
+const PARRY_LEAD_MAX = 6;
 /** Book 10 "Dodge": the middle of its invulnerable ticks (8 to 13). */
 const DODGE_LEAD = 10;
 const DUSK =
@@ -312,6 +313,7 @@ async function parryOnly(browser: Browser, out: string): Promise<string> {
   const clip = new Clip(page, 'parry-only', out);
   let turned = 0;
   let parried = false;
+  let pressed = false;
   let after = -1;
   for (let i = 0; i < FPS * 16 && (after < 0 || i < after + FPS * 2); i++) {
     const s = await foe(page, SVART);
@@ -330,20 +332,21 @@ async function parryOnly(browser: Browser, out: string): Promise<string> {
         turned++;
       }
     }
-    if (f !== null && turned >= 2 && !parried) {
-      const lands =
-        ['light1', 'heavyRelease'].includes(f.state) && s.t < f.activeAt
-          ? f.activeAt
-          : f.state.startsWith('charge') && f.flashAt >= f.since
-            ? f.flashAt + 28
-            : null;
-      const lead = lands === null ? -1 : lands - (s.t + 1);
-      if (lead === PARRY_LEAD || lead === PARRY_LEAD + 1) {
-        await page.keyboard.down('KeyQ');
-        await tick(page);
-        await page.keyboard.up('KeyQ');
+    if (
+      f !== null &&
+      (turned >= 2 || i > FPS * 6) &&
+      !pressed &&
+      ['light1', 'heavyRelease'].includes(f.state)
+    ) {
+      // Pressed a few ticks before his blow lands, as the dusk fight's parry clip (captureCombat2).
+      const lead = f.activeAt - s.t;
+      if (lead >= PARRY_LEAD_MIN && lead <= PARRY_LEAD_MAX) {
+        await page.keyboard.press('KeyQ');
+        pressed = true;
       }
     }
+    if (pressed && f !== null && f.state !== 'parried' && !parried && s.t > f.activeEnd)
+      pressed = false;
     if (f?.state === 'parried' && !parried) {
       parried = true;
       await strike(page);
@@ -374,8 +377,8 @@ async function dodgeOnly(browser: Browser, out: string): Promise<string> {
   let after = -1;
   let first = -1;
   for (let i = 0; i < FPS * 20 && (after < 0 || i < after); i++) {
-    // Two red blows dodged and their recoveries struck at: the lesson shown; two seconds more.
-    if (dodged >= 2 && after < 0) after = i + FPS * 2;
+    // Two red blows dodged and a recovery struck at: the lesson shown; a second more.
+    if (dodged >= 2 && hits > 0 && after < 0) after = i + FPS;
     const s = await foe(page, KETILL);
     const me = await steerer(page);
     const f = s.f;
@@ -402,14 +405,13 @@ async function dodgeOnly(browser: Browser, out: string): Promise<string> {
         s.x > me.x + 8 ? 'KeyD' : s.x < me.x - 8 ? 'KeyA' : '',
         s.y > me.y + 8 ? 'KeyS' : s.y < me.y - 8 ? 'KeyW' : '',
       ];
-      if (d > 30)
-        for (const k of keys)
-          if (k !== '') await page.keyboard.down(k);
-          else {
-            for (const k of ['KeyA', 'KeyD', 'KeyW', 'KeyS']) await page.keyboard.up(k);
-            await strike(page);
-            hits++;
-          }
+      if (d > 30) {
+        for (const k of keys) if (k !== '') await page.keyboard.down(k);
+      } else {
+        for (const k of ['KeyA', 'KeyD', 'KeyW', 'KeyS']) await page.keyboard.up(k);
+        await strike(page);
+        hits++;
+      }
     } else for (const k of ['KeyA', 'KeyD', 'KeyW', 'KeyS']) await page.keyboard.up(k);
     if (s.dead && after < 0) after = i + FPS * 2;
     await clip.frame(f !== null && f.move === 'red' && f.flashAt === s.t);

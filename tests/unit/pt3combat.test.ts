@@ -816,8 +816,9 @@ describe('every tutorial enemy speaks before attacking (asked; decision DG-8)', 
     const one = fight('kind-one', [CONN], { plain: true, away: 9 });
     const three = fight('kind-three', [KETILL, SVART, CONN], { plain: true, away: 9 });
     for (const f of [one, three])
-      steps(f, 60 * 12, () => { f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }); },
-      );
+      steps(f, 60 * 12, () => {
+        f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false });
+      });
     expect(one.events.find((e) => e.type === 'FIRST_SIGHT')).toMatchObject({ kind: 'WARNING' });
     expect(three.events.find((e) => e.type === 'FIRST_SIGHT')).toMatchObject({ kind: 'TAUNT' });
     // The pools' rule, drawn many times (a property over the `ai` stream).
@@ -945,12 +946,16 @@ describe('combat prompts (decisions DG-7, DG-11 and DG-25)', () => {
     const f = fight('sneak', [SVART, CONN], { plain: true, away: 14 });
     for (const a of Object.values(f.world.onFoot?.actors ?? {}))
       if (a.fight !== undefined) a.fight.f.angle = Math.PI;
-    steps(f, 30, () => { f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false }); });
+    steps(f, 30, () => {
+      f.sim.submit({ type: 'MOVE', x: -1, y: 0, run: false, sneak: false });
+    });
     expect(f.events.filter((e) => e.type === 'SNEAK_HINT')).toHaveLength(1);
     expect(f.world.player.teaching?.sneakShown).toBe(1);
     // Sneaking its tiles retires it for good.
     f.sim.submit({ type: 'SNEAK' });
-    steps(f, 200, () => { f.sim.submit({ type: 'MOVE', x: 1, y: 0, run: false, sneak: true }); });
+    steps(f, 200, () => {
+      f.sim.submit({ type: 'MOVE', x: 1, y: 0, run: false, sneak: true });
+    });
     expect(f.world.player.teaching?.retired).toContain('SNEAK');
     // At most sneakHintTimes in the campaign.
     const t = f.world.player.teaching ?? never();

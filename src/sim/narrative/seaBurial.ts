@@ -17,7 +17,7 @@ import type { Id } from '../../core/ids.ts';
 import { cyrb53 } from '../../core/hash.ts';
 import { setFact } from '../ledger/ledger.ts';
 import { TICKS_PER_SECOND } from '../land/onFoot.ts';
-import type { LandContext } from '../land/onFoot.ts';
+import type { LandContext, OnFootActor } from '../land/onFoot.ts';
 import { findActor, placeActor } from '../land/zoneLinks.ts';
 import { stepResident } from '../people/residents.ts';
 import type { WorldState } from '../world.ts';
@@ -387,6 +387,17 @@ export function bearersOf(world: WorldState, guard: Id, caller: Id): Id[] {
   return order.filter((id) => world.household.residents.includes(id) && able(id)).slice(0, 2);
 }
 
+/**
+ * A bearer leaves any walk the fight left them (a carrier is held by the fight's walking, which
+ * would take them towards a goal left over from the last fight): the rite moves them now.
+ */
+export function settleForCarry(a: OnFootActor): void {
+  const fa = a.fight;
+  if (fa === undefined) return;
+  fa.ai.goal = null;
+  fa.vel = { x: 0, y: 0 };
+}
+
 /** Where the household stands at the edge while the sea takes him (tiles from the edge). */
 const STAND: readonly (readonly [number, number])[] = [
   [-2.3, -1.2],
@@ -436,6 +447,7 @@ export function stepSeaBurial(
     if (m.phase === 'BIER') {
       if (a.zone !== s.zone) placeActor(onFoot, id, s.zone, a.actor);
       a.actor.carries = who.body;
+      settleForCarry(a.actor);
       a.actor.x = (bier.x + side * 1.05) * T;
       a.actor.y = bier.y * T + 2;
       a.actor.facing = 's';

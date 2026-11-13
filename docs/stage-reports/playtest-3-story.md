@@ -3,7 +3,7 @@
 In the Book 2 section 23 format: one heading per report field. This builds decisions DG-12, DG-13 and
 DG-14 (and the sounds of DG-29 that are theirs) of the user's third playtest, beside the combat
 build and the interface build, which other sessions make in the same working tree at the same time.
-The choices the books left open, and the departures, are DG-50 to DG-66 in `docs/decision-log.md`
+The choices the books left open, and the departures, are DG-50 to DG-67 in `docs/decision-log.md`
 ("Building the story"). Nothing is committed by this session.
 
 ## Implemented
@@ -64,7 +64,12 @@ knocking at the third, slaps on the cloak as it drifts); `SFX_BODY_SINK` (a swal
 of bubbles); `MUS_LAMENT_SEA`, the lament's sea ending (a held keening note through the carry,
 thinning to the drone through the waves, its last note ending with the sink; a new registered ID,
 DG-55). Each has a caption string; the text audit cuts them (work and rites sounds, Book 8 section
-10), so none is shown. Registered in `content/audio.json` and the renders.
+10), so none is shown. Registered in `content/audio.json` and the renders. Listened back with
+`npm run audio:render -- story3` (peak / RMS, linear): the frame 0.246 / 0.027, the body taken
+0.351 / 0.048, the sinking 0.299 / 0.049, the lament's sea ending 0.454 / 0.053 (-25.5 dBFS RMS,
+raised from -28.4 to sit by Thorkel's lament at 0.058, Book 11's music band of -21 to -24); all
+under the -1 dBTP ceiling (0.89), the effects by the sail's haul (0.040) and the old sea-burial cue
+(0.030).
 
 **Art** (`assets/art/authoring/pt3_story_art.py`, palette-indexed, compiled): `prop_shelter_frame`
 (the sail folded with three oars; the frame going up, 8 frames; the frame standing in the wind, 4;
@@ -81,17 +86,72 @@ FOLDED.
 finishing a hand; the chapter run does both stages on day 1 and four Build actions on the second
 morning (DG-66); `RepairBot.rigging` waits for the next ebb when the tide closes on its walk out;
 `npm run capture -- playtest-3-story` (`src/tools/art/captureStory.ts`); test and capture hooks
-`shelter=frame` and `rites=taken` (DG-64).
+`shelter=frame` and `rites=taken` (DG-64). The rites' carrier leaves the walk the last fight left
+him (`settleForCarry`, DG-67): Bran had carried the body off to the machair's north-east corner, so
+the rites never began and the launch telemetry tests failed.
 
 **Books**: Book 2 section 07 (the shelter's stages), Book 8 section 10 (the prompts' keys), Book 10
 section 03 (`shelterRaise` removed; `shelterFinish`'s notes for DG-56), `content/balance.json`
 regenerated.
 
 ## GIFs
-GIFS_HERE
+Captured from the real game (`npm run capture -- playtest-3-story`, `src/tools/art/captureStory.ts`),
+each at 1x; every kept frame is a real frame of the game, stepped.
+
+**Thorkel's body taken by the sea** (`docs/art/playtest-3/story/thorkel-taken.gif`, **2.87 MB**, 273
+frames drawn at 10 a second and kept at 8, 27.3 s; 320 x 180 of the view's lower middle): from the
+lament's last word (`rites=taken`) at 17:45, the tide out, so the bearers carry the bier 13 tiles
+down the flats at their pace (7.3 s) with the household and the steerer walking down; set at the
+water; the first wave round it, the second over it, the third lifting it; the backwash, the drift
+riding lower, the sink in its ring of foam; Hild's last line and the gulls; control back. Still at
+4x: `thorkel-taken@4x.png` (the second wave over the bier); key frames `thorkel-taken-strip.png`
+(and @2x).
+
+![Thorkel taken by the sea](../art/playtest-3/story/thorkel-taken.gif)
+
+**The shelter's three stages** (`shelter-stages.gif`, 1.67 MB, 176 frames): the sail folded with its
+three oars; the frame going up under the build loop with Hild steadying the oars; the sail hauled
+over and lashed, filling into the lean-to; then the second morning's finishing (sped up, a frame
+every 30 ticks of the work; the night between is skipped by setting the clock to the second dawn)
+to the S1 shelter. Key frames `shelter-stages-strip.png` (and @2x).
+
+![The shelter's three stages](../art/playtest-3/story/shelter-stages.gif)
 
 ## Tests
-TESTS_HERE
+Run in the shared tree with the combat build still at work (the interface build finished).
+- `npm run lint`: ESLint clean; content lint clean (1628 strings, 532 registered IDs); art lint clean
+  (149 sheets, 0 placeholders); Prettier flags one file, the combat build's
+  `tests/unit/pt3combat.test.ts` (not this work).
+- `npm run build`: builds.
+- `npm test` (the main run; the budget pass after it did not run because the main run failed):
+  **909 tests: 904 passed, 4 failed, 1 skipped.** None of the four is this work's: golden save 11's
+  two tests (the 2.5 save; to be regenerated at version 13 once all three builds are in), the art
+  test's sheet list (the combat build's new `fx_red_glint`), and the search scenario's Bran fight (the
+  combat build's foes). Before the coordinator's note, this work's own failures were the art lint's 20
+  findings in `prop_shelter_frame` (uninked pixels at the canvas edge and the turves' feet off the
+  pivot row: fixed in the authoring script and recompiled), the ID registry's `TASK_RAISE_SHELTER`
+  (the ID retired with its Book 10 row, DG-50) and the launch telemetry tests (the rites' carrier,
+  DG-67): all three now pass (`tests/scenario/launch.test.ts` 2 of 2, `idRegistry.test.ts` 10 of
+  10, art lint clean for both sheets).
+- New: `tests/unit/pt3story.test.ts` (8 tests: Book 10's numbers; Hild's broch line and its aim;
+  the three stages over two days with Hild's word at each, her steadying, the drawing, the beds, the
+  jobs and the worker-day; the frame's and sail's stuck hints; the finishing's hints; the sea
+  burial's marks, masks, drift, control and facts; the water's edge; the version 13 migration).
+  `tests/browser/pt3story.spec.ts` (4 tests, stepped): Hild's tower line played with the keys; the
+  frame and the sail by the keys with Hild's words; the second morning's word and the finishing; the
+  sea burial's timings, masks, the steerer held and the cursor hidden, then gone.
+- Updated (DG-65): `opening2.test.ts`, `home.test.ts`, `people.test.ts`, `art.test.ts`,
+  `tests/scenario/rescued.test.ts`. **The rescue scenario test passes, 36 of 36**: everyone rescued
+  reaches the camp, sleeps under the lean-to on the first night and under the finished shelter's roof
+  once it is built, eats and talks.
+- `npm run test:browser -- --project=chromium`: **95 tests: 92 passed, 3 failed.** None is this
+  work's: `sound.spec.ts` counts 49 sound buttons against 45 (the combat build's four new cues);
+  `standard.spec.ts` and `storm.spec.ts` keep their motion (96.4% on the strand, 97.6% in the cold
+  open, threshold 80%) but miss the 5.5 ms script budget (6.71 ms and 9.78 ms run again alone) with
+  the machine at a load of 9 to 10 from the other sessions, as 2.5's report found under load.
+- WebKit not run here (its browser cannot be downloaded in this environment); CI runs Chromium and
+  WebKit, and both block publishing. No threshold, standard or budget was changed. No probe tests
+  are left in the tree.
 
 ## Gate checks
 The story checks of Book 2 section 23 ("The shelter", "The sea burial") and the task's list:
@@ -104,13 +164,65 @@ The story checks of Book 2 section 23 ("The shelter", "The sea burial") and the 
 | The sea burial plays its waves, the body submerges and sinks, the scene ends with the body gone and the facts set | PASS | `pt3story.test.ts` "the waves wash round, over and lift the bier; it drifts, sinks and is gone, control returned" (the marks in order, Hild's last line, under the foam, 6 tiles out, wholly masked for at least seaSink, the steerer held, the facts) and "sets the bier at the water's edge wherever the tide stands"; browser "Thorkel taken by the sea" (Book 10's spacing from the bier set down, under the foam, afloat, tilting, wholly masked for at least 2 s, the steerer held and the cursor hidden, then gone) |
 | Rescued people reach camp and sleep under the shelter | PASS | `tests/scenario/rescued.test.ts` (36 runs): night 1 under the lean-to, under the finished shelter's roof once built; `opening2.test.ts` "Hild, Oddi, Bran and Runa reach the camp and sleep under the shelter, two nights running" |
 | World state version 13's shelter | PASS | `pt3story.test.ts` "maps a raised lean-to to SAIL, at S1 to FINISHED, and one not raised to FOLDED" |
-| The finished shelter's interior meets the 80% motion rule | PASS | MOTION_HERE |
+| The finished shelter's interior meets the 80% motion rule | PASS | `docs/art/playtest-3/story/README.md` (camera still): the finished shelter by day **83.5%**, under its roof at night **91.5%**, the lean-to at night 93.1%, the frame standing by day 84.4% (threshold 80%) |
 
 ## Timing
-TIMING_HERE
+Measured by the telemetry, the scripted player playing the whole chapter through the simulation's
+commands (`node src/tools/play/chapterRun.ts chapter-1 [human]`, seed chapter-1), in the shared tree
+as it stands with the combat and interface builds' work in it. The clock starts at the waking.
+
+| Mark | Bot pace | Human pace | 2.5 human | Book 10 target |
+|---|---|---|---|---|
+| Hild safe | 0:40 | 0:40 | 0:40 | hildFreedBy 2:30 |
+| the chest at the camp | 1:19 | 1:25 | 1:19 | chestAtCampBy 4:00 |
+| the first fire | 2:25 | 2:37 | 2:31 | firstFireBy 5:00 |
+| the lean-to up (frame and sail) | 3:18 | 3:30 | 3:20 | shelterBy 6:00 |
+| Hild's leg tended | 4:21 | 4:41 | 4:31 | |
+| the first night | 11:25 | 11:25 | 11:25 | |
+| Oddi / Runa / Bran | 13:17 / 15:02 / 18:03 | 13:32 / 15:36 / 18:47 | 13:20 / 15:24 / 18:23 | |
+| the bow | 19:40 | 20:24 | 19:55 | bowBy 20 to 30 |
+| the stores | 20:50 | 21:34 | 21:07 | |
+| **the shelter finished** | 31:45 (day 3 14:23) | 32:25 (day 3 14:35) | (S1 by the builder, not tracked) | shelterFinish: from day 2 06:00 |
+| the hull | 58:00 | 59:03 | 49:05 | |
+| the fitting | | 60:49 | 50:49 | |
+| the rites (the sea) | 63:57 | 64:51 | 59:29 | |
+| the launch | 64:10 | 66:20 | 60:55 | |
+| **the chapter's end** | **64:28** | **66:59** (2:50 of it held by menus) | 61:33 | **45 to 60 minutes** |
+
+Stated honestly:
+- **The chapter is 66:59 at a human pace, 6:59 over Book 10's 60 and 5:26 longer than 2.5's
+  61:33.** The story's own share is small and early: the chest's line waits behind the tower's
+  (+6 s to the chest at camp), the frame is a second action (+10 s to the lean-to), and the bot's
+  four Build actions on the second morning (+12 s to the searches). Most of the growth is after the
+  stores: the hull comes at 59:03 (2.5: 49:05), the same game day but about six game hours later.
+  In a private copy of this tree with the story's schedule and rite changes taken back out, the hull
+  came at 57:28, so about 1.5 minutes of it are the story's (Runa building on the finishing until
+  day 3 before she turns to the boat) and the rest come with the other builds' work (the fights,
+  the prompts, the first-sight pauses); a separate measurement belongs to the final pass.
+- **The shelter is finished on day 3 at 14:35, not day 2** (DG-56): Hild fishes first while the
+  stores are short, which they are until the mast stores come up on day 2 at 19:51.
+- **The sea burial** takes 7.3 s of carry at the low water of the run's rite plus Book 10's 18.7 s
+  to control (DG-57, DG-58).
+- The first minutes are all inside their targets; the bow at 19:40 and 20:24 (bowBy 20 to 30).
 
 ## Art check
-ART_HERE
+- **New sheets**, generated by `assets/art/authoring/pt3_story_art.py`, palette-indexed, compiled
+  (`assets/atlases/`), art lint clean (149 sheets, 0 placeholders): `prop_shelter_frame` (25 frames)
+  and `fx_sea_burial` (49 frames). Rendered at 1x and 4x as contact sheets in
+  `docs/art/playtest-3/story/` (`prop_shelter_frame.png`, `@4x`; `fx_sea_burial.png`, `@4x`) and
+  inspected at 4x: the oars stand at the lean-to's posts and run on up the wall, the ridge lashed
+  where it crosses them, the guys pegged to stones; the sail comes up over the ridge in the haul with
+  its loose top corner flogging and the lashings appearing one by one along the ridge; the bier's
+  planks are tarred at the seams with two lashings, the cloak the grey of Thorkel's own with its woad
+  trim, the face and grey beard at the west end, the ring one bright pixel; the foam reads against
+  the water in the captures. Two first drafts were redrawn after inspection: the wash ring was too
+  thin (now lumpy foam), the sinking tilt bent the body into a hump (now the planks tilt a little and
+  the water's mask does the sinking); the 60-degree frames were clipped by the canvas (now 128 x 60).
+- **No placeholders.** The finished shelter (S1) and the lean-to are the approved art, unchanged.
+- **Standard** (Book 7 section 14): the motion figures above, all over 80% with the camera still.
+- **Compared with `docs/art/reference/`**: the camp views keep the reference's density of moving
+  cells (the strand's reference 100% with clouds, 89.2% frozen; these 83.5% to 93.1%); the burial's
+  water is the strand's own shader, the waves' foam bands and rings drawn in its foam colours.
 
 ## Balance
 Every number is Book 10's: `shelterFrame`, `shelterSail` (5 s, 15 game minutes, 1 stamina each, the
@@ -122,11 +234,19 @@ line, the chest's moved from 3 s to 9 s (DG-52). `shelterRaise` removed from Boo
 `shelterFinish`'s notes say Hild fishes first when the stores are short (DG-56).
 
 ## Deviations
-DG-50 to DG-66 in `docs/decision-log.md`. The flagged ones are under **Flagged for the user's
+DG-50 to DG-67 in `docs/decision-log.md`. The flagged ones are under **Flagged for the user's
 review**.
 
 ## Known issues
-KNOWN_HERE
+- **The chapter runs long** (66:59 at a human pace against 45 to 60): see **Timing**. Severity:
+  medium; for the final pass, which measures the three builds together.
+- **The shelter is finished on day 3 in the bot's chapter** (DG-56), flagged below. Low.
+- **The captures' frame stage** was taken before two edge pixels of the frame art were inked
+  (an art-lint fix after the capture; the GIF's pixels differ by those). Low.
+- **Golden save 11** still holds the 2.5 chapter (`ch1.shelter_raised`); it migrates to `ch1.shelter`
+  through version 13, but its "reproduced by its scenario" test needs the golden regenerated once
+  all three builds are in (the final pass). Medium, expected.
+- **WebKit** was not run here (its browser cannot be downloaded in this environment); CI runs it.
 
 ## Flagged for the user's review
 - **DG-51, the frame's drawing**: the two oars stand upright against the wall at the lean-to's posts,
@@ -147,5 +267,5 @@ KNOWN_HERE
   (seaLength says "about 17").
 
 ## Next stage ready
-NO: the third playtest's build stops for the user's playtest when all three parts are done (DG-1);
-this part is complete, the chapter's whole run waits on the known issue above.
+NO: the third playtest's build stops for the user's playtest when all three parts are done (DG-1).
+The story part is complete; the chapter's length and golden save 11 are for the final pass.

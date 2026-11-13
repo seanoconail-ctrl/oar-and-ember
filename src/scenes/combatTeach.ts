@@ -61,6 +61,11 @@ export class CombatTeach {
   readonly #fold: FoldTalk | null;
   readonly #rng: RngState;
   #lastShout: string | null = null;
+  /**
+   * The let-go shout waiting for the frame: offered there, after the frame's events, so a bark in
+   * the same frame (a companion of the beaten foe running at the sight) does not take its place.
+   */
+  #shout: { readonly text: string; readonly at: number } | null = null;
   readonly #lastReply = new Map<string, string>();
   /** When the steerer last let a foe go (frame ms): the spare gesture is drawn for a moment. */
   spareAt = -Infinity;
@@ -184,7 +189,10 @@ export class CombatTeach {
         h.sound('SPARE', 'P_STEERER');
         if (key === null) return;
         this.#lastShout = key;
-        h.say(h.t('caption.format.subtitle', { speaker: h.steererName(), line: h.t(key) }), now);
+        this.#shout = {
+          text: h.t('caption.format.subtitle', { speaker: h.steererName(), line: h.t(key) }),
+          at: now,
+        };
         return;
       }
       case 'SPARED_REPLY': {
@@ -220,6 +228,10 @@ export class CombatTeach {
       readonly region: HTMLElement;
     },
   ): readonly CombatPromptLine[] {
+    if (this.#shout !== null) {
+      this.#host.say(this.#shout.text, this.#shout.at);
+      this.#shout = null;
+    }
     const h = this.#host;
     const secs = now / 1000;
     this.#foldFrame(secs, world, tile, now);

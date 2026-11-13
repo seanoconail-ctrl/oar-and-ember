@@ -146,11 +146,11 @@ def frame_sprite(stage, sway=0, flutter=0):
             lying_oar(s, 4, H - 10, W - 18, H - 17, 5)
         else:
             # the right oar half up, leaning against the wall
-            line(s, RIGHT_X + 1, FOOT, RIGHT_X - 22, 34, C('driftwood', 5), 3)
-            line(s, RIGHT_X + 2, FOOT, RIGHT_X - 21, 34, INK, 1)
+            line(s, RIGHT_X + 1, FOOT - 1, RIGHT_X - 22, 34, C('driftwood', 5), 3)
+            line(s, RIGHT_X + 2, FOOT - 1, RIGHT_X - 21, 34, INK, 1)
         return s.outline()
     # The right upright stands (as the lean-to's right post, carried on up the wall).
-    loom(s, RIGHT_X + 1, RIGHT_TOP, FOOT)
+    loom(s, RIGHT_X + 1, RIGHT_TOP, FOOT - 1)
     for cols in POST_COLS[1:]:
         copy_into(s, BASE, range(63, H), cols)
     if stage == 2:
@@ -162,16 +162,16 @@ def frame_sprite(stage, sway=0, flutter=0):
         line(s, LEFT_X + 2, FOOT, LEFT_X + 21, 46, INK, 1)
         lying_oar(s, 10, H - 3, W - 22, H - 7, 4)
         return s
-    loom(s, LEFT_X + 1, LEFT_TOP, FOOT)
+    loom(s, LEFT_X + 1, LEFT_TOP, FOOT - 1)
     copy_into(s, BASE, range(63, H), POST_COLS[0])
     if stage == 4:
         lying_oar(s, 16, H - 4, W - 20, H - 6, 4)
         return s
     if stage == 5:
         # The ridge oar lifted at one end, its other on the ground.
-        line(s, 2, 70, W - 3, 58, C('driftwood', 5), 3)
-        line(s, 2, 72, W - 3, 60, INK, 1)
-        line(s, 2, 69, W - 3, 57, INK, 1)
+        line(s, 2, 70, W - 6, 58, C('driftwood', 5), 3)
+        line(s, 2, 72, W - 6, 60, INK, 1)
+        line(s, 2, 69, W - 6, 57, INK, 1)
         return s
     ridge(s)
     if stage == 6:
@@ -235,7 +235,7 @@ def turf_sprite(k):
     for i in range(n):
         row, col = divmod(i, 3)
         x0 = 22 + col * 11 + (row % 2) * 5
-        y0 = H - 6 - row * 4
+        y0 = H - 5 - row * 4
         for y in range(y0, y0 + 4):
             for x in range(x0, x0 + 10):
                 top = y == y0

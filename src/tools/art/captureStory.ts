@@ -97,6 +97,7 @@ function gif(
   file: string,
   fps: number,
   colours: number,
+  outFps = fps,
 ): number {
   rmSync(dir, { recursive: true, force: true });
   mkdirSync(dir, { recursive: true });
@@ -114,7 +115,7 @@ function gif(
       '-i',
       join(dir, 'f%04d.png'),
       '-vf',
-      `split[a][b];[a]palettegen=max_colors=${colours}:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle`,
+      `fps=${outFps},split[a][b];[a]palettegen=max_colors=${colours}:stats_mode=diff[p];[b][p]paletteuse=dither=none:diff_mode=rectangle`,
       file,
     ],
     { stdio: 'inherit' },
@@ -343,7 +344,8 @@ export async function storyCapture(browser: Browser): Promise<string> {
   // Thorkel taken by the sea.
   const sea = await burial(browser, 320, 180);
   const seaGif = join(out, 'thorkel-taken.gif');
-  const seaSize = gif(sea.frames, join(out, '.frames'), seaGif, 10, 40);
+  // Drawn at 10 a second, kept at 8 a second in real time (the file under about 3 MB).
+  const seaSize = gif(sea.frames, join(out, '.frames'), seaGif, 10, 40, 8);
   const under = sea.keys.find((k) => k.name === 'the second over it') ?? sea.keys[0];
   if (under !== undefined)
     writeFileSync(
@@ -377,7 +379,7 @@ export async function storyCapture(browser: Browser): Promise<string> {
     'Written by `npm run capture -- playtest-3-story` (src/tools/art/captureStory.ts). The bots play',
     "in the page through a player's commands; every kept frame is a real frame of the game.",
     '',
-    `- \`thorkel-taken.gif\`: ${sea.frames.length} frames at 10 a second (${(sea.frames.length / 10).toFixed(1)} s), ${(seaSize / 1e6).toFixed(2)} MB; 320 x 180 of the view's lower middle at 1x, from the bier lifted at the rite's place to a moment after control returns. ${sea.log.join('; ')}.`,
+    `- \`thorkel-taken.gif\`: ${sea.frames.length} frames drawn at 10 a second, kept at 8 (${(sea.frames.length / 10).toFixed(1)} s), ${(seaSize / 1e6).toFixed(2)} MB; 320 x 180 of the view's lower middle at 1x, from the bier lifted at the rite's place to a moment after control returns. ${sea.log.join('; ')}.`,
     `- \`thorkel-taken@4x.png\`: the second wave over the bier, the whole view at 4x.`,
     `- \`thorkel-taken-strip.png\` (and @2x): ${sea.keys.map((k) => k.name).join(', ')}.`,
     `- \`shelter-stages.gif\`: ${sh.frames.length} frames at 10 a second, ${(shSize / 1e6).toFixed(2)} MB; the middle 320 x 180 at 1x: the frame and the sail at their own pace (a frame every 6 ticks), the second day's finishing sped up (a frame every 30 ticks of its work). The night between is skipped by setting the clock to the second dawn. ${sh.log.join('; ')}.`,
