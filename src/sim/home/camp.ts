@@ -114,6 +114,11 @@ export interface CampContext {
   readonly shelterWorkerDays: number;
   /** When the shelter's finishing opens (Book 10 section 03, shelterFinish; null: no opening). */
   readonly shelterFinishFrom: { readonly day: number; readonly minute: number } | null;
+  /**
+   * The ship's stores lashed on the broken mast, in ration-days (Book 10 section 03, mastStores; 0
+   * without the row): counted towards the next day's food until they are brought up (DG-90).
+   */
+  readonly mastStoresRd: number;
   /** Ticks of a hands-on action, and of lying down before the night passes. */
   readonly actionTicks: number;
   readonly sleepTicks: number;
@@ -153,6 +158,30 @@ function finishFrom(balance: unknown): { day: number; minute: number } | null {
   return { day: Number(m[3]), minute: Number(m[1]) * 60 + Number(m[2]) };
 }
 
+/** Book 10 section 03 mastStores ("N rd of salt fish ..."), or 0 if the row is not there. */
+function mastStoresFrom(balance: unknown): number {
+  const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  const list = tables?.['foodFuelAndSeasons']?.['workAndTheWreckCamp'];
+  const row = Array.isArray(list)
+    ? (list as Record<string, string>[]).find((r) => r['Key'] === 'mastStores')
+    : undefined;
+  if (row === undefined) return 0;
+  const m = /^(\d+(?:\.\d+)?) rd of salt fish/.exec(row['Value'] ?? '');
+  if (m === null) throw new Error(`balance.json: mastStores is "${row['Value'] ?? ''}"`);
+  return Number(m[1]);
+}
+
+/**
+ * The food the household reckons on for tomorrow, in ration-days: the stores, and the ship's stores
+ * still lashed on the mast or lying in the shallows, which it can see and means to bring up
+ * (Book 10 section 03, shelterFinish; DG-90).
+ */
+export function foodReckoned(world: WorldState, ctx: CampContext, home: HomeState): number {
+  const brought = world.facts['ch1.mast_stores'] === 'CAMP';
+  const onMast = world.facts['ch1.shelter'] !== undefined && !brought ? ctx.mastStoresRd : 0;
+  return foodRd(home) + onMast;
+}
+
 export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampContext | null {
   const def = content.camp;
   if (def === null) return null;
@@ -180,6 +209,7 @@ export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampCon
     time: parseTimeBalance(content.balance),
     shelterWorkerDays: buildingWorkerDays(content.balance, def.shelter.balanceRow),
     shelterFinishFrom: finishFrom(content.balance),
+    mastStoresRd: mastStoresFrom(content.balance),
     actionTicks: Math.round(taskBalance.action.actionSeconds * TICKS_PER_SECOND),
     sleepTicks: Math.round(def.sleepSeconds * TICKS_PER_SECOND),
   };

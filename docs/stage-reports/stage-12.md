@@ -1,5 +1,12 @@
 # STAGE 12 REPORT: the launch and the Build 1 gate
 
+> **The user's third playtest came after the 2.5 rework.** The Build 1 gate now covers the third
+> playtest too (finish or let go, the early combat prompts, the two teaching foes, first-sight
+> words, Hild's lead, the shelter in three stages, Thorkel taken by the sea, the pause menu and save
+> slots, the intro's skip, the no-trap rule and the developer menu): see
+> [playtest-3.md](playtest-3.md) for what it changed in Stages 7 to 12, the checks run again, the
+> timing, the captures and the choices flagged for review.
+
 > **Design addendum 2.5 came after the 2.4 rework.** The Build 1 gate now covers the 2.5 rework
 > too (committed combat, less on-screen text, the storm opening and the rescue fix): see
 > [rework-2.5.md](rework-2.5.md) for what 2.5 changed in Stages 7 to 12, the checks run again,

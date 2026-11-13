@@ -62,7 +62,9 @@
  *   fight; all three scavengers fall); the key taken from Thorkel's body, the chest opened and the
  *   bow; the mast stores shot down; the boards, the rigging, the oar found at the empty skiff, the
  *   extended hold; Thorkel given to the sea; the launch, the boat named Grey Seal under a woad
- *   raven, the sea map closed. It is reproduced exactly by its scenario.
+ *   raven, the sea map closed. It is reproduced exactly by its scenario. Regenerated at schema 12
+ *   for design addendum 2.5 (DF-86) and at schema 13 for the user's third playtest (DG-94): the
+ *   shelter in three stages and finished on day 2, the teaching foes at the fold, the sea burial.
  *
  *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-11.json
  */

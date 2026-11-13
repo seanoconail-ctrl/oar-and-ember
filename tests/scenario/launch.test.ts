@@ -251,11 +251,16 @@ describe('Chapter 1 timed by telemetry (Book 3 Stage 12 check 1)', () => {
     expect(marks['first_combat']).toBeLessThan(marks['chapter_end'] ?? 0);
     expect(marks['chapter_end']).toBeCloseTo(run.report.now, 0);
     expect(run.world.telemetry.start).toBe(0);
+    // The shelter, a two-day job: finished on day 2, before the household's bed (DG-90).
+    const finished = run.world.telemetry.marks['shelter_finished'];
+    expect(finished?.day, 'the shelter finished on day 2').toBe(2);
+    expect(finished?.minute ?? 1440).toBeLessThan(22 * 60);
   }, 120_000);
 
   it('counts the time menus hold the game (the human pace reads the screens)', () => {
     const human = playChapter('chapter-1', HUMAN_PACE);
     expect(human.report.held).toBeGreaterThan(HUMAN_PACE.launchScreens + HUMAN_PACE.seaMap - 1);
     expect(human.report.now).toBeGreaterThan(human.report.held);
+    expect(human.world.telemetry.marks['shelter_finished']?.day).toBe(2);
   }, 120_000);
 });

@@ -117,6 +117,9 @@ describe('work loops in the scene (Book 7 section 07; Stage 7 check 4)', () => {
 
   it('plays the same loop for the steerer and a resident at the same task', () => {
     const { sim, bot } = atBroch('time=07:00&tended=1&fire=lit&line=1&day=2');
+    // The ship's stores are already up from the mast, so Hild reckons on no more food than the
+    // stores hold and keeps to her nets this morning (DG-90).
+    sim.state.facts['ch1.mast_stores'] = 'CAMP';
     // Hild goes down to fish from the morning after her leg is tended.
     const hildNow = () =>
       sim.state.onFoot === null ? null : findActor(sim.state.onFoot, 'C_HILD');

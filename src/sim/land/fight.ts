@@ -4428,6 +4428,9 @@ export function afterFight(fw: Pick<FightWorld, 'world' | 'ctx'>): void {
   for (const [id, a] of Object.entries(onFoot.actors).sort(ORDERLY)) {
     const fa = a.fight;
     const person = world.people[id];
+    // The household's fighters stand down: their fight minds at rest, so none carries a retreat or
+    // a press from this fight into the next (the integration pass of the third playtest, DG-94).
+    if (fa?.side === 'HOUSEHOLD') fa.ai.mind = newMind();
     if (
       fa?.side !== 'HOUSEHOLD' ||
       person === undefined ||

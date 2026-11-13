@@ -23,6 +23,7 @@ import {
   FACT_ARRIVED_SAID,
   FACT_AT_BROCH,
   foodRd,
+  foodReckoned,
   homeOf,
   shelterFinishOpen,
   shelterStage,
@@ -112,13 +113,17 @@ export function jobToday(
   // The jobs they take up first while there is such work (Hild finishing the shelter on the
   // second day, DG-12), unless the steerer has given them another than their own.
   // A fisher leaves the nets for it only while the stores hold the next day's food for every
-  // mouth: feeding the household comes first (DG-56).
+  // mouth: feeding the household comes first (DG-56). The ship's stores on the mast are counted,
+  // since the household can see them and means to bring them up (DG-90); with nothing in the
+  // stores for the evening meal, the fisher fishes whatever is reckoned.
   const own = ctx.household.people[p.id];
   const home = homeOf(world, camp);
   const mouths = 1 + world.household.residents.length;
   const fed =
     own?.job !== 'FISHER' ||
-    (home !== undefined && foodRd(home) >= mouths * camp.work.foodPerPersonPerDay);
+    (home !== undefined &&
+      foodRd(home) > 0 &&
+      foodReckoned(world, camp, home) >= mouths * camp.work.foodPerPersonPerDay);
   if (job.kind === own?.job && fed)
     for (const first of own.first ?? [])
       if (jobOpen(world, camp, ctx.household.jobs[first], p.id)) return first;
@@ -161,9 +166,15 @@ export function jobSpot(
   if (own !== undefined && def?.task === own.task) return own;
   const spots = def?.spots ?? [];
   if (spots.length === 0) return null;
+  // Everyone working it today, by the job they take up (a first job counts, so two who take up
+  // the shelter's finishing never share a spot: DG-90).
   const same = world.household.residents.filter((r) => {
     const q = world.people[r];
-    return q !== undefined && q.job?.kind === job && camp.def.people[r]?.work.task !== def?.task;
+    return (
+      q !== undefined &&
+      (q.job?.kind === job || jobToday(world, camp, ctx, q) === job) &&
+      camp.def.people[r]?.work.task !== def?.task
+    );
   });
   // Someone working it as their first job (not their own) takes the next spot along.
   const i = same.indexOf(id);

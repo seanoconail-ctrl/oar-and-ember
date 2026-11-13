@@ -78,6 +78,18 @@
           "x": 33.8,
           "y": 30.9,
           "facing": "n"
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 32.4,
+          "y": 32.9,
+          "facing": "n"
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR",
+          "x": 34.8,
+          "y": 30.1,
+          "facing": "w"
         }
       ]
     },
@@ -238,6 +250,7 @@
     },
     "C_ODDI": {
       "job": "CAMP",
+      "first": ["BUILDER"],
       "memories": [
         {
           "kind": "EVENT",
@@ -253,6 +266,7 @@
     },
     "C_BRAN": {
       "job": "CAMP",
+      "first": ["BUILDER"],
       "memories": [
         {
           "kind": "EVENT",

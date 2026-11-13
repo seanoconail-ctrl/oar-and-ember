@@ -33,6 +33,11 @@ export function readLogicalFrame(gl: WebGL2RenderingContext, vp: Viewport): Rgba
   const H = gl.drawingBufferHeight;
   const all = new Uint8Array(W * H * 4);
   gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, all);
+  return logicalFrom(all, W, H, vp);
+}
+
+/** The logical 640 x 360 frame out of a whole drawing buffer read back (rows bottom up). */
+function logicalFrom(all: Uint8Array, W: number, H: number, vp: Viewport): Rgba {
   const out = new Uint8Array(LOGICAL_WIDTH * LOGICAL_HEIGHT * 4);
   for (let y = 0; y < LOGICAL_HEIGHT; y++) {
     const dy = Math.floor(vp.y + (y + 0.5) * vp.scale);
@@ -52,6 +57,62 @@ export function readLogicalFrame(gl: WebGL2RenderingContext, vp: Viewport): Rgba
     }
   }
   return { width: LOGICAL_WIDTH, height: LOGICAL_HEIGHT, data: out };
+}
+
+/**
+ * The frame just drawn, read back without stalling it (an autosave's screenshot, DG-80; the user's
+ * third playtest's integration pass, DG-93): the copy is queued into a pixel buffer behind the
+ * frame's own drawing, and taken once a fence says the GPU has done it, a frame or more later.
+ * A plain `readPixels` waits there and then for everything queued before it, which on the first
+ * frame of play is every atlas upload and shader compile: about 0.4 s of one frame in Chromium's
+ * software renderer. `poll()` returns the frame once it is ready, else null; after `patience`
+ * polls it reads the buffer anyway (the read then waits, as before).
+ */
+export class FrameReadback {
+  readonly #gl: WebGL2RenderingContext;
+  readonly #vp: Viewport;
+  readonly #W: number;
+  readonly #H: number;
+  #buffer: WebGLBuffer | null;
+  #sync: WebGLSync | null;
+  #polls = 0;
+  readonly patience: number;
+
+  constructor(gl: WebGL2RenderingContext, vp: Viewport, patience = 30) {
+    this.patience = patience;
+    this.#gl = gl;
+    this.#vp = vp;
+    this.#W = gl.drawingBufferWidth;
+    this.#H = gl.drawingBufferHeight;
+    this.#buffer = gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.#buffer);
+    gl.bufferData(gl.PIXEL_PACK_BUFFER, this.#W * this.#H * 4, gl.STREAM_READ);
+    gl.readPixels(0, 0, this.#W, this.#H, gl.RGBA, gl.UNSIGNED_BYTE, 0);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    this.#sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    gl.flush();
+  }
+
+  /** The frame, once the GPU has copied it; null while it has not. */
+  poll(): Rgba | null {
+    const gl = this.#gl;
+    if (this.#buffer === null) return null;
+    this.#polls++;
+    const ready =
+      this.#sync === null ||
+      gl.getSyncParameter(this.#sync, gl.SYNC_STATUS) === gl.SIGNALED ||
+      this.#polls > this.patience;
+    if (!ready) return null;
+    const all = new Uint8Array(this.#W * this.#H * 4);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.#buffer);
+    gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, all);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    gl.deleteBuffer(this.#buffer);
+    this.#buffer = null;
+    if (this.#sync !== null) gl.deleteSync(this.#sync);
+    this.#sync = null;
+    return logicalFrom(all, this.#W, this.#H, this.#vp);
+  }
 }
 
 /** A PNG in base64 from RGBA, through a canvas (the browser's encoder). */

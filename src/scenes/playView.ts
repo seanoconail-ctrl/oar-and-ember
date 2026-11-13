@@ -87,7 +87,7 @@ import { PauseMenuView } from './pauseMenuView.ts';
 import { itemText, slotLines } from './pauseMenuArt.ts';
 import { IntroSkipView } from './introSkip.ts';
 import { SkipHold } from '../ui/introSkip.ts';
-import { canvasPngBase64, menuFont, readLogicalFrame } from './pauseMenuView.ts';
+import { canvasPngBase64, FrameReadback, menuFont } from './pauseMenuView.ts';
 import { makeThumbnail } from '../ui/thumbnail.ts';
 import { coldOpenSeconds } from '../sim/narrative/wreck.ts';
 import { DevMenu, devModeOn } from './devMenu.ts';
@@ -2095,6 +2095,8 @@ export function startPlay(
   let first = true;
   let lastVisual = started;
   let frameMs = 0;
+  /** An autosave's screenshot being read back from the GPU (DG-93), and the slots it is for. */
+  let pendingShot: { readonly read: FrameReadback; readonly slots: string[] } | null = null;
   let frames = 0;
   // Effect detail (AP-16): full unless forced with ?quality=full|lite|low, stepped down when
   // frames keep coming slower than 10 a second, so a slow machine stays playable.
@@ -3271,16 +3273,26 @@ export function startPlay(
         // The last frame before the pause menu opened: its backdrop and the save's thumbnail.
         pauseView.afterRender(presenter.gl, presenter.viewport, session.menus.timeStopped);
         // An autosave, checkpoint or day-start written since the last frame: its screenshot.
-        // The frame is read now (before the browser composites it); the PNG is made after it.
-        if (saves.unpictured.length > 0) {
-          const read = readLogicalFrame(presenter.gl, presenter.viewport);
-          const slots = saves.unpictured.splice(0);
-          setTimeout(() => {
-            const shot = makeThumbnail(read, uiB.menu.thumbnail, uiB.menu.thumbnailBytes, (img) =>
-              canvasPngBase64(document, img),
-            );
-            if (shot !== null) for (const slot of slots) saves.attachThumbnail(slot, shot);
-          }, 0);
+        // The frame is queued for reading now (before the browser composites it) without
+        // waiting on the GPU, taken a frame or more later, and the PNG is made after that frame
+        // (DG-93: a plain read on the first frame of play stalled it for the whole start-up).
+        if (saves.unpictured.length > 0 && pendingShot === null)
+          pendingShot = {
+            read: new FrameReadback(presenter.gl, presenter.viewport),
+            slots: saves.unpictured.splice(0),
+          };
+        else if (pendingShot !== null) {
+          const read = pendingShot.read.poll();
+          if (read !== null) {
+            const slots = pendingShot.slots;
+            pendingShot = null;
+            setTimeout(() => {
+              const shot = makeThumbnail(read, uiB.menu.thumbnail, uiB.menu.thumbnailBytes, (img) =>
+                canvasPngBase64(document, img),
+              );
+              if (shot !== null) for (const slot of slots) saves.attachThumbnail(slot, shot);
+            }, 0);
+          }
         }
       }
       root.dataset['seamap'] = '';

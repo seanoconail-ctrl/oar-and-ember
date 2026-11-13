@@ -327,6 +327,71 @@ describe('the shelter in three stages over two days (DG-12)', () => {
   });
 });
 
+describe('the shelter finished on day 2 by the household (DG-90)', () => {
+  /** Day 2 at 07:00, the lean-to up, the four rescued at home at their own jobs. */
+  function secondMorning(seed: string) {
+    const s = start(seed, 'camp=broch&fire=lit&tended=1&day=2&time=07:00&crew=1');
+    const { world } = s;
+    world.facts['ch1.shelter'] = 'SAIL';
+    delete world.facts['ch1.mast_stores'];
+    world.household.residents = ['C_HILD', 'C_ODDI', 'C_BRAN', 'C_RUNA'];
+    for (const id of world.household.residents) {
+      const p = world.people[id];
+      const own = people.household.people[id]?.job;
+      if (p !== undefined && own !== undefined) p.job = { kind: own, since: 1, byOrder: false };
+    }
+    const home = world.homes['ISLE_SKARV'];
+    if (home === undefined) throw new Error('no home');
+    home.stage = 'S0';
+    home.fresh = [];
+    return { ...s, home };
+  }
+  const job = (world: ReturnType<typeof secondMorning>['world'], id: string) => {
+    const p = world.people[id];
+    if (p === undefined) throw new Error(`no ${id}`);
+    return jobToday(world, camp, people, p);
+  };
+
+  it('Hild reckons the ship’s stores on the mast towards tomorrow’s food, and fishes with nothing in the stores', () => {
+    const { world, home } = secondMorning('reckon');
+    expect(camp.mastStoresRd).toBe(ob.camp.mastStoresRd);
+    const mouths = 1 + world.household.residents.length;
+    // One ration-day in the stores and the mast's still lashed: tomorrow is reckoned fed.
+    home.stores['RES_SALTED_FISH'] = mouths - camp.mastStoresRd;
+    expect(job(world, 'C_HILD')).toBe('BUILDER');
+    // A ration short of it, she fishes first (DG-56).
+    home.stores['RES_SALTED_FISH'] = mouths - camp.mastStoresRd - 1;
+    expect(job(world, 'C_HILD')).toBe('FISHER');
+    // Brought up, the stores count once, in the stores.
+    world.facts['ch1.mast_stores'] = 'CAMP';
+    home.stores['RES_SALTED_FISH'] = mouths - camp.mastStoresRd;
+    expect(job(world, 'C_HILD')).toBe('FISHER');
+    home.stores['RES_SALTED_FISH'] = mouths;
+    expect(job(world, 'C_HILD')).toBe('BUILDER');
+    // Nothing in the stores for the evening meal: she fishes, whatever is on the mast.
+    delete world.facts['ch1.mast_stores'];
+    home.stores['RES_SALTED_FISH'] = 0;
+    expect(job(world, 'C_HILD')).toBe('FISHER');
+  });
+
+  it('everyone home joins the finishing as they come, and goes back to their own work once it is done', () => {
+    const { world, home } = secondMorning('join');
+    home.stores['RES_SALTED_FISH'] = 10;
+    for (const id of ['C_HILD', 'C_ODDI', 'C_BRAN', 'C_RUNA'])
+      expect(job(world, id), id).toBe('BUILDER');
+    // Not on day 1, and not once it is the S1 shelter.
+    world.calendar = { day: 1, minuteOfDay: 15 * 60 };
+    expect(job(world, 'C_ODDI')).toBe('CAMP');
+    world.calendar = { day: 2, minuteOfDay: 15 * 60 };
+    world.facts['ch1.shelter'] = 'FINISHED';
+    home.stage = 'S1';
+    expect(job(world, 'C_ODDI')).toBe('CAMP');
+    expect(job(world, 'C_BRAN')).toBe('CAMP');
+    expect(job(world, 'C_HILD')).toBe('FISHER');
+    expect(job(world, 'C_RUNA')).not.toBe('BUILDER');
+  });
+});
+
 describe('Thorkel taken by the sea (DG-14)', () => {
   it('the waves wash round, over and lift the bier; it drifts, sinks and is gone, control returned', () => {
     const { sim, world, events } = start('sea-taken', 'camp=broch&crew=1&time=17:45');

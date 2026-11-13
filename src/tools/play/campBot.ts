@@ -7,13 +7,14 @@
  */
 import type { TimeBalance } from '../../content/balance.ts';
 import type { CampSite } from '../../content/registry.ts';
-import { tideAt } from '../../sim/calendar/calendar.ts';
+import { minutesIntoDay, tideAt } from '../../sim/calendar/calendar.ts';
 import type { CampContext } from '../../sim/home/camp.ts';
 import { markTick } from '../../sim/home/camp.ts';
 import { bandAt, isDeep, stillWaterLevel } from '../../sim/land/water.ts';
-import { tileOf } from '../../sim/land/zoneMap.ts';
+import { tileBlocks, tileOf } from '../../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../../sim/land/zoneMap.ts';
 import type { Simulation, SimWorldContext } from '../../sim/simulation.ts';
+import { hostilesAware } from '../../sim/land/fight.ts';
 import { beyond, findActor } from '../../sim/land/zoneLinks.ts';
 import { talkOptions } from '../../sim/people/talk.ts';
 import { findPath } from './openingBot.ts';
@@ -25,6 +26,11 @@ export class CampBot {
   readonly #land: SimWorldContext;
   readonly #camp: CampContext;
   ticks = 0;
+  /**
+   * Whether a wait through the night is slept, as a player goes to bed with the household (the
+   * chapter run's player, DG-92); off, the bot waits awake as the older scenarios were written.
+   */
+  sleepsAtNight = false;
 
   constructor(sim: Simulation, b: TimeBalance, land: SimWorldContext, camp: CampContext) {
     this.#sim = sim;
@@ -91,46 +97,73 @@ export class CampBot {
     sneak = false,
   ): boolean {
     const map = this.map;
-    const tide = tideAt(this.#sim.state.calendar, this.#b);
-    const elevation = this.#land.elevations.get(map.zone);
-    const level = stillWaterLevel(tide);
-    const spot = (t: Tile) => ({ x: (t.tx + 0.5) * map.tile, y: (t.ty + 0.7) * map.tile });
-    const passable = (t: Tile): boolean => {
-      if (elevation === undefined) return true;
-      const at = spot(t);
-      return !avoid(t) && !isDeep(bandAt(this.#land.water, elevation, at.x, at.y, level));
-    };
-    const p = this.#onFoot.player;
-    const path = findPath(map, tide.tidalGroundOpen, tileOf(map, p.x, p.y), goal, passable);
-    if (path === null) return false;
     const limit = this.ticks + maxTicks;
-    const steps = path.slice(1);
-    for (const [n, waypoint] of steps.entries()) {
-      const { x: cx, y: cy } = spot(waypoint);
-      // Design addendum 2.5: speed builds and dies (Book 10 "Movement and acceleration"). A
-      // waypoint where the path runs straight on is passed at speed; at a turn or the last one the
-      // keys ease off near it, so the steerer neither cuts the corner nor circles it.
-      const prev = n === 0 ? path[0] : steps[n - 1];
-      const next = steps[n + 1];
-      const straight =
-        prev !== undefined &&
-        next !== undefined &&
-        next.tx - waypoint.tx === waypoint.tx - prev.tx &&
-        next.ty - waypoint.ty === waypoint.ty - prev.ty;
-      for (;;) {
-        const pl = this.#onFoot.player;
-        const dx = cx - pl.x;
-        const dy = cy - pl.y;
-        const len = Math.hypot(dx, dy);
-        if (straight ? len < 6 : Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
-        if (this.ticks > limit) return false;
-        const k = !straight && len < 10 ? Math.max(0.25, len / 10) : 1;
-        this.#sim.submit({ type: 'MOVE', x: (dx / len) * k, y: (dy / len) * k, run, sneak });
-        this.step();
+    // A walk that stalls (the tide closing on a path planned over the flats, or the flood risen
+    // over it) is planned again from where the steerer stands, as a player would look again and
+    // go round; caught on the flats, they are open to the steerer until left (Book 10 "No trap",
+    // tideClosing), so the new plan may cross them.
+    for (let plans = 0; plans < 12; plans++) {
+      const tide = tideAt(this.#sim.state.calendar, this.#b);
+      const elevation = this.#land.elevations.get(map.zone);
+      const level = stillWaterLevel(tide);
+      const spot = (t: Tile) => ({ x: (t.tx + 0.5) * map.tile, y: (t.ty + 0.7) * map.tile });
+      const p = this.#onFoot.player;
+      const here = tileOf(map, p.x, p.y);
+      const caught =
+        !tide.tidalGroundOpen &&
+        tileBlocks(map, here.tx, here.ty, false) &&
+        !tileBlocks(map, here.tx, here.ty, true);
+      const passable = (t: Tile): boolean => {
+        if (avoid(t)) return false;
+        if (elevation === undefined) return true;
+        const at = spot(t);
+        if (!isDeep(bandAt(this.#land.water, elevation, at.x, at.y, level))) return true;
+        return caught && tileBlocks(map, t.tx, t.ty, false) && !tileBlocks(map, t.tx, t.ty, true);
+      };
+      const path = findPath(map, tide.tidalGroundOpen || caught, here, goal, passable);
+      if (path === null) return false;
+      const steps = path.slice(1);
+      let stalled = false;
+      walk: for (const [n, waypoint] of steps.entries()) {
+        const { x: cx, y: cy } = spot(waypoint);
+        // Design addendum 2.5: speed builds and dies (Book 10 "Movement and acceleration"). A
+        // waypoint where the path runs straight on is passed at speed; at a turn or the last one
+        // the keys ease off near it, so the steerer neither cuts the corner nor circles it.
+        const prev = n === 0 ? path[0] : steps[n - 1];
+        const next = steps[n + 1];
+        const straight =
+          prev !== undefined &&
+          next !== undefined &&
+          next.tx - waypoint.tx === waypoint.tx - prev.tx &&
+          next.ty - waypoint.ty === waypoint.ty - prev.ty;
+        let still = 0;
+        for (;;) {
+          const pl = this.#onFoot.player;
+          const dx = cx - pl.x;
+          const dy = cy - pl.y;
+          const len = Math.hypot(dx, dy);
+          if (straight ? len < 6 : Math.abs(dx) < 2 && Math.abs(dy) < 2) break;
+          if (this.ticks > limit) return false;
+          const k = !straight && len < 10 ? Math.max(0.25, len / 10) : 1;
+          const was = { x: pl.x, y: pl.y };
+          this.#sim.submit({ type: 'MOVE', x: (dx / len) * k, y: (dy / len) * k, run, sneak });
+          this.step();
+          const now = this.#onFoot.player;
+          // Held where it stands for two seconds of pressing (not a talk or a scene holding it).
+          still = now.x === was.x && now.y === was.y ? still + 1 : 0;
+          if (still >= 120) {
+            stalled = true;
+            break walk;
+          }
+        }
+      }
+      if (!stalled) {
+        this.stop();
+        return true;
       }
     }
     this.stop();
-    return true;
+    return false;
   }
 
   /**
@@ -306,7 +339,54 @@ export class CampBot {
   /** Runs the clock (standing still) to a time of day, minutes after midnight. */
   waitUntil(minuteOfDay: number): void {
     this.stop();
-    this.waitFor(() => this.#sim.state.calendar.minuteOfDay === minuteOfDay, 60 * 60 * 60);
+    // The next time the clock reads it, or the first moment past it (a night slept through, or
+    // time held, passes minutes at once).
+    const now = this.#minuteOfCampaign();
+    const ahead = (minuteOfDay - this.#sim.state.calendar.minuteOfDay + 1440) % 1440;
+    const target = now + ahead;
+    // A wait through the night is slept, as a player goes to bed with the household.
+    if (this.sleepsAtNight)
+      this.waitFor(
+        () => this.sleepIfNight(target) || this.#minuteOfCampaign() >= target,
+        60 * 60 * 60,
+      );
+    this.waitFor(() => this.#minuteOfCampaign() >= target, 60 * 60 * 60);
+  }
+
+  /** Minutes since the campaign's first dawn. */
+  #minuteOfCampaign(): number {
+    const cal = this.#sim.state.calendar;
+    return (cal.day - 1) * 1440 + minutesIntoDay(cal, this.#b);
+  }
+
+  /**
+   * A player waiting through the night goes to bed with the household (its sleep block, Book 5
+   * section 17), and the night passes at once (Book 2 section 03). Sleeps when it is that time, the
+   * steerer is free, and the wait runs on past the next dawn (`until`, minutes since the campaign's
+   * first dawn; undefined: unknown, as for the tide); returns whether the bot slept.
+   */
+  sleepIfNight(until?: number): boolean {
+    if (!this.sleepsAtNight) return false;
+    const cal = this.#sim.state.calendar;
+    const into = minutesIntoDay(cal, this.#b);
+    const sleepBlock = this.#land.people?.blocks.find((x) => x.block === 'SLEEP')?.from;
+    if (sleepBlock === undefined) return false;
+    const bedtime = (sleepBlock - this.#b.dayStart + 1440) % 1440;
+    if (into < bedtime) return false;
+    const dawn = cal.day * 1440;
+    if (until !== undefined && until < dawn) return false;
+    if (this.#onFoot.carrying !== null || this.#sim.state.talk !== null) return false;
+    if (hostilesAware(this.#onFoot) > 0 || !this.#sim.state.player.awake) return false;
+    const stage = this.#sim.state.homes[this.#camp.def.home]?.stage;
+    const bed = stage === 'S1' ? 'bed_s1' : 'bed_s0';
+    if (!this.#camp.def.sites.some((site) => site.key === bed)) return false;
+    const day = cal.day;
+    this.doAt(bed);
+    this.waitFor(
+      () => this.#sim.state.player.awake && this.#sim.state.calendar.day > day,
+      60 * 120,
+    );
+    return true;
   }
 
   /** Walks to dry ground with water deep enough to fish within casting reach. */

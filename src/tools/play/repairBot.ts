@@ -49,6 +49,20 @@ export class RepairBot extends SearchBot {
   /** Waits (standing) for the tidal ground to open: low water. */
   waitForLowWater(): void {
     this.stop();
+    // A night's wait is slept, as a player does (then back to the same place).
+    const zone = this.onFoot.zone;
+    const p = this.onFoot.player;
+    const here = { x: p.x, y: p.y };
+    this.waitFor(() => this.tideOpen || this.sleepIfNight(), 60 * 60 * 60);
+    if (
+      this.onFoot.zone !== zone ||
+      Math.hypot(this.onFoot.player.x - here.x, this.onFoot.player.y - here.y) > 24
+    ) {
+      this.goToZone(zone);
+      const T = this.map.tile;
+      const at = { tx: Math.floor(here.x / T), ty: Math.floor(here.y / T) };
+      this.walkTo((t) => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) <= 1, false, 60 * 300);
+    }
     this.waitFor(() => this.tideOpen, 60 * 60 * 60);
   }
 
@@ -84,7 +98,15 @@ export class RepairBot extends SearchBot {
         if (found === null) return;
         this.goToZone(found.zone);
         this.waitFor(() => this.onFoot.player.winded?.carry !== true, 60 * 60);
-        this.lift(id);
+        try {
+          this.lift(id);
+        } catch (e) {
+          // Set down on the flats as the tide closed (winded under it): back for it at the next
+          // low water, as a player would.
+          if (this.tideOpen || tries >= 29) throw e;
+          this.waitForLowWater();
+          continue;
+        }
       }
       this.goToZone(boatZone);
       if (this.onFoot.carrying !== id) continue;

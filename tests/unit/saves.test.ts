@@ -595,13 +595,14 @@ describe('golden save 10 (schema 10, frozen)', () => {
   });
 });
 
-describe('golden save 11 (schema 12): the chapter-end save, regenerated for design addendum 2.5', () => {
+describe('golden save 11 (schema 13): the chapter-end save, regenerated for the user’s third playtest', () => {
   const golden = JSON.parse(repoFile(GOLDEN_11)) as SaveFile;
 
-  it('loads, matches its hash and holds Chapter 1 as 2.5 plays it, ended', () => {
+  it('loads, matches its hash and holds Chapter 1 as the third playtest plays it, ended', () => {
     const { state, migratedFrom } = readSave(golden);
-    // Regenerated once 2.5 was complete (DF-46, DF-86): written at version 12, no migration.
-    expect(golden.header.schemaVersion).toBe(12);
+    // Regenerated once the third playtest's three parts were in (DG-94): written at version 13,
+    // no migration.
+    expect(golden.header.schemaVersion).toBe(13);
     expect(migratedFrom).toBeNull();
     expect(state.version).toBe(13);
     expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
@@ -612,13 +613,14 @@ describe('golden save 11 (schema 12): the chapter-end save, regenerated for desi
       marks: { sail: 'raven:woad' },
       fittings: { MIDSHIP: 'FIT_EXTENDED_HOLD' },
     });
-    // The 2.4 opening: Hild cut free, the chest home, the fire, Hild walking up, the sail raised.
+    // The opening: Hild cut free, the chest home, the fire, Hild walking up, the shelter in its
+    // three stages, finished on day 2 (DG-12, DG-90).
     expect(state.facts).toMatchObject({
       'ch1.net_free': true,
       'ch1.chest_home': true,
       'ch1.fire_lit': true,
       'ch1.hild_walked_up': true,
-      'ch1.shelter_raised': true,
+      'ch1.shelter': 'FINISHED',
       'ch1.dusk': 'DARK',
       'ch1.fire_scene': true,
     });
@@ -629,7 +631,8 @@ describe('golden save 11 (schema 12): the chapter-end save, regenerated for desi
       'search.bran': 'FIGHT',
       'runa.told': 'FIRE',
       'runa.tools_at': 'FIRE',
-      'ch1.key': 'BODY',
+      // Bran, home from the fold alive, gives the key at the bier (Book 4 beat 13).
+      'ch1.key': 'BRAN',
       'ch1.chest_opened': true,
       'ch1.mast_stores': 'CAMP',
       'ch1.rites': 'SEA_BURIAL',
@@ -640,6 +643,10 @@ describe('golden save 11 (schema 12): the chapter-end save, regenerated for desi
     expect(state.knowledge.places['SITE_CARRICK']).toBe('RUMOURED');
     for (const mark of ['first_combat', 'bow', 'stores', 'chapter_end'])
       expect(state.telemetry.marks[mark], mark).toBeDefined();
+    expect(state.telemetry.marks['shelter_finished']?.day).toBe(2);
+    // The fights were the third playtest's: the prompts counted, the spared (if any) recorded.
+    expect(state.player.teaching).toBeDefined();
+    expect(Array.isArray(state.spared)).toBe(true);
     // Saved at the chapter's end (design addendum 2.5): every fighter at rest in 2.5's terms.
     const fighters = [
       state.onFoot?.player.fight,

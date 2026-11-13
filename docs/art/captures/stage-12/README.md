@@ -23,12 +23,12 @@ and the boat, sail marks, crew and chart in `docs/art/stage-12/`.
 
 | View | Continuous motion |
 |---|---|
-| Wreck Strand (41 frames over 6.4 s) | 94.1% |
+| Wreck Strand (41 frames over 6.4 s) | 93.9% |
 | launch-ready | 88.9% |
-| launch-heave | 91.7% |
+| launch-heave | 91.5% |
 | launch-sail | 93.1% |
-| camp-sail | 83.2% |
-| dusk-stern | 89.1% |
+| camp-sail | 82.6% |
+| dusk-stern | 88.9% |
 | The sea map (not an in-world view; for the record) | 72.9% |
 | Book 7 threshold (in-world views) | 80.0% |
 
