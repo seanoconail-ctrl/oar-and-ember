@@ -363,6 +363,21 @@ export function readinessView(
           vars: {},
         });
         break;
+      case 'COUNCIL': {
+        // A reason for the first raid (DH-141): the intent agreed at the fire, or not yet.
+        const intent = world.facts['ch1.council'];
+        const required = world.facts['council.required'] === true;
+        lines.push({
+          ...base,
+          state: typeof intent === 'string' ? 'READY' : required ? 'SHORT' : 'UNKNOWN',
+          textKey:
+            typeof intent === 'string'
+              ? `ui.gate.launch.council.${intent.toLowerCase()}`
+              : 'ui.gate.launch.council.short',
+          vars: {},
+        });
+        break;
+      }
       case 'RITES': {
         const rites = world.facts['ch1.rites'];
         lines.push({
@@ -385,12 +400,21 @@ export function readinessView(
     status: gate.status,
     lines,
     pointOfNoReturnKey: ctx.def.pointOfNoReturnKey,
-    canStart: gate.status === 'OPEN' && stats?.seaworthy === true && toFloat === 0,
+    canStart:
+      gate.status === 'OPEN' && stats?.seaworthy === true && toFloat === 0 && councilHeld(world),
   };
 }
 
 /** Why the launch cannot start now, or null if it can. */
-export type LaunchRefusal = 'NOT_OPEN' | 'NOT_SEAWORTHY' | 'TIDE_OUT';
+export type LaunchRefusal = 'NOT_OPEN' | 'NOT_SEAWORTHY' | 'TIDE_OUT' | 'NO_COUNCIL';
+
+/**
+ * A reason for the first raid (DH-141): the household sits in council at the fire before the
+ * launch. Required once the first raid's systems run (they set `council.required`).
+ */
+export function councilHeld(world: WorldState): boolean {
+  return world.facts['council.required'] !== true || world.facts['ch1.council'] !== undefined;
+}
 
 /**
  * Starts the gate on the player's command: the gate is STARTED, the checkpoint is made, Thorkel
@@ -406,6 +430,7 @@ export function startLaunch(
 ): LaunchRefusal | null {
   const gate = gateOf(world, ctx);
   if (gate.status !== 'OPEN') return 'NOT_OPEN';
+  if (!councilHeld(world)) return 'NO_COUNCIL';
   const ship = boatOf(world);
   if (ship === null || !deriveStats(ship, ctx.ship, launchCrew(world).length).seaworthy)
     return 'NOT_SEAWORTHY';
@@ -423,8 +448,13 @@ export function startLaunch(
     const crew = launchCrew(world);
     hooks.deed('RITES_DENIED', crew);
     setFact(world, 'ch1.rites', 'DENIED');
-    if (crew.includes(ctx.def.speaker) && ctx.def.lines['noRites'] !== undefined)
-      emit({ type: 'PERSON_SPOKE', person: ctx.def.speaker, lineKey: ctx.def.lines['noRites'] });
+    // The user's fourth playtest (DH-20): with his body taken from the fold, he lies nowhere.
+    const said =
+      world.facts['ch1.thorkel_body'] === 'LOST'
+        ? (ctx.def.lines['noRitesLost'] ?? ctx.def.lines['noRites'])
+        : ctx.def.lines['noRites'];
+    if (crew.includes(ctx.def.speaker) && said !== undefined)
+      emit({ type: 'PERSON_SPOKE', person: ctx.def.speaker, lineKey: said });
   }
   emit({ type: 'GATE_STARTED', gate: ctx.def.gate });
   emit({ type: 'CHECKPOINT', label: ctx.def.checkpoint });

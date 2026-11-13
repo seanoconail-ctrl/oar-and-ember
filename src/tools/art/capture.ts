@@ -45,10 +45,12 @@ import { REPO_ROOT } from './loadTitleArt.ts';
 import { combat2Capture } from './captureCombat2.ts';
 import { combat25Capture } from './captureCombat25.ts';
 import { pt3CombatCapture } from './capturePt3Combat.ts';
+import { pt4CombatCapture } from './capturePt4Combat.ts';
 import { openingCapture } from './captureOpening.ts';
 import { stormCapture } from './captureStorm.ts';
 import { STORY_PORT, storyCapture } from './captureStory.ts';
 import { WORLD_PORT, worldCapture } from './captureWorld.ts';
+import { RAID_PORT, raidCapture } from './captureRaid.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
@@ -1714,7 +1716,22 @@ if (import.meta.filename === process.argv[1]) {
     console.error('usage: npm run capture -- <label>   (e.g. stage-07)');
     process.exit(1);
   }
-  if (label === 'playtest-4-world' || label === 'playtest-4-world-before') {
+  if (label === 'playtest-4-raid-reason') {
+    // A reason for the first raid (DH-130 on): docs/art/playtest-4/raid-reason/ (captureRaid.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: RAID_PORT, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await raidCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'playtest-4-world' || label === 'playtest-4-world-before') {
     // The user's fourth playtest's world and art (DH-100 on): docs/art/playtest-4/world/.
     const server = await createServer({
       root: REPO_ROOT,
@@ -1770,6 +1787,21 @@ if (import.meta.filename === process.argv[1]) {
     const browser = await chromium.launch();
     try {
       console.log(await openingCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'playtest-4-combat') {
+    // The user's fourth playtest's combat and AI (DH-70 on): docs/art/playtest-4/combat/.
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5289, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await pt4CombatCapture(browser));
     } finally {
       await browser.close();
       await server.close();

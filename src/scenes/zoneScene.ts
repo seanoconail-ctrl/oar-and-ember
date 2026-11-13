@@ -47,6 +47,8 @@ export const MARKER_SHEET = 'ui_marker';
 /** Missiles in flight and at rest (Book 10 section 21), and the glint on things to pick up. */
 export const MISSILE_SHEET = 'fx_missile';
 export const GLINT_SHEET = 'fx_glint';
+/** The household asleep under their blankets (the user's fourth playtest, request 15). */
+export const SLEEPERS_SHEET = 'prop_sleepers';
 /** The starting weapons lying on the strand: one state per item, named as its hotbar icon. */
 export const PICKUP_SHEET = 'prop_pickup';
 /** The broch and other buildings drawn in bands of ground rows (assets/art/buildings.json). */
@@ -505,6 +507,16 @@ export interface ZoneSceneInput {
   readonly steererBloodied?: boolean;
   /** The user's third playtest (DG-4): the tick the steerer let a foe go (the gesture's start). */
   readonly steererSpare?: number;
+  /**
+   * The user's fourth playtest (Book 10 "The steerer's death", DH-71): the steerer's collapse, from
+   * the killing blow's way (0 to 15, or null), with its buckle, its fall's frames and their ticks.
+   */
+  readonly steererCollapse?: {
+    readonly from: number | null;
+    readonly buckle: number;
+    readonly frames: number;
+    readonly frameTicks: number;
+  };
   /** Stage 9: ticks a corpse takes to fade with the gore setting low (and off). */
   readonly corpseFade?: { readonly low: number; readonly off: number };
   /**
@@ -592,6 +604,12 @@ export function fightAnim(
     /** The user's third playtest: ticks since a guard turned a blow (DG-9), or a let-go (DG-4). */
     readonly turned?: number | null;
     readonly spare?: number | null;
+    /** The steerer's collapse (DH-71): the knees held, then the fall's frames, slower. */
+    readonly collapse?: {
+      readonly buckle: number;
+      readonly frames: number;
+      readonly frameTicks: number;
+    };
   } = {},
 ): PersonAnim | null {
   const has = (s: string): boolean => own[s] !== undefined;
@@ -811,7 +829,16 @@ export function fightAnim(
       // The fall (Book 7 section 12): two frames by the way of the hit, then the body settles.
       const fall = extra.fall ?? null;
       const age = tick - f.since;
-      if (fall !== null && has(fall) && age < 10) return { state: fall, frame: age < 5 ? 0 : 1 };
+      // The steerer's collapse (Book 10 "The steerer's death", DH-71): the knees go (the stagger's
+      // second frame, held), then the fall at its own pace, then still.
+      const c = extra.collapse;
+      if (c !== undefined) {
+        if (age < c.buckle && has('stagger')) return { state: 'stagger', frame: 1 };
+        const k = Math.floor((age - c.buckle) / Math.max(1, c.frameTicks));
+        if (fall !== null && has(fall) && k < c.frames)
+          return { state: fall, frame: Math.min((own[fall]?.frames ?? 1) - 1, Math.max(0, k)) };
+      } else if (fall !== null && has(fall) && age < 10)
+        return { state: fall, frame: age < 5 ? 0 : 1 };
       const s = extra.piece == null ? 'dead' : `dead_${extra.piece}`;
       return has(s) ? { state: s, frame: 0 } : has('dead') ? { state: 'dead', frame: 0 } : null;
     }
@@ -912,6 +939,19 @@ export interface FireLight {
   readonly colour: Readonly<Record<Phase, readonly [number, number, number]>>;
   /** How much the radius flickers, as a share of it. */
   readonly flicker: number;
+  /**
+   * The user's fourth playtest (request 23; DH-124): the hearth's hot core, a tighter, warmer pool
+   * inside the wide one, and a soapstone lamp's small pool in its wall niche.
+   */
+  readonly core?: {
+    readonly radius: Readonly<Record<Phase, number>>;
+    readonly colour: Readonly<Record<Phase, readonly [number, number, number]>>;
+  };
+  readonly lamp?: {
+    readonly radius: Readonly<Record<Phase, number>>;
+    readonly colour: Readonly<Record<Phase, readonly [number, number, number]>>;
+    readonly flicker: number;
+  };
 }
 
 /** The frame a missile in flight is drawn with: its velocity on screen, the arc's rise included. */
@@ -1128,6 +1168,13 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       }
       // A prop with a loop of its own (the sails' ripples) plays it; others hold their frame.
       const [state = '', facing = '-'] = prop.frame.split('/');
+      // A lamp in its niche throws its own small warm pool (DH-124).
+      const lamp = camp.light?.lamp;
+      if (state === 'lamp' && lamp !== undefined) {
+        const f = 1 + lamp.flicker * Math.sin(seconds * 9.1 + prop.x);
+        const r = lamp.radius[input.phase] * f;
+        if (r > 1) pools.push({ x, y: y - 10, radius: r, colour: lamp.colour[input.phase] });
+      }
       const loop = prop.fixed !== true && (anims.get(prop.sheet)?.[state]?.frames ?? 1) > 1;
       const sprite: SceneSprite = {
         sheet: prop.sheet,
@@ -1228,6 +1275,11 @@ export function zoneScene(input: ZoneSceneInput): Scene {
                 0.1 * Math.sin(seconds * 41.1));
           const radius = light.radius[phase] * flick * (low ? 0.6 : 1);
           if (radius > 1) pools.push({ x, y: y - 6, radius, colour: light.colour[phase] });
+          const core = light.core;
+          if (core !== undefined) {
+            const r2 = core.radius[phase] * (2 - flick) * (low ? 0.6 : 1);
+            if (r2 > 1) pools.push({ x, y: y - 4, radius: r2, colour: core.colour[phase] });
+          }
         }
       }
     }
@@ -1264,6 +1316,30 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     }
     if (bodySprite !== null && opts.shadow !== false) cast(bodySprite);
     return bodySprite;
+  };
+
+  /**
+   * The user's fourth playtest (request 15; DH-105): someone asleep is drawn lying under their own
+   * blanket, the head on a rolled cloak, breathing (prop_sleepers), instead of the old lying frames.
+   * Returns false when the sheet has no sleeper for this person (they are drawn as before).
+   */
+  const sleeper = (who: PersonLook, facing: string, x: number, y: number): boolean => {
+    const key = who.body.replace(/^actor_/, '').replace(/^[pc]_/, '');
+    const state = `${key}_${facing === 'n' || facing === 'w' ? 'w' : 'e'}`;
+    const def = anims.get(SLEEPERS_SHEET)?.[state];
+    if (def === undefined) return false;
+    // Each sleeper breathes on their own phase.
+    const phase = Math.floor(hash01(Math.round(x), Math.round(y), 31) * def.frames * def.ticks);
+    const sprite: SceneSprite = {
+      sheet: SLEEPERS_SHEET,
+      frame: `${state}/-/${frameIndex(anims, SLEEPERS_SHEET, state, reduced ? 0 : tick + phase)}`,
+      x,
+      y,
+      layer: 'actor',
+    };
+    sprites.push(sprite);
+    cast(sprite);
+    return true;
   };
 
   // The steerer, and while carrying, the carried person drawn over their shoulders.
@@ -1307,6 +1383,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {}, {
       gait: st === undefined || st.speed === 1 ? null : st.backing === true ? 'backoff' : 'strafe',
       spare: input.steererSpare === undefined ? null : tick - input.steererSpare,
+      ...(input.steererCollapse === undefined || steererFight.state !== 'dead'
+        ? {}
+        : {
+            collapse: input.steererCollapse,
+            fall:
+              input.steererCollapse.from === null
+                ? 'fall_back'
+                : fallOf(steererFight.angle, input.steererCollapse.from, null),
+          }),
     });
     if (fa !== null) {
       state = fa.state;
@@ -1317,7 +1402,11 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     gore > 0 && input.steererBloodied === true ? look.steerer : withoutBlood(look.steerer);
   const combat = input.combat;
   const kick = (id: string): { dx: number; dy: number } => combat?.offsets[id] ?? { dx: 0, dy: 0 };
-  if (input.hidePeople !== true && input.launch?.steererHidden !== true)
+  const steererAsleep =
+    state === 'sleep' &&
+    input.hidePeople !== true &&
+    sleeper(steererLook, p.facing, p.x - camera.x, p.y - camera.y);
+  if (input.hidePeople !== true && input.launch?.steererHidden !== true && !steererAsleep)
     person(
       steererLook,
       `${state}/${p.facing}/${stepFrame}`,
@@ -1489,7 +1578,17 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         // A pose the sheet has no drawing for (a chest set down) is drawn lying, or standing.
         const st = own[st0] !== undefined ? st0 : own['down'] !== undefined ? 'down' : 'idle';
         const frame = frameIndex(anims, who.body, st, tick);
-        person(drawn, `${st}/${actor.facing}/${frame}`, actor.facing, x, y, visual?.water[id], {});
+        const asleep = actor.pose === 'sleep' && sleeper(drawn, actor.facing, x, y);
+        if (!asleep)
+          person(
+            drawn,
+            `${st}/${actor.facing}/${frame}`,
+            actor.facing,
+            x,
+            y,
+            visual?.water[id],
+            {},
+          );
         walkers.push({ x: actor.x, y: actor.y });
       }
       // A crew order taken: its icon a moment over the head.

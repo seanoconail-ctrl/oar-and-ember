@@ -27,6 +27,7 @@ import type {
   VALUES,
 } from '../content/registry.ts';
 import { newPerson } from './people/person.ts';
+import type { CompanyState } from './people/company.ts';
 import type { Id } from '../core/ids.ts';
 import { seedAllStreams } from '../core/rng.ts';
 import type { RngState, RngStream } from '../core/rng.ts';
@@ -663,7 +664,16 @@ export interface WorldState {
   /** The campaign's options (version 7). */
   options: CampaignOptions;
   /** The steerer has died: the game is over until a save is loaded (version 7). */
-  gameOver: { readonly day: number; readonly tick: number; readonly cause: string } | null;
+  gameOver: {
+    readonly day: number;
+    readonly tick: number;
+    readonly cause: string;
+    /**
+     * The user's fourth playtest (Book 10 "The steerer's death", DH-71): the way the killing blow
+     * came (0 to 15, as a corpse's), so the collapse falls the right way; absent for other deaths.
+     */
+    readonly from?: number;
+  } | null;
   /** Book 2 section 16: each story gate's state, by its beat ID (version 10). */
   gates: Record<Id, GateState>;
   /** The chapter's telemetry (version 10). */
@@ -676,6 +686,12 @@ export interface WorldState {
   aims?: AimState;
   /** The spared (version 13; Book 2 section 15, decisions DG-5 and DG-6): never removed. */
   spared?: SparedRecord[];
+  /**
+   * The household's own life (the user's fourth playtest, DH-40 onwards; Book 2 section 06): the
+   * talk among residents, the nudges, refused bindings. Created when first needed, so a save from
+   * before it loads without it (decision DH-65).
+   */
+  company?: CompanyState;
 }
 
 /** Book 2 section 16: the aim the journal shows and its stuck clock. */

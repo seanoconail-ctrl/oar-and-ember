@@ -107,6 +107,7 @@
     },
     {
       "id": "SCN_SK_WRECKERS",
+      "post": { "x": 30.5, "y": 35.8 },
       "zone": "ZONE_SK_CAIRN",
       "after": "ch1.at_broch",
       "takesCaptives": false,
@@ -137,6 +138,7 @@
     },
     {
       "id": "SCN_SK_SEALCAVE",
+      "post": { "x": 44.8, "y": 24.8 },
       "zone": "ZONE_SK_SEALCAVE",
       "after": "ch1.wreckers_cave",
       "takesCaptives": false,
@@ -380,7 +382,55 @@
             "person": "C_BRAN",
             "key": "c_bran.fold.silver.2"
           }
-        ]
+        ],
+        "unless": "ch1.silver_taken_by"
+      },
+      {
+        "id": "stolen",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_CONN",
+        "needs": ["E_WRECKER_CONN"]
+      },
+      {
+        "id": "stolen_svart",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen_svart.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_SVART",
+        "needs": ["E_WRECKER_SVART"]
+      },
+      {
+        "id": "stolen_ketill",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen_ketill.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_KETILL"
       },
       {
         "id": "posts",

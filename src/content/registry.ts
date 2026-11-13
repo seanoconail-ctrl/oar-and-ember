@@ -10,6 +10,12 @@ import { arrayOf, bool, id, int, object, oneOf, recordOf, ref, text } from './sc
 import type { Check, Ctx, Issue, Ref, RefKind } from './schema.ts';
 import { steererWordingProblems } from './steererWords.ts';
 import { aimCondition } from './aimSchema.ts';
+import { parseCompany, parseGuidance } from './companySchema.ts';
+import { parseFinds } from './findsSchema.ts';
+import type { FindsDef } from './findsSchema.ts';
+import type { CompanyDef, GuidanceDef } from './companySchema.ts';
+import { parseRaid, RAID_ACTIONS, RAID_WHEN } from './raidSchema.ts';
+import type { RaidDef } from './raidSchema.ts';
 import { captionProblems, isDialogueKey, modernMoralWordsIn, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
@@ -37,6 +43,13 @@ export const CONTENT_FILES = {
   searches: 'content/searches.json',
   repairs: 'content/repairs.json',
   launch: 'content/launch.json',
+  /** The user's fourth playtest (DH-40 onwards): the household's own life, and the guidance. */
+  company: 'content/company.json',
+  guidance: 'content/guidance.json',
+  /** The user's fourth playtest (DH-115 onwards): the small finds off the paths (request 24). */
+  finds: 'content/finds.json',
+  /** A reason for the first raid (DH-130 to DH-159): needs, the skin boat, asking, the council. */
+  raid: 'content/raid.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
   zoneHagseat: 'content/zones/zone_sk_hagseat.json',
@@ -120,6 +133,9 @@ export const ACTIVITY_KINDS = [
   'SCENE',
   'REFUSE',
   'DARK',
+  /** The user's fourth playtest (DH-44, DH-41): the night's watch by the fire; a wound being bound. */
+  'WATCH',
+  'TENDED',
 ] as const;
 export const BARK_CATEGORIES = [
   'DANGER',
@@ -131,7 +147,17 @@ export const BARK_CATEGORIES = [
   'WEATHER',
   'IDLE',
 ] as const;
-export const MEMORY_KINDS = ['WOUND', 'DEATH', 'DEED', 'EVENT', 'JOB', 'SEASON', 'CARE'] as const;
+export const MEMORY_KINDS = [
+  'WOUND',
+  'DEATH',
+  'DEED',
+  'EVENT',
+  'JOB',
+  'SEASON',
+  'CARE',
+  // A reason for the first raid (DH-134): a topic offered while a need is felt (content/raid.json).
+  'NEED',
+] as const;
 export const JUDGEMENTS = [
   'TAKE_SIDE',
   'COMPROMISE',
@@ -280,7 +306,7 @@ const cueCheck = object(
     /** Design addendum 2.5 (DF-80): a combat sound's drawn twin, in place of a caption. */
     drawn: text,
     temporary: bool,
-    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship'] as const),
+    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship', 'rites'] as const),
     layers: recordOf(text, bool),
   },
   [
@@ -473,8 +499,15 @@ const talkExchangeCheck = object(
     id: text,
     lines: arrayOf(object({ person: ref('person'), key: ref('string') })),
     needs: arrayOf(ref('person')),
+    /**
+     * The user's fourth playtest (DH-15): heard only while a story fact holds (`fact` set, or set
+     * to `is`), or only while it does not (`unless`): who took the ship's silver.
+     */
+    fact: text,
+    is: text,
+    unless: text,
   },
-  ['needs'],
+  ['needs', 'fact', 'is', 'unless'],
 );
 const crewArmsCheck = object({ weapon: id(['ITEM']), shield: bool, bow: bool, heavy: bool }, [
   'weapon',
@@ -516,6 +549,12 @@ const encounterCheck = object(
     teaches: ref('person'),
     /** Who runs when another of the band falls, or when hit at all (Conn at dusk: connFlees). */
     runsWhenFriendFalls: ref('person'),
+    /**
+     * The user's fourth playtest (Book 10 "Guarding and pursuit", decision DH-72): the ground or
+     * thing the band guards, in tiles (the fold and Bran in it; the skiff in Seal Cave). A band
+     * with a post rushes back to it when its foe is too far from it; one without pursues.
+     */
+    post: object({ x: fraction(0, 512), y: fraction(0, 512) }),
     members: arrayOf(
       object(
         {
@@ -529,7 +568,17 @@ const encounterCheck = object(
       ),
     ),
   },
-  ['after', 'parley', 'allies', 'warns', 'dusk', 'shieldOnBack', 'teaches', 'runsWhenFriendFalls'],
+  [
+    'after',
+    'parley',
+    'allies',
+    'warns',
+    'dusk',
+    'shieldOnBack',
+    'teaches',
+    'runsWhenFriendFalls',
+    'post',
+  ],
 );
 /**
  * Combat v2 (Book 10 "Sneaking", tallGrass): ground that hides a sneaking actor beyond Book 10's
@@ -605,122 +654,167 @@ const openingCheck = object({
   safeLine: ref('string'),
   refusedLine: ref('string'),
   /** Design addendum 2.4's opening (decisions DE-16 to DE-30): src/sim/narrative/wreck.ts. */
-  rework: object({
-    coldOpen: object({
-      about: text,
-      seconds: int(1, 120),
-      strikeSeconds: int(1, 120),
-      blackSeconds: int(1, 120),
-      shoutEverySeconds: int(1, 60),
-      shouts: arrayOf(ref('string')),
-      captions: recordOf(text, ref('string')),
-    }),
-    waking: object({ about: text, getUpTicks: int(1, 600), coughCaption: ref('string') }),
-    net: object({
-      about: text,
-      blades: arrayOf(id(['ITEM'])),
-      lines: recordOf(text, ref('string')),
-      captions: recordOf(text, ref('string')),
-      promptKey: ref('string'),
-      refusalKey: ref('string'),
-      jokeSeconds: int(0, 60),
-    }),
-    chest: object({
-      about: text,
-      id: id(['ITEM']),
-      zone: ref('zone'),
-      at: facingAtR,
-      home: object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), facing: text }),
-      key: id(['ITEM']),
-      lineAfterSafeSeconds: fraction(0, 60),
-      line: ref('string'),
-      lockedKey: ref('string'),
-      openPromptKey: ref('string'),
-      keyPromptKey: ref('string'),
-      contents: arrayOf(
-        object({ item: id(['ITEM']), count: int(1, 99), quiver: bool }, ['quiver']),
-      ),
-      bowLine: ref('string'),
-      keyLine: ref('string'),
-      captions: recordOf(text, ref('string')),
-    }),
-    mast: object({
-      about: text,
-      zone: ref('zone'),
-      foot: object({ x: fraction(0, 512), y: fraction(0, 512) }),
-      lashing: object({
-        x: fraction(0, 512),
-        y: fraction(0, 512),
-        heightPx: int(0, 400),
-        w: int(1, 64),
-        h: int(1, 64),
+  rework: object(
+    {
+      coldOpen: object({
+        about: text,
+        seconds: int(1, 120),
+        strikeSeconds: int(1, 120),
+        blackSeconds: int(1, 120),
+        shoutEverySeconds: int(1, 60),
+        shouts: arrayOf(ref('string')),
+        captions: recordOf(text, ref('string')),
       }),
-      fall: facingAtR,
-      bundle: id(['ITEM']),
-      line: ref('string'),
-      lineAfterSeconds: int(0, 60),
-      captions: recordOf(text, ref('string')),
-      campTiles: fraction(0.5, 20),
-    }),
-    camp: object({
-      about: text,
-      reachTiles: fraction(0.5, 30),
-      walkUp: ref('string'),
-      walkUpTiles: fraction(0.5, 10),
-      shelterUp: ref('string'),
-      oldBoat: ref('string'),
-      oldBoatTiles: fraction(0.5, 20),
-      captions: recordOf(text, ref('string')),
-      /** Where the folded sail and the three oars lie (Book 9 section 04), and Hild's seat. */
-      sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
-      hildSeat: facingAtR,
+      waking: object({ about: text, getUpTicks: int(1, 600), coughCaption: ref('string') }),
+      net: object({
+        about: text,
+        blades: arrayOf(id(['ITEM'])),
+        lines: recordOf(text, ref('string')),
+        captions: recordOf(text, ref('string')),
+        promptKey: ref('string'),
+        refusalKey: ref('string'),
+        jokeSeconds: int(0, 60),
+      }),
+      chest: object({
+        about: text,
+        id: id(['ITEM']),
+        zone: ref('zone'),
+        at: facingAtR,
+        home: object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), facing: text }),
+        key: id(['ITEM']),
+        lineAfterSafeSeconds: fraction(0, 60),
+        line: ref('string'),
+        lockedKey: ref('string'),
+        openPromptKey: ref('string'),
+        keyPromptKey: ref('string'),
+        contents: arrayOf(
+          object({ item: id(['ITEM']), count: int(1, 99), quiver: bool }, ['quiver']),
+        ),
+        bowLine: ref('string'),
+        keyLine: ref('string'),
+        captions: recordOf(text, ref('string')),
+      }),
+      mast: object({
+        about: text,
+        zone: ref('zone'),
+        foot: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+        lashing: object({
+          x: fraction(0, 512),
+          y: fraction(0, 512),
+          heightPx: int(0, 400),
+          w: int(1, 64),
+          h: int(1, 64),
+        }),
+        fall: facingAtR,
+        bundle: id(['ITEM']),
+        line: ref('string'),
+        lineAfterSeconds: int(0, 60),
+        captions: recordOf(text, ref('string')),
+        campTiles: fraction(0.5, 20),
+      }),
+      camp: object({
+        about: text,
+        reachTiles: fraction(0.5, 30),
+        walkUp: ref('string'),
+        walkUpTiles: fraction(0.5, 10),
+        shelterUp: ref('string'),
+        oldBoat: ref('string'),
+        oldBoatTiles: fraction(0.5, 20),
+        captions: recordOf(text, ref('string')),
+        /** Where the folded sail and the three oars lie (Book 9 section 04), and Hild's seat. */
+        sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+        hildSeat: facingAtR,
+        /**
+         * The user's third playtest (DG-12): Hild's word for each stage of the shelter (the frame
+         * after her walk-up, the sail once it stands, the night's word under the lean-to, the second
+         * morning's finishing and the finished shelter), how long a second line waits behind a
+         * first (real seconds), and where she steadies the oars while the frame goes up.
+         */
+        frame: ref('string'),
+        sailLine: ref('string'),
+        night: ref('string'),
+        finish: ref('string'),
+        finished: ref('string'),
+        nextLineSeconds: fraction(0.5, 20),
+        steady: facingAtR,
+        /**
+         * The user's fourth playtest (DH-10, DH-11): the marked spot where the frame and the sail
+         * are worked, beside the lean-to's bed and never on it (Book 9 section 04).
+         */
+        mark: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+      }, ['mark']),
+      /** The user's third playtest (DG-13): Hild points up the bank to the old tower, once safe. */
+      broch: object({ about: text, line: ref('string'), afterSafeSeconds: fraction(0, 30) }),
+      fireScene: object({
+        about: text,
+        fromMinute: int(0, 1439),
+        nearTiles: fraction(0.5, 10),
+        lines: arrayOf(ref('string')),
+      }),
+      hagLight: object({
+        about: text,
+        fromMinute: int(0, 1439),
+        untilMinute: int(0, 1439),
+        caption: ref('string'),
+      }),
+      hagStone: object({
+        about: text,
+        holds: arrayOf(fraction(0, 60)),
+        captions: recordOf(text, ref('string')),
+      }),
+      runa: object({
+        about: text,
+        talk: text,
+        places: recordOf(
+          text,
+          object({
+            zone: ref('zone'),
+            x: fraction(0, 512),
+            y: fraction(0, 512),
+            r: fraction(0, 40),
+          }),
+        ),
+        checkTiles: fraction(0.5, 20),
+        truth: ref('string'),
+        lie: ref('string'),
+      }),
+      rescue: object({ about: text, people: arrayOf(ref('person')) }),
+      life: object({ about: text, sealSinkTiles: fraction(0, 40), gullLiftTiles: fraction(0, 40) }),
       /**
-       * The user's third playtest (DG-12): Hild's word for each stage of the shelter (the frame
-       * after her walk-up, the sail once it stands, the night's word under the lean-to, the second
-       * morning's finishing and the finished shelter), how long a second line waits behind a
-       * first (real seconds), and where she steadies the oars while the frame goes up.
+       * The user's fourth playtest's story and scenes (decisions DH-10 to DH-39): the steerer's word
+       * over a body, the strongbox taken in sight, Runa's reminder, and Hild's first-night lines once
+       * her father is found. Its numbers are Book 10's ("Story and scenes").
        */
-      frame: ref('string'),
-      sailLine: ref('string'),
-      night: ref('string'),
-      finish: ref('string'),
-      finished: ref('string'),
-      nextLineSeconds: fraction(0.5, 20),
-      steady: facingAtR,
-    }),
-    /** The user's third playtest (DG-13): Hild points up the bank to the old tower, once safe. */
-    broch: object({ about: text, line: ref('string'), afterSafeSeconds: fraction(0, 30) }),
-    fireScene: object({
-      about: text,
-      fromMinute: int(0, 1439),
-      nearTiles: fraction(0.5, 10),
-      lines: arrayOf(ref('string')),
-    }),
-    hagLight: object({
-      about: text,
-      fromMinute: int(0, 1439),
-      untilMinute: int(0, 1439),
-      caption: ref('string'),
-    }),
-    hagStone: object({
-      about: text,
-      holds: arrayOf(fraction(0, 60)),
-      captions: recordOf(text, ref('string')),
-    }),
-    runa: object({
-      about: text,
-      talk: text,
-      places: recordOf(
-        text,
-        object({ zone: ref('zone'), x: fraction(0, 512), y: fraction(0, 512), r: fraction(0, 40) }),
-      ),
-      checkTiles: fraction(0.5, 20),
-      truth: ref('string'),
-      lie: ref('string'),
-    }),
-    rescue: object({ about: text, people: arrayOf(ref('person')) }),
-    life: object({ about: text, sealSinkTiles: fraction(0, 40), gullLiftTiles: fraction(0, 40) }),
-  }),
+      story4: object({
+        about: text,
+        remarks: object({
+          about: text,
+          /** Thorkel's body (an actor, not a person of the household). */
+          thorkel: text,
+          thorkelLines: arrayOf(ref('string')),
+          fallenLines: arrayOf(ref('string')),
+        }),
+        snatch: object({
+          about: text,
+          /** Which way the dune grass lies (he comes from it) and the edge he leaves by. */
+          landward: oneOf(['n', 's', 'e', 'w'] as const),
+          exit: oneOf(['n', 's', 'e', 'w'] as const),
+          thieves: arrayOf(
+            object({
+              person: ref('person'),
+              grab: ref('string'),
+              caught: ref('string'),
+              oddiShout: ref('string'),
+              oddiSafe: ref('string'),
+            }),
+          ),
+        }),
+        runa: object({ about: text, lines: arrayOf(ref('string')) }),
+        fireFound: object({ about: text, swap: recordOf(ref('string'), ref('string')) }),
+      }),
+    },
+    ['story4'],
+  ),
   /** Every aim of Chapter 1 (Book 2 section 16, AimDef; Book 8 section 13). */
   aims: arrayOf(
     object(
@@ -738,8 +832,13 @@ const openingCheck = object({
               textKey: ref('string'),
               canCall: bool,
               alt: object({ speaker: ref('person'), textKey: ref('string'), canCall: bool }),
+              /**
+               * The user's fourth playtest (DH-35): given only while these hold (where it helps);
+               * otherwise the hint waits, its clock running on.
+               */
+              when: arrayOf(aimCondition),
             },
-            ['alt'],
+            ['alt', 'when'],
           ),
         ),
       },
@@ -784,8 +883,18 @@ const siteCheck = object(
     stages: arrayOf(oneOf(STAGES)),
     /** How the site is drawn, a frame of prop_driftwood for a piece of driftwood (decision PT-5). */
     frame: text,
+    /**
+     * The user's fourth playtest (DH-100): the ground the site covers, in tiles of its zone (the
+     * steerer's bed, 2 x 1 tiles, Book 7 section 01). Standing anywhere on it uses it.
+     */
+    area: object({
+      x0: fraction(0, 512),
+      y0: fraction(0, 512),
+      x1: fraction(0, 512),
+      y1: fraction(0, 512),
+    }),
   },
-  ['stages', 'frame'],
+  ['stages', 'frame', 'area'],
 );
 const campPropCheck = object(
   {
@@ -833,12 +942,20 @@ const campCheck = object(
   ['shelterBeds'],
 );
 
-const spotCheck = object({
-  zone: ref('zone'),
-  x: fraction(0, 512),
-  y: fraction(0, 512),
-  facing: oneOf(['s', 'n', 'e', 'w'] as const),
-});
+const spotCheck = object(
+  {
+    zone: ref('zone'),
+    x: fraction(0, 512),
+    y: fraction(0, 512),
+    facing: oneOf(['s', 'n', 'e', 'w'] as const),
+    /**
+     * The user's fourth playtest (DH-60): how a job is worked at this spot, a standing work loop
+     * (the task's own) or kneeling low (caulking a seam), so workers round the boat differ.
+     */
+    pose: oneOf(['work', 'kneel'] as const),
+  },
+  ['pose'],
+);
 const clock: Check<string> = (v, path, ctx) =>
   typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v)
     ? v
@@ -905,8 +1022,10 @@ const lineWhen = {
   wounded: bool,
   grief: bool,
   season: oneOf(['Spring', 'Summer', 'Autumn', 'Winter'] as const),
+  /** The user's fourth playtest (DH-20): said only while these hold (the facts of the story). */
+  when: arrayOf(aimCondition),
 };
-const WHEN_KEYS = ['watch', 'activity', 'voice', 'wounded', 'grief', 'season'] as const;
+const WHEN_KEYS = ['watch', 'activity', 'voice', 'wounded', 'grief', 'season', 'when'] as const;
 const greetingCheck = object({ key: ref('string'), ...lineWhen }, WHEN_KEYS);
 const barkCheck = object(
   { key: ref('string'), category: oneOf(BARK_CATEGORIES), ...lineWhen },
@@ -961,8 +1080,12 @@ const topicCheck = object(
     always: bool,
     labelKey: ref('string'),
     root: text,
+    /** The user's fourth playtest (DH-20): offered only while these hold (the facts of the story). */
+    when: arrayOf(aimCondition),
+    /** Chosen, it opens these words instead of the topic's own (DH-22: Hild's father's rites). */
+    opens: text,
   },
-  ['state', 'about', 'season', 'missing', 'pressing', 'always'],
+  ['state', 'about', 'season', 'missing', 'pressing', 'always', 'when', 'opens'],
 );
 const nodeCheck = object({ line: ref('string'), choices: arrayOf(choiceCheck) });
 const talkCheck = object({
@@ -1041,6 +1164,9 @@ export const SEARCH_ACTIONS = [
   'RUNA_FIRE',
   'RUNA_SHELTER',
   'RUNA_BOAT',
+  // A reason for the first raid (DH-130 to DH-159): ask where they came from, take the skin
+  // boat's goods, and the council's four intents (content/raid.json).
+  ...RAID_ACTIONS,
 ] as const;
 export const SEARCH_WHEN = [
   'UNSEEN',
@@ -1055,6 +1181,8 @@ export const SEARCH_WHEN = [
   'HAS_FOOD',
   // Stage 12: the launch is open (its gate).
   'GATE_OPEN',
+  // A reason for the first raid: the skin boat's goods still in it.
+  ...RAID_WHEN,
 ] as const;
 const searchTalkCheck = object({
   id: text,
@@ -1225,7 +1353,16 @@ const launchCheck = object({
   readiness: arrayOf(
     object({
       kind: oneOf(['CREW', 'SHIP', 'STORES', 'ALLIES', 'EQUIPMENT', 'OTHER'] as const),
-      measure: oneOf(['BOAT', 'TIDE', 'CREW', 'FOOD', 'WEAPONS', 'ALLIES', 'RITES'] as const),
+      measure: oneOf([
+        'BOAT',
+        'TIDE',
+        'CREW',
+        'FOOD',
+        'WEAPONS',
+        'ALLIES',
+        'RITES',
+        'COUNCIL',
+      ] as const),
       labelKey: ref('string'),
     }),
   ),
@@ -1331,6 +1468,13 @@ export interface Content {
   readonly repairs: RepairsDef | null;
   /** Stage 12: the launch, Chapter 1's gate. */
   readonly launch: LaunchDef | null;
+  /** The user's fourth playtest (DH-40 onwards): hours, bindings, talk, the boat; guidance. */
+  readonly company: CompanyDef | null;
+  /** The user's fourth playtest: Chapter 1's small finds off the paths (DH-115). */
+  readonly finds: FindsDef | null;
+  readonly guidance: GuidanceDef | null;
+  /** A reason for the first raid (DH-130 to DH-159). */
+  readonly raid: RaidDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -1481,6 +1625,11 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const searches = searchesCheck(files.searches, '', ctx(CONTENT_FILES.searches));
   const repairs = repairsCheck(files.repairs, '', ctx(CONTENT_FILES.repairs));
   const launch = launchCheck(files.launch, '', ctx(CONTENT_FILES.launch));
+  const company = parseCompany(files.company, '', ctx(CONTENT_FILES.company));
+  const finds = parseFinds(files.finds, '', ctx(CONTENT_FILES.finds));
+  const guidance = parseGuidance(files.guidance, '', ctx(CONTENT_FILES.guidance));
+  const raid = parseRaid(files.raid, '', ctx(CONTENT_FILES.raid));
+  issues.push(...companyProblems(company, guidance, opening, talk));
   // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
   searches?.omens.forEach((o, i) => {
     for (const part of ['sign', 'rule', 'response', 'consequence'] as const) {
@@ -1728,6 +1877,10 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       searches,
       repairs,
       launch,
+      company,
+      guidance,
+      finds,
+      raid,
       zoneMaps,
     },
     issues,
@@ -1748,6 +1901,48 @@ export function parseAudioTable(json: unknown): AudioTable {
     );
   }
   return audio;
+}
+
+/**
+ * The fourth playtest's people content (DH-40 onwards): every aim named has a definition, every
+ * refuser's talk node exists, and every exchange's lines name one of its speakers.
+ */
+function companyProblems(
+  company: CompanyDef | null,
+  guidance: GuidanceDef | null,
+  opening: OpeningDef | null,
+  talk: TalkDef | null,
+): Issue[] {
+  const out: Issue[] = [];
+  const aims = new Set((opening?.aims ?? []).map((a) => a.id));
+  for (const aim of Object.keys(guidance?.nudges ?? {}))
+    if (!aims.has(aim))
+      out.push({ file: CONTENT_FILES.guidance, path: `nudges.${aim}`, reason: 'no such aim' });
+  company?.care.refusers.forEach((r, i) => {
+    if (talk !== null && talk.nodes[r.node] === undefined)
+      out.push({
+        file: CONTENT_FILES.company,
+        path: `care.refusers[${i}].node`,
+        reason: `no talk node "${r.node}"`,
+      });
+  });
+  company?.exchanges.forEach((e, i) => {
+    if (e.speakers.length < 2 || e.speakers.length > 3)
+      out.push({
+        file: CONTENT_FILES.company,
+        path: `exchanges[${i}].speakers`,
+        reason: 'an exchange has two or three speakers',
+      });
+    e.lines.forEach((l, j) => {
+      if (l.by >= e.speakers.length)
+        out.push({
+          file: CONTENT_FILES.company,
+          path: `exchanges[${i}].lines[${j}].by`,
+          reason: 'names no speaker of the exchange',
+        });
+    });
+  });
+  return out;
 }
 
 /** The people's content (Stage 8): every reference between people, jobs, talk and scenes. */
@@ -1821,7 +2016,8 @@ function peopleProblems(
         if (c.next !== undefined && !nodes.has(c.next))
           out.push({ file: CONTENT_FILES.talk, path: `${at}.next`, reason: `no node "${c.next}"` });
         const act = c.act;
-        if (act !== undefined && act !== 'TEND') {
+        // TEND_PERSUADED: a refused binding taken up again on the refuser's own terms (DH-42).
+        if (act !== undefined && act !== 'TEND' && act !== 'TEND_PERSUADED') {
           const job = /^JOB:([A-Z]+)$/.exec(act)?.[1];
           if (job === undefined || household?.jobs[job as (typeof JOBS)[number]] === undefined)
             out.push({

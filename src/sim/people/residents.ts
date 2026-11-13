@@ -77,6 +77,21 @@ function settle(actor: OnFootActor, place: ResidentPlace): void {
 }
 
 /**
+ * Puts a resident at their place at once, in its pose (time skipped: the user's fourth playtest,
+ * DH-47). Someone lying hurt, carried, calling or dead is left where they are.
+ */
+export function putResident(onFoot: OnFootState, id: Id, place: ResidentPlace): void {
+  const found = findActor(onFoot, id);
+  if (found === null) return;
+  const { actor } = found;
+  if (['carried', 'down', 'call', 'dead'].includes(actor.pose)) return;
+  actor.x = place.x;
+  actor.y = place.y;
+  settle(actor, place);
+  placeActor(onFoot, id, place.zone, actor);
+}
+
+/**
  * One tick for a resident who wants to be at `place`. `hold` keeps them standing where they are
  * (Hild waiting for the steerer to catch up while she leads).
  */

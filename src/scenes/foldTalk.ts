@@ -19,6 +19,11 @@ export interface TalkExchange {
   readonly id: string;
   readonly lines: readonly { readonly person: string; readonly key: string }[];
   readonly needs?: readonly string[];
+  /** The user's fourth playtest (DH-15): heard only while this fact is set (to `is`, if given). */
+  readonly fact?: string;
+  readonly is?: string;
+  /** Heard only while this fact is not set. */
+  readonly unless?: string;
 }
 
 /** What the frame tells the talk about the fold now. */
@@ -34,6 +39,8 @@ export interface FoldView {
   readonly tiles: (person: string) => number;
   /** How long a line's subtitle shows, in seconds (Book 10 speechHold). */
   readonly hold: (key: string) => number;
+  /** A story fact's value (the world's facts; DH-15). */
+  readonly fact?: (key: string) => unknown;
 }
 
 /** A line to give: shown as speech, or only its murmur of blips. */
@@ -41,6 +48,15 @@ export interface FoldLine {
   readonly person: string;
   readonly key: string;
   readonly murmur: boolean;
+}
+
+/** Whether an exchange's story fact holds (DH-15: who took the silver), as the view reads it. */
+function factsHold(e: TalkExchange, v: FoldView): boolean {
+  const read = v.fact ?? ((): unknown => undefined);
+  if (e.unless !== undefined && read(e.unless) !== undefined) return false;
+  if (e.fact === undefined) return true;
+  const value = read(e.fact);
+  return e.is === undefined ? value !== undefined : value === e.is;
 }
 
 export class FoldTalk {
@@ -76,8 +92,10 @@ export class FoldTalk {
   #shuffle(v: FoldView): void {
     this.#rng ??= seedStream(`${this.#seed}/fold/${String(this.#arrivals)}`, 'generation');
     const rng = this.#rng;
-    const can = this.#ex.filter((e) =>
-      [...e.lines.map((l) => l.person), ...(e.needs ?? [])].every((p) => v.present(p)),
+    const can = this.#ex.filter(
+      (e) =>
+        [...e.lines.map((l) => l.person), ...(e.needs ?? [])].every((p) => v.present(p)) &&
+        factsHold(e, v),
     );
     const order = [...can];
     for (let i = order.length - 1; i > 0; i--) {

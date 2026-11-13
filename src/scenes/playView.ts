@@ -26,6 +26,9 @@ import { InputMapper } from '../input/inputState.ts';
 import { browserStorage, loadSettings } from '../input/settingsStore.ts';
 import { resolveDisplaySettings, saveDisplaySettings } from '../input/displaySettings.ts';
 import { CombatFx } from './combatFx.ts';
+import { ZONE_PLACE_KEYS } from '../persist/save.ts';
+import { contentNameKeys, displayName } from '../content/names.ts';
+import type { NameBook } from '../content/names.ts';
 import { saveFor } from '../persist/checkpoints.ts';
 import { bakeElevation } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
@@ -48,17 +51,11 @@ import type { TipContext } from './tips.ts';
 import { MISSILE_SHEET } from './zoneScene.ts';
 import { tileOf } from '../sim/land/zoneMap.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
-import {
-  campUseNear,
-  campUses,
-  driftwoodPieces,
-  isTimed,
-  leanToUp,
-  shelterStage,
-} from '../sim/home/camp.ts';
+import { campUseNear, driftwoodPieces, isTimed, leanToUp, shelterStage } from '../sim/home/camp.ts';
 import { seaBurialActive } from '../sim/narrative/seaBurial.ts';
-import { boatLayers, repairProps } from './repairsScene.ts';
-import { boatOf, repairPlacedUses } from '../sim/narrative/repairs.ts';
+import { boatDrawing, boatLayers, repairProps } from './repairsScene.ts';
+import { findActor } from '../sim/land/zoneLinks.ts';
+import { boatOf } from '../sim/narrative/repairs.ts';
 import { staminaView } from '../sim/home/stamina.ts';
 import { FACT_HILD_SAFE } from '../sim/narrative/opening.ts';
 import { createSimulation } from '../sim/simulation.ts';
@@ -71,6 +68,7 @@ import type { FightContext } from '../sim/land/fight.ts';
 import { attachWakingAutosave, DAY_START_SLOT } from '../persist/manager.ts';
 import { browserSaves } from '../persist/browserSaves.ts';
 import { parseInterfaceBalance } from '../content/interfaceBalance.ts';
+import { parsePt4Balance } from '../content/pt4Balance.ts';
 import { ACTIONS, rebind } from '../input/actions.ts';
 import type { Binding } from '../input/actions.ts';
 import { saveSettings } from '../input/settingsStore.ts';
@@ -155,7 +153,10 @@ const WRECK_SOUNDS: Partial<Record<WreckWhat, string>> = {
   HAG_GUST: 'HAG_GUST',
 };
 import type { CampScene } from './zoneScene.ts';
-import { campHooks, campUseLabel, interactionPoint, reportSentences } from './camp.ts';
+import { campHooks, campUseLabel, interactionPoint, reportSentences, useWins } from './camp.ts';
+import { placedUsesHere } from '../sim/narrative/uses.ts';
+import { findProps } from '../sim/narrative/finds.ts';
+import { snatchHolds } from '../sim/narrative/story4.ts';
 import { visualTuning, ZoneVisuals } from './zoneVisuals.ts';
 import type { CameraLead } from './zoneVisuals.ts';
 import { AIM_DIRECTIONS } from '../sim/simulation.ts';
@@ -167,7 +168,6 @@ import {
   FACT_ODDI,
   FACT_RUNA,
   FACT_WRECKERS,
-  searchPlacedUses,
   stoneWeeps,
 } from '../sim/narrative/searches.ts';
 import { activityOf } from '../sim/people/schedule.ts';
@@ -437,6 +437,20 @@ export function startPlay(
   const fightCtx: FightContext | null = land.fight ?? null;
   const combatB = parseCombatBalance(content.balance);
   const aiB = parseAiBalance(content.balance);
+  // The user's fourth playtest (Book 10 "The steerer's death", DH-71): the collapse before the
+  // game-over screen: the knees, the fall, then a still beat in silence.
+  const deathB = parsePt4Balance(content.balance).death;
+  const collapseTicks =
+    deathB.buckleTicks +
+    deathB.fallFrames * deathB.fallFrameTicks +
+    Math.round(deathB.beatSeconds * TICKS_PER_SECOND);
+  /** Whether the game-over screen shows yet: the collapse first (DH-71). */
+  const gameOverShown = (): boolean => {
+    const over = sim.state.gameOver;
+    return over !== null && sim.state.tick - over.tick >= collapseTicks;
+  };
+  /** The game-over sting is played once, as the screen comes (DH-71). */
+  let gameOverStung = -1;
   /** Combat v2 (decision DE-12): an autosave on reaching camp, written once the frame's steps end. */
   let autosaveDue: 'CAMP' | null = null;
   const steererVitality = parsePeopleBasics(content.balance).vitality;
@@ -495,6 +509,8 @@ export function startPlay(
   window.addEventListener('keydown', (e) => {
     // Game over (Stage 9): reload the latest save, or begin again.
     if (sim.state.gameOver !== null) {
+      // Keys do nothing until the collapse has played and the screen has come (DH-71).
+      if (!gameOverShown()) return;
       if (e.code === 'Enter' || keyCodes('interact').includes(e.code)) reloadLatest();
       else if (e.code === 'KeyN') window.location.reload();
       return;
@@ -662,11 +678,19 @@ export function startPlay(
   };
 
   // Book 8 section 01: patronymics in formal speech only; barks and prompts use the short name.
+  // Never an ID on the screen (the user's fourth playtest, request 25; DH-110): a person, a load
+  // carried or an item is named from its string, or as "that".
+  const names: NameBook = {
+    has: (key) => strings.has(key),
+    t: (key, vars) => t(key, vars ?? {}),
+    keys: contentNameKeys(content),
+    zones: ZONE_PLACE_KEYS,
+  };
   const nameOf = (id: string): string => {
     const short = `person.short.${id.toLowerCase()}`;
     if (strings.has(short)) return t(short);
     const key = world.people[id]?.nameKey;
-    return key === undefined ? id : t(key);
+    return key === undefined ? displayName(id, names) : t(key);
   };
   // Stage 12: the boat's name, once given, in the lines that speak of it ({ship}, Book 8).
   const line = (key: string): string =>
@@ -696,6 +720,8 @@ export function startPlay(
   let ritesScene = false;
   /** Barks heard this session (Stage 8; the browser tests read it). */
   let barksHeard = 0;
+  /** The keys of the latest speech lines, oldest first (the fourth playtest's tests). */
+  const spokenKeys: string[] = [];
   let beat = '';
   /** Where a person is, left or right of the steerer, as a stereo pan. */
   const panOf = (person: string): number => {
@@ -705,6 +731,27 @@ export function startPlay(
     return Math.max(-1, Math.min(1, (actor.x - onFoot.player.x) / 200));
   };
   let lastAmbienceAt = -1;
+  /**
+   * The user's fourth playtest (DH-63; Book 10 boatWorkSound): each resident working at the boat
+   * in earshot is heard at it, the repair's adze and mallet panned to them, every boatWorkSound.
+   */
+  const boatHeardAt = new Map<string, number>();
+  const boatWorkSounds = (): void => {
+    const peopleNow = land.people ?? null;
+    const every = peopleNow?.company?.b.boat.workSoundSeconds;
+    if (audio === null || !engine.unlocked || peopleNow === null || every === undefined) return;
+    const onFoot = sim.state.onFoot;
+    if (onFoot === null || sim.state.talk !== null) return;
+    for (const [id, a] of Object.entries(onFoot.actors)) {
+      if (a.task !== 'TASK_REPAIR_SHIP' || (a.pose !== 'work' && a.pose !== 'kneel')) continue;
+      const d = Math.hypot(a.x - onFoot.player.x, a.y - onFoot.player.y) / map.tile;
+      if (d > peopleNow.b.talk.earshotTiles) continue;
+      const last = boatHeardAt.get(id) ?? -Infinity;
+      if (engine.now - last < every) continue;
+      boatHeardAt.set(id, engine.now);
+      audio.event('TASK_REPAIR', engine.now, { pan: panOf(id) });
+    }
+  };
   // Home audio (Stage 7): which music a place wants, in turns with ambience only at home, and how
   // near a lit fire the steerer is.
   const homeAudio = audioTable?.home;
@@ -735,6 +782,18 @@ export function startPlay(
     const phaseNow = launchPhase(sim.state);
     const launching =
       mapMode === 'reveal' || (phaseNow !== null && phaseNow !== 'NAMING' && phaseNow !== 'DONE');
+    // The user's fourth playtest (DH-23): Thorkel's rites have their own music, from the choice to
+    // the rite's end, at the rite's place and at the camp (the lament is sung over it).
+    const ritesForm = sim.state.facts['rites.pending'];
+    const ritesDef = content.repairs?.rites;
+    const ritesMusic =
+      ritesDef === undefined || (ritesForm !== 'SETTING' && ritesForm !== 'SEA')
+        ? null
+        : map.zone === (ritesForm === 'SEA' ? ritesDef.sea.zone : ritesDef.setting.zone) || atHome
+          ? ritesForm === 'SEA'
+            ? 'MUS_RITES_SEA'
+            : 'MUS_RITES_STONES'
+          : null;
     const want =
       sim.state.gameOver !== null
         ? null
@@ -742,15 +801,17 @@ export function startPlay(
           ? 'MUS_LAUNCH'
           : inFight
             ? 'MUS_COMBAT_1'
-            : (placeMusic?.want(engine.now, {
-                // Design addendum 2.4: the music arrives gently with the first fire.
-                allowed:
-                  sim.state.facts['ch1.phase'] === undefined
-                    ? sim.state.facts[FACT_HILD_SAFE] === true
-                    : sim.state.facts['ch1.fire_lit'] === true,
-                home: atHome,
-                phase,
-              }) ?? null);
+            : ritesMusic !== null
+              ? ritesMusic
+              : (placeMusic?.want(engine.now, {
+                  // Design addendum 2.4: the music arrives gently with the first fire.
+                  allowed:
+                    sim.state.facts['ch1.phase'] === undefined
+                      ? sim.state.facts[FACT_HILD_SAFE] === true
+                      : sim.state.facts['ch1.fire_lit'] === true,
+                  home: atHome,
+                  phase,
+                }) ?? null);
     if (want === null) {
       if (audio.director.state !== null) audio.silence(engine.now);
     } else if (audio.director.state !== want) audio.play(want, engine.now);
@@ -824,9 +885,13 @@ export function startPlay(
         tufts?: [number, number, number, number][];
       }
     | undefined;
+  // The user's fourth playtest (DH-62): the boat's work in hand drawn stage by stage.
+  const drawing = content.repairs === null ? null : boatDrawing(content.balance);
   const loops: Record<string, string> = Object.fromEntries(
     Object.entries(campDef?.tasks ?? {}).map(([id, def]) => [id, def.workLoop]),
   );
+  /** Whether the steerer's bed is the prompt now (its highlight edge; DH-103). */
+  let bedLit = false;
   const campScene = (): CampScene | undefined => {
     if (campDef === null) return undefined;
     const home = sim.state.homes[campDef.home];
@@ -837,15 +902,32 @@ export function startPlay(
     // Design addendum 2.4: the lean-to only once raised; the mast, the pool, the sail, the doors.
     const stageProps = stagePropsNow(sim.state, stageAll, sim.state.tick);
     const opening =
-      wreckCtx === null ? [] : openingProps(sim.state, wreckCtx, map, stageAll, sim.state.tick);
+      wreckCtx === null
+        ? []
+        : openingProps(
+            sim.state,
+            wreckCtx,
+            map,
+            stageAll,
+            sim.state.tick,
+            campDef?.sites.find((s) => s.kind === 'BUILD' && s.zone === map.zone),
+          );
     // Stage 11: the boat and its repairs, the wreck's rigging, the skiff, the ship of stones.
     const repairDef = content.repairs;
     const extra =
       repairDef === null
         ? []
-        : repairProps(sim.state, { def: repairDef }, map.zone, content.launch);
+        : repairProps(sim.state, { def: repairDef }, map.zone, content.launch, drawing);
+    // The user's fourth playtest: the small finds off the paths (DH-115).
+    const findsHere = land.finds == null ? [] : findProps(sim.state, land.finds, map.zone);
+    // The steerer's bed takes its in-reach highlight edge while it is the prompt (DH-103).
+    const marked = (here ? stageProps : []).map((pr) =>
+      bedLit && pr.sheet === 'prop_bed_steerer'
+        ? { ...pr, frame: pr.frame.replace(/^(s[01])\//, '$1_lit/') }
+        : pr,
+    );
     return {
-      props: [...(here ? stageProps : []), ...extra, ...opening],
+      props: [...marked, ...extra, ...opening, ...findsHere],
       stage: home.stage,
       fire:
         fireSite === undefined
@@ -1304,7 +1386,7 @@ export function startPlay(
     person: (id) => nameOf(id),
     item: (id) => {
       const def = itemOf(id);
-      return def === undefined ? id : t(def.nameKey);
+      return def === undefined ? displayName(id, names) : t(def.nameKey);
     },
     fitting: (id) => t(`fitting.name.${id.toLowerCase()}`),
   };
@@ -1362,6 +1444,8 @@ export function startPlay(
         return;
       }
       case 'PERSON_SPOKE':
+        spokenKeys.push(e.lineKey);
+        if (spokenKeys.length > 40) spokenKeys.shift();
         say(
           t('caption.format.subtitle', { speaker: nameOf(e.person), line: line(e.lineKey) }),
           now,
@@ -1489,6 +1573,12 @@ export function startPlay(
         if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         if (e.first && itemOf(e.item)?.tipKey !== undefined) tipQueue.push(e.item);
         return;
+      case 'FIND_MADE':
+        // The user's fourth playtest (DH-115, DH-118): a find's sound and its story caption.
+        if (audio !== null && engine.unlocked) audio.event(e.sound, engine.now, { pan: 0 });
+        inform(e.captionKey, t(e.captionKey), now);
+        root.dataset['found'] = e.key;
+        return;
       case 'SHOVED':
         visuals.shove();
         return;
@@ -1523,6 +1613,11 @@ export function startPlay(
         return;
       case 'FELL_ASLEEP':
         if (audio !== null && engine.unlocked) audio.event('SLEEP', engine.now, { pan: 0 });
+        return;
+      // A reason for the first raid (DH-147): the skin boat's goods set down into the stores, with
+      // the load's own thump, as the ship's stores are.
+      case 'GOODS_STORED':
+        if (audio !== null && engine.unlocked) audio.event('LOAD_DOWN', engine.now, { pan: 0 });
         return;
       // ---- Stage 11: every repair and its task has its sound (Book 11 section 12).
       case 'MATERIAL_LAID':
@@ -1682,9 +1777,36 @@ export function startPlay(
       case 'AIM_HINT':
         hintsHeard++;
         return;
-      case 'EDGE_CAPTION':
-        inform(e.key, t(e.key), now);
+      case 'EDGE_CAPTION': {
+        // The user's fourth playtest (DH-36): "Nothing that way" names a real, open way.
+        const way = e.way;
+        const text =
+          way === undefined
+            ? t(e.key)
+            : t('caption.edge.nothing_way', {
+                way: t('caption.edge.way', {
+                  place: t(`caption.edge.place.${way.to.toLowerCase()}`),
+                  direction: t(`caption.direction.${way.direction}`),
+                }),
+              });
+        inform(e.key, text, now);
         edgeCaptions++;
+        return;
+      }
+      // The user's fourth playtest (DH-24): the steerer's word over a body, under the steerer's
+      // name with a breath out and no blip (Book 11 section 08).
+      case 'STEERER_SPOKE':
+        say(
+          t('caption.format.subtitle', { speaker: sim.state.player.name, line: line(e.lineKey) }),
+          now,
+        );
+        if (audio !== null && engine.unlocked)
+          audio.event('STEERER_REMARK', engine.now, { pan: 0 });
+        return;
+      // The strongbox taken in sight (DH-13): the box hauled up by its handles, panned to him.
+      case 'SNATCH':
+        if (e.what === 'GRABBED' && audio !== null && engine.unlocked)
+          audio.event('SNATCH', engine.now, { pan: panAt(e.x) });
         return;
       case 'DOOR': {
         if (e.what === 'OPENING') {
@@ -1793,7 +1915,8 @@ export function startPlay(
         fightSound('PERSON_DOWNED', 'P_STEERER');
         return;
       case 'STEERER_DIED':
-        if (audio !== null && engine.unlocked) audio.event('GAME_OVER', engine.now, { pan: 0 });
+        // The collapse (DH-71): the sound drops away now; the sting comes with the screen.
+        engine.setFallen(true, deathB.soundFadeSeconds, deathB.soundQuickSeconds);
         return;
       case 'FINISH_WARNING':
         inform(
@@ -2072,6 +2195,9 @@ export function startPlay(
     // With Book 10 for the migrations that need it (schema 3 to 4, the camp's bindings at 10 to 11).
     sim.restore(saves.load(point.slot, { context: { balance: content.balance } }).state);
     restored = true;
+    // The sound comes back after the collapse's silence (Book 10 soundFade, DH-71).
+    engine.setFallen(false, deathB.restoreSeconds);
+    gameOverStung = -1;
     lookOwns = null;
     captions.clear();
     fadeInFrom = frameNow;
@@ -2439,12 +2565,17 @@ export function startPlay(
         return { kind: 'travel' };
       })(),
       aiming: onFoot.player.aim !== null,
-      fire: ((): { x: number; y: number; lit: boolean } | null => {
+      fire: ((): { x: number; y: number; lit: boolean; roofed: boolean } | null => {
         const site = campDef?.sites.find((x) => x.kind === 'FIRE' && x.zone === map.zone);
         const home = campDef === null ? undefined : sim.state.homes[campDef.home];
         return site === undefined || home === undefined
           ? null
-          : { x: site.x * map.tile, y: site.y * map.tile, lit: home.fire.lit };
+          : {
+              x: site.x * map.tile,
+              y: site.y * map.tile,
+              lit: home.fire.lit,
+              roofed: home.stage === 'S1',
+            };
       })(),
       night: lightPhase(sim.state.calendar, b) === 'night',
     };
@@ -2472,7 +2603,7 @@ export function startPlay(
           ? t(what.nameKey)
           : lying?.item === 'ITEM_BINDING'
             ? t('item.name.bindings')
-            : '';
+            : displayName(lying?.item ?? '', names);
       prompt =
         device === 'mouse'
           ? t('ui.prompt.pick_up_click', { item })
@@ -2516,27 +2647,31 @@ export function startPlay(
       prompt = t('ui.prompt.move', { keys: moveKeys });
       promptKind = 'move';
     }
-    // The camp's uses (Stage 7): the nearer of a lift or pickup and a task, as the simulation picks.
+    // The uses here, the very list the simulation acts on (the user's fourth playtest, DH-10): the
+    // nearer of a lift or pickup and a use, as the simulation picks. Before, the opening's own uses
+    // were missing here, so the shelter's prompt never showed (DH-4).
     const campCtx = land.camp ?? null;
-    const uses = campCtx === null ? [] : campUses(sim.state, campCtx, map, onFoot.actors);
-    // Stage 10: the searches' words (Bran, Ketill, Runa, the stone), as the simulation offers them.
-    if (land.searches != null) uses.push(...searchPlacedUses(sim.state, land.searches, map));
-    // Stage 11: the boat, the wreck's rigging, the skiff's oar, the words at the cave and the bier.
-    if (land.repairs != null) uses.push(...repairPlacedUses(sim.state, land.repairs, map));
+    const uses = placedUsesHere(
+      sim.state,
+      {
+        camp: campCtx,
+        wreck: wreckCtx,
+        searches: land.searches ?? null,
+        repairs: land.repairs ?? null,
+        remarks: land.story4?.remarks ?? null,
+        finds: land.finds ?? null,
+        raid: land.raid ?? null,
+      },
+      map,
+    );
     const reachPx = land.rules.interactRadiusTiles * map.tile;
     const use =
       onFoot.carrying === null && onFoot.player.work == null
         ? campUseNear(uses, onFoot.player, reachPx)
         : null;
+    bedLit = use?.use.kind === 'SLEEP';
     const at = interaction === null ? null : interactionPoint(onFoot, interaction, map.tile);
-    if (
-      use !== null &&
-      (interaction === null ||
-        (interaction.kind !== 'SET_DOWN' &&
-          (at === null ||
-            Math.hypot(use.x - onFoot.player.x, use.y - onFoot.player.y) <
-              Math.hypot(at.x - onFoot.player.x, at.y - onFoot.player.y))))
-    ) {
+    if (use !== null && useWins(use, interaction, at, onFoot.player)) {
       const label = campUseLabel(use.use, content, t, nameOf, interactKey, device === 'mouse');
       prompt = label.text;
       promptKind = label.kind;
@@ -2565,6 +2700,8 @@ export function startPlay(
       (wreckCtx !== null && hagNow(sim.state, wreckCtx) !== null) ||
       ritesScene ||
       seaBurialActive(sim.state) ||
+      // The strongbox taken in sight (DH-13): a brief scene.
+      snatchHolds(sim.state, land.story4 ?? null) ||
       launchPlaying;
     const quiet = narrativeShowing || storyBeat || talkOpen;
     const secs = now / 1000;
@@ -2627,6 +2764,7 @@ export function startPlay(
       );
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
       placeAudio();
+      boatWorkSounds();
     }
     // Sound captions go through the audit by key like every other line (most are cut).
     if (audio !== null) {
@@ -2661,7 +2799,8 @@ export function startPlay(
       phase: wreckPhase(sim.state),
       gettingUp: sim.state.facts['ch1.getting_up'] !== undefined,
       scene: sim.state.talk?.kind === 'SCENE' || sim.state.talk?.scene != null,
-      rites: ritesScene || seaBurialActive(sim.state),
+      rites:
+        ritesScene || seaBurialActive(sim.state) || snatchHolds(sim.state, land.story4 ?? null),
       launch: launchPlaying,
     });
     const pointerOffered =
@@ -2828,6 +2967,16 @@ export function startPlay(
           .map(([id, o]) => [id, o.order]),
       ),
       steererBloodied: steererBloodied(),
+      ...(sim.state.gameOver === null
+        ? {}
+        : {
+            steererCollapse: {
+              from: sim.state.gameOver.from ?? null,
+              buckle: deathB.buckleTicks,
+              frames: deathB.fallFrames,
+              frameTicks: deathB.fallFrameTicks,
+            },
+          }),
       ...(spareTick === null ? {} : { steererSpare: spareTick }),
       combat: combatFx.overlay(onFoot, sim.state.tick, display.marks),
       walkPerTick: (land.movement.walk * map.tile) / TICKS_PER_SECOND,
@@ -2969,7 +3118,12 @@ export function startPlay(
     const staminaRegion = overlay.region('stamina');
     if (staminaRegion.textContent !== reasonText) staminaRegion.textContent = reasonText;
     // Game over (Stage 9; Book 2 section 20): the steerer has fallen; reload the latest save.
-    const over = sim.state.gameOver;
+    // The game-over screen waits for the collapse (Book 10 "The steerer's death", DH-71).
+    const over = gameOverShown() ? sim.state.gameOver : null;
+    if (over !== null && gameOverStung !== over.tick) {
+      gameOverStung = over.tick;
+      if (audio !== null && engine.unlocked) audio.event('GAME_OVER', engine.now, { pan: 0 });
+    }
     const goRegion = overlay.region('gameover');
     const point = over === null ? null : saves.latestRestorePoint();
     const goShown = over === null ? '' : `${over.tick}|${point?.sequence ?? 0}|${device}`;
@@ -3398,6 +3552,19 @@ export function startPlay(
         ? ''
         : `${hildP.happiness.toFixed(1)},${hildP.friendship.toFixed(1)},${hildP.fear.toFixed(1)}`;
     root.dataset['residents'] = sim.state.household.residents.join(',');
+    // The user's fourth playtest (tests): each resident's activity, pose and tile, and the last
+    // speech line's key (exchanges, nudges and advice).
+    root.dataset['people'] = sim.state.household.residents
+      .map((id) => {
+        const f = sim.state.onFoot === null ? null : findActor(sim.state.onFoot, id);
+        const act = sim.state.people[id]?.life.activity ?? '';
+        if (f === null) return `${id}:${act}:-:-`;
+        const x = (f.actor.x / map.tile).toFixed(1);
+        const y = (f.actor.y / map.tile).toFixed(1);
+        return `${id}:${act}:${f.actor.pose}:${f.zone}@${x},${y}`;
+      })
+      .join('|');
+    root.dataset['spoken'] = spokenKeys.join('|');
     // Stage 10: the three searches as facts (tests), and whether the Hag's Seat stone weeps.
     root.dataset['searches'] = [
       FACT_ODDI,
@@ -3423,7 +3590,7 @@ export function startPlay(
             `OAR=${String(sim.state.facts['repair.oar'] ?? '')}`,
             `RITES=${String(sim.state.facts['ch1.rites'] ?? '')}`,
           ].join('|');
-    root.dataset['boat'] = boatLayers(sim.state)
+    root.dataset['boat'] = boatLayers(sim.state, null, drawing)
       .map((l) => l.frame.split('/')[0] ?? '')
       .join('+');
     root.dataset['barks'] = String(barksHeard);

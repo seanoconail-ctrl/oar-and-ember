@@ -15,6 +15,8 @@ import type {
   TalkDef,
 } from '../../content/registry.ts';
 import type { Id } from '../../core/ids.ts';
+import { companyContext } from './company.ts';
+import type { CompanyContext } from './company.ts';
 
 export type Block = 'SLEEP' | 'MEAL' | 'WORK' | 'EVENING';
 
@@ -31,6 +33,12 @@ export interface PeopleContext {
   readonly blocks: readonly { readonly block: Block; readonly from: number }[];
   /** Ticks in a real second (the bark clock). */
   readonly ticksPerSecond: number;
+  /**
+   * The user's fourth playtest (DH-40 onwards): own hours, bindings, talk among the household,
+   * nudges, advice and the boat. Null without content/company.json (the household's day as
+   * before, but for the steerer's sleep: DH-44).
+   */
+  readonly company: CompanyContext | null;
 }
 
 export function minutesOf(clock: string): number {
@@ -39,7 +47,8 @@ export function minutesOf(clock: string): number {
 }
 
 export function peopleContext(
-  content: Pick<Content, 'household' | 'talk' | 'scenes' | 'people' | 'balance'>,
+  content: Pick<Content, 'household' | 'talk' | 'scenes' | 'people' | 'balance'> &
+    Partial<Pick<Content, 'company' | 'guidance' | 'opening'>>,
   ticksPerSecond = 60,
 ): PeopleContext | null {
   const household = content.household;
@@ -56,6 +65,15 @@ export function peopleContext(
       .map((s) => ({ block: s.block, from: minutesOf(s.from) }))
       .sort((a, b) => a.from - b.from),
     ticksPerSecond,
+    company:
+      content.company == null
+        ? null
+        : companyContext({
+            company: content.company,
+            guidance: content.guidance ?? null,
+            opening: content.opening ?? null,
+            balance: content.balance,
+          }),
   };
 }
 

@@ -320,6 +320,7 @@ export class CombatTeach {
         return a === undefined ? Infinity : Math.hypot(a.x - p.x, a.y - p.y) / tile;
       },
       hold: (key) => h.speechSeconds(h.t(key)),
+      fact: (key) => world.facts[key],
     });
     if (line === null) return;
     const text = h.t(line.key);

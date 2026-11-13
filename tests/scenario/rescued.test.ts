@@ -27,6 +27,7 @@ import { aboveTideLine, terrainAt, tileBlocks, tileOf } from '../../src/sim/land
 import { searchHolds } from '../../src/sim/narrative/searches.ts';
 import { wreckHolds } from '../../src/sim/narrative/wreck.ts';
 import { activityOf } from '../../src/sim/people/schedule.ts';
+import { nightOf, watcherOf } from '../../src/sim/people/company.ts';
 import { createSimulation } from '../../src/sim/simulation.ts';
 import type { SimEvent, Simulation } from '../../src/sim/simulation.ts';
 import type { WorldState } from '../../src/sim/world.ts';
@@ -200,7 +201,8 @@ function watch(p: Play): void {
     }
     s.last = { x: f.actor.x, y: f.actor.y, zone: f.zone, act: act.kind };
     if (f.visible && f.actor.moving === true && pose !== 'carried') s.walkedSeen = true;
-    if (w.people[p.who]?.life.activity === 'WORK' && pose === 'work')
+    // At work standing, or kneeling at a low seam of the boat (the fourth playtest, DH-60).
+    if (w.people[p.who]?.life.activity === 'WORK' && (pose === 'work' || pose === 'kneel'))
       s.workedDays.add(w.calendar.day);
   };
 }
@@ -692,7 +694,22 @@ function follow(p: Play, run: Run): void {
       p.bot.step(T * 5);
       settleTalk(p);
     }
-    if (!asleep) {
+    // The user's fourth playtest (DH-46): tonight's watch keeps the fire until 02:00, awake by
+    // it, and sleeps under the shelter after (its night counted at dawn like everyone's).
+    const watching =
+      !asleep &&
+      people.company !== null &&
+      watcherOf(
+        world(p),
+        people.company,
+        nightOf(world(p).calendar.day, minute(p)),
+        world(p).household.residents,
+      ) === p.who;
+    if (watching) {
+      expect(world(p).people[p.who]?.life.activity, `${label} night ${night}`).toBe('WATCH');
+      expect(at(p)?.zone, `${label}: the watch at the camp`).toBe(CAMP_ZONE);
+      expect(s.campAt, `${label}: reached the camp`).not.toBeNull();
+    } else if (!asleep) {
       p.bot.waitFor(() => at(p)?.actor.pose === 'sleep' && underShelter(p), T * 600);
       expect(
         underShelter(p),

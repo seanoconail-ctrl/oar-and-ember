@@ -216,6 +216,9 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   }
   bot.waitUntil(18 * 60 + 30);
   bot.rites('SEA');
+  // A reason for the first raid (DH-140): the household sits in council at the fire before the
+  // launch, and the steerer chooses the household's intent.
+  bot.council('QUIET');
   bot.goToZone('ZONE_SK_STRAND');
   bot.waitForWater();
   bot.askToLaunch();

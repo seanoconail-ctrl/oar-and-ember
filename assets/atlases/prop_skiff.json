@@ -25,6 +25,16 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "oar_goods": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bare_goods": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -41,6 +51,14 @@
     "bare/-/0": [
       0,
       64
+    ],
+    "oar_goods/-/0": [
+      0,
+      128
+    ],
+    "bare_goods/-/0": [
+      0,
+      192
     ]
   }
 }

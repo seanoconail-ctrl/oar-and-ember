@@ -11,16 +11,19 @@ import { INTERFACE_SOUNDS } from './interface.ts';
 import { OPENING_SOUNDS } from './opening.ts';
 import { STORM_SOUNDS } from './storm.ts';
 import { STORY3_SOUNDS } from './story3.ts';
+import { STORY4_SOUNDS } from './story4.ts';
 import hearthJson from '../../../content/music/hearth.json';
 import combatJson from '../../../content/music/combat.json';
 import raidJson from '../../../content/music/raid.json';
 import skarvholmJson from '../../../content/music/skarvholm.json';
 import shipJson from '../../../content/music/ship.json';
+import ritesJson from '../../../content/music/rites.json';
 import { envelope } from './engine.ts';
 import type { SynthEngine } from './engine.ts';
 import type { Piece } from './notation.ts';
 import { rng } from './samples.ts';
 import { HOME } from './home.ts';
+import { FIND_SOUNDS } from './finds.ts';
 import type { HomePhase } from './home.ts';
 import { COMBAT, FIGHT, MISSILES, out, PEOPLE, TELLS } from './sfx.ts';
 import { SOUTH } from './south.ts';
@@ -36,6 +39,7 @@ export const PIECES: Readonly<Record<string, Piece>> = {
   raid: raidJson,
   combat: combatJson,
   ship: shipJson,
+  rites: ritesJson,
 };
 
 /** The horn and the two stingers, generated from the instruments' samples. */
@@ -146,6 +150,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...PEOPLE,
     ...MISSILES,
     ...HOME,
+    ...FIND_SOUNDS,
     ...DISPUTES,
     ...FIGHT,
     ...ENDINGS,
@@ -157,6 +162,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...OPENING_SOUNDS,
     ...STORM_SOUNDS,
     ...STORY3_SOUNDS,
+    ...STORY4_SOUNDS,
     ...INTERFACE_SOUNDS,
   ].map((d) => [d.id, d]),
 );

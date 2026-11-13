@@ -75,6 +75,7 @@ Write specific oaths rooted in each culture rather than generic Viking shouting.
 - Content lint (Book 2) flags any string tagged `ADDRESS_STEERER` or `ABOUT_STEERER` that contains a word from the banned list.
 - **A gendered word for someone else** in a line addressed to the steerer (Hild's "He wore the key round his neck" of her father, or "her" of a boat) is allowed only when the string also carries `REFERS:<id>` naming whom the word means (`REFERS:c_thorkel`, `REFERS:ship`), and never in a string that names the steerer (`{steerer}`). Content lint then allows only the words that fit that referent; a reviewer reads every such line. Write round it where the line reads as well without (decision DE-31).
 - Period attitudes to women and men exist in the world and may be spoken (Eithne's marriage, Órlaith's), but no line applies them to the steerer or reveals the steerer's gender (section 16).
+- **The steerer's own words** (the user's fourth playtest, decisions DH-24 to DH-26): besides the spare shout (section 07), the steerer says a short word over a body when the player looks at it: Thorkel's first, a line each look in order ("Thorkel. You brought us this far. I'll take them the rest of the way." / "Cold as the sea that had you. Rest. We'll see you right." / "You'd laugh at the boat we're patching. Then you'd show us how."), the first with his key when it is taken from his body; and one line over each fallen foe, never the last one said twice running ("All this for a wreck's leavings." / "You should have walked on." / "Someone will wait for you, and wonder." / "The tide will have you before your friends do."). Shown under the steerer's name with a breath out and no blip (Book 11 section 08), tagged `ABOUT_STEERER` so the lint reads them, and written round any word that could tell the steerer's gender.
 
 | Instead of | Write |
 |---|---|
@@ -115,6 +116,7 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 > "The sea keeps what it is given. You were not given. You were lent."
 
 ## 05 / The household's voices
+**Hild on her father follows the facts** (the user's fourth playtest, decisions DH-20 to DH-22): before his body is found, "We've not found Father yet. Bran went after him, and Bran doesn't let go." and, on the shore, "Still looking, Father."; once Bran has brought him home she never says he was never found ("Bran carried him home. I keep waiting for him to sit up and shout at us."; on the shore, "Loud, he was. The shore's too quiet without him."), and her topics offer "Your father's rites", which opens the rites' choice wherever she is; after the rite, "Rán has him now. I hope the sea likes loud company." or "He's under the stones now, looking out to sea. Where he'd want to be."; if the scavengers took him from the fold, "They took him from the fold, the scavengers. He'll get no rites from us now." If the fold is settled before the first night's fire, its lines that still look for him are said as "Bran brought Father home. Bran never lets go of anything." and "Oddi was by the stern when she broke." **Runa's reminder** (DH-31): "My tool chest's still out on the headland. Bring it into the broch, would you?" / "Those tools are all I have. Into the broch with them, out of the wet." / "The chest. My tools. The broch. I'll not ask again."
 | Speaker | Voice | Sample lines |
 |---|---|---|
 | Hild | Warm, quick, jokes when it is worst; grief breaks through in short sentences | "Up you get. The sea's not having you today." / "Father would have hated this boat. That's how I know it's sound." / "Don't. Not yet. I'll say when." |
@@ -159,6 +161,32 @@ Old, unhurried, plain about strange things. Seal and tide images. They do not ri
 
 **Runa's tool chest** (Book 4 section 08, beat 13; decision DE-21). Once the chest has been set down somewhere safe, the next talk with Runa opens on it: `Runa: My chest. Where have you put it?` The steerer's answers name a place: "By the fire." / "In the shelter." / "By the boat." Told the truth: `Runa: Good. Off the wet ground, I hope.` Told a lie, she finds it out when she goes to look: `Runa: It's not where you said. Why say it, then?`, and it counts against Word.
 
+**What the household lacks, in their own voices** (the user's request "give the player a reason to make the first raid"; decisions DH-130 to DH-159; Book 4 section 08, "Needs before aims"; Book 5 section 02). From day 1 the four speak, now and then, of iron, grain, cloth and salt, each tied to what they are doing (content/raid.json). They are barks under section 08's rules, with Book 10's own spacing on top (needLineGap, needLinesPerDay), and talk topics while the need is felt (section 09). Bran's line is spoken at the evening fire, where he works the notches out of his axe with Thorkel's whetstone in hand; no sharpening loop is drawn yet (decision DH-133, flagged).
+
+| Speaker | Doing | Line |
+|---|---|---|
+| Runa | At work | `Runa: Nine nails. Nine. I've counted them twice.` / `Runa: The sail's chafed through at the lashing. Nothing to patch it with.` |
+| Runa | Asked to make the hull patch good for the open sea (her topic, "Nails") | `Runa: Not with wooden pegs. She'd come apart in the first swell.` (`REFERS:ship`): she will not do iron work without iron |
+| Hild | At a meal; at the evening fire | `Hild: Thinner porridge tomorrow. The meal-sack's down to the seam.` / `Hild: Counted the stores again. They don't grow for counting.` |
+| Hild | Fishing | `Hild: Bent another hook on the rocks. That was the last good one.` / after a poor day, `Hild: One fish all day. The sea's keeping the rest.` / with fish and no salt, `Hild: No salt. Whatever I catch has two days in it.` |
+| Bran | At the evening fire | `Bran: More notch than edge, this axe. We'll want iron before winter.` / `Bran: A whetstone can only take so much off. Then it's gone.` |
+| Bran | A wound and no linen | `Bran: No clean linen for that. I'll boil what rags we have.` |
+| Oddi | At a meal; at work | `Oddi: Is that all the porridge? I'm only asking.` / `Oddi: One knife with an edge on it. That's all I'd ask.` |
+| Oddi | Thorkel's chest opened (he keeps the chart) | `Oddi: Thorkel's chart. I'll keep it. Grain, iron, few spears, at Carrick.` and, when the scavengers' word or their boat agrees, `Oddi: Carrick. It's on Thorkel's chart, plain as day.` |
+| Whoever of the household is at the Hag's Seat on a clear day, Runa first | Pointing out the Irish coast, with the information line *Smoke, far off to the south-west* | `Runa: Smoke, south and west. Folk over there. Fields, too.` (Hild: "See that smoke? The Irish shore. Folk over there. Fields, too."; Oddi and Bran in their own words) |
+
+**The council at the fire** (Book 4 section 08, beat 16; decisions DH-140 to DH-143). Called at the fire once the boat is ready and everyone is found. The household gathers and speaks in turn, then Hild asks the steerer, and the steerer chooses. Each line is a period voice: grain, kin and the smoke for Hild; the chart and the share for Oddi; the beach at Kilbrecc for Bran; iron for Runa.
+
+| Who | Counsel |
+|---|---|
+| Hild | `Sit, all of you. We're not rowing out with no notion where to.` / `Grain for a few days more. Then it's limpets and seaweed.` / `If Father's people got out, they'll look for our smoke. Keep it lit.` |
+| Oddi | `It's on the chart. Carrick. Grain, iron, few spears. Thorkel's own hand.` (if the chest is still shut: `Thorkel had a chart in that chest. Open it, and we'll know where.`) / if no one has looked in the scavengers' boat, `I went through their boat at the cave. Carrick grain. Carrick nails.` / `And a share's a share. Mine counted out like anyone's.` |
+| Bran | `I went up a beach like that once. Kilbrecc. I still see a face.` / `Take what we need. Not one life more than that.` |
+| Runa | `Iron. Nails, rivets, a forge's worth. However it's got.` / `Bought or carried off, iron's iron. The boat doesn't care.` |
+| Hild | `Well, Steerer? How do we go?` |
+
+The steerer's four answers, each a period voice: "By night, quietly. Take what we need and be gone." (quiet) / "In daylight, armed. They'll give it up rather than bleed." (threat) / "With what we can spare. We bargain first." (trade-goods) / "We take it. Anyone who stands in the way falls." (force). Each resident answers it in turn (Hild to quiet: "Creeping in. Father never hid his sail. Still, everyone home." `REFERS:c_thorkel`; Bran to force: "Then I'll carry. I'll not strike first. Not again."; the rest in content/raid.json). At Carrick (Stage 16) each reminds the party of what was agreed as they land ("Show the axe. Don't use it.") and judges the raid against it afterwards ("We said no more than we needed. We took more.").
+
 The first night's fire scene is fire talk (section 09) with Hild alone: her grief comes through in short sentences between the jokes ("He'd have hated being carried. He'd have hated all of it."), and it ends on the morning's aims. Her lines name the people and things they mean and never the steerer's gender (section 03).
 
 ## 06 / Voices of the coast
@@ -196,6 +224,8 @@ The first night's fire scene is fire talk (section 09) with Hild alone: her grie
 ### Scavengers, thieves and wary locals
 They want loot, not a death (Book 1 section 09; Book 10 section 07, "Warnings"). Since the user's third playtest they, like most enemies, speak first (below); those who warn then warn again as the steerer comes on, short and plain, and a walk away ends it. The wreck-scavengers at the stern, as the steerer comes on: `Svart: This wreck is ours. Walk on.` / `Svart: One more step and you'll bleed.` (and `Svart: Keep out of this.` if a weapon is drawn). Offered food: `Conn: Fish? Svart, it's fish.` / `Svart: Leave it there. Now go.` When one falls, the other's flight: `Conn: Not for a wreck. Not for this.` Wary farmers on the mainland: "That's far enough." / "We've nothing worth your trouble." / "Go round. Go round, I said."
 
+**The wreck-scavengers are Carrick folk** (decision DH-137): neighbours who rowed over for a wreck, as anyone on the coast would, never written as villains. Asked where they came from (at Ketill's parley, in the cave, or beaten at the steerer's mercy: "Where have you come from?"), each names Carrick in their own voice, and the custom: `Ketill: Carrick, over the water. A wreck's anyone's who gets there first.` / `Ketill: Colla keeps a storehouse at the landing. Grain, iron, three old spears.`; `Svart: Carrick Landing. We rowed over for the wreck, as anyone would.` / `Svart: There's a storehouse there. Grain and iron. Few spears to keep it.`; `Conn: Carrick. My uncle Colla keeps the store at the landing.` / `Conn: Grain and iron, and hardly a spear. Please. Leave them be.` Beaten, before the question: `Ketill: Well? Finish it, or ask what you're going to ask.` / `Svart: Enough. I'm done. What do you want?` / `Conn: I yield. I yield. I'll tell you anything.`
+
 ### First sight
 *The user's third playtest (decision DG-8; Book 10 section 07, "First sight"). Every enemy in Chapter 1, and most later enemies, speaks on first noticing the steerer, before any attack. Alone, weak or outnumbered, it is a **warning** to leave; confident or in a group, a **taunt or threat**. It replaces design addendum 2.4's "warn first" as the general rule.*
 - Lines follow the speaker's culture and period voice (section 04): Norse outlaws are blunt and boastful, with the gods and the gulls in their mouths; Gaels speak of God, the poets and their own ground; a scavenger talks like someone who wants the loot, not the fight.
@@ -229,6 +259,9 @@ The reply comes from the spared foe's own pool, or their voice's. It never gives
 | `e_generic_norse` | "I'll not forget this." / "A life owed. I'll pay it, one way or another." / "The gods keep you. I'm gone." | "I owe you a life. Here's some of it." / "Told you I'd pay. Now we're square." | "You let me go once. Not twice." / "Remember me? I've thought of nothing else." |
 | `e_generic_gael` | "God reward you." / "I'll remember your face." / "May you never need the like." | "God sent me back to you. Stand easy." / "A life for a life. Take it." | "You shamed me before my own. No more." / "I prayed for you. Then I stopped." |
 
+### Bran's shouts at the fold (the user's fourth playtest)
+Decisions DH-32 and DH-33. At the fold Bran shouts the way of each teaching foe at the moment it is needed, never two shouts back to back (Book 10 branAdviceGap): as Svart winds up a thrust at the steerer, "Svart's thrusting! Meet it, turn it aside, then strike!" (`c_bran.teach.svart_parry`); as Ketill winds up his red blow, "Not on the shield! Step out from under it!" (`c_bran.teach.red.01`). A shout due inside the gap waits for that foe's next wind-up. "Svart's guard won't break. Turn the spear aside, then strike." is now said on the first blow Svart turns only if his thrust's shout has not yet come (the steerer struck first).
+
 ### The teaching foes' guidance
 *Decision DG-9; Book 10 section 07, "Teaching foes". The guidance is speech: a boast from the foe or a shout from Bran, never an instruction about keys (the prompt at the screen's edge does that).*
 
@@ -259,6 +292,31 @@ The reply comes from the spared foe's own pool, or their voice's. It never gives
 | finish | `Svart: Let me finish it, Ketill. One thrust.` / `Ketill: And have his kin on us? Wait.` | only with Svart there |
 | prayer | `Conn: He's praying again, Ketill.` / `Bran: Christ keep him. Christ keep all of us.` / `Ketill: Pray quieter.` | only with Conn there |
 | ring | `Ketill: That ring's gold. Gold's no use to the dead.` / `Bran: It's Thorkel's. It goes with him.` | always |
+
+The user's fourth playtest (decision DH-15): the fold remembers who took the ship's silver from the strand. While `ch1.silver_taken_by` is set, **silver** is not heard (they have it), and one of these is, by who took it:
+
+| Exchange | Lines, in order | Plays |
+|---|---|---|
+| stolen | `Ketill: Conn's brought us the ship's silver. So what's left to bargain with?` / `Bran: Then you've what you came for. Go, and leave him be.` | only when Conn took it, with Conn there |
+| stolen_svart | `Ketill: Svart's brought us the ship's silver. So what's left to bargain with?` / `Bran: (as stolen)` | only when Svart took it, with Svart there |
+| stolen_ketill | `Ketill: Their silver's in my lap now. So what's left to bargain with?` / `Bran: (as stolen)` | only when Ketill took it |
+
+### The strongbox taken in sight (the user's fourth playtest)
+*Decisions DH-12 to DH-16. While the steerer carries Oddi, one of the band breaks from the dune grass and takes the ship's silver in a brief scene. Lines in content/strings/en.json.*
+
+| Moment | Speaker | Line |
+|---|---|---|
+| He hauls the box up | Conn | "Silver! Ketill can haggle for the dead. This is ours." |
+| | Svart | "The tide pays after all." |
+| | Ketill | "Kind of you to mind it for us." |
+| Oddi shouts after him | Oddi | "Oi! Thief! That's the ship's silver!" |
+| Run down, he drops it | Conn | "Take it! Take the cursed box!" |
+| | Svart | "Keep it. It's not worth a spear in the back." |
+| | Ketill | "Have it, then. I'll have it back another day." |
+| Oddi set down while the thief runs | Oddi | "Never mind me! After the thief, before the dunes hide the silver!" |
+| Oddi safe, the thief away | Oddi | "That was Conn, the thin one with the bow. Our silver's gone up to the fold." (Svart: "That was Svart, the spearman. ..."; Ketill: "Ketill, that was, their leader. ...") |
+| Oddi safe, the thief run down | Oddi | "You ran the thief down! Silver's in the sand. Don't leave it lying." |
+| Oddi safe, none of the band free | Oddi | "Thanks for the carry. The silver's still down in the wash. Fetch it up when you can." |
 
 ### Supernatural voices
 - **The Blue Men** speak in rhymed couplets. They give two lines and wait for two more. The player's choices are four couplets: one bold and fitting (success), one clever but slow (partial), one timid (failure), one insulting (they laugh, then attack). Write new couplets each time; never use well-known verses.
@@ -294,6 +352,7 @@ The reply comes from the spared foe's own pool, or their voice's. It never gives
 | Idle and evening | "Sing the one about the goat." / "Dry feet. I'd forgotten." / "Pass the ale before Kári sees it." |
 | Weather and season | "Smell that? Snow." / "Gulls inland. Storm tomorrow." / "Long light. Too long to sleep." |
 | Supernatural signs | "The water's moving wrong." / "Footprints. Wet ones." / "That fog's going against the wind." |
+| Needs (decision DH-133) | "Nine nails. Nine. I've counted them twice." (Runa) / "We'll want iron before winter." (Bran) / "Counted the stores again. They don't grow for counting." (Hild). Occasional: never within Book 10's needLineGap of another need line, never more than needLinesPerDay a day, and never over the household's own exchanges |
 | Awareness (enemies) | Suspicious: "Who's there?" / "Thought I heard something." / "Show yourself." Alert: "There!" / "Up! Up, we've company!" Losing the trail: "Wind in the grass. That's all." |
 | Wounded enemies | "I'm cut! To me!" / "Back, back, give me room." / "Enough. Enough, I yield." |
 | Reactions to brutality | "That wasn't a fight." (Bran) / "Farmers. No name to be won off farmers." (Kári) / "God forgive us." (Eithne) / "We'll pay for that." (Tófi) / "No need of that. Bad luck, that." (Kolla) |
@@ -319,9 +378,19 @@ The reply comes from the spared foe's own pool, or their voice's. It never gives
 | A worry | Kolla: "Kári's been talking to the Crow's men at Saltvik. Too much." |
 | A request | Áine: "Give me a day on the hill with my bow. I'll bring you a deer." |
 | Ordinary life | Kolbeinn: "Asa thinks I snore. I think the wind snores." |
+| A need (decision DH-134; offered while it is felt) | Runa: "Nine nails. That's what I have. Nine." Choices: "Can you make the patch good for open sea?" (Runa: "Not with wooden pegs. She'd come apart in the first swell.") / "Make do with them." Hild ("The stores"), Bran ("Your axe") and Oddi ("Thorkel's chart") have their own |
 
 ### Fire talk
 On evenings with a feast, a storm or a death, the household gathers at the fire. Two or three residents speak in turn; the player can join, prompt a story, or stay silent. Fire talk is where values clash openly and where songs and stories (Book 11) are performed.
+
+### Talk among the household (the user's fourth playtest)
+Short exchanges of two or three lines between residents, overheard, never addressed to the steerer (decisions DH-48 to DH-52; content/company.json `exchanges`, keys `<speaker>.chat.<exchange>.<n>`, tagged `VOICED` only). Each is chosen by the speakers' ties, traits and what has happened, and sounds like both of them: Oddi counting, Bran gentle and final, Runa blunt about luck, Hild joking. Samples: Bran: "Eat slower. Nobody's taking it from you." / Oddi: "You don't know that." / Bran: "I do. I'm watching." (Bran is Oddi's mentor). Runa: "Stop that." / Oddi: "I wasn't doing anything." / Runa: "You were about to whistle." (Runa's superstition). Hild: "You held that fold alone, Bran?" / Bran: "Not alone. Your father was there." (after the fold). Oddi: "When we sail, who decides the shares?" / Bran: "Eat first." / Hild: "Then decide who we are." Each line is one speech line with its speaker's blip; the next replaces it.
+
+### Asking about the boat (the user's fourth playtest)
+A resident whose job is the boat's answers "The boat" with what it needs next, in their own voice (decisions DH-62, DH-63; keys `<speaker>.boat.<need>`): the boards, the patch under way, the rigging to fetch at low water or the mast being stepped, the oar to fetch, being carved or to lash on, the fitting, or ready. Runa: "Strakes are stove in. Bring the boards from the debris." Oddi: "Hammering. Lots of it. Some of it by me." Bran: "The mast goes up today, if the stays hold."
+
+### Binding refused (the user's fourth playtest)
+Runa's refusal and its answers (decisions DH-41 to DH-43): `Runa: No. Another's hands on my hurt, and the sea marks me. I'll bind it.` The steerer: "Then bind it yourself. I'll hold the end." / "The boat needs you whole." / "Suit yourself." Held: `Runa: Hm. Hold the end, then. Tight. Don't tell the sea.` Pressed with the boat: `Runa: The boat needs me stubborn. Leave it.` Asked on a later day: `Runa: Fine. Yesterday's luck is spent. Bind it.`
 
 ## 10 / Writing for content files
 ### String rules
@@ -329,6 +398,7 @@ On evenings with a feast, a storm or a death, the household gathers at the fire.
 - String keys: `<speaker>.<context>.<id>`, for example `c_hild.bark.danger.03`. Caption strings start `caption.`.
 - Variables in braces: `{steerer}`, `{ship}`, `{place}`, `{count}`, `{speaker}`, and in interface text `{control:<action>}` for a control as currently bound. Never a pronoun variable for the steerer.
 - Tags: `ADDRESS_STEERER`, `ABOUT_STEERER`, `VOICED`, `GLOSSARY:<word>`, and on every caption string `SPEECH` or `INFO`.
+- **No ID ever reaches the screen** (the user's fourth playtest, request 25; decisions DH-110 to DH-114). Everything the game names on screen (a person, a load carried, an item, a place, a task) is named from a string: a person by `person.short.<id>` or their name, a load carried by `person.short.<id>` (`ITEM_RIGGING`: "The rigging"), a hotbar item by its `nameKey`, any other item by `item.name.<word>`, a zone by its place name. Something with no name shows as "that" (`ui.name.unknown`), never its ID. The ID lint (part of `npm run lint`) fails the build if a player-facing string has a token that looks like an ID (`ITEM_RIGGING`, `item_rigging`, `C_HILD`) or an unfilled string key (`ui.prompt.sleep`), or if anything content can show by name has no name string; the developer menu's strings (`ui.dev.*`, only under `?dev`) are excepted.
 
 ### Modern moral words
 Dialogue strings, meaning every line spoken by a person (keys whose speaker is a person: `c_`, `l_`, `r_`, `e_`, `h_`, `p_`), never use modern moral vocabulary: **rights, war crime, genocide, trauma, civilian, ethics, morality, values, consent, abuse, victim, tolerance, equality**. Dialogue says "farmers", "folk" or "people who bore no weapon" rather than "civilians". "Innocent" is allowed: it is a Church word. Interface text, such as the household screen, and information captions are exempt. Content lint (Book 2) flags these words in dialogue strings, as it flags gendered words about the steerer (section 03).
@@ -395,8 +465,10 @@ Every kind of message the game showed when design addendum 2.5 was written (`con
 | Panels the player opens or the day brings | the clock, the stamina bar's reasons, the journal and morning report, the talk panel, the help pages, menus, game over, the launch's readiness, naming and mark panels, the chapter's end, the sea map's labels, the timings readout | Their own panels | Keep | Never in a fight (the safe rule closes menus); the morning report opens on waking only |
 | Marks over the world | the awareness "?" and "!", a crew order's icon, the lock-on mark, the stance arrow, the bars | The pixel layer | Keep; the awareness marks off by default | Drawn shapes, not text |
 | Combat prompts (the user's third playtest; decisions DG-7, DG-9, DG-11, DG-25) | `ui.prompt.combat.lock_on`, `.strike`, `.parry_dodge`, `.block`; `ui.prompt.heal_bind`, `.heal_eat`; `ui.prompt.sneak`; `ui.prompt.teach_parry`, `.teach_dodge`; `ui.prompt.finish_or_spare` (which replaces `ui.prompt.finish` in a fight) | New: the right edge of the view (Book 10 section 21, promptPlace) | Keep: the one exception to "no text in a fight" | Input prompts only: a control and a verb, never a hit, damage, a state or a log. The first five only in the first three fights; the heal prompt until three heals; the sneak hint at most three times; the teaching prompts until each lesson is done; the finish-or-let-go choice whenever offered. Faded while a fighter is drawn under them and during story beats, scenes and talk |
+| Talk among the household, nudges, advice and the boat's need (the user's fourth playtest; DH-48 to DH-63) | `*.chat.*`, `*.nudge.*`, `*.advice.*`, `*.boat.*`, `*.care.*` | Captions (speech) | Keep | One speech line, a new one replacing the last; exchanges and nudges never in a fight (Book 10 section 08), never during talk or scenes; advice and the boat's need in the talk panel |
 | First-sight lines, the spare shout and replies, the returned lines, the teaching foes' guidance, the fold's talk | `*.sight.*`, `p_steerer.spare.*`, `*.spared.*`, `*.returned.*`, `*.teach.*`, `*.fold.*` | Captions (speech) | Keep | One speech line; in a fight they are barks. The steerer's shout is the only speech line under the steerer's name, with no blip |
 | The pause menu, saves, the title screen and settings | `ui.pause.*`, `ui.save.*`, `ui.title.new_game` and the rest, `ui.settings.*` | Their own panels | Keep | Panels the player opens; a refused save shows its reason in the panel (`ui.save.refused`) |
+| The first raid's reasons (decisions DH-136, DH-138, DH-139) | `caption.raid.smoke_far`; `caption.raid.goods_stored`; `info.skinboat.*`; the morning report's `report.need.*` and `report.low.*` | Captions; the talk panel; the morning report | Keep | *Smoke, far off to the south-west* is direction class (the smoke is beyond the view's edge); *Grain, nails and net into the stores* is story class (a consequence off screen); the skin boat's lines are in the talk panel, as the boat's are; the report's need lines are at most two a morning (Book 10 reportNeedLines) |
 | Skipping the intro | `ui.intro.skip`, `ui.intro.hold` | The cold open's bottom right | Keep | Only once the cold open has been seen; fades after a few seconds until a key is pressed |
 | The developer menu | `ui.dev.*` | Top left, in developer mode only | Keep out of play | Never shown in a player's game: only in a debug build or with `?dev` (Book 2 section 21) |
 | Strings never shown in play | `ui.activity.*`, `ui.work.result.*`, `ui.work.good`, `ui.play.zone.*`; `ui.play.label` (the canvas's screen-reader label only) | Nowhere on screen | Keep out | Not to be shown; the screen-reader label stays |
@@ -501,7 +573,7 @@ Choices: "Give Kári the ring." / "Give Oddi the ring." / "Sell it and split the
 - **Aims come from people first.** Each aim is given in speech by someone the steerer meets, and has two hints: the first offered by a nearby person after a spell with no progress, the second clearer, after a while longer (Book 10 section 25, "Guidance"). Hints are speech in the speaker's own voice and period English, never an instruction about controls, and never name a key. With no one near, a hint can come as a distant call with an information caption giving the direction.
 
 ### Chapter 1 aims
-Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The journal line is plain interface English; the hints are speech. The speaker in brackets is the default: when they are not near, the nearest resident of the household who knows of the aim speaks the hint in their own voice.
+Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The journal line is plain interface English; the hints are speech. The speaker in brackets is the default: when they are not near, the nearest resident of the household who knows of the aim speaks the hint in their own voice. **A hint that only makes sense in its place waits for it** (the user's fourth playtest, decisions DH-19 and DH-34): the stores' first hint only while the lashing is whole, and the second ("Stand still. Aim at the rope, not the bundle.") only on Wreck Strand near the mast, with the bow carried and the lashing whole.
 
 | Aim | Journal | First hint | Second hint |
 |---|---|---|---|
@@ -526,9 +598,12 @@ Every aim of Chapter 1 has its journal line and two hints (decision DE-24). The 
 | Cut the rigging free | Bring the rigging from the wreck at low water. | (Runa) "The rigging's on the skerry. Low water, or you swim." | (Runa) "Wait for the ebb. Then out over the flats." |
 | Get a steering oar | Get a steering oar. | (Runa) "The scavengers had a skiff. Seal Cave, north-east." | (Runa) "Take theirs, buy theirs, or I carve one. Two days." |
 | Thorkel's rites | Give Thorkel his rites, if the household will. | (Hild) "Father should have his rites before we sail." | (Hild) "Stones on the machair, or the sea. Talk to me." |
+| Sit in council | Sit in council with the household at the fire. | (Hild) "Before we sail, we sit at the fire and settle it. All of us." | (Hild) "The fire, Steerer. Call everyone in. Then we sail." |
 | Launch the boat | Launch the boat when the tide is in. | (Runa) "She's sound. Wait for the water and we'll run her down." (`REFERS:ship`) | (Hild) "Tide's in. Look the boat over and we'll go." |
 
 The fire and shelter hints come as distant calls while Hild is still on the strand; the frame and sail hints call from the camp if the steerer is away. "See the old tower" is given by Hild's line on being set down (section 05) and is done on reaching the broch, or with the chest set at its outline; "Finish the shelter" opens at 06:00 on the second day (the user's third playtest, decisions DG-12 and DG-13). The Runa and Bran hints wait until they are in the household; until then Hild speaks them in her own words.
+
+**Nudges and advice** (the user's fourth playtest, decisions DH-53 to DH-58; content/guidance.json; Book 10 section 08). Besides the two hints, each aim has a line for each resident who can be home while it is open (`<speaker>.nudge.<aim>`), saying what to do next in their own voice, as a remark rather than a hint: whoever is nearest says theirs, unprompted, now and then, and the nearest with no line for the current aim speaks of the next open one (the next person to find). The same line answers "Ask for advice", after the advisor's opening line (`<speaker>.advice.intro`: Hild "You're asking me? All right."), for the current aim and the next. Hild has a line for every aim from the old tower on; Oddi, Bran and Runa for each from the second day on. Samples: Hild (finding Oddi): "Oddi first, I'd say. He was by the stern when we broke." Oddi (Runa): "Runa? Chasing lights at the Hag's Seat. West. Mad as a gull." Bran (the oar): "The oar is in their skiff. Ask for it before you take it." Runa (the stores): "Fish on the mast. One arrow. Don't miss and sulk." Later chapters' aims gain lines in the same file.
 - A revenge quest words every other way out as plainly as the killing: "Kill him." / "Offer him a duel." / "Make him leave the coast." / "Ask his kin for the blood-price." / "Tell Áine who ordered it."
 - The one who asked speaks the ending by their values. Áine, after an exile: "He's gone. It's not what I wanted. It's something."
 

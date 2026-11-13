@@ -12,8 +12,9 @@
 import type { Id } from '../../core/ids.ts';
 import { setFact } from '../ledger/ledger.ts';
 import type { WorldState } from '../world.ts';
-import { TICKS_PER_SECOND } from './onFoot.ts';
-import { linkOf } from './zoneLinks.ts';
+import { compass, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
+import type { LandContext } from './onFoot.ts';
+import { entryPoint, linkOf } from './zoneLinks.ts';
 import type { Edge } from './zoneLinks.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import type { ZoneMap } from './zoneMap.ts';
@@ -130,6 +131,63 @@ export interface EdgeEvent {
   readonly type: 'EDGE_CAPTION';
   readonly kind: EdgeKindName;
   readonly key: string;
+  /** "Nothing that way" with a real, open way named (the user's fourth playtest, DH-36). */
+  readonly way?: OpenWay;
+}
+
+/** The nearest open way into the next zone: where it leads and which way it lies. */
+export interface OpenWay {
+  readonly to: Id;
+  readonly direction: ReturnType<typeof compass>;
+}
+
+/**
+ * The nearest open crossing into a next zone from where the steerer stands (Book 10 edgeWay): a
+ * point along a linked edge, a tile apart, where the edge really leads on (its neighbour lies
+ * beyond), the ground there can be stood on, and the next zone's ground can be entered at the tide
+ * now. Null when there is none.
+ */
+export function openWayFrom(
+  map: ZoneMap,
+  maps: ReadonlyMap<Id, ZoneMap>,
+  p: { readonly x: number; readonly y: number },
+  rules: LandContext['rules'],
+  tidalGroundOpen: boolean,
+): OpenWay | null {
+  const T = map.tile;
+  const W = map.width * T;
+  const H = map.height * T;
+  const f = rules.footprint;
+  let best: { to: Id; at: { x: number; y: number }; d: number } | null = null;
+  for (const link of map.links ?? []) {
+    const to = maps.get(link.to);
+    if (to === undefined) continue;
+    const along = link.edge === 'n' || link.edge === 's' ? map.width : map.height;
+    for (let k = 0; k < along; k++) {
+      const at =
+        link.edge === 'n'
+          ? { x: (k + 0.5) * T, y: f.h + 2 }
+          : link.edge === 's'
+            ? { x: (k + 0.5) * T, y: H - 2 }
+            : link.edge === 'w'
+              ? { x: f.w / 2 + 2, y: (k + 0.6) * T }
+              : { x: W - f.w / 2 - 2, y: (k + 0.6) * T };
+      if (linkOf(map, link.edge, at, maps) !== link.to) continue;
+      if (!footprintClear(map, rules, at.x, at.y, tidalGroundOpen)) continue;
+      const out =
+        link.edge === 'n'
+          ? { x: at.x, y: -T * 0.5 }
+          : link.edge === 's'
+            ? { x: at.x, y: H + T * 0.5 }
+            : link.edge === 'w'
+              ? { x: -T * 0.5, y: at.y }
+              : { x: W + T * 0.5, y: at.y };
+      if (entryPoint(map, to, out.x, out.y, { rules }, tidalGroundOpen) === null) continue;
+      const d = Math.hypot(at.x - p.x, at.y - p.y);
+      if (best === null || d < best.d) best = { to: link.to, at, d };
+    }
+  }
+  return best === null ? null : { to: best.to, direction: compass(p, best.at) };
 }
 
 const FACT_SINCE = 'edge.since';
@@ -145,6 +203,8 @@ export function stepEdges(
   kind: EdgeKindName | null,
   timing: { readonly afterSeconds: number; readonly cooldownSeconds: number },
   emit: (e: EdgeEvent) => void,
+  /** The open way to name with "Nothing that way" (DH-36), asked only when it is said. */
+  wayNow?: () => OpenWay | null,
 ): void {
   const since = world.facts[FACT_SINCE];
   if (kind === null) {
@@ -160,5 +220,6 @@ export function stepEdges(
   if (typeof said === 'number' && world.tick - said < timing.cooldownSeconds * TICKS_PER_SECOND)
     return;
   setFact(world, FACT_SAID, world.tick);
-  emit({ type: 'EDGE_CAPTION', kind, key: EDGE_CAPTIONS[kind] });
+  const way = kind === 'NOTHING' ? (wayNow?.() ?? null) : null;
+  emit({ type: 'EDGE_CAPTION', kind, key: EDGE_CAPTIONS[kind], ...(way === null ? {} : { way }) });
 }

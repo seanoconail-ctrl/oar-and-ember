@@ -43,7 +43,7 @@ import {
   workMultiplier,
 } from './measures.ts';
 import { joinPerson } from './person.ts';
-import { stepResident } from './residents.ts';
+import { putResident, stepResident } from './residents.ts';
 import { activityOf, jobToday } from './schedule.ts';
 import type { Activity } from './schedule.ts';
 
@@ -64,7 +64,7 @@ export function tilesFromSteerer(world: WorldState, id: Id, tile: number): numbe
 }
 
 /** Residents whose day the opening still runs: Hild until she has led the steerer to the broch. */
-function inOpening(world: WorldState, id: Id, opener: Id | null): boolean {
+export function inOpening(world: WorldState, id: Id, opener: Id | null): boolean {
   // Before design addendum 2.4 Hild's day began at the broch; since it, once she is safe (her
   // walk up at the first fire is the opening's: src/sim/narrative/wreck.ts, decision DE-22).
   if (
@@ -115,14 +115,14 @@ export function stepPeopleTick(
     if (here !== undefined && heldByFight(world, id, here)) continue;
     const act = activityOf(world, camp, ctx, id);
     if (act.place === null) {
-      // Talking: they stand where they are and face the steerer.
+      // Talking: they stand where they are and face the steerer; being bound, they sit (DH-40).
       const found = findActor(onFoot, id);
       if (found?.visible === true) {
         const a = found.actor;
         delete a.walk;
         delete a.moving;
         delete a.task;
-        a.pose = 'idle';
+        a.pose = act.kind === 'TENDED' ? 'sit' : 'idle';
         const dx = onFoot.player.x - a.x;
         const dy = onFoot.player.y - a.y;
         a.facing = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : dy > 0 ? 's' : 'n';
@@ -144,6 +144,29 @@ export function stepPeopleTick(
       false,
       hurt && limp !== undefined ? Math.min(limp, land.movement.walk) : undefined,
     );
+  }
+}
+
+/**
+ * After time passed at once (a night slept, a collapse): everyone is where their own day has them
+ * now, in the pose they hold there, not where they stood when it began (DH-47). Residents held by
+ * something else, or in the opening, are left be.
+ */
+export function settlePeople(
+  world: WorldState,
+  ctx: PeopleContext,
+  camp: CampContext,
+  opener: Id | null,
+  held: (id: Id) => boolean = () => false,
+): void {
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  for (const id of residents(world)) {
+    if (inOpening(world, id, opener) || held(id)) continue;
+    const here = onFoot.actors[id];
+    if (here !== undefined && heldByFight(world, id, here)) continue;
+    const act = activityOf(world, camp, ctx, id);
+    if (act.place !== null) putResident(onFoot, id, act.place);
   }
 }
 
@@ -487,9 +510,10 @@ export function peopleMinute(
   const acts = new Map<Id, Activity>();
   for (const id of ids)
     if (!inOpening(world, id, opener)) acts.set(id, activityOf(world, camp, ctx, id));
-  const atFire = ids.filter(
-    (id) => acts.get(id)?.kind === 'EVENING' && home.fire.lit && nearFire(id),
-  );
+  const atFire = ids.filter((id) => {
+    const kind = acts.get(id)?.kind;
+    return (kind === 'EVENING' || kind === 'WATCH') && home.fire.lit && nearFire(id);
+  });
   const storyteller = atFire.some((id) =>
     world.people[id]?.traits.some((t) => t.trait === 'STORYTELLER' && t.known),
   );
@@ -512,6 +536,11 @@ export function peopleMinute(
       }
     }
     if (act.kind === 'SLEEP' && !home.fire.lit) p.life.coldTonight = true;
+    // The night's watch keeps the fire in from the woodpile (Book 10 watchFire; DH-46).
+    if (act.kind === 'WATCH' && home.fire.lit) {
+      if (home.fire.fuel < camp.work.fuelPerDay[seasonOf(world.calendar.day)] / 2)
+        feedFire(world, camp, emit);
+    }
     if (act.kind === 'WORK') {
       workMinute(world, ctx, camp, p, act, home, emit, say, tile, shipWork);
       if (act.task !== undefined) meet(world, p, act.task, false);
@@ -528,7 +557,7 @@ export function peopleMinute(
     }
     if (act.kind === 'MEAL' && tilesFromSteerer(world, id, tile) <= ctx.b.talk.besideTiles)
       meet(world, p, 'WATCHED_EATING');
-    if (act.kind === 'EVENING' && atFire.includes(id)) {
+    if ((act.kind === 'EVENING' || act.kind === 'WATCH') && atFire.includes(id)) {
       if (steererByFire || atFire.length > 1) meet(world, p, 'FIRESIDE', false);
       for (const other of atFire) if (other !== id) meet(world, p, other, false);
       if (storyteller) p.life.storyDay = world.calendar.day;

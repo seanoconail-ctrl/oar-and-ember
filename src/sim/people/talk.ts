@@ -22,9 +22,20 @@ import { seasonOf, watchOf } from '../calendar/calendar.ts';
 import type { CampContext } from '../home/camp.ts';
 import { FACT_AT_BROCH } from '../home/camp.ts';
 import type { JobKind, Person, TalkState, WorldState } from '../world.ts';
+import { holds } from '../narrative/aims.ts';
+import type { AimCondition } from '../../content/aimSchema.ts';
 import { searchOptions } from '../narrative/searches.ts';
 import type { SearchContext } from '../narrative/searches.ts';
 import type { PeopleContext } from './context.ts';
+import {
+  adviceLines,
+  boatLine,
+  careAnswer,
+  carePersuaded,
+  exchangeUnderWay,
+  isAdvisor,
+  refuserOf,
+} from './company.ts';
 import { checkFeelings, meet, tilesFromSteerer, timeSpent, treat } from './day.ts';
 import type { Emit } from './day.ts';
 import type { JobRefusal } from './events.ts';
@@ -51,6 +62,7 @@ function fits(
     readonly wounded?: boolean;
     readonly grief?: boolean;
     readonly season?: string;
+    readonly when?: readonly AimCondition[];
   },
 ): boolean {
   if (when.watch !== undefined && WATCH_NAME[watchOf(world.calendar, ctx.time)] !== when.watch)
@@ -61,6 +73,8 @@ function fits(
   if (when.wounded !== undefined && when.wounded !== p.wounds.length > 0) return false;
   if (when.grief !== undefined && when.grief !== grieving(world, ctx, p)) return false;
   if (when.season !== undefined && seasonOf(world.calendar.day) !== when.season) return false;
+  // The user's fourth playtest (DH-20): a line held to the story's facts (Hild's father found).
+  if (when.when !== undefined && !when.when.every((c) => holds(world, c))) return false;
   return true;
 }
 
@@ -106,6 +120,8 @@ function topicOpen(world: WorldState, ctx: PeopleContext, p: Person, t: TopicDef
     return false;
   if (t.season !== undefined && seasonOf(day) !== t.season) return false;
   if (t.missing !== undefined && world.people[t.missing]?.status !== 'missing') return false;
+  // The user's fourth playtest (DH-20): a topic held to the story's facts.
+  if (t.when !== undefined && !t.when.every((c) => holds(world, c))) return false;
   switch (t.memory) {
     case 'WOUND': {
       const w = p.wounds[0];
@@ -116,6 +132,10 @@ function topicOpen(world: WorldState, ctx: PeopleContext, p: Person, t: TopicDef
     case 'JOB':
     case 'SEASON':
       return true;
+    // A reason for the first raid (DH-134): offered while the need is felt (src/sim/narrative/
+    // raid.ts keeps `need.felt.<about>`), whatever the speaker remembers.
+    case 'NEED':
+      return world.facts[`need.felt.${t.about ?? ''}`] === true;
     default:
       return p.memories.some(
         (m) => m.kind === t.memory && (t.about === undefined || m.about === t.about),
@@ -139,7 +159,50 @@ export function topicsFor(world: WorldState, ctx: PeopleContext, id: Id): TopicD
     .filter((t) => t.memory !== 'JOB')
     .sort((a, b) => b.priority - a.priority)
     .slice(0, ctx.b.talk.topicsPerTalk);
-  return [...chosen, ...[...byKind.values()].filter((t) => t.memory === 'JOB')];
+  return [
+    ...chosen,
+    ...[...byKind.values()].filter((t) => t.memory === 'JOB'),
+    ...companyTopics(world, ctx, p),
+  ];
+}
+
+/** The user's fourth playtest's topics (DH-55, DH-62): always offered, like their work. */
+export const ADVICE_TOPIC = 'company.advice';
+export const BOAT_TOPIC = 'company.boat';
+const COMPANY_LABELS: Readonly<Record<string, string>> = {
+  [ADVICE_TOPIC]: 'ui.talk.topic.advice',
+  [BOAT_TOPIC]: 'ui.talk.topic.boat',
+};
+
+/** Whether a topic id is one of the fourth playtest's, offered like work (not talked through). */
+function companyTopic(id: string): boolean {
+  return COMPANY_LABELS[id] !== undefined;
+}
+
+/**
+ * "Ask for advice" from an advisor while there is an aim (Book 10 adviceTrust), and "The boat"
+ * from someone whose job is the boat's while its repairs are open (Book 10 "Boat work").
+ */
+function companyTopics(world: WorldState, ctx: PeopleContext, p: Person): TopicDef[] {
+  const cc = ctx.company;
+  if (cc === null) return [];
+  const out: TopicDef[] = [];
+  const topic = (id: string): TopicDef => ({
+    id,
+    speaker: p.id,
+    memory: 'JOB',
+    priority: 0,
+    labelKey: COMPANY_LABELS[id] ?? id,
+    root: '',
+    always: true,
+  });
+  if (isAdvisor(cc, p) && world.aims?.current != null) out.push(topic(ADVICE_TOPIC));
+  const job = cc.def.boat.talkers;
+  const own = ctx.household.people[p.id];
+  const boatHand =
+    p.job?.kind === job || own?.job === job || (own?.then ?? []).includes(job as JobKind);
+  if (boatHand && boatLine(world, cc, p.id) !== null) out.push(topic(BOAT_TOPIC));
+  return out;
 }
 
 /** A pressing topic not yet raised: the resident comes to the steerer with it. */
@@ -182,7 +245,7 @@ export function talkOptions(
       kind: 'CHOICE' as const,
     }));
   const topics: TalkOption[] = talk.topics.map((id) => ({
-    key: ctx.talk?.topics.find((t) => t.id === id)?.labelKey ?? id,
+    key: ctx.talk?.topics.find((t) => t.id === id)?.labelKey ?? COMPANY_LABELS[id] ?? id,
     kind: 'TOPIC' as const,
   }));
   return [...topics, { key: 'ui.talk.leave', kind: 'LEAVE' }];
@@ -297,6 +360,23 @@ export function assignJob(
 }
 
 /**
+ * The words a conversation's option `index` opens instead of its topic (the user's fourth playtest,
+ * DH-22: Hild's "Your father's rites"), or null for an ordinary option.
+ */
+export function talkOpensWords(
+  world: WorldState,
+  ctx: PeopleContext,
+  index: number,
+): string | null {
+  const talk = world.talk;
+  if (talk?.kind !== 'TALK' || talk.node !== null || ctx.talk === null) return null;
+  const option = talkOptions(world, ctx)[index];
+  if (option?.kind !== 'TOPIC') return null;
+  const id = talk.topics[index];
+  return ctx.talk.topics.find((t) => t.id === id)?.opens ?? null;
+}
+
+/**
  * The steerer chooses option `index` in the conversation. `tend` starts tending the speaker's
  * wound (the simulation's hands-on action); it ends the talk.
  */
@@ -321,6 +401,20 @@ export function chooseTalk(
   }
   if (option.kind === 'TOPIC') {
     const id = talk.topics[index];
+    // The fourth playtest's (DH-55, DH-62): the advice, a line or three in turn; the boat's need.
+    const cc = ctx.company;
+    if (cc !== null && id !== undefined && companyTopic(id)) {
+      const lines =
+        id === ADVICE_TOPIC
+          ? adviceLines(world, cc, talk.with)
+          : [boatLine(world, cc, talk.with)].filter((k): k is string => k !== null);
+      const [first, ...rest] = lines;
+      if (first === undefined) return;
+      speak(talk, talk.with, first, emit);
+      talk.queue.push(...rest.map((key) => ({ speaker: talk.with, key })));
+      talk.nextLineTick = world.tick + Math.round(LINE_SECONDS * ctx.ticksPerSecond);
+      return;
+    }
     const topic = ctx.talk.topics.find((t) => t.id === id);
     if (topic === undefined || id === undefined) return;
     talk.topic = id;
@@ -335,7 +429,29 @@ export function chooseTalk(
   if (choice === undefined) return;
   applyReply(world, ctx, p, choice.reply, emit);
   const lines = ctx.talk.people[talk.with]?.jobs;
-  if (choice.act === 'TEND') {
+  if (choice.act === 'TEND' || choice.act === 'TEND_PERSUADED') {
+    // The user's fourth playtest (DH-41, DH-42): one whose trait makes them refuse another's hand
+    // says so, and is offered the steerer's answers; holding the end while they bind it, or asking
+    // on a later day, and they let it be done.
+    const cc = ctx.company;
+    const refuser = cc === null ? null : refuserOf(cc, p);
+    if (cc !== null && refuser !== null) {
+      if (choice.act === 'TEND_PERSUADED') {
+        carePersuaded(world, cc, p);
+        emit({ type: 'PERSON_SPOKE', person: talk.with, lineKey: refuser.persuaded });
+      } else {
+        const answer = careAnswer(world, cc, p);
+        if (answer === 'REFUSE') {
+          // The wound is not seen to: its topic stays on offer (Book 10 topicRest).
+          if (talk.topic !== null) Reflect.deleteProperty(p.life.topics, talk.topic);
+          talk.node = refuser.node;
+          speak(talk, talk.with, refuser.refuse, emit);
+          return;
+        }
+        if (answer === 'LATER')
+          emit({ type: 'PERSON_SPOKE', person: talk.with, lineKey: refuser.later });
+      }
+    }
     endTalk(world, ctx, emit, true);
     tend(talk.with);
     return;
@@ -366,7 +482,11 @@ export function chooseTalk(
   const done = ctx.talk.topics.find((t) => t.id === talk.topic);
   if (done?.memory !== 'JOB') talk.topics = talk.topics.filter((t) => t !== talk.topic);
   talk.topic = null;
-  if (talk.topics.every((id) => ctx.talk?.topics.find((t) => t.id === id)?.memory === 'JOB'))
+  if (
+    talk.topics.every(
+      (id) => companyTopic(id) || ctx.talk?.topics.find((t) => t.id === id)?.memory === 'JOB',
+    )
+  )
     endTalk(world, ctx, emit);
 }
 
@@ -416,6 +536,8 @@ export function barkTick(
   emit: Emit,
 ): void {
   if (ctx.talk === null || !world.player.awake || world.onFoot?.player.sleep != null) return;
+  // An exchange among the household is being spoken: barks wait for it (Book 10 exchangeQuiet).
+  if (exchangeUnderWay(world)) return;
   // The opening and the lead to the broch have their own lines (Book 4 Chapter 1 beats 1 and 2).
   if (world.facts[FACT_AT_BROCH] !== true) return;
   const t = ctx.b.talk;

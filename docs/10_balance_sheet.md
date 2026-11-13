@@ -368,7 +368,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 
 | Key | Value | Notes |
 |---|---|---|
-| strikeArc | 100 degrees in front: a strike meets everyone within its reach there |  |
+| strikeArc | 100 degrees in front: a strike meets everyone within its reach there | Since the user's fourth playtest a swing's arc; a spear's thrust is a line ("Hitboxes", decision DH-76) |
 | bodyRadius | 0.3 tiles: reach is measured to the near edge of the body a strike meets |  |
 | blockStun | 10 ticks: a blow taken on the shield rocks the guard |  |
 | chargeFromPress | A melee press starts the charge (the raised weapon is the tell); released before level1At it is a light attack whose windup counts from the press |  |
@@ -817,6 +817,35 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | Unarmed (the foe's weapon) | Standing | 20 | 4 | 22 | 10 | 0.2 | 3 px, 12 ticks |
 | Unarmed (the foe's weapon) | Lying | 18 | 4 | 20 | 10 | 0.15 | 3 px, 12 ticks |
 
+### The steerer's death
+*The user's fourth playtest (request 16; decision DH-71): a moment of collapse before the death screen. The steerer's death is still game over (Book 1 section 09): the killing blow ends the steerer's part at once and nothing can undo it; the world goes on drawing while the steerer falls and the sound drops away, then the game-over screen comes with its sting. Ticks at 60 Hz from the killing blow.*
+
+| Key | Value | Notes |
+|---|---|---|
+| collapseBuckle | 14 ticks: the knees go (the stagger's second frame, held) | |
+| collapseFall | 2 frames of 12 ticks: the fall by the way of the killing blow (from in front, backwards; from behind, forwards; from the side or by a club, crumpling; Book 7 section 12) | Then lying still (the dead frame) |
+| soundFade | 1.6 real seconds: every sound but the fall's own thud drops away, effects, voices and the tells over the first 0.5 s, the world and the music over the whole | To silence, not a pause duck; back over 0.5 s when a save is loaded |
+| beat | 1.2 real seconds of stillness after the fall, in silence, before the game-over screen | The screen and the GAME_OVER sting come at collapseBuckle + collapseFall + beat (about 1.8 s); keys do nothing until then |
+
+### Hitboxes
+*The user's fourth playtest (request 20; decision DH-76): every weapon's blow meets what its drawn frames show. Measured against the active frames of every weapon layer in every facing (Book 7 section 01): reach is the weapon's (Weapon movesets) to the near edge of the body struck (Fight rules, bodyRadius), plus the step over the active ticks (Frame data), and the drawn blade or spear tip stands over that ground in each facing, within hitboxTolerance (tests/unit/hitboxes.test.ts). A thrust is a line, not an arc: the spear meets only what is in front of its shaft. Swings keep strikeArc's arc, the sweep the cut's frames draw from the cocked frame to the follow-through.*
+
+| Weapon | Shape | Arc or width | Notes |
+|---|---|---|---|
+| Seax | Swing | 100 degrees, centred on the facing | strikeArc |
+| Hand axe | Swing | 100 degrees, centred on the facing | strikeArc |
+| Spear | Thrust | 0.1 tiles either side of the shaft, held 0.3 tiles right of the facing line | The shaft runs from the right hand along the facing; a body is met when its edge is within 0.1 tiles of the shaft, from the striker's own body out to the reach |
+| Sword | Swing | 100 degrees, centred on the facing | strikeArc |
+| Dane axe | Swing | 100 degrees, centred on the facing | strikeArc |
+| Club or hammer | Swing | 100 degrees, centred on the facing | strikeArc |
+
+### Hitbox checks
+*How closely the drawn frames and the hitboxes above must agree (decision DH-76); the art check, not a rule of play.*
+
+| Key | Value | Notes |
+|---|---|---|
+| hitboxTolerance | 0.25 tiles: the drawn tip in an active frame lies no further than this inside or beyond the reach the hitbox gives (with the step) | Facing south or north the tip is drawn over the ground at the world's scale (decision DH-76), so its ground reach reads the same as east or west |
+
 ## 07 / Enemies, wildlife and perception
 ### Archetypes
 *Vitality is combat v2's, about 25% less than combat v1 gave every enemy but the each-uisce (decision DE-8). Reach is each archetype's: armed people use their weapon's (section 06, "Weapon movesets"), beasts and the dead their own (decision DE-4).*
@@ -979,7 +1008,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | retreatAt | Below 30% vitality it falls back towards the nearest friend within 8 tiles; cohesion still breaks groups (Cohesion and surrender: flee, beg or surrender) |
 | pressers | 1 or 2 of a group press the attack (attackTokens: 1, warbands 2); the rest circle 2.5 to 4 tiles out, flank or hang back |
 | avoid | Deep water, cliff edges within 1 tile, and fire within 1.5 tiles |
-| leash | 20 tiles from their own ground: they follow no further, and go back |
+| leash | 20 tiles from their own ground: they follow no further, and go back (since the user's fourth playtest, for pursuers only, held until pursuitResume: "Guarding and pursuit", decision DH-72) |
 | remember | 3 days: a group the steerer fought and left greets the steerer again as an enemy, without warnings |
 | leaveIfStronger | Scavengers and thieves leave when the vitality of the steerer's side within 8 tiles is twice theirs or more |
 | awareDodge | 25%: an aware fighter that sees the shooter sidesteps an arrow or thrown spear, with a 6-tick tell; never while attacking, blocking, staggered or drawing |
@@ -1030,7 +1059,7 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | teaching | Svart is the parry-teaching foe (Teaching foes, below) in this fight and in every Chapter 1 fight he is in (decision DG-9) |
 
 ### Teaching foes
-*The user's third playtest (decision DG-9): two Chapter 1 enemies each teach one defence and can be beaten only that way, with guidance in speech (Book 8 section 07) and a short prompt at the screen's edge (section 21, "Combat prompts"). Svart, the spearman at the stern at the first dusk, teaches the parry; Ketill, the band's leader at the sheepfold (or in Seal Cave if the fold passes without a fight), teaches the dodge. The rule holds in every Chapter 1 fight they are in; met again after Chapter 1 (section 17, "The spared remembered") they fight as ordinary outlaws.*
+*The user's third playtest (decision DG-9): two Chapter 1 enemies each teach one defence and can be beaten only that way, with guidance in speech (Book 8 section 07) and a short prompt at the screen's edge (section 21, "Combat prompts"). Svart, the spearman at the stern at the first dusk, teaches the parry; Ketill, the band's leader at the sheepfold (or in Seal Cave if the fold passes without a fight), teaches the dodge. The rule holds in every Chapter 1 fight they are in; met again after Chapter 1 (section 17, "The spared remembered") they fight as ordinary fighters (Carrick folk, not outlaws: decision DH-137).*
 
 | Key | Value | Notes |
 |---|---|---|
@@ -1124,6 +1153,55 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | dashOnce | At most one dash in 6 real seconds | Too close again within that, it is cornered |
 | cornered | Deep water, a cliff edge, a wall or the zone's edge within 1.5 tiles behind it, or the target still within tooClose after the dash | It draws its sidearm (20 ticks; a seax) and fights in melee as an outlaw for the rest of the fight (decision DE-41) |
 | noArrows | Out of arrows it draws its sidearm the same way | Section 13 of Book 2 |
+
+### Guarding and pursuit
+*The user's fourth playtest (request 18; decisions DH-72 and DH-73): no walking back and forth at a limit. A band given a post in content (the ground or the thing it holds: the fold and Bran in it, the skiff in Seal Cave) **guards** it: when its foe is too far from the post it rushes back, and it takes up the fight again only when the foe comes nearer than that, so the two distances never meet. A band without a post **pursues**, but keeps together: one that runs ahead of its friends slows, then waits. Each choice is held until its other side is reached (hysteresis), never re-weighed at the line itself. Replaces Self-preservation's leash for guards; for pursuers the leash stays their farthest ground, with the same hold.*
+
+| Key | Value | Notes |
+|---|---|---|
+| guardRadius | 7 tiles: when its foe is further than this from its post, a guard breaks off and runs back to it | Measured from the post to the foe, not to the guard, so a guard never stops at an invisible line in the open |
+| guardResume | 5 tiles: a guard on its way back, or standing at its post, takes up the fight again only when its foe comes within this of the post | 2 tiles inside guardRadius: the gap that stops any pacing at the limit |
+| guardHome | 1.5 tiles: back within this of its post it stands guard, facing the way its foe went | It does not walk back out until guardResume, or a blow |
+| guardChase | 5 real seconds: a guard struck (a blow or a missile) chases its striker for at least this long before it weighs its post again | So a shot from beyond guardRadius is answered, and the return is still one decision, not a flicker |
+| pursuitResume | 15 tiles: a pursuer gone back home past the leash (Self-preservation, 20 tiles) takes up the chase again only when its foe comes within this of its home | The same hold as a guard's, on a pursuer's own ground |
+| cohesionSpread | 4 tiles: a pursuer this far ahead of its nearest standing friend (ahead: nearer the foe than that friend) no longer runs, it walks | Alone, or its friends all down or gone, it keeps no cohesion |
+| cohesionWait | 6 tiles: this far ahead it stops, faces its foe and waits until a friend is back within cohesionSpread of it | Unless the foe is within its own engage distance (Distances by archetype): then it fights where it stands |
+| pursuitTogether | When every other member of its band still standing has gone back, the last pursuer goes back too | A band breaks off together rather than leave one to chase alone |
+
+### Target choice
+*The user's fourth playtest (request 19; decision DH-74): enemies weigh threat. Each fighter scores every foe it can see at each decision and goes for the highest, so striking one wrecker turns the others on the striker, usually the steerer, rather than on Bran. Scores add; starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| threatMemory | 8 real seconds: what a foe did counts for this long | |
+| threatDamage | 1 point for each point of damage the foe dealt to the fighter's group within threatMemory | A clean seax hit (23) is worth 23 |
+| threatStruckMe | 30: the foe struck this fighter within threatMemory | |
+| threatSteerer | 20: the foe is the steerer | The steerer leads the household and is, unless something else weighs more, the bigger danger |
+| threatAttacking | 20: the foe is in an attack (wind-up or active) on the fighter or one of its group, or locked on to one | |
+| threatNear | 30 at the fighter's own body, falling evenly to 0 at 8 tiles | Nearness still counts, but no longer decides alone |
+| threatWeak | 10 x (1 - the foe's vitality share): a hurt foe draws a little | |
+| threatKeep | 10: the foe it already has | So it does not flip between two near-equal foes |
+| threatSwitch | 10: it takes a new foe only at a look round, and only one scoring at least this much more than the one it has | A look round is awarenessEvery (Fighters' habits); the foes weighed are those it sees and any who struck its band within threatMemory (it heard the blow) |
+
+### Running off
+*The user's fourth playtest (request 17; decision DH-75): a foe let go (Finishing a beaten foe) actually runs off, out of sight, then is gone from the zone; its SPARED deed and record (section 17, "The spared remembered") are written at the let-go and stay.*
+
+| Key | Value | Notes |
+|---|---|---|
+| runOffWay | It plans a way over the ground (round walls and water, never past the steerer) to the nearest place out of the steerer's sight, else the zone's edge on the side away from the steerer, and runs it | Never nearer the steerer at any step than runOffKeep less than where it began |
+| runOffKeep | 1 tile | |
+| runOffSight | Out of sight: outside the logical view (640 x 360, section 21) centred on the steerer, widened by lookAheadAiming (5 tiles) and runOffMargin each way | The camera can look ahead; the foe is never taken out while it could be on screen |
+| runOffMargin | 1 tile | |
+| runOffGone | Once out of sight, or at the zone's edge, it is gone from the zone | Its record stays (status missing, as one who fled) |
+| runOffReplan | 1 real second without moving: it plans its way again from where it stands | A friend or a body in the way |
+
+### Attack pace
+*The user's fourth playtest (request 20; decision DH-77): the spear enemy (Svart) attacks a little more often.*
+
+| Key | Value | Notes |
+|---|---|---|
+| spearPatience | x0.7: a fighter with a spear waits this share of its archetype's patience (Distances by archetype) before attacking without an opening | Svart (Outlaw: 1.4 to 2.45 s from 2.0 to 3.5 s) |
+| spearCooldown | 30 ticks after its own recovery before a spear fighter starts another attack | In place of attackCooldown's 45 ("AI decisions") |
 
 ## 08 / People, skills and wounds
 ### Skills
@@ -1400,6 +1478,67 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 | Punished | Treated badly today: happiness -10; a punishment (Fear deltas) |
 | Shamed | Treated badly today: happiness -20; a punishment (Fear deltas) |
 | Threat | A threat to a resident (Fear deltas) |
+
+### Own hours
+*The user's fourth playtest, request 13 (decisions DH-44 to DH-47): the household keeps its own hours, not the steerer's. The steerer's sleep still passes the night at once (Clock, sleepAfter), and everyone's own day runs through it minute by minute. The household's bedtime and day are content/household.json's SLEEP and MEAL blocks (22:00 and 06:00); who rises early or stays late is by trait and like (content/company.json, Book 5 section 17).*
+
+| Key | Value | Notes |
+|---|---|---|
+| earlyRise | 45 game minutes before the household's day | Diligent or Pious: up at 05:15, at work (or at their dawn habit) before the steerer wakes at 06:00; outdoor work still waits for light. Their dawn ration is served at the steerer's waking as everyone's |
+| lateFire | 60 game minutes after the household's bedtime | Storyteller, Drinker, or a like for the fireside: by the fire until 23:00 |
+| nightWatch | One resident keeps the night watch by the fire from the household's bedtime until 02:00, by turns night by night, while 2 or more are at home | Never one bed-bound; the turn goes round the residents in order of their names, one a night |
+| watchSleepIn | 60 game minutes | The night's watch sleeps on past the household's day by this much (until 07:00) |
+| watchFire | The watch feeds the fire from the woodpile when it is below half a day's fuel | As the camp's work does by day (Fuel and hay) |
+
+### Binding a wound
+*The user's fourth playtest, request 9 (decisions DH-40 to DH-43).*
+
+| Key | Value | Notes |
+|---|---|---|
+| boundStill | The one being bound sits still, facing the steerer, until the binding ends | Their work, walk and habits wait; a binding cut short frees them at once |
+| careRefusal | A Superstitious resident refuses another's hand on their wound the first time it is offered on a day | Written for Runa (content/company.json): "another's hands on my hurt, and the sea marks me" |
+| carePersuaded | Offering to hold the end while they bind it themselves: accepted at once | Their own luck kept; the binding is the steerer's hands-on action as any (Tend wounds, section 09) |
+| careLater | 1 day | Asked again on a later day, they let it be bound |
+
+### Talk among the household
+*The user's fourth playtest, request 10 (decisions DH-48 to DH-52): short exchanges of two or three lines between residents, chosen by their traits, their ties and what has happened. Each line is a speech line with its speaker's voice blip (Book 8 section 10's one speech line).*
+
+| Key | Value | Notes |
+|---|---|---|
+| exchangeEvery | 90 to 180 real seconds | From one exchange's end to the next one's start, drawn on the people stream |
+| exchangeFirst | 45 real seconds | After a load or a new campaign, before the first |
+| exchangeNear | 4 tiles | Every speaker within this of the first, in the same zone |
+| exchangeHeard | Within barkEarshot (section 08) of the steerer | Only heard exchanges are spoken |
+| exchangeLineGap | 2.5 real seconds | Between one line and the next |
+| exchangeQuiet | 6 real seconds | None starts within this of any other speech line; barks wait while one is under way |
+| exchangeRepeat | 20 real minutes | The same exchange not again within this, nor before every other that fits has been heard |
+| exchangeChoice | The most particular that fits | An event or a memory counts 3, a tie 2, a trait 2, an activity 1; among the most particular, one drawn on the people stream |
+| exchangeNever | In a fight, a scene, a conversation, a story beat, the launch or the sea burial, or while the steerer sleeps | As the hints' quiet (Guidance, section 25) |
+
+### Nudges and advice
+*The user's fourth playtest, requests 11 and 12 (decisions DH-53 to DH-58): whoever is near says what to do next, in their own voice (content/guidance.json), more often than the stuck hints, and an advisor answers "Ask for advice" with the next aim or two. For every chapter's aims.*
+
+| Key | Value | Notes |
+|---|---|---|
+| nudgeFirst | 30 real seconds | After an aim becomes the current one, before its first nudge |
+| nudgeEvery | 60 real seconds | Between one nudge and the next |
+| nudgeQuiet | 6 real seconds | None within this of any other speech line |
+| nudgeAfterProgress | 20 real seconds | None this soon after a step towards the aim |
+| nudgeMax | 4 an aim | Then only the aim's hints (section 25, Guidance) |
+| nudgeNear | Within barkEarshot (section 08) | The nearest resident in earshot with a line for the current aim speaks; with none, for the next open aim (the next person to find); a line is never said twice by one speaker within barkSameSpeaker |
+| adviceAims | 2 | The current aim and the next open one |
+| adviceTrust | Friendship 40 or more | Hild always; others when this trusted (a Loyal friend); the steward when there is one (Stage 22) |
+
+### Boat work
+*The user's fourth playtest, request 14 (decisions DH-59 to DH-64).*
+
+| Key | Value | Notes |
+|---|---|---|
+| boatSpots | 6 round the boat, and 3 seated for the seriously wounded | content/household.json SHIPWRIGHT: either side, stem and stern, standing and kneeling; one worker a spot, never two |
+| boatSpotClear | 1 tile | No worker's spot within this of where the steerer works the boat |
+| hullStages | 5 drawn: as found, then at 25%, 50% and 75% of the patch's labour, and patched | Book 7 section 05: the stove-in strakes trimmed square, then the boards going on one by one, then the rivets |
+| riggingStages | 3 drawn: lacking, at 50% of the rigging's labour, and set up | The mast lying along the benches, then stepped unstayed, then stayed with the yard and sail |
+| boatWorkSound | Every 1.6 real seconds from each worker at the boat in earshot | The adze and mallet of the repair (Book 11 section 07), panned to the worker |
 
 ## 09 / Buildings, tools and crafting
 ### Buildings
@@ -1983,6 +2122,20 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | change | Every area changes with season and tide |
 | objective | The current goal is always shown |
 
+### Chapter 1 finds
+*The user's fourth playtest, request 24 (decisions DH-115 to DH-121): one or two small points of interest in each Chapter 1 zone, off the obvious path (Book 9 section 03, "Chapter 1 finds"; `content/finds.json`). Each is found with Interact, at once and at no stamina; its sound plays and its information caption shows. A find that is taken is gone (what is left of it stays drawn); one that is read can be read again, and gives nothing more. Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| cowries | 1 collectible | Cowrie shells in the wrack of the strand's far west beach (Book 1 section 11, collectibles: shells) |
+| gullNest | 0.5 ration-days of fresh eggs in spring and summer | Three eggs in a gull's nest in the blind gully east of the stream's mouth; they keep as fresh food does (section 03). In autumn and winter the nest is empty and gives nothing |
+| carvedStone | Nothing but its story | A fallen slab on the north-west machair: a ship cut in it long ago and a cross cut over the ship later |
+| waymark | Nothing but its story | A small cairn on the north-east rise; the steerer adds a stone, as passers-by do |
+| oldOffering | Nothing but its story | A bronze ring-pin and a twist of wool in a cleft north of the Hag's Stone, left for her long ago; it is not taken |
+| kerbstone | Nothing but its story | Cup-and-ring marks on a kerbstone of the Hollow Cairn's eastern flank |
+| sealSkull | Nothing but its story | A seal's skull on a ledge at Seal Cave's northern tip, ringed with white shells: someone's sign (the Keepers', Book 4) |
+| lostKnife | 1 oz of silver | A knife wedged in the rocks at Seal Cave's southern end, its grip wound with silver wire; the wire goes into the household's silver |
+
 ### Secret entrances
 *Four wilderness routes hide a secret entrance to a small dungeon (decision DD-10; Book 4 section 03, Book 6 section 13, Book 9 section 14). Starting values, for tuning after playtests.*
 
@@ -2202,6 +2355,39 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | tideLookahead | 24 game hours | How far ahead the readiness screen looks for water enough to float the boat off |
 | storesShort | 3 days | Fewer days of food in store than this reads short on the readiness screen |
 
+### Reasons for the first raid
+*The user's request "give the player a reason to make the first raid" (decisions DH-130 to DH-159; Book 4 section 08, Chapter 1 and "Needs before aims"; Book 6 sections 02 and 18; Book 8 section 08). The household lacks iron, grain, cloth and salt from day 1 and says so, occasionally and in its own voices; the mainland is pointed out from the Hag's Seat; the wreck-scavengers' skin boat holds what the household lacks; a council at the fire settles the household's intent before the launch. Starting values, for tuning after the playtest.*
+
+| Key | Value | Notes |
+|---|---|---|
+| needs | Iron, grain, cloth and salt | The four the household lacks from day 1. A need is felt while its store is under its "enough" row below; Chapter 1 never meets one |
+| wreckGrain | 14 rd of barley meal | The ship's meal-sack, wet through at the bottom, among the salvage in the broch at S0 (beside wreckStores) |
+| grainShare | 0.25 rd a mouth a day | The morning porridge: each mouth's ration (foodPerPersonPerDay) takes this much from the grain while any is left, and the rest from fish as before. Grain is food (section 03), so it counts in every food runway |
+| grainEnough | 30 days | Grain for fewer days than this, at grainShare for every mouth, is felt as a need |
+| runaNails | 9 nails | Runa's own, in her tool chest when she joins: too few for any iron work (Book 6 section 02: the hull patch is made permanent only with iron) |
+| ironEnough | 1 iron lot | Iron is felt as a need below this; nails never make up a lot |
+| clothEnough | 1 cloth lot | Cloth is felt as a need below this; the camp's linen bindings (bindingsAtCamp) are not a lot |
+| saltEnough | 1 salt lot | Salt is felt as a need below this (Salted fish or meat: 1 salt lot per 60 rd) |
+| needLineGap | 180 real seconds | Between any two of the household's need lines (barks), whoever speaks, so they stay occasional |
+| needLinesPerDay | 4 | At most this many need lines in a game day (about 17 real minutes), on top of Book 8's bark rules (barkSameSpeaker, barkSameLine) |
+| reportNeedLines | 2 | At most this many need lines in a morning report: the grain counted down, and the one thing that ran low since the last report |
+| poorCatch | 2 fish | A day's fishing that lands fewer fish than this, with someone at the nets, ran low ("a poor day's fishing") |
+| stormsAt | Day 61 | Autumn's first day (Book 4 section 04: storms rising, crossings riskier): the report counts the days to the autumn storms |
+| stormsEvery | 3 days | The storms are counted on the first morning report and then every 3rd morning, with the grain |
+| likelyFrom | 2 sources | A Carrick clue told by this many different sources (the chart, the boat, a scavenger asked, the smoke seen) reads likely; one source, a rumour. Certain is Stage 15's (scouting) |
+| carrickSack | 12 rd of barley | The scavengers' sack of Carrick grain in their skin boat, marked with the storehouse's mark |
+| carrickNails | 30 nails | A rag-bound bundle of nails in the skin boat: welcome, and still not iron enough (ironEnough) |
+| carrickNet | 1 net | A mended fishing net in the skin boat: kept in the stores for the homestead's fishing (Stage 19) |
+| goodsCamp | 4 tiles | The skin boat's goods, carried as one load (the carry pace) and set down within this of the camp fire, go into the stores |
+| pointOutHours | 08:00 to 17:00 | A clear day at the Hag's Seat: in these hours, with the weeping stone dry (or never weeping) and, from Stage 13, the weather clear |
+| pointOutTiles | 10 tiles | The steerer at the Hag's Seat and someone of the household, or Runa still sitting there, within this (barkEarshot): they point out the smoke and fields on the Irish coast, once |
+| councilReach | 3 tiles | The steerer within this of the camp fire, with the launch's gate open, can call the household to council |
+| councilGather | 40 real seconds | The household walks to the fire; the council begins when all are there or after this, with whoever has come |
+| councilHeard | +2 friendship | Each resident whose counsel the steerer's chosen intent follows |
+| councilOverruled | -1 friendship | Each resident whose counsel the chosen intent goes against; the rest are unmoved |
+| intentKept | +1 friendship | Stage 16: each resident who spoke for the intent, when the raid at Carrick goes as the council said |
+| intentBroken | -2 friendship from the Word-minded, -1 from the rest | Stage 16: a raid harder than the council said (blood where it agreed none) costs this with each resident who was there; the Word-minded (Word 2 or more) weigh it double |
+
 ## 23 / Conversation depth
 *The minimum for each major character (leaders, antagonists, residents, quest characters), checked by content lint (design addendum 2.3 section 2; Book 8).*
 
@@ -2274,6 +2460,27 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | edgeCaptionAfter | 0.3 real seconds of pressing against it | Then its information caption: "Nothing that way", "The water's too deep" or "Too steep to climb" |
 | edgeCaptionCooldown | 4 real seconds | At most one edge caption in this time |
 | homeOutline | 10 tiles | A carried thing with a home at the camp shows a faint outline at its home while it is carried within this distance; set down within 1 tile of the outline, it settles into place there |
+| edgeWay | The nearest open crossing into the next zone, measured from the steerer | "Nothing that way" also names it, with its direction (the user's fourth playtest, decision DH-36): "Nothing that way. The broch is north of here." A crossing counts only where the edge really leads on and the ground on both sides can be stood on at the tide now; with none, the caption is the plain one |
+
+### Story and scenes (the user's fourth playtest)
+*The user's fourth playtest, requests 1 to 8 and 22 (decisions DH-10 to DH-39): the strongbox taken in sight, the shelter's mark, Hild's word on her father and the rites' own music, the steerer's word over a body, the broch's quarrel only in view, Runa's tools, Bran's shouts at the fold and the stores' hint only where it helps. Book 4 section 08 and Book 8 hold the beats and lines.*
+
+| Key | Value | Notes |
+|---|---|---|
+| snatchAfter | 1.5 real seconds of carrying Oddi on his strand while the strongbox still lies there | Or at once if he is set down on the strand before then. Only one of the band who is alive, free and not yet met at the fold or the cave comes (Conn first, then Svart, then Ketill); with none, nobody comes and the strongbox stays where it lies |
+| snatchStart | 7 tiles from the strongbox, on the landward side | Where he breaks from the dune grass |
+| snatchRun | 4.0 tiles a second | His run down to the box, unladen |
+| snatchStoop | 0.5 real seconds | Hauling the box up by its handles |
+| snatchHold | Until the box is up, at most 3 real seconds | The brief scene: the steerer stops where they stand (still carrying Oddi) and turns to him; nothing else can be done until it ends |
+| snatchCarry | 2.4 tiles a second | Off up the dunes with the box to the strand's north edge, where he is gone (to the fold) |
+| snatchCatch | 1.2 tiles | The steerer that close, hands free (Oddi set down), while he carries it: he drops the box and runs on empty-handed, and does not come back for it |
+| remarkReach | 1.4 tiles | The steerer's word over a body (the interaction's reach for it) |
+| sightView | 13 tiles across and 7 tiles up and down from the steerer | "In view": inside this, with no wall, rock or solid ground on the straight line between the steerer's eyes and the person |
+| runaRemindAfter | 20 real seconds after Runa is home at the camp | With the steerer awake within earshot (barkEarshot, section 08) and her tool chest not yet at one of her safe places |
+| runaRemindEvery | 180 real seconds | |
+| runaRemindTimes | 3 | Then she stops asking |
+| branAdviceGap | 6 real seconds between any two of Bran's teaching shouts in one fight | Shared by both foes (svartGuidance and ketillGuidance keep their own gaps). A shout due inside the gap waits for that foe's next wind-up at the steerer |
+| storesHintNear | 12 tiles from the mast's foot, on Wreck Strand | The stores' second hint ("Stand still. Aim at the rope") is given only here, with the bow carried and the lashing still whole |
 
 ### No trap
 *The user's third playtest (decision DG-20): the steerer was stuck in the water by the western outcrop with the broken mast and the stores' lashing, at night. No collision shape may trap anyone: every edge has a way out, and a test walks the edges of every collision shape to prove it (Book 2 section 23; Book 9 section 13).*

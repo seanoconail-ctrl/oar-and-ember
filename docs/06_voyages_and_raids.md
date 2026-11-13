@@ -90,6 +90,17 @@ Everyone judges by the ethics of their own culture around AD 900, the household 
 ### Lead
 After the launch, the sea map shows smoke on the Irish coast. Thorkel's chart fragment, from his locked chest (opened in Chapter 1 with the key from his body, section 18), marks a landing called Carrick with the note "grain, iron, few spears". The island needs provisions and iron for nails and tools. **Confidence:** likely.
 
+**The reason, felt before the lead** (the user's request "give the player a reason to make the first raid"; decisions DH-130 to DH-159; Book 4 section 08, "Needs before aims"). By the launch the household has said, day after day, what it lacks: iron, grain, cloth and salt; the morning report has counted the grain down. The lead comes in pieces, each a clue Stage 15 takes up as a lead with its sources (Book 2 section 16, "The first raid's facts"):
+
+| Source | How it comes | What it tells |
+|---|---|---|
+| **The chart** | Thorkel's chart fragment, once his chest is opened; Oddi keeps it and reads his marks | Carrick, grain, iron, few spears |
+| **The skin boat** | The wreck-scavengers' boat in Seal Cave, looked into (section 18): a sack of barley with the storehouse's mark, a bundle of nails, a net. The mark is the one on the chart at Carrick (read against the chart, or named by Oddi, who knows it from the coast's trade). If no one has looked by the council, Oddi has | Carrick (with the chart), grain, iron |
+| **A scavenger asked** | At Ketill's parley at the fold, in Seal Cave, or beaten at the steerer's mercy after a fight (section 18) | Carrick, a storehouse at the landing, grain and iron, few spears |
+| **The smoke seen** | Pointed out from the Hag's Seat on a clear day | Folk and fields on the Irish coast |
+
+An item told by one source is a **rumour**; by two or more (Book 10 likelyFrom), **likely**; **certain** only by scouting (Stage 15). Whatever happened to the scavengers (killed, spared, captured or never fought), the boat and the chart are there, and the council makes sure the boat's clue is known, so Carrick is always named by the launch. The household's **intent**, chosen at the council at the fire before the launch (Book 4 section 08, beat 16), is the plan's starting point (Preparation, below).
+
 ### The place
 A shingle beach with a timber jetty, a stone-footed storehouse, the keeper's house, a byre, a drying rack for fish and a watch post on the headland. A cart track leads inland to Ardcarn. A runner who gets off the map brings Fiachra's riders, quartered at Ardcarn, back in about two minutes (Book 9 section 07). Low tide doubles the carry from the storehouse to a boat on the beach; high tide lets the boat lie at the jetty.
 
@@ -105,9 +116,18 @@ A shingle beach with a timber jetty, a stone-footed storehouse, the keeper's hou
 | Watch | Two guards by day, one at night; the night guard sleeps at the turn of the tide. Dogs only after a first raid. |
 
 ### Known intel and how to improve it
-Without scouting: grain and iron, few spears. **Scout the shore** (Oddi or Hild, half a day): guard count, the night guard's habit, the marked seed sacks, the runner. **Ask a trader** (if Saltvik visited first, not possible in Build 2): the iron was owed to Kilbrecc's smith. Captured or friendly locals can tell the rest.
+Without scouting: grain and iron, few spears (the chart), and, if a scavenger was asked, a storehouse at the landing kept by Colla. **Scout the shore** (Oddi or Hild, half a day): guard count, the night guard's habit, the marked seed sacks, the runner. **Ask a trader** (if Saltvik visited first, not possible in Build 2): the iron was owed to Kilbrecc's smith. Captured or friendly locals can tell the rest.
 
 ### Preparation
+**The council's intent sets the plan's first choices** (decision DH-143; content/raid.json `carrick.plan`), which the player can still change on the plan screen (Stage 15); the household remembers what was agreed, and judges the raid against it (Consequences, Crew):
+
+| Intent at the fire | Mode | Approach | Preparation advantage | Timing |
+|---|---|---|---|---|
+| Quiet: by night, take what we need and be gone | Stealth | Steal | Scout the shore | Night |
+| Threat: in daylight, armed | Open landing (stealth party) | Threaten | Extra fighting equipment | Day |
+| Trade-goods: bargain first | Open landing (stealth party) | Bargain | Trade goods | Day |
+| Force: anyone who stands in the way falls | Assault | Assault | Extra fighting equipment | Dawn |
+
 Choose the **mode**: a stealth raid, with up to five landing-party members and the others staying with the boat, or an assault, with the full crew ashore and the boat drawn up on the beach, so the landing itself must be held. Then choose timing (dawn, day, dusk, night; tide high or low) and **one preparation advantage**: scout the shore, bring trade goods (salvage from the wreck: an amber necklace, a silver arm-ring, good rope) or bring extra fighting equipment (spare shields and spears for everyone ashore).
 
 ### Approaches
@@ -151,7 +171,8 @@ The coastal boat has three free berths and four or five cargo slots. Available: 
 ### Consequences
 **At home.** Iron becomes nails and tools: the boat's hull patch is made permanent and a simple forge can be built. Grain becomes breathing room shown in the steward's report. Eithne at the fire, if she came. Stolen silver attracts an offer or accusation at the next harbour.
 **Regional.** Ardcarn's winter stores fall by what was taken. A taken currach means Ardcarn's fishing suffers. After any raid Carrick posts two more guards and keeps dogs. The runner's news reaches Fiachra in three days and Kilbrecc in five. Saltvik's traders hear within ten days, which shifts prices and gossip.
-**Crew.** Bran approves bargains and mercy, Hild approves bold success and everyone coming home, Oddi approves the haul, Runa approves the iron. Every approach pleases someone and troubles someone.
+**Crew.** Bran approves bargains and mercy, Hild approves bold success and everyone coming home, Oddi approves the haul, Runa approves the iron. Every approach pleases someone and troubles someone. **What was said at the fire** (decision DH-143; Stage 16 builds it from content/raid.json `carrick.reactions`): at the landing each resident reminds the party of the agreed intent in their own voice; after the raid each judges it against the intent, by the approaches' hardness (bargain, steal, threaten, fight, assault): **kept** (as agreed: friendship +1 from each who spoke for it, Book 10 intentKept), **harder** (blood where none was agreed: -2 from the Word-minded, -1 from the rest who were there, intentBroken) or **softer** (less taken than agreed: a remark, no change). Bran remembers his counsel against killing, Hild hers for everyone home, Oddi his share, Runa the iron.
+**The scavengers at Carrick.** They were Carrick folk (section 18). Conn is the keeper Colla's sister's son: killed on Skarvholm, he is Colla's grief and grievance, and Colla knows whose sail it was if anyone came home to tell; spared, he is home before the household and plays the fate his sparing drew (Book 10 section 17): pleading for the store, warning the landing, or standing aside. Ketill or Svart spared may be among the guards or the fishermen on the beach. A household that killed them all and took their boat's goods is not known for it at Carrick unless a witness lived; the crew always knows.
 **Evidence.** Bodies at Carrick are found by Ardcarn the next morning. They link the deed to the household if gear was dropped, if a body bears a recognisable wound pattern from a known weapon, or if a fisherman offshore saw the sail (a chance in Book 10). With no escaping witness and no link, Ardcarn knows only that someone did it, and blames the nearest raiders: Ulf. If the household hid the bodies or denies the killing, the ledger also holds `KILLING_HIDDEN`: the crew know, and to Norse eyes an undeclared killing is murder. An assault by day is always linked: everyone who fled saw the sail.
 **Delayed.** `SEED_TAKEN`: Ardcarn's spring sowing fails in Year 2, bringing hungry refugees, a desperate Muiredach and hired swords. `SEED_LEFT` (if anyone at Ardcarn learns of it): Muiredach remembers the mercy at the council. Taking the tithe grain makes Kilbrecc an aggrieved party. Taking the silver makes Fiachra one. A known massacre empties half of Ardcarn's fields the next spring, makes Muiredach an implacable enemy and closes the Carrick Strand site to anything but conquest.
 
@@ -167,6 +188,7 @@ Saltvik (sell or trade, Runa's sister, ship fittings) and Glen Arra (cattle, and
 6. A new player completes the raid in 12 to 20 minutes.
 7. Both modes can be completed: a stealth raid by night can reach the storehouse unseen, and an assault by day can seize the store and hold the landing until the boat is loaded.
 8. The same haul taken by assault records more witnesses and schedules its answer sooner than when taken by stealth.
+9. The council's intent seeds the plan (mode, approach, advantage, timing), every resident present has a landing line for it, and the raid as agreed, harder or softer is judged as above (decision DH-143).
 
 ## 03 / Scenario 2: The Light in the Fog
 *Chapter 3 voyage interruption. A light in Manannán's mist, a price that sounds cheap, and the arrival of Nessa.*
@@ -419,6 +441,10 @@ Once the Cup is lifted, Rán's surge rises on the Book 10 timers: tidal ground f
 | A resident left behind | The enemy who took them | A ransom demand, a rescue, or word of their death | Their empty place at the fire; the enemy's envoy |
 | The scavengers fought at the first dusk (Chapter 1) | Conn, running to Ketill | One fewer at the sheepfold and at Seal Cave; the band warned (section 18) | Svart's body on the strand, or Svart kneeling; fewer men at the fold's gate |
 | The scavengers paid off with food at the first dusk | Svart and Conn, fed | All three at the fold, and a parley there that starts warmer | Less salt fish in the morning report |
+| A scavenger asked where they came from (Chapter 1) | Their answer, and Oddi's chart | The Carrick lead with a storehouse at the landing, likely rather than a rumour | The answer in speech; the lead's sources on the plan screen (Stage 15) |
+| Conn killed on Skarvholm | Nobody, unless one of the band got home | Colla's grief at Carrick; his grievance if he learns whose sail it was | Colla's words at the landing (Stage 16) |
+| Conn spared on Skarvholm | Conn, home before the household | His fate at Carrick: pleading for the store, a warning to the landing, or standing aside | His face on the beach at Carrick |
+| The council's intent (Chapter 1) | Everyone who sat at the fire | Their words at the landing, and their judgement of the raid against it | Their lines at Carrick; friendship moved by intentKept or intentBroken |
 | Runa lied to about her tool chest | Runa, when she goes to look | Her friendship falls by her Word; she checks the steerer's word again later | Her line at the empty place; her cooler greeting |
 
 ### Propagation rules
@@ -655,7 +681,7 @@ Every one is announced by the scene before it can happen, and every death that f
 | Part | Contents |
 |---|---|
 | **Lead** | At the first dusk, iron on wood from the east end of the strand; Hild hears it at the camp ("Someone's down at the stern."), and the aim is to see who it is |
-| **True state** | Three wreck-scavengers, outlaws who take no captives: Ketill (the heavy build, axe and shield, their leader) watches the sheepfold, where Bran holds Thorkel's body; Svart (spear, his shield on his back while he works) and Conn (young, bow and seax, cowardly) strip the wreck's stern. They want loot, not a death |
+| **True state** | Three wreck-scavengers, **Carrick folk who came over by skin boat to strip the wreck, as anyone on the coast would** (decision DH-137): neighbours, not villains, and they take no captives. Ketill and Svart are Norse-Gaelic fishermen of Carrick Landing; Conn is the keeper Colla's sister's son. Their skin boat (the skiff) lies drawn up in Seal Cave's mouth with a sack of Carrick grain, a bundle of nails and a net in it. Ketill (the heavy build, axe and shield, their leader) watches the sheepfold, where Bran holds Thorkel's body; Svart (spear, his shield on his back while he works) and Conn (young, bow and seax, cowardly) strip the wreck's stern. They want loot, not a death |
 | **Mode** | A small fight, or none |
 | **Approaches** | **Fight:** on first seeing the steerer they speak before anything else: two of them, so a threat (Book 8 section 07, first sight), then a pause; then they warn the steerer off as the steerer comes on ("This wreck is ours. Walk on." "One more step and you'll bleed."). **Svart is the parry-teaching foe** (decision DG-9): every blow is turned on his spear's shaft, and only a parry opens him; his heavy thrust has a slow, obvious wind-up, so the first parry lands and earns a big riposte with its hitstop. His boasts and the parry prompt guide it. **Walk away:** they finish at dark and go to the fold. **Bargain:** offer salt fish from the camp's stores; they take it and go. **Sneak:** through the dune grass on the bank behind them (the sneak hint shows on the way, Book 10 section 21) for a backstab on Conn; Svart turns even a backstab, and is on guard at once |
 | **Complication** | When one falls (dead, downed or surrendered), the other runs: self-preservation shown at once. Conn runs if he is hit at all |
@@ -663,6 +689,7 @@ Every one is announced by the scene before it can happen, and every death that f
 | **Evidence** | A body on the strand, which the household see and remark on; the stern stripped or not |
 | **Consequences** | Whoever of the band is neither dead nor held goes to Ketill at the fold (the fold has one, two or three to face), and after the fold, to their skiff in Seal Cave (decision S11-10). A killing is a `KILLING` deed with the household's witnesses (a finisher on a begging or downed foe `SURRENDERED_KILLED`); one let go is `SPARED`, and plays the fate it drew at the fold or in the cave first (Book 10 section 17, chapter1); the food is gone from the stores |
 | **Gate** | Not a gate. A checkpoint autosave before it |
+| **Asked** | A beaten scavenger (begging or downed) left at the steerer's mercy after a fight, before or instead of being finished or let go, can be asked where they came from (Interact: "Speak to"), and names Carrick: a storehouse at the landing, grain and iron, few spears (decision DH-142). **Captured** means this: beaten and held at the steerer's mercy when the fight ends, neither finished nor let go; walking away leaves them, spared (Book 2 section 12, LEFT). The same question is offered at Ketill's parley at the fold and at the cave |
 | **Proof tests** | Every approach ends the encounter; a scripted new player who parries Svart's first heavy wins with a riposte; no other way harms Svart; both speak before either attacks; Conn flees when Svart falls; walking away never starts the fight; the fold's band matches what happened at dusk, and a spared one there stands aside or fights by its fate |
 
 ### Bran at the fold
@@ -671,7 +698,7 @@ Every one is announced by the scene before it can happen, and every death that f
 | **Lead** | Hild's word at the first night's fire ("Bran went after Father."), and the first hint ("Up by the old mound, maybe.") |
 | **On arrival** | While none of them is aware of the steerer, Bran and the scavengers are in the middle of a running exchange over Thorkel's body (decision DG-26; Book 8 section 07; Book 10 section 07, "At the fold"): Ketill wants the ring and the key on its cord, or the ship's silver for the body; Bran refuses, his leg bleeding through; who stands where (Ketill and Svart at the gate, Conn on the mound with his bow, the east wall unwatched); that at dark they take the skiff round to the cave. Heard from cover, it shows the sneak route (the east wall), the bargain (the silver) and where they go after (Seal Cave). The sneak hint shows on the approach, if it has shows left. The talk stops the moment any of them sees the steerer, and their first-sight lines follow |
 | **Approaches** | **Fight**, beside Bran: **Ketill is the dodge-teaching foe** (decision DG-9): his only blow is the red blow (a red glint along his axe's edge, steel scraping on his shield's rim), which a shield or a parry cannot stop; he is hurt only while he recovers from it. Bran's shouts guide it, and the dodge prompt shows until a red blow has been avoided. **Sneak:** while unseen, Bran climbs out over the east wall with the body. **Bargain:** the ship's silver, in Ketill's parley |
-| **Consequences** | As before (decisions S10-8 and S11-10). If the fold passes without a fight, Ketill teaches the dodge in Seal Cave |
+| **Consequences** | As before (decisions S10-8 and S11-10). If the fold passes without a fight, Ketill teaches the dodge in Seal Cave. Asked at the parley, Ketill names Carrick (decision DH-142) |
 | **Proof tests** | The talk plays only while all are unaware and stops at the first suspicion; no other way harms Ketill; a scripted player who dodges his red blow and strikes in its recovery beats him beside Bran and alone in the cave |
 
 ### Thorkel's chest, his key and the bow
@@ -691,3 +718,15 @@ Every one is announced by the scene before it can happen, and every death that f
 | **Approaches** | Tell the truth, or name another place |
 | **Consequences** | The truth satisfies her (her friendship rises a little). A lie is found out when she goes to look, and counts against Word: her friendship falls by her Word (Book 10 section 08, `runaLie`), and it is remembered |
 | **Proof tests** | Each answer is offered whatever the truth; a lie is always found out within a day; the truth never is |
+
+### The scavengers' skin boat and the Carrick clues
+*The user's request "give the player a reason to make the first raid" (decisions DH-137 to DH-142).*
+
+| Part | Contents |
+|---|---|
+| **Lead** | The steering oar's aim sends the steerer to the scavengers' skiff in Seal Cave (section 18, Thorkel's chest; Book 8 section 13); the fold's overheard talk says they take it round to the cave |
+| **True state** | The skiff is the **skin boat** they came over from Carrick in: tarred hides on a wicker frame, drawn up in the cave's mouth at the head of the cove (reached at low water, as the oar is), with Thorkel's steering oar lashed on its quarter. In it: a sack of Carrick barley marked with the storehouse's mark (a ring with a stroke through it), a rag-bound bundle of nails and a mended net: the very things the household lacks (Book 10 carrickSack, carrickNails, carrickNet) |
+| **Approaches** | **Look in it** (always): the goods, and the mark, read against Thorkel's chart if his chest is open (the Carrick clue). **Take the goods**: one load, carried home and set down by the camp fire into the stores. With none of the band left there, they are found; with the band by their fire, it is a theft (seen, the fight is on) |
+| **Outcome** | The clue in every outcome of the scavenger fight: **killed** (the boat and its goods are there, read against the chart; Oddi tells the council), **spared** (asked first, or the boat), **captured** (asked), **sneaked past or bargained with** (asked at the parley or the cave, or the boat). The council at the fire brings the boat's clue if no one has |
+| **Consequences** | THEFT if taken from the living band; the goods relieve the needs a little (some days of grain, thirty nails: not iron enough, a net for later fishing) and the household says so ("That sack was someone's winter. Ours now, I suppose.") |
+| **Proof tests** | The clue (Carrick named, with its sources) appears in every outcome of the scavenger fight; the goods taken with the band gone are found, with the band there a theft; set down by the fire they are in the stores |

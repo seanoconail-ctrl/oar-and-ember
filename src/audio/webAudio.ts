@@ -215,6 +215,24 @@ export class WebAudioEngine implements AudioSink {
     return this.#paused;
   }
 
+  /**
+   * The steerer's collapse (the user's fourth playtest, Book 10 "The steerer's death", DH-71):
+   * every sound drops away to silence, effects, voice blips and the tells over `quick` seconds, the
+   * world and the music over `seconds`; `fallen` false brings them back over `seconds` (a save
+   * loaded). Sounds already sounding (the fall's own thud) play on under the fade.
+   */
+  setFallen(fallen: boolean, seconds: number, quick = seconds): void {
+    const e = this.#e;
+    if (e === null) return;
+    const now = e.ctx.currentTime;
+    for (const bus of ['music', 'ambience', 'effects', 'voice', 'tells'] as const) {
+      const level = this.#volumes.get(bus) ?? 0;
+      const over = bus === 'music' || bus === 'ambience' ? seconds : quick;
+      e.buses[bus].gain.cancelScheduledValues(now);
+      e.buses[bus].gain.setTargetAtTime(fallen ? 0 : level, now, Math.max(0.01, over / 4));
+    }
+  }
+
   /** The pause menu's wooden click (SFX_MENU_CLICK), or its knock as it opens; never captioned. */
   click(opening = false): void {
     const e = this.#e;

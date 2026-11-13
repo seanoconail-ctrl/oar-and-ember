@@ -6,6 +6,7 @@
  */
 import { floatLine, launchPhase } from '../../sim/narrative/launch.ts';
 import type { LaunchContext } from '../../sim/narrative/launch.ts';
+import type { Intent } from '../../sim/narrative/raid.ts';
 import { RepairBot } from './repairBot.ts';
 
 export class LaunchBot extends RepairBot {
@@ -13,6 +14,28 @@ export class LaunchBot extends RepairBot {
     const ctx = this.land.launch ?? null;
     if (ctx === null) throw new Error('no launch in the content');
     return ctx;
+  }
+
+  /**
+   * A reason for the first raid (DH-140): calls the household to council at the fire once the
+   * launch's gate is open, waits while they gather and speak, and chooses the intent. Nothing to do
+   * without content/raid.json, or once the council has been held.
+   */
+  council(intent: Intent): void {
+    const raid = this.land.raid ?? null;
+    if (raid === null || this.sim.state.facts['ch1.council'] !== undefined) return;
+    this.waitFor(() => this.sim.state.facts['council.open'] === true, 60 * 60 * 30);
+    const call = raid.def.council;
+    this.waitFor(() => this.sim.state.talk === null, 60 * 30);
+    this.useAt(call.zone, call.call.x, call.call.y, 1.2);
+    if (this.sim.state.facts['council.stage'] === undefined)
+      throw new Error('the household was not called to council');
+    this.waitFor(() => this.sim.state.talk?.scene === call.talk.id, 60 * 60);
+    this.waitFor(() => this.options().length > 0, 60 * 120);
+    this.choose(`p_steerer.council.${intent.toLowerCase()}`);
+    this.waitFor(() => this.sim.state.talk === null, 60 * 120);
+    const held: unknown = this.sim.state.facts['ch1.council'];
+    if (held !== intent) throw new Error('the council was not held');
   }
 
   /** Looks the boat over and chooses "Launch the boat" (the gate must be open). */

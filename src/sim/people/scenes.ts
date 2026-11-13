@@ -37,6 +37,11 @@ export function sceneDue(
   camp: CampContext,
   scene: SceneDef,
   tile: number,
+  /**
+   * The user's fourth playtest (DH-29): whether the steerer can see these people now. The quarrel
+   * in the broch starts only in view of everyone in it (the thief, and the finder if there is one).
+   */
+  sees?: (ids: readonly Id[]) => boolean,
 ): boolean {
   if (Object.hasOwn(world.oneShots, scene.id) || world.talk !== null) return false;
   const thief = world.people[scene.thief];
@@ -52,7 +57,10 @@ export function sceneDue(
   const fire = camp.def.sites.find((s) => s.kind === 'FIRE');
   const p = world.onFoot.player;
   if (fire === undefined) return false;
-  return Math.hypot(p.x / tile - fire.x, p.y / tile - fire.y) <= ctx.b.talk.earshotTiles;
+  if (Math.hypot(p.x / tile - fire.x, p.y / tile - fire.y) > ctx.b.talk.earshotTiles) return false;
+  if (sees === undefined) return true;
+  const finder = finderOf(world, ctx, camp, scene, tile);
+  return sees(finder === null ? [scene.thief] : [scene.thief, finder]);
 }
 
 /**
@@ -124,9 +132,10 @@ export function sceneMinute(
   camp: CampContext,
   tile: number,
   emit: Emit,
+  sees?: (ids: readonly Id[]) => boolean,
 ): void {
   for (const scene of ctx.scenes)
-    if (sceneDue(world, ctx, camp, scene, tile)) {
+    if (sceneDue(world, ctx, camp, scene, tile, sees)) {
       openScene(world, ctx, camp, scene, tile, emit);
       return;
     }

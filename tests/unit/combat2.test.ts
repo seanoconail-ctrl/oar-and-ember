@@ -556,18 +556,26 @@ describe('reach, spacing and the weapons (decision DE-4)', () => {
   });
 
   it('enemies hold off just outside the steerer’s reach, further from a spear, closer to a seax', () => {
+    // Ketill (a hand axe, 1.1 tiles) rather than Svart: a spear's own reach (1.8) is as long as the
+    // steerer's spear, so Book 10's longReach and shortReach show on a shorter weapon. Svart's spear
+    // also attacks more often since the user's fourth playtest (DH-77), which is not what is measured.
     const hold = (hand: string, seed: string): number => {
-      const f = strand(seed, { foe: [70, 34.5], at: [74, 34.5], hand });
-      alert(f, 'E_WRECKER_SVART');
+      const f = strand(seed, {
+        foe: [70, 34.5],
+        at: [74, 34.5],
+        hand,
+        members: [{ person: 'E_WRECKER_KETILL', x: 70, y: 34.5, facing: 'e' }],
+      });
+      alert(f, 'E_WRECKER_KETILL');
       // Keep him from the token: he waits his turn, holding off.
-      const s = fa(f, 'E_WRECKER_SVART');
+      const s = fa(f, 'E_WRECKER_KETILL');
       let sum = 0;
       let n = 0;
       steps(f, 600, () => {
         s.ai.nextAttack = f.world.tick + 1000;
         f.world.player.vitality = 100;
         const p = player(f);
-        const a = actor(f, 'E_WRECKER_SVART');
+        const a = actor(f, 'E_WRECKER_KETILL');
         if (f.world.tick > 200) {
           sum += Math.hypot(a.x - p.x, a.y - p.y) / TILE;
           n++;

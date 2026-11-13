@@ -10,13 +10,46 @@
   "chapterSave": "chapter-1-end",
   "speaker": "C_HILD",
   "readiness": [
-    { "kind": "SHIP", "measure": "BOAT", "labelKey": "ui.gate.kind.ship" },
-    { "kind": "OTHER", "measure": "TIDE", "labelKey": "ui.gate.kind.tide" },
-    { "kind": "CREW", "measure": "CREW", "labelKey": "ui.gate.kind.crew" },
-    { "kind": "STORES", "measure": "FOOD", "labelKey": "ui.gate.kind.stores" },
-    { "kind": "EQUIPMENT", "measure": "WEAPONS", "labelKey": "ui.gate.kind.equipment" },
-    { "kind": "ALLIES", "measure": "ALLIES", "labelKey": "ui.gate.kind.allies" },
-    { "kind": "OTHER", "measure": "RITES", "labelKey": "ui.gate.kind.rites" }
+    {
+      "kind": "SHIP",
+      "measure": "BOAT",
+      "labelKey": "ui.gate.kind.ship"
+    },
+    {
+      "kind": "OTHER",
+      "measure": "TIDE",
+      "labelKey": "ui.gate.kind.tide"
+    },
+    {
+      "kind": "CREW",
+      "measure": "CREW",
+      "labelKey": "ui.gate.kind.crew"
+    },
+    {
+      "kind": "STORES",
+      "measure": "FOOD",
+      "labelKey": "ui.gate.kind.stores"
+    },
+    {
+      "kind": "EQUIPMENT",
+      "measure": "WEAPONS",
+      "labelKey": "ui.gate.kind.equipment"
+    },
+    {
+      "kind": "ALLIES",
+      "measure": "ALLIES",
+      "labelKey": "ui.gate.kind.allies"
+    },
+    {
+      "kind": "OTHER",
+      "measure": "RITES",
+      "labelKey": "ui.gate.kind.rites"
+    },
+    {
+      "kind": "OTHER",
+      "measure": "COUNCIL",
+      "labelKey": "ui.gate.kind.council"
+    }
   ],
   "pointOfNoReturnKey": "ui.gate.launch.warning",
   "weapons": ["ITEM_SEAX", "ITEM_BOW"],
@@ -34,7 +67,11 @@
     "settleSeconds": 0.6
   },
   "drawnUp": {
-    "steerer": { "x": 41.6, "y": 29.4, "facing": "n" },
+    "steerer": {
+      "x": 41.6,
+      "y": 29.4,
+      "facing": "n"
+    },
     "crew": [
       [38.6, 28.9],
       [40.2, 29.6],
@@ -52,6 +89,7 @@
     "row": "c_oddi.launch.row",
     "smoke": "c_hild.launch.smoke",
     "noRites": "c_hild.launch.no_rites",
+    "noRitesLost": "c_hild.launch.no_rites_lost",
     "drawnUp": "c_bran.launch.drawn_up"
   },
   "info": {
@@ -78,28 +116,95 @@
   },
   "marks": {
     "patterns": [
-      { "key": "plain", "nameKey": "ui.launch.mark.pattern.plain", "dyed": false },
-      { "key": "stripes_broad", "nameKey": "ui.launch.mark.pattern.stripes_broad", "dyed": true },
-      { "key": "stripes_narrow", "nameKey": "ui.launch.mark.pattern.stripes_narrow", "dyed": true },
-      { "key": "lozenge", "nameKey": "ui.launch.mark.pattern.lozenge", "dyed": true },
-      { "key": "quartered", "nameKey": "ui.launch.mark.pattern.quartered", "dyed": true },
-      { "key": "raven", "nameKey": "ui.launch.mark.pattern.raven", "dyed": true },
-      { "key": "serpent", "nameKey": "ui.launch.mark.pattern.serpent", "dyed": true },
-      { "key": "wave", "nameKey": "ui.launch.mark.pattern.wave", "dyed": true },
-      { "key": "cross", "nameKey": "ui.launch.mark.pattern.cross", "dyed": true },
-      { "key": "sunwheel", "nameKey": "ui.launch.mark.pattern.sunwheel", "dyed": true }
+      {
+        "key": "plain",
+        "nameKey": "ui.launch.mark.pattern.plain",
+        "dyed": false
+      },
+      {
+        "key": "stripes_broad",
+        "nameKey": "ui.launch.mark.pattern.stripes_broad",
+        "dyed": true
+      },
+      {
+        "key": "stripes_narrow",
+        "nameKey": "ui.launch.mark.pattern.stripes_narrow",
+        "dyed": true
+      },
+      {
+        "key": "lozenge",
+        "nameKey": "ui.launch.mark.pattern.lozenge",
+        "dyed": true
+      },
+      {
+        "key": "quartered",
+        "nameKey": "ui.launch.mark.pattern.quartered",
+        "dyed": true
+      },
+      {
+        "key": "raven",
+        "nameKey": "ui.launch.mark.pattern.raven",
+        "dyed": true
+      },
+      {
+        "key": "serpent",
+        "nameKey": "ui.launch.mark.pattern.serpent",
+        "dyed": true
+      },
+      {
+        "key": "wave",
+        "nameKey": "ui.launch.mark.pattern.wave",
+        "dyed": true
+      },
+      {
+        "key": "cross",
+        "nameKey": "ui.launch.mark.pattern.cross",
+        "dyed": true
+      },
+      {
+        "key": "sunwheel",
+        "nameKey": "ui.launch.mark.pattern.sunwheel",
+        "dyed": true
+      }
     ],
     "dyes": [
-      { "key": "madder", "nameKey": "ui.launch.mark.dye.madder" },
-      { "key": "woad", "nameKey": "ui.launch.mark.dye.woad" },
-      { "key": "weld", "nameKey": "ui.launch.mark.dye.weld" }
+      {
+        "key": "madder",
+        "nameKey": "ui.launch.mark.dye.madder"
+      },
+      {
+        "key": "woad",
+        "nameKey": "ui.launch.mark.dye.woad"
+      },
+      {
+        "key": "weld",
+        "nameKey": "ui.launch.mark.dye.weld"
+      }
     ],
     "likeness": [
-      { "pattern": "stripes_broad", "dye": "madder", "noteKey": "ui.launch.mark.like_saltvik" },
-      { "pattern": "stripes_narrow", "dye": "madder", "noteKey": "ui.launch.mark.like_saltvik" },
-      { "pattern": "cross", "dye": "woad", "noteKey": "ui.launch.mark.like_kilbrecc" },
-      { "pattern": "raven", "noteKey": "ui.launch.mark.like_ulf" },
-      { "pattern": "plain", "noteKey": "ui.launch.mark.like_plain" }
+      {
+        "pattern": "stripes_broad",
+        "dye": "madder",
+        "noteKey": "ui.launch.mark.like_saltvik"
+      },
+      {
+        "pattern": "stripes_narrow",
+        "dye": "madder",
+        "noteKey": "ui.launch.mark.like_saltvik"
+      },
+      {
+        "pattern": "cross",
+        "dye": "woad",
+        "noteKey": "ui.launch.mark.like_kilbrecc"
+      },
+      {
+        "pattern": "raven",
+        "noteKey": "ui.launch.mark.like_ulf"
+      },
+      {
+        "pattern": "plain",
+        "noteKey": "ui.launch.mark.like_plain"
+      }
     ]
   },
   "seaMap": {
@@ -107,22 +212,64 @@
     "smoke": "SITE_CARRICK",
     "home": "ISLE_SKARV",
     "places": {
-      "ISLE_SKARV": { "x": 318, "y": 166 },
-      "SITE_CARRICK": { "x": 232, "y": 252 },
-      "TOWN_ARDCARN": { "x": 214, "y": 300 },
-      "ABBEY_KILBRECC": { "x": 128, "y": 236 },
-      "FORT_DUNFIACH": { "x": 46, "y": 252 },
-      "TOWN_SALTVIK": { "x": 372, "y": 292 },
-      "GLEN_ARRA": { "x": 560, "y": 120 },
-      "CAMP_CROWWICK": { "x": 498, "y": 196 },
-      "ISLE_INISRON": { "x": 598, "y": 262 },
-      "ISLE_KALDNESS": { "x": 54, "y": 30 }
+      "ISLE_SKARV": {
+        "x": 318,
+        "y": 166
+      },
+      "SITE_CARRICK": {
+        "x": 232,
+        "y": 252
+      },
+      "TOWN_ARDCARN": {
+        "x": 214,
+        "y": 300
+      },
+      "ABBEY_KILBRECC": {
+        "x": 128,
+        "y": 236
+      },
+      "FORT_DUNFIACH": {
+        "x": 46,
+        "y": 252
+      },
+      "TOWN_SALTVIK": {
+        "x": 372,
+        "y": 292
+      },
+      "GLEN_ARRA": {
+        "x": 560,
+        "y": 120
+      },
+      "CAMP_CROWWICK": {
+        "x": 498,
+        "y": 196
+      },
+      "ISLE_INISRON": {
+        "x": 598,
+        "y": 262
+      },
+      "ISLE_KALDNESS": {
+        "x": 54,
+        "y": 30
+      }
     },
     "hazards": {
-      "HAZ_CAULDRON": { "x": 430, "y": 136 },
-      "HAZ_BLUEMEN": { "x": 182, "y": 78 },
-      "HAZ_MIST": { "x": 470, "y": 286 },
-      "HAZ_RANSREACH": { "x": 318, "y": 166 }
+      "HAZ_CAULDRON": {
+        "x": 430,
+        "y": 136
+      },
+      "HAZ_BLUEMEN": {
+        "x": 182,
+        "y": 78
+      },
+      "HAZ_MIST": {
+        "x": 470,
+        "y": 286
+      },
+      "HAZ_RANSREACH": {
+        "x": 318,
+        "y": 166
+      }
     }
   }
 }

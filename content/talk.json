@@ -112,7 +112,14 @@
         {
           "key": "c_hild.bark.shore.02",
           "category": "IDLE",
-          "activity": "TENDENCY"
+          "activity": "TENDENCY",
+          "when": [{ "not": { "fact": "ch1.thorkel_body" } }]
+        },
+        {
+          "key": "c_hild.bark.shore.03",
+          "category": "IDLE",
+          "activity": "TENDENCY",
+          "when": [{ "fact": "ch1.thorkel_body" }]
         },
         {
           "key": "c_hild.bark.grief.01",
@@ -490,7 +497,77 @@
       "priority": 8,
       "pressing": true,
       "labelKey": "ui.talk.topic.father",
-      "root": "c_hild_father"
+      "root": "c_hild_father",
+      "when": [{ "not": { "fact": "ch1.thorkel_body" } }]
+    },
+    {
+      "id": "c_hild.father_lost",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_lost",
+      "when": [{ "fact": "ch1.thorkel_body", "is": "LOST" }]
+    },
+    {
+      "id": "c_hild.father_rites",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 9,
+      "always": true,
+      "labelKey": "ui.talk.topic.rites",
+      "root": "c_hild_father_found",
+      "opens": "hild.rites",
+      "when": [
+        { "fact": "ch1.thorkel_body", "is": "CAMP" },
+        { "not": { "fact": "ch1.rites" } },
+        { "not": { "fact": "rites.pending" } },
+        { "not": { "gateStarted": "BEAT_1_LAUNCH" } }
+      ]
+    },
+    {
+      "id": "c_hild.father_found",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_found",
+      "when": [
+        { "fact": "ch1.thorkel_body", "is": "CAMP" },
+        {
+          "any": [
+            { "fact": "rites.pending" },
+            { "fact": "ch1.rites", "is": "DENIED" },
+            { "gateStarted": "BEAT_1_LAUNCH" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c_hild.father_sea",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_sea",
+      "when": [{ "fact": "ch1.rites", "is": "SEA_BURIAL" }, { "not": { "fact": "rites.pending" } }]
+    },
+    {
+      "id": "c_hild.father_stones",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_stones",
+      "when": [
+        { "fact": "ch1.rites", "is": "SHIP_SETTING" },
+        { "not": { "fact": "rites.pending" } }
+      ]
     },
     {
       "id": "c_hild.rescue",
@@ -918,6 +995,86 @@
         {
           "key": "p_steerer.talk.say_no_more",
           "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_lost": {
+      "line": "c_hild.talk.father.lost",
+      "choices": [
+        {
+          "key": "p_steerer.talk.sorry",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.say_no_more",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_found": {
+      "line": "c_hild.talk.father.found",
+      "choices": [
+        {
+          "key": "p_steerer.talk.sorry",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        },
+        {
+          "key": "p_steerer.talk.say_no_more",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_sea": {
+      "line": "c_hild.talk.father.sea",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        }
+      ]
+    },
+    "c_hild_father_stones": {
+      "line": "c_hild.talk.father.stones",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        }
+      ]
+    },
+    "c_hild_father_more_found": {
+      "line": "c_hild.talk.father.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Glad",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.enough",
+          "reply": "Cold",
           "end": true
         }
       ]
@@ -1466,6 +1623,41 @@
       "choices": [
         {
           "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_refused": {
+      "line": "c_runa.care.refuse",
+      "choices": [
+        {
+          "key": "p_steerer.talk.care.hold_end",
+          "reply": "Warm",
+          "act": "TEND_PERSUADED"
+        },
+        {
+          "key": "p_steerer.talk.care.boat_needs",
+          "reply": "Talk",
+          "next": "c_runa_wound_still"
+        },
+        {
+          "key": "p_steerer.talk.care.suit",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_still": {
+      "line": "c_runa.care.still",
+      "choices": [
+        {
+          "key": "p_steerer.talk.care.hold_end",
+          "reply": "Warm",
+          "act": "TEND_PERSUADED"
+        },
+        {
+          "key": "p_steerer.talk.care.suit",
           "reply": "Talk",
           "end": true
         }

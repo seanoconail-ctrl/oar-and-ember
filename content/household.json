@@ -121,26 +121,58 @@
           "x": 47.4,
           "y": 28.5,
           "facing": "w"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 36.6,
+          "y": 28.4,
+          "facing": "e"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 42.0,
+          "y": 29.2,
+          "facing": "n"
         }
       ],
       "spots": [
         {
           "zone": "ZONE_SK_STRAND",
-          "x": 43.2,
+          "x": 41.2,
           "y": 27.9,
           "facing": "n"
         },
         {
           "zone": "ZONE_SK_STRAND",
-          "x": 40.6,
-          "y": 27.9,
-          "facing": "n"
+          "x": 44.8,
+          "y": 28.0,
+          "facing": "n",
+          "pose": "kneel"
         },
         {
           "zone": "ZONE_SK_STRAND",
-          "x": 45.6,
-          "y": 27.9,
-          "facing": "n"
+          "x": 37.5,
+          "y": 27.3,
+          "facing": "e"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 46.5,
+          "y": 27.3,
+          "facing": "w"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 39.4,
+          "y": 28.1,
+          "facing": "n",
+          "pose": "kneel"
+        },
+        {
+          "zone": "ZONE_SK_STRAND",
+          "x": 42.4,
+          "y": 24.9,
+          "facing": "s"
         }
       ]
     },
@@ -212,20 +244,20 @@
     "S1": [
       {
         "zone": "ZONE_SK_MACHAIR",
-        "x": 35.1,
-        "y": 28.7,
-        "facing": "e"
-      },
-      {
-        "zone": "ZONE_SK_MACHAIR",
-        "x": 36.6,
+        "x": 36.5,
         "y": 28.85,
         "facing": "w"
       },
       {
         "zone": "ZONE_SK_MACHAIR",
         "x": 37.6,
-        "y": 30.6,
+        "y": 30.85,
+        "facing": "w"
+      },
+      {
+        "zone": "ZONE_SK_MACHAIR",
+        "x": 37.4,
+        "y": 33.35,
         "facing": "w"
       }
     ]

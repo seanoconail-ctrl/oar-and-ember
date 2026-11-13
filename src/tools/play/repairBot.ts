@@ -330,19 +330,17 @@ export class RepairBot extends SearchBot {
     if (!done()) throw new Error('the work at the boat did not finish');
   }
 
-  /** Asks Hild for her father's rites at the bier (she must be by it) and goes to them. */
+  /**
+   * Asks Hild for her father's rites, as the user's fourth playtest has it (DH-22): talking to her,
+   * "Your father's rites" opens them wherever she is; then goes to them.
+   */
   rites(form: 'SETTING' | 'SEA'): void {
     const r = this.repairs.def.rites;
-    const body = findActor(this.onFoot, r.body);
-    if (body === null) throw new Error('no body');
-    this.goToZone(body.zone);
-    const at = tileOf(this.map, body.actor.x, body.actor.y);
-    const near = (t: Tile): boolean =>
-      Math.max(Math.abs(t.tx - at.tx), Math.abs(t.ty - at.ty)) === 1;
-    if (!this.walkTo(near)) throw new Error('no way to the bier');
+    if (findActor(this.onFoot, r.body) === null) throw new Error('no body');
     this.waitFor(() => this.sim.state.talk === null, 60 * 30);
-    this.sim.submit({ type: 'INTERACT_AT', tile: at });
-    this.step();
+    this.talkTo(r.recommends);
+    this.waitFor(() => this.options().includes('ui.talk.topic.rites'), 60 * 30);
+    this.choose('ui.talk.topic.rites');
     if (this.sim.state.talk?.scene !== 'hild.rites')
       throw new Error('Hild did not speak of the rites');
     this.waitFor(() => this.options().length > 0, 60 * 30);

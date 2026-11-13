@@ -74,7 +74,13 @@
       "at": "DUSK",
       "place": "SHORE",
       "pose": "watch"
-    }
+    },
+    "ties": [
+      {
+        "to": "C_ODDI",
+        "kind": "FRIEND"
+      }
+    ]
   },
   {
     "id": "C_ODDI",
@@ -146,7 +152,17 @@
       "at": "EVENING",
       "place": "FIRE",
       "pose": "sit"
-    }
+    },
+    "ties": [
+      {
+        "to": "C_HILD",
+        "kind": "FRIEND"
+      },
+      {
+        "to": "C_BRAN",
+        "kind": "MENTOR"
+      }
+    ]
   },
   {
     "id": "C_BRAN",
@@ -219,7 +235,13 @@
       "at": "DAWN",
       "place": "FIRE",
       "pose": "kneel"
-    }
+    },
+    "ties": [
+      {
+        "to": "C_ODDI",
+        "kind": "MENTOR"
+      }
+    ]
   },
   {
     "id": "C_RUNA",

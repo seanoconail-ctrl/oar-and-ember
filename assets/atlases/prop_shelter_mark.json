@@ -1,0 +1,91 @@
+{
+  "sheet": "prop_shelter_mark",
+  "kind": "decal",
+  "image": "prop_shelter_mark.png",
+  "width": 40,
+  "height": 26,
+  "pivot": {
+    "x": 20,
+    "y": 25
+  },
+  "footprint": {
+    "w": 40,
+    "h": 26
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "pegs": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "stones": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "turf": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 16,
+    "h": 3
+  },
+  "placeholder": false,
+  "frames": {
+    "pegs/-/0": [
+      0,
+      0
+    ],
+    "pegs/-/1": [
+      40,
+      0
+    ],
+    "pegs/-/2": [
+      80,
+      0
+    ],
+    "pegs/-/3": [
+      120,
+      0
+    ],
+    "stones/-/0": [
+      0,
+      26
+    ],
+    "stones/-/1": [
+      40,
+      26
+    ],
+    "stones/-/2": [
+      80,
+      26
+    ],
+    "stones/-/3": [
+      120,
+      26
+    ],
+    "turf/-/0": [
+      0,
+      52
+    ],
+    "turf/-/1": [
+      40,
+      52
+    ],
+    "turf/-/2": [
+      80,
+      52
+    ],
+    "turf/-/3": [
+      120,
+      52
+    ]
+  }
+}

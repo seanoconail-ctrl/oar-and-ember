@@ -207,6 +207,8 @@ export interface WreckContext {
     readonly zone: Id;
     readonly fire: { x: number; y: number };
     readonly shelter: { x: number; y: number };
+    /** The marked spot where the frame and the sail are worked (DH-10), beside the bed. */
+    readonly mark: { x: number; y: number };
   } | null;
   /** Bran's search: who, Thorkel's body, the bier. */
   readonly bran: { readonly person: Id; readonly body: Id } | null;
@@ -259,6 +261,7 @@ export function wreckContext(
             zone: camp.zone,
             fire: { x: fire.x, y: fire.y },
             shelter: { x: def.rework.camp.sail.x, y: def.rework.camp.sail.y },
+            mark: def.rework.camp.mark ?? { x: def.rework.camp.sail.x, y: def.rework.camp.sail.y },
           },
     bran: s === null ? null : { person: s.bran.person, body: s.bran.body.id },
     boat:
@@ -864,7 +867,7 @@ function stepFireScene(world: WorldState, ctx: WreckContext, emit: WreckEmit): v
     if (distTiles(h.actor, p, tile) > ctx.earshotTiles) return;
     setFact(world, FACT_FIRE_SCENE, true);
     setFact(world, FACT_SEARCH_TOLD, true);
-    const lines = ctx.rw.fireScene.lines;
+    const lines = fireLines(world, ctx);
     for (const key of lines.slice(-2))
       emit({ type: 'PERSON_SPOKE', person: ctx.caller, lineKey: key });
     return;
@@ -874,7 +877,7 @@ function stepFireScene(world: WorldState, ctx: WreckContext, emit: WreckEmit): v
   if (distTiles(p, fire, tile) > ctx.rw.fireScene.nearTiles) return;
   if (distTiles(h.actor, fire, tile) > ctx.rw.fireScene.nearTiles + 1) return;
   setFact(world, FACT_FIRE_SCENE_ON, true);
-  const [first, ...rest] = ctx.rw.fireScene.lines;
+  const [first, ...rest] = fireLines(world, ctx);
   world.talk = {
     kind: 'SEARCH',
     with: ctx.caller,
@@ -921,6 +924,18 @@ function giveKey(
   const key = ctx.rw.chest.key;
   world.player.inventory[key] = 1;
   emit({ type: 'WRECK', what: 'KEY_TAKEN', item: key, key: ctx.rw.chest.captions['key'] ?? '' });
+}
+
+/**
+ * The first night's lines as Hild says them: once her father's body has been found (Bran's search
+ * decided before the night), the lines that still look for him are said as content's `fireFound`
+ * swaps (the user's fourth playtest, DH-21).
+ */
+export function fireLines(world: WorldState, ctx: WreckContext): readonly string[] {
+  const lines = ctx.rw.fireScene.lines;
+  const swap = ctx.rw.story4?.fireFound.swap;
+  if (swap === undefined || world.facts['ch1.thorkel_body'] === undefined) return lines;
+  return lines.map((k) => swap[k] ?? k);
 }
 
 /**
@@ -984,8 +999,11 @@ export function wreckPlacedUses(
         site: stage === 'FOLDED' ? 'shelter_frame' : 'shelter_sail',
         target: 'SHELTER',
       },
-      x: c.shelter.x * T,
-      y: c.shelter.y * T,
+      // DH-10: at its marked spot beside the lean-to's bed it comes before anyone or anything
+      // else in reach (the bed itself, stood on, is still the bed's).
+      x: c.mark.x * T,
+      y: c.mark.y * T,
+      first: true,
     });
   return out;
 }

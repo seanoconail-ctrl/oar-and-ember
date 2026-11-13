@@ -11,6 +11,38 @@ import { boatOf, oarInSkiff, riggingOnWreck } from '../sim/narrative/repairs.ts'
 import type { RepairsContext } from '../sim/narrative/repairs.ts';
 import { ritesView } from '../sim/narrative/repairs.ts';
 import type { WorldState } from '../sim/world.ts';
+import { parseCompanyBalance } from '../content/companyBalance.ts';
+import { parseWorkBalance } from '../content/homeBalance.ts';
+import { parseShipBalance } from '../content/shipBalance.ts';
+import { drawnStage } from '../sim/people/company.ts';
+
+/**
+ * How the boat's work in hand is drawn (the user's fourth playtest, DH-61 and DH-62; Book 10 "Boat
+ * work"): each repair's labour in worker-minutes and the shares at which its drawing steps on.
+ */
+export interface BoatDrawing {
+  readonly hullLabour: number;
+  readonly riggingLabour: number;
+  readonly hullSteps: readonly number[];
+  readonly riggingSteps: readonly number[];
+}
+
+export function boatDrawing(balance: unknown): BoatDrawing {
+  const ship = parseShipBalance(balance).repairs;
+  const day = parseWorkBalance(balance).workerDayMinutes;
+  const steps = parseCompanyBalance(balance).boat;
+  return {
+    hullLabour: ship.hullWorkerDays * day,
+    riggingLabour: ship.riggingWorkerDays * day,
+    hullSteps: steps.hullSteps,
+    riggingSteps: steps.riggingSteps,
+  };
+}
+
+/** The hull's frames between wrecked and patched, by drawn stage (ship_t1_work). */
+const HULL_WORK = ['hull_trim', 'hull_boards', 'hull_rivets'] as const;
+/** The rigging's frames in hand, by drawn stage (ship_t1_rigwork). */
+const RIG_WORK = ['lying', 'stepped'] as const;
 
 export interface RepairProp {
   readonly sheet: string;
@@ -109,21 +141,38 @@ const LAID: Readonly<Record<string, { sheet: string; dx: number; dy: number }>> 
 };
 
 /** The boat's drawn layers now: hull, then rigging, oar, fitting and launch-ready over it. */
-export function boatLayers(world: WorldState, launch: LaunchDef | null = null): BoatLayer[] {
+export function boatLayers(
+  world: WorldState,
+  launch: LaunchDef | null = null,
+  drawing: BoatDrawing | null = null,
+): BoatLayer[] {
   const ship = boatOf(world);
   if (ship === null) return [];
   const afloat = launch === null ? null : launchLayers(world, launch);
   if (afloat !== null) return afloat;
   const r = ship.repairs;
-  const out = [
-    {
-      sheet: 'ship_t1',
-      frame: r.HULL.stage === 'DONE' ? 'hull_patched/-/0' : 'hull_wrecked/-/0',
-    },
+  // The fourth playtest (DH-62): the patch drawn stage by stage as its labour is done.
+  const hullAt =
+    drawing === null || r.HULL.stage !== 'MATERIALS'
+      ? 0
+      : drawnStage(r.HULL.progress, drawing.hullLabour, drawing.hullSteps);
+  const hullWork = hullAt > 0 ? HULL_WORK[Math.min(hullAt, HULL_WORK.length) - 1] : undefined;
+  const out: BoatLayer[] = [
+    hullWork !== undefined
+      ? { sheet: 'ship_t1_work', frame: `${hullWork}/-/0` }
+      : {
+          sheet: 'ship_t1',
+          frame: r.HULL.stage === 'DONE' ? 'hull_patched/-/0' : 'hull_wrecked/-/0',
+        },
   ];
   const fitted = Object.values(ship.fittings);
   if (fitted.includes('FIT_EXTENDED_HOLD')) out.push({ sheet: 'ship_t1_parts', frame: 'hold/-/0' });
   if (r.RIGGING.stage === 'DONE') out.push({ sheet: 'ship_t1_parts', frame: 'rig/-/0' });
+  else if (drawing !== null && r.RIGGING.stage === 'MATERIALS' && r.RIGGING.progress > 0) {
+    const at = drawnStage(r.RIGGING.progress, drawing.riggingLabour, drawing.riggingSteps);
+    const rig = RIG_WORK[Math.min(at, RIG_WORK.length - 1)] ?? 'lying';
+    out.push({ sheet: 'ship_t1_rigwork', frame: `${rig}/-/0` });
+  }
   if (fitted.includes('FIT_RAISED_BOW_PLATFORM'))
     out.push({ sheet: 'ship_t1_parts', frame: 'bow/-/0' });
   if (r.STEERING_OAR.stage === 'DONE') out.push({ sheet: 'ship_t1_parts', frame: 'oar/-/0' });
@@ -138,13 +187,14 @@ export function repairProps(
   ctx: Pick<RepairsContext, 'def'> | { readonly def: RepairsDef },
   zone: Id,
   launch: LaunchDef | null = null,
+  drawing: BoatDrawing | null = null,
 ): RepairProp[] {
   const d = ctx.def;
   const out: RepairProp[] = [];
   const ship = boatOf(world);
   if (ship !== null && ship.lies.zone === zone) {
     const launching = launch !== null && launchView(world, { def: launch }) !== null;
-    boatLayers(world, launch).forEach((layer, k) => {
+    boatLayers(world, launch, drawing).forEach((layer, k) => {
       out.push({
         sheet: layer.sheet,
         frame: layer.frame,
@@ -159,6 +209,15 @@ export function repairProps(
     for (const [repair, laid] of Object.entries(LAID)) {
       const rep = ship.repairs[repair as keyof typeof ship.repairs];
       if (rep.stage !== 'MATERIALS') continue;
+      // The fourth playtest (DH-62): the rigging goes into the boat as its work begins; the
+      // boards are used up once the last hole is boarded.
+      if (drawing !== null && repair === 'RIGGING' && rep.progress > 0) continue;
+      if (
+        drawing !== null &&
+        repair === 'HULL' &&
+        drawnStage(rep.progress, drawing.hullLabour, drawing.hullSteps) >= HULL_WORK.length
+      )
+        continue;
       out.push({
         sheet: laid.sheet,
         frame: 'down/s/0',
@@ -177,7 +236,8 @@ export function repairProps(
   if (zone === d.oar.zone)
     out.push({
       sheet: 'prop_skiff',
-      frame: oarInSkiff(world) ? 'oar/-/0' : 'bare/-/0',
+      // A reason for the first raid (DH-138): the skin boat holds its Carrick goods until taken.
+      frame: `${oarInSkiff(world) ? 'oar' : 'bare'}${world.facts['carrick.goods'] === undefined ? '_goods' : ''}/-/0`,
       x: d.oar.skiff.x,
       y: d.oar.skiff.y,
     });

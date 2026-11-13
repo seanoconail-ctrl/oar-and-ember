@@ -1153,7 +1153,7 @@
     {
      "Key": "strikeArc",
      "Value": "100 degrees in front: a strike meets everyone within its reach there",
-     "Notes": ""
+     "Notes": "Since the user's fourth playtest a swing's arc; a spear's thrust is a line (\"Hitboxes\", decision DH-76)"
     },
     {
      "Key": "bodyRadius",
@@ -3331,6 +3331,73 @@
      "Step": "0.15",
      "Shake": "3 px, 12 ticks"
     }
+   ],
+   "theSteererSDeath": [
+    {
+     "Key": "collapseBuckle",
+     "Value": "14 ticks: the knees go (the stagger's second frame, held)",
+     "Notes": ""
+    },
+    {
+     "Key": "collapseFall",
+     "Value": "2 frames of 12 ticks: the fall by the way of the killing blow (from in front, backwards; from behind, forwards; from the side or by a club, crumpling; Book 7 section 12)",
+     "Notes": "Then lying still (the dead frame)"
+    },
+    {
+     "Key": "soundFade",
+     "Value": "1.6 real seconds: every sound but the fall's own thud drops away, effects, voices and the tells over the first 0.5 s, the world and the music over the whole",
+     "Notes": "To silence, not a pause duck; back over 0.5 s when a save is loaded"
+    },
+    {
+     "Key": "beat",
+     "Value": "1.2 real seconds of stillness after the fall, in silence, before the game-over screen",
+     "Notes": "The screen and the GAME_OVER sting come at collapseBuckle + collapseFall + beat (about 1.8 s); keys do nothing until then"
+    }
+   ],
+   "hitboxes": [
+    {
+     "Weapon": "Seax",
+     "Shape": "Swing",
+     "Arc or width": "100 degrees, centred on the facing",
+     "Notes": "strikeArc"
+    },
+    {
+     "Weapon": "Hand axe",
+     "Shape": "Swing",
+     "Arc or width": "100 degrees, centred on the facing",
+     "Notes": "strikeArc"
+    },
+    {
+     "Weapon": "Spear",
+     "Shape": "Thrust",
+     "Arc or width": "0.1 tiles either side of the shaft, held 0.3 tiles right of the facing line",
+     "Notes": "The shaft runs from the right hand along the facing; a body is met when its edge is within 0.1 tiles of the shaft, from the striker's own body out to the reach"
+    },
+    {
+     "Weapon": "Sword",
+     "Shape": "Swing",
+     "Arc or width": "100 degrees, centred on the facing",
+     "Notes": "strikeArc"
+    },
+    {
+     "Weapon": "Dane axe",
+     "Shape": "Swing",
+     "Arc or width": "100 degrees, centred on the facing",
+     "Notes": "strikeArc"
+    },
+    {
+     "Weapon": "Club or hammer",
+     "Shape": "Swing",
+     "Arc or width": "100 degrees, centred on the facing",
+     "Notes": "strikeArc"
+    }
+   ],
+   "hitboxChecks": [
+    {
+     "Key": "hitboxTolerance",
+     "Value": "0.25 tiles: the drawn tip in an active frame lies no further than this inside or beyond the reach the hitbox gives (with the step)",
+     "Notes": "Facing south or north the tip is drawn over the ground at the world's scale (decision DH-76), so its ground reach reads the same as east or west"
+    }
    ]
   },
   "enemiesWildlifeAndPerception": {
@@ -3869,7 +3936,7 @@
     },
     {
      "Key": "leash",
-     "Value": "20 tiles from their own ground: they follow no further, and go back"
+     "Value": "20 tiles from their own ground: they follow no further, and go back (since the user's fourth playtest, for pursuers only, held until pursuitResume: \"Guarding and pursuit\", decision DH-72)"
     },
     {
      "Key": "remember",
@@ -4366,6 +4433,139 @@
      "Key": "noArrows",
      "Value": "Out of arrows it draws its sidearm the same way",
      "Notes": "Section 13 of Book 2"
+    }
+   ],
+   "guardingAndPursuit": [
+    {
+     "Key": "guardRadius",
+     "Value": "7 tiles: when its foe is further than this from its post, a guard breaks off and runs back to it",
+     "Notes": "Measured from the post to the foe, not to the guard, so a guard never stops at an invisible line in the open"
+    },
+    {
+     "Key": "guardResume",
+     "Value": "5 tiles: a guard on its way back, or standing at its post, takes up the fight again only when its foe comes within this of the post",
+     "Notes": "2 tiles inside guardRadius: the gap that stops any pacing at the limit"
+    },
+    {
+     "Key": "guardHome",
+     "Value": "1.5 tiles: back within this of its post it stands guard, facing the way its foe went",
+     "Notes": "It does not walk back out until guardResume, or a blow"
+    },
+    {
+     "Key": "guardChase",
+     "Value": "5 real seconds: a guard struck (a blow or a missile) chases its striker for at least this long before it weighs its post again",
+     "Notes": "So a shot from beyond guardRadius is answered, and the return is still one decision, not a flicker"
+    },
+    {
+     "Key": "pursuitResume",
+     "Value": "15 tiles: a pursuer gone back home past the leash (Self-preservation, 20 tiles) takes up the chase again only when its foe comes within this of its home",
+     "Notes": "The same hold as a guard's, on a pursuer's own ground"
+    },
+    {
+     "Key": "cohesionSpread",
+     "Value": "4 tiles: a pursuer this far ahead of its nearest standing friend (ahead: nearer the foe than that friend) no longer runs, it walks",
+     "Notes": "Alone, or its friends all down or gone, it keeps no cohesion"
+    },
+    {
+     "Key": "cohesionWait",
+     "Value": "6 tiles: this far ahead it stops, faces its foe and waits until a friend is back within cohesionSpread of it",
+     "Notes": "Unless the foe is within its own engage distance (Distances by archetype): then it fights where it stands"
+    },
+    {
+     "Key": "pursuitTogether",
+     "Value": "When every other member of its band still standing has gone back, the last pursuer goes back too",
+     "Notes": "A band breaks off together rather than leave one to chase alone"
+    }
+   ],
+   "targetChoice": [
+    {
+     "Key": "threatMemory",
+     "Value": "8 real seconds: what a foe did counts for this long",
+     "Notes": ""
+    },
+    {
+     "Key": "threatDamage",
+     "Value": "1 point for each point of damage the foe dealt to the fighter's group within threatMemory",
+     "Notes": "A clean seax hit (23) is worth 23"
+    },
+    {
+     "Key": "threatStruckMe",
+     "Value": "30: the foe struck this fighter within threatMemory",
+     "Notes": ""
+    },
+    {
+     "Key": "threatSteerer",
+     "Value": "20: the foe is the steerer",
+     "Notes": "The steerer leads the household and is, unless something else weighs more, the bigger danger"
+    },
+    {
+     "Key": "threatAttacking",
+     "Value": "20: the foe is in an attack (wind-up or active) on the fighter or one of its group, or locked on to one",
+     "Notes": ""
+    },
+    {
+     "Key": "threatNear",
+     "Value": "30 at the fighter's own body, falling evenly to 0 at 8 tiles",
+     "Notes": "Nearness still counts, but no longer decides alone"
+    },
+    {
+     "Key": "threatWeak",
+     "Value": "10 x (1 - the foe's vitality share): a hurt foe draws a little",
+     "Notes": ""
+    },
+    {
+     "Key": "threatKeep",
+     "Value": "10: the foe it already has",
+     "Notes": "So it does not flip between two near-equal foes"
+    },
+    {
+     "Key": "threatSwitch",
+     "Value": "10: it takes a new foe only at a look round, and only one scoring at least this much more than the one it has",
+     "Notes": "A look round is awarenessEvery (Fighters' habits); the foes weighed are those it sees and any who struck its band within threatMemory (it heard the blow)"
+    }
+   ],
+   "runningOff": [
+    {
+     "Key": "runOffWay",
+     "Value": "It plans a way over the ground (round walls and water, never past the steerer) to the nearest place out of the steerer's sight, else the zone's edge on the side away from the steerer, and runs it",
+     "Notes": "Never nearer the steerer at any step than runOffKeep less than where it began"
+    },
+    {
+     "Key": "runOffKeep",
+     "Value": "1 tile",
+     "Notes": ""
+    },
+    {
+     "Key": "runOffSight",
+     "Value": "Out of sight: outside the logical view (640 x 360, section 21) centred on the steerer, widened by lookAheadAiming (5 tiles) and runOffMargin each way",
+     "Notes": "The camera can look ahead; the foe is never taken out while it could be on screen"
+    },
+    {
+     "Key": "runOffMargin",
+     "Value": "1 tile",
+     "Notes": ""
+    },
+    {
+     "Key": "runOffGone",
+     "Value": "Once out of sight, or at the zone's edge, it is gone from the zone",
+     "Notes": "Its record stays (status missing, as one who fled)"
+    },
+    {
+     "Key": "runOffReplan",
+     "Value": "1 real second without moving: it plans its way again from where it stands",
+     "Notes": "A friend or a body in the way"
+    }
+   ],
+   "attackPace": [
+    {
+     "Key": "spearPatience",
+     "Value": "x0.7: a fighter with a spear waits this share of its archetype's patience (Distances by archetype) before attacking without an opening",
+     "Notes": "Svart (Outlaw: 1.4 to 2.45 s from 2.0 to 3.5 s)"
+    },
+    {
+     "Key": "spearCooldown",
+     "Value": "30 ticks after its own recovery before a spear fighter starts another attack",
+     "Notes": "In place of attackCooldown's 45 (\"AI decisions\")"
     }
    ]
   },
@@ -5383,6 +5583,171 @@
     {
      "Reply": "Threat",
      "Effect": "A threat to a resident (Fear deltas)"
+    }
+   ],
+   "ownHours": [
+    {
+     "Key": "earlyRise",
+     "Value": "45 game minutes before the household's day",
+     "Notes": "Diligent or Pious: up at 05:15, at work (or at their dawn habit) before the steerer wakes at 06:00; outdoor work still waits for light. Their dawn ration is served at the steerer's waking as everyone's"
+    },
+    {
+     "Key": "lateFire",
+     "Value": "60 game minutes after the household's bedtime",
+     "Notes": "Storyteller, Drinker, or a like for the fireside: by the fire until 23:00"
+    },
+    {
+     "Key": "nightWatch",
+     "Value": "One resident keeps the night watch by the fire from the household's bedtime until 02:00, by turns night by night, while 2 or more are at home",
+     "Notes": "Never one bed-bound; the turn goes round the residents in order of their names, one a night"
+    },
+    {
+     "Key": "watchSleepIn",
+     "Value": "60 game minutes",
+     "Notes": "The night's watch sleeps on past the household's day by this much (until 07:00)"
+    },
+    {
+     "Key": "watchFire",
+     "Value": "The watch feeds the fire from the woodpile when it is below half a day's fuel",
+     "Notes": "As the camp's work does by day (Fuel and hay)"
+    }
+   ],
+   "bindingAWound": [
+    {
+     "Key": "boundStill",
+     "Value": "The one being bound sits still, facing the steerer, until the binding ends",
+     "Notes": "Their work, walk and habits wait; a binding cut short frees them at once"
+    },
+    {
+     "Key": "careRefusal",
+     "Value": "A Superstitious resident refuses another's hand on their wound the first time it is offered on a day",
+     "Notes": "Written for Runa (content/company.json): \"another's hands on my hurt, and the sea marks me\""
+    },
+    {
+     "Key": "carePersuaded",
+     "Value": "Offering to hold the end while they bind it themselves: accepted at once",
+     "Notes": "Their own luck kept; the binding is the steerer's hands-on action as any (Tend wounds, section 09)"
+    },
+    {
+     "Key": "careLater",
+     "Value": "1 day",
+     "Notes": "Asked again on a later day, they let it be bound"
+    }
+   ],
+   "talkAmongTheHousehold": [
+    {
+     "Key": "exchangeEvery",
+     "Value": "90 to 180 real seconds",
+     "Notes": "From one exchange's end to the next one's start, drawn on the people stream"
+    },
+    {
+     "Key": "exchangeFirst",
+     "Value": "45 real seconds",
+     "Notes": "After a load or a new campaign, before the first"
+    },
+    {
+     "Key": "exchangeNear",
+     "Value": "4 tiles",
+     "Notes": "Every speaker within this of the first, in the same zone"
+    },
+    {
+     "Key": "exchangeHeard",
+     "Value": "Within barkEarshot (section 08) of the steerer",
+     "Notes": "Only heard exchanges are spoken"
+    },
+    {
+     "Key": "exchangeLineGap",
+     "Value": "2.5 real seconds",
+     "Notes": "Between one line and the next"
+    },
+    {
+     "Key": "exchangeQuiet",
+     "Value": "6 real seconds",
+     "Notes": "None starts within this of any other speech line; barks wait while one is under way"
+    },
+    {
+     "Key": "exchangeRepeat",
+     "Value": "20 real minutes",
+     "Notes": "The same exchange not again within this, nor before every other that fits has been heard"
+    },
+    {
+     "Key": "exchangeChoice",
+     "Value": "The most particular that fits",
+     "Notes": "An event or a memory counts 3, a tie 2, a trait 2, an activity 1; among the most particular, one drawn on the people stream"
+    },
+    {
+     "Key": "exchangeNever",
+     "Value": "In a fight, a scene, a conversation, a story beat, the launch or the sea burial, or while the steerer sleeps",
+     "Notes": "As the hints' quiet (Guidance, section 25)"
+    }
+   ],
+   "nudgesAndAdvice": [
+    {
+     "Key": "nudgeFirst",
+     "Value": "30 real seconds",
+     "Notes": "After an aim becomes the current one, before its first nudge"
+    },
+    {
+     "Key": "nudgeEvery",
+     "Value": "60 real seconds",
+     "Notes": "Between one nudge and the next"
+    },
+    {
+     "Key": "nudgeQuiet",
+     "Value": "6 real seconds",
+     "Notes": "None within this of any other speech line"
+    },
+    {
+     "Key": "nudgeAfterProgress",
+     "Value": "20 real seconds",
+     "Notes": "None this soon after a step towards the aim"
+    },
+    {
+     "Key": "nudgeMax",
+     "Value": "4 an aim",
+     "Notes": "Then only the aim's hints (section 25, Guidance)"
+    },
+    {
+     "Key": "nudgeNear",
+     "Value": "Within barkEarshot (section 08)",
+     "Notes": "The nearest resident in earshot with a line for the current aim speaks; with none, for the next open aim (the next person to find); a line is never said twice by one speaker within barkSameSpeaker"
+    },
+    {
+     "Key": "adviceAims",
+     "Value": "2",
+     "Notes": "The current aim and the next open one"
+    },
+    {
+     "Key": "adviceTrust",
+     "Value": "Friendship 40 or more",
+     "Notes": "Hild always; others when this trusted (a Loyal friend); the steward when there is one (Stage 22)"
+    }
+   ],
+   "boatWork": [
+    {
+     "Key": "boatSpots",
+     "Value": "6 round the boat, and 3 seated for the seriously wounded",
+     "Notes": "content/household.json SHIPWRIGHT: either side, stem and stern, standing and kneeling; one worker a spot, never two"
+    },
+    {
+     "Key": "boatSpotClear",
+     "Value": "1 tile",
+     "Notes": "No worker's spot within this of where the steerer works the boat"
+    },
+    {
+     "Key": "hullStages",
+     "Value": "5 drawn: as found, then at 25%, 50% and 75% of the patch's labour, and patched",
+     "Notes": "Book 7 section 05: the stove-in strakes trimmed square, then the boards going on one by one, then the rivets"
+    },
+    {
+     "Key": "riggingStages",
+     "Value": "3 drawn: lacking, at 50% of the rigging's labour, and set up",
+     "Notes": "The mast lying along the benches, then stepped unstayed, then stayed with the yard and sail"
+    },
+    {
+     "Key": "boatWorkSound",
+     "Value": "Every 1.6 real seconds from each worker at the boat in earshot",
+     "Notes": "The adze and mallet of the repair (Book 11 section 07), panned to the worker"
     }
    ]
   },
@@ -7714,6 +8079,48 @@
      "Value": "The current goal is always shown"
     }
    ],
+   "chapter1Finds": [
+    {
+     "Key": "cowries",
+     "Value": "1 collectible",
+     "Notes": "Cowrie shells in the wrack of the strand's far west beach (Book 1 section 11, collectibles: shells)"
+    },
+    {
+     "Key": "gullNest",
+     "Value": "0.5 ration-days of fresh eggs in spring and summer",
+     "Notes": "Three eggs in a gull's nest in the blind gully east of the stream's mouth; they keep as fresh food does (section 03). In autumn and winter the nest is empty and gives nothing"
+    },
+    {
+     "Key": "carvedStone",
+     "Value": "Nothing but its story",
+     "Notes": "A fallen slab on the north-west machair: a ship cut in it long ago and a cross cut over the ship later"
+    },
+    {
+     "Key": "waymark",
+     "Value": "Nothing but its story",
+     "Notes": "A small cairn on the north-east rise; the steerer adds a stone, as passers-by do"
+    },
+    {
+     "Key": "oldOffering",
+     "Value": "Nothing but its story",
+     "Notes": "A bronze ring-pin and a twist of wool in a cleft north of the Hag's Stone, left for her long ago; it is not taken"
+    },
+    {
+     "Key": "kerbstone",
+     "Value": "Nothing but its story",
+     "Notes": "Cup-and-ring marks on a kerbstone of the Hollow Cairn's eastern flank"
+    },
+    {
+     "Key": "sealSkull",
+     "Value": "Nothing but its story",
+     "Notes": "A seal's skull on a ledge at Seal Cave's northern tip, ringed with white shells: someone's sign (the Keepers', Book 4)"
+    },
+    {
+     "Key": "lostKnife",
+     "Value": "1 oz of silver",
+     "Notes": "A knife wedged in the rocks at Seal Cave's southern end, its grip wound with silver wire; the wire goes into the household's silver"
+    }
+   ],
    "secretEntrances": [
     {
      "Key": "routesWithEntrances",
@@ -8354,6 +8761,143 @@
      "Value": "3 days",
      "Notes": "Fewer days of food in store than this reads short on the readiness screen"
     }
+   ],
+   "reasonsForTheFirstRaid": [
+    {
+     "Key": "needs",
+     "Value": "Iron, grain, cloth and salt",
+     "Notes": "The four the household lacks from day 1. A need is felt while its store is under its \"enough\" row below; Chapter 1 never meets one"
+    },
+    {
+     "Key": "wreckGrain",
+     "Value": "14 rd of barley meal",
+     "Notes": "The ship's meal-sack, wet through at the bottom, among the salvage in the broch at S0 (beside wreckStores)"
+    },
+    {
+     "Key": "grainShare",
+     "Value": "0.25 rd a mouth a day",
+     "Notes": "The morning porridge: each mouth's ration (foodPerPersonPerDay) takes this much from the grain while any is left, and the rest from fish as before. Grain is food (section 03), so it counts in every food runway"
+    },
+    {
+     "Key": "grainEnough",
+     "Value": "30 days",
+     "Notes": "Grain for fewer days than this, at grainShare for every mouth, is felt as a need"
+    },
+    {
+     "Key": "runaNails",
+     "Value": "9 nails",
+     "Notes": "Runa's own, in her tool chest when she joins: too few for any iron work (Book 6 section 02: the hull patch is made permanent only with iron)"
+    },
+    {
+     "Key": "ironEnough",
+     "Value": "1 iron lot",
+     "Notes": "Iron is felt as a need below this; nails never make up a lot"
+    },
+    {
+     "Key": "clothEnough",
+     "Value": "1 cloth lot",
+     "Notes": "Cloth is felt as a need below this; the camp's linen bindings (bindingsAtCamp) are not a lot"
+    },
+    {
+     "Key": "saltEnough",
+     "Value": "1 salt lot",
+     "Notes": "Salt is felt as a need below this (Salted fish or meat: 1 salt lot per 60 rd)"
+    },
+    {
+     "Key": "needLineGap",
+     "Value": "180 real seconds",
+     "Notes": "Between any two of the household's need lines (barks), whoever speaks, so they stay occasional"
+    },
+    {
+     "Key": "needLinesPerDay",
+     "Value": "4",
+     "Notes": "At most this many need lines in a game day (about 17 real minutes), on top of Book 8's bark rules (barkSameSpeaker, barkSameLine)"
+    },
+    {
+     "Key": "reportNeedLines",
+     "Value": "2",
+     "Notes": "At most this many need lines in a morning report: the grain counted down, and the one thing that ran low since the last report"
+    },
+    {
+     "Key": "poorCatch",
+     "Value": "2 fish",
+     "Notes": "A day's fishing that lands fewer fish than this, with someone at the nets, ran low (\"a poor day's fishing\")"
+    },
+    {
+     "Key": "stormsAt",
+     "Value": "Day 61",
+     "Notes": "Autumn's first day (Book 4 section 04: storms rising, crossings riskier): the report counts the days to the autumn storms"
+    },
+    {
+     "Key": "stormsEvery",
+     "Value": "3 days",
+     "Notes": "The storms are counted on the first morning report and then every 3rd morning, with the grain"
+    },
+    {
+     "Key": "likelyFrom",
+     "Value": "2 sources",
+     "Notes": "A Carrick clue told by this many different sources (the chart, the boat, a scavenger asked, the smoke seen) reads likely; one source, a rumour. Certain is Stage 15's (scouting)"
+    },
+    {
+     "Key": "carrickSack",
+     "Value": "12 rd of barley",
+     "Notes": "The scavengers' sack of Carrick grain in their skin boat, marked with the storehouse's mark"
+    },
+    {
+     "Key": "carrickNails",
+     "Value": "30 nails",
+     "Notes": "A rag-bound bundle of nails in the skin boat: welcome, and still not iron enough (ironEnough)"
+    },
+    {
+     "Key": "carrickNet",
+     "Value": "1 net",
+     "Notes": "A mended fishing net in the skin boat: kept in the stores for the homestead's fishing (Stage 19)"
+    },
+    {
+     "Key": "goodsCamp",
+     "Value": "4 tiles",
+     "Notes": "The skin boat's goods, carried as one load (the carry pace) and set down within this of the camp fire, go into the stores"
+    },
+    {
+     "Key": "pointOutHours",
+     "Value": "08:00 to 17:00",
+     "Notes": "A clear day at the Hag's Seat: in these hours, with the weeping stone dry (or never weeping) and, from Stage 13, the weather clear"
+    },
+    {
+     "Key": "pointOutTiles",
+     "Value": "10 tiles",
+     "Notes": "The steerer at the Hag's Seat and someone of the household, or Runa still sitting there, within this (barkEarshot): they point out the smoke and fields on the Irish coast, once"
+    },
+    {
+     "Key": "councilReach",
+     "Value": "3 tiles",
+     "Notes": "The steerer within this of the camp fire, with the launch's gate open, can call the household to council"
+    },
+    {
+     "Key": "councilGather",
+     "Value": "40 real seconds",
+     "Notes": "The household walks to the fire; the council begins when all are there or after this, with whoever has come"
+    },
+    {
+     "Key": "councilHeard",
+     "Value": "+2 friendship",
+     "Notes": "Each resident whose counsel the steerer's chosen intent follows"
+    },
+    {
+     "Key": "councilOverruled",
+     "Value": "-1 friendship",
+     "Notes": "Each resident whose counsel the chosen intent goes against; the rest are unmoved"
+    },
+    {
+     "Key": "intentKept",
+     "Value": "+1 friendship",
+     "Notes": "Stage 16: each resident who spoke for the intent, when the raid at Carrick goes as the council said"
+    },
+    {
+     "Key": "intentBroken",
+     "Value": "-2 friendship from the Word-minded, -1 from the rest",
+     "Notes": "Stage 16: a raid harder than the council said (blood where it agreed none) costs this with each resident who was there; the Word-minded (Word 2 or more) weigh it double"
+    }
    ]
   },
   "conversationDepth": {
@@ -8552,6 +9096,83 @@
      "Key": "homeOutline",
      "Value": "10 tiles",
      "Notes": "A carried thing with a home at the camp shows a faint outline at its home while it is carried within this distance; set down within 1 tile of the outline, it settles into place there"
+    },
+    {
+     "Key": "edgeWay",
+     "Value": "The nearest open crossing into the next zone, measured from the steerer",
+     "Notes": "\"Nothing that way\" also names it, with its direction (the user's fourth playtest, decision DH-36): \"Nothing that way. The broch is north of here.\" A crossing counts only where the edge really leads on and the ground on both sides can be stood on at the tide now; with none, the caption is the plain one"
+    }
+   ],
+   "storyAndScenes": [
+    {
+     "Key": "snatchAfter",
+     "Value": "1.5 real seconds of carrying Oddi on his strand while the strongbox still lies there",
+     "Notes": "Or at once if he is set down on the strand before then. Only one of the band who is alive, free and not yet met at the fold or the cave comes (Conn first, then Svart, then Ketill); with none, nobody comes and the strongbox stays where it lies"
+    },
+    {
+     "Key": "snatchStart",
+     "Value": "7 tiles from the strongbox, on the landward side",
+     "Notes": "Where he breaks from the dune grass"
+    },
+    {
+     "Key": "snatchRun",
+     "Value": "4.0 tiles a second",
+     "Notes": "His run down to the box, unladen"
+    },
+    {
+     "Key": "snatchStoop",
+     "Value": "0.5 real seconds",
+     "Notes": "Hauling the box up by its handles"
+    },
+    {
+     "Key": "snatchHold",
+     "Value": "Until the box is up, at most 3 real seconds",
+     "Notes": "The brief scene: the steerer stops where they stand (still carrying Oddi) and turns to him; nothing else can be done until it ends"
+    },
+    {
+     "Key": "snatchCarry",
+     "Value": "2.4 tiles a second",
+     "Notes": "Off up the dunes with the box to the strand's north edge, where he is gone (to the fold)"
+    },
+    {
+     "Key": "snatchCatch",
+     "Value": "1.2 tiles",
+     "Notes": "The steerer that close, hands free (Oddi set down), while he carries it: he drops the box and runs on empty-handed, and does not come back for it"
+    },
+    {
+     "Key": "remarkReach",
+     "Value": "1.4 tiles",
+     "Notes": "The steerer's word over a body (the interaction's reach for it)"
+    },
+    {
+     "Key": "sightView",
+     "Value": "13 tiles across and 7 tiles up and down from the steerer",
+     "Notes": "\"In view\": inside this, with no wall, rock or solid ground on the straight line between the steerer's eyes and the person"
+    },
+    {
+     "Key": "runaRemindAfter",
+     "Value": "20 real seconds after Runa is home at the camp",
+     "Notes": "With the steerer awake within earshot (barkEarshot, section 08) and her tool chest not yet at one of her safe places"
+    },
+    {
+     "Key": "runaRemindEvery",
+     "Value": "180 real seconds",
+     "Notes": ""
+    },
+    {
+     "Key": "runaRemindTimes",
+     "Value": "3",
+     "Notes": "Then she stops asking"
+    },
+    {
+     "Key": "branAdviceGap",
+     "Value": "6 real seconds between any two of Bran's teaching shouts in one fight",
+     "Notes": "Shared by both foes (svartGuidance and ketillGuidance keep their own gaps). A shout due inside the gap waits for that foe's next wind-up at the steerer"
+    },
+    {
+     "Key": "storesHintNear",
+     "Value": "12 tiles from the mast's foot, on Wreck Strand",
+     "Notes": "The stores' second hint (\"Stand still. Aim at the rope\") is given only here, with the bow carried and the lashing still whole"
     }
    ],
    "noTrap": [

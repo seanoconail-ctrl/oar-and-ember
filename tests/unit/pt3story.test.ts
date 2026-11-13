@@ -166,7 +166,8 @@ describe('the shelter in three stages over two days (DG-12)', () => {
     let steadied = false;
     const day = world.calendar.day;
     const minute0 = world.calendar.minuteOfDay;
-    const site = wreck.camp?.shelter ?? { x: 0, y: 0 };
+    // The marked spot where the frame and the sail are worked (the user's fourth playtest, DH-10).
+    const site = wreck.camp?.mark ?? { x: 0, y: 0 };
     const tile = { tx: Math.floor(site.x), ty: Math.floor(site.y) };
     bot.walkTo((t) => Math.abs(t.tx - tile.tx) + Math.abs(t.ty - tile.ty) <= 1);
     sim.submit({ type: 'INTERACT_AT', tile });
@@ -231,6 +232,8 @@ describe('the shelter in three stages over two days (DG-12)', () => {
     if (h0 === undefined) throw new Error('no home');
     const stores = h0.stores;
     stores['RES_SALTED_FISH'] = 0;
+    // The meal-sack is food too (a reason for the first raid, DH-131): empty it as well.
+    stores['RES_GRAIN'] = 0;
     h0.fresh = [];
     expect(jobToday(world, camp, people, hild)).toBe('FISHER');
     stores['RES_SALTED_FISH'] = 10;

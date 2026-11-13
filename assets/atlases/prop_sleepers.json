@@ -1,0 +1,322 @@
+{
+  "sheet": "prop_sleepers",
+  "kind": "prop",
+  "image": "prop_sleepers.png",
+  "width": 48,
+  "height": 24,
+  "pivot": {
+    "x": 24,
+    "y": 22
+  },
+  "footprint": {
+    "w": 48,
+    "h": 24
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "steerer_a_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "steerer_a_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "steerer_b_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "steerer_b_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "hild_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "hild_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "oddi_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "oddi_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "runa_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "runa_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "bran_heavy_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "bran_heavy_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "heavy_e": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    },
+    "heavy_w": {
+      "frames": 4,
+      "ticks": 75,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 30,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "steerer_a_e/-/0": [
+      0,
+      0
+    ],
+    "steerer_a_e/-/1": [
+      48,
+      0
+    ],
+    "steerer_a_e/-/2": [
+      96,
+      0
+    ],
+    "steerer_a_e/-/3": [
+      144,
+      0
+    ],
+    "steerer_a_w/-/0": [
+      0,
+      24
+    ],
+    "steerer_a_w/-/1": [
+      48,
+      24
+    ],
+    "steerer_a_w/-/2": [
+      96,
+      24
+    ],
+    "steerer_a_w/-/3": [
+      144,
+      24
+    ],
+    "steerer_b_e/-/0": [
+      0,
+      48
+    ],
+    "steerer_b_e/-/1": [
+      48,
+      48
+    ],
+    "steerer_b_e/-/2": [
+      96,
+      48
+    ],
+    "steerer_b_e/-/3": [
+      144,
+      48
+    ],
+    "steerer_b_w/-/0": [
+      0,
+      72
+    ],
+    "steerer_b_w/-/1": [
+      48,
+      72
+    ],
+    "steerer_b_w/-/2": [
+      96,
+      72
+    ],
+    "steerer_b_w/-/3": [
+      144,
+      72
+    ],
+    "hild_e/-/0": [
+      0,
+      96
+    ],
+    "hild_e/-/1": [
+      48,
+      96
+    ],
+    "hild_e/-/2": [
+      96,
+      96
+    ],
+    "hild_e/-/3": [
+      144,
+      96
+    ],
+    "hild_w/-/0": [
+      0,
+      120
+    ],
+    "hild_w/-/1": [
+      48,
+      120
+    ],
+    "hild_w/-/2": [
+      96,
+      120
+    ],
+    "hild_w/-/3": [
+      144,
+      120
+    ],
+    "oddi_e/-/0": [
+      0,
+      144
+    ],
+    "oddi_e/-/1": [
+      48,
+      144
+    ],
+    "oddi_e/-/2": [
+      96,
+      144
+    ],
+    "oddi_e/-/3": [
+      144,
+      144
+    ],
+    "oddi_w/-/0": [
+      0,
+      168
+    ],
+    "oddi_w/-/1": [
+      48,
+      168
+    ],
+    "oddi_w/-/2": [
+      96,
+      168
+    ],
+    "oddi_w/-/3": [
+      144,
+      168
+    ],
+    "runa_e/-/0": [
+      0,
+      192
+    ],
+    "runa_e/-/1": [
+      48,
+      192
+    ],
+    "runa_e/-/2": [
+      96,
+      192
+    ],
+    "runa_e/-/3": [
+      144,
+      192
+    ],
+    "runa_w/-/0": [
+      0,
+      216
+    ],
+    "runa_w/-/1": [
+      48,
+      216
+    ],
+    "runa_w/-/2": [
+      96,
+      216
+    ],
+    "runa_w/-/3": [
+      144,
+      216
+    ],
+    "bran_heavy_e/-/0": [
+      0,
+      240
+    ],
+    "bran_heavy_e/-/1": [
+      48,
+      240
+    ],
+    "bran_heavy_e/-/2": [
+      96,
+      240
+    ],
+    "bran_heavy_e/-/3": [
+      144,
+      240
+    ],
+    "bran_heavy_w/-/0": [
+      0,
+      264
+    ],
+    "bran_heavy_w/-/1": [
+      48,
+      264
+    ],
+    "bran_heavy_w/-/2": [
+      96,
+      264
+    ],
+    "bran_heavy_w/-/3": [
+      144,
+      264
+    ],
+    "heavy_e/-/0": [
+      0,
+      288
+    ],
+    "heavy_e/-/1": [
+      48,
+      288
+    ],
+    "heavy_e/-/2": [
+      96,
+      288
+    ],
+    "heavy_e/-/3": [
+      144,
+      288
+    ],
+    "heavy_w/-/0": [
+      0,
+      312
+    ],
+    "heavy_w/-/1": [
+      48,
+      312
+    ],
+    "heavy_w/-/2": [
+      96,
+      312
+    ],
+    "heavy_w/-/3": [
+      144,
+      312
+    ]
+  }
+}

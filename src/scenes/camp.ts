@@ -2,6 +2,7 @@
  * The camp in the play view (Stage 7): what the prompt says for a camp use, the morning report's
  * sentences, and the test and capture hooks that start play at the broch (`?camp=broch`).
  */
+import { boatDrawing } from './repairsScene.ts';
 import type { Content } from '../content/registry.ts';
 import { parseShipBalance } from '../content/shipBalance.ts';
 import { parseTimeBalance } from '../content/balance.ts';
@@ -44,7 +45,7 @@ export function reportSentences(
 /** The prompt for a camp use, for the device in use. */
 export function campUseLabel(
   use: SiteUse,
-  content: Pick<Content, 'camp' | 'searches'> & Partial<Pick<Content, 'repairs'>>,
+  content: Pick<Content, 'camp' | 'searches'> & Partial<Pick<Content, 'repairs' | 'raid'>>,
   t: Translate,
   nameOf: (id: Id) => string,
   key: string,
@@ -59,14 +60,18 @@ export function campUseLabel(
       // Stage 11: cutting the rigging free of the wreck is a ship repair with its own words.
       if (use.site === 'rigging_cut')
         return { text: click('ui.prompt.cut_rigging'), kind: 'cut_rigging' };
+      // A task is named from its string, never by its ID (DH-110).
       const def = content.camp?.tasks[use.task];
-      const task = def === undefined ? use.task : t(def.nameKey);
+      const task = t(def === undefined ? 'ui.name.unknown' : def.nameKey);
       return { text: click('ui.prompt.task', { task }), kind: use.task.toLowerCase() };
     }
     case 'REPAIR':
       // Stage 11: the steering oar taken from the scavengers' skiff.
       return { text: click('ui.prompt.take_oar'), kind: 'take_oar' };
     case 'OPENING':
+      // The user's fourth playtest (DH-24): the steerer's word over a body, named.
+      if (use.site === 'remark')
+        return { text: click('ui.prompt.remark', { name: nameOf(use.target) }), kind: 'remark' };
       // Design addendum 2.4: Thorkel's key and chest, and the sail raised between the oars.
       return { text: click(`ui.prompt.${use.site}`), kind: use.site };
     case 'FEED_FIRE':
@@ -79,9 +84,17 @@ export function campUseLabel(
       return { text: click('ui.prompt.talk', { name: nameOf(use.target) }), kind: 'talk' };
     case 'SEARCH': {
       // Stage 10: a search's words: talk to Bran, Ketill or Runa; leave an offering at the stone.
-      const talk = [...(content.searches?.talks ?? []), ...(content.repairs?.talks ?? [])].find(
-        (x) => x.id === use.site,
-      );
+      // A reason for the first raid (DH-130 on): the skin boat, a beaten scavenger, the council.
+      const raid = content.raid;
+      const raidTalks =
+        raid == null
+          ? []
+          : [raid.skinBoat.talk, raid.council.talk, ...Object.values(raid.ask.beaten)];
+      const talk = [
+        ...(content.searches?.talks ?? []),
+        ...(content.repairs?.talks ?? []),
+        ...raidTalks,
+      ].find((x) => x.id === use.site);
       const prompt = talk?.promptKey ?? 'ui.prompt.talk';
       return {
         text: click(prompt, { name: nameOf(use.target) }),
@@ -93,9 +106,18 @@ export function campUseLabel(
               : prompt.replace('ui.prompt.', ''),
       };
     }
+    case 'FIND':
+      // The user's fourth playtest (DH-115): a find off the path, named from its string.
+      return {
+        text: click(use.take ? 'ui.prompt.find_take' : 'ui.prompt.find_look', {
+          name: t(use.nameKey),
+        }),
+        kind: use.take ? 'find_take' : 'find_look',
+      };
     case 'REFUSE':
+      // The hour comes from Book 10's sleepAfter with the refusal, never written here (DH-101).
       if (use.reason === 'TOO_EARLY_TO_SLEEP')
-        return { text: t('ui.prompt.too_early', { time: '18:00' }), kind: 'too_early' };
+        return { text: t('ui.prompt.too_early', { time: use.after ?? '' }), kind: 'too_early' };
       if (use.reason === 'NO_DRIFTWOOD')
         return { text: t('ui.prompt.need_wood'), kind: 'need_wood' };
       return { text: t('ui.refusal.no_food'), kind: 'no_food' };
@@ -244,6 +266,7 @@ export function campHooks(
   // (`ship=hull,rig,oar` repairs done, `fit=hold|bow`, `lay=boards,rig,oar` materials by it).
   if (params.get('crew') === '1') seedCrew(world, content, land, params.get('wreckers') ?? 'cave');
   seedShip(world, content, params);
+  seedPeople4(world, content, params);
   // Stage 12 (tests and captures): the launch (`launch=open|naming|scene`): the boat ready and the
   // gate open; or the gate started with the boat to be named; or named (`name=`) and marked
   // (`mark=raven:woad`), so the scene plays from the first tick. The tide must be in (`time=`).
@@ -263,6 +286,22 @@ export function campHooks(
 }
 
 /** Where an interaction's target is, in pixels (to compare with a camp use's distance). */
+/**
+ * Whether the nearest use is what Interact does rather than the lift or pickup in reach (as the
+ * simulation picks): the nearer of the two, and never while setting something down. The play view
+ * names the winner as its prompt (the user's fourth playtest, DH-10).
+ */
+export function useWins(
+  use: { readonly d: number },
+  interaction: Interaction | null,
+  at: { readonly x: number; readonly y: number } | null,
+  player: { readonly x: number; readonly y: number },
+): boolean {
+  if (interaction === null) return true;
+  if (interaction.kind === 'SET_DOWN') return false;
+  return at === null || use.d < Math.hypot(at.x - player.x, at.y - player.y);
+}
+
 export function interactionPoint(
   onFoot: OnFootState,
   interaction: Interaction,
@@ -276,6 +315,45 @@ export function interactionPoint(
 }
 
 /** Stage 11 hooks: the searches done and the crew at home (`crew=1`). */
+/**
+ * The user's fourth playtest (tests and captures; DH-40 to DH-64): `boatwork=all` puts everyone
+ * home on the boat; `hull=0.3` and `rig=0.6` set a laid repair's work done as a share of its labour;
+ * `hurt=C_RUNA,...` gives each a serious wound, untended; `joined=N` dates everyone's joining.
+ */
+function seedPeople4(world: WorldState, content: Content, params: URLSearchParams): void {
+  const ship = world.ships['flagship'];
+  if (params.get('boatwork') === 'all')
+    for (const id of world.household.residents) {
+      const p = world.people[id];
+      if (p !== undefined) p.job = { kind: 'SHIPWRIGHT', since: world.calendar.day, byOrder: true };
+    }
+  const drawing = content.repairs === null ? null : boatDrawing(content.balance);
+  const labour: Record<string, number> = {
+    hull: drawing?.hullLabour ?? 0,
+    rig: drawing?.riggingLabour ?? 0,
+  };
+  for (const [key, repair] of [
+    ['hull', 'HULL'],
+    ['rig', 'RIGGING'],
+  ] as const) {
+    const share = Number(params.get(key) ?? '');
+    const rep = ship?.repairs[repair];
+    if (params.has(key) && Number.isFinite(share) && rep?.stage === 'MATERIALS')
+      rep.progress = share * (labour[key] ?? 0);
+  }
+  for (const id of (params.get('hurt') ?? '').split(',').filter((x) => x !== '')) {
+    const p = world.people[id];
+    if (p !== undefined)
+      p.wounds = [{ day: world.calendar.day, severity: 'SERIOUS', where: 'ankle' }];
+  }
+  const joined = Number(params.get('joined') ?? '');
+  if (Number.isInteger(joined) && joined > 0)
+    for (const id of world.household.residents) {
+      const p = world.people[id];
+      if (p?.life.joinedDay === null) p.life.joinedDay = joined;
+    }
+}
+
 function seedCrew(
   world: WorldState,
   content: Content,

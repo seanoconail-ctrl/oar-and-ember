@@ -289,6 +289,9 @@ function deliver(
   };
   const speaks = (id: Id): boolean =>
     world.household.residents.includes(id) || id === ctx.caller || lying(id);
+  // The user's fourth playtest (DH-35): a hint that only makes sense in its place waits for it.
+  const when = 'when' in hint ? hint.when : undefined;
+  if (when !== undefined && !when.every((c) => holds(world, c, maps))) return false;
   const alt = 'alt' in hint ? hint.alt : undefined;
   const line = !speaks(hint.speaker) && alt !== undefined ? alt : hint;
   if (!speaks(line.speaker)) return false;

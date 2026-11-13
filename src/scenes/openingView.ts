@@ -52,6 +52,8 @@ export function openingProps(
   map: ZoneMap,
   stageProps: readonly CampProp[],
   tick: number,
+  /** Where the second day's finishing is worked (the camp's BUILD site), for its mark (DH-11). */
+  buildAt?: { readonly x: number; readonly y: number },
 ): CampProp[] {
   const out: CampProp[] = [];
   const zone = map.zone;
@@ -82,6 +84,20 @@ export function openingProps(
   for (const p of stageProps) {
     if (p.sheet !== 'prop_sail_leanto') continue;
     const at = { x: p.x, y: p.y, fixed: true };
+    // The user's fourth playtest (DH-11): the spot where the shelter is worked is marked on the
+    // ground while it can be worked: stakes and a cord where the frame goes, the foot-stones and a
+    // coil of lashing for the sail, and on the second morning a turf spade and the cutting line.
+    const mark = shelterMark(world, stage);
+    if (mark !== null) {
+      const turf = mark === 'turf';
+      out.push({
+        sheet: SHELTER_MARK_SHEET,
+        frame: `${mark}/-/${Math.floor(tick / 14) % SHELTER_MARK_FRAMES}`,
+        x: turf ? (buildAt?.x ?? p.x) : camp.mark.x,
+        y: turf ? (buildAt?.y ?? p.y) : camp.mark.y,
+        fixed: true,
+      });
+    }
     if (stage === 'FOLDED') {
       const k = share('TASK_SHELTER_FRAME');
       out.push({
@@ -175,6 +191,29 @@ export function stagePropsNow<T extends { readonly sheet: string }>(
   return props.filter(
     (p) => p.sheet !== 'prop_sail_leanto' || (leanToUp(world) && tick - stageAt >= 60),
   );
+}
+
+/** The shelter's ground mark (the user's fourth playtest, DH-11): its sheet and frames. */
+export const SHELTER_MARK_SHEET = 'prop_shelter_mark';
+export const SHELTER_MARK_FRAMES = 4;
+
+/**
+ * Which mark shows where the shelter is worked, while it can be worked (DH-11): `pegs` for the
+ * frame, `stones` for the sail, `turf` once Hild has asked for the finishing on the second morning
+ * and before its first turf is cut. Null when there is nothing to do there.
+ */
+export function shelterMark(
+  world: WorldState,
+  stage: ReturnType<typeof shelterStage>,
+): 'pegs' | 'stones' | 'turf' | null {
+  const home = world.homes['ISLE_SKARV'];
+  if (home?.stage !== 'S0' || world.facts['ch1.at_broch'] !== true) return null;
+  if (stage === 'FOLDED') return 'pegs';
+  if (stage === 'FRAME') return 'stones';
+  const started = (home.building?.progress ?? 0) > 0;
+  if (stage === 'SAIL' && world.facts['ch1.shelter_finish_said'] === true && !started)
+    return 'turf';
+  return null;
 }
 
 /** The shelter's stages' sheet (DG-12) and its states' frame counts (assets/art/sheets). */

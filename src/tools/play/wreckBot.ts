@@ -63,7 +63,8 @@ export class WreckBot extends LaunchBot {
     for (const stage of want) {
       if (stage === 'FRAME' && this.sim.state.facts['ch1.shelter'] !== 'FOLDED') continue;
       this.goToZone(c.zone);
-      const at = { tx: Math.floor(c.shelter.x), ty: Math.floor(c.shelter.y) };
+      // The marked spot where each stage is worked, beside the lean-to's bed (DH-10).
+      const at = { tx: Math.floor(c.mark.x), ty: Math.floor(c.mark.y) };
       if (!this.walkTo((t: Tile) => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) <= 1))
         throw new Error('no way to the sail');
       this.sim.submit({ type: 'INTERACT_AT', tile: at });

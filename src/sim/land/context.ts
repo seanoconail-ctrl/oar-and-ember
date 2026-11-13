@@ -2,6 +2,8 @@
 import { parseOpeningBalance } from '../../content/openingBalance.ts';
 import { aimsContext } from '../narrative/aims.ts';
 import { wreckContext } from '../narrative/wreck.ts';
+import { story4Context } from '../narrative/story4.ts';
+import { parsePeopleBalance } from '../../content/peopleBalance.ts';
 import {
   parseTimeBalance,
   parseArrowBalance,
@@ -17,7 +19,9 @@ import { parseCombatBalance } from '../../content/combatBalance.ts';
 import { fightContext } from './fight.ts';
 import { peopleContext } from '../people/context.ts';
 import { searchContext } from '../narrative/searches.ts';
+import { hasRaidBalance, raidContext, raidWhen, withNeedTopics } from '../narrative/raid.ts';
 import { repairsContext } from '../narrative/repairs.ts';
+import { findsContext } from '../narrative/finds.ts';
 import { parseSeaBurialBalance } from '../narrative/seaBurial.ts';
 import { launchContext } from '../narrative/launch.ts';
 import { parseLaunchBalance } from '../../content/launchBalance.ts';
@@ -51,6 +55,10 @@ export function landContext(
         | 'launch'
         | 'hulls'
         | 'fittings'
+        | 'company'
+        | 'guidance'
+        | 'finds'
+        | 'raid'
       >
     >,
   balance: unknown,
@@ -63,6 +71,11 @@ export function landContext(
       : fightContext({ combat: content.combat }, balance, parseTimeBalance(balance).daylight);
   const cb = fight === null ? null : parseCombatBalance(balance);
   for (const [zone, map] of content.zoneMaps) elevations.set(zone, bakeElevation(map.rows));
+  // A reason for the first raid (DH-130 to DH-159): needs, the skin boat, asking, the council.
+  const raid =
+    content.raid == null || !hasRaidBalance(balance)
+      ? null
+      : raidContext({ raid: content.raid, balance });
   // Stage 11: the boat's repairs, its fitting and Thorkel's rites.
   const repairs =
     content.repairs == null || content.hulls === undefined || content.fittings === undefined
@@ -109,9 +122,23 @@ export function landContext(
     searches:
       content.searches == null
         ? null
-        : searchContext({ searches: content.searches, balance }, repairs),
+        : searchContext(
+            { searches: content.searches, balance },
+            repairs,
+            // The user's fourth playtest (DH-12): the strongbox is taken only in sight.
+            content.opening?.rework.story4 !== undefined,
+            raid === null
+              ? null
+              : { talks: raid.talks, extraChoices: raid.extraChoices, when: raidWhen },
+          ),
+    raid,
     repairs,
     launch,
+    // The user's fourth playtest: the small finds off the paths (DH-115).
+    finds:
+      content.finds == null || !hasTable(balance, 'explorationDensity')
+        ? null
+        : findsContext(content.finds, balance),
     // Design addendum 2.4: the opening, the aims, the doors and the edges (Book 10 section 25).
     ...((): Partial<SimWorldContext> => {
       const ok = content.opening !== null && hasTable(balance, 'theOpeningGuidanceAndFeel');
@@ -128,6 +155,8 @@ export function landContext(
       return {
         wreck: wreckContext(full),
         aims: aimsContext(full),
+        // The user's fourth playtest's story and scenes (decisions DH-10 to DH-39).
+        story4: story4Context(full, parsePeopleBalance(balance).talk.earshotTiles),
         doors: ob.doors,
         edgeCaption: {
           afterSeconds: ob.feedback.edgeCaptionAfterSeconds,
@@ -141,10 +170,14 @@ export function landContext(
         ? null
         : peopleContext({
             household: content.household,
-            talk: content.talk ?? null,
+            // The first raid's need topics join the household's talk (DH-134).
+            talk: withNeedTopics(content.talk ?? null, raid?.def ?? null),
             scenes: content.scenes ?? [],
             people: content.people,
             balance,
+            company: content.company ?? null,
+            guidance: content.guidance ?? null,
+            opening: content.opening ?? null,
           }),
   };
 }

@@ -270,17 +270,28 @@ async function bedViews(browser: Browser, dir: string): Promise<ViewResult[]> {
 
 /** The sleepers at night: the steerer lying in the bed, breathing, the household asleep. */
 async function sleepGif(browser: Browser, dir: string): Promise<number> {
+  // The household asleep in their beds after 22:00, the steerer standing by the fire.
   const page = await open(
     browser,
-    'camp=broch&stage=S1&fire=lit&day=2&time=21:30&crew=1&at=33.3,29.7&asleep=1',
+    'camp=broch&stage=S1&fire=lit&day=2&time=23:10&crew=1&at=35.0,31.2',
   );
-  await advance(page, 30, 8, 8);
+  await advance(page, 60, 8, 8);
   const frames: string[] = [];
-  for (let i = 0; i < 40; i++) frames.push(await advance(page, 6, 320, 180, -30));
+  for (let i = 0; i < 50; i++) frames.push(await advance(page, 12, 320, 180, -30));
   const full = decodePng(fromDataUrl(await advance(page, 1, W, H)));
   writeFileSync(join(dir, 'sleepers-night.png'), encodePng(full));
   writeFileSync(join(dir, 'sleepers-night@4x.png'), encodePng(scale(full, 4)));
   await page.close();
+  // The steerer lying down in their own bed (the night passes after Book 10's sleep seconds).
+  const bed = await open(browser, 'camp=broch&stage=S1&fire=lit&day=2&time=23:10&crew=1&at=33.3,29.6');
+  await bed.evaluate(() => {
+    const w = window as unknown as { oePlay: { sim: { submit: (c: unknown) => void } } };
+    w.oePlay.sim.submit({ type: 'INTERACT' });
+  });
+  const lying = decodePng(fromDataUrl(await advance(bed, 40, W, H)));
+  writeFileSync(join(dir, 'steerer-asleep.png'), encodePng(lying));
+  writeFileSync(join(dir, 'steerer-asleep@4x.png'), encodePng(scale(lying, 4)));
+  await bed.close();
   return gif(frames, join(dir, '.frames'), join(dir, 'sleepers.gif'), 10);
 }
 
@@ -324,10 +335,15 @@ export async function worldCapture(browser: Browser, before: boolean): Promise<s
     readme(dir, 'before', views, size);
     return `${dir}: before ${views.map((v) => `${v.name} ${pct(v.share)}`).join(', ')}`;
   }
-  const views = await brochViews(browser, dir, 'after');
-  const size = await brochGif(browser, dir, 'after');
-  readme(dir, 'after', views, size);
-  compare(dir);
+  // OE_WORLD_PARTS=beds re-takes only the bed, the sleepers and the finds (the broch's after
+  // views kept from the last full run).
+  const brochToo = process.env['OE_WORLD_PARTS'] !== 'beds';
+  const views = brochToo ? await brochViews(browser, dir, 'after') : [];
+  const size = brochToo ? await brochGif(browser, dir, 'after') : 0;
+  if (brochToo) {
+    readme(dir, 'after', views, size);
+    compare(dir);
+  }
   const beds = await bedViews(browser, dir);
   const sleepers = await sleepGif(browser, dir);
   const pois = await poiViews(browser, dir);

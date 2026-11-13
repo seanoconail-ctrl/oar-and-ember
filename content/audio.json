@@ -323,6 +323,55 @@
       "temporary": false
     },
     {
+      "id": "SFX_FIND_SHELLS",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_shells",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_EGGS",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_eggs",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_STONE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_stone",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_CAIRN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_cairn",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_OFFERING",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_offering",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_BONE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_bone",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_KNIFE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_knife",
+      "temporary": false
+    },
+    {
       "id": "SFX_WORK_CAST",
       "kind": "sfx",
       "bus": "effects",
@@ -692,6 +741,60 @@
       "kind": "stinger",
       "lengthBeats": 32,
       "captionKey": "caption.music.lament_thorkel",
+      "temporary": false
+    },
+    {
+      "id": "MUS_RITES_STONES",
+      "kind": "music",
+      "bpm": 50,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.rites_stones",
+      "temporary": false,
+      "piece": "rites",
+      "layers": {
+        "drone": true,
+        "walk": true,
+        "swell": false,
+        "stones": true,
+        "lyre": true,
+        "choir": true,
+        "choir_low": false,
+        "whistle": true
+      }
+    },
+    {
+      "id": "MUS_RITES_SEA",
+      "kind": "music",
+      "bpm": 50,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.rites_sea",
+      "temporary": false,
+      "piece": "rites",
+      "layers": {
+        "drone": true,
+        "walk": false,
+        "swell": true,
+        "stones": false,
+        "lyre": true,
+        "choir": true,
+        "choir_low": true,
+        "whistle": true
+      }
+    },
+    {
+      "id": "SFX_STEERER_SIGH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.steerer_sigh",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SNATCH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.snatch",
       "temporary": false
     },
     {
@@ -1120,6 +1223,13 @@
     "ITEM_PICKED_UP": "SFX_PICKUP",
     "TASK_DRIFTWOOD": "SFX_WORK_DRIFTWOOD",
     "DRIFTWOOD_PICKED_UP": "SFX_DRIFTWOOD_PICKUP",
+    "FIND_SHELLS": "SFX_FIND_SHELLS",
+    "FIND_EGGS": "SFX_FIND_EGGS",
+    "FIND_STONE": "SFX_FIND_STONE",
+    "FIND_CAIRN": "SFX_FIND_CAIRN",
+    "FIND_OFFERING": "SFX_FIND_OFFERING",
+    "FIND_BONE": "SFX_FIND_BONE",
+    "FIND_KNIFE": "SFX_FIND_KNIFE",
     "TASK_FISH": "SFX_WORK_CAST",
     "FISH_LANDED": "SFX_WORK_CATCH",
     "TASK_TEND": "SFX_WORK_TEND",
@@ -1164,6 +1274,8 @@
     "RITES_DONE_SEA": "SFX_SEA_BURIAL",
     "BOAT_READY": "MUS_STINGER_BUILDING_FINISHED",
     "RITES_BEGAN": "MUS_LAMENT_THORKEL",
+    "STEERER_REMARK": "SFX_STEERER_SIGH",
+    "SNATCH": "SFX_SNATCH",
     "LAUNCH_SLIDE": "SFX_BEACHING",
     "LAUNCH_AFLOAT": "SFX_SPLASH",
     "CREW_ABOARD": "SFX_SPLASH",

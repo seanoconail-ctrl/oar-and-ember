@@ -2641,6 +2641,62 @@
       "note": "Playtest change (generated, Book 11 section 12; decision PT-6). A piece of driftwood picked up from the shingle."
     },
     {
+      "id": "SFX_FIND_SHELLS",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): cowrie shells taken from the wrack."
+    },
+    {
+      "id": "SFX_FIND_EGGS",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a gull's nest robbed of its eggs."
+    },
+    {
+      "id": "SFX_FIND_STONE",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a carved stone looked at."
+    },
+    {
+      "id": "SFX_FIND_CAIRN",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a stone added to a cairn."
+    },
+    {
+      "id": "SFX_FIND_OFFERING",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): an old offering found in a cleft."
+    },
+    {
+      "id": "SFX_FIND_BONE",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a seal's skull on a ledge."
+    },
+    {
+      "id": "SFX_FIND_KNIFE",
+      "ref": "Sounds by place and action",
+      "book": 11,
+      "section": "07",
+      "origin": "assigned",
+      "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a lost knife worked free of the rocks."
+    },
+    {
       "id": "SFX_WORK_CAST",
       "ref": "Work sounds for every homestead task",
       "book": 11,
@@ -4078,12 +4134,68 @@
       "note": "The user's third playtest (decision DG-14; DG-55): the lament's ending at the sea burial, its last note ending with the sink."
     },
     {
+      "id": "MUS_RITES_STONES",
+      "ref": "Thorkel's rites have their own music",
+      "book": 11,
+      "section": "03",
+      "origin": "stated",
+      "note": "The user's fourth playtest (decision DH-23): the rites' own music, the ship of stones on the machair (content/music/rites.json, its walk and stones layers)."
+    },
+    {
+      "id": "MUS_RITES_SEA",
+      "ref": "Thorkel's rites have their own music",
+      "book": 11,
+      "section": "03",
+      "origin": "stated",
+      "note": "The user's fourth playtest (decision DH-23): the rites' own music, the sea burial (content/music/rites.json, its swell and low choir layers)."
+    },
+    {
+      "id": "SFX_STEERER_SIGH",
+      "ref": "a slow, soft breath out through the nose",
+      "book": 11,
+      "section": "08",
+      "origin": "stated",
+      "note": "The user's fourth playtest (decision DH-26): the steerer's breath out under the steerer's word over a body."
+    },
+    {
+      "id": "SFX_SNATCH",
+      "ref": "The strongbox snatched",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "The user's fourth playtest (decision DH-17): the strongbox hauled up by its iron handles as one of the band snatches it."
+    },
+    {
       "id": "SFX_MENU_CLICK",
       "ref": "The pause menu's items make a soft wooden click",
       "book": 11,
       "section": "09",
       "origin": "assigned",
       "note": "The user's third playtest (decision DG-15): the pause menu's interface sounds (opening, a muted thump; items, a click)."
+    },
+    {
+      "id": "ITEM_CARRICK_GOODS",
+      "ref": "skin boat's goods",
+      "book": 10,
+      "section": "22",
+      "origin": "assigned",
+      "note": "The user's request for a reason to make the first raid (decision DH-139): the wreck-scavengers' Carrick grain, nails and net, carried home from their skin boat in Seal Cave as one load."
+    },
+    {
+      "id": "RES_NAILS",
+      "ref": "nails",
+      "book": 10,
+      "section": "22",
+      "origin": "assigned",
+      "note": "Decision DH-133: nails counted one by one (Runa's own, and the skin boat's bundle); never an iron lot."
+    },
+    {
+      "id": "RES_NET",
+      "ref": "net",
+      "book": 10,
+      "section": "22",
+      "origin": "assigned",
+      "note": "Decision DH-139: the skin boat's mended fishing net, kept in the stores for the homestead's fishing (Stage 19)."
     }
   ],
   "families": [

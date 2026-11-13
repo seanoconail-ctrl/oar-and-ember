@@ -1,0 +1,499 @@
+{
+  "about": "The fourth playtest's people (requests 9, 10, 13 and 14; decisions DH-40 onwards): who refuses a binding and how they come round, the household's talk among themselves, the trait-driven hours they keep, and what each says the boat needs next. Every number is Book 10's (section 08).",
+  "hours": {
+    "early": ["DILIGENT", "PIOUS"],
+    "late": {
+      "traits": ["STORYTELLER", "DRINKER"],
+      "likes": ["FIRESIDE"]
+    }
+  },
+  "care": {
+    "refusers": [
+      {
+        "trait": "SUPERSTITIOUS",
+        "person": "C_RUNA",
+        "refuse": "c_runa.care.refuse",
+        "persuaded": "c_runa.care.persuaded",
+        "still": "c_runa.care.still",
+        "later": "c_runa.care.later",
+        "node": "c_runa_wound_refused"
+      }
+    ]
+  },
+  "exchanges": [
+    {
+      "id": "oddi_share",
+      "speakers": ["C_HILD", "C_ODDI"],
+      "lines": [
+        {
+          "by": 1,
+          "key": "c_oddi.chat.oddi_share.1"
+        },
+        {
+          "by": 0,
+          "key": "c_hild.chat.oddi_share.2"
+        },
+        {
+          "by": 1,
+          "key": "c_oddi.chat.oddi_share.3"
+        }
+      ],
+      "tie": "FRIEND",
+      "when": [
+        {
+          "fact": "ch1.chest_opened"
+        }
+      ]
+    },
+    {
+      "id": "eat_slower",
+      "speakers": ["C_BRAN", "C_ODDI"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_bran.chat.eat_slower.1"
+        },
+        {
+          "by": 1,
+          "key": "c_oddi.chat.eat_slower.2"
+        },
+        {
+          "by": 0,
+          "key": "c_bran.chat.eat_slower.3"
+        }
+      ],
+      "tie": "MENTOR",
+      "activity": ["MEAL"]
+    },
+    {
+      "id": "whistle",
+      "speakers": ["C_RUNA", "C_ODDI"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.whistle.1"
+        },
+        {
+          "by": 1,
+          "key": "c_oddi.chat.whistle.2"
+        },
+        {
+          "by": 0,
+          "key": "c_runa.chat.whistle.3"
+        }
+      ],
+      "traits": [
+        {
+          "by": 0,
+          "trait": "SUPERSTITIOUS"
+        }
+      ]
+    },
+    {
+      "id": "grace",
+      "speakers": ["C_BRAN", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_bran.chat.grace.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.grace.2"
+        }
+      ],
+      "traits": [
+        {
+          "by": 0,
+          "trait": "PIOUS"
+        }
+      ],
+      "when": [
+        {
+          "not": {
+            "fact": "ch1.rites"
+          }
+        }
+      ],
+      "memory": {
+        "by": 1,
+        "kind": "DEATH",
+        "about": "THORKEL"
+      }
+    },
+    {
+      "id": "knots",
+      "speakers": ["C_RUNA", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.knots.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.knots.2"
+        },
+        {
+          "by": 0,
+          "key": "c_runa.chat.knots.3"
+        }
+      ],
+      "when": [
+        {
+          "fact": "repair.open"
+        }
+      ]
+    },
+    {
+      "id": "rock_and_fish",
+      "speakers": ["C_BRAN", "C_RUNA"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_bran.chat.rock_and_fish.1"
+        },
+        {
+          "by": 1,
+          "key": "c_runa.chat.rock_and_fish.2"
+        },
+        {
+          "by": 0,
+          "key": "c_bran.chat.rock_and_fish.3"
+        }
+      ],
+      "activity": ["MEAL", "EVENING"]
+    },
+    {
+      "id": "held_fold",
+      "speakers": ["C_HILD", "C_BRAN"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_hild.chat.held_fold.1"
+        },
+        {
+          "by": 1,
+          "key": "c_bran.chat.held_fold.2"
+        }
+      ],
+      "when": [
+        {
+          "fact": "search.bran"
+        }
+      ]
+    },
+    {
+      "id": "bedding",
+      "speakers": ["C_HILD", "C_ODDI"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_hild.chat.bedding.1"
+        },
+        {
+          "by": 1,
+          "key": "c_oddi.chat.bedding.2"
+        },
+        {
+          "by": 0,
+          "key": "c_hild.chat.bedding.3"
+        }
+      ],
+      "tie": "FRIEND",
+      "when": [
+        {
+          "fact": "scene.beat_1_oddi_theft"
+        }
+      ]
+    },
+    {
+      "id": "goat",
+      "speakers": ["C_HILD", "C_BRAN"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_hild.chat.goat.1"
+        },
+        {
+          "by": 1,
+          "key": "c_bran.chat.goat.2"
+        },
+        {
+          "by": 0,
+          "key": "c_hild.chat.goat.3"
+        }
+      ],
+      "activity": ["EVENING", "WATCH"]
+    },
+    {
+      "id": "rites_owed",
+      "speakers": ["C_RUNA", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.rites_owed.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.rites_owed.2"
+        }
+      ],
+      "traits": [
+        {
+          "by": 0,
+          "trait": "SUPERSTITIOUS"
+        }
+      ],
+      "when": [
+        {
+          "fact": "ch1.thorkel_body",
+          "is": "CAMP"
+        },
+        {
+          "not": {
+            "fact": "ch1.rites"
+          }
+        }
+      ]
+    },
+    {
+      "id": "chest_hands",
+      "speakers": ["C_RUNA", "C_ODDI"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.chest_hands.1"
+        },
+        {
+          "by": 1,
+          "key": "c_oddi.chat.chest_hands.2"
+        },
+        {
+          "by": 0,
+          "key": "c_runa.chat.chest_hands.3"
+        }
+      ],
+      "traits": [
+        {
+          "by": 1,
+          "trait": "LIGHT_FINGERED"
+        }
+      ],
+      "when": [
+        {
+          "fact": "search.runa_tools_safe"
+        }
+      ]
+    },
+    {
+      "id": "fold_many",
+      "speakers": ["C_ODDI", "C_BRAN"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_oddi.chat.fold_many.1"
+        },
+        {
+          "by": 1,
+          "key": "c_bran.chat.fold_many.2"
+        },
+        {
+          "by": 0,
+          "key": "c_oddi.chat.fold_many.3"
+        }
+      ],
+      "traits": [
+        {
+          "by": 0,
+          "trait": "COWARDLY"
+        }
+      ],
+      "when": [
+        {
+          "fact": "search.bran"
+        }
+      ]
+    },
+    {
+      "id": "ridge",
+      "speakers": ["C_RUNA", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.ridge.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.ridge.2"
+        }
+      ],
+      "when": [
+        {
+          "fact": "ch1.shelter",
+          "is": "FINISHED"
+        }
+      ]
+    },
+    {
+      "id": "two_tongues",
+      "speakers": ["C_HILD", "C_BRAN"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_hild.chat.two_tongues.1"
+        },
+        {
+          "by": 1,
+          "key": "c_bran.chat.two_tongues.2"
+        }
+      ],
+      "traits": [
+        {
+          "by": 1,
+          "trait": "PIOUS"
+        }
+      ]
+    },
+    {
+      "id": "float",
+      "speakers": ["C_ODDI", "C_RUNA"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_oddi.chat.float.1"
+        },
+        {
+          "by": 1,
+          "key": "c_runa.chat.float.2"
+        }
+      ],
+      "when": [
+        {
+          "repair": "HULL"
+        }
+      ]
+    },
+    {
+      "id": "who_we_are",
+      "speakers": ["C_ODDI", "C_BRAN", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_oddi.chat.who_we_are.1"
+        },
+        {
+          "by": 1,
+          "key": "c_bran.chat.who_we_are.2"
+        },
+        {
+          "by": 2,
+          "key": "c_hild.chat.who_we_are.3"
+        }
+      ],
+      "activity": ["EVENING", "MEAL"]
+    },
+    {
+      "id": "fish_again",
+      "speakers": ["C_ODDI", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_oddi.chat.fish_again.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.fish_again.2"
+        },
+        {
+          "by": 0,
+          "key": "c_oddi.chat.fish_again.3"
+        }
+      ],
+      "tie": "FRIEND",
+      "activity": ["MEAL"]
+    },
+    {
+      "id": "weather",
+      "speakers": ["C_RUNA", "C_HILD"],
+      "lines": [
+        {
+          "by": 0,
+          "key": "c_runa.chat.weather.1"
+        },
+        {
+          "by": 1,
+          "key": "c_hild.chat.weather.2"
+        },
+        {
+          "by": 0,
+          "key": "c_runa.chat.weather.3"
+        }
+      ],
+      "traits": [
+        {
+          "by": 0,
+          "trait": "SUPERSTITIOUS"
+        }
+      ]
+    }
+  ],
+  "boat": {
+    "talkers": "SHIPWRIGHT",
+    "lines": {
+      "BOARDS": {
+        "C_RUNA": "c_runa.boat.boards",
+        "C_HILD": "c_hild.boat.boards",
+        "C_ODDI": "c_oddi.boat.boards",
+        "C_BRAN": "c_bran.boat.boards"
+      },
+      "HULL_WORK": {
+        "C_RUNA": "c_runa.boat.hull_work",
+        "C_HILD": "c_hild.boat.hull_work",
+        "C_ODDI": "c_oddi.boat.hull_work",
+        "C_BRAN": "c_bran.boat.hull_work"
+      },
+      "RIGGING_FETCH": {
+        "C_RUNA": "c_runa.boat.rigging_fetch",
+        "C_HILD": "c_hild.boat.rigging_fetch",
+        "C_ODDI": "c_oddi.boat.rigging_fetch",
+        "C_BRAN": "c_bran.boat.rigging_fetch"
+      },
+      "RIGGING_WORK": {
+        "C_RUNA": "c_runa.boat.rigging_work",
+        "C_HILD": "c_hild.boat.rigging_work",
+        "C_ODDI": "c_oddi.boat.rigging_work",
+        "C_BRAN": "c_bran.boat.rigging_work"
+      },
+      "OAR_FETCH": {
+        "C_RUNA": "c_runa.boat.oar_fetch",
+        "C_HILD": "c_hild.boat.oar_fetch",
+        "C_ODDI": "c_oddi.boat.oar_fetch",
+        "C_BRAN": "c_bran.boat.oar_fetch"
+      },
+      "OAR_CARVING": {
+        "C_RUNA": "c_runa.boat.oar_carving",
+        "C_HILD": "c_hild.boat.oar_carving",
+        "C_ODDI": "c_oddi.boat.oar_carving",
+        "C_BRAN": "c_bran.boat.oar_carving"
+      },
+      "OAR_SHIP": {
+        "C_RUNA": "c_runa.boat.oar_ship",
+        "C_HILD": "c_hild.boat.oar_ship",
+        "C_ODDI": "c_oddi.boat.oar_ship",
+        "C_BRAN": "c_bran.boat.oar_ship"
+      },
+      "FIT": {
+        "C_RUNA": "c_runa.boat.fit",
+        "C_HILD": "c_hild.boat.fit",
+        "C_ODDI": "c_oddi.boat.fit",
+        "C_BRAN": "c_bran.boat.fit"
+      },
+      "READY": {
+        "C_RUNA": "c_runa.boat.ready",
+        "C_HILD": "c_hild.boat.ready",
+        "C_ODDI": "c_oddi.boat.ready",
+        "C_BRAN": "c_bran.boat.ready"
+      }
+    }
+  }
+}

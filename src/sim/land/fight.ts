@@ -90,6 +90,11 @@ import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
 import { tilePath } from './path.ts';
 import { parseSearchBalance } from '../../content/searchBalance.ts';
 import { parsePt3Balance } from '../../content/pt3Balance.ts';
+import { parsePt4Balance } from '../../content/pt4Balance.ts';
+import type { Pt4Balance } from '../../content/pt4Balance.ts';
+import { chooseTarget, cohesionPace, holdGround, noteHarm, runOffStep } from './pursuit.ts';
+import type { Harm, Seen } from './pursuit.ts';
+import { parseStory4Balance } from '../../content/story4Balance.ts';
 import type { FinisherVariant, FinisherWeapon, Pt3Balance } from '../../content/pt3Balance.ts';
 import { activeChapter, freshTeaching } from '../world.ts';
 import type { CombatPromptId, SparedRecord, Teaching } from '../world.ts';
@@ -177,6 +182,16 @@ export interface FighterAi {
   sidearmAt: number;
   /** Struck while unaware: it speaks no first-sight line (Book 10 "First sight", when). */
   silent?: boolean;
+  /**
+   * The user's fourth playtest (Book 10 "Guarding and pursuit", DH-72): the tick it broke off to go
+   * back to its post or home (held until its foe comes near enough again); the tick until which,
+   * struck, it chases its striker regardless; and whether, ahead of its friends, it waits for them.
+   */
+  back?: number;
+  chaseUntil?: number;
+  waiting?: boolean;
+  /** Let go and running off (Book 10 "Running off", DH-75): its way, the next tile, last moved. */
+  runOff?: { path: { tx: number; ty: number }[]; next: number; moved: number };
 }
 
 /**
@@ -318,6 +333,8 @@ export interface Battle {
   looted?: boolean;
   /** Its members the household killed (Book 10 kinKilled). */
   killed?: Id[];
+  /** The user's fourth playtest (Book 10 "Target choice", DH-74): blows lately, for threat. */
+  harm?: Harm[];
 }
 
 /** An encounter's first-sight line (Book 10 "First sight"). */
@@ -356,6 +373,13 @@ export interface FightContext {
   readonly guardTiles: number;
   /** The user's third playtest's rows (src/content/pt3Balance.ts). */
   readonly pt3: Pt3Balance;
+  /** The user's fourth playtest's combat and AI rows (src/content/pt4Balance.ts; DH-70 on). */
+  readonly pt4: Pt4Balance;
+  /**
+   * The user's fourth playtest (Book 10 branAdviceGap; DH-33): the least ticks between any two of
+   * Bran's teaching shouts in one fight, both foes together.
+   */
+  readonly branAdviceGapTicks?: number;
 }
 
 export function fightContext(
@@ -383,12 +407,16 @@ export function fightContext(
       },
     },
     pt3,
+    pt4: parsePt4Balance(balance),
     ai: parseAiBalance(balance),
     def,
     fighters: new Map(def.fighters.map((f) => [f.person, f])),
     daylight,
     parleyTicks: Math.round(searches.parleySeconds * TICKS_PER_SECOND),
     guardTiles: searches.guardTiles,
+    branAdviceGapTicks: Math.round(
+      parseStory4Balance(balance).branAdviceGapSeconds * TICKS_PER_SECOND,
+    ),
   };
 }
 
@@ -612,6 +640,11 @@ export type FightEvent =
   | { readonly type: 'HEAL_INTERRUPTED'; readonly kind: 'BIND' | 'EAT' }
   /** A scavenger walked off: the steerer clearly stronger, a bargain taken, or dark come. */
   | { readonly type: 'PERSON_LEFT'; readonly person: Id }
+  /**
+   * The user's fourth playtest (Book 10 "Guarding and pursuit", DH-72): a fighter breaks off to go
+   * back to its post (a guard) or its home ground (a pursuer at its leash).
+   */
+  | { readonly type: 'GUARD_RETURNS'; readonly person: Id; readonly post: boolean }
   /**
    * The scavengers at dusk are settled (decision DE-15; for the narrative's beats): `FOOD` (a
    * bargain), `DARK` (they finished and went to the fold, or were never met), `FOUGHT` (with
@@ -1709,7 +1742,7 @@ export function stepFight(fw: FightWorld): void {
       // states", Retreat; "AI decisions", attackCooldown).
       if (e.type === 'STATE_ENDED' && STRIKE_ENDS.includes(e.state) && !striking(fa.f)) {
         fa.ai.stepOutAt = tick + ctx.ai.self.stepOutTicks;
-        fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
+        fa.ai.mind.cooldownUntil = tick + cooldownOf(ctx, fa);
         if (fa.ai.mind.state === 'ATTACK') {
           fa.ai.mind.state = 'RETREAT';
           fa.ai.mind.since = tick;
@@ -1718,7 +1751,7 @@ export function stepFight(fw: FightWorld): void {
       if (e.type === 'STATE_ENDED' && e.state === 'recovery' && fa.ai.mind.state === 'ATTACK') {
         fa.ai.mind.state = 'RETREAT';
         fa.ai.mind.since = tick;
-        fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
+        fa.ai.mind.cooldownUntil = tick + cooldownOf(ctx, fa);
       }
       // A reel neither finished nor let go (Book 10 reel): flight or begging.
       if (e.type === 'STATE_ENDED' && e.state === 'reel') endReel(fw, id, a, fa);
@@ -1765,6 +1798,14 @@ export function stepFight(fw: FightWorld): void {
   sparedStep(fw);
   teachStep(fw);
   stepDusk(fw);
+}
+
+/**
+ * Ticks after its own recovery before a fighter attacks again (Book 10 attackCooldown; a spear
+ * fighter's spearCooldown, the user's fourth playtest: DH-77).
+ */
+function cooldownOf(ctx: FightContext, fa: ActorFight): number {
+  return fa.f.weapon === 'Spear' ? ctx.pt4.pace.spearCooldownTicks : ctx.ai.states.attackCooldown;
 }
 
 /** The strike states whose end starts Book 10's stepOut. */
@@ -1941,7 +1982,7 @@ function strikeLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: num
     const dx = pos.x - at.x;
     const dy = pos.y - at.y;
     const d = Math.hypot(dx, dy);
-    if (d > reach || !inFrontAngle(f.angle, dx, dy, ctx.cb.strikeArcDegrees)) continue;
+    if (!inHitbox(ctx, f, dx, dy, reach, tile)) continue;
     hit.push([tid, d]);
   }
   if (hit.length === 0) return;
@@ -1949,6 +1990,8 @@ function strikeLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: num
   f.hit = true;
   const blow = blowOf(f, ctx.cb, { berserk });
   for (const [tid, d] of hit) {
+    // Struck at, whatever the blow comes to (Book 10 "Target choice", threatStruckMe; DH-74).
+    if (sideOf(onFoot, tid) === 'ENEMY') noteHarm(fw, tid, id, 0);
     // A spear against a foe inside its reach does less (Book 10 spearInside).
     const inside =
       f.weapon === 'Spear' &&
@@ -1963,6 +2006,38 @@ function strikeLands(fw: FightWorld, id: Id, f: Fighter, at: { x: number; y: num
     );
   }
   if (fw.world.onFoot?.battle != null) fw.world.onFoot.battle.lastBlow = world.tick;
+}
+
+/**
+ * Whether a body centred (dx, dy) from a striker is inside its weapon's hitbox (Book 10 "Hitboxes",
+ * the user's fourth playtest: DH-76): a swing meets what is within its reach in its arc; a thrust
+ * meets what its shaft touches, along the facing from the striker out to its reach, the shaft held
+ * a little right of the facing line. `reach` is to the struck body's centre.
+ */
+export function inHitbox(
+  ctx: Pick<FightContext, 'cb' | 'pt4'>,
+  f: Pick<Fighter, 'weapon' | 'angle'>,
+  dx: number,
+  dy: number,
+  reach: number,
+  tile: number,
+): boolean {
+  const hb = f.weapon === null ? undefined : ctx.pt4.hitboxes[f.weapon];
+  if (hb === undefined || hb.shape === 'SWING') {
+    const arc = hb?.arcDegrees ?? ctx.cb.strikeArcDegrees;
+    return Math.hypot(dx, dy) <= reach && inFrontAngle(f.angle, dx, dy, arc);
+  }
+  const c = Math.cos(f.angle);
+  const s = Math.sin(f.angle);
+  const along = dx * c + dy * s;
+  // Positive to the right of the facing (screen y points south).
+  const across = -dx * s + dy * c;
+  const body = ctx.cb.bodyRadiusTiles * tile;
+  return (
+    along >= 0 &&
+    along <= reach &&
+    Math.abs(across - hb.handTiles * tile) <= body + hb.halfWidthTiles * tile
+  );
 }
 
 /** The awareness of the one struck: unaware, suspicious or alert (the household are alert). */
@@ -2263,7 +2338,7 @@ export function hurt(
   const tick = world.tick;
   if (id === STEERER) {
     world.player.vitality = Math.max(0, world.player.vitality - damage);
-    if (world.player.vitality <= 0) steererFalls(fw);
+    if (world.player.vitality <= 0) steererFalls(fw, dir16(how.dx, how.dy));
     return;
   }
   const a = onFoot.actors[id];
@@ -2271,6 +2346,8 @@ export function hurt(
   if (a === undefined || fa?.dead !== null) return;
   fa.vitality = Math.max(0, fa.vitality - damage);
   fa.lastHit = { tick, dx: how.dx, dy: how.dy, heavy: how.heavyKill };
+  // Remembered for the foes' choice by threat (Book 10 "Target choice", DH-74).
+  if (fa.side === 'ENEMY') noteHarm(fw, id, by, damage);
   const person = world.people[id];
   if (person !== undefined) person.vitality = fa.vitality;
   if (!fa.bloodied && fa.vitality < fa.maxVitality * ctx.cb.bloodiedBelow) {
@@ -2377,7 +2454,7 @@ function maybeBerserk(fw: FightWorld, id: Id, fa: ActorFight, chance: number): v
 }
 
 /** The steerer at nothing: downed for Second wind once a scene, else dead and the game over. */
-function steererFalls(fw: FightWorld): void {
+function steererFalls(fw: FightWorld, from?: number): void {
   const { world } = fw;
   const onFoot = world.onFoot;
   if (onFoot === null) return;
@@ -2393,17 +2470,26 @@ function steererFalls(fw: FightWorld): void {
     fw.emit({ type: 'STEERER_DOWNED', secondWind: true });
     return;
   }
-  dies(fw);
+  dies(fw, from);
 }
 
-function dies(fw: FightWorld): void {
+/**
+ * The steerer's death: game over at once (Book 1 section 09); the collapse that follows is drawn
+ * and heard by the presentation from `gameOver` (Book 10 "The steerer's death", DH-71).
+ */
+function dies(fw: FightWorld, from?: number): void {
   const { world } = fw;
   const f = world.onFoot?.player.fight;
   if (f != null) {
     f.state = 'dead';
     f.since = world.tick;
   }
-  world.gameOver = { day: world.calendar.day, tick: world.tick, cause: 'FIGHT' };
+  world.gameOver = {
+    day: world.calendar.day,
+    tick: world.tick,
+    cause: 'FIGHT',
+    ...(from === undefined ? {} : { from }),
+  };
   fw.emit({ type: 'STEERER_DOWNED', secondWind: false });
   fw.emit({ type: 'STEERER_DIED', day: world.calendar.day });
 }
@@ -2659,6 +2745,8 @@ function perceive(
   const sneaking = p.gait === 'sneak' || p.stance?.sneaking === true;
   let seen: { id: Id; pos: { x: number; y: number }; d: number } | null = null;
   let rangeSeen = 0;
+  // Every foe seen, for the choice by threat (Book 10 "Target choice", DH-74).
+  const all: Seen[] = [];
   const eye = { x: a.x, y: a.y, facing: facingOfAngle(fa.f.angle) };
   for (const [fid, pos] of foes(onFoot, 'ENEMY')) {
     const range =
@@ -2668,6 +2756,7 @@ function perceive(
     const d = Math.hypot(pos.x - a.x, pos.y - a.y);
     const close = ai.aware && d < 2 * tile;
     if (!close && !sees(ctx.ai, eye, pos, range, tile, solid)) continue;
+    all.push({ id: fid, pos, d });
     if (seen === null || d < seen.d) {
       seen = { id: fid, pos, d };
       rangeSeen = range;
@@ -2683,6 +2772,21 @@ function perceive(
         ? k.fillNear
         : k.fillNear + (k.fillFar - k.fillNear) * Math.min(1, (dt - k.nearTiles) / span);
     level += (rate * ctx.ai.habits.awarenessEvery) / TICKS_PER_SECOND;
+    // Awareness fills by the nearest seen; the foe it goes for is the greatest threat (DH-74),
+    // among those seen and those who struck its band lately (the blow heard, wherever they stand).
+    const struck = new Set(
+      (onFoot.battle?.harm ?? [])
+        .filter(
+          (h) =>
+            tick - h.tick <= ctx.pt4.threat.memoryTicks &&
+            (h.victim === id || (fa.group !== null && h.group === fa.group)),
+        )
+        .map((h) => h.by),
+    );
+    for (const [fid, pos] of foes(onFoot, 'ENEMY'))
+      if (struck.has(fid) && !all.some((s) => s.id === fid))
+        all.push({ id: fid, pos, d: Math.hypot(pos.x - a.x, pos.y - a.y) });
+    seen = chooseTarget(fw, id, fa, all) ?? seen;
     ai.memory = { x: seen.pos.x, y: seen.pos.y, tick, seen: true };
     ai.target = seen.id;
     heard = true;
@@ -2793,6 +2897,8 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   }
   ai.next = tick + ctx.ai.habits.awarenessEvery;
   if (ai.mode === 'FLEE' || ai.mode === 'LEAVE') {
+    // Let go: it runs a planned way out of sight (Book 10 "Running off", DH-75), set as it walks.
+    if (fa.spared !== undefined && ai.mode === 'FLEE') return;
     const p = onFoot.player;
     ai.goal = { x: p.x, y: p.y, run: ai.mode === 'FLEE', away: true };
     return;
@@ -2862,11 +2968,17 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     startFight(fw);
     say(ctx, id, 'taunt', fw.emit, tick);
   }
-  // Book 10 leash: they follow no further than their ground, and go back.
-  const self = ctx.ai.self;
-  if (Math.hypot(a.x - ai.home.x, a.y - ai.home.y) > self.leashTiles * tile) {
-    ai.mode = 'GUARD';
-    ai.goal = { x: ai.home.x, y: ai.home.y, run: false };
+  // Book 10 "Guarding and pursuit" (the user's fourth playtest, DH-72): a guard runs back to its
+  // post when its foe is too far from it, a pursuer to its home at its leash; either comes out again
+  // only when the foe is near enough, so none walks back and forth at a limit.
+  const foeAt =
+    seen !== null
+      ? { id: seen.id, x: seen.pos.x, y: seen.pos.y }
+      : ai.memory !== null && ai.target !== null
+        ? { id: ai.target, x: ai.memory.x, y: ai.memory.y }
+        : null;
+  if (holdGround(fw, id, a, fa, foeAt)) {
+    if (ai.goal === null && foeAt !== null) faceTowards(fw, fa, a, foeAt.x, foeAt.y);
     return;
   }
   if (!remembered(ctx.ai, ai.memory, tick)) {
@@ -3116,11 +3228,17 @@ function engage(
     case 'APPROACH': {
       lowerGuard(fw, fa);
       ai.mode = 'FIGHT';
+      // A pursuer keeps with its band (Book 10 cohesionSpread, cohesionWait; DH-73).
+      const pace = cohesionPace(fw, id, a, fa, pos);
+      if (pace === 'WAIT') {
+        ai.goal = null;
+        return;
+      }
       const side = flankSlot(fw, id, target, pos, circle);
       ai.goal = {
         x: side?.x ?? pos.x,
         y: side?.y ?? pos.y,
-        run: d > ctx.ai.habits.runAt * tile,
+        run: pace !== 'WALK' && d > ctx.ai.habits.runAt * tile,
       };
       return;
     }
@@ -3243,7 +3361,10 @@ function enterState(fw: FightWorld, fa: ActorFight, st: FightStateName): void {
     const p = distancesOf(fw, fa).patience;
     const wounded = fa.vitality < fa.maxVitality * fw.ctx.ai.self.woundedAt;
     const span = p === null ? 0 : p.min + nextFloat(fw.world.rng.ai) * (p.max - p.min);
-    mind.patienceUntil = tick + Math.round(span * (wounded ? fw.ctx.ai.self.woundedPatience : 1));
+    // A spear fighter waits less (Book 10 spearPatience, the user's fourth playtest: DH-77).
+    const spear = fa.f.weapon === 'Spear' ? fw.ctx.pt4.pace.spearPatience : 1;
+    mind.patienceUntil =
+      tick + Math.round(span * (wounded ? fw.ctx.ai.self.woundedPatience : 1) * spear);
   }
 }
 
@@ -3494,6 +3615,7 @@ function startAttack(
   ai.lastStruck = tick;
   ai.mind.struck = true;
   a.facing = fa.f.facing;
+  branParryAdvice(fw, fa, target);
   const lead = ctx.cb.telegraphs.flashLead;
   if (fa.f.state === 'lunge') {
     fa.f.flashAt = Math.max(tick, fa.f.activeAt - lead);
@@ -4127,6 +4249,14 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const f = fa.f;
   const tile = map.tile;
   const ar = ctx.ai.archers;
+  // Let go, on its feet: it runs its planned way, and once out of the steerer's sight (or at the
+  // zone's edge) it is gone (Book 10 "Running off", the user's fourth playtest: DH-75).
+  if (fa.spared !== undefined && fa.ai.mode === 'FLEE' && f.state === 'idle') {
+    if (runOffStep(fw, a, fa)) {
+      goneFromZone(fw, id, fa);
+      return;
+    }
+  }
   let vx: number;
   let vy: number;
   let speed: number;
@@ -4293,8 +4423,9 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   }
   if (a.x !== before.x || a.y !== before.y) a.moving = true;
   if (a.carries !== undefined) carryAlong(onFoot, a);
-  // Fled (or left) out of sight far enough: gone from the zone.
-  if (fa.ai.mode === 'FLEE' || fa.ai.mode === 'LEAVE') {
+  // Fled (or left) out of sight far enough: gone from the zone. (One let go runs its own way out
+  // of sight, above: DH-75.)
+  if ((fa.ai.mode === 'FLEE' || fa.ai.mode === 'LEAVE') && fa.spared === undefined) {
     const p = onFoot.player;
     // Cornered within reach of the steerer, one who flees begs instead (Book 2 section 13).
     const cornered =
@@ -4313,19 +4444,27 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
       Math.hypot(a.x - p.x, a.y - p.y) > ctx.ai.sight.day * tile ||
       (!a.moving && Math.hypot(a.x - p.x, a.y - p.y) > ctx.ai.habits.fledAt * tile)
     ) {
-      const leaving = fa.ai.mode === 'LEAVE';
-      // The scavengers at dusk: how each went (decision DE-15).
-      if (
-        encounterOf(ctx, onFoot.battle)?.dusk === true &&
-        world.facts[`ch1.dusk.${id}`] === undefined
-      )
-        world.facts[`ch1.dusk.${id}`] = leaving ? 'LEFT' : 'FLED';
-      Reflect.deleteProperty(onFoot.actors, id);
-      const person = world.people[id];
-      if (person !== undefined) person.status = 'missing';
-      fw.emit(leaving ? { type: 'PERSON_LEFT', person: id } : { type: 'PERSON_FLED', person: id });
+      goneFromZone(fw, id, fa);
     }
   }
+}
+
+/**
+ * One who fled, left or was let go is gone from the zone (out of the steerer's sight): taken out of
+ * the zone, missing in the world (a spared one's record stays, Book 10 "The spared remembered").
+ */
+function goneFromZone(fw: FightWorld, id: Id, fa: ActorFight): void {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  const leaving = fa.ai.mode === 'LEAVE';
+  // The scavengers at dusk: how each went (decision DE-15).
+  if (encounterOf(ctx, onFoot.battle)?.dusk === true && world.facts[`ch1.dusk.${id}`] === undefined)
+    world.facts[`ch1.dusk.${id}`] = leaving ? 'LEFT' : 'FLED';
+  Reflect.deleteProperty(onFoot.actors, id);
+  const person = world.people[id];
+  if (person !== undefined) person.status = 'missing';
+  fw.emit(leaving ? { type: 'PERSON_LEFT', person: id } : { type: 'PERSON_FLED', person: id });
 }
 
 function carryAlong(onFoot: OnFootState, a: OnFootActor): void {
@@ -5717,7 +5856,12 @@ function turnBlow(
     // Svart's boasts at his first and third blows turned, or Bran's word at the fold if Svart was
     // not fought at the dusk (Book 8 section 07).
     const atFold = encounterOf(ctx, onFoot.battle)?.allies?.includes('C_BRAN') === true;
-    const bran = atFold && world.facts['ch1.dusk'] !== 'FOUGHT' && onFoot.actors['C_BRAN'] != null;
+    // DH-32: at the fold Bran gives the parry at Svart's wind-up; on the first blow turned his
+    // older word comes only if that has not been said (the steerer struck first).
+    const bran =
+      atFold &&
+      onFoot.actors['C_BRAN'] != null &&
+      !fa.teach.said.includes('c_bran.teach.svart_parry');
     if (fa.teach.turned === 1)
       guide(
         fw,
@@ -5738,10 +5882,33 @@ function guide(fw: FightWorld, fa: ActorFight, speaker: Id, key: string): void {
   if (t === undefined || t.said.includes(key)) return;
   const tick = fw.world.tick;
   if (tick - t.lineAt < fw.ctx.pt3.teaching.guidanceGapTicks) return;
-  if (fw.world.onFoot?.actors[speaker] === undefined) return;
+  const who = fw.world.onFoot?.actors[speaker];
+  if (who === undefined) return;
+  // The user's fourth playtest (DH-33): Bran's shouts are never back to back, whichever foe they
+  // are about (Book 10 branAdviceGap), and a downed Bran shouts nothing.
+  if (speaker === BRAN) {
+    if (who.pose === 'down' || who.pose === 'dead' || who.fight?.f.state === 'downed') return;
+    const last = fw.world.facts[FACT_BRAN_SHOUT];
+    if (typeof last === 'number' && tick - last < (fw.ctx.branAdviceGapTicks ?? 0)) return;
+    fw.world.facts[FACT_BRAN_SHOUT] = tick;
+  }
   t.said.push(key);
   t.lineAt = tick;
   fw.emit({ type: 'PERSON_SPOKE', person: speaker, lineKey: key, bark: 'teach' });
+}
+
+const BRAN = 'C_BRAN';
+/** When Bran last shouted a teaching foe's way (DH-33). */
+const FACT_BRAN_SHOUT = 'teach.bran_at';
+
+/**
+ * Bran's word as Svart winds up at the steerer at the fold (the user's fourth playtest, DH-32):
+ * parry him. Said at the first wind-up outside Bran's gap; one inside it waits for the next.
+ */
+function branParryAdvice(fw: FightWorld, fa: ActorFight, target: Id): void {
+  if (target !== STEERER || teachRule(fw.world, fa) !== 'PARRY') return;
+  if (encounterOf(fw.ctx, fw.world.onFoot?.battle)?.allies?.includes(BRAN) !== true) return;
+  guide(fw, fa, BRAN, 'c_bran.teach.svart_parry');
 }
 
 /** A teaching foe's lesson done (Book 10 lessonDone): recorded once; its prompt stops. */
@@ -5783,7 +5950,9 @@ function startRed(
   if (fa.teach !== undefined) fa.teach.reds++;
   fw.emit({ type: 'ATTACK_STARTED', who: id, heavy: true, kind: 'red' });
   const atFold = encounterOf(ctx, world.onFoot?.battle)?.allies?.includes('C_BRAN') === true;
-  if (fa.teach?.reds === 1)
+  // DH-32: at the fold, Bran's word comes at the first red blow outside his gap (it waits for the
+  // next red wind-up rather than being lost); in the cave, Ketill's boast at his first.
+  if (fa.teach !== undefined && (atFold || fa.teach.reds === 1))
     guide(
       fw,
       fa,

@@ -5,7 +5,12 @@
  * What they are doing is an `Activity` with a reason (a reason code the interface words) and the
  * place and pose it is done in.
  *
- * - Asleep while the steerer sleeps, and through the SLEEP block, in their bed or by the fire.
+ * - Asleep by their own hours (the user's fourth playtest, DH-44 to DH-47; Book 10 "Own hours"),
+ *   not the steerer's: the household's SLEEP block, from a later bedtime for those who love the
+ *   fire, to an earlier rising for the Diligent and the Pious; one keeps the night watch by the
+ *   fire by turns and sleeps on in the morning. The steerer's sleep passes the night, and their
+ *   day runs through it.
+ * - Being bound: sitting still, facing the steerer, until the binding ends (DH-40).
  * - A grave wound keeps them in bed (Book 10 section 08: bed-bound).
  * - A meal is eaten at the fire when there is one: the dawn ration (served only to those who woke
  *   at home) and supper while the stores hold food.
@@ -31,6 +36,7 @@ import {
 import { shipWorkFor } from '../ship/work.ts';
 import type { ResidentPlace } from './residents.ts';
 import type { ActivityKind, JobKind, Person, WorldState } from '../world.ts';
+import { inSpan, ownHours } from './company.ts';
 import { blockAt } from './context.ts';
 import type { PeopleContext } from './context.ts';
 
@@ -45,6 +51,9 @@ export interface Activity {
   /** Which meal: dawn or supper. */
   readonly meal?: 'DAWN' | 'SUPPER';
 }
+
+/** The task of binding a wound (the steerer's hands-on action on someone). */
+const CARE_TASK = 'TASK_CARE';
 
 /** Jobs done out of doors stop at dark (the season's light, Book 10 section 02). */
 const NEEDS_LIGHT: ReadonlySet<JobKind> = new Set(['FISHER', 'DRIFTWOOD']);
@@ -164,14 +173,21 @@ export function jobSpot(
   const def = ctx.household.jobs[job];
   const own = camp.def.people[id]?.work;
   if (own !== undefined && def?.task === own.task) return own;
-  const spots = def?.spots ?? [];
+  // The user's fourth playtest (DH-60): one worker a spot, never two. Everyone working it today
+  // (a first job counts, so two who take up the shelter's finishing never share a spot: DG-90),
+  // in order of their names; the seriously wounded at the job's seated places, the rest at its
+  // spots, each the next along.
+  const hurt = (r: Id): boolean =>
+    (def?.hurtSpots?.length ?? 0) > 0 &&
+    world.people[r]?.wounds.some((w) => w.severity === 'SERIOUS') === true;
+  const mine = hurt(id);
+  const spots = (mine ? def?.hurtSpots : def?.spots) ?? [];
   if (spots.length === 0) return null;
-  // Everyone working it today, by the job they take up (a first job counts, so two who take up
-  // the shelter's finishing never share a spot: DG-90).
-  const same = world.household.residents.filter((r) => {
+  const same = [...world.household.residents].sort().filter((r) => {
     const q = world.people[r];
     return (
       q !== undefined &&
+      hurt(r) === mine &&
       (q.job?.kind === job || jobToday(world, camp, ctx, q) === job) &&
       camp.def.people[r]?.work.task !== def?.task
     );
@@ -186,12 +202,15 @@ function tendencyWindow(
   ctx: PeopleContext,
   day: number,
   when: string,
+  /** An early riser keeps a dawn habit from their own rising (DH-45). */
+  rise: number | null = null,
 ): readonly [number, number] | null {
   const light = ctx.time.daylight[seasonOf(day)];
   const tm = ctx.household.tendencyMinutes;
   const start = (b: string): number => ctx.blocks.find((x) => x.block === b)?.from ?? 0;
   switch (when) {
     case 'DAWN':
+      if (rise !== null) return [rise, rise + tm];
       return [light.lightFrom, light.lightFrom + tm];
     case 'DUSK':
       return [light.darkFrom - tm, light.darkFrom];
@@ -232,25 +251,41 @@ export function activityOf(
   const talk = world.talk;
   if (talk !== null && (talk.with === id || talk.finder === id))
     return { kind: talk.kind === 'SCENE' ? 'SCENE' : 'TALK', place: null };
-  const asleep = world.onFoot?.player.sleep != null || !world.player.awake;
+  // Being bound (DH-40): still where they are, facing the steerer, until the binding ends.
+  const work = world.onFoot?.player.work;
+  if (work?.task === CARE_TASK && work.target === id) return { kind: 'TENDED', place: null };
   const bed = bedOf(world, camp, ctx, id);
-  if (asleep) return { kind: 'SLEEP', place: at(bed, 'sleep') };
   if (p.wounds.some((w) => w.severity === 'GRAVE')) return { kind: 'BED', place: at(bed, 'sleep') };
   const minute = world.calendar.minuteOfDay;
-  const { block } = blockAt(ctx, minute);
+  // Their own hours (DH-44): asleep from their bedtime to their rising, whatever the steerer does.
+  const householdBed = ctx.blocks.find((b) => b.block === 'SLEEP')?.from ?? 22 * 60;
+  const workFrom = ctx.blocks.find((b) => b.block === 'WORK')?.from ?? ctx.time.dayStart;
+  const hours = ownHours(world, ctx.company, p, householdBed, ctx.time.dayStart);
+  if (inSpan(minute, hours.bed, hours.rise)) return { kind: 'SLEEP', place: at(bed, 'sleep') };
+  let { block } = blockAt(ctx, minute);
+  // Up before the household's day (an early riser): at their dawn habit or their work already.
+  const early = hours.early && !hours.watch && inSpan(minute, hours.rise, workFrom);
+  if (early) block = 'WORK';
   // The tendency at its hour (not at work, unless it is a work habit or dusk ends the day).
   const def = ctx.defs.get(id)?.tendency;
-  const window = def === undefined ? null : tendencyWindow(ctx, world.calendar.day, def.at);
+  const window =
+    def === undefined
+      ? null
+      : tendencyWindow(ctx, world.calendar.day, def.at, early ? hours.rise : null);
   if (def !== undefined && window !== null && within(minute, window)) {
     const workHabit = def.at === 'WORK' || def.at === 'DUSK';
-    if (block !== 'WORK' || workHabit) {
+    if (block !== 'WORK' || workHabit || early) {
       const place = ctx.household.places[def.place];
       const spot = place ?? seat;
       const pose = def.pose === 'work' ? 'work' : def.pose === 'watch' ? 'watch' : def.pose;
       return { kind: 'TENDENCY', place: at(spot, pose) };
     }
   }
-  if (block === 'SLEEP') return { kind: 'SLEEP', place: at(bed, 'sleep') };
+  if (block === 'SLEEP') {
+    // Awake in the household's night (DH-46, DH-47): the watch by the fire, or late at it.
+    if (hours.watch) return { kind: 'WATCH', place: at(seat, 'sit') };
+    return { kind: 'EVENING', place: at(seat, 'sit') };
+  }
   const home = homeOf(world, camp);
   if (block === 'MEAL') {
     const supper = minute >= 12 * 60;
@@ -279,12 +314,13 @@ export function activityOf(
     const half = p.wounds.some((w) => w.severity === 'SERIOUS');
     // Design addendum 2.5 (DF-21, item 8): seriously wounded, a job with seated places is worked
     // sitting there at half pace, off the steerer's work spot (Runa at the boat with her ankle).
-    const seated = half ? (jdef?.hurtSpots?.[0] ?? null) : null;
-    const spot = seated ?? jobSpot(world, camp, ctx, id, job);
+    // The user's fourth playtest (DH-60): each at a seated place of their own, never shared.
+    const seated = half && (jdef?.hurtSpots?.length ?? 0) > 0;
+    const spot = jobSpot(world, camp, ctx, id, job);
     if (jdef?.task !== undefined && spot !== null)
       return {
         kind: 'WORK',
-        place: at(spot, seated === null ? 'work' : 'sit', jdef.task),
+        place: at(spot, seated ? 'sit' : (spot.pose ?? 'work'), jdef.task),
         job,
         task: jdef.task,
         half,

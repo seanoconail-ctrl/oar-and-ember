@@ -54,6 +54,10 @@ const EXACT: Readonly<Record<string, Verdict>> = {
   'caption.stinger.dispute': keep('STORY'),
   'caption.scene.theft_found': keep('STORY'),
   'caption.repair.oar_seen': keep('STORY'),
+  // A reason for the first raid (DH-142, DH-139): the smoke on the Irish coast is far off the view's
+  // edge, so its direction is told; the skin boat's goods go into the stores out of sight.
+  'caption.raid.smoke_far': keep('DIRECTION'),
+  'caption.raid.goods_stored': keep('STORY'),
   'info.launch.not_yet': keep('STORY'),
   // Cut: seen in the world.
   'caption.voice.approach': CUT,
@@ -71,6 +75,8 @@ const PREFIX: readonly (readonly [string, Verdict])[] = [
   ['caption.tell.', keep('SAFETY')],
   ['caption.search.', keep('STORY')],
   ['info.boat.', keep('STORY')],
+  // A reason for the first raid: what is in the skin boat, said in the talk panel (DH-138).
+  ['info.skinboat.', keep('STORY')],
   // Combat and missile sounds: read by sight and sound only, never captioned (DF-9, DF-80).
   ['caption.sfx.light_attack', COMBAT],
   ['caption.sfx.heavy_swing', COMBAT],
@@ -103,6 +109,9 @@ const PREFIX: readonly (readonly [string, Verdict])[] = [
   ['ui.heal.', CUT],
   ['caption.sfx.bind_wound', CUT],
   ['caption.sfx.eat', CUT],
+  // The small finds off the paths (the user's fourth playtest, DH-118): what was found and its
+  // story, which the picture alone cannot tell; held through a fight like the story lines.
+  ['caption.find.', keep('STORY')],
   // Work, camp, repairs, rites and launch: seen in their loops and scenes.
   ['caption.sfx.', CUT],
   ['caption.repair.', CUT],

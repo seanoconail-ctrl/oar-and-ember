@@ -37,6 +37,7 @@ import type { Id } from '../core/ids.ts';
 import {
   applyInteraction,
   facingOf,
+  footprintClear,
   inReach,
   interactionAt,
   interactionNow,
@@ -98,13 +99,38 @@ import { updateExhausted } from './combat/fighter.ts';
 import type { MissileEvent } from './land/missiles.ts';
 import { bandAt, isDeep, stillWaterLevel } from './land/water.ts';
 import { seaBurialActive } from './narrative/seaBurial.ts';
+import { remark } from './narrative/remarks.ts';
+import type { RemarkEvent } from './narrative/remarks.ts';
+import {
+  oddiLifted,
+  oddiSafeLine,
+  seesAll,
+  snatchHolds,
+  stepRunaRemind,
+  stepSnatch,
+} from './narrative/story4.ts';
+import type { Story4Context, Story4Event } from './narrative/story4.ts';
+import { placedUsesHere } from './narrative/uses.ts';
+import {
+  campFire,
+  needBarkTick,
+  needReportLines,
+  noteCatch,
+  raidAction,
+  raidHolds,
+  raidSetDown,
+  raidTalkOpened,
+  raidUseFirst,
+  stepRaid,
+} from './narrative/raid.ts';
+import type { RaidContext, RaidEvent, RaidHooks } from './narrative/raid.ts';
+import { openWayFrom } from './land/edges.ts';
 import {
   byTheFire,
   homeOf,
   campaignMinute,
   campUseAt,
   campUseNear,
-  campUses,
   eat,
   feedFire,
   finishWork,
@@ -128,7 +154,6 @@ import {
   searchHolds,
   searchLifted,
   searchSetDown,
-  searchPlacedUses,
   startSearchTalk,
   stepSearches,
 } from './narrative/searches.ts';
@@ -138,13 +163,14 @@ import {
   boatLooked,
   chooseRepair,
   repairActionDone,
-  repairPlacedUses,
   repairSetDown,
   repairsHold,
   stepRepairs,
   takeOar,
 } from './narrative/repairs.ts';
 import type { RepairEvent, RepairsContext } from './narrative/repairs.ts';
+import { useFind } from './narrative/finds.ts';
+import type { FindEvent, FindsContext } from './narrative/finds.ts';
 import {
   closeSeaMap,
   FACT_LAUNCHED,
@@ -176,7 +202,6 @@ import {
   wreckLifted,
   wreckPhase,
   wreckPickUp,
-  wreckPlacedUses,
   wreckSetDown,
   wreckUse,
   wreckWorkCancelled,
@@ -190,11 +215,31 @@ import { doorAt, doorsHere, openDoor, stepDoors } from './land/doors.ts';
 import type { DoorEvent, DoorTimings } from './land/doors.ts';
 import type { OpeningEvent } from './narrative/opening.ts';
 import type { PeopleContext } from './people/context.ts';
-import { joinNew, peopleDawn, peopleMinute, residents, stepPeopleTick } from './people/day.ts';
+import {
+  inOpening,
+  joinNew,
+  peopleDawn,
+  peopleMinute,
+  residents,
+  settlePeople,
+  stepPeopleTick,
+  tilesFromSteerer,
+} from './people/day.ts';
+import { companyTick, spoke } from './people/company.ts';
+import type { CompanyView } from './people/company.ts';
+import { activityOf } from './people/schedule.ts';
 import { householdDeed, remember, tended } from './people/deeds.ts';
 import type { PeopleEvent } from './people/events.ts';
 import { chooseScene, sceneMinute } from './people/scenes.ts';
-import { assignJob, barkTick, chooseTalk, endTalk, startTalk, talkTick } from './people/talk.ts';
+import {
+  assignJob,
+  barkTick,
+  chooseTalk,
+  endTalk,
+  startTalk,
+  talkOpensWords,
+  talkTick,
+} from './people/talk.ts';
 import type { JobKind } from './world.ts';
 
 /** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
@@ -374,7 +419,13 @@ export type SimEvent =
   | FightEvent
   | SearchEvent
   | RepairEvent
+  | FindEvent
   | LaunchEvent
+  /** A reason for the first raid: clues, the mainland pointed out, the goods, the council. */
+  | RaidEvent
+  /** The user's fourth playtest: the strongbox taken in sight, the steerer's word over a body. */
+  | Story4Event
+  | RemarkEvent
   /** Design addendum 2.4: the opening, the aims, the edges' captions and the doors. */
   | WreckEvent
   | AimEvent
@@ -458,9 +509,15 @@ export interface SimWorldContext extends LandContext {
   readonly repairs?: RepairsContext | null;
   /** Chapter 1's gate, the launch (Stage 12). */
   readonly launch?: LaunchContext | null;
+  /** The user's fourth playtest: the small finds off the paths (DH-115). */
+  readonly finds?: FindsContext | null;
+  /** A reason for the first raid (DH-130 to DH-159): needs, the skin boat, asking, the council. */
+  readonly raid?: RaidContext | null;
   /** Design addendum 2.4: the opening (src/sim/narrative/wreck.ts) and Chapter 1's aims. */
   readonly wreck?: WreckContext | null;
   readonly aims?: AimsContext | null;
+  /** The user's fourth playtest's story and scenes (decisions DH-10 to DH-39). */
+  readonly story4?: Story4Context | null;
   /** Book 10 section 25's doors and edge captions (decisions DE-25 and DE-26). */
   readonly doors?: DoorTimings | null;
   readonly edgeCaption?: { readonly afterSeconds: number; readonly cooldownSeconds: number } | null;
@@ -475,6 +532,14 @@ export function createSimulation(
     throw new Error(`Simulation state version ${state.version} is not ${SIM_STATE_VERSION}`);
   }
   const events = new EventBus<SimEvent>();
+  // The user's fourth playtest (DH-50, DH-56): the quiet before an exchange or a nudge counts from
+  // the last speech line anyone said.
+  events.on('PERSON_SPOKE', () => {
+    spoke(state);
+  });
+  events.on('PERSON_CALLED', () => {
+    spoke(state);
+  });
   let queue: Command[] = [];
 
   const camp = land?.camp ?? null;
@@ -482,8 +547,11 @@ export function createSimulation(
   const fightCtx = land?.fight ?? null;
   const searchCtx = land?.searches ?? null;
   const repairCtx = land?.repairs ?? null;
+  const findsCtx = land?.finds ?? null;
+  const raidCtx = land?.raid ?? null;
   const launchCtx = land?.launch ?? null;
   const wreckCtx = land?.wreck ?? null;
+  const story4 = land?.story4 ?? null;
   const aimsCtx = land?.aims ?? null;
   const sb = land?.stamina ?? null;
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
@@ -494,6 +562,8 @@ export function createSimulation(
     if (e.type === 'WOUND_TENDED') tended(state, people, e.person, emitPeople);
     if (e.type === 'FIRE_LIT') remember(state, here, 'FIRE_LIT');
     if (e.type === 'FISH_LANDED') remember(state, here, 'FIRST_FISH');
+    // The day's catch, for the morning report's "poor day's fishing" (DH-132).
+    if (e.type === 'FISH_LANDED') noteCatch(state, e.count);
     if (e.type === 'CAMP_STAGE' && e.stage === 'S1') {
       remember(state, here, 'SHELTER');
       // A building finished is a success (Book 10 "Happiness inputs").
@@ -598,6 +668,12 @@ export function createSimulation(
       startDay(state, camp);
       const plans = people === null ? [] : peopleDawn(state, people, camp, emitPeople);
       state.report = morningReport(state, camp, night, (id) => id, plans);
+      // The grain counted down and what ran low (DH-132), after the household's plans.
+      if (raidCtx !== null)
+        state.report = {
+          ...state.report,
+          lines: [...state.report.lines, ...needReportLines(state, raidCtx)],
+        };
     }
     events.emit({ type: 'WOKE', day, at: clockText(state.calendar.minuteOfDay), cause });
     // The scheduler's daily entry for the spared (decision DG-6; src/sim/land/fight.ts).
@@ -611,6 +687,44 @@ export function createSimulation(
       events.emit({ type: 'SEASON_STARTED', day, season: seasonOf(day), year: yearOf(day) });
     }
     events.emit({ type: 'MORNING_REPORT_DUE', day });
+  };
+
+  /** Residents held by a scene or the opening: their own day waits (as stepPeopleTick's). */
+  const peopleHeld = (id: Id): boolean =>
+    searchHolds(state, searchCtx, id) ||
+    repairsHold(state, repairCtx, id) ||
+    raidHolds(state, raidCtx, id) ||
+    launchHolds(state, id) ||
+    (wreckCtx !== null && wreckHolds(state, wreckCtx, id));
+
+  /** After a night or a collapse passed at once, everyone is where their own day has them (DH-47). */
+  const settleAfterSkip = (): void => {
+    if (people === null || camp === null) return;
+    settlePeople(state, people, camp, land?.opening?.caller ?? null, peopleHeld);
+  };
+
+  /** What the household's talk and nudges read of everyone (src/sim/people/company.ts). */
+  const companyView = (): CompanyView => {
+    const tile = tileSize();
+    const opener = land?.opening?.caller ?? null;
+    return {
+      residents: residents(state),
+      activity: (id) =>
+        people === null || camp === null || inOpening(state, id, opener) || peopleHeld(id)
+          ? 'TALK'
+          : activityOf(state, camp, people, id).kind,
+      fromSteerer: (id) => tilesFromSteerer(state, id, tile),
+      earshotTiles: people?.b.talk.earshotTiles ?? 0,
+      sameSpeakerSeconds: people?.b.talk.sameSpeakerSeconds ?? 0,
+      ticksPerSecond: people?.ticksPerSecond ?? 60,
+      // A line of an exchange or a nudge: kept by the bark rules' clocks, not counted as a bark.
+      say: (person, key) => {
+        const mine = (state.barks.bySpeaker[person] ??= {});
+        mine[key] = state.tick;
+        state.barks.byLine[key] = state.tick;
+        events.emit({ type: 'PERSON_SPOKE', person, lineKey: key });
+      },
+    };
   };
 
   /** Runs `minutes` game minutes through the home step (a task's time, a night), quietly. */
@@ -637,6 +751,7 @@ export function createSimulation(
         cold = true;
     });
     wake('slept', { slept: minutes, cold, collapsed: false });
+    settleAfterSkip();
   };
 
   /** Minutes into the day at which an awake steerer collapses (02:00 is 1200 after 06:00). */
@@ -648,7 +763,7 @@ export function createSimulation(
     // The sea taking Thorkel (DG-14) is a scene that takes control: only the options and the
     // telemetry are taken until it ends.
     if (
-      seaBurialActive(state) &&
+      (seaBurialActive(state) || snatchHolds(state, story4)) &&
       !['TIME_HELD', 'SET_OPTIONS', 'SET_DAY_LENGTH'].includes(command.type)
     )
       return;
@@ -1107,7 +1222,13 @@ export function createSimulation(
         if (people === null || camp === null || state.talk === null) return;
         if (state.talk.kind === 'SCENE')
           chooseScene(state, people, camp, command.index, tileSize(), emitPeople);
-        else
+        else if (searchCtx !== null && talkOpensWords(state, people, command.index) !== null) {
+          // The user's fourth playtest (DH-22): a topic that opens other words (Hild's "Your
+          // father's rites" opens the rites' choice wherever she is).
+          const opens = talkOpensWords(state, people, command.index) ?? '';
+          endTalk(state, people, emitPeople, true);
+          startSearchTalk(state, searchCtx, opens, emitSearch);
+        } else
           chooseTalk(state, people, camp, command.index, emitPeople, (id) => {
             tendPerson(id);
           });
@@ -1284,6 +1405,23 @@ export function createSimulation(
     runa: (place: string): void => {
       if (wreckCtx !== null) runaAnswer(state, wreckCtx, place, emitWreck);
     },
+    // A reason for the first raid: ask, take the skin boat's goods, the council's intent.
+    raid: (action: string, speaker: Id): void => {
+      if (raidCtx !== null) raidAction(state, raidCtx, action, speaker, raidHooks, emitRaid);
+    },
+  };
+  /** The first raid's events: onto the bus. */
+  const emitRaid = (e: RaidEvent): void => {
+    events.emit(e);
+  };
+  /** What the first raid's systems need of the simulation. */
+  const raidHooks: RaidHooks = {
+    openTalk: (id: string): boolean =>
+      searchCtx !== null && startSearchTalk(state, searchCtx, id, emitSearch),
+    fight: (): void => {
+      searchHooks.fight();
+    },
+    fire: campFire(camp),
   };
   /** What the repairs' choices do beyond them (Stage 11). */
   const repairHooks = {
@@ -1549,24 +1687,34 @@ export function createSimulation(
     }
   };
 
-  /** The camp's uses in the zone in view (its sites, and anyone to tend). */
+  /** The steerer's word over a body (DH-24), as a simulation event. */
+  const emitRemark = (e: RemarkEvent): void => {
+    events.emit(e);
+  };
+
+  /** Every use in the zone in view, as the play view names them (one list; DH-10). */
   const usesHere = (): PlacedUse[] => {
     const onFoot = state.onFoot;
     const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
     if (onFoot === null || map === undefined) return [];
-    const uses = camp === null ? [] : campUses(state, camp, map, onFoot.actors);
-    // Design addendum 2.4: Thorkel's key and chest, and the sail to raise (before others on a tile).
-    if (wreckCtx !== null) uses.unshift(...wreckPlacedUses(state, wreckCtx, map, camp));
-    // Stage 10: a search's words to open (Bran, Ketill, Runa, the stone).
-    if (searchCtx !== null) uses.push(...searchPlacedUses(state, searchCtx, map));
-    // Stage 11: the boat, the wreck's rigging, the skiff's oar, the words at the cave and the bier.
-    if (repairCtx !== null) uses.push(...repairPlacedUses(state, repairCtx, map));
-    return uses;
+    return placedUsesHere(
+      state,
+      {
+        camp,
+        wreck: wreckCtx,
+        searches: searchCtx,
+        repairs: repairCtx,
+        remarks: story4?.remarks ?? null,
+        finds: findsCtx,
+        raid: raidCtx,
+      },
+      map,
+    );
   };
 
   /** Whether a camp use is nearer the steerer than a lift or pickup. */
   const nearer = (
-    use: { x: number; y: number },
+    use: { x: number; y: number; d?: number },
     interaction: Interaction,
     onFoot: NonNullable<SimState['onFoot']>,
     map: { tile: number },
@@ -1583,7 +1731,9 @@ export function createSimulation(
             return stuck;
           })();
     if (there === undefined) return true;
-    return Math.hypot(use.x - p.x, use.y - p.y) < Math.hypot(there.x - p.x, there.y - p.y);
+    // A use with an area (the steerer's bed, DH-100) is as near as its nearest edge.
+    const d = use.d ?? Math.hypot(use.x - p.x, use.y - p.y);
+    return d < Math.hypot(there.x - p.x, there.y - p.y);
   };
 
   /** Hands busy with a task or lying down: other actions wait (the press is WORK_PRESS). */
@@ -1626,12 +1776,28 @@ export function createSimulation(
     const onFoot = state.onFoot;
     if (onFoot === null) return;
     if (use.kind === 'SEARCH') {
+      // The council's call gathers the household before its talk opens (DH-140).
+      if (raidCtx !== null && raidUseFirst(state, raidCtx, use.site, emitRaid)) return;
       if (searchCtx !== null) startSearchTalk(state, searchCtx, use.site, emitSearch);
       if (use.site === 'boat.look' && repairCtx !== null) boatLooked(state, repairCtx);
+      if (raidCtx !== null) raidTalkOpened(state, raidCtx, use.site, emitRaid);
       return;
     }
     if (use.kind === 'OPENING') {
+      // The user's fourth playtest (DH-24): the steerer's word over a body.
+      const remarks = story4?.remarks ?? null;
+      if (use.site === 'remark') {
+        if (remarks !== null) remark(state, remarks, use.target, emitRemark);
+        return;
+      }
       if (wreckCtx !== null) wreckUse(state, wreckCtx, use.site, wreckHooks, emitWreck);
+      // Thorkel's key taken from his body: his first line with it (DH-25).
+      if (use.site === 'take_key' && remarks !== null)
+        remark(state, remarks, use.target, emitRemark);
+      return;
+    }
+    if (use.kind === 'FIND') {
+      if (findsCtx !== null) useFind(state, findsCtx, use.site, events.emit.bind(events));
       return;
     }
     if (use.kind === 'REPAIR') {
@@ -1655,6 +1821,18 @@ export function createSimulation(
         }
         onFoot.player.aim = null;
         onFoot.player.work = null;
+        // Lying down in the bed itself, the head to the wall (the user's fourth playtest, DH-102):
+        // the bed's spot is clear ground, so the steerer wakes standing where they lay.
+        const bedMap = land?.maps.get(onFoot.zone);
+        if (
+          land !== null &&
+          bedMap !== undefined &&
+          footprintClear(bedMap, land.rules, at.x, at.y, true)
+        ) {
+          onFoot.player.x = at.x;
+          onFoot.player.y = at.y;
+          onFoot.player.facing = 'w';
+        }
         onFoot.player.sleep = { since: state.tick, site: use.site };
         events.emit({ type: 'FELL_ASLEEP', site: use.site });
         return;
@@ -1702,10 +1880,21 @@ export function createSimulation(
     const there = land.maps.get(onFoot.zone);
     if (wreckCtx !== null && there !== undefined)
       wreckSetDown(state, wreckCtx, camp, target, there, emitWreck);
+    // The skin boat's goods set down by the fire go into the stores (DH-139).
+    if (raidCtx !== null && there !== undefined)
+      raidSetDown(state, raidCtx, target, raidHooks.fire, there.tile, emitRaid);
     // Stage 10: Oddi safe (he joins), Thorkel's chest saved, Runa's tools past the neck.
     const zoneMap = land.maps.get(onFoot.zone);
     if (searchCtx !== null && zoneMap !== undefined)
-      searchSetDown(state, searchCtx, target, zoneMap, emitSearch);
+      searchSetDown(
+        state,
+        searchCtx,
+        target,
+        zoneMap,
+        emitSearch,
+        // The strongbox taken in sight (DH-15): Oddi's word fits what he saw ('' for none yet).
+        story4 === null ? undefined : (oddiSafeLine(state, story4) ?? ''),
+      );
     // Stage 11: the boards, the rigging or the steering oar laid by the boat.
     if (repairCtx !== null && zoneMap !== undefined)
       repairSetDown(state, repairCtx, target, zoneMap, emitRepair);
@@ -1763,6 +1952,8 @@ export function createSimulation(
       events.emit({ type: 'PERSON_LIFTED', person: interaction.target });
       if (land.opening !== null) onLifted(state, land.opening, interaction.target, emit);
       if (searchCtx !== null) searchLifted(state, searchCtx, interaction.target, emitSearch);
+      // The user's fourth playtest (DH-13): carrying Oddi starts the snatch's clock.
+      oddiLifted(state, story4, interaction.target);
       if (wreckCtx !== null) wreckLifted(state, wreckCtx, interaction.target, emitWreck);
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
@@ -1853,14 +2044,21 @@ export function createSimulation(
     if (waking) p.intent = { ...p.intent, x: 0, y: 0 };
     // The launch scene moves the steerer itself (Stage 12).
     const press =
-      launchActive(state) || seaBurialActive(state)
+      launchActive(state) || seaBurialActive(state) || snatchHolds(state, story4)
         ? null
         : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level }, state.tick);
     if (held || waking) p.intent = wanted;
     // "Nothing that way" (decision DE-25): pressing against an edge gives its caption.
     if (land.edgeCaption != null) {
       const kind = press === null ? null : edgeKindAt(map, press, land.maps, tide.tidalGroundOpen);
-      stepEdges(state, kind === null || kind === 'LINK' ? null : kind, land.edgeCaption, emitWreck);
+      stepEdges(
+        state,
+        kind === null || kind === 'LINK' ? null : kind,
+        land.edgeCaption,
+        emitWreck,
+        // The user's fourth playtest (DH-36): "Nothing that way" names a real, open way.
+        () => openWayFrom(map, land.maps, p, land.rules, tide.tidalGroundOpen),
+      );
     }
     if (fw !== null) {
       stepFight(fw);
@@ -1952,6 +2150,20 @@ export function createSimulation(
         land.opening?.caller ?? null,
         emitSearch,
       );
+    // The user's fourth playtest (DH-12 to DH-16, DH-31): the strongbox taken in sight, and
+    // Runa's reminder of her tool chest.
+    if (story4 !== null) {
+      const quietNow =
+        state.talk !== null ||
+        hostilesAware(onFoot) > 0 ||
+        seaBurialActive(state) ||
+        launchActive(state);
+      const emit4 = (e: Story4Event): void => {
+        events.emit(e);
+      };
+      stepSnatch(state, story4, map, land, tide.tidalGroundOpen, quietNow, emit4);
+      stepRunaRemind(state, story4, map.tile, quietNow, emit4);
+    }
     // Chapter 1 beats 4 to 6: the repairs, the fitting and Thorkel's rites (Stage 11).
     if (repairCtx !== null)
       stepRepairs(state, repairCtx, land, tide.tidalGroundOpen, emitRepair, (zone, x, y) => {
@@ -1962,6 +2174,9 @@ export function createSimulation(
       });
     // Chapter 1 beat 8, the launch and its gate (Stage 12).
     if (launchCtx !== null) stepLaunch(state, launchCtx, emitLaunch);
+    // A reason for the first raid: the needs, the chart, the mainland, the council (DH-130 on).
+    if (raidCtx !== null)
+      stepRaid(state, raidCtx, land, tide.tidalGroundOpen, raidHooks, emitRaid);
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
     // a conversation's lines play; residents in earshot bark.
     if (people !== null && camp !== null) {
@@ -1976,13 +2191,19 @@ export function createSimulation(
         (id) =>
           searchHolds(state, searchCtx, id) ||
           repairsHold(state, repairCtx, id) ||
+          raidHolds(state, raidCtx, id) ||
           launchHolds(state, id) ||
           (wreckCtx !== null && wreckHolds(state, wreckCtx, id)),
         wreckCtx?.limp,
       );
       talkTick(state, people, map.tile, land.rules.interactRadiusTiles, emitPeople);
-      if (!launchActive(state) && !seaBurialActive(state))
+      if (!launchActive(state) && !seaBurialActive(state)) {
         barkTick(state, people, camp, map.tile, residents(state), emitPeople);
+        // The user's fourth playtest (DH-48 to DH-58): talk among the household, and nudges.
+        if (people.company !== null) companyTick(state, people.company, companyView(), map.tile);
+        // A reason for the first raid: the household's needs, spoken now and then (DH-133).
+        if (raidCtx !== null) needBarkTick(state, raidCtx, camp, people, map.tile, emitRaid);
+      }
     }
     // Other people: an archer's stop, draw, loose and move, then their own walk.
     for (const [id, actor] of Object.entries(onFoot.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
@@ -2079,7 +2300,20 @@ export function createSimulation(
           if (repairCtx !== null) addShipWork(state, repairCtx, workerMinutes, id, emitRepair);
         },
       );
-      sceneMinute(state, people, camp, at?.tile ?? 24, emitPeople);
+      sceneMinute(
+        state,
+        people,
+        camp,
+        at?.tile ?? 24,
+        emitPeople,
+        // The broch's quarrel only in view of its people (DH-29).
+        ((): ((ids: readonly Id[]) => boolean) | undefined => {
+          const seen = at === null ? undefined : land?.maps.get(at.zone);
+          return story4 === null || seen === undefined
+            ? undefined
+            : (ids) => seesAll(state, story4.b, seen, ids);
+        })(),
+      );
     }
     if (state.player.awake && minutesIntoDay(after, b) === collapseAt) {
       events.emit({ type: 'COLLAPSED', day: after.day, at: clockText(after.minuteOfDay) });
@@ -2093,6 +2327,7 @@ export function createSimulation(
       const minutes = 1440 - minutesIntoDay(state.calendar, b) + until;
       advanceBy(minutes);
       wake('collapsed', { slept: minutes, cold: false, collapsed: true });
+      settleAfterSkip();
     }
   };
 

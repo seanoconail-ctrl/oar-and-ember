@@ -1,0 +1,43 @@
+{
+  "sheet": "decal_broch_floor",
+  "kind": "decal",
+  "image": "decal_broch_floor.png",
+  "width": 312,
+  "height": 288,
+  "pivot": {
+    "x": 156,
+    "y": 287
+  },
+  "footprint": {
+    "w": 312,
+    "h": 288
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "s0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "s1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "s0/-/0": [
+      0,
+      0
+    ],
+    "s1/-/0": [
+      0,
+      288
+    ]
+  }
+}

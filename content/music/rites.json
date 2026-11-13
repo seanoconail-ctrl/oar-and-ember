@@ -1,0 +1,126 @@
+{
+  "id": "MUS_RITES",
+  "title": "Thorkel's rites",
+  "about": "The music of Thorkel's rites (the user's fourth playtest, decision DH-23; Book 11 sections 03 and 04): from the moment the rite is chosen, through the gathering and the rite itself, until it is done. D Aeolian, slow (50 beats a minute, 4/4), over a low drone. The lyre carries Thorkel's lament's falling line, the voice pad answers it a bar behind with a descending choir line (Rán's way: always falling), and a soft whistle comes in at the half with a fragment that turns upward and settles on the home note. Two forms by the rite: the stones (a slow frame-drum walk, two strokes a bar, and a stone set down in the gaps) and the sea (no walk: the drum swells once a bar like the swell coming in, and the choir sits lower). The lament itself is sung over it, the piece ducking under it, as a stinger is. Written for the game; no borrowed tune.",
+  "mode": "D aeolian",
+  "tempo": 50,
+  "beatsPerBar": 4,
+  "stepsPerBeat": 2,
+  "bars": 8,
+  "echo": {
+    "delay": 0.34,
+    "feedback": 0.3,
+    "mix": 0.24,
+    "tone": 2200
+  },
+  "layers": [
+    {
+      "id": "drone",
+      "name": "Drone",
+      "instrument": "drone",
+      "gain": 0.5,
+      "pan": 0,
+      "echo": 0.15,
+      "bars": ["D2:64", "-", "-", "-", "-", "-", "-", "-"]
+    },
+    {
+      "id": "walk",
+      "name": "Frame drum (the procession's walk)",
+      "instrument": "drum",
+      "gain": 0.55,
+      "pan": 0.05,
+      "echo": 0.08,
+      "bars": [
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! D2:4,",
+        "D2:4! r:4"
+      ]
+    },
+    {
+      "id": "swell",
+      "name": "Frame drum (the swell)",
+      "instrument": "drum",
+      "gain": 0.45,
+      "pan": -0.05,
+      "echo": 0.2,
+      "bars": [
+        "r:2 D2:1, D2:1, D2:4!",
+        "r:8",
+        "r:2 D2:1, D2:1, D2:4!",
+        "r:8",
+        "r:2 D2:1, D2:1, D2:4!",
+        "r:8",
+        "r:2 D2:1, D2:1, D2:4!",
+        "r:8"
+      ]
+    },
+    {
+      "id": "stones",
+      "name": "Stones set down",
+      "instrument": "knock",
+      "gain": 0.4,
+      "pan": -0.2,
+      "echo": 0.06,
+      "bars": ["r:8", "r:6 A3:2,", "r:8", "r:6 A3:2,", "r:8", "r:6 D3:2,", "r:8", "r:6 A3:2,"]
+    },
+    {
+      "id": "lyre",
+      "name": "Lyre (the lament's line)",
+      "instrument": "lyre",
+      "gain": 0.8,
+      "pan": -0.1,
+      "echo": 0.3,
+      "bars": [
+        "A4:4! G4:2 F4:2",
+        "E4:4 D4:4",
+        "F4:4! E4:2 D4:2",
+        "C4:4 D4:4",
+        "A4:2! Bb4:2 A4:4",
+        "G4:4 F4:4",
+        "E4:4! F4:2 E4:2",
+        "D4:8"
+      ]
+    },
+    {
+      "id": "choir",
+      "name": "Choir pad (falling)",
+      "instrument": "pad",
+      "gain": 0.58,
+      "pan": 0.1,
+      "echo": 0.35,
+      "bars": ["r:8", "A3:8", "G3:8", "F3:8", "E3:8", "F3:8", "E3:8", "D3:8"]
+    },
+    {
+      "id": "choir_low",
+      "name": "Choir pad, low (the sea)",
+      "instrument": "pad",
+      "gain": 0.5,
+      "pan": -0.1,
+      "echo": 0.35,
+      "bars": ["D3:8", "C3:8", "Bb2:8", "A2:8", "Bb2:8", "A2:8", "G2:8", "A2:8"]
+    },
+    {
+      "id": "whistle",
+      "name": "Whistle (a fragment turning upward)",
+      "instrument": "whistle",
+      "gain": 0.42,
+      "pan": 0.2,
+      "echo": 0.4,
+      "bars": [
+        "r:8",
+        "r:8",
+        "r:8",
+        "r:8",
+        "D5:4 E5:2 F5:2",
+        "E5:4 C5:4",
+        "D5:2 ~C5:2 A4:4",
+        "D5:8,"
+      ]
+    }
+  ]
+}

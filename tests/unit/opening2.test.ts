@@ -29,6 +29,8 @@ import { tideAt } from '../../src/sim/calendar/calendar.ts';
 import { bandAt, stillWaterLevel } from '../../src/sim/land/water.ts';
 import { migrateOpening } from '../../src/persist/openingMigration.ts';
 import { activityOf } from '../../src/sim/people/schedule.ts';
+import { nightOf, watcherOf } from '../../src/sim/people/company.ts';
+import { peopleContext } from '../../src/sim/people/context.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
 import { openingProps, stagePropsNow } from '../../src/scenes/openingView.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
@@ -44,6 +46,9 @@ const land = landContext(content, balance);
 const campOrNull = campContext(content);
 if (campOrNull === null || land.wreck == null || land.aims == null) throw new Error('no content');
 const camp = campOrNull;
+const peopleOrNull = peopleContext(content);
+if (peopleOrNull === null) throw new Error('no people content');
+const people = peopleOrNull;
 const wreck = land.wreck;
 const aims = land.aims;
 const strand = land.maps.get('ZONE_SK_STRAND');
@@ -223,7 +228,8 @@ describe('Thorkel’s chest, its outline and home, his key and the bow (DE-17, D
       false,
     );
     const frames = new Set<string>();
-    const site = wreck.camp?.shelter ?? { x: 0, y: 0 };
+    // The marked spot where the frame and the sail are worked (the user's fourth playtest, DH-10).
+    const site = wreck.camp?.mark ?? { x: 0, y: 0 };
     bot.walkTo(
       (t) => Math.abs(t.tx - Math.floor(site.x)) + Math.abs(t.ty - Math.floor(site.y)) <= 1,
     );
@@ -519,10 +525,27 @@ describe('everyone rescued gets up and joins the household (DE-22)', () => {
         }
         bot.waitUntil(30);
       }
+      // The user's fourth playtest (DH-46): one keeps the night watch by the fire until 02:00,
+      // awake; the rest are abed under the shelter.
+      const watch =
+        people.company === null
+          ? null
+          : watcherOf(
+              world,
+              people.company,
+              nightOf(world.calendar.day, world.calendar.minuteOfDay),
+              world.household.residents,
+            );
+      expect(watch).not.toBeNull();
       for (const id of ['C_HILD', 'C_ODDI', 'C_BRAN', 'C_RUNA']) {
         const f = findActor(world.onFoot ?? (null as never), id);
         expect(f?.zone, `${id} night ${night}`).toBe('ZONE_SK_MACHAIR');
         const a = f?.actor;
+        if (id === watch) {
+          expect(world.people[id]?.life.activity).toBe('WATCH');
+          expect(a?.pose).toBe('sit');
+          continue;
+        }
         // Under the lean-to's furs at S0; once residents have put the S1 sail roof over the court
         // (Book 7 section 06), anywhere under it.
         const roofed = world.homes['ISLE_SKARV']?.stage === 'S1';
@@ -553,7 +576,8 @@ describe('everyone rescued gets up and joins the household (DE-22)', () => {
 describe('aims, the journal and stuck help (DE-23, DE-24; Book 8 section 13)', () => {
   it('every Chapter 1 aim has its journal line and two hints in the strings', () => {
     // The user's third playtest adds the old tower's and the shelter's three stages (DG-12, DG-13).
-    expect(aims.aims.length).toBe(23);
+    // 24 since the council at the fire before the launch (a reason for the first raid, DH-140).
+    expect(aims.aims.length).toBe(24);
     for (const a of aims.aims) {
       expect(content.strings.has(a.journalKey), a.id).toBe(true);
       expect(a.hints).toHaveLength(2);

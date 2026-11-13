@@ -1737,8 +1737,8 @@
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.talk.father.01": {
-    "text": "We never found Father. The sea keeps what it takes.",
-    "tags": ["ADDRESS_STEERER", "VOICED"]
+    "text": "We've not found Father yet. Bran went after him, and Bran doesn't let go.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
   },
   "c_hild.talk.father.02": {
     "text": "Loud. Fair. He'd have hated this broch. He'd have mended it.",
@@ -4699,6 +4699,126 @@
   "person.short.item_mast_stores": {
     "text": "The stores"
   },
+  "person.short.item_boards": {
+    "text": "The boards"
+  },
+  "person.short.item_rigging": {
+    "text": "The rigging"
+  },
+  "person.short.item_steering_oar": {
+    "text": "The steering oar"
+  },
+  "ui.name.unknown": {
+    "text": "that"
+  },
+  "find.name.cowries": {
+    "text": "the cowrie shells"
+  },
+  "find.name.gull_nest": {
+    "text": "the gull's nest"
+  },
+  "find.name.carved_stone": {
+    "text": "the carved stone"
+  },
+  "find.name.waymark": {
+    "text": "the little cairn"
+  },
+  "find.name.old_offering": {
+    "text": "the cleft in the rock"
+  },
+  "find.name.kerbstone": {
+    "text": "the kerbstone"
+  },
+  "find.name.seal_skull": {
+    "text": "the seal's skull"
+  },
+  "find.name.lost_knife": {
+    "text": "the knife in the rocks"
+  },
+  "ui.prompt.find_look": {
+    "text": "{key}  Look at {name}"
+  },
+  "ui.prompt.find_look_click": {
+    "text": "Right-click  Look at {name}"
+  },
+  "ui.prompt.find_take": {
+    "text": "{key}  Take {name}"
+  },
+  "ui.prompt.find_take_click": {
+    "text": "Right-click  Take {name}"
+  },
+  "caption.find.cowries": {
+    "text": "Cowrie shells, caught in the wrack",
+    "tags": ["INFO"]
+  },
+  "caption.find.gull_nest": {
+    "text": "Three gull's eggs, still warm",
+    "tags": ["INFO"]
+  },
+  "caption.find.carved_stone": {
+    "text": "Boat and cross, cut in the stone",
+    "tags": ["INFO"]
+  },
+  "caption.find.waymark": {
+    "text": "An old cairn; you add a stone",
+    "tags": ["INFO"]
+  },
+  "caption.find.old_offering": {
+    "text": "A bronze pin, green, left for someone",
+    "tags": ["INFO"]
+  },
+  "caption.find.kerbstone": {
+    "text": "Cups and rings pecked in the stone",
+    "tags": ["INFO"]
+  },
+  "caption.find.seal_skull": {
+    "text": "A seal's skull, ringed with white shells",
+    "tags": ["INFO"]
+  },
+  "caption.find.lost_knife": {
+    "text": "A knife, its grip wound in silver",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_shells": {
+    "text": "Shells clinking",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_eggs": {
+    "text": "A gull crying overhead",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_stone": {
+    "text": "A hand on old stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_cairn": {
+    "text": "Stone set on stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_offering": {
+    "text": "A faint ring of bronze",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_bone": {
+    "text": "Dry bone on rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_knife": {
+    "text": "Iron scraping free of rock",
+    "tags": ["INFO"]
+  },
+  "item.name.axe": {
+    "text": "Hand axe"
+  },
+  "item.name.spear": {
+    "text": "Spear"
+  },
+  "item.name.sword": {
+    "text": "Sword"
+  },
+  "item.name.dane_axe": {
+    "text": "Dane axe"
+  },
   "ui.timings.mark.woke": {
     "text": "Woke in the surf"
   },
@@ -5145,6 +5265,206 @@
   "c_hild.rites.sea_taken": {
     "text": "Gone. Rán has you now, Father. Be kind to her.",
     "tags": ["VOICED"]
+  },
+  "p_steerer.remark.thorkel.01": {
+    "text": "Thorkel. You brought us this far. I'll take them the rest of the way.",
+    "tags": ["ABOUT_STEERER", "REFERS:c_thorkel"]
+  },
+  "p_steerer.remark.thorkel.02": {
+    "text": "Cold as the sea that had you. Rest. We'll see you right.",
+    "tags": ["ABOUT_STEERER", "REFERS:c_thorkel"]
+  },
+  "p_steerer.remark.thorkel.03": {
+    "text": "You'd laugh at the boat we're patching. Then you'd show us how.",
+    "tags": ["ABOUT_STEERER", "REFERS:c_thorkel"]
+  },
+  "p_steerer.remark.fallen.01": {
+    "text": "All this for a wreck's leavings.",
+    "tags": ["ABOUT_STEERER"]
+  },
+  "p_steerer.remark.fallen.02": {
+    "text": "You should have walked on.",
+    "tags": ["ABOUT_STEERER"]
+  },
+  "p_steerer.remark.fallen.03": {
+    "text": "Someone will wait for you, and wonder.",
+    "tags": ["ABOUT_STEERER"]
+  },
+  "p_steerer.remark.fallen.04": {
+    "text": "The tide will have you before your friends do.",
+    "tags": ["ABOUT_STEERER"]
+  },
+  "ui.prompt.remark": {
+    "text": "{key}  Look at {name}"
+  },
+  "ui.prompt.remark_click": {
+    "text": "Right-click  Look at {name}"
+  },
+  "e_wrecker_conn.snatch.grab": {
+    "text": "Silver! Ketill can haggle for the dead. This is ours.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_conn.snatch.caught": {
+    "text": "Take it! Take the cursed box!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.snatch.grab": {
+    "text": "The tide pays after all.",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_svart.snatch.caught": {
+    "text": "Keep it. It's not worth a spear in the back.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.snatch.grab": {
+    "text": "Kind of you to mind it for us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.snatch.caught": {
+    "text": "Have it, then. I'll have it back another day.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.snatch.shout": {
+    "text": "Oi! Thief! That's the ship's silver!",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.snatch.safe.conn": {
+    "text": "That was Conn, the thin one with the bow. Our silver's gone up to the fold.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.snatch.safe.svart": {
+    "text": "That was Svart, the spearman. Our silver's gone up to the fold.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.snatch.safe.ketill": {
+    "text": "Ketill, that was, their leader. Our silver's gone up to the fold.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.snatch.after": {
+    "text": "Never mind me! After the thief, before the dunes hide the silver!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.search.safe_left": {
+    "text": "Thanks for the carry. The silver's still down in the wash. Fetch it up when you can.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.snatch.safe.caught": {
+    "text": "You ran the thief down! Silver's in the sand. Don't leave it lying.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.fold.stolen.1": {
+    "text": "Conn's brought us the ship's silver. So what's left to bargain with?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.fold.stolen.2": {
+    "text": "Then you've what you came for. Go, and leave him be.",
+    "tags": ["VOICED", "REFERS:c_thorkel"]
+  },
+  "e_wrecker_ketill.fold.stolen_svart.1": {
+    "text": "Svart's brought us the ship's silver. So what's left to bargain with?",
+    "tags": ["VOICED"]
+  },
+  "e_wrecker_ketill.fold.stolen_ketill.1": {
+    "text": "Their silver's in my lap now. So what's left to bargain with?",
+    "tags": ["VOICED"]
+  },
+  "c_runa.remind.tools.01": {
+    "text": "My tool chest's still out on the headland. Bring it into the broch, would you?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.remind.tools.02": {
+    "text": "Those tools are all I have. Into the broch with them, out of the wet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.remind.tools.03": {
+    "text": "The chest. My tools. The broch. I'll not ask again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.night.02_found": {
+    "text": "Bran brought Father home. Bran never lets go of anything.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.fire.aims.01_found": {
+    "text": "Oddi was by the stern when she broke.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.launch.no_rites_lost": {
+    "text": "We sail, and Father's out there somewhere, with no rites.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.talk.father.lost": {
+    "text": "They took him from the fold, the scavengers. He'll get no rites from us now.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.talk.father.found": {
+    "text": "Bran carried him home. I keep waiting for him to sit up and shout at us.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.talk.father.sea": {
+    "text": "Rán has him now. I hope the sea likes loud company.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.talk.father.stones": {
+    "text": "He's under the stones now, looking out to sea. Where he'd want to be.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.bark.shore.03": {
+    "text": "Loud, he was. The shore's too quiet without him.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "ui.talk.topic.rites": {
+    "text": "Your father's rites"
+  },
+  "p_steerer.talk.he_was": {
+    "text": "He brought us this far."
+  },
+  "caption.sfx.steerer_sigh": {
+    "text": "A breath out",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.snatch": {
+    "text": "An iron-bound box hauled up",
+    "tags": ["INFO"]
+  },
+  "caption.music.rites_sea": {
+    "text": "The rites, drums slow as the swell",
+    "tags": ["INFO"]
+  },
+  "caption.music.rites_stones": {
+    "text": "The rites, drums slow as a walk",
+    "tags": ["INFO"]
+  },
+  "caption.edge.nothing_way": {
+    "text": "Nothing that way. {way}",
+    "tags": ["INFO"]
+  },
+  "caption.edge.way": {
+    "text": "{place} is {direction} of here.",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_machair": {
+    "text": "The broch",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_strand": {
+    "text": "Wreck Strand",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_hagseat": {
+    "text": "The Hag's Seat",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_cairn": {
+    "text": "The Hollow Cairn",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_sealcave": {
+    "text": "Seal Cave",
+    "tags": ["INFO"]
+  },
+  "c_bran.teach.svart_parry": {
+    "text": "Svart's thrusting! Meet it, turn it aside, then strike!",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "e_wrecker_ketill.fold.key.1": {
     "text": "The key on his neck, Bran. Hand it over.",
@@ -5610,5 +5930,1268 @@
   },
   "ui.sound.sfx.red_scrape": {
     "text": "The red blow's scrape"
+  },
+  "c_hild.nudge.see_tower": {
+    "text": "That tower on the bank. Walls keep the wind off better than I do.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.chest_to_camp": {
+    "text": "Father's chest won't walk up the bank on its own. I asked it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.light_fire": {
+    "text": "Fire first. Everything goes better warm.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.shelter_frame": {
+    "text": "The oars by the wall. Stand them up before the light goes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.shelter_sail": {
+    "text": "That frame wants its sail. The rain won't wait for us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.hild_leg": {
+    "text": "My leg, when you've a moment. I'll only ask twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.scavengers": {
+    "text": "Listen. Someone's at the stern. Go and look. Quietly.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.sit_fire": {
+    "text": "Come and sit. The day's done, even if we aren't.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.find_oddi": {
+    "text": "Oddi first, I'd say. He was by the stern when we broke.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_oddi"]
+  },
+  "c_hild.nudge.find_bran": {
+    "text": "Bran went after Father. The old mound, east. Find them both.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.find_runa": {
+    "text": "That light on the Hag's Seat. Runa will have gone after it. West.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.open_chest": {
+    "text": "You've the key. Open Father's chest. I can't. Not yet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.stores": {
+    "text": "Our salt fish is still up that mast. The bow will fetch it down.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.shelter_finish": {
+    "text": "The shelter's half a job. Lend a hand at the lashings.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.hull": {
+    "text": "Runa wants the boards first. They're in the debris by the boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.rigging": {
+    "text": "The rigging's out on the skerry. Low water, or you swim.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.oar": {
+    "text": "No steering oar, no steering. The scavengers' skiff had one.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.nudge.rites": {
+    "text": "Father wants his rites before we sail. Come and talk to me.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.nudge.launch": {
+    "text": "She's ready. Wait for the water, then we run her down.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_oddi.nudge.find_bran": {
+    "text": "Bran'll be with Thorkel's body. Up by the mound, I'd bet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.find_runa": {
+    "text": "Runa? Chasing lights at the Hag's Seat. West. Mad as a gull.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.open_chest": {
+    "text": "That chest. You've the key now. Looking's free.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.stores": {
+    "text": "Fish up a mast. Somebody with a bow could fix that. Not me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.shelter_finish": {
+    "text": "Shelter's not done. I'll help. If you're helping.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.hull": {
+    "text": "Boards are in the debris by the boat. Heavy. I'd carry half.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.rigging": {
+    "text": "Rigging's on the skerry. Wait for low water or drown. Your pick.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.oar": {
+    "text": "Their skiff in Seal Cave has a steering oar. Finding isn't stealing.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.rites": {
+    "text": "Hild won't sail till Thorkel's seen to. Ask Hild.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.launch": {
+    "text": "Boat's sound. Tide comes in, we go. Before anyone thinks better of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.find_oddi": {
+    "text": "Oddi is still out there. The strand, by the wreck. Go gently.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.find_runa": {
+    "text": "Runa's not come in. The Hag's Seat, Hild says. Mind the wind.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.open_chest": {
+    "text": "The key's yours now. Thorkel would want his chest opened by kin.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_bran.nudge.stores": {
+    "text": "Food on the mast. A steady bow brings it down. Then we eat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.shelter_finish": {
+    "text": "The shelter first, then the rest. A roof makes a household.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.hull": {
+    "text": "Boards to the boat first. Then hands to the boards.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.rigging": {
+    "text": "Low water, and the rigging off the skerry. I'll keep your supper.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.oar": {
+    "text": "The oar is in their skiff. Ask for it before you take it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.rites": {
+    "text": "Thorkel waits for his rites. Speak to Hild. Grace before the sea.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_bran.nudge.launch": {
+    "text": "The boat is ready. God and the tide willing, so are we.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.find_oddi": {
+    "text": "Oddi's not back. The wreck, west end. Fetch him before the tide does.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_oddi"]
+  },
+  "c_runa.nudge.find_bran": {
+    "text": "Bran's at the mound with the dead. The sheepfold. East.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.open_chest": {
+    "text": "Open the chest. Tools in it, maybe. Good ones, if Thorkel had sense.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.stores": {
+    "text": "Fish on the mast. One arrow. Don't miss and sulk.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.shelter_finish": {
+    "text": "Finish the shelter. My tools want a dry night.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.hull": {
+    "text": "Boards. By the boat. Then work. In that order.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.rigging": {
+    "text": "Rigging's fouled on the skerry. Low water, a sharp blade, quick feet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.oar": {
+    "text": "Steering oar. Take theirs, buy theirs, or I carve one. Two days.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.rites": {
+    "text": "Thorkel's rites before we sail. The sea counts who's owed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.launch": {
+    "text": "She's sound. High water, and we run her down. Don't whistle.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.advice.intro": {
+    "text": "You're asking me? All right.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.advice.none": {
+    "text": "Nothing that can't wait. Sit a while.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.advice.intro": {
+    "text": "Advice? From me? It's free. Here.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.advice.none": {
+    "text": "Nothing to do? Don't say that out loud.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.advice.intro": {
+    "text": "Sit. I'll tell you what I'd do.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.advice.none": {
+    "text": "Nothing pressing. Eat, and give thanks.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.advice.intro": {
+    "text": "You want my word? Listen, then.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.advice.none": {
+    "text": "Nothing needs you. Plenty needs me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.talk.topic.advice": {
+    "text": "Ask for advice"
+  },
+  "ui.talk.topic.boat": {
+    "text": "The boat"
+  },
+  "ui.activity.watch": {
+    "text": "{name}: keeping the night watch by the fire"
+  },
+  "ui.activity.tended": {
+    "text": "{name}: having a wound bound"
+  },
+  "c_runa.care.refuse": {
+    "text": "No. Another's hands on my hurt, and the sea marks me. I'll bind it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.care.persuaded": {
+    "text": "Hm. Hold the end, then. Tight. Don't tell the sea.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.care.still": {
+    "text": "The boat needs me stubborn. Leave it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.care.later": {
+    "text": "Fine. Yesterday's luck is spent. Bind it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.talk.care.hold_end": {
+    "text": "Then bind it yourself. I'll hold the end.",
+    "tags": ["ADDRESS_STEERER"]
+  },
+  "p_steerer.talk.care.boat_needs": {
+    "text": "The boat needs you whole.",
+    "tags": ["ADDRESS_STEERER"]
+  },
+  "p_steerer.talk.care.suit": {
+    "text": "Suit yourself.",
+    "tags": ["ADDRESS_STEERER"]
+  },
+  "c_oddi.chat.oddi_share.1": {
+    "text": "When we sell the bow, what's my share?",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.oddi_share.2": {
+    "text": "We're not selling the bow.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.oddi_share.3": {
+    "text": "Say we did.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.eat_slower.1": {
+    "text": "Eat slower. Nobody's taking it from you.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.eat_slower.2": {
+    "text": "You don't know that.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.eat_slower.3": {
+    "text": "I do. I'm watching.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.whistle.1": {
+    "text": "Stop that.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.whistle.2": {
+    "text": "I wasn't doing anything.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.whistle.3": {
+    "text": "You were about to whistle.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.grace.1": {
+    "text": "I'll say a word for your father tonight. In both tongues.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.grace.2": {
+    "text": "Say it in the one he swore in.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.knots.1": {
+    "text": "Your father's knots. Every one a granny.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.knots.2": {
+    "text": "He tied them in the dark, in a gale.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.knots.3": {
+    "text": "That explains the mast.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.rock_and_fish.1": {
+    "text": "Fish again. With kale I could make it a broth.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.rock_and_fish.2": {
+    "text": "There's no kale. There's rock, and there's fish.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.rock_and_fish.3": {
+    "text": "Then rock and fish, and grace over both.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.held_fold.1": {
+    "text": "You held that fold alone, Bran?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.held_fold.2": {
+    "text": "Not alone. Your father was there.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.bedding.1": {
+    "text": "Fish in your bedding, Oddi.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.bedding.2": {
+    "text": "Keeping it warm. For everyone.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.bedding.3": {
+    "text": "Generous.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.goat.1": {
+    "text": "Sing the one about the goat, Bran.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.goat.2": {
+    "text": "In Irish the goat dies at the end.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.goat.3": {
+    "text": "Everything dies at the end in Irish.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.rites_owed.1": {
+    "text": "Your father wants his rites before we sail. The sea keeps count.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.rites_owed.2": {
+    "text": "I know what the sea keeps.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.chest_hands.1": {
+    "text": "Hands off my chest, Oddi.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.chest_hands.2": {
+    "text": "I was dusting it.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.chest_hands.3": {
+    "text": "From the inside.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.fold_many.1": {
+    "text": "Were there many of them? At the fold?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.fold_many.2": {
+    "text": "Enough. You'd have run.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.fold_many.3": {
+    "text": "Fast, though. Very fast.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.ridge.1": {
+    "text": "Who lashed the ridge? It's crooked.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.ridge.2": {
+    "text": "The oars are crooked. The ridge is perfect.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.two_tongues.1": {
+    "text": "Why pray in two tongues, Bran?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.two_tongues.2": {
+    "text": "Twice the chance one of them is listening.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.float.1": {
+    "text": "Will she float?",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.float.2": {
+    "text": "She'll float. Staying up is your rowing.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.who_we_are.1": {
+    "text": "When we sail, who decides the shares?",
+    "tags": ["VOICED"]
+  },
+  "c_bran.chat.who_we_are.2": {
+    "text": "Eat first.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.who_we_are.3": {
+    "text": "Then decide who we are.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.fish_again.1": {
+    "text": "Fish again.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.fish_again.2": {
+    "text": "You caught none of it.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.chat.fish_again.3": {
+    "text": "I'm counting, not catching.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.weather.1": {
+    "text": "Wind's backing. Rain by dark.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.chat.weather.2": {
+    "text": "You said that yesterday.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.chat.weather.3": {
+    "text": "It rained yesterday.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.boat.boards": {
+    "text": "Strakes are stove in. Bring the boards from the debris.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.boards": {
+    "text": "Runa wants the boards from the debris. Then the hammering.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.boards": {
+    "text": "Needs boards. They're in the debris. Heavy ones.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.boards": {
+    "text": "Boards first. They lie in the wreck's leavings by the boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.hull_work": {
+    "text": "Patching the strakes. Work it with me and it goes faster.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.hull_work": {
+    "text": "The boards are going on. The rivets want hammering home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.hull_work": {
+    "text": "Hammering. Lots of it. Some of it by me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.hull_work": {
+    "text": "The patch is going on. Another pair of hands won't hurt.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.rigging_fetch": {
+    "text": "No rigging. It's on the skerry, fouled. Low water.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.rigging_fetch": {
+    "text": "It wants rigging. Father's is on the skerry, at low water.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.rigging_fetch": {
+    "text": "Rigging's on the skerry. Low water. I'll hold your boots.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.rigging_fetch": {
+    "text": "The rigging lies out on the skerry. Go at low water.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.rigging_work": {
+    "text": "Stepping the mast. Setting up the stays. Don't whistle.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.rigging_work": {
+    "text": "Mast's going in. Ropes everywhere. Mind your feet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.rigging_work": {
+    "text": "We're putting the mast in. I'm on the ropes.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.rigging_work": {
+    "text": "The mast goes up today, if the stays hold.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.oar_fetch": {
+    "text": "No steering oar. The skiff in Seal Cave, or ask me to carve.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.oar_fetch": {
+    "text": "We need a steering oar. The scavengers' skiff, in Seal Cave.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.oar_fetch": {
+    "text": "No oar. The skiff in Seal Cave's got one. Spare, probably.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.oar_fetch": {
+    "text": "A steering oar. Seal Cave, or Runa's knife and two days.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.oar_carving": {
+    "text": "Carving the oar. Two days. Don't talk to me.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.oar_carving": {
+    "text": "Runa's carving the oar. Best leave her to it.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_runa"]
+  },
+  "c_oddi.boat.oar_carving": {
+    "text": "Runa's carving. Don't ask how long. She bites.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_runa"]
+  },
+  "c_bran.boat.oar_carving": {
+    "text": "Runa is carving the oar. It will be a good one.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.oar_ship": {
+    "text": "The oar wants lashing to its boss. An hour's work.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.oar_ship": {
+    "text": "There's the oar. It only wants lashing on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.boat.oar_ship": {
+    "text": "Oar's here. Tie it on and we're nearly a boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.oar_ship": {
+    "text": "The oar is by the boat. Lash it on and she steers.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_runa.boat.fit": {
+    "text": "Fitting what you chose. A day's work. Help or watch.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.boat.fit": {
+    "text": "Runa's at the fitting you chose. A day, she says.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_runa"]
+  },
+  "c_oddi.boat.fit": {
+    "text": "Building the extra bit. Don't ask me which bit.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.fit": {
+    "text": "The fitting is under way. Patience. And broth.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.boat.ready": {
+    "text": "She's sound. Look her over, then wait for the water.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.boat.ready": {
+    "text": "She'll float. Look her over and wait for high water.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_oddi.boat.ready": {
+    "text": "Boat's done. Nobody touch it till the tide.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.boat.ready": {
+    "text": "She is ready. Wait for the tide, and say a word over her.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_hild.need.grain.01": {
+    "text": "Thinner porridge tomorrow. The meal-sack's down to the seam.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.need.grain.02": {
+    "text": "Counted the stores again. They don't grow for counting.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.need.grain.03": {
+    "text": "One fish all day. The sea's keeping the rest.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.need.salt.01": {
+    "text": "No salt. Whatever I catch has two days in it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.need.iron.01": {
+    "text": "Bent another hook on the rocks. That was the last good one.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.need.iron.01": {
+    "text": "More notch than edge, this axe. We'll want iron before winter.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.need.iron.02": {
+    "text": "A whetstone can only take so much off. Then it's gone.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.need.grain.01": {
+    "text": "I can stretch a pot. I can't stretch a sack.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.need.cloth.01": {
+    "text": "No clean linen for that. I'll boil what rags we have.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.need.salt.01": {
+    "text": "Fish without salt. It'll be walking by the third day.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.need.iron.01": {
+    "text": "Nine nails. Nine. I've counted them twice.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.need.iron.02": {
+    "text": "Give me a forge's worth of iron and I'd sleep easy.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.need.cloth.01": {
+    "text": "The sail's chafed through at the lashing. Nothing to patch it with.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.need.grain.01": {
+    "text": "Is that all the porridge? I'm only asking.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.need.iron.01": {
+    "text": "One knife with an edge on it. That's all I'd ask.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.need.cloth.01": {
+    "text": "Bind it with what? My shirt's mostly holes now.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.talk.topic.stores": {
+    "text": "The stores"
+  },
+  "ui.talk.topic.nails": {
+    "text": "Nails"
+  },
+  "ui.talk.topic.axe": {
+    "text": "Your axe"
+  },
+  "ui.talk.topic.chart": {
+    "text": "Thorkel's chart"
+  },
+  "c_hild.topic.stores.1": {
+    "text": "I've counted the stores three times. They don't grow for counting.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.topic.stores.2": {
+    "text": "Barley for a few days. Fish if the sea's kind. No salt to keep any.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.topic.stores.3": {
+    "text": "Then limpets. And if Father's people got out, they find us thin.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.topic.stores.sea": {
+    "text": "Full of fish, and I've one line and two hooks. Find me iron.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.topic.stores.how_long": {
+    "text": "How long have we?"
+  },
+  "p_steerer.topic.stores.sea": {
+    "text": "The sea's full of fish."
+  },
+  "p_steerer.topic.stores.leave": {
+    "text": "Leave the counting to me tonight."
+  },
+  "p_steerer.topic.stores.then": {
+    "text": "And then?"
+  },
+  "p_steerer.topic.stores.manage": {
+    "text": "We'll manage. We always have."
+  },
+  "p_steerer.topic.stores.smoke": {
+    "text": "They'll find smoke, at least."
+  },
+  "p_steerer.topic.stores.enough": {
+    "text": "Enough for tonight."
+  },
+  "p_steerer.topic.stores.iron": {
+    "text": "I'll find some."
+  },
+  "c_runa.topic.nails.1": {
+    "text": "Nine nails. That's what I have. Nine.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.topic.nails.2": {
+    "text": "Not with wooden pegs. She'd come apart in the first swell.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "p_steerer.topic.nails.patch": {
+    "text": "Can you make the patch good for open sea?"
+  },
+  "p_steerer.topic.nails.make_do": {
+    "text": "Make do with them."
+  },
+  "p_steerer.topic.nails.find": {
+    "text": "Then we find iron."
+  },
+  "p_steerer.topic.nails.leave": {
+    "text": "Then we coast, and keep close in."
+  },
+  "c_bran.topic.iron.1": {
+    "text": "Look at this edge. More notch than blade now.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.topic.iron.2": {
+    "text": "Ground out to nothing, it'd be. We'll want iron before winter.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.topic.iron.3": {
+    "text": "There's always iron somewhere. That's the trouble. It's always someone's.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.topic.iron.grind": {
+    "text": "Can it be ground out?"
+  },
+  "p_steerer.topic.iron.do": {
+    "text": "It'll do for now."
+  },
+  "p_steerer.topic.iron.where": {
+    "text": "Where would we get iron?"
+  },
+  "p_steerer.topic.iron.find": {
+    "text": "Then we'll find it."
+  },
+  "p_steerer.topic.iron.see": {
+    "text": "We'll see."
+  },
+  "c_oddi.topic.chart.1": {
+    "text": "Thorkel's chart. That mark there, over the water. Carrick.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.topic.chart.2": {
+    "text": "Grain, iron, few spears, he wrote. His own hand.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_oddi.topic.chart.3": {
+    "text": "I carried his things three summers. I know his marks.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_oddi.topic.chart.share": {
+    "text": "Same as anyone's. Counted out in front of everyone, mind.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.topic.chart.what": {
+    "text": "What's at Carrick?"
+  },
+  "p_steerer.topic.chart.share": {
+    "text": "And what's your share in it?"
+  },
+  "p_steerer.topic.chart.hand": {
+    "text": "You can read his marks?"
+  },
+  "p_steerer.topic.chart.keep": {
+    "text": "Keep the chart safe."
+  },
+  "p_steerer.topic.chart.fair": {
+    "text": "Counted out. You have my word."
+  },
+  "report.need.grain_days": {
+    "text": "Grain for {days} days, at a bowl a head."
+  },
+  "report.need.grain_one": {
+    "text": "Grain for one more day."
+  },
+  "report.need.grain_none": {
+    "text": "The grain is gone."
+  },
+  "report.need.storms": {
+    "text": "Grain for {days} days. {storms} days to the autumn storms."
+  },
+  "report.low.meal_wet": {
+    "text": "The meal-sack is wet at the bottom. Some of it is paste."
+  },
+  "report.low.nails": {
+    "text": "Runa counted her nails again: nine."
+  },
+  "report.low.catch": {
+    "text": "A poor day's fishing: {fish} fish."
+  },
+  "report.low.salt": {
+    "text": "No salt to put the catch down in. It keeps two days."
+  },
+  "report.low.hook": {
+    "text": "Hild lost her last good hook on the rocks."
+  },
+  "report.low.linen": {
+    "text": "No clean linen left for binding wounds."
+  },
+  "report.low.cauldron": {
+    "text": "The cauldron's handle came away. No rivet to set it."
+  },
+  "report.low.axe": {
+    "text": "Bran's axe is more notch than edge."
+  },
+  "report.low.sail": {
+    "text": "The shelter's sail has chafed through at a lashing."
+  },
+  "c_runa.point.mainland": {
+    "text": "Smoke, south and west. Folk over there. Fields, too.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.point.mainland": {
+    "text": "See that smoke? The Irish shore. Folk over there. Fields, too.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.point.mainland": {
+    "text": "Smoke over the water. Folk over there. Fields, too.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.point.mainland": {
+    "text": "That's Ireland. Folk over there. Fields, too.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "caption.raid.smoke_far": {
+    "text": "Smoke, far off to the south-west",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.look_skinboat": {
+    "text": "{key}  Look in the skin boat"
+  },
+  "ui.prompt.look_skinboat_click": {
+    "text": "Right-click  Look in the skin boat"
+  },
+  "info.skinboat.look": {
+    "text": "A skin boat: hides on a wicker frame, drawn up in the cave mouth",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.sack": {
+    "text": "A sack of barley, marked with a ring and a stroke through it",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.nails": {
+    "text": "A bundle of nails in a rag, and a mended net",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.mark": {
+    "text": "The same mark is on Thorkel's chart, at Carrick",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.unmarked": {
+    "text": "A storehouse mark, from somewhere over the water",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.empty": {
+    "text": "Nothing in it now but the oars",
+    "tags": ["INFO"]
+  },
+  "info.skinboat.taken": {
+    "text": "The goods are yours to carry home",
+    "tags": ["INFO"]
+  },
+  "p_steerer.skinboat.take": {
+    "text": "Take the grain, the nails and the net."
+  },
+  "caption.raid.goods_stored": {
+    "text": "Grain, nails and net into the stores",
+    "tags": ["INFO"]
+  },
+  "c_runa.raid.goods_stored": {
+    "text": "Thirty nails. Still not a hull's worth. I'll take them.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.raid.goods_stored": {
+    "text": "Carrick barley. That's some days more, anyway.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.raid.goods_stored": {
+    "text": "That sack was someone's winter. Ours now, I suppose.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.raid.goods_stored": {
+    "text": "A net! And nails. Someone's going to miss these.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.ask.home": {
+    "text": "Where have you come from?"
+  },
+  "ui.prompt.ask_beaten": {
+    "text": "{key}  Speak to {name}"
+  },
+  "ui.prompt.ask_beaten_click": {
+    "text": "Right-click  Speak to {name}"
+  },
+  "e_wrecker_ketill.home.1": {
+    "text": "Carrick, over the water. A wreck's anyone's who gets there first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.home.2": {
+    "text": "Colla keeps a storehouse at the landing. Grain, iron, three old spears.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.home.1": {
+    "text": "Carrick Landing. We rowed over for the wreck, as anyone would.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.home.2": {
+    "text": "There's a storehouse there. Grain and iron. Few spears to keep it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.home.1": {
+    "text": "Carrick. My uncle Colla keeps the store at the landing.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.home.2": {
+    "text": "Grain and iron, and hardly a spear. Please. Leave them be.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_ketill.beaten.open": {
+    "text": "Well? Finish it, or ask what you're going to ask.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_svart.beaten.open": {
+    "text": "Enough. I'm done. What do you want?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "e_wrecker_conn.beaten.open": {
+    "text": "I yield. I yield. I'll tell you anything.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.raid.confirm": {
+    "text": "Carrick. It's on Thorkel's chart, plain as day.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.raid.chart": {
+    "text": "Thorkel's chart. I'll keep it. Grain, iron, few spears, at Carrick.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.prompt.council": {
+    "text": "{key}  Call the household to council"
+  },
+  "ui.prompt.council_click": {
+    "text": "Right-click  Call the household to council"
+  },
+  "c_hild.council.open": {
+    "text": "Sit, all of you. We're not rowing out with no notion where to.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.council.grain": {
+    "text": "Grain for a few days more. Then it's limpets and seaweed.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.council.smoke": {
+    "text": "If Father's people got out, they'll look for our smoke. Keep it lit.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.chart": {
+    "text": "It's on the chart. Carrick. Grain, iron, few spears. Thorkel's own hand.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.boat": {
+    "text": "I went through their boat at the cave. Carrick grain. Carrick nails.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.share": {
+    "text": "And a share's a share. Mine counted out like anyone's.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.raid": {
+    "text": "I went up a beach like that once. Kilbrecc. I still see a face.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.mercy": {
+    "text": "Take what we need. Not one life more than that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.iron": {
+    "text": "Iron. Nails, rivets, a forge's worth. However it's got.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.how": {
+    "text": "Bought or carried off, iron's iron. The boat doesn't care.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.council.ask": {
+    "text": "Well, Steerer? How do we go?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.council.quiet": {
+    "text": "By night, quietly. Take what we need and be gone."
+  },
+  "p_steerer.council.threat": {
+    "text": "In daylight, armed. They'll give it up rather than bleed."
+  },
+  "p_steerer.council.trade": {
+    "text": "With what we can spare. We bargain first."
+  },
+  "p_steerer.council.force": {
+    "text": "We take it. Anyone who stands in the way falls."
+  },
+  "c_hild.council.quiet": {
+    "text": "Creeping in. Father never hid his sail. Still, everyone home.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.council.threat": {
+    "text": "Good. Let them see us and think again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.council.trade": {
+    "text": "Trade, then. With a ring and some rope.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.council.force": {
+    "text": "Then we bring everyone back. Everyone, Steerer.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.quiet": {
+    "text": "Quiet suits me. I'm good at quiet.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.threat": {
+    "text": "Frightened folk hand over the good sacks.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.trade": {
+    "text": "Trade what? We've a ring and some rope.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.force": {
+    "text": "More for the boat. Still, I'd rather not bleed for it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.quiet": {
+    "text": "Better. Nobody dies of a quiet night.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.threat": {
+    "text": "Threats get tested. Mind that, when they are.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.trade": {
+    "text": "Good. I'll speak for us. I've the Irish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.council.force": {
+    "text": "Then I'll carry. I'll not strike first. Not again.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.quiet": {
+    "text": "Mind the iron's what you carry back.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.threat": {
+    "text": "Fine by me, if the iron's in the boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.trade": {
+    "text": "Bargain hard. We've little, and they'll know it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.council.force": {
+    "text": "Iron's iron. I'll not ask how.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "ui.gate.launch.council.short": {
+    "text": "The household has not sat in council"
+  },
+  "ui.gate.launch.council.quiet": {
+    "text": "Agreed at the fire: by night, quietly"
+  },
+  "ui.gate.launch.council.threat": {
+    "text": "Agreed at the fire: in daylight, armed"
+  },
+  "ui.gate.launch.council.trade": {
+    "text": "Agreed at the fire: bargain first"
+  },
+  "ui.gate.launch.council.force": {
+    "text": "Agreed at the fire: take it by force"
+  },
+  "ui.journal.aim.council": {
+    "text": "Sit in council with the household at the fire."
+  },
+  "c_hild.hint.council.1": {
+    "text": "Before we sail, we sit at the fire and settle it. All of us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.hint.council.2": {
+    "text": "The fire, Steerer. Call everyone in. Then we sail.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.landing.quiet": {
+    "text": "Quiet now. Back to the boat by first light.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.landing.threat": {
+    "text": "Shields up where they can see them.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.landing.trade": {
+    "text": "Goods first. Let them see we came to deal.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.landing.force": {
+    "text": "Stay close. I'm bringing everyone home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.kept": {
+    "text": "As we said at the fire. Everyone home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.harder": {
+    "text": "That's not what we agreed at the fire.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.carrick.softer": {
+    "text": "Gentler than we meant. I'll not complain.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.landing.quiet": {
+    "text": "Soft feet. I'll find the sacks.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.landing.threat": {
+    "text": "Look hard at them. They'll fold.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.landing.trade": {
+    "text": "Let me count what they offer.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.landing.force": {
+    "text": "Keep the boat close. We'll be loading fast.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.kept": {
+    "text": "Good haul. Good as we planned.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.harder": {
+    "text": "Well. That got bloody.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.carrick.softer": {
+    "text": "We left grain on the shore for that?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.landing.quiet": {
+    "text": "No one wakes. That's the whole of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.landing.threat": {
+    "text": "Show the axe. Don't use it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.landing.trade": {
+    "text": "Let me speak. They'll hear the Irish.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.landing.force": {
+    "text": "I said what I said at the fire. I'll carry.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.kept": {
+    "text": "We did what we said. That's something.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.harder": {
+    "text": "We said no more than we needed. We took more.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.carrick.softer": {
+    "text": "Better than we planned. Thanks be to God.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.landing.quiet": {
+    "text": "The iron's heavy. Two to a bar.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.landing.threat": {
+    "text": "Iron first. Then whatever else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.landing.trade": {
+    "text": "Weigh their iron before you pay.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.landing.force": {
+    "text": "Iron in the boat before anything else.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.kept": {
+    "text": "Iron's aboard. That's what we came for.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.harder": {
+    "text": "Done is done. The iron's aboard.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.carrick.softer": {
+    "text": "Less iron than we said. Still, iron.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "person.short.item_carrick_goods": {
+    "text": "The Carrick goods"
+  },
+  "resource.name.res_nails": {
+    "text": "Nails"
+  },
+  "resource.name.res_net": {
+    "text": "Net"
+  },
+  "ui.gate.kind.council": {
+    "text": "Council"
+  },
+  "c_hild.nudge.council": {
+    "text": "Before we sail, we sit at the fire, all of us.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.council": {
+    "text": "Hild wants us all at the fire before we go. Talk first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.council": {
+    "text": "We should sit at the fire and settle it, before the boat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.council": {
+    "text": "The boat's ready. The rest of us aren't. The fire, first.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.council.no_chart": {
+    "text": "Thorkel had a chart in that chest. Open it, and we'll know where.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
   }
 }

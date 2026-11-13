@@ -82,22 +82,51 @@ export interface SearchContext {
   readonly talks: ReadonlyMap<string, SearchTalkDef>;
   /** Stage 11: the repairs, for their choices' conditions. */
   readonly repairs: RepairsContext | null;
+  /**
+   * The user's fourth playtest (DH-12): the strongbox is taken only in sight (src/sim/narrative/
+   * story4.ts), never out of it: leaving the strand or setting Oddi down takes nothing.
+   */
+  readonly seenTaking: boolean;
+  /**
+   * A reason for the first raid (DH-130 to DH-159; src/sim/narrative/raid.ts): its conditions on
+   * a choice (null: not one of its own), absent without content/raid.json.
+   */
+  readonly raidWhen?: (world: WorldState, when: string) => boolean | null;
+}
+
+/** What content/raid.json adds to the talks: its own, and a choice added to others' talks. */
+export interface RaidTalks {
+  readonly talks: readonly SearchTalkDef[];
+  readonly extraChoices: Readonly<Record<string, SearchTalkDef['choices'][number]>>;
+  readonly when: (world: WorldState, when: string) => boolean | null;
 }
 
 export function searchContext(
   content: Pick<Content, 'searches' | 'balance'>,
   repairs: RepairsContext | null = null,
+  seenTaking = false,
+  raid: RaidTalks | null = null,
 ): SearchContext | null {
   const def = content.searches;
   if (def == null) return null;
+  const talks = new Map([
+    ...def.talks.map((t): [string, SearchTalkDef] => [t.id, t]),
+    ...(repairs === null ? [] : [...repairs.talks]),
+    ...(raid === null ? [] : raid.talks.map((t): [string, SearchTalkDef] => [t.id, t])),
+  ]);
+  // Asking a scavenger where they came from, added to their parleys (DH-136), before "leave".
+  for (const [id, choice] of Object.entries(raid?.extraChoices ?? {})) {
+    const t = talks.get(id);
+    if (t === undefined || t.choices.some((c) => c.key === choice.key)) continue;
+    talks.set(id, { ...t, choices: [choice, ...t.choices] });
+  }
   return {
     def,
     b: parseSearchBalance(content.balance),
-    talks: new Map([
-      ...def.talks.map((t): [string, SearchTalkDef] => [t.id, t]),
-      ...(repairs === null ? [] : [...repairs.talks]),
-    ]),
+    talks,
     repairs,
+    seenTaking,
+    ...(raid === null ? {} : { raidWhen: raid.when }),
   };
 }
 
@@ -294,6 +323,10 @@ function choiceOpen(world: WorldState, when: string | undefined, ctx: SearchCont
     const open = repairChoiceOpen(world, ctx.repairs, when);
     if (open !== null) return open;
   }
+  if (when !== undefined && ctx.raidWhen !== undefined) {
+    const open = ctx.raidWhen(world, when);
+    if (open !== null) return open;
+  }
   switch (when) {
     case undefined:
       return true;
@@ -367,6 +400,8 @@ export interface SearchHooks {
   readonly repair?: (action: string) => void;
   /** Design addendum 2.4 (decision DE-21): the place named for Runa's tool chest. */
   readonly runa?: (place: string) => void;
+  /** A reason for the first raid (DH-130 to DH-159): ask, take the goods, the council's intent. */
+  readonly raid?: (action: string, speaker: Id) => void;
 }
 
 /** The steerer chooses option `index` of a search's words. */
@@ -427,6 +462,14 @@ export function chooseSearch(
     case 'RUNA_BOAT':
       end();
       hooks.runa?.(choice.do.slice('RUNA_'.length));
+      return;
+    case 'ASK_HOME':
+    case 'TAKE_GOODS':
+    case 'COUNCIL_QUIET':
+    case 'COUNCIL_THREAT':
+    case 'COUNCIL_TRADE':
+    case 'COUNCIL_FORCE':
+      hooks.raid?.(choice.do, def.with);
       return;
     case 'OFFER_CONFESSION':
     case 'OFFER_SEAX':
@@ -574,6 +617,8 @@ export function searchSetDown(
   target: Id,
   map: ZoneMap,
   emit: SearchEmit,
+  /** DH-15: Oddi's line when the strongbox is taken in sight ('' for none yet); else his own. */
+  oddiLine?: string,
 ): void {
   const onFoot = world.onFoot;
   if (onFoot === null) return;
@@ -586,14 +631,13 @@ export function searchSetDown(
     const outcome = world.facts[FACT_CHEST] === 'SAVED' ? 'CHEST_FIRST' : 'ODDI_FIRST';
     setFact(world, FACT_ODDI, outcome);
     joinHousehold(world, target);
-    // Oddi seen to first: the scavengers have the strongbox if it is still on the strand.
-    if (world.facts[FACT_CHEST] === undefined) chestTaken(world, ctx, emit);
-    emit({
-      type: 'PERSON_SPOKE',
-      person: target,
-      lineKey:
-        (outcome === 'CHEST_FIRST' ? d.oddi.lines['safeChest'] : d.oddi.lines['safeNoChest']) ?? '',
-    });
+    // Oddi seen to first: before the fourth playtest the scavengers had the strongbox at once if it
+    // was still on the strand; now it is taken only in sight (DH-12), and Oddi speaks of that.
+    if (world.facts[FACT_CHEST] === undefined && !ctx.seenTaking) chestTaken(world, ctx, emit);
+    const own =
+      (outcome === 'CHEST_FIRST' ? d.oddi.lines['safeChest'] : d.oddi.lines['safeNoChest']) ?? '';
+    const said = outcome === 'CHEST_FIRST' || !ctx.seenTaking ? own : (oddiLine ?? own);
+    if (said !== '') emit({ type: 'PERSON_SPOKE', person: target, lineKey: said });
     emit({ type: 'SEARCH_RESOLVED', search: 'ODDI', outcome });
     fireOneShot(world, d.oddi.beat, () => undefined);
     return;
@@ -715,6 +759,7 @@ function stepChest(world: WorldState, ctx: SearchContext, emit: SearchEmit): voi
     return;
   }
   if (
+    !ctx.seenTaking &&
     world.facts[FACT_ODDI_FOUND] === true &&
     onFoot.zone !== d.zone &&
     onFoot.carrying !== d.chest.id

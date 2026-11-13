@@ -23,6 +23,10 @@ import combat from '../../content/combat.json';
 import searches from '../../content/searches.json';
 import repairs from '../../content/repairs.json';
 import launch from '../../content/launch.json';
+import company from '../../content/company.json';
+import guidance from '../../content/guidance.json';
+import finds from '../../content/finds.json';
+import raid from '../../content/raid.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
 import zoneMachair from '../../content/zones/zone_sk_machair.json';
 import zoneHagseat from '../../content/zones/zone_sk_hagseat.json';
@@ -53,6 +57,10 @@ export const BUNDLED_FILES: ContentFiles = {
   searches,
   repairs,
   launch,
+  company,
+  guidance,
+  finds,
+  raid,
   zoneStrand,
   zoneMachair,
   zoneHagseat,

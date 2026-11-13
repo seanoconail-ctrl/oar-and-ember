@@ -110,7 +110,9 @@ class Part:
 
     def put(self, x, y, mat, z=None):
         x, y = int(x), int(y)
-        if 0 <= x < CW and 0 <= y < CH:
+        # A held weapon may reach past the working canvas into its own sheet's margin (DH-76).
+        px, top, bottom = WEAPON_PAD[CW > 48] if self.layer == 'weapon' else (0, 0, 0)
+        if -px <= x < CW + px and -top <= y < CH + bottom:
             self.px[(x, y)] = (mat, self.z if z is None else z)
 
     def erase(self, x, y):
@@ -184,6 +186,9 @@ class Part:
 # Canvas size for parts (layers may be larger than the 32 x 48 body: the bow's 48 x 56).
 CW, CH = 48, 56
 OX, OY = 8, 4        # the body canvas sits at (8, 4) inside the working canvas
+# The user's fourth playtest (DH-76): a held weapon may reach past the working canvas, up to these
+# pixels each way (left/right, above, below); its layer's sheet is that much larger (weapon_size).
+WEAPON_PAD = {False: (0, 4, 8), True: (6, 10, 12)}
 
 
 def set_canvas(big):
@@ -593,9 +598,40 @@ MODEL_HILD = Model('hild', 5.5, forearm=2,
                    heads=HEAD_HILD)
 
 
+# The user's fourth playtest (request 20, decision DH-76): a weapon held to fight, seen from the
+# front or behind, is drawn reaching along the ground at the world's own scale (one pixel a unit, as
+# the facing east or west already shows it), not foreshortened by the figure's depth (TILT): the
+# blade or spear tip then stands over the ground its hitbox reaches. Set by draw_arms while it
+# draws a held weapon facing s or n: (facing, the grip, the tip's reach forward of the grip).
+WEAPON_REACH = None
+
+
 def P2(facing, pt):
     x, y, d = project(facing, pt)
+    wr = WEAPON_REACH
+    if wr is not None and wr[0] == facing:
+        g, reach = wr[1], wr[2]
+        sgn = 1.0 if facing == 's' else -1.0
+        df = pt[1] - g[1]
+        # Along the weapon at the ground's scale; towards the tip, the hand's own reach forward too,
+        # so the tip lands where the hitbox reaches and the grip stays in the drawn hand
+        # (behind the grip, the butt keeps the figure's depth: it runs back past the body, not up
+        # over the head).
+        if df > 0:
+            y += sgn * df * (1 - TILT)
+            y += sgn * g[1] * (1 - TILT) * min(1.0, df / max(1e-6, reach))
     return (x + OX, y + OY, d)
+
+
+def held_reach(facing, grip, d, length):
+    """Starts drawing a held weapon at its ground reach (DH-76): facing s or n only."""
+    global WEAPON_REACH
+    WEAPON_REACH = (facing, grip, max(1e-6, d[1] * length)) if facing in 's n' else None
+
+
+def held_reach_end():
+    global WEAPON_REACH
+    WEAPON_REACH = None
 
 
 def P2g(facing, pt, raise_ok=True):
@@ -2495,13 +2531,17 @@ def draw_arms(parts, facing, j, pose, ch):
             continue
         wp = Part('weapon', 0, kind, side=0)
         if kind in ('sword', 'dane', 'club'):
+            fd = vnorm(pose.wdir or (0.0, 1.0, 0.0))
+            held_reach(facing, R, fd, {'sword': 12.0, 'dane': 14.0, 'club': 9.5}[kind])
             finisher_weapon(wp, facing, R, pose, kind)
+            held_reach_end()
             parts.append(wp)
             continue
         if kind == 'seax':
             if combat:
                 d = vnorm(pose.wdir or (0.0, 1.0, 0.0))
                 grip = add(R, vscale(d, 0.5))
+                held_reach(facing, grip, d, 7.5)
                 blade_line(wp, facing, add(grip, vscale(d, -2.5)), grip, 1, 'haft', 0.2)
                 blade_line(wp, facing, grip, add(grip, vscale(d, 7.5)), 2 if facing in 'e w' else 1, 'blade', 0.25)
                 tip = P2(facing, add(grip, vscale(d, 5.5)))
@@ -2530,6 +2570,7 @@ def draw_arms(parts, facing, j, pose, ch):
             else:
                 butt = add(R, vscale(d, -2.0))
                 end = add(R, vscale(d, 11.0))
+                held_reach(facing, R, d, 11.0)
                 blade_line(wp, facing, butt, end, 2, 'haft', 0.2)
                 edge = vnorm(vcross(d, (1.0, 0.0, 0.0))) if abs(d[0]) < 0.8 else vnorm(vcross(d, (0.0, 1.0, 0.0)))
                 if edge[1] < 0 and abs(d[1]) < 0.6:
@@ -2539,11 +2580,14 @@ def draw_arms(parts, facing, j, pose, ch):
             d = vnorm(pose.wdir if combat and pose.wdir else (0.0, 0.35, 0.94))
             butt = add(R, vscale(d, -15.0))
             tip = add(R, vscale(d, 27.0))
+            if combat:
+                held_reach(facing, R, d, 28.5)
             blade_line(wp, facing, butt, tip, 1 if not combat or facing in 's n' else 2, 'haft', 0.2)
             head0 = add(R, vscale(d, 23.0))
             blade_line(wp, facing, head0, add(tip, vscale(d, 1.5)), 2, 'blade', 0.3)
             t = P2(facing, add(tip, vscale(d, -1.0)))
             wp.put(t[0], t[1], 'edge', t[2] + 0.35)
+        held_reach_end()
         parts.append(wp)
 
 
@@ -3973,8 +4017,11 @@ def render_character(ch, states, mats, order, names, sizes, soft):
             for f in FACINGS:
                 for i, pose in enumerate(poses):
                     parts = fig(ch, f, pose, poses[i - 1])
-                    # Cloth that reaches the ground lies on it: nothing below the sole row.
+                    # Cloth that reaches the ground lies on it: nothing below the sole row. A held
+                    # weapon facing south reaches out over the ground in front (DH-76), past it.
                     for part in parts:
+                        if part.layer == 'weapon':
+                            continue
                         part.px = {k: v for k, v in part.px.items() if k[1] <= OY + 46}
                     sep = separate(parts, order[f], soft)
                     if 'blood' in names:
@@ -4172,7 +4219,10 @@ def write_character(key):
         poses = dict(WORK_POSES, **FIGHT_POSES)
         intro = INTRO_WRECKER.format(name=key.capitalize())
     arms_size = ((CW, CH), (OX + PIVOT[0], OY + PIVOT[1]))
-    sizes = {'bow': ((48, 56), (24, 51)) if not big else arms_size, 'weapon': arms_size, 'shield': arms_size}
+    # The weapon's sheet has the margin a held weapon may reach into (DH-76).
+    px, top, bottom = WEAPON_PAD[big]
+    weapon_size = ((CW + 2 * px, CH + top + bottom), (OX + PIVOT[0] + px, OY + PIVOT[1] + top))
+    sizes = {'bow': ((48, 56), (24, 51)) if not big else arms_size, 'weapon': weapon_size, 'shield': arms_size}
     sheets = render_character(ch, states, mats, order, names, sizes, getattr(ch, 'soft', SOFT))
     if key in SLUNG:
         # The same shield slung on the back in every state (decision DE-14): the game draws it in

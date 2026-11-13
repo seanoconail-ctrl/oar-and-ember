@@ -63,6 +63,8 @@ type Kind =
   | 'smoke'
   | 'spark'
   | 'moth'
+  /** The user's fourth playtest (DH-125): the hearth's smoke wisps, from fx_hearth_smoke. */
+  | 'wisp'
   /** Stage 9: a drop of blood in flight (fx_gore spray), and a hit's flash. */
   | 'blood'
   | 'flash';
@@ -159,7 +161,13 @@ export interface FrameInput {
   /** Drawing a bow: the camera leads further (lookAheadAiming). */
   readonly aiming?: boolean;
   /** The camp fire in this zone (world pixels), burning or not; and whether it is dark. */
-  readonly fire?: { readonly x: number; readonly y: number; readonly lit: boolean } | null;
+  readonly fire?: {
+    readonly x: number;
+    readonly y: number;
+    readonly lit: boolean;
+    /** Under the S1 sail roof: the smoke spreads under it and finds the edge (DH-125). */
+    readonly roofed?: boolean;
+  } | null;
   readonly night?: boolean;
 }
 
@@ -612,6 +620,19 @@ export class ZoneVisuals {
           vz: 30 + this.#rand() * 25,
           life: 1.2,
         });
+      // The hearth's smoke wisps (DH-125): soft curls that grow and thin as they rise; fewer with
+      // reduced motion (Book 7 section 14).
+      if (this.#rand() < dt * 2.4 * (this.reducedMotion ? 0.5 : 1))
+        this.#emit({
+          kind: 'wisp',
+          x: fire.x + (this.#rand() - 0.5) * 6,
+          y: fire.y + 2,
+          vx: (this.#rand() - 0.5) * 3,
+          vy: 0,
+          z: 8,
+          vz: 7 + this.#rand() * 4,
+          life: 5.5 + this.#rand() * 1.5,
+        });
       if (
         input.night === true &&
         this.#rand() < dt * 0.6 &&
@@ -634,6 +655,18 @@ export class ZoneVisuals {
         // Above the wall head the wind takes it east.
         const over = Math.max(0, q.z - 56);
         q.vx = this.wind.dirX * Math.min(40, over * 0.9);
+      }
+      if (q.kind === 'wisp') {
+        if (fire?.roofed === true && q.z > 40) {
+          // Under the sail it slows, spreads and drifts to the cloth's edge, then is taken.
+          q.vz = Math.max(1.5, q.vz * 0.97);
+          q.vx += (q.x >= fire.x ? 1 : -1) * 6 * dt;
+          q.vy -= 2.5 * dt;
+        } else {
+          const over = Math.max(0, q.z - 56);
+          q.vx = this.wind.dirX * Math.min(34, over * 0.8) + Math.sin(q.age * 1.7 + q.life) * 2.5;
+          q.vy = this.wind.dirY * Math.min(14, over * 0.3);
+        }
       }
       if (q.kind === 'midge') {
         q.x += Math.sin(t * 7 + q.y) * 0.4;
@@ -1040,6 +1073,18 @@ export class ZoneVisuals {
           y: q.y - q.z,
           layer: 'actor',
           sort: q.y + 0.6,
+        });
+        continue;
+      }
+      if (q.kind === 'wisp') {
+        const n = input.anims.get('fx_hearth_smoke')?.['wisp']?.frames ?? 1;
+        marks.push({
+          sheet: 'fx_hearth_smoke',
+          frame: `wisp/-/${Math.min(n - 1, Math.floor((q.age / q.life) * n))}`,
+          x: q.x,
+          y: q.y - q.z,
+          layer: 'actor',
+          sort: q.y + 40,
         });
         continue;
       }

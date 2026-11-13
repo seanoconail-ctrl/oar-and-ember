@@ -162,6 +162,10 @@
       "finish": "c_hild.camp.finish",
       "finished": "c_hild.camp.finished",
       "nextLineSeconds": 4,
+      "mark": {
+        "x": 31.9,
+        "y": 30.45
+      },
       "steady": {
         "x": 34.6,
         "y": 29.95,
@@ -232,6 +236,63 @@
       "about": "Curiosity rewarded (Book 9 section 03): the seal sinks when the steerer comes near and rises again; standing gulls lift within their distance and settle further along.",
       "sealSinkTiles": 6,
       "gullLiftTiles": 3
+    },
+    "story4": {
+      "about": "The user's fourth playtest's story and scenes (decisions DH-10 to DH-39; Book 4 section 08; Book 8). Every number is Book 10's (section 25, Story and scenes).",
+      "remarks": {
+        "about": "The steerer's word over a body (DH-24): Thorkel's first (one line a look, in order, the first with his key if it is taken from him), then each fallen foe's once, from a pool never used twice running. Shown under the steerer's name with a breath out, no blip (Book 11 section 08).",
+        "thorkel": "C_THORKEL",
+        "thorkelLines": [
+          "p_steerer.remark.thorkel.01",
+          "p_steerer.remark.thorkel.02",
+          "p_steerer.remark.thorkel.03"
+        ],
+        "fallenLines": [
+          "p_steerer.remark.fallen.01",
+          "p_steerer.remark.fallen.02",
+          "p_steerer.remark.fallen.03",
+          "p_steerer.remark.fallen.04"
+        ]
+      },
+      "snatch": {
+        "about": "The strongbox taken in sight (DH-12 to DH-16): while the steerer carries Oddi, one of the band breaks from the dune grass, hauls the box up and runs for the north edge with it. Caught, he drops it and runs on; away, the household remembers who has the silver.",
+        "landward": "n",
+        "exit": "n",
+        "thieves": [
+          {
+            "person": "E_WRECKER_CONN",
+            "grab": "e_wrecker_conn.snatch.grab",
+            "caught": "e_wrecker_conn.snatch.caught",
+            "oddiShout": "c_oddi.snatch.shout",
+            "oddiSafe": "c_oddi.snatch.safe.conn"
+          },
+          {
+            "person": "E_WRECKER_SVART",
+            "grab": "e_wrecker_svart.snatch.grab",
+            "caught": "e_wrecker_svart.snatch.caught",
+            "oddiShout": "c_oddi.snatch.shout",
+            "oddiSafe": "c_oddi.snatch.safe.svart"
+          },
+          {
+            "person": "E_WRECKER_KETILL",
+            "grab": "e_wrecker_ketill.snatch.grab",
+            "caught": "e_wrecker_ketill.snatch.caught",
+            "oddiShout": "c_oddi.snatch.shout",
+            "oddiSafe": "c_oddi.snatch.safe.ketill"
+          }
+        ]
+      },
+      "runa": {
+        "about": "Runa home at the camp while her tool chest is not yet at one of her safe places (DH-31): she reminds the steerer to bring it into the broch.",
+        "lines": ["c_runa.remind.tools.01", "c_runa.remind.tools.02", "c_runa.remind.tools.03"]
+      },
+      "fireFound": {
+        "about": "Hild's first-night lines once her father's body has been found (DH-21): each line on the left is said as the one on the right.",
+        "swap": {
+          "c_hild.fire.night.02": "c_hild.fire.night.02_found",
+          "c_hild.fire.aims.01": "c_hild.fire.aims.01_found"
+        }
+      }
     }
   },
   "aims": [
@@ -1034,7 +1095,14 @@
         {
           "speaker": "C_HILD",
           "textKey": "c_hild.hint.stores.1",
-          "canCall": false
+          "canCall": false,
+          "when": [
+            {
+              "not": {
+                "fact": "ch1.lashing_cut"
+              }
+            }
+          ]
         },
         {
           "speaker": "C_BRAN",
@@ -1044,7 +1112,25 @@
             "speaker": "C_HILD",
             "textKey": "c_hild.hint.stores.2_alt",
             "canCall": false
-          }
+          },
+          "when": [
+            {
+              "not": {
+                "fact": "ch1.lashing_cut"
+              }
+            },
+            {
+              "has": "ITEM_BOW"
+            },
+            {
+              "near": {
+                "zone": "ZONE_SK_STRAND",
+                "x": 40.4,
+                "y": 37.6,
+                "r": 12
+              }
+            }
+          ]
         }
       ],
       "givenBy": {
@@ -1270,6 +1356,42 @@
         {
           "speaker": "C_HILD",
           "textKey": "c_hild.hint.rites.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
+      "id": "council",
+      "journalKey": "ui.journal.aim.council",
+      "opensWhen": [
+        {
+          "fact": "council.open"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.council"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 35.4,
+            "y": 31.6,
+            "r": 4
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.council.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.council.2",
           "canCall": false
         }
       ]

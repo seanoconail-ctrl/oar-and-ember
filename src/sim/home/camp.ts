@@ -119,6 +119,11 @@ export interface CampContext {
    * without the row): counted towards the next day's food until they are brought up (DG-90).
    */
   readonly mastStoresRd: number;
+  /**
+   * The morning porridge (Book 10 section 22, "Reasons for the first raid", grainShare; decision
+   * DH-131): rations a mouth eats from the grain each day while any is left (0 without the row).
+   */
+  readonly grainShare: number;
   /** Ticks of a hands-on action, and of lying down before the night passes. */
   readonly actionTicks: number;
   readonly sleepTicks: number;
@@ -171,6 +176,19 @@ function mastStoresFrom(balance: unknown): number {
   return Number(m[1]);
 }
 
+/** Book 10 grainShare (decision DH-131); 0 in a balance without the first raid's table. */
+function grainShareFrom(balance: unknown): number {
+  const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  const list = tables?.['storyGates']?.['reasonsForTheFirstRaid'];
+  const row = Array.isArray(list)
+    ? (list as Record<string, string>[]).find((r) => r['Key'] === 'grainShare')
+    : undefined;
+  if (row === undefined) return 0;
+  const m = /^(\d+(?:\.\d+)?) rd a mouth a day/.exec(row['Value'] ?? '');
+  if (m === null) throw new Error(`balance.json: grainShare is "${row['Value'] ?? ''}"`);
+  return Number(m[1]);
+}
+
 /**
  * The food the household reckons on for tomorrow, in ration-days: the stores, and the ship's stores
  * still lashed on the mast or lying in the shallows, which it can see and means to bring up
@@ -210,6 +228,7 @@ export function campContext(content: Pick<Content, 'camp' | 'balance'>): CampCon
     shelterWorkerDays: buildingWorkerDays(content.balance, def.shelter.balanceRow),
     shelterFinishFrom: finishFrom(content.balance),
     mastStoresRd: mastStoresFrom(content.balance),
+    grainShare: grainShareFrom(content.balance),
     actionTicks: Math.round(taskBalance.action.actionSeconds * TICKS_PER_SECOND),
     sleepTicks: Math.round(def.sleepSeconds * TICKS_PER_SECOND),
   };
@@ -313,7 +332,12 @@ export function skillRatio(work: WorkBalance, level: number): number {
 
 /** Food in the stores, in ration-days. */
 export function foodRd(home: HomeState): number {
-  return (home.stores['RES_SALTED_FISH'] ?? 0) + home.fresh.reduce((s, f) => s + f.rd, 0);
+  // Grain is food (Book 10 section 03; decision DH-131): the meal-sack counts in every runway.
+  return (
+    (home.stores['RES_SALTED_FISH'] ?? 0) +
+    (home.stores['RES_GRAIN'] ?? 0) +
+    home.fresh.reduce((s, f) => s + f.rd, 0)
+  );
 }
 
 export type SiteUse =
@@ -331,10 +355,19 @@ export type SiteUse =
    * chest, raise the sail between the oars.
    */
   | { readonly kind: 'OPENING'; readonly site: string; readonly target: Id }
+  /** The user's fourth playtest (DH-115): a small find off the path, looked at or taken. */
+  | {
+      readonly kind: 'FIND';
+      readonly site: string;
+      readonly take: boolean;
+      readonly nameKey: string;
+    }
   | {
       readonly kind: 'REFUSE';
       readonly site: string;
       readonly reason: 'NO_DRIFTWOOD' | 'NO_FOOD' | 'TOO_EARLY_TO_SLEEP';
+      /** Too early to sleep: the hour a bed ends the day from (Book 10 sleepAfter; DH-101). */
+      readonly after?: string;
     };
 
 /** The sites of a zone that exist at the camp's stage. */
@@ -376,7 +409,12 @@ export function siteUse(world: WorldState, ctx: CampContext, site: CampSite): Si
     case 'BED':
       return sleepAllowed(world, ctx.time)
         ? { kind: 'SLEEP', site: site.key }
-        : { kind: 'REFUSE', site: site.key, reason: 'TOO_EARLY_TO_SLEEP' };
+        : {
+            kind: 'REFUSE',
+            site: site.key,
+            reason: 'TOO_EARLY_TO_SLEEP',
+            after: clockText(ctx.time.sleepAfter),
+          };
     case 'BUILD':
       // The frame and the sail are the opening's own actions (src/sim/narrative/wreck.ts); the
       // finishing is building work from 06:00 on the second day (DG-12), towards the S1 roof.
@@ -410,6 +448,30 @@ export interface PlacedUse {
   readonly y: number;
   /** Its own reach in pixels (Stage 10: words over a wall), instead of the interaction radius. */
   readonly reach?: number;
+  /**
+   * The ground it covers, in pixels (the user's fourth playtest, DH-100: the steerer's bed, 2 x 1
+   * tiles): its distance is to the nearest point of this, so standing anywhere on it is on it.
+   */
+  readonly area?: {
+    readonly x0: number;
+    readonly y0: number;
+    readonly x1: number;
+    readonly y1: number;
+  };
+  /**
+   * Offered before anything else in reach (the user's fourth playtest, DH-10): the shelter's frame
+   * and sail at their marked spot, which lies on the lean-to's own bed.
+   */
+  readonly first?: boolean;
+}
+
+/** How far `at` is from a use: from its area if it has one (0 standing on it), else its point. */
+export function useDistance(u: PlacedUse, at: { readonly x: number; readonly y: number }): number {
+  const a = u.area;
+  if (a === undefined) return Math.hypot(u.x - at.x, u.y - at.y);
+  const dx = Math.max(a.x0 - at.x, 0, at.x - a.x1);
+  const dy = Math.max(a.y0 - at.y, 0, at.y - a.y1);
+  return Math.hypot(dx, dy);
 }
 
 /** Every camp use in a zone now: its sites, and the people who can be tended. */
@@ -425,7 +487,17 @@ export function campUses(
   if (world.facts[FACT_AT_BROCH] !== true) return out;
   for (const site of activeSites(world, ctx, map.zone)) {
     const use = siteUse(world, ctx, site);
-    if (use !== null) out.push({ use, x: site.x * map.tile, y: site.y * map.tile });
+    if (use === null) continue;
+    const T = map.tile;
+    const a = site.area;
+    out.push({
+      use,
+      x: site.x * T,
+      y: site.y * T,
+      ...(a === undefined
+        ? {}
+        : { area: { x0: a.x0 * T, y0: a.y0 * T, x1: a.x1 * T, y1: a.y1 * T } }),
+    });
   }
   for (const [id, actor] of Object.entries(actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
     if (actor.pose === 'carried' || actor.pose === 'down' || actor.pose === 'call') continue;
@@ -438,7 +510,9 @@ export function campUses(
 
 /**
  * The nearest camp use within `reach` pixels of `at`: something that can be done before a reason
- * why something cannot (too early to sleep), so a refusal never hides a task beside it.
+ * why something cannot (too early to sleep), so a refusal never hides a task beside it. A bed the
+ * steerer stands on comes before anything else when it can be slept in (the user's fourth
+ * playtest, DH-100: whatever lies beside it, the bed under the feet is the one wanted).
  */
 export function campUseNear(
   uses: readonly PlacedUse[],
@@ -446,12 +520,19 @@ export function campUseNear(
   reach: number,
 ): (PlacedUse & { readonly d: number }) | null {
   let best: (PlacedUse & { d: number }) | null = null;
-  const rank = (u: PlacedUse): number => (u.use.kind === 'REFUSE' ? 1 : 0);
-  for (const u of uses) {
-    const d = Math.hypot(u.x - at.x, u.y - at.y);
+  const rank = (u: PlacedUse & { d: number }): number =>
+    u.use.kind === 'SLEEP' && u.area !== undefined && u.d <= 0
+      ? -2
+      : u.first === true
+        ? -1
+        : u.use.kind === 'REFUSE'
+          ? 1
+          : 0;
+  for (const u0 of uses) {
+    const d = useDistance(u0, at);
+    const u = { ...u0, d };
     if (d > (u.reach ?? reach)) continue;
-    if (best === null || rank(u) < rank(best) || (rank(u) === rank(best) && d < best.d))
-      best = { ...u, d };
+    if (best === null || rank(u) < rank(best) || (rank(u) === rank(best) && d < best.d)) best = u;
   }
   return best;
 }
@@ -462,16 +543,26 @@ export function campUseAt(
   map: ZoneMap,
   tile: { readonly tx: number; readonly ty: number },
 ): PlacedUse | null {
-  // Something that can be done before a reason why something cannot (as campUseNear).
+  // Something that can be done before a reason why something cannot (as campUseNear); a bed
+  // clicked anywhere on it, when it can be slept in, before anything else there (DH-100).
   let refusal: PlacedUse | null = null;
+  let found: PlacedUse | null = null;
   for (const u of uses) {
     const t = tileOf(map, u.x, u.y - 0.001);
-    if (t.tx === tile.tx && (t.ty === tile.ty || t.ty === tile.ty + 1)) {
-      if (u.use.kind !== 'REFUSE') return u;
-      refusal ??= u;
+    const a = u.area;
+    const onArea =
+      a !== undefined &&
+      (tile.tx + 1) * map.tile > a.x0 &&
+      tile.tx * map.tile < a.x1 &&
+      (tile.ty + 1) * map.tile > a.y0 &&
+      tile.ty * map.tile < a.y1;
+    if (onArea && u.use.kind === 'SLEEP') return u;
+    if (onArea || (t.tx === tile.tx && (t.ty === tile.ty || t.ty === tile.ty + 1))) {
+      if (u.use.kind !== 'REFUSE') found ??= u;
+      else refusal ??= u;
     }
   }
-  return refusal;
+  return found ?? refusal;
 }
 
 export type CampEvent =
@@ -826,6 +917,13 @@ export function startDay(world: WorldState, ctx: CampContext): void {
     // The day's ration for every mouth: the oldest fresh fish first, then the salt fish.
     const mouths = 1 + world.household.residents.length;
     let need = mouths * ctx.work.foodPerPersonPerDay;
+    // The morning porridge first, from the grain while any is left (decision DH-131).
+    const grain = home.stores['RES_GRAIN'] ?? 0;
+    const porridge = Math.min(grain, mouths * ctx.grainShare, need);
+    if (porridge > 0) {
+      home.stores['RES_GRAIN'] = grain - porridge;
+      need -= porridge;
+    }
     home.fresh.sort((a, b) => a.day - b.day);
     for (const lot of home.fresh) {
       const take = Math.min(lot.rd, need);

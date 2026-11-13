@@ -41,7 +41,7 @@ test('the shelter’s frame, then the sail over it, with Hild’s word after eac
   page,
 }) => {
   test.setTimeout(240_000);
-  await startPlay(page, 'A', 'camp=broch&shelter=down&fire=lit&time=10:00&at=33.6,30.6&capture');
+  await startPlay(page, 'A', 'camp=broch&shelter=down&fire=lit&time=10:00&at=31.9,30.45&capture');
   await step(page, 3);
   await expect(overlay(page)).toHaveAttribute('data-shelter', 'FOLDED');
   await page.keyboard.press('KeyE');

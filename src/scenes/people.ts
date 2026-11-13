@@ -57,6 +57,8 @@ export const CARRIED_LOOKS: Readonly<Record<Id, string>> = {
   // Design addendum 2.4: the ship's silver in its strongbox, and the stores from the mast.
   ITEM_SHIP_SILVER: 'prop_strongbox',
   ITEM_MAST_STORES: 'prop_stores_bundle',
+  // A reason for the first raid (DH-139): the skin boat's Carrick grain, nails and net.
+  ITEM_CARRICK_GOODS: 'prop_carrick_goods',
 };
 
 export function personLook(file: LayerFile): PersonLook {
