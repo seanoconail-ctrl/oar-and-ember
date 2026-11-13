@@ -48,6 +48,7 @@ import { pt3CombatCapture } from './capturePt3Combat.ts';
 import { openingCapture } from './captureOpening.ts';
 import { stormCapture } from './captureStorm.ts';
 import { STORY_PORT, storyCapture } from './captureStory.ts';
+import { WORLD_PORT, worldCapture } from './captureWorld.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
@@ -1713,7 +1714,22 @@ if (import.meta.filename === process.argv[1]) {
     console.error('usage: npm run capture -- <label>   (e.g. stage-07)');
     process.exit(1);
   }
-  if (label === 'playtest-3-story') {
+  if (label === 'playtest-4-world' || label === 'playtest-4-world-before') {
+    // The user's fourth playtest's world and art (DH-100 on): docs/art/playtest-4/world/.
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: WORLD_PORT, strictPort: true, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await worldCapture(browser, label.endsWith('-before')));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'playtest-3-story') {
     // The user's third playtest's story (DG-12, DG-14): docs/art/playtest-3/story/ (captureStory.ts).
     const server = await createServer({
       root: REPO_ROOT,

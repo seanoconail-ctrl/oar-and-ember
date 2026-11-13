@@ -2291,18 +2291,39 @@ def hild_carried(facing, i):
 
 def body_carried(ch, facing, i):
     """Anyone in a tunic across the steerer's (or a bearer's) shoulders (Stage 10: Oddi, Thorkel's
-    body): Hild's carried pose with their own head and tunic, no braid."""
+    body): Hild's carried pose with their own head and tunic, no braid. The heavy build (Bran, downed
+    at the fold and lifted: the user's fourth playtest, DH-70) is the same pose a pixel thicker."""
     keep = dict(CUR)
     CUR.update(head=ch.model.heads, braid=False, cloth='tunic')
     try:
-        parts = _tunic_carried(facing, i)
+        parts = _tunic_carried(facing, i, getattr(ch.model, 'heavy', False))
     finally:
         CUR.update(keep)
     return [p for p in parts if p.name != 'braid']
 
 
-def _tunic_carried(facing, i):
-    return _tunic_variant()(facing, i)
+def _tunic_carried(facing, i, heavy=False):
+    return (_tunic_variant_heavy() if heavy else _tunic_variant())(facing, i)
+
+
+def _tunic_variant_heavy():
+    """The heavy build across the shoulders: the trunk and thighs a pixel thicker, the side view's
+    body a pixel deeper each way (the user's fourth playtest, DH-70)."""
+    import inspect
+    src = inspect.getsource(hild_carried)
+    src = src.replace('def hild_carried(facing, i):', 'def _carried_tunic_heavy(facing, i):')
+    src = src.replace("m('dress_far')", "m('tunic_far')").replace("m('dress')", "m('tunic')")
+    src = src.replace('d = Doll()', 'd = FightDoll()')
+    src = src.replace("p.seg((X(5), Y(16.5)), (X(21), Y(16.5)), 5,", "p.seg((X(5), Y(16.5)), (X(21), Y(16.5)), 6,")
+    src = src.replace("p.row(Y(14), X(9), X(19),", "p.row(Y(13), X(8), X(20),")
+    src = src.replace("p.seg((X(21), Y(16)), (X(26), Y(17.5)), 4,", "p.seg((X(21), Y(16)), (X(26), Y(17.5)), 5,")
+    src = src.replace("for y in range(12, 20):", "for y in range(11, 20):")
+    src = src.replace("x0 = 8 if y > 13 else 9", "x0 = 7 if y > 12 else 8")
+    src = src.replace("p.row(Y(y), X(x0), X(14), m('tunic'))", "p.row(Y(y), X(x0), X(15), m('tunic'))")
+    src = src.replace("p.seg((X(14), Y(16)), (X(19), Y(17)), 4,", "p.seg((X(14), Y(16)), (X(19), Y(17)), 5,")
+    ns = dict(globals())
+    exec(src, ns)
+    return ns['_carried_tunic_heavy']
 
 
 # ------------------------------------------------------------------------------------- output
@@ -4112,8 +4133,9 @@ def write_character(key):
             names['shield'] = f'layer_shield_round_{nk}'
         base = [s_ for s_ in (HEAVY_STATES if heavy else STEERER_STATES) if s_[0] != 'draw']
         states = base + fight_states(ch, heavy) + [('sit', sit_kneel, 18, True)]
-        if not heavy:
-            states += [('down', Lying('downed', 2), 40, True), ('carried', None, 5, True)]
+        # Downed and carried: Oddi from the surf, and Bran too, downed at the fold and lifted (the
+        # user's fourth playtest: his sheet had no carried pose, and drawing it stopped the game, DH-70).
+        states += [('down', Lying('downed', 2), 40, True), ('carried', None, 5, True)]
         mats, order, events = RESIDENT_MATS[key], ORDER_ARMED, STEERER_EVENTS
         poses = dict(WORK_POSES, **FIGHT_POSES, sit='seated', down='lying', carried='carried')
         intro = INTRO_RESIDENT.format(name={'oddi': 'Oddi Gunnarsson (C_ODDI)', 'bran': 'Bran Gilla Brigte (C_BRAN), the heavy build'}[key])
