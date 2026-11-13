@@ -55,7 +55,10 @@ const MOVES: readonly [MoveName, string, number][] = [
   ['lunge', 'lunge', 1],
 ];
 
-type Px = { x: number; y: number };
+interface Px {
+  x: number;
+  y: number;
+}
 
 /** The drawn pixels of a frame, relative to the sheet's foot anchor. */
 function pixels(img: IndexedImage, pivot: Px): Px[] {

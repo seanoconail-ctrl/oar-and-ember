@@ -73,7 +73,7 @@ export function findFrame(world: WorldState, f: FindDef): string {
 
 /** The finds that can be used here now: a READ always, a TAKE until taken. */
 export function findPlacedUses(world: WorldState, ctx: FindsContext, map: ZoneMap): PlacedUse[] {
-  if (world.onFoot === null || world.onFoot.carrying !== null || world.talk !== null) return [];
+  if (world.onFoot?.carrying !== null || world.talk !== null) return [];
   const out: PlacedUse[] = [];
   for (const f of findsIn(ctx, map.zone)) {
     if (f.kind === 'TAKE' && found(world, f.key)) continue;

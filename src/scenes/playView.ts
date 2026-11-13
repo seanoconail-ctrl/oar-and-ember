@@ -801,17 +801,17 @@ export function startPlay(
           ? 'MUS_LAUNCH'
           : inFight
             ? 'MUS_COMBAT_1'
-            : ritesMusic !== null
-              ? ritesMusic
-              : (placeMusic?.want(engine.now, {
-                  // Design addendum 2.4: the music arrives gently with the first fire.
-                  allowed:
-                    sim.state.facts['ch1.phase'] === undefined
-                      ? sim.state.facts[FACT_HILD_SAFE] === true
-                      : sim.state.facts['ch1.fire_lit'] === true,
-                  home: atHome,
-                  phase,
-                }) ?? null);
+            : (ritesMusic ??
+              placeMusic?.want(engine.now, {
+                // Design addendum 2.4: the music arrives gently with the first fire.
+                allowed:
+                  sim.state.facts['ch1.phase'] === undefined
+                    ? sim.state.facts[FACT_HILD_SAFE] === true
+                    : sim.state.facts['ch1.fire_lit'] === true,
+                home: atHome,
+                phase,
+              }) ??
+              null);
     if (want === null) {
       if (audio.director.state !== null) audio.silence(engine.now);
     } else if (audio.director.state !== want) audio.play(want, engine.now);
@@ -910,7 +910,7 @@ export function startPlay(
             map,
             stageAll,
             sim.state.tick,
-            campDef?.sites.find((s) => s.kind === 'BUILD' && s.zone === map.zone),
+            campDef.sites.find((s) => s.kind === 'BUILD' && s.zone === map.zone),
           );
     // Stage 11: the boat and its repairs, the wreck's rigging, the skiff, the ship of stones.
     const repairDef = content.repairs;

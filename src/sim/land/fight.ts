@@ -4431,7 +4431,6 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     const cornered =
       !a.moving &&
       fa.ai.mode === 'FLEE' &&
-      fa.spared === undefined &&
       fa.f.hitstop === 0 &&
       fa.f.state === 'idle' &&
       Math.hypot(a.x - p.x, a.y - p.y) <= ctx.ai.habits.fledAt * tile &&

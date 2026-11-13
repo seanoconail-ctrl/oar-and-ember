@@ -26,8 +26,16 @@ export class LaunchBot extends RepairBot {
     if (raid === null || this.sim.state.facts['ch1.council'] !== undefined) return;
     this.waitFor(() => this.sim.state.facts['council.open'] === true, 60 * 60 * 30);
     const call = raid.def.council;
-    this.waitFor(() => this.sim.state.talk === null, 60 * 30);
-    this.useAt(call.zone, call.call.x, call.call.y, 1.2);
+    for (let tries = 0; tries < 6 && this.sim.state.facts['council.stage'] === undefined; tries++) {
+      // A scene that comes up meanwhile (Oddi's theft at night) is answered as a player would.
+      if (this.sim.state.talk?.kind === 'SCENE') {
+        this.waitFor(() => this.options().length > 0, 60 * 30);
+        const first = this.options()[0];
+        if (first !== undefined) this.choose(first);
+      }
+      this.waitFor(() => this.sim.state.talk === null, 60 * 30);
+      this.useAt(call.zone, call.call.x, call.call.y, 1.2);
+    }
     if (this.sim.state.facts['council.stage'] === undefined)
       throw new Error('the household was not called to council');
     this.waitFor(() => this.sim.state.talk?.scene === call.talk.id, 60 * 60);

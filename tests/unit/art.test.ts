@@ -189,9 +189,13 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'ship_t1_crew',
       'ship_t1_launch',
       'ship_t1_parts',
+      // The user's fourth playtest (DH-62): the rigging in hand.
+      'ship_t1_rigwork',
       'ship_t1_sail',
       'ship_t1_storm',
       'ship_t1_storm_mast',
+      // The user's fourth playtest (DH-62): the hull as the patch goes on.
+      'ship_t1_work',
       'tile_machair_01',
       'tile_strand',
       'token_t1',

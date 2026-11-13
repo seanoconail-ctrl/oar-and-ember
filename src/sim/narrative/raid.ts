@@ -500,6 +500,8 @@ export function raidPlacedUses(
       x: d.council.call.x * T,
       y: d.council.call.y * T,
       reach: ctx.b.councilReachTiles * T,
+      // The chapter's beat: in the circle, Interact calls it before the fire's and people's uses.
+      first: true,
     });
   return out;
 }
@@ -668,13 +670,17 @@ function atCouncil(
 ): Id[] {
   const onFoot = world.onFoot;
   if (onFoot?.zone !== fire.zone) return [];
+  // Within the circle: the farthest place round the fire, and the call's reach beyond it.
+  const circle =
+    Math.max(...ctx.def.council.spots.map((p) => Math.hypot(p.x - fire.x, p.y - fire.y))) +
+    ctx.b.councilReachTiles;
   return world.household.residents.filter((id) => {
     const a = onFoot.actors[id];
     return (
       a !== undefined &&
       a.pose !== 'down' &&
       a.pose !== 'dead' &&
-      Math.hypot(a.x - fire.x * 24, a.y - fire.y * 24) <= ctx.b.councilReachTiles * 2 * 24
+      Math.hypot(a.x - fire.x * 24, a.y - fire.y * 24) <= circle * 24
     );
   });
 }

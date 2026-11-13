@@ -122,7 +122,7 @@ def hull_stage(stage, k):
         for j in range(18):
             f = j / 17
             x = bx + 6 - f * 6
-            y = nr + 2 + f * (PY - nr - 2)
+            y = nr + 2 + f * (PY - 2 - nr - 2)      # its foot on the shingle, above the keel's row
             s.px(int(round(x)), int(round(y)), C('driftwood', 4.6 - f))
             s.px(int(round(x)) + 1, int(round(y)), C('driftwood', 3.0 - f))
     return s.outline()

@@ -2,25 +2,13 @@
   "about": "Art direction for the renderer (Book 7 sections 01 and 08). Ambient light multiplies every colour by value/255; light pools add their colour in bands. Day is cool and clear; dusk (first and last light) is a grey half-light, a little warm; night leaves the scene readable in blue shadow, with lantern and hearth pools.",
   "phases": {
     "day": {
-      "ambient": [
-        255,
-        255,
-        255
-      ]
+      "ambient": [255, 255, 255]
     },
     "dusk": {
-      "ambient": [
-        228,
-        214,
-        204
-      ]
+      "ambient": [228, 214, 204]
     },
     "night": {
-      "ambient": [
-        92,
-        116,
-        164
-      ]
+      "ambient": [92, 116, 164]
     }
   },
   "poolBands": 3,
@@ -33,21 +21,9 @@
       "night": 110
     },
     "colour": {
-      "day": [
-        40,
-        20,
-        2
-      ],
-      "dusk": [
-        132,
-        72,
-        24
-      ],
-      "night": [
-        196,
-        112,
-        44
-      ]
+      "day": [40, 20, 2],
+      "dusk": [132, 72, 24],
+      "night": [196, 112, 44]
     },
     "flicker": 0.07,
     "core": {
@@ -58,21 +34,9 @@
         "night": 48
       },
       "colour": {
-        "day": [
-          0,
-          0,
-          0
-        ],
-        "dusk": [
-          70,
-          34,
-          8
-        ],
-        "night": [
-          96,
-          46,
-          10
-        ]
+        "day": [0, 0, 0],
+        "dusk": [70, 34, 8],
+        "night": [96, 46, 10]
       }
     },
     "lamp": {
@@ -83,21 +47,9 @@
         "night": 30
       },
       "colour": {
-        "day": [
-          0,
-          0,
-          0
-        ],
-        "dusk": [
-          60,
-          34,
-          10
-        ],
-        "night": [
-          90,
-          52,
-          16
-        ]
+        "day": [0, 0, 0],
+        "dusk": [60, 34, 10],
+        "night": [90, 52, 16]
       },
       "flicker": 0.08
     }

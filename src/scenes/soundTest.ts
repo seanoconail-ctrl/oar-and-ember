@@ -32,6 +32,7 @@ import { COMBAT2_SOUNDS } from '../audio/synth/combat2.ts';
 import { COMBAT3_SOUNDS } from '../audio/synth/combat3.ts';
 import { OPENING_SOUNDS } from '../audio/synth/opening.ts';
 import { STORY3_SOUNDS } from '../audio/synth/story3.ts';
+import { STORY4_SOUNDS } from '../audio/synth/story4.ts';
 import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
@@ -313,6 +314,7 @@ export function startItem(
       ...OPENING_SOUNDS,
       ...STORM_SOUNDS,
       ...STORY3_SOUNDS,
+      ...STORY4_SOUNDS,
       ...TELLS,
     ].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no sound ${id}`);

@@ -8870,8 +8870,8 @@
     },
     {
      "Key": "councilReach",
-     "Value": "3 tiles",
-     "Notes": "The steerer within this of the camp fire, with the launch's gate open, can call the household to council"
+     "Value": "1.5 tiles",
+     "Notes": "The steerer within this of the middle of the circle round the camp fire, with the launch's gate open, can call the household to council; there the call comes before the fire's and the people's own uses on Interact (a click on someone still talks to them)"
     },
     {
      "Key": "councilGather",

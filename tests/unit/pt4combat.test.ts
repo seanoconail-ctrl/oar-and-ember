@@ -46,7 +46,12 @@ interface Fight {
   land: ReturnType<typeof landContext>;
 }
 
-type Member = { person: string; x: number; y: number; facing: 's' | 'n' | 'e' | 'w' };
+interface Member {
+  person: string;
+  x: number;
+  y: number;
+  facing: 's' | 'n' | 'e' | 'w';
+}
 
 /** An encounter on Wreck Strand's open shingle: the members placed, a post or none. */
 function strand(

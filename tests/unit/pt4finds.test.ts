@@ -32,7 +32,13 @@ const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
 const finds = content.finds;
 if (finds === null) throw new Error('content/finds.json did not load');
-const ZONES = ['ZONE_SK_STRAND', 'ZONE_SK_MACHAIR', 'ZONE_SK_HAGSEAT', 'ZONE_SK_CAIRN', 'ZONE_SK_SEALCAVE'];
+const ZONES = [
+  'ZONE_SK_STRAND',
+  'ZONE_SK_MACHAIR',
+  'ZONE_SK_HAGSEAT',
+  'ZONE_SK_CAIRN',
+  'ZONE_SK_SEALCAVE',
+];
 
 function start(query: string): { sim: Simulation; events: SimEvent[] } {
   const world = newCampaign('finds', b, parsePeopleBasics(balance), content, {
@@ -101,7 +107,8 @@ describe("Chapter 1's finds off the paths (asked; request 24; DH-115 to DH-121)"
       const goal = (t: Tile): boolean =>
         Math.hypot(t.tx + 0.5 - f.x, t.ty + 0.7 - f.y) <= land.rules.interactRadiusTiles;
       for (const open of [false, true])
-        for (const from of entries(map)) expect(findPath(map, open, from, goal), `${open}`).not.toBeNull();
+        for (const from of entries(map))
+          expect(findPath(map, open, from, goal), `${open}`).not.toBeNull();
       // It stands on open ground and adds no collision, so the edge-walk no-trap test
       // (tests/unit/noTrap.test.ts) walks the same shapes as before.
       expect(tileBlocks(map, Math.floor(f.x), Math.floor(f.y - 0.01), false)).toBe(false);
@@ -115,7 +122,8 @@ describe("Chapter 1's finds off the paths (asked; request 24; DH-115 to DH-121)"
         for (const c of ends) {
           if (a === c) continue;
           const path = findPath(map, false, a, (t) => t.tx === c.tx && t.ty === c.ty) ?? [];
-          for (const t of path) nearest = Math.min(nearest, Math.hypot(t.tx + 0.5 - f.x, t.ty + 0.5 - f.y));
+          for (const t of path)
+            nearest = Math.min(nearest, Math.hypot(t.tx + 0.5 - f.x, t.ty + 0.5 - f.y));
         }
       expect(nearest).toBeGreaterThanOrEqual(4);
     });
@@ -131,7 +139,8 @@ describe("Chapter 1's finds off the paths (asked; request 24; DH-115 to DH-121)"
       const near = campUseNear(uses, p, land.rules.interactRadiusTiles * map.tile);
       expect(near?.use.kind).toBe('FIND');
       if (near === null) return;
-      const t = (k: string, v: Record<string, string> = {}): string => formatString(content.strings, k, v);
+      const t = (k: string, v: Record<string, string> = {}): string =>
+        formatString(content.strings, k, v);
       const label = campUseLabel(near.use, content, t, (id) => id, 'E', false);
       expect(idLikeTokens(label.text)).toEqual([]);
       expect(label.text).toContain(t(f.nameKey));
@@ -142,7 +151,12 @@ describe("Chapter 1's finds off the paths (asked; request 24; DH-115 to DH-121)"
       sim.step();
       const made = events.filter((e) => e.type === 'FIND_MADE');
       expect(made).toHaveLength(1);
-      expect(made[0]).toMatchObject({ key: f.key, sound: f.sound, captionKey: f.captionKey, first: true });
+      expect(made[0]).toMatchObject({
+        key: f.key,
+        sound: f.sound,
+        captionKey: f.captionKey,
+        first: true,
+      });
       expect(found(sim.state, f.key)).toBe(true);
       const reward = parseFindsBalance(balance).get(f.balanceKey);
       if (reward?.kind === 'SILVER') expect(home?.stores['RES_SILVER']).toBe(silver + reward.oz);

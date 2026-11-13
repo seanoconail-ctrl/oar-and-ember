@@ -338,10 +338,17 @@ export class RepairBot extends SearchBot {
     const r = this.repairs.def.rites;
     if (findActor(this.onFoot, r.body) === null) throw new Error('no body');
     this.waitFor(() => this.sim.state.talk === null, 60 * 30);
-    this.talkTo(r.recommends);
+    // Beside her, and a word (a click on her tile could name a site she stands on instead).
+    for (let tries = 0; tries < 4 && this.sim.state.talk?.with !== r.recommends; tries++) {
+      this.waitFor(() => this.onFoot.actors[r.recommends]?.walk === undefined, 60 * 120);
+      this.goBeside(r.recommends);
+      this.sim.submit({ type: 'TALK', person: r.recommends });
+      this.step();
+    }
+    if (this.sim.state.talk?.with !== r.recommends) throw new Error('could not talk to Hild');
     this.waitFor(() => this.options().includes('ui.talk.topic.rites'), 60 * 30);
     this.choose('ui.talk.topic.rites');
-    if (this.sim.state.talk?.scene !== 'hild.rites')
+    if (this.sim.state.talk.scene !== 'hild.rites')
       throw new Error('Hild did not speak of the rites');
     this.waitFor(() => this.options().length > 0, 60 * 30);
     this.choose(form === 'SETTING' ? 'p_steerer.rites.setting' : 'p_steerer.rites.sea');

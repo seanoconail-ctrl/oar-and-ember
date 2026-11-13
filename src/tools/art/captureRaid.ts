@@ -112,15 +112,15 @@ async function play<T>(page: Page, fn: string): Promise<T> {
 async function council(browser: Browser): Promise<{ frames: Buffer[]; key: Buffer | null }> {
   const page = await open(
     browser,
-    'camp=broch&crew=1&ship=hull,rig,oar&launch=open&fire=lit&time=19:10&at=37.3,33.3',
+    'camp=broch&crew=1&ship=hull,rig,oar&launch=open&council=open&fire=lit&time=19:10&at=36.9,33.1',
   );
   const frames: Buffer[] = [];
   let key: Buffer | null = null;
   await play(page, "sim.submit({ type: 'INTERACT' });");
   let chose = false;
   let after = 0;
-  for (let i = 0; i < 900 && after < 6; i++) {
-    await step(page, 30);
+  for (let i = 0; i < 120 && after < 4; i++) {
+    await step(page, 60);
     const f = await shot(page);
     frames.push(f);
     const s = await play<{ talk: boolean; queue: number; council: boolean; stage: string }>(
@@ -129,7 +129,7 @@ async function council(browser: Browser): Promise<{ frames: Buffer[]; key: Buffe
     );
     if (s.talk && s.queue === 0 && !chose && !s.council) {
       // Hild has asked: the steerer's answer (the options are the four intents, in order).
-      for (let k = 0; k < 3; k++) frames.push(await shot(page));
+      for (let k = 0; k < 2; k++) frames.push(await shot(page));
       key ??= frames.at(-1) ?? null;
       await play(page, "sim.submit({ type: 'TALK_CHOOSE', index: 0 });");
       chose = true;
@@ -155,7 +155,7 @@ async function pointOut(browser: Browser): Promise<{ frames: Buffer[]; key: Buff
   let key: Buffer | null = null;
   let after = 0;
   let walking = true;
-  for (let i = 0; i < 200 && after < 22; i++) {
+  for (let i = 0; i < 200 && after < 15; i++) {
     await step(page, 12);
     if (walking && after > 0) {
       await play(page, "sim.submit({ type: 'MOVE', x: 0, y: 0, run: false, sneak: false });");
@@ -226,7 +226,7 @@ export async function raidCapture(browser: Browser): Promise<string> {
     '|---|---|---|---|',
   ];
   for (const [name, what, run, fps] of [
-    ['council', 'The council at the fire (DH-140)', council, 2],
+    ['council', 'The council at the fire (DH-140)', council, 1],
     ['pointout', 'The Hag’s Seat point-out on a clear day (DH-136)', pointOut, 5],
     [
       'skinboat',

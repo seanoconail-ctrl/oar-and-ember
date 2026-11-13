@@ -18,7 +18,7 @@
       "id": "drone",
       "name": "Drone",
       "instrument": "drone",
-      "gain": 0.5,
+      "gain": 0.65,
       "pan": 0,
       "echo": 0.15,
       "bars": ["D2:64", "-", "-", "-", "-", "-", "-", "-"]
@@ -27,7 +27,7 @@
       "id": "walk",
       "name": "Frame drum (the procession's walk)",
       "instrument": "drum",
-      "gain": 0.55,
+      "gain": 0.7,
       "pan": 0.05,
       "echo": 0.08,
       "bars": [
@@ -45,7 +45,7 @@
       "id": "swell",
       "name": "Frame drum (the swell)",
       "instrument": "drum",
-      "gain": 0.45,
+      "gain": 0.62,
       "pan": -0.05,
       "echo": 0.2,
       "bars": [
@@ -63,7 +63,7 @@
       "id": "stones",
       "name": "Stones set down",
       "instrument": "knock",
-      "gain": 0.4,
+      "gain": 0.5,
       "pan": -0.2,
       "echo": 0.06,
       "bars": ["r:8", "r:6 A3:2,", "r:8", "r:6 A3:2,", "r:8", "r:6 D3:2,", "r:8", "r:6 A3:2,"]
@@ -72,7 +72,7 @@
       "id": "lyre",
       "name": "Lyre (the lament's line)",
       "instrument": "lyre",
-      "gain": 0.8,
+      "gain": 1.0,
       "pan": -0.1,
       "echo": 0.3,
       "bars": [
@@ -90,7 +90,7 @@
       "id": "choir",
       "name": "Choir pad (falling)",
       "instrument": "pad",
-      "gain": 0.58,
+      "gain": 0.78,
       "pan": 0.1,
       "echo": 0.35,
       "bars": ["r:8", "A3:8", "G3:8", "F3:8", "E3:8", "F3:8", "E3:8", "D3:8"]
@@ -99,7 +99,7 @@
       "id": "choir_low",
       "name": "Choir pad, low (the sea)",
       "instrument": "pad",
-      "gain": 0.5,
+      "gain": 0.7,
       "pan": -0.1,
       "echo": 0.35,
       "bars": ["D3:8", "C3:8", "Bb2:8", "A2:8", "Bb2:8", "A2:8", "G2:8", "A2:8"]
@@ -108,7 +108,7 @@
       "id": "whistle",
       "name": "Whistle (a fragment turning upward)",
       "instrument": "whistle",
-      "gain": 0.42,
+      "gain": 0.55,
       "pan": 0.2,
       "echo": 0.4,
       "bars": [

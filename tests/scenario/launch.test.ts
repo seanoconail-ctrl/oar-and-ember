@@ -81,6 +81,8 @@ describe('the launch gate (Book 6 section 15)', () => {
       'WEAPONS',
       'ALLIES',
       'RITES',
+      // A reason for the first raid (DH-141): the intent agreed at the council at the fire.
+      'COUNCIL',
     ]);
     expect(view.pointOfNoReturnKey).toBe('ui.gate.launch.warning');
     expect(content.strings.get('ui.gate.launch.warning')?.text).toMatch(/no going back/);

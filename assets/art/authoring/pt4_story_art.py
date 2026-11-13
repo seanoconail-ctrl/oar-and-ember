@@ -58,14 +58,14 @@ def cord(s, x0, y0, x1, y1, sag):
         t = k / n
         x = x0 + (x1 - x0) * t
         y = y0 + (y1 - y0) * t + math.sin(t * math.pi) * sag
-        s.px(int(round(x)), int(round(y)), C('earth', 3 if k % 4 else 2))
+        s.px(int(round(x)), int(round(y)), C('wool', 4 if k % 4 else 3))
 
 
 def tail(s, x, y, k, way=1, n=4):
     """A cord's loose end stirring in the wind (frame k of 4)."""
     for j in range(n):
         lift = int(round(math.sin(k * math.pi / 2 + j * 0.9) * (j / 2)))
-        s.px(x + way * j, y + j // 2 - lift, C('earth', 3 - (j == n - 1)))
+        s.px(x + way * j, y + j // 2 - lift, C('wool', 4 - (j == n - 1)))
 
 
 def scratch(s, x0, x1, y):
@@ -82,6 +82,11 @@ def pegs_sprite(k):
     the wall, a second peg for the guy, and a line scratched in the turf between."""
     s = Sprite(W, H, PIVOT[0], PIVOT[1])
     scratch(s, 9, 31, FOOT - 1)
+    # The turf cut back round the stake's foot: a patch of bare earth.
+    for dy in range(-1, 2):
+        for dx in range(-4, 6):
+            if abs(dx - 1) * 0.5 + abs(dy) * 1.6 <= 3 and hash01(dx, dy, 13) < 0.9:
+                s.px(11 + dx, FOOT - 1 + dy, C('earth', 1 + (hash01(dx, dy, 5) > 0.5)))
     stake(s, 10, FOOT - 9)
     stake(s, 29, FOOT - 4, FOOT, 1)
     cord(s, 12, FOOT - 7, 29, FOOT - 3, 1.5)

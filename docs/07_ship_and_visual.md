@@ -146,6 +146,9 @@ Hulls are built from segments: **bow**, a repeatable **midship** segment (one pe
 | Crew | Rowing, idle, bailing, shields up, boarding, wounded resting |
 | Identity | Sail mark, shields, carvings, vane, trophies |
 
+### The wreck-scavengers' skin boat
+The scavengers' skiff in Seal Cave is a **currach**, the skin boat they came over from Carrick in (decision DH-137): tarred hides stretched over a wicker frame, a doubled withy gunwale lashed through the hide, the bow lifting blunt to the west, one sewn seam along the side, the laths showing inside, two oars along the thwarts; Thorkel's steering oar lashed on the near quarter, or taken. Its Carrick goods lie in it until taken: a barley sack marked with the storehouse's mark (a ring with a stroke through it), a rag-bound bundle of nails glinting at the neck, a mended net with cork floats over the stern thwart. Taken, the goods are one load (`prop_carrick_goods`), carried on the shoulder like the repairs' loads. Drawn in the ramps of tar, driftwood, wool, earth, sand and stone (`assets/art/authoring/raid_reason_art.py`).
+
 ### Beaching, launching and boarding
 Beaching shows the hull tilting onto shingle; launching shows the crew pushing and climbing aboard, part of the extraction in raids. Boarding planks and grapnel lines are drawn objects with collision. When two ships are lashed, their decks form one walkable area with a readable gap.
 

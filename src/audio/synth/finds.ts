@@ -72,7 +72,8 @@ export const FIND_SOUNDS: readonly SoundDef[] = [
         [0.22, 0],
       ]);
       const r = rng(71);
-      for (let i = 0; i < 6; i++) click(e, at + 0.2 + i * 0.045 + r() * 0.03, to, 3200 + r() * 1800, 0.18 + r() * 0.1);
+      for (let i = 0; i < 6; i++)
+        click(e, at + 0.2 + i * 0.045 + r() * 0.03, to, 3200 + r() * 1800, 0.18 + r() * 0.1);
       return 0.6;
     },
   },
@@ -189,7 +190,8 @@ export const FIND_SOUNDS: readonly SoundDef[] = [
         ],
       );
       const r = rng(83);
-      for (let i = 0; i < 3; i++) click(e, at + 0.15 + i * 0.06 + r() * 0.02, to, 3600 + r() * 1200, 0.12);
+      for (let i = 0; i < 3; i++)
+        click(e, at + 0.15 + i * 0.06 + r() * 0.02, to, 3600 + r() * 1200, 0.12);
       return 0.5;
     },
   },

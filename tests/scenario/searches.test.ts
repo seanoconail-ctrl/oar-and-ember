@@ -85,10 +85,16 @@ describe('Oddi near the wreck: the chest now, or Oddi home first', () => {
     const { world, bot, events } = start('oddi-first');
     bot.oddi('ODDI_FIRST');
     expect(world.facts['search.oddi']).toBe('ODDI_FIRST');
+    // The user's fourth playtest (DH-12 to DH-15): taken in sight, by one of the band, who runs
+    // it up the dunes; once he is over the edge it is the band's, and remembered.
+    bot.waitFor(() => world.facts['ch1.silver_snatch'] !== undefined, 60 * 60);
     expect(world.facts['ch1.chest']).toBe('LOST');
+    expect(world.facts['ch1.silver_taken_by']).toBe('E_WRECKER_CONN');
     expect(world.household.residents).toContain('C_ODDI');
     expect(resolved(events)).toEqual(['ODDI:ODDI_FIRST']);
-    expect(events).toContainEqual({ type: 'SEARCH_INFO', key: 'caption.search.chest_lost' });
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'SNATCH', what: 'AWAY', by: 'E_WRECKER_CONN' }),
+    );
   });
 });
 

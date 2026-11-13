@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test';
 import { attr, overlay, startPlay, step, stepUntil } from './strand.ts';
 
 // The marked spot beside the lean-to's bed (Book 9 section 04; content rework.camp.mark).
-const MARK = '31.9,30.45';
+const MARK = '35.0,29.65';
 
 for (const [label, time] of [
   ['by day', '10:00'],

@@ -16,7 +16,7 @@ export interface IdLintIssue {
 }
 
 /** Strings only a developer sees (the developer menu, under ?dev). */
-const DEV_ONLY = /^ui\.dev\./;
+const DEV_ONLY = 'ui.dev.';
 
 /** Every player-facing string whose text holds an ID-like token or an unfilled string key. */
 export function stringIdIssues(
@@ -24,7 +24,7 @@ export function stringIdIssues(
 ): IdLintIssue[] {
   const out: IdLintIssue[] = [];
   for (const [key, entry] of strings) {
-    if (DEV_ONLY.test(key)) continue;
+    if (key.startsWith(DEV_ONLY)) continue;
     const bad = idLikeTokens(entry.text);
     if (bad.length > 0)
       out.push({ where: `string ${key}`, reason: `looks like an ID: ${bad.join(', ')}` });

@@ -13,7 +13,8 @@ export type FindReward =
 function rows(json: unknown): Record<string, string>[] {
   const tables = (json as { tables?: Record<string, Record<string, unknown>> }).tables;
   const list = tables?.['explorationDensity']?.['chapter1Finds'];
-  if (!Array.isArray(list)) throw new Error('balance.json: no table explorationDensity.chapter1Finds');
+  if (!Array.isArray(list))
+    throw new Error('balance.json: no table explorationDensity.chapter1Finds');
   return list as Record<string, string>[];
 }
 
@@ -35,7 +36,8 @@ export function parseFindReward(key: string, value: string): FindReward {
       .filter((x): x is string => x !== undefined)
       .map((x) => {
         const s = SEASON_NAMES[x];
-        if (s === undefined) throw new Error(`balance.json: chapter1Finds.${key}: no season "${x}"`);
+        if (s === undefined)
+          throw new Error(`balance.json: chapter1Finds.${key}: no season "${x}"`);
         return s;
       });
     return { kind: 'FOOD', rd: Number(m[1]), seasons };

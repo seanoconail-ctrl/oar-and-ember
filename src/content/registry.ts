@@ -712,37 +712,40 @@ const openingCheck = object({
         captions: recordOf(text, ref('string')),
         campTiles: fraction(0.5, 20),
       }),
-      camp: object({
-        about: text,
-        reachTiles: fraction(0.5, 30),
-        walkUp: ref('string'),
-        walkUpTiles: fraction(0.5, 10),
-        shelterUp: ref('string'),
-        oldBoat: ref('string'),
-        oldBoatTiles: fraction(0.5, 20),
-        captions: recordOf(text, ref('string')),
-        /** Where the folded sail and the three oars lie (Book 9 section 04), and Hild's seat. */
-        sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
-        hildSeat: facingAtR,
-        /**
-         * The user's third playtest (DG-12): Hild's word for each stage of the shelter (the frame
-         * after her walk-up, the sail once it stands, the night's word under the lean-to, the second
-         * morning's finishing and the finished shelter), how long a second line waits behind a
-         * first (real seconds), and where she steadies the oars while the frame goes up.
-         */
-        frame: ref('string'),
-        sailLine: ref('string'),
-        night: ref('string'),
-        finish: ref('string'),
-        finished: ref('string'),
-        nextLineSeconds: fraction(0.5, 20),
-        steady: facingAtR,
-        /**
-         * The user's fourth playtest (DH-10, DH-11): the marked spot where the frame and the sail
-         * are worked, beside the lean-to's bed and never on it (Book 9 section 04).
-         */
-        mark: object({ x: fraction(0, 512), y: fraction(0, 512) }),
-      }, ['mark']),
+      camp: object(
+        {
+          about: text,
+          reachTiles: fraction(0.5, 30),
+          walkUp: ref('string'),
+          walkUpTiles: fraction(0.5, 10),
+          shelterUp: ref('string'),
+          oldBoat: ref('string'),
+          oldBoatTiles: fraction(0.5, 20),
+          captions: recordOf(text, ref('string')),
+          /** Where the folded sail and the three oars lie (Book 9 section 04), and Hild's seat. */
+          sail: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+          hildSeat: facingAtR,
+          /**
+           * The user's third playtest (DG-12): Hild's word for each stage of the shelter (the frame
+           * after her walk-up, the sail once it stands, the night's word under the lean-to, the second
+           * morning's finishing and the finished shelter), how long a second line waits behind a
+           * first (real seconds), and where she steadies the oars while the frame goes up.
+           */
+          frame: ref('string'),
+          sailLine: ref('string'),
+          night: ref('string'),
+          finish: ref('string'),
+          finished: ref('string'),
+          nextLineSeconds: fraction(0.5, 20),
+          steady: facingAtR,
+          /**
+           * The user's fourth playtest (DH-10, DH-11): the marked spot where the frame and the sail
+           * are worked, beside the lean-to's bed and never on it (Book 9 section 04).
+           */
+          mark: object({ x: fraction(0, 512), y: fraction(0, 512) }),
+        },
+        ['mark'],
+      ),
       /** The user's third playtest (DG-13): Hild points up the bank to the old tower, once safe. */
       broch: object({ about: text, line: ref('string'), afterSafeSeconds: fraction(0, 30) }),
       fireScene: object({

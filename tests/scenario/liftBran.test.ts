@@ -163,7 +163,8 @@ describe('lifting the downed Bran at the fold never freezes (request 21, DH-70)'
           }
         }
         expect(slowest).toBeLessThan(250);
-        expect(onFoot.carrying === BRAN || bran.pose === 'down').toBe(true);
+        // Still across the shoulders, or set down by a bar run empty (Book 10 heavyCarryEmpty).
+        expect([BRAN, null]).toContain(onFoot.carrying);
       });
     }
   }

@@ -499,7 +499,7 @@ describe('the Carrick clues appear in every outcome of the scavenger fight (requ
 
   it('whatever the outcome, the council at the fire brings the boat’s clue (Oddi went through their boat) if no one has', () => {
     const r = start(
-      'camp=broch&crew=1&ship=hull,rig,oar&launch=open&time=12:00&at=35.8,32.5',
+      'camp=broch&crew=1&ship=hull,rig,oar&launch=open&council=open&time=12:00&at=35.8,32.5',
       (w) => {
         w.facts['ch1.chest_opened'] = true;
       },
@@ -576,7 +576,9 @@ function holdCouncil(r: Run, intent: Intent): void {
 describe('the council at the fire before the launch (request 5)', () => {
   for (const intent of INTENTS)
     it(`runs before the launch and records the intent: ${intent}`, () => {
-      const r = start('camp=broch&crew=1&ship=hull,rig,oar&launch=open&time=12:00&at=35.8,32.5');
+      const r = start(
+        'camp=broch&crew=1&ship=hull,rig,oar&launch=open&council=open&time=12:00&at=35.8,32.5',
+      );
       const launch = land.launch;
       if (launch == null) throw new Error('no launch');
       // The launch waits for the council: refused, and the readiness screen says why.

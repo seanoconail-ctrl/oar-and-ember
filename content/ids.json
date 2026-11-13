@@ -2642,58 +2642,58 @@
     },
     {
       "id": "SFX_FIND_SHELLS",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_SHELLS`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): cowrie shells taken from the wrack."
     },
     {
       "id": "SFX_FIND_EGGS",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_EGGS`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a gull's nest robbed of its eggs."
     },
     {
       "id": "SFX_FIND_STONE",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_STONE`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a carved stone looked at."
     },
     {
       "id": "SFX_FIND_CAIRN",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_CAIRN`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a stone added to a cairn."
     },
     {
       "id": "SFX_FIND_OFFERING",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_OFFERING`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): an old offering found in a cleft."
     },
     {
       "id": "SFX_FIND_BONE",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_BONE`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a seal's skull on a ledge."
     },
     {
       "id": "SFX_FIND_KNIFE",
-      "ref": "Sounds by place and action",
+      "ref": "`SFX_FIND_KNIFE`",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a lost knife worked free of the rocks."
     },
     {

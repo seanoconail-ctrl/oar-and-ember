@@ -22,7 +22,7 @@ test('the council at the fire: each one’s counsel, the four intents, the choic
   await startPlay(
     page,
     'A',
-    'camp=broch&crew=1&ship=hull,rig,oar&launch=open&fire=lit&time=12:00&at=37.3,33.3&capture',
+    'camp=broch&crew=1&ship=hull,rig,oar&launch=open&council=open&fire=lit&time=12:00&at=36.9,33.1&capture',
   );
   await step(page, 3);
   await page.keyboard.press('KeyE');

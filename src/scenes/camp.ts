@@ -507,6 +507,13 @@ function seedLaunch(
     pressureSteps: 0,
     retriesUsed: 0,
   };
+  // A reason for the first raid (DH-141): the launch waits for the council at the fire; these
+  // hooks start past it (the household agreed to go quietly) unless `council=open` leaves it to
+  // be held.
+  if (params.get('council') !== 'open') {
+    world.facts['ch1.council'] = params.get('council')?.toUpperCase() ?? 'QUIET';
+    world.facts['council.required'] = true;
+  }
   if (which === 'open') return;
   const b = parseTimeBalance(content.balance);
   const quiet = (): void => undefined;

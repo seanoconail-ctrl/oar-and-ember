@@ -28,7 +28,10 @@ const HOST = process.env['PEOPLE4_HOST'] ?? `http://localhost:${String(PORT)}/`;
 const BASE = `${HOST}?capture&quality=full&view=play&name=Ash&body=A&camp=broch&crew=1&joined=2`;
 
 async function open(browser: Browser, params: string): Promise<Page> {
-  const page = await browser.newPage({ viewport: { width: 640, height: 360 }, deviceScaleFactor: 2 });
+  const page = await browser.newPage({
+    viewport: { width: 640, height: 360 },
+    deviceScaleFactor: 2,
+  });
   page.on('pageerror', (e) => {
     console.log(`page error: ${e.message}`);
   });
@@ -43,17 +46,21 @@ async function open(browser: Browser, params: string): Promise<Page> {
 
 /** Advances `n` ticks in chunks, so no one evaluation runs for long. */
 async function run(page: Page, n: number): Promise<void> {
-  for (let done = 0; done < n; done += 300) await tick(page, Math.min(300, n - done));
+  // Undrawn ticks (the simulation and overlay only), then one drawn: time passing between frames.
+  await page.evaluate((k) => {
+    const w = window as unknown as { oeStep: (ms: number, draw?: boolean) => void };
+    for (let i = 0; i < k; i++) w.oeStep(1000 / 60, i === k - 1);
+  }, n);
 }
 
-type World = {
+interface World {
   onFoot: {
     player: { x: number; y: number };
     actors: Record<string, { x: number; y: number }>;
   };
   company?: { nextExchange: number };
   tick: number;
-};
+}
 
 /** The view's point (game pixels) of a place on the zone, for the crops. */
 async function focusOn(page: Page, x: number, y: number): Promise<{ x: number; y: number }> {
@@ -86,7 +93,7 @@ async function boatChanges(browser: Browser, out: string): Promise<string> {
   let last = '';
   let changes = 0;
   for (let i = 0; i < 30 * 9; i++) {
-    await tick(page, 150);
+    await run(page, 150);
     const boat = (await page.locator('.oe-overlay').getAttribute('data-boat')) ?? '';
     if (boat !== last) {
       changes++;
@@ -102,7 +109,7 @@ async function boatChanges(browser: Browser, out: string): Promise<string> {
 
 async function exchange(browser: Browser, out: string): Promise<string> {
   const page = await open(browser, 'fire=lit&tended=1&time=18:30&day=3&at=36.4,33.2');
-  await tick(page, 60 * 8);
+  await run(page, 60 * 8);
   // The next exchange due now (staged), the steerer by the fire with them.
   await page.evaluate(() => {
     const w = (window as unknown as { oeWorld: World }).oeWorld;
@@ -116,21 +123,47 @@ async function exchange(browser: Browser, out: string): Promise<string> {
     const spoken = (await page.locator('.oe-overlay').getAttribute('data-spoken')) ?? '';
     if (spoken.includes('.chat.') && /\.chat\.[a-z_]+\.[23]$/.test(spoken)) heard++;
   }
-  const size = clip.write(0, [480, 270]);
+  const size = clip.write(0, [640, 360]);
   await page.close();
   return `exchange.gif ${(size / 1e6).toFixed(2)} MB`;
 }
 
 async function refusal(browser: Browser, out: string): Promise<string> {
   const page = await open(browser, 'hurt=C_RUNA&fire=lit&tended=1&time=18:40&day=3');
-  await tick(page, 60 * 5);
-  const runa = await page.evaluate(() => {
-    const w = (window as unknown as { oeWorld: World }).oeWorld.onFoot;
-    const a = w.actors['C_RUNA'] ?? w.player;
-    w.player.x = a.x + 22;
-    w.player.y = a.y;
-    return { x: a.x, y: a.y };
-  });
+  await run(page, 60 * 5);
+  // Beside Runa on whichever side makes her the one Interact talks to (the others sit close).
+  const place = async (dx: number, dy: number): Promise<{ x: number; y: number }> =>
+    page.evaluate(
+      ([ox, oy]) => {
+        const w = (window as unknown as { oeWorld: World & { onFoot: { items: unknown[] } } })
+          .oeWorld.onFoot;
+        w.items = [];
+        const a = w.actors['C_RUNA'] ?? w.player;
+        w.player.x = a.x + ox;
+        w.player.y = a.y + oy;
+        return { x: a.x, y: a.y };
+      },
+      [dx, dy] as const,
+    );
+  const talk = async (): Promise<string> =>
+    (await page.locator('.oe-overlay').getAttribute('data-talk')) ?? '';
+  let runa = { x: 0, y: 0 };
+  for (const [dx, dy] of [
+    [-16, 0],
+    [0, 14],
+    [16, 0],
+    [0, -14],
+  ] as const) {
+    runa = await place(dx, dy);
+    await tick(page, 4);
+    await page.keyboard.press('KeyE');
+    await tick(page, 4);
+    if ((await talk()) === 'C_RUNA') break;
+    if ((await talk()) !== '') await page.keyboard.press('Space');
+    await tick(page, 4);
+  }
+  // Out of the talk again, to record it from the start.
+  await page.keyboard.press('Space');
   await tick(page, 10);
   const clip = new Clip(page, 'refusal', out);
   clip.focus = await focusOn(page, runa.x, runa.y);
@@ -149,7 +182,7 @@ async function refusal(browser: Browser, out: string): Promise<string> {
   for (let i = 0; i < 75; i++) await clip.frame(i === 20);
   await choose('p_steerer.talk.care.hold_end');
   for (let i = 0; i < 30 * 5; i++) await clip.frame();
-  const size = clip.write(0, [480, 270]);
+  const size = clip.write(0, [640, 360]);
   await page.close();
   return `refusal.gif ${(size / 1e6).toFixed(2)} MB`;
 }
@@ -158,7 +191,10 @@ export async function people4Capture(browser: Browser): Promise<string> {
   const out = join(REPO_ROOT, OUT);
   mkdirSync(out, { recursive: true });
   const lines: string[] = [];
-  for (const run of [boatWork, boatChanges, exchange, refusal]) lines.push(await run(browser, out));
+  const only = process.env['PEOPLE4_ONLY']?.split(',') ?? null;
+  const clips = { boatWork, boatChanges, exchange, refusal };
+  for (const [name, make] of Object.entries(clips))
+    if (only === null || only.includes(name)) lines.push(await make(browser, out));
   return lines.join('\n');
 }
 

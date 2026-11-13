@@ -175,12 +175,7 @@ async function steerer(page: Page): Promise<{ x: number; y: number; state: strin
   });
 }
 
-async function finish(
-  clip: Clip,
-  name: string,
-  focus: { x: number; y: number },
-  extra = '',
-): Promise<string> {
+function finish(clip: Clip, name: string, focus: { x: number; y: number }, extra = ''): string {
   clip.focus = focus;
   const bytes = clip.write(0, VIEW, focus);
   return `${name}.gif ${(bytes / 1e6).toFixed(2)} MB${extra === '' ? '' : ` (${extra})`}`;
@@ -200,7 +195,7 @@ async function death(browser: Browser, out: string): Promise<string> {
     if (dead < 0 && i > FPS * 8) break;
   }
   const me = await steerer(page);
-  const line = await finish(
+  const line = finish(
     clip,
     'death',
     await screen(page, me.x, me.y - 20),
@@ -241,7 +236,7 @@ async function runOff(browser: Browser, out: string): Promise<string> {
     if (gone < 0 && (await actor(page, SVART)) === null) gone = i;
   }
   const me = await steerer(page);
-  const line = await finish(
+  const line = finish(
     clip,
     'run-off',
     await screen(page, me.x - 120, me.y - 20),
@@ -269,7 +264,7 @@ async function guardReturn(browser: Browser, out: string): Promise<string> {
     if (back < 0 && (await actor(page, SVART))?.back === true) back = i;
   }
   await page.keyboard.up('KeyD');
-  const line = await finish(
+  const line = finish(
     clip,
     'guard-return',
     await screen(page, 25 * 24, 35.8 * 24 - 16),
@@ -294,6 +289,13 @@ async function threat(browser: Browser, out: string): Promise<string> {
       if (bran !== undefined) {
         bran.x = 31.6 * 24;
         bran.y = 36.1 * 24;
+        // Bran stands by, hurt, not striking (his own blows would rightly draw them: DH-74).
+        if (bran.fight !== undefined) {
+          bran.fight.ai.next = 1e12;
+          bran.fight.ai.mode = 'GUARD';
+          bran.fight.ai.target = null;
+          (bran.fight.ai as unknown as { goal: unknown }).goal = null;
+        }
       }
       for (const id of ids) {
         const a = w.onFoot.actors[id];
@@ -301,7 +303,15 @@ async function threat(browser: Browser, out: string): Promise<string> {
       }
       // Conn holds still (his bow drawn on no one) for the blow.
       const c = w.onFoot.actors['E_WRECKER_CONN'];
-      if (c?.fight !== undefined) c.fight.ai.next = 1e12;
+      if (c?.fight !== undefined) {
+        c.fight.ai.next = 1e12;
+        c.fight.ai.mode = 'GUARD';
+        c.fight.ai.target = null;
+        (c.fight.ai as unknown as { hop: unknown; goal: unknown }).hop = null;
+        (c.fight.ai as unknown as { hop: unknown; goal: unknown }).goal = null;
+        c.x = 26.1 * 24;
+        c.y = 36.2 * 24;
+      }
     },
     [BRAN, [SVART, KETILL]] as const,
   );
@@ -310,6 +320,11 @@ async function threat(browser: Browser, out: string): Promise<string> {
     const at = await screen(page, c.x, c.y - 18);
     await page.mouse.move(at.x, at.y);
   }
+  await tick(page, 12);
+  // Locked on Conn, so the blow goes to him (DF-81).
+  await page.keyboard.down('KeyZ');
+  await tick(page);
+  await page.keyboard.up('KeyZ');
   const clip = new Clip(page, 'threat', out);
   for (let i = 0; i < FPS; i++) {
     await heal(page);
@@ -326,7 +341,7 @@ async function threat(browser: Browser, out: string): Promise<string> {
     const k = await actor(page, KETILL);
     if (turned < 0 && s?.target === 'P_STEERER' && k?.target === 'P_STEERER') turned = i;
   }
-  const line = await finish(
+  const line = finish(
     clip,
     'threat',
     await screen(page, 28.2 * 24, 36 * 24 - 16),
@@ -375,7 +390,7 @@ async function spearReach(browser: Browser, out: string): Promise<string> {
       await clip.frame(thrusts === 1 && ['light1', 'light2', 'heavyRelease'].includes(st));
     }
   }
-  const line = await finish(clip, 'spear-reach', await screen(page, 80 * 24, 34.6 * 24 - 16));
+  const line = finish(clip, 'spear-reach', await screen(page, 80 * 24, 34.6 * 24 - 16));
   await page.close();
   return line;
 }

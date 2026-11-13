@@ -131,14 +131,19 @@ describe("the steerer's bed: reachable and usable from every side (the user's fo
         const p = sim.state.onFoot?.player;
         if (p === undefined) throw new Error('not on foot');
         const near = campUseNear(uses(sim), p, land.rules.interactRadiusTiles * T);
-        expect(near?.use.kind, `the prompt at (${(p.x / T).toFixed(2)}, ${(p.y / T).toFixed(2)})`).toBe('SLEEP');
+        expect(
+          near?.use.kind,
+          `the prompt at (${(p.x / T).toFixed(2)}, ${(p.y / T).toFixed(2)})`,
+        ).toBe('SLEEP');
         sim.submit({ type: 'INTERACT' });
         sim.step();
         expect(events.some((e) => e.type === 'FELL_ASLEEP')).toBe(true);
         // Lying in the bed itself.
         const lying = sim.state.onFoot?.player;
         expect(lying?.sleep).not.toBeNull();
-        expect(Math.hypot((lying?.x ?? 0) - bed.x * T, (lying?.y ?? 0) - bed.y * T)).toBeLessThan(1);
+        expect(Math.hypot((lying?.x ?? 0) - bed.x * T, (lying?.y ?? 0) - bed.y * T)).toBeLessThan(
+          1,
+        );
       });
     }
   }
@@ -158,12 +163,20 @@ describe("the steerer's bed: reachable and usable from every side (the user's fo
       );
       sim.submit({ type: 'INTERACT' });
       sim.step();
-      expect(events.some((e) => e.type === 'FELL_ASLEEP'), `at (${x}, ${y})`).toBe(true);
+      expect(
+        events.some((e) => e.type === 'FELL_ASLEEP'),
+        `at (${x}, ${y})`,
+      ).toBe(true);
       // Clicking any tile the bed covers.
-      const c = start(`camp=broch&fire=lit&shelter=down&time=22:00&at=${x.toFixed(2)},${(y + 0.3).toFixed(2)}`);
+      const c = start(
+        `camp=broch&fire=lit&shelter=down&time=22:00&at=${x.toFixed(2)},${(y + 0.3).toFixed(2)}`,
+      );
       c.sim.submit({ type: 'INTERACT_AT', tile: { tx: Math.floor(x), ty: Math.floor(y - 0.001) } });
       c.sim.step();
-      expect(c.events.some((e) => e.type === 'FELL_ASLEEP'), `click at (${x}, ${y})`).toBe(true);
+      expect(
+        c.events.some((e) => e.type === 'FELL_ASLEEP'),
+        `click at (${x}, ${y})`,
+      ).toBe(true);
     }
   });
 
@@ -199,7 +212,10 @@ describe("the steerer's bed: reachable and usable from every side (the user's fo
     // Nobody else's sleeping place falls on it, at either stage.
     const people = land.people;
     if (people == null) throw new Error('no people context');
-    for (const q of ['camp=broch&crew=1&time=23:00', 'camp=broch&crew=1&stage=S1&day=2&time=23:00']) {
+    for (const q of [
+      'camp=broch&crew=1&time=23:00',
+      'camp=broch&crew=1&stage=S1&day=2&time=23:00',
+    ]) {
       const { sim } = start(q);
       for (const id of sim.state.household.residents) {
         const spot = bedOf(sim.state, camp, people, id);
@@ -222,7 +238,8 @@ describe("the steerer's bed: reachable and usable from every side (the user's fo
     if (home === undefined) throw new Error('no home');
     home.stage = 'S1';
     sim.state.facts['ch1.shelter'] = 'FINISHED';
-    if (!home.buildings.includes(camp.def.shelter.building)) home.buildings.push(camp.def.shelter.building);
+    if (!home.buildings.includes(camp.def.shelter.building))
+      home.buildings.push(camp.def.shelter.building);
     bot.waitUntil(18 * 60 + 5);
     walkOnto(sim, bot, s0.x, s0.y - 0.3);
     sim.submit({ type: 'INTERACT' });

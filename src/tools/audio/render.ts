@@ -113,6 +113,22 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_BODY_TAKEN', 12.5, {}, 'story3-body-taken'],
   ['sfx:SFX_BODY_SINK', 3, {}, 'story3-body-sink'],
   ['sfx:MUS_LAMENT_SEA', 20, {}, 'story3-lament-sea'],
+  // The user's fourth playtest (DH-17, DH-23, DH-26): the strongbox snatched, the steerer's breath
+  // out over a body, and the rites' own music in its two forms.
+  ['sfx:SFX_SNATCH', 1.5, {}, 'story4-snatch'],
+  ['sfx:SFX_STEERER_SIGH', 1.8, {}, 'story4-steerer-sigh'],
+  [
+    'music:rites',
+    40,
+    { layers: { walk: true, swell: false, stones: true, choir_low: false } },
+    'story4-rites-stones',
+  ],
+  [
+    'music:rites',
+    40,
+    { layers: { walk: false, swell: true, stones: false, choir_low: true } },
+    'story4-rites-sea',
+  ],
   [
     'music:hearth',
     44,

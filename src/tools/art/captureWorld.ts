@@ -83,7 +83,7 @@ function grid(rows: readonly (readonly RgbaImage[])[]): RgbaImage {
     data[i + 2] = 24;
     data[i + 3] = 255;
   }
-  rows.forEach((row, r) =>
+  rows.forEach((row, r) => {
     row.forEach((img, c) => {
       const ox = c * (w0 + gap);
       const oy = r * (h0 + gap);
@@ -91,8 +91,8 @@ function grid(rows: readonly (readonly RgbaImage[])[]): RgbaImage {
         for (let x = 0; x < img.width; x++)
           for (let k = 0; k < 4; k++)
             data[((oy + y) * width + ox + x) * 4 + k] = img.data[(y * img.width + x) * 4 + k] ?? 0;
-    }),
-  );
+    });
+  });
   return { width, height, data };
 }
 
@@ -158,7 +158,8 @@ async function still(page: Page, dir: string, file: string): Promise<{ share: nu
   writeFileSync(join(dir, `${file}.png`), encodePng(first));
   writeFileSync(join(dir, `${file}@4x.png`), encodePng(scale(first, 4)));
   const stills: Uint8Array[] = [first.data];
-  for (let i = 0; i < 40; i++) stills.push(decodePng(fromDataUrl(await advance(page, 10, W, H))).data);
+  for (let i = 0; i < 40; i++)
+    stills.push(decodePng(fromDataUrl(await advance(page, 10, W, H))).data);
   const motion = continuousMotion(stills, W, H);
   const marked = { width: W, height: H, data: Uint8Array.from(first.data) };
   motion.cells.forEach((moving, k) => {
@@ -283,7 +284,10 @@ async function sleepGif(browser: Browser, dir: string): Promise<number> {
   writeFileSync(join(dir, 'sleepers-night@4x.png'), encodePng(scale(full, 4)));
   await page.close();
   // The steerer lying down in their own bed (the night passes after Book 10's sleep seconds).
-  const bed = await open(browser, 'camp=broch&stage=S1&fire=lit&day=2&time=23:10&crew=1&at=33.3,29.6');
+  const bed = await open(
+    browser,
+    'camp=broch&stage=S1&fire=lit&day=2&time=23:10&crew=1&at=33.3,29.6',
+  );
   await bed.evaluate(() => {
     const w = window as unknown as { oePlay: { sim: { submit: (c: unknown) => void } } };
     w.oePlay.sim.submit({ type: 'INTERACT' });
@@ -356,7 +360,7 @@ export async function worldCapture(browser: Browser, before: boolean): Promise<s
     '- `broch-before-*.png`, `broch-after-*.png` (and @4x, -motion): the interior at S0 and S1, by',
     '  day and by night; `broch-before.gif`, `broch-after.gif`: the S1 interior at night;',
     '  `broch-compare.png` (and @2x): before (top row) and after (bottom row), view by view.',
-    '- `bed-*.png` (and @4x): the steerer\'s bed and its mark, by day and night, with the prompt.',
+    "- `bed-*.png` (and @4x): the steerer's bed and its mark, by day and night, with the prompt.",
     `- \`sleepers.gif\` (${(sleepers / 1e6).toFixed(2)} MB) and \`sleepers-night.png\` (and @4x): the household asleep, breathing under their blankets.`,
     `- \`poi-*.png\` (and @4x): the new points of interest: ${pois.join(', ')}.`,
     '',

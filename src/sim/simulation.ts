@@ -1814,7 +1814,7 @@ export function createSimulation(
           use.reason === 'TOO_EARLY_TO_SLEEP' ? clockText(b.sleepAfter) : '',
         );
         return;
-      case 'SLEEP':
+      case 'SLEEP': {
         if (!sleepAllowed(state, b)) {
           refuse(command, 'TOO_EARLY_TO_SLEEP', clockText(b.sleepAfter));
           return;
@@ -1836,6 +1836,7 @@ export function createSimulation(
         onFoot.player.sleep = { since: state.tick, site: use.site };
         events.emit({ type: 'FELL_ASLEEP', site: use.site });
         return;
+      }
       case 'EAT':
         eat(state, camp, false, emitCamp);
         return;
@@ -2175,8 +2176,7 @@ export function createSimulation(
     // Chapter 1 beat 8, the launch and its gate (Stage 12).
     if (launchCtx !== null) stepLaunch(state, launchCtx, emitLaunch);
     // A reason for the first raid: the needs, the chart, the mainland, the council (DH-130 on).
-    if (raidCtx !== null)
-      stepRaid(state, raidCtx, land, tide.tidalGroundOpen, raidHooks, emitRaid);
+    if (raidCtx !== null) stepRaid(state, raidCtx, land, tide.tidalGroundOpen, raidHooks, emitRaid);
     // The household's day (Stage 8): new residents join it; each walks to what they are doing;
     // a conversation's lines play; residents in earshot bark.
     if (people !== null && camp !== null) {

@@ -117,7 +117,7 @@ describe('content (DH-40 onwards)', () => {
   });
 
   it('boat workers’ spots: six round the boat, three seated, never one on the steerer’s work spot', () => {
-    const job = need(content.household?.jobs.SHIPWRIGHT, 'shipwright');
+    const job = need(content.household?.jobs['SHIPWRIGHT'], 'shipwright');
     expect(job.spots).toHaveLength(6);
     expect(job.hurtSpots).toHaveLength(3);
     const work = need(content.repairs, 'repairs').boat.work;
@@ -156,12 +156,16 @@ describe('request 9: bound still, and the one who refuses (DH-40 to DH-43)', () 
     const at = { x: hild.x, y: hild.y };
     // Through the binding, at an hour when her work would take her to the rocks.
     let ticks = 0;
-    while (onFoot.player.work != null) {
+    const binding = (): boolean => onFoot.player.work != null;
+    while (binding()) {
       expect(activityOf(world, camp, people, 'C_HILD').kind).toBe('TENDED');
       sim.step();
       ticks++;
-      expect(hild.pose).toBe('sit');
-      expect(Math.hypot(hild.x - at.x, hild.y - at.y)).toBeLessThan(0.01);
+      // Still being bound after this tick: sitting, unmoved.
+      if (binding()) {
+        expect(hild.pose).toBe('sit');
+        expect(Math.hypot(hild.x - at.x, hild.y - at.y)).toBeLessThan(0.01);
+      }
     }
     expect(ticks).toBeGreaterThan(T);
     expect(world.people['C_HILD']?.wounds[0]?.tendedDay).toBe(2);
@@ -652,7 +656,7 @@ describe('request 14: boat work (DH-59 to DH-64)', () => {
     const opts = talkOptions(world, people).map((o) => o.key);
     sim.submit({ type: 'TALK_CHOOSE', index: opts.indexOf('ui.talk.topic.boat') });
     sim.step();
-    expect(lines.at(-1)?.key).toBe(company.boat.lines.RIGGING_FETCH['C_RUNA']);
+    expect(lines.at(-1)?.key).toBe(company.boat.lines['RIGGING_FETCH']?.['C_RUNA']);
     // Hild, at her nets, is not the boat's: no such topic.
     expect(topicsFor(world, people, 'C_HILD').map((t) => t.id)).not.toContain(BOAT_TOPIC);
   });

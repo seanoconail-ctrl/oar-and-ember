@@ -6,7 +6,13 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { contentNameKeys, displayName, idLikeTokens, looksLikeId, nameKeyOf } from '../../src/content/names.ts';
+import {
+  contentNameKeys,
+  displayName,
+  idLikeTokens,
+  looksLikeId,
+  nameKeyOf,
+} from '../../src/content/names.ts';
 import type { NameBook } from '../../src/content/names.ts';
 import { CONTENT_FILES } from '../../src/content/registry.ts';
 import { formatString } from '../../src/content/strings.ts';
@@ -73,7 +79,8 @@ describe('the ID lint (asked; DH-112)', () => {
 });
 
 describe('the runtime guard: every ID through the name functions (asked; DH-113)', () => {
-  const families = /^(C|E|P|ITEM|RES|ZONE|ISLE|BLD|FIT|TASK|SITE|TOWN|FORT|ABBEY|GLEN|CAMP|HULL|FAC)_/;
+  const families =
+    /^(C|E|P|ITEM|RES|ZONE|ISLE|BLD|FIT|TASK|SITE|TOWN|FORT|ABBEY|GLEN|CAMP|HULL|FAC)_/;
   const ids = content.ids.entries.map((e) => e.id).filter((id) => families.test(id));
 
   it('no registered ID of a thing, person or place is ever shown as an ID', () => {
@@ -98,12 +105,17 @@ describe('the runtime guard: every ID through the name functions (asked; DH-113)
   });
 
   it('every prompt with a name in it reads as words for every person and load', () => {
-    const keys = [...content.strings.keys()].filter((k) => /\{(name|item|what|task)\}/.test(k) || /\{(name|item|what|task)\}/.test(content.strings.get(k)?.text ?? ''));
+    const keys = [...content.strings.keys()].filter(
+      (k) =>
+        /\{(name|item|what|task)\}/.test(k) ||
+        /\{(name|item|what|task)\}/.test(content.strings.get(k)?.text ?? ''),
+    );
     expect(keys.length).toBeGreaterThan(5);
     for (const key of keys) {
       const text = content.strings.get(key)?.text ?? '';
       const vars: Record<string, string> = {};
-      for (const m of text.matchAll(/\{([a-zA-Z0-9_]+)\}/g)) vars[m[1] ?? ''] = displayName('ITEM_RIGGING', book);
+      for (const m of text.matchAll(/\{([a-zA-Z0-9_]+)\}/g))
+        vars[m[1] ?? ''] = displayName('ITEM_RIGGING', book);
       expect(idLikeTokens(t(key, vars)), key).toEqual([]);
     }
   });

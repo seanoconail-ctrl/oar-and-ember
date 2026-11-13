@@ -2381,7 +2381,7 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | goodsCamp | 4 tiles | The skin boat's goods, carried as one load (the carry pace) and set down within this of the camp fire, go into the stores |
 | pointOutHours | 08:00 to 17:00 | A clear day at the Hag's Seat: in these hours, with the weeping stone dry (or never weeping) and, from Stage 13, the weather clear |
 | pointOutTiles | 10 tiles | The steerer at the Hag's Seat and someone of the household, or Runa still sitting there, within this (barkEarshot): they point out the smoke and fields on the Irish coast, once |
-| councilReach | 3 tiles | The steerer within this of the camp fire, with the launch's gate open, can call the household to council |
+| councilReach | 1.5 tiles | The steerer within this of the middle of the circle round the camp fire, with the launch's gate open, can call the household to council; there the call comes before the fire's and the people's own uses on Interact (a click on someone still talks to them) |
 | councilGather | 40 real seconds | The household walks to the fire; the council begins when all are there or after this, with whoever has come |
 | councilHeard | +2 friendship | Each resident whose counsel the steerer's chosen intent follows |
 | councilOverruled | -1 friendship | Each resident whose counsel the chosen intent goes against; the rest are unmoved |

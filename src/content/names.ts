@@ -80,7 +80,9 @@ export function contentNameKeys(content: {
   readonly people: ReadonlyMap<Id, { readonly nameKey: string }>;
   readonly places: ReadonlyMap<Id, { readonly nameKey: string }>;
   readonly fittings: ReadonlyMap<Id, { readonly nameKey: string }>;
-  readonly onFoot: { readonly items: Readonly<Record<string, { readonly nameKey: string }>> } | null;
+  readonly onFoot: {
+    readonly items: Readonly<Record<string, { readonly nameKey: string }>>;
+  } | null;
 }): Map<Id, string> {
   const out = new Map<Id, string>();
   for (const [id, p] of content.places) out.set(id, p.nameKey);
