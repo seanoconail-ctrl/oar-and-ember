@@ -469,8 +469,8 @@ const ODDI = {
   },
   /**
    * The playtest's way: lifted, carried up the strand and set down there above the tide line, as
-   * Hild was. That is his rescue (decision DE-85): he joins and limps home himself, and the
-   * scavengers have the strongbox, still lying in the wash.
+   * Hild was. That is his rescue (decision DE-85): he joins and limps home himself, and one of the
+   * scavengers takes the strongbox, still lying in the wash, in sight (DH-12).
    */
   strandFirst: (p: Play): void => {
     const bot = p.bot;
@@ -480,6 +480,9 @@ const ODDI = {
     bot.setDown();
     expect(world(p).household.residents).toContain('C_ODDI');
     expect(world(p).facts['search.oddi']).toBe('ODDI_FIRST');
+    // The user's fourth playtest (DH-12 to DH-15): a scavenger takes the strongbox in sight and
+    // runs it up the dunes; once he is over the edge it is the band's.
+    bot.waitFor(() => world(p).facts['ch1.silver_snatch'] !== undefined, 60 * 60);
     expect(world(p).facts['ch1.chest']).toBe('LOST');
     expect(findActor(bot.onFoot, 'ITEM_SHIP_SILVER')).toBeNull();
   },

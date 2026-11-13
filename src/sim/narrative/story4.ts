@@ -180,14 +180,44 @@ function startPoint(
 }
 
 /** The point on the exit edge he makes for: straight across from where he is. */
-function exitPoint(map: ZoneMap, a: { x: number; y: number }, way: Edge): { x: number; y: number } {
+function exitPoint(
+  map: ZoneMap,
+  a: { x: number; y: number },
+  way: Edge,
+  along?: number,
+): { x: number; y: number } {
   const W = map.width * map.tile;
   const H = map.height * map.tile;
   const m = map.tile * 0.6;
-  if (way === 'n') return { x: a.x, y: m + 12 };
-  if (way === 's') return { x: a.x, y: H - m };
-  if (way === 'e') return { x: W - m, y: a.y };
-  return { x: m, y: a.y };
+  const x = along ?? a.x;
+  const y = along ?? a.y;
+  if (way === 'n') return { x, y: m + 12 };
+  if (way === 's') return { x, y: H - m };
+  if (way === 'e') return { x: W - m, y };
+  return { x: m, y };
+}
+
+/** Where along the exit edge he runs: away from the steerer, by the start's distance (DH-14). */
+function veer(
+  map: ZoneMap,
+  a: { x: number; y: number },
+  p: { x: number; y: number },
+  way: Edge,
+  tiles: number,
+): number {
+  const T = map.tile;
+  const across = way === 'n' || way === 's';
+  const from = across ? a.x : a.y;
+  const them = across ? p.x : p.y;
+  const span = (across ? map.width : map.height) * T;
+  const away = from >= them ? 1 : -1;
+  return Math.max(2 * T, Math.min(span - 2 * T, from + away * tiles * T));
+}
+
+/** The exit point fixed when he took the box (a fact), or straight ahead. */
+function exitAlong(world: WorldState): number | undefined {
+  const v = world.facts['snatch.exit'];
+  return typeof v === 'number' ? v : undefined;
 }
 
 function atEdge(map: ZoneMap, a: { x: number; y: number }, way: Edge): boolean {
@@ -313,6 +343,7 @@ export function stepSnatch(
     a.carries = o.chest;
     box.pose = 'carried';
     setFact(world, FACT_STAGE, 'AWAY');
+    setFact(world, 'snatch.exit', Math.round(veer(map, a, p, sn.exit, b.startTiles)));
     emit({ type: 'SNATCH', what: 'GRABBED', by, x: a.x, y: a.y });
     emit({ type: 'PERSON_SPOKE', person: by, lineKey: t.grab });
     // Oddi shouts after him, carried or lying where he was set.
@@ -321,7 +352,7 @@ export function stepSnatch(
     return;
   }
   if (stage === 'AWAY') {
-    const goal = exitPoint(map, a, sn.exit);
+    const goal = exitPoint(map, a, sn.exit, exitAlong(world));
     runTo(a, goal.x, goal.y, map, land, b.carryTilesPerSecond, tidalGroundOpen);
     if (box !== undefined) {
       box.x = a.x;
@@ -330,7 +361,11 @@ export function stepSnatch(
     }
     // Run down: he drops it and runs on empty-handed (DH-14).
     // Hands free (Oddi set down) and close enough to lay hold of him.
-    if (onFoot.carrying === null && Math.hypot(a.x - p.x, a.y - p.y) <= b.catchTiles * T) {
+    if (
+      onFoot.carrying === null &&
+      p.moving &&
+      Math.hypot(a.x - p.x, a.y - p.y) <= b.catchTiles * T
+    ) {
       delete a.carries;
       if (box !== undefined) {
         box.pose = 'down';
@@ -364,7 +399,7 @@ export function stepSnatch(
     return;
   }
   // FLEE: empty-handed to the edge, and gone.
-  const goal = exitPoint(map, a, sn.exit);
+  const goal = exitPoint(map, a, sn.exit, exitAlong(world));
   runTo(a, goal.x, goal.y, map, land, b.runTilesPerSecond, tidalGroundOpen);
   if (atEdge(map, a, sn.exit)) {
     removeActor(onFoot, by);

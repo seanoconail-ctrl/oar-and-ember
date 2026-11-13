@@ -389,12 +389,32 @@ describe('the steerer’s word over a body (DH-24 to DH-26)', () => {
     }
     const p = onFoot.player;
     const seen: string[] = [];
+    // An arrow in Svart is pulled first; the word over him comes after (the combat build's rule).
+    onFoot.stuck.push({
+      n: 990,
+      kind: 'arrow',
+      x: 2,
+      y: -2,
+      h: 20,
+      dir: 8,
+      in: 'body',
+      target: 'E_WRECKER_SVART',
+      broken: false,
+      at: 0,
+    });
     for (const id of foes) {
       const a = onFoot.actors[id];
       if (a === undefined) throw new Error(`no ${id}`);
       p.x = a.x + 14;
       p.y = a.y + 2;
       sim.step();
+      if (id === 'E_WRECKER_SVART') {
+        expect(siteOf(offered(world))).toBe('PICK_UP');
+        sim.submit({ type: 'INTERACT' });
+        sim.step();
+        expect(onFoot.stuck.some((s) => s.n === 990)).toBe(false);
+        expect(spoken(events)).toEqual([]);
+      }
       expect(siteOf(offered(world))).toBe('OPENING:remark');
       sim.submit({ type: 'INTERACT' });
       sim.step();

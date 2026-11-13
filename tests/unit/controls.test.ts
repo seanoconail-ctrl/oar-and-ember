@@ -233,6 +233,10 @@ describe('use and interact at a tile', () => {
         telemetry: null,
         aims: null,
       });
+    // The world's first tick sets up what is set once (the first raid's meal-sack, needs and
+    // council facts, DH-131 to DH-141; the household's company): taken before comparing.
+    sim.step();
+    events.length = 0;
     const before = world();
     sim.submit({ type: 'INTERACT_AT', tile: { tx: own.tx - 5, ty: own.ty } });
     sim.submit({ type: 'USE_AT', slot: 1, tile: { tx: own.tx + 4, ty: own.ty } });

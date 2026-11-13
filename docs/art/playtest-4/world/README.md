@@ -8,6 +8,9 @@ views by `npm run capture -- playtest-4-world-before`, run once before the rewor
   `broch-compare.png` (and @2x): before (top row) and after (bottom row), view by view.
 - `bed-*.png` (and @4x): the steerer's bed and its mark, by day and night, with the prompt.
 - `sleepers.gif` (0.59 MB) and `sleepers-night.png` (and @4x): the household asleep, breathing under their blankets.
+- `steerer-asleep.png` (and @4x): the steerer lying in their own bed under the madder blanket.
+- `sleeper-poses.gif` and `sheet-prop_sleepers.png` (@4x): every sleeper's pose and breath, from the sheet.
+- `sheet-prop_bed_steerer.png`, `sheet-prop_finds.png`, `sheet-prop_broch_clutter.png` (and @4x): the new sheets at 1x and 4x (authored by `assets/art/authoring/pt4_world_art.py`).
 - `poi-*.png` (and @4x): the new points of interest: strand_cowries, strand_gull_nest, machair_carved_stone, machair_cairn, hagseat_old_offering, cairn_kerbstone, sealcave_seal_skull, sealcave_lost_knife.
 
 ## Motion with the camera still (Book 7 section 14)

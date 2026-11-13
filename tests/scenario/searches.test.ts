@@ -221,6 +221,8 @@ describe('Bran guarding Thorkel’s body: fight, sneak or bargain', () => {
     bot.interact();
     bot.waitFor(() => bot.options().length > 0, 60 * 10);
     expect(bot.options()).toEqual([
+      // A reason for the first raid (DH-142): asking where they came from comes first.
+      'p_steerer.ask.home',
       'p_steerer.search.ketill.threat',
       'p_steerer.search.ketill.leave',
     ]);

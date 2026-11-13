@@ -57,6 +57,18 @@ test.describe("the broch's interior, reworked (the user's fourth playtest)", () 
       expect(share).toBeGreaterThanOrEqual(MOTION_THRESHOLD);
     });
 
+  test("under the finished shelter at night, the household's things, smoke and lights stay within the frame budget @budget", async ({
+    page,
+  }) => {
+    await open(page, 'camp=broch&stage=S1&fire=lit&day=2&time=21:30&crew=1&at=35.6,32.2');
+    await motion(page, 33);
+    const ms = Number(await page.locator('.oe-overlay').getAttribute('data-frame-ms'));
+    console.log(`broch at night, script per frame: ${ms.toFixed(2)} ms`);
+    expect(ms).toBeGreaterThan(0);
+    // Book 2's browser budget (as standard.spec.ts): a third of a 60 fps frame.
+    expect(ms).toBeLessThan(5.5);
+  });
+
   test("standing on the steerer's bed after 18:00: the sleep prompt, and a press sleeps", async ({
     page,
   }) => {

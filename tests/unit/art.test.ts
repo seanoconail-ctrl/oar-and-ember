@@ -154,6 +154,8 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'prop_boards',
       'prop_boulder',
       'prop_camp',
+      // A reason for the first raid (DH-146): the skin boat's Carrick goods as a load.
+      'prop_carrick_goods',
       'prop_chest_open',
       'prop_chest_runa',
       'prop_chest_thorkel',
