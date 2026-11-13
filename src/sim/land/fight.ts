@@ -4232,9 +4232,15 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ny = a.y + vy * speed;
   if (vx !== 0 && clear(nx, a.y)) a.x = nx;
   if (vy !== 0 && clear(a.x, ny)) a.y = ny;
-  if (a.x === before.x && a.y === before.y && fa.ai.goal?.away === true && speed > 0) {
-    // Running away and blocked straight ahead (rock, deep water): slide along it, on the side
-    // that takes them further from the steerer, rather than stand at it in sight for good.
+  if (
+    a.x === before.x &&
+    a.y === before.y &&
+    (fa.ai.mode === 'FLEE' || fa.ai.mode === 'LEAVE') &&
+    fa.ai.goal?.away === true &&
+    speed > 0
+  ) {
+    // Fleeing or leaving and blocked straight ahead (rock, deep water): slide along it, on the
+    // side that takes them further from the steerer, rather than stand at it in sight for good.
     const p = onFoot.player;
     const sides = [
       { x: -vy, y: vx },

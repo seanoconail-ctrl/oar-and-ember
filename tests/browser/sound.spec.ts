@@ -57,8 +57,9 @@ test('the sound test page offers every item, with captions and sliders', async (
   // a wound and eating. Committed combat adds seven (design addendum 2.5): the three tells by
   // weight, the steerer's tell, exhausted breathing, a sidearm drawn and a shield split; and four
   // for commitment (DF-83): the parry's rasp, the block's creak, the dodge's landing, the whiff.
-  // The user's third playtest adds the pause menu's click (DG-88).
-  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3 + 8 + 10 + 7 + 4 + 1);
+  // The user's third playtest adds the pause menu's click (DG-88), and four for the combat (DG-29):
+  // the finisher, the let-go, the guard turned and the red blow's scrape.
+  await expect(page.locator('[data-sound]')).toHaveCount(9 + 3 + 3 + 8 + 10 + 7 + 4 + 1 + 4);
   await expect(page.locator('[data-voice]')).toHaveCount(4);
   await expect(page.locator('[data-step]')).toHaveCount(6);
   await expect(page.locator('[data-step-all]')).toHaveCount(1);

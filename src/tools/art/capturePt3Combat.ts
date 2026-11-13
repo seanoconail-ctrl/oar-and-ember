@@ -6,8 +6,9 @@
  * Played in capture mode as the 2.5 clips are (captureCombat2.ts: two ticks a frame, every frame
  * exact), with the overlay shown (the speech lines and the prompts at the right edge are part of
  * what the clips show). A moment is staged through the page's world, then played with the keys,
- * reading the fighters' drawn state as a player reads it. Each is a GIF at 1x of the whole 640 x
- * 360 view (30 frames a second) and a still at 4x of its key moment:
+ * reading the fighters' drawn state as a player reads it. Each is a GIF at 1x of a 480 x 270 crop
+ * of the view (30 frames a second; the fighters, the prompts and the speech line) and a still at 4x
+ * on the steerer:
  *   finisher     Svart beaten (the reel); the finisher held, then its one blow
  *   spare        Svart downed; let go: the shout, his reply, the spear dropped, him running
  *   warning      Conn alone at the stern turning alert: his warning, and the pause
@@ -314,30 +315,40 @@ async function parryOnly(browser: Browser, out: string): Promise<string> {
   let turned = 0;
   let parried = false;
   let pressed = false;
+  let first = -1;
+  let last = -FPS * 9;
+  let parriedAt = -1;
   let after = -1;
   for (let i = 0; i < FPS * 16 && (after < 0 || i < after + FPS * 2); i++) {
     const s = await foe(page, SVART);
     const me = await steerer(page);
     const f = s.f;
-    // Two blows struck at his guard first (turned); then wait for his and parry it in its wind-up.
+    // Blows struck at his guard now and then (turned; he steps back after each); his own, parried.
     if (
-      turned < 2 &&
+      !parried &&
+      !pressed &&
+      i - last >= FPS * 2.5 &&
       me.state === 'idle' &&
       f?.state !== undefined &&
       !f.state.startsWith('charge')
     ) {
       const d = Math.hypot(s.x - me.x, s.y - me.y);
-      if (d < 40 && i % 40 === 0) {
+      // Walk in to him (held until in reach), then strike.
+      const keys = [
+        s.x > me.x + 8 ? 'KeyD' : s.x < me.x - 8 ? 'KeyA' : '',
+        s.y > me.y + 8 ? 'KeyS' : s.y < me.y - 8 ? 'KeyW' : '',
+      ];
+      if (d > 36) {
+        for (const k of keys) if (k !== '') await page.keyboard.down(k);
+      } else {
+        for (const k of ['KeyA', 'KeyD', 'KeyW', 'KeyS']) await page.keyboard.up(k);
         await strike(page);
+        if (turned === 0) first = i;
+        last = i;
         turned++;
       }
-    }
-    if (
-      f !== null &&
-      (turned >= 2 || i > FPS * 6) &&
-      !pressed &&
-      ['light1', 'heavyRelease'].includes(f.state)
-    ) {
+    } else for (const k of ['KeyA', 'KeyD', 'KeyW', 'KeyS']) await page.keyboard.up(k);
+    if (f !== null && turned >= 1 && !pressed && ['light1', 'heavyRelease'].includes(f.state)) {
       // Pressed a few ticks before his blow lands, as the dusk fight's parry clip (captureCombat2).
       const lead = f.activeAt - s.t;
       if (lead >= PARRY_LEAD_MIN && lead <= PARRY_LEAD_MAX) {
@@ -349,9 +360,12 @@ async function parryOnly(browser: Browser, out: string): Promise<string> {
       pressed = false;
     if (f?.state === 'parried' && !parried) {
       parried = true;
+      parriedAt = i;
       await strike(page);
     }
+    // Two seconds after he falls back hurt (or dies), or three after the parry at most.
     if (parried && (s.dead || f?.state === 'reel') && after < 0) after = i;
+    if (parried && after < 0 && i >= parriedAt + FPS) after = i;
     await clip.frame(parried && f?.state === 'parried');
     await heal(page);
     if (i % 60 === 0)
@@ -360,7 +374,14 @@ async function parryOnly(browser: Browser, out: string): Promise<string> {
         if (m?.state === 'WAIT_FOR_OPENING') m.patienceUntil = 0;
       }, SVART);
   }
-  const line = await done(clip, 'parry-only', `parried ${String(parried)}`);
+  // From half a second before the first blow at his guard (the walk in left out), and no more
+  // than seven seconds before the parry (the GIF's size).
+  const line = await done(
+    clip,
+    'parry-only',
+    `parried ${String(parried)}, ${String(turned)} blows turned`,
+    Math.max(0, first - FPS / 2, parriedAt - FPS * 7),
+  );
   await page.close();
   return line;
 }
@@ -426,7 +447,7 @@ async function dodgeOnly(browser: Browser, out: string): Promise<string> {
     clip,
     'dodge-only',
     `dodged ${String(dodged)}, struck ${String(hits)}`,
-    Math.max(0, first - FPS),
+    Math.max(0, first - FPS / 2),
   );
   await page.close();
   return line;

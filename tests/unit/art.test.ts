@@ -95,6 +95,7 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'fx_outline',
       'fx_people',
       'fx_rain_cloth',
+      'fx_red_glint',
       'fx_sea_burial',
       'fx_sealcave',
       'fx_seamap',
