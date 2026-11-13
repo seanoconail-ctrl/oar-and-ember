@@ -392,6 +392,14 @@ function steererHas(world: WorldState, item: Id): boolean {
 }
 
 /** Whether Hild is still caught in the net. */
+/**
+ * Who Interact goes to first while Hild is caught in the net: her (the cut, or her word that a
+ * blade is needed), before Thorkel's chest or anything else nearer (decision DE-86).
+ */
+export function interactFirst(world: WorldState, ctx: WreckContext | null): Id | null {
+  return ctx !== null && netted(world) ? ctx.caller : null;
+}
+
 export function netted(world: WorldState): boolean {
   return (
     world.facts[FACT_PHASE] !== undefined &&

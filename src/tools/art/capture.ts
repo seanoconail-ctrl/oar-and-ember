@@ -43,6 +43,7 @@ import { findPath } from '../play/openingBot.ts';
 import type { Tile } from '../play/openingBot.ts';
 import { REPO_ROOT } from './loadTitleArt.ts';
 import { combat2Capture } from './captureCombat2.ts';
+import { combat25Capture } from './captureCombat25.ts';
 import { openingCapture } from './captureOpening.ts';
 import { stormCapture } from './captureStorm.ts';
 import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
@@ -1736,6 +1737,21 @@ if (import.meta.filename === process.argv[1]) {
     const browser = await chromium.launch();
     try {
       console.log(await openingCapture(browser));
+    } finally {
+      await browser.close();
+      await server.close();
+    }
+  } else if (label === 'rework-2.5-combat') {
+    // Design addendum 2.5's clips: docs/art/rework-2.5/combat/ (captureCombat25.ts).
+    const server = await createServer({
+      root: REPO_ROOT,
+      server: { port: 5287, hmr: false, watch: null },
+      logLevel: 'error',
+    });
+    await server.listen();
+    const browser = await chromium.launch();
+    try {
+      console.log(await combat25Capture(browser));
     } finally {
       await browser.close();
       await server.close();

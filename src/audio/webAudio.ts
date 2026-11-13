@@ -47,6 +47,8 @@ export class WebAudioEngine implements AudioSink {
   /** Design addendum 2.5: the cold open's storm bed, and rain on the sail cloth under it. */
   #storm: StormAmbience | null = null;
   #rain: RainClothAmbience | null = null;
+  #stormLevel = 0;
+  #rainLevel = 0;
   #gale = false;
   #steps = 0;
   #winter = false;
@@ -128,7 +130,8 @@ export class WebAudioEngine implements AudioSink {
    */
   setStorm(level: number, pitch = 3.2, roll = 5.4): void {
     const e = this.#e;
-    if (e === null) return;
+    if (e === null || level === this.#stormLevel) return;
+    this.#stormLevel = level;
     const t = e.ctx.currentTime;
     if (level > 0 && this.#storm === null) {
       this.#storm = new StormAmbience(e, pitch, roll);
@@ -143,7 +146,8 @@ export class WebAudioEngine implements AudioSink {
   /** Rain on the sail cloth (`AMB_RAIN_CLOTH`), heard only under the sail: 0 (none) to 1. */
   setRainCloth(level: number): void {
     const e = this.#e;
-    if (e === null) return;
+    if (e === null || level === this.#rainLevel) return;
+    this.#rainLevel = level;
     const t = e.ctx.currentTime;
     if (level > 0 && this.#rain === null) {
       this.#rain = new RainClothAmbience(e, level);

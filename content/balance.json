@@ -4702,7 +4702,7 @@
     {
      "Key": "oddiCall",
      "Value": "9 tiles",
-     "Notes": "Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it"
+     "Notes": "Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; the wreck-scavengers take it the moment he is set down safe (anywhere above the tide line, on the strand or off it: his rescue, decision DE-85), or when the steerer leaves the strand without it once he has called"
     },
     {
      "Key": "chestSilver",
@@ -4712,7 +4712,7 @@
     {
      "Key": "chestFirst",
      "Value": "Oddi +3 friendship",
-     "Notes": "The strongbox carried up before him: the haul saved (Gain)"
+     "Notes": "The strongbox carried off the strand before he is set down safe: the haul saved (Gain). Lifted first, he says he will wait (decision DE-85)"
     },
     {
      "Key": "chestLost",
@@ -7973,7 +7973,7 @@
     {
      "Key": "rainCloth",
      "Value": "Drops bead on the sail cloth, up to 24 beads at once, each growing over 1.5 to 3 real seconds and then running down the cloth",
-     "Notes": "Its patter and the drips from the edge (AMB_RAIN_CLOTH) are heard only under the sail (Book 11 section 07; decision DE-27)"
+     "Notes": "Its patter and the drips from the edge are heard only under the sail (Book 11 section 07, rain on the sail cloth; decision DE-27)"
     }
    ]
   }

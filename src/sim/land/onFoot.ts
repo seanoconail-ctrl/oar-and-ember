@@ -585,7 +585,12 @@ export function stepMovement(
  * The mode the steerer moves in (Book 10 "Movement and acceleration"): carrying, exhausted, the
  * shield up, sneaking, running, or in the stance backing off or strafing, else walking.
  */
-function accelMode(p: OnFootPlayer, state: OnFootState, exhausted: boolean, blocking: boolean): AccelMode {
+function accelMode(
+  p: OnFootPlayer,
+  state: OnFootState,
+  exhausted: boolean,
+  blocking: boolean,
+): AccelMode {
   if (state.carrying !== null) return 'carry';
   if (exhausted) return 'exhausted';
   if (blocking) return 'blocking';
@@ -655,7 +660,8 @@ export function easeVelocity(
  * Book 1 section 15, Book 9) keeps their footing as the tide moves: when the water at their feet
  * comes within a tenth of the knee and waist bands' span of leaving them, they step at their
  * wading pace up or down the slope of the shore until it is back inside that margin. A step
- * never goes onto rock. Deterministic: the still water level and the baked ground height only.
+ * never goes onto rock, the tidal flats or the sea (DE-87). Deterministic: the still water level
+ * and the baked ground height only.
  */
 export function keepFooting(
   actor: OnFootActor,
@@ -682,13 +688,16 @@ export function keepFooting(
   const g = Math.hypot(gx, gy);
   if (g < 1e-6) return;
   const band = bandAt(ctx.water, elevation, actor.x, actor.y, level);
-  const pace =
-    (ctx.movement.wade * (band?.speedFactor ?? knee.speedFactor ?? 1) * map.tile) /
-    TICKS_PER_SECOND;
+  // Caught out of their depth by the rising tide, they climb at the knee's pace, not the deep's.
+  const factor = band === null || band.band === 'DEEP' ? knee.speedFactor : band.speedFactor;
+  const pace = (ctx.movement.wade * (factor ?? 1) * map.tile) / TICKS_PER_SECOND;
   const x = actor.x + (way * gx * pace) / g;
   const y = actor.y + (way * gy * pace) / g;
   const { tx, ty } = tileOf(map, x, y);
-  if (terrainAt(map, tx, ty) === 'rock') return;
+  // Never onto rock, nor out onto the tidal flats or the sea, which the rising tide closes: the
+  // steerer must always be able to wade to them (decision DE-87).
+  const ground = terrainAt(map, tx, ty);
+  if (ground === 'rock' || ground === 'flats' || ground === 'sea') return;
   actor.x = x;
   actor.y = y;
   actor.moving = true;
@@ -801,6 +810,8 @@ export function interactionNow(
   rules: OnFootRules,
   tidalGroundOpen: boolean,
   facts: FactView = {},
+  /** Someone to lift before anyone or anything nearer, when in reach (Hild in the net, DE-86). */
+  first: Id | null = null,
 ): Interaction | null {
   const p = state.player;
   if (state.carrying !== null) {
@@ -814,6 +825,14 @@ export function interactionNow(
     return { kind: 'SET_DOWN', target: state.carrying, at, refusal, terrain };
   }
   const reach = rules.interactRadiusTiles * map.tile;
+  const firstActor = first === null ? undefined : state.actors[first];
+  if (
+    first !== null &&
+    firstActor !== undefined &&
+    NEEDS_LIFT.includes(firstActor.pose) &&
+    Math.hypot(firstActor.x - p.x, firstActor.y - p.y) <= reach
+  )
+    return { kind: 'LIFT', target: first };
   let best: { id: Id; d: number } | null = null;
   for (const [id, actor] of Object.entries(state.actors).sort(([a], [b]) => (a < b ? -1 : 1))) {
     if (!NEEDS_LIFT.includes(actor.pose)) continue;

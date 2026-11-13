@@ -27,13 +27,13 @@ import { REPO_ROOT } from './loadTitleArt.ts';
 const TICK = 1000 / 60;
 /** Two ticks a frame: 30 frames a second. */
 const FRAME_TICKS = 2;
-const FPS = 30;
+export const FPS = 30;
 const SVART = 'E_WRECKER_SVART';
 const CONN = 'E_WRECKER_CONN';
 const BASE =
   '?capture&quality=full&view=play&name=Ash&body=A&camp=broch&kit=seax,bow&time=18:35&zone=ZONE_SK_STRAND';
 
-async function tick(page: Page, n = 1): Promise<void> {
+export async function tick(page: Page, n = 1): Promise<void> {
   await page.evaluate(
     ([k, ms]) => {
       const w = window as unknown as { oeStep: (ms: number) => void };
@@ -43,7 +43,7 @@ async function tick(page: Page, n = 1): Promise<void> {
   );
 }
 
-async function open(
+export async function open(
   browser: Browser,
   at: [number, number],
   camera: [number, number],
@@ -65,7 +65,7 @@ async function open(
  * Stages the foes through the page's world: `who` placed and set, Conn held at his work (he
  * chooses nothing, so he shoots no one), as the unit tests do.
  */
-async function stage(
+export async function stage(
   page: Page,
   who: {
     x?: number;
@@ -173,7 +173,7 @@ async function stage(
 }
 
 /** Svart as the page reports him: state and ticks to his strike's active frames. */
-async function svart(
+export async function svart(
   page: Page,
 ): Promise<{ state: string; toActive: number; x: number; y: number }> {
   const raw = (await page.locator('.oe-overlay').getAttribute('data-fighters')) ?? '';
@@ -183,7 +183,7 @@ async function svart(
 }
 
 /** The screen point of a world point (the camera is held: data-camera). */
-async function screen(page: Page, x: number, y: number): Promise<{ x: number; y: number }> {
+export async function screen(page: Page, x: number, y: number): Promise<{ x: number; y: number }> {
   const cam = ((await page.locator('.oe-overlay').getAttribute('data-camera')) ?? '0,0')
     .split(',')
     .map(Number);
@@ -194,7 +194,7 @@ async function screen(page: Page, x: number, y: number): Promise<{ x: number; y:
  * Turns to Svart (the stance faces the cursor) and locks on: the lock takes the foe nearest the
  * facing, and Conn stands behind at his work.
  */
-async function lockSvart(page: Page): Promise<void> {
+export async function lockSvart(page: Page): Promise<void> {
   const s = await svart(page);
   const at = await screen(page, s.x, s.y - 18);
   await page.mouse.move(at.x, at.y);
@@ -205,7 +205,7 @@ async function lockSvart(page: Page): Promise<void> {
   await tick(page);
 }
 
-class Clip {
+export class Clip {
   readonly #dir: string;
   #n = 0;
   #key: string | null = null;

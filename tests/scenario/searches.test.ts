@@ -162,6 +162,8 @@ describe('Bran guarding Thorkel’s body: fight, sneak or bargain', () => {
       expect(world.facts['ch1.thorkel_body']).toBe('CAMP');
       expect(world.household.residents).toContain('C_BRAN');
     }
+    // Design addendum 2.5: the careful player (src/tools/play/carefulFighter.ts) at the fold.
+    console.log(`the fold: the careful player won ${won} of 8`);
     expect(won).toBeGreaterThanOrEqual(3);
   });
 

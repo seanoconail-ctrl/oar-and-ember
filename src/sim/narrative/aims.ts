@@ -280,7 +280,13 @@ function deliver(
 ): boolean {
   const onFoot = world.onFoot;
   if (onFoot === null) return false;
-  const speaks = (id: Id): boolean => world.household.residents.includes(id) || id === ctx.caller;
+  // Someone found lying hurt and waiting to be carried speaks for themselves (Oddi; DE-85).
+  const lying = (id: Id): boolean => {
+    const pose = findActor(onFoot, id)?.actor.pose;
+    return world.people[id] !== undefined && (pose === 'down' || pose === 'call');
+  };
+  const speaks = (id: Id): boolean =>
+    world.household.residents.includes(id) || id === ctx.caller || lying(id);
   const alt = 'alt' in hint ? hint.alt : undefined;
   const line = !speaks(hint.speaker) && alt !== undefined ? alt : hint;
   if (!speaks(line.speaker)) return false;

@@ -473,9 +473,17 @@ export const MIGRATIONS: readonly Migration[] = [
 ];
 
 function migrateFighter25(f: Record<string, unknown>, enemy: boolean): Record<string, unknown> {
-  const { turnFrom: _turnFrom, ...rest } = f;
-  void _turnFrom;
-  return { ...rest, move: null, weight: 'LIGHT', missed: false, step: 0, flashAt: -1, floors: enemy };
+  const rest = { ...f };
+  delete rest['turnFrom'];
+  return {
+    ...rest,
+    move: null,
+    weight: 'LIGHT',
+    missed: false,
+    step: 0,
+    flashAt: -1,
+    floors: enemy,
+  };
 }
 
 function migrateActors25(actors: Record<string, Record<string, unknown>> | undefined): void {

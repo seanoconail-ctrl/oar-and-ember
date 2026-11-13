@@ -1230,9 +1230,9 @@ People of mixed birth (Bran, Senán, Áine, much of Saltvik) take the stronger o
 
 | Key | Value | Notes |
 |---|---|---|
-| oddiCall | 9 tiles | Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; leave the strand without it once he has called, and the wreck-scavengers take it |
+| oddiCall | 9 tiles | Oddi calls out when the steerer comes this near him on Wreck Strand and asks for the ship's silver, in its iron-bound strongbox a little along the shingle; the wreck-scavengers take it the moment he is set down safe (anywhere above the tide line, on the strand or off it: his rescue, decision DE-85), or when the steerer leaves the strand without it once he has called |
 | chestSilver | 4 oz | The ship's hack-silver in the strongbox: what the wreck-scavengers take for Thorkel's body, or for the steering oar (Book 10 section 04 prices it) |
-| chestFirst | Oddi +3 friendship | The strongbox carried up before him: the haul saved (Gain) |
+| chestFirst | Oddi +3 friendship | The strongbox carried off the strand before he is set down safe: the haul saved (Gain). Lifted first, he says he will wait (decision DE-85) |
 | chestLost | Oddi -3 friendship | The strongbox left for the scavengers to take |
 | limp | 0.9 tiles per second | How fast a rescued person with a serious leg wound walks home under their own power (Runa) |
 | parley | 30 real seconds | Wreck-scavengers who see the steerer come with empty hands, not running, hold and talk this long before they lose patience; a weapon taken in hand, a blow or a threat ends it at once |
@@ -2137,4 +2137,4 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | greenWater | Green water comes over the side every 8 to 12 real seconds | As before (Book 7 section 05) |
 | rain | 80 to 120 drops on screen, slanting 25 degrees downwind | |
 | firstRain | A shower over the island from 20:00 on day 1 to 04:00 on day 2, once the sail is raised | Before weather comes (DF-21): presentation only, so the simulation's rain (sight and noise, section 07) is not yet applied. A light overlay of 40 to 60 drops, slanting 25 degrees, that never hides a threat (Book 7 section 08) |
-| rainCloth | Drops bead on the sail cloth, up to 24 beads at once, each growing over 1.5 to 3 real seconds and then running down the cloth | Its patter and the drips from the edge (`AMB_RAIN_CLOTH`) are heard only under the sail (Book 11 section 07; decision DE-27) |
+| rainCloth | Drops bead on the sail cloth, up to 24 beads at once, each growing over 1.5 to 3 real seconds and then running down the cloth | Its patter and the drips from the edge are heard only under the sail (Book 11 section 07, rain on the sail cloth; decision DE-27) |

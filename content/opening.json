@@ -646,6 +646,40 @@
       ]
     },
     {
+      "id": "bring_oddi",
+      "journalKey": "ui.journal.aim.bring_oddi",
+      "opensWhen": [
+        {
+          "fact": "search.oddi_found"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "search.oddi"
+        }
+      ],
+      "progress": [
+        {
+          "carrying": "C_ODDI"
+        },
+        {
+          "carrying": "ITEM_SHIP_SILVER"
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_ODDI",
+          "textKey": "c_oddi.hint.bring_oddi.1",
+          "canCall": true
+        },
+        {
+          "speaker": "C_ODDI",
+          "textKey": "c_oddi.hint.bring_oddi.2",
+          "canCall": true
+        }
+      ]
+    },
+    {
       "id": "find_oddi",
       "journalKey": "ui.journal.aim.find_oddi",
       "opensWhen": [

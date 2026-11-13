@@ -136,9 +136,10 @@ export class CaptionDirector {
       CLASS_RANK[cur.cls] > CLASS_RANK[o.cls]
     )
       return;
+    const from = Math.min(now, Math.max(o.at, now - this.#b.fadeInSeconds));
     this.#replace(
       'info',
-      { kind: 'info', text: o.text, cls: o.cls, from: now, until: now + this.#b.infoHoldSeconds },
+      { kind: 'info', text: o.text, cls: o.cls, from, until: from + this.#b.infoHoldSeconds },
       now,
     );
   }
@@ -153,14 +154,16 @@ export class CaptionDirector {
     this.#pendingSpeech = [];
     const said = speech[speech.length - 1];
     if (said !== undefined) {
+      // A line offered between frames fades in from when it was offered.
+      const from = Math.min(now, Math.max(said.at, now - this.#b.fadeInSeconds));
       this.#replace(
         'speech',
         {
           kind: 'speech',
           text: said.text,
           cls: null,
-          from: now,
-          until: now + this.#speechHold(said.text),
+          from,
+          until: from + this.#speechHold(said.text),
         },
         now,
       );
@@ -194,7 +197,7 @@ export class CaptionDirector {
       if (!fight && held !== null && now - this.#fightEndedAt >= b.heldDelaySeconds) {
         this.#held = null;
         if (now - held.at < b.heldMaxAgeSeconds && !this.#repeated(held.text, now))
-          this.#showInfo(held, now);
+          this.#showInfo({ ...held, at: now }, now);
       }
     } else {
       this.#held = null;

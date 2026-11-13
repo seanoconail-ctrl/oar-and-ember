@@ -44,13 +44,13 @@ function thunder(e: SynthEngine, at: number, pan: number, near: boolean): number
   const swells = near ? 6 : 4;
   for (let k = 0; k < swells; k++) {
     const t = at + (near ? 0.15 : 0) + k * (length / swells) * (0.8 + r() * 0.4);
-    const peak = (near ? 0.62 : 0.4) * (1 - k / (swells + 1));
+    const peak = (near ? 0.62 : 1.1) * (1 - k / (swells + 1));
     noiseHit(
       e,
       t,
       to,
       'lowpass',
-      near ? 260 : 160,
+      near ? 260 : 230,
       0.9,
       [
         [0, 0],
@@ -139,15 +139,15 @@ export const STORM_SOUNDS: readonly SoundDef[] = [
         0.6,
         [
           [0, 0],
-          [0.15, 0.5],
-          [0.7, 0.3],
+          [0.15, 0.9],
+          [0.7, 0.55],
           [1.3, 0],
         ],
         900,
       );
       noiseHit(e, at + 0.6, to, 'bandpass', 1600, 1.2, [
         [0, 0],
-        [0.3, 0.14],
+        [0.3, 0.24],
         [1.6, 0],
       ]);
       return 2.3;
@@ -345,7 +345,7 @@ export class RainClothAmbience {
       // A drop on taut cloth: a soft, dull tap.
       noiseHit(e, at, this.#out, 'bandpass', 700 + this.#r() * 500, 2.5, [
         [0, 0],
-        [0.004, 0.06 + this.#r() * 0.05],
+        [0.004, 0.09 + this.#r() * 0.07],
         [0.05, 0],
       ]);
       this.#nextPat += 0.03 + this.#r() * 0.07;

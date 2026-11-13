@@ -215,15 +215,61 @@ def puff(i):
     return g
 
 
+def tell(soft):
+    """Design addendum 2.5 (Book 10 "Telegraphs", flash; Book 7 section 12): the telegraph's
+    one-frame flash on an attacker's weapon and shoulder, two palette steps lighter than the iron
+    and the cloth it lies on, never white: a short pale streak along the drawn-back weapon and a
+    glint at its point. With reduced flashes only the weapon's edge brightens (a thin line)."""
+    g = blank(16, 16)
+    if soft:
+        for k in range(4):
+            g[6 + k][5 + k] = c('stone', 7)
+        return g
+    for k in range(6):
+        g[4 + k][3 + k] = c('stone', 8) if k < 5 else c('stone', 7)
+    for (x, y) in ((4, 4), (3, 5)):
+        g[y][x] = c('stone', 7)
+    g[3][2] = c('stone', 8)
+    g[2][2] = c('stone', 7)
+    g[3][1] = c('stone', 7)
+    g[12][9] = c('wool', 5)
+    g[12][10] = c('wool', 5)
+    g[13][10] = c('wool', 4)
+    return g
+
+
+def shield_broken():
+    """A shield split or worn through (Book 10 shieldBreaks: it is dropped), lying where it broke:
+    two halves of the round board apart on the ground, the boss on one, a rim strap torn."""
+    g = blank(16, 16)
+    for y in range(16):
+        for x in range(16):
+            for (cx, cy, side) in ((6, 10, -1), (10, 11, 1)):
+                u, v = (x - cx) / 4.6, (y - cy) / 2.3
+                if u * u + v * v <= 1 and (x - cx) * side >= 0:
+                    rim = u * u + v * v > 0.62
+                    g[y][x] = c('tar', 1) if rim else (c('driftwood', 3) if (x + y) % 3 else c('driftwood', 2))
+    for (x, y) in ((10, 11), (11, 11)):
+        g[y][x] = c('stone', 6)
+    g[10][10] = c('stone', 8)
+    g[12][7] = c('driftwood', 1)
+    g[12][8] = INK
+    g[9][6] = c('driftwood', 4)
+    return g
+
+
 def fx_combat():
     write('fx_combat', 'decal', 16, 16, [
         ('parry', [star(3, True), star(6, True), star(7, False), star(4, False)], 3, False),
         ('sparks', [sparks(i, True) for i in range(3)], 3, False),
         ('splinters', [sparks(i, False) for i in range(3)], 4, False),
         ('puff', [puff(i) for i in range(3)], 4, False),
+        ('tell', [tell(False), tell(True)], 1, False),
+        ('shield_broken', [shield_broken()], 60, False),
     ], ['Combat v2 (decisions DE-5, DE-7, DE-10): the parry\'s bright spark, sparks off mail and iron,',
         'splinters off a shield\'s boards (an arrow\'s thunk, a blocked blow), and the dust of a',
-        'sidestep.'])
+        'sidestep. Design addendum 2.5 (DF-9, DF-21): the telegraph\'s one-frame flash (and its',
+        'reduced-flash edge), and a broken shield lying where it broke.'])
 
 
 if __name__ == '__main__':

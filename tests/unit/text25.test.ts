@@ -201,9 +201,10 @@ describe('the text audit (Book 8 section 10; DF-13, DF-80)', () => {
 
   it('has a verdict for every caption string and every sound caption', () => {
     const cueKeys = (content.audio?.cues ?? []).flatMap((c) => c.captionKey ?? []);
-    const unlisted = [...new Set([...captionKeys, ...cueKeys])].filter(
-      (k) => auditInfo(k).show === false && (auditInfo(k) as { why: string }).why === 'UNLISTED',
-    );
+    const unlisted = [...new Set([...captionKeys, ...cueKeys])].filter((k) => {
+      const v = auditInfo(k);
+      return !v.show && v.why === 'UNLISTED';
+    });
     expect(unlisted).toEqual([]);
   });
 

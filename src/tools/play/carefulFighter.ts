@@ -82,7 +82,7 @@ export function carefulTick(
   const fighterOf = (id: string): Fighter | undefined => onFoot.actors[id]?.fight?.f;
   const ready = pf == null || free(pf);
   // A light pressed is let go at once (chargeFromPress: released before level 1, a light).
-  if (pf != null && pf.state === 'chargeL0') out.push({ type: 'MELEE_RELEASE' });
+  if (pf?.state === 'chargeL0') out.push({ type: 'MELEE_RELEASE' });
   // Locked on to the nearest foe (its attacks aim at it, DF-81).
   const lock = p.stance?.lockOn ?? null;
   if (
@@ -127,12 +127,11 @@ export function carefulTick(
     const at = cf === undefined ? null : blowLandsAt(cf, cb);
     out.push(still);
     const lead = cb.parry.windup + Math.floor(cb.parry.window / 2);
-    if (at !== null && at - t === lead && (ready || pf?.state === 'block') && stamina > 0)
+    if (at !== null && at - t === lead && (ready || pf.state === 'block') && stamina > 0)
       out.push({ type: 'PARRY' });
     return out;
   }
-  const ownReach =
-    pf?.weapon == null ? cb.unarmed.reachTiles : cb.weapons[pf.weapon].reachTiles;
+  const ownReach = pf?.weapon == null ? cb.unarmed.reachTiles : cb.weapons[pf.weapon].reachTiles;
   const reachPx = (ownReach + cb.bodyRadiusTiles) * tile;
   // A riposte on the stunned: walk in to its reach, then strike.
   const stunned = ranked.find(({ id }) => fighterOf(id)?.state === 'parried');
@@ -178,8 +177,7 @@ export function carefulTick(
   }
   // Otherwise keep just outside the reach of the nearest foe and let it come.
   const fa = onFoot.actors[nearest.id]?.fight;
-  const theirs =
-    fa?.f.weapon == null ? cb.unarmed.reachTiles : cb.weapons[fa.f.weapon].reachTiles;
+  const theirs = fa?.f.weapon == null ? cb.unarmed.reachTiles : cb.weapons[fa.f.weapon].reachTiles;
   const hold = (theirs + cb.bodyRadiusTiles + 0.6) * tile;
   if (fa?.bow === true && (fa.arrows > 0 || fa.ai.sidearmAt < 0)) {
     // An archer: close on it.

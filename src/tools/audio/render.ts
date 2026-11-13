@@ -88,6 +88,14 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     { fade: { fadeIn: 8, layersJoin: 25, stopAt: 34, fadeOut: 6 } },
     'opening-hearth-fades',
   ],
+  // Design addendum 2.5 section 3: the storm of the cold open (DF-16, DF-17) and rain on the
+  // sail cloth (DF-21): thunder near and far, a wave on the hull, green water, the storm's bed.
+  ['sfx:SFX_THUNDER_NEAR', 5, {}, 'storm-thunder-near'],
+  ['sfx:SFX_THUNDER_FAR', 4, {}, 'storm-thunder-far'],
+  ['sfx:SFX_WAVE_HULL', 2, {}, 'storm-wave-hull'],
+  ['sfx:SFX_GREEN_WATER', 2.6, {}, 'storm-green-water'],
+  ['storm:bed', 12, {}, 'storm-bed'],
+  ['storm:rain', 10, {}, 'storm-rain-cloth'],
   ['tell:SFX_TELL_RAN', 6, {}, 'tell-ran'],
   ['tell:SFX_TELL_MANANNAN', 7, {}, 'tell-manannan'],
   ['tell:SFX_TELL_DRAUGR', 6.5, {}, 'tell-draugr'],

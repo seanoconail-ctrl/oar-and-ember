@@ -953,6 +953,55 @@
       "bus": "effects",
       "captionKey": "caption.sfx.eat",
       "temporary": false
+    },
+    {
+      "id": "SFX_TELL_LIGHT",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.tell_light",
+      "temporary": false
+    },
+    {
+      "id": "SFX_TELL_SCRAPE",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.tell_scrape",
+      "temporary": false
+    },
+    {
+      "id": "SFX_TELL_CREAK",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.tell_creak",
+      "temporary": false
+    },
+    {
+      "id": "SFX_TELL_STEERER",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.tell_steerer",
+      "temporary": false
+    },
+    {
+      "id": "SFX_EXHAUSTED_BREATH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.exhausted_breath",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SIDEARM",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sidearm",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SHIELD_SPLIT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.shield_split",
+      "temporary": false
     }
   ],
   "events": {
@@ -1059,7 +1108,14 @@
     "SIDESTEP": "SFX_SIDESTEP",
     "ALERT_STING": "SFX_ALERT",
     "BIND_WOUND": "SFX_BIND_WOUND",
-    "EAT_RATION": "SFX_EAT"
+    "EAT_RATION": "SFX_EAT",
+    "TELL_LIGHT": "SFX_TELL_LIGHT",
+    "TELL_SCRAPE": "SFX_TELL_SCRAPE",
+    "TELL_CREAK": "SFX_TELL_CREAK",
+    "TELL_STEERER": "SFX_TELL_STEERER",
+    "EXHAUSTED_BREATH": "SFX_EXHAUSTED_BREATH",
+    "SIDEARM_DRAWN": "SFX_SIDEARM",
+    "SHIELD_SPLIT": "SFX_SHIELD_SPLIT"
   },
   "home": {
     "restSeconds": 90,

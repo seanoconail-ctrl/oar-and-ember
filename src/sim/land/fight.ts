@@ -678,6 +678,11 @@ export function spawnEncounters(
       // Stage 11: the dead, the taken and the gone are not placed again (the wreckers at Seal Cave
       // after the sheepfold are the ones who walked away from it).
       if (person.status === 'dead' || person.status === 'captive') continue;
+      // DF-21: one still stripping the stern at dusk is not at the fold yet; they join it at dark.
+      if (enc.dusk !== true && duskAway(world, ctx, m.person)) {
+        world.facts[`enc.join.${m.person}`] = enc.id;
+        continue;
+      }
       const arch = ctx.ai.archetypes[fd.archetype] ?? { vitality: ctx.cb.vitality, armour: 'NONE' };
       const x = m.x * map.tile;
       const y = m.y * map.tile;
@@ -1034,12 +1039,11 @@ export function meleeRelease(world: WorldState, ctx: FightContext, emit: FightEm
 export function steererParry(
   world: WorldState,
   ctx: FightContext,
-  emit: FightEmit,
+  _emit: FightEmit,
   window = ctx.cb.parry.window,
 ): void {
   const f = steererFighter(world, ctx);
   if (f === null || world.onFoot?.carrying != null) return;
-  void emit;
   const angle = steererAngle(world, world.onFoot?.player.facing ?? 's');
   if (free(f) || f.state === 'block') setAngle(f, angle);
   if (pressParry(f, world.tick, ctx.cb, pool(world), window) === 'STARTED') faceAction(world, f);
@@ -1255,7 +1259,6 @@ export function stepStance(
   if (p.aim !== null) want = Math.atan2(p.aim.y, p.aim.x);
   // Locked in an action (Book 10 "Commitment"): no turning from the first wind-up tick to the
   // last recovery tick, locked on or not.
-  void tick;
   if (f !== null && (f.hitstop > 0 || locked(f))) want = null;
   if (want !== null)
     st.facing = on || p.aim !== null ? turnTowards(st.facing, want, turn) : wrapAngle(want);
@@ -1461,6 +1464,11 @@ export interface FightWorld {
    * edge or near a fire.
    */
   readonly avoid?: (x: number, y: number) => boolean;
+  /**
+   * Design addendum 2.5 (DF-21; Book 10 sightInLight, Sneaking shadow): whether a point lies in a
+   * light pool (a lit fire's light): seen at the full day range there, and never in shadow.
+   */
+  readonly lit?: (x: number, y: number) => boolean;
   /** Whether it is raining (Book 10 rain: sight and noise shortened); false until weather comes. */
   readonly rain?: boolean;
   /** Time balance (daylight). */
@@ -1550,7 +1558,8 @@ export function stepFight(fw: FightWorld): void {
         fa.ai.mind.cooldownUntil = tick + ctx.ai.states.attackCooldown;
       }
     }
-    if (fa.f.exhausted !== wasExhausted) fw.emit({ type: 'EXHAUSTED', who: id, on: fa.f.exhausted });
+    if (fa.f.exhausted !== wasExhausted)
+      fw.emit({ type: 'EXHAUSTED', who: id, on: fa.f.exhausted });
     telegraph(fw, id, fa.f);
     regen(fa, ctx, tick);
     a.blocking = guardLive(fa.f);
@@ -1628,7 +1637,8 @@ function strikeMotion(
     ux = f.dodge.x;
     uy = f.dodge.y;
   } else if (!steerer && f.state === 'dodge' && f.dodge !== null) {
-    step = dashStep(tick - f.since - ctx.cb.dodge.start, ctx.cb.dodge.dash, ctx.cb.dodge.tiles) * tile;
+    step =
+      dashStep(tick - f.since - ctx.cb.dodge.start, ctx.cb.dodge.dash, ctx.cb.dodge.tiles) * tile;
     ux = f.dodge.x;
     uy = f.dodge.y;
   }
@@ -2329,9 +2339,13 @@ function sightOn(
   y: number,
 ): number {
   const { ctx, world, map } = fw;
-  let range = sightRange(ctx.ai, light, false) * (fw.rain === true ? ctx.ai.sight.rainFactor : 1);
+  // In a light pool the full day's range, and no shadow to hide in (Book 10 sightInLight).
+  const pooled = light !== 'day' && fw.lit?.(x, y) === true;
+  let range =
+    sightRange(ctx.ai, pooled ? 'day' : light, false) *
+    (fw.rain === true ? ctx.ai.sight.rainFactor : 1);
   if (!sneaking) return range;
-  if (light !== 'day') range *= ctx.ai.sneaking.shadow;
+  if (light !== 'day' && !pooled) range *= ctx.ai.sneaking.shadow;
   if (world.onFoot !== null && inCover(ctx, world.onFoot.zone, x, y, map.tile))
     range = Math.min(range, ctx.ai.sneaking.hideTiles);
   return range;
@@ -2471,6 +2485,10 @@ function think(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     ai.releaseAt = -1;
   }
   if (ai.releaseAt >= 0 && tick >= ai.releaseAt && charging(fa.f)) {
+    // The hold has reached its level this tick (its clock steps after the choice).
+    const held = tick - fa.f.since;
+    if (fa.f.state === 'chargeL0' && held >= ctx.cb.charge.level1At) fa.f.state = 'chargeL1';
+    if (fa.f.state === 'chargeL1' && held >= ctx.cb.charge.level2At) fa.f.state = 'chargeL2';
     const enc = encounterOf(ctx, onFoot.battle);
     const slowTell = enc?.teaches === id && fa.f.state !== 'chargeL0' ? ctx.ai.dusk.svartWindup : 0;
     releaseAttack(fa.f, tick, ctx.cb, fa.stamina, slowTell);
@@ -2794,9 +2812,20 @@ function engage(
   }
   const share = fa.stamina.current / Math.max(1, fa.staminaMax);
   // Decide (Book 10 decisionInterval), holding each state its least time (a cooldown).
-  if (tick >= mind.next) {
-    mind.next = tick + k.decisionInterval;
-    const want = chooseState(fw, id, a, fa, target, pos, d, { circle, engageAt, range, dist, share });
+  // Decisions fall on the fighter's own grid of decisionInterval ticks; one that comes while it
+  // is locked in an action is skipped, never moved (so a group's choices stay out of step).
+  const due = tick >= mind.next;
+  const onGrid = due && (tick - mind.next) % k.decisionInterval === 0;
+  if (due)
+    mind.next += k.decisionInterval * (Math.floor((tick - mind.next) / k.decisionInterval) + 1);
+  if (onGrid) {
+    const want = chooseState(fw, id, a, fa, target, pos, d, {
+      circle,
+      engageAt,
+      range,
+      dist,
+      share,
+    });
     const hard = fa.f.state === 'stagger' || fa.f.state === 'knockdown';
     if (want !== mind.state && (tick - mind.since >= k.least[mind.state] || hard))
       enterState(fw, fa, want);
@@ -3205,7 +3234,8 @@ function startAttack(
   if (m === undefined) {
     // A light: released the tick after the press, its wind-up the floor's from the press.
     ai.releaseAt = tick + 1;
-    if (light !== undefined) fa.f.flashAt = Math.max(tick, tick + windupFor(fa.f, ctx.cb, light) - lead);
+    if (light !== undefined)
+      fa.f.flashAt = Math.max(tick, tick + windupFor(fa.f, ctx.cb, light) - lead);
     return true;
   }
   // A heavy held for its hold (Book 10 "Enemy attacks"); released the tick it is due.
@@ -3358,8 +3388,13 @@ function archerFight(
   if (d < ar.tooClose * tile) {
     const recent = ai.hopAt >= 0 && tick - ai.hopAt < ar.dashOnceTicks;
     const away = { x: (a.x - pos.x) / Math.max(1e-6, d), y: (a.y - pos.y) / Math.max(1e-6, d) };
-    const behind = { x: a.x + away.x * ar.corneredTiles * tile, y: a.y + away.y * ar.corneredTiles * tile };
-    const blocked = !groundOpen(fw, behind.x, behind.y) || !groundOpen(fw, (a.x + behind.x) / 2, (a.y + behind.y) / 2);
+    const behind = {
+      x: a.x + away.x * ar.corneredTiles * tile,
+      y: a.y + away.y * ar.corneredTiles * tile,
+    };
+    const blocked =
+      !groundOpen(fw, behind.x, behind.y) ||
+      !groundOpen(fw, (a.x + behind.x) / 2, (a.y + behind.y) / 2);
     if (recent || blocked || fa.f.exhausted || fa.stamina.current <= 0) {
       drawSidearm(fw, id, a, fa);
       return;
@@ -3384,7 +3419,14 @@ function archerFight(
   }
   if (d < ar.shootFrom.min * tile) {
     mind.state = 'RETREAT';
-    ai.goal = { x: pos.x, y: pos.y, run: false, away: true, face: pos, share: ctx.cb.stance.backOff };
+    ai.goal = {
+      x: pos.x,
+      y: pos.y,
+      run: false,
+      away: true,
+      face: pos,
+      share: ctx.cb.stance.backOff,
+    };
     return;
   }
   ai.goal = null;
@@ -3392,15 +3434,14 @@ function archerFight(
   // Settle, draw, loose, then recover, standing completely still (Book 10 standStill).
   mind.state = 'ATTACK';
   mind.since = tick;
-  orderShot(
-    a,
-    { x: pos.x, y: pos.y },
-    { x: 0, y: 0, run: false, sneak: false },
-    'arrow',
-    { settle: ar.settle, draw: ctx.cb.telegraphs.floorDraw - ar.settle, recover: ar.recover },
-  );
+  orderShot(a, { x: pos.x, y: pos.y }, { x: 0, y: 0, run: false, sneak: false }, 'arrow', {
+    settle: ar.settle,
+    draw: ctx.cb.telegraphs.floorDraw - ar.settle,
+    recover: ar.recover,
+  });
   fa.arrows--;
-  mind.cooldownUntil = tick + ctx.cb.telegraphs.floorDraw + ar.recover + ctx.ai.states.attackCooldown;
+  mind.cooldownUntil =
+    tick + ctx.cb.telegraphs.floorDraw + ar.recover + ctx.ai.states.attackCooldown;
   ai.lastStruck = tick;
   say(ctx, id, 'taunt', fw.emit, tick + id.length);
 }
@@ -3504,12 +3545,15 @@ function react(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     const soonest = Math.max(tick, of.since + h.reactTicks);
     // The blow's first active tick as it can be read (a charge's: at the light's soonest).
     const lightM = of.weapon === null ? null : ctx.cb.weapons[of.weapon].moves.light1;
-    const active = striking(of) ? of.activeAt : of.since + (lightM === null || lightM === undefined ? 0 : windupFor(of, ctx.cb, lightM));
+    const active = striking(of)
+      ? of.activeAt
+      : of.since + (lightM === null || lightM === undefined ? 0 : windupFor(of, ctx.cb, lightM));
     const live = ctx.cb.parry.windup;
     const window = parryWindowOf(fa.f, ctx.cb, ctx.cb.parry.window);
     // The press that centres the live ticks on the blow's first active tick.
     const press = active - live - Math.floor(window / 2);
-    const parryOk = (fa.f.weapon !== null || fa.f.shield) && press >= soonest && fa.stamina.current > 0;
+    const parryOk =
+      (fa.f.weapon !== null || fa.f.shield) && press >= soonest && fa.stamina.current > 0;
     const blockOk = fa.f.shield && soonest + ctx.cb.block.raise <= active;
     const parry = parryOk && (!fa.f.shield || nextFloat(world.rng.ai) < h.parryShare || !blockOk);
     if (parry) ai.react = { kind: 'PARRY', at: press, until: press + 1 };
@@ -3868,7 +3912,12 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
     }
     // Grounded movement (Book 10 "Movement and acceleration"): ease towards the walk wanted.
     const ticks = accelTicks(ctx.cb.accel, mode, f);
-    const v = easeVelocity(fa.vel ?? { x: 0, y: 0 }, want, Math.max(full, Math.hypot(fa.vel?.x ?? 0, fa.vel?.y ?? 0)), ticks);
+    const v = easeVelocity(
+      fa.vel ?? { x: 0, y: 0 },
+      want,
+      Math.max(full, Math.hypot(fa.vel?.x ?? 0, fa.vel?.y ?? 0)),
+      ticks,
+    );
     // Never past the point it walks to.
     const sp = Math.hypot(v.x, v.y);
     const cap = goal !== null && goal.away !== true ? d : Infinity;
@@ -3893,7 +3942,7 @@ function walk(fw: FightWorld, id: Id, a: OnFootActor, fa: ActorFight): void {
   const ny = a.y + vy * speed;
   if (vx !== 0 && clear(nx, a.y)) a.x = nx;
   if (vy !== 0 && clear(a.x, ny)) a.y = ny;
-  if (fa.vel !== undefined && a.x === before.x && a.y === before.y) fa.vel = { x: 0, y: 0 };
+  if (a.x === before.x && a.y === before.y) fa.vel = { x: 0, y: 0 };
   // Stage 10: a wall in the way (the sheepfold's): round it by the tiles, towards the goal.
   const goal = fa.ai.goal;
   const moved = Math.hypot(a.x - before.x, a.y - before.y);
@@ -4235,6 +4284,88 @@ function warnStep(fw: FightWorld, battle: Battle): void {
   else if (w.stage === 3 && d < (w.at ?? d) - ctx.cb.bodyRadiusTiles * tile) startFight(fw);
 }
 
+/** Whether a person is one of the dusk's band, still at the stern (the dusk not yet settled). */
+function duskAway(world: WorldState, ctx: FightContext, person: Id): boolean {
+  const enc = duskEncounter(ctx);
+  if (enc === undefined || world.facts['ch1.dusk'] !== undefined) return false;
+  if (!enc.members.some((m) => m.person === person)) return false;
+  const k = ctx.ai.dusk;
+  const day = world.calendar.day;
+  return day < k.day || (day === k.day && world.calendar.minuteOfDay < darkAt(world, ctx));
+}
+
+/**
+ * The dusk settled (DF-21): those of its band who went their way (at dark, or with the food) join
+ * the band at the fold if it was met without them, standing where its plan puts them.
+ */
+function joinLate(fw: Pick<FightWorld, 'world' | 'ctx' | 'land'>): void {
+  const { world, ctx } = fw;
+  const onFoot = world.onFoot;
+  if (onFoot === null) return;
+  for (const key of Object.keys(world.facts).sort()) {
+    if (!key.startsWith('enc.join.')) continue;
+    const person = key.slice('enc.join.'.length);
+    const encId = world.facts[key];
+    Reflect.deleteProperty(world.facts, key);
+    const fate = world.facts[`ch1.dusk.${person}`];
+    if (fate !== 'LEFT' && fate !== 'FLED') continue;
+    const enc = ctx.def.encounters.find((e) => e.id === encId);
+    const m = enc?.members.find((x) => x.person === person);
+    const fd = ctx.fighters.get(person);
+    const p = world.people[person];
+    const map = enc === undefined ? undefined : fw.land.maps.get(enc.zone);
+    if (enc === undefined || m === undefined || fd === undefined || p === undefined || map === undefined)
+      continue;
+    const here = onFoot.zone === enc.zone;
+    const rest = here ? null : onFoot.elsewhere?.[enc.zone];
+    const battle = here ? onFoot.battle : rest?.battle;
+    const actors = here ? onFoot.actors : rest?.actors;
+    if (actors === undefined || battle == null || battle.scene !== enc.id || battle.over) continue;
+    const arch = ctx.ai.archetypes[fd.archetype] ?? { vitality: ctx.cb.vitality, armour: 'NONE' };
+    const x = m.x * map.tile;
+    const y = m.y * map.tile;
+    actors[person] = {
+      x,
+      y,
+      facing: m.facing,
+      pose: m.task === undefined ? 'idle' : 'work',
+      ...(m.task === undefined ? {} : { task: m.task }),
+      fight: {
+        f: newFighter(weaponRow(ctx, fd.weapon), {
+          shield: fd.shield ?? false,
+          heavy: fd.heavy ?? false,
+          armour: arch.armour,
+          facing: m.facing,
+          floors: true,
+        }),
+        arch: fd.archetype,
+        side: 'ENEMY',
+        vitality: arch.vitality,
+        maxVitality: arch.vitality,
+        stamina: { current: ctx.cb.stamina.max, spentTick: 0 },
+        staminaMax: ctx.cb.stamina.max,
+        group: enc.id,
+        leader: fd.leader ?? false,
+        bow: fd.bow ?? false,
+        arrows: fd.bow === true ? ctx.ai.habits.archerArrows : 0,
+        finishesDowned: fd.finishesDowned ?? false,
+        able: true,
+        ai: newAi(x, y, m.facing, m.task),
+        berserkUntil: -1,
+        finishing: null,
+        lastHit: null,
+        bloodied: false,
+        dead: null,
+        order: null,
+        quietSince: world.tick,
+      },
+    };
+    p.vitality = arch.vitality;
+    p.status = 'alive';
+    battle.groups[enc.id]?.members.push(person);
+  }
+}
+
 /** The scavengers at dusk's encounter (combat.json), if any. */
 function duskEncounter(ctx: FightContext): CombatDef['encounters'][number] | undefined {
   return ctx.def.encounters.find((e) => e.dusk === true);
@@ -4288,6 +4419,7 @@ function resolveDusk(fw: FightWorld, outcome: 'FOOD' | 'DARK' | 'FOUGHT'): void 
   }
   world.facts['ch1.dusk'] = outcome;
   fw.emit({ type: 'DUSK_RESOLVED', outcome, fates });
+  joinLate(fw);
 }
 
 /**

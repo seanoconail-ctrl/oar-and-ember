@@ -165,6 +165,8 @@ export class Session {
     this.menus.update();
     const orders = this.menus.timeStopped ? [] : this.ring.update(input, aim);
     for (const order of orders) this.sim.submit({ type: 'CREW_ORDER', order });
+    // The ring's centre heals (DF-21: heal on the gamepad's command ring).
+    if (this.ring.takeHeal() && !this.menus.timeStopped) this.sim.submit({ type: 'HEAL' });
 
     // On foot: the movement wanted and Interact, applied at the start of the very next tick, so
     // a key pressed before this frame moves the steerer in this frame (no added latency).

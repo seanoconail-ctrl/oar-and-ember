@@ -459,7 +459,10 @@ export function parseMissileBalance(json: unknown): MissileBalance {
   };
   const spear: RangedWeapon = {
     reachTiles: number('weaponMovesets.Spear, thrown.Reach', spearRow['Reach'] ?? ''),
-    drawTicks: number('frameData.Spear, thrown.Wind-up', frame('Spear, thrown', 'Throw')['Wind-up'] ?? ''),
+    drawTicks: number(
+      'frameData.Spear, thrown.Wind-up',
+      frame('Spear, thrown', 'Throw')['Wind-up'] ?? '',
+    ),
   };
   const full = match(
     'spreadFullDraw',

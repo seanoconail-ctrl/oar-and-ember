@@ -7,18 +7,22 @@
  * followed for two in-game days.
  *
  * The playtest's bug (DE-82): Oddi set down above the tide line on his own strand stood up after
- * Book 10's rescueGetUp but had not joined the household (only a set-down off the strand rescues
- * him, S10-7), so no day ever moved him, talk refused him (not a resident) and, standing, he could
- * not be lifted again. The scripted searches always carried him straight off the strand.
+ * Book 10's rescueGetUp but had not joined the household (then only a set-down off the strand
+ * rescued him, S10-7), so no day ever moved him, talk refused him (not a resident) and, standing,
+ * he could not be lifted again. The scripted searches always carried him straight off the strand.
+ * Since DE-85 any safe set-down rescues him, on his strand or off it, and the scavengers then take
+ * the strongbox unless it was carried up first.
  */
 import { describe, expect, it } from 'vitest';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import { readSave, writeSave } from '../../src/persist/save.ts';
 import type { SaveFile } from '../../src/persist/save.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
+import { tideAt } from '../../src/sim/calendar/calendar.ts';
 import { campaignMinute } from '../../src/sim/home/camp.ts';
 import { landContext } from '../../src/sim/land/context.ts';
-import { findActor } from '../../src/sim/land/zoneLinks.ts';
+import { findActor, placeActor } from '../../src/sim/land/zoneLinks.ts';
+import { bandAt, stillWaterLevel } from '../../src/sim/land/water.ts';
 import { aboveTideLine, terrainAt, tileBlocks, tileOf } from '../../src/sim/land/zoneMap.ts';
 import { searchHolds } from '../../src/sim/narrative/searches.ts';
 import { wreckHolds } from '../../src/sim/narrative/wreck.ts';
@@ -29,7 +33,7 @@ import type { WorldState } from '../../src/sim/world.ts';
 import { newCampaign } from '../../src/sim/world.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
-import { OpeningBot } from '../../src/tools/play/openingBot.ts';
+import { findPath, OpeningBot } from '../../src/tools/play/openingBot.ts';
 import type { Tile } from '../../src/tools/play/openingBot.ts';
 import { WreckBot } from '../../src/tools/play/wreckBot.ts';
 
@@ -95,6 +99,8 @@ interface Play {
   events: SimEvent[];
   readonly who: Who;
   seen: Seen;
+  /** The steerer went straight to bed after the rescue (the night passes at once). */
+  slept: boolean;
 }
 
 interface Seen {
@@ -208,6 +214,7 @@ function newPlay(who: Who, sim: Simulation): Play {
     bot,
     events,
     who,
+    slept: false,
     seen: {
       rescuedAt: null,
       from: null,
@@ -350,6 +357,8 @@ const loaded = (file: SaveFile): WorldState =>
 function carryInto(p: Play, id: string, zone: string, goal: (t: Tile) => boolean): void {
   const bot = p.bot;
   for (let tries = 0; tries < 12; tries++) {
+    // A rescued person dropped above the tide line by a winded steerer is rescued there (DE-85).
+    if (tries > 0 && world(p).household.residents.includes(id)) return;
     bot.waitFor(() => bot.onFoot.player.winded?.carry !== true, T * 60);
     if (bot.onFoot.carrying !== id) bot.lift(id);
     bot.goToZone(zone);
@@ -450,24 +459,42 @@ const ODDI = {
   },
   /**
    * The playtest's way: lifted, carried up the strand and set down there above the tide line, as
-   * Hild was; then (he lies there, to be lifted again) carried off the strand.
+   * Hild was. That is his rescue (decision DE-85): he joins and limps home himself, and the
+   * scavengers have the strongbox, still lying in the wash.
    */
   strandFirst: (p: Play): void => {
     const bot = p.bot;
     bot.goToZone('ZONE_SK_STRAND');
     bot.lift('C_ODDI');
-    const own = tileOf(bot.map, bot.onFoot.player.x, bot.onFoot.player.y);
-    if (!bot.walkTo((t) => dry(p)(t) && t.ty <= own.ty - 3 && Math.abs(t.tx - own.tx) <= 3))
-      throw new Error('no dry ground up the strand');
+    upTheStrand(p);
     bot.setDown();
-    // Still on his strand: not yet rescued, and lying where he was put for the steerer to lift.
-    bot.step(getUpTicks + 2 * T);
-    const lying = at(p);
-    expect(lying?.zone, describeWho(p)).toBe('ZONE_SK_STRAND');
-    expect(lying?.actor.pose, describeWho(p)).toBe('down');
-    expect(world(p).household.residents).not.toContain('C_ODDI');
-    expect(world(p).facts['search.oddi']).toBeUndefined();
-    carryInto(p, 'C_ODDI', CAMP_ZONE, dry(p));
+    expect(world(p).household.residents).toContain('C_ODDI');
+    expect(world(p).facts['search.oddi']).toBe('ODDI_FIRST');
+    expect(world(p).facts['ch1.chest']).toBe('LOST');
+    expect(findActor(bot.onFoot, 'ITEM_SHIP_SILVER')).toBeNull();
+  },
+  /**
+   * The strongbox lifted first (Oddi says he will wait) and carried off the strand; then Oddi
+   * carried up the strand and set down there: CHEST_FIRST, the silver saved.
+   */
+  strandChestFirst: (p: Play): void => {
+    const bot = p.bot;
+    bot.goToZone('ZONE_SK_STRAND');
+    const n = p.events.length;
+    bot.lift('ITEM_SHIP_SILVER');
+    expect(p.events.slice(n)).toContainEqual({
+      type: 'PERSON_SPOKE',
+      person: 'C_ODDI',
+      lineKey: 'c_oddi.search.chest_saved',
+    });
+    carryInto(p, 'ITEM_SHIP_SILVER', CAMP_ZONE, dry(p));
+    expect(world(p).facts['ch1.chest']).toBe('SAVED');
+    bot.goToZone('ZONE_SK_STRAND');
+    bot.lift('C_ODDI');
+    upTheStrand(p);
+    bot.setDown();
+    expect(world(p).facts['search.oddi']).toBe('CHEST_FIRST');
+    expect(world(p).facts['ch1.chest']).toBe('SAVED');
   },
   /** Carried all the way to the camp's fire. */
   fire: (p: Play): void => {
@@ -479,24 +506,18 @@ const ODDI = {
   },
 };
 
-/** A downed ally carried into the camp's safe place (Book 10 broughtHome), lifted again if dropped. */
-function broughtHome(p: Play, id: string): void {
-  if (findActor(p.bot.onFoot, id)?.actor.pose !== 'down') return;
-  const safe = land.fight?.def.safePlaces[0];
-  if (safe === undefined) throw new Error('no safe place');
-  carryInto(
-    p,
-    id,
-    safe.zone,
-    (t) => dry(p)(t) && Math.hypot(t.tx + 0.5 - safe.x, t.ty + 0.5 - safe.y) < safe.r - 1.5,
-  );
+/** A few tiles up the strand from where the steerer stands, on dry shingle above the tide line. */
+function upTheStrand(p: Play): void {
+  const bot = p.bot;
+  const own = tileOf(bot.map, bot.onFoot.player.x, bot.onFoot.player.y);
+  if (!bot.walkTo((t) => dry(p)(t) && t.ty <= own.ty - 3 && Math.abs(t.tx - own.tx) <= 3))
+    throw new Error('no dry ground up the strand');
 }
 
 const BRAN = {
-  /** The fight at the fold; Bran, if downed in it, carried home (the bot's carry may drop him). */
+  /** The fight at the fold; Bran, if downed in it, carried home by the bot (searchBot.bran). */
   fight: (p: Play) => {
     p.bot.bran('FIGHT');
-    broughtHome(p, 'C_BRAN');
   },
   sneak: (p: Play) => {
     p.bot.bran('SNEAK');
@@ -544,7 +565,7 @@ function play(run: Run, seed: string): Play {
     p.sim.events.onAny((e) => {
       if (
         e.type === 'CAMP_REACHED' &&
-        p.bot.onFoot.carrying === run.who &&
+        p.sim.state.household.residents.includes(run.who) &&
         saved.campAutosave === null
       )
         saved.campAutosave = saveNow(p, 'camp');
@@ -572,6 +593,7 @@ function play(run: Run, seed: string): Play {
     const state = loaded(saveNow(p, 'rescued'));
     const fresh = newPlay(run.who, createSimulation(b, state, land));
     fresh.seen = p.seen;
+    fresh.slept = p.slept;
     p = fresh;
   } else if (run.save === 'checkpoint') {
     // Killed after the rescue: back to the checkpoint taken when Oddi called; rescued again.
@@ -582,14 +604,12 @@ function play(run: Run, seed: string): Play {
     ODDI.oddiFirst(p);
     markRescued(p);
   } else if (run.save === 'campAutosave') {
-    // Killed after the rescue: back to the camp's autosave, taken while carrying him in.
-    if (saved.campAutosave === null) throw new Error('no camp autosave while carrying');
-    p.sim.restore(loaded(saved.campAutosave));
-    p.seen.rescuedAt = null;
-    expect(p.bot.onFoot.carrying).toBe(run.who);
+    // On ahead to the camp while he limps home (its autosave, DE-53), then killed: back to it.
+    p.bot.goToZone(CAMP_ZONE);
     p.bot.walkTo(nearFire(p), false, T * 120);
-    p.bot.setDown();
-    markRescued(p);
+    if (saved.campAutosave === null) throw new Error('no camp autosave');
+    p.sim.restore(loaded(saved.campAutosave));
+    expect(world(p).household.residents).toContain(run.who);
   }
 
   if (run.save === 'walkLoad') {
@@ -608,9 +628,10 @@ function play(run: Run, seed: string): Play {
     const back = (minute(p) + 60) % 1440;
     waitUntil(p, back);
   } else if (run.after === 'sleep') {
-    // Straight to bed under the sail (the rescue is at night).
+    // Straight to bed under the sail (the rescue is at night; after Book 10's collapse hour the
+    // night has already passed, and it is day).
     p.bot.doAt('bed_s0');
-    expect(p.bot.onFoot.player.sleep, 'the steerer asleep').not.toBeNull();
+    p.slept = p.bot.onFoot.player.sleep != null;
   } else if (run.after === 'fight') {
     // Straight off to fight the scavengers at the fold (Bran's search by a fight).
     BRAN.fight(p);
@@ -643,7 +664,7 @@ function follow(p: Play, run: Run): void {
   for (let night = 0; night < 2; night++) {
     // Hild walks up at the first fire's smoke (DE-62): the camp's first work, as a player does it.
     if (run.who === 'C_HILD' && night === 0) hildCamp(p);
-    const asleep = night === 0 && run.after === 'sleep';
+    const asleep = night === 0 && p.slept;
     if (asleep) {
       // The steerer abed since the rescue: the night passes at once (Book 2 section 03), so the
       // night is checked by its record: spent at home, counted at dawn.
@@ -759,10 +780,10 @@ const runs: Run[] = [
     after: 'stay',
     save: 'fresh',
   },
-  // Oddi: every way off his strand, the playtest's set-down on the strand among them.
+  // Oddi: every way home, the playtest's set-down on his strand among them (DE-85).
   {
     who: 'C_ODDI',
-    name: 'set down on the strand first, morning, stays',
+    name: 'set down on his strand, morning, stays',
     at: MORNING,
     rescue: ODDI.strandFirst,
     after: 'stay',
@@ -770,10 +791,26 @@ const runs: Run[] = [
   },
   {
     who: 'C_ODDI',
-    name: 'set down on the strand first, dusk, leaves at once',
+    name: 'set down on his strand, dusk, leaves at once',
     at: DUSK,
     rescue: ODDI.strandFirst,
     after: 'leave',
+    save: 'none',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'set down on his strand, night, saved and loaded on the walk home',
+    at: NIGHT,
+    rescue: ODDI.strandFirst,
+    after: 'stay',
+    save: 'walkLoad',
+  },
+  {
+    who: 'C_ODDI',
+    name: 'strongbox first, then set down on his strand, afternoon, stays',
+    at: AFTERNOON,
+    rescue: ODDI.strandChestFirst,
+    after: 'stay',
     save: 'none',
   },
   {
@@ -826,9 +863,9 @@ const runs: Run[] = [
   },
   {
     who: 'C_ODDI',
-    name: 'carried to the fire, morning, back to the camp autosave',
+    name: 'set down on his strand, morning, back to the camp autosave',
     at: MORNING,
-    rescue: ODDI.fire,
+    rescue: ODDI.strandFirst,
     after: 'stay',
     save: 'campAutosave',
   },
@@ -977,4 +1014,101 @@ describe('everyone rescued walks to camp, works, eats, sleeps under the shelter 
     it(`${run.who}: ${run.name}`, () => {
       play(run, `rescued-${i}`);
     }, 240_000);
+});
+
+describe('Oddi’s rescue and the opening’s reach (DE-85 to DE-88)', () => {
+  it('Oddi dropped by a winded steerer above the tide line is rescued there, and limps home', () => {
+    const p = atBroch('C_ODDI', 'dropped', '10:00');
+    p.bot.goToZone('ZONE_SK_STRAND');
+    p.bot.lift('C_ODDI');
+    p.bot.goToZone(CAMP_ZONE);
+    // Standing with him until the bar runs empty (Book 10 heavyCarryEmpty).
+    p.bot.waitFor(() => p.bot.onFoot.carrying === null, T * 600);
+    expect(p.events.some((e) => e.type === 'LOAD_DROPPED')).toBe(true);
+    expect(world(p).household.residents).toContain('C_ODDI');
+    expect(world(p).facts['search.oddi']).toBe('ODDI_FIRST');
+    p.bot.waitFor(() => rescued(p), T * 10);
+    markRescued(p);
+    p.bot.waitFor(() => p.seen.campAt !== null, T * 600);
+    expect(p.seen.walkedSeen).toBe(true);
+  }, 120_000);
+
+  it('Interact beside Hild in the net cuts it, even with Thorkel’s chest nearer (DE-86)', () => {
+    const p = newGame('C_HILD', 'net-first');
+    const strand = land.maps.get('ZONE_SK_STRAND');
+    if (strand === undefined) throw new Error('no strand');
+    const ob = new OpeningBot(p.sim, strand, b, land);
+    const hild = (): { x: number; y: number } => {
+      const h = p.bot.onFoot.actors['C_HILD'];
+      if (h === undefined) throw new Error('no Hild');
+      return h;
+    };
+    // Reached before the seax is found: she needs a blade, and the chest washes up beside her.
+    const h0 = tileOf(strand, hild().x, hild().y);
+    if (!ob.walkTo((t) => Math.abs(t.tx - h0.tx) + Math.abs(t.ty - h0.ty) === 1))
+      throw new Error('no way to Hild');
+    p.sim.submit({ type: 'INTERACT_AT', tile: tileOf(strand, hild().x, hild().y) });
+    ob.step();
+    ob.waitFor(() => p.bot.onFoot.actors['ITEM_THORKEL_CHEST'] !== undefined, T * 5);
+    ob.pickUp('wreck_seax');
+    const chest = p.bot.onFoot.actors['ITEM_THORKEL_CHEST'];
+    if (chest === undefined) throw new Error('no chest');
+    const reach = land.rules.interactRadiusTiles * strand.tile;
+    const centre = (t: Tile) => ({ x: (t.tx + 0.5) * 24, y: (t.ty + 0.7) * 24 });
+    const d = (a: { x: number; y: number }, c: { x: number; y: number }) =>
+      Math.hypot(a.x - c.x, a.y - c.y);
+    const spot = (t: Tile): boolean =>
+      d(centre(t), chest) < d(centre(t), hild()) && d(centre(t), hild()) < reach - 2;
+    if (!ob.walkTo(spot)) throw new Error('no spot nearer the chest than Hild');
+    expect(world(p).facts['ch1.net_free']).not.toBe(true);
+    p.bot.interact();
+    expect(p.bot.onFoot.carrying).toBeNull();
+    expect(p.bot.onFoot.player.work?.task).toBe('TASK_CUT_NET');
+  }, 60_000);
+
+  it('Hild in the net never drifts out of reach: off the flats and the sea, all day (DE-87)', () => {
+    const p = newGame('C_HILD', 'drift');
+    const strand = land.maps.get('ZONE_SK_STRAND');
+    const elevation = land.elevations.get('ZONE_SK_STRAND');
+    if (strand === undefined || elevation === undefined) throw new Error('no strand');
+    const ob = new OpeningBot(p.sim, strand, b, land);
+    ob.pickUp('wreck_seax');
+    for (let k = 0; k < 60; k++) {
+      p.bot.step(T * 20);
+      const h = p.bot.onFoot.actors['C_HILD'];
+      if (h === undefined) throw new Error('no Hild');
+      const at = tileOf(strand, h.x, h.y);
+      const ground = terrainAt(strand, at.tx, at.ty);
+      expect(['flats', 'sea', 'rock'], `${hhmm(minute(p))} on ${ground}`).not.toContain(ground);
+      const tide = tideAt(world(p).calendar, b);
+      const level = stillWaterLevel(tide);
+      const wade = (t: Tile): boolean =>
+        bandAt(land.water, elevation, (t.tx + 0.5) * 24, (t.ty + 0.7) * 24, level)?.band !== 'DEEP';
+      const beside = (t: Tile): boolean => Math.abs(t.tx - at.tx) + Math.abs(t.ty - at.ty) === 1;
+      expect(
+        findPath(strand, tide.tidalGroundOpen, ob.tile(), beside, wade),
+        `a way to Hild at ${hhmm(minute(p))}`,
+      ).not.toBeNull();
+    }
+  }, 120_000);
+
+  it('a resident in Seal Cave finds the way home through the cairn (DE-88)', () => {
+    const p = atBroch('C_ODDI', 'sealcave', '10:00');
+    ODDI.oddiFirst(p);
+    p.bot.goToZone('ZONE_SK_SEALCAVE');
+    // Staged: Oddi out of his way, in the cave in view (no route of play leaves him there).
+    const cave = land.maps.get('ZONE_SK_SEALCAVE');
+    const oddi = findActor(p.bot.onFoot, 'C_ODDI');
+    if (cave === undefined || oddi === null) throw new Error('no cave or Oddi');
+    const me = p.bot.onFoot.player;
+    placeActor(p.bot.onFoot, 'C_ODDI', 'ZONE_SK_SEALCAVE', {
+      ...oddi.actor,
+      x: me.x + 2 * cave.tile,
+      y: me.y,
+      pose: 'idle',
+    });
+    delete p.bot.onFoot.actors['C_ODDI']?.walk;
+    p.bot.waitFor(() => findActor(p.bot.onFoot, 'C_ODDI')?.zone !== 'ZONE_SK_SEALCAVE', T * 300);
+    expect(findActor(p.bot.onFoot, 'C_ODDI')?.zone).not.toBe('ZONE_SK_SEALCAVE');
+  }, 120_000);
 });

@@ -546,7 +546,7 @@ describe('everyone rescued gets up and joins the household (DE-22)', () => {
 
 describe('aims, the journal and stuck help (DE-23, DE-24; Book 8 section 13)', () => {
   it('every Chapter 1 aim has its journal line and two hints in the strings', () => {
-    expect(aims.aims.length).toBe(19);
+    expect(aims.aims.length).toBe(20);
     for (const a of aims.aims) {
       expect(content.strings.has(a.journalKey), a.id).toBe(true);
       expect(a.hints).toHaveLength(2);

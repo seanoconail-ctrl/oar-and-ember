@@ -143,3 +143,21 @@ export function shieldSlung(f: {
 }): boolean {
   return !f.shield && f.shieldBreaks === 0;
 }
+
+/** Whether a fighter's shield broke (Book 10 shieldBreaks): it is dropped, so not drawn on it. */
+export function shieldGone(f: {
+  readonly shield: boolean;
+  readonly shieldBreaks: number;
+}): boolean {
+  return !f.shield && f.shieldBreaks > 0;
+}
+
+/** A fighter's look with its shield layers taken off (a broken shield lies on the ground). */
+export function withoutShield(look: PersonLook): PersonLook {
+  const layers: Record<string, readonly string[]> = {};
+  for (const [facing, sheets] of Object.entries(look.layers))
+    layers[facing] = sheets.filter(
+      (n) => !n.startsWith(SHIELD_LAYER) && !n.startsWith('layer_shield_back_'),
+    );
+  return { body: look.body, layers };
+}

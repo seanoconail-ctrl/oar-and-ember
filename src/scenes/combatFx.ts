@@ -24,6 +24,9 @@ const FX: Readonly<Record<string, { readonly frames: number; readonly ticks: num
   puff: { frames: 3, ticks: 4 },
 };
 
+/** Broken shields lying in view at once (the oldest goes first). */
+const BROKEN_SHIELDS = 8;
+
 export interface BlowLook {
   readonly attacker: Id;
   readonly defender: Id;
@@ -46,6 +49,10 @@ export class CombatFx {
   #hit = new Map<Id, number>();
   #alert = new Map<Id, number>();
   #fx: { kind: string; x: number; y: number; from: number }[] = [];
+  /** Design addendum 2.5: telegraph flashes due (who, the tick, reduced to the edge). */
+  #tells = new Map<Id, { tick: number; soft: boolean }>();
+  /** Broken shields lying where they broke (Book 10 shieldBreaks: it is dropped). */
+  #broken: { x: number; y: number }[] = [];
   #health = { value: -1, changed: 0 };
   #stamina = { value: -1, changed: 0 };
 
@@ -87,6 +94,26 @@ export class CombatFx {
   awareness(person: Id, state: string, tick: number): void {
     if (state === 'ALERT') this.#alert.set(person, tick);
     else this.#alert.delete(person);
+  }
+
+  /**
+   * An enemy's telegraph (Book 10 "Telegraphs", flash; Book 7 section 12): a one-frame flash on
+   * its weapon two palette steps lighter, never white; with reduced flashes the weapon's edge
+   * brightens instead. Its drawn twin of the tell's sound (DF-80: no caption ever).
+   */
+  telegraph(who: Id, tick: number, reducedFlashes: boolean): void {
+    this.#tells.set(who, { tick, soft: reducedFlashes });
+  }
+
+  /** A shield broke: its halves lie where it broke for the scene (DF-21). */
+  shieldBroken(x: number, y: number): void {
+    this.#broken.push({ x, y });
+    if (this.#broken.length > BROKEN_SHIELDS) this.#broken.shift();
+  }
+
+  /** A new zone: what lay in the last one is not drawn here. */
+  clearGround(): void {
+    this.#broken = [];
   }
 
   /** A sidestep's tell: a puff of dust at the feet. */
@@ -134,7 +161,19 @@ export class CombatFx {
       );
       if (shown) bars[id] = Math.max(0, fa.vitality / Math.max(1, fa.maxVitality));
     }
-    const fx: { frame: string; x: number; y: number }[] = [];
+    const fx: { frame: string; x: number; y: number; decal?: boolean }[] = [];
+    for (const b of this.#broken)
+      fx.push({ frame: 'shield_broken/-/0', x: b.x, y: b.y - 4, decal: true });
+    for (const [id, t] of this.#tells) {
+      if (tick !== t.tick) {
+        if (tick > t.tick) this.#tells.delete(id);
+        continue;
+      }
+      const who = id === 'P_STEERER' ? onFoot.player : onFoot.actors[id];
+      if (who === undefined) continue;
+      const side = who.facing === 'w' ? 3 : who.facing === 'e' ? -3 : 0;
+      fx.push({ frame: `tell/-/${t.soft ? 1 : 0}`, x: who.x + side, y: who.y - 26 });
+    }
     this.#fx = this.#fx.filter((f) => {
       const d = FX[f.kind];
       if (d === undefined) return false;

@@ -150,6 +150,8 @@ describe('the steering oar from Seal Cave: fight, theft, trade or carving', () =
       }
       if (world.facts['repair.oar'] === 'FIGHT') won++;
     }
+    // Design addendum 2.5: the careful player (src/tools/play/carefulFighter.ts) at Seal Cave.
+    console.log(`Seal Cave: the careful player won ${won} of 4`);
     expect(won).toBeGreaterThanOrEqual(2);
   }, 120_000);
 

@@ -29,6 +29,7 @@ import { CaveAmbience, REPAIR_SOUNDS } from '../audio/synth/repairs.ts';
 import { LAUNCH_SOUNDS } from '../audio/synth/launch.ts';
 import { COMBAT2_SOUNDS } from '../audio/synth/combat2.ts';
 import { OPENING_SOUNDS } from '../audio/synth/opening.ts';
+import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
@@ -123,6 +124,28 @@ export function startItem(
       },
       stop: () => {
         player.stop();
+      },
+    };
+  }
+  // Design addendum 2.5: the cold open's storm (the strand's wind bed at full storm under the
+  // storm's own rain, timber and sail), and rain on the sail cloth under the shelter.
+  if (kind === 'storm') {
+    const bed = id === 'rain' ? new RainClothAmbience(e, 1) : new StormAmbience(e, 3.2, 5.4);
+    bed.start(at);
+    const wind = id === 'rain' ? null : new StrandAmbience(e);
+    wind?.setTide(0.9, at);
+    wind?.start(at);
+    return {
+      schedule: (until, now) => {
+        if (wind !== null)
+          for (let t = Math.max(at, now); t < until; t += 0.25)
+            wind.setWind(1, 0.7 + 0.3 * Math.sin((t - at) * 1.7), -STRAND_WIND.dirX, t);
+        wind?.schedule(until);
+        bed.schedule(until);
+      },
+      stop: (t) => {
+        bed.stop(t);
+        wind?.stop(t);
       },
     };
   }
@@ -273,7 +296,7 @@ export function startItem(
     };
   }
   if (kind === 'sfx' || kind === 'tell') {
-    const def = [...COMBAT, ...COMBAT2_SOUNDS, ...OPENING_SOUNDS, ...TELLS].find(
+    const def = [...COMBAT, ...COMBAT2_SOUNDS, ...OPENING_SOUNDS, ...STORM_SOUNDS, ...TELLS].find(
       (d) => d.id === id,
     );
     if (def === undefined) throw new Error(`no sound ${id}`);

@@ -58,6 +58,8 @@ export const FACT_OFFERING = 'hagseat.offering';
 const FACT_TOLD = 'search.told';
 const FACT_ARRIVED_AT = 'search.arrived_at';
 const FACT_ODDI_FOUND = 'search.oddi_found';
+/** Oddi has said he will wait while the strongbox is carried up first (decision DE-85). */
+const FACT_CHEST_SAID = 'search.oddi_chest_said';
 const FACT_RUNA_SEEN = 'search.runa_seen';
 const FACT_TOOLS_SAFE = 'search.runa_tools_safe';
 const FACT_BRAN_HOME = 'search.bran_home';
@@ -532,7 +534,10 @@ export function searchHolds(world: WorldState, ctx: SearchContext | null, id: Id
   return findActor(world.onFoot, id)?.actor.carries !== undefined;
 }
 
-/** Oddi lifted first: he knows what it means for the chest (once). */
+/**
+ * Oddi lifted first: he knows what it means for the chest (once). The strongbox lifted first while
+ * he lies there: he says he will wait (once; decision DE-85).
+ */
 export function searchLifted(
   world: WorldState,
   ctx: SearchContext,
@@ -540,6 +545,16 @@ export function searchLifted(
   emit: SearchEmit,
 ): void {
   const d = ctx.def.oddi;
+  if (
+    target === d.chest.id &&
+    world.facts[FACT_ODDI] === undefined &&
+    world.facts[FACT_ODDI_FOUND] === true &&
+    world.facts[FACT_CHEST_SAID] !== true
+  ) {
+    setFact(world, FACT_CHEST_SAID, true);
+    emit({ type: 'PERSON_SPOKE', person: d.person, lineKey: d.lines['chestSaved'] ?? '' });
+    return;
+  }
   if (target !== d.person || world.facts[FACT_CHEST] !== undefined) return;
   if (world.facts['search.oddi_lifted'] === true) return;
   setFact(world, 'search.oddi_lifted', true);
@@ -547,9 +562,11 @@ export function searchLifted(
 }
 
 /**
- * Something set down (where the steerer may set it down). Oddi set down is safe and joins the
- * household; the chest above the tide line is saved; Runa's tools on the landward side are safe.
- * Call before the rescue's deed, so Oddi is a resident when it is weighed.
+ * Something set down (where the steerer may set it down). Oddi set down anywhere is safe and
+ * joins the household (above the tide line, on his strand or off it; decision DE-85), and the
+ * scavengers go for the strongbox if it still lies on the strand; the chest above the tide line is
+ * saved; Runa's tools on the landward side are safe. Call before the rescue's deed, so Oddi is a
+ * resident when it is weighed.
  */
 export function searchSetDown(
   world: WorldState,
@@ -565,14 +582,12 @@ export function searchSetDown(
   // A chest is set down lying where it was put, not sitting like a person.
   if (actor !== undefined && (target === d.oddi.chest.id || target === d.runa.tools.id))
     actor.pose = 'down';
-  if (
-    target === d.oddi.person &&
-    world.facts[FACT_ODDI] === undefined &&
-    map.zone !== d.oddi.zone
-  ) {
+  if (target === d.oddi.person && world.facts[FACT_ODDI] === undefined) {
     const outcome = world.facts[FACT_CHEST] === 'SAVED' ? 'CHEST_FIRST' : 'ODDI_FIRST';
     setFact(world, FACT_ODDI, outcome);
     joinHousehold(world, target);
+    // Oddi seen to first: the scavengers have the strongbox if it is still on the strand.
+    if (world.facts[FACT_CHEST] === undefined) chestTaken(world, ctx, emit);
     emit({
       type: 'PERSON_SPOKE',
       person: target,
@@ -703,13 +718,21 @@ function stepChest(world: WorldState, ctx: SearchContext, emit: SearchEmit): voi
     world.facts[FACT_ODDI_FOUND] === true &&
     onFoot.zone !== d.zone &&
     onFoot.carrying !== d.chest.id
-  ) {
-    remove(onFoot, d.chest.id);
-    setFact(world, FACT_CHEST, 'LOST');
-    emit({ type: 'SEARCH_INFO', key: d.info['chestLost'] ?? '' });
-    const oddi = world.people[d.person];
-    if (oddi !== undefined) oddi.friendship += ctx.b.chestLostFriendship;
-  }
+  )
+    chestTaken(world, ctx, emit);
+}
+
+/** The wreck-scavengers have the ship's silver: gone from the strand, and Oddi sorry for it. */
+function chestTaken(world: WorldState, ctx: SearchContext, emit: SearchEmit): void {
+  const onFoot = world.onFoot;
+  const d = ctx.def.oddi;
+  if (onFoot === null || world.facts[FACT_CHEST] !== undefined) return;
+  if (findActor(onFoot, d.chest.id)?.zone !== d.zone) return;
+  remove(onFoot, d.chest.id);
+  setFact(world, FACT_CHEST, 'LOST');
+  emit({ type: 'SEARCH_INFO', key: d.info['chestLost'] ?? '' });
+  const oddi = world.people[d.person];
+  if (oddi !== undefined) oddi.friendship += ctx.b.chestLostFriendship;
 }
 
 /** Runa limps to her tools once they are safe, by the way the stone allows; there she joins. */

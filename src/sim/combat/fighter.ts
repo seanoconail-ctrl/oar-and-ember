@@ -240,7 +240,13 @@ export function setAngle(f: Fighter, angle: number): void {
 
 export function newFighter(
   weapon: MeleeWeaponName | null,
-  opts: { shield?: boolean; heavy?: boolean; armour?: Armour; facing?: Facing; floors?: boolean } = {},
+  opts: {
+    shield?: boolean;
+    heavy?: boolean;
+    armour?: Armour;
+    facing?: Facing;
+    floors?: boolean;
+  } = {},
 ): Fighter {
   const facing = opts.facing ?? 's';
   return {
@@ -289,7 +295,11 @@ export function weaponOf(f: Fighter, cb: CombatBalance): WeaponStats | null {
 }
 
 /** A weapon's frames for a move (Book 10 "Frame data"), or null if it has no such move. */
-export function movesOf(cb: CombatBalance, weapon: MeleeWeaponName, move: MoveName): MoveFrames | null {
+export function movesOf(
+  cb: CombatBalance,
+  weapon: MeleeWeaponName,
+  move: MoveName,
+): MoveFrames | null {
   return cb.weapons[weapon].moves[move] ?? null;
 }
 
@@ -298,7 +308,12 @@ export function movesOf(cb: CombatBalance, weapon: MeleeWeaponName, move: MoveNa
  * an enemy, never below the telegraph floor of its weight (Book 10 "Enemy attacks"). For a heavy
  * or charged heavy this is the swing after the release (the hold is the AI's, holdFor).
  */
-export function windupFor(f: Pick<Fighter, 'heavy' | 'floors'>, cb: CombatBalance, m: MoveFrames, lights = true): number {
+export function windupFor(
+  f: Pick<Fighter, 'heavy' | 'floors'>,
+  cb: CombatBalance,
+  m: MoveFrames,
+  lights = true,
+): number {
   const build = f.heavy ? cb.heavy.windupExtra : 0;
   if (!f.floors || !lights) return m.windup + build;
   return Math.max(m.windup, cb.telegraphs.floor[m.weight]) + build;
@@ -408,7 +423,8 @@ export function phaseOf(f: Fighter, tick: number): 'WINDUP' | 'ACTIVE' | 'RECOVE
     case 'recovery':
       return 'RECOVERY';
     case 'dodge':
-      return 'ACTIVE';
+    case 'sidestep':
+      return tick < f.activeAt ? 'WINDUP' : 'ACTIVE';
     default:
       return f.state === 'idle' ? null : 'ACTIVE';
   }
@@ -449,12 +465,7 @@ export function poiseMax(f: Fighter, cb: CombatBalance): number {
 }
 
 export type PressResult =
-  | 'STARTED'
-  | 'QUEUED'
-  | 'REFUSED'
-  | 'NO_STAMINA'
-  | 'NO_SHIELD'
-  | 'EXHAUSTED';
+  'STARTED' | 'QUEUED' | 'REFUSED' | 'NO_STAMINA' | 'NO_SHIELD' | 'EXHAUSTED';
 
 function spend(pool: StaminaPool, amount: number, tick: number): void {
   pool.current = Math.max(0, pool.current - amount);

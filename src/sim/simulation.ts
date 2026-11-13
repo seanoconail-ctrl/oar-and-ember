@@ -86,6 +86,7 @@ import {
   BINDING,
   RATION,
 } from './land/fight.ts';
+import { aboveTideLine, terrainAt, tileOf } from './land/zoneMap.ts';
 import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import { updateExhausted } from './combat/fighter.ts';
@@ -153,6 +154,7 @@ import { onLifted, onSetDown, onTideRefusal, stepOpening } from './narrative/ope
 import {
   chestInteract,
   finishWreckWork,
+  interactFirst,
   isWreckWork,
   netInteract,
   runaAnswer,
@@ -853,7 +855,14 @@ export function createSimulation(
           return;
         }
         const tideOpen = tideAt(state.calendar, b).tidalGroundOpen;
-        const interaction = interactionNow(onFoot, map, land.rules, tideOpen, state.facts);
+        const interaction = interactionNow(
+          onFoot,
+          map,
+          land.rules,
+          tideOpen,
+          state.facts,
+          interactFirst(state, wreckCtx),
+        );
         const reach = land.rules.interactRadiusTiles * map.tile;
         const use = onFoot.carrying === null ? campUseNear(usesHere(), onFoot.player, reach) : null;
         // The nearer of a lift or pickup and a camp use (carrying, only setting down).
@@ -1003,7 +1012,12 @@ export function createSimulation(
           const ly = locked.y - p.y;
           const ld = Math.hypot(lx, ly);
           if (ld > 1e-6) {
-            p.aim = { x: lx / ld, y: ly / ld, since: p.aim?.since ?? state.tick, dist: ld / map.tile };
+            p.aim = {
+              x: lx / ld,
+              y: ly / ld,
+              since: p.aim?.since ?? state.tick,
+              dist: ld / map.tile,
+            };
             return;
           }
         }
@@ -1232,12 +1246,23 @@ export function createSimulation(
           bandAt(land.water, elevation, x, y, stillWaterLevel(tideAt(state.calendar, b))) !== null
         );
       },
-      // Combat v2 (Book 10 avoid): deep water, and a lit fire within its distance.
+      // Combat v2 (Book 10 avoid): deep water, a cliff's edge (a steep bank within its tiles;
+      // design addendum 2.5, DF-21) and a lit fire within its distance.
       avoid: (x, y) => {
         const elevation = land.elevations.get(onFoot.zone);
         const level = stillWaterLevel(tideAt(state.calendar, b));
         if (elevation !== undefined && isDeep(bandAt(land.water, elevation, x, y, level)))
           return true;
+        const edge = fightCtx.ai.self.avoidCliffTiles * map.tile;
+        for (const [ox, oy] of [
+          [edge, 0],
+          [-edge, 0],
+          [0, edge],
+          [0, -edge],
+        ] as const) {
+          const t = tileOf(map, x + ox, y + oy);
+          if (terrainAt(map, t.tx, t.ty) === 'bank') return true;
+        }
         const fire = camp?.def.sites.find((f) => f.kind === 'FIRE' && f.zone === onFoot.zone);
         const lit = camp === null ? false : homeOf(state, camp)?.fire.lit === true;
         return (
@@ -1245,6 +1270,17 @@ export function createSimulation(
           lit &&
           Math.hypot(x - fire.x * map.tile, y - fire.y * map.tile) <=
             fightCtx.ai.self.avoidFireTiles * map.tile
+        );
+      },
+      // Design addendum 2.5 (DF-21; Book 10 sightInLight): inside a lit fire's light pool.
+      lit: (x, y) => {
+        const fire = camp?.def.sites.find((f) => f.kind === 'FIRE' && f.zone === onFoot.zone);
+        const on = camp === null ? false : homeOf(state, camp)?.fire.lit === true;
+        return (
+          fire !== undefined &&
+          on &&
+          Math.hypot(x - fire.x * map.tile, y - fire.y * map.tile) <=
+            fightCtx.ai.torchLightTiles * map.tile
         );
       },
       emit: emitFight,
@@ -1559,6 +1595,49 @@ export function createSimulation(
     events.emit({ type: 'COMMAND_REFUSED', command: command.type, reason, detail });
   };
 
+  /**
+   * What follows a person or a load set down above the tide line: by the steerer, or dropped by a
+   * winded steerer carrying someone rescued (decision DE-85).
+   */
+  const afterSetDown = (target: Id): void => {
+    const onFoot = state.onFoot;
+    if (onFoot === null || land === null) return;
+    const emit = events.emit.bind(events);
+    // A downed ally set down: safe at the camp, or downed again where they lie (Stage 9).
+    const fw = fightWorld();
+    const setDown = onFoot.actors[target];
+    if (fw !== null && setDown !== undefined) broughtTo(fw, target, setDown);
+    if (land.opening !== null) onSetDown(state, land.opening, target, emit);
+    // Design addendum 2.4: a thing at its home, the stores at the camp, Runa's chest, a rescue.
+    const there = land.maps.get(onFoot.zone);
+    if (wreckCtx !== null && there !== undefined)
+      wreckSetDown(state, wreckCtx, camp, target, there, emitWreck);
+    // Stage 10: Oddi safe (he joins), Thorkel's chest saved, Runa's tools past the neck.
+    const zoneMap = land.maps.get(onFoot.zone);
+    if (searchCtx !== null && zoneMap !== undefined)
+      searchSetDown(state, searchCtx, target, zoneMap, emitSearch);
+    // Stage 11: the boards, the rigging or the steering oar laid by the boat.
+    if (repairCtx !== null && zoneMap !== undefined)
+      repairSetDown(state, repairCtx, target, zoneMap, emitRepair);
+    // Rescued by this set-down (of the household, not downed): the get-up clock (DE-22, DE-82).
+    if (wreckCtx !== null) rescueSetDown(state, wreckCtx, target);
+    // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
+    if (
+      people !== null &&
+      state.household.residents.includes(target) &&
+      !state.ledger.some((d) => d.tag === 'RESCUE' && d.victims.includes(target))
+    ) {
+      joinNew(state, people, state.tick, emitPeople);
+      householdDeed(
+        state,
+        people,
+        { tag: 'RESCUE', placeId: onFoot.zone, victims: [target] },
+        [target],
+        emitPeople,
+      );
+    }
+  };
+
   /** Applies an allowed lift or set-down, or refuses a set-down below the tide line. */
   const carryOut = (command: Command, interaction: Interaction): void => {
     const onFoot = state.onFoot;
@@ -1597,39 +1676,7 @@ export function createSimulation(
       if (wreckCtx !== null) wreckLifted(state, wreckCtx, interaction.target, emitWreck);
     } else {
       events.emit({ type: 'PERSON_SET_DOWN', person: interaction.target, aboveTideLine: true });
-      // A downed ally set down: safe at the camp, or downed again where they lie (Stage 9).
-      const fw = fightWorld();
-      const setDown = onFoot.actors[interaction.target];
-      if (fw !== null && setDown !== undefined) broughtTo(fw, interaction.target, setDown);
-      if (land.opening !== null) onSetDown(state, land.opening, interaction.target, emit);
-      // Design addendum 2.4: a thing at its home, the stores at the camp, Runa's chest, a rescue.
-      const there = land.maps.get(onFoot.zone);
-      if (wreckCtx !== null && there !== undefined)
-        wreckSetDown(state, wreckCtx, camp, interaction.target, there, emitWreck);
-      // Stage 10: Oddi safe (he joins), Thorkel's chest saved, Runa's tools past the neck.
-      const zoneMap = land.maps.get(onFoot.zone);
-      if (searchCtx !== null && zoneMap !== undefined)
-        searchSetDown(state, searchCtx, interaction.target, zoneMap, emitSearch);
-      // Stage 11: the boards, the rigging or the steering oar laid by the boat.
-      if (repairCtx !== null && zoneMap !== undefined)
-        repairSetDown(state, repairCtx, interaction.target, zoneMap, emitRepair);
-      // Rescued by this set-down (of the household, not downed): the get-up clock (DE-22, DE-82).
-      if (wreckCtx !== null) rescueSetDown(state, wreckCtx, interaction.target);
-      // Carried out of the sea above the tide line: a rescue, and the rescued remember it.
-      if (
-        people !== null &&
-        state.household.residents.includes(interaction.target) &&
-        !state.ledger.some((d) => d.tag === 'RESCUE' && d.victims.includes(interaction.target))
-      ) {
-        joinNew(state, people, state.tick, emitPeople);
-        householdDeed(
-          state,
-          people,
-          { tag: 'RESCUE', placeId: onFoot.zone, victims: [interaction.target] },
-          [interaction.target],
-          emitPeople,
-        );
-      }
+      afterSetDown(interaction.target);
     }
   };
 
@@ -1794,6 +1841,11 @@ export function createSimulation(
           actor.y = p.y;
         }
         events.emit({ type: 'LOAD_DROPPED', person });
+        // Someone rescued dropped above the tide line is set down safe all the same (DE-85).
+        const feet = tileOf(map, p.x, p.y);
+        const ground = terrainAt(map, feet.tx, feet.ty);
+        if (wreckCtx?.rw.rescue.people.includes(person) === true && aboveTideLine(ground))
+          afterSetDown(person);
       }
       // Wet through outside summer: cold until warmed by a fire or a hot meal.
       const deep = band !== null && band.band !== 'WET' && band.band !== 'ANKLE';

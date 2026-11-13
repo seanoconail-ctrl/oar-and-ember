@@ -263,8 +263,7 @@ export function underSail(
   p: { x: number; y: number },
 ): boolean {
   const camp = ctx.camp;
-  if (camp === null || map.zone !== camp.zone || world.facts['ch1.shelter_raised'] === false)
-    return false;
+  if (camp?.zone !== map.zone || world.facts['ch1.shelter_raised'] === false) return false;
   const sail = ctx.rw.camp.sail;
   return (
     Math.abs(p.x / map.tile - (sail.x - 0.2)) < 1.9 &&

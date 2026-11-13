@@ -176,8 +176,8 @@ export async function stormCapture(browser: Browser): Promise<string> {
     if (i === 72) await page.keyboard.up('KeyA');
     // The lightning's bright frames are 4 and 3 ticks long: near a strike, a frame a tick.
     const s0 = await storm(page);
-    const near = s0 !== null && s0.strikes.some(([at]) => s0.t > at - 0.12 && s0.t < at + 0.6);
-    const f = await advance(page, near ? 2 : 8, CROP.w, CROP.h);
+    const near = s0?.strikes.some(([at]) => s0.t > at - 0.12 && s0.t < at + 0.6) === true;
+    const f = await advance(page, near ? 2 : 10, CROP.w, CROP.h);
     const s = await storm(page);
     phase = (await page.locator('.oe-overlay').getAttribute('data-phase')) ?? '';
     if (s !== null) {
@@ -208,7 +208,7 @@ export async function stormCapture(browser: Browser): Promise<string> {
       '-loglevel',
       'error',
       '-framerate',
-      '7.5',
+      '6',
       '-i',
       join(framesDir, 'f%04d.png'),
       '-vf',
@@ -241,7 +241,7 @@ export async function stormCapture(browser: Browser): Promise<string> {
     'Written by `npm run capture -- rework-2.5-storm` (src/tools/art/captureStorm.ts) in capture mode,',
     'the cold open played with the steering keys from its first frame.',
     '',
-    `- \`storm-opening.gif\`: ${frames.length} frames at 7.5 a second (a frame each 8 ticks), ${(size / 1e6).toFixed(2)} MB; the middle ${CROP.w} x ${CROP.h} of the view at 1x. Near each strike frames are kept a tick or two apart so the double flicker shows.`,
+    `- \`storm-opening.gif\`: ${frames.length} frames at 6 a second (a frame each 10 ticks), ${(size / 1e6).toFixed(2)} MB; the middle ${CROP.w} x ${CROP.h} of the view at 1x. Near each strike frames are kept a tick or two apart so the double flicker shows.`,
     `- \`storm-strip.png\` (and @2x): ${keys.map((k) => k.name).join(', ')}.`,
     '- `views/storm.png`, `views/lightning.png` (and @4x): the whole view at 1x.',
     '',

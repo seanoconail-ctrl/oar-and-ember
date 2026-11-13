@@ -4,6 +4,7 @@
  * 1 played to its end by the chapter run) is reproduced by its scenario (decision DE-80).
  */
 import { describe, expect, it } from 'vitest';
+import { parseOpeningBalance } from '../../src/content/openingBalance.ts';
 import {
   parsePeopleBasics,
   parseStartingWeapons,
@@ -341,11 +342,21 @@ describe('golden save 4 (schema 4, frozen)', () => {
     });
     expect(state.people['C_HILD']?.wounds).toEqual([{ day: 1, severity: 'SERIOUS', where: 'leg' }]);
     // Schema 11 (design addendum 2.4): the bow came from Thorkel's chest, so the chest stands
-    // opened at its home by the shelter in the camp (and nothing else is elsewhere).
+    // opened at its home by the shelter in the camp; and with Book 10 to hand the camp's salvage
+    // has its linen bindings (decision DF-51). Nothing else is elsewhere.
     expect(state.onFoot?.elsewhere).toEqual({
       ZONE_SK_MACHAIR: {
         actors: { ITEM_THORKEL_CHEST: { x: 32.2 * 24, y: 31.4 * 24, facing: 'e', pose: 'idle' } },
-        items: [],
+        items: [
+          {
+            key: 'camp_bindings',
+            item: 'ITEM_BINDING',
+            count: parseOpeningBalance(balance).camp.bindingsAtCamp,
+            x: 37.6,
+            y: 30.4,
+            glint: true,
+          },
+        ],
         stuck: [],
       },
     });

@@ -31,7 +31,7 @@ import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import type { DepthBand } from '../content/balance.ts';
 import type { ZoneLife } from '../content/zoneMap.ts';
 import { PLANT_KINDS } from '../content/zoneMap.ts';
-import { shieldSlung, withSlungShield } from './people.ts';
+import { shieldGone, shieldSlung, withoutShield, withSlungShield } from './people.ts';
 import type { PeopleLook, PersonLook } from './people.ts';
 import type { Fighter } from '../sim/combat/fighter.ts';
 
@@ -519,7 +519,13 @@ export interface CombatOverlay {
   readonly marks: Readonly<Record<string, '?' | '!'>>;
   readonly bars: Readonly<Record<string, number>>;
   readonly lockOn: string | null;
-  readonly fx: readonly { readonly frame: string; readonly x: number; readonly y: number }[];
+  readonly fx: readonly {
+    readonly frame: string;
+    readonly x: number;
+    readonly y: number;
+    /** On the ground (a broken shield), drawn under people. */
+    readonly decal?: boolean;
+  }[];
 }
 
 /** Combat v2's interface pieces in the world, and its hit effects (combat24_ui.py). */
@@ -542,47 +548,75 @@ export function fightAnim(
   tick: number,
   moving: boolean,
   own: Readonly<Record<string, Anim>>,
-  extra: { readonly piece?: string | null; readonly finishing?: boolean } = {},
+  extra: {
+    readonly piece?: string | null;
+    readonly finishing?: boolean;
+    /** The stance walk (Book 7 section 01): backing off or strafing while facing the foe. */
+    readonly gait?: 'backoff' | 'strafe' | null;
+    /** A death fall's way (Book 7 section 12): by the hit's direction against the facing. */
+    readonly fall?: 'fall_fwd' | 'fall_back' | 'fall_crumple' | null;
+    /** An archer's hop back under way: its ticks so far (Book 10 dashAway). */
+    readonly hop?: number | null;
+  } = {},
 ): PersonAnim | null {
   const has = (s: string): boolean => own[s] !== undefined;
   const loop = (s: string): number => {
     const a = own[s];
     return a === undefined ? 0 : Math.floor(tick / a.ticks) % a.frames;
   };
+  /** A state's frame by how far through `from` to `to` the tick is. */
+  const through = (s: string, from: number, to: number): number => {
+    const n = own[s]?.frames ?? 1;
+    const t = (tick - from) / Math.max(1, to - from);
+    return Math.max(0, Math.min(n - 1, Math.floor(t * n)));
+  };
   if (extra.finishing === true && has('finish')) return { state: 'finish', frame: 0 };
-  const phase3 = (): number => (tick < f.activeAt ? 0 : tick < f.activeEnd ? 1 : 2);
+  // Design addendum 2.5 (Book 7 section 01; Book 10 "Telegraphs"): the wind-up drawn back past
+  // the ready pose by weight, held at the top for its last ticks; never blended into the blow.
+  const wind = `windup_${f.weight === 'CHARGED' ? 'c' : f.weight === 'HEAVY' ? 'h' : 'l'}`;
+  const phase3 = (s: string): PersonAnim | null => {
+    if (!has(s)) return null;
+    if (tick < f.activeAt) {
+      // The draw-back, then the top held, then the strike's cocked frame just before the blow.
+      if (f.activeAt - tick <= 3) return { state: s, frame: 0 };
+      if (has(wind))
+        return { state: wind, frame: tick - f.since < (f.activeAt - f.since) / 3 ? 0 : 1 };
+      return { state: s, frame: 0 };
+    }
+    // A miss recovery shows the body overbalanced: the follow-through held (frame 2).
+    return { state: s, frame: tick < f.activeEnd ? 1 : 2 };
+  };
+  // The crouch, the spring (while it moves), the landing low.
+  if (extra.hop != null && has('hop'))
+    return { state: 'hop', frame: extra.hop < 3 ? 0 : moving ? 1 : 2 };
   switch (f.state) {
+    case 'idle': {
+      // Exhausted (Book 10 "Exhausted"): bent, blowing hard; the stance walk; a flinch.
+      if (f.flinchUntil > tick && has('flinch'))
+        return { state: 'flinch', frame: f.flinchUntil - tick > 4 ? 0 : 1 };
+      if (f.exhausted && moving && has('exhausted_walk'))
+        return { state: 'exhausted_walk', frame: loop('exhausted_walk') };
+      if (f.exhausted && has('exhausted')) return { state: 'exhausted', frame: loop('exhausted') };
+      if (moving && extra.gait != null && has(extra.gait))
+        return { state: extra.gait, frame: loop(extra.gait) };
+      return null;
+    }
     case 'chargeL0':
-      if (tick - f.since < 6 && has('windup'))
-        return { state: 'windup', frame: tick - f.since < 3 ? 0 : 1 };
-      return has('charge')
-        ? {
-            state: moving && has('chargewalk') ? 'chargewalk' : 'charge',
-            frame: loop(moving ? 'chargewalk' : 'charge'),
-          }
-        : null;
+      if (has(wind)) return { state: wind, frame: tick - f.since < 4 ? 0 : 1 };
+      return has('charge') ? { state: 'charge', frame: loop('charge') } : null;
     case 'chargeL1':
     case 'chargeL2':
-      return has('charge')
-        ? {
-            state: moving && has('chargewalk') ? 'chargewalk' : 'charge',
-            frame: loop(moving ? 'chargewalk' : 'charge'),
-          }
-        : null;
+      return has('charge') ? { state: 'charge', frame: loop('charge') } : null;
     case 'light1':
     case 'light2':
     case 'light3':
-      return has(f.state) ? { state: f.state, frame: phase3() } : null;
+      return phase3(f.state);
     // Combat v2 (decisions DE-4, DE-5, DE-9): the riposte and the backstab, heavy and distinct;
     // the lunge's tell (the step and the dip) and then its reach.
     case 'riposte':
-      return has('riposte')
-        ? { state: 'riposte', frame: phase3() }
-        : has('light1')
-          ? { state: 'light1', frame: phase3() }
-          : null;
+      return has('riposte') ? phase3('riposte') : phase3('light1');
     case 'backstab':
-      return has('backstab') ? { state: 'backstab', frame: phase3() } : null;
+      return phase3('backstab');
     case 'lunge':
       return has('lunge')
         ? {
@@ -595,37 +629,79 @@ export function fightAnim(
       return has('parried') ? { state: 'parried', frame: t < 0.4 ? 0 : 1 } : null;
     }
     case 'knockdown':
+      if (has('knockdown'))
+        return { state: 'knockdown', frame: through('knockdown', f.since, f.since + 18) };
       return has('downed') ? { state: 'downed', frame: 0 } : null;
     case 'getUp': {
       const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
       return has('getup') ? { state: 'getup', frame: t < 0.5 ? 0 : 1 } : null;
     }
     case 'sidestep': {
-      // The tell is the crouch; then the dodge's push and landing.
-      if (tick < f.activeAt) return has('dodge') ? { state: 'dodge', frame: 0 } : null;
+      const s = has('sidestep') ? 'sidestep' : 'dodge';
+      if (!has(s)) return null;
+      if (tick < f.activeAt) return { state: s, frame: 0 };
       const t = (tick - f.activeAt) / Math.max(1, f.recoveryEnd - f.activeAt);
-      return has('dodge') ? { state: 'dodge', frame: t < 0.6 ? 1 : 2 } : null;
+      return { state: s, frame: t < 0.6 ? 1 : 2 };
     }
-    case 'heal':
-      return has('kneel') ? { state: 'kneel', frame: loop('kneel') } : null;
+    case 'heal': {
+      const s =
+        f.heal?.kind === 'EAT' && has('eat_ration') ? 'eat_ration' : has('bind') ? 'bind' : 'kneel';
+      return has(s) ? { state: s, frame: loop(s) } : null;
+    }
     case 'heavyRelease':
-      return has('heavy') ? { state: 'heavy', frame: phase3() } : null;
+      return phase3('heavy');
     case 'shove':
-      return has('shove') ? { state: 'shove', frame: phase3() } : null;
+      return phase3('shove');
+    case 'parryWindup':
+      return has('parry_windup')
+        ? { state: 'parry_windup', frame: through('parry_windup', f.since, f.recoveryEnd) }
+        : has('parry')
+          ? { state: 'parry', frame: 0 }
+          : null;
     case 'parry':
       return has('parry') ? { state: 'parry', frame: 0 } : null;
     case 'parryRecovery':
       return has('parry') ? { state: 'parry', frame: 1 } : null;
+    case 'blockRaise':
+      return has('block_raise')
+        ? { state: 'block_raise', frame: through('block_raise', f.since, f.recoveryEnd) }
+        : null;
+    case 'blockLower':
+      return has('block_raise')
+        ? {
+            state: 'block_raise',
+            frame:
+              (own['block_raise']?.frames ?? 1) -
+              1 -
+              through('block_raise', f.since, f.recoveryEnd),
+          }
+        : null;
     case 'block':
       return has('block') ? { state: 'block', frame: 0 } : null;
     case 'blockStun':
       return has('block') ? { state: 'block', frame: 1 } : null;
     case 'dodge': {
-      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
-      return has('dodge') ? { state: 'dodge', frame: t < 0.25 ? 0 : t < 0.7 ? 1 : 2 } : null;
+      if (!has('dodge')) return null;
+      if (tick < f.activeAt) return { state: 'dodge', frame: 0 };
+      const t = (tick - f.activeAt) / Math.max(1, f.recoveryEnd - f.activeAt);
+      return { state: 'dodge', frame: t < 0.6 ? 1 : 2 };
     }
-    case 'stagger':
+    case 'dodgeRecovery':
+      return has('dodge_recover')
+        ? { state: 'dodge_recover', frame: through('dodge_recover', f.since, f.recoveryEnd) }
+        : has('dodge')
+          ? { state: 'dodge', frame: 2 }
+          : null;
+    case 'recovery':
+      return has('windup_l') ? { state: 'windup_l', frame: 0 } : null;
     case 'guardBroken': {
+      // An emptied guard (Book 10 guardBreakEmpty): its own large stagger, the shield arm wide.
+      if (f.recoveryEnd - f.since >= 60 && has('guard_break'))
+        return { state: 'guard_break', frame: through('guard_break', f.since, f.recoveryEnd) };
+      const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
+      return has('stagger') ? { state: 'stagger', frame: t < 0.5 ? 0 : 1 } : null;
+    }
+    case 'stagger': {
       const t = (tick - f.since) / Math.max(1, f.recoveryEnd - f.since);
       return has('stagger') ? { state: 'stagger', frame: t < 0.5 ? 0 : 1 } : null;
     }
@@ -638,12 +714,32 @@ export function fightAnim(
           ? { state: 'down', frame: loop('down') }
           : null;
     case 'dead': {
+      // The fall (Book 7 section 12): two frames by the way of the hit, then the body settles.
+      const fall = extra.fall ?? null;
+      const age = tick - f.since;
+      if (fall !== null && has(fall) && age < 10) return { state: fall, frame: age < 5 ? 0 : 1 };
       const s = extra.piece == null ? 'dead' : `dead_${extra.piece}`;
       return has(s) ? { state: s, frame: 0 } : has('dead') ? { state: 'dead', frame: 0 } : null;
     }
     default:
       return null;
   }
+}
+
+/**
+ * The way a fighter falls dead (Book 7 section 12: deaths vary by weapon and the hit's direction):
+ * struck from in front it falls back, from behind forwards, and a blow (club, shove) or a hit from
+ * the side crumples it.
+ */
+export function fallOf(
+  angle: number,
+  dir16: number,
+  weapon: string | null,
+): 'fall_fwd' | 'fall_back' | 'fall_crumple' {
+  const hit = (dir16 * Math.PI) / 8;
+  const d = Math.cos(hit - angle);
+  if (weapon === 'Club or hammer' || Math.abs(d) < 0.4) return 'fall_crumple';
+  return d > 0 ? 'fall_fwd' : 'fall_back';
 }
 
 /** Whether a person is bloodied (Book 10 bloodiedBelow), and so drawn with their blood layer. */
@@ -1103,7 +1199,10 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   const gore = input.gore ?? 2;
   const steererFight = p.fight ?? null;
   if (steererFight !== null && work == null && p.sleep == null) {
-    const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {});
+    const st = p.stance;
+    const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {}, {
+      gait: st === undefined || st.speed === 1 ? null : st.backing === true ? 'backoff' : 'strafe',
+    });
     if (fa !== null) {
       state = fa.state;
       stepFrame = fa.frame;
@@ -1151,7 +1250,9 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     const who =
       dressed !== undefined && actor.fight !== undefined && shieldSlung(actor.fight.f)
         ? withSlungShield(dressed, (sheet) => anims.has(sheet))
-        : dressed;
+        : dressed !== undefined && actor.fight !== undefined && shieldGone(actor.fight.f)
+          ? withoutShield(dressed)
+          : dressed;
     const x = actor.x - camera.x;
     const y = actor.y - camera.y;
     const fa = actor.fight;
@@ -1172,6 +1273,17 @@ export function zoneScene(input: ZoneSceneInput): Scene {
           : fightAnim(fa.f, tick, actor.moving === true, own, {
               piece: gore === 2 ? (fa.dead?.piece?.toLowerCase() ?? null) : null,
               finishing: fa.finishing !== null,
+              gait:
+                fa.ai.goal?.face === undefined
+                  ? null
+                  : fa.ai.goal.away === true
+                    ? 'backoff'
+                    : 'strafe',
+              fall:
+                fa.dead !== null && fa.dead.piece === null
+                  ? fallOf(fa.f.angle, fa.dead.dir, fa.f.weapon)
+                  : null,
+              hop: fa.ai.hop === null ? null : tick - fa.ai.hop.since,
             });
       if (fa?.dead != null && gore > 0) {
         // The pool under the dead grows (Book 7 section 12): fewer and darker with gore low.
@@ -1344,14 +1456,24 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     });
   }
   for (const fx of combat?.fx ?? [])
-    sprites.push({
-      sheet: FX_COMBAT_SHEET,
-      frame: fx.frame,
-      x: fx.x - camera.x - 8,
-      y: fx.y - camera.y - 8,
-      layer: 'actor',
-      sort: fx.y - camera.y + 30,
-    });
+    sprites.push(
+      fx.decal === true
+        ? {
+            sheet: FX_COMBAT_SHEET,
+            frame: fx.frame,
+            x: fx.x - camera.x - 8,
+            y: fx.y - camera.y - 8,
+            layer: 'decal',
+          }
+        : {
+            sheet: FX_COMBAT_SHEET,
+            frame: fx.frame,
+            x: fx.x - camera.x - 8,
+            y: fx.y - camera.y - 8,
+            layer: 'actor',
+            sort: fx.y - camera.y + 30,
+          },
+    );
   // Items lying to be picked up, with a glint every few seconds.
   const facts = input.facts ?? {};
   for (const item of onFoot.items) {

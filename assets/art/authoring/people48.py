@@ -2844,8 +2844,8 @@ def anim_exhausted(ch=None):
     low, the free hand on the knee; the shoulders heave with each breath."""
     out = []
     for k, (b, u) in enumerate([(0, 0.0), (-1, -0.6), (-1, -0.9), (0, -0.3)]):
-        p = fight_pose((1.6, 3.0, -9.5 + u), (0.2, 0.7, -0.7), lean=(0, 2.6 - 0.3 * u),
-                       pel=(0, -0.6, -1.5), lh=(0.6, 3.5, -7.5 + u), head=(0, 0.6, -0.4 + 0.3 * u),
+        p = fight_pose((1.6, 3.5, -10.0 + u), (0.2, 0.7, -0.7), lean=(0, 3.8 - 0.3 * u),
+                       pel=(0, -1.0, -2.5), lh=(0.6, 4.5, -8.5 + u), head=(0, 1.4, -1.2 + 0.3 * u),
                        mouth=1, feet={'R': (-2.5, 0), 'L': (2.5, 0)})
         p.breath = b
         p.grip = {'R': 'fist', 'L': 'open'}
@@ -2858,7 +2858,8 @@ def anim_exhausted_walk(ch=None, heavy=False):
     hanging, blowing hard."""
     out = []
     for p in anim_walk(heavy):
-        q = p.copy(lean=(0, 2.0), hold='held', wdir=(0.2, 0.7, -0.7), mouth=1)
+        q = p.copy(lean=(0, 3.0), hold='held', wdir=(0.2, 0.7, -0.7), mouth=1,
+                   head=(0, 1.0, -0.8), pel=(p.pel[0], p.pel[1], p.pel[2] - 1.5))
         q.feet = {k: (v[0] * 0.5, v[1] * 0.6) for k, v in p.feet.items()}
         q.hands = {'R': (1.6, 2.5, -9.5), 'L': (0.8, 1.5, -10.0)}
         q.elbow = {'R': (0.8, -0.6, 0.3), 'L': (0.3, -1.0, 0.0)}
@@ -2935,7 +2936,7 @@ def anim_knockdown(ch=None):
         p.hands = {'R': (2.8, 1.0 - k, -4.0 - 2.0 * k), 'L': (2.5, -1.5 - k, -5.0 - 2.5 * k)}
         p.elbow = {'R': (1.2, -0.4, 0.0), 'L': (1.2, -0.4, 0.0)}
         p.grip = {'R': 'fist', 'L': 'open'}
-        p.feet = {'R': (fr + 3.0, 1.0 + 2.0 * k), 'L': (3.0 + k, 2.0 * k)}
+        p.feet = {'R': (fr + 3.0, 0), 'L': (3.0 + k, 0)}
         p.toe = {'R': 0, 'L': 0}
         p.shield = 'arm'
         p.cloth = (1.0, 0)
@@ -2950,7 +2951,7 @@ def anim_sidestep(ch=None):
                    head=(0, 0.3, 0), feet={'R': (-2.0, 0), 'L': (2.5, 0)}, shield='arm')
     a.feet_r = {'R': 0.0, 'L': -1.0}
     b = fight_pose((1.8, 1.5, -4.0), (0.2, 0.9, 0.3), lean=(-1.2, 0.0), pel=(-1.2, 0, -1),
-                   feet={'R': (-1.5, 3.0), 'L': (1.5, 2.0)}, cloth=(-1.0, 0), shield='arm')
+                   feet={'R': (-1.5, 3.0), 'L': (1.5, 0)}, cloth=(-1.0, 0), shield='arm')
     b.feet_r = {'R': -1.5, 'L': -2.0}
     c = fight_pose((1.8, 2.0, -5.5), (0.2, 0.9, 0.3), lean=(0.4, 0.6), pel=(0.4, 0, -2),
                    feet={'R': (-2.0, 0), 'L': (2.5, 0)}, cloth=(0.6, 0), shield='arm')
@@ -2962,8 +2963,8 @@ def anim_hop(ch=None):
     the bow (or blade) kept towards the foe, and a landing low."""
     a = fight_pose((1.6, 2.5, -6.0), (0.2, 0.9, 0.3), lean=(0, 1.2), pel=(0, 0.4, -3),
                    feet={'R': (-1.5, 0), 'L': (2.0, 0)})
-    b = fight_pose((1.6, 3.0, -4.0), (0.2, 0.9, 0.3), lean=(0, -1.0), pel=(0, -0.8, 1),
-                   feet={'R': (-3.5, 3.0), 'L': (0.5, 4.0)}, cloth=(1.4, 0))
+    b = fight_pose((1.6, 3.0, -4.0), (0.2, 0.9, 0.3), lean=(0, -1.0), pel=(0, -0.8, 0),
+                   feet={'R': (-3.5, 3.0), 'L': (0.5, 0)}, cloth=(1.4, 0))
     c = fight_pose((1.6, 2.5, -6.5), (0.2, 0.9, 0.3), lean=(0, 1.0), pel=(0, -0.4, -3),
                    feet={'R': (-3.0, 0), 'L': (2.0, 0)}, cloth=(0.6, 0))
     return [a, b, c]
@@ -3220,7 +3221,9 @@ def piece_parts(ch, piece, d):
 
 FIGHT_POSES = {'downed': 'lying', 'dead': 'lying', 'dead_head': 'lying', 'dead_arm': 'lying',
                'dead_leg': 'lying', 'piece_head': 'lying', 'piece_arm': 'lying', 'piece_leg': 'lying',
-               'surrender': 'seated', 'getup': 'seated', 'bind': 'seated', 'eat_ration': 'seated'}
+               'surrender': 'seated', 'getup': 'seated', 'bind': 'seated', 'eat_ration': 'seated',
+               'knockdown': 'seated', 'fall_fwd': 'seated', 'fall_back': 'seated',
+               'fall_crumple': 'seated'}
 
 
 def narrow(poses, ch):

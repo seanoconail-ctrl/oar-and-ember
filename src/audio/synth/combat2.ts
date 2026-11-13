@@ -5,11 +5,18 @@
  * at a gender), the parry's long bright ring, the riposte's heavy whoosh and impact, the lunge's
  * scuff and drawn breath, the backstab's short muffled struggle, a sidestep's scuff, the sharp
  * intake and drawn weapon of an enemy turning alert, and binding a wound and eating.
+ *
+ * Design addendum 2.5 (Book 11 section 07; decisions DF-3, DF-8, DF-9, DF-21) adds the telegraph's
+ * sounds by weight at the flash: a sharp breath (a light), steel scraping (a bladed heavy or
+ * charged attack), a grunt and the haft's creak (an axe, club or Dane axe heavy); the steerer's
+ * own tell, a quiet breath; the hard breathing of the exhausted; a sidearm drawn; a shield split.
+ * Each has its drawn twin (the draw-back and flash, the bent idle, the drawn blade, the broken
+ * board on the ground); none is ever captioned in play (DF-80).
  */
 import { boosted, breath, grunt, metal, noiseHit, out, tone } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
-export const COMBAT2_SOUNDS: readonly SoundDef[] = [
+const COMBAT24_SOUNDS: readonly SoundDef[] = [
   {
     id: 'SFX_STEERER_BREATH',
     captionKey: 'caption.sfx.steerer_breath',
@@ -230,3 +237,153 @@ export const COMBAT2_SOUNDS: readonly SoundDef[] = [
     },
   },
 ];
+
+/** Design addendum 2.5's combat sounds (DF-3, DF-8, DF-9, DF-21). */
+const COMBAT25_SOUNDS: readonly SoundDef[] = [
+  {
+    id: 'SFX_TELL_LIGHT',
+    captionKey: 'caption.sfx.tell_light',
+    bus: 'tells',
+    play: (e, at, pan, opts) => {
+      const to = boosted(e, 1.5, 'tells', pan);
+      // A sharp breath in through the nose and teeth before a light blow: short, rising.
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        1800,
+        2.2,
+        [
+          [0, 0],
+          [0.06, 0.5],
+          [0.16, 0],
+        ],
+        3200,
+      );
+      grunt(e, at + 0.05, to, (opts.voice ?? 150) * 1.2, 0.06, 0.05);
+      return 0.2;
+    },
+  },
+  {
+    id: 'SFX_TELL_SCRAPE',
+    captionKey: 'caption.sfx.tell_scrape',
+    bus: 'tells',
+    play: (e, at, pan) => {
+      const to = boosted(e, 1.6, 'tells', pan);
+      // Steel scraping as a blade is drawn back for a heavy blow: a long rasp, then a thin ring.
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        4200,
+        6,
+        [
+          [0, 0],
+          [0.05, 0.35],
+          [0.3, 0.25],
+          [0.42, 0],
+        ],
+        2600,
+      );
+      metal(e, at + 0.32, to, 1760, [1, 2.4, 3.9], 0.35, 0.05);
+      return 0.7;
+    },
+  },
+  {
+    id: 'SFX_TELL_CREAK',
+    captionKey: 'caption.sfx.tell_creak',
+    bus: 'tells',
+    play: (e, at, pan, opts) => {
+      const to = boosted(e, 1.8, 'tells', pan);
+      // A grunt of effort and the haft's creak as an axe or club goes up and back.
+      grunt(e, at, to, opts.voice ?? 150, 0.3, 0.2);
+      for (let k = 0; k < 4; k++)
+        noiseHit(e, at + 0.08 + k * 0.055, to, 'bandpass', 600 + k * 90, 9, [
+          [0, 0],
+          [0.01, 0.22],
+          [0.05, 0],
+        ]);
+      return 0.4;
+    },
+  },
+  {
+    id: 'SFX_TELL_STEERER',
+    captionKey: 'caption.sfx.tell_steerer',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // The steerer's own tell: a quiet breath, no voice (Book 11 section 08).
+      const to = out(e, 'effects', pan);
+      breath(e, at, to, 0.14, 0.12, 1500);
+      return 0.15;
+    },
+  },
+  {
+    id: 'SFX_EXHAUSTED_BREATH',
+    captionKey: 'caption.sfx.exhausted_breath',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // Blowing hard (Book 10 exhaustedLook): three ragged breaths in and out, slowing.
+      const to = boosted(e, 1.3, 'effects', pan);
+      for (let k = 0; k < 3; k++) {
+        const t = at + k * 0.78;
+        breath(e, t, to, 0.3, 0.32 - k * 0.05, 700);
+        breath(e, t + 0.34, to, 0.36, 0.26 - k * 0.04, 1100);
+      }
+      return 2.4;
+    },
+  },
+  {
+    id: 'SFX_SIDEARM',
+    captionKey: 'caption.sfx.sidearm',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // A seax drawn from its sheath: leather and a short steel slide.
+      const to = boosted(e, 1.2, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 900, 1.5, [
+        [0, 0],
+        [0.02, 0.2],
+        [0.08, 0],
+      ]);
+      noiseHit(
+        e,
+        at + 0.06,
+        to,
+        'highpass',
+        3000,
+        1,
+        [
+          [0, 0],
+          [0.03, 0.22],
+          [0.18, 0],
+        ],
+        6000,
+      );
+      return 0.3;
+    },
+  },
+  {
+    id: 'SFX_SHIELD_SPLIT',
+    captionKey: 'caption.sfx.shield_split',
+    bus: 'effects',
+    play: (e, at, pan) => {
+      // Boards splitting: a dry crack and the halves clattering down.
+      const to = boosted(e, 1.6, 'effects', pan);
+      noiseHit(e, at, to, 'bandpass', 1400, 2, [
+        [0, 0],
+        [0.005, 0.6],
+        [0.09, 0],
+      ]);
+      for (const k of [0.22, 0.31])
+        noiseHit(e, at + k, to, 'lowpass', 500, 1, [
+          [0, 0],
+          [0.01, 0.3],
+          [0.12, 0],
+        ]);
+      return 0.5;
+    },
+  },
+];
+
+export const COMBAT2_SOUNDS: readonly SoundDef[] = [...COMBAT24_SOUNDS, ...COMBAT25_SOUNDS];

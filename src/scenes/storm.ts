@@ -103,7 +103,8 @@ export function flashProfile(dt: number, b: StormBalance, reduced: boolean): num
     return 0;
   }
   const f = b.flash;
-  const tick = dt * TICKS;
+  // Whole ticks (the cold open's seconds are ticks over 60, so allow for rounding).
+  const tick = Math.floor(dt * TICKS + 1e-6);
   if (tick < f.bright) return 1;
   if (tick < f.bright + f.dim) return DIM;
   const end = f.bright + f.dim + f.bright2;

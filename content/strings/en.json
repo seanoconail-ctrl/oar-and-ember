@@ -2866,6 +2866,34 @@
     "text": "A scuff of feet, a breath drawn",
     "tags": ["INFO"]
   },
+  "caption.sfx.tell_light": {
+    "text": "A sharp breath",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.tell_scrape": {
+    "text": "Steel scraping",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.tell_creak": {
+    "text": "A grunt and a creak of wood",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.tell_steerer": {
+    "text": "A breath",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.exhausted_breath": {
+    "text": "Hard breathing",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sidearm": {
+    "text": "A blade drawn",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.shield_split": {
+    "text": "A shield splits",
+    "tags": ["INFO"]
+  },
   "caption.sfx.backstab": {
     "text": "A short, muffled struggle",
     "tags": ["INFO"]
@@ -4390,6 +4418,9 @@
   "ui.journal.aim.sit_fire": {
     "text": "Sit with Hild by the fire."
   },
+  "ui.journal.aim.bring_oddi": {
+    "text": "Carry Oddi above the tide line."
+  },
   "ui.journal.aim.find_oddi": {
     "text": "Find Oddi near the wreck."
   },
@@ -4490,6 +4521,14 @@
   },
   "c_hild.hint.sit_fire.2": {
     "text": "The fire's warm. Come on.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.hint.bring_oddi.1": {
+    "text": "Up past the weed with me, where it's dry. I'll limp the rest of the way.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.hint.bring_oddi.2": {
+    "text": "Just get me above the tide line. This leg will get me home from there.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
   "c_hild.hint.find_oddi.1": {

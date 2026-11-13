@@ -28,6 +28,28 @@ function edgeTo(map: ZoneMap, to: Id): Edge | null {
   return map.links?.find((l) => l.to === to)?.edge ?? null;
 }
 
+/**
+ * The next zone on the shortest chain of links from `from` to `to` (decision DE-88): a resident
+ * finds their way through the zones between, not only across a shared edge. Null with no way.
+ */
+function nextZone(maps: ReadonlyMap<Id, ZoneMap>, from: Id, to: Id): Id | null {
+  if (from === to) return to;
+  const came = new Map<Id, Id>([[from, from]]);
+  const queue: Id[] = [from];
+  for (const z of queue) {
+    if (z === to) break;
+    for (const l of maps.get(z)?.links ?? [])
+      if (!came.has(l.to)) {
+        came.set(l.to, z);
+        queue.push(l.to);
+      }
+  }
+  if (!came.has(to)) return null;
+  let at = to;
+  while (came.get(at) !== from) at = came.get(at) ?? from;
+  return at;
+}
+
 /** A point just inside an edge, in line with (x, y). */
 function atEdge(map: ZoneMap, edge: Edge, x: number, y: number): { x: number; y: number } {
   const W = map.width * map.tile;
@@ -97,8 +119,9 @@ export function stepResident(
       placeActor(onFoot, id, place.zone, actor);
       return;
     }
-    // Coming into view: from the edge between their zone and this one, in line with them.
-    const edge = edgeTo(target, zone);
+    // Coming into view: from the edge on the way between their zone and this one, in line.
+    const via = nextZone(maps, place.zone, zone);
+    const edge = via === null ? null : edgeTo(target, via);
     const t = inside(target, translate(map, target, actor.x, actor.y), land.rules.footprint);
     const entry = edge === null ? { x: place.x, y: place.y } : atEdge(target, edge, t.x, t.y);
     actor.x = entry.x;
@@ -113,12 +136,14 @@ export function stepResident(
     actor.pose = 'idle';
     return;
   }
-  // In view: walk there, or to the edge that leads there.
+  // In view: walk there, or to the edge that leads on towards there.
+  const hop = nextZone(maps, zone, place.zone);
+  const hopMap = hop === null ? undefined : maps.get(hop);
   const goal =
     zone === place.zone
       ? { x: place.x, y: place.y }
       : ((): { x: number; y: number } | null => {
-          const edge = edgeTo(map, place.zone);
+          const edge = hop === null ? null : edgeTo(map, hop);
           if (edge === null) return null;
           // Make for the edge in line with the place on the island.
           const along = translate(target, map, place.x, place.y);
@@ -158,9 +183,10 @@ export function stepResident(
     return;
   }
   // At the edge: on into the next zone (now out of view, they are placed next tick).
-  const next = inside(target, translate(map, target, actor.x, actor.y), land.rules.footprint);
+  if (hop === null || hopMap === undefined) return;
+  const next = inside(hopMap, translate(map, hopMap, actor.x, actor.y), land.rules.footprint);
   actor.x = next.x;
   actor.y = next.y;
   delete actor.walk;
-  placeActor(onFoot, id, place.zone, actor);
+  placeActor(onFoot, id, hop, actor);
 }

@@ -105,18 +105,29 @@ export class SearchBot extends CampBot {
     throw new Error(`could not carry ${id} there`);
   }
 
-  /** Carries someone downed to the safe place at the camp and sets them down there. */
+  /**
+   * Carries someone downed to the safe place at the camp and sets them down there. A bar run empty
+   * on the way drops them (Book 10 heavyCarryEmpty): the bot gets its breath back, lifts them
+   * again where they lie, and goes on.
+   */
   carryHome(id: string): void {
     const safe = this.land.fight?.def.safePlaces[0];
     if (safe === undefined) throw new Error('no safe place');
-    this.lift(id);
-    this.goToZone(safe.zone);
     const inside = (t: Tile): boolean =>
       Math.hypot(t.tx + 0.5 - safe.x, t.ty + 0.5 - safe.y) < safe.r - 1.5 &&
       this.#dry(t) &&
       !tileBlocks(this.map, t.tx, t.ty, false);
-    if (!this.walkTo(inside)) throw new Error('no way into the camp');
-    this.setDown();
+    for (let tries = 0; tries < 12; tries++) {
+      this.waitFor(() => this.onFoot.player.winded?.carry !== true, 60 * 60);
+      if (this.onFoot.carrying !== id) this.lift(id);
+      this.goToZone(safe.zone);
+      if (this.onFoot.carrying !== id) continue;
+      if (!this.walkTo(inside)) throw new Error('no way into the camp');
+      if (this.onFoot.carrying !== id) continue;
+      this.setDown();
+      return;
+    }
+    throw new Error(`could not carry ${id} home`);
   }
 
   /** A tile above the tide line, of shingle or turf, in the zone in view. */

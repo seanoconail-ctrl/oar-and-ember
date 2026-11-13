@@ -21,7 +21,6 @@ import { MemoryStore, SaveManager } from '../../src/persist/manager.ts';
 import { hears, lightAt, sees, sightRange, stepNoise } from '../../src/sim/ai/perception.ts';
 import {
   blowOf,
-  charging,
   frameData,
   newFighter,
   pressAttack,
@@ -34,7 +33,6 @@ import {
   poiseHit,
   stepFighter,
   strikePhase,
-  striking,
 } from '../../src/sim/combat/fighter.ts';
 import type { Fighter, StaminaPool } from '../../src/sim/combat/fighter.ts';
 import type { MoveName } from '../../src/content/combatBalance.ts';
@@ -446,7 +444,9 @@ describe('parry, block, dodge and shove (Book 10 section 06; Stage 9 check 2)', 
     const h = newFighter('Hand axe', { heavy: true });
     pressAttack(h, 0, cb, 'e', pool());
     releaseAttack(h, 1, cb, pool());
-    expect(h.activeAt).toBe(must(cb.weapons['Hand axe'].moves.light1).windup + cb.heavy.windupExtra);
+    expect(h.activeAt).toBe(
+      must(cb.weapons['Hand axe'].moves.light1).windup + cb.heavy.windupExtra,
+    );
     expect(blowOf(h, cb).damage).toBeCloseTo(cb.weapons['Hand axe'].damage * cb.heavy.damage);
   });
 });

@@ -74,14 +74,7 @@ export type DamageType = 'CUT' | 'THRUST' | 'BLOW';
 export type Weight = 'LIGHT' | 'HEAVY' | 'CHARGED';
 /** The moves of Book 10's "Frame data" (design addendum 2.5; decision DF-10). */
 export type MoveName =
-  | 'light1'
-  | 'light2'
-  | 'light3'
-  | 'heavy'
-  | 'charged'
-  | 'lunge'
-  | 'riposte'
-  | 'backstab';
+  'light1' | 'light2' | 'light3' | 'heavy' | 'charged' | 'lunge' | 'riposte' | 'backstab';
 
 /**
  * One move's frames (Book 10 "Frame data"): wind-up, active and recovery ticks, the miss recovery
@@ -372,14 +365,7 @@ const HZ = 60;
 
 /** The modes of Book 10 "Movement and acceleration". */
 export type AccelMode =
-  | 'walk'
-  | 'run'
-  | 'sneak'
-  | 'backOff'
-  | 'strafe'
-  | 'blocking'
-  | 'exhausted'
-  | 'carry';
+  'walk' | 'run' | 'sneak' | 'backOff' | 'strafe' | 'blocking' | 'exhausted' | 'carry';
 
 const MOVE_NAMES: Readonly<Record<string, MoveName>> = {
   'Light 1': 'light1',
@@ -552,7 +538,6 @@ export function parseCombatBalance(json: unknown): CombatBalance {
     '^Berserkers and named cruel enemies may finish the downed, after a visible (\\d+) s warning',
     '"... after a visible N s warning ..."',
   );
-
 
   const h = keyed(json, 'heavyBuild', 'table');
   const [hw] = grab(h, 'heavyBuild', 'windup', '^\\+(\\d+) ticks on every attack$', '"+N ticks"');
@@ -813,11 +798,13 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   });
   const runNote = accRow('Run')['Notes'] ?? '';
   const runWalk = /from a walk (\d+) ticks/.exec(runNote);
-  if (runWalk === null) fail('movementAndAcceleration.Run.Notes', runNote, '"... from a walk N ticks ..."');
+  if (runWalk === null)
+    fail('movementAndAcceleration.Run.Notes', runNote, '"... from a walk N ticks ..."');
   const speedShare = (mode: string): number => {
     const text = accRow(mode)['Speed'] ?? '';
     const m = new RegExp(`^${N} x the speed the way moved$`).exec(text);
-    if (m === null) fail(`movementAndAcceleration.${mode}.Speed`, text, '"N x the speed the way moved"');
+    if (m === null)
+      fail(`movementAndAcceleration.${mode}.Speed`, text, '"N x the speed the way moved"');
     return Number(m[1]);
   };
   const factor = (mode: string): number => {
@@ -828,7 +815,8 @@ export function parseCombatBalance(json: unknown): CombatBalance {
   };
   const heavyNote = accRow('Heavy build')['Notes'] ?? '';
   const both = new RegExp(`In mail as well, x${N}`).exec(heavyNote);
-  if (both === null) fail('movementAndAcceleration.Heavy build.Notes', heavyNote, '"In mail as well, xN"');
+  if (both === null)
+    fail('movementAndAcceleration.Heavy build.Notes', heavyNote, '"In mail as well, xN"');
   const ex = t2('exhausted');
   const [exUntil] = ex('exhaustedUntil', '^(\\d+)% of the current maximum$');
   const [exDelay] = ex('regenDelay', '^(\\d+) ticks after the last cost$');
@@ -924,9 +912,9 @@ export function parseCombatBalance(json: unknown): CombatBalance {
       start: dStart ?? 0,
       dash: dDash ?? 0,
       recovery: dRec ?? 0,
-      ticks: dTotal ?? 0,
-      invulnFrom: dInv0 ?? 0,
-      invulnTo: dInv1 ?? 0,
+      ticks: dTotal,
+      invulnFrom: Number(dInv0),
+      invulnTo: Number(dInv1),
       tiles: dTiles ?? 0,
     },
     shove: {
@@ -1320,7 +1308,11 @@ function parseAiStates(json: unknown): Pick<AiBalance, 'states' | 'distances' | 
       const to = /back to Circle at (\d+)%/.exec(does);
       const extra = new RegExp(`its circle radius \\+ ${N} tiles`).exec(does);
       if (to === null || extra === null)
-        fail('aiStates.Recover stamina.Does', does, '"... radius + N tiles ... back to Circle at N%"');
+        fail(
+          'aiStates.Recover stamina.Does',
+          does,
+          '"... radius + N tiles ... back to Circle at N%"',
+        );
       recoverTo = Number(to[1]) / 100;
       recoverExtra = Number(extra[1]);
     }
@@ -1393,7 +1385,7 @@ function parseAiStates(json: unknown): Pick<AiBalance, 'states' | 'distances' | 
       reset: reset ?? 0,
       dashOnceTicks: Math.round((once ?? 0) * HZ),
       corneredTiles: corner ?? 0,
-      sidearmTicks: side ?? 0,
+      sidearmTicks: side,
     },
   };
 }

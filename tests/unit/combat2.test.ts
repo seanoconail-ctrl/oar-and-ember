@@ -250,6 +250,15 @@ describe('the arrow fix (decision DE-10; Book 10 sweptHits)', () => {
     'staggered',
     'downed',
     'fleeing',
+    // Design addendum 2.5's states: arrows still hit in every one of them.
+    'parryWindup',
+    'parrying',
+    'blockRaise',
+    'dodgeRecovery',
+    'guardBroken',
+    'exhausted',
+    'hopping',
+    'winding',
   ] as const;
   for (const speed of [16, 64, 400, 3000])
     it(`hits in every combat state at ${speed} tiles a second (fast ones would tunnel)`, () => {
@@ -292,6 +301,26 @@ describe('the arrow fix (decision DE-10; Book 10 sweptHits)', () => {
         if (state === 'downed') {
           s.f.state = 'downed';
           svart.pose = 'down';
+        }
+        if (state === 'parryWindup' || state === 'parrying') {
+          // Facing north: the arrow from the east meets the body (missiles cannot be parried).
+          s.f.state = state === 'parryWindup' ? 'parryWindup' : 'parry';
+          s.f.recoveryEnd = far;
+        }
+        if (state === 'blockRaise' || state === 'dodgeRecovery' || state === 'guardBroken') {
+          s.f.state = state;
+          s.f.recoveryEnd = far;
+        }
+        if (state === 'exhausted') {
+          s.stamina.current = 0;
+          s.stamina.spentTick = far;
+          s.f.exhausted = true;
+        }
+        if (state === 'hopping') s.ai.hop = { since: far, x: 0, y: 0 };
+        if (state === 'winding') {
+          // A long enemy wind-up, its telegraph drawn back (a heavy's hold).
+          pressAttack(s.f, f.world.tick, cb, 'n', s.stamina);
+          s.f.since = far;
         }
         // Due west (direction 32), at the feet (a full-range shot for one who runs as it flies).
         shoot(f, AIM_DIRECTIONS / 2, state === 'fleeing' ? null : 6, () => {
@@ -1214,7 +1243,7 @@ describe('the scavengers at dusk (decisions DE-14 and DE-15; Book 6 section 18)'
         }
         f.sim.step();
         const sv = onFoot.actors['E_WRECKER_SVART']?.fight;
-        if (sv === undefined || sv.dead !== null) break;
+        if (sv?.dead !== null) break;
       }
       steps(f, 600);
       const rip = f.events.find((e) => e.type === 'BLOW' && e.kind === 'riposte');

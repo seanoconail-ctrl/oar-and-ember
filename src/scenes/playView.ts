@@ -94,7 +94,7 @@ import {
   openingProps,
   stagePropsNow,
 } from './openingView.ts';
-import { bladeOf, hagNow, netted, wreckPhase } from '../sim/narrative/wreck.ts';
+import { bladeOf, hagNow, interactFirst, netted, wreckPhase } from '../sim/narrative/wreck.ts';
 import type { ColdStorm } from './openingView.ts';
 import { firstRainDrops, swayAt } from './storm.ts';
 import { heightAt } from '../content/terrain/elevation.ts';
@@ -1382,6 +1382,44 @@ export function startPlay(
       case 'ATTACK_STARTED':
         if (e.kind === 'lunge') fightSound('LUNGE_TELL', e.who);
         return;
+      // Design addendum 2.5 (Book 10 "Telegraphs"; DF-9, DF-80): an enemy's tell is its one-frame
+      // flash and a sound by weight; the steerer's own is a breath. Never a caption.
+      case 'TELEGRAPH': {
+        if (e.flash) combatFx.telegraph(e.who, sim.state.tick, display.reducedMotion);
+        if (e.lunge === true) return;
+        const blade = e.weapon === 'Seax' || e.weapon === 'Sword' || e.weapon === 'Spear';
+        fightSound(
+          !e.flash
+            ? 'TELL_STEERER'
+            : e.weight === 'LIGHT'
+              ? 'TELL_LIGHT'
+              : blade
+                ? 'TELL_SCRAPE'
+                : 'TELL_CREAK',
+          e.who,
+        );
+        return;
+      }
+      // Exhausted (Book 10 exhaustedLook): hard breathing, and the bent idle; no word.
+      case 'EXHAUSTED':
+        if (e.on) fightSound('EXHAUSTED_BREATH', e.who);
+        return;
+      case 'ARCHER_HOP': {
+        const a = sim.state.onFoot?.actors[e.who];
+        if (a !== undefined) combatFx.sidestep(a.x, a.y, sim.state.tick);
+        fightSound('SIDESTEP', e.who);
+        return;
+      }
+      case 'SIDEARM_DRAWN':
+        fightSound('SIDEARM_DRAWN', e.who);
+        return;
+      case 'SHIELD_BROKEN': {
+        const at =
+          e.who === 'P_STEERER' ? sim.state.onFoot?.player : sim.state.onFoot?.actors[e.who];
+        if (at !== undefined) combatFx.shieldBroken(at.x + 6, at.y);
+        fightSound('SHIELD_SPLIT', e.who);
+        return;
+      }
       case 'HEAL_STARTED':
         // Healing is seen in its kneeling loop and heard: no caption (the audit).
         fightSound(e.kind === 'BIND' ? 'BIND_WOUND' : 'EAT_RATION', 'P_STEERER');
@@ -1853,7 +1891,14 @@ export function startPlay(
     };
     lastVisual = now;
     visuals.update(frameInput);
-    const interaction = interactionNow(onFoot, map, land.rules, tideOpen, sim.state.facts);
+    const interaction = interactionNow(
+      onFoot,
+      map,
+      land.rules,
+      tideOpen,
+      sim.state.facts,
+      interactFirst(sim.state, wreckCtx),
+    );
 
     // The one prompt that fits the moment.
     let prompt = '';
@@ -2542,7 +2587,7 @@ export function startPlay(
                 steererSheets: [look.steerer.body, ...Object.values(look.steerer.layers).flat()],
                 bodyModel: choice.bodyModel,
                 bundleDrift:
-                  wreckCtx === null || now - bundleFellAt > BUNDLE_DRIFT_MS
+                  now - bundleFellAt > BUNDLE_DRIFT_MS
                     ? null
                     : {
                         k: (now - bundleFellAt) / BUNDLE_DRIFT_MS,

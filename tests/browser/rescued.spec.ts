@@ -1,10 +1,10 @@
 /**
- * Design addendum 2.5 section 4 (decision DE-82) in the browser: Oddi's rescue played with the
- * keys, stepped (`capture`), the way the user's playtest played it. Lifted from the shingle by the
- * wreck, he is first set down above the tide line on his own strand, as Hild was: there he is not
- * yet rescued, so he lies where he was put, to be lifted again (the playtest's Oddi stood up there,
- * not of the household, unanswering and out of reach). Carried on up into the machair and set
- * down, he joins, gets up, walks to the camp, and talks when spoken to.
+ * Design addendum 2.5 section 4 (decisions DE-82 and DE-85) in the browser: Oddi's rescue played
+ * with the keys, stepped (`capture`), the way the user's playtest played it. Lifted from the
+ * shingle by the wreck and set down above the tide line on his own strand, as Hild was, he is
+ * rescued there: he joins the household, the scavengers have the ship's silver still in the wash,
+ * and he gets up and limps home himself to the camp, where he talks when spoken to. (The
+ * playtest's Oddi stood up there, not of the household, unanswering and out of reach.)
  *
  * The page's world (`oeWorld`, capture mode only) is read, never written: the test plays only
  * through the keyboard.
@@ -124,7 +124,7 @@ async function interact(page: Page, kind: string): Promise<void> {
   await step(page, 2);
 }
 
-test('Oddi set down on his strand lies to be lifted again; carried off it, he walks to the camp and talks', async ({
+test('Oddi set down on his strand is rescued there: he limps home to the camp and talks', async ({
   page,
 }) => {
   test.setTimeout(240_000);
@@ -140,47 +140,41 @@ test('Oddi set down on his strand lies to be lifted again; carried off it, he wa
   await interact(page, 'lift');
   await expect(overlay(page)).toHaveAttribute('data-carrying', 'C_ODDI');
 
-  // Up the strand above the tide line, and set down there, as Hild was.
+  // Up the strand above the tide line, and set down there, as Hild was: his rescue (DE-85).
   await walkTo(page, strand, (t) => dry(strand)(t) && t.ty <= at.ty - 4 && t.tx >= at.tx + 4);
   await hold(page, 'KeyW', 1);
   await interact(page, 'set_down');
   await expect(overlay(page)).toHaveAttribute('data-carrying', '');
-  // Book 10's rescueGetUp and more: still on his strand he is not rescued. He lies there, not of
-  // the household, and the prompt offers to lift him again.
-  await step(page, 80);
-  const onStrand = await oddi(page);
-  expect(onStrand?.zone).toBe('ZONE_SK_STRAND');
-  expect(onStrand?.pose).toBe('down');
-  expect(onStrand?.resident).toBe(false);
-  expect(await attr(page, 'searches')).toContain('search.oddi=|');
+  await expect(overlay(page)).toHaveAttribute('data-residents', /C_ODDI/);
+  expect(await attr(page, 'searches')).toContain('search.oddi=ODDI_FIRST');
+  // Oddi seen to first: the scavengers have the strongbox still lying in the wash.
+  expect(await attr(page, 'searches')).toContain('ch1.chest=LOST');
 
-  // Lift him again and carry him off the strand, north into the machair.
-  await interact(page, 'lift');
-  await expect(overlay(page)).toHaveAttribute('data-carrying', 'C_ODDI');
+  // He gets up and limps off up the strand on his own.
+  let walked = false;
+  for (let s = 0; s < 60 && !walked; s++) {
+    await step(page, 4, 250);
+    const now = await oddi(page);
+    if (now?.zone === 'ZONE_SK_STRAND' && now.moving) walked = true;
+  }
+  expect(walked, JSON.stringify(await oddi(page))).toBe(true);
+
+  // The steerer follows him north into the machair.
   await walkTo(page, strand, (t) => t.ty === 1);
   await page.keyboard.down('KeyW');
   await stepUntil(page, 'zone', 'ZONE_SK_MACHAIR', 10);
   await page.keyboard.up('KeyW');
   await step(page, 1);
   await expect(overlay(page)).toHaveAttribute('data-zone', 'ZONE_SK_MACHAIR');
-  await walkTo(page, machair, (t) => dry(machair)(t) && t.ty >= machair.height - 8);
-  await hold(page, 'KeyW', 1);
-  await interact(page, 'set_down');
-  await expect(overlay(page)).toHaveAttribute('data-carrying', '');
-  await expect(overlay(page)).toHaveAttribute('data-residents', /C_ODDI/);
-  expect(await attr(page, 'searches')).toContain('search.oddi=ODDI_FIRST');
 
-  // He gets up and walks to the camp (at a limp), seen walking on the way.
-  let walked = false;
+  // He reaches the camp (at a limp).
   let home: Seen | null = null;
   for (let s = 0; s < 240 && home === null; s++) {
     await step(page, 4, 250);
     const now = await oddi(page);
-    if (now?.moving === true) walked = true;
     if (now?.zone === 'ZONE_SK_MACHAIR' && Math.hypot(now.x - fire.x, now.y - fire.y) <= 8)
       home = now;
   }
-  expect(walked).toBe(true);
   expect(home, JSON.stringify(await oddi(page))).not.toBeNull();
 
   // Talking: beside him, Interact opens his conversation.

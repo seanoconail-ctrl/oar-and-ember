@@ -35,6 +35,16 @@
       "frames": 3,
       "ticks": 4,
       "loop": false
+    },
+    "tell": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "shield_broken": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
     }
   },
   "events": {},
@@ -92,6 +102,18 @@
     "puff/-/2": [
       32,
       48
+    ],
+    "tell/-/0": [
+      0,
+      64
+    ],
+    "tell/-/1": [
+      16,
+      64
+    ],
+    "shield_broken/-/0": [
+      0,
+      80
     ]
   }
 }
