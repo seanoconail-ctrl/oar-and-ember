@@ -17,6 +17,23 @@ import { rng } from './samples.ts';
 import { metal, noiseHit, out, tone } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
+/**
+ * The effect's bus through a gain, so each stands at the Chapter 1 finds' level (the driftwood
+ * pick-up's peak, rendered by `npm run audio:render`): these are quiet, close sounds by nature.
+ */
+function loud(
+  e: SynthEngine,
+  bus: 'effects' | 'tells',
+  pan: number,
+  gain: number,
+  echo: number,
+): AudioNode {
+  const g = e.ctx.createGain();
+  g.gain.value = gain;
+  g.connect(out(e, bus, pan, echo));
+  return g;
+}
+
 /** A small hollow click with its ring (a shell, a pebble). */
 function click(e: SynthEngine, at: number, to: AudioNode, hz: number, level: number): void {
   noiseHit(e, at, to, 'bandpass', hz, 7, [
@@ -66,7 +83,14 @@ function drip(e: SynthEngine, at: number, to: AudioNode, hz: number, level: numb
 }
 
 /** A swish of plant stems (heather, grass, cress) torn or cut. */
-function swish(e: SynthEngine, at: number, to: AudioNode, hz: number, dur: number, level: number): void {
+function swish(
+  e: SynthEngine,
+  at: number,
+  to: AudioNode,
+  hz: number,
+  dur: number,
+  level: number,
+): void {
   noiseHit(
     e,
     at,
@@ -114,7 +138,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A single shell lifted from shingle or weed: a damp scrape, one hollow click, its ring.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 3, 0);
       noiseHit(e, at, to, 'bandpass', 1800, 1.1, [
         [0, 0],
         [0.04, 0.14],
@@ -131,7 +155,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Oiled leather drawn back, then vellum lifted: a soft dry crackle that settles.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 4, 0);
       noiseHit(e, at, to, 'bandpass', 900, 0.9, [
         [0, 0],
         [0.08, 0.12],
@@ -158,7 +182,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Water running off someone onto dry rock, slow drips, and the sea breathing low under it.
-      const to = out(e, 'effects', pan, 0.3);
+      const to = loud(e, 'effects', pan, 2.2, 0.3);
       noiseHit(e, at, to, 'lowpass', 300, 0.7, [
         [0, 0],
         [0.8, 0.1],
@@ -166,7 +190,8 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
         [3.0, 0],
       ]);
       const r = rng(151);
-      for (let i = 0; i < 7; i++) drip(e, at + 0.2 + i * 0.38 + r() * 0.12, to, 900 + r() * 500, 0.12);
+      for (let i = 0; i < 7; i++)
+        drip(e, at + 0.2 + i * 0.38 + r() * 0.12, to, 900 + r() * 500, 0.12);
       return 3.1;
     },
   },
@@ -176,7 +201,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A palm on cold stone, and under it a low hum, two close tones beating, felt more than heard.
-      const to = out(e, 'effects', pan, 0.4);
+      const to = loud(e, 'effects', pan, 2.4, 0.4);
       noiseHit(e, at, to, 'bandpass', 760, 0.7, [
         [0, 0],
         [0.15, 0.16],
@@ -205,7 +230,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Peat sucking free of bronze, then the rim's dull, green-old note.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 1, 0);
       wet(e, at, to, 0.22);
       metal(e, at + 0.35, to, 196, [1, 2.32, 3.9, 5.1], 1.6, 0.16);
       return 1.9;
@@ -217,7 +242,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A great stone turning on its pivot: a grinding rumble that swells and stops, then settles.
-      const to = out(e, 'effects', pan, 0.5);
+      const to = loud(e, 'effects', pan, 3, 0.5);
       noiseHit(
         e,
         at,
@@ -263,7 +288,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Cress pulled from cold running water: a trickle, a soft tear, drips falling back.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 3.5, 0);
       noiseHit(e, at, to, 'bandpass', 2600, 0.8, [
         [0, 0],
         [0.1, 0.07],
@@ -271,7 +296,8 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
       ]);
       swish(e, at + 0.2, to, 1700, 0.25, 0.14);
       const r = rng(171);
-      for (let i = 0; i < 4; i++) drip(e, at + 0.5 + i * 0.09 + r() * 0.04, to, 1200 + r() * 600, 0.08);
+      for (let i = 0; i < 4; i++)
+        drip(e, at + 0.5 + i * 0.09 + r() * 0.04, to, 1200 + r() * 600, 0.08);
       return 0.9;
     },
   },
@@ -281,7 +307,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Woody heather stems cut, three strokes, and the armful gathered up.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 3.6, 0);
       for (let i = 0; i < 3; i++) swish(e, at + i * 0.3, to, 2200, 0.16, 0.18);
       noiseHit(e, at + 1.0, to, 'bandpass', 1100, 0.8, [
         [0, 0],
@@ -297,7 +323,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A hare lifted from its form: a thump in the heather and the stems swishing back.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 6, 0);
       noiseHit(e, at, to, 'lowpass', 260, 1, [
         [0, 0],
         [0.01, 0.2],
@@ -313,7 +339,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Bog cotton plucked: the softest snaps of stems, in a breath of wind.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 6, 0);
       const r = rng(181);
       for (let i = 0; i < 5; i++)
         noiseHit(e, at + i * 0.14 + r() * 0.05, to, 'highpass', 3800, 1, [
@@ -335,7 +361,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Kelp hauled off the rocks: wet slaps and a heavy drag, water running off.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 2.4, 0);
       wet(e, at, to, 0.24);
       wet(e, at + 0.38, to, 0.18);
       noiseHit(e, at + 0.5, to, 'bandpass', 2000, 0.7, [
@@ -352,7 +378,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Eggs lifted from the ledge: seabirds crying round, and the eggs clicking together.
-      const to = out(e, 'effects', pan, 0.2);
+      const to = loud(e, 'effects', pan, 5, 0.2);
       for (const [d, f] of [
         [0, 1320],
         [0.22, 1180],
@@ -385,7 +411,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A peat spade bites, levers and lifts: a dull cut, a wet tearing, the block set down.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 2.5, 0);
       noiseHit(e, at, to, 'lowpass', 480, 1.2, [
         [0, 0],
         [0.01, 0.26],
@@ -406,7 +432,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A fish swung up onto the rock and flapping: three wet smacks, quicker each time.
-      const to = out(e, 'effects', pan);
+      const to = loud(e, 'effects', pan, 4.5, 0);
       for (const d of [0, 0.22, 0.38, 0.5])
         noiseHit(e, at + d, to, 'bandpass', 1300, 1.1, [
           [0, 0],
@@ -422,7 +448,7 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A seal taken at the haul-out: the others' low groans and a heavy weight dragged on wet sand.
-      const to = out(e, 'effects', pan, 0.2);
+      const to = loud(e, 'effects', pan, 5.5, 0.2);
       tone(
         e,
         at,

@@ -36,6 +36,7 @@ import { STORY4_SOUNDS } from '../audio/synth/story4.ts';
 import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { SEA_SOUNDS, SeaAmbience, WreckAmbience } from '../audio/synth/sea.ts';
+import { ISLAND_FIND_SOUNDS } from '../audio/synth/islandFinds.ts';
 import { TRAVERSE_SOUNDS } from '../audio/synth/traverse.ts';
 import type { SeaBedState } from '../audio/synth/sea.ts';
 import { seaStrokeSeconds } from '../audio/seaAudio.ts';
@@ -376,6 +377,8 @@ export function startItem(
       ...STORY4_SOUNDS,
       ...TELLS,
       ...TRAVERSE_SOUNDS,
+      // Stage 14, work package C: the island's finds and gathering (S14-86).
+      ...ISLAND_FIND_SOUNDS,
     ].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no sound ${id}`);
     def.play(e, at, 0, {

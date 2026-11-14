@@ -106,12 +106,23 @@ async function at(
   return decodePng(await page.screenshot()).data;
 }
 
-/** The share of pixels that differ between two frames. */
+/**
+ * How far apart two frames' colours are: half the summed difference of their colour histograms
+ * (4 bits a channel), as a share of the frame. The world keeps moving between frames, which moves
+ * pixels but hardly changes which colours there are; a season or a tide changes the colours.
+ */
 function differ(a: Uint8Array, c: Uint8Array): number {
-  let n = 0;
-  for (let i = 0; i < a.length; i += 4)
-    if (a[i] !== c[i] || a[i + 1] !== c[i + 1] || a[i + 2] !== c[i + 2]) n++;
-  return n / (a.length / 4);
+  const ha = new Int32Array(4096);
+  const hc = new Int32Array(4096);
+  for (let i = 0; i < a.length; i += 4) {
+    const ka = ((a[i] ?? 0) >> 4) * 256 + ((a[i + 1] ?? 0) >> 4) * 16 + ((a[i + 2] ?? 0) >> 4);
+    const kc = ((c[i] ?? 0) >> 4) * 256 + ((c[i + 1] ?? 0) >> 4) * 16 + ((c[i + 2] ?? 0) >> 4);
+    ha[ka] = (ha[ka] ?? 0) + 1;
+    hc[kc] = (hc[kc] ?? 0) + 1;
+  }
+  let d = 0;
+  for (let k = 0; k < 4096; k++) d += Math.abs((ha[k] ?? 0) - (hc[k] ?? 0));
+  return d / 2 / (a.length / 4);
 }
 
 /** The first minute of day `day` at low water (tidal ground open), or at high water. */
@@ -142,17 +153,15 @@ test.describe('the island’s water and seasons (Stage 14)', () => {
     const m = continuousMotion(shots, 640, 360);
     console.log(`Kelda's stream: continuous motion ${(m.share * 100).toFixed(1)}%`);
     expect(m.share).toBeGreaterThanOrEqual(MOTION_THRESHOLD);
-    // Foam on the stream: pale foam steps (the sea ramp's top three) along its banks and stones.
+    // Foam on the stream: the sea ramp's pale foam steps (blue-green whites, unlike the clover's
+    // grey-whites), lit by the noon grade, along its banks and stones.
     const first = shots[0] ?? new Uint8Array();
     let foam = 0;
     for (let i = 0; i < first.length; i += 4) {
-      const [r, g, bl] = [first[i], first[i + 1], first[i + 2]];
-      if (
-        (r === 0x93 && g === 0xb5 && bl === 0xb3) ||
-        (r === 0xbf && g === 0xd4 && bl === 0xcd) ||
-        (r === 0xe4 && g === 0xee && bl === 0xe8)
-      )
-        foam++;
+      const r = first[i] ?? 0;
+      const g = first[i + 1] ?? 0;
+      const bl = first[i + 2] ?? 0;
+      if (g > 160 && g - r > 12 && bl - r > 8) foam++;
     }
     console.log(`foam pixels: ${foam}`);
     expect(foam).toBeGreaterThan(300);
@@ -179,12 +188,17 @@ test.describe('the island’s water and seasons (Stage 14)', () => {
       const noon = 12 * 60;
       const frames = [];
       for (const day of Object.values(DAYS)) frames.push(await at(page, day, noon, 1));
+      // The same season a few seconds on: how far the moving world alone moves the colours.
+      const still = differ(frames[0] ?? new Uint8Array(), await at(page, DAYS.Spring, noon, 3));
+      console.log(`${z.zone} spring against itself: ${(still * 100).toFixed(1)}%`);
       const names = Object.keys(DAYS);
       for (let a = 0; a < frames.length; a++)
         for (let c = a + 1; c < frames.length; c++) {
           const share = differ(frames[a] ?? new Uint8Array(), frames[c] ?? new Uint8Array());
           console.log(`${z.zone} ${names[a]}-${names[c]}: ${(share * 100).toFixed(1)}%`);
-          expect(share, `${z.zone} ${names[a]}-${names[c]}`).toBeGreaterThan(0.02);
+          expect(share, `${z.zone} ${names[a]}-${names[c]}`).toBeGreaterThan(
+            Math.max(0.02, still * 2),
+          );
         }
       if (!tidal) return;
       const s = viewOf(z, true);
@@ -193,8 +207,11 @@ test.describe('the island’s water and seasons (Stage 14)', () => {
       const low = await at(page, day, tideMinute(day, true), 12);
       const high = await at(page, day, tideMinute(day, false), 12);
       const share = differ(low, high);
-      console.log(`${z.zone} low-high water: ${(share * 100).toFixed(1)}%`);
-      expect(share).toBeGreaterThan(0.02);
+      const again = differ(high, await at(page, day, tideMinute(day, false), 3));
+      console.log(
+        `${z.zone} low-high water: ${(share * 100).toFixed(1)}% (high against itself ${(again * 100).toFixed(1)}%)`,
+      );
+      expect(share).toBeGreaterThan(Math.max(0.02, again * 2));
     });
   }
 

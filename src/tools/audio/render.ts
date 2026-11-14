@@ -48,6 +48,22 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
   ['sfx:SFX_PARRY', 1, {}, 'sfx-parry'],
   ['sfx:SFX_BLOCK', 1, {}, 'sfx-block'],
   ['sfx:SFX_GUARD_BREAK', 1.2, {}, 'sfx-guard-break'],
+  // Stage 14, work package C: the island's finds, the cairn's door and gathering (S14-86).
+  ['sfx:SFX_FIND_SHELL', 1, {}, 'finds14-find-shell'],
+  ['sfx:SFX_FIND_PAGE', 1.6, {}, 'finds14-find-page'],
+  ['sfx:SFX_FIND_DROWNED', 3.4, {}, 'finds14-find-drowned'],
+  ['sfx:SFX_FIND_LORE', 2.8, {}, 'finds14-find-lore'],
+  ['sfx:SFX_FIND_CAULDRON', 2.2, {}, 'finds14-find-cauldron'],
+  ['sfx:SFX_CAIRN_DOOR', 3.4, {}, 'finds14-cairn-door'],
+  ['sfx:SFX_GATHER_CRESS', 1.2, {}, 'finds14-gather-cress'],
+  ['sfx:SFX_GATHER_HEATHER', 1.8, {}, 'finds14-gather-heather'],
+  ['sfx:SFX_GATHER_HARE', 1, {}, 'finds14-gather-hare'],
+  ['sfx:SFX_GATHER_COTTON', 1.3, {}, 'finds14-gather-cotton'],
+  ['sfx:SFX_GATHER_KELP', 1.6, {}, 'finds14-gather-kelp'],
+  ['sfx:SFX_GATHER_EGGS', 1.3, {}, 'finds14-gather-eggs'],
+  ['sfx:SFX_GATHER_PEAT', 1.3, {}, 'finds14-gather-peat'],
+  ['sfx:SFX_GATHER_FISH', 1, {}, 'finds14-gather-fish'],
+  ['sfx:SFX_GATHER_SEAL', 1.8, {}, 'finds14-gather-seal'],
   // Combat v2 (design addendum 2.4): the hurt, the parry's ring, the riposte, the lunge, the
   // backstab, the sidestep, turning alert, binding a wound and eating.
   ['sfx:SFX_STEERER_BREATH', 0.6, {}, 'combat2-steerer-breath'],
