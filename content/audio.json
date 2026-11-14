@@ -1454,6 +1454,118 @@
       "bus": "effects",
       "captionKey": "caption.sfx.jump_land",
       "temporary": false
+    },
+    {
+      "id": "SFX_FIND_SHELL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_shell",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_PAGE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_page",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_DROWNED",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_drowned",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_LORE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_lore",
+      "temporary": false
+    },
+    {
+      "id": "SFX_FIND_CAULDRON",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.find_cauldron",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CAIRN_DOOR",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.cairn_door",
+      "temporary": false
+    },
+    {
+      "id": "SFX_PASSAGE_LOUD",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.sfx.passage_loud",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_CRESS",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_cress",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_HEATHER",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_heather",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_HARE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_hare",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_COTTON",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_cotton",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_KELP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_kelp",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_EGGS",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_eggs",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_PEAT",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_peat",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_FISH",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_fish",
+      "temporary": false
+    },
+    {
+      "id": "SFX_GATHER_SEAL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.gather_seal",
+      "temporary": false
     }
   ],
   "events": {
@@ -1606,7 +1718,23 @@
     "SINK_ENDED": "SFX_SINK_GASP",
     "CRAWL_SHUFFLE": "SFX_CRAWL",
     "STONE_SCRAPE": "SFX_STONE_SCRAPE",
-    "JUMP_LANDED": "SFX_JUMP_LAND"
+    "JUMP_LANDED": "SFX_JUMP_LAND",
+    "FIND_SHELL": "SFX_FIND_SHELL",
+    "FIND_PAGE": "SFX_FIND_PAGE",
+    "FIND_DROWNED": "SFX_FIND_DROWNED",
+    "FIND_LORE": "SFX_FIND_LORE",
+    "FIND_CAULDRON": "SFX_FIND_CAULDRON",
+    "CAIRN_DOOR_TURNS": "SFX_CAIRN_DOOR",
+    "PASSAGE_LOUD": "SFX_PASSAGE_LOUD",
+    "GATHER_WATERCRESS": "SFX_GATHER_CRESS",
+    "GATHER_HEATHER": "SFX_GATHER_HEATHER",
+    "GATHER_HARES": "SFX_GATHER_HARE",
+    "GATHER_BOG_COTTON": "SFX_GATHER_COTTON",
+    "GATHER_KELP": "SFX_GATHER_KELP",
+    "GATHER_SEALS": "SFX_GATHER_SEAL",
+    "GATHER_EGGS": "SFX_GATHER_EGGS",
+    "GATHER_PEAT": "SFX_GATHER_PEAT",
+    "GATHER_ROCK_FISH": "SFX_GATHER_FISH"
   },
   "home": {
     "restSeconds": 90,

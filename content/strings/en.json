@@ -8571,5 +8571,69 @@
   },
   "ui.sound.call.tell_drowned": {
     "text": "The drowned's tell"
+  },
+  "caption.sfx.find_shell": {
+    "text": "A shell lifted",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_page": {
+    "text": "Dry vellum crackling",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_drowned": {
+    "text": "Water dripping on dry rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_lore": {
+    "text": "A low hum in the stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.find_cauldron": {
+    "text": "A dull note of bronze",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.cairn_door": {
+    "text": "Stone grinding on stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.passage_loud": {
+    "text": "The sea booming in the rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_cress": {
+    "text": "Cress pulled from the water",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_heather": {
+    "text": "Heather cut",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_hare": {
+    "text": "A thump in the heather",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_cotton": {
+    "text": "Stems snapping softly",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_kelp": {
+    "text": "Wet kelp hauled",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_eggs": {
+    "text": "Seabirds crying",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_peat": {
+    "text": "A spade biting peat",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_fish": {
+    "text": "A fish flapping on rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.gather_seal": {
+    "text": "Seals groaning",
+    "tags": ["INFO"]
   }
 }

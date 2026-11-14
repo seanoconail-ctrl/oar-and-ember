@@ -2929,6 +2929,134 @@
       "note": "The user's fourth playtest (generated, Book 11 section 12; decision DH-119): a lost knife worked free of the rocks."
     },
     {
+      "id": "SFX_FIND_SHELL",
+      "ref": "`SFX_FIND_SHELL`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a shell lifted, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_FIND_PAGE",
+      "ref": "`SFX_FIND_PAGE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): dry vellum crackling, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_FIND_DROWNED",
+      "ref": "`SFX_FIND_DROWNED`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): water dripping on dry rock, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_FIND_LORE",
+      "ref": "`SFX_FIND_LORE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a low hum in the stone, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_FIND_CAULDRON",
+      "ref": "`SFX_FIND_CAULDRON`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a dull note of bronze, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_CAIRN_DOOR",
+      "ref": "`SFX_CAIRN_DOOR`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): stone grinding on stone, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_PASSAGE_LOUD",
+      "ref": "`SFX_PASSAGE_LOUD`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): the sea booming in the rock, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_CRESS",
+      "ref": "`SFX_GATHER_CRESS`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): cress pulled from the water, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_HEATHER",
+      "ref": "`SFX_GATHER_HEATHER`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): heather cut, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_HARE",
+      "ref": "`SFX_GATHER_HARE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a thump in the heather, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_COTTON",
+      "ref": "`SFX_GATHER_COTTON`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): stems snapping softly, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_KELP",
+      "ref": "`SFX_GATHER_KELP`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): wet kelp hauled, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_EGGS",
+      "ref": "`SFX_GATHER_EGGS`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): seabirds crying, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_PEAT",
+      "ref": "`SFX_GATHER_PEAT`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a spade biting peat, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_FISH",
+      "ref": "`SFX_GATHER_FISH`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): a fish flapping on rock, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
+      "id": "SFX_GATHER_SEAL",
+      "ref": "`SFX_GATHER_SEAL`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, work package C (decision S14-86): seals groaning, generated in code (src/audio/synth/islandFinds.ts)."
+    },
+    {
       "id": "SFX_WORK_CAST",
       "ref": "Work sounds for every homestead task",
       "book": 11,
