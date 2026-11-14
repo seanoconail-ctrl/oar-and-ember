@@ -186,7 +186,28 @@ mainland pointed out** (`pointout.gif`, 2.65 MB) and **the skin boat's Carrick g
 ![Carrick goods sheet](../art/playtest-4/raid-reason/prop_carrick_goods-sheet@4x.png)
 
 ## Tests
-{{TESTS}}
+- `npm run lint`: **clean.** ESLint, Prettier, content lint (2,050 strings, 546 registered IDs,
+  the ID lint included) and art lint (159 sheets, 69,609 frames, 0 placeholders). The ESLint errors
+  reported earlier in `playView.ts` and `repairBot.ts` were already gone at f0eec35.
+- `npm test` (final run, after every change of this pass): **68 files, 1,106 tests: 1,105 passed,
+  1 skipped, 0 failed**; then the frame-budget pass timed alone (`OE_BUDGET=1`): 1 passed (its other 7
+  skipped by design). The skipped test in the main run is that budget test.
+- **At the start of this pass** the full suite showed **3 failures**, each fixed at its cause
+  (DH-162): `idRegistry.test.ts` (the Seal Cave refs quoted Book 4's old line), `art.test.ts` (seven
+  new sheets missing from its list of committed sheets; art lint already passed them) and golden save
+  11's reproduction (the world changed: DH-160). `workLoops` and art lint on `ship_t1_work` passed.
+- `npm run build`: **builds** (the usual large-chunk warning only).
+- `npm run test:browser -- --project=chromium` (one full run, 12.7 min, fully parallel, then the
+  budget measures alone): **111 passed, 2 failed**, then the budget pass **3 passed** (the broch
+  4.83 ms, the strand 2.81 ms, the cold open 4.57 ms). The two failures were specs written before
+  the fourth playtest's changes, brought to them without loosening (DH-162): `rescued.spec.ts`
+  expected the strongbox lost the moment Oddi was set down, which since DH-12 happens only when the
+  thief is seen taking it and gets away (now checked once the steerer has left the strand), and
+  `stage07.spec.ts` counted one light pool at night, where the fire now has its pool and its hot core
+  (DH-124; now exactly two). Run again: **7 passed**.
+- WebKit was not run here: its browser cannot be downloaded in this environment. CI runs Chromium
+  and WebKit, and both block publishing. Firefox is not tested (BR-9).
+- No probe or scratch tests are left in the tree.
 
 ### The tests the user asked for (all pass)
 
@@ -213,7 +234,17 @@ golden 12 (schema 14) loads, matches its hash, holds Chapter 1 ended with the co
 is reproduced exactly by its scenario.
 
 ## Stages 7 to 12 redone
-{{STAGES}}
+Each stage's unit and scenario tests were run again after every change of this pass, one run each
+(then the stage's browser specs in the full Chromium run). Every one passes.
+
+| Stage | Unit and scenario tests run again | Browser specs |
+|---|---|---|
+| 7 | 142 passed (`home`, `driftwood`, `homeAudio`, `workLoops`, `pt3story`, `shelterDay2`, `pt4bed`, `pt4story`) | `stage07.spec.ts` (after its pool count, above), `pt3story.spec.ts`, `pt4story.spec.ts`, `pt4world.spec.ts` passed |
+| 8 | 117 passed (`people`, `synth`, `audioCoverage`, the rescue scenario `rescued`, `pt4people`) | `stage08.spec.ts`, `rescued.spec.ts` (after the snatch, above), `pt4people.spec.ts` passed |
+| 9 | 260 passed (`combat25`, `combat2`, `combat`, `missiles`, `water`, `pt3combat`, `pt4combat`, `hitboxes`, `liftBran`) | `stage09.spec.ts`, `combat2.spec.ts`, `combat25.spec.ts`, `pt3combat.spec.ts`, `pt4combat.spec.ts` passed |
+| 10 | 102 passed (`searches` scenario, `opening2`, `omen`, `noTrap`, `pt4finds`, `raidReason`) | `stage10.spec.ts`, `opening2.spec.ts`, `opening.spec.ts`, `raidReason.spec.ts` passed |
+| 11 | 37 passed (`repairs` scenario, `ship`, `shipArt`) | `stage11.spec.ts` passed |
+| 12 | 137 passed (`launch` scenario and unit, `saves`, `text25`, `storm25`, `pt3ui`, `pt4names`, `plantBatch`, `pt4final`) | `stage12.spec.ts`, `text25.spec.ts`, `pt3ui.spec.ts`, `art.spec.ts`, `standard.spec.ts`, `storm.spec.ts` passed |
 
 ### Stage 7: day and night, shelter and first tasks
 **What the fourth playtest changed:** the shelter's prompt and mark (DH-10, DH-11), the bed in one
@@ -221,7 +252,7 @@ place (DH-100 to DH-104), the broch's interior (DH-122 to DH-127), the household
 (DH-44 to DH-47). **Its checks now:** the day, sleep after 18:00 and the morning report hold
 (`home.test.ts`, `pt4bed.test.ts`); the tasks and loops hold (`workLoops.test.ts`, the sleepers);
 the standard: the broch's four views keep 85.8% to 91.7% moving (the world part's captures) and the
-camp in the gate capture {{CAMP}}; audio: the rites' music and the finds' sounds render under the
+camp in the gate capture 82.8%; audio: the rites' music and the finds' sounds render under the
 ceiling (their parts).
 
 ### Stage 8: crew agents, schedules and conversation
@@ -259,8 +290,8 @@ see **Gate checks**.
    17:00 to 17:44 (the fold), the dusk fight on offer from about 10 minutes. See **Timing**.
 2. **User playtest: READY** (`docs/playtest/build-1.md` rewritten for this build).
 3. **Art lint clean, no placeholders: PASS.** 159 sheets, 69,609 frames, 0 placeholders.
-4. **The Book 7 section 14 standard: {{STD}}** (see **Art check**).
-5. **The browsers block publishing:** Chromium here {{CHROMIUM}}; WebKit runs in CI (it cannot be
+4. **The Book 7 section 14 standard: PASS** for every in-world view (82.8% to 93.9% in the gate capture; the broch 88.5% to 93.6%; the strand 95.8% to 96.4%; the cold open 97.2%) (see **Art check**).
+5. **The browsers block publishing:** Chromium here 111 of 113 in the full run, the 2 others passing after their specs were brought to the fourth playtest (above), and the budget pass 3 of 3 in that run; the broch's budget measure fails in about half of its runs alone (see **Frame budget**); WebKit runs in CI (it cannot be
    downloaded here). CI: see the end of this report.
 6. **Audio: PASS** for every new sound of the parts (rendered under the ceiling by each part: the
    rites 0.580 and 0.481 peak, `SFX_SNATCH` 0.223, the steerer's sigh 0.057, the finds' seven cues).
@@ -295,10 +326,68 @@ game day on whether the stores come home before the second evening's low water (
 finding).
 
 ## Frame budget
-{{BUDGET}}
+Measured as the specs measure (`data-frame-ms`, the script's share of a frame, smoothed, read after
+33 screenshots), each `@budget` measure timed alone (one worker), the production build, on this
+4-core machine with nothing else running.
+
+| Reading | Before this pass (f0eec35) | After this pass | Budget |
+|---|---|---|---|
+| The broch at night, the household home (`pt4world.spec.ts`) | **8.50, 8.65** (and 8.65 to 10.34 interleaved with the new build) | **4.83, 5.18, 5.41, 5.43, 5.61, 5.78, 5.88, 6.11** | 5.5 ms |
+| Wreck Strand (`standard.spec.ts`) | 3.56 | 2.81, 2.85, 3.01, 3.55 | 5.5 ms |
+| The cold open (`storm.spec.ts`) | 2.27 | 2.76, 2.90, 3.16 (once 4.57) | 5.5 ms |
+
+**The cause** (DH-161): the broch's view holds 8,427 sprites, **7,645 of them machair grass** (the
+strand 1,690); each plant was made an object three times a frame (the scene, the draw list, the
+vertex buffer) and the plant pass scanned 29,223 candidates for them. With the plants left out the
+frame read 3.4 to 3.9 ms. The smoke, clutter, light pools, sleepers and the people's per-frame work
+of the fourth playtest cost little (the world part measured the broch at the commit before the
+playtest within 0.7 ms of after it, under load).
+
+**What changed** (drawing exactly the same picture, proved by `plantBatch.test.ts` and the new
+`art.spec.ts` scene): the plants as one typed-array batch merged into the draw order by the same rule;
+what depends only on the camera kept while it stands still; the sprite passes drawn by instances,
+uploaded once a pass instead of once for each of 149 batches; the seal-and-gull pass no longer
+measures a distance for every sprite; the household's exchange choice reads each activity once.
+
+**Stated honestly:** the broch went from about 8.6 ms to about 5.5 ms, and **its measure still fails
+in about half the runs here** (it passed in the full run's budget pass at 4.83 ms). The limit is
+unchanged and the measure still asserts it. What remains is spread thin: in the software-rendered
+browser the page runs at about 4 frames a second under the spec's screenshots, so each frame also
+carries about 14 simulation ticks (about 1.2 ms), the play view's own work about 1.4 ms, and the
+plants about 1.4 ms. CI's two-core runner is slower again, so the broch measure is likely to fail
+there. The main session asked for the work to be timeboxed at this point.
 
 ## Art check
-{{ART}}
+Captures in `docs/art/captures/stage-12/` (`npm run capture -- stage-12`, run in this pass; its
+README lists every file). The capture rewrote three files of `docs/art/mockups/stage-12/`
+(`launch-sail-loop.gif`, `launch-sail.png`, `screen-mark.png`); they were restored from c7ecdb6, so
+`docs/art/mockups` and `docs/art/stage-06-rework` match c7ecdb6 (`git status` shows nothing under
+them).
+
+**Motion with the camera still** (Book 7 section 14, 80% of cells), every in-world view:
+
+| View | Moving cells (third playtest) |
+|---|---|
+| Wreck Strand where the steerer gets up (`still`) | 93.9% (93.9%) |
+| The boat ready on its skids (`launch-ready`) | 88.9% (88.9%) |
+| The heave and the run down the skids (`launch-heave`) | 91.7% (91.5%) |
+| Afloat under the mark, rowing (`launch-sail`) | 93.1% (93.1%) |
+| The camp with the sail raised, the fire lit (`camp-sail`) | 82.8% (82.6%) |
+| The first dusk at the stern (`dusk-stern`) | 88.7% (88.9%) |
+| The broch's four views (the world part, `pt4world.spec.ts` in this run) | 88.5% to 93.6% (under the finished shelter at night 93.2%) |
+| The strand in `standard.spec.ts` / the cold open in `storm.spec.ts` | 95.8% to 96.4% / 97.2% |
+| The sea map (a screen, for the record) | 72.9% (72.9%) |
+| Book 7 threshold | 80% |
+
+Every in-world view meets the threshold; the lowest is still the camp. The 10-second clip is 10.0 s.
+
+**Compared with `docs/art/reference/`** (`wreck-strand-target.png`, `kelda-summer-target.png`,
+`target-walk.mp4`): the strand's shingle, wrack, dune grass, foam line and moving sea match the
+reference as before (`compare.png`, looked at); the camp view now shows the reworked broch at 11:00,
+the lean-to with its drying line, the worn floor, the hearth's smoke and the household's things
+(`camp-sail@2x.png`, looked at), in the reference's outline weight, three-step shading and palette.
+This pass adds no art: the plants, people and props draw exactly as before (DH-161), and the carried
+box now shows over its carrier's shoulders on every frame (DH-165).
 
 ## Balance
 - Every number is read from `content/balance.json`. This pass adds no row and no number: the
@@ -315,8 +404,9 @@ causes), DH-163 (the council before the rites), DH-164 (aim stages in the guidan
 kept), DH-165 (the carried-load sort), DH-166 (left open).
 
 ## Known issues
-- **The broch's frame budget** reads about 5.2 to 5.9 ms alone on an idle machine, against 5.5 ms:
-  the measure fails in some runs here and will on CI's slower runner. Medium. See **Frame budget**.
+- **The broch's frame budget** reads 4.8 to 6.1 ms alone on an idle machine, against 5.5 ms: the
+  measure fails in about half its runs here and is likely to on CI's slower runner, which blocks
+  publishing. High. See **Frame budget**.
 - **The stolen silver** cannot be won back later in Chapter 1 (DH-15). Low.
 - **The chapter's one-day swing** on the second evening's low water (the third playtest's finding)
   stands. Medium; the playtest will tell.

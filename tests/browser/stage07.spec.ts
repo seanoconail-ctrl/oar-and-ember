@@ -174,11 +174,13 @@ test.describe('Stage 7: day and night, shelter and first tasks', () => {
     await expect(overlay(page)).toHaveAttribute('data-report', '');
   });
 
-  test('the fire lights the night: a warm pool round it', async ({ page }) => {
+  test('the fire lights the night: a warm pool round it, and its hot core', async ({ page }) => {
     await startPlay(page, 'A', 'capture&camp=broch&time=23:00&fire=lit');
     await step(page, 3);
     await expect(overlay(page)).toHaveAttribute('data-light', 'night');
     await expect(overlay(page)).toHaveAttribute('data-fire', 'lit');
-    await expect(overlay(page)).toHaveAttribute('data-pools', '1');
+    // The fire's pool, and since the user's fourth playtest its hot core (DH-124, render.json
+    // fire.core): two pools, both the fire's (no lamp at the lean-to).
+    await expect(overlay(page)).toHaveAttribute('data-pools', '2');
   });
 });

@@ -147,8 +147,8 @@ test('Oddi set down on his strand is rescued there: he limps home to the camp an
   await expect(overlay(page)).toHaveAttribute('data-carrying', '');
   await expect(overlay(page)).toHaveAttribute('data-residents', /C_ODDI/);
   expect(await attr(page, 'searches')).toContain('search.oddi=ODDI_FIRST');
-  // Oddi seen to first: the scavengers have the strongbox still lying in the wash.
-  expect(await attr(page, 'searches')).toContain('ch1.chest=LOST');
+  // Oddi seen to first: since the user's fourth playtest a scavenger is seen taking the strongbox
+  // (DH-12, DH-13); it is lost once he is away with it (below, when the steerer leaves the strand).
 
   // He gets up and limps off up the strand on his own.
   let walked = false;
@@ -166,6 +166,8 @@ test('Oddi set down on his strand is rescued there: he limps home to the camp an
   await page.keyboard.up('KeyW');
   await step(page, 1);
   await expect(overlay(page)).toHaveAttribute('data-zone', 'ZONE_SK_MACHAIR');
+  // Not chased, the thief got away with the silver (DH-14): the scavengers have it.
+  expect(await attr(page, 'searches')).toContain('ch1.chest=LOST');
 
   // He reaches the camp (at a limp).
   let home: Seen | null = null;
