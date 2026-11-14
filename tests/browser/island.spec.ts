@@ -22,7 +22,9 @@ const ZONES: readonly (readonly [string, number, number])[] = [
 ];
 
 test.describe('the whole island: each new zone', () => {
-  test.setTimeout(120_000);
+  // Each zone draws thousands of swaying plants; with the other tests beside it in a software
+  // renderer a run can take over two minutes.
+  test.setTimeout(300_000);
   for (const [zone, x, y] of ZONES) {
     test(`${zone} loads with ?zone= and keeps at least ${MOTION_THRESHOLD * 100}% of the screen moving`, async ({
       page,

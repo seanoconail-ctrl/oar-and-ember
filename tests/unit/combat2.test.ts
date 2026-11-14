@@ -1018,8 +1018,11 @@ describe('enemies that want to live (decision DE-6)', () => {
     const home = { ...fa(f, 'E_WRECKER_SVART').ai.home };
     // The steerer runs far east; he follows no further than Book 10's leash.
     let furthest = 0;
+    // From Stage 14 the strand's east end leads on to Naust Cove (decision S14-2): the steerer
+    // runs east to just short of it and stands there, on the strand, out of his leash.
     steps(f, 1800, () => {
-      move(f, 1, 0, true);
+      const at = f.world.onFoot?.player.x ?? 0;
+      move(f, at < 92 * TILE ? 1 : 0, 0, true);
       f.world.player.vitality = 100;
       f.world.player.stamina.current = 100;
       const a = actor(f, 'E_WRECKER_SVART');

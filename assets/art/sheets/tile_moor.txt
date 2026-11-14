@@ -764,6 +764,7 @@ anim.g_ffsf_5: frames 1, ticks 1
 anim.g_ffsf_6: frames 1, ticks 1
 anim.g_ffsf_7: frames 1, ticks 1
 anim.g_ffso_16: frames 1, ticks 1
+anim.g_ffsr_24: frames 1, ticks 1
 anim.g_ffss_0: frames 1, ticks 1
 anim.g_ffss_1: frames 1, ticks 1
 anim.g_ffss_12: frames 1, ticks 1
@@ -794,13 +795,12 @@ anim.g_foff_2: frames 1, ticks 1
 anim.g_foff_20: frames 1, ticks 1
 anim.g_foff_23: frames 1, ticks 1
 anim.g_foff_6: frames 1, ticks 1
-anim.g_fofo_19: frames 1, ticks 1
 anim.g_fofo_9: frames 1, ticks 1
 anim.g_fooo_14: frames 1, ticks 1
 anim.g_fooo_17: frames 1, ticks 1
-anim.g_foso_24: frames 1, ticks 1
 anim.g_frfr_12: frames 1, ticks 1
 anim.g_frfs_17: frames 1, ticks 1
+anim.g_frrr_20: frames 1, ticks 1
 anim.g_fsff_1: frames 1, ticks 1
 anim.g_fsff_10: frames 1, ticks 1
 anim.g_fsff_11: frames 1, ticks 1
@@ -810,6 +810,7 @@ anim.g_fsff_22: frames 1, ticks 1
 anim.g_fsff_3: frames 1, ticks 1
 anim.g_fsff_5: frames 1, ticks 1
 anim.g_fsff_7: frames 1, ticks 1
+anim.g_fsfr_15: frames 1, ticks 1
 anim.g_fsfr_7: frames 1, ticks 1
 anim.g_fsfs_11: frames 1, ticks 1
 anim.g_fsfs_12: frames 1, ticks 1
@@ -1193,31 +1194,38 @@ anim.g_nnnn_6: frames 1, ticks 1
 anim.g_nnnn_7: frames 1, ticks 1
 anim.g_nnnn_8: frames 1, ticks 1
 anim.g_nnnn_9: frames 1, ticks 1
-anim.g_nnnr_16: frames 1, ticks 1
-anim.g_nnnr_20: frames 1, ticks 1
-anim.g_nnnr_4: frames 1, ticks 1
-anim.g_nnon_16: frames 1, ticks 1
-anim.g_nnrn_1: frames 1, ticks 1
-anim.g_nnrn_13: frames 1, ticks 1
+anim.g_nnnr_10: frames 1, ticks 1
+anim.g_nnnr_2: frames 1, ticks 1
+anim.g_nnnr_22: frames 1, ticks 1
+anim.g_nnnr_24: frames 1, ticks 1
+anim.g_nnrn_15: frames 1, ticks 1
+anim.g_nnrn_20: frames 1, ticks 1
 anim.g_nnrn_22: frames 1, ticks 1
-anim.g_nnrn_24: frames 1, ticks 1
-anim.g_nnrr_0: frames 1, ticks 1
-anim.g_nnrr_5: frames 1, ticks 1
-anim.g_nnrr_6: frames 1, ticks 1
-anim.g_nnrr_7: frames 1, ticks 1
-anim.g_nnrr_8: frames 1, ticks 1
-anim.g_nnrr_9: frames 1, ticks 1
-anim.g_nonn_13: frames 1, ticks 1
-anim.g_nonr_2: frames 1, ticks 1
+anim.g_nnrn_3: frames 1, ticks 1
+anim.g_nnrn_8: frames 1, ticks 1
+anim.g_nnrr_1: frames 1, ticks 1
+anim.g_nnrr_11: frames 1, ticks 1
+anim.g_nnrr_19: frames 1, ticks 1
+anim.g_nnrr_21: frames 1, ticks 1
+anim.g_nnrr_23: frames 1, ticks 1
+anim.g_nnrr_24: frames 1, ticks 1
+anim.g_nnrr_3: frames 1, ticks 1
+anim.g_nnsn_16: frames 1, ticks 1
+anim.g_nrnn_1: frames 1, ticks 1
+anim.g_nrnn_12: frames 1, ticks 1
 anim.g_nrnn_18: frames 1, ticks 1
 anim.g_nrnn_19: frames 1, ticks 1
-anim.g_nrnn_21: frames 1, ticks 1
-anim.g_nrnr_12: frames 1, ticks 1
+anim.g_nrnr_15: frames 1, ticks 1
+anim.g_nrnr_18: frames 1, ticks 1
+anim.g_nrnr_21: frames 1, ticks 1
+anim.g_nrnr_23: frames 1, ticks 1
 anim.g_nrnr_7: frames 1, ticks 1
-anim.g_nrrr_0: frames 1, ticks 1
-anim.g_nrrr_17: frames 1, ticks 1
-anim.g_nrrr_21: frames 1, ticks 1
-anim.g_nrrr_9: frames 1, ticks 1
+anim.g_nrrr_12: frames 1, ticks 1
+anim.g_nrrr_2: frames 1, ticks 1
+anim.g_nrrr_20: frames 1, ticks 1
+anim.g_nrrr_3: frames 1, ticks 1
+anim.g_nrrs_4: frames 1, ticks 1
+anim.g_nsnn_13: frames 1, ticks 1
 anim.g_oahh_15: frames 1, ticks 1
 anim.g_ocos_21: frames 1, ticks 1
 anim.g_offf_0: frames 1, ticks 1
@@ -1250,15 +1258,12 @@ anim.g_ohoo_3: frames 1, ticks 1
 anim.g_ohoo_4: frames 1, ticks 1
 anim.g_ohoo_5: frames 1, ticks 1
 anim.g_omoo_22: frames 1, ticks 1
-anim.g_onoo_15: frames 1, ticks 1
-anim.g_onrr_21: frames 1, ticks 1
 anim.g_oocc_0: frames 1, ticks 1
 anim.g_oocc_18: frames 1, ticks 1
 anim.g_ooff_0: frames 1, ticks 1
 anim.g_ooff_1: frames 1, ticks 1
 anim.g_ooff_10: frames 1, ticks 1
 anim.g_ooff_11: frames 1, ticks 1
-anim.g_ooff_13: frames 1, ticks 1
 anim.g_ooff_17: frames 1, ticks 1
 anim.g_ooff_18: frames 1, ticks 1
 anim.g_ooff_19: frames 1, ticks 1
@@ -1284,7 +1289,6 @@ anim.g_oohh_22: frames 1, ticks 1
 anim.g_oohh_23: frames 1, ticks 1
 anim.g_oohh_24: frames 1, ticks 1
 anim.g_ooho_13: frames 1, ticks 1
-anim.g_oonr_14: frames 1, ticks 1
 anim.g_ooof_1: frames 1, ticks 1
 anim.g_ooof_14: frames 1, ticks 1
 anim.g_ooof_16: frames 1, ticks 1
@@ -1317,99 +1321,23 @@ anim.g_oooo_6: frames 1, ticks 1
 anim.g_oooo_7: frames 1, ticks 1
 anim.g_oooo_8: frames 1, ticks 1
 anim.g_oooo_9: frames 1, ticks 1
-anim.g_ooor_1: frames 1, ticks 1
-anim.g_ooor_2: frames 1, ticks 1
-anim.g_ooor_20: frames 1, ticks 1
-anim.g_ooor_22: frames 1, ticks 1
-anim.g_ooor_24: frames 1, ticks 1
-anim.g_ooor_5: frames 1, ticks 1
-anim.g_ooos_1: frames 1, ticks 1
 anim.g_ooos_17: frames 1, ticks 1
-anim.g_ooos_19: frames 1, ticks 1
 anim.g_ooos_22: frames 1, ticks 1
-anim.g_ooos_23: frames 1, ticks 1
-anim.g_ooos_24: frames 1, ticks 1
-anim.g_ooos_9: frames 1, ticks 1
-anim.g_ooro_11: frames 1, ticks 1
-anim.g_ooro_12: frames 1, ticks 1
-anim.g_ooro_13: frames 1, ticks 1
-anim.g_ooro_17: frames 1, ticks 1
-anim.g_ooro_20: frames 1, ticks 1
-anim.g_ooro_3: frames 1, ticks 1
-anim.g_ooro_4: frames 1, ticks 1
-anim.g_ooro_5: frames 1, ticks 1
-anim.g_ooro_9: frames 1, ticks 1
-anim.g_oorr_11: frames 1, ticks 1
-anim.g_oorr_12: frames 1, ticks 1
-anim.g_oorr_2: frames 1, ticks 1
-anim.g_oorr_23: frames 1, ticks 1
-anim.g_oorr_24: frames 1, ticks 1
-anim.g_oorr_3: frames 1, ticks 1
-anim.g_oorr_5: frames 1, ticks 1
-anim.g_oorr_6: frames 1, ticks 1
-anim.g_oors_1: frames 1, ticks 1
-anim.g_oors_2: frames 1, ticks 1
-anim.g_oors_20: frames 1, ticks 1
-anim.g_oors_24: frames 1, ticks 1
-anim.g_ooso_1: frames 1, ticks 1
 anim.g_ooso_12: frames 1, ticks 1
-anim.g_ooso_20: frames 1, ticks 1
-anim.g_ooso_21: frames 1, ticks 1
 anim.g_ooss_11: frames 1, ticks 1
-anim.g_ooss_15: frames 1, ticks 1
-anim.g_ooss_2: frames 1, ticks 1
 anim.g_ooss_20: frames 1, ticks 1
 anim.g_ooss_23: frames 1, ticks 1
 anim.g_ooss_24: frames 1, ticks 1
-anim.g_ooss_3: frames 1, ticks 1
-anim.g_ornn_10: frames 1, ticks 1
-anim.g_oroo_17: frames 1, ticks 1
-anim.g_oroo_22: frames 1, ticks 1
-anim.g_oroo_6: frames 1, ticks 1
-anim.g_oror_0: frames 1, ticks 1
-anim.g_oror_1: frames 1, ticks 1
-anim.g_oror_11: frames 1, ticks 1
-anim.g_oror_12: frames 1, ticks 1
-anim.g_oror_13: frames 1, ticks 1
-anim.g_oror_16: frames 1, ticks 1
-anim.g_oror_21: frames 1, ticks 1
 anim.g_oros_13: frames 1, ticks 1
-anim.g_oros_2: frames 1, ticks 1
-anim.g_orro_18: frames 1, ticks 1
-anim.g_orrr_10: frames 1, ticks 1
-anim.g_orrr_6: frames 1, ticks 1
-anim.g_orrr_7: frames 1, ticks 1
-anim.g_orso_5: frames 1, ticks 1
-anim.g_orss_4: frames 1, ticks 1
 anim.g_oscs_1: frames 1, ticks 1
-anim.g_osfo_14: frames 1, ticks 1
 anim.g_osof_2: frames 1, ticks 1
-anim.g_osoo_14: frames 1, ticks 1
-anim.g_osoo_19: frames 1, ticks 1
-anim.g_osoo_20: frames 1, ticks 1
-anim.g_osoo_23: frames 1, ticks 1
-anim.g_osoo_4: frames 1, ticks 1
-anim.g_osoo_8: frames 1, ticks 1
-anim.g_osos_1: frames 1, ticks 1
-anim.g_osos_11: frames 1, ticks 1
 anim.g_osos_12: frames 1, ticks 1
-anim.g_osos_14: frames 1, ticks 1
-anim.g_osos_15: frames 1, ticks 1
 anim.g_osos_17: frames 1, ticks 1
 anim.g_osos_2: frames 1, ticks 1
 anim.g_osos_22: frames 1, ticks 1
-anim.g_osos_3: frames 1, ticks 1
-anim.g_osos_6: frames 1, ticks 1
 anim.g_osos_7: frames 1, ticks 1
-anim.g_osro_6: frames 1, ticks 1
-anim.g_osss_16: frames 1, ticks 1
 anim.g_osss_18: frames 1, ticks 1
 anim.g_osss_2: frames 1, ticks 1
-anim.g_osss_20: frames 1, ticks 1
-anim.g_osss_24: frames 1, ticks 1
-anim.g_osss_3: frames 1, ticks 1
-anim.g_osss_4: frames 1, ticks 1
-anim.g_osss_7: frames 1, ticks 1
 anim.g_papa_3: frames 1, ticks 1
 anim.g_papp_12: frames 1, ticks 1
 anim.g_papp_8: frames 1, ticks 1
@@ -1768,32 +1696,16 @@ anim.g_rmrr_14: frames 1, ticks 1
 anim.g_rmrr_24: frames 1, ticks 1
 anim.g_rmrr_6: frames 1, ticks 1
 anim.g_rnnn_19: frames 1, ticks 1
+anim.g_rnnn_23: frames 1, ticks 1
+anim.g_rnrn_13: frames 1, ticks 1
 anim.g_rnrn_18: frames 1, ticks 1
 anim.g_rnrn_2: frames 1, ticks 1
-anim.g_rnrn_7: frames 1, ticks 1
-anim.g_rnrr_12: frames 1, ticks 1
-anim.g_rnrr_23: frames 1, ticks 1
-anim.g_rnrr_4: frames 1, ticks 1
-anim.g_rnrr_6: frames 1, ticks 1
-anim.g_rooo_0: frames 1, ticks 1
-anim.g_rooo_15: frames 1, ticks 1
-anim.g_rooo_16: frames 1, ticks 1
-anim.g_rooo_18: frames 1, ticks 1
-anim.g_rooo_22: frames 1, ticks 1
-anim.g_rooo_23: frames 1, ticks 1
-anim.g_rorn_14: frames 1, ticks 1
-anim.g_roro_10: frames 1, ticks 1
-anim.g_roro_13: frames 1, ticks 1
-anim.g_roro_18: frames 1, ticks 1
-anim.g_roro_8: frames 1, ticks 1
-anim.g_rorr_10: frames 1, ticks 1
-anim.g_rorr_11: frames 1, ticks 1
-anim.g_rorr_16: frames 1, ticks 1
-anim.g_rorr_17: frames 1, ticks 1
-anim.g_rorr_23: frames 1, ticks 1
-anim.g_rorr_8: frames 1, ticks 1
-anim.g_rorr_9: frames 1, ticks 1
-anim.g_ross_0: frames 1, ticks 1
+anim.g_rnrn_8: frames 1, ticks 1
+anim.g_rnrr_18: frames 1, ticks 1
+anim.g_rnrr_2: frames 1, ticks 1
+anim.g_rnrr_20: frames 1, ticks 1
+anim.g_rnrr_7: frames 1, ticks 1
+anim.g_rnsr_0: frames 1, ticks 1
 anim.g_rrff_0: frames 1, ticks 1
 anim.g_rrff_1: frames 1, ticks 1
 anim.g_rrff_15: frames 1, ticks 1
@@ -1803,6 +1715,7 @@ anim.g_rrff_4: frames 1, ticks 1
 anim.g_rrmm_15: frames 1, ticks 1
 anim.g_rrmr_0: frames 1, ticks 1
 anim.g_rrmr_5: frames 1, ticks 1
+anim.g_rrnn_10: frames 1, ticks 1
 anim.g_rrnn_11: frames 1, ticks 1
 anim.g_rrnn_12: frames 1, ticks 1
 anim.g_rrnn_15: frames 1, ticks 1
@@ -1810,22 +1723,8 @@ anim.g_rrnn_16: frames 1, ticks 1
 anim.g_rrnn_17: frames 1, ticks 1
 anim.g_rrnn_18: frames 1, ticks 1
 anim.g_rrnn_19: frames 1, ticks 1
-anim.g_rrno_22: frames 1, ticks 1
 anim.g_rrnr_13: frames 1, ticks 1
 anim.g_rrnr_16: frames 1, ticks 1
-anim.g_rroo_15: frames 1, ticks 1
-anim.g_rroo_16: frames 1, ticks 1
-anim.g_rroo_18: frames 1, ticks 1
-anim.g_rroo_19: frames 1, ticks 1
-anim.g_rroo_21: frames 1, ticks 1
-anim.g_rroo_4: frames 1, ticks 1
-anim.g_rroo_6: frames 1, ticks 1
-anim.g_rroo_7: frames 1, ticks 1
-anim.g_rror_12: frames 1, ticks 1
-anim.g_rror_17: frames 1, ticks 1
-anim.g_rror_6: frames 1, ticks 1
-anim.g_rror_7: frames 1, ticks 1
-anim.g_rror_8: frames 1, ticks 1
 anim.g_rrrf_19: frames 1, ticks 1
 anim.g_rrrf_22: frames 1, ticks 1
 anim.g_rrrm_11: frames 1, ticks 1
@@ -1833,11 +1732,8 @@ anim.g_rrrm_16: frames 1, ticks 1
 anim.g_rrrm_19: frames 1, ticks 1
 anim.g_rrrm_21: frames 1, ticks 1
 anim.g_rrrm_9: frames 1, ticks 1
-anim.g_rrro_11: frames 1, ticks 1
-anim.g_rrro_18: frames 1, ticks 1
-anim.g_rrro_20: frames 1, ticks 1
-anim.g_rrro_3: frames 1, ticks 1
-anim.g_rrro_5: frames 1, ticks 1
+anim.g_rrrn_14: frames 1, ticks 1
+anim.g_rrrn_22: frames 1, ticks 1
 anim.g_rrrr_0: frames 1, ticks 1
 anim.g_rrrr_1: frames 1, ticks 1
 anim.g_rrrr_10: frames 1, ticks 1
@@ -1872,7 +1768,10 @@ anim.g_rrrs_17: frames 1, ticks 1
 anim.g_rrrs_18: frames 1, ticks 1
 anim.g_rrrs_19: frames 1, ticks 1
 anim.g_rrrs_2: frames 1, ticks 1
+anim.g_rrrs_21: frames 1, ticks 1
+anim.g_rrrs_22: frames 1, ticks 1
 anim.g_rrrs_23: frames 1, ticks 1
+anim.g_rrrs_3: frames 1, ticks 1
 anim.g_rrrs_5: frames 1, ticks 1
 anim.g_rrrs_6: frames 1, ticks 1
 anim.g_rrrs_8: frames 1, ticks 1
@@ -1913,7 +1812,8 @@ anim.g_rrss_8: frames 1, ticks 1
 anim.g_rrss_9: frames 1, ticks 1
 anim.g_rsfs_17: frames 1, ticks 1
 anim.g_rsms_11: frames 1, ticks 1
-anim.g_rsrr_0: frames 1, ticks 1
+anim.g_rsnr_2: frames 1, ticks 1
+anim.g_rsrr_10: frames 1, ticks 1
 anim.g_rsrr_11: frames 1, ticks 1
 anim.g_rsrr_13: frames 1, ticks 1
 anim.g_rsrr_16: frames 1, ticks 1
@@ -1924,6 +1824,7 @@ anim.g_rsrr_3: frames 1, ticks 1
 anim.g_rsrr_4: frames 1, ticks 1
 anim.g_rsrr_5: frames 1, ticks 1
 anim.g_rsrr_6: frames 1, ticks 1
+anim.g_rsrr_8: frames 1, ticks 1
 anim.g_rsrs_0: frames 1, ticks 1
 anim.g_rsrs_1: frames 1, ticks 1
 anim.g_rsrs_10: frames 1, ticks 1
@@ -1947,7 +1848,6 @@ anim.g_rsrs_6: frames 1, ticks 1
 anim.g_rsrs_7: frames 1, ticks 1
 anim.g_rsrs_8: frames 1, ticks 1
 anim.g_rsrs_9: frames 1, ticks 1
-anim.g_rssr_4: frames 1, ticks 1
 anim.g_rsss_12: frames 1, ticks 1
 anim.g_rsss_13: frames 1, ticks 1
 anim.g_rsss_14: frames 1, ticks 1
@@ -1956,6 +1856,8 @@ anim.g_rsss_17: frames 1, ticks 1
 anim.g_rsss_18: frames 1, ticks 1
 anim.g_rsss_19: frames 1, ticks 1
 anim.g_rsss_21: frames 1, ticks 1
+anim.g_rsss_22: frames 1, ticks 1
+anim.g_rsss_23: frames 1, ticks 1
 anim.g_rsss_24: frames 1, ticks 1
 anim.g_rsss_3: frames 1, ticks 1
 anim.g_rsss_6: frames 1, ticks 1
@@ -2047,42 +1949,35 @@ anim.g_sfss_7: frames 1, ticks 1
 anim.g_sfss_8: frames 1, ticks 1
 anim.g_sfss_9: frames 1, ticks 1
 anim.g_smss_7: frames 1, ticks 1
+anim.g_snrr_21: frames 1, ticks 1
 anim.g_socc_17: frames 1, ticks 1
-anim.g_soff_12: frames 1, ticks 1
-anim.g_sooo_0: frames 1, ticks 1
-anim.g_sooo_10: frames 1, ticks 1
 anim.g_sooo_21: frames 1, ticks 1
-anim.g_sooo_9: frames 1, ticks 1
-anim.g_sorr_0: frames 1, ticks 1
-anim.g_sorr_1: frames 1, ticks 1
 anim.g_soso_0: frames 1, ticks 1
-anim.g_soso_17: frames 1, ticks 1
-anim.g_soso_2: frames 1, ticks 1
-anim.g_soso_22: frames 1, ticks 1
-anim.g_soso_4: frames 1, ticks 1
 anim.g_soso_5: frames 1, ticks 1
-anim.g_soso_7: frames 1, ticks 1
-anim.g_sosr_9: frames 1, ticks 1
 anim.g_soss_10: frames 1, ticks 1
-anim.g_soss_6: frames 1, ticks 1
 anim.g_srff_3: frames 1, ticks 1
 anim.g_srrr_0: frames 1, ticks 1
 anim.g_srrr_1: frames 1, ticks 1
+anim.g_srrr_10: frames 1, ticks 1
 anim.g_srrr_11: frames 1, ticks 1
 anim.g_srrr_12: frames 1, ticks 1
 anim.g_srrr_13: frames 1, ticks 1
 anim.g_srrr_14: frames 1, ticks 1
+anim.g_srrr_16: frames 1, ticks 1
 anim.g_srrr_17: frames 1, ticks 1
 anim.g_srrr_19: frames 1, ticks 1
+anim.g_srrr_2: frames 1, ticks 1
 anim.g_srrr_20: frames 1, ticks 1
 anim.g_srrr_22: frames 1, ticks 1
 anim.g_srrr_24: frames 1, ticks 1
 anim.g_srrr_4: frames 1, ticks 1
+anim.g_srrr_6: frames 1, ticks 1
 anim.g_srrr_8: frames 1, ticks 1
 anim.g_srrr_9: frames 1, ticks 1
 anim.g_srsr_0: frames 1, ticks 1
 anim.g_srsr_1: frames 1, ticks 1
 anim.g_srsr_10: frames 1, ticks 1
+anim.g_srsr_11: frames 1, ticks 1
 anim.g_srsr_12: frames 1, ticks 1
 anim.g_srsr_14: frames 1, ticks 1
 anim.g_srsr_15: frames 1, ticks 1
@@ -2106,6 +2001,7 @@ anim.g_srss_16: frames 1, ticks 1
 anim.g_srss_17: frames 1, ticks 1
 anim.g_srss_19: frames 1, ticks 1
 anim.g_srss_23: frames 1, ticks 1
+anim.g_srss_5: frames 1, ticks 1
 anim.g_srss_7: frames 1, ticks 1
 anim.g_srss_8: frames 1, ticks 1
 anim.g_srss_9: frames 1, ticks 1
@@ -2157,6 +2053,9 @@ anim.g_sscs_6: frames 1, ticks 1
 anim.g_sscs_7: frames 1, ticks 1
 anim.g_sscs_8: frames 1, ticks 1
 anim.g_sscs_9: frames 1, ticks 1
+anim.g_ssff_12: frames 1, ticks 1
+anim.g_ssff_13: frames 1, ticks 1
+anim.g_ssff_14: frames 1, ticks 1
 anim.g_ssff_4: frames 1, ticks 1
 anim.g_ssfs_0: frames 1, ticks 1
 anim.g_ssfs_10: frames 1, ticks 1
@@ -2167,26 +2066,12 @@ anim.g_ssfs_23: frames 1, ticks 1
 anim.g_ssfs_4: frames 1, ticks 1
 anim.g_ssfs_6: frames 1, ticks 1
 anim.g_ssfs_8: frames 1, ticks 1
-anim.g_ssno_8: frames 1, ticks 1
+anim.g_ssnr_14: frames 1, ticks 1
+anim.g_ssns_8: frames 1, ticks 1
 anim.g_ssoo_10: frames 1, ticks 1
 anim.g_ssoo_11: frames 1, ticks 1
 anim.g_ssoo_12: frames 1, ticks 1
 anim.g_ssoo_14: frames 1, ticks 1
-anim.g_ssoo_17: frames 1, ticks 1
-anim.g_ssoo_20: frames 1, ticks 1
-anim.g_ssoo_21: frames 1, ticks 1
-anim.g_ssoo_22: frames 1, ticks 1
-anim.g_ssoo_23: frames 1, ticks 1
-anim.g_ssoo_24: frames 1, ticks 1
-anim.g_ssoo_7: frames 1, ticks 1
-anim.g_ssoo_8: frames 1, ticks 1
-anim.g_ssos_10: frames 1, ticks 1
-anim.g_ssos_15: frames 1, ticks 1
-anim.g_ssos_18: frames 1, ticks 1
-anim.g_ssos_21: frames 1, ticks 1
-anim.g_ssos_23: frames 1, ticks 1
-anim.g_ssos_24: frames 1, ticks 1
-anim.g_ssos_9: frames 1, ticks 1
 anim.g_ssrr_0: frames 1, ticks 1
 anim.g_ssrr_10: frames 1, ticks 1
 anim.g_ssrr_12: frames 1, ticks 1
@@ -2195,22 +2080,29 @@ anim.g_ssrr_15: frames 1, ticks 1
 anim.g_ssrr_16: frames 1, ticks 1
 anim.g_ssrr_17: frames 1, ticks 1
 anim.g_ssrr_18: frames 1, ticks 1
+anim.g_ssrr_2: frames 1, ticks 1
 anim.g_ssrr_21: frames 1, ticks 1
 anim.g_ssrr_22: frames 1, ticks 1
+anim.g_ssrr_3: frames 1, ticks 1
 anim.g_ssrr_4: frames 1, ticks 1
 anim.g_ssrr_5: frames 1, ticks 1
 anim.g_ssrr_6: frames 1, ticks 1
 anim.g_ssrr_7: frames 1, ticks 1
 anim.g_ssrr_8: frames 1, ticks 1
+anim.g_ssrr_9: frames 1, ticks 1
 anim.g_ssrs_0: frames 1, ticks 1
 anim.g_ssrs_1: frames 1, ticks 1
 anim.g_ssrs_11: frames 1, ticks 1
 anim.g_ssrs_12: frames 1, ticks 1
+anim.g_ssrs_13: frames 1, ticks 1
 anim.g_ssrs_14: frames 1, ticks 1
+anim.g_ssrs_17: frames 1, ticks 1
 anim.g_ssrs_18: frames 1, ticks 1
 anim.g_ssrs_23: frames 1, ticks 1
 anim.g_ssrs_24: frames 1, ticks 1
+anim.g_ssrs_3: frames 1, ticks 1
 anim.g_ssrs_4: frames 1, ticks 1
+anim.g_ssrs_5: frames 1, ticks 1
 anim.g_ssrs_6: frames 1, ticks 1
 anim.g_ssrs_7: frames 1, ticks 1
 anim.g_ssrs_8: frames 1, ticks 1
@@ -2242,20 +2134,21 @@ anim.g_sssc_8: frames 1, ticks 1
 anim.g_sssc_9: frames 1, ticks 1
 anim.g_sssf_22: frames 1, ticks 1
 anim.g_sssf_5: frames 1, ticks 1
-anim.g_ssso_12: frames 1, ticks 1
-anim.g_ssso_16: frames 1, ticks 1
 anim.g_ssso_20: frames 1, ticks 1
-anim.g_ssso_4: frames 1, ticks 1
+anim.g_sssr_1: frames 1, ticks 1
 anim.g_sssr_11: frames 1, ticks 1
 anim.g_sssr_12: frames 1, ticks 1
 anim.g_sssr_14: frames 1, ticks 1
 anim.g_sssr_17: frames 1, ticks 1
 anim.g_sssr_19: frames 1, ticks 1
+anim.g_sssr_20: frames 1, ticks 1
 anim.g_sssr_21: frames 1, ticks 1
+anim.g_sssr_22: frames 1, ticks 1
 anim.g_sssr_23: frames 1, ticks 1
 anim.g_sssr_24: frames 1, ticks 1
 anim.g_sssr_3: frames 1, ticks 1
 anim.g_sssr_4: frames 1, ticks 1
+anim.g_sssr_5: frames 1, ticks 1
 anim.g_sssr_7: frames 1, ticks 1
 anim.g_sssr_9: frames 1, ticks 1
 anim.g_ssss_0: frames 1, ticks 1
@@ -2303,14 +2196,15 @@ anim.g_ssyy_19: frames 1, ticks 1
 anim.g_ssyy_23: frames 1, ticks 1
 anim.g_ssyy_3: frames 1, ticks 1
 anim.g_ssyy_6: frames 1, ticks 1
-anim.g_syoo_13: frames 1, ticks 1
 anim.g_syss_0: frames 1, ticks 1
 anim.g_syss_10: frames 1, ticks 1
 anim.g_syss_11: frames 1, ticks 1
 anim.g_syss_12: frames 1, ticks 1
+anim.g_syss_13: frames 1, ticks 1
 anim.g_syss_16: frames 1, ticks 1
 anim.g_syss_17: frames 1, ticks 1
 anim.g_syss_18: frames 1, ticks 1
+anim.g_syss_19: frames 1, ticks 1
 anim.g_syss_22: frames 1, ticks 1
 anim.g_syss_23: frames 1, ticks 1
 anim.g_syss_24: frames 1, ticks 1
@@ -2387,7 +2281,8 @@ anim.g_yfyy_0: frames 1, ticks 1
 anim.g_yfyy_13: frames 1, ticks 1
 anim.g_yfyy_23: frames 1, ticks 1
 anim.g_yfyy_7: frames 1, ticks 1
-anim.g_ynon_10: frames 1, ticks 1
+anim.g_ynss_15: frames 1, ticks 1
+anim.g_ynyn_10: frames 1, ticks 1
 anim.g_ysnn_7: frames 1, ticks 1
 anim.g_ysyy_1: frames 1, ticks 1
 anim.g_ysyy_10: frames 1, ticks 1
@@ -2413,7 +2308,6 @@ anim.g_yyfy_16: frames 1, ticks 1
 anim.g_yyfy_22: frames 1, ticks 1
 anim.g_yyfy_7: frames 1, ticks 1
 anim.g_yynn_6: frames 1, ticks 1
-anim.g_yyoo_14: frames 1, ticks 1
 anim.g_yyss_1: frames 1, ticks 1
 anim.g_yyss_23: frames 1, ticks 1
 anim.g_yyss_6: frames 1, ticks 1
@@ -2421,6 +2315,7 @@ anim.g_yysy_0: frames 1, ticks 1
 anim.g_yysy_11: frames 1, ticks 1
 anim.g_yysy_12: frames 1, ticks 1
 anim.g_yysy_13: frames 1, ticks 1
+anim.g_yysy_14: frames 1, ticks 1
 anim.g_yysy_17: frames 1, ticks 1
 anim.g_yysy_18: frames 1, ticks 1
 anim.g_yysy_19: frames 1, ticks 1
@@ -22844,6 +22739,33 @@ frame g_ffso_16 - 0
 áááááÔÔÔÔÔÔÕÕÕÖÖÏÖÖÖÖÖÖÏ
 end
 
+frame g_ffsr_24 - 0
+ÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖØØ
+ÖÖÖÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÖÖÖÖÔÔÔ
+ØÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÔÔÔÔÔá
+ØØØØØØÖÖÖÖÖÖÖÖÖÔÔÔááÔÔáá
+ØØØØØØØØÖÖÖÖÖÖÖÔÔááááÔáę
+ØØØØØØØØØØØÖÖÖÖÖÔĚááęááá
+ÖÖÖÖÖÖØØØØØØÔÔÖöáááââááá
+ÖÖÖÖÖÖÖÖØØØØÔÔÔÔááâãääáá
+ÖÖÖÖÖÖÖÖÖÖØØÛÔÔÔááâãäåææ
+ÖÖÖÖÖÖÖÖÖÖÖØÛÛÔááââãäåææ
+ÕÕÕÖÖÖÖÖÖÖÖÖÛÛÛÛáääâææææ
+ÕÕÕÕÕÕÖÖÖÖÖÖÖÖÛÛÛáçââāææ
+ááÕÕÕÕÕÕÔÔÖÖÖÖÛÛÚáççáââæ
+áâáÔÔÕÕÔÔÔÖÖÖÖÛÛáçççâááá
+áááÔÔÔÔÔÔÔÕÖÖÖÛáççççáááá
+ÕáÔÔÔÔěÔÔÔÕÕÕÕÛçèèçâáááá
+ÔÔÔÔÔÔÔÔÔÔÕÕÕÕÔèèèâááááá
+ÔÔėėėėÔÔėėÖÖÖÔþáèâáááááá
+ėėėėÔÔÔÔÔėÖÖÛÛýááááááááá
+ÔÔÔÔÔÔÔÔÔėÖÔÔþááââáááááá
+ÔÔÔÔÔÔÔÔÔėÖÔÔááääääâáááá
+end
+
 frame g_ffss_0 - 0
 ÖÖÖÖÖÖÖÖÖØØØØØØØÖÖÖÖÖÖÖÖ
 ÖÖÖÖÖÖÖØØØØØØÖÖÖÖÖÖÖÖÖÖÖ
@@ -23654,33 +23576,6 @@ frame g_foff_6 - 0
 ÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖØØØØØ
 end
 
-frame g_fofo_19 - 0
-ØØØØØØØÖÖÖÖÖÕÕÕÕÕÕÖÖÖÖÖÏ
-ØØØØØØØØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖØØØØØØØØÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖØØØØÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÖØØØØØÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖØØØÖÖÖÖÖÖÏÖÖÖÖÖ
-ÕÕÖÖÖÖÖÖÖÖÖØÖÖÖÖÖÖÏÖÖÖÖÖ
-ÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÖÖÖÏÖÖÖÖÖÖ
-ØÖÖÖÖÖÖÖÖÖÖÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ØØØÖÖÖÖÖÖÖÖÖÕÕÕÖÖÖÖÖÖÖÖÖ
-ØØØØØÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ØØØØØØØÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖØØØØØØØÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖØØØØØØØÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖØØØØØØÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖØØØØÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖØÖÖÖÏÖÖÖÖÖÖÖÖ
-ÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-end
-
 frame g_fofo_9 - 0
 ÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
 ÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÏÕÕÕÕÕÕ
@@ -23762,33 +23657,6 @@ frame g_fooo_17 - 0
 ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÕÏÖ
 end
 
-frame g_foso_24 - 0
-ÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÕÕÕÕÕÕÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÕÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÕÕÕÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ØØØØØØÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ØØØØØØØØÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ØØØØØØØØØØØÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÖÖØØØØØØÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÖÖÖÖØØØØØØÖÖÖÖÏÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖØØØØØÖÖÖÏÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÖØØØÖÖÖÖÏÖÖÖÏÕ
-ÕÕÕÖÖÖÖÖÖÖÖÖÖØÖÖÖÖÏÖÖÖÏÕ
-ÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÕÏÕ
-ááÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÏÕÕÕÕÕ
-áâáÔÔÕÕÕÕÖÖÖÖÖÖÖÖÕÏÕÕÕÕÏ
-áááÔÔÔÔÕÕÕÕÖÖÖÖÕÕÕÏÕÕÕÕÏ
-ÕáÔÔÔÔÔÔÕÕÕÕÕÕÖÕÕÕÏÕÕÕÕÏ
-ÔÔÔÔÔÔÔÔÔÖÕÕÕÕÕÕÕÏÕÕÕÕÕÏ
-ÔÔėėėėÔÔėėÖÖÖÕÕÕÕÏÕÕÕÕÕÕ
-ėėėėÔÔÔÔÔėÖÖÖÖÖÖÏÕÕÕÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔėÖÖÖÖÖÖÖÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÔÔėÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-end
-
 frame g_frfr_12 - 0
 ØØØØØØØØýááááááäâááááááá
 ØØØØØØØØáãääåååääâáááááá
@@ -23841,6 +23709,33 @@ frame g_frfs_17 - 0
 ØØØØØØØØØØØØØØØØėėėėÔÔÔÔ
 ØØØØØØØØØØØØØØØØėėėėÔÔÔÔ
 ÖÖÖÖÖÖØØØØØØØØØÖÔÔÔÔÔÔÔÔ
+end
+
+frame g_frrr_20 - 0
+ØØØÖÖÖÖÔÔáõõáõþþáæææĂĂçç
+ÖÖÖÖÖÔęáãāááááááæçççĂĂèè
+ÖÖÖÖÖĚèââæææáææææèèèèèèè
+ÖÖÖÖÔââááâæææææææèèèèèèâ
+ÔÔÔÔááááááââæææææèèèèââá
+áááááááááááááââââââââááá
+áááááááááááááááááááááááá
+äââááááááááááááááááááááá
+áááäâááááááááááááááááááá
+þááääâáááááááááááááááááá
+ááåçççáááááááááááââááááá
+áāæçççááááááááââââäääâáá
+ææççççáááááááââãããååäääâ
+ççèèèâááááááââãäääååååää
+ĂĂèèâááááááâãäääāāāāåççç
+ĂĂâááááááááâãäåāāāāāæççç
+áááááááááááâãääæāāæææççç
+áááááááááááâãäææāāææçèçç
+ááááááááááááâæææāāçèèèèè
+áááááááááááááâææāāèèèèâá
+áááááááááááááááâææèèââââ
+áááááááááááááááááááââââä
+áááááááááááááááááâââãããå
+ááááááááááááááááââããäääå
 end
 
 frame g_fsff_1 - 0
@@ -24084,6 +23979,33 @@ frame g_fsff_7 - 0
 ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØ
 ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØØØØ
 ØÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØØØØØÖÖ
+end
+
+frame g_fsfr_15 - 0
+ÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕáááââá
+ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕááááááá
+ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕááááÔÔÔÔ
+ÖÖÖÖÖÖÖØØÕÕÕÕÕÕááâááÔÔÔÔ
+ÖÖÖÖÖÖØØØØÕÕÕÕÕáâââÔÔÔÔÔ
+ÖÖÖÖØØØØØØÖÖÕÕÕáâââÔÔÔÔÔ
+ØØØØØØØØÖÖÖÖÖÖÖÖââáÔÔÔÔÔ
+ØØØØØØØÖÖÖÖÖÖÖÕÕÕÔÔÔÔÔÔÔ
+ØØØØÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔÔÔÔÔ
+ÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔÔÔÖÖÔ
+ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÖÖÔÔÔÔÖÖÖÖ
+ÖÖÖÖÖÖÖÖÕÕÕÕÖÖÖÖÔÔÔÔÓÓÓę
+ÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÔÔáááááæ
+ÖÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖþýááááææ
+ÕÕÕÕÕÕÕÖÖÖÖĮĮÿĮĭĭþáááæææ
+ÕÕÕÕÕÖÖÖÖÖÖÿĮÿĮĮĭþááââââ
+ÕÕÕÖÖÖÖÖÖÖÖÖÿÿĮĮþáááááââ
+ÖÖÖÖÖÖÖÖÖÖØØØÔÔÔÔáåááááä
+ÖÖÖÖÖÖÖÖÖØØØÔÔÔÔááåáþþáä
+ÖÖÖÖÖÖÖÖØØØØãããçĭááááááç
+ÖÖÖÖÖØØØØØÖÖÖäíĭĬþáæåççç
+ÖÖØÔØØØØØÖÖÖÖäĭĭúýáææççç
+ØØØØØØØØÖÖÖÖääĬúþáæææççç
+ØØØØØÖÖÖÖõõöööĭþáææææççç
 end
 
 frame g_fsfr_7 - 0
@@ -34427,34 +34349,142 @@ frame g_nnnn_9 - 0
 ããââÄÄÄÄÄÄâââââââääääâââ
 end
 
-frame g_nnnr_16 - 0
-âÄÄÄÄÄÄÄäääââââââääâââââ
-âääääÄÄÄÄÄÄâââââââââââââ
-âäääääÄÄÄÄÄÄââââââââââââ
-ääääääÄÄÄÄÅÅããããââââââââ
-ääääääÄÄÄÄÅÅããããããããââââ
-ääääääÄÄÄÄÅÅãããããããããâââ
-ääääääÄÄÄÅÅÅããããããäããâââ
-äääääääÄÄÅÅÅããããããäãėėââ
-âââââââÄÄÄÅÅãããããããėėęėâ
-âââââââÄÄÄÅÅãããããėėęęęĘė
-âââââââÄÄÄÅÅããããėėããĘęęę
-âââââââÄÄÄÅÅėėãâėãėããããã
-âââââââÄÄÄėėėėãâėãėããããã
-âââââââÄÄÄėėėėėėėããããããã
-âââââââÄÄėėėėėėããããĘĘĘęę
-âââââââÄÄėėÅäėėããâĘĘėėėę
-âââââââÄÄÄėÅäėėãââėėėçäė
-âââââââÄÄÄÄÅėėėėėėėėĭãää
-âââââââÄÄÄÄÅėėėėėėėėėãåå
-ââââââââÄÄÄäėėėėėėėėääåå
-ââââââââââääėėėėėėçäææææ
-ãããââââââââäėėėėėçåæææææ
-ääãââââââââäėėėėçèåæææææ
-ããäââââââėâääÄėėėėėæææææ
+frame g_nnnr_10 - 0
+âââââââââããããããâââââââââ
+ââââââââââãããããâââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+âââââââââââââââââââââââÄ
+âââââââââââââââââââââââÄ
+ââââââââââââââââââââââÄÄ
+âââââââââââââââââââââââė
+ââââââââââââââââââââââėė
+ââââââââââââääääââäėėėėė
+ââââââââââääääääääėėâããã
+âââââââââääâââââäėėĘĘĘãä
+ââââââââääâãããâââėĘĘĘĘãä
+ãâââââââääâãããâââėĘĘĘĘãė
+ääääâââääâãããããââėĘĘĘĘãė
+ãããääââääâãããããããėęęęęėė
+ããããääääââãããããããėęęęėėæ
+ããããääääâãããããããėėėėææææ
+ããããâėėÄÄÄÅÅÅÅėėþþææææææ
+ããÅÅÄėėÄÄÄÅÅÅÅėėėþþææææç
+ããÅÅėėėÄÄÅÅÅÅÅėėėėėėæææè
+ããÅÅėėėėÅÅÅÅÅÅėėėėėėæææè
+ããÅėėėėÅÅÅÅÅÅėėėėėėáââââ
+ããÅÅėėÅÅÅÅÅėėėėėėėáááááá
 end
 
-frame g_nnnr_20 - 0
+frame g_nnnr_2 - 0
+ââââââââââââââââââââââââ
+âââââââââââââââââÄÄÄÄÄââ
+âââââââââââÄÄÄÄÄÄÄÄÄÄÄÄä
+âââââââââÄÄÄÄÄÄÄÄÄÄÄÄÄÄâ
+ââââââââÄÄÄÄÄÄÄÄÅÅÅÅÅÅÅâ
+âââââââââÄÄÄÄÄÄÅÅÅÅÅÅÅÅâ
+âââėââââââÄÄÄÄÄÅÅÅÅÅÅÅÅã
+âââėâââââââÄÄÄÄÅÅÅÅÅÅÅÅâ
+âââââââââââÄÄÄÄÅÅÅÅÅÅÅÅâ
+âââââââââââÄÄÄÄÄÄÅÅÅÅÅâė
+âââââââââââÄÄÄÄÄÄÄėėÄÄėã
+ÄââââââââââÄÄÄÄÄÄÄėėėėâė
+ÄââââââââââÄÄÄÄÄÄėėėâââá
+ÄââââââââââÄÄÄÄÄėėėââââá
+ÄâââââââââââÄÄÄėėėėėėėėė
+ÄÄââââââââââââėėėėėááΑſė
+ÄÄÄââââââââėėėėėėėėΑΑâáá
+ÄÄÄÄÅÅÅÅâėėãääėėþĨĬĬääâá
+ÄÄÄÅÅÅÅÅėėėėėėėėþĬĬåäääâ
+ÄÄÄÄÅÅÅÅėãáĦĦĦþþĬĬåååäçç
+ÄÄÄÄÅÅÅėęááĦĦþĬĬſΑæåçççç
+ÄÄÄÄÄÄėėėáĦþþĭĭĭĭſææçççç
+ÄÄÄÄââėããáĦĦþþĭĭĭæææçççç
+ÄÄÄâââėããėħĦĦĦþĭæææççççç
+end
+
+frame g_nnnr_22 - 0
+âââããããããââââââäããÅÅÅÅââ
+âââããããããââââââäããÅÅÅÅââ
+ââââããääãââââââäããÅÅÅÅÅâ
+ââââãääääâââââââããÅÅÅÅÅâ
+ââââãäããäâââââäâããÅÅÅÅÅÅ
+ÄÄÄÄÅÅÅÅääââââäâããÅÅÅÅÅÅ
+ÄÄÄÄÅÅÅÅÅäââââäâããÅÅÅÅÅÅ
+ÄÄÄÄÅÅÅÅÅäââââäâããÅÅÅÅÅÅ
+ÄÄÄÅÅÅÅÅÅääâââäâããÅÅÅÅÅÄ
+ÅÅÅÅÅÅÅÅÅâäââäââããÅÅÅÅÅė
+ÅÅÅÅÅÅÅÅÅâäââäâââããÅÅÅėė
+ÅÅÅÅÅÅÅÅÅâääääâââããããÅėã
+ÅÅÅÅÅÅÅÅââääääâââããããâėã
+ÅÅÅÅÅÅÅÅâââääââââããããâėã
+ÅÅÅÅÅÅÅÅâââââââââããããââã
+ÅÅÅÅÅÄÄÄâââââââââââââââã
+ÅÅÅÅÄÄâââââââėėėėâââââėė
+ÅÅÅââââââėėėėėęãėââââėáė
+ââââââââėėėėėãęęėėėėėėáá
+âââââââėããããėėėėááėėáááá
+âââââėėãããããááþĬĬââââââá
+âââââėãããããėãáþĬĬââääääâ
+âââââėããããããėáĬĬĬããäääää
+ââââėėãããããããėĨããääååååä
+end
+
+frame g_nnnr_24 - 0
+ããääããããããããããããããããããâä
+ããääãããããããããããããããããâââ
+ããäããããããããããããããããããâââ
+ââäããããããããããããããããâââââ
+ââäãããããããããããããââââââââ
+ââäããÅÅÅÅãããããããââââââââ
+ÄÄÄÅÅÅÅÅÅãããããããââäâââââ
+ÄÄÄÅÅÅÅÅÅÅãããããâââââââââ
+ÄÄÄÅÅÅÅÅÅããããããâââââââââ
+ÄÄÄÅÅÅÅÅÅããããããââââââââė
+ääâããããããããėėėėââââââââė
+äââãããããããėėėėėėââââââėė
+äââãããããããėėęęėėėâââėėėė
+âââãããããããėėėėėėėâââėėėė
+ââããããããããėėėėėâėėâėėėėę
+ããããããããããâėėėęââėėėėããę
+ããããããããâââââėĘėėėėėėėėΑ
+ãããããââââââââėâáĬΑėΑΑááá
+ãããããââââââââėėáĬĬΑΑáááá
+ããããââââââââėėėĬĬΑΑΑáááá
+ãããâââââėėėėââėĬΒΒΒΑΑááá
+ââââââââėęęããėĬâΒΒΒΑΑΑáá
+ââââââââėęęėėĭĭäâΒΒΑáááá
+ââââââââėėėėėĭĭĭäääâáááá
+end
+
+frame g_nnrn_15 - 0
+ãããÅÅÅÅÅÅÅÅÅÅääääääääããã
+ãããÅÅÅÅããääääãääääääääãâ
+ããããÅããããääãããããäääääääâ
+âãėėėėãããääãããããããããääää
+ââėėėėããããäããããããããããäää
+ââėėėââãããäããããããããããäää
+ââėėââââãäããããããããããããää
+ââââââââãäããããããããããããää
+ââââââââãäãããããããããããââä
+ââââââââãäãããããããâââââââ
+ââââââââäãããããããâääääâââ
+âââââââääãããããããäääääâââ
+âââââââääããããããâäääääâââ
+ââėėââääãããããããââääâââââ
+âėėėėâääėėėėėãããââââââââ
+ėėėėėėėėėėėėėėããããããââââ
+ėėėėėėėėėėėėėãããããããããââ
+ãåėãΘėÄäââãããããããããããããâ
+äåĘĘĘėėäâââããããããããããããâ
+ææĘĘĘėėėâââããããããããããããâ
+ææĘĘĘĘėėėââããããããããããããã
+ææĘĘĘĘėėėââããããããââããããã
+æææėėėççėâââããâââÄÄÄÄÄãä
+ææææççççėėėėėėėâÄÄÄÄÄÄãä
+end
+
+frame g_nnrn_20 - 0
 äääâââââââââââââÄÄÄÄÄÄäã
 äâââââââââââââââÄÄÄÄÄÄÅã
 ââââââââââââããââÄÄÄÄÄÄÅã
@@ -34463,130 +34493,22 @@ frame g_nnnr_20 - 0
 âââââââÄÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
 ââââÄÄÄÄÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
 âââÄÄÄÄÄÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
-âââÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅė
-ââââÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅėėė
-ããäääããâââäââââÅÅÅÅÅėėėė
-äääãããããââââââââėėėėėėėė
-ääããããããâââââââėėėėėėėėė
-äââããããââââââėėėėėėėėááė
-äâââââââââėėėėėėėėėėáççç
-ääâââââââėėėėėėėėėėĬæççç
-ääââââââââėėääėėėėĬĨæççç
-ÄÄÄÅÅââââââėãááþþĬĬĬçèçç
-ÄÄÄÅÅÅâââââėáĦþþþþĬĬèèèè
-ÄÄÄÅÅÅâââââėėþþæĬĬĬĬèèâá
-ÅÅÅÅÅÅÅââââėėėėĨĩĬĬèââââ
-ÅÅÅÅÄÄÄââââėėėėĬĬĨáââââä
-ÅÅÅÅÄÄÄâââėėėáĬĬĬâââãããå
-ÅÅÅÅÄÄÄââėėáááááââããäääå
-end
-
-frame g_nnnr_4 - 0
-ââââââââââââããããããÅÅÅÅÅÅ
-ââââââââââââââãããÅÅÅÅÅÅÅ
-ââââââââââââââââÅÅÅÅÅÅÅÅ
-ââââââââââââââÅÅÅÅÅÅÅÅÅÅ
-âââââââââââââÅÅÅÅÅÅÅÅÅÅÅ
-ââââââââââââââââÅÅÅÅÅÅÅÄ
-ââââââââââââââââââÅÅÅÅÄÄ
-ââââââââââââââââââââÅÅÄâ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-áâââââââââââââââââââââââ
-ááââââââââėââââââááâââââ
-ááââââââââėėėėââááááâėėė
-ááâââââââėėėėėâââááâėėėė
-áââââââââėėėâââââėėėĘĘęė
-âââââââââėėâââėėėėääėėėâ
-âââââââââââââėėėęėáááááã
-âââââââââââėėęęęęėááááâä
-âââââââââââėããęęėáΑΑááâä
-ââââââââââââėãããáſΑáááâã
-âââââââââââââėėáſſâáááâã
-ââââââââââââââėſſſáááááâ
-ââââââââââââââėſſâáááááá
-ââââââãââââââėþſſááááááá
-end
-
-frame g_nnon_16 - 0
-âÄÄÄÄÄÄÄäääââââââääâââââ
-âääääÄÄÄÄÄÄâââââââââââââ
-âäääääÄÄÄÄÄÄââââââââââââ
-ääääääÄÄÄÄÅÅããããââââââââ
-ääääääÄÄÄÄÅÅããããããããââââ
-ääääääÄÄÄÄÅÅãããããããããâââ
-ääääääÄÄÄÅÅÅããããããäããâââ
-äääääääÄÄÅÅÅããããããäããâââ
-ėââââââÄÄÄÅÅããããããããââââ
-ėėâââââÄÄÄÅÅãããããâââââââ
-ėââââââÄÄÄÅÅããããâââââââä
-âââââââÄÄÄėėãããâââââââäã
-âââââââÄÄėėėėããâââââââäã
-âââââââÄėėėėėããââââââäãã
-ââââââėėėΚėėääãââââââääã
-ėââââėėħĘääėääãââââââääâ
-ėėėââėþħáäėėääääââââääää
-ÏÖÔÛėėėėėėėėėäääääääääää
-ÏÖÖÝÛúĘėėÄÄėėäääääääääää
-ÖÖÖÛÛÚĘáėÄÄėėããããâââââää
-ÖÖÖÖÖĘááėėėėäãããããããââââ
-ÖÖÖÖÖÖááãėėėėäÄÄÅÅãããâââ
-ÖÖÖÖÖÖÖėáėėėäÄÄÄÅÅÅãããââ
-ÖÖÖÖÖÖėÏÖþėääÄÄÅÅÅÅããããâ
-end
-
-frame g_nnrn_1 - 0
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-âââėėâââââââââââââââââââ
-ââėââėėėėâââââââââââââââ
-âėââΘėėėėėėėėâââââââââââ
-âėââΘėėėâââėėâââââââââââ
-ėėėėėėââââââėâââââââââââ
-ėėėâââââââââââââââââââââ
-ėėėėããããâââââââÄÄÄÄÄÄÄÄÄ
-ėėėėėėããâââââââÄÄÄÄÄÄÄÄÄ
-ĬĬĭėėėääâââââââÄÄÄÅÄÄÄÄÄ
-ĬĬĬėėėėäâââââââÄÄÄÅÅÄÄÄÄ
-ėĬĬĬėãėäââââââÄÄÄÅÅÅÄÄÄÄ
-ėĬááėãėėėėâââÅÅÅÅÅÅÅÄÄÄÄ
-çâáááãΘΘâėėÅÅÅÅÅÅÅÅÅÄÄÄÄ
-çâââââėΘââęėÅÅÅÅÅÅÅÅÄÄÄÄ
-ĂâââãããėėėãâėÅÅÅÅÅÅÅÄÄÄÄ
-ââãããããåėâãâėėÅÅÅÅÅÅÄÄÄÄ
-âããääääáėââãėėâęėėėÄÄÄÄÄ
-ääääæææáãâââėââęęęėėÄÄÄÄ
-ääåææææááėėâΘΘâĘĘĘėėÄÄÄÄ
-ääåæææææááãėΘΘâėėėėâÄÄÄÄ
-end
-
-frame g_nnrn_13 - 0
-ÄÅÅÅÅÅããããââââââãããããããã
-ÄÅÅÅÅÅããããââââââãããããããã
-ãããããããããããââââããããããããâ
-ããããããããããããããããããääããâÄ
-ãããããããããããããããããääääââÄ
-ããããããããããããäääääääääâÄÄ
-ãããããããããããäääääääããäâÄÄ
-ãããããããããããääääãããããääÄÄ
-ãããėããããããããäääääããããääÄ
-ããėęėėããėėããããėėėããããããã
-ėėėėãėėėėėėâââėėėããããããã
-áááãããŊėėėââââââÄÅÅããããã
-ááėėããŊãėâââėâÄÄÄÅÅÅėėãã
-þáááææŊãėėâėââÄÄÄÅÅÅãããã
-ĭþáääááėãėėėââÄÄÄÅÅÅãããã
-ėĭáääááėããėėääãÄÄÄÄããããã
-ĭĭĭááááėãėėėãããããÄââââââ
-ääĭþááėėėėėããããããâââââââ
-äääþáėėėėėėããããããâââââââ
-ãäæþþėėėėėėããããããâââââââ
-âæāþėėėėėėėãããããââââââââ
-áâāþėėėėėėėããããâââââââââ
-ááââææėėėėėėããââââââââââ
-áááááââááėėėėėėėėâââââââ
+âââÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+ėėââÅėėėÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅÅ
+ėėäääėėėėâäââââÅÅÅÅÅÅÅÅâ
+ėääãããėėėââââââââÅÅÅÅÅãã
+ėėėėėãėėėėâââââââÅÅÅÅÅãã
+ėėėėėėėėėėėââââââãÅÅÅãââ
+ęėėėėėėėėėėėėâââââÅÅÅâââ
+ęęėėėėäääääėėėââââÅÅÅâââ
+ΑΑΑΑĬáááäėėėėėââââââââââ
+Αáááááþėėėėėėėėâââââââââ
+ááááááėėâââėėėėâââââââââ
+ááááááėėâââėėėââââââââââ
+ááááááėėėėėėėâââââââââââ
+áááááááėėėėėėâââââââââââ
+áááááááááááėėėââââââââââ
+áááááááááááááėââââââââââ
 end
 
 frame g_nnrn_22 - 0
@@ -34616,7 +34538,196 @@ frame g_nnrn_22 - 0
 ááááááááááėãããėėââââââââ
 end
 
-frame g_nnrn_24 - 0
+frame g_nnrn_3 - 0
+ââääâââââââââââââããâââââ
+âääâââââââââââââââââââââ
+äâââââââÄÄÄÄÄÅââââââââââ
+âââââââÄÄÄÄÄÄÄââââââââââ
+âââââââÄÄÄÄÄÄÄââââââââââ
+âââââââÄÄÄÄÄÄÄââââââââââ
+ãââââââÄÄÄÄÄÄÄââââââââââ
+ââââââââÄÄÄÄÄáââââââââââ
+âââââââââÄÄÄÄááâââââââââ
+ėėâââââââÄÄÄááââââââââââ
+ėãėėėėėââââáááââââââââââ
+áááėėėėââââáááâââââââââá
+áĭþþþáėėâââáááâââââââââá
+ĭĭĭþĭááėâââáááâââââââââá
+ėĭĭááááėââââáâââââââââââ
+ėĭááááėėââââââââââââââââ
+ááááėėėėââââââââââââââââ
+áâáėââââėėėâââââââââââââ
+ââėããâââėėęėââââââââââââ
+ââãėâââėėėäėėėėėââââââââ
+ãäãáėėâėėããėėėėėââââââââ
+äääåāėėėėėãããėėėââââââââ
+äääåææėėėΘããΘΘĘėėâââââââ
+äääåææėþėėãĘĘĘĘĘėâââââââ
+end
+
+frame g_nnrn_8 - 0
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââėėââââââââââââââââââââ
+ėėÄÄââââââââââââââââââââ
+ėėėÄââââââââââââââääääää
+ĭĬėėėėėââââäääããããããââââ
+ĭĭþááėėėââäããããããããããããâ
+ĭĭæþýýėėââäããããããããããããã
+ĭæææþþėėââãããããããããããããâ
+æææĭΑĩėėėäããããããããããããÅÅ
+æææΑēáėėėėėããããããããâÅÅÄÄ
+ææāāāááėėėããããããââââÄÄÄÄ
+ææāāĂáááėėããããããââââÄÄÄÄ
+ææææèáááėėãããããââââââÄÄÄ
+ææææèáááėėãããããââââââââÄ
+âāææĂáááãėėããããâââââââââ
+ááááááááäãėãââââââââââââ
+ááááááââėãėâââââãããããããâ
+ááááââââããėâââââãããããããã
+end
+
+frame g_nnrr_1 - 0
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââââââââââââââââââââââââ
+ââėėėėėėėėââââââââââââââ
+âėâââėėėėėėėėėââââââââââ
+âėââΘΘėėâââââėââââââââââ
+âėââΘΘėėėėęĘââėâââââââââ
+ėėėėėėėėėėėėėėėėââââââââ
+ėėėėėėėėââėėááėėėâââââââ
+ėėėėėėėėââėėááėėÄÄÄÄÄÄÄÄ
+ėĬėėĚĚėėėėėėėėėėėÄÄÄÄÄÄė
+ĬĬĭĩėėĚėėėėėâėėėėÄÅÄÄÄėã
+ĬĬĬĭĭėĚĚęėėėėėáėėėÅÅÄÄėã
+ėĬĬĬĭėããããáėėááėėėėėÄÄėė
+çâáááėããââáááááėėáááėėėė
+çâááááėėėėáááááááááââããä
+çââââââääââáááááááâäãääæ
+Ăâââãããäääääâáááááãääåææ
+ââãããããåååäääââááâãääåææ
+âããääääååååäääâáááãääåææ
+ääääæææææåååçççâááâæææææ
+ääåæææææææççççĂâáááâææāā
+ääåææææææææçççĂâááááââāā
+end
+
+frame g_nnrr_11 - 0
+âââââäääääâââäääâââââÄÄÄ
+ââââäääääääääääââââââÄÄÄ
+âââääãããââäääââââããããââÄ
+ÄÄÄÄããããããâââââããããããããâ
+ÄÄÄėėėėããããâââãããããããããã
+Äėėėėėėãããããâããããããããããã
+ėėėėėėėããããããããããããããããã
+ėėėėėėėėãããããããããããããããã
+ėėėėãäėėėããããããėėėėããããė
+ėėãėãããėėãããããėėėėėėããėþ
+äããėęęĚĚėėėããããėėėáėėãėý
+ääĘęęęĚĚęęėãããããėãããėėėė
+ėėėėęęĚĚęęėããããÅėãããėėėė
+ėėėėėęĚĚęęėããããÅėΚæΚáėėė
+ėáäėėėėęęėėãããėėėáäáäääå
+ææáŊŊŊáėãėėėãėėėåáäáäääå
+ææáááááåėėėėėėėæççááäääå
+ææççáááåææææææææççççãäää
+æçèΑçááåææææææææççççãāææ
+èèèèãááåæææææææçççççâāææ
+èèèèãææææææææççèèèççââææ
+èèèââæææææææèèèèèèèâááââ
+ââáááâāāææææĂĂèèèèâááááá
+ááááááââææææĂĂèèââááááââ
+end
+
+frame g_nnrr_19 - 0
+ââããäããããäâââââââââääââã
+ââãäãããããäâââââââääääâââ
+ãããäãããããääââââäääääââââ
+ããääããããããääääääääââââââ
+äääãããããããããããââââââââââ
+ãããããããããããããããâââââââââ
+ããããããããããããėãããââââââââ
+ãããããããÅããããėãããââââÄÄÄâ
+ãããėããÅÅãėėėėãããâââÄÄÄÄÄ
+ããėėėėėėėėėėėããããââÄÄÄÄÄ
+ãėėááŊŊėėėėėėããããââÄÄÄÄÄ
+ããėėŊŊŊãėããėėãããããâÄÄÄÄÄ
+ãããááŊŊãėããėėėããããėÄÄÄÄÄ
+ããááááãáėãėėãėããããããÄÄÄâ
+ææááĭĭĭĭėėėęęęėėėãããââââ
+ááááĭĭĭĭâáėėėĭΑĭĭėääãėėė
+áááááâââããėėėĭåääėėėėâėė
+ááááâââãããäėėėĭååäääâããã
+ááááâãäãäääæėĬĭĭååçâããää
+áááâãäääåæææĬĭææçççäãääæ
+áááâãäääåææĭĭĭāāçççääåææ
+ââáâãäääåæææææāāçççäååææ
+ääâáâãääåæææāāææçççäååææ
+äĂçââãææææææāāççèèèääåææ
+end
+
+frame g_nnrr_21 - 0
+ããääâââââââääÄÄÅÅÅÅããããâ
+ãããäâââââääääÄÄÅÅÅÅãããââ
+ãããääâââääââââÄÅÅÅÅãããââ
+ããâäääääâââââãããããããããââ
+ââââäääâââããããããããäãããââ
+ÅÄââââââââãããããããäääãÅÄÄ
+ÅÄÄÄââââââããããããääääãÅÄÄ
+ėėÄÄââââââãããããääääääÅÄÄ
+ėėėėėââââââãããããääãääÅÄÄ
+âãęęĘėâââââââââãäääãÅėėã
+ėėėėęėėâėėėėėėėâäääãėėää
+ėĭėėėėėãėėėėėėėėäääÅėėėė
+ėėĭėėſΑėėėėėėėėėėäÅÅėėėá
+âáſėſſſΑėėėėĘĘėėėėėėáááĭ
+âáΑΑΑΑſãėėėėėėėææĬĬĨĬþēē
+çáΑΑΑΑâãėėėĬĬææææĭĭĭĭėėĭ
+çáááááâãėėėåæææææçĭĭĭĭâá
+âááááááâãäæėėėæėççèçĂĭáá
+áááááááâæææėėėāėèèèèèâáá
+ááááááááââææėæāĂèèèèâááá
+ááááááááááââæææèèââááááá
+ääâááááâââââääââáááááááá
+ääääâáâââãããääääââáááááá
+åååääââãããääåååäääâááááá
+end
+
+frame g_nnrr_23 - 0
+âââââââÄÅÅÅÅÅÅÅÅÄÄÄÄâââã
+âââââââÄÅÅÅÅÅÅÅÅÄÄÄÄâââã
+âââââââÅÅÅÅÅÅÅÅÄÄÄÄÄââââ
+ââââãããÅÅÅÅÅÅÅÅÄÄâââââââ
+âââããããÅÅÅÅÅÅÅãâââââââââ
+ÄâããããÅÅÅÅėėėėėėââââââââ
+ÄâããããÅÅėėėããããėėââââââė
+ÄâããããÅėėėėãããęėėėėââââė
+Äââããėėėėėėęããėėėėâėėėėė
+ėėėėėėėėėÅėėėėėėėââââââė
+ãėėėááááėėėãáááããââĘĘĘâė
+ėėýýýýáááėáãáãããããâĘĘĘâė
+ėýýýýýýýýýáãáããŊŊŊėėėėėė
+ėþýýýþþþýááãáãããããæááááė
+ãþýýħþâááááááΚææááþþáááá
+ãėþħþâãááæΚááááėáþþþΒááæ
+ėĭΑþãäääááááááėėáâææææææ
+ėĭáâãääæΑΑĭĭΑçėėááââæáææ
+ááááãääåΑΑĭææçėėâáááááââ
+ááááãäāāΑΑĭæçèççáááááááá
+ááááâæææΑΑèèèèèâáááááááá
+âááááââæææèèèèâááááááááá
+äâááááááââââááááááâââááá
+ääâááááááááááááâââââäääâ
+end
+
+frame g_nnrr_24 - 0
 ããääããããããããããããããããããâä
 ããääãããããããããããããããããâââ
 ããäããããããããããããããããããâââ
@@ -34624,239 +34735,131 @@ frame g_nnrn_24 - 0
 ââäãããããããããããããââââââââ
 ėâäããÅÅÅÅãããããããââââââââ
 ėėÄÅÅÅÅÅÅãããããããââäâââââ
-ėėÄÅÅÅÅÅÅÅãããããâââââââââ
-ėÄÄÅÅÅÅÅÅããããããâââââââââ
-ÄÄÄÅÅÅÅÅÅããããããâââââââââ
-ėäâãããããããėėėãââââââââââ
-ėââãããããėėėėėėâââââââââã
-ėââãããėėėėėėėėâââââââââä
-ėėâãããėėėėėėėėâââââââââä
-áäėãããėėėėėėėėâââââââââä
-çáėėėėėėėėėėâââââââââââä
-èèèėėėėėėėėââââââââââââä
-èèèèâėėęėėââââââââââÄÄÄÄ
-âââááėęęėėââââėėâââÄÄÄÄÄ
-áááááĭėęęęėėâėėėâââÄÄÄÄÄ
-áááááĬĬėėėââėėėėėääÄÄÅÅÅ
-áááááĬĬĬĬĬėããėėâėėėÅÅÅÅÅ
-áááááĨĬĨĬĬėėėėėâââÅÅÅÅÅÅ
-ááááááĬĬâėėĭėėėãããÅÅÅÅÅÅ
+ėėÄÅÅÅÅÅÅÅãããããâââėėââââ
+ėÄÄÅÅÅÅÅÅėėėėėėėėėââââââ
+ėėÄÅÅÅÅÅėėęęęęãėėėėââââė
+ėėâãããėėėęėėėęęâėėėââââė
+ėėâããėėĚėħħþþėęââėââėėėė
+ėėâããėĚėþħþĭĭĭęââėėėėėėė
+ėėėãėėėþþþþäĭĭėâââėėââãė
+ááėėėáĭĭþþþėėėæėėâââââãę
+çááááĭĭĭĭėėėėėæΑΑėâââėãę
+èèèèĂâĭääåėėėæææΑΑΑΑΑááΑ
+èèèèâáâääåææææææΑΑΑΑáááá
+âââáááâãāāææææççèèΑâáááá
+áááááááâāāæææèèèèèâááááá
+ááááááááâææææèèèèâáááááá
+ááááááááááââââââáááááááá
+áááááááááââââäääââáááááá
+áááááááââââããääääääâáááá
 end
 
-frame g_nnrr_0 - 0
-ÅÅÅÅÄÄââââââââââââââââââ
-ÅÅÅâââââââââââââââââââââ
-ÅÅââââââââââââââââââââââ
-ÅâââââââââÅÅÅâââââââââââ
-ÅââââââââÅÅÅÅÅââââââââââ
-ÄâââââââââÅÅÅââââââââėėâ
-ââââââââââââââââââââėėėâ
-âââââââââââââââââââââėėė
-âââââââââââââââââââââėėė
-ââââââââėėėâââėėâââââėėė
-ââââââėėėėėėėėėėėââââââė
-âââââėėėęęęęęęęęėââââââė
-ėėėėėėþþęęęęęęęęėââââââė
-ėėėėėþþþėęęęęęęęęėâââââė
-ėâþėþþþþäēēáááēēāėėėėėėė
-âãþþþþþåääēááēēΑāāæççĬĬė
-äãääæææååäåæææææææāāçççç
-äåææææææçäåæææææææāāçççç
-äåææææææçäåæææææææææçççç
-ääåæææææçäæææææææææçèççç
-ææææææççèāæææææçççĂĂèèèç
-æææææèèèèāæææææèèèĂĂèèèã
-âæāāæèèèèææææææèèèèèèèãä
-ááââââââââæææææèèèèèèâãä
+frame g_nnrr_3 - 0
+ââääâââââââââââââããâââââ
+âääâââââââââââââââââââââ
+äâââââââÄÄÄÄÄÅââââââââââ
+âââââââÄÄÄÄÄėėâââââââââė
+âââââââÄÄÄÄÄėėââââââââėė
+âââââââÄÄÄÄÄÄėėėėėââėėėė
+ãââââââÄÄėėÄÄÄėėėėėėėėėã
+ââââââââÄėėÄÄáâââėėėėėėė
+ââââââââėėėėėėáââėėėėėėâ
+ėėėâėėėėėėėėėėââââėėââââ
+ėãáėáþþėėėėėėáââââââââââ
+ááĭĭĭĭĭĭėėâáááâââââââââá
+áĭĭĭĭĭĭĭėėâáááâââââââėėá
+ĭĭĭĭĭĭĭſėėėėėáââââââėėėė
+ėĭĭſſΑſſâėėėėėėâėėėėėâėė
+ėáſΑΑΑΑΑáėėėĘėėėėááėėėėė
+ááááááΑââââėĘėėáááááėėėė
+áââáááâäääääâááááááááááė
+âââėėėėåååäääââááááááááâ
+ââãááėäåååååääâáááááâââã
+ãäãääāāāæååååĂçâáááââããä
+äääåāāāāæææçĂĂçâáááãäãäæ
+äääåæææææææçççççááâãäåææ
+äääåæææææææçççççááâãäåææ
 end
 
-frame g_nnrr_5 - 0
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-âââââââââââėėâââââââââãã
-ââââââââââėėėėâââėėėãããã
-âââââââââėėėėėėėėėėėãããã
-ėâââââââėėėėėėėėáėėãââââ
-ėėäâââââėėėėėėĦĦĦėãâââââ
-ããäääââėėėãėĦĦĦĦĦėėėėėėâ
-ããããäääėėėėĦĦĦĦĦĦėėėėėėė
-ããããââėėėėþþþĦĦĦĦþėėĬĬþþ
-ããããââėėėėáþþþþþþáááĬĬĬþ
-ããėėėėėėėþáááááááááááĬĨĬ
-ãėėèþėėėėþáááááááááááááá
-ėėėèėėėėþþáááááááááááááá
-ėėėėėėėááþáááááááááááááá
-ááėėėėáááááááááááááááááá
-áááááááááááááááááááááááá
-âááááááááááááááááááááááá
-ââáááááááááááááááááááâââ
-Ăâááááááááááááááááâââââä
-Ăääââááááááááááááââããããå
+frame g_nnsn_16 - 0
+âÄÄÄÄÄÄÄäääââââââääâââââ
+âääääÄÄÄÄÄÄâââââââââââââ
+âäääääÄÄÄÄÄÄââââââââââââ
+ääääääÄÄÄÄÅÅããããââââââââ
+ääääääÄÄÄÄÅÅããããããããââââ
+ääääääÄÄÄÄÅÅãããããããããâââ
+ääääääÄÄÄÅÅÅããããããäããâââ
+äääääääÄÄÅÅÅããããããäããâââ
+ėââââââÄÄÄÅÅããããããããââââ
+ėėâââââÄÄÄÅÅãããããâââââââ
+ėââââââÄÄÄÅÅããããâââââââä
+âââââââÄÄÄėėãããâââââââäã
+âââââââÄÄėėėėããâââââââäã
+âââââââÄėėėėėããââââââäãã
+ââââââėėėΚėėääãââââââääã
+ėââââėėħĘääėääãââââââääâ
+ėėėââėþħáäėėääääââââääää
+ÔÔÔÛėėėėėėėėėäääääääääää
+ÔÔÔÝÛúĘėėÄÄėėäääääääääää
+ÔÔÔÛÛÚĘáėÄÄėėããããâââââää
+ÔÔÔÔÔĘááėėėėäãããããããââââ
+ÔÔÔÔÔÔááãėėėėäÄÄÅÅãããâââ
+ÔÔÔÔÔÔÔėáėėėäÄÄÄÅÅÅãããââ
+áááááÔėÔÔþėääÄÄÅÅÅÅããããâ
 end
 
-frame g_nnrr_6 - 0
-âââââââââââäääâââââââÄÄÄ
-âââââââââââäääâââââââÄÄÄ
-âââââââââââääââââââââÄÄÄ
-âââââââââââââââââââââÄÄė
-ââââââââââââââââââããėėėė
-ãããââââââââââââââããėėâââ
-ãããããââââââââââââãėėâėââ
-ããããâââââââââââââėėãâėâė
-âââââââââââââââÄÅėėėâėėė
-ââââââââââââââÄÄÅėáėėėėâ
-ââââââââââââââÄÄėėáþėėæė
-ėâââââââââââââÄÄėėþþĭĭĭá
-ėââââââââââââââÄėėþæĭĭĭá
-ėėÄÄâââââââėėėėėĭΑæææĭāĂ
-áėėėÄâââââėėėáĭĭĭææææĭçè
-ááęęėėââėėėáááĭĭâææææèèè
-ááėęęėėááááááááááââææâãã
-ááėęęęėėââââáááááâââãããã
-ááėėęęėėââääääâáâââãããää
-ááááâėėãããååääääâãäääääæ
-áááââãããääååååäääãääååææ
-áááãääääææææåååççãääåæææ
-ääâãääåææææææççççãääååææ
-åääãääåæææææææçççãäääæææ
+frame g_nrnn_1 - 0
+ââââââââėėėėĦþėėäçâááááá
+ââââââââėėėėáþėėçççâáááá
+âââââââėėâėėėėããėçėâáááá
+âââââėėėââėėėėâããėėėáááá
+ââââėėėėâââââââããėėááááá
+âââėėėėėâââââââãããėėáĬââ
+âââėėėėėėâââėėâėėΘäėėėâã
+âââėėââėėėėĘėėâėėΘĘĘėėėä
+âââââââââââėėėãėėėėėââėė
+âââââââââââėėėėėėââââââė
+ââââããããâââââââÄÄÄÄÄÄÄÄė
+âââãããããâââââââÄÄÄÄÄÄÄÄĘ
+âââãããääâââââââÄÄÄÅÄÄÄÄã
+ââââããääâââââââÄÄÄÅÅÄÄÄė
+âââââãääââââââÄÄÄÅÅÅÄÄÄÄ
+âââââââââââââÅÅÅÅÅÅÅÄÄÄÄ
+âââââââââÅÅÅÅÅÅÅÅÅÅÅÄÄÄÄ
+ââââââââÅÅÅÅÅÅÅÅÅÅÅÅÄÄÄÄ
+âââââââÅÅÅÅÅÅÅÅÅÅÅÅÅÄÄÄÄ
+âââââââÅÅÅÅÅÅÅÅÅÅÅÅÅÄÄÄÄ
+âââââââÅÅÅÅÅÅÅÅÅÅÅÅÄÄÄÄÄ
+âââââââÅÅÅÅÅÅÅÅÅÄÄÄÄÄÄÄÄ
+ââââââââÅÄÄÄäââââââÄÄÄÄÄ
+âââââââââââääääâââââÄÄÄÄ
 end
 
-frame g_nnrr_7 - 0
-ÄÄââââââââââââääããããÅÅââ
-ÄÄââââââââââââäââããÅÅÅÅâ
-ÄÄââââââââââäääâââÅÅÅÅÅÅ
-ėÄââââââââääââââââÅÅÄÄÄÄ
-ėėââââââääããããâââääÄÄÄÄÄ
-ėėââãäääããããããââäääÄėėÄÄ
-ėėââääããããããããâėėääÄėėėÄ
-ėėâãäãããããããããėėėėâėėėėė
-âââäääÅããããããėėėėĘėėėėėė
-ââäääėėėãããėėėėėėėėáėėėė
-ėäėėäėėėââėėėėėėėėėáäėėá
-ėėėėėäääėėėėėėėėáŕΑááááĭ
-ááááėääėėėâėΑŔėçççΑΑááĭĭ
-áááááėėááėėŔΑΒçççççãááäĭ
-èèĂþááãáááāāççèèĂĂâãááäå
-èääääááááæāāèèèèĂââãááäå
-ãääääääâææææèèèèâááâãääæ
-äååååääääââââââááááâææææ
-äååååååääâááááááááááâæææ
-ææææååççççâááááááááááââæ
-æææææçççççâááááááááááááâ
-æææææçççççâááááááááááááá
-æææææçççççâááááááááááááá
-æææææçççççâââââááááááááá
-end
-
-frame g_nnrr_8 - 0
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââėėââââââââėėėėââââââââ
-âėėėâââââââââėėėââââââââ
-ėėėėââââââââââââââââââââ
-ėėėėėėėėėâââââââââääääää
-ĭĭėėėááėėââäääėėããããââââ
-ĭĭäþþþþþėâäããėėėėããããããâ
-ĭæææþþþþėâäãėėþþėėãããããã
-ĭæææææĬçĂėėėėääåæėėããããâ
-ææææææĬçççççâãäėėėããėėėė
-ææææææĬçççççââėėėããâėėėė
-ææāāāāççèçççâáėėėėâėėããė
-ææāāĂĂèèèèèâááááâėâėėėėá
-ææææèèĂĂèèâááááááėėėáááá
-ææææèèĂĂèâááááááááėááááá
-âāææĂĂââááááááááááááėėáá
-áááááááááâââââáááááááááá
-ááááááâââââäääâââáááââââ
-ááááââââãããääääääâáâââãã
-end
-
-frame g_nnrr_9 - 0
-âââââãããââââââââââââÄÄÄâ
-ââââââÅÅÅÅââââââââââÄÄÄâ
-âââââÅÅÅÅÅâââââââââÄÄÄÄâ
-âââââÅÅÅÅÅâââââââââÄėėÄâ
-ââââââÅÅÅÅâââââââââėėėÄâ
-âââââääÄâââââââââääÄėėėâ
-âââââäääââââââââââäâėėėâ
-ââââäääâââââââââââââėėėâ
-ââäääääėėėėėėėÄÄÄÄââââââ
-ėėääėėĘããėáėėęėėÄÄÄââââė
-ėėėėėâââėáááááΑėėâââââãä
-âėėããâââĭΑΑáááááŔėėėėėėã
-âėãããâėėĭΑΑáãáááΑŔėėėėėã
-âėãėėėėäåĭΑΑááááŔΑėėėėėã
-ėęėáėėėææææææΑΑŔŔèçėėėėė
-ĘėááâėėææææææççΑèèèėėėėė
-ėėááėėėāæææææèèèèèĂâėėėė
-ááėėĘĘâėæææææèèèèâââáááė
-ááėėĘĘΘėáâââââââääääââáá
-áááėėėėáââââããããääääääââ
-áááááááâââããããääååååäääâ
-ââááááâââããäääääåååååäää
-âäääââããäääääæææææååååĂĂ
-ãåääääãäääååææææææææĂĂĂĂ
-end
-
-frame g_nonn_13 - 0
-ÄÅÅÅÅÅããããââââėėÏÛÛÛÛÖÏÖ
-ÄÅÅÅÅÅããããââââėėÓÚÛÛÖÖÏÖ
-ãããããããããããâââėĭΑΑΑΑÖÖÏÏ
-ããããããããããããããėėΑΑΑΑēÖÖÏ
-ãããããããããããããããėėΑΑΑēēÖÖ
-ããããããããããããäääėėėáΑēēÓÓ
-ãããããããããããääääėáėėáēēáÓ
-ãããããããããããäääėäääęáēēēÖ
-ããããããããããããäėėėęáęΑēēĔÏ
-ãããããããããėėããėėėęáęþēēĔĔ
-ããããããâââėėâėėėėėáęááēĔĔ
-ãããããâââââââėėėâėáęáááþþ
-ããããââââââââėėėėėááęáęħė
-ããããââââââââââÄÄÄėáęáęęė
-ãããããâââââââââÄÄÄėááááėė
-ââããããääääääääãÄÄėėėėėãã
-ââãääääããããããããããÄėėââââ
-ââäääããããããããããããâėėââââ
-âäääãããããããããããããâââââââ
-âääâãããããããããããããâââââââ
-âäääââããããããããããââââââââ
-âääääââââããããããâââââââââ
-âääÄäääââââãããââââââââââ
-âäÄÄÄäääââââââââââââââââ
-end
-
-frame g_nonr_2 - 0
-âââėėėΘΘããããããĬĚÓėėÓÓÕÕÕ
-ââââėėėėėėėãããėÓėėâęáÓÕÕ
-âââââėėėėėėėėėėâââĘėæěÓÕ
-âââââėėėėėėėėėėãââęėææÓÏ
-ââââėėââėėėėėėĘãããėææęÓÕ
-âââėėėâââėėėėėĘėėėėáÛÛÖÖ
-ââėãėėâââėÄėėėėėėėáÛÛÛÛÖ
-âââėãėâââââÄėėãėėėþÚÛÛÛÖ
-âââėėėėââėâÄėėėėėėþþÚáÛÕ
-âââėėėėėėėâÄÄėėėėėėþáááÔ
-ââââėėėââââÄÄėėėėėėþáááá
-ÄââââėėââââÄÄÄėĬþΑΒþõúáá
-ÄââââėėââââÄÄÄėááΑΒΒþþáá
-ÄââââėėââââÄÄėĬĬýΑΒΒáááá
-ÄâââėėėâââââėėĬĩáΑΑááááá
-ÄÄââėâââââėėėėĨĬΑΑΑâáááá
-ÄÄÄââââėėėėėėΑĬĬĬäääââáá
-ÄÄÄÄÅÅÅėėááĦþþĬĬĬåääääâá
-ÄÄÄÅÅÅÅėėáþĦĦþþĬĬåååäääâ
-ÄÄÄÄÅÅÅėėáĦĦĦþĬĬææåååäçç
-ÄÄÄÄÅÅėėėáĦþþſĭſāāæåçççç
-ÄÄÄÄÄÄėĘėáĦþſĭĭĭĭāææçççç
-ÄÄÄÄââėããáĦþþĭĭĭĭæææçççç
-ÄÄÄâââėããėħĦĦþþĭæææççççç
+frame g_nrnn_12 - 0
+ÄÄÄÄÄÅÅÅÅėęęęęėėėááááááá
+ÄÄÄÄÄÅÅÅÅãėęęėåääááááááá
+Äââããããããããėęĭĩĭççáááááá
+ââããããääääãėãĭÎÎÎÎáááááá
+ããããäääääääėãėĭÎÎááááááá
+ãããääããããäääėėėÎÎááááááá
+ããääããããããääääėėÎėėááááá
+ããääããããããäääãėėėėĚėäâáá
+ããääããããããããããããėęęęėėâá
+ããäääãããããããããããėęęęęęėâ
+ããääääããããããããããėĘââââėç
+ââääÄÄÄÄÄããããããâėââââėėþ
+äääÄÄÄÄÄÄâããããâââėâââėħá
+äääÄÄÄÄÄÄÄâãããâââėėââėħė
+äââÄÄÄÄÄÄÄâââââââėėėėėėâ
+âââÄÄÄÄÄÄââââââââââėââââ
+ãâââÄÄÄÄÄâââââââââââââââ
+ãâââÄÄÄÄÄâââââââââââââââ
+ãâââėėÄÄââââââââââââââââ
+âââââÄÄÄââââââââââââââââ
+ââââââÄÄââââââââââââââââ
+ââââââÄÄââââââââââââââââ
+ââââââÄÄââââââââââââââââ
+ââââââÄÄâââääääâââââââââ
 end
 
 frame g_nrnn_18 - 0
@@ -34913,58 +34916,112 @@ frame g_nrnn_19 - 0
 ãããääãããããããããããããããããâä
 end
 
-frame g_nrnn_21 - 0
-ããääââââėėâääÄÄÅėėėėææĂĂ
-ãããäâââââääääÄÄÅÅėėėææĂĂ
-ãããääâââääââââÄÅÅėėæææèè
-ããâäääääâââââããããėþþâæèè
-ââââäääâââãããããããėėþþþáá
-ÅÄââââââââãããããããėėėþþáá
-ÅÄÄÄââââââããããããäėėėþþáė
-ÅÅÄÄââââââãããããääėėėþþþâ
-ÅÅÅÄâââââââãããããääėėėþþã
-Åââââââââââââââãäääėėáþä
-ââââââââââââââââäääãėėėþ
-ãâââââââââââââââäääÅėėėė
-ãââââââââââââââââäÅÅėėĚė
-âââââââââââââââÅÅÅÅÅÅėėė
-âââââââââââââââÅÅÅÅÅÅÅÅÅ
-âââââââââââââââÄÄÄÅÅÅÅÅÅ
-âââââââââââââââââââÄÄÅÅÅ
-âââââââââââââââââââââÅÅÅ
-âââââââââââââââââââââââÅ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
-ââââââââââââââââââââââââ
+frame g_nrnr_15 - 0
+ãããÅėÅÅÅÅÅÅėĭĩėėėėááááââ
+ãããėėėÅããääėĭĭėėėáââââââ
+ãããėėėėėėėėėĭĭėėáââââããã
+âããėėããėėėėėėĭėėâââããããã
+âââėėėėėėãäėėėėėâãããääää
+ââââėââãããäããããėėããäääææ
+ââââââââãäãããããėėääåææææ
+ââââââââãäãããėėėääååææææ
+ââââââââãäãããėėäääååææææ
+ââââââââãäãããėėãäääåææææ
+ââââââââäãããėėėãääāāææææ
+âââââââääãããėėâãāāāāææææ
+âââââââääããėėááâææææææææ
+ââââââääããėėėėááââææææææ
+ââââââääâėâãããėėėáââææææ
+âââÄÄâääėėâãããâėėääâââââ
+ââÄÄÄÄÄäâėėâãėėááäääääââ
+ââÄÄÄÄÄäââãėėáááãååäääää
+ââÄÄÄÄÄäâââãėėėėėååååäää
+âââÄÄÄääâââããėėėæææååååç
+âââääääââââããėėæææææåççç
+ââääääâââââããėæææææææççç
+âääääâââââââėėāāæææææççç
+ääääâââââââėåæāāæææææççç
 end
 
-frame g_nrnr_12 - 0
-ÄÄÄÄÄÅÅÅÅėęęęėäėėááááááá
-ÄÄÄÄÄÅÅÅÅėėęęėåääâáááááá
-Äââãããããããėęėĭååççáááááá
-ââããããääääããėĭÎçççâááááá
-ããããäääääääãėĭĭĂççâááááá
-ãããääããããääėėĭĭÎççáááááá
-ããääããããããäėėĭĭĂèââááááá
-ããääããããããääėėĂââääääâáá
-ããääããããããããėėĭããååäääâá
-ããäääããããããããėėėäååååääâ
-ããääääãããããããėėėėææååççç
-ââääÄÄėÄÄãããėėãĘėėėæçççç
-äääÄėėėėÄâããėėĘĘĘâėææçĂĂ
-äääÄėėėėÄÄâãėėĘĘĘėææççĂĂ
-äââÄėėėÄÄÄâââėėėāāççèèèç
-âââÄėėėÄÄââââėááāĂèèèèèã
-ãââėėėėėÄââââėáææèĂĂèèâã
-ãââėėâĘėÄâââėááĬæèĂââáâã
-ãââėâââėââââėááĬĬáááááâã
-âââėâââėââââėáĬĬĬááááááâ
-âââėėėėÄâââââėĬĬĬááááááá
-âââėėėÄÄââââââėėĬâââáááá
-ââââėėÄÄâââââėėėĬääääâáá
-âââââėėÄâââäėėėããĬĬäääâá
+frame g_nrnr_18 - 0
+ääÄÄÄÄäââââėėââėáááááááá
+ääÄÄÄÄÄÄÄÄÄėėĘâėáááááááá
+ââÄÄÄÄÄÄÄÄÄėėĘėĭáááááâââ
+ââÅÄÄÄÄÄÄÄÄėėĘĭĭááââââãä
+ããÅÅÄÄÄÄÄÄÄėėėĭááââãããäå
+ããÅÅÄÄÄÄÄÄÄėėėėááãäãääææ
+ããÅÅÄÄÄÄÄÄėėėėėáâãääææāā
+ãããÅÄÄÄÄÄėėėĭĭááâãäåææāā
+ãããâââââėãããėâááâãääææææ
+ÅããââââėããããėþáááΑΑēēææç
+ÅãââââėėããėėááΑáΑΑΑēæææè
+ÅãâââėėėĘĘėãããáááΑΑēæææè
+ããâââėėėĘĘėããããáááΑēááââ
+ããâââėėėĘėėææãááááΑΑáááá
+âââââââėėėääáΚæΚááΑΑáááá
+âââââââââėėáááäääáΑΑΑēáá
+âââââââââėėáááääááΑΑΑΑáá
+âââââââââėėėėėääáΑΑĭĭááá
+âââââââââėÄÄÄėáŊááĭááááá
+âââââââääÄÄÄÄėáááâââââáá
+ââââäääääÄÄÄÄėėáââäääääâ
+äääääääâÄÄÄÅėėėėããääääää
+ääââââââÄÅÅÅėėėėääååååää
+âââââââÄÅÅėėėėėĭääåååååå
+end
+
+frame g_nrnr_21 - 0
+ããääââââėėėääÄÄÅėėėėææĂĂ
+ãããäâââââėäääÄÄÅėėėæææĂĂ
+ãããääâââääââââÄÅėėææææèè
+ããâäääääâââââãããėááââæèè
+ââââäääâââããããããėááááááá
+ÅÄââââââââããããėėáááááááá
+ÅÄÄÄââââââãããėėĭáááááááâ
+ÅÅÄÄââââââããėėėĭááááááââ
+ÅÅÅÄâââââââėėėęááááááâãã
+Åââââââââââėęęęęâááááâää
+ââââââââââėėęęęęääâááâää
+ãââââââââââėėęęåääääââää
+ãâââââėââââėėĘėåååäääâãæ
+âââââââââââėėĘėææååççââæ
+âââââââââââėėęėæææççççââ
+âââââââââââėėėææææççççâá
+ââââââââââââėėėææçççĂĂâá
+ââââââââââââââėâççèçĂâáá
+ââââââââââââââėĘėèèèèâáá
+ââââââââââââââėĘèèèèâááá
+ââââââââââââââėĬèââááááá
+ââââââââââââââėááááááááá
+ââââââââââââââėäââáááááá
+âââââââââėėėėėėäääâááááá
+end
+
+frame g_nrnr_23 - 0
+âââââââÄÅÅėėĚėėĭĬĬææāååç
+âââââââÄÅėęęęęėĨĬĬææāāçç
+âââââââÅÅėęęęęėĩĬėėæææçç
+ââââãããÅÅėęããâΘėėĘãėææçç
+âââããããÅÅėęââââėėĘããæççç
+ÄâããããÅÅėęęâããėėėĘããççèè
+ÄâããããÅÅėęęėáäėáėĘããèèèè
+ÄâããããÅėėęęääääáæĘãėèèèè
+ÄââãããÅÅėėėäääááæėėėâããã
+ÄÄââãÅÅÅÅÅėäääááâââãããää
+ÄÄÄÄÄÄÄėÄÄėãááááâãããäääæ
+ÄÄÄÄÄÄėėėėėãáããáááääåæææ
+ÄÄÄÄÄėėėėėėãáããŊáááåāāææ
+ÄÄÄÄÄėėėėėããáãããááääåāææ
+ÄÄÄÄÄÄÄėėãáááΚæááãääææææ
+ÄÄÄÄÄÄÄėėæΚææäėėáãææææææ
+ÄÄÄÄÄėėėęėáääėęęáâææææææ
+ÄÄÄÄėęęęęęėėėęęęááââææææ
+âÄÄÄėęęęęęęęäęęęáááááâââ
+âââäėėėėėęäääääęáááááááá
+âââääâââėėėėėėäėáááááááá
+âââääââââėėýþėėėáááááááá
+âââääââââėėáþþėáááâââááá
+âââäââââââėáĦþáâââââäääâ
 end
 
 frame g_nrnr_7 - 0
@@ -34994,112 +35051,166 @@ frame g_nrnr_7 - 0
 ÄÄÄÄÄÄÅÅÅėėęęėâėėėėááááá
 end
 
-frame g_nrrr_0 - 0
-ÅÅÅÅÄÄââėėėáááááâääääæāā
-ÅÅÅââââėėėþΑáááâãääåææāā
-ÅÅâââėėėėėėΑĔááâãääåææææ
-ÅâââėėėėãėėėΑΑėėãääåææææ
-ÅââėėėãėėėėΑΑΑáėâãæææææç
-Äââėėėãááþþááááááâæææææè
-âââėėėėááþþþááááááâææææè
-âââėėėėáááááááááááááââââ
-ââââėėėááΑſĭáááááááááááá
-âââââėááΑΑſĭâââââââááááá
-ââââėėááſſĭĭĭĭâäääääââáá
-ââėėėáááâėėĭĭĭãäääääääâá
-ėėėėþááââėėėėĭãååååääääâ
-ėėþþâäâââããĭĭēäååååååäää
-ėââããääääãäääæææāāååååçç
-âããääåååääååææææāāæççççç
-äãääæææååäåæææææææāāçççç
-äåææææææçäåæææææææāāçççç
-äåææææææçäåæææææææææçççç
-ääåæææææçäæææææææææçèççç
-ææææææççèāæææææçççĂĂèèèç
-æææææèèèèāæææææèèèĂĂèèèã
-âæāāæèèèèææææææèèèèèèèãä
-ááââââââââæææææèèèèèèâãä
+frame g_nrrr_12 - 0
+ÄÄÄÄÄÅÅÅėėęęęėäėáááááááá
+ÄÄÄÄÄÅÅÅÅėęęęėåääâáááááá
+Äââãããããããėęėæååççáááááá
+ââããããääääėėæææçççâááááá
+ããããääääääėėææāĂççâááááá
+ãããääããããėėėææĂĂççáááááá
+ããäėãããããėėėçèĂĂèââááááá
+ėėėėããããėėėėèèĂââääääâáá
+ėėääãããėėėėėââãããååäääâá
+þþėääėėėėááėâããääååååääâ
+þýýėáėãėėáäãäääææææååççç
+ėėėėėâââėėäääåææææææçççç
+ėėėėėâââãėåçäåæææææææçĂĂ
+ėėėėėėėėåĂççääåæææææççĂĂ
+æėėėėþþāæçççææææāāççèèèç
+ææþėþþāāæççççæææāĂèèèèèã
+åæææāāæææçççççæææèĂĂèèâã
+ææææāāææçèççççââæèĂââáâã
+æææææçççèèèèçâááááááááâã
+æææææèèèèèèèââáááááááááâ
+æææææèèèèèèââááááááááááá
+æææææèèèèèâáááââââââáááá
+âââææèâââáááââââãääääâáá
+âââáááááááâââããããååäääâá
 end
 
-frame g_nrrr_17 - 0
-ââââââėÄâââėþĭäääåĬååääâ
-ââââââÄÄââäėėääææææååĂçç
-ââââââÄÄÄÅėãäãėėææææçççç
-ââââââÄÄÄÄėããããėææææçççç
-âââââââââėėããããėāāææĂĂçç
-ââââââââėėęãėėėėāāççĂĂçç
-ââââââââėĘęėææėėæèĭèèèèâ
-ââââââââėėãėâæėėæèèèèââá
-ââėėėėâââäėėáâėâæèâââááá
-ėėėŊėėėâäâėėáááááááááááá
-ėėėėėėėėėâėėėėėėáááááááá
-ėėėėėááááėėėėėėėáááááááá
-ãėėėėááááááėėãããėááááááá
-ããėėėááááááááėėėáááááááá
-ęęėėėėėááááááááááááááááá
-ęęėėėââááááááááâáááááááá
-ėėááėėėááááââââäääââáááá
-äääâáėėááâââãããäääääââáá
-åäääâáááâââãēãäååååäääâá
-åååäçâáâãâããΑääæååååäççâ
-æåçççâáâãääåΑæææāāåççççâ
-ææççççâãäääåææææāāæççççâ
-ææççĂĂâãäääåææææææāĂçççâ
-æçççĂĂáâãääåææææææĂĂçççâ
+frame g_nrrr_2 - 0
+âââėėãΘΘãėããããĬääėėæåååå
+ââėėėėΘΘãėėããėääæėâæææåå
+âââėėėããĘėėėŊáėėėėėææææç
+âââėėėãĘĘėėėėáėãâėėææææç
+ââėããããĘĘĘėėááėėėėėææææç
+ėėęãããėėĘĘĘėáááæāāææææçè
+ėęęãããėėĘĘĘėááááāāæçççèè
+ėęęããėäėėėėâææææāāæèèèèè
+âėėáááááçáááâæāāāāæèèèèè
+âėΑΑæááççááááââāāāæèèèèâ
+ėėΑΑæçĂĂâáááááááââââââáâ
+ėΑΑΑΑΑΑĂâááėėááááááááááá
+þΑΑΑΑΑΑĭááėėėááááááááááá
+ŔΑâââáΑſáááááááááááááááá
+ΒââáááΑΑΑááááááááááááááá
+ΑäääâáΑΑΑΑááââââââââáááá
+åååääâááááââââââääääââáá
+æåååäçâááâââããããååääääâá
+ėėæçççâáââãããäääååååäääâ
+æææçççââãäããääāāææåååäçç
+ææΑſĭçââãääåäāææāāæåçççç
+ççĭĭèçâãäääåāāææāāææçççç
+ĂĂèèèââãäääåææææææææçççç
+ĂĂèâáááâãääååææææææççççç
 end
 
-frame g_nrrr_21 - 0
-ããääââââėėėääÄÄėėėėėææĂĂ
-ãããäėâââėėäääÄÄÅėėėæææĂĂ
-ãããääėėėääââââÄÅėâææææèè
-ããâääėėėâââââãããėááââæèè
-ââââäėėėââããããėėáááááááá
-ÅÄââėĘãėââããėėėááááááááá
-ÅėÄÄėĘĘėââãėĚáĭááááááááâ
-ėėėėėĘĘėââãėĚėĭáááááááââ
-ėãęęĘĘėėėėėęęėáááááááâãã
-âėėėėėėėėėėęęęėââááááâää
-ėėĭĭĭſėėėėęęęęėäääâááâää
-ėĭĭĭĭſΑΑėââęėėãåääääââää
-ėáĭĭĭſΑâėââėėääåååäääâãæ
-âáſſſſſâãėėäæææææååççââæ
-âáΑΑΑΑâãääåæææææææççççââ
-çááΑΑáâãääåæææææææççççâá
-çáááááâãääååæææææçççĂĂâá
-âááááááâãäææææææççèçĂâáá
-áááááááâææææææāĂèèèèèâáá
-ááááááááââææææāĂèèèèâááá
-ááááááááááââæææèèââááááá
-ääâááááâââââääââáááááááá
-ääääâáâââãããääääââáááááá
-åååääââãããääåååäääâááááá
+frame g_nrrr_20 - 0
+äääââââââââþþæææææææĂĂçç
+äâââââââââėþþææææçççĂĂèè
+âââėėââââėėþþææææèèèèèèè
+âââėėėėėėėėþþææææèèèèèèâ
+ââââėėėėėėþþþææææèèèèââá
+âââââėėėėþþþþþâââââââááá
+ââââÄėėęĬþþþþááááááááááá
+âââÄÄėęęĬĭáááááááááááááá
+ėââÅėãęęĬĬĭááááááááááááá
+ėėėėėãęėĬĬĬááááááááááááá
+ėėėėáėėĭĬĬĬĬáááááââááááá
+ėėėėĭĭĭĭĬĬĬĬĬáââââäääâáá
+ėėĭççĭĭĭĬĬĬĬĬââãããååäääâ
+ėĭĭĭèĭĭĭĬĬĬáââãäääååååää
+ęėſΑΑááááááâãäääāāāāåççç
+ęėΑΑáááááááâãäåāāāāāæççç
+Αááááááááááâãääæāāæææççç
+áááááááááááâãäææāāææçèçç
+ááááááááááááâæææāāçèèèèè
+áááááááááááááâææāāèèèèâá
+áááááááááááááááâææèèââââ
+áááááááááááááááááááââââä
+áááááááááááááááááâââãããå
+ááááááááááááááááââããäääå
 end
 
-frame g_nrrr_9 - 0
-âââââãããâââââėþĩáááááááá
-ââââââÅÅÅÅâââėĬĬáááááááá
-âââââÅÅÅÅÅâââėĬĬáááááááá
-âââââÅÅÅÅÅââėėėėáááááááá
-ââââââÅÅÅÅâėėėĬėáááááááá
-âââââääÄââėėĬĬĬááááááááá
-âââââäääâėėĬĬĬääââááááââ
-ââââäääėėĬĬĬĭäääääâââââã
-ââääėĘĘããĬĭääåååäääââããã
-ėėėėĘĘĘėãäääææååååäçääää
-ėėėėėââäåäāāææææåçĂĂääåæ
-âėãėėėėäåæāāææææççĂĂääåæ
-âėãėėäääåæΑΑΑāææççççääåæ
-âėėĬãäääåæææāāææççççãäææ
-ėėááâãäææææææææçèèççāāææ
-Ęėááâææææææææççèèèèèâāææ
-ėėáááėāāæææææèèèèèĂâááâā
-áááėėėėâæææææèèèèâââáááá
-áááėėĘėááâââââââääääââáá
-ááááááááââââããããääääääââ
-áááááááâââããããääååååäääâ
-ââááááâââããäääääåååååäää
-âäääââããäääääæææææååååĂĂ
-ãåääääãäääååææææææææĂĂĂĂ
+frame g_nrrr_3 - 0
+ââääââėėââėáþĬáâããããååää
+âääâââėėėėėááĬãããäääåååä
+äâââââėėėėãááãääåæææææçç
+âââââââėėėááááäΑΑæææææçç
+âââââââėėããáááääåæææææçç
+ââââââėėãããááçãææææææçèè
+ãâââââėááááááççæææææèèèè
+âââââėėæáááççççâææææèèèâ
+ââââėėāāāāæççççâáâââââáá
+ėėėėææāāāāçççççâáááááááá
+ėááĭĭĭĭææççèèççâáááááááá
+áĭĭĭĭĭĭççèèèèèâááááááááá
+ĭĭĭĭĭĭĭĭèèèèĂâáááááááááá
+ĭĭĭĭĭĭĭèèèèââááááááááááá
+ĭĭĭſſΑſâââáááááááááááááá
+ėááΑáΑááááááėááááááááááá
+ááááâââââââááááááááááááá
+áââááââäääääâááááááááááá
+âââáėããåååäääââááááááááâ
+ââãáäääåååååääâáááááâââã
+ãäãääāāāæååååĂçâáááââããä
+äääåāāāāæææçĂĂçâáááãäãäæ
+äääåæææææææçççççááâãäåææ
+äääåæææææææçççççááâãäåææ
+end
+
+frame g_nrrs_4 - 0
+âââėėâââėėėėėĭááääääââââ
+âââėėėâėėėþĬĭĭĭĭååäääâãã
+ââėėėĘĘėááþþþæææåååçãããä
+ėėėėĦėĘėáááþþææææçççãääæ
+ėėėėĦėėĦėėėþþþæææçççäåææ
+ãėėėėėėėėėėĦþþÎÎæççäåæææ
+ããėėėâââėėėþþÎÎÎĂĂçääæææ
+ėãėĦėėėėþþþÎāāççĂĂèäæææá
+âėãėþėėæĬĬĬææèèèĂĂèæāāæá
+âėėėþĬΑΑæææææèèáĂĂèâāāæú
+áėþþþĬĬáââæææèèèèââáââáú
+áėŔĬĬĬĬááėėâââââáááááĬĬá
+ėΑŔΑĬĬĬáėėėáááááááááĬĬĬì
+ėſΑΑΑĨĬáááââááááááááĬĬĬĭ
+ėėſΑΑááââââäääââáááĬúúĬĬ
+ėėáſáááâãããåääääááÔĬúúÔá
+ėėáááááããääååååáííÚÔÔÔÔá
+ėėááááááäææΒΒáìììÚÚØØÔėá
+ėâââááýáææΑŔŔáììÚÚÚÔÔÔėá
+ãäääãáááææææááìÚÚÚÚÔÔėėė
+äååääááåææææááçÚÚÚÛÔÔėėė
+ææååĂĂáæææææááÚÕÛÛÛÔÔėėė
+āāæçççáæāāæèèáÔÔÔÛÛÔÔÔÔÔ
+āāæççááæāāæèèèáÔÔÛÛÔÔÔÔÔ
+end
+
+frame g_nsnn_13 - 0
+ÄÅÅÅÅÅããããââââėėÔÛÛÛÛÔÔÔ
+ÄÅÅÅÅÅããããââââėėÔÚÛÛÔÔÔÔ
+ãããããããããããâââėĭΑΑΑΑÔÔÔÔ
+ããããããããããããããėėΑΑΑΑēÔÔÔ
+ãããããããããããããããėėΑΑΑēēÔÔ
+ããããããããããããäääėėėáΑēēÔÔ
+ãããããããããããääääėáėėáēēáÔ
+ãããããããããããäääėäääęáēēēÔ
+ããããããããããããäėėėęáęΑēēĔØ
+ãããããããããėėããėėėęáęþēēĔĔ
+ããããããâââėėâėėėėėáęááēĔĔ
+ãããããâââââââėėėâėáęáááþþ
+ããããââââââââėėėėėááęáęħė
+ããããââââââââââÄÄÄėáęáęęė
+ãããããâââââââââÄÄÄėááááėė
+ââããããääääääääãÄÄėėėėėãã
+ââãääääããããããããããÄėėââââ
+ââäääããããããããããããâėėââââ
+âäääãããããããããããããâââââââ
+âääâãããããããããããããâââââââ
+âäääââããããããããããââââââââ
+âääääââââããããããâââââââââ
+âääÄäääââââãããââââââââââ
+âäÄÄÄäääââââââââââââââââ
 end
 
 frame g_oahh_15 - 0
@@ -35966,60 +36077,6 @@ frame g_omoo_22 - 0
 ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÖÖÖÖ
 end
 
-frame g_onoo_15 - 0
-ÖÖÖöÖááĚėėėĨĭėäääääääããã
-ÖÖÖÖÖÖáĚΑΑĭĭĭėääääääääãâ
-ÖÖÖÖÏÖÖÓΑΑĭĭĭėããäääääääâ
-ÖÖÖÖÏÖööĭΑĭĭĭėããããããääää
-ÏÖÖÖÖÏöĭĭĭĭĭėėãããããããäää
-ÏÖÖÖÖÏĭĭĭĭĭėėėãããããããäää
-ÏÖÖÓÖÖĭĭÓĘęėėėããããããėėää
-ÏÖÖÖÖÖÏÖÖÓÓÛėėãããėėėėėää
-ÏÖÖÖÖÖÏÖÖÖÓÓėėėėėááėėėėė
-ÏÖÖÖÖÖÖÖÖÖÖÖėėÓěęėėĘėėėė
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÓÓĚėėĘėėėė
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÓėėėėėââ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖėėėėėââ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖėėėėėėâ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖėėΑΑΑėė
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÖÖÖΑΑΑė
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖĭÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖĭÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖėÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-end
-
-frame g_onrr_21 - 0
-ÖÖÖÖÖÖėėÖĭþääÄÄÅÅÅÅããããâ
-ÖÖÖÖĬÖėėĭþėääÄÄÅÅÅÅãããââ
-ÖÖÖÖĬÖÖėėėėâââÄÅÅÅÅãããââ
-ÖÖÖÖÖĬÖÖâėėââãããããããããââ
-ÖÖÖÖÖÖÏĬėėããããããããäãããââ
-ÖÖÖÖÖíĭĬĬėãėėããããäääãÅÄÄ
-ÖÖÖÖĭĭĭĬĬâãėėėėėääääãÅÄÄ
-ÕÕÕĭĬĬĬĬþėėėĚėėėėėäääÅÄÄ
-ÕÕÕãĬúúúþááėęęęėėėėėėÅÄÄ
-ÕÚÚúúúõõþááėęęęęėėėėėėėã
-ÚÚááúúúþááėęęęęęäėėėėėėä
-íááááĬþþâėėėęęėåäėėėáėėė
-áááááĭþþâėėėėėäååėėėáááá
-áááááþþþáäãäæææææååÎÎÎÎĭ
-ýááááþþýááåæææææææēēēēēē
-þýááááááþáåæææææææĭĭĭĭėá
-ááááááááááååæææææçççĂĂâá
-ááááááááãäææææææççèçĂâáá
-áááááááâææææææāĂèèèèèâáá
-ááááááááââææææāĂèèèèâááá
-ááááááááááââæææèèââááááá
-ääâááááâââââääââáááááááá
-ääääâáâââãããääääââáááááá
-åååääââãããääåååäääâááááá
-end
-
 frame g_oocc_0 - 0
 ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
 ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
@@ -36180,33 +36237,6 @@ frame g_ooff_11 - 0
 ØØØØØØØØÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕ
 ØØØØØØØØØØØÖÖÖÖÖÖÖÖÖÖÕÕÕ
 ØØØØØØØØØØØØØÖÖÖÖÖÖÖÖÖÖÖ
-end
-
-frame g_ooff_13 - 0
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÏ
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖØØØØÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÖØØØØØØØØØØÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖØØØØØØØÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÖØØØØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÖ
-ÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕ
-ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕ
-ÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖØØØØØØÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖØØØØØØØØØØØØÖÖÖÖ
-ÖÖÖÖÖÖÖØØØØØØØØØØØØØØØØØ
 end
 
 frame g_ooff_17 - 0
@@ -36882,33 +36912,6 @@ frame g_ooho_13 - 0
 ÝÝÝÝãÔÔÔÔÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
 ÝÝÝÜÛãÔÔÔÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖ
 ÝÝÝÝÝÝÝÛÔÔÖÏÖÖÖÖÖÖÖÏÖÖÖÖ
-end
-
-frame g_oonr_14 - 0
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏ
-õõõÖÖÖÏÖÖÖėÖÖÖÖÖÖÏÖÖÖÖÖÖ
-õõõõÖÖÏÖÖėėėÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖõõõÖÏÖõõėėėÖÖÖÏÖÖÖÖÓÖÖ
-ÖÏõõõõõõõõõėÏÖÓÓÓÖÖÖÓáÓÖ
-ÏÖõõõõõõõõõÖÏÖÓęĘÓÓÓáááÓ
-ÖÖÖÖÖÖÏÖÖÖÖþþÓĚâěáÓááæĚá
-åĭÖÓÖÏėþÖÓþþþöááááęáææāá
-ĮĮÖÖÏþėþĭþþþþýáááááæææææ
-ėėėėėÿÿþĮĮĭþþþááááááââæá
-ââãęėėþþĮΑĮþþáááááááááęá
-ėėėėėėþþþþþþþáââââáâááęâ
-ããėėėþáááėáþþáâääääâáááã
-ãããėėėėėėėėėėΑĭääääâáááä
-ââėėėėėėėėėėėėäååååäáááä
-âėėããėėėþþãėėėėėėėååäáäā
-âėėĘĘėėėħħþėĘĘãããėΑåååææ
-âėėĘĘĘėėėħħėėėėėęėėçååææ
-ââėĘĘĘĘĘėėėėėėėėėėėçäåāā
-ââėėęęęęėėâââââėėėæçĂæāā
-âââėėęęėėėâââââėėėççĂæææ
-ââããäãããėėââââėėėėáèĂæææ
 end
 
 frame g_ooof_1 - 0
@@ -37775,195 +37778,6 @@ frame g_oooo_9 - 0
 ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
 end
 
-frame g_ooor_1 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÓÓÓÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÖÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÏÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÕÕÕÕÏÏÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÖÕÕÕÕÏÕÕÕÕÏõõÕÕÕÏ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏõõÕÓÓô
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÓáÓÏÕÕÕÓáô
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕááęÏÕÕÓáĚá
-ÖÖÖÏÖÖÖÖÖÕÕÕÓÓááĘÓõõõááá
-ÕÕÕÏÖÖÖÖÖÕÕáĘáááááááááââ
-ÕÕÕÕÏÖÖÖÕÕÏáááááááááâââã
-ÕÕÕÕÏÕÕÕÕÕÖááááááááââããä
-ÕÕÕÕÕÏÕÕÕÕÖÓáááááááäãääæ
-ÕÕÕÕÕÏÕÕÕÏÖÿþááááááääåææ
-ÕÕÕÕÕÏÕÕÕÕÖÿþáááááãääåææ
-ÕÕÕÕÕÏÕÕÕÚÿþþýýáááãääåææ
-ÕÕÕÕÕÏÕÕÚíþíçáýýááâæææææ
-ÕÕÕÕÕÕÕÕÚþþþíýýááááâææāā
-ÕÕÕÕÕÕÛÚĭĭĭþþþýáááááââāā
-end
-
-frame g_ooor_2 - 0
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÏÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÏÓÓÓÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÏÓáęĘÓÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÓÓÓÓÓÕ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÕÕÕÕÛÓÕ
-ÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÛÓÔ
-ÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÏÕÕÕÔÔá
-ÏÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÏÕÔÔõá
-ÏÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕõõõõáá
-ÏÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕõõõõáá
-ÏÕÕÕÕÕÏÕÕÕÕÏÕÕĭĭĭõõõáááá
-ÏÕÕÕÕÏÕÕÕÕÕÏÕÕĭĭĭõõááááá
-ÏÕÕÕÏÕÕÕÕÓÓÓÓÕĭþþõáäââáá
-ÏÕÕÕÏÖÖÖÕÓÓáěáþþáåääääâá
-ÏÕÕÕÏÖÖÖÖÓáĘááááååååäääâ
-ÏÕÕÕÏÖÖÖÕÓáĘääááææåååäçç
-ÏÕÕÕÕõõÕÕÓęááāææāāæåçççç
-ÏÕÕÕõõõõÕÓĚááāææāāææçççç
-ÕÕÕÕõõõõÕÓÓěáæææææææçççç
-ÖÖÖÖÖÖÖÏÕÕÕúááæææææççççç
-end
-
-frame g_ooor_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÏÖ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÓÓÓÓÏÖÖÖÖÖÏÏÖÖÖÖÏÖ
-ÖÖÖÖÖÖÏÖÓÓÏÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÏÖÖÕÕÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÏÕÕÕÕÖÖÓÖÏÖÖÖÖÖÖÕÏÕ
-ÖÖÖÖÕÏÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÏÏÕ
-ÖÖÖÕÏÕÕÕÕÕÏÖÖÖÖÏÖÖÖÖÖÏÏÕ
-ÖÖÕÕÏÕÕÕÕÕÏÕÕÕÕÓÓÓÓÓÓÓÖÖ
-ÖÕÕÏÖÖÖÖÕÓÏÏÕÕÓÓÓęáěÓÓÓÖ
-ÖÖÖÏÖÖÖÖÖÕÕÏÕÓÓÓÓĚáěÓÓÓÓ
-ÖÖÖÏÓÓÓÓÓÓÕÏÓÓÓÓÓááááýÓá
-ÕÖÖÏÖÓÓÓÓÓÓÕÓÓÕÓÓááááááá
-ÕÕÕÏÖÖÖÓÓÓÓÕÕÕÕÕþýáááýýá
-ÕÕÕÕÖÖÖÖÓÓÓÕÕÕÕÕþþáááýáá
-ÕÕÕÕÏÕÖÕÕÕÕÕÕÕÕÕþááæáááá
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕþþáææçèçá
-ÕÕÕÕÕÕÕÕÕÕõÕþþþþýāçèèèèè
-ÕÕÕÕÕÕÕÕÕõõõþþþþáāèèèèâá
-ÕÕÕÕÕÕÕÕÕõõõþþþþáæèèââââ
-ÕÕÕÕÕÕÕÕÕõõþþþþááááââââä
-ÖÖÕÕÕÕÕÕÕõõþþýáááâââãããå
-ÖÖÖÕÕÕÕÕÕõõþááááââããäääå
-end
-
-frame g_ooor_22 - 0
-ÖÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÏÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖööÖ
-ÖÏÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖöööÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖöööö
-ÏÕÕÕÏÖÖÖÕÖÖÖÖÏÖÖÏÖÖÓááÓö
-ÕÕÕÕÖÖÖÖÕÕÕÖÖÏÖÖÏÖöěāāęÏ
-ÕÕÖÏÖÖÖÖÕÕÕÕÖÏÖÖÏÖÓááááĭ
-ÖÖÖÏÖÖÖÕÕÕÕÕÖÏõõõÖĮþÓÓþþ
-ÖÖÖÏÖÖÖÕÕÕÕÕÕÏõõõĭĮþþĬþá
-ÖÖÖÏÖÕÕÕÕÕÕÕÕÏõõõþþýáýáá
-ÖÖÖÏÏÕÕÕÕÕÕÕÏÕõõáááæèááè
-ÖÖÖÕÏÏÕÕÕÕÕÏÕÕÓááæææèèèè
-ÖÖÕÕÕÕÏÕÕÕÕÏÕÕÓěáâââèááâ
-ÖÖÕÕÕÕÏÕÕÕÕÕÓÓããĬááááááá
-ÖÖÕÕÕÕÕÕÕÕÏäááãíþááááááá
-ÖÕÕÕÕÕÕÕĬþýááááááááááááá
-ÕÕÕÕÕÕÕÕþáááááááâáááâââá
-ÕÕÕÕÕÕÏÕþááááâââââáääääâ
-ÏÕÕÕÕÕÏÕÓááááââããããäääää
-ÕÏÕÕÕÕÏÕÕÓĚęáâãããääååååä
-end
-
-frame g_ooor_24 - 0
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÓÓÓ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÓÓÓÓÓá
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÓÓÓááÓÓáá
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÓÓááááÓáę
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÓĚááęááá
-ÏÖÖÖÖÖÖÖÖÏÖÖÓÓÖöáááââááá
-ÏÖÖÖÖÖÖÖÖÏÖÖÓÓÓÓááâãääáá
-ÏÖÖÖÖÖÖÖÖÏÏÖÛÓÓÓááâãäåææ
-ÏÖÖÖÖÖÖÖÖÖÏÖÛÛÓááââãäåææ
-ÏÖÖÖÖÖÖÖÖÖÏÖÛÛÛÛáääâææææ
-ÖÖÖÖÖÖÖÖÖÖÏÏÖÖÛÛÛáçââāææ
-ÖÖÖÖÏÖÖÖÓÓÏÏÖÖÛÛÚáççáââæ
-ÖÖÖÖÏÖÖÓÓÓÖÏÖÖÛÛáçççâááá
-ÖÖÖÏÏÓÓÓÓÓÖÏÖÕÛáççççáááá
-ÖÖÖÏÏÓěÓÓÓÕÏÕÕÛçèèçâáááá
-ÖÖÖÏÏÓÓÓÓÓÕÏÕÕÔèèèâááááá
-ÖÖÕÕÏÏÓÕÕÕÏÕÕÔþáèâáááááá
-ÕÕÕÕÕÏÓÕÕÕÏÕÛÛýááááááááá
-ÕÕÕÕÕÏÓÕÕÕÏÓÔþááââáááááá
-ÏÕÕÕÕÕÓÓÕÕÖÔÔááääääâáááá
-end
-
-frame g_ooor_5 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖõõõÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖõõõÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÖÖÖÕÕÏÏÕÕÕÕÕÕÕÕÕÕÖÓÓõáõõ
-ÖÖÖÕÏÏÕÕÕÕÕÕÓÓÕÕÏÖÓÓáááõ
-ÖÖÖÏÏÕÕÕÕÕÕÓęáÓÓÓÓÖÓęááá
-ÖÖÏÏÖÕÕÕÕÕÕÓáááĚáÓÖÓáááá
-ÖÖÏÏÖÕÕÕÕÕÕÓáááęáĬĬááááá
-ÖÖÖÏÖÕÕÕÕÕÕÓĘěáááááááááá
-ÖÖÖÏÖÖÖÕÕÕÕÓĚĚáááááááááá
-ÖÖÖÏÖÖÖÖÕÕÓÓÓááááááááááá
-ÖÖÖÏÖÖÖÖÓÓÓÓÓááááááááááá
-ÖÖÖÏÖÖÖÖÓáĚÓÕááááááááááá
-ÖÖÖÏÓÓÓÓááěõõááááááááááá
-ÖÖÖÖÓĚáááááááááááááááááá
-ÖÖÖÖÓááááááááááááááááâââ
-ÖÖÖÖęááááááááááááááââââä
-ÖÖÖÓęěáááááááááááâáããããå
-end
-
-frame g_ooos_1 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÖÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÏÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÕÕÕÕÏÏÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÖÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÖ
-ÕÕÕÏÖÖÖÖÖÕÕÏÕÕÕÕÕØØØÖÖÖÖ
-ÕÕÕÕÏÖÖÖÕÕÏÕÕÕÕÖØØØØØØÖÖ
-ÕÕÕÕÏÕÕÕÕÕÖÖÖÖÕÖÖÖÖØØØØØ
-ÕÕÕÕÕÏÕÕÕÕÖÖÖÖÖÔÔÖÖÖØÔÔÔ
-ÕÕÕÕÕÏÕÕÕÏÖÖÖÖÔÔÔÖÖÖÔÔÔÔ
-ÕÕÕÕÕÏÕÕÕÕÖÖÖÔÔÔÔÖÖÖÔÔÔÔ
-ÕÕÕÕÕÏÕÕÕÕÏÖÔÔÔÔÔÖÖÖÔÔÔÔ
-ÕÕÕÖÖÏÕÕÕÕÏÔÔÔÔÔÔÔÕÔÔÔÔÔ
-ÕÕÕÕÖÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
 frame g_ooos_17 - 0
 ÕÕÕÕÕÏÕÕÕÕÏÖÖÖÕÕÕÏÕÕÕÕÕÕ
 ÕÕÕÕÕÏÕÕÕÕÏÖÖÖÕÕÕÏÕÕÕÕÕÕ
@@ -37989,33 +37803,6 @@ frame g_ooos_17 - 0
 ÏÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖėėėėÔÔÔÔ
 ÏÖÖÖÏÖÖÖÖÖÖÏÖÖÖØėėėėÔÔÔÔ
 ÖÖÖÖÏÖÖÖÖÖÖÏÖÖØÖÔÔÔÔÔÔÔÔ
-end
-
-frame g_ooos_19 - 0
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÕÕÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÖÏÕÕÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÔÔÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏØØÔÕØÖÖÖÖÖá
-ÖÖÖÖÏÖÖÖÖÖÏÏÖØÔÔÕØØÖÖÖØÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÕÕÕØØØÔÔÔ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÔÔÔÔ
 end
 
 frame g_ooos_22 - 0
@@ -38045,681 +37832,6 @@ frame g_ooos_22 - 0
 ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÔÔÔÔÔÔÔÔÔ
 end
 
-frame g_ooos_23 - 0
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÏÕÕÖÖÖÖÖÏÖâÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÏÕÕÕÕÖÖÖÖââÕÖ
-ÏÖÖÖÖÖÏÖÖÖÖÏÕÕÖÖÖÖÏÖÔÔÔÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÔ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÔÔÔÔÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÔÔÔÔÔÕ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÕÕÕÏÕÖÖÖÏÔÔÔÔÔÔÔÔ
-ÖÖÖÕÕÏÕÕÕÕÏÕÕÕÖÏÔÔÔÔÔÔÔÔ
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÔÔÔÔÔÔÔÔ
-end
-
-frame g_ooos_24 - 0
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÏÏØØØÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÖÏØØØÖÖÖÖÏÖâââØ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖØÖÖÖÖÏÖÔÔėė
-ÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÏÖÖÔėė
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÏÕÕÔÔė
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÕÏÕÕÔÔÔ
-ÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÕÕÏÕÕÔÔÔ
-ÖÖÖÏÏÖÖÖÖÕÕÕÕÕÖÖÖÕÏÕÕÔÔÔ
-ÖÖÖÏÏÕÕÕÕÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔ
-ÖÖÕÕÏÏÕÕÕÕÖÖÖÕÕÔÔÔÔÔÔėėė
-ÕÕÕÕÕÏÕÕÕÖÖÖÖÖÖėėėėėėėėė
-ÕÕÕÕÕÏÕÕÕÕÖÖÖÖėėėėėėėėėė
-ÏÕÕÕÕÕÏÕÕÕÖÖÖÖėėėėėėėėėė
-end
-
-frame g_ooos_9 - 0
-ÕÕÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÖÖÖÖÕÕÕÕÕÏÕÕÕÕÕÕ
-ÕÕÕÕÖÖÖÖÖÏÕÕÕÕÕÕÕÏÏÕÕÕÕÕ
-ÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÕÕÏÕÕÕÕÏ
-ÏÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÏÕ
-ÏÕÕÕÕÕÏÕÕÕÏÖÖÖÖÖÖÕÕÏÕÖÖÖ
-ÕÕÕÕÕÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖÕØØÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖÖÕÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖØÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖââÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖâââá
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖâââá
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖâââá
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏââââá
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖââáÔ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÔÔÔÖÖÔááÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÏÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_ooro_11 - 0
-ÖÏÓÓÓÓÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-ÖÓÓáÓÏÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-ÓÓááÓÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖ
-þáááÓÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖ
-áááěÓÖÖÖÖÖÖÖÓÖÖÖÏÖÖÖÖÖÖÏ
-ĘáÓÓÓÓÓÖÖÖÖÏÓÖÖÖÏÖÖÖÖÖÏÏ
-ĘęÖÖÏÓÓÓÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ĚÓÖÖÏÓÓÓÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-áÛÖÖÏÖÖÓÖÖÏÏÖÖÖÖÏÖÖÖÖÖÏÏ
-áÛÛÖÛÛÛÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-áþÚÛÛÚÛÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÏ
-áþÚÚÚÚÛÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÏ
-áþììÚÚÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÏ
-åáþììÚÚÖÓÏÏÖÖÖÖÖÖÏÖÖÖÖÖÏ
-ææááááÚÚÓÖÏÖÖÖÖÖÖÏÖÖÖÖÖÏ
-ææçççááúöÖÏÖÖÖÖÖÖÏÏÖÖÖÖÏ
-ææçççäááþĮÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ææçççääáþþþöööööÖÖÏÖÖÖÖÖ
-æçèèçääááþþĮöööõõÖÏÖÖÖÖÖ
-èèèèãääåáþþĭĮĮõõõÖÏÖÖÖÖÖ
-èèèèãææææáĭĭĮĮõõõÖÏÖÖÖÖÖ
-èèèââæææææþĭĭĭõõõõÏÖÖÖÖÖ
-ââáááâāāææáĭĭĭĭõõõÖÖÖÖÖÖ
-ááááááââæææþþþĭĭõõÖÏÖÖÖÖ
-end
-
-frame g_ooro_12 - 0
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÏ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÓÖÖÖÖÏÖÖÖÖÏÖ
-öĮþþÖÏÖÖÖÖÖÏÓÖÖÖÖÖÏÖÖÖÖÖ
-ĭĭĭĭþþÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏ
-ĭĭĭþĭþþÖÖÖÖÏÖÖÓÓÖÖÖÏÖÖÖÏ
-ĭĭĭþþþþþþþÖÏÖÖÓÖÖÖÖÏÖÖÖÏ
-ĭĭþþþĭĭþþþþÏÖÖÖÖÖÖÖÏÖÖÖÏ
-þþþþþþþþþþþäĭÖÖÖÖÖÖÏÖÖÖÏ
-áááááááþþþþĭĭÖÖÖÖÖÖÏÖÖÖÏ
-ææææāāááþþĭÖÏÖÖÖÖÖÖÏÖÖÖÏ
-æææææççááþĭÖÏÖĮĮÖÖÓÏÖÖÖÏ
-æææææèèáýþĭĭÚĭĮĮÖÖÖÏÖÖÖÏ
-æææææèèáþþþĭĭĭåĮĭÖÖÏÖÖÖÏ
-æææææèèáþþþĭĭĭĮĮĭÕÏÕÕÕÕÖ
-âââææèââþþþĭåĭĭĭÕÕÏÕÕÕÕÕ
-âââááááááþĭĭĭåÚÕÕÏÏÕÕÕÕÕ
-end
-
-frame g_ooro_13 - 0
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÏ
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÔÖÖÖÖÏÖÖÖÖÖÏÖÖÓÓÏÖÖÖÖÖÏÖ
-ÔÔÖÖÖÏÖÖÖÖÖÖÏÓÓÓÏÖÖÖÖÏÖÖ
-ããÔÖÖÏÖÖööõÓÓÓÓÓÖÖÖÖÖÏÖÖ
-þĮãÖÖÛÛÖöáááÓÓÓÓÖÖÖÖÖÏÖÖ
-þĮþÔÚÚÛÖöáááÓÏÖÖÖÖÖÖÖÏÖÖ
-þþĭĭúÚÚÓÓÓáÓÏÖÖÖÖÏÖÖÖÖÏÖ
-þþþþþĬááÓÓÓÓÖÖÖÖÖÏÖÖÖÖÖÏ
-ááááýýáĚÓÓÓÓÖÖÖÖÖÏÖÖÖÖÖÖ
-áááááþþÓĚáĚÓÖÖÖÖÖÖÏÖÖÖÖÖ
-äääåáþþìěěáÖÖÖÖÓÖÖÏÖÓÓÖÖ
-ãäæææáááęęÓÖÖÖÖÓÖÖÏÖÓÓÖÖ
-âæāāææáááęÓÖÖÖÖÓÓÖÏÖÓÖÖÖ
-áâāāæææáááÓÖÖÖÓÓÓÓÖÏÖÖÖÖ
-ááââæææááĭÓööÓÓěáÓÓÓÖÖÖÖ
-áááááââááþõááááęáĚáÓÓÖÖÖ
-end
-
-frame g_ooro_17 - 0
-ÕÕÕÕÕÏÕÕÕÕÏÖÖÖÕÕÕÏÕÕÕÕÕÕ
-ÕÕÕÕÕÏÕÕÕÕÏÖÖÖÕÕÕÏÕÕÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÏÕÖÕÕÕÏÏÕÕÕÕÕÏ
-ÏÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏÕ
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÏÖÖ
-ÖÏÕÕÕÕÕÏÕÕÕÕÕÕÕÏÖÖÖÖÖÏÖÖ
-ÖÏÖÖÕÕÕÏÕÕÕÕÕÕÕÏÖÖÖÖÏÖÖÖ
-ÖÏÖÖÖÖÖÏÖÖÕÕÕÕÕÏÖÖÖÖÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÏÕÕÕÖÏÖÖ
-ÛÖÖÖÖÖÖÖÖõÏÖÖÖÕÕÏÏÕÕÕÕÖÖ
-ÚÖÖĭþþÏÖõõÏÖÖÖÖÕÕÕÏÕÕÕÏÖ
-úöþþþõõõõÖÏÖÖÖÖÖÕÕÕÕÕÕÏÖ
-ööþáþõõõõÖÏöÖÖÖÖÖÕÕÏÕÕÏÖ
-ööýáþõõõõööööÖÖÖÖÕÕÏÕÕÏÕ
-áááááþõõöööööÖÖÖÖÖÏÕÕÕÏÕ
-áááááýþööööööÖÖÖÖÏÕÕÕÕÕÏ
-ââáááááööööÖÖÖÖÖÏÖÕÕÕÕÕÏ
-äääâááááööÖÖÖÖÖÏÖÖÖÕÕÕÕÕ
-åäääâáááöúÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-åååäçâáâáĬçÖÖÖÖÏÖÖÖÖÕÕÕÕ
-æåçççâáâãááíÖÖÖÏÖÖÖÖÕÕÕÏ
-ææççççâãääáíÖÖíÖÖÖÖÓÕÕÕÏ
-ææççĂĂâãäáĭìááìÖÖÖÖÖÖÕÏÏ
-æçççĂĂáâáĬĭìììÖÖÏÖÖÖÖÕÏÖ
-end
-
-frame g_ooro_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÏÖ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÓÓÓÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÓÓÓÓÓÏÖÖÖÖÖÏÏÖÖÖÖÏÖ
-ÓÖÖÖÖÓÓÓÓÓÏÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ááÓÓÓÏÖÖÓÓÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-áęęĚÓÓÕÕÕÕÖÖÖÖÏÖÖÖÖÖÖÕÏÕ
-äĘěęÓÓÕÕÓÓÖÖÖÖÖÖÖÖÖÖÖÏÏÕ
-ýÓÓáÓÕÕÕÓÓÏÖÖÖÖÏÖÖÖÖÖÏÏÕ
-þÓÚáÓÕÕÕÓÓÓÕÕÕÕÏÖÖÖÖÖÏÖÖ
-áááááÓÓÓÓÓÓÏÕÕÕÏÖÖÖÖÏÖÖÖ
-ááæçççáĚĚÓÓÏÕÕÕÕÖÖÖÖÏÖÖÖ
-ææççççááĚęþÓÕÕÕÕÖÖÖÖÏÖÖÖ
-ççèèèâááĚáþÓÕÕÕÕÖÖÖÖÖÖÖÖ
-ĂĂááááááááÓÓÕÕÕÕÖÖÖÖÖÖÖÖ
-ĂĂáçááááááÓÓÕÕÕÕÕÖÖÖÖÖÖÖ
-áááîîááááěÓÕÕÕÕÕÕÕÕÕÕÕÖÖ
-áááîîááĭĬõÕÕÕÕÕÕÕÕÕÕÕÕÕÖ
-áááîáíþĭúõõõþÕÕÕÕÕÕÕÕÕÕÕ
-ááááíþþĬõõõþþÕÕÕÕÕÕÕÕÕÕÕ
-áááááþþþĭĬĭþõÕÕÕÕÕÕÕÕÕÕÕ
-áááááþþþĭþþþõõúÕÕÕÕÕÕÕÕÕ
-ááááááþþþþþþþþõõÕÕÕÕÕÕÕÕ
-ááááááþýááááýþþĭÕÕÕÕÕÕÕÕ
-end
-
-frame g_ooro_3 - 0
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÕ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÖÖÖÖÖÖÕÕÕ
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÛÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-áýþþÚÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕ
-âæáýÚÚÛÛÛÕÕÕÕÕÕÕÕÖÖÖÖÕÕÕ
-áâæáĭÚÚÛÛÚÚÕÕÕÕÕÕÖÖÖÖÕÕÕ
-ááâáýĭÚÚÛÛÕÕÕÕÕÕÕÖÖÖÖÕÕÕ
-ááááþĬúÚÚÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕ
-ááááþúõúÚÕÕÕÕÕÕÕÕÕÖÕÕÕÕÕ
-áááýþõõõúúÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-áââþõõõõõõõõÕÕÕÕÕÕÕÕÕÕÕÕ
-âââõõõõõõõõõõÔÛÛÕÕÕÕÕÕÕÕ
-ââãáõõõõõõõõúÚÛÛÛÕÕÕÕÕÕÕ
-ãäãäáþõõõõõõúÚÚÛÛÕÕÕÕÕÕÕ
-äääåāáýõõõõõáúÚÛÛÕÕÕÕÕÕÕ
-äääåáááõõõõáááÚÚÛÕÕÕÕÕÕÕ
-äääáááááõõõááááÚÚÕÕÕÕÕÕÕ
-end
-
-frame g_ooro_4 - 0
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÕ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕ
-ÕÕÚÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĭÚÚÚÛÛÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬÚÚÚÛÛÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬĬÚÚÛÛÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬĬĭĭĭĭÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬĬĭĭĭÚÚÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬĬĭúÚÚÚÕĭÓÓÕÕÕÕÕÕÕÕÕÕÕÕ
-ĬĬĭĭúÚÚÚĭáááÓÓÕÕÕÕÕÕÕÕÕÕ
-ĭĭĭĭúĬÚÚĭáááÓÕÕÕÕÕÕÕÕÕÕÕ
-þþþĭúííááááìÚÕÕÕÕÕÕÕÖÖÖÖ
-áþþþĭììáþááììÚÕÕÕÖÖÖÖÖÖÖ
-ãáááþÿììáááìÚÚÕÕÕÖÖÖÖÖÖÖ
-äååäáþþþáææáÚÚÕÕÕÕÕÕÕÕÕÕ
-ææååĂáþáæææáÚÛÕÕÕÕÕÕÕÕÕÕ
-āāæççáýáāāæáááÓÕÕÕÕÕÕÕÕÕ
-āāæççáááāāæèèèáÓÕÕÕÕÕÕÕÕ
-end
-
-frame g_ooro_5 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕôÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÕÕõôÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÖÕõôÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-õÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-úÖÖÕÕÏÏÕÕÕÕÕÕÕÕÕÕÖÖÖÖÏÏÕ
-öÖÖÕÏÏÕÕÕÕÕÕÓÕÕÕÏÖÖÖÖÕÏÏ
-ÖÖÓÔÏÕÕÕÕÕÕÓÓÓÕÕÏÖÖÖÖÕÕÕ
-áááÔÚÛÕÕÕÕÕÓááÓÓÏÖÖÖÕÕÕÕ
-áááÚÛÕÕÕÕÕÓáááÓÓÏÖÖÖÕÕÕÕ
-ááĚÚääãÓÕÕÓáĘěÓÓÏÕÖÕÕÕÕÕ
-áááááááÓÓÓÓÓÓÓÓÓÓÕÕÕÕÕÕÏ
-áæèèèááááááÓÓÓÓÓÓÏÕÕÕÕÕÏ
-áââááááááááÓÕÓěáÓÏÕÕÕÕÕÖ
-áááááááááááÓÕÓěááÏÕÕÕÖÏÖ
-ááááááááááááõÓĘááÏÕÖÖÖÖÖ
-âáááááááááááááááÓÏÖÖÖÖÖÏ
-ââááááááááááááááÓÏÖÖÖÖÖÏ
-ĂâáááááááááááááęÓÏÖÖÖÖÖÖ
-ĂääââááááááááááĚÓÏÖÖÖÖÖÖ
-end
-
-frame g_ooro_9 - 0
-ÕÕÖÖÖÖÖÖÖÖÖÖÓÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÖÖÖÓÓÕÕÕÕÏÕÕÕÕÕÕ
-ÕÕÕÕÖÖÖÖÖÏÓÓÓÕÕÕÕÏÏÕÕÕÕÕ
-ÕÕÕÕÏÕÕÕÕÓÓÓÕÕÕÕÕÕÏÕÕÕÕÏ
-ÏÕÕÕÕÏÕÕÕÓÓÓÕÕÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕõÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÕÏõõÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ĭÏÕÕÕÕÓÓÕÕÕÕÕÕÕÕÕÕÕÏÕÕÏÕ
-ĭÕÕÕÕÓáÓÕÕÏÖÖÖÖÖÖÕÕÏÕÕÏÖ
-ĬĭÕÕÓááÓÖÖÏÖÖÖÖÖÖÖÖÖÕÕÏÖ
-þþÓÓáęáÓÖÖÏÖÖÖÖÖÖÖÖÖÖÕÖÖ
-ýááááĚÓÓÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-áááááęÓÓÓÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-áááááááÓÓÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ááááááááÓÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ááþþááæáÖÖÛÚÚÖÖÖÖÖÏÖÖÖÏÖ
-ááþþþõõõõÚÚÚÚÚÖÖÖÖÏÖÖÖÏÖ
-áþþþþõõõööúÚÚÚÛÖÖÏÏÖÖÖÏÖ
-ýþþþõõõõööúĬĬÚÛÛÖÏÏÖÖÖÏÖ
-ááááõõõõöþúááÚÚÖÖÏÏÖÖÖÏÖ
-áááááõþþþááããĘÖÖÖÖÏÖÖÖÏÖ
-ââááááááááãääĘÖÖÖÖÏÖÖÖÖÖ
-âäääââãáááäääáÖÖÖÖÏÖÖÖÖÏ
-ãåääääãääáååæáÖÖÖÖÏÖÖÖÖÏ
-end
-
-frame g_oorr_11 - 0
-ÖÏÓÓÓÓÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-ÖÓÓáÓÓÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-ÓÓááÓÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖ
-ýááááÖÖÖÖÛÖÖÓÓÖÖÖÏÛÖÖÖÖÖ
-áááěáÓÖÖÖÛÖÓáÓÖÖÏÛÛÛÖÖÖÏ
-ĘáÓÓÓÓÓÓÓÓÓáááÖÖÏÛÛÛÖÖÏÏ
-èęÖÖÏáęáÓÓÓúáúÖÖÏÖÖÖÖÖÏÖ
-ĚÓÖÛĮþááÓÓÓúööÖÖÏÖÖÖÖÖÏÖ
-áÛÛÛäþýááĘÓúúöÖÖÏÖÖÖÖÖÏÏ
-áÚþþÿþþÚáěÓúúöÖÖÏÖÖÖÖÖÖÏ
-áþþþÿĮþÚáĘÔúúööööööööööö
-áþþííííĭáááúúúöööööööþĭĭ
-ááþìììĭááááááúööööööþþþĭ
-åáýþþáááããáááúúöööþþýþþĭ
-ææåçççããäááööúúááýþþþþþþ
-ææçççääääááþööáååáþýáýþþ
-ææçççääåææáþþþáááááááááá
-ææçççääåææáþþþþááááçãäää
-æçèèçääåææáþþþþþááççãāææ
-èèèèãääåæææþþþþááçççâāææ
-èèèèãææææææáþýááèèççââææ
-èèèââæææææææáèèèèèèâááââ
-ââáááâāāææææĂĂèèèèâááááá
-ááááááââææææĂĂèèââááááââ
-end
-
-frame g_oorr_12 - 0
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÏ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÓÓÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÏÖÖÖÖÓÓÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖĬÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÓÓÓÓÓÓÓÖÖÖÖÖÏÖÖ
-ÖÖÖÖÏÖÓÖÖÖÓáęáÓÖÓÓáÓÓÖÏÖ
-ÖÖÖÖÏÓÓÓÖÖÓáâáþããěåááÓÓÓ
-öĮþþþþÓÓÖÖÔáääáááææååĘÔÔ
-ĭĭĭþþþþþþþþááåææææææççáá
-ĭĭþþþþþþþþþááåæææææææçĂá
-ĭĭþþþþþþþþáááäåæææææççáá
-ĭĭþþþýáááááááæææāāçáááýý
-þþþþááāāæççááæææāĂáááýþá
-ááææāāæææççáááááæèĂĂèááá
-ææææāāææçèçáááááæèĂââáâã
-æææææçççèèèáááþþááááááâã
-æææææèèèèèèáááþýáááááááâ
-æææææèèèèèèááááááááááááá
-æææææèèèèèâáááááââââáááá
-âââææèâââáááââââãääääâáá
-âââáááááááâââããããååäääâá
-end
-
-frame g_oorr_2 - 0
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÏÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÓÓÓÓÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÏÓáęĘÓÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÓěáÓÓÕ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÛÛÛÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÓÕÕÛÛÛÛÛÛÛÖÖ
-ôôÕÕÕôÕÏÕÕÕÕÏÕÕÛÛÛÛÛÛÛÖÖ
-ôôôôôôôÏÕÕÕÕÏÕÕÛÛÕÕÕÛÛÛÕ
-ôôôôôôôôÕÕÕÕÕÕÕÚÕÕÕÔÛááÔ
-ôôôôôôôôôôÕÏÕÕÕĭÕÏÕÔÔÚáá
-ôôáááááôĭþþĭĭĭĭĭþþúúõúáá
-ôáæèèèâáþþþĭĭĭþþþþþõõúáá
-ááâââáááýþþþþĭĭĭĭþþþõááá
-âââááááááááþþþĭþþþþááááá
-ääääâáááááááááýááááâáááá
-åååáááááááââââââääääââáá
-æåáþþþþááâââããããååääääâá
-ææáþÿäþáââãããäääååååäääâ
-ææáþþþþâãäããääāāææåååäçç
-ææááþýáâãääåäāææāāæåçççç
-ççáááááãäääåāāææāāææçççç
-ĂĂèèáââãäääåææææææææçççç
-ĂĂèâáááâãääååææææææççççç
-end
-
-frame g_oorr_23 - 0
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÓÓÓÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÓÓÛáęÓÖ
-ÖÖÖÖÖÖÖÖÖÖÏÓÓÓÓÓÓÛÚááęÓÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÓÓÓÓÓÛÚÚáĚÓÖ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÛÚááÓÖ
-ÖÖÖÖÖÖÖÖþĭĮþÖÖÖÖÖÖĭÚúáôô
-ÏÖÖÖÖÏÖþþþþþþÖÖÖÖĭĭĭôôôô
-þþÖÖÖÖÏþĭĭĭĭĭĭĭĭĭúúĭþþþþ
-áþĬĬĬĭþþĭþþþĭĭĭĬĭĭúĭþýýý
-áþþĬĬþþĭþýþþþĭþþþþþþþýáá
-ááĬúĭĭĭþáãäýþþþþþþþþþþáá
-èáúõþĭĭþääåáþþááþþþþþþáá
-ááááþþþáææææááççáþþþÿþáæ
-áááâááäææææææçççáþÿÿÿÿþæ
-ááááãääåæææææçççâþÿÿÿÿþâ
-ááááãäāāææææçèççááþþþþáá
-ááááâæææææèèèèèâáááááááá
-âááááââæææèèèèâááááááááá
-äâááááááââââááááááâââááá
-ääâááááááááááááâââââäääâ
-end
-
-frame g_oorr_24 - 0
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÓÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÓÖÏÖÖÖÖÖÖÖÖÖÏÖÓÓÓÓ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÓÓÓÓÓÓÓá
-ÏÖÖÛÖÖÖÖÏÖÖÖÖÖÓáęáááÓÓáá
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÓáĚááááááâ
-ÏÖĭþþÖÖÖÖÚúúááöáááááâááá
-ÏþþþþÓÓÓÓúöááááááááââãáá
-þþþýáÓÓÓäöááááááááâãääæá
-þþþáááěÓäööââääââáâãäåææ
-ááááááááþööáãääääââãäåææ
-ááááçççááááääåååäääâææææ
-ææĂĂçççãäãäáááááåäçââāææ
-ççĂĂèèãääåæáááááççççáââæ
-èèèèĂâãääåæáááææççççâááá
-èèèèâáâääåæáýáææççççáááá
-âââáááâãāāæáþáççèèçâáááá
-áááááááâāāææáèèèèèâááááá
-ááááááááâææææèèèèâáááááá
-ááááááááááââââââáááááááá
-áááááááááââââäääââáááááá
-áááááááââââããääääääâáááá
-end
-
-frame g_oorr_3 - 0
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÕ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÖÖÖÖÖÖÕÕÕ
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕĭÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÛÛÕÕÕÕ
-ÕÕÕþĭÕÕÕÕÕÕÕÕÕÕÕÕÚÚÚĭĭĭÚ
-ÔÕþþþþþÕÕÕÕÕôÕÕÕÕÚííĭĭĭĭ
-ááááþþĭÚÚÚúúôúÚÕÚììĭĭĭĬĬ
-âæáááþþĬĬúôôôôúĭĬĭìĭĭĭĬĬ
-áâæáááááááôôĬĬĬþĭĭĭĭĭĭĬĬ
-ááââááááááôôĬĬþþÿĭĭĭĭĭĬĬ
-ááááááááþþôôôôþþþþþþÿþþĬ
-ááááááááþĭþááááááááááþþĬ
-ááááááááþþþááááááááááááþ
-áââááááááäááþþþþþááááááá
-âââáýáááååäáþþþþþááááááá
-ââããáááåååååääâáááááâââã
-ãäãääāāāæååååĂçâáááââããä
-äääåāāāāæææçĂĂçâáááãäãäæ
-äääåæææææææçççççááâãäåææ
-äääåæææææææçççççááâãäåææ
-end
-
-frame g_oorr_5 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖõõõÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖõõõÖ
-ÕÕõôÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÕÕõôóÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-ÖÕõôôÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖõõõõ
-õõÕÕÕÕÕÕÕÕÕÕÓÓÕÕÖÖÖÖõõõõ
-úõÖÕÕÏÏÕÕìììáĚÕÕÕÓýĚááõõ
-öÖÖÓÏÏÕÕÕþìááááÓÓĚáááæáõ
-ÖÓÔÔÚÛÚÚÚþáááááááááááááá
-ááááúÚÚÚþþááááááááúááááá
-áááááááááááááááááááááááá
-áááááááááááááááááááááááá
-ááèèèèèâáááááááááááááááá
-áæèèèââááááááááááááááááá
-áââááááááááááááááááááááá
-áááááááááááááááááááááááá
-áááááááááááááááááááááááá
-âááááááááááááááááááááááá
-ââáááááááááááááááááááâââ
-Ăâááááááááááááááááâââââä
-Ăääââááááááááááááââããããå
-end
-
-frame g_oorr_6 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÖÖÖÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÖÖÖÏ
-ÖÖÖÖÖÖÖÕÕÕÕÕÕÏÕÕÕÕÕÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÏÕÕÕÕÖÖÖÖÖÖ
-õÖÖÖÖÖÖÖÕÕÕÕÕÏÕÕÏÖÖÖÖõõõ
-õõõÖÖÛÝÖÕÕÕÕÕÏÕÕÏÖÖÖööõõ
-õõõÏÖÖÛÖÕÕÕÕÕÏÕÕÏÖÖöööõõ
-õõÖÓÓÕÕÕÕÓÕÕÕÕÕÕÏööööööö
-ĭĭÓáÓõõÓĘááÓÛÕÕÕõþýþöööå
-þþáááþþÓáæĘáþþþýááåæáöáæ
-áááááþþþáææááááääåæææááá
-áááááýþýáææèèèèäääåæææáá
-áááááááááââââââãäæææææāá
-áááááááááááááááâæææææççè
-ááááááááááááááááâææææèèè
-áááááááááááááááááââææâãá
-ááááááááââââááááááááãããá
-ááááááââââääääâáâáþþáãáý
-ááááâââãããååääääâãáááäáá
-áááââãããääååååäääãääååææ
-áááãääääææææåååççãääåæææ
-ääâãääåææææææççççãääååææ
-åääãääåæææææææçççãäääæææ
-end
-
-frame g_oors_1 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÖÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÓÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÓÖÖÕÏÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÓÖÖÏÖÖÖÕÕÕÕÏÏÕÕÕÕÕÏÕÕÕÏÕ
-õÖÖÏÖÖÖÖÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-õÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-õõúĬÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ĭúúúĬÖÖÖÖÕÕÕÕÕÓÓÕÏÕÕÕÕÕÕ
-ĭõõúĬĬÖÖÖÕÓÓÓÓÓÓÕÏÕÕÕÕÕÖ
-ĭĭõúĬĬĬÖÖÕÓáĘĚÓÓÕØØØÖÖÖÖ
-ĭĭþĬĬĬĬÖããÓáááÓÖØØØØØØÖÖ
-ĭþþúúúúúäãÖááĚÓÔÖÖÖØØØØØ
-þþýõõõõõúÕÖÓĚěÓÔÔÖÖÖØÔÔÔ
-áááááþþþúÏÿþþþÔÔÔÖÖÖÔÔÔÔ
-ááááááýþþÿÿþþþÔÔÔÖÖÖÔÔÔÔ
-âããááääáááþþÔÔÔÔÔÖÖÖÔÔÔÔ
-ääääæææææááýçÔÔÔÔÔÔÔÔÔÔÔ
-ääåææææææááþíÔÔÔÔÔÔÔÔÔÔÔ
-ääåææææáááýþíÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_oors_2 - 0
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÏÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÏÕÓÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÏÕÓÓÓÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÏÕ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ôÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ôôôÕÕÕÕÏÕÕÕÕÏÕÕÕÏÕÕÕÕÕÏÕ
-ôôôôôÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖ
-ôôôôôôÕÏÕÕÕÏÕÕÕÕÕÏÕÕÕÕÖÖ
-ôôôôôôôÏÕÕÕÏÕÕÕÕÕÕÏÕÖÖÖÖ
-ôááááááÏÕÕÕÏÕÕÕÕÕÕÏÕÖÖÔÔ
-áááâáááÓÕÕÕÏÕÕÕÕÕÕÏÖÖÖÔÔ
-áááááĘÓÓÕÕÕÏÕÕÕÕÕÖÖÖÖÖÔÔ
-ääáááÓÓÓÓÓÕÏÕÕÕÕÕÖÖÖØØÔÔ
-ååáôôôÕÓáĚÓÓÕÕÕÕÖØØØØÔÔÔ
-æåýôôôÖôááááÓÓÕØØØõõØÔÔÔ
-ææþõõõúúáâáĘáÓÕØõõõõõėÔÔ
-ææþþõõõõáäããááÓØØõõõõėėÔ
-ææýþĭĭõõáääááęÓÕÖėėėėėėÔ
-çááþĭĭĭþáääááĘÓÕėėėėėėėÔ
-ĂĂáýþþþþááááááÓÕėėėáėėėÔ
-ĂĂèáááááþþþúáõõÔėėėáėėėÔ
-end
-
-frame g_oors_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÏÖ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÓÓÓÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÓÓÓÓÓÏÖÖÖÖÖÏÏÖÖÖÖÏÖ
-ÓÖÖÖÖÓÓÓÓÓÏÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ááÓÓÓÏÖÖÓÓÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-áęęĚÓÓÕÕÕÕÖÖÖÖÏÖÖÖÖÖÖÕÏÕ
-äĘěęÓÓÕÕÓÓÖÖÖÖÖÖÖÖÖÖÖÏÏÕ
-ýÓÓáÓÕÕÕÓÓÏÖÖÖÖÏÖÖÖÖÖÏÏÕ
-þÓÚáÓÕÕÕÓÓÓÕÕÕÕÏÖÖÖÖÖÏÖÖ
-áááááÓÓÓÓÓÓÏÕÕÕÏÖÖÖÖÖÖÖÖ
-ááæçççáĚĚÓÓÏÕÕÕÕÖÖÖÖÕÖÖÖ
-ææççççááĚęþÓÕÕÕÕÖÖÖÖÕÕÖÕ
-ççèèèâááĚáþÓÕÕÕÕÖÕÕÕÕÖÖÖ
-ĂĂááááááááÓÓÕÕÕÕÕÕÖÖÖÖÖÖ
-ĂĂáçááááááÔÔÕÕÕÕÕÖÖÖÖÖÖá
-áááîîááááěÔÕÕÕÕÖÖÖÖÖÖÖáá
-áááîîááĭĬõÕÕÕÕÖÖÖÖÖÔÔÔÔÔ
-áááîáíþĭúõõõþÖÖÖÖÖÔÔÔÔÔÔ
-ááááíþþĬõõõþþÖÖÖÖÔÔÔÔÔÔÔ
-áááááþþþĭĬĭþõÖÖÖÖÔÔÔÔÔÔÔ
-áááááþþþĭþþþõõúÔÔÔÔÔÔÔÔÔ
-ááááááþþþþþþþþõõÔÔÔÔÔÔÔÔ
-ááááááþýááááýþþĭÔÔÔÔÔÔÔÔ
-end
-
-frame g_oors_24 - 0
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏ
-ÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÓÏÖÖÖÏ
-ÏÖĭĮÖÖÖÖÖÖÖÖÖÖÖÖÖÓáÓÖÖÖÖ
-ÏþþþþÖÖÖÖÏÖÖÓÖÖÖÖÓáĘÖÖÖÖ
-þþþþþÖÖÖÖÏÖÓÓÖÖÖÖÓáÓÖÖÖÖ
-þþþÓÓÓÖÖÖÏÏØÔØÖÖÖÓÓÓÖÖÖÖ
-ýýÓÓÓÓÖÖÖÖÏØÛØÖÖÖÓÓÓâââØ
-ááááĚáÓÓÖÖÏÖÖØÖÖÖÖÓÖÔÔėė
-áæááááěĚááÓÏÖÖÖÖÖÖÏÖÖÔėė
-ççĂĂèèãęäåÓÏÖÖÖÛÖÖÏÕÕÔÔė
-èèèèĂâãääåÓÏÖÖÖÖÖÕÏÕÕÔÔÔ
-èèèèâáâääåÓÏÖÖÖÖÓÓÓÓÕÔÔÔ
-âââáááâãāāþÕÕÕÖÔÔÓáÓÕÔÔÔ
-áááááááâāáþÕÕÕÕÔÔÔÔÔÔÔÔÔ
-ááááááááâáþÖÖÕÕÔÔÔÔÔÔėėė
-ááááááááááþÛÖÖÖėėėėėėėėė
-ááááááááááýÔÖÖėėėėėėėėėė
-áááááááââááÔÔÖėėėėėėáęėė
-end
-
-frame g_ooso_1 - 0
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÖÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÖÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÕÏÕÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÕÕÕÕÏÏÕÕÕÕÕÏÕÕÕÏÕ
-ÖÖÖÏÖÖÖÖÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÏÕÕÕÕÏÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÏÕÕÕÕÕÏÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÏÕÕÕÕÕÏÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÏÕÕÕÕÕÕÕ
-ÖÕÕÕÕÕÕÕÕÕÖÖÖÖÖÏÏÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÏÏÕÕÕÕÕÕÕ
-ÔÕÕÕÕÕÔÕÕÕÔÖÖÖÖÏÏÕÕÕÕÕÕÕ
-ÔÔÖÖÖÖÔÔÔÔÔÔÔÖÕÕÏÕÕÕÕÕÕÕ
-ÔÔÔÖÖÔÔÔÔÔÔÔÔÔÕÕÕÏÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÕÕÏÕÕÕÕÕÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÏÕÕÕÕÕÏ
-end
-
 frame g_ooso_12 - 0
 ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
 ÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÏ
@@ -38747,60 +37859,6 @@ frame g_ooso_12 - 0
 ÔÔáâââááÔėėėėÔÕÕÕÏÏÕÕÕÕÕ
 end
 
-frame g_ooso_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÏÖ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÏÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÏÖÖÕÕÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÏÕÕÕÕÖÖÖÖÏÖÖÖÖÖÖÕÏÕ
-ÖÖÖÖÕÏÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÏÏÕ
-ÖÖÖÕÏÕÕÕÕÕÏÖÖÖÖÏÖÖÖÖÖÏÏÕ
-ÖÖÕÕÏÕÕÕÕÕÏÕÕÕÕÏÖÖÖÖÖÏÖÖ
-ÖÖÕÏÖÖÖÖÕÕÏÏÕÕÕÏÖÖÖÖÏÖÖÖ
-ØØėÏÖÖÖÖÖÕÕÏÕÕÕÕÖÖÖÖÏÖÖÖ
-ØØėėÖÖÖÖÖÕÕÏÕÕÕÕÖÖÖÖÏÖÖÖ
-ėėėėÖÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ėėėėėÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ėėėėėÖÖÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖ
-ÔÔėėÏÕÖÕÖÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖ
-ÔÔÔÕÕÕÕÕÕÕÕÕÕÕÖÖÕÕÕÕÕÕÕÖ
-ÔÔÔÕÕÕÕÕÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕ
-ÔÔÔÕÕÕÕÕÕÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕ
-ėáââááÔÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕ
-ėââââáÔÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕ
-ėâââáÔÔÔÔÔÔÖÖØØØÕÕÕÕÕÕÕÕ
-ėėáėÔÔÔÔÔÔÔÔÔØØØØÕÕÕÕÕÕÕ
-end
-
-frame g_ooso_21 - 0
-ÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÏÕÕÕÏÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖÖÖÖÕÕÏ
-ÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÏÖÖÖÖÖÕÏÕ
-ÖÖÕÕÕÏÕÕÕÕÕÏÕÕÕÕÖÖÖÖÖÏÖÖ
-ÖÖÖÕÕÏÕÕÕÕÕÏÕÕÕÕÏÖÖÖÖÏÖÖ
-ÖÖÖÕÏÏÕÕÕÕÕÏÕÕÕÕÏÖÖÖÖÏÖÖ
-ÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÏÕÖÖÖÏÖÖ
-ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÏÖÖ
-ááÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖ
-ááÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖ
-ÔáÕÕÕÕÕÕÕÕÕÖÖÕÕÕÕÕÏÕÕÕÏÖ
-ÔÔÔÕÕÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕÏÖ
-ÔÔÔÔÕÕÕÔØØØÖÖÖÖÕÕÕÕÕÕÕÏÖ
-ÔÔÔÔÔÔÔÔÔØØØØØÕÕÕÕÕÕÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔÔØØØØÕÕÕÕÕÕÕÕÕÏ
-ÔÔÔÔÔÔÔÔÔÔÔØØØÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖØÕÕÏÕÕÕÕÕÕÕ
-end
-
 frame g_ooss_11 - 0
 ÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
 ÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
@@ -38826,60 +37884,6 @@ frame g_ooss_11 - 0
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_ooss_15 - 0
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÖÖÏ
-ÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÖ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÖÕÕÕÕÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÖÕÕÕÖÖÖÏÖÖÖÖÖÖÖÔÔÖÖÔÔ
-ÕÕÖÖÕÖÔÔÔėėÖÖÖÖÖÏááėÔÔÔÔ
-ÕÕÕÖÖÖÔÔÔÔėėėėėėėááÔÔÔÔÔ
-ÖÏÖÔÖÖÖÔÔÔėėėėėėėÕÕÕÔÔÔÔ
-ÖÏÖÔÔÖÖÔÔÔėėėėėėÕÕÕÕÕÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔėėáėėėÕÕÕÕÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔááááėėÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔėėėėėÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔėėėėÔÔÔÔÔÔÔáÔ
-ÔááááÔÔÔÔÔÔėėėÔÔÔÔÔÔááââ
-end
-
-frame g_ooss_2 - 0
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÏÕÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÏÕ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÏÖÖÖÕÕÕÖ
-ÕÕÕÖÖÖÖÏÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÔÕÕÕÕÕÕÕÖ
-ÕÕÕÕÖÖÖÖÕÕÕÔÖÔÔÔÕÏÕÕÕÕÖÖ
-ÏÕÕÕÕÕÕÖÕÕáÔÔÔÔÔÕÕÏÕÖÖÖÖ
-ÏÕÕÕÕÕÕÕâââÔÔÔÔÔÕÖÖÖÖÔÔÔ
-ÖÖÖÖÖÕÕÕâââÔÔÔÔÔÔÖÖÖÖÔÔÔ
-ÖÖÖÖÖÖÖáâââáÔÔÔÔÔÖÖÖÖÔÔÔ
-ÖÖÔÔÔÔÔáââââáÔÔÔÔÔÖÖÔÔÔÔ
-ÖÔÔÔÔÔÔáâââââááÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔáââââââááÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÖÖáââââáááÔÔėėėėėÔÔ
-ÔÔÔÔÔÔÔÔÔááÔÔÔÔÔÔėėėėėėÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėėėėėÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėėėėėÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėáėėėÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėáėėėÔ
 end
 
 frame g_ooss_20 - 0
@@ -38963,330 +37967,6 @@ frame g_ooss_24 - 0
 ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
 end
 
-frame g_ooss_3 - 0
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÕ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÖÖÖÖÖÖÕÕÕ
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÕÕÕÕÕØØØØØØÕÕÕÖÖÖÕÕÕÕ
-ÔÖÖÖÖØØØØØØØØØØÔÔÖÖÖÖÕÕÕ
-ÔÔÖØØØØØØØØØØØÓÔÔÔÖÖÖÕÕÕ
-ÔÔØØØØÖÖÖÖÖÖÖÖÓÔÔÔÔÔÖÕÕÓ
-ÔÔÔØÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔáÕÓÓ
-ėėėėėÖÖÖÖÖÖÖÖÖÖÔÔÔÔáâáÔÓ
-ÔėėėėėėááááÔÖÔÔÔÔÔÔâââáÔ
-ÔÔÔÔáááááââáÔÔÔÔÔÔÔâââáÔ
-ÔÔÔÔááááááááÔÔÔÔÔÔÔâââáÔ
-ÔÔÔÔÔáááááááÔÔÔÔÔÔÔâââÔÔ
-ÔÔÔÔÔááááááÔÔÔÔÔÔÔááâáėė
-ÔÔÔÔÔááááÔÔÔÔÔááááááááėė
-ÔÔÔÔÔáááÔÔÔÔááááááááááÔė
-ÔÔÔÔÔáááÔÔÔÔÔáááááááááÔė
-end
-
-frame g_ornn_10 - 0
-ÖÖÖÓęęááááááááááâãããäääå
-ÖÖÖÓęęäâááááááááãääåææāā
-ÖÖÓĘĘääçâááááááâãääåææææ
-ÏÖÓĚåçççâáááááááãääåææææ
-ÏÖÓáçççççâááááááâãææææææ
-ÖÖÓæçççççâáááááááææææææè
-ÖÏáæçėėççâááááááááâææææè
-ÖÓáçèėėçâáááááááááááââââ
-þþĂėėėėėėėėėėėėáááĬĬáááá
-ýýþėėėėėėâââääėááėėááááá
-ýýėėėėėėââäääääėâââėáááá
-ėėâââââââääâââââėââĘėėėė
-ââââââââääâãããââėâĘĘĘĘãä
-ãâââââââääâãããâââėĘĘĘĘãã
-ääääâââääâãããããââėėėėėėė
-ãããääââääâãããããããããėãâââ
-ããããääääââãããããããããããããã
-ããããäėėäâããããããããããããããã
-ããããėėėÄÄÄÅÅÅÅÅããããããããÅ
-ããÅÅėėėÄÄÄÅÅÅÅÅÅãããããããÅ
-ããÅÅėėÄÄÄÅÅÅÅÅÅÅããããããÅÅ
-ããÅÅÅÅÅÅÅÅÅÅÅÅÅÅããããããÅÅ
-ããÅÅÅÅÅÅÅÅÅÅÅÅÅÅãããããããÅ
-ããÅÅÅÅÅÅÅÅÅÅÅÅÅäãããããããÄ
-end
-
-frame g_oroo_17 - 0
-ÕÕÕÕÕÏÕÕÕÛĭĭþþþþýáåååääâ
-ÕÕÕÕÕÏÕÕÕÔÛÛÚĭíþþýáååĂçç
-ÕÕÕÕÕÕÏÕÕÕÏÕÛÚÚĭþþþáçççç
-ÏÕÕÕÕÕÏÕÕÕÏÕÛÛÚÚþĭĭþáççá
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÛÛÚĭĭĭĭþþýþ
-ÖÏÕÕÕÕÕÏÕÕÕÕÕÕÕÚÚÿĭÿĭĭĭĮ
-ÖÏÖÖÕÕÕÏÕÕÕÕÕÕÕãÚÿĭĭĭĮĮÿ
-ÖÏÖÖÖÖÖÏÖÖÕÕÕÕÕÏÖÚĭÿÿĭÿÿ
-ÏÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÛÚÚÿÿþþþ
-ÖÖÖÖÖÖÖÖÖõÏÖÖÖÕÕÏÛÚÚÚþþþ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÕÕÕÏÕÕÔÔþ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÕÕÕÕÕÕÏÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÕÕÏÕÕÏÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÕÕÏÕÕÏÕ
-ÖÖÖÖÖÏÏÖÖÖÖÖÖÖÖÖÖÖÏÕÕÕÏÕ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÕÕÕÕÕÏ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÕÕÕÕÕÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÕÕÕÏ
-ÏÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÕÕÕÏ
-ÏÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÕÏÏ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÕÏÖ
-end
-
-frame g_oroo_22 - 0
-ÖÖÖÖÏÓÓÖÖììþþþþþáççèèçĂâ
-ÖÖÖÖÏÖÖÖÖÖÖþþþþþáèèèèèâá
-ÏÖÖÖÏÖÖÖÖÖÖĭĭþýáèèèèèâáá
-ÏÖÖÖÏÖÖÖÖÖÖĭĭþáèèèèââááá
-ÏÖÖÖÏÖÖÖÖÖÖĭĭĭþáââââäääâ
-ÖÖÖÖÏÖÖÖÖÖÖĭĭĭĭþáâããääää
-ÖÏÖÖÏÖÖÖÖÖÖĭĭĭĭþþáããåååå
-ÖÖÖÖÏÖÖÖÖÖÖÖÖĭÖããáääåååå
-ÏÕÕÕÏÖÖÖÕÖÖÖÖÏÖÖööáæāāæá
-ÕÕÕÕÖÖÖÖÕÕÕÖÖÏÖúööáæāāæá
-ÕÕÖÏÖÖÖÖÕÕÕÕÖÏúúúöáææææý
-ÖÖÖÏÖÖÖÕÕÕÕÕÖÏúúõöþþáááþ
-ÖÖÖÏÖÖÖÕÕÕÕÕÕÏõõõÖĮþÓÖÓþ
-ÖÖÖÏÖÕÕÕÕÕÕÕÕÏÖÖÖÖĭÖÓÖÖÓ
-ÖÖÖÏÏÕÕÕÕÕÕÕÏÕÖÖÖÓÓÓÓÓÓÓ
-ÖÖÖÕÏÏÕÕÕÕÕÏÕÕÖÖÖÓÚÓÓÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÏÕÕÖÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÏÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÖÖÖÖ
-end
-
-frame g_oroo_6 - 0
-ÕÕÕÕÚÛÛÛĭĭĭĭĭþþááááááááá
-ÕÕÕÕÕÕÕÕÕĭĭÚĬþþýáâáááááá
-ÕÕÕÕÕÕÕÕÕÕÕÚÚþþþááâááááá
-ÖÖÖÖÖÖÖÕÕÕÛÚÚĬúõõááááááá
-ÖÖÖÖÖÖÖÖÕÕÕÛÚÚÚõõõáááááá
-ÖÖÖÖÖÖÖÖÕÕÕÕÛÛÕäĭþýááááá
-ÖÖÖÖÖÖÖÖÕÕÕÕÛÏĭĭĭþþáááäâ
-ÖÖÏÏÖÖÖÖÕÕÕÕÕÏÕĭĭþþýááää
-ÖÖÖÏÖÕÕÕÕÕÕÕÕÕÕÕõþááááåå
-ÕÕÕÕÏÕÕÕÕÓÓÕÕÕÕÕõáááááæå
-ÕÕÕÕÕÏÕÕÕÓÓÕÏÕÕÓýáåæááææ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÕþþáåæææááá
-ÏÕÕÕÕÕÏÕÕÕÕÕÏþþýáäåææááý
-ÏÕÕÕÕÕÏÕÕÕÕÖÓÓþþáæææááúö
-ÏÕÕÕÕÏÕÕÖÖÖÖÓÖÖÖÓáæááöúú
-ÕÕÕÕÕÏÖÖÖÖÖÏÖÖÖÖÖööööúöö
-ÕÕÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÏÖÓÓÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-end
-
-frame g_oror_0 - 0
-ÖÖÖÕÕÕÕÕõõþáááááâääääæāā
-ÖÖÖÕÕÕÕÕõõþþáááááääåææāā
-ÖÖÕÕÕÕÕÕõõĭþááááááäåææææ
-ÕÕÕÕÕÕÕÕõĭĭĭþþþþááäåææææ
-ÕÕÕÕÕÕÖÕÕĭĭĭþþþþááæææææç
-ÕÕÕÕÖÖÖÖÖĭĭĭþþþýááæææææè
-ÕÕÕÕÖÖÖÖÖÿĭþþþþáááâææææè
-ÕÕÕÕÖÖÖÖÖÿþþááááááááââââ
-ÕÕÕÛÛÖÖÖÖþþááááááááááááá
-ÕÕÕÛÛÖÖÖÖþááâââââââááááá
-ÕÕÕÕÕÖÖÖþáâââââäääääââáá
-ÕÕÕÕÕÕÖÓáâââãããäääääääâá
-ÕÕÕÕÕÕÕþáâãããããååååääääâ
-ÕÕÕÕÕÕÖÖáãããäääáåååååäää
-ÕÕÕÕÕÖÖÖÓãäääææáāāååååçç
-ÕÕÕÖÖÖÖÖÓĚååææáýáāæççççç
-ÕÖÖÖÖÖÖÖÖěááæááþáæāāçççç
-ÖÖÖÖÖÖÖÖÖÓęáææáþþþþááççç
-ÖÖÖÖÖÖÖÖÖÕÔáææáþþþĭþáççç
-ÖÖÖÖÖÖÖÖÖÕÕìáááþþþĭþýáçç
-ÕÕÕÖÖÖÖÖÕÕÕìáááááúõþþááç
-ÕÕÕÕÕÕÕÕÕÕÕçþáááááõõþýáã
-ÕÕÕÕÕÕôÕÕÕÕíþĭááááááááãä
-ÕÕÕÕÕôôÕÕÕÕííĭýáááááèâãä
-end
-
-frame g_oror_1 - 0
-ÕÕÕÕÕÕÕÕÛÛÚþĭĭĭþáçâááááá
-ÕÕÕÕÕÕÕÕÛþþþþĭþáçççâáááá
-ÕÕÕÕÕÕÕÕÕĭĭĭþþþççççâáááá
-ÕÕÕÕÕÕÕÕÕĭĭĭþþýççççâáááá
-ÕÕÕÕÕÕÕÕÕÕĭĭþþþáççĂááááá
-ÖÕÕÕÕÕÕÕÕÕÛĭþþþþáèâáááââ
-ÖÖÖÕÕÕÕÕÕÕÛÛÚþþþáâáááââã
-ÖÖÖÕÏÕÕÕÕÕÛÚúþþþáááááãää
-ÖÖÖÏÖÖÖÕÕÕÛúõĭþýáááááãää
-ÖÖÖÏÖÖÖÖÕÔõõõþýááááááãää
-ÖÖÖÏÖÖÖÖÖÔÔõõááááááááâäæ
-ÖÖÖÏÖÖÖÖÖÓáĚááááááááááææ
-ÖÖÖÖÖÖÖÖÖÓĚááááááááááááâ
-ÖÖÖÏÖÖÖÖÖÓĚááááááááááááá
-ÕÕÕÏÖÖÖÖÖÔááááááááááááââ
-ÕÕÕÕÏÖÖÖÕãááááááááááâââã
-ÕÕÕÕÏÕÕÕÕããááááááááââããä
-ÕÕÕÕÕÏÕÕÕÕÖáááááááâäãääæ
-ÕÕÕÕÕÏÕÕÕÏÿþááááááãääåææ
-ÕÕÕÕÕÏÕÕÕÕÿþáââááâãääåææ
-ÕÕÕÕÕÏÕÕÚþþþááááááãääåææ
-ÕÕÕÕÕÏÕÕíþýáááááááâæææææ
-ÕÕÕÕÕÕÕÕíþþþáááááááâææāā
-ÕÕÕÕÕÕÛÚĭĭþþþþááááááââāā
-end
-
-frame g_oror_11 - 0
-ÖÓáäääåęáĚęáāĂĂĂççãæææææ
-ÖÓáçäáěěáĘĘæĂĂĂĂçâææææææ
-ÖÓáááÓÓÓÚááçèèèèĂââæææææ
-ÖÓáááÓÖÖÚÚáèèèèèâááââæææ
-ÖÓÓěáÓÓÓÚáèèèèâááááááâââ
-ÖÏÖÖÓÓáĚááââáááááááááááá
-ÖÏÖÖÏÓęááááááááááááááááá
-ÖÏÖÖÏÖÓáĘááááááááááááááá
-ÖÏÖÖÏÖÓÓáĘáááááááááááááâ
-ÖÏÖÖÏÖÛÛÓěááááööáááááâââ
-ÖÏÖÖÏÖÛÛÓÓÔúáöööááááâââã
-ÖÏÖÖÏÖÖÖÓÓÔúáöööáááâââãã
-ÖÏÖÖÏÖÖÖÓÓÔúáúööáâââãäãã
-ÖÏÖÖÏÖÖÖÓÓöúúúööáääããäää
-ÏÖÖÖÏÖÖÖÖÖöööúúáåääãäääå
-ÖÖÖÖÏÖÖÖÖÖööööáååááçäääå
-ÖÖÖÖÏÖÖÖÖĮĮöööþááááçäääå
-ÖÖÖÖÖÖÖÖÖþþĭĭĭþþááççãäää
-ÖÖÖÏÖÖÖÖÿþþĭĭĭþþþáççãāææ
-ÖÖÖÖÏÓÓÓþþþĭĭĭþþþáççâāææ
-ÖÖÖÓęÓÓþþþĭĭĭĭĭþááççââææ
-ÖÖÖáęáÓáęáþĭĭĭĭþáèèâááââ
-ÖÖÖÓÓÓÓáááþĭĭĭþááèâááááá
-ÖÖÖÖÖÓÓááááþþþáááâááááââ
-end
-
-frame g_oror_12 - 0
-ÖÏÖÖÖÏÖÖýááááááäâááááááá
-ÖÏÖÖÖÖÖÖáãääåååääâáááááá
-ÖÖÖÖÖÖÖÖáäææææååççáááááá
-ÏÖÖÖÏÖÖÖáåæææææçççâááááá
-ÖÖÖÖÏÖÖÖÓåææææāĂççâááááá
-ÖÖÖÖÖÖÖÖÓááááæĂĂççáááááá
-ÖÖÖÖÖÖÖÖÓááááèĂĂèââááááá
-ÖÖÖÖÖÖÖÖÖÓááèèĂââääääâáá
-ÖÖÖÖÏÖÖÖÖÓáæââãããååäääâá
-ÖÖÖÖÏÖÖÖÖÖáââããääååååääâ
-ÖÖÖÖÖÏÖÖÖÖÔãäääææææååççç
-ÖÖÖÖÖÏÖÖÖÖÔáäåææææææçççç
-ÖÖÖĭĭÖÏÖÖþþááåæææææææçĂĂ
-ÖÖÖĮĭÖÏÖþþþþáäåæææææççĂĂ
-ÖÖÖÖÖÖÏÖþþþþáæææāāççèèèç
-ÖÖÖÖÖÖÏÖþþþþþáææāĂèèèèèã
-ÖÖÖÖÖÖÏÖÖþþĭĭþááæèĂĂèèâã
-ÖÖÖÖÖÖÏÖÖÓþĭĭĭþþáèĂââáâã
-ÖÖÖÓÓÓÏÖÖĬĭĭĭĭĭĭááááááâã
-ÖÖÖÓÓÓÏÖÖìĭĭĭĭĭĭáááááááâ
-ÖÖÖÖÓÖÏÖÖÖþĭĭĭåĭþááááááá
-ÖÖÖÕÕÕÏÕÕÕĭĭĭĭĭĭþáââáááá
-ÖÕÕÕÕÕÏÕÕÕþĭåĭĭĭþáäääâáá
-ÕÕÕÕÕÏÕÕÕÔĭĭþþþþááåäääâá
-end
-
-frame g_oror_13 - 0
-ÖÖÖÏÖÖÖÖÖÖÖÓěååäääââããää
-ÖÖÖÏÖÖÖÖÖÖÖÓáåååääääãääæ
-ÖÖÖÖÖÖÖÖÖÖÓáææåååççääåææ
-ÖÖÖÓÏÖÖÖÖÓÓáææāĂçççääåææ
-ÖÖÖÖÏÖÖÖÖÓĘáæææçççĂääåææ
-ÖÖÖÖÖÏÖÖÖÖÓæææááççĂäāāææ
-ÖÖÖÖÖÏÖÖÖÖĬæææááçççâææææ
-ÖÖÖÖÖÏÖÖÖÖĬæææçèèçããããåå
-ÖÖÖÖÖÏÖÖÖöááççèèèããäääåå
-ÖÖÖÖÖÏÖÖÓöááèèèããäääæææå
-ÖÖÖÖÖÏÖÖÓááèĂĂääääææææææ
-ÖÖÖÖÖÏÖÖöáäèĂäääååææææææ
-ÖÖÖÖÖÏÖÖöäääääääåæææææææ
-ÖÖÖÖÖÏÖÖöáåäääääååææææææ
-ÖÖÖÖÖÏÖÖÓĘáååçäääæææāāææ
-ÖÖÖÖÖÖÖÖÖÓááááááææææāāææ
-ÖÖÖÖÏÖÖÖÓÓěááááæææææææçç
-ÖÖÖÖÏÖÖÖÓáĚáÚáçæææææææèè
-ÖÖÖÖÏÖÖÖÓěáÚúáçâææāāææèè
-ÖÖÖÖÏÖÖÖÓÓÓÚÚáçââââāææèè
-ÖÖÖÖÏÖÖÖÖÓÓÖúúâáááááââââ
-ÖÖÖÖÖÏÖÖÖÖÏÖöááááááááááá
-ÏÕÖÖÖÖÏÖÖÖÖööááááááááááá
-ÏÕÕÖÖÖÏÖÖÖÖöáááááááááááá
-end
-
-frame g_oror_16 - 0
-ÖÖÖÖÖÖÓĘáááýþáááááááââââ
-ÖÖÖÖÖÖÏÓÓáááááââááâââããã
-ÖÖÖÖÖÖÏÖÖööáááääââââããää
-ÏÖÖÖÖÖÏÖÖööááåääääãäääææ
-ÏÖÖÖÖÖÖÖÖööááåååääãääåææ
-ÏÖÖÖÖÖÖÏÖöááææåååççääåææ
-ÏÖÖÖÖÖÖÏÖááááæāĂççĂääæææ
-ÏÖÖÖÖÖÖÏÖööááæāĂççĂæææææ
-ÏÖÖÖÖÖÖÖÖÖÏþááæçççççææææ
-ÏÖÖÓÓÓÓÓÖÖÏþýááçççççáááæ
-ÏÖÖÓáááÓÖÖÏþþáááèèççâááâ
-ÏÖÖÓááááÖÖÏþþááèèèèâáááá
-ÏÖÖÓÓĚæĚÖÖÏÓááèèèèâááááá
-ÏÖÖÖÓęáÓÖÖÏþááèääââááááá
-ÏÖÖÖÓÓÓÓÓÓÓáããäáääääâááá
-ÏÖÖÖÖÓÓÓÓÓááääåáåäääáááá
-ÏÖÖÖÖÖÏÖÖÖÓáääåååååäáçäâ
-ÏÖÖÖÖÖÏÖÖÖÖáææææáááááãää
-ÏÖÖÖÖÛÛÛÖÖĬáææææáþþýáãåå
-ÖÖÖÖÖÖÚÛÛÖĬáæææææþþááäåå
-ÖÖÖÖÖÖÏÛÛÚÚáæææææáþáææææ
-ÖÖÖÖÖÖÖÖÛÛÚáæææææáþáææææ
-ÖÖÖÖÖÖÖÏÖÖÖáæææççáááææææ
-ÖÖÖÖÖÖÖÏÖþþþáæèèèááæææææ
-end
-
-frame g_oror_21 - 0
-ÖÖÖÖÖÖÖÏÖĭþþþáèèèæáæææĂĂ
-ÖÖÖÖÖÖÖÏÖĭþþþááèèæææææĂĂ
-ÖÖÖÖÖÖÖÏÖÖþþáááââáææææèè
-ÖÖÖÖÖÖÖÖÖÖÖþáááááááââæèè
-ÖÖÖÖÖÖÏÖÖÖÏþáááááááááááá
-ÖÖÖÖÖÖÏÖÖÖĭþáááááááááááá
-ÖÖÖÖÖÖÏÖÖÖĬýáááááááááááâ
-ÕÕÕÕÕÕÏÕÕÕþáááááááááááââ
-ÕÕÕÕÕÕÏÕÕĭþááááááááááâãã
-ÕÕÕÕÕÕÏÕÕĭþáâââââááááâää
-ÖÖÕÕÕÏÕÕÕþáââââäääâááâää
-ÖÖÖÕÕÏÕÕãþáããããáääääââää
-ÖÖÖÕÏÏÕÔãýáãäääááááääâãæ
-ÖÖÖÕÕÕÕÕÕþáäæææááååççââæ
-ÖÖÖÕÕÕÕÕÕÕþáæææáææççççââ
-ÖÖÕÕÕÕÕÕÕÚÚáææááææççççâá
-ÖÖÕÕÕÕÕÕÕÚĬýææááæçççĂĂâá
-ÖÕÕÕÕÕÕÕÕÚĬĭááááççèçĂâáá
-ÕÕÕÕÕÕÕÕÕúĬíîĭĬáèèèèèâáá
-ÕÕÕÕÕÕÕÕÕõĬìííĭáèèèèâááá
-ÕÕÕÕÕÕÕÕÕúĬìáìĭáèââááááá
-ÕÕÕÕÕÕÕÕÕÓĬììĭìááááááááá
-ÕÕÕÕÕÕÕÕÕÓĭĭĭĭþáââáááááá
-ÕÕÕÕÕÕÕÕÕÚÚĭĬĭþýääâááááá
-end
-
 frame g_oros_13 - 0
 ÖÖÖÏÖÖÖÖÖÖÖÓěååäääââããää
 ÖÖÖÏÖÖÖÖÖÖÖÓęáååääääãääæ
@@ -39312,195 +37992,6 @@ frame g_oros_13 - 0
 ÖÖÖÖÖÏÖÖÖÖØØØØÔÔÔÔÔÔÔÔÔÔ
 ÏÕÖÖÖÖÏÖÖØØØØØÔÔÔÔÔÔÔÔÔÔ
 ÏÕÕÖÖÖÏÖÖÖØØØØÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_oros_2 - 0
-ÕÏÕÕÕÕÏÕÕÓÛáááãääääæåååå
-ÕÏÕÕÕÕÏÕÕÛÛÛÛááäææææææåå
-ÏÕÕÕÕÕÏÕÓÛáÛÛþþáæææææææç
-ÕÕÕÕÕÕÏÕÕÓÛÛÝþþáæææææææç
-ÕÕÕÕÕÕÕÕÕÕÓÛÛÝþýāāæææææç
-ÕÕÕÕÕÕÕÏÕÕÕÓááþþáāææææçè
-ÕÕÕÕÕÕÕÏÕÕÕÓĘáþþýáæçççèè
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÛÛþþááááèèè
-ÕÕÕÕÕÕÕÏÕÕÕÕÏÕÛÛÚþþááèèè
-ÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕÚÚÕÔþáèèâ
-ÕÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÏÕÔÚááâ
-ÏÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÏÕÔúáá
-ÏÕÕÕÕÕÕÏÕÕÕÏÕÕÕÕÕÕÏÕÖÔõá
-ÏÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÏÖÖÔÔá
-ÏÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÖÖÖÖÔęá
-ÏÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÖõÖÔáĘá
-ÏÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÖØõõÔááá
-ÏÕÕÕÏÖÖÖÕÕÕÏÕÕÕØØØõõáááĘ
-ÏÕÕÕÏÖÖÖÖÕÕÏÕÕÕØØõõõáááá
-ÏÕÕÕÏÖÖÖÕÕÕÏÕÕÕØØÖõõõõõÔ
-ÏÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÖėėėėėėÔ
-ÏÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕėėėėėėėÔ
-ÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕėėėáėėėÔ
-ÖÖÖÖÖÖÖÏÕÕÕÏÕÕÕÔėėėáėėėÔ
-end
-
-frame g_orro_18 - 0
-ÏÕÕÖÖÖÖÖÖÖÖááááááááááááá
-ÏÕÕÖÖÖÏÖÖÖõááááááááááááá
-ÕÕÕÖÖÖĭĭÓõáááááááááááâââ
-ÕÕÕÖÖĬĭþáäâáááááááââââãä
-ÖÖÕÖÖĭĭþáäääâááááââãããäå
-ÖÖÖÖÖÖÓááååäçâáááãáãääææ
-ĮÖÖÖÖÏÓááæçççâááâáááææāā
-ĮÖÖÖÓÓÓááæççççááááýááæāá
-ĮÿÓááááááæçççáöööþáááæáá
-ÿÿáááááááçèááööööþýááááá
-ããěáááááááááöööööþþþþþþþ
-ÖÖÓááâæáęáõööööööþþþþþĮĮ
-ÿÖÓĚęáááĬĬúööööúúþþþþþĮÔ
-ÿþÓĭěááýĬĬúööööúúöþþĭĮĮÔ
-þýþþþþþĭĭĬĬúöööööööööúÚÛ
-áááþþþĭĭĭĭĭþúõõõõõõõúÚÛÛ
-áááááááþþþþúúúÔÔõõõõäÛÛÏ
-áááááááááááĬĬĭìÔÔÔÔÖÖÖÖÏ
-ááááááááááááĭìááÔÔÔÓÖÖÖÖ
-ááááââââääâáĬáááÔÔÏÖÖÖÖÖ
-áááââããäååäááááþĭĭÏÖÖÖÖÏ
-ááâäãääææååáááÚþĭÔÏÖÖÖÖÏ
-ááãääæææææçááááÔÖÖÏÖÖÖÖÖ
-ááãääæææææçáááááÓÖÏÖÖÖÖÖ
-end
-
-frame g_orrr_10 - 0
-ÖÖÖÓęęááááááááááâãããäääå
-ÖÖÖÓęęäâááááááááãääåææāā
-ÖÖÓĘĘääçâááááááâãääåææææ
-ÏÖÓĚåçççâáááááááãääåææææ
-ÏÖÓáçççççâááááááâãææææææ
-ÖÖÓæçççççâáááááááææææææè
-ÖÏáæçççççâááááááááâææææè
-ÖÓáçèçççâáááááááááááââââ
-ÓáĂĂèèèçâááááááááááááááá
-ááĂĂèèèâáááááááááááááâââ
-áèĂĂèââáááááááááááâââââä
-áèĂââáááááááááááâââããããä
-ââââââáááááááááâââãããääå
-ââääääââááááááâããããäääææ
-ããåäääääâáááááâãääääææææ
-ääååååäääâááááâãääåæææææ
-äææååååäççâáááâãääåæææææ
-æææææåĂĂççâáááâãääååææææ
-æææææççççççâááâãäāææææææ
-ææææææçççççâáááâāāæææææç
-æææææççççççâááááâææææææè
-æææææçççççâááááááââææææè
-ææçççèèèèçâáááááááááââââ
-ææèèèèèèäääââááááááááááá
-end
-
-frame g_orrr_6 - 0
-ÕÕÕÕÚÛÛÚĭĭĭĭþþýááááááááá
-ÕÕÕÚÚÚÛÛĭĭĭþþþááââáááááá
-ÕÕÕÕÚúúúúúþþýáááääâááááá
-ÖÖÖÚúõõõúúúýááááääââáááá
-ÖÖÖÚúõõõúĭþþááááĂĂçâáááá
-õõõõúúúúĭĭĭþþþþááĂçâáááá
-õõõõõúúúĭĭåþþþþþáçççâääâ
-õõõõõúúúþþþþþþááçççããäää
-õõõáááýáææææááççççããäååå
-ĭĭáâáááāææææççèèèãääāāæå
-þþáâæááææææèèèèèääåæææææ
-ááááâááææææèèèèääåææææææ
-áááááááâæææèèèèäääåæææāā
-áááááááááââââââãäæææææāĂ
-áááááááááááááááâæææææççè
-ááááááááááááááááâææææèèè
-áááááááááááááááááââææâãã
-ááááááááââââáááááâââãããã
-ááááááââââääääâáâââãããää
-ááááâââãããååääääâãäääääæ
-áááââãããääååååäääãääååææ
-áááãääääææææåååççãääåæææ
-ääâãääåææææææççççãääååææ
-åääãääåæææææææçççãäääæææ
-end
-
-frame g_orrr_7 - 0
-ÖÖÖÖÖÖÖÏÖÖõúááææææççèèçç
-ÖÖÖÖõõõõõõúõááááççèèèèèâ
-ÖÖÖõõõõõõúúõáááááèèèèèâá
-Öõõõõõõõõúúááááááèèèèâáá
-õõõõöööööúúáááááèâââáááá
-õõõöööööööáááááááááááááá
-õõöÖööááááááááââáááááááá
-õõöÖÏááâââããääääââáááááá
-ááÓĬĬâââãããäåååäääâáááââ
-ååáĬáâãããäääæåååääçááâââ
-ççááâãääåææææææççççâââãã
-áççççãääåææææææççççâãããã
-ááççâãääåææææææççççâãäää
-áèççâãääææææææçççççãäääå
-èèĂâáâææææāāççèèĂĂâãäääå
-èääääââæææāāèèèèĂââãäääå
-ãääääääâææææèèèèâááâãääæ
-ááåååääääââââââááááâææææ
-þááååååääâááááááááááâæææ
-ááææååççççâááááááááááââæ
-æææææçççççâááááááááááááâ
-æææææçççççâááááááááááááá
-æææææçççççâááááááááááááá
-æææææçççççâââââááááááááá
-end
-
-frame g_orso_5 - 0
-ÕÕÕÕôôôÕÕÕÕííþþáááýáââãä
-ÕÕÕÕÕÕÕÕÕÕÕìììþýááýáââãä
-ÕÕÕÕÕÕÕÕÕÕÕìáìþþþáááâãää
-ÕÕÕÕÕÕÕÕÕÕÕÔììþþþááááäáá
-ÕÕÕÕÕÕÕÕÕÕÕÔÔçþþþþþýáááá
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕííĬôþþþááá
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕííĭúôþþááá
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕìáÓôþáááá
-ÖÖÕÕÕÕÕÕÕÕÕÕÓÓÕÕÓþááææçá
-ÖÖÖÕÕÏÏÕÕÕÕÕěÓÕÕÕýááææèá
-ÖÖÖØÏÏÕÕÕÕÕÓĚÓÓÕÓÓááâæèá
-ÖÖÖÖÖÖÖÖÕÕÕÓęááÓÓÓÓÓáááá
-ÖÖÖÖÖÖÖÖÖÕÕÓáááĚÓÖÖÓáááá
-ÖÖÖÖÖÖÖÖÖÕÕÓáááęÓÖÖÓáááá
-ÖÖÖÖÖÖÕÕÕÕÕÕÓÓÓÓÓÓÓÓěěáá
-ÖÖÕÕÕÕÕÕÕÕÕÏÕÓÓÓÓÓÓÓęááá
-ÕÕÕÕÕÕÕÕáÕÏÕÕÕÓÓÓÓÕÕÓÓÓÓ
-ÔÔÔÔÔÔáâââÏÕÕÕÕÓÓÏÕÕÕÕÕÓ
-ÔÔÔÔÔÔâââÏÏÕÕÕÕÓÓÏÕÕÕÖÏÖ
-ÔÔÔÔÔÔáááÏÏÕÕÕÕÓÕÏÕÖÖÖÖÖ
-ÔÔÔÔÔÔÔÓÖÕÏÕÕÕÕÕÕÏÖÖÖÖÖÏ
-ÔÔÔÔÔÔĚáÓÖÏÕÕÕÖÖÖÏÖÖÖÖÖÏ
-ÔÔÔÔÔÔÔÓÓÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÓÓÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
-end
-
-frame g_orss_4 - 0
-ÕÕÕÕÕÕÓÓÕÕÔÓÔáååääääââââ
-ÕÕÕÕÕÕÓÓÓÓÓáĚáååååäääâãã
-ÕÕÕÕÕÕÓÓÓÓáěææææåååçãããä
-ÕÕÕÕÕÕÓÓÓÓáāæææææçççãääæ
-ÕÕÕÕÕÕÕÕÓÓááĘææææçççäåææ
-ÕÕÕÕÕÕÕÕÓÓÓÓÓÓěáááááåæææ
-ÕÕÕÕÕÕÕÕÕÓÓÖÖÖÓěáĬúõáæææ
-ÕÕÕÕÕÕÕÕÕÓÓÖÖÖÓÓçĭĬúáæáá
-ÕÕÕÕÕÕÕÕÕÕÕÕÓÓÕÕÓíáááāáú
-ÕÕÕÕÕÖÖÖÕÕÕÓÓÕÕÕÕíááāāáú
-ÕÕÕÕÕÖÖÖÖÕÕÕÕÕÕÕÕÓáááááĬ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÓÓÓĭĭĭĭ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÓÕÕÕÕÕììì
-ÓÕÕÕÕÕÕÕÕÔÔáÓÓÓÕÕÕÕÕÕĭĭĭ
-ÓÓÔÕÕÕÕÕÔÔÔÔÔÔÔÕÕÕÕÕÕÔÔÔ
-ÓÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÔÔÔÔá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔėá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 end
 
 frame g_oscs_1 - 0
@@ -39530,33 +38021,6 @@ frame g_oscs_1 - 0
 ããããããããããããĘáþþÔÔÔÔÔÔÔÔ
 end
 
-frame g_osfo_14 - 0
-ÖÖÖÖÖÖÏÖÖÖÖØØÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÔÔÔÔÔÔÔÔááÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖØÔÔÔÔáââá
-ÖÖÖÖÕÕÖÖÖÖÖÖÖÖÖÖÖėėėââââ
-ÏÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÔÔÔââââ
-ÖÖÖÖÕÕÕÖÖÖÖÖÖÖÖÖÏÔÔÔââââ
-ÖÖÖÖÖÖÕÖÖÖÖÖÏÖÖÖÏÖÕÔâââá
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖÖÔáâáÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖáááÔ
-ÖÖØØÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÏÏÖØØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÏ
-ÖÖÖÏÖÖØØÖÖØÖÖÖÖÏÖÖÖÖÖÏÏÏ
-ÖÖÖÏÏÖÖØØØØØØÖÖÖÖÖÖÖÖÏÏÏ
-ÖÖÖÖÏÖÖÖØØØØØØØÖÖÖÖÖÖÏÏÖ
-ÖÖÖÖÖÖÖÖÖÖØØØØØØÖÖÖÖÖÏÖÖ
-ÕÕÖÖÖÖÖÖÖÖÖÖØØØØÏÖÖÖÖÏÖÖ
-ÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÕÕÕÕÖÖÖÖÖÏÖÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÖÖÖÏÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÖÏÖÖÖÖÏ
-end
-
 frame g_osof_2 - 0
 ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÔÔÔÔÔÔÔÔ
 ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÔÔÔÔÔÔÔÔ
@@ -39584,222 +38048,6 @@ frame g_osof_2 - 0
 ÖÖÖÖÖÖÖÏÕÕÕÏÕÕÕÖÖÕÕÕÕÕÕÕ
 end
 
-frame g_osoo_14 - 0
-ÖÖÖÖÖÖÏÖÖÖÖÖØÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÔÔÔÔÔÔÔÔááÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖØÔÔÔÔáââá
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖėėėââââ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÔÔÔââââ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÔÔââââ
-ÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÏÖÖÖâââá
-ÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖâáÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖáÔ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÏ
-ÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÏÏ
-ÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏÏ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏÖ
-ÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖ
-ÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖ
-ÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖ
-ÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-end
-
-frame g_osoo_19 - 0
-ÏÖÖÖÖÖÖÖâââÖÕâââáááááááÔ
-ÏÖÖÖÖÖÖÖÖââÖÖââáááááááÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖâââáÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖââáÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÏÏÖÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖØÔÔÔÔÔÔ
-ÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÖÖÖØÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-end
-
-frame g_osoo_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÖÔÔÔÔÔÔÔÔÔáâââ
-ÖÏÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔââââ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÔÔÔÔÖÖÔáâââ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖáâââ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖØØáááá
-ÖÖÖÖÖÏÖÖÕÕÖÖÖÖÖÏØØØØØááá
-ÖÖÖÖÖÏÕÕÕÕÖÖÖÖÏÖØØØØØėėÔ
-ÖÖÖÖÕÏÕÕÕÕÖÖÖÖÖÖØÖÖÖÖÖÖÔ
-ÖÖÖÕÏÕÕÕÕÕÏÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÕÕÏÕÕÕÕÕÏÕÕÕÖÖÖÖÖÖÖÖÖÖ
-ÖÕÕÏÖÖÖÖÕÕÏÏÕÕÕÖÖÖÖÖÖÖÖÕ
-ÖÖÖÏÖÖÖÖÖÕÕÏÕÕÕÕÖÖÕÕÕÕÕÖ
-ÖÖÖÏÖÖÖÖÖÕÕÏÕÕÕÕÖÖÖÖÏÖÖÖ
-ÕÖÖÏÖÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÕÕÕÏÖÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÕÕÕÕÖÖÖÖÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÕÏÕÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_osoo_23 - 0
-ÖÖÖÖÖÏÖÖÖÖááėėėÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔáá
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖØØØØØâââ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖØØØØØØââ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖØØâââ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖáâââââ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖáÏÖÖÖá
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖá
-ÏÖÖÖÖÖÏÖÖÖÖÏÕÕÕÖÖÖÖÏââáÖ
-ÏÖÖÖÖÖÏÖÖÖÖÏÖÕÕÖÖÖÖÖÖÕÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÕÕÕÏÕÖÖÖÏÖÖÖÖÖÕÏÕ
-ÖÖÖÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÏÏ
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÏ
-end
-
-frame g_osoo_4 - 0
-ÕÕÕÕÕÕÕÕÕÕÖØØÖėėėėėėėėėė
-ÕÕÕÕÕÕÕÕÕÕÖÖØØėėėėėėėáėė
-ÕÕÕÕÕÕÕÕÕÕÖÖÖØėėėėėėáááė
-ÕÕÕÕÕÕÕÕÕÖÖÖÖØØėėėėėėáėė
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÕÕÕÕÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÔ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖ
-ÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_osoo_8 - 0
-ÕÕÕÕÕÕÕÕÖÖÖÖÖÔÔÔÔÔááááÔÔ
-ÕÕÕÕÕÕÖØØØØØØÔÔÔÔÔÔáâááÔ
-ÕÕÕÕÕØØØØØØØÔÔÔÔÔÔÔáââáÔ
-ÕÕÕÕÕØØØØØØØÔÔÔÔÔÔÔáââáá
-ÕÕÕÕÕØØØÖÖÖÖÔÔÔÔÔÔÔááááÔ
-ÕÕÕÕÕÕÕÕÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÖÖÖÔÔÔÔÔÔÔÔÔÔÔ
-ÕÏÕÕÕÏÕÕÕÕÕÖÖÖÔÔÔÔÔÔÔÔÔÔ
-ÕÏÕÕÕÏÕÕÕÕÕÖÕÕÕÕÕÕÖÖÖÖÔÔ
-ÕÏÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÕÕÕÕÕÕÖ
-ÕÏÕÕÕÕÕÕÕÕÏÕÖÖÖÖÖÖÖÖÕÕÕÕ
-ÕÏÕÕÕÕÕÏÕÕÏÖÖÖÖÏÖÖÖÖÖÖÖÕ
-ÕÏÕÕÕÕÕÏÕÕÕÖÖÖÏÖÖÖÖÖÖÖÖÖ
-ÕÏÕÕÕÕÕÏÕÕÖÖÖÖÏÖÖÖÖÖÖÏÖÖ
-ÏÕÕÕÕÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÏ
-ÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-end
-
-frame g_osos_1 - 0
-ÕÕÕÕÕÕÕÕÕÔÔÖÖááėėėėėėÔÔÔ
-ÕÕÕÕÕÕÕÕÕááââââÔėėėėėÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕâââââÔėėėėÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕáâââáÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÔÔááÔÔÔÔÔÔÔÔÔė
-ÖÕÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔėė
-ÖÖÖÕÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔÔėė
-ÖÖÖÕÏÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔėė
-ÖÖÖÏÖÖÖÕÕÕÕÏÏÔÔÔÔÔÔÔÔÔėė
-ÖÖÖÏÖÖÖÖÕÕÕÕÏÕÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÔÔÔÔÔÔÔááá
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÔÔÔÔÔÔáááâ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÔÔÔÔááââ
-ÖÖÖÏÖÖÖÖÖÕÕÕÏÕÔÔÔÔÔėÔáââ
-ÕÕÕÏÖÖÖÖÖÕÕÏÕÕÔÔÔÔÔėÔÔáá
-ÕÕÕÕÏÖÖÖÖÕÏÕÕÕÔÔÔÔÔÔÔÔÔá
-ÕÕÕÕÏÕÖÖÖÕÖÖÖÖÔÔÔÔÔÔÔÔÔá
-ÕÕÕÕÕÏÕÕÕÕÕÖÖáÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÕÔááÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÖÖÖÕÕÕÏÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÖÖÏÕÕÕÕÏÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÖÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_osos_11 - 0
-ÖÏÖÖÖÖÏÕÕÕÖÖÖááÔÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÏÖÖÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÏÖÖÖÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖÖÖÕÕÕÕÔÔÔÔÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÖÖÖÖÖÖÕÔÔÕÕÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔ
-ÖÏÖÖÏÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÔÔ
-ÖÏÖÖÏÖÖÖÖØØÖÖÖÖÖėÕÕÕÕÔÔÔ
-ÖÏÖÖÏÖÖØØØØØØØÖÖėÕÕÕÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖØØÖÖÖÖÖėÔÔÔÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÏÏÖÖÖÖÖėÔÔÔÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÏÏÖÖÖÖØÔÔÔÔÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÏÖÖÖÖÖėÔÔÔÔÔÔÔÔ
-ÖÏÖÖÏÖÖÖÖÏÏÖÖÖâáÔÔÔÔÔÔÔÔ
-ÏÖÖÖÏÖÖÖÖÖÏÖÖÖâáÔÔÔÔÔÔÔÔ
-ÖÖÖÖÕÖÖÖÖÖÏÖÖÖâáÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖáÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÕÕÕÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÏÖÖÖÖÖÖÖÖÕÕÕÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖØØØØÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖØØØØÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-end
-
 frame g_osos_12 - 0
 ÖÏÖÖÖÏÖÖÖÖÏÖÖÖââââááááââ
 ÖÏÖÖÖÖÖÖÖÖÖÏÖÖâââââááâââ
@@ -39825,60 +38073,6 @@ frame g_osos_12 - 0
 ÖÖÖÕÕÕÏÕÕÕÕėėėÔÔÔÔÔÔÔÔáâ
 ÖÕÕÕÕÕÏÕÕÕÖėėÔÔÔÔÔÔÔÔÔáâ
 ÕÕÕÕÕÏÕÕÕÕÕėėÔÔÔÔÔááááââ
-end
-
-frame g_osos_14 - 0
-ÖÖÖÖÖÖÏÖÖÖÖØÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔÔÔááÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÏÔÔÔÔÔÔáââá
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔėėėââââ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔââââ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔââââ
-ÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÔÔÔÕÔâââá
-ÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÔÔÔÕÔáâáÔ
-ÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÔÔÕÕááááÔ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÔÔÕÕááááÔ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÕÕáááááÔ
-ÖÖÖÏÏÖÖÖÖÖÖÖÖÖÔÔááááááėÔ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÖÔáâáááááÔÔ
-ÖÖÖÏÏÖÖÖÖÖØØØÖÔáâââáááÔÔ
-ÖÖÖÖÏÖÖÖÖØØØØÔÔáâââáááÔÔ
-ÖÖÖÖÖÏÖÖÖÖØØØÔÔáâââááááÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖØÔÔėáááááááÕ
-ÖÏÖÖÖÖÏÖÖÖÖÖÖÔÔėėėÕáâââá
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÔÔėėėÕáââââ
-ÖÏÖÖÖÖÏÖÖÖÖÖÖÔÔÔėėÕáââââ
-ÖÏÖÖÖÖÖÖÕÕÖÖÖÔÔÔėÔÔáââââ
-ÖÖÖÖÖÏÖÖáÔÕÕÖÔÔÔÔÔÔáâââá
-ÏÖÖÖÏÖÖÖáááÕÕÔÔÔÔÔáááâáá
-ÏÖÖÖÖÖÖÖâââÕÕâáááááááááÔ
-end
-
-frame g_osos_15 - 0
-ÖÖÖÖÖÖÖÖÏÖÖÕÕÕÕÕÕÕÖááââá
-ÖÖÖÖÖÖÖÖÏÖÖÖÕÕÕÕÕááááááá
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÕÕááááÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏááâááÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏáâââÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏâââÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖÖÖÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖÖÔÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÔáÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖáááėÔÔÔÔ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏėááÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖØØØėėėėÕÕÕÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖØØØėėėėÕÕÕÕÕÔÔÔ
-ÖÏÖÖÖÖÖÖÖØØØáėėėÕÕÕÕÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖÖáááėėÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖÖėėėėėÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÏÖÖÖėėėėÔÔÔÔÔÔÔáÔ
-ÖÏÖÖÖÖÖÏÖÖÔėėėÔÔÔÔÔÔááââ
 end
 
 frame g_osos_17 - 0
@@ -39962,60 +38156,6 @@ frame g_osos_22 - 0
 ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÔÔÔÔÔÔÔÔÔ
 end
 
-frame g_osos_3 - 0
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÔÔÔÔėÔÔ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÖÔÔÔáââáá
-ÏÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÔÔÔââââá
-ÕÕÕÕÕÕÏÕÕÕÕÕÔÔÕÕÔÔÔáââáá
-ÕÕÕÕÕÕÏÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÕÕÕÕÓÓÔÔÔÔÔÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÕÕÕÕÓÓÓÓÔÔÔÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÕÕÕÓÓÓÓÓÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÖÖÖÖÖÓÔÔÔÔÔÔÔÔÓ
-ÏÕÕÕÕÕÕÕÕØØØØØÓÔÔÔÔÔÔÔÓÓ
-ÕÕÕÕÕÕÕÕÕÕØØØÓÓÔÔÔÔÔÔÔÓÓ
-ÕÕÕÕÕÕÖÕÕÕØØØÓÓÔÔÔÔÔÔÔÓÓ
-ÏÕÕÕÕÕÖÕÕÕÖÖÖÖÓÔÔÔÔÔÔÔÓÓ
-ÏÕÕÕÕÖÖÖÕÕÖÖÖÖÖÔÔÔÔÔááÓÓ
-ÕÕÕÕÖÖÖÖÕÕÕÖÖÖÖÔÔÔÔáâáÔÓ
-ÕÕÖÖÖÖÖÖÖÕÕÕÖÖÖÔÔÔÔâââáÔ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔÔÔâââáÔ
-ÖÖÖÖÖÖÖÖÖÖÕÕÕÕÔÔÔÔÔâââáÔ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔÔÔâââÔÔ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÔÔááâáėė
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕááááááėė
-ÕÕÕÕÕÕÕÕÕÕÖÕÕÕÕÕááááááÔė
-ÕÕÕÕÕÕÕÕÕÖÖÖÖÖááááááááÔė
-end
-
-frame g_osos_6 - 0
-ÕÕÕÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕØáááááÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕØâââââáÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÕÕâââââáÔÔėėėėÔÔÔ
-ÖÖÖÖÖÖÖÖÕÕÕÕááÔÔėėėėėÔÔÔ
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÔÔÔėėėėėėÔÔ
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÏÔÔėėėėėėÔÔ
-ÖÖÏÏÖÖÖÖÕÕÕÕÕÏÔÔėėėėėėÔá
-ÖÖÖÏÖÕÕÕÕÕÕÕÕÕÔÔėėėėėėáâ
-ÕÕÕÕÏÕÕÕÕÕÕÕÕÕÔÔėėėėėėáá
-ÕÕÕÕÕÏÕÕÕÕÕÕÏÕÔÔÔÔÔÔÔÔÔÔ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÕÖÔÔÔÔÔÔÔÔÔ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÖÖÔÔÔÔÔÔÔÔÔ
-ÏÕÕÕÕÕÏÕÕÕÕÖÏÖÖÔÔÔÔÔÔÔÔÔ
-ÏÕÕÕÕÏÕÕÖÖÖÖÏÖÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÏÖÖÖÖÖÏÖÖÔÔÔÔÔÔÔÔÔÔ
-ÕÕÖÖÏÖÖÖÖÖÖÏÖÖáÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖááÔÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖâááÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖâááÔÔÔÔÔÔÔ
-ÖÖÖÖÏÖÖÖÖâÖÏÖâááÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÏÖÖÖâââââááÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÏÖÖÖÖââÏáááÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖâÖÖÏááÔÔÔÔÔÔÔÔ
-end
-
 frame g_osos_7 - 0
 ÖÖÖÖÖÖÖÏÖÖÕÏÕÕÕÔėėáááėÔÔ
 ÖÖÖÖÖÖÖÏÖÖÖÏÕÔÔÔėėááááÔÔ
@@ -40041,60 +38181,6 @@ frame g_osos_7 - 0
 ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÔÔÔÔÔáá
 ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖâáÔÔÔáââ
 ÖÏÖÖÖÏÖÖÖÖÏÖÖÖââââááááââ
-end
-
-frame g_osro_6 - 0
-ÕÕÕÕÕÕÕÕÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕØáááááÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÕÕââáÖÖÖÖÔÔÔÔÔ
-ÖÖÖÖÖÖÖÕÕÕÕÕÕÏáØÖÖÖÖėÔÔÔ
-ÖÖÖÖÖÖÖÖÕÕÕÕÕÏØØØØØÖÖÔÔÔ
-õÖÖÖÖÖÖÖÕÕÕÕÕÏÔØØØØØėėÔÔ
-õõÖÖÖÖÖÖÕÕÕÕÕÏÕÔÖØØØėėÔÔ
-õõÏÏÖÖÖÖÕÕÕÕÕÏÕÖÖÖÖØėėÔá
-õõÖÓÖÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖėėáâ
-ĭĭÓÓÓÕÕÕÕÓÕÕÕÕÕÕÖÖÖÖėėáá
-þúÓáÓÏÕÕÓÓÓÕÏÕÕÖÖÖÖÔÔÔÔÔ
-ááááÓÕÏÕÓÓÓÕÏÕÖÖÖÓÔÔÔÔÔÔ
-ááááÓÕÏÕÓþþÓÏÖÖÖÓęáÔÔÔÔÔ
-ááááĭÓÏÕþþþþÓÓÖÖÓęáÔÔÔÔÔ
-áááþýááÓþþþþÓÓÖÖÖÓÓÖÔÔÔÖ
-áááþááááþþþÓáÓÖÖÖÖÖÖÕÕÕÏ
-áááááááááþþþÓÖÖÖÏÖÖÖÖÖÖÏ
-ááááááááâáþþþÖÖÖÏÖÖÖÖÖÖÏ
-ááááááâââááþþþÖÖÏÖÖÖÖÖÖÏ
-ááááâââãããåáþÓÖÖÏÖÖÖÖÖÖÖ
-áááââãããääååáÓÖÖÖÏÖÖÖÖÖÖ
-áááãääääææææåęÓÖÖÏÖÖÖÖÖÖ
-ääâãääåææææææáÓÖÖÖÖÖÖÖÖÖ
-åääãääåæææææááÓÖÖÖÏÖÖÖÖÖ
-end
-
-frame g_osss_16 - 0
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÏėėÔÔÔÔÔ
-ÏÖÖÖÖÖÖÏÖÖÏÖÖÖÖÏÖáááÔÔÔÔ
-ÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖėáÔÔÔÔÔ
-ÏÖÖÖÖÖÖÏÖÖÖÖÖÖÏÏėėėÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÖÖÏÖėėÖÏėėėėėÔÔÔ
-ÏÖÔÔÖÖÏÖÖÖÏÔÕėėėėÔÔÔÔÔÔÔ
-ÏÖÔÔÔÖÏÖÖÖÖÖÖÔėėÔÔÔÔÔÔÔė
-ÏÖÔÔÔÖÏÖÖÖÔÖÖÖÔÔÔÔÔÔÔÔėė
-ÏÖÔÔÔÖÏÖÖÔÔÖÖÖÔÔÔÔÔÔÔÔėė
-ÔÔÔÔÔÖÏÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔáááááááááÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔââââááááááÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔáááááááááááÔÔėÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáááááÔėÔÔ
-áááááÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔÔ
 end
 
 frame g_osss_18 - 0
@@ -40149,141 +38235,6 @@ frame g_osss_2 - 0
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėėėėėÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėáėėėÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėáėėėÔ
-end
-
-frame g_osss_20 - 0
-ÖÏÖÖÖÖÖÏÖÖÔÔÔÔÔÔÔÔÔÔáâââ
-ÖÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔââââ
-ÖÏÖÖÖÖÖÔÖÖÔÔÔÔÔÔÔÔÔÔáâââ
-ÏÖÖÖÖÖÔÔÔÔÔÖÖÔÔÔÔÔÔÔáâââ
-ÖÖÖÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔááááá
-ÖÖÖÕÕÕÕÖÔÔÔÔÔÔÔÔÔááááááá
-ÖÖÖÕÖÏÕÖÔÔÔÔÔÔÔÔÔáááėėėÔ
-ÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔėėÔ
-ÖÖÖÕÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
-ÖÖÔÔÖÖÖØÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
-ÖÖėÔÔØØØÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
-ØØėėÔØØØÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
-ØėėėÔØÖÖÔÔÔÔÔÔÔÖÔÔÔÔÔááÔ
-ėėėėėÔÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔááá
-ėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáá
-ėėėėėėááááááááÔÔÔÔÔÔÔÔáá
-ÔÔėėėėáââââââáÔÔÔÔÔÔÔÔáá
-ÔÔÔėėėáââââââáÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔėėėááááááÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėáââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėâââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėáėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_osss_24 - 0
-ÖÖÖÏÖÖÖÖÕÖÖÖÖÕáââáÕÕÔÔÔÔ
-ÖÖÖÏÖÖÖÖÕÕÕÖÖÖââââáÕÔÔÔÔ
-ÖÖÖÏÖÖÖÖÕÕÕÕÕÕáâââáÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÕÕÕÕáâââáÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÕááááááááÔÔ
-ÏÖÖÖÖÖÖÖÏÖÖâââáááááââââÔ
-ÏÖÖÖÖÖÖÖÏÖÖâââáááááââââÔ
-ÏÖÖÖÖÖÖÖÏÖÖáááááááâââââÔ
-ÏÖÖÖÖÖÖØØØØÕÕÕááâââââââá
-ÏÖÖÖÖÖØØØØØÔÔÔÔââââââââá
-ÏÖÖÖÖÖÖÖØØÔÔÔÔÔâââââââââ
-ÏÖÖÖÖÖÖÖÖÖÔÔÔÔÔâââââââââ
-ÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔââââââââá
-ÏÖÕÖÖÖÖÖÔÔÔÔÔÔÔáââáÔÔÔėė
-ÖÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔėė
-áááÔÔÔÔÔÔÔááááÔÔÔÔÔÔÔÔÔė
-áâáÔÔÔÔÔÔÔâââáÔÔÔÔÔÔÔÔÔÔ
-áááÔÔÔÔÔÔÔááááÔÔÔÔÔÔÔÔÔÔ
-ÕáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔėėėėÔÔėėėėėÔÔÔÔÔÔÔÔėėė
-ėėėėÔÔÔÔÔėėėėėėėėėėėėėėė
-ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
-ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
-end
-
-frame g_osss_3 - 0
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÔÔÔÔėÔÔ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÖÔÔÔáââáá
-ÏÕÕÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔÔââââá
-ÕÕÕÕÕÕÏÕÕÕÕÔÔÔÔÔÔÔÔáââáá
-ÕÕÕÖÖÖÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÔÔÔÔÓÓÔÔÔÔÔÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
-ÖÕÕÖÖÖÖÖÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
-ÕÖÖÖÖÖÖÖÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
-ÖÖÖÕÖÖÖÖÔÔÓÓÓÓÓÔÔÔÔÔÔÔÔÓ
-ÖÖÖÖÖÖÖØØÔÓÓÓÓÓÔÔÔÔÔÔÔÓÓ
-ÔÖÖÖÖØØØØØÓÓÓÓÓÔÔÔÔÔÔÔÓÓ
-ÔÔÖØØØØØØØÓÓÓÓÓÔÔÔÔÔÔÔÓÓ
-ÔÔØØØØÖÖÖÖÔÓÓÓÓÔÔÔÔÔÔÔÓÓ
-ÔÔÔėėÖÖėėÔÔÓÓÓÔÔÔÔÔÔááÓÓ
-ėėėėėėėėėėÔÔÓÔÔÔÔÔÔáâáÔÓ
-ÔėėėėėėááááÔÔÔÔÔÔÔÔâââáÔ
-ÔÔÔÔáááááââáÔÔÔÔÔÔÔâââáÔ
-ÔÔÔÔááááááááÔÔÔÔÔÔÔâââáÔ
-ÔÔÔÔÔáááááááÔÔÔÔÔÔÔâââÔÔ
-ÔÔÔÔÔááááááÔÔÔÔÔÔÔááâáėė
-ÔÔÔÔÔááááÔÔÔÔÔááááááááėė
-ÔÔÔÔÔáááÔÔÔÔááááááááááÔė
-ÔÔÔÔÔáááÔÔÔÔÔáááááááááÔė
-end
-
-frame g_osss_4 - 0
-ÕÕÕÕÕÕÕÕÕÕÖØØÖėėėėėėėėėė
-ÕÕÕÕÕÕÕÕÕÕÖØØØėėėėėėėáėė
-ÕÕÕÕÕÕÕÕØØØØØėėėėėėėáááė
-ÕÕÕÕÕÕÕÖÖÖÖÖÖėėėėėėėėáėė
-ÕÕÕÕÕÕÖÖÖÖÖÖáÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÖÖÖÖâáÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÖÖÖÖááÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÕÕÖááÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÖÖÕÕÕÕáááÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÖÖÖÔÔÔááÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÖÔÔÔÔÔááÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÖÔÔÔÔÔÔááÔÔÓÓÓÓÓÓÓÔÔÔ
-ÕÕÕÔÔÔÔÔÔÔááÓÓÓÓÓÓÓÓÓáÔÔ
-ÓÓÓÔÔÔÔÔÔÔÔáÓÓÓÓÓÓÓÓÓÔÔÔ
-ÓÓÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÓÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔėá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėė
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_osss_7 - 0
-ÖÖÖÖÖÖÖÏÖÖÕÏÕÕÕÔėėáááėÔÔ
-ÖÖÖÖÖÖÖÏÖÖÖÏÕÔÔÔėėááááÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖÔÔÔÔÔėėáââááá
-ÖÖÖÖÖÏÖÖÖÖÕÔÔÔÔÔėėáâââââ
-ÏÖÖÖÖÏÖÖÖÖÖÔÔÔÔÔÔÔáââââá
-ÏÖÖÖÏÖÖÖÖÔÔÔÖÖÔÔÔÔáââááÔ
-ÏÖÖÖÏÖÖÖÔÔÔÔÖÖÖÔÔááâááÔÔ
-ÏÖÖÖÏÖÖÖÔÔÔÖÖÖÖáááââáÔÔÔ
-ØØÖÖÖÖÖÖÔÔÔØØØØâââââáÔÔÔ
-ØØØÖÖÏÖØÔÔÔØØØØââááááÔÔÔ
-ÖØØÖÖÏØØÔÔÔØØØááááÔÔÔÔÔÔ
-ÔÖÖÖØØØØØØØÔÔáááÔÔÔÔÔÔÔÔ
-ÔÔÔÖÖÔÔØØØÖÔÔÔááÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÖÖÔÔÔÔáÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔááââáÕÕÕÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔáââââÕÕÕÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔááââââÕÕÕÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔááááááááÕÕÕÔÔÔÔÔÔÔÔÔÔ
-ÔÔááââáááÔÔÕÕÕÔÔÔÔÔÔÔÔáá
-ÔÔáâââáÔÔÔÔÔáââââáÔÔÔáââ
-ÔááâââáÔÔÔÔáââââââááááââ
 end
 
 frame g_papa_3 - 0
@@ -49952,6 +47903,60 @@ frame g_rnnn_19 - 0
 ãããääãããããããããããããããããâä
 end
 
+frame g_rnnn_23 - 0
+ááâäæææææėęęėėėÅÄÄÄÄâââã
+áááæææėæĭėęęėėėÅÄÄÄÄâââã
+ááááâėėėáæęęęėÅÄÄÄÄÄââââ
+ėėááėėãėáãėããėėÄÄâââââââ
+ėėėáėėėėáãęââėėâââââââââ
+Äėėááėėáäęęâããėėââââââââ
+Äâėááááäėęęããããėėâââââââ
+ėėėááááäėęęãããėėâââââââÄ
+ΑΑþáááááėėėėãėâââââââââÄ
+ΑþýááááėėÅÅėėėââââââââââ
+þýýýáááėÄÄÄėėėâââââââââä
+ėýýýýáėėÄÄÄėėėėėââââââää
+ãėýýýėãėÄÄÄėėėėėėââââäää
+ėãėýėėėėÄÄÄÄÄėėėâââäääââ
+ėėėėėėėėėÄÄÅÅÅääääääââââ
+ÄėėėėėÄÄėėÅÅÅÅããâââââããã
+ÄÄėėėėėÅÅÅÅÅÅããããããããããã
+ÄÄėėėėėėãããããããããããããããã
+âÄÄėėėėėãããããããããããããããã
+âââääâââãããããããããããããããã
+âââääâââââãããããããããããããã
+âââääââââââããããããÅãããâââ
+âââääââââââââââãããããââââ
+âââäââââââââââââããããââââ
+end
+
+frame g_rnrn_13 - 0
+áááâââãããėėâââââãããããããã
+ááâââãããäėėâââââãããããããã
+ááâãääääėėãââââããããããããâ
+áâãäääåėėėããããããããääããâÄ
+áâãäėėėėėėãããããããääääââÄ
+áâãäėėėėėėããäääääääääâÄÄ
+áâããäėėėėėėääääėääããäâÄÄ
+ááâãäæææææėäääėėėãããääÄÄ
+ááâææææææææėėėėėäããããääÄ
+áááâæææææææĭĭĭáėãėãããããã
+âáááââæææææĭĬĬþėėėãããããã
+âáâââââäääĬĬĬĬþâėėėėėããã
+âââĭĭããååäĬĬĬĬėėėėėėėėãã
+ââãĭĭääåååĬĬĬĬėėėėėėėããã
+ãäãĭääæææåĭĬþþėÄÄėėėãããã
+äääåæææææėėþħėėÄÄėėããããã
+äääåææææææþþėėėããėėâââââ
+äääåææææææþėėėėėėėėâââââ
+äääåææáþææþėėėėėėėėâââââ
+ãäææææáááþþėėãėããėėâââââ
+âæāāææáááħėėėãããââââââââ
+áâāāææááááėėėããâââââââââ
+ááââææáááėėėėãââââââââââ
+áááááââáááėėėėėėėâââââââ
+end
+
 frame g_rnrn_18 - 0
 ááááááááááėėėėėâėâââââââ
 âáááááėėááėėėėėėėâââââââ
@@ -50006,652 +48011,166 @@ frame g_rnrn_2 - 0
 ĂĂèâáááâãäþĦĦėâäãėėãââââ
 end
 
-frame g_rnrn_7 - 0
-áááááááâãäþħĦėääãėėãÅÅââ
-ááááááėėėæþýėėäââėėÅÅÅÅâ
-ááááááėėėėėėėääâââÅÅÅÅÅÅ
-ááááááėėėėėėėâââââÅÅÄÄÄÄ
-ááááááááþėėėėãâââääÄÄÄÄÄ
-ááááááþþþėėėãėėėėääÄÄÄÄÄ
-âááááþþþáėėėãėėęėääÄÄÄÄÄ
-ääâááááþáėėėėėėėėââÄÄÄÄÄ
-äääâáâââáėėėėėėėėėėâââÄÄ
-ååäçââããáėėáâėėâėėėââââÄ
-ççççâãääáááėâėėããėėââââÄ
-æççççãääááėėėėėãããããâââÄ
-ççççâãþäáėâėėėâããããããââÄ
-çèççâãääáėėėėėėããããããââÄ
-èèĂâáâáááááėââėãããããâââÄ
-èääääâáááááėââėããããââââÄ
-ãääääääâææææėâėãâââââââÅ
-äååååääääââáėėããââââââãÅ
-äååååååääâááėėããââââââÅÅ
-ææææååççççâáėėããâââÄÄÄÅÅ
-æææææçççççâáėėãããâÄÄÄÄÅÅ
-æææææçççççėáėėėãããÄÄÄÄÅÅ
-æææææçççççėėėėãããÅÅÅÅÅÅÅ
-æææææçççççėęęėãääÅÅÅÅÅÅÄ
+frame g_rnrn_8 - 0
+äääæææėėėėâĘĘĘĘĘėâââââââ
+ãæææææėėėėĘĘĘĘĘėââââââââ
+âææææėããããĘĘĘĘėėââââââââ
+áâæĭėęęęęĘĘĘĘĘėâââââââââ
+ááâėėęęęęĘĘĘĘĘėėââââââââ
+áááėėėėęęĘĘĘĘĘĘėââââââââ
+ááááááĬėâââĘėėâėââââââââ
+áâââââááââââââėėââââââââ
+ââââäääâėââėėėėâââââââââ
+ããããäääääėėėėėââââääääää
+ããääåååäääėėääããããããââââ
+ääääåååååėėãããėėãããããããâ
+äæææææååĂėäãããėėãããããããã
+æææææææçĂėėėėėėããããããããâ
+æææææææççççėėėããããããããÅÅ
+æææææææçççççėããããããâÅÅÄÄ
+ææāāāāççèĭĭėėãããââââÄÄÄÄ
+ææāāĂĂèèèĭĩėããããââââÄÄÄÄ
+ææææèèĂĂèĭėėãããââââââÄÄÄ
+ææææèèĂĂèėėėãããââââââââÄ
+âāææĂĂââáãėėãããâââââââââ
+ááááááááėãėėââââââââââââ
+ááááááââėãėėââââãããããããâ
+ááááââââããėâââââãããããããã
 end
 
-frame g_rnrr_12 - 0
-æææççèèèĂâãęęėääääÅÅÅÅÅÄ
-æçèèèèĭèããėęęęėääãÅÅÅÅÅÅ
-æèèèĂĭĭĭãäėėėėĩėãããããããã
-æèèèĂĩĭĭėėėėæĭÎÎėããããããã
-ââââââĭĭĭėėėĭĭĭÎėėãããããã
-ááááááãäĭÎėėėĭĭÎėėėėãããã
-ááááááâææÎėėėèĭÎÎĚĚėėããã
-ááââââââæææėėèĂââęĚĚęėãã
-âââââäääâââæėėĭėėęęęęęėã
-ââãããäääääââėėėėėęęęęęęė
-ãããããåååäääãäĭėėĘĘââââęė
-ãääääåååååäääåėĘĘâââėėþħ
-äääāæææååååçäåėĘĘâââĬþþħ
-äæāāææææåĂççääåėėėėėçþþþ
-ææāāææāāæçççææææāāççèèèĭ
-ææāāææāāæççççæææāĂèèèèèĭ
-åæææāāæææçççççæææèĂĂèèâã
-ææææāāææçèççççââæèĂââáâã
-æææææçççèèèèçâááááááááâã
-æææææèèèèèèèââáááááááááâ
-æææææèèèèèèââááááááááááá
-æææææèèèèèâáááââââââáááá
-âââææèâââáááââââãääääâáá
-âââáááááááâââããããååäääâá
+frame g_rnrr_18 - 0
+ááááááááááėėėėââėâââââââ
+âáááááááááėėėėââėâââââââ
+âááááėėėááėĘėėėėėėėââââã
+âáááėėėėääėĘĘėėėėėėėâããã
+âááââėėãåäėėĘėėėėėãėėããä
+ááââãäääåååĭĨėėâėėėããėėä
+ááãääåææææçĭĭėėėėáėėããėã
+ááãääæææææççççáááááėėėėã
+ááãääæææææçççâááâáääėėėã
+ááâæææææççèèèâááΑáäėėããã
+áááâææææèèèèâáááááããėėėã
+áááááâææèèâáááááááãááėáã
+ááááááááááááááááááááþėáã
+ááááááááááááááááááááþþáã
+ááááááááááááááááááááēēēá
+áááááááááááááááááááΑΑēēá
+áááááááááááááááááΑΑΑΑΑΑá
+ááááááááááááááááááΑĭĭΑΑá
+ááááááááááááááááááááĭĭáá
+ááááââââääââáááâââââââáá
+áááââããäååääââââââäääääâ
+ááâäãääææååçĂââãããääääää
+ááãääæææææççâãããääååååää
+ááãääæææææççããääääåååååå
 end
 
-frame g_rnrr_23 - 0
-ááâäæææææėęęėėėÅÄÄÄÄâââã
-áááæææææèĩėęęėėėėėėÄâââã
-ááááâāėæĂááęęęėėėėėėââââ
-ááááááâââááããâΘėėėėėėâââ
-âááááááááááââââĘĘėėėėâââ
-äââáááááááááėããĘĘĘėėâââė
-äääâáááááááááäėĘĘĘėėâââė
-åääçâáááááááäääėĘĘãėėėėė
-åçççâááááááááäááėĘââââėė
-ççççĂááááááááááááėâââââė
-çççççâáááááΒááááááėĘĘĘâė
-ççççâááááááááááááããėėėâė
-èçĂĂâááááááááááááŊŊãááėė
-èèĂĂâááââââââááááááááááė
-èèèâáâââããääääááâãäþæááá
-èâááââããääåååääââãææææææ
-ááááãäääææææåçççáâææææææ
-áááâãääææææææçççâáââææææ
-ááááãääåæææææçççâáááááââ
-ááááãäāāææææçèççáááááááá
-ááááâæææææèèèèèâáááááááá
-âááááââæææèèèèâááááááááá
-äâááááááââââááááááâââááá
-ääâááááááááááááâââââäääâ
+frame g_rnrr_2 - 0
+áááááááááĬĬãããėâââââââââ
+áááááááááááėãėėââÄÄÄÄÄââ
+ááááááááááãŊėėÄÄÄÄÄÄÄÄÄä
+áááááááááΚææėėÄÄÄÄÄÄÄÄÄâ
+ââââââááááááėėėėÅÅÅÅÅÅÅâ
+âããääääâáááááėĘãėÅÅÅÅÅÅâ
+ãääåååääâáėãáėãęęėÅÅÅÅÅã
+äææææåçççááâæėãęęėėÅÅÅÅâ
+ææææææçççáááâĭėęęęėėÅÅÅâ
+åææææççççááááſėėęęęãėÅâė
+æææææçĂĂâááááááėėĘãããėėã
+æææèèèĂĂâáááėááĬėĘâââââė
+æææèèèâááááėėááááėâââââá
+áââââááááááááááááΑėėėėėĭ
+âââááááááááááááááΑΑΑΑΑſĭ
+ääääâáááááááâââââΑΑΑΑááá
+åååääâááááââââââääääââáá
+æåååäçâááâââããããååääääâá
+æææçççâáââãããäääååååäääâ
+æææçççââãäããääāāææåååäçç
+æææçççââãääåäāææāāæåçççç
+ççèĭèçâãäääåāāææāāææçççç
+ĂĂèèèââãäääåææææææææçççç
+ĂĂèâáááâãääååææææææççççç
 end
 
-frame g_rnrr_4 - 0
-âáááááĬĬâããĭėėããããÅÅÅÅÅÅ
-çâáááââãããääėėėããÅÅÅÅÅÅÅ
-ççááâãääãääāþþėėėėÅÅÅÅÅÅ
-ççááâãäääĬÎþþýėėėėėÅÅÅÅÅ
-ççááâãääåĬÎþþĦėėėėÅÅÅÅÅÅ
-çâááâãäääĬþþĦĦėėėÅÅÅÅÅÅÄ
-âáááâãäääĬþþĦþáėėâÅÅÅÅÄÄ
-áááááâãæææĬÎÎÎáäėâââÅÅÄâ
-áááááâæææææææèááäėââââââ
-ááááááââæææææèèááėâââėââ
-ááááááááââæææèèááėââėėââ
-ááááááááááââââėėėėėėėėėâ
-ááááááááááááááėėėĘėėėėėė
-ááááááááááââááėėėėėėėáėĘ
-áááááááââââäääėėáááááėėė
-áááááâââãããåääėėâááááááâ
-ááááââãããääååååääâááááâã
-ááááâääääææΒΒååçççâáááâä
-ââââãääåæææŔŔæççççâáááâä
-ãäääãääåææææΑæççççâáááâã
-äååääääåææææææççççâáááâã
-ææååĂĂææææææççèèççáááááâ
-āāæçççææāāæèèèĂĂèâáááááá
-āāæççççæāāæèèèĂââááááááá
+frame g_rnrr_20 - 0
+āāæççèèçėėėäþħėėÄÄÄÄÄÄäã
+āĂèèèèèèãāæþþþėėÄÄÄÄÄÄÅã
+æèèèèèèââææþþþėâÄÄÄÄÄÄÅã
+æèèèèââááâþþþþėÅÅÄÄÄÅÅÅã
+ââââááááááâþþþėÅÅÅÅÅÅÅÅÅ
+áááááááááááþþėėėėėÅÅÅÅÅÅ
+áááááááááááþþþþþþėėÅÅÅÅÅ
+äââáááááááááááááþėėėėėÅÅ
+ääääâáááááááááĭĭááėėėėėė
+åååääâááĬĬĬáááĭĭáááėėėėė
+āāåçççááĬĬĬááĬĬĬáââááėėė
+āāæçççááááĬĬĬĬââââääáãėė
+ææççççáááááĬĬĨâãããååáááė
+ççèèèâááááááââãäääåååáää
+ĂĂèèâááááááâãäääāāāāåççç
+ĂĂâááááááááâãäåāāāāāæççç
+áááááááááááâãääæāāæææççç
+áááááááááááâãäææāāææçèçç
+ááááááááááááâæææāāçèèèèè
+áááááááááááááâææāāèèèèâá
+áááááááááááááááâææèèââââ
+áááááááááááááááááááââââä
+áááááááááááááááááâââãããå
+ááááááááááááááááââããäääå
 end
 
-frame g_rnrr_6 - 0
-ääåæææææáááėėâėėėėėââÄÄÄ
-ääåææææææſΑþýėâėėėėââÄÄÄ
-æææææææáçΑþþýýėĘėėėėėÄÄÄ
-äæææææááäΑþþþþþėęėėėėėėė
-ååçæææááäæþþþþΑėėėėėâėėė
-æççãääááæææþþþΑΑėėããėėââ
-æççãääáææææþþþΑėΑėėėėáėâ
-çççãääååæææΑþΑėėĭÎĭėĭėėė
-ĂĂèãäääāæææΑΑėėėĭçĭĭĩėėė
-ĂĂââãæāāææėėėėėėĭãääāėėė
-âááâæææææææèΑėėĭĭäåææææė
-ááááââæææææèĭĭĭĭĭåæææĭĭá
-ááááááââæææèĭĭĭĭĭäåææĭĭá
-áááááááááââââââĭäæææææāĂ
-áááááááááááááááâæææææççè
-ááááááááááááááááâææææèèè
-áááááááááááááááááââææâãã
-ááááááááââââáááááâââãããã
-ááááááââââääääâáâââãããää
-ááááâââãããååääääâãäääääæ
-áááââãããääååååäääãääååææ
-áááãääääææææåååççãääåæææ
-ääâãääåææææææççççãääååææ
-åääãääåæææææææçççãäääæææ
+frame g_rnrr_7 - 0
+áááááááâãäþħĦėääãėėėÅÅââ
+ááááááááâæþýáėäââėėėÅÅÅâ
+ááááááááâĬþýėėäââėėėÅÅÅÅ
+áááááááááþþėėėėââėėėėėÄÄ
+áááááááááþþėėėėėėėėėėėÄÄ
+ááááááááþþþþėýáááėėėėėÄÄ
+âáááááááþþþĭĭþýááäėėėĘėÄ
+ääâááááâââããääþþáááááėėė
+äääâáâââãããäåååääΑĬááėėė
+ååäçââãããäääæåååääŔΑáėėė
+ççççâãääåææææææçççΑΑáááá
+æççççãääåææææææççççâáááĭ
+ççççâãääåæææΑææççççâãáĭĭ
+çèççâãääææææææçççççãäääĭ
+èèĂâáâææææāāççèèĂĂâãäáäå
+èääääââæææāāèèèèĂââãäääå
+ãääääääâææææèèèèâááâãääæ
+äååååääääââââââááááâææææ
+äååååååääâááááááááááâæææ
+ææææååççççâááááááááááââæ
+æææææçççççâááááááááááááâ
+æææææçççççâááááááááááááá
+æææææçççççâááááááááááááá
+æææææçççççâââââááááááááá
 end
 
-frame g_rooo_0 - 0
-âââáááýááááááþþĭĭÕÕÕÕÕÕÕ
-ääääâáþþáýþþþþþþĭÕÕÕÕÕÕÕ
-åååäááþþĭĭĭþþþþĭĭÕÕÕÕÕÕÕ
-æåååáþþĭĭĭĭĭĭþþåĭÕÕÕÕÕÕÕ
-ææāááõþĭĬĭĭĭĭĭĭĭĭÕÕÕÕÕÕÕ
-æááááááþþĭĭĭĭõÕÕÖÖÖÖÖÖÖÖ
-ááááááááþþĭôôÕÕÕÖÖÖÖÖÖÖÖ
-áĬĬĬááááþþÿÕÕÕÕÕÖÖÖÖÖÖÖÖ
-úĬĬĬÚÛáÛþþÿÕÕÕÕÖÖÖÖÖÖÖÖÖ
-úĬĬþÚÛÛÛþþþÓÓÓÕÖÖÖÖÖÖÖÖÖ
-ĬĭĭþþÛÛÛþþááĚÓÖÖÖÖÖÖÖÖÖÖ
-áááááÛÛþáááâãęÖÖÖÖÖÖÖÖÖÖ
-ááĘáęÔÓþááãããáÖÖÖÖÖÖÖÖÖÖ
-ìÔÔěÓÕÖÖþěáęáÓÕÖÖÖÖÖÖÖÖÖ
-ÔÕÕÕÕÖÖÖÖÓÓÓÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÖÓÓÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_rooo_15 - 0
-ææèèèãããåääáöööööÖÖÖÖÖÖÏ
-ææèãããääååååáöööÖÖÖÖÖÖÖÏ
-âãäãääææææåååáÓÏÖÖÖÖÖÖÖÏ
-âãääåææææææçççÓÏÖÖÖÖÖÖÖÏ
-âäääåææææææççáÓÏÖÖÖÖÖÖÖÖ
-âãääåææææææçááÓÏÖÖÖÖÖÖÖÖ
-âãääææææææçáýÛÓÏÖÖÖÖÖÖÖÖ
-áâææææáááěĘáþÓÏÏÖÖÖÖÖÖÖÖ
-áââæāáþþááÓÓÓÓÖÏÏÖÖÖÖÖÖÖ
-áááâáúþÚÓÓÓÓÓÖÖÖÖÏÖÖÖÖÖÖ
-áááááÚÚÛÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ááęĘáÛÝÛÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ááĚÓÓÓÛÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÓÓÓÓÓÓÓÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÖÖÓÓÓÓÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÓÓÓÓÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-end
-
-frame g_rooo_16 - 0
-âáááááááâââáþþþþõõÖÏÖÖÖÕ
-ääâââáááâââáþþþþõõÖÖÖÖÖÕ
-ääáþþþáááááýþþþÖÖÖÏÖÖÖÖÏ
-åáþþþĭĭþþþþþþþÖÖÖÏÖÖÖÖÖÖ
-áþþþþĭĬäþööþöööÏÏÖÖÖÖÖÖÖ
-õõþĬĬĬĬõõááööööÏÖÖÖÖÖÖÖÖ
-õõááĬĬúõõááöööÓÖÖÖÖÖÖÖÖÖ
-õõáæáÓÖÏÓööÖÖÖÏÏÖÖÖÖÖÖÖÖ
-úáææçęáÓÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ááæçççäęÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÏ
-áæāĂèçæáÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ççĂĂèèæáÖÖÏÖÖÖÖÖÖÖÖÏÖÖÏÖ
-èèèèèèæĚÖÖÏÖÖÖÖÖÖÖÖÏÖÖÏÖ
-èèèèèèáÓÖÖÏÖÖÖÖÖÖÖÖÏÖÖÏÖ
-áěęĚáĚÓÓÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÓÓÓÓÓÓÓÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏ
-end
-
-frame g_rooo_18 - 0
-ááááááááþþþáááááęáěÓÓÖÖÖ
-âááááááááþááááááĚáÓÏÖÖÖÖ
-âáááááááááááááááĚÓÖÖÖÖÖÖ
-áááááááâääâáĚáááÓÖÏÖÖÖÖÏ
-þþáááááãåäääáěĚĚÓÏÖÖÖÖÏÖ
-þþáááááäåååäááĚĘÓÏÖÖÖÖÏÖ
-ÿþááááááææçáááÓÓÖÏÖÖÖÖÏÖ
-þþááááááááááööÖÖÖÏÖÖÖÖÏÖ
-þááääááááááöööÖÖÖÏÖÖÖÖÏÖ
-þáâææááááõõöööÖÖÖÏÖÖÖÖÖÖ
-þþáááááÓÓÓõööÖÖÖÖÏÖÖÖÖÖÖ
-ÿÖÓÓáęěÓÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÓÓÓÓÓÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÕÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÕÕÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏÖ
-ÕÕÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏ
-ÏÕÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏ
-ÏÕÖÖÖÖÓÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÓÓÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÓÓÓÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏ
-ÕÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÕÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-end
-
-frame g_rooo_22 - 0
-çèèèçâáâáĭĭþþþÖÖÏÖÖÖÖÖÏÖ
-èèèèâááááíìþþþÖÖÏÖÖÖÖÖÏÖ
-èèĂâááááááþĭĭĭĭÖÖÖÖÖÖÖÏÖ
-ââááááááááþĭĭĭĭĭÖÖÓÖÖÏÏÖ
-áááááááááþĭĭĭĭĭĭÖÖÖÖÖÏÏÖ
-ááâââáááþþäĭĭĭĭÖÖÖÖÖÖÏÏÖ
-ââââäääáĭþĭĭĭÏÖÖÖÖÖÖÖÏÏÖ
-ããããååäáĭĭĭÖÖÏÖÖÖÖÖÖÖÏÏÏ
-ááäæååáĭÕÖÖÖÖÏÖÖÏÖÖÖÖÖÏÏ
-þáææææáÓÕÕÕÖÖÏÖÖÏÖÖÖÖÖÖÏ
-ĭþáæáĚÓÖÕÕÕÕÖÏÖÖÏÖÖÖÖÖÖÏ
-ĭĭĬĬÓÖÖÕÕÕÕÕÖÏÖÖÏÖÖÖÖÖÖÖ
-ÿĬĭÏÖÖõÕÕÕÕÕÕÏÖÖÖÖÖÖÖÖÖÖ
-ĭĭÖÏÖÕÕÕÕÕÕÕÕÏÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÏÏÕÕÕÕÕÕÕÏÕÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÕÏÏÕÕÕÕÕÏÕÕÖÖÖÖÖÖÖÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÏÕÕÖÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÏÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÖÖÖÖ
-end
-
-frame g_rooo_23 - 0
-ááâäæææææçèáĬáęáÓÖÏÖÖÖÖÖ
-áááæææææèèèáÔÔěáÓÖÏÖÖÖÖÖ
-ááááâāææĂáááÓÓÓÖÖÖÖÖÖÖÖÏ
-ááááááááááöööÓÖÖÖÖÖÏÖÖÖÏ
-âáááááýöööööÓÓÖÖÖÖÖÏÖÖÖÖ
-äâáööööööööááÓÓÓÓÖÖÏÓÖÖÖ
-äáööúúööööÓááÓÓÓÓÖÖÏÖÖÖÖ
-ááöúúööÖÖÖÏÓÓÖÖÖÖÖÖÏÖÖÖÖ
-þþööÓÖÖÖÖÿÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-þþúöÓÓÖÖþĭĮÖÖÖÖÖÖÖÖÏÖÖÖÖ
-þþÖÓÖÏÖÖĭĭĭÏÖÖÖÖÖÖÖÏÖÖÖÖ
-þþÖÖÖÖÏÖÖĭĭÏÖÖÖÖÖÖÖÏÖÖÖÖ
-þĭÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖ
-ÓÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÕÕÕÏÕÖÖÖÏÖÖÖÖÖÕÏÕ
-ÖÖÖÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÏÏ
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÏ
-end
-
-frame g_rorn_14 - 0
-äåååääãääáåææáÖÖÖÖÏÖÖÖÖÏ
-æææååĂçäääåææáþÖÖÖÏÖÖÖÖÏ
-ææāāçççäääååāáááþĭÖÖÖÖÖÏ
-ææāāçççãääææāāææáþþÖÖÖÖÖ
-ææææçççãææėėææææáþþþÓÓÖÖ
-ææççèèçâæææėėæææáþþþĚáÓÖ
-æèĂĂèèèââæææėæææèáýááāáÖ
-äèĂĂèââááââæææææèãááāāáÓ
-åååäääâááááââââââæææææāþ
-ååååäçĂâáááááááááâæææėþþ
-æååççççâáááááááΑááâæėėėý
-ææçççççâááááááĭĭĭĭΑΑėėėė
-ææçááçççâáááááĭĭĭĭĭþėėėė
-ææçççççââááááâĭĭĭėėėėėėã
-æçççĂĂçâááââΑĭĭĭėĚĚėėėėä
-ççèèĂĂçâââââėėĭĭėėėėėėėã
-èèèèĂĂââââããėãėėėėėėėėėã
-èèèèĂâáââããėããėãäėėėėėãã
-èèèââáâãääþėĘĘããäããããããã
-èââáááâãäŔþþėėããäããããããã
-ááááááâãäΒΒėėââãääãããããã
-ááááááâãäŔėâââââãääããããã
-ááááááâãΑΒėâââââââäääããã
-áááááááâΑþėââââââââääâãã
-end
-
-frame g_roro_10 - 0
-äääääââáááááááááÓÏĭÖÖÖÖÖ
-ååååäääâááááááááÓÏĭÖÖÖÖÖ
-åååååääçâáááöÓááÓÏÖÖÖÖÖÖ
-æææååçççâáááÓÓáááÓÏÖÖÖÖÖ
-ææææçççççâáĚÓÓáĘáÓÓÓÖÖÖÖ
-ææææçççççâáęÓÓáĚÓÓÓÓÓÓÓÖ
-ææææçççççâáĘÓÓÓÓÓÓÓÓÓÓÓÖ
-æææçèçççâááĘÓÖÓÛÓÓÓÓÓÓÓÖ
-ççĂĂèèèçâááõÓÓÓÚÚÓÓÓÓÓÖÖ
-èèĂĂèèèâáááþþõÖÚÚÓĚęÓÓÖÖ
-èèĂĂèââááááþþþÖÚÚÖÓÓÓÓÖÖ
-èèĂââáááááýþþþÖÛÛÖÏÖÓÓÖÖ
-ââââââááááþþþþÖÛÛÛÏÖÖÓÖÖ
-ââääääââááþþþþÖÛÛÛÛÖÖÖÖÖ
-ããåäääääâáþþþúöÖÖÛÛÖÖÖÖÖ
-ääååååäääâáþúúöÖÖÛÛÖÖÖÖÏ
-äææååååäççáúúĬÖÖÏÖÖÖÖÖÏÖ
-æææææåĂĂççáúĬĬÖÖÖÖÖÖÖÏÖÖ
-æææææççççççĬĬĭÓÓÖÖÖÖÖÏÖÖ
-ææææææççççáĬĬĭìÏÖÖÖÖÖÏÖÖ
-æææææçççççáĬĬĭáÏÖÖÖÖÖÖÏÖ
-æææææççççáĬúúĭáÏÖÖÖÖÖÖÏÖ
-ææçççèèèèçáúúĬĭÏÖÖÖÖÖÖÏÏ
-ææèèèèèèäääáöúöÏÖÖÖÖÖÖÖÏ
-end
-
-frame g_roro_13 - 0
-áááâââããáþúÓěÓÓÓÏÖÛÛÖÖÏÖ
-ááâââãããáþþáęáÓÓÏÖÛÖÖÖÏÖ
-ááâãäääääáááááÓÓÓÖÛÖÖÖÏÏ
-áâãäääååææææááÓÓÓÖÛÖÖÖÖÏ
-áâãäääåææææææáÓÏÖÖÖÖÖÖÖÖ
-áâãäääåææáæææáÖÏÖÖÖÓÓÖÖÖ
-áâããääååáááææáÏÏÖÖÓÓÓÖÖÖ
-ááâãäææææááææáÓÏÖÖÖÖÖÖÖÖ
-ááâææææææææçççĚáęÖÖÖÖÖÖÏ
-áááâæææææææèèèèãĚÓÖÖÖÖÏÖ
-âáááââæææææèĂĂääáÖÖÖÖÏÖÖ
-âáâáááâääääèĂäääáÖÖÖÖÏÖÖ
-âââýýááååääääääáÓÖÖÖÖÏÖÖ
-ââãáááäååååääááöÖÖÖÖÖÏÖÖ
-ãäãäääæææåååáÓöööÏÖÖÖÖÏÖ
-äääåæææææææááÓöööÏÖÖÖÖÖÏ
-äääåæææææææáÚÓÖöÖÏÖÖÖÖÖÖ
-äääåæææææææáÚÓÓÓÓÖÏÖÖÖÖÖ
-äääåææááææçáÚÓÓÓÓÖÏÖÓÓÖÖ
-ãäæææææææçáÚÚÖÓÓÓÓÏÓÓÓÖÖ
-âæāāæææçèèáÚÖÖÓÓÓÓÓÓÓÖÖÖ
-áâāāæææèèáÓÖöÖÓáÓÓÓÓÖÖÖÖ
-ááââæææèááÓööÓáěáÓÓÓÓÖÖÖ
-áááááâââáþõááááęáĚáÓÓÖÖÖ
-end
-
-frame g_roro_18 - 0
-ááááááááýþþáááááęáěÓÓÖÖÖ
-âáááááááááááááááĚáÓÓÖÖÖÖ
-âáááááááááááááááĚÓÖÖÖÖÖÖ
-âáááââââääâáááááěÖÏÖÖÖÖÏ
-âááââãããåäääâááááÏÖÖÖÖÏÖ
-ááââãäääåååäçâáĘÓÏÖÖÖÖÏÖ
-ááãääåææææçççâáěÖÏÖÖÖÖÏÖ
-ááãääæææææçççáöÖÖÏÖÖÖÖÏÖ
-ááãääæææææççáöööÖÏÖÖÖÖÏÖ
-ááâæææææççèèáöööÖÏÖÖÖÖÖÖ
-áááâææææèèèáööööÖÏÖÖÖÖÖÖ
-áááááâææèèáööööÖÖÏÖÖÖÖÖÖ
-ááááááááááõöööÖäÖÏÖÖÖÖÖÖ
-áááááááááúõöööÖäÖÏÖÖÖÖÖÖ
-ááááááááþĭĬúöööÖÖÏÖÖÖÖÏÖ
-áááááááþþĭĭþõõõÔÖõõÖÖÖÖÖ
-áááááááááþþþúäÔÖÖÖÏÖÖÖÖÏ
-áááááááááááĬĭìÔÖÖÖÏÖÖÖÖÏ
-ááááááááááááĭìÔÓÓÖÏÖÖÖÖÖ
-ááááââââääâáĬìáÓÖÖÏÖÖÖÖÖ
-áááââããäååäááÚÔÔÖÖÏÖÖÖÖÏ
-ááâäãääææååááúÚÔÖÖÏÖÖÖÖÏ
-ááãääæææææçááááÔÖÖÏÖÖÖÖÖ
-ááãääæææææçáĬáááÓÖÏÖÖÖÖÖ
-end
-
-frame g_roro_8 - 0
-äääáýáááááááááááÚÕÕÕÕÕÕÕ
-ãææáááæáááááèáááÛÕÕÕÕÕÕÕ
-âææææææèáááèèèáÛÕÕÕÕÕÕÕÕ
-áâæææææèáýáèèâęÓÕÕÕÕÕÕÕÏ
-ááââæææèáááâááÛÓÕÕÕÏÕÕÕÕ
-áááááââââááááÚÚÛÛÕÕÏÕÕÕÕ
-ááááááááááááúúúÚÕÕÕÏÕÕÕÕ
-áâââââááááááúúúÚÕÕÕÏÕÕÕÕ
-ââââäääââááááõÚÚÕÕÏÕÕÕÕÕ
-ããããäääääââááþÚÕÕÏÕÕÕÕÕÏ
-ããääåååäääâáýþÓÕÕÕÕÕÕÖÏÏ
-ääääåååååááþþþöÓÖÖÖÖÖÏÏÖ
-äæææææååĂáþþĮöááÓÖÖÖÖÏÏÖ
-æææææææçĂáýþþööÓÖÖÖÖÖÏÏÖ
-æææææææçççááþööÏÖÖÖÖÖÖÏÖ
-æææææææççççáöööÏÏÖÖÖÖÖÖÏ
-ææāāāāççèççáöööÖÏÏÖÖÖÖÖÖ
-ææāāĂĂèèèèèáöööÖÖÖÏÖÖÖÖÖ
-ææææèèĂĂèèâáöööÖÖÖÏÖÖÖÖÖ
-ææææèèĂĂèâáööööÖÖÖÏÖÖÖÖÖ
-âāææĂĂââáöööööööÖÏÖÖÖÖÖÖ
-ááááááááööööööööÖÏÖÖÖÖÖÏ
-ááááááââööööõõõöÖÖÖÖÖÖÏÏ
-ááááââââýĮöõõõõöÏÖÖÖÖÖÏÖ
-end
-
-frame g_rorr_10 - 0
-äääääââáááááááááÓÏĭĭÖÖÖÖ
-ååååäääâááááááááÓÏĭĭÖÖÖÖ
-åååååääçâááááááâáÓþþÖÖÖÓ
-æææååçççâáááááááãáýýÓÓÓþ
-ææææçççççâááááááâááááááá
-ææææçççççâáááááááááææææę
-ææææçççççâááááááááâææææè
-æææçèçççâáááááááááááââââ
-ççĂĂèèèçâááááááááááááááá
-èèĂĂèèèâáááááááááááááâââ
-èèĂĂèââáááááááááááâââââä
-èèĂââááááááááááááââããããä
-ââââââááááááááááááãããääå
-ââääääââáááááááááããäääææ
-ããåäääääâáááááááääääææææ
-ääååååäääâáááááãääåææááæ
-äææååååäççâáááâãääåæææææ
-æææææåĂĂççâáááâãääååææææ
-æææææççççççâááâãäāææææææ
-ææææææçççççâáááâāāæææææç
-æææææççççççâááááâææææææè
-æææææçççççâááááááââææææè
-ææçççèèèèçâáááááááááââââ
-ææèèèèèèäääââááááááááááá
-end
-
-frame g_rorr_11 - 0
-ååääääåæææææáęÓÛÖÖÏÖÖÖÖÖ
-æçççääææææææĂááÚÛÛÛÖÖÖÖÖ
-æçççĂæææææççèèèÚÛÛÛÛÖÖÖÖ
-æçççĂæææææèèèèèáÚÛÛÝÛÖÖÖ
-çèĂĂâáâæææèèèèâáÚÛÛÝÝÖÖÏ
-èèĂĂâáááââââááááÚÛÛÛÛÛÏÏ
-èèâááááááááááááúÚÚÚÚÚÚÏÖ
-âááááááááááááááúúúúÚÚÚÏÖ
-áááááááááááááááööáööÖÖÏÏ
-âááááááááááááááööááööÔÖÏ
-ääââááááááâââáöööááööþþö
-ääääâááâââââääöööáááýþĭĭ
-ååäääââââãããääáöááááááþĭ
-ååååäĂâããããäååááááááááþĭ
-ææåçççããääääåååååáááááþþ
-ææçççääääæāāáææååçááááýþ
-ææçççääåææææááææççáçäááá
-ææçççääåæææáþþáæççççãäää
-æçèèçääåæææáþþýááçççãāææ
-èèèèãääåæææáþþááççççâāææ
-èèèèãæææææææáááèèèççââææ
-èèèââæææææææèèèèèèèâááââ
-ââáááâāāææææĂĂèèèèâááááá
-ááááááââææææĂĂèèââááááââ
-end
-
-frame g_rorr_16 - 0
-âáááááááâââáþþþþõõÖÏÖÖÖÕ
-ääâââáááâââááýþþõõõÖÖÖÖÕ
-äääáááâââââáááýþĭõõõÖÖÖÏ
-ååáþþþáááááãáááþĭĭúÚÛÖÖÖ
-ååááþþýááäääååááþöúúÚÖÖÖ
-ææåååáýáääāāææåáþöúúúõõÖ
-æææåççáåææææææāááúúúöõõõ
-ææææççäåææææææāááúúúúúúÖ
-ææææççäåææāāæææáááúúĬÚÚÛ
-æææçççäåæááāæææáááöúĭìÚÚ
-ææāĂèçææææáææççááááúĬĭĭÚ
-ççĂĂèèææææææçèèèèèááþþĬú
-èèèèèèææææææèèèèèèâááþþö
-èèèèèèâæææææèèèääââááþþö
-èèèèââáââââãããäääääáþþþá
-âââáááâââãããääåååääáþþþá
-áááááâãâããääääåååååáþþáâ
-âáááâããääääææææææåááýýáä
-äâááâãäääåæææææææáýýáááá
-çââáâãäääåææææææææáááäåå
-ĂĂâáâãäääåææææææææááææææ
-ĂĂâáâããääåæææææææçåæææææ
-ççâááâãææææææææççèåæææææ
-ççâáááâæææææææèèèääæææææ
-end
-
-frame g_rorr_17 - 0
-ãäääââáááþþþþĭÚÛÕÏÕÕÕÕÕÕ
-ãååäääâááþþþþÚÚÛÕÏÕÕÕÕÕÕ
-äååååäçâááþÚÚÛÛÕÏÏÕÕÕÕÕÏ
-æææåçççâááþÚÚÛÛÕÏÛÛÕÕÕÏÕ
-ææāāççĂĂááþÚÛÛÛÕÖÛÚÖÖÏÖÖ
-ææāāççĂĂááþþþÛÚÚÚÖÖÖÖÏÖÖ
-æææççççâááþþþþÚÚÚÖÖÖÏÛÖÖ
-æççèèèèâááþþþþÚÚÚÚÖÖÖÖÖÖ
-æèèèèèâááþþÿÿĭúáÚÚÚÚÖÏÖÖ
-æèèèâááááþþÿÿÿõáÚììÚÕÕÖÖ
-âââááááááýþþÿþõáúĭááÓÓÏÖ
-ááááááááááýöööþþþúĭìþþÏÖ
-áááááááááááááöþĭþõááþþþÿ
-áááááááááááýöþþþþþáĬþþþÿ
-áááááááááááþĮĮþááýõúþþþþ
-áááááááááááĮĮĮýááááááááá
-ââáááááááááþĮĮþááááááááá
-äääâáááááâáþĮþþááááäââáá
-åäääâáááââáþþþþáááåäääâá
-åååäçâáâãâãááááæååååäççâ
-æåçççâáâãääåäæææāāåççççâ
-ææççççâãäääåææææāāæççççâ
-ææççĂĂâãäääåææææææāĂçççâ
-æçççĂĂáâãääåææææææĂĂçççâ
-end
-
-frame g_rorr_23 - 0
-ááâäæææææçèáþáęāěÖÏÖÖÖÖÖ
-áááæææææèèèáááěáęÓÏÖÖÓÖÖ
-ááááâāææĂĂäáááĘãÓÖÖÖÓÓÓÏ
-ááááááâââããäááÔÔÓÓÖÓÓÓÓÓ
-âááááááááâãääáĚááÚÚááęÓÖ
-äââááááááâãäææææææáççáÓÖ
-äääâááááááâæææææææĂĂèáÛÖ
-åääçâááááááâææææææáĂèáÛÖ
-åçççâáááááááâááááááááááÖ
-ççççĂáááááááááááþþþþáááô
-çççççâáááááááýþþþĭĭþýáôþ
-ççççâááááááááþþþþþĭĭþáýþ
-èçĂĂâááááááááþþþþþĭĭþááý
-èèĂĂâááâââââááþþþþþþýááá
-èèèâáâáâããääááááýþþþþááá
-èâááâááãääåååääâáþþþþááá
-ááááãäääææææåçççáýþþþþáæ
-áááâãääææææææçççâáþÿÿÿþæ
-ááááãääåæææææçççâáþÿÿÿþâ
-ááááãäāāææææçèççáááþþþáá
-ááááâæææææèèèèèâáááááááá
-âááááââæææèèèèâááááááááá
-äâááááááââââááááááâââááá
-ääâááááááááááááâââââäääâ
-end
-
-frame g_rorr_8 - 0
-äääáýáááááááááááÚÕÕÕÕÕÕÕ
-ãææááææááááèèèááÚÕÕÕÕÕÕÕ
-âææææææèáááèèèâáÛÛÕÕÕÕÕÕ
-áâæææææèááèèèâááÚÛĭĭÛÛÕÏ
-ááââæææèèáèâááááÚþĭĭĭÛÕÕ
-áááááââââááááááúÚĭþĭĭÛÕÕ
-ááááááááááááááõõĭþþĭĭĭÛĭ
-áâââââááááááááþþĭþþþĭĭĭĭ
-ââââäääââááááááþþþþþþþþĭ
-ããããäääääââáááááþþþþþþþþ
-ããääåååäääââáââãááþþÿþþþ
-ääääåååååäçââãäääæáþÿÿÿþ
-äæææææååĂĂççâääåæææýÿÿÿþ
-æææææææçĂĂççâääåææáþÿÿÿþ
-æææææææçççççâãäææááþÿÿþý
-æææææææçççççââæááááþþþþá
-ææāāāāççèçççâáâæææèááýáá
-ææāāĂĂèèèèèâááááââââáááá
-ææææèèĂĂèèâááááááááááááá
-ææææèèĂĂèâáááááááááááááá
-âāææĂĂââáááááááááááááááá
-áááááááááâââââáááááááááá
-ááááááâââââäääâââáááââââ
-ááááââââãããääääääâáâââãã
-end
-
-frame g_rorr_9 - 0
-æææççáááââæèâââÓÕÕÛÕÕÕÕÕ
-æçèèèáááááááááááÓÏÕÕÕÕÕÕ
-æèèèâáááááááááááÓÓÏÕÕÕÕÕ
-ââââááááááááááááÓÓÓÕÕÕÕÏ
-áááááááááááááááááõõõõÕÕÕ
-ááááááááááâââââáõõõõõÕÕÕ
-áááááááââââââäááþõõõõåÕÕ
-ááááááâââããããääááþõõĭĮÏÕ
-áááááââãããääáåååäþĭĭĭĮÏÖ
-ááááâããããääááæåååþĭĭĭĭÏú
-ááááâãääåäāáááææáþĭĭĭäĭĭ
-áááâãäääåæāāáááááþþþþþÿÿ
-âááâãäääåæææáááþþááþþþþþ
-âááâãäääåæææāááþþýýþþþþþ
-ááááâãäæææææææáýþþþþþþþþ
-ááááâææææææææççáýþþþþþþþ
-áááááâāāæææææèèèèáþþþþþá
-áááááááâæææææèèèèâáþþäþá
-áááááááááâââââââääáþåĭþá
-ááááááááââââããããäääáþþáâ
-áááááááâââããããääååååááäâ
-ââááááâââããäääääåååååäää
-âäääââããäääääæææææååååĂĂ
-ãåääääãäääååææææææææĂĂĂĂ
-end
-
-frame g_ross_0 - 0
-âââáááýááááááþþĭĭÕÕÕÕÕÕÕ
-ääääâáþþáýþþþþþþĭÕÕÕÕÕÕÕ
-åååäááþþĭĭĭþþþþĭĭÕÕÕÕÕÕÕ
-æåååáþþĭĭĭĭĭĭþþåĭÕÕÕÕÕÕÕ
-ææāááõþĭĬĭĭĭĭĭĭĭĭÕÕÕÕÕÕÕ
-æááááááþþĭĭĭĭõÕÕÖÖÖÖÖÖÖÖ
-ááááááááþþĭôôÕÕÕÖÖÖÖÔÖÖÖ
-áĬĬĬááááþþÿÕÕÕÕÕÖÖÖÖÖÖÖÖ
-úĬĬĬÚÛáÛþþÿÕÕÕÕÖÖÖÖÖÖÖÖÖ
-úĬĬþÚÛÛÛþþþÔÔÔÕÖÖÖÖÖÖÖÖÖ
-ĬĭĭþþÛÛÛþþááĚÔÔÖÖÖÖÖÖÖÖÖ
-áááááÛÛþáááâãęÔÖÖÖÖÖÖÖÖÖ
-ááĘáęÔÔþááãããáÔÖÖÖÖÖÖÖÖÖ
-ìÔÔěÔÔÔÔþěáęáÔÔÔÖÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÖ
-áááÔÔÔėėėėėėÔÔÔÔÔÔÔÔÔÕÔÔ
-áââáėėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔ
-áââáėėėėėėÔÔáÔÔÔÔÔÔÔÔÔÔÔ
-ááááėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėėėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔėėėėėėėėėėėÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔėėėėėėėėėėėėėėėÔÔÔ
+frame g_rnsr_0 - 0
+âââááááááááááėââââââââââ
+ääääâááááááááėââââââââââ
+åååäääâááááΑĔėââââââââââ
+æåååäçâááááΑėėââââââââââ
+ææāĂçççâááááėėââââââėėėâ
+ææāĂçççâááááėėėėâââėėãėâ
+ááæççççâááááþėėėėââėãããė
+áááèèççááááááėėėėâââėãėė
+úúááĂĂâáááááĭĭėęėėâėėėėė
+úúþááâáááΑſĭĭĭėėęėėėėėėė
+ĬĬáááááááâĭĭĭĭėėėėâââėėė
+ááááááááâââĭĭėėęėėâââââė
+áááááááâââãėėėėęėėâââââė
+ìááââäáââããĭĭēēåååėėââėė
+ĬÔÚáÚþþáäãääēēææāāååėėėė
+ááÚÚÚúĭþääååææææāāæççççė
+áââáÚúúúáäåææææááæāāçççç
+áââáėėôôúáåææææáááááçççç
+ááááėėôôúúáææææáþþþþáççç
+ėėėėėôôôôĬĭáææááýþþþááçç
+ėėėėėôôôėėĭþáááááóþþýááç
+ėėėėõôôôėėçþáááèèááõýááã
+ÔÔÔÔõôôôėėííþááèèáááááãä
+ÔÔÔÔõôôėėėÕíĭþááááááèâãä
 end
 
 frame g_rrff_0 - 0
@@ -50897,6 +48416,33 @@ frame g_rrmr_5 - 0
 ööõõáááááááááááááââããããå
 end
 
+frame g_rrnn_10 - 0
+äääääââáááááááááâãããäääå
+ååååäääâááááááááãääåææāā
+åååååääçâááááááâãääåææææ
+æææååçççâáááááááãääåææææ
+ææææçççççâááááááâãææææææ
+ææææçççççâáááááááææææææè
+ææææçėėççâááááááááâææææè
+æææçèėėçâáááááááááááââââ
+þþĂėėėėėėėėėėėėáááĬĬáááá
+ýýþėėėėėėâââääėááėėááááá
+ýýėėėėėėââäääääėâââėáááá
+ėėâââââââääâââââėââĘėėėė
+ââââââââääâãããââėâĘĘĘĘãä
+ãâââââââääâãããâââėĘĘĘĘãã
+ääääâââääâãããããââėėėėėėė
+ãããääââääâãããããããããėãâââ
+ããããääääââãããããããããããããã
+ããããäėėäâããããããããããããããã
+ããããėėėÄÄÄÅÅÅÅÅããããããããÅ
+ããÅÅėėėÄÄÄÅÅÅÅÅÅãããããããÅ
+ããÅÅėėÄÄÄÅÅÅÅÅÅÅããããããÅÅ
+ããÅÅÅÅÅÅÅÅÅÅÅÅÅÅããããããÅÅ
+ããÅÅÅÅÅÅÅÅÅÅÅÅÅÅãããããããÅ
+ããÅÅÅÅÅÅÅÅÅÅÅÅÅäãããããããÄ
+end
+
 frame g_rrnn_11 - 0
 ååääääåæææææāĂĂĂççãæææææ
 æçççääææææææĂĂĂĂçâææææææ
@@ -51086,33 +48632,6 @@ frame g_rrnn_19 - 0
 ãããääãããããããããããããããããâä
 end
 
-frame g_rrno_22 - 0
-çèèèçâáâãäææāāæææççèèçĂâ
-èèèèâáááâæææāāæçèèèèèèâá
-èèĂâáááááâææāāæèèèèèèâáá
-ââáΒΒáááááââāāæèèèèââááá
-áááŔáááááááááâââââââäääâ
-ááâĭÎÎÎáááááááââââããääää
-ââĬėÎÎÎâáááááâââããããåååå
-ããĬĬĭĭĭäâáááâãâããäääåååå
-ãääæåååäĂâááâãáäääææāāæå
-åæææææççĭĬĬâãäááåæææāāæá
-åæææææçççĬĩĬááááåææææææá
-þþææææççááþĬĬþáäåæææææáá
-áþþæççèèėėėėėþáäæááááýþý
-ėþþþèèèèėėþėėþáææááááúĬþ
-ÅėėþþėėĬþėėĘĘėáæææææááĬÓ
-ÅÅėėėėėþėėĘĘĘĘėâææææáĬÓÖ
-ÅÅėėėėėėėėėęęėáááâááĬÖÖÖ
-ÅÅėááėėėėĦĦĦþþáýĬáúÚÚÚÖÖ
-âėėãáėėãėĦĦĦþþáíÔÔÓÖÛÛÖÖ
-âėėėėãããėááþþþÎÔÔÔÖÚÛÖÖÖ
-ââėėėãėãããėáþþĬĬÔÖÚÛÖÖÖÖ
-ââââėãėãããėãáþĬĬĚÚÛÛÖÖÖÖ
-ââââėããããããėáþĬĬÓÕÛÏÖÖÖÖ
-âââėėėãããããããėĨęÓÕÕÏÖÖÖÖ
-end
-
 frame g_rrnr_13 - 0
 áááâââãããããååååäääââããää
 ááâââãããäääåååååääääãääæ
@@ -51165,357 +48684,6 @@ frame g_rrnr_16 - 0
 ãããâââėėââėėãáæææçåæææææ
 ääãâââââââėėėėæççèåæææææ
 ããäâââââėėėääÄėėėėäæææææ
-end
-
-frame g_rroo_15 - 0
-ææèèèãããåääääâááááááááââ
-ææèãããääååååääâáááââââââ
-âãäãääææææåååçĂâáââââããã
-âãääåææææææçççĂâââáááááã
-âäääåææææææçççççâáþþþýáá
-âãääåææææææççççãäþĮþþááþ
-âãääææææææççĂĂçãäþöĮþááþ
-áâææææææççèèĂĂããäáþþþþþö
-áââæāāáæèèèèèèãäääááþþúú
-áááâāáááèèèèââããäääáìäÔĭ
-ááááááááááááááâãääāáìÓÔę
-ááááááááþÿþþþþáááāāāáááæ
-ááĚáĘááÚÖçÿĮþþþýáááááááæ
-ÓÓÓáĘěáÓÖíÿĮĮĮþþþááááááá
-ÏÖÓĘĚááÓÓÓÿÿÿÿĮĭĭþþÓÓÓÓĘ
-ÖÖÖÓěááÓÓÓÿÿÿĮĮĮÏÖÓÓÓÓÓÓ
-ÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖ
-end
-
-frame g_rroo_16 - 0
-âáááááááâââââââáááááââââ
-ääâââáááââââââââááâââããã
-ääáááââââââãääääââââããää
-åáþþþááãããããååääääãäääææ
-ááþþþþááãäääååååääãääåææ
-þþáááþþáääāāææåååççääåææ
-õõáåçáõáææææææāĂççĂäááææ
-õáææçáááææææææāĂççĂááþáæ
-úáææççäåáááāæææçççááþþĭþ
-áææçççäåáþþááááááááöúĬúĭ
-áæāĂèçææáþþþáááááááúĬĬĬú
-ççĂĂèèææáÖþþþþýýáááĬĬþúú
-èèèèèèææÓÖÏÓÓþþþþĬĬĬþþúú
-èèèèèèâęÓÖÏÓÓþþþþÚÚííĭĬÚ
-áěęĚââęěÓÓÓÓáÓÓÖÖÖÖÖÖÖÚÛ
-ÓÓĚĚáĚęÓÓÓÓÓÓÓÖÖÖÖÏÖÖÖÖÝ
-ÏÖÖÓÓÓÓÖÖÖÖÓÓÓÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÖÏÖÖÖÖÖÓÓÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÖÛÛÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏ
-end
-
-frame g_rroo_18 - 0
-áááááááááááááááááááááááá
-âááááááááááááááááááááááá
-âááááááááááááááááááááâââ
-ááááââââääâáááááááââââãä
-þááââãããåäääâááááââãããäå
-þþáâãäääåååäçâáááãäãääææ
-ÿþáääåææææçççâááâãääææāā
-þþãääæææææççççááâãááææāá
-þáãääæææææçççâáöþáááæææá
-þáâæææææççèèèáöööþáááááá
-þýáâææææèèèááööööþþþýþþþ
-ÿãĚááâææááõööööööþþþþþĮĮ
-ÖÖÓÓęáááÔĬõöööööúþþþþþĮÔ
-ÖÕÖÖÓÓþÓÖÖÖööööäöúþþĭĮĮÔ
-ÕÕÖÖÖÖĭÏÖÖÖÏööööööööúúÚÛ
-ÕÕÖÖÖÖĭÏÖÖÖÏääÖÔõõõõäÛÛÛ
-ÕÕÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖõÖÖÖÖÏ
-ÏÕÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏ
-ÏÕÖÖÖÓÓÓÓÓÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÓÓÓÓÓÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÖÖÓÓÓÓÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏ
-ÕÖÖÖÓÓÓÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÕÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-end
-
-frame g_rroo_19 - 0
-áááááááââæāāæææèèèèèèæāā
-ááááááááââāāæææèèèèèèâāā
-âáááááááááââæææèèèèââáââ
-ääââáááââââäääââââáááááá
-ååääââââãããååäääâááááááá
-åååççââããääååååääâáááááá
-æçĂĂçãäääæāāæåááççâááááá
-áááááááåææāáááááççâááááá
-ááþĮĮĮÿþááááýááçççâááááá
-þþĮĮĮúúúþáýþþþáçççâááááá
-ĮĮĮĬĬÔúúúĮĮĮĮĮöááááááááá
-ÔÔÔÔÔÔÖÖĬúúĮĮĬöööööááááá
-ÔÔÔÔÖÖÖÖÚĬúúĮĮööúúúááááá
-ÔÔÖÏÖÖÖÖÖĭĬĬĬúúúúúúúáááÓ
-ÛÖÖÏÖÖÖÖÖÖÚĬúúĬĬĬöööööõÖ
-ÛÛÛÛÏÖÖÖÓÓÓÏöúÓÓÓÖÖöööõÖ
-ÖÛÛÖÖÏÖÖÖÓÓÖöÖÖÓÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖõÖÖÖÏÖÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖõÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖ
-end
-
-frame g_rroo_21 - 0
-ççâááááâææææææèèèæææææĂĂ
-çâááááááââææææèèèæææææĂĂ
-ââááááááááââââââââææææèè
-áááááááááááááááááááââæèè
-áááááááááááááááááááááááá
-áááýáááááááááááááááááýáá
-áááþááááááááááááááááþþþâ
-áááþýáááááááááááááááþĭþá
-áááááõõþþáááááááááááþÿþþ
-áááááõõþþáááâââáááááþÿþþ
-ááááúúúúþáâââââááááþþÿÿĭ
-ááááĭĭĭĭþáâãããáþþþþþþþĭĭ
-íÚĚÔáááĭþáããääáþĭĭĭĭĭĭĭÿ
-ÓÓÔÔÔÔììĭþáäæáþÔĭĭĭĭĭĭĭÿ
-ÖÖãÔÔÔÕÕÕÕÕýááÓÕÏÚÚÚÕÏÖÖ
-ÖÖÕÔÔÕÕÕÕÕÕÕÓÓÕÕÕÏÚÕÕÕÖÖ
-ÖÖÕÕÕÕÕÕÕÕÕÕÓÕÕÕÕÏÓÕÕÕÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÓÓÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÓÓÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕ
-end
-
-frame g_rroo_4 - 0
-âáááááâââããããåååääääââââ
-çâáááââãããäääåååååäääâãã
-ççááâãääãääāææææåååçãããä
-ççááâãäääåāāæææææçççãääæ
-ççááâãääååæææææææçççäåææ
-çâááâãäääåæææææææççäåæææ
-âáááâãäääæāāāāææĂĂáääæææ
-áááááâãæææāāāāççĂĂáäæææá
-þþýýþôõáæææææèèááĂèæāāæá
-þþþôôôúþáææææèáþáĂèâāāæú
-ĬĬäĭúúĬåýáæææááþááâááááĬ
-ĬĬĬĭĭĭĭĭĬáááááááááááĬĬĬĭ
-ĬĬĬĭĭĭĭĭìĭĬúþþááááęĭĭĭĭì
-ĬĬĬĭĭĭĭÚìĭĭĬĬĬáĚÓÓÓÓĭĬĭĭ
-ĬĬÚÚÚÚÛÚÕĭááççÓÓÓÕÓÕÕĬĬÔ
-ÛÛÕÚÛÛÛÛÕÓęááÓÓÓÕÕÕÕÕÕÕÕ
-ÕÕÕÕÛÜÜÛÖÓÓÓÓÓÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÛÜÜÜÖÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖ
-ÕÕÕÖÛÜÜÛÖÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÖÛÛÛÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÛÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÛÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_rroo_6 - 0
-ääåæææææææçççççâáááááááá
-ääåæææææææççççääââáááááá
-áæææææææççèåååääääâááááá
-þááææææèäääåååååääââáááá
-ýáçæææãääæææææååĂĂçâáááá
-áççãääåááááááááááĂçâáááá
-æççãääåááþýþþþþþááççâääâ
-áççãääåáááááþþþþááçããäää
-ááèãääáāæææááááááçããäáåå
-þáââãæáāææææááááèãääāáæå
-áááâæáááæææèáááèääåæææææ
-ááááâáþáæææèèèèääåææææææ
-áááááþþþáææèèèèäääåæææáá
-ááááĭÓÓþýáááâáááäææææááö
-áÚÓÕÕÓÓÓþþþááááýáæææááöú
-ÚÓÕÕÕÓĚÓþþþýááÛÛÚáááööúö
-ÓÓÖÖÏÓáÓþþþÓÓÓÖÖÏÖööööÖÏ
-ÓÓÓáááááÓĭÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÓÓęáááááÓÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÖÖÓööÓÓÓÓÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖöÏÖÖÖÓÓÖÏÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÓÖÖÏÖÖÖÖÏÖÖÖÖÖÖ
-ÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖ
-ÖÏÖÓÓÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖ
-end
-
-frame g_rroo_7 - 0
-áááááááâãäææææææææççèèçç
-ááááááááâæææææææççèèèèèâ
-ááááááááââææææææèèèèèèâá
-áááááýþáááâæææææèèèèèâáá
-ááááááýáááááâââæèâââáááá
-áááþáááááááááááááááááááá
-âááöááááââââäâââááýááááá
-ääáááááâââããääääâááááááá
-äääááâââãããäåååäääâááááá
-ååäáââãããäääæåååääçááþýþ
-ççççâãääåææææææááááþþþþþ
-æççççãääåæææææáúÚþþĭÿþþþ
-ýááçâãääåæææææÚÚÛÛĮĮÿþþþ
-þáááâãääæææææáÚÛÛÛÝĮÿþþþ
-ööáááâææááááááÛÛÛÝÛÝÛĭĭÛ
-öÓÓááââæöööÓÚÛÛÖÏÖÔÔÛÛÛÏ
-ÖÖÖÖÓáęęÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÏ
-ÖÖÖÖÖÖÓÖÖÖÏÖÖÖÖÖÖÓÓĘÓÓÏÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÓáááÓÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÓááÓÓÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÓÓÖÖÏÖ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-end
-
-frame g_rror_12 - 0
-æææççèèèĂâããääääâááááááá
-æçèèèèèèããääåååääâáááááá
-áèèèĂĂèäãäææææååççáááááá
-ááèèĂĂãääåæææææçççâááááá
-áâââââãääåææææāĂççâááááá
-ááááááãääæææææĂĂççáááááá
-ááááááâæææææçèĂĂèââááááá
-ááââââââææææèèĂââääääâáá
-þýáââäääâââæââãããååäääâá
-þþþááäääääâââããääååååääâ
-þþþýáåååäääãäääææææååççç
-ĭĭþááááááåäääåææææææçççç
-ĭĭþýþþþþýáåçäåæææææææçĂĂ
-ĭĭĭþþþþþýáççääåæææææççĂĂ
-ĭĭþþþþþááçççææææāāççèèèç
-ÖĭþþþþáááççááæææāĂèèèèèã
-ÖÖþþþáááááááááæææèĂĂèèâã
-ÖÖÓááěáááááþþþááæèĂââáâã
-ÖÖęææęáìááþþĭþþþááááááâã
-ÖÖÓææěáìĭþþĭĭĭĭþáááááááâ
-ÖÖÖÓááÓÓáþþĭĭĭåþáááááááá
-ÖÖÖÕÕÓÓÕÕþþĭĭĭĭþýâââáááá
-ÖÕÕÕÕÕÏÕÕþþĭåĭĭþýääääâáá
-ÕÕÕÕÕÏÕÕÕÛĭĭþþþþááåäääâá
-end
-
-frame g_rror_17 - 0
-ãäääââááááââããäääååååääâ
-ãååäääâááâãääääææææååĂçç
-äååååäçâáâãääåāāææææçççç
-æææåçççâáâãääåāāææææçççç
-ææāāççĂĂáâãääåææāāááĂĂçç
-ææāāççĂĂáâãæææææāāáááááç
-æææççççâááâææææææèáááááá
-æççèèèèâáááááææææèáááââá
-áááèèèâáááýþþáââæèâââááá
-äþááâááááþþþþááááááááááá
-ĭþááááááýþþþþááááááááááá
-öĭáááááþþþþöáááááááááááá
-ööáááýþþþþþáááþþáááááááá
-úöþááþþþþþöööþþþáááááááá
-ÚúáááþþþööööĮĮþááááááááá
-áááááýþþöööĮĮĮþááááááááá
-ÛÚõááááöööööĮĮþááäââáááá
-ÏÖÓÓááááöööööĮĮþááääââáá
-ÖÖÖÓááááöúúĬĬĬĮþýáåäääâá
-ÖÖÖÓáâááúĬĬĭĭĬúááåååäççâ
-ÏÖÓÓĚáááááĭíîĭáæāāåççççâ
-ÏÓÖÓÓÓÖÓęááííĭáæāāæççççâ
-ÏÖÖÖÓÖÖÓÓíììáĬáæææāĂçççâ
-ÖÖÖÖÏÓÓÖÖìììþþõöáæĂĂçççâ
-end
-
-frame g_rror_6 - 0
-ääåæææææææçççççâáááááááá
-ääåæææææææççççääââáááááá
-áæææææææççèåååääääâááááá
-þáæææææèäääåååååääââáááá
-ýáçæææãääæææææååĂĂçâáááá
-áççãääååæææææææçĂĂçâáááá
-æççãääåæááæææææçççççâääâ
-áççãääååæææææææççççããäää
-ááèãäääāææææææççççããäååå
-þáââãæāāææææççèèèãääāāæå
-áááâæææææææèèèèèääåæææææ
-ááááââáææææèèèèääåææææææ
-áááááááâæææèèèèäääåæææāā
-áááááááááââââââãäæææææāĂ
-ááĭĬáááááááááááâæææææççè
-áìĭĬĬáááááááááááâææææèèè
-ÓÓĬúáááááááááááááââææâãã
-ÓÓááááááââââáááááâââãããã
-ÓĚááááââââääääâáâáááããää
-ÖÓááâââãããååääääâáááäääæ
-ÖÖöþáááãääååååäääãääååææ
-ÖÖÖöþÓęáææææåååççãääåæææ
-ÏÖÓÓęáááæææææççççãääååææ
-ÖÏÓĚęááĚĘáææææçççãäääæææ
-end
-
-frame g_rror_7 - 0
-áááááááâãäææææææææççèèçç
-ááááááááâæææææææççèèèèèâ
-ááááááááââææææææèèèèèèâá
-ááááááýáááâæææææèèèèèâáá
-ááááááááááááâââæèâââáááá
-áááááááááááááááááááááááá
-âáááááááââââäâââáááááááá
-ääáááááâââããääääââáááááá
-äääááâââãããäåååäääâáááââ
-ååäçââãããäääæåååääçááâââ
-ççççâãääåææææææççççâââãã
-æççççãääåææææææççççâãããã
-ááççâãääåææææææççççâãäää
-þáççâãääææææææçççççãäääå
-öáĂâáâææææāāççèèĂĂâãäääå
-ööáääââæææāāèèèèĂââãäääå
-ÖÖÓĭáääâæááæèèèèâááâãääæ
-ÖÖÖÖÓáääáþþþþþâááááâææææ
-ÖÖÖÖÖÓĚáĭĮĮĮĮĮááááááâæææ
-ÏÖÖÖÖÖÓÓÖĮĮĮĮĮáááááááââæ
-ÏÖÖÖÖÖÓÓÖþÿÿÿÿþááááááááâ
-ÏÖÖÖÖÖÖÖÓÔþÿÿþþááááááááá
-ÖÏÖÖÖÏÖÖÓÔþþþþáááááááááá
-ÖÏÖÖÖÏÖÖÓááýáááááááááááá
-end
-
-frame g_rror_8 - 0
-äääæææææææçççççâááâãäæææ
-ãæææææææççèèèèçâáááâææææ
-âææææææèèèèèèèâáááááâæææ
-áâæææææèèèèèèâááááááááââ
-ááââæææèèèèâáááááááááááá
-áááááââââááááááááááááááá
-áááááááááááááááááááááááá
-áâââââáááááááááááááááááá
-ááââäääââáááááááâââââááá
-ýáããäääääââáááâââãääääâá
-ááääåååäääââáââããäåååääâ
-ááääåååååäçââãäääæāāååçç
-ááááææååĂáççâääåæææææççç
-áááááææçĂáççâääåæææææççç
-ÏäáææááçççççâãäæææææáĂçç
-ÖÖęæáúõáççççââæáææèèĂĂèâ
-ÖÖÓáĚÔöáèçççâáâæææèèèèâá
-ÖÖÓÓÔÔÚúèèèâááááââââáááá
-ÖÖÖÓÛÛÚÚáèâááááááááááááá
-ÖÖÖÏÖÛÛÚÚáááöááááááááááá
-ÖÖÖÏÖÛÝÛÖöööööáááááááááá
-ÖÖÖÏÖÛÝÛÖöööööáááááááááá
-ÖÖÖÏÖÖÖÖÖöööõõáââáááââââ
-ÖÖÖÏÖÖÖÖÖÖÖõõáäääâáâââãã
 end
 
 frame g_rrrf_19 - 0
@@ -51707,139 +48875,58 @@ frame g_rrrm_9 - 0
 ãåääääãäääååæáõõõõõõõõõö
 end
 
-frame g_rrro_11 - 0
-ååääääåæææææāĂĂĂççãæææææ
-æçççääææææææĂĂĂĂçâææææææ
-æçççĂæææææççèèèèĂââæææææ
-æçççĂæææææèèèèèèâááââææá
-çèĂĂâáâæææèèèèâááááááâáá
-èèĂĂâáááââââáááááááááþáá
-èèâáááááááááááááááááýþþá
-âáááááááááááááááááááýþþá
-áááááááááááááááááááááþþþ
-âááááááááááááááááááááþþþ
-ääââááááááââââáááááááþþþ
-ääääâááâââââääáöáááááþþĭ
-ååäääââââãããääöööááááþþĭ
-ååååäĂâããããäåáöööýþþþþĭĭ
-ææåçççããäääááááááööööööÏ
-ææçççääääæááööáááööööööÏ
-ææçççääåææáþþþþþþõõõõöÖÖ
-ææçççääåææýþþþþþþäõõõöÖÖ
-æçèèçääåææþþĭĭĭþþĭúúúÚÖÖ
-èèèèãääåææþþĭĭĭĭþĭúúúÖÖÖ
-èèèèãæææææáĭĭĭĭĭĭĭþõõõÖÖ
-èèèââæææææáĭĭĭĭõõþõõõõÖÖ
-ââáááâāāææáþĭĭĭõõõõõõõÖÖ
-ááááááââæææþþþĭĭõõÖÏÖÖÖÖ
+frame g_rrrn_14 - 0
+äåååääãäääåæææææææææçççã
+æææååĂçäääåæææææææææççãä
+ææāāçççäääååāāææææææçäää
+ææāāçççãääææāāæææææçääææ
+ææææçççãææėėææææççĂäåæææ
+ææççèèçâæææėėæææèèĂååæææ
+æèĂĂèèèââæææėæææèèääåāææ
+äèĂĂèââááââæææææèãääāāææ
+åååäääâááááââââââæææææāþ
+ååååäçĂâáááááááááâæææėþþ
+æååççççâáááááááΑááâæėėėý
+ææçççççâááááááĭĭĭĭΑΑėėėė
+ææççççççâáááááĭĭĭĭĭþėėėė
+ææçççççââááááâĭĭĭėėėėėėã
+æçççĂĂçâááââΑĭĭĭėĚĚėėėėä
+ççèèĂĂçâââââėėĭĭėėėėėėėã
+èèèèĂĂââââããėãėėėėėėėėėã
+èèèèĂâáââããėããėãäėėėėėãã
+èèèââáâãääþėĘĘããäããããããã
+èââáááâãäŔþþėėããäããããããã
+ááááááâãäΒΒėėââãääãããããã
+ááááááâãäŔėâââââãääããããã
+ááááááâãΑΒėâââââââäääããã
+áááááááâΑþėââââââââääâãã
 end
 
-frame g_rrro_18 - 0
-áááááááááááááááááááááááá
-âááááááááááááááááááááááá
-âááááááááááááááááááááâââ
-âáááââââääâáááááááââââãä
-âááââãããåäääâááááââãããäå
-ááââãäääåååäçâáááãäãääææ
-ááãääåææææçççâááâãääææāā
-ááãääæææææççççááâãäåææāā
-ááãääæææææçççâáááãääæææá
-ááâæææææççèèèâáþþáææææáá
-áááâææææèèèèâáööþýááááþþ
-áááááâææèèâááööþþýáááþþĮ
-ááááááááááááöööþþáááýþĮĮ
-ááááááááááááööööþþþþþþĮÚ
-ááááááááááááááööþĭĭĭĭúÚÛ
-áááááááááýááááõõõõõõúÚÛÛ
-áááááááááááááááõõõõõÚÛÛÏ
-ááááááááááááááááĬúõõÖÖÖÏ
-áááááááááááááááááĚáãþþÖÖ
-ááááââââääââáááááþÔþþÖÖÖ
-áááââããäååääááááþĭþĭĭÖÖÏ
-ááâäãääææååçáááþĭĭĭÖÖÖÖÏ
-ááãääæææææççáááÔãÖÏÖÖÖÖÖ
-ááãääæææææçáááááÓÖÏÖÖÖÖÖ
-end
-
-frame g_rrro_20 - 0
-āāæççèèçãäääææææææææĂĂçç
-āĂèèèèèèãāæææææææçççĂĂèè
-æèèèèèèââææææææææèèèèèèè
-æèèèèââááâæææææææèèèèèèá
-ââââááááááââæææææèèèèââá
-áááááááááááááâââââââáááá
-áááááááááááááááááááááýáá
-äââááááááááááááááááááááá
-ääääâááááááááááááááááááá
-åååääâáááááááááááááááááá
-āāåçççáááááááááááââááááá
-āāæçççááááááááââââäääááá
-ææççççáááááááââãããååäááá
-ççèèèâááááááââãäääååááþÓ
-ĂĂèèâááááááâãäáááāāáþþÿÿ
-ĂĂâááááááááâãäáþýáááþÿÿÿ
-áááááááááááâãáþþþááýþÿÿÿ
-áááááááááááááýþþþááýþÕÕÖ
-ááááááááááááýþþþþõáõõõÕÕ
-ááááááááááááýþþþõõõõõõÕÕ
-ááááááááááááýþþõúÕÕÕÕÕÕÕ
-ááááááýþþþþýþþþõõÕÕÕÕÕÕÕ
-ááááááþþýáááþþþõõÕÕÕÕÕÕÕ
-ááááááýááááááþþĭÕÕÕÕÕÕÕÕ
-end
-
-frame g_rrro_3 - 0
-ääçâááááááááááââããããååää
-ççççâááâáááááâãããäääåååä
-ççççâââäääââáãääåææáææçç
-çççââããäääääâãääåááááæçç
-çççãããäååååäääääåáþýááçç
-ççããäääæååááááãæáýþþþýáè
-èääåäāæææáááþááæáþäþþþáè
-èääåāāæææááþþþáááþĭĭþþþá
-äääåææāāāáýþþþþáþþþþþþþþ
-ãääåææāāāáýþþþþþþþþĭĭĭĭĬ
-ãäæææææææçáþþþþþþĭĭĭĭĭĬĬ
-âææææææççèèáþĬþþÿĭĭĭĭĭĬĬ
-áâæææææèèèèáþĬþþÿĭĭĭĭĭĬĬ
-ááââæææèèèèáþþþþÿĭĭĭĭĭĬĬ
-áááááââââááááþþþþÿÿÿĬÚÚĬ
-áááááááááþþáááýþþþúÚÚÛÛÛ
-ááááââââáþþýôôôôôúÚÚÛÛÕÕ
-áâââââááäááõôôôôúúÚÚÕÕÕÕ
-âââãááááååáõõõôôúúÚÚÕÕÕÕ
-ââããäáááååáõõõõúúÚÚÕÕÕÕÕ
-ãäãääāááááááááúúÚÚÕÕÕÕÕÕ
-äääåāāááááááĂááĬÚÛÕÕÕÕÕÕ
-äääåæááááááááááĬÚÛÕÕÕÕÕÕ
-äääááááááõõááááÚÚÕÕÕÕÕÕÕ
-end
-
-frame g_rrro_5 - 0
-ááááááááááââââæèèâââââãä
-ááááááááááááááááááááââãä
-ááááááááááááááááááâââãää
-áááááááááááááááááââããäåá
-ááááááááááááááááâããääææá
-áâââááááááááááááãääåææáá
-ââäääââáááááááááãääáææææ
-ããååäääââáááááááâääāææææ
-ääååååäääáááááááâæææææçá
-ææææåååççááááááááâææææèá
-æææææçĂĂççáááááááááââæèá
-ææææææĂĂççáááááááááááááá
-æææææçççççáááááááááááááá
-ææææççèççâáááááááááááááá
-ææççèèèèâááááááááááááááá
-ææèèèèèâáááááááááááááááá
-ææèèèââááááááááááááááááÓ
-áââáááááááááááááááęáÓÓÓÓ
-ááááááááááááááááááÔÔÓÓÓÖ
-ááááááááááááááááááÔãÖÖÖÖ
-âááááááááááááááááÏÖÖÖÖÖÏ
-ââáááááááááááááááÏĭÖÖÖÖÏ
-ĂâááááááááááááááÓÏĭÖÖÖÖÖ
-ĂääââááááááááááĚÓÏĭÖÖÖÖÖ
+frame g_rrrn_22 - 0
+çèèèçâáâãäææāāæææççèèçĂâ
+èèèèâáááâæææāāæçèèèèèèâá
+èèĂâáááááâææāāæèèèèèèâáá
+ââááááááááââāāæèèèèââááė
+áááááááááááááâââââââäėėė
+ááâââáááááááááââââããäėėė
+ââââäääâáááááâââããããåėėė
+ããããååääâáááâãâããäääååėė
+ãääæåååäĂâááâãääääėėāāæå
+åæææææççĂĂáâãäääåæėėėėėΑ
+åæææææççççââãäääåėėėâããė
+åæææææççççááĬĨääåėęėėėãã
+ææææççèèçâááėėĬĬæęęėėėėė
+ææææèèèèâááėĘėėæėėėėãââė
+âæāāèèèâááĬĘĘĘĘėėėãããââÄ
+ááâââááááþėĘĘĘĘęėâââââââ
+áááááááááþþėęęęãėâââââââ
+áááááááááþþþĦėęãėâââââââ
+ááááááááááþþĦĦėęęâââââââ
+ááááááááááÎþĦĦėėėâââââââ
+áááááááááááááĦþáėâââââââ
+ááááááááááááááááėâââââââ
+ááááááááááááááėėėâââââââ
+áááááááááááããããėââââââââ
 end
 
 frame g_rrrr_0 - 0
@@ -52760,6 +49847,60 @@ frame g_rrrs_2 - 0
 ĂĂèááááááþþáááõõėėėáėėėÔ
 end
 
+frame g_rrrs_21 - 0
+ççâááááâææææææèèèæææææĂĂ
+çâááááááââææææèèèæææææĂĂ
+ââááááááááââââââââææææèè
+âááááááááááááááááááââæèè
+áááááááááááááááááááááááá
+áááááááááááááááááááááááá
+áááááááááááááááááááááþýâ
+ááááááááááááááááááááýþþá
+ááááááááááááááááááááþþþþ
+ááááááááááááâââââáááþþþþ
+ááááááááááâââââäääâáþþþĭ
+ááááááááâââããããåáááþþþþĭ
+áááááááâââããäääááýþþþþĭÿ
+âáááááááãäãäæææááþþþĭĭĭÿ
+âáááááááááåææææáááýþĭĭÔÔ
+çáááááááþþáæææáááááçÚÔÔÔ
+çáááááááþýáåææáááááíÔÔÔÔ
+âááááááááááææááĬááèěÔÔÔÔ
+áááááááááááááþĭĭíáèĚÔÔÔÔ
+áááááááááâááþìììÔááěÔÔÔÔ
+áááááááááááĬáììÚÔÔÔÔÔÔáá
+ääâááááâââáĬììÚãÔÔÔÔÔááá
+ääääâáâââãáĬììÚÔėėėėÔÔáá
+åååääââãááþĬĬÔÔÔėėėėėÔÔÔ
+end
+
+frame g_rrrs_22 - 0
+çèèèçâáâãäææāāæææççèèçĂâ
+èèèèâáááâæææāāæçèèèèèèâá
+èèĂâáááááâææāāæèèèèèèâáá
+ââááááááááââāāæèèèèââááá
+áááááááááááááâââââââäääâ
+ááâââáááááááááââââããääää
+ââââäääâáááááâââããããåååå
+ããããååääâáááâãâããäääåååå
+ãääæåååäĂâááâãáäääææāāæå
+åæææææççĂĂáâãäááåæææāāæá
+åæææææçççáááááááåææææææá
+åæææææççááþþþþáäåæææææáá
+ææææççèèááþþþþáäæááááýþý
+ææææèèèèáþþþþþáææááááúĬþ
+âæāāèèèâáþþþþþáæææææááĬÔ
+ááâââááááþþþááââææææáĬÔÔ
+áááááááááááááááááâááĬÔÔÔ
+áááááááááááááááýĬáúÚÚÚÔÔ
+áááááááááááááááíÔÔÔÔÛÛÔÔ
+áááááááááááááááÔÔÔÕÚÛÔÔÔ
+ááááááááááááááááÔÕÚÛÔÔÔÔ
+ááááááááááááááââĚÚÛÛÔÔÔÔ
+ááááááááááááááâáÔÔÛÔÔÔÔÔ
+áááááááááááâáááęÔÔÔÔÔÔÔÔ
+end
+
 frame g_rrrs_23 - 0
 ááâäæææææçèçäääāææææāååç
 áááæææææèèèääååāææææāāçç
@@ -52785,6 +49926,33 @@ frame g_rrrs_23 - 0
 âáááááâæææèèèèááþÔÔÔÔÔÔÔ
 äâááááááââââáááþÔÔÔÔÔÔÔÔ
 ääâááááááááááááþÔÔÔÔÔÔÔÔ
+end
+
+frame g_rrrs_3 - 0
+ääçâááááááááááââããããååää
+ççççâááâáááááâãããäääåååä
+ççççâââäääââáãääåææáææçç
+çççââããäääääâãääåááááæçç
+çççãããäååååäääääåáþýááçç
+ççããäääæååááááãæáýþþþýáè
+èääåäāæææáááþááæáþäþþþáè
+èääåāāæææááþþþáááþĭĭþþþá
+äääåææāāāáýþþþþáþþþþþþþþ
+ãääåææāāāáýþþþþþþþþĭĭĭĭĬ
+ãäæææææææçáþþþþþþĭĭĭĭĭĬĬ
+âææææææççèèáþĬþþÿĭĭĭĭĭĬĬ
+áâæææææèèèèáþĬþþÿĭĭĭĭĭĬĬ
+ááââæææèèèèáþþþþÿĭĭĭĭĭĬĬ
+áááááââââááááþþþþÿÿÿĬÚÚĬ
+áááááááááþþáááýþþþúÚÚÛÛÛ
+ááááââââáþþýôôôôôúÚÚÛÛáÔ
+áâââââááäááõôôôôúúÚÚââáÔ
+âââãááááååáõõõôôúúÚÚââáÔ
+ââããäáááååáõõõõúúÚÚâââÔÔ
+ãäãääāááááááááúúÚÚááâáėė
+äääåāāááááááĂááĬÚÛááááėė
+äääåæááááááááááĬÚÛááááÔė
+äääááááááõõááááÚÚáááááÔė
 end
 
 frame g_rrrs_5 - 0
@@ -53867,31 +51035,58 @@ frame g_rsms_11 - 0
 öööööõõõõõõõõõõõõõÔÔÔÔÔÔ
 end
 
-frame g_rsrr_0 - 0
-âââááááááááááþþĭĭÔÔÔÔÔÔÔ
-ääääâááááááááþþþĭÔÔÔÔÔÔÔ
-åååääáááþþþýáþþþþĭÔÔÔÔÔÔ
-æåååäçáþþĭĭþáþþþþĭĭÔÔÔÔÔ
-ææāĂçççáþĭþþáþþþÿĭĭÔÔÔÔÔ
-ææāĂçççâáááááþþĭĭĭĭĭþÔÔÔ
-æææççççâááááááþþþĭåþýáÔÔ
-ææçèèççáááááááýþþþĭþááĚÔ
-çèĂĂĂĂâáááááááááþþþõáááĘ
-èèĂĂĂâááááááâââááþõááááę
-ĂĂââáááááââââââäááááââáá
-ááááááááââââãããääääääááþ
-áááááááâââãããããååååääááþ
-ááâââäâââãããäääååååååäáþ
-âââããääääãäääæææāāååååáþ
-âããääåååääååææææāāæçççáþ
-äãääæææååäåæææææáæāāáááþ
-äåææææææçäåæææææááýýáááþ
-äåææææææçäåæææææáþþþþááá
-ääåæææææçäæææææææáþþþááá
-ææææææççèāæææææçççááýþáá
-æææææèèèááæææææèèèĂááááã
-âæāāæèèèèææææææèèèèèèèãä
-ááââââââââæææææèèèèèèâãä
+frame g_rsnr_2 - 0
+ááááááááááâááááĚÔÔÔÔÔÔÔÔ
+ááááááááááâááÛþÓÔááęáÔÔÔ
+áááááááááâãáþþþþÛáæææěÔÔ
+áááááááááâãáþþþþÛæææææÔÔ
+ââââââáááâãäááþþááæææęÔÔ
+âããääääâááâãääáþááááÛÛÖÔ
+ãääåååääâááãææáýýááÛÛÛÛÔ
+äææææåççáááâææááááþÚÛÛÛÕ
+ææææææçááááþþááááýþþÚáÛÕ
+ėææææççáááþþþþáááþþþáááÔ
+ėææææçĂĂâáþþþþþáýþþþáááá
+ėΑΑΑèèĂĂâááþþþþþþþþþõúáá
+ėΑΑΑΑΑΑĭĭėėėėþþþþþþþþþáá
+ãΑΑΑΑΑΑſĭĭėėėþþýýþþááááá
+ÄėΑΑΑΑΑΑΑΑΑááááááááááááá
+ÄÄþþþΑėΑΑΑΑáââââââââáááá
+ÄÄėėėėėĬΒΒΒΑΑââĬääääââáá
+ÄÄÄėėėãėĬĬΒΒΑΑãĬååääääâá
+ÄÄÄÅÅėėėĭĬĬþþΑäĬååååäääâ
+ÄÄÄÄÅėėãþĬþþþΑΑāææåååäçç
+ÄÄÄÄÅėâęþþþþΑſĭſāāæåçççç
+ÄÄÄÄÄėâĘþþþΑſĭĭĭĭāææçççç
+ÄÄÄÄâėėãėĦþþþĭĭĭææææçççç
+ÄÄÄâââėããėħĦĦþþĭæææççççç
+end
+
+frame g_rsrr_10 - 0
+äääääââáááááááááÔÔĭĭââââ
+ååååäääâááááááááÔÔĭĭáâââ
+åååååääçâááááááâáÔþþÔáâá
+æææååçççâáááááááãáýýÔÔáþ
+ææææçççççâááááááâááááááá
+ææææçççççâáááááááááææææę
+ææææçççççâááááááááâææææè
+æææçèçççâáááááááááááââââ
+ççĂĂèèèçâááááááááááááááá
+èèĂĂèèèâáááááááááááááâââ
+èèĂĂèââáááááááááááâââââä
+èèĂââááááááááááááââããããä
+ââââââááááááááááááãããääå
+ââääääââáááááááááããäääææ
+ããåäääääâáááááááääääææææ
+ääååååäääâáááááãääåææááæ
+äææååååäççâáááâãääåæææææ
+æææææåĂĂççâáááâãääååææææ
+æææææççççççâááâãäāææææææ
+ææææææçççççâáááâāāæææææç
+æææææççççççâááááâææææææè
+æææææçççççâááááááââææææè
+ææçççèèèèçâáááááááááââââ
+ææèèèèèèäääââááááááááááá
 end
 
 frame g_rsrr_11 - 0
@@ -54162,6 +51357,33 @@ frame g_rsrr_6 - 0
 áááãääääææææåååççãääåæææ
 ääâãääåææææææççççãääååææ
 åääãääåæææææææçççãäääæææ
+end
+
+frame g_rsrr_8 - 0
+äääáýáááááááááááÚÔááááÔÔ
+ãææááææááááèèèááÚÔÔáâááÔ
+âææææææèáááèèèâáÛÛÔáââáÔ
+áâæææææèááèèèâááÚÛĭĭÛÛáá
+ááââæææèèáèâááááÚþĭĭĭÛáÔ
+áááááââââááááááúÚĭþĭĭÛÔÔ
+ááááááááááááááõõĭþþĭĭĭÛĭ
+áâââââááááááááþþĭþþþĭĭĭĭ
+ââââäääââááááááþþþþþþþþĭ
+ããããäääääââáááááþþþþþþþþ
+ããääåååäääââáââãááþþÿþþþ
+ääääåååååäçââãäääæáþÿÿÿþ
+äæææææååĂĂççâääåæææýÿÿÿþ
+æææææææçĂĂççâääåææáþÿÿÿþ
+æææææææçççççâãäææááþÿÿþý
+æææææææçççççââæááááþþþþá
+ææāāāāççèçççâáâæææèááýáá
+ææāāĂĂèèèèèâááááââââáááá
+ææææèèĂĂèèâááááááááááááá
+ææææèèĂĂèâáááááááááááááá
+âāææĂĂââáááááááááááááááá
+áááááááááâââââáááááááááá
+ááááááâââââäääâââáááââââ
+ááááââââãããääääääâáâââãã
 end
 
 frame g_rsrs_0 - 0
@@ -54785,33 +52007,6 @@ frame g_rsrs_9 - 0
 ãåääääãääáååæáÔÔÔÔÔÔÔÔÔÔ
 end
 
-frame g_rssr_4 - 0
-âáááááâââáááÔÔėėėėėėááėė
-çâáááââãããäáĚěėėėėėėėáėė
-ççááâãääãääāæěĚėėėėėáááė
-ççááâãäääåāāææěėėááėėáėė
-ççááâãääååææææĚáÔÔÔÔÔÔÔÔ
-çâááâãäääåæáĚĚěáÔÔÔÔÔÔÔÔ
-âáááâãäääæāáõÔÔěÔÔÔÔÔÔÔÔ
-ááááááááææāáĬÔÔÔÔÕÕÔÔÔÔÔ
-þþþôôôúúáææáááíÕÓÓÓÓÔÔÔÔ
-þþþúúúúúþááææáþíííááááíÔ
-ĬĬäĬĬĬĬĬþáááááþìììááĭĭĭĭ
-ĬĬĬĭĭĭĭĭĭáááýááááááĭĭĭĭĭ
-ĬĬĬĭĭĭĭĭìĭáúþýáááááĬĬĬĬá
-ĬĬĬĭĭĭĭĭĭáááááááááááúúúá
-ĬĬÚÚÚÚÚÚĬááäááâáááááôõõþ
-ÛÛÚÚÚÚÚÚĬáãåäääááááááþþþ
-ÔÔÔÚÛÛÛÚĭáäåååááíĭáááááþ
-ÔÔÔÛÜÛÛÚÚáááááìììþþýáááþ
-ÔÔÔÛÜÜÛÛÚááááĭìììþþþáááý
-ÔÔÛÛÜÜÛÛÚáááááììĭþáááááá
-ÔÔÛÜÜÜÛÛÚááááááýáçâááááã
-ÔÔÛÜÜÛÛÛÚáááááááççáááááâ
-ÔÔÔÛÔÔÔÔÛáááèèĂĂèâáááááá
-ÔÔÔÔÔÔÔÔÔáæèèèĂââááááááá
-end
-
 frame g_rsss_12 - 0
 æææççèèèĂâãááþââââááááââ
 ááèèáèèèããääáÓâââââááâââ
@@ -55026,6 +52221,60 @@ frame g_rsss_21 - 0
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááá
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėėÔÔáá
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėėėėÔÔÔ
+end
+
+frame g_rsss_22 - 0
+çèèèçâáâáĭĭþþþÖÖÔÔÔÔÔÔÔÔ
+èèèèâááááíìþþþÖÔÔÔÔÔÔÔÔÔ
+èèĂâááááááþĭĭĭĭÔÔÔÔÔÔÔÔÔ
+ââááááááááþĭĭĭĭĭÔÔÔÔÔÔÔÔ
+áááááááááþĭĭĭĭĭĭÔÔÕÔÔÔÔė
+ááâââáááþþäĭĭĭĭÔÔÕáâââââ
+ââââäääáĭþĭĭĭÔÔÔÔÕââââââ
+ããããååäáĭĭĭÖÔÔÔÔÔÕââââââ
+ááäæååáĭÕÔÔÔÔÔÔÔÔáââââáÔ
+þáææææáÓÔÔÔÔÔÔÔÔÔáâââáÔÔ
+ĭþáæáĚÓÔÔÔÔÔÔáááâââââÔÔÔ
+ĭĭĬĬÔÔÔÔÔÔÔÔÔáââââââáÔÔÔ
+ÿĬĭÔÔÔõÔÔÔÔÔÔáááââââáÔÔÔ
+ĭĭÔÔÔÔÔÔėÔÔÔÔÔÔÔėááááÔÔÔ
+ÔÔÔáááÔėÔÔÔÔÔÔÔÔėėėáėÔÔÔ
+ÔÔÔáâáÔÔÔÔÔÔÔÔÔÔÔėėėÔÔÔÔ
+ÔÔÔâââÔÔÔÔÔÔėėėÔÔÔÔÔÔÔÔÔ
+ÔÔáâââÔÔÔÔėėėėėėÔÔÔÔÔÔÔÔ
+ÔÔáâââáÔÔÔėėėėėėÔÔÔÔÔÔÔÔ
+ÔááâââáÔÔÔėėėėėėÔÔÔÔÔÔÔÔ
+ááââââáÔÔÔÔÔėėÔÔÔÔÔÔÔÔÔÔ
+áâââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+áááááááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+end
+
+frame g_rsss_23 - 0
+ááâäæææææçèáĬáęáÔÔÔÔÔÔÔÔ
+áááæææææèèèáÔÔěáÔÔÔÔÔÔÔÔ
+ááááâāææĂáááÓÔÔÔÔÔÔÔÔÔÔÔ
+ááááááááááöööÔÔÔÔÔÔÔÔÔÔÔ
+âáááááýöööööÔÔÔÔÔÔÔÔÔÔáá
+äâáööööööööááÔÔÔÔÔÔáââââ
+äáööúúööööâááÔÔÔÔÔáâââââ
+ááöúúööÔÔâââáÔÔÔÔÔáâââââ
+þþööÔėėÔÔÿââáÔÔÔÔÔáâââââ
+þþúöÔÔÔÔþĭĮâÔÔÔÔÔÔáââââá
+þþÖÔÖÖÔÔĭĭĭâÔÔÔÔÔÔáââââá
+þþÖÖÖÖÖÔÔĭĭáÔÔÔÔÔÔáâââáÔ
+þĭÖÖÖÖÖÔÔáâáÔÔÔÔÔÔÔáââáÔ
+ÔÖÖÖÖÔÔÔÔÔááÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕ
+ÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔÕ
+ÔÔÔÔÔÔÔÔÔáâáÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔáâââÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔáâââÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔâââÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔÔ
 end
 
 frame g_rsss_24 - 0
@@ -57485,6 +54734,33 @@ frame g_smss_7 - 0
 ÔááâââáÔÔÔÔáââââââááááââ
 end
 
+frame g_snrr_21 - 0
+âââââÔėėÔĭþääÄÄÅÅÅÅããããâ
+ââââĬÔėėĭþėääÄÄÅÅÅÅãããââ
+ââââĬÔÔėėėėâââÄÅÅÅÅãããââ
+âââââĬÔÔâėėââãããããããããââ
+áâââáÔÔĬėėããããããããäãããââ
+áááááíĭĬĬėãėėããããäääãÅÄÄ
+ááááĭĭĭĬĬâãėėėėėääääãÅÄÄ
+ÔÔÔĭĬĬĬĬþėėėĚėėėėėäääÅÄÄ
+ÖÖÕãĬúúúþááėęęęėėėėėėÅÄÄ
+ÕÚÚúúúõõþááėęęęęėėėėėėėã
+ÚÚááúúúþááėęęęęęäėėėėėėä
+íááááĬþþâėėėęęėåäėėėáėėė
+áááááĭþþâėėėėėäååėėėáááá
+áááááþþþáäãäæææææååÎÎÎÎĭ
+ýááááþþýááåæææææææēēēēēē
+þýááááááþáåæææææææĭĭĭĭėá
+ááááááááááååæææææçççĂĂâá
+ááááááááãäææææææççèçĂâáá
+áááááááâææææææāĂèèèèèâáá
+ááááááááââææææāĂèèèèâááá
+ááááááááááââæææèèââááááá
+ääâááááâââââääââáááááááá
+ääääâáâââãããääääââáááááá
+åååääââãããääåååäääâááááá
+end
+
 frame g_socc_17 - 0
 ÔááââââáÔėėėÕÖÕÕÕÏÕÕÕÕÕÕ
 ÔÔáâââááÔėėÖÖÖÕÕÕÏÕÕÕÕÕÕ
@@ -57510,87 +54786,6 @@ frame g_socc_17 - 0
 ããŊŊããããããããããããããããããáã
 ääääãäääääáááääääããáááãã
 ääääääääääääáääääããããããã
-end
-
-frame g_soff_12 - 0
-ÔááâââáÔÔÔÔÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÔÔááááÔÔÔÔÔÏÖÖÖÖÏÖÖÖÖÖÏÏ
-ÔÔÔÔÔÔÕÕÔÔÔÏÖÖÖÖÏÖÖÖÖÖÏÖ
-ÔÔÔÔÔÕÕÕÕÔÔÔÖÖÖÖÖÖÖÖÖÖÏÖ
-ÔÔÔÔÕÕÕÕÕÔÖÖÖÖÖÖÖÖÖÖÕÕÖÖ
-ÔÔÔÕÕÕÕÕÕÖÖÖÖÖÖÖÖÕÕÕÕÕÖÖ
-ÔÔÔÕÕÕÕÕÖÖÖÖÏÖÖÖÕÕÕÕÕÕÖÖ
-ÔÔÔÕÕÕÕÕÕÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖ
-ÔÔÔÔÕÕÕÕÕÕÕÕÕÖÕÕÕÖÖÖÖÖÖÖ
-ÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÔÔÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖØØØ
-ØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØ
-ØØØØÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØØØÖ
-ØØØØØØØØØØØØØØØØØØØØØÖÖÖ
-ÖØØØØØØØØØØØØØØØØØØØÖÖÖÖ
-ÖÖÖÖØØØØØØØØØØØØØØÖÖÖÖÖÖ
-ÖÖÖÖÖÖØØØØØÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕ
-ÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕ
-ÕÕÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖ
-end
-
-frame g_sooo_0 - 0
-ėėėėÔÔÔÔÔÔÔÔÔØØØÖÖÕÕÕÕÕÕ
-ėėėėÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÕÕÕÕÕ
-ėėėėÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ėėėÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔáÔÔÔÔÔÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÔáâáÔÔÖÖÖÔÔÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÔâââáÖÖÖÕÔÔÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÔâââÔÕÕÕÕÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖ
-ÔÕÕÕÕÕÕÕÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÖÖÕÕÕÕÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÕÖÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖ
-ÕÕÕÕÕÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÖÖÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_sooo_10 - 0
-ÔÔÔÔÔÔÔÔÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-áÔÔÔÔÔÔÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-âââáÔÔÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ââââÔÔÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-âââáÔÔÔÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-áÔÔÔÔėėėÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÔÔÔÔÔÔėėÕÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖ
-ÏÖÔÔÔÔÔÔÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÔÔÔÔÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÔÖÖÏÖÖÖÖØØÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖØÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏÏ
-ÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÖÏ
 end
 
 frame g_sooo_21 - 0
@@ -57620,87 +54815,6 @@ frame g_sooo_21 - 0
 ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕ
 end
 
-frame g_sooo_9 - 0
-ÔÔÔÔÔÔÔÔÔÔÖÖÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÖÖÕÕÕÕÕÏÕÕÕÕÕÕ
-ÔÔÔÔáââáÔÔÕÕÕÕÕÕÕÏÏÕÕÕÕÕ
-ÔÔÔáââââÔÖÏÕÕÕÕÕÕÕÏÕÕÕÕÏ
-ÔÔÔÔáâââÔÔÏÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔáâáÔÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔááÔÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÏÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔÕÏÖÖÖÖÖÖÕÕÏÕÕÏÖ
-ÔÔÔÔÔÔÔÔÔÖÏÖÖÖÖÖÖÖÖÖÕÕÏÖ
-ÔÔÔÔÔÔÔÖÖÖÏÖÖÖÖÖÖÖÖÖÖÕÖÖ
-ÔÔÔÕÔÔÔÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÔÔÔÕÕÔÔÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÔÔÖÕÕÕÔÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÕÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÏ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-end
-
-frame g_sorr_0 - 0
-ėėėėÔÔÔÔÔÔÔÔÔØØØÖÖÕÕÕÕÕÕ
-ėėėėÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÕÕÕÕÕ
-ėėėėÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ėėėÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔáÔÔÔÔÔÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖ
-ÔáâÛÛÔÖÖÖÔÔÕÕÕÕÕÖÖÖÖÖÓÓÓ
-ÔâÛÜÜÛÖÖÕÔÔÕÕÕÕÕÖÖÖÖÓęĚÓ
-ÔâÛÛÜÜÛÕÕÿÿþþÓÕÖÖõõÖęááĘ
-ÔÚÚÚÛÜÜÛþþþáááÓÖôõõõęááę
-ìíÚÚÚÛááááââââáÓôôõõáâáá
-ìáááááááââââããáþþááááááþ
-áááááááâââãããããáááåäááýþ
-ááâââááââãããäääááåååáááþ
-þááãááýáäãäääææááāåååááþ
-þþáááþþáääååææáýáāæççááþ
-þþááááýáåäåææææáááāáááýþ
-þþáááááæçäåææææáþþþþþáþþ
-þþáæææææçäåææææáþþĭþþýáá
-ýááæææææçäææææææáþþþþýáá
-æááááæççááæææææççááþþþáá
-æææáæèèèáþáææææèèèáááýáã
-âæāāæèèèááæææææèèèèèèèãä
-ááââââââââæææææèèèèèèâãä
-end
-
-frame g_sorr_1 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÕÏÕÖÕÕÕÕÕ
-ÔÔáááááááááâÖÖÖÕÏÕÕÕÕÕÕÕ
-ÔÔââÕâââââââÖÖÖÕÕÕÕÕÓÕÕÕ
-ÔÔáÕÕÕÕÕáááâÖÖÕÕÕÏÓÓÓÓÕÏ
-ÔÔÔáÕÕÕÕÕÔÔÔáÕÕÕÕÏÕÓÕÕÕÏ
-ÔÔÔÔÔÕÕÕÔÔÔÔÔÕÕÕÕÕÏÕÕÕÏÕ
-ÔÔÔÔÔÔÕÔÔÔÔÔÛÛÛÕÕÕÏÕÕÕÏÕ
-ÔÔÔÔÔÕÕÕÖÖÕÏÕÛÛÕÕÕÏÕÕÕÏÕ
-ÔÔÔÔÖÖÖÕÕÕÕÏÏÕÕÕÕÕÏÕÕÕÏÕ
-õØØØÖÖÖÖÕÔÔÕõÕääÕõõõÕÕÕÏ
-õõØĭĬĬĬÖÔĘÔõõõääÓõõõõÓÓô
-õúúúúĬĬÖÔááĚõááááõõõõááô
-ĭõõõúúĬĭÚáĚááááááõõõáááá
-ĭĭõõõúĬĬĬáááááááááõõáááá
-ĭĭĭõõõõúýáááááááááááááââ
-ĭĭþþõõõõþáááááááááááâââã
-þþáááþþþþááááááááááââããä
-þáááááááááââááááááâäãääæ
-ááââããááááääâáááááãääåææ
-áâãããããåååäääââááâãääåææ
-âããääääååååäääâáááãääåææ
-ääääæææææåååçççâááâæææææ
-ääåæææææææççççĂâáááâææāā
-ääåææææææææçççĂâááááââāā
-end
-
 frame g_soso_0 - 0
 ėėėėÔÔÔÔÔÔÔÔÔØØØÖÖÕÕÕÕÕÕ
 ėėėėÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÕÕÕÕÕ
@@ -57726,114 +54840,6 @@ frame g_soso_0 - 0
 ėėėėėėėėėėėÖÕÕÕÕÕÕÕÕÕÕÕÕ
 ÔÔÔÔėėėėėėėÕÕÕÕÕÕÕÕÕÕÕÕÕ
 ÔÔÔÔÔÔėėėėėÕÕÖÖÖÕÕÕÕÕÕÕÕ
-end
-
-frame g_soso_17 - 0
-ÔááââââáÔėėėÕÖÖÕÕÏÕÕÕÕÕÕ
-ÔÔáâââááÔėėÖÖÖÕÕÕÏÕÕÕÕÕÕ
-ÔÔÔááááÔÔÕÖÖÖÖÕÕÏÏÕÕÕÕÕÏ
-ÔÔÔÔÔÔÔÔÕÕÏÖÖÖÕÕÏÕÕÕÕÕÏÕ
-ÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÖÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÏÖÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÏÖÖÖÖÏÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÏÖÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔėėÕÕÕÕÏÕÕÕÖÏÖÖ
-ÔÔÔÔÔÔÔÔÔÔėėėÖÕÕÏÏÕÕÕÕÖÖ
-ėėÔÔÔÔÔÔÔÔėėėÖÖÕÕÕÏÕÕÕÏÖ
-ėėėÔÔÔÔÔÔÔėėėėÖÖÕÕÕÕÕÕÏÖ
-ėėėėÔÔÔÔÔÔÔėėėÖÖÖÕÕÏÕÕÏÖ
-ėėėÔÔÔÔÔÔÔÔėėÕÖÖÖÕÕÏÕÕÏÕ
-ėėėÔÔÔÔÔÔÔÔÕÕÕÖÖÖÖÏÕÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔÔÔÕÖÖÖÖÖÏÕÕÕÕÕÏ
-ÔÔÔÔÔÔėėÔÔÔÖÖÖÖÖÏÖÕÕÕÕÕÏ
-ÔÔÔÔÔėėėÔÔÔÖÖÖÖÏÖÖÖÕÕÕÕÕ
-ÔÔÔÔÔėÖėÔÔÔÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÔÔÔÔÔėėÔÔÔÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÔÔÔÔėėėÔÔÖÏÖÖÖÖÏÖÖÖÖÕÕÕÏ
-ÔÔÔÔėėėÔÔÖÏÖÖÖÖÖÖÖÖÖÕÕÕÏ
-ÔÔÔÔėėÔÔÔÖÖÏÖÖÖÖÖÖÖÖÖÕÏÏ
-ÔÔÔÔÔÔÔÔÔÖÖÏÖÖÖÖÏÖÖÖÖÕÏÖ
-end
-
-frame g_soso_2 - 0
-ÔÔÔÔÔÔÔÖÖÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔÔÖÖÖÕÕÕÏÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔÖÖÔáÕÕÕÏÕÕÕÕÏÕÕÕÕÕ
-ÔÔÔÔÔØØÖÔáÔÕÕÕÕÕÕÏÕÕÕÕÕÏ
-ėėÔÔÔÔØØÔÔÕÕÏÕÕÕÕÕÕÕÕÕÏÕ
-ėėėÔÔÔÔÔØØÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ėėėÔÔÔÔÔØÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ėėėÔÔÔÔÔÖÕÕÕÏÕÕÕÏÖÖÖÖÏÖÖ
-ėėÔÔÔÔÔÔÔÔÕÕÏÕÕÕÏÕÕÕÕÕÏÕ
-ėÔÔÔÔÔÖÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÏ
-ÔÔÔÔÔÔÖÔáááÔÔÔÔÕÕÏÕÕÕÕÕÕ
-áÔÔÔÕÕÕÔáâáÔÔÔÕÕÕÕÏÕÕÕÕÕ
-áÔÔÕÕÕÕÔâââÔÔÔÕÕÕÕÏÕÕÕÕÕ
-áÔÔÔÔÕÔÔâââÔÔÕÕÕÕÕÏÕÕÕÕÕ
-áÔÔÔÔÔÔáâââáÔÕÕÕÕÏÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔáââââÕÕÕÕÕÏÕÕÕÕÕÏ
-ÔÔÔÔÔÔÔáââââÕÕÕÕÏÕÕÕÕÕÏÕ
-ÔÔÔÔÔÔÔáâââÖÕÕÕÕÏÕÕÕÖÏÖÖ
-ÔÔÔÔÔÖÖÖââØÏÕÕÕÕÏÕÖÖÖÏÖÖ
-ÔÔÔÔÔÔÖÖÕÕÕÏÕÕÕÕÏÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÕÕÕÕÏÕÕÕÕÏÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÕÕÕÕÏÕÕÕÕÖÖÖÖÖÏÖÖ
-ÔÔÔÔÔÔÔÕÕÕÕÏÕÕÕÕÖÖÖÖÖÏÖÕ
-ÔÔÔÔÔÔÔÏÕÕÕÏÕÕÕÕÖÖÖÖÖÏÖÕ
-end
-
-frame g_soso_22 - 0
-ÔÔÔÔÔÔÔÔÔÖÖÏÏÖÖÖÏÖÖÖÖÖÏÖ
-ÔÔÔÔÔÔÔÔÔÖÖÖÏÖÖÖÏÖÖÖÖÖÏÖ
-ÔÔÔÔÔÔÔÔÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÖ
-ÔÔÔÔÔÔÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÏÖ
-ÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÏÖ
-ÔÔÔáâÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖ
-ÔÔÔÖÏâÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÖ
-ÔÔÔáââÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÏÏ
-ÔÔÔáááÖÖÔÔÔÖÖÏÖÖÏÖÖÖÖÖÏÏ
-ÔÔÔÔÔÔÖÔÔÔÔÔÖÏÖÖÏÖÖÖÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÏÖÖÏÖÖÖÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔáÖÖÏÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔáØØÖÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔėÔÔÔÔÔØÖÖÖÖÖÖÖÖÖ
-ÔÔÔáááÔėÔÔÔÔÏÕÖÖÖÖÖÖÖÖÖÖ
-ÔÔÔáâáÔÔÔÔÔÏÕÕÖÖÖÖÖÖÖÖÖÖ
-ÔÔÔâââÔÔÔÔÖÏÕÕÖÖÖÏÖÖÖÖÖÖ
-ÔÔáâââÔÔÖÖÖÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÔÔáâââáÖÖÖÖÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÔááâââáÔÖÖÖÕÕÕÕÕÖÏÖÖÖÖÖÖ
-ááââââáÔÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-áâââââáÔÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-áááááááÔÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖ
-ÔÔÔÔÔÔÔÔÖÕÕÕÕÏÕÕÕÕÕÏÖÖÖÖ
-end
-
-frame g_soso_4 - 0
-ÔÔÔÔÔÔÔÔÔėØØØÖÖÖÖÖÖÖÖÖÖÖ
-áÔÔÔÔÔÔÔÔØØØØÖÖÖÖÖÖÖÖÖÖÖ
-ááÔÔÔÔÔÔÔØØØØÖÖÖÖÖÖÖÖÖÖÖ
-áÔÔÔÔÔÔÔėÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕ
-ÔÔÔÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕ
-ÔÔÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÖÖÖÖáÖÖÖÖÖÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÕÕÕÖáÖÖÖÖÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÕÕÕáÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÔÔÔÔÔÔÔÔÕááÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔááÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔáÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔáÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÓÓÔÔÔÔÔÔÔÔÔÖÖÕÕÕÕÕÕÕÕÕÕÕ
-ÓÔÔÔÔÔÔÔÔØÖÖÖÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
 end
 
 frame g_soso_5 - 0
@@ -57863,60 +54869,6 @@ frame g_soso_5 - 0
 ÔÔÔÔÔÔÔÔÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
 end
 
-frame g_soso_7 - 0
-ÔÔÔÔÔÔÔÔÖÖÕÏÕÕÕÕÖÖÖÖÖÏÏÕ
-ÔÔÔÔÔÔÔÔÖÖÖÏÕÕÕÕÖÖÖÖÖÏÏÕ
-ÔÔÔÔÔÔÔÔÔÔÕÔÕÕÕÕÏÖÖÖÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÏÖÖÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÏÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÕÕÕÕÏÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÕÏÕÕÕÕÕ
-áÔÔÔÔÔÔÔÔÔÔÖÖÖÖÕÕÕÏÕÕÕÕÕ
-âáÔÔÔÔÔÔÔÔÖØØØÖÕÕÏÕÕÕÕÕÕ
-ááÔÔÔÔÔÔÔÔØØØØÖÖÏÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔØØØØØÖÏÖÖÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔØØØØØØÖÖÖÖÖÖÕÕÕÕ
-ÔÔÔÔÔÔÔÔØØÖÖÖÖÖÖÖÖÖÖÖÕÕÕ
-ÔÔÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕ
-ÔÔÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÖÕÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÖÏÔÔÖÖÖÖÏÖÖÖÖÖÏ
-ÔÔÔÔÔÔááâÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÔÔÔÔÔÔáâÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÔÔÔÔÔááâÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÔÔÔáááááÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖ
-ÔÔááââáááÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÔÔáâââáÔÔÔÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÔááâââáÔÔÔÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-end
-
-frame g_sosr_9 - 0
-ÔÔÔÔÔÔÔÔÔÔÖÔÓÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÓÓÕÕÕÕÏÕÕÕÕÕÕ
-ÔÔÔÔáââáÔÔÔÓÓÕÕÕÕÏÏÕÕÕÕÕ
-ÔÔÔáââââÔÔÔÓÓÕÕÕÕÕÏÕÕÕÕÏ
-ÔÔÔÔáâââÔÔÔÓÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔáâáÔÔÔÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔááÔÔÕÕÕÕÕÕÕÕÕÏÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÏÕÕÏÕ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖÖÕÕÏÕÕÏÖ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÓÖÖÖÖÕÕÏÚ
-ÔÔÔÔÔÔÔÔÔÔáÖÖÖÖÖÖÖÖĭĭäĭÖ
-ÔÔÔÔÔÔÔÔÔáÏÖÖÖÖÖÖÖÏĭĭĭÿÿ
-ÔÔÔÔÔÔÔÔÔáÏÖÖÖÖÖÖÖÏĭþÿÿþ
-ÔÔÔÔÔÔÔÔááÏÖÖöÖÖÖÖÏĭþÿÿþ
-ÔÔÔÔÔÔÔÔÔáÏÖöúúÚÚÖíĭþþÿþ
-ÔÔÔÔÔÔÔÔÔÔÔÚúúúúÚĬĭĭĭþþþ
-ÔÔÔÔÔÔÔÔÔÔÔÚúúúúúúĭĭĭþþý
-ÔÔÔÔÔÔÔÔÔÔÚÚÚúááöõþĭĭäĭá
-ÔÔÔÔÔÔÔÔÔÚÚĬĬáââáþþþåĭĭá
-ÔÔÔÔÔÔÔÔÔöÚĬááãááþþþĭĭþâ
-ÔÔÔÔÔÔÔÔööÔáããáöþþþþþþáâ
-ÔÔÔÔÔÔÔÔõöáäääáþþýááááää
-ÔÔÔÔÔÔÔÔØþáääæáþþááááåĂĂ
-ÔÔÔÔÔÔÔÔãþýåææáþþááæĂĂĂĂ
-end
-
 frame g_soss_10 - 0
 ÔÔÔÔÔÔÔÔÔÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
 ÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖÏÖÖÖÖÖÖ
@@ -57942,33 +54894,6 @@ frame g_soss_10 - 0
 ÔÔÔÔÔÔááÔÕÕÕÕÕÕÕÕááááááÔ
 ÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕááááááá
 ÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕááááâá
-end
-
-frame g_soss_6 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÖÖÏ
-áÔÔÔÔÔááááááááÕÕÕÏÕÕÖÖÖÏ
-ââââââââââââââÕÕÕÏÕÖÖÖÖÏ
-ââââââââââââââØÕÕÕÕÖÖÖÖÏ
-ááááââââââââááÔØÕÕÖÖÖÖÖÖ
-ÔÔÔÔÔÔáâââáÔÔÔÔØØÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔáááÔÔÔÔÔÔÖØØÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÖÖÖØØÖÖÖ
-ÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔėÖÖÖÖØØØ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėÖÖÖÖėáØ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔááÔÔÔÔÔÔÔÔÔÔ
-ÔÔėėėėėėáááááááÔÔÔÔÔÔÔÔÔ
-ėėėėėėėáââââââááÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔââââââââááÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔââââââââááÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔâââââââááÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔâââââââááÔÔÔÔÔÔÔÔ
-áÔÔÔÔÔÔââââââáááÔÔÔÔÔÔÔÔ
-áÔÔÔÔÔÔââââââáááÔÔÔÔÔÔÔÔ
 end
 
 frame g_srff_3 - 0
@@ -58050,6 +54975,33 @@ frame g_srrr_1 - 0
 ääääæææææåååçççâááâæææææ
 ääåæææææææççççĂâáááâææāā
 ääåææææææææçççĂâááááââāā
+end
+
+frame g_srrr_10 - 0
+ÔÔÔÔęęááááááááááâãããäääå
+ÔÔÔÔęęäâááááááááãääåææāā
+áÔÔĘĘääçâááááááâãääåææææ
+âââĚåçççâáááááááãääåææææ
+âââáçççççâááááááâãææææææ
+âââæçççççâáááááááææææææè
+áÔáæçççççâááááááááâææææè
+ÔÔáçèçççâáááááááááááââââ
+ÔáĂĂèèèçâááááááááááááááá
+ááĂĂèèèâáááááááááááááâââ
+áèĂĂèââáááááááááááâââââä
+áèĂââáááááááááááâââããããä
+ââââââáááááááááâââãããääå
+ââääääââááááááâããããäääææ
+ããåäääääâáááááâãääääææææ
+ääååååäääâááááâãääåæææææ
+äææååååäççâáááâãääåæææææ
+æææææåĂĂççâáááâãääååææææ
+æææææççççççâááâãäāææææææ
+ææææææçççççâáááâāāæææææç
+æææææççççççâááááâææææææè
+æææææçççççâááááááââææææè
+ææçççèèèèçâáááááááááââââ
+ææèèèèèèäääââááááááááááá
 end
 
 frame g_srrr_11 - 0
@@ -58160,6 +55112,33 @@ frame g_srrr_14 - 0
 áááááááâææāāæææçççèèĂæææ
 end
 
+frame g_srrr_16 - 0
+ÔÔÔÔÔÔÔĘáâáýþáááááááââââ
+ÔÔÔÔÔÔÔÔááááááââááâââããã
+ÔÔÔÔÔÔÔÖÖöáááäääââââããää
+ÔÔÔÔÔÔÏÖÔöýáååääääãäääææ
+ÔÔÔÔÔÖÖÔõþáäååååääãääåææ
+ÔÔÔÔÖÖÖÏõáāāææåååççääåææ
+ÔÔÖÖÖÖÖõáæææææāĂççĂääæææ
+ÔÔÔÓÓÖÖõáæææææāĂççĂæææææ
+ÔÔÔáçęáááááāæææçççççææææ
+ÔÔæçççäåáþáāæææçççççâáææ
+ÔáāĂèçææáááææççèèèççâááâ
+ççĂĂèèæææááæçèèèèèèâáááá
+èèèèèèæææááæèèèèèèâááááá
+èèèèèèâæææææèèèääââááááá
+èèèèââáââââãããääääääâááá
+âââáááâââãããääåååääääâáá
+áááááâãâããääääåååååääçäâ
+âáááâããääääææææææååççãää
+äâááâãäääåææææææææççããåå
+çââáâãäääåææææææææçäääåå
+ĂĂâáâãäääåææææææææçäææææ
+ĂĂâáâããääåæææææææçåæææææ
+ççâááâãææææææææççèåæææææ
+ççâáááâæææææææèèèääæææææ
+end
+
 frame g_srrr_17 - 0
 ÔááââââáÔÛĭĭþþþþááåååääâ
 ÔÔáâââááÔÔÛĭþþþþáááååĂçç
@@ -58212,6 +55191,33 @@ frame g_srrr_19 - 0
 ââáâãäääåæææææāāçççäååææ
 ääâáâãääåæææāāææçççäååææ
 äĂçââãææææææāāççèèèääåææ
+end
+
+frame g_srrr_2 - 0
+ÔÔÔÔÔÔÔÔÖÛáááããääääæåååå
+ÔÔÔÔÔÖÖÔÔÛááááääææææææåå
+ÔÔÔÔÔÖÖÔáááááááææææææææç
+ÔÔÔõõõØÔáâãááááææææææææç
+ėėÔôúúúĬáááááäåæāāæææææç
+ėėėĬúôôúĬþáãääææāāææææçè
+ėôėĬúôôôþþáãææææāāæçççèè
+ôôôúôôôôþþþáææææāāæèèèèè
+ôôôôôôôôþþþþááāāāāæèèèèè
+ôôôôôôôĭþþþþþþâāāāæèèèèâ
+ôôôôááôþþþþþþþááââââââáâ
+ôááèèèĂááþþþþþáááááááááá
+ôáæèèèâáááþþþþáááááááááá
+áââââááááááááááááááááááá
+âââááááááááááááááááááááá
+ääääâáááááááââââââââáááá
+åååáááááááââââââääääââáá
+æåáþþþáááâââããããååääääâá
+ææáþþþááââãããäääååååäääâ
+ææáþþþáâãäããääāāææåååäçç
+ææááýááâãääåäāææāāæåçççç
+ççèáááâãäääåāāææāāææçççç
+ĂĂèèèââãäääåææææææææçççç
+ĂĂèâáááâãääååææææææççççç
 end
 
 frame g_srrr_20 - 0
@@ -58320,6 +55326,33 @@ frame g_srrr_4 - 0
 ææååĂĂææææææççèèççáááááâ
 āāæçççææāāæèèèĂĂèâáááááá
 āāæççççæāāæèèèĂââááááááá
+end
+
+frame g_srrr_6 - 0
+ÔÔÔÔÚÛÛÚĭĭĭĭþþýááááááááá
+áÔÔÚÚÚÛÛĭĭĭþþþááââáááááá
+ââââÚúúúúúþþýáááääâááááá
+âââÚúõõõúúúýááááääââáááá
+áááÚúõõõúĭþþááááĂĂçâáááá
+õõõõúúúúĭĭĭþþþþááĂçâáááá
+õõõõõúúúĭĭåþþþþþáçççâääâ
+õõõõõúúúþþþþþþááçççããäää
+õõõáááýáææææááççççããäååå
+ĭĭáâáááāææææççèèèãääāāæå
+þþáâæááææææèèèèèääåæææææ
+ááááâááææææèèèèääåææææææ
+áááááááâæææèèèèäääåæææāā
+áááááááááââââââãäæææææāĂ
+áááááááááááááááâæææææççè
+ááááááááááááááááâææææèèè
+áááááááááááááááááââææâãã
+ááááááááââââáááááâââãããã
+ááááááââââääääâáâââãããää
+ááááâââãããååääääâãäääääæ
+áááââãããääååååäääãääååææ
+áááãääääææææåååççãääåæææ
+ääâãääåææææææççççãääååææ
+åääãääåæææææææçççãäääæææ
 end
 
 frame g_srrr_8 - 0
@@ -58455,6 +55488,33 @@ frame g_srsr_10 - 0
 ÔÔÔÔÓáááÔìĭĬúúĬýáââææææè
 ÔÔÔÔÓÓÕÕÕÕĭúööúáááááââââ
 ÔÔÔÕÕÖÕÕÕĘáúöááááááááááá
+end
+
+frame g_srsr_11 - 0
+áÔáäääåęáĚęáāĂĂĂççãæææææ
+ÔÔáçäáěěáĘĘæĂĂĂĂçâææææææ
+ÔÔáááÔÔÔÚááçèèèèĂââæææææ
+ÔÔáááÔÖÔÚÚáèèèèèâááââæææ
+ÔÔÔěáÔÕÔÚáèèèèâááááááâââ
+ÔÔÔÔÔÕáĚááââáááááááááááá
+ÔÔÔÔÔÕęááááááááááááááááá
+ÔÔÔÔÔÕÕáĘááááááááááááááá
+ÔÔÔÔÔÕáâáĘáááááááááááááâ
+ÔÔÔÔÔÕÛÛâěááááööáááááâââ
+ÔÔÔÔÔÕÛÛÔÔÔúáöööááááâââã
+ÔÔÔÔÔÕÖÖÔÔÔúáöööáááâââãã
+ÔÔÔÔÔÕÖÖÔÓÔúáúööáâââãäãã
+ÔÔÔÔÔÕÕÕÔÓöúúúööáääããäää
+ÔÔÔÔÔÕÕÕÕÕöööúúáåääãäääå
+ÔÔÔÔÔÔÕÕÕÕööööáååááçäääå
+ėėÔÔÔÔÔÖÕĮĮöööþááááçäääå
+ėėÔÔÔÔÔÔÖþþĭĭĭþþááççãäää
+ėėÔÔÔÔÔÔÿþþĭĭĭþþþáççãāææ
+ėėÔÔÔÔÔÔþþþĭĭĭþþþáççâāææ
+ėėÔÔęÔÔþþþĭĭĭĭĭþááççââææ
+ÔÔÔáęáÔáęáþĭĭĭĭþáèèâááââ
+ÔÔÔÔÔÔÔáááþĭĭĭþááèâááááá
+ÔÔÔÔÔÔÔááááþþþáááâááááââ
 end
 
 frame g_srsr_12 - 0
@@ -59076,6 +56136,33 @@ frame g_srss_23 - 0
 ÔÔÔÔÔÔÔÔáâââÔÔÔÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔÔâââÔÔÔÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔÔ
+end
+
+frame g_srss_5 - 0
+ÔÔÔÔôôôÔėėėííþþáááýáââãä
+ÔÔÔÔÔÔÔÔÔėėìììþýááýáââãä
+ÔÔÔÔÔÔáááÔÕìáìþþþáááâãää
+ÔÔÔÔÔÔáâáÕÕÔììþþþááááäáá
+ÔÔÔÔÔÔáâáÕÕÔÔçþþþþþýáááá
+ÔÔÔÔÔÔâââÕÔÔÔÔííĬôþþþááá
+ÔÔÔÔÔáâââáÔÔÔÔííĭúôþþááá
+ÔÔÔÔÔáââââáááááìáâôþáááá
+ÔÔÔÔáââââââááááââþááææçá
+ÔÔÔÔÔáâââââáěááââýááææèá
+ÔÔÔÔÔáââââââĚââáááááâæèá
+ÔÔÔÔÔÔáááâââęáááÔÔÔÔáááá
+ÕÔÔÔÔÔÔÔááââáááĚÔÔÔÔáááá
+ÕÔÔÔÔÔÔÔÔáââáááęÔÔÔÔáááá
+ÔÔÔÔÔÔÔÔÔáâââââÔÔÔÔėěěáá
+ÔÔÔÔÔÔÔáááââââáÔÔÔÔėęááá
+ÔÔÔÔÔÔáááâââââÔÔÔÔÔėėÔÔÔ
+ÔÔÔÔÔÔáââââââáÔÔÔÔÔÔÔÔėė
+ÔÔÔÔÔÔââââââááÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔáááááââáÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔÔÔÔááá
+ÔÔÔÔÔÔĚáÔÔÔáââáÔÔÔÔÔáâââ
+ÔÔÔÔÔÔÔÔÔÔÔáââáÔÔÔÔáââââ
+ÔÔÔÔÔÔÔÔÔÔÔáââááÔÔÔáââââ
 end
 
 frame g_srss_7 - 0
@@ -60455,6 +57542,87 @@ frame g_sscs_9 - 0
 ŊäääääääĘþĬĬĬĬĬĭÔÔÔÔÔÔÔÔ
 end
 
+frame g_ssff_12 - 0
+ÔááâââáÔÔÔÔÔââââââááááââ
+ÔÔááááÔÔÔÔÔÔáââââââááâââ
+ÔÔÔÔÔÔÕÕÔÔÔÔáâââââââââââ
+ÔÔÔÔÔÕÕÕÕÔÔÔÔââââââââââá
+ÔÔÔÔÕÕÕÕÕÔÔÔÔââââââââââá
+ÔÔÔÕÕÕÕÕÕÔÔÔÔáâââââââââá
+ÔÔÔÕÕÕÕÕÕÔÔÔÔÔÔÕááââââáá
+ÔÔÔÕÕÕÕÕÕÔÔÔÔÔÔÔÕÕáááááá
+ÔÔÔÔÕÕÕÕÔÔÔÔÔÔÔÔÕÕÕááááá
+ÔÔÔÔÔÔÕÕÔÔÔÔÔÔÔÔÔÔÔááááá
+ÔÔÔÔÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔ
+ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔ
+ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔØØØ
+ØÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔØØØØ
+ØØØØÖÖÖÖÖÖÖÖÖÖÖÖÖØØØØØØÖ
+ØØØØØØØØØØØØØØØØØØØØØÖÖÖ
+ÖØØØØØØØØØØØØØØØØØØØÖÖÖÖ
+ÖÖÖÖØØØØØØØØØØØØØØÖÖÖÖÖÖ
+ÖÖÖÖÖÖØØØØØÖÖÔÔÔÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÖÖÖÖÖÖÖÕÕ
+ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕ
+ÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕ
+ÕÕÕÕÕÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÖÖ
+ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÖ
+end
+
+frame g_ssff_13 - 0
+âââáÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔááÔÔÔ
+âââááááÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+âââááááÕÕÔÔÔÔÔáááÔÔÔÔÔÔÔ
+áááâââáÕÔÔÔÔÔáâââáÔÔÔÔÔÔ
+áááââââáÔÔÔÔÔáâââáÔÔÔÔÔÔ
+áááâââáÔÔÔÕÕÕáâââáÔÔÔÔÔÔ
+áááááááÔÔÔÕÕÕáââââÔÔÔÔÔÔ
+áááááááÔÔÔÕÕÕâââââáááÔÔÔ
+ááÕÔÔÔÔÔÔÔÔØÔââââââââáÔÔ
+ÕÔÔÔÔÔÔÔÔØØØÖÖââââââââÔØ
+ÔÔÔÔÔÔÔÔÔÖÖÖÖÖÖââââââáÔÖ
+ÔÔÔÔááááÖÖÖÖÖÖÖâââáááÖÖÖ
+ØØÔááâââÖÖÖÖÖÖÖââÖÖÖÖÖÖÖ
+ØÖÔáââââÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÔÔÔáââââÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÖ
+ÖÖÖáâââÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
+ÖÖÖÖÕÕÕÕÕÕÕÖÖÖÖÖÕÕÕÕÕÕÕÕ
+ÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕ
+ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÕ
+ÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖØØØØØØÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖØØØØØØØØØØØØÖÖÖÖ
+ÖÖÖÖÖÖÖØØØØØØØØØØØØØØØØØ
+end
+
+frame g_ssff_14 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââá
+ÔÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔėėėââââ
+ÔÔÔÔÔÔÔÔÔÔááÔÔÔÔÔÔÔÔââââ
+ÔÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔââââ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÔâââá
+ÔÔÖÖÖáááÔÔÔÔÔÔÔÔÔÔÕÔáâáÔ
+ØÖÖÖÖâââáÔÖÕÕÕÔÔÔÕÕááááÔ
+ØØØØÖâââáÖÖÖÖÖÔÔÔÕÕááááÔ
+ÖØØØØØØÖÖÖÖÖÖÖÔÔÕÕáááááÔ
+ÖÖÕÔØØØØØÖÖÖÖÖÔÔááááááėÔ
+ÖÖÕÕÔØØØØØØÖÖÖÖáâáááááÔÔ
+ÖÖÕÕÖÖÖØØØØØØÖÖáâââáááÔÔ
+ÖÖÖÖÖÖÖÖØØØØØØØØØØâáááÔÔ
+ÖÖÖÖÖÖÖÖÖÖØØØØØØØØØØáááØ
+ÕÕÖÖÖÖÖÖÖÖÖÖØØØØØØØØØØØØ
+ÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÕÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÕÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖÖÖ
+ÖÖÖÖÖÖÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕ
+end
+
 frame g_ssff_4 - 0
 ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
 áÔÔÔÔÔÔÔÔėáâáėėėėėėėėáėė
@@ -60725,7 +57893,34 @@ frame g_ssfs_8 - 0
 ÖÖÖÖÖÖÖÕÕÕÖÔÔÔÔÔÔÔÔáááÔÔ
 end
 
-frame g_ssno_8 - 0
+frame g_ssnr_14 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââá
+õõõÔÔÔÔÔÔÔėáÔÔÔÔÔėėėââââ
+õõõõÔÔÔÔÔėėėÔÔÔÔÔÔÔÔââââ
+ÔÔõõõÔÔÔõõėėėÔÔÔÔÔÔÔââââ
+ÔÔõõõõõõõõõėÔÔÔÔÔÔÕÔâáâá
+ÔÔõõõõõõõõõÔÔÔÔęĘÔÕÔáááÔ
+ØÖÖÖÖâââáÔÖþþÔĚâěáÕááæĚá
+åĭØÔÖâėþáÔþþþöááááęáææāá
+ĮĮØØØþėþĭþþþþýáááááæææææ
+ėėėėėÿÿþĮĮĭþþþááááááââæá
+ââãęėėþþĮΑĮþþáááááááááęá
+ėėėėėėþþþþþþþáââââáâááęâ
+ããėėėþáááėáþþáâääääâáááã
+ãããėėėėėėėėėėΑĭääääâáááä
+ââėėėėėėėėėėėėäååååäáááä
+âėėããėėėþþãėėėėėėėååäáäā
+âėėĘĘėėėħħþėĘĘãããėΑåååææ
+âėėĘĘĘėėėħħėėėėėęėėçååææ
+ââėĘĘĘĘĘėėėėėėėėėėėçäåāā
+ââėėęęęęėėâââââėėėæçĂæāā
+âââėėęęėėėâââââėėėççĂæææ
+ââããäãããėėââââėėėėáèĂæææ
+end
+
+frame g_ssns_8 - 0
 ÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔááááÔÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâááÔ
 áááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáÔ
@@ -60735,21 +57930,21 @@ frame g_ssno_8 - 0
 ĭĭþėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 ĭþþėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 þþþėÔááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ĭþþęĘáááÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÔ
-þþýáęáåĚÔÔÔÔÔÔÔÖÖÖÖÖÕÕÕÕ
-ĭáäÔĚáåęÔÖÖÖėÖÖÖÖÖÖÖÖÖÖÔ
-ĭĭáõõĚåěÕõõÖÖÖÏÖÖÖÖÖÖÖÖÔ
-ĭĭáááĚĚÔÕÕÖÖÖÖÏÖÖÖÖÖÖÖÖÖ
-þþĭĭΑĩĬÔÓÓÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ħþáėĘááĬĭÓÓÖÖÖÖÏÏÖÖÖÖÖÖÏ
-ėáėėęęęęĭĭÓÖöÖÖÖÏÏÖÖÖÖÖÖ
-ÅėäääääęĭĭěöööÖÖÖėėÖÖÖÖÖ
-ÅėėääŊŊáėėėėėėėėÖėėÖÖÖÖÖ
-ÅÅėėėėėėėėėėėėėėėėėÖÖÖÖÖ
-ÅÅÅėėėėėėėėėėėėėėėėėėÖÖÖ
-ÅÅÅėėėėėėėėėėėėėėėėėėÖÖÏ
-ÅÅÅÅÅėėėėėėâėėėėÖÖÖÖÖÖÏÏ
-ÄÅÅÅÅÅããããâââėėėÏÖÖÖÖÖÏÖ
+ĭþþęĘáááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+þþýáęáåĚÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ĭáäÔĚáåęÔÔÔėėÔÔÔÔÔÔÔáÔÔÔ
+ĭĭáõõĚåěÔõõėėėÔÔÔÔÔâââáÔ
+ĭĭáááĚĚÔÔÔėėėėÔÔÔÔáââââá
+þþĭĭΑĩĬÔÔėėėėėėÔÔÔáââââá
+ħþáėĘááĬĭėėėėėėÔÔÔÔáááÔÔ
+ėáėėęęęęĭĭėėöėÔÔÔÔÔÔÔÔÔÔ
+ÅėäääääęĭĭěöööÔÔÔėėÔÔÔÔÔ
+ÅėėääŊŊáėėėėėėėėÔėėÔÔÔÔÔ
+ÅÅėėėėėėėėėėėėėėėėėÔÔÔÔÔ
+ÅÅÅėėėėėėėėėėėėėėėėėėÔÔÔ
+ÅÅÅėėėėėėėėėėėėėėėėėėÔÔÔ
+ÅÅÅÅÅėėėėėėâėėėėÔÔÔááÔÔÔ
+ÄÅÅÅÅÅããããâââėėėÔÔÔáááÔÔ
 end
 
 frame g_ssoo_10 - 0
@@ -60858,411 +58053,6 @@ frame g_ssoo_14 - 0
 ÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÏÖ
 ÏÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
 ÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-end
-
-frame g_ssoo_17 - 0
-ÔááââââáÔėėėėÔÔÔÔÔáâââââ
-ÔÔáâââááÔėėėÔÔÔÔÔÔáâââââ
-ÔÔÔááááÔÔėėėÔÔÔÔÔÔââââââ
-ÔÔÔÔÔÔÔÔÔÔėėÔÔÔÔÔáâââââá
-ÔÔÔÔÔÔÔÔÔÔėėÔÔÔÔáââââââá
-ÖÔÔÔÔÔÔÔÔÔÔėÔÔÔÔáââââââá
-ÖÏÔÔÔÔÔÔÔÔÔėÔÔÔÔááââââáÔ
-ÖÏÔÔÔÔÔÔÔÔÔėėÔÔÔÔÔÔÔÔÔÔÔ
-ÏÖÔÔÔÔÔÔÔÔėėėėÔÔÔÔÔÔÔÔÔÔ
-ÖÖÔÔÔÔÔÔÔÔėėėėėėėÔÔÔėÕėė
-ÖÖÔÔÔÖÖÖÖÖėėėėėėÔÔÔÔÔÕėė
-ėėėÔÔÖÖÖÖÖÖėėėėÖÕÖÖÖÖÕėÖ
-ėėėėÔÖÖÖÖÖÖėėėÖÖÖÖÖÕÕÕÏÖ
-ÖÖÖÕÕÖÖÖÖÖÕÕÕÕÖÖÖÕÕÕÕÕÏÕ
-ÖÖÖÕÕÏÏÖÕÕÕÕÖÖÖÖÖÖÏÕÕÕÏÕ
-ÖÖÖÖÖÏÖÖÕÕÖÖÖÖÖÖÖÏÕÕÕÕÕÏ
-ÏÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÏÖÕÕÕÕÕÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÕÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÕÕÕÕ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÕÕÕÏ
-ÏÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÕÕÕÏ
-ÏÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÕÏÏ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÕÏÖ
-end
-
-frame g_ssoo_20 - 0
-ÔâââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
-áââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔââââ
-ÔâââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááááá
-ėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáØØėėėÔ
-ėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖėėÔ
-ėėÔÔÔÔÖÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖ
-ėėÔÔÔÖÖØÔÔÔÔÔÔÖÖÖÖÖÖÖÖÖÖ
-áėėÔÔØØØØØØØØÖÖÖÖÖÖÖÖÖÖÕ
-ØėėėÔØØÖÖÕÕÏÕÖÖÖÖÖÕÕÕÕÕÕ
-ØØėėØØÖÖÖÕÕÏÕÕÕÖÖÕÕÕÕÕÖÖ
-ÕØėėÖÖÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖ
-ÕÕÕÏÖÖÖÖÖÖÖÖÕÕÕÕÖÕÖÖÖÖÖÖ
-ÕÕÕÕÖÖÖÖÕÖÖÖÕÕÕÕÕÖÖÖÖÖÖÖ
-ÕÕÕÕÏÕÖÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕÕÕÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÖÖÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-end
-
-frame g_ssoo_21 - 0
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔáââáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-áâââáÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔÔ
-áááááÔÔÔÔÔÔÔÔÔÔáááááÔÔÔÔ
-ááááÔÔÔÔÔÔÔÔÔÔÔáááááÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÖáááááááÔÔÔÔ
-ÖÔÔÔÔÔÔÔÔÔÔÖÖÖÖÏâââØØÖÖÏ
-ÕÕÕÔÕÕÔÔÔÔÔÕÕÕÕÏÖÖØØØØØÕ
-ÖÖÕÕÕÏÕÕÔÔáÏÕÕÕÕÖÖÖÖØØØØ
-ÖÖÖÕÕÏÕÕÕÕÕÏÕÕÕÕÏÖÖÖáÔÔØ
-ÖÖÖÕÏÏÕÕÕÕÕÏÕÕÕÕÏÖÖÖáÔÔÖ
-ÖÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÏÕÖÖÖÔÖÖ
-ÖÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÏÖÖ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖ
-ÖÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÖ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕ
-ÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÕÕ
-end
-
-frame g_ssoo_22 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔááááÔÔÔÔÔÔÔÕÔÔÔÔė
-ÔÔÖÖÏÖÖÖÖÖÖÔÔÔÔÔÔÕáâââââ
-ÖÏÖÖÏÖÖÖÖÖÖÖÔÔÔÔÔÕââââââ
-ÖÖÖÖÏÖÖÖÖÖáÔÔÔÔÔÔÕââââââ
-ÏÕÕÕÏÖÖÖÔÔÔÔÔÔÔÔÔáââââáÔ
-ÕÕÕÕÖÖÖÖÔÔÔÔÔÔÔÔÔáâââáÔÔ
-ÕÕÖÏÖÖÖÔÔÔÔÔÔááÖÖââââÔÔÔ
-ÖÖÖÔÖÖÔÔÔÔÔÔÔáâØØâââáØØÖ
-ÖÖØØØÔÔÔÔÔÔÔÔááØØØÖÖÖÖÖÖ
-ÖÖÖØØÕÕØØØÔÔÔÔÔØØÖÖÖÖÖÖÖ
-ÖÖÖÖÏÕÕÕÕÕÕÕÏÕÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÏÏÕÕÕÕÕÏÕÕÖÖÖÖÖÖÖÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÏÕÕÖÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÏÕÕÕÕÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÖÕÕÕÕÕÕÕÕÏÕÕÕÕÖÖÏÖÖÖÖÖÖ
-ÖÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÖÏÖÖÖÖÖÖ
-ÕÕÕÕÕÕÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÕÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖÖ
-ÏÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÖÏÖÖÖÖ
-ÕÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÏÖÖÖÖ
-end
-
-frame g_ssoo_23 - 0
-ÔÔÔÔÔÔÔÔÔáááėėėÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔėėėÔÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėėÔÔâââÔÔÔÔÔÔÔÔÔÔáá
-ââėėėėėÔÔâââáÔÔÔÔÔÔáââââ
-ââėėėėėÔÔâââáÔÔÔÔÔáâââââ
-âáėėėėėÔÔâââáÔÔÔÔÔáâââââ
-ÔÔÔėėėėÔÔâââáÔÔÔÔÔáâââââ
-ÔÔØÖÖėÔÔÔâââÔÔÔÔÔÔáââââá
-ØÖÖÖÖÖÖÔÔáââÔÔÔÔÔÔáââââá
-ÖÖÖÖÖÖÖÖÔáâáÔÔÔÔÔÔáâââáÖ
-ÖÖÖÖÖÖÖÖÕáâáÔÔÔÕÔÔÖÖââÕÖ
-ÖÖÖÖÖÕÕÕÕÕÕáÔÔÕÕÕÖÏÖÖÖÖÖ
-ÏÖÖÕÕÕÕÕÕÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÕÕÕÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÖÖÖÖÏÖÕÕÕÏÕÖÖÖÏÖÖÖÖÖÕÏÕ
-ÖÖÖÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÏÏ
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÖÖÖÖÖÕÕÏ
-end
-
-frame g_ssoo_24 - 0
-ÔáÔÔÕÕÕÕÕÕÕÕÕÕáââáÕÕÔÔÔÔ
-áááÔÕÕÕÕÕÕÕÕÕÕââââáÕÔÔÔÔ
-áâáÔÕÕÕÕÕÕÕÕÕÕáâââáÔÔÔÔÔ
-áâáÔÔÕÕÕÕÕÕÕÕááâââáÔÔÔÔÔ
-ââáÔÔÕÕÕÕÕÕáááááááááááÔÔ
-ââáÔÔÕÕÕÕÕáâââáááááââââÔ
-ââáÔÖÖÕÕÕÕáâââáÕáááââââÔ
-ââáÔÖÖÕÕÕÕááááááááâââââÔ
-áááØØÕÕØØØØÕÕÕááâââââââá
-áÔÖÖÖÖØØØØØØÖÔÔââââââÖâá
-ÔÖÖÖÖÖÖÖØØØØØØÔâââââÖÖÖâ
-ÏÖÖÖÖÖÖÖÖÖØØØØØââââââââÖ
-ÏÖÖÖÖÖÖÖÖÖÖØØØØÖÖââââââØ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖØØÖÖÖÏÖÖÖÏÕ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÕÏÕ
-ÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÏÕÕÕÕÕ
-ÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÕÏÕÕÕÕÏ
-ÖÖÖÏÏÖÖÖÖÖÖÏÖÕÕÕÕÕÏÕÕÕÕÏ
-ÖÖÖÏÏÖÖÖÖÕÕÏÕÕÕÕÕÕÏÕÕÕÕÏ
-ÖÖÖÏÏÕÕÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏ
-ÖÖÕÕÏÏÕÕÕÕÏÕÕÕÕÕÕÏÕÕÕÕÕÕ
-ÕÕÕÕÕÏÕÕÕÕÏÕÕÕÕÕÏÕÕÕÕÕÏÕ
-ÕÕÕÕÕÏÕÕÕÕÏÖÖÖÖÏÖÖÖÖÖÏÖÖ
-ÏÕÕÕÕÕÏÕÕÕÖÖÖÖÏÖÖÖÖÖÖÖÖÖ
-end
-
-frame g_ssoo_7 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėáááėÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėááááÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėáââááá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėáâââââ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââââá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââááÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖÔÔááâááÔÔ
-áÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖááââáÔÔÔ
-âáÔÔÔÖÖÔÔÔÔØØØØØØâââáÔÔÔ
-ááØØØÏÖÔÔÔÔØØØØØØØáááÔÔÔ
-ÔÔØØØÏÖØØØØØØØØØÖÖÖÔÔÔÔÔ
-ÔÖÖÖØØØØØØØØØØÖÖÖÖÖÖÔÔÔÔ
-ÖÖÖÖÖÖÖØØØÖÖÖÖÖÖÖÖÖÖÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÖ
-ÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÕÕÕÔÕÕ
-ÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÕÕÕÕÕÖÏ
-ÖÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÕÖÖÖÖÏ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÏÖ
-ÏÖÖÖÖÖÏÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÏÖ
-ÏÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖ
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÖÏÖÖÖÏÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏ
-end
-
-frame g_ssoo_8 - 0
-ÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔááááÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâááÔ
-áááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáÔ
-ââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáá
-áááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÖÖÖėÖÖÖÖÖÖÖÖÖÖÔ
-ÔÔÔáââáÏÕÕÕÖÖÖÏÖÖÖÖÖÖÖÖÔ
-ÕÕÕââââÖÕÕÖÖÖÖÏÖÖÖÖÖÖÖÖÖ
-ÕÕÕÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÏÖ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖÏ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÏÏÖÖÖÖÖÖ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÏÏÖÖÖÖÖÖÏÖÖÖÖÖÖ
-ÖÖÖÏÖÖÖÖÖÖÏÏÖÖÖÖÖÏÖÖÖÖÖÏ
-ÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÖÖÖÖÖÏÏ
-ÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÖÏÖ
-end
-
-frame g_ssos_10 - 0
-ÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔÔáââââ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
-áÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâá
-âââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáá
-ââââÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáÔ
-âââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-áÔÔÔÔėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÏÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÔÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÔÔÔÔÔÔÔÔÔááėÔÔÔÔÔÔÔÔÔÔ
-ÖÖÔÔÔÔÔÔÔÔØØØáÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÔÔÔÔÔÔÔÔØÖáÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÔÔÔÔÔėáÖáėÔÔÔÖÔÔÔÔÔ
-ÖÖÖÖÖÔÔÔÔÔėáááėėėÔÖÔÔÔÔÔ
-ÖÖÖÖÖÖÔÔÔÔėėėėėėėėėėėėėė
-ÖÖÖÖÖÖÔÔÔÔÔėÔÔėėėėėėėėėė
-ÖÖÖÖÖÖÏâáÔÔÕÕÔėėėáėėėėėė
-ÖÖÖÖÖÖÏÖâÔÔÔÔÔÕėėáááėėėė
-ÖÖÖÖÖÏÖÖÖÔÔÕÕÕÕÕėáááėėėė
-ÖÖÖÖÏÖÖÖÖÕÕÕÕÕÕÕÕááááááÔ
-ÖÖÖÖÖÖÖÖÖÏÕÕÕÕÕÕÕááááááá
-ÖÖÖÖÖÖÖÖÏÖÖÕÕÕÕÕÕÕááááâá
-end
-
-frame g_ssos_15 - 0
-ÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕáááââá
-ÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕááááááá
-ÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕááááÔÔÔÔ
-ÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕááâááÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕáâââÔÔÔÔÔ
-ÔÖÖÖÖÔÔÔÔÔÕÕÕÕÕáâââÔÔÔÔÔ
-ÏÖÖÖÖÔÔÔÔÔÕÕÕÕÕáââáÔÔÔÔÔ
-ÏÖÖÖÖÔÔÔÔÔÕÕÕÕÕÕÕÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÔÔÔÔÕÕáÕÕÕÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÔÔÕáááÕÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÖėėÕÕáėėÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÖÖÕÕÕÕÖÖėÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÕÕÕÕÕÖÖÖÖėÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÕÕÕÕÕÖÖÖÖÖėÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÖÖėėėÔáÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖėėÖÖėÖėáááėÔÔÔÔ
-ÖÏÖÖÖÖÏÖÖÔėėėėėėėááÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖėėėėėėėÕÕÕÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖØėėėėėėÕÕÕÕÕÔÔÔ
-ÖÏÖÖÖÖÖÖØØėėáėėėÕÕÕÕÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖØááááėėÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÖÖÖÔėėėėėÔÔÔÔÔÔÔÔ
-ÖÏÖÖÖÖÖÏÖÖÔėėėėÔÔÔÔÔÔÔáÔ
-ÖÏÖÖÖÖÖÏÖÖÔėėėÔÔÔÔÔÔááââ
-end
-
-frame g_ssos_18 - 0
-âââââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ââââââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-âáááááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-áááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕ
-ÔÔÔÔÔÔÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔÕ
-ėėėėÔÔÔááââáÔÔÔÔÔÔÔÔÔÔÔÕ
-ėėėÔÔÔááâââáÔÔÔÔÔÔÔÔÔÔÔÕ
-ÖÖėÔÔááááââáÔÔÔÔÔÔÔÔÔÔÔÕ
-ÖÖÖÖááááááááÔÔÔÔÔÔÔÔÔÔÔÕ
-ÖÕÖÖÖÖâááÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÖÖÖÖÖáÔÔÔÔÔÔáááÔÔÔÔÔÔÔ
-ÕÕÖÖÖÖÖáÔÔÔÔÔáââáÔÔÔÔÔÔá
-ÕÕÖÖÖÖÏâáÔÔÔÔááâáÔÔÔÔÔÔá
-ÏÕÖØÖÖÏÖÖÔÔÔÔááááÔÔÔÔÔÔÔ
-ÏÕÖØÖÖÏÖÖÖáááááááÔÔÔÔÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖâááÖÖÔááááÔÔÔ
-ÏÖÖÖÖÖÏÖÖÖÖÕÕÕÕÕÔáááááÔÔ
-ÕÖÖÖÖÏÖÖÖÖÕÕÕÕÕÕÔÔáááÔÔÔ
-ÕÖÖÖÖÏÖÖÖÖÕÖÖÖÖÕÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÏÖÖÖÖÖáėėėÔÔÔÔÔÔÔÔÔ
-end
-
-frame g_ssos_21 - 0
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔáââáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
-áâââáÔÔÔÔÔÔÔÔÔÔÔááááÔÔÔÔ
-áááááÔÔÔÔÔÔÔÔÔÔáááááÔÔÔÔ
-ááááÔÔÔÔÔÔÔÔÔÔÔáááááÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔáááááááÔÔÔÔ
-ÖÔÔÔÔÔÔÔÔÔÔÔáááââââáÔÔÔÔ
-ÕÕÔÔÔÔÔÔÔÔÔáââââââââÔÔÔÔ
-ÖÖÔÔÔÔÔÔÔÔáâââââââââáÔÔÔ
-ÖÖÔÔÔÏÕÔÔááâââââââââáÔÔÔ
-ÖÖÖÕÏÏÕÕÕÕÕâââââââââáÔÔÔ
-ÖÖÖÕÕÕÕÕÕÕÕáââââââââáÔÔÔ
-ÖÖÖÕÕÕÕÕÕÕÔÔÔáááááááÔÔÔÔ
-ÖÖÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔááÔÔÔÔÔ
-ÖÖÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÕÕÕÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕØØØÖÔÔÔÔÔÔÔÔÔÔÔÔ
-ÕÕÕÕÕÕÕÕØØØÔÔÔÔÔÔÔÔÔÔÔáá
-ÕÕÕÕÕÕÕÕØØØÔÔÔÔÔÔÔÔÔÔááá
-ÕÕÕÕÕÕÕÕÖÖØØÔÔÔÔėėėėÔÔáá
-ÕÕÕÕÕÕÕÕÖÖÖÖÖÔÔÔėėėėėÔÔÔ
-end
-
-frame g_ssos_23 - 0
-ÔÔÔÔÔÔÔÔÔáááėėėÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔėėėÔÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔÔ
-ėėėėėėėÔÔâââÔÔÔÔÔÔÔÔÔÔáá
-ââėėėėėÔÔâââáÔÔÔÔÔÔáââââ
-ââėėėėėÔÔâââáÔÔÔÔÔáâââââ
-âáėėėėėÔÔâââáÔÔÔÔÔáâââââ
-ÔÔÔėėėėÔÔâââáÔÔÔÔÔáâââââ
-ÔÔÔÔÔėÔÔÔâââÔÔÔÔÔÔáââââá
-ÔÖÖÖÖÔÔÔÔáââÔÔÔÔÔÔáââââá
-ÖÖÖÖÖÖÔÔÔáâáÔÔÔÔÔÔáâââáÔ
-ÖÖÖÖÖÖÖÔÔáâáÔÔÔÔÔÔÔáââáÔ
-ÖÖÖÖÖÕÕÔÔÔááÔÔÔÔÔÔÔÔÔÔÔÔ
-ÏÖÖÕÕÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÏÖÕÕÕÕÔÔÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÏÖÖÕÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕ
-ÖÖÖÖÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔÕ
-ÏÖÖÖÖÖÖØØÖÖÖÖÖÔÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖÖØØØØÖÏÖÖÖÖÔÔÔÔÔÔÔÔÔ
-ÏÖÖÖØØØØØÕÏÕÖÖÖÔÔÔÔÔÔÔÔÔ
-ÖÖÖÕÕØØØÕÕÏÕÕÕÖÏÔÔÔÔÔÔÔÔ
-ÕÏÕÕÕÏÕÕÕÕÏÕÕÕÖÏÔÔÔÔÔÔÔÔ
-end
-
-frame g_ssos_24 - 0
-ÔáÔÔÕÕÕÕÕÕÕÕÕÕáââáÕÕÔÔÔÔ
-áááÔÕÕÕÕÕÕÕÕÕÕââââáÕÔÔÔÔ
-áâáÔÕÕÕÕÕÕÕÕÕÕáâââáÔÔÔÔÔ
-áâáÔÔÕÕÕÕÕÕÕÕááâââáÔÔÔÔÔ
-ââáÔÔÕÕÕÕÕÕáááááááááááÔÔ
-ââáÔÔÕÕÕÕÕáâââáááááââââÔ
-ââáÔÔÕÕÕÕÕáâââáááááââââÔ
-ââáÔÔÕÕÕÕÕááááááááâââââÔ
-áááÔÔÕÕÕÕÕÕÕÕÕááâââââââá
-áÔÖÖÖÖØØÕÕÔÔÔÔÔââââââââá
-ÔÖÖÖÖÖÖÖØÔÔÔÔÔÔâââââââââ
-ÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔâââââââââ
-ÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔââââââââá
-ÏÖÖÖÖÖÖÖÖÔÔÔÔÔÔáââáÔÔÔėė
-ÖÖÖÖÖÖÖÖÖÔÔÔÔÔÔÔáÔÔÔÔÔėė
-ÖÖÖÖÏÖÖÖÔÔááááÔÔÔÔÔÔÔÔÔė
-ÖÖÖÖÏÖÖÖÖÔâââáÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÏÏÖÖÖÖÕááááÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÏÏÖÖÖÖÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÏÏÕÕÕÕÖÕÕÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÕÕÏÏÕÕėÖÖÖÖÕÔÔÔÔÔÔÔėėė
-ÕÕÕÕÕÏÕÕÔėÖÖÖÖėėėėėėėėėė
-ÕÕÕÕÕÏÕÕÕÖÖÖÖÖėėėėėėėėėė
-ÏÕÕÕÕÕÏÕÕÕÖÖÖÖėėėėėėėėėė
-end
-
-frame g_ssos_9 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔáââáÔÔÔÔÔÔÔáââÔÔÔÔÔÔ
-ÔÔÔáââââÔÔÔÔÔÔÔâââáÔÔÔÔÔ
-ÔÔÔÔáâââÔÔÔÔÔÔÔâââáÔÔÔÔÔ
-ÔÔÔÔÔáâáÔÔÔÔÔÔáâââáÔÔÔÔÔ
-ÔÔÔÔÔÔááÔÔÔÔÔėáââââáÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔėáââââââááá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔááââââââââá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔáááááâââââá
-ÔÔÔÔÔÔÔÔÔÔáááėėÔÔÔÔáâââá
-ÔÔÔÔÔÔÔÔÔááâáėėėÔÔÔÔáâáÔ
-ÔÔÔÔÔÔÔÔÔáââáėėėÔÔÔÔáâáÔ
-ÔÔÔÔÔÔÔÔááâÖâėėėÔÔÔÔáááÔ
-ÔÔÔÖÔÔÔÔÔáââáėėėÔÔÔÔáâáÔ
-ÖÖÖÖÖÖÖÔÔÔÔáÔėėėÔÔÔÔâââÔ
-ÏÖÖÖÖÖÖÔÔÔÔÔÔėėėÔÔÔáâââá
-ÏÖÖÖÖÔÔÔÔÔÔÔÔėėėÔááââââá
-ÏÖÖÖÖÔÔÔÔÔÔÔėėėėááâââââá
-ÏÖÖÖÖÖÖÖÖÔÔÔėėėėÔááââââá
-ÏÖÖÖÖÖÏÖÖÖÖÔėėėÔÔÔÔáââáÔ
-ÖÖÖÖÖÖÏÖÖØÖÔÔÔÔÔÔÔÔÔááÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖØÔÔÔÔÔÔÔÔÔÔÔÔ
-ÖÖÖÖÖÖÏÖÖÖÖØÔÔÔÔÔÔÔÔÔÔÔÔ
 end
 
 frame g_ssrr_0 - 0
@@ -61481,6 +58271,33 @@ frame g_ssrr_18 - 0
 ááãääæææææççããääääåååååå
 end
 
+frame g_ssrr_2 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔááÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔáÔÔÔÔÔÔÔÔÔáęĘÔÔ
+ėėÔÔÔÔÔÔÔÔÔÔÏÔÔÔÔÔÔěáÔÔÔ
+ėėėÔÔÔÔÔÔÔÔÕÏÕÔÔÔÛÛÛÔÔÔÔ
+ėėėÔÔÔÔÔÔÔÔÕÓÕÕÛÛÛÛÛÛÛÔÔ
+ôôėÔÔôÔÔÔÔÔÔÏÕÔÛÛÛÛÛÛÛÕÕ
+ôôôôôôôÖÔÔÔÔÔÔÔÛÛÔÔÕÛÛÛÕ
+ôôôôôôôôÔÔÔÔÔÔÔÚÔÔÕÔÛááÔ
+ôôôôôôôôôôáÔÔÔÔĭÔÕÕÔÔÚáá
+ôôáááááôĭþþĭĭĭĭĭþþúúõúáá
+ôáæèèèâáþþþĭĭĭþþþþþõõúáá
+ááâââáááýþþþþĭĭĭĭþþþõááá
+âââááááááááþþþĭþþþþááááá
+ääääâáááááááááýááááâáááá
+åååáááááááââââââääääââáá
+æåáþþþþááâââããããååääääâá
+ææáþÿäþáââãããäääååååäääâ
+ææáþþþþâãäããääāāææåååäçç
+ææááþýáâãääåäāææāāæåçççç
+ççáááááãäääåāāææāāææçççç
+ĂĂèèáââãäääåææææææææçççç
+ĂĂèâáááâãääååææææææççççç
+end
+
 frame g_ssrr_21 - 0
 âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
 âââââÔÔÔÔÔÔÔÔÔÔÔáââáÔÔÔÔ
@@ -61533,6 +58350,33 @@ frame g_ssrr_22 - 0
 áááááááááááááââââââääääâ
 ááááááááááááâââããããäääää
 áááááááááááâââãããääååååä
+end
+
+frame g_ssrr_3 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔââââá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÓÓÔÔÔÔÔÔÔÔÔÔ
+ááááââááÔĭÓÓÓÓÓÓÔÔÔÔÔÕÔÔ
+ááÕÖÖÖâáÔÔÓÓÓÓÓÓÔÔÛÛÔÕÔÔ
+áÖÖþĭÖÖáÔÔÓÓÓÓÓÓÔÚÚÚĭĭĭÚ
+ÔÖþþþþþÖÖÔÓÓôÓÓÔÔÚííĭĭĭĭ
+ááááþþĭÚÚÚúúôúÚÔÚììĭĭĭĬĬ
+âæáááþþĬĬúôôôôúĭĬĭìĭĭĭĬĬ
+áâæáááááááôôĬĬĬþĭĭĭĭĭĭĬĬ
+ááââááááááôôĬĬþþÿĭĭĭĭĭĬĬ
+ááááááááþþôôôôþþþþþþÿþþĬ
+ááááááááþĭþááááááááááþþĬ
+ááááááááþþþááááááááááááþ
+áââááááááäááþþþþþááááááá
+âââáýáááååäáþþþþþááááááá
+ââããáááåååååääâáááááâââã
+ãäãääāāāæååååĂçâáááââããä
+äääåāāāāæææçĂĂçâáááãäãäæ
+äääåæææææææçççççááâãäåææ
+äääåæææææææçççççááâãäåææ
 end
 
 frame g_ssrr_4 - 0
@@ -61670,6 +58514,33 @@ frame g_ssrr_8 - 0
 ááááââââãããääääääâáâââãã
 end
 
+frame g_ssrr_9 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔáââáÔÔÔÔÔÔÔáââÔÔÔÔÔÔ
+ÔÔÔáââââÔÔęęÔÔÔâââáÔÔÔÔÔ
+ÔÔÔÔáâââÔÔááÔÔÔâââáÔÔÔÔÔ
+ÔÔõõõáâáÔÔÔÔÔÔáâââáÔÔÔÔÔ
+ÔÔõõõÔááÔÔÔÔÔėáâââõõÔÔÔÔ
+ĭÔõõõÔęĚÔõõõÔėáâââõââááá
+ĭõÔÔõáááõõõõõááýþĭâââââá
+þþõÔááãáõõõööĭááþĭĭĭâââÚ
+þþþááãäáõõöÿĮĭþýþĭĭĭĭäĭá
+ááááãääáááþÿÿÿĭĭĭĭĭĭþþÿÿ
+áááâãäääåááþÿÿĭĭĭþþþþÿÿþ
+áááâãäääåááþþþĮĭĭþþþþÿþþ
+ááááâãäææááááþþĭĭĭäĭþþþþ
+ááááâææææáááááþþþĭĭĭþþþþ
+áááááâāāááæææèèááþþĭĭþþá
+áááááááááææææèèèèáþþĭäþá
+áááááþþááâââââââääáþåĭþá
+ááááááááââââããããääáýþþýâ
+áááááááâââããããääåååáááäâ
+ââááááâââããäääääåååååäää
+âäääââããäääääæææææååååĂĂ
+ãåääääãäääååææææææææĂĂĂĂ
+end
+
 frame g_ssrs_0 - 0
 ėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 ėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
@@ -61778,6 +58649,33 @@ frame g_ssrs_12 - 0
 âââááááááþĭĭĭåÚÔÔÔááááââ
 end
 
+frame g_ssrs_13 - 0
+âââáÕÕÕÕÕÔÔÔÔÔÔÔÔÔÔááÔÔÔ
+âââááááÕÕÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+âââááááÕÕÔÔÔÔÔáááÔÔÔÔÔÔÔ
+áááâââáÕÔÔÔÔÔáâââáÔÔÔÔÔÔ
+áááââââáÔÔÔÔÔáâââáÔÔÔÔÔÔ
+áááâââáÔÔÔÕÕÕáâââáÔÔÔÔÔÔ
+áááááááÔÔÔÕÕÕáââââÔÔÔÔÔÔ
+áááááááÔÔÔÕÕÕâââââáááÔÔÔ
+ááÕÔÔÔÔÔÔÔÔÔÔââââââââáÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔâââââââââÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔáââââââââáÔÔ
+ããÔÔááááööõÔáâââââáááÔÕÕ
+þĮãááÛÛâöáááÔââââáÔÔÔÕÕÕ
+þĮþÔÚÚÛâöáááÔââââáÔÔÔÔÕÕ
+þþĭĭúÚÚââÔáÔÖââââáÔÔÔÔÔÔ
+þþþþþĬááÔÔÔÔÕââââáÔÔÔÔÔÔ
+ááááýýáĚÔÔÔÔÖââââÔÔÔÔÔÔÔ
+áááááþþÔĚáĚÔÖÖâââÔÔÔÔÔÔÔ
+äääåáþþìěěáÖÖÖâââÔÔÔÔÔÔÔ
+ãäæææáááęęÔÖÖÖââáÔÔÔÔÔÔÔ
+âæāāææáááęÔÖÖÖáááÔÔÔÔÔÔÔ
+áâāāæææáááÔØØØÔÔÔÔÔÔÔÔÔÔ
+ááââæææááĭÔööÔÔěáÔÔÔÔÔÔÔ
+áááááââááþõááááęáĚáÔÔÔÔÔ
+end
+
 frame g_ssrs_14 - 0
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááÔ
@@ -61803,6 +58701,33 @@ frame g_ssrs_14 - 0
 ááþööþáýþþáåæęÔÔÔÔÔáâââá
 áááþþáááþþáāæĚÔÔÔÔáááâáá
 áááááááááááāæĚöááááááááÔ
+end
+
+frame g_ssrs_17 - 0
+ÔááââââáÔėėėėÔÔÔÔÔáâââââ
+ÔÔáâââááÔėėėÔÔÔÔÔÔáâââââ
+ÔÔÔááááÔÔėėėÔÔÔÔÔÔââââââ
+ÔÔÔÔÔÔÔÔÔÔėėÔÔÔÔÔáâââââá
+ÔÔÔÔÔÔÔÔÔÔėėÔÔÔÔáââââââá
+ÖÔÔÔÔÔÔÔÔÔÔėÔÔÔÔáââââââá
+ÖÏÔÔÔÔÔÔÔÔÔėÔÔÔÔááââââáÔ
+ÖÏÔÔÔÔÔÔÔÔÔėėÔÔÔÔÔÔÔÔÔÔÔ
+ÏÖÔÔÔÔÔÔÔÔėėėėÔÔÔÔÔÔÔÔÔÔ
+ÛÖÔÔÔÔÔÔÔõėėėėėėėÔÔÔėėėė
+ÚÖÔĭþþÔÔõõėėėėėėÔÔÔÔÔėėė
+úöþþþõõõõÔėėėėėÔÔÔÔÔÔÔėė
+ööþáþõõõõÔÔöėėėÔÔÔÔÔÔÔėė
+ööýáþõõõõööööáááÔÔÔÔÔÔėė
+áááááþõõöööööâââÔÔÔÔÔÔėė
+áááááýþööööööâââėÔÔÔÔÔÔė
+ââáááááööööėÖâââėėėėėÔÔÔ
+äääâááááööÔÖÖÖÖėėėėėėėÔÔ
+åäääâáááöúÔÖÖÖÖÖėėėėėėÔÔ
+åååäçâáâáĬçÖÖÖÖėėėėėėÔÔÔ
+æåçççâáâãááíØØėėėėėėÔÔÔÔ
+ææççççâãääáíØØíėėėėėÔÔÔÔ
+ææççĂĂâãäáĭìááìėėėėėÔÔÔÔ
+æçççĂĂáâáĬĭìììØÖÔÔÔÔÔÔÔÔ
 end
 
 frame g_ssrs_18 - 0
@@ -61886,6 +58811,33 @@ frame g_ssrs_24 - 0
 áááááááââááÔÔÖėėėėėėáęėė
 end
 
+frame g_ssrs_3 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔââââá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáââáá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÓÓÔÔÔÔÔÔÔÔÔÔ
+ááááââááÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
+ááâââââáÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
+ááÖÖÖââáÔÔÓÓÓÓÓÓÔÔÔÔÔÔÔÔ
+ÔÔÖÛÖÖÖÔÔÔÓÓÓÓÓÔÔÔÔÔÔÔÔÓ
+áýþþÚÖÖØÔÔÓÓÓÓÓÔÔÔÔÔÔÔÓÓ
+âæáýÚÚÛÛÛÔÓÓÓÓÓÔÔÔÔÔÔÔÓÓ
+áâæáĭÚÚÛÛÚÚÓÓÓÓÔÔÔÔÔÔÔÓÓ
+ááâáýĭÚÚÛÛÖÓÓÓÓÔÔÔÔÔÔÔÓÓ
+ááááþĬúÚÚÖÖÖÓÓÔÔÔÔÔÔááÓÓ
+ááááþúõúÚÖÖÖÖÔÔÔÔÔÔáâáÔÓ
+áááýþõõõúúÖÖÖÔÔÔÔÔÔâââáÔ
+áââþõõõõõõõõÕÔÔÔÔÔÔâââáÔ
+âââõõõõõõõõõõÔÛÛÔÔÔâââáÔ
+ââãáõõõõõõõõúÚÛÛÛÔÔâââÔÔ
+ãäãäáþõõõõõõúÚÚÛÛÔááâáėė
+äääåāáýõõõõõáúÚÛÛáááááėė
+äääåáááõõõõáááÚÚÛáááááÔė
+äääáááááõõõááááÚÚáááááÔė
+end
+
 frame g_ssrs_4 - 0
 ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
 áÔÔÔÔÔÔÔÔėáâáėėėėėėėėáėė
@@ -61911,6 +58863,33 @@ frame g_ssrs_4 - 0
 ææååĂáþáæææáÚÛÔÔÔÔÔÔÔėėė
 āāæççáýáāāæáááÔÔÔÔÔÔÔÔÔÔ
 āāæççáááāāæèèèáÔÔÔÔÔÔÔÔÔ
+end
+
+frame g_ssrs_5 - 0
+ÔÔÔÔÔÔÔÔėėėėėėėėėėėėėÔÔÔ
+ÔÔÔÔÔÔÔÔÔėėėėėėėáááááááá
+ÔÔÔÔÔÔáááÔÔÔÔėėÔââââââââ
+ÔÔÔÔÔÔáâáÔÔÔÔÔÔÔââââââââ
+ÔÔÔÔÔÔáâáÔÔÔÔÔÔÔââââââáá
+ÔÔÔôÔÔâââáÔÔÔÔÔáââââáÔÔÔ
+ÔÔõôÔáâââáÔÔÔÔÔáâââáÔÔÔÔ
+ÔÔõôÔáââââááááááâââÔÔÔÔÔ
+õÔÔÔáââââââááááâââáÔÔÔÔÔ
+úÔÔØØØØââââááááâââáÔÔÔÔÔ
+öØØØØØÖââââââââááááÔÔÔÔÔ
+ÖÖÔÔÖÖáááââââââáÔÔÔÔÔÔÔÔ
+áááÔÚÛÔÔááââááâáÔÔÔÔÔÔÔÔ
+áááÚÛÖÖÔÔáâáááâáÔÔÔÔėėÔÔ
+ááĚÚääãÔÔáâáĘěâÔÔÔÔėėėÔÔ
+áááááááÔááââââáÔÔÔÔėėėÔÔ
+áæèèèááááááâââÔÔÔÔÔėėÔÔÔ
+áââááááááááââáěáÔÔÔÔÔÔėė
+áááááááááááÓÕÓěááÔÔÔÔÔÔÔ
+ááááááááááááõÓĘááÔÔÔÔÔÔÔ
+âáááááááááááááááÔÔÔÔÔááá
+ââááááááááááááááÔÔÔÔáâââ
+ĂâáááááááááááááęÔÔÔáââââ
+ĂääââááááááááááĚÔÔÔáââââ
 end
 
 frame g_ssrs_6 - 0
@@ -62750,60 +59729,6 @@ frame g_sssf_5 - 0
 ÔÔÔÔÔÔÔÔÔÔÔáââÖÖÖÖÖÖÖÖÖÖ
 end
 
-frame g_ssso_12 - 0
-ÔááâââáÔÔÔÔÔââââââááááââ
-ÔÔááááÔÔÔÔÔÔáââââââááâââ
-ÔÔÔÔÔÔÕÕÔÔÔÔáâââââââââââ
-ÔÔÔÔÔÕÕÕÕÔÔÔÔââââââââââá
-ÔÔÔÔÕÕÕÕÕÔÔÔÔââââââââââá
-ÔÔÔÕÕÕÕÕÕÔÔÔÔáâââââââââá
-ÔÔÔÕÕÕÕÕÕÔÔÔÔÔÔÕááââââáá
-ÔÔÔÕÕÕÕÕÕÔÔÔÔÔÔÔÕÕáááááá
-ÔÔÔÔÕÕÕÕÔÔÔÔÔÔÔÔÕÕÕááááá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááá
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÔÔÔÔÔÔØÏ
-ÔÔÔÔÔÔÔÔÔáááááÖÖÖÔÔÔÔÔØÏ
-ÔÔÔÔÔÔÔÔÔááááÖÖÖÖÔÔÔÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔáááØØØØØÔÔÏÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔáááÔÖÖÏÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔáÔÖÖÖÏÖÖÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÏÖÖÖÏ
-ÔÔÔáááÔÔÔÔÔÔÔÔÔÖÖÖÖÏÖÖÖÏ
-ÔÔÔáááÔÔÔÔÔÔÔÔÖÖÖÖÖÏÖÖÖÏ
-ÔÔÔáâáÔÔÔÔÔėėėÕÕÕÕÏÕÕÕÕÖ
-ÔÔáâââáÔÔÔėėėÔÕÕÕÕÏÕÕÕÕÕ
-ÔÔáâââááÔėėėėÔÕÕÕÏÏÕÕÕÕÕ
-end
-
-frame g_ssso_16 - 0
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔėėÖÖėėėÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔėėÖÖÖÏėėėÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔėėÖÖÖÏėáááÔÔÔÖ
-ÔÔÔÔÔÔÔÔÔėėėÖÖÏÖÖėáÔÔÔÔÖ
-ÔÔÔÔÔÔÔÔÔÔėėėÖÏÏėėėÔÔÔÔÖ
-ÔÔÔÔÔÔÔÔÔÔÔėėėėÏėėėėėÔÖÖ
-ÔÔÔÔÔÔÔÔááÔÔÕėėėėÔÔÔÔÔÖÏ
-ÔÔÔÔÔÔÔáâáÔÔÔÔÖÖÔÔÔÔÔÔÖÖ
-ÔÔÔÔÔÔÔáááÔÔÖÖÖÖÖÔÔÔÔÔÏÖ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖÖÔÔÏÖÖÏÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÔÔÔÏÖÖÏÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔØØÔÔÔÔÔÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔØÔÔÔÔÔÔÔÔÔÖÏ
-ÔÔÔÔÔÔÔÔÔÔÔÔØØÔÔÔÔÔÔÔÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖØØØÔÔÔÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖÖØØØØØÖÖÖ
-ÔÔÔÔÔÔÔááááÖÖÖÖÖÖÖØØØØÖÖ
-ÔÔÔÔÔÔÔââââÖÖÖÖÖáÔÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔááááÖÖÖÖáÏÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÕÕÕÖÖÏÖÖÖÖÖÖÏ
-áááááÔÔÔÔÔÔÕÕÕÖÖÏÖÖÖÖÖÖÏ
-end
-
 frame g_ssso_20 - 0
 ÔâââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
 áââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔââââ
@@ -62831,31 +59756,31 @@ frame g_ssso_20 - 0
 ėėáėÔÔÔÔÔÔÔÔÔØØØØØÕÕÕÕÕÕ
 end
 
-frame g_ssso_4 - 0
-ÔÔÔÔÔÔÔÔÔėėėėėėėėėėėėėėė
-áÔÔÔÔÔÔÔÔėáâáėėėėėėėėáėė
-ááÔÔÔÔÔÔÔáâââėėėėėėėáááė
-áÔÔÔÔÔÔÔėáâââėėėėėėėėáėė
-ÔÔÔÔÔÔÔÔÔÔââáÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔáâáÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔÔááÔÔÔÔÔÔÔÔÔÔÔ
-ÔÔÔÔÔÔÔÔÔÔáááÔÔÔÔÔÔÔÔÔÔÔ
-ÓÔÔÔÔÔÔÔÔÔááÔÔÔÕÕÕÕÕÔÔÔÔ
-ÓÓÓÔÔÔÔÔÔÔááÔÔÔÕÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔááÔÔÓÓÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔááÓÓÓÓÕÕÕÕÕÕÕÕ
-ÓÓÓÔÔÔÔÔÔÔÔáÓÓÓÓÕÕÕÕÕÕÕÕ
-ÓÓÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕ
-ÓÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááÕÕÕÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÔÕÖÖÖÖØÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÖÖÖÖÖÖÖ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
-ÔÔÔÔÔÔÔÔÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕ
+frame g_sssr_1 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔáááėėėėėėÔÔÔ
+ÔÔáááááááááââââÔėėėėėÔÔÔ
+ÔÔâââââââââââââÔėėėėÔÔÔÔ
+ÔÔáââááááááâââáÔÔÔÔÔÔÔÔÔ
+ÔÔÔáÔÔÔÔÔÔÔÔááÔÔÔÔÔÔÔÔÔė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔõõÔÔÔÕ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔõõÔáÔô
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáÔÔÔÔáÔáô
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔááęÔÔÔÓáĚá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔááĘÔõõõááá
+ÔÔÔÔÔÔÔÔÔÔÔáĘáááááááááââ
+ÔÔÔÔÔÔÔÔÔÔÔáááááááááâââã
+ÔÔÔÔÔÔÔÔÔÔÔááááááááââããä
+ÔÔÔÔÔÔÔÔÔÔÔÔáááááááäãääæ
+ÔÔÔÔÔÔÔÔÔÔÔÿþááááááääåææ
+ÔÔÔÔÔÔÔÔÔÔÔÿþáááááãääåææ
+ÔÔÔÔÔÔÔÔÔÚÿþþýýáááãääåææ
+ÔÔÔÔÔÔÔÔÚíþíçáýýááâæææææ
+ÔÔÔÔÔÔÔÔÚþþþíýýááááâææāā
+ÔÔÔÔÔÔÛÚĭĭĭþþþýáááááââāā
 end
 
 frame g_sssr_11 - 0
@@ -62993,6 +59918,33 @@ frame g_sssr_19 - 0
 ÔÔÔÔÔÕÕÕÕööááāççèááääåææ
 end
 
+frame g_sssr_20 - 0
+ÔâââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
+áââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔââââ
+ÔâââááÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáâââ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááá
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔááááááá
+ėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáááėėėÔ
+ėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔėėÔ
+ėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖÖÖ
+ėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÖÖ
+áėėÔÔÔÔÔÔÔÔÔÔÔÔÔÔęáěÔÔÔÕ
+áėėėÔÔÔÔÔÔÔÔÔÔÔÔÔĚáěÔÔÔÔ
+ėėėėÔÔÔÔÔÔÔÔÔÔÔÔÔááááýÔá
+ėėėėėÔÔÔÔÔÔÔÔÔÖÔÔááááááá
+ėėėėėėÔÔÔÔÔÖÖÖÕÕþýáááýýá
+ėėėėėėááááÔÖÕÕÕÕþþáááýáá
+ÔÔėėėėáâââÕÕÕÕÕÖþááæáááá
+ÔÔÔėėėáâââÕÕÕÕÖþþáææçèçá
+ÔÔÔėėėááááõáþþþþýāçèèèèè
+ÔÔÔėėėÔÔÔõõõþþþþáāèèèèâá
+ėáââááÔÔÔõõõþþþþáæèèââââ
+ėââââáÔÔÔõõþþþþááááââââä
+ėâââáÔÔÔÔõõþþýáááâââãããå
+ėėáėÔÔÔÔÔõõþááááââããäääå
+end
+
 frame g_sssr_21 - 0
 âââââÔÔÔÔÔÔÔÔÔÔÔááâáÔÔÔÔ
 âââââÔÔÔÔÔÔÔÔÔÔÔáââáÔÔÔÔ
@@ -63018,6 +59970,33 @@ frame g_sssr_21 - 0
 ÔÔÔÔÔÔÔÔÔÔĭììììááááááááá
 ÔÔÔÔÔÔÔÔÔÔÔçìĭþááâáááááá
 ÔÔÔÔÔÔÔÔÔÛÚĭĬĭĭþáäâááááá
+end
+
+frame g_sssr_22 - 0
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔááááÔÔÔÔÔÔÔÕÔÔÔÔė
+ÔÔÔáâââââââÔÔÔÔÔÔÕáââööâ
+ÔÔÔââââââââÔÔÔÔÔÔÕââöööâ
+ÔÔÔáââââââáÔÔÔÔÔÔÕââöööö
+ÔÔÔááááÔÔÔÔÔÔÔÔÔÔáââáááö
+ÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔáöěāāęÔ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔáááâââááááĭ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔáõõõâĮþáÔþþ
+ÔÔÔÔÔÔÔÔÔÔÔÔÔáõõõĭĮþþĬþá
+ÔÔÔÔÔÔÔÔėÔÔÔÔÔõõõþþýáýáá
+ÔÔÔáááÔėÔÔÔÔÔÔõõáááæèááè
+ÔÔÔáâáÔÔÔÔÔÔÔÔÔááæææèèèè
+ÔÔÔâââÔÔÔÔÔÔėÕÓěáâââèááâ
+ÔÔáâââÔÔÔÔÖÖÔÔããĬááááááá
+ÔÔáâââáÔÔÖÖäááãíþááááááá
+ÔááâââáÔĬþýááááááááááááá
+ááââââáÔþáááááááâáááâââá
+áâââââáÔþááááâââââáääääâ
+áááááááÔÔááááââããããäääää
+ÔÔÔÔÔÔÔÔÖÓĚęáâãããääååååä
 end
 
 frame g_sssr_23 - 0
@@ -63126,6 +60105,33 @@ frame g_sssr_4 - 0
 ÔÔÔÛÛÔÔÔÛááááááááçáááááâ
 ÔÔÔÔÔÔÔÔÔááááèĂáèâáááááá
 ÔÔÔÔÔÔÔÔÔáæèèèĂââááááááá
+end
+
+frame g_sssr_5 - 0
+ÔÔÔÔÔÔÔÔėėėėėėėėėėėėėÔÔÔ
+ÔÔÔÔÔÔÔÔÔėėėėėėėáááááááá
+ÔÔÔÔÔÔáááÔÔÔÔėėÔââââââââ
+ÔÔÔÔÔÔáâáÔÔÔÔÔÔÔââââõõõâ
+ÔÔÔÔÔÔáâáÔÔÔÔÔÔÔââââõõõá
+ÔÔÔÔÔÔâââáÔÔÔÔÔáââââõõõõ
+ÔÔÔÔÔáâââáÔÔÔÔÔáâââáõõõõ
+ÔÔÔÔÔáââââááááááâââÔõõõõ
+ÔÔÔÔáââââââááááâââáÔõõõõ
+ÔÔÔÔÔáâââââááááâââáÔõáõõ
+ÔÔÔÔÔáâââââââââááááÔáááõ
+ÔÔÔÔÔÔáááâââęáâáÔÔÔÔęááá
+ÕÔÔÔÔÔÔÔááââáááĚáÔÔÔáááá
+ÕÔÔÔÔÔÔÔÔáââáááęáĬĬááááá
+ÔÔÔÔÔÔÔÔÔáââĘěáááááááááá
+ÔÔÔÔÔÔÔáááââĚĚáááááááááá
+ÔÔÔÔÔÔáááââââááááááááááá
+ÔÔÔÔÔÔáâââââÓááááááááááá
+ÔÔÔÔÔÔâââáĚÓÕááááááááááá
+ÔÔÔÔÔÔááááěõõááááááááááá
+ÔÔÔÔÔĚáááááááááááááááááá
+ÔÔÔÔÔááááááááááááááááâââ
+ÔÔÔÔęááááááááááááááââââä
+ÔÔÔÔęěáááááááááááâáããããå
 end
 
 frame g_sssr_7 - 0
@@ -64397,33 +61403,6 @@ frame g_ssyy_6 - 0
 ãããããããĘĘĘĘĘĘĘĘĘĘĘĘĘĘĘãã
 end
 
-frame g_syoo_13 - 0
-âââáÕÕÕÕÕėėĘĘėááėââãââęę
-âââááááÕÕÔÔĬĬáááėâããââęę
-âââááááÕÖÖĭĭĭĘėââãããââęę
-áááâââáÕÖÖĭĭĭęėãããėãâęęĘ
-áááââââáÖÖÔĭĭáėäãėãėęęĘĘ
-áááâââáÔÔÖÖáááãėėãããėęĘĘ
-áááááááÔÔÖÖÓááääáäääėãĘĘ
-áááááááÔØØØÓěáááęäääėãâĘ
-ááÕÔÔÔÔØØØØÓÓáĚèęáęááęėĘ
-ÕÔÔÔÔÔÔØØØØÓÓáèããΑΑΑáęęė
-ÔÔÔÔÔÔÔÖÖÖÖÓÓęäääáþþēáþė
-ÖÖÔÔáÏÖÖÖÖÓÓÓĘěäáöþþþþþþ
-ÖÖÖáÖÏÖÖÖõõÓÓÓááÓöþþþþþþ
-ÖÖÖÖÖÏÖÖÖÖÓÓÓÏÓÓÖöĮĮþþþÓ
-ÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÏÖĮþÿþÓ
-ÖÖÖÖÖÖÖÖÖÕÖÏÖÖÖÖÖÏÖÖþþÖÓ
-ÖÖÖÖÏÖÖÖÖÖÏÖÖÖÖÖÖÏÖÖÖÖÖÓ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÓÓÓÓ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖááÓÓ
-ÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÓáÓÖ
-ÖÖÖÖÏÖÖÖÖÖÖÖÖÖÖÖÖÖÏÖÓÓÖÖ
-ÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÕÖÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖ
-ÏÕÕÖÖÖÏÖÖÖÖÏÖÖÖÖÖÖÖÏÖÖÖÖ
-end
-
 frame g_syss_0 - 0
 ėėėėÔÔÔÔõõþáááėââââĘĘĘĘĘ
 ėėėėÔÔÔÔõõĭþýĔâââââĘĘĘĘâ
@@ -64532,6 +61511,33 @@ frame g_syss_12 - 0
 ÔÔáâââááÔėėėėÔÔÔÔÔááááââ
 end
 
+frame g_syss_13 - 0
+âââáÕÕÕÕÕėėĘĘėááėââãââęę
+âââááááÕÕÔÔĬĬáááėâããââęę
+âââááááÕÕÔĭĭĭĘėââãããââęę
+áááâââáÕÔÖĭĭĭęėãããėãâęęĘ
+áááââââáÔÔÔĭĭáėäãėãėęęĘĘ
+áááâââáÔÔÔÕáááãėėãããėęĘĘ
+áááááááÔÔÔÕÕááääáäääėãĘĘ
+áááááááÔÔÔÕÕěáááęäääėãâĘ
+ááÕÔÔÔÔÔÔÔÔÔÔáĚèęáęááęėĘ
+ÕÔÔÔÔÔÔÔÔÔÔÔÔáèããΑΑΑáęęė
+ÔÔÔÔÔÔÔÔÔÔÔÔÔęäääáþþēáþė
+ÔÔÔÔáááááÔÔÔÔĘěäáöþþþþþþ
+ÔÔÔááââââõõáÔâááâöþþþþþþ
+ÔÔÔáââââââââÔââââöĮĮþþþÕ
+ÔÔÔáâââââââââââââáÔĮþÿþÔ
+ÔÔÔáâââââââââââââáÔÔþþÔÔ
+ÔÔÔââââââââââââââÔÔÔÔÔÔÔ
+ááâââââââááááââââÔÔÔÔÔÔÔ
+ââââââââáÕÕÕááâââÔÔÔááÔÔ
+ââââââââáÔÕÕááââáÔÔÔÔáÔÔ
+ââââââââáÔÔÔÔááááÔÔÔÔÔÔÔ
+ââââââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+âââââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+âââââââáÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔÔ
+end
+
 frame g_syss_16 - 0
 ÔÔÔÔÔÔÔĘáėĘãããââââââââââ
 ÔÔÔÔÔÔÔÔėėĘããããâââââââââ
@@ -64611,6 +61617,33 @@ frame g_syss_18 - 0
 ÔÔÔáââââââââááÔÔÔÔáááÔÔÔ
 ÔÔÔÔáááááââááėėÔÔÔÔÔÔÔÔÔ
 ÔÔÔÔÔÔÔÔááááėėėÔÔÔÔÔÔÔÔÔ
+end
+
+frame g_syss_19 - 0
+ÔÔÔÔÕÕēēΑþþėėãããããĘĘĘĘĘĘ
+ÔÔÔÔÕÕēēΑΒþþááããããĘĘĘĘĘĘ
+ÔÔÔÔÕÕÕÕáâΒþėáãėããĘĘĘĘĘĘ
+ÔÔÔÕÕÕÕÕÕáúĘĘãããėãĘĘĘĘĘĘ
+ÔÔÔÕÕÕÕÕÕáÚááããääėãĘĘĘĘĘ
+ÕÕÕÕÕÕÕÕÔÔþááĘĘääääėĘĘĘĘ
+ÕÕÕÕÕėėÕÔÔþþĘáááĘääėĘĘĘĘ
+ÕÕÕÕėėėėÔÔēΒĘáþþĘėėĘĘĘĘĘ
+ÕÕÕÕėėėėėÔĔΒΒΒėĘĘĘĘĘĘĘĘĘ
+ÕÕÕÕėėėėėēĔĔΒėęęĘĘĘĘĘĘĘĘ
+ÕÕÕÕėėėėėēĔĔėãããããããããĘĘ
+ÕÕÕėėėėėėēĔėãããããããããããĘ
+ÕÕÕėėėėėėēΒėããΘΘããããΘΘãĘ
+ÔáÕėėėėėėėΒėãėėÔėėããΘΘãĘ
+âââėėėėėėėáááΑΑĭÔÔÔÖėĘĘė
+âââáėėėėėÔááááΑĭÔÔÔÔÖėėÖ
+âââÔÔėėÔÔÔáâááÔÔÔÔÕÔÖÖÖÖ
+ÔáÔÔÔÔÔÔÔÔáââÔÔÔÔÕÕÕÖÖÖÖ
+ÔÔÔÔÔÔÔÔÔÔâââÔÔÔÔÕÕÕÖÖÖÖ
+ÔÔÔÔÔÔÔÔÔÔâââÔÔÔÔÕÕÕÖÖÖÖ
+ÔÔÔÔÔÔÔÔÔÔâââÔÔÔÕÕÕÕÖÖÖá
+ÔÔÔÔÔÔÔÔÔÔâââÔÔÔÕÕÕÕáâáÔ
+ÔÔÔÔÔÔÔÔÔÔáâáÔÔÕÕÕÕÕÔÔÔÔ
+ÔÔÔÔÔÕÕÕÕÕÕÕÕÕÕÕÕÕÕÕÔÔÔÔ
 end
 
 frame g_syss_22 - 0
@@ -66665,7 +63698,34 @@ frame g_yfyy_7 - 0
 ããããΘΘęęęęęęęęęęęââââââã
 end
 
-frame g_ynon_10 - 0
+frame g_ynss_15 - 0
+ĘĘããääääääėããėäääääääããã
+ĘĘęãäääääããããėääääääääãâ
+ĘĘęããääääããããėããäääääääâ
+ĘĘęããããęęęĚĚĚėããããããääää
+ĘĘĘããããęęęĚĚėėãããããããäää
+ĘĘĘãããĘĘęėĚėėėãããããããäää
+ĘĘĘĘĘĘĘĘęäėėėėããããããėėää
+ĘĘĘĘĘĘĘĘėėėĚėėãããėėėėėää
+ĘĘĘėĘĘĘĘėėęĚėėėėėęâėėėėė
+ĘĘėþþþėėėėęĚĚĚęęęęâėėėėė
+ĘĘþþĭĭėėėėęããããâĘââėėėėė
+Ęėėēēĭėėėėęãããâââããėėėââ
+ĘėėĭĘáėėėėėėėėėėâãėėėėââ
+ėÓÓáĘěáÔĭĭĭėėėėėėããėėėėâ
+ÏÖÓĘĚááÔĭĭĭėėėėėãããėΑΑėė
+ÕÕÖÓěááÔÔĭĭėėėėėėėėėΑΑΑė
+ÕÕÕÖÖÖÔÔÔÔėėėėėėęááÔÔĭÔÔ
+ÖÏėėÖÖÖÔÔÔėėėėėėėÕÕÕÔĭÔÔ
+ÖÏėĘėÖÖÔÔÔėėėėėėÕÕÕÕÕĭÔÔ
+ÔÔĘĘėÔÔÔÔÔėėáėėėÕÕÕÕÔÔÔÔ
+ÔÔėĘėÔÔÔÔÔááááėėÔÔÔÔÔÔÔÔ
+ÔÔÔėÔÔÔÔÔÔÔėėėėėÔÔÔÔÔÔÔÔ
+ÔÔÔÔÔÔÔÔÔÔÔėėėėÔÔÔÔÔÔÔáÔ
+ÔááááÔÔÔÔÔÔėėėÔÔÔÔÔÔááââ
+end
+
+frame g_ynyn_10 - 0
 ęęęęããããããėėãããâââââââââ
 ęęęęęãããããėėãããâââââââââ
 ĘĘęęęęããėėėėââââââââââââ
@@ -66675,21 +63735,21 @@ frame g_ynon_10 - 0
 ĘĘĘĘęęėââââėėâââââââââÄÄ
 ĘĘĘĘęęââââėėâââââââââââÄ
 ĘĘĘĘĘęââėėâââââââââââââÄ
-ėĘĘĘĘĘââėâââääääââääääää
-ėėėĘėėĘâėâääääääääääääää
-ėĘĘááãėãėääâââââääääääää
-ėĘĘáááėãėėâãããâââäââââää
-ħħĘáŊæėãėėâãããââââââââââ
-þþĘĘŊėĘĘãėãããããâââââââââ
-þþþėėėėĘĘėėããããããããããâââ
-ÓáæėėėėĘĘėėããããããããããããã
-ÓáėęĘĘĘĘėėėããããããããããããã
-ÖĚėęĘĘĘėáėÅėėÅÅããããããããÅ
-ÖÓėęėėėááėėėÅÅÅÅãããããããÅ
-ÖÖėėæááęáėėÅÅÅÅÅããããããÅÅ
-ÖÖÓááááęĭĭėÅÅÅÅÅããããããÅÅ
-ÖÖÖÓÓÓÓÓÓĭėėÅÅÅÅãããããããÅ
-ÖÖÖöÖÖáĚėėėėėÅÅäãããããããÄ
+ĘĘĘĘĘĘââėâââääääââääääää
+ĘĘĘĘĘĘĘâėâääääääääääääää
+ĘĘĘĘĘĘĘãėääâââââääääääää
+ęęĘĘĘĘĘãėėâãããâââäââââää
+ęęęĘĘĘĘãėėâãããââââââââââ
+ęęęĘĘĘĘĘãėãããããâââââââââ
+ęęęęĘĘĘĘĘėėããããããããããâââ
+ęęęęĘĘĘĘĘėėããããããããããããã
+ãĚęęĘĘĘĘĘėėããããããããããããã
+ãĚęęĘĘĘĘĘėÅėėÅÅããããããããÅ
+ããęęęĘĘĘãėėėÅÅÅÅãããããããÅ
+ããęęęęĘããėėÅÅÅÅÅããããããÅÅ
+ââęęęęęãããėÅÅÅÅÅããããããÅÅ
+ęęęęãääääãėėÅÅÅÅãããããããÅ
+ĘęęãäääääãėėėÅÅäãããããããÄ
 end
 
 frame g_ysnn_7 - 0
@@ -67367,33 +64427,6 @@ frame g_yynn_6 - 0
 ââââââäääâââââääâââââÄÄÄ
 end
 
-frame g_yyoo_14 - 0
-ęęããããããããĘĘĘĘĘĘĘĘĘĘĘĘęę
-ęęããããããããâĘĘĘĘĘĘĘĘĘĘĘĘę
-ęęããããããããâââĘĘĘĘĘĘĘâĘĘĘ
-ĘĘââããããĘâââââĘĘęęęâėėΘĘ
-ĘĘââââãâĘĘââââĘĘęęâėėėėã
-ĘĘââââââĘĘââââĘęęęââėėãĘ
-ĘĘââââââĘĘâââââęęęĚââėãĘ
-ĘĘâââââĘĘĘâââââėėęĚęęęĘĘ
-ĘĘâââããĘĘĘââââΘėėĚĚĚęęĘĘ
-ââââããããĘĘããããęþþĚĚĚęęęĘ
-ââââãããããėããããėĭĭėĚĚęęęĘ
-ââããęęããėĭėėĘęėĭĭėĚĚĚęęę
-ėâãęęęãėĭĭĭĭėėėĭĭėėėėėėė
-ÓėėėėėėėĭĭĨĭėėėĭĭėėėėėėħ
-ÓÖÖÖÏÖÖÖÖėėėėėĭĭĭėėėþþþþ
-ÚÖÖÖÖÏÖÖÖėėėėėĭĭĭėΘėĭĭÖÖ
-ÓÖÖÖÖÖÏÖÖÖÖÖėėáĭėėėėĭÏÖÖ
-ÖÏÖÖÖÖÏÖÖÖÓÓÓėėėããėΑÖÏÖÖ
-ÖÏÖÖÖÖÖÏÖÖÓęáėėããäėΑÖÏÖÖ
-ÖÏÖÖÖÖÏÖÖÖÓĘáÓÖėėėėÖÖÏÖÖ
-ÖÏÖÖÖÖÖÖÖÖÖÓÓÖÖÖÖÖÖÖÖÖÖÖ
-ÖÖÖÖÖÏÖÖÖÖÖÖÓÏÖÖÖÏÖÖÖÖÏÖ
-ÏÖÖÖÏÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-ÏÖÖÖÖÖÖÖÖÖÖÖÖÏÖÖÖÖÏÖÖÖÖÏ
-end
-
 frame g_yyss_1 - 0
 âĘĘĘęęęęęĘĘãããããããęęęĘĘĘ
 âĘĘĘęęęęããããããããããęęęĘĘĘ
@@ -67581,6 +64614,33 @@ frame g_yysy_13 - 0
 âââþþáĘĘĘėââââââããĘĘĘĘĘĘ
 ââââââĘáĘĘėΘââââããĘĘĘĘĘã
 âââââââáĘĘėΘââââãããĘĘĘãã
+end
+
+frame g_yysy_14 - 0
+ęęããããããããĘĘĘĘĘĘĘĘĘĘĘĘęę
+ęęããããããããâĘĘĘĘĘĘĘĘĘĘĘĘę
+ęęããããããããâââĘĘĘĘĘĘĘâĘĘĘ
+ĘĘââããããĘâââââĘĘęęęâââΘĘ
+ĘĘââââãâĘĘââââĘĘęęââââãã
+ĘĘââââââĘĘââââĘęęęâââããĘ
+ĘĘââââââĘĘâââââęęęĚââããĘ
+ĘĘâââââĘĘĘâââââęęęĚęęęĘĘ
+ĘĘâââããĘĘĘââââΘęęĚĚĚęęĘĘ
+ââââããããĘĘããããęęęĚĚĚęęęĘ
+ââââããããããããããęęęĚĚĚęęęĘ
+ââããęęãããããęĘęęęĚĚĚĚĚęęę
+ââãęęęãããããęęęęęĚĚĚĚĚęęę
+ÕėėãęęãããããęĘęęęĚĚĚĚĚęęę
+ÓÖÿĮėėęęęęĘããããęęĚĚĚĚęęę
+ÚÚÖĮĭþėĘĘĘĘãããããããΘΘĚęęę
+ÔÔÔÔÖÖþėĘĘĘããããããããããããã
+ÔÔÔÔÔÚÚþėĘĘããããããããããããã
+ÔÔÔÔÔÚÚþħėĘĘĘĘãããääããããã
+ÔÔÔÔÔÚĘááĘėĘĘĘĘęęãäããããã
+ÔÔÔÔÛĘáĘáĘėėĘĘĘĘęęãããããã
+ÔÔÔÔÔÛáęáĘþėėĘĘĘĘęããããââ
+ÔÔÔÔėáÛÛΑþþėėãããĘĘĘĘĘĘęę
+ÔÔÔÔÕėáΑΑþþėãããããĘĘĘĘĘĘĘ
 end
 
 frame g_yysy_17 - 0
