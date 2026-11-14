@@ -4659,12 +4659,6 @@
   "ui.prompt.take_key_click": {
     "text": "Right-click  Take the key"
   },
-  "ui.prompt.wreck_board": {
-    "text": "{key}  Speak to Hild in the boat"
-  },
-  "ui.prompt.wreck_board_click": {
-    "text": "Right-click  Speak to Hild in the boat"
-  },
   "ui.prompt.shelter_frame": {
     "text": "{key}  Stand up the oars"
   },
@@ -7686,7 +7680,10 @@
     "tags": ["INFO"]
   },
   "ui.prompt.wreck_board": {
-    "text": "Back to the boat"
+    "text": "{key}  Back to the boat"
+  },
+  "ui.prompt.wreck_board_click": {
+    "text": "Right-click  Back to the boat"
   },
   "c_finan.wreck.open": {
     "text": "Gaill, by your sail. God sends whatever boat comes to hand.",

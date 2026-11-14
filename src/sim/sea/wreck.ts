@@ -242,7 +242,8 @@ export function openWreckTalk(
 /** What Interact would otherwise do on the reef: lift someone, set them down, or pick up. */
 export type ReefInteraction =
   | { readonly kind: 'LIFT'; readonly target: Id }
-  | { readonly kind: 'SET_DOWN' | 'PICK_UP' }
+  | { readonly kind: 'SET_DOWN' }
+  | { readonly kind: 'PICK_UP' }
   | null;
 
 /**
@@ -259,12 +260,14 @@ function wreckBeforeLift(
   useDistance: number,
 ): boolean {
   const onFoot = world.onFoot;
-  if (onFoot === null || onFoot.carrying !== null) return false;
+  if (onFoot === null) return false;
+  // A load carried: Interact sets it down.
+  if (onFoot.carrying !== null) return false;
   if (interaction === null || interaction.kind === 'PICK_UP') return true;
-  if (interaction.kind !== 'LIFT') return false;
-  if (use.target === interaction.target)
-    return world.facts[`${WRECK_FACTS.heard}.${use.target}`] !== true;
-  const lifted = onFoot.actors[interaction.target];
+  if (interaction.kind === 'SET_DOWN') return false;
+  const target: Id = interaction.target;
+  if (use.target === target) return world.facts[`${WRECK_FACTS.heard}.${target}`] !== true;
+  const lifted = onFoot.actors[target];
   if (lifted === undefined) return true;
   const p = onFoot.player;
   return useDistance < Math.hypot(lifted.x - p.x, lifted.y - p.y);

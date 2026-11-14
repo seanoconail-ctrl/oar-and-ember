@@ -162,6 +162,32 @@ Please note anything, but these questions matter most:
 - **Look and sound:** anything ugly, broken, too still, too loud or too quiet; anything you liked.
 - **Time:** was the chapter too long, too short, or about right? Where did time drag?
 
+## After the chapter: the sea map (Stage 13, to try if you like)
+
+The published build now goes on past the launch with Stage 13: sailing on the sea map, and one
+interruption on the way. It is not part of the Build 1 playtest, and the first raid itself (Carrick
+Landing on foot) is Stage 16's, so the voyage stops at the landing for now.
+
+- **Reach the chart:** after the chapter's end, back on the island, press **M** (the map key). Pick a
+  place on the chart: its course is painted, with the watches it takes, the landfall and the stores.
+  **Set sail** to go. Carrick Landing is the only course known at first (from Thorkel's chart).
+- **Sailing:** the watches pass by themselves, one every few seconds, and the boat sails its share of
+  the course. Watch the weather cartouche at the top left (wind, tide and slack water, haze and fog,
+  tomorrow's forecast) and the sea, the clouds, the rain and the storms on the chart. If the weather
+  rises, the household asks whether to **press on or shelter** (the watches wait while you choose).
+- **The wreck:** on the first crossing to Carrick you meet a broken boat on the reef of Sgeir Dhubh.
+  You go ashore on the reef: talk to the three survivors (walk up to one and press E), carry the hurt
+  one if you like, then go **back to the boat** and give Hild your answer: take them aboard, take
+  them aboard and set them ashore before Carrick, take only the cargo, or leave them. The chart comes
+  back once the answer is given, and the voyage goes on to the landing.
+- **For testing only:** with `?dev` in the address, F3's developer menu on the chart adds **Chart
+  every route and place** and a list of every route to sail from where the boat lies. The tests'
+  address `?view=play&name=Ash&body=A&camp=broch&crew=1&wreck=1` puts you straight on the reef.
+- **What to look for:** does choosing a course feel like a choice (wind, tide, stores)? Is the chart
+  alive in every weather, and does the music follow the weather (calm, wind, storm; silence in fog)?
+  At the wreck: was the prompt at each survivor and at the boat's side clear, did the answer feel
+  hard, and could you tell where the cries came from?
+
 ## How to report
 
 1. When you finish (or stop), press **Esc** then **T** and copy the timings shown. A screenshot is

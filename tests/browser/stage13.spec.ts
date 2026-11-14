@@ -230,6 +230,10 @@ test.describe('Stage 13: the wreck handed off on foot', () => {
       w.oeWorld.onFoot.player.y = 20.2 * 24;
     });
     await step(page, 2);
+    // The prompt line names what Interact does there (decision S13-81), never an ID; the chart was
+    // clicked, so it is the mouse's form.
+    await expect(page.locator('[data-region=prompt]')).toHaveText('Right-click  Back to the boat');
+    expect(await attr(page, 'prompt')).toBe('wreck_board');
     await page.keyboard.press('KeyE');
     await step(page, 2);
     expect(await attr(page, 'talk-kind')).toBe('SEARCH');

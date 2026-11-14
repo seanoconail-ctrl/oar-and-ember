@@ -21,7 +21,7 @@ Made by `npm run capture -- stage-13` (src/tools/art/capture.ts and captureSea.t
 
 | View | Continuous motion |
 |---|---|
-| Wreck Strand | 94.1% |
+| Wreck Strand | 93.9% |
 | chart-day | 92.5% |
 | chart-fog | 99.5% |
 | chart-storm | 99.0% |
@@ -32,7 +32,7 @@ Made by `npm run capture -- stage-13` (src/tools/art/capture.ts and captureSea.t
 
 The chart meets the threshold in every weather, by real moving water, cloud and fog (no waiver).
 
-The script's share of a chart frame in a storm as the stepped capture reads it: 1.43 ms (most stepped frames are not drawn); drawn every frame in Chromium it read about 4.5 ms. Book 2's limit is 5.5 ms.
+The script's share of a chart frame in a storm as the stepped capture reads it: 1.21 ms (most stepped frames are not drawn); drawn every frame in Chromium it read about 4.5 ms (package B). Book 2's limit is 5.5 ms.
 
 ## Against the reference
 
@@ -41,5 +41,5 @@ The references (`docs/art/reference/wreck-strand-target.png` and `kelda-summer-t
 - **Palette and tone**: every chart pixel is a Book 7 palette colour from an authored frame (unit-tested), in the reference's darker North Atlantic ramps: grey-green sea darkening to the deep, cool sand, wet stone, moss and grass; warmth only in the token's sail, the course's madder and the sun mark.
 - **Water**: as in the reference, the sea lightens over the shallows to the surf line and darkens over the deep (Rán's Reach darker still); its sheen runs in three sets of crests, where the Stage 12 chart had two and left still water (72.9%).
 - **Wind and light**: one wind drives the clouds' shadows, the gusts' sheen over the land, the fog's drift and the rain's slant, as the strand's one wind drives its grass and sand; night has its own grade with a moonlit sheen; storms darken the chart and flash, a double flicker with a bolt.
-- **Motion**: 90 to 99.5% of the chart keeps moving with the camera still in every weather (the strand reference's mockup 89.2% with its clouds frozen), 82.1% with reduced motion; no waiver. The wreck (package C's scene, on foot) 96.2%.
+- **Motion**: 90 to 99.5% of the chart keeps moving with the camera still in every weather (the strand reference's mockup 89.2% with its clouds frozen), 82.1% with reduced motion; no waiver. The wreck on Sgeir Dhubh (package C's scene, on foot) 96.2%: the surf on the skerry, the boat afloat with its crew at the oars, the shingle, thrift and grass of the reef in the strand reference's outline weight, three-step shading and palette (`wreck@2x.png`, looked at in the integration pass).
 - **Below the reference**: the chart's land is painted flat, as a map (no plants or animals; the strand's life and decoration belong to places walked on foot); the token is 24 x 16 at the chart's scale and reads best at 2x.
