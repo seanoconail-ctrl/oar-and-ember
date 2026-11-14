@@ -36,6 +36,11 @@ import zoneHagseat from '../../content/zones/zone_sk_hagseat.json';
 import zoneCairn from '../../content/zones/zone_sk_cairn.json';
 import zoneSealcave from '../../content/zones/zone_sk_sealcave.json';
 import zoneSeaWreck from '../../content/zones/zone_sea_wreck.json';
+import zoneCairnIn from '../../content/zones/zone_sk_cairn_in.json';
+import zoneSealcaveDeep from '../../content/zones/zone_sk_sealcave_deep.json';
+import zoneBog from '../../content/zones/zone_sk_bog.json';
+import zoneRook from '../../content/zones/zone_sk_rook.json';
+import zoneCliffs from '../../content/zones/zone_sk_cliffs.json';
 import zoneGeo from '../../content/zones/zone_sk_geo.json';
 import zoneSkerry from '../../content/zones/zone_sk_skerry.json';
 import zoneNaust from '../../content/zones/zone_sk_naust.json';
@@ -79,6 +84,11 @@ export const BUNDLED_FILES: ContentFiles = {
   zoneCairn,
   zoneSealcave,
   zoneSeaWreck,
+  zoneCairnIn,
+  zoneSealcaveDeep,
+  zoneBog,
+  zoneRook,
+  zoneCliffs,
   zoneGeo,
   zoneSkerry,
   zoneNaust,

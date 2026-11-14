@@ -445,6 +445,25 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     `island-${id}`,
   ]),
   ['island:SFX_TELL_DROWNED', 7, {}, 'island-tell-drowned'],
+  // Stage 14, work package B: the movement verbs (decision S14-61).
+  ...(
+    [
+      ['SFX_CLIMB_HOLD', 0.8],
+      ['SFX_CLIMB_STRAIN', 1.4],
+      ['SFX_CLIMB_SLIDE', 2],
+      ['SFX_SWIM_STROKE', 1.2],
+      ['SFX_SINK', 2],
+      ['SFX_SINK_GASP', 1.4],
+      ['SFX_CRAWL', 0.8],
+      ['SFX_STONE_SCRAPE', 1.6],
+      ['SFX_JUMP_LAND', 0.8],
+    ] as const
+  ).map(([id, seconds]): [string, number, Record<string, unknown>, string] => [
+    `sfx:${id}`,
+    seconds,
+    {},
+    `traverse-${id.slice(4).toLowerCase().replaceAll('_', '-')}`,
+  ]),
 ];
 
 if (import.meta.filename === process.argv[1]) {

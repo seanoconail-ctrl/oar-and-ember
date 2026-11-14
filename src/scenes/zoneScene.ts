@@ -1289,7 +1289,14 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     const x = o.x * map.tile - camera.x;
     const y = o.y * map.tile - camera.y;
     if (!inView(x, y)) continue;
-    const sprite: SceneSprite = { sheet: o.sheet, frame: o.frame, x, y, layer: 'actor', tall: true };
+    const sprite: SceneSprite = {
+      sheet: o.sheet,
+      frame: o.frame,
+      x,
+      y,
+      layer: 'actor',
+      tall: true,
+    };
     sprites.push(sprite);
     cast(sprite);
   }

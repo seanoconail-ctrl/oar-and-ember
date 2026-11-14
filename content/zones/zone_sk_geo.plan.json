@@ -5,7 +5,12 @@
   "terrainSeed": "zone_sk_strand",
   "ground": "tile_moor",
   "plantSheet": "plant_moor",
-  "blocks": { "x": 4, "y": 2, "w": 10, "h": 9 },
+  "blocks": {
+    "x": 4,
+    "y": 2,
+    "w": 10,
+    "h": 9
+  },
   "warpTiles": 3,
   "tideLineTiles": 2,
   "faceTiles": 3,
@@ -14,11 +19,44 @@
   "sward": 0.6,
   "crevices": 0.35,
   "wind": 1.5,
-  "codes": { "\"": "h", "^": "h", "X": "h", "#": "c", "G": "." },
+  "codes": {
+    "\"": "h",
+    "^": "h",
+    "X": "h",
+    "#": "c",
+    "G": "."
+  },
   "carve": [
-    { "code": "h", "ellipse": { "x": 49, "y": 26, "rx": 7, "ry": 19 }, "rough": 0.5 },
-    { "code": "h", "ellipse": { "x": 76, "y": 23, "rx": 6.5, "ry": 17 }, "rough": 0.5 },
-    { "code": "h", "ellipse": { "x": 62, "y": 52, "rx": 16, "ry": 11 }, "rough": 0.4 },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 49,
+        "y": 26,
+        "rx": 7,
+        "ry": 19
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 76,
+        "y": 23,
+        "rx": 6.5,
+        "ry": 17
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 62,
+        "y": 52,
+        "rx": 16,
+        "ry": 11
+      },
+      "rough": 0.4
+    },
     {
       "code": "~",
       "line": [
@@ -30,8 +68,26 @@
       "width": 7.5,
       "rough": 0.45
     },
-    { "code": "c", "ellipse": { "x": 56, "y": 24.5, "rx": 4.6, "ry": 6.5 }, "rough": 0.3 },
-    { "code": "-", "ellipse": { "x": 58.6, "y": 27.4, "rx": 2.2, "ry": 2.6 }, "rough": 0.2 },
+    {
+      "code": "c",
+      "ellipse": {
+        "x": 56,
+        "y": 24.5,
+        "rx": 4.6,
+        "ry": 6.5
+      },
+      "rough": 0.3
+    },
+    {
+      "code": "-",
+      "ellipse": {
+        "x": 58.6,
+        "y": 27.4,
+        "rx": 2.2,
+        "ry": 2.6
+      },
+      "rough": 0.2
+    },
     {
       "code": "-",
       "line": [
@@ -42,9 +98,36 @@
       "width": 2.4,
       "rough": 0.2
     },
-    { "code": "~", "ellipse": { "x": 56.2, "y": 24.6, "rx": 1.0, "ry": 0.9 }, "rough": 0.05 },
-    { "code": ".", "ellipse": { "x": 54.8, "y": 23.4, "rx": 1.3, "ry": 1.1 }, "rough": 0.05 },
-    { "code": ".", "ellipse": { "x": 66, "y": 35.5, "rx": 5.5, "ry": 3.4 }, "rough": 0.35 },
+    {
+      "code": "~",
+      "ellipse": {
+        "x": 56.5,
+        "y": 24.9,
+        "rx": 0.9,
+        "ry": 1.3
+      },
+      "rough": 0.05
+    },
+    {
+      "code": ".",
+      "ellipse": {
+        "x": 55.0,
+        "y": 24.2,
+        "rx": 1.2,
+        "ry": 1.2
+      },
+      "rough": 0.05
+    },
+    {
+      "code": ".",
+      "ellipse": {
+        "x": 66,
+        "y": 35.5,
+        "rx": 5.5,
+        "ry": 3.4
+      },
+      "rough": 0.35
+    },
     {
       "code": ".",
       "line": [
@@ -84,13 +167,45 @@
     }
   ],
   "outcrops": [],
-  "spawns": { "P_STEERER": { "x": 76.5, "y": 58.5, "facing": "w" } },
+  "spawns": {
+    "P_STEERER": {
+      "x": 76.5,
+      "y": 58.5,
+      "facing": "w"
+    }
+  },
   "props": [
-    { "sheet": "prop_cell", "frame": "back/-/0", "x": 60.5, "y": 55.6, "sort": 50.2 },
-    { "sheet": "prop_cell", "frame": "front/-/0", "x": 60.5, "y": 55.6 },
-    { "sheet": "prop_cell", "frame": "altar/-/0", "x": 58.6, "y": 51.4 },
-    { "sheet": "prop_cell", "frame": "cross/-/0", "x": 64.6, "y": 51.3 },
-    { "sheet": "prop_island", "frame": "niche/-/0", "x": 57.5, "y": 52.9 }
+    {
+      "sheet": "prop_cell",
+      "frame": "back/-/0",
+      "x": 60.5,
+      "y": 55.6,
+      "sort": 50.2
+    },
+    {
+      "sheet": "prop_cell",
+      "frame": "front/-/0",
+      "x": 60.5,
+      "y": 55.6
+    },
+    {
+      "sheet": "prop_cell",
+      "frame": "altar/-/0",
+      "x": 58.6,
+      "y": 51.4
+    },
+    {
+      "sheet": "prop_cell",
+      "frame": "cross/-/0",
+      "x": 64.6,
+      "y": 51.3
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "niche/-/0",
+      "x": 57.5,
+      "y": 52.9
+    }
   ],
   "cuts": [],
   "paths": [
@@ -106,23 +221,84 @@
     ]
   ],
   "links": [
-    { "edge": "e", "to": "ZONE_SK_ROOK" },
-    { "edge": "s", "to": "ZONE_SK_CLIFFS" }
+    {
+      "edge": "e",
+      "to": "ZONE_SK_ROOK"
+    },
+    {
+      "edge": "s",
+      "to": "ZONE_SK_CLIFFS"
+    }
   ],
   "life": [
-    { "kind": "gull", "x": 64, "y": 14, "r": 5 },
-    { "kind": "gull", "x": 30, "y": 30, "r": 7 },
-    { "kind": "gull", "x": 50, "y": 8, "r": 4 },
-    { "kind": "gull_standing", "x": 54.2, "y": 14.6 },
-    { "kind": "gull_standing", "x": 70.4, "y": 12.6 },
-    { "kind": "gull_standing", "x": 69.6, "y": 20.4 },
-    { "kind": "gull_standing", "x": 43.5, "y": 30.6 },
-    { "kind": "cormorant", "x": 61.5, "y": 31.4 },
-    { "kind": "seal", "x": 64, "y": 10 },
-    { "kind": "crab", "x": 66.4, "y": 37.2 }
+    {
+      "kind": "gull",
+      "x": 64,
+      "y": 14,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 30,
+      "r": 7
+    },
+    {
+      "kind": "gull",
+      "x": 50,
+      "y": 8,
+      "r": 4
+    },
+    {
+      "kind": "gull_standing",
+      "x": 54.2,
+      "y": 14.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 70.4,
+      "y": 12.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 69.6,
+      "y": 20.4
+    },
+    {
+      "kind": "gull_standing",
+      "x": 43.5,
+      "y": 30.6
+    },
+    {
+      "kind": "cormorant",
+      "x": 61.5,
+      "y": 31.4
+    },
+    {
+      "kind": "seal",
+      "x": 64,
+      "y": 10
+    },
+    {
+      "kind": "crab",
+      "x": 66.4,
+      "y": 37.2
+    }
   ],
   "traverse": {
-    "jumps": [{ "id": "geo.cleft", "from": { "x": 57, "y": 25 }, "to": { "x": 55, "y": 24 } }],
+    "jumps": [
+      {
+        "id": "geo.cleft",
+        "from": {
+          "x": 57,
+          "y": 25
+        },
+        "to": {
+          "x": 55,
+          "y": 24
+        }
+      }
+    ],
     "crawls": [
       {
         "id": "geo.corbel",

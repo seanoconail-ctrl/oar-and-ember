@@ -1442,7 +1442,13 @@ export function createSimulation(
         const item = state.player.hotbar.slots[state.player.hotbar.selected] ?? null;
         const rules = item === null ? undefined : land.rules.items[item];
         const aims = rules?.use === 'AIM';
-        if (command.dir === null || !aims || item === null || onFoot.carrying !== null || inVerb()) {
+        if (
+          command.dir === null ||
+          !aims ||
+          item === null ||
+          onFoot.carrying !== null ||
+          inVerb()
+        ) {
           if (p.aim !== null && item !== null && rules !== undefined) loose(item, rules, p.aim);
           p.aim = null;
           return;
@@ -2123,7 +2129,8 @@ export function createSimulation(
     }
     if (use.kind === 'FIND' && isIslandSite(use.site)) {
       // Stage 14: a collectible, a puzzle's place, a resource node or the drowned.
-      if (islandCtx !== null) useIsland(state, islandCtx, use.site, { advance: advanceBy }, emitIsland);
+      if (islandCtx !== null)
+        useIsland(state, islandCtx, use.site, { advance: advanceBy }, emitIsland);
       return;
     }
     if (use.kind === 'FIND') {
@@ -2445,10 +2452,7 @@ export function createSimulation(
       updateMax(st, sb);
       p.winded ??= {};
       // Stage 14: climbing, swimming and a heavy object moving (Book 10 "Stamina in traversal").
-      const verbs =
-        traverseCtx === null
-          ? null
-          : traverseDrains(state, map, land, traverseCtx);
+      const verbs = traverseCtx === null ? null : traverseDrains(state, map, land, traverseCtx);
       const swimming = verbs?.swimming === true;
       const emptied = traversalTick(
         st,

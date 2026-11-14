@@ -161,7 +161,8 @@ void main() {
     if (flow > 0.66) c = seaStep(6.0);
     if (flow2 > 0.78 - 0.1 * spd) c = seaStep(7.0);
     float churn = vnoise(vec2(ac / 2.0, (al - tt * (10.0 + 24.0 * spd)) / 3.0));
-    if (bank < (1.1 + churn * 0.9) * (0.5 + spd)) c = u_foam[1];
+    // Foam along the banks: broken, thicker where the water runs fast, a thin wet rim on a pool.
+    if (bank < (0.5 + churn * 1.3) * (0.35 + spd)) c = churn > 0.55 ? u_foam[1] : u_foam[0];
     // Foam where the plan puts rocks and narrows, racing with the water; spray over a fall's pool.
     float foam = min(code, 0.6) / 0.6;
     if (foam > 0.04) {

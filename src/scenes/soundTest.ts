@@ -36,6 +36,7 @@ import { STORY4_SOUNDS } from '../audio/synth/story4.ts';
 import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
 import { SEA_SOUNDS, SeaAmbience, WreckAmbience } from '../audio/synth/sea.ts';
+import { TRAVERSE_SOUNDS } from '../audio/synth/traverse.ts';
 import type { SeaBedState } from '../audio/synth/sea.ts';
 import { seaStrokeSeconds } from '../audio/seaAudio.ts';
 import audioJson from '../../content/audio.json';
@@ -374,6 +375,7 @@ export function startItem(
       ...STORY3_SOUNDS,
       ...STORY4_SOUNDS,
       ...TELLS,
+      ...TRAVERSE_SOUNDS,
     ].find((d) => d.id === id);
     if (def === undefined) throw new Error(`no sound ${id}`);
     def.play(e, at, 0, {
@@ -1177,6 +1179,8 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       ...SEA_SOUNDS.map((d) => `sea:${d.id}`),
       ...Object.keys(SEA_VOICES).map((id) => `resident:${id}`),
     ],
+    /** Stage 14, work package B: the movement verbs' sounds (decision S14-61). */
+    traverseItems: TRAVERSE_SOUNDS.map((d) => `sfx:${d.id}`),
     /** Stage 14: the island's ambience in each scene, and the drowned's tell. */
     islandItems: [
       ...ISLAND_LISTENS.map((l) => `island:${l.id}`),

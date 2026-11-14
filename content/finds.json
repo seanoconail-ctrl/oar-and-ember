@@ -162,8 +162,8 @@
       "kind": "SHELL",
       "scene": "ZONE_SK_CLIFFS",
       "pos": {
-        "x": 44.5,
-        "y": 19.5
+        "x": 42.5,
+        "y": 24.7
       },
       "use": "TAKE",
       "sheet": "prop_collectibles",
@@ -289,8 +289,8 @@
       "kind": "CARVED_STONE",
       "scene": "ZONE_SK_BOG",
       "pos": {
-        "x": 3.5,
-        "y": 82.5
+        "x": 9.7,
+        "y": 89.3
       },
       "use": "LOOK",
       "sheet": "prop_greymen",
@@ -307,8 +307,8 @@
       "kind": "CARVED_STONE",
       "scene": "ZONE_SK_GEO",
       "pos": {
-        "x": 63.5,
-        "y": 52.6
+        "x": 64.6,
+        "y": 52.0
       },
       "use": "LOOK",
       "sheet": "prop_cell",
@@ -325,8 +325,8 @@
       "kind": "CARVED_STONE",
       "scene": "ZONE_SK_ROOK",
       "pos": {
-        "x": 52.5,
-        "y": 90.6
+        "x": 54.5,
+        "y": 90.7
       },
       "use": "LOOK",
       "sheet": "prop_collectibles",
@@ -344,8 +344,8 @@
       "kind": "CARVED_STONE",
       "scene": "ZONE_SK_NAUST",
       "pos": {
-        "x": 28.5,
-        "y": 5.5
+        "x": 27.0,
+        "y": 5.6
       },
       "use": "LOOK",
       "sheet": "prop_island",
@@ -433,8 +433,8 @@
       "kind": "PSALTER_PAGE",
       "scene": "ZONE_SK_CLIFFS",
       "pos": {
-        "x": 60.5,
-        "y": 20.5
+        "x": 57.5,
+        "y": 19.7
       },
       "use": "TAKE",
       "sheet": "prop_collectibles",
@@ -453,8 +453,8 @@
       "kind": "PSALTER_PAGE",
       "scene": "ZONE_SK_ROOK",
       "pos": {
-        "x": 60.5,
-        "y": 60.5
+        "x": 58.5,
+        "y": 59.7
       },
       "use": "TAKE",
       "conditions": [
@@ -676,8 +676,8 @@
       "power": "seal_kin",
       "scene": "ZONE_SK_SEALCAVE",
       "pos": {
-        "x": 56.5,
-        "y": 20.7
+        "x": 58.6,
+        "y": 20.15
       },
       "use": "LOOK",
       "conditions": [
@@ -691,7 +691,7 @@
       "nameKey": "find.name.seal_face",
       "captionKey": "caption.find.seal_face",
       "journalKey": "journal.find.lore_sealkin",
-      "about": "Cut above the weed line on the inner chamber's far wall from the skiff"
+      "about": "Cut above the weed line on the inner chamber's east wall, the far side from the skiff, which fills the chamber's back at low water"
     },
     {
       "key": "bog_wooden_man",

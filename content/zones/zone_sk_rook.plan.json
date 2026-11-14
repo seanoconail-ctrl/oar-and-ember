@@ -1,0 +1,388 @@
+{
+  "zone": "ZONE_SK_ROOK",
+  "about": "Rook Hill and Kelda's upper stream (Book 4 section 02; Book 9 sections 02, 03 and 05; Stage 14, decisions S14-1, S14-4, S14-5 and S14-41): blocks 14 to 25 by 3 to 17, expanded by src/tools/levels/zones.ts. Heather slopes with bracken in their hollows rise to the summit at block (22, 9), the island's view point, with the watch cairn's plot marked out on it in stones; on the summit's lee the hermit's prayer stone over its cist, its capstone pulled one tile to open it (and pushed back). Kelda's upper stream rises at a spring line at block (21, 13), falls over the lip of the high ground at block (20, 14) (the lip a short face, the falling sheet blocking, its pool knee deep at the edge, a dry ledge behind the sheet reached only by wading the pool's edge), and runs south over the grass towards the Kelda. The north coast is cliff; a rock knoll in the south-west corner closes the gap of decision S14-4. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_rook",
+  "terrainSeed": "zone_sk_strand",
+  "ground": "tile_moor",
+  "plantSheet": "plant_moor",
+  "blocks": {
+    "x": 14,
+    "y": 3,
+    "w": 12,
+    "h": 15
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 2,
+  "faceTiles": 4,
+  "cliffRim": 2,
+  "heather": 0.6,
+  "bracken": 0.62,
+  "sward": 0.66,
+  "tussock": 0.45,
+  "crevices": 0.4,
+  "wind": 1.2,
+  "codes": {
+    "\"": "h",
+    "^": "h",
+    "R": "h",
+    "#": "c"
+  },
+  "carve": [
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 2,
+        "y": 112,
+        "rx": 5,
+        "ry": 9
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 48,
+        "y": 84,
+        "rx": 26,
+        "ry": 6
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "c",
+      "line": [
+        [24, 88.6],
+        [44.4, 88.6]
+      ],
+      "width": 2.2,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [51.6, 88.6],
+        [72, 88.6]
+      ],
+      "width": 2.2,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [44.5, 87.4],
+        [47.5, 87.4]
+      ],
+      "width": 1.2,
+      "rough": 0.05
+    },
+    {
+      "code": ".",
+      "line": [
+        [45.4, 88.6],
+        [46.6, 88.6]
+      ],
+      "width": 1.6,
+      "rough": 0.05
+    },
+    {
+      "code": "w",
+      "line": [
+        [47.4, 88.4],
+        [49.6, 88.4]
+      ],
+      "width": 2,
+      "rough": 0.05
+    },
+    {
+      "code": "w",
+      "line": [
+        [56.5, 80.5],
+        [53, 84],
+        [50, 86.5],
+        [48.5, 88]
+      ],
+      "width": 2,
+      "rough": 0.15
+    },
+    {
+      "code": "w",
+      "ellipse": {
+        "x": 48,
+        "y": 91.8,
+        "rx": 3.6,
+        "ry": 2.1
+      },
+      "rough": 0.15
+    },
+    {
+      "code": "w",
+      "line": [
+        [47.6, 93.4],
+        [46.2, 100],
+        [44.5, 108],
+        [43.5, 121]
+      ],
+      "width": 2.1,
+      "rough": 0.15
+    }
+  ],
+  "solid": [
+    {
+      "tiles": [
+        [47, 88],
+        [48, 88],
+        [49, 88],
+        [47, 89],
+        [48, 89],
+        [49, 89],
+        [57, 59]
+      ]
+    }
+  ],
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 44.5,
+      "y": 116.5,
+      "facing": "n"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_island",
+      "frame": "naust0/-/0",
+      "x": 71.2,
+      "y": 52.5
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 70.77,
+      "y": 53.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust2/-/0",
+      "x": 69.6,
+      "y": 54.41
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust3/-/0",
+      "x": 68.0,
+      "y": 54.7
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust0/-/0",
+      "x": 66.4,
+      "y": 54.41
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 65.23,
+      "y": 53.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust2/-/0",
+      "x": 64.8,
+      "y": 52.5
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust3/-/0",
+      "x": 65.23,
+      "y": 51.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust0/-/0",
+      "x": 66.4,
+      "y": 50.59
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 68.0,
+      "y": 50.3
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust2/-/0",
+      "x": 69.6,
+      "y": 50.59
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust3/-/0",
+      "x": 70.77,
+      "y": 51.4
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone3/-/0",
+      "x": 57.5,
+      "y": 59.9
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "capstone/-/0",
+      "x": 58.5,
+      "y": 60.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "fall/-/0",
+      "x": 48.5,
+      "y": 90.2
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "churn/-/0",
+      "x": 48.0,
+      "y": 92.6
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [40, 119.9],
+      [38, 108],
+      [34, 96],
+      [30, 90],
+      [36, 80],
+      [50, 70],
+      [60, 58],
+      [66, 52]
+    ],
+    [
+      [66, 52],
+      [78, 58],
+      [95.9, 64]
+    ],
+    [
+      [0.1, 66],
+      [14, 62],
+      [30, 56],
+      [50, 54],
+      [64, 52]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "s",
+      "to": "ZONE_SK_MACHAIR"
+    },
+    {
+      "edge": "s",
+      "to": "ZONE_SK_CAIRN"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_GEO"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_CLIFFS"
+    },
+    { "edge": "e", "to": "ZONE_SK_BOG" }
+  ],
+  "life": [
+    {
+      "kind": "spring",
+      "x": 56.5,
+      "y": 80.6
+    },
+    {
+      "kind": "gull",
+      "x": 40,
+      "y": 12,
+      "r": 6
+    },
+    {
+      "kind": "gull",
+      "x": 70,
+      "y": 30,
+      "r": 8
+    },
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 60,
+      "r": 7
+    },
+    {
+      "kind": "sheep",
+      "x": 30,
+      "y": 108
+    },
+    {
+      "kind": "sheep",
+      "x": 58,
+      "y": 112
+    },
+    {
+      "kind": "sheep",
+      "x": 70,
+      "y": 104
+    },
+    {
+      "kind": "gull_standing",
+      "x": 71.5,
+      "y": 50.2
+    }
+  ],
+  "falls": [
+    {
+      "x": 48,
+      "y": 88,
+      "width": 3,
+      "drop": 2
+    }
+  ],
+  "traverse": {
+    "pushes": [
+      {
+        "id": "rook.capstone",
+        "line": [
+          [58, 59],
+          [59, 59]
+        ],
+        "start": 0,
+        "sheet": "prop_island",
+        "frame": "capstone/-/0"
+      }
+    ],
+    "wades": [
+      {
+        "x": 44,
+        "y": 90,
+        "w": 8,
+        "h": 4,
+        "band": "KNEE"
+      }
+    ]
+  },
+  "areas": [],
+  "viewPoints": [
+    {
+      "scene": "ZONE_SK_ROOK",
+      "at": {
+        "x": 64,
+        "y": 48,
+        "w": 8,
+        "h": 8
+      },
+      "reveals": [
+        "ZONE_SK_STRAND",
+        "ZONE_SK_MACHAIR",
+        "ZONE_SK_KELDA",
+        "ZONE_SK_NAUST",
+        "ZONE_SK_CAIRN",
+        "ZONE_SK_SKERRY"
+      ]
+    }
+  ]
+}

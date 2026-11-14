@@ -8419,7 +8419,7 @@
     "tags": ["INFO"]
   },
   "caption.edge.low": {
-    "text": "Too low to get through with a load",
+    "text": "Too low to pass with a load",
     "tags": ["INFO"]
   },
   "caption.traverse.sinking": {

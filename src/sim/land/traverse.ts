@@ -193,7 +193,12 @@ export function climbLine(
 }
 
 /** Whether feet at y on a route rest: on a ledge's row, or at either end. */
-export function climbRests(map: ZoneMap, land: Pick<Land, 'rules'>, c: ClimbMark, y: number): boolean {
+export function climbRests(
+  map: ZoneMap,
+  land: Pick<Land, 'rules'>,
+  c: ClimbMark,
+  y: number,
+): boolean {
   const line = climbLine(map, land, c);
   if (y >= line.footY - 0.5 || y <= line.headY + 0.5) return true;
   const T = map.tile;
@@ -281,12 +286,7 @@ function along(
 const pushKey = (zone: Id, id: string): string => `${zone}/${id}`;
 
 /** Where a heavy object lies now: its saved place, or its line's start. */
-export function objectTile(
-  world: WorldState,
-  tctx: TraverseContext,
-  zone: Id,
-  m: PushMark,
-): Tile {
+export function objectTile(world: WorldState, tctx: TraverseContext, zone: Id, m: PushMark): Tile {
   const region = tctx.regionOf(zone) ?? zone;
   const saved = world.regions[region]?.pushed?.[pushKey(zone, m.id)];
   if (saved !== undefined) return [saved.x, saved.y];
@@ -431,7 +431,7 @@ export function moveExtras(
 /** Whether the steerer is in marked deep water now, carrying nothing (the swim). */
 function inSwimWater(world: WorldState, map: ZoneMap, land: Land, tide: TideNow): boolean {
   const onFoot = world.onFoot;
-  if (onFoot === null || onFoot.carrying !== null) return false;
+  if (onFoot?.carrying !== null) return false;
   const p = onFoot.player;
   const elevation = land.elevations.get(map.zone);
   if (elevation === undefined) return false;
@@ -527,7 +527,8 @@ export function stepTraverse(
         }
         return true;
       }
-      const dy = Math.max(-1, Math.min(1, p.intent.y)) * ((tctx.tb.climbSpeed * T) / TICKS_PER_SECOND);
+      const dy =
+        Math.max(-1, Math.min(1, p.intent.y)) * ((tctx.tb.climbSpeed * T) / TICKS_PER_SECOND);
       const y = Math.max(line.headY, Math.min(line.footY, p.y + dy));
       p.moving = Math.abs(y - p.y) > 1e-9;
       p.y = y;
@@ -571,8 +572,12 @@ export function stepTraverse(
       const atStart = t.at <= 1e-6 && here.ahead !== null;
       const atEnd = t.at >= path.length - 1e-6 && here.behind !== null;
       const out =
-        (atStart && here.ahead !== null && -(p.intent.x * here.ahead.x + p.intent.y * here.ahead.y) > 0.2) ||
-        (atEnd && here.behind !== null && p.intent.x * here.behind.x + p.intent.y * here.behind.y > 0.2);
+        (atStart &&
+          here.ahead !== null &&
+          -(p.intent.x * here.ahead.x + p.intent.y * here.ahead.y) > 0.2) ||
+        (atEnd &&
+          here.behind !== null &&
+          p.intent.x * here.behind.x + p.intent.y * here.behind.y > 0.2);
       // Out only onto ground that can be stood on now (a mouth the tide has closed waits).
       if (out && footprintClear(map, land.rules, here.at.x, here.at.y, tide.open)) {
         p.traverse = null;
@@ -593,7 +598,9 @@ export function stepTraverse(
       if (p.vel !== undefined) p.vel = { x: 0, y: 0 };
       const dir = move > 0 ? now.ahead : move < 0 ? now.behind : null;
       if (dir !== null && p.moving)
-        p.facing = facingOfAxis(axisOf(move > 0 ? dir.x : -dir.x, move > 0 ? dir.y : -dir.y, 0) ?? [0, 1]);
+        p.facing = facingOfAxis(
+          axisOf(move > 0 ? dir.x : -dir.x, move > 0 ? dir.y : -dir.y, 0) ?? [0, 1],
+        );
       return true;
     }
     case 'push': {
@@ -607,7 +614,12 @@ export function stepTraverse(
       if (k >= 1) {
         p.traverse = null;
         if (m !== undefined) setObjectTile(world, tctx, map.zone, m, t.to);
-        emit({ type: 'OBJECT_MOVED', object: t.object, to: { x: t.to[0], y: t.to[1] }, pull: t.pull });
+        emit({
+          type: 'OBJECT_MOVED',
+          object: t.object,
+          to: { x: t.to[0], y: t.to[1] },
+          pull: t.pull,
+        });
       }
       return true;
     }
@@ -669,7 +681,10 @@ function tileFree(onFoot: OnFootState, map: ZoneMap, land: Pick<Land, 'rules'>, 
   const T = map.tile;
   const f = land.rules.footprint;
   const hits = (x: number, y: number): boolean =>
-    x + f.w / 2 > t[0] * T && x - f.w / 2 < (t[0] + 1) * T && y > t[1] * T && y - f.h < (t[1] + 1) * T;
+    x + f.w / 2 > t[0] * T &&
+    x - f.w / 2 < (t[0] + 1) * T &&
+    y > t[1] * T &&
+    y - f.h < (t[1] + 1) * T;
   if (hits(onFoot.player.x, onFoot.player.y)) return false;
   return !Object.values(onFoot.actors).some((a) => a.pose !== 'carried' && hits(a.x, a.y));
 }
@@ -692,7 +707,7 @@ function startMove(
   tideOpen: boolean,
 ): boolean {
   const onFoot = world.onFoot;
-  if (onFoot === null || onFoot.carrying !== null) return false;
+  if (onFoot?.carrying !== null) return false;
   const p = onFoot.player;
   if (m.fact !== undefined && world.facts[m.fact] !== true) return false;
   if (world.player.stamina.current <= 0) return false;
@@ -758,11 +773,10 @@ export function afterMove(
     if (d !== null) {
       const ahead: Tile = [ft.tx + d[0], ft.ty + d[1]];
       const climb = marks.climbs.find(
-        (c) =>
-          c.x === ft.tx &&
-          ((d[1] < 0 && c.foot === ft.ty) || (d[1] > 0 && c.head === ft.ty)),
+        (c) => c.x === ft.tx && ((d[1] < 0 && c.foot === ft.ty) || (d[1] > 0 && c.head === ft.ty)),
       );
-      if (climb !== undefined) startClimb(world, map, land, climb, d[1] < 0 ? 'FOOT' : 'HEAD', emit);
+      if (climb !== undefined)
+        startClimb(world, map, land, climb, d[1] < 0 ? 'FOOT' : 'HEAD', emit);
       else {
         const crawl = marks.crawls.find((c) => crawlEnd(c, [ft.tx, ft.ty], ahead) !== null);
         if (crawl !== undefined) startCrawl(world, map, land, crawl, [ft.tx, ft.ty], emit);
@@ -793,7 +807,11 @@ export function afterMove(
 }
 
 /** Sinking: after Book 10's seconds without reaching the waist band, drowning at its rate. */
-function stepSinking(world: WorldState, tctx: TraverseContext, emit: (e: TraverseEvent) => void): void {
+function stepSinking(
+  world: WorldState,
+  tctx: TraverseContext,
+  emit: (e: TraverseEvent) => void,
+): void {
   const t = world.onFoot?.player.traverse;
   if (t?.verb !== 'swim' || t.sink === undefined || world.gameOver !== null) return;
   if (world.tick - t.sink.since < Math.round(tctx.tb.sink.seconds * TICKS_PER_SECOND)) return;
@@ -818,8 +836,7 @@ function crawlEnd(c: CrawlMark, mouth: Tile, ahead: Tile): 0 | 1 | null {
   const [m0, m1] = crawlMouths(c);
   const first = c.tiles[0];
   const last = c.tiles[c.tiles.length - 1];
-  const same = (a: Tile | undefined, b: Tile): boolean =>
-    a !== undefined && a[0] === b[0] && a[1] === b[1];
+  const same = (a: Tile | undefined, b: Tile): boolean => a?.[0] === b[0] && a[1] === b[1];
   if (same(m0, mouth) && same(first, ahead)) return 0;
   if (same(m1, mouth) && same(last, ahead)) return 1;
   return null;
@@ -881,7 +898,8 @@ export function traverseDrains(
 ): { climbing: boolean; swimming: boolean; pushPerSecond: number; noRegen: boolean } {
   const p = world.onFoot?.player;
   const t = p?.traverse;
-  if (p === undefined || t == null) return { climbing: false, swimming: false, pushPerSecond: 0, noRegen: false };
+  if (p === undefined || t == null)
+    return { climbing: false, swimming: false, pushPerSecond: 0, noRegen: false };
   if (t.verb === 'climb') {
     const c = marksOf(map).climbs.find((r) => r.id === t.route);
     const rest = c === undefined || climbRests(map, land, c, p.y);
@@ -889,7 +907,8 @@ export function traverseDrains(
     // On the face the bar drains and never refills (Regeneration: 0 while climbing).
     return { climbing: !rest && !sliding, swimming: false, pushPerSecond: 0, noRegen: !rest };
   }
-  if (t.verb === 'swim') return { climbing: false, swimming: true, pushPerSecond: 0, noRegen: true };
+  if (t.verb === 'swim')
+    return { climbing: false, swimming: true, pushPerSecond: 0, noRegen: true };
   if (t.verb === 'push')
     return { climbing: false, swimming: false, pushPerSecond: tctx.tb.pushStamina, noRegen: false };
   return { climbing: false, swimming: false, pushPerSecond: 0, noRegen: false };

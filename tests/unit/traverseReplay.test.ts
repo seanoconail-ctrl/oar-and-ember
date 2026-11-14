@@ -16,7 +16,12 @@ const land = testLand();
 const T = 24;
 
 /** Plays every verb, returning the commands it sent (with their ticks) and the events seen. */
-function play(): { start: ReturnType<typeof testWorld>; inputs: TimedCommand[]; ticks: number; events: SimEvent[] } {
+function play(): {
+  start: ReturnType<typeof testWorld>;
+  inputs: TimedCommand[];
+  ticks: number;
+  events: SimEvent[];
+} {
   const start = testWorld({ x: 3.5, y: 15 });
   const s: Simulation = createSimulation(b, snapshot(start), land);
   const inputs: TimedCommand[] = [];

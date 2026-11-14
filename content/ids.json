@@ -4732,6 +4732,78 @@
       "section": "02",
       "origin": "stated",
       "note": "Stage 13 (decision S13-43): a survivor of the wreck on Sgeir Dhubh, a refugee outside the roster; content/wreck.json, not people.json (decision S13-44)."
+    },
+    {
+      "id": "SFX_CLIMB_HOLD",
+      "ref": "`SFX_CLIMB_HOLD`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a hand-hold taken on a climb."
+    },
+    {
+      "id": "SFX_CLIMB_STRAIN",
+      "ref": "`SFX_CLIMB_STRAIN`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): the climb's strained breath, every fourth hold."
+    },
+    {
+      "id": "SFX_CLIMB_SLIDE",
+      "ref": "`SFX_CLIMB_SLIDE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a spent climber sliding down the face."
+    },
+    {
+      "id": "SFX_SWIM_STROKE",
+      "ref": "`SFX_SWIM_STROKE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a swim stroke."
+    },
+    {
+      "id": "SFX_SINK",
+      "ref": "`SFX_SINK`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a spent swimmer starting to sink, and drowning."
+    },
+    {
+      "id": "SFX_SINK_GASP",
+      "ref": "`SFX_SINK_GASP`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): the gasp on reaching the shallows."
+    },
+    {
+      "id": "SFX_CRAWL",
+      "ref": "`SFX_CRAWL`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a crawl's shuffle."
+    },
+    {
+      "id": "SFX_STONE_SCRAPE",
+      "ref": "`SFX_STONE_SCRAPE`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a heavy stone pushed or pulled a tile."
+    },
+    {
+      "id": "SFX_JUMP_LAND",
+      "ref": "`SFX_JUMP_LAND`",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14, the movement verbs (generated, Book 11 section 12; decision S14-61): a jump's landing, and a slide's end."
     }
   ],
   "families": [

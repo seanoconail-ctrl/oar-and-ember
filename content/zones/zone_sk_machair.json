@@ -176,6 +176,10 @@
     {
       "edge": "e",
       "to": "ZONE_SK_CAIRN"
+    },
+    {
+      "edge": "n",
+      "to": "ZONE_SK_ROOK"
     }
   ],
   "doors": [

@@ -124,7 +124,10 @@ export function testLand(marks: TraverseMarks = MARKS): SimWorldContext {
 }
 
 /** A campaign standing in the test zone, at (x, y) in tiles, at the given hour of day 2. */
-export function testWorld(at: { x: number; y: number } = { x: 5.5, y: 17.5 }, hour = 12): WorldState {
+export function testWorld(
+  at: { x: number; y: number } = { x: 5.5, y: 17.5 },
+  hour = 12,
+): WorldState {
   const world = newCampaign('traverse', b, parsePeopleBasics(balance), content, {
     name: 'Ash',
     bodyModel: 'A',

@@ -24,11 +24,18 @@
  */
 import type { SynthEngine } from './engine.ts';
 import { rng } from './samples.ts';
-import { breath, noiseHit, out, tone } from './sfx.ts';
+import { boosted, breath, noiseHit, out, tone } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
 /** A few grains of grit trickling down rock. */
-function grit(e: SynthEngine, at: number, to: AudioNode, n: number, seed: number, level: number): void {
+function grit(
+  e: SynthEngine,
+  at: number,
+  to: AudioNode,
+  n: number,
+  seed: number,
+  level: number,
+): void {
   const r = rng(seed);
   for (let i = 0; i < n; i++)
     noiseHit(e, at + i * 0.035 + r() * 0.05, to, 'bandpass', 3800 + r() * 2600, 9, [
@@ -40,12 +47,21 @@ function grit(e: SynthEngine, at: number, to: AudioNode, n: number, seed: number
 
 /** A soft slap of a hand or arm on water, and the swirl after it. */
 function slap(e: SynthEngine, at: number, to: AudioNode, level: number, hz = 900): void {
-  noiseHit(e, at, to, 'bandpass', hz, 1.4, [
-    [0, 0],
-    [0.006, level],
-    [0.09, level * 0.25],
-    [0.32, 0],
-  ], hz * 0.55);
+  noiseHit(
+    e,
+    at,
+    to,
+    'bandpass',
+    hz,
+    1.4,
+    [
+      [0, 0],
+      [0.006, level],
+      [0.09, level * 0.25],
+      [0.32, 0],
+    ],
+    hz * 0.55,
+  );
   noiseHit(e, at + 0.08, to, 'lowpass', 600, 0.7, [
     [0, 0],
     [0.12, level * 0.35],
@@ -54,7 +70,14 @@ function slap(e: SynthEngine, at: number, to: AudioNode, level: number, hz = 900
 }
 
 /** Bubbles rising: small pitched blips going up. */
-function bubbles(e: SynthEngine, at: number, to: AudioNode, n: number, seed: number, level: number): void {
+function bubbles(
+  e: SynthEngine,
+  at: number,
+  to: AudioNode,
+  n: number,
+  seed: number,
+  level: number,
+): void {
   const r = rng(seed);
   for (let i = 0; i < n; i++) {
     const t = at + i * 0.06 + r() * 0.05;
@@ -84,12 +107,21 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Fingers into a crack (a dry, close scrape), grit trickling, a shoe finding the next hold.
-      const to = out(e, 'effects', pan, 0.12);
-      noiseHit(e, at, to, 'bandpass', 2600, 2.5, [
-        [0, 0],
-        [0.01, 0.2],
-        [0.07, 0],
-      ], 1500);
+      const to = boosted(e, 2, 'effects', pan, 0.12);
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        2600,
+        2.5,
+        [
+          [0, 0],
+          [0.01, 0.2],
+          [0.07, 0],
+        ],
+        1500,
+      );
       grit(e, at + 0.05, to, 5, 141, 0.09);
       noiseHit(e, at + 0.22, to, 'bandpass', 900, 1.6, [
         [0, 0],
@@ -105,7 +137,7 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A breath held and pushed out through the teeth under load, then a short recovery breath.
-      const to = out(e, 'effects', pan, 0.1);
+      const to = boosted(e, 4, 'effects', pan, 0.1);
       noiseHit(e, at, to, 'bandpass', 2900, 3, [
         [0, 0],
         [0.08, 0.05],
@@ -139,18 +171,27 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // The grip goes: a sharp scrabble, then a long rattling slither of grit down the face.
-      const to = out(e, 'effects', pan, 0.2);
+      const to = boosted(e, 3.5, 'effects', pan, 0.2);
       noiseHit(e, at, to, 'bandpass', 2200, 1.8, [
         [0, 0],
         [0.01, 0.26],
         [0.12, 0.05],
       ]);
-      noiseHit(e, at + 0.08, to, 'bandpass', 1700, 0.9, [
-        [0, 0],
-        [0.15, 0.16],
-        [1.1, 0.09],
-        [1.6, 0],
-      ], 700);
+      noiseHit(
+        e,
+        at + 0.08,
+        to,
+        'bandpass',
+        1700,
+        0.9,
+        [
+          [0, 0],
+          [0.15, 0.16],
+          [1.1, 0.09],
+          [1.6, 0],
+        ],
+        700,
+      );
       grit(e, at + 0.1, to, 28, 142, 0.12);
       return 1.7;
     },
@@ -161,7 +202,7 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // An arm over and in: the slap, the pull through and the swirl, and the other arm's softer.
-      const to = out(e, 'effects', pan, 0.18);
+      const to = boosted(e, 2.5, 'effects', pan, 0.18);
       slap(e, at, to, 0.22);
       slap(e, at + 0.34, to, 0.13, 1100);
       return 0.9;
@@ -173,7 +214,7 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A thrash at the surface, the water closing over with a choked gulp, bubbles rising.
-      const to = out(e, 'effects', pan, 0.3);
+      const to = boosted(e, 1.4, 'effects', pan, 0.3);
       slap(e, at, to, 0.24, 1300);
       slap(e, at + 0.18, to, 0.2, 800);
       tone(
@@ -206,18 +247,36 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Up out of it: water streaming off, a ragged in-breath, a cough.
-      const to = out(e, 'effects', pan, 0.12);
-      noiseHit(e, at, to, 'bandpass', 1500, 0.8, [
-        [0, 0],
-        [0.04, 0.16],
-        [0.4, 0],
-      ], 600);
-      noiseHit(e, at + 0.12, to, 'bandpass', 1900, 2.2, [
-        [0, 0],
-        [0.05, 0.14],
-        [0.24, 0.1],
-        [0.32, 0],
-      ], 2600);
+      const to = boosted(e, 4, 'effects', pan, 0.12);
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        1500,
+        0.8,
+        [
+          [0, 0],
+          [0.04, 0.16],
+          [0.4, 0],
+        ],
+        600,
+      );
+      noiseHit(
+        e,
+        at + 0.12,
+        to,
+        'bandpass',
+        1900,
+        2.2,
+        [
+          [0, 0],
+          [0.05, 0.14],
+          [0.24, 0.1],
+          [0.32, 0],
+        ],
+        2600,
+      );
       // The cough: two short bursts low in the throat.
       for (const d of [0.5, 0.68])
         noiseHit(e, at + d, to, 'bandpass', 620, 2.0, [
@@ -234,7 +293,7 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // A palm and a knee on damp rock, the cloth dragging between.
-      const to = out(e, 'effects', pan, 0.25);
+      const to = boosted(e, 2, 'effects', pan, 0.25);
       for (const [d, hz, lvl] of [
         [0, 1300, 0.13],
         [0.22, 700, 0.15],
@@ -258,13 +317,22 @@ export const TRAVERSE_SOUNDS: readonly SoundDef[] = [
     bus: 'effects',
     play: (e, at, pan) => {
       // Stone ground along stone for the step's length: a low grating with catches in it.
-      const to = out(e, 'effects', pan, 0.28);
-      noiseHit(e, at, to, 'bandpass', 260, 1.1, [
-        [0, 0],
-        [0.12, 0.3],
-        [1.0, 0.26],
-        [1.25, 0],
-      ], 200);
+      const to = boosted(e, 4, 'effects', pan, 0.28);
+      noiseHit(
+        e,
+        at,
+        to,
+        'bandpass',
+        260,
+        1.1,
+        [
+          [0, 0],
+          [0.12, 0.3],
+          [1.0, 0.26],
+          [1.25, 0],
+        ],
+        200,
+      );
       noiseHit(e, at, to, 'bandpass', 1400, 2.2, [
         [0, 0],
         [0.1, 0.05],

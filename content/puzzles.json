@@ -518,8 +518,8 @@
               "near": {
                 "zone": "ZONE_SK_CLIFFS",
                 "x": 41.5,
-                "y": 22.5,
-                "r": 3
+                "y": 24.5,
+                "r": 2.5
               }
             }
           ],
@@ -603,8 +603,8 @@
     {
       "key": "bog_cauldron_look",
       "scene": "ZONE_SK_BOG",
-      "x": 59.5,
-      "y": 82.6,
+      "x": 62,
+      "y": 84,
       "verb": "LOOK",
       "nameKey": "island.use.name.cauldron",
       "when": [
@@ -630,8 +630,8 @@
     {
       "key": "bog_cauldron_take",
       "scene": "ZONE_SK_BOG",
-      "x": 59.5,
-      "y": 82.6,
+      "x": 62,
+      "y": 84,
       "verb": "TAKE",
       "nameKey": "island.use.name.cauldron",
       "when": [

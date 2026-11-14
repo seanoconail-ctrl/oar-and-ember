@@ -66,14 +66,6 @@ async function open(page: Page, x: number, y: number): Promise<void> {
   expect(await attr(page, 'zone')).toBe(ZONE);
 }
 
-/** Holds a key down for `frames` stepped frames. */
-async function hold(page: Page, key: string, frames: number): Promise<void> {
-  await page.keyboard.down(key);
-  await step(page, frames);
-  await page.keyboard.up(key);
-  await step(page, 1);
-}
-
 /** A number from the steerer's own state in the page. */
 async function state(page: Page, what: 'stamina' | 'vitality'): Promise<number> {
   return page.evaluate((key) => {
@@ -144,11 +136,12 @@ test.describe('Stage 14: the movement verbs', () => {
     await step(page, 1);
     const at = await page.evaluate((zone) => {
       const w = window as unknown as {
-        oePlay: { sim: { state: { regions: Record<string, { pushed?: Record<string, unknown> }> } } };
+        oePlay: {
+          sim: { state: { regions: Record<string, { pushed?: Record<string, unknown> }> } };
+        };
       };
-      return Object.values(w.oePlay.sim.state.regions).find((r) => r.pushed !== undefined)?.pushed?.[
-        `${zone}/test.stone`
-      ];
+      return Object.values(w.oePlay.sim.state.regions).find((r) => r.pushed !== undefined)
+        ?.pushed?.[`${zone}/test.stone`];
     }, ZONE);
     expect(at).toEqual({ x: 31, y: 26 });
   });

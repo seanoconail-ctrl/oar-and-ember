@@ -91,7 +91,9 @@ describe('the numbers (Book 10 sections 02 and 06)', () => {
   it('holds a zone’s marks to Book 10: the jump’s gap, the ledges’ spacing, the reset rule', () => {
     const open = (x: number, y: number): boolean => !tileBlocks(zone, x, y, true);
     expect(checkMarks(MARKS, tb, open)).toEqual([]);
-    expect(jumpGapTiles(MARKS.jumps[0] ?? { id: '', from: { x: 0, y: 0 }, to: { x: 0, y: 0 } })).toBe(1);
+    expect(
+      jumpGapTiles(MARKS.jumps[0] ?? { id: '', from: { x: 0, y: 0 }, to: { x: 0, y: 0 } }),
+    ).toBe(1);
     const bad = checkMarks(
       {
         ...MARKS,
@@ -107,7 +109,11 @@ describe('the numbers (Book 10 sections 02 and 06)', () => {
 });
 
 describe('climb (Book 2 section 10; Book 10 Climb, climbEmpty)', () => {
-  const line = climbLine(zone, land, MARKS.climbs[0] ?? { id: '', x: 0, foot: 0, head: 0, ledges: [] });
+  const line = climbLine(
+    zone,
+    land,
+    MARKS.climbs[0] ?? { id: '', x: 0, foot: 0, head: 0, ledges: [] },
+  );
 
   it('starts only by walking into the marked foot, and climbs facing the rock at climb speed', () => {
     // Beside the route, walking north into the cliff only stops at the edge.
@@ -189,7 +195,10 @@ describe('climb (Book 2 section 10; Book 10 Climb, climbEmpty)', () => {
     expect(events.find((e) => e.type === 'CLIMB_ENDED')).toMatchObject({ at: 'FOOT' });
     expect(s.state.player.vitality).toBe(30);
     // A long slide with no ledge below: 10 vitality a tile beyond 2 would kill; the floor holds.
-    const bare = testLand({ ...MARKS, climbs: [{ id: 'cliff', x: 3, foot: 14, head: 1, ledges: [4] }] });
+    const bare = testLand({
+      ...MARKS,
+      climbs: [{ id: 'cliff', x: 3, foot: 14, head: 1, ledges: [4] }],
+    });
     const s2 = createSimulation(b, testWorld({ x: 3.5, y: 15 }), bare);
     const ev2: SimEvent[] = [];
     s2.events.onAny((e) => ev2.push(e));
@@ -214,7 +223,9 @@ describe('climb (Book 2 section 10; Book 10 Climb, climbEmpty)', () => {
     s.submit({ type: 'DODGE', x: 0, y: 1 });
     steps(s, 5);
     expect(steer(s).fight?.state ?? 'idle').not.toBe('parry');
-    expect(events.some((e) => e.type === 'COMMAND_REFUSED' && e.command === 'INTERACT')).toBe(false);
+    expect(events.some((e) => e.type === 'COMMAND_REFUSED' && e.command === 'INTERACT')).toBe(
+      false,
+    );
   });
 
   it('climbs on up to the head, and down again from the head', () => {

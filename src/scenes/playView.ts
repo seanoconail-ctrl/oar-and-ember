@@ -3376,7 +3376,8 @@ export function startPlay(
     });
     root.dataset['dev'] = dev === null ? '' : dev.open ? 'open' : 'closed';
     const reportOpen =
-      session.menus.open === 'report' && (reportShown !== null || aimLine !== null || islandView !== null);
+      session.menus.open === 'report' &&
+      (reportShown !== null || aimLine !== null || islandView !== null);
     const shownKey = `${aimLine ?? ''}|${reportShown?.join('|') ?? ''}|${reportShown === null ? (islandView?.journalKey(sim.state) ?? '') : ''}`;
     if (reportOpen && reportRegion.dataset['shown'] !== shownKey) {
       const title = document.createElement('h2');
@@ -3392,7 +3393,10 @@ export function startPlay(
       aim.className = 'oe-journal-aim';
       aim.textContent = aimLine ?? t('ui.journal.none');
       // Stage 14: the journal's pages (the aim with the side aims, the finds, the region map).
-      const pages = reportShown === null && islandView !== null ? islandView.journal(sim.state, aim, true) : null;
+      const pages =
+        reportShown === null && islandView !== null
+          ? islandView.journal(sim.state, aim, true)
+          : null;
       const body = (pages ?? [aim, ...(reportShown ?? [])]).map((l) => {
         if (typeof l !== 'string') return l;
         const para = document.createElement('p');

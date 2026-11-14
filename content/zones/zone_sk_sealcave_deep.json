@@ -1,0 +1,1713 @@
+{
+  "zone": "ZONE_SK_SEALCAVE_DEEP",
+  "about": "The Seal Cave's deep passage (Book 9 sections 11 and 16; Stage 14, decisions S14-3, S14-8, S14-9 and S14-43): an interior of 48 x 20 tiles read tile for tile from docs/levels/sealcave_passage_tiles.txt by src/tools/levels/zones.ts, with no warp. Rock walls (`r`); the passage floor is wet rock open only on spring-tide days inside the tidal ground window (`n`); the knee-deep pool and the waist-deep lowest point are water (`w`, their bands marked as wades); the crawl's tiles are rock crawled through (marked); the fallen stone lies at P and slides north into its slot (marked, deep.stone). Its way in from Seal Cave's back wall and its way on into the Hollow Cairn are links: the cairn's tidal passage meets its west edge (the two interiors are placed side by side off the island grid by their origins), Seal Cave's back wall is a portal at A. The damp haze and the light off the water are fx props. Edit this plan, not the generated map, then run npm run zones.",
+  "tile": 24,
+  "width": 48,
+  "height": 20,
+  "origin": {
+    "x": 448,
+    "y": 13
+  },
+  "spawns": {
+    "P_STEERER": {
+      "x": 45.5,
+      "y": 10.4,
+      "facing": "w"
+    }
+  },
+  "props": [
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 3
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 5
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 7
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 11
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 13
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 17
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45,
+      "y": 19
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47,
+      "y": 19
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "slab/-/0",
+      "x": 22.5,
+      "y": 9
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "pushstone/-/0",
+      "x": 23.5,
+      "y": 12.9
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "shoring/-/0",
+      "x": 30.5,
+      "y": 8.1
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "shoring/-/0",
+      "x": 19.5,
+      "y": 13.1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 31.5,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 34.5,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 37.5,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 40.5,
+      "y": 9
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 5.5,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 8.5,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 11.5,
+      "y": 15
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 14.5,
+      "y": 15
+    }
+  ],
+  "life": [
+    {
+      "kind": "crab",
+      "x": 43.4,
+      "y": 9.6
+    },
+    {
+      "kind": "crab",
+      "x": 27.2,
+      "y": 10.6
+    }
+  ],
+  "links": [
+    {
+      "edge": "w",
+      "to": "ZONE_SK_CAIRN_IN"
+    }
+  ],
+  "decalFrames": [
+    "decal_strand pebbles/-/0",
+    "decal_strand pebbles/-/1",
+    "decal_strand pebbles/-/2",
+    "decal_strand pebbles/-/3",
+    "decal_strand pebbles/-/4",
+    "decal_strand pebbles/-/5",
+    "decal_strand pebbles/-/6",
+    "decal_strand pebbles/-/7",
+    "decal_strand pebbles/-/8",
+    "decal_strand pebbles/-/9",
+    "decal_strand shells/-/0",
+    "decal_strand shells/-/1",
+    "decal_strand shells/-/2",
+    "decal_strand shells/-/3",
+    "decal_strand wrack/-/0",
+    "decal_strand wrack/-/1",
+    "decal_strand wrack/-/2",
+    "decal_strand wrack/-/3",
+    "decal_strand wrack/-/4",
+    "decal_strand wrack/-/5",
+    "decal_strand wrack/-/6",
+    "decal_strand wrack/-/7",
+    "decal_strand twigs/-/0",
+    "decal_strand twigs/-/1",
+    "decal_strand twigs/-/2",
+    "decal_strand stones/-/0",
+    "decal_strand stones/-/1",
+    "decal_strand stones/-/2",
+    "decal_strand stones/-/3",
+    "decal_strand path/-/0",
+    "decal_strand path/-/1",
+    "decal_strand path/-/2",
+    "decal_strand path/-/3"
+  ],
+  "ground": "tile_cave",
+  "plantSheet": "plant_moor",
+  "traverse": {
+    "crawls": [
+      {
+        "id": "deep.crawl",
+        "tiles": [
+          [
+            24,
+            8
+          ],
+          [
+            23,
+            8
+          ],
+          [
+            22,
+            8
+          ],
+          [
+            21,
+            8
+          ],
+          [
+            20,
+            8
+          ]
+        ],
+        "mouths": [
+          [
+            25,
+            8
+          ],
+          [
+            19,
+            8
+          ]
+        ]
+      }
+    ],
+    "pushes": [
+      {
+        "id": "deep.stone",
+        "line": [
+          [
+            23,
+            12
+          ],
+          [
+            23,
+            11
+          ],
+          [
+            23,
+            10
+          ]
+        ],
+        "start": 0,
+        "sheet": "prop_island",
+        "frame": "pushstone/-/0"
+      }
+    ],
+    "wades": [
+      {
+        "x": 31,
+        "y": 9,
+        "w": 11,
+        "h": 2,
+        "band": "KNEE"
+      },
+      {
+        "x": 4,
+        "y": 15,
+        "w": 12,
+        "h": 2,
+        "band": "WAIST"
+      }
+    ]
+  },
+  "areas": [],
+  "viewPoints": [],
+  "portals": [
+    {
+      "id": "deep.a",
+      "exit": {
+        "x": 47,
+        "y": 9,
+        "w": 1,
+        "h": 2
+      },
+      "to": "ZONE_SK_SEALCAVE",
+      "entry": {
+        "x": 56.5,
+        "y": 18.5
+      },
+      "when": {
+        "tide": "SPRING_LOW"
+      }
+    }
+  ],
+  "decals": [
+
+  ],
+  "plants": [
+
+  ],
+  "rows": [
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrnnnrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrnnnrrrrrrrrrrrrrnnnrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrnnnrrrrrrrrrrrrrnnnrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrnnnrrrrrrrrrrrrrnnnrrr",
+    "rrrrrrrrrrrrrrrrrrrnrrrrrnnnnnnrrrrrrrrrrrnnnrrr",
+    "rrrrrrrrrrrrrrrrrrrnrrrrrnnnnnnwwwwwwwwwwwnnnnnn",
+    "rrrrrrrrrrrrrrrrrrrnrrrnrnnnnnnwwwwwwwwwwwnnnnnn",
+    "rrrrrrrrrrrrrrrrrrrnrrrnrnnnnnnrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrnrrnnnnrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrnnnnnnrrrrrrrrrrrrrrrrrrrrrrrr",
+    "nnnnrrrrrrrrrrrrnnnnrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "nnnnwwwwwwwwwwwwnnnnrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rnnnwwwwwwwwwwwwnnnnrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+  ]
+}

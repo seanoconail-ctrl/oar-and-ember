@@ -99,6 +99,11 @@ export interface ZonePlan {
    */
   readonly cliffRim?: number;
   /**
+   * Stage 14: an interior's walls: rock (`r`) within `tiles` of open ground becomes `code` (the
+   * Hollow Cairn's drystone, `d`), the rest stays the dark rock it is built into.
+   */
+  readonly walls?: { readonly code: TileCode; readonly tiles: number };
+  /**
    * Stage 14: pools in the peat (the bog): where the noise of `cell` tiles rises above `above`,
    * peat (`p`) becomes a pool (`o`), inside the given rectangle of tiles if one is given.
    */
@@ -598,6 +603,21 @@ export function expandZone(
         if (near) rim.push([tx, ty]);
       }
     for (const [tx, ty] of rim) set(tx, ty, 'c');
+  }
+  // Stage 14: an interior's built walls along its open ground.
+  if (plan.walls !== undefined) {
+    const n = plan.walls.tiles;
+    const open = (c: TileCode | undefined): boolean => c !== undefined && c !== 'r' && c !== plan.walls?.code;
+    const wall: [number, number][] = [];
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++) {
+        if (at(tx, ty) !== 'r') continue;
+        let near = false;
+        for (let dy = -n; dy <= n && !near; dy++)
+          for (let dx = -n; dx <= n && !near; dx++) if (open(at(tx + dx, ty + dy))) near = true;
+        if (near) wall.push([tx, ty]);
+      }
+    for (const [tx, ty] of wall) set(tx, ty, plan.walls.code);
   }
   // Stage 14: the bog's pools in the peat.
   if (plan.pools !== undefined) {

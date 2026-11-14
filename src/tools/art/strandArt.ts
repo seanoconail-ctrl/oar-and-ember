@@ -194,8 +194,8 @@ function paint(
         if (hash01(wx, wy, 49) < 0.06) return c('bracken', 2.4);
         return c('tar', 1.8 + (band % 2) * 0.6 + (tone - 0.5));
       }
-      const ledge = (wy + strata * 5) % 4 < 0.9 && band % 2 === 1;
-      if (ledge) return hash01(wx, wy, 50) < 0.3 ? c('wool', 5.5) : c('stone', 6.6);
+      const ledge = (wy + strata * 5) % 4 < 0.9 && band % 3 === 1 && valueNoise(wx, wy, 9, 65, P) > 0.4;
+      if (ledge) return hash01(wx, wy, 50) < 0.25 ? c('wool', 5.0) : c('stone', 5.6);
       if (valueNoise(wx, wy, 2, 51, P) > 0.84) return c('stone', 1.1);
       if (valueNoise(wx, wy, 3, 52, P) > 0.78 && tone > 0.5) return c('trefoil', 1.3);
       return c('stone', 3.2 + (band % 2) * 0.8 - (band % 3 === 0 ? 0.6 : 0) + (tone - 0.5) * 0.8);

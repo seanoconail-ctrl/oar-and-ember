@@ -320,7 +320,14 @@
       "edge": "s",
       "to": "ZONE_SK_CAIRN"
     },
-    { "edge": "s", "to": "ZONE_SK_SKERRY" }
+    {
+      "edge": "s",
+      "to": "ZONE_SK_SKERRY"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_BOG"
+    }
   ],
   "life": [
     {
@@ -2002,5 +2009,24 @@
     [0, 1660, 546, 0, 553],
     [1, 1668, 545, 3, 553],
     [3, 1665, 552, 3, 553]
+  ],
+  "portals": [
+    {
+      "id": "sealcave.back",
+      "exit": {
+        "x": 55,
+        "y": 17,
+        "w": 3,
+        "h": 1
+      },
+      "to": "ZONE_SK_SEALCAVE_DEEP",
+      "entry": {
+        "x": 46.5,
+        "y": 9.9
+      },
+      "when": {
+        "tide": "SPRING_LOW"
+      }
+    }
   ]
 }

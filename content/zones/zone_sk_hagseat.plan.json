@@ -272,7 +272,8 @@
     {
       "edge": "e",
       "to": "ZONE_SK_MACHAIR"
-    }
+    },
+    { "edge": "n", "to": "ZONE_SK_CLIFFS" }
   ],
   "life": [
     {

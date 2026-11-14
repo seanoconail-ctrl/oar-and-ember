@@ -424,9 +424,26 @@
       "edge": "n",
       "to": "ZONE_SK_SEALCAVE"
     },
-    { "edge": "s", "to": "ZONE_SK_NAUST" },
-    { "edge": "w", "to": "ZONE_SK_STRAND" },
-    { "edge": "e", "to": "ZONE_SK_SKERRY" }
+    {
+      "edge": "s",
+      "to": "ZONE_SK_NAUST"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_STRAND"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_SKERRY"
+    },
+    {
+      "edge": "n",
+      "to": "ZONE_SK_ROOK"
+    },
+    {
+      "edge": "n",
+      "to": "ZONE_SK_BOG"
+    }
   ],
   "life": [
     {
@@ -1559,5 +1576,24 @@
     [0, 1524, 533, 0, 548],
     [0, 1529, 535, 3, 548]
   ],
-  "tussock": 0.42
+  "tussock": 0.42,
+  "portals": [
+    {
+      "id": "cairn.door",
+      "exit": {
+        "x": 67,
+        "y": 19,
+        "w": 1,
+        "h": 1
+      },
+      "to": "ZONE_SK_CAIRN_IN",
+      "entry": {
+        "x": 46.4,
+        "y": 14.6
+      },
+      "when": {
+        "fact": "cairn.door.open"
+      }
+    }
+  ]
 }
