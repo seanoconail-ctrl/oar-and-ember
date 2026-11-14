@@ -686,13 +686,16 @@ describe('"Nothing that way" (DE-25)', () => {
     expect(Math.abs(r.p.x - r.from.x)).toBeLessThan(24);
   });
 
-  it('gives STEEP at rock and NOTHING at the zone’s end with no link', () => {
+  it('gives STEEP at rock, and the zone’s east end now leads on (Stage 14)', () => {
     const rock = press('edge-steep', 63, 34.6, 0, 1, 2);
     expect(rock.edge[0]?.kind).toBe('STEEP');
     // On the shingle beside the zone's east end (decision DG-20: a footprint set over the bank
-    // above would now walk out along it rather than stand frozen pressing).
+    // above would now walk out along it rather than stand frozen pressing). Until Stage 14 this
+    // was the end of the ground ("Nothing that way"); from Stage 14 the strand's east edge leads
+    // on to Naust Cove (decision S14-2), so the steerer walks on into it.
     const end = press('edge-nothing', 95.5, 30.5, 1, 0, 2);
-    expect(end.edge[0]?.kind).toBe('NOTHING');
+    expect(end.world.onFoot?.zone).toBe('ZONE_SK_NAUST');
+    expect(end.edge.every((e) => e.kind !== 'NOTHING')).toBe(true);
   });
 
   it('moves along an edge pressed at a shallow angle (a walk beside the shore is not caught)', () => {

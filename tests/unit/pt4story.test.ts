@@ -654,7 +654,10 @@ describe('“Nothing that way” names a real, open way when one exists (DH-36)'
   it('at the cairn’s north-west, where Seal Cave does not lie beyond, it names Seal Cave where it does', () => {
     const way = openWayFrom(cairn, land.maps, { x: 6 * 24, y: 2 * 24 }, land.rules, true);
     expect(way).not.toBeNull();
-    expect(['ZONE_SK_SEALCAVE', 'ZONE_SK_MACHAIR']).toContain(way?.to);
+    // From Stage 14 Rook Hill and the bog lie north of the cairn too (decision S14-2).
+    expect(['ZONE_SK_SEALCAVE', 'ZONE_SK_MACHAIR', 'ZONE_SK_ROOK', 'ZONE_SK_BOG']).toContain(
+      way?.to,
+    );
   });
   it('never names a way that does not really lead on', () => {
     const fake = { ...hag, links: [{ edge: 'w' as const, to: 'ZONE_SK_MACHAIR' }] };

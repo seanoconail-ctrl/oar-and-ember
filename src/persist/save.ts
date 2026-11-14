@@ -86,6 +86,15 @@ export const ZONE_PLACE_KEYS: Readonly<Record<string, string>> = {
   ZONE_SK_SEALCAVE: 'place.name.sk_tidecave',
   // Stage 13: the wreck on Sgeir Dhubh, played on foot from the sea (decision S13-47).
   ZONE_SEA_WRECK: 'place.name.zone_sea_wreck',
+  // Stage 14: the whole island (decisions S14-1 and S14-3).
+  ZONE_SK_ROOK: 'place.name.sk_rookhill',
+  ZONE_SK_BOG: 'place.name.sk_bog',
+  ZONE_SK_CLIFFS: 'place.name.zone_sk_cliffs',
+  ZONE_SK_GEO: 'place.name.sk_geo',
+  ZONE_SK_NAUST: 'place.name.sk_naust',
+  ZONE_SK_SKERRY: 'place.name.sk_skerry',
+  ZONE_SK_SEALCAVE_DEEP: 'place.name.zone_sk_sealcave_deep',
+  ZONE_SK_CAIRN_IN: 'place.name.zone_sk_cairn_in',
 };
 
 /** The place's name string for a world: its zone's, else the home island's. */

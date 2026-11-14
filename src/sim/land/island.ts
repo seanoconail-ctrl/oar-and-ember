@@ -195,13 +195,13 @@ export function stepIsland(
   emit: (e: IslandEvent) => void,
 ): void {
   if (world.onFoot === null) return;
+  const minute = world.calendar.day * 1440 + world.calendar.minuteOfDay;
   syncFinds(world, ctx);
   stepDiscovery(world, ctx, emit);
   stepPuzzles(world, ctx, emit);
   stepPassage(world, ctx, emit);
   stepFoggyFeast(world, ctx, hooks.nearestResident, emit);
   // The side aims count game minutes: once a minute, as the calendar turns.
-  const minute = world.calendar.day * 1440 + world.calendar.minuteOfDay;
   if (world.facts['island.minute'] !== minute) {
     world.facts['island.minute'] = minute;
     sideAimsMinute(world, ctx, hooks.sideAims, emit);

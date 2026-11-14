@@ -92,6 +92,15 @@
   "place.name.sk_eagle": {
     "text": "Eagle stack"
   },
+  "place.name.zone_sk_cliffs": {
+    "text": "The west cliffs"
+  },
+  "place.name.zone_sk_sealcave_deep": {
+    "text": "The deep passage"
+  },
+  "place.name.zone_sk_cairn_in": {
+    "text": "Inside the Hollow Cairn"
+  },
   "hazard.name.haz_cauldron": {
     "text": "The Cailleach's Cauldron"
   },
@@ -5772,6 +5781,38 @@
   },
   "caption.edge.place.zone_sk_sealcave": {
     "text": "Seal Cave",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_rook": {
+    "text": "Rook Hill",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_bog": {
+    "text": "The peat bog",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_cliffs": {
+    "text": "The west cliffs",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_geo": {
+    "text": "Gull Geo",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_naust": {
+    "text": "Naust Cove",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_skerry": {
+    "text": "The Skerry of the Drowned",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_sealcave_deep": {
+    "text": "The deep passage",
+    "tags": ["INFO"]
+  },
+  "caption.edge.place.zone_sk_cairn_in": {
+    "text": "The Hollow Cairn",
     "tags": ["INFO"]
   },
   "c_bran.teach.svart_parry": {
