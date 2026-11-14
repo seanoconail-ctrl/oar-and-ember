@@ -1067,7 +1067,90 @@
      "Daily risk per resident": "x0.5"
     }
    ],
-   "winterPreparationFormulaText": "food needed  = 30 days x mouths + 25% reserve\nfuel needed  = 30 x heated houses x 1.0 + smoke-house and forge use\nhay needed   = 30 x (cows x 0.15 + sheep x 0.03)\nExample, day 90 with 15 mouths, 2 houses, 3 cows, 12 sheep:\nfood 563 rd   fuel 75 loads   hay 25 loads"
+   "winterPreparationFormulaText": "food needed  = 30 days x mouths + 25% reserve\nfuel needed  = 30 x heated houses x 1.0 + smoke-house and forge use\nhay needed   = 30 x (cows x 0.15 + sheep x 0.03)\nExample, day 90 with 15 mouths, 2 houses, 3 cows, 12 sheep:\nfood 563 rd   fuel 75 loads   hay 25 loads",
+   "islandResourceNodes": [
+    {
+     "Node": "watercress",
+     "Scenes": "ZONE_SK_MACHAIR (the Kelda), ZONE_SK_ROOK (the upper stream's pools)",
+     "Seasons": "Spring, summer",
+     "Tide": "Any",
+     "Respawn": "3 days",
+     "Yield": "0.25 rd of fresh greens, keeping 2 days",
+     "Notes": "5 game minutes, no stamina, no tool; 2 beds at the Kelda, 3 in the upper stream"
+    },
+    {
+     "Node": "heather",
+     "Scenes": "ZONE_SK_ROOK",
+     "Seasons": "Summer, autumn",
+     "Tide": "Any",
+     "Respawn": "10 days",
+     "Yield": "1 bundle of heather, for thatch and bedding",
+     "Notes": "30 game minutes and 2 stamina; 4 patches on the slopes"
+    },
+    {
+     "Node": "hares",
+     "Scenes": "ZONE_SK_ROOK",
+     "Seasons": "Spring, summer, autumn, winter",
+     "Tide": "Any",
+     "Respawn": "4 days",
+     "Yield": "1.5 rd of fresh meat, keeping 2 days",
+     "Notes": "A hare starts from its form when the steerer comes within 4 tiles and runs; taken with the bow (section 06). 3 forms in the heather"
+    },
+    {
+     "Node": "bogCotton",
+     "Scenes": "ZONE_SK_BOG",
+     "Seasons": "Summer",
+     "Tide": "Any",
+     "Respawn": "30 days",
+     "Yield": "1 bundle of bog cotton, for wicks and stuffing",
+     "Notes": "10 game minutes, no stamina; 3 stands by the pools"
+    },
+    {
+     "Node": "kelp",
+     "Scenes": "ZONE_SK_GEO, ZONE_SK_HAGSEAT",
+     "Seasons": "Spring, summer, autumn, winter",
+     "Tide": "Low water",
+     "Respawn": "2 days, and again at the dawn after a storm (afterStorm, \"Driftwood finds\")",
+     "Yield": "1 load of kelp, for the plots",
+     "Notes": "20 game minutes and 1 stamina; 2 beds in the geo, 1 under the Hag's Seat. What kelp does for the plots comes with their rules"
+    },
+    {
+     "Node": "seals",
+     "Scenes": "ZONE_SK_SEALCAVE",
+     "Seasons": "Days 65 to 85 (the pups)",
+     "Tide": "Low water",
+     "Respawn": "Once a year: at most 3 taken in a season",
+     "Yield": "20 rd of fresh meat and 1 hide",
+     "Notes": "Taken with a spear or an axe at the haul-out in the cove. Killing a seal angers the seal-kin (Book 4 section 02): counted as the fact sealsKilled; what the anger does is deferred (decision S14-20)"
+    },
+    {
+     "Node": "eggs",
+     "Scenes": "ZONE_SK_CLIFFS",
+     "Seasons": "Days 10 to 40",
+     "Tide": "Any",
+     "Respawn": "3 days a ledge",
+     "Yield": "Eggs, 4 rd a climb (Food items)",
+     "Notes": "3 ledges, each by its marked climb (Book 9 section 03)"
+    },
+    {
+     "Node": "peat",
+     "Scenes": "ZONE_SK_BOG",
+     "Seasons": "Spring, summer",
+     "Tide": "Any",
+     "Respawn": "A bank gives 10 loads a season, then is cut back until the next spring",
+     "Yield": "1 load of wet peat a cut, at peatCut's rate (90 game minutes and 4 stamina)",
+     "Notes": "Dries over peatDry (Fuel and hay) before use; needs a peat spade; 4 banks on the bog's south"
+    },
+    {
+     "Node": "rockFish",
+     "Scenes": "ZONE_SK_NAUST, ZONE_SK_SKERRY",
+     "Seasons": "Spring, summer, autumn, winter (winter on calm days only)",
+     "Tide": "Any",
+     "Respawn": "A rock gives the season's \"Fishing from shore\" catch a day",
+     "Yield": "1 fresh fish a catch (Food items)",
+     "Notes": "The shore-fishing timed task (section 21, timedTasks) from a fishing rock; 2 rocks in the cove, 2 on the east shore"
+    }
+   ]
   },
   "cargoTradeAndSilver": {
    "cargoValues": [
@@ -1720,6 +1803,53 @@
      "Key": "waistWadeEmpty",
      "Value": "Speed factor x0.5 again until 25 stamina is regained",
      "Notes": ""
+    }
+   ],
+   "movementVerbs": [
+    {
+     "Key": "jumpGap",
+     "Value": "1.5 tiles",
+     "Notes": "The widest gap jumped, from a marked take-off to a marked landing (Book 9 section 12)"
+    },
+    {
+     "Key": "jumpStamina",
+     "Value": "6",
+     "Notes": "Spent at the take-off; with less, the jump is refused"
+    },
+    {
+     "Key": "crawlSpeed",
+     "Value": "0.6 tiles per second",
+     "Notes": "Through a marked crawl only"
+    },
+    {
+     "Key": "crawlCarry",
+     "Value": "Nothing",
+     "Notes": "No load and no carried person passes a crawl; the steerer sets a load down at its mouth"
+    },
+    {
+     "Key": "pushSpeed",
+     "Value": "0.8 tiles per second",
+     "Notes": "Pushing or pulling a heavy object along its line"
+    },
+    {
+     "Key": "pushStamina",
+     "Value": "2 per second",
+     "Notes": "While the object moves"
+    },
+    {
+     "Key": "climbLedgeEvery",
+     "Value": "12 tiles or fewer",
+     "Notes": "Climbing distance between rests on a marked route (12 tiles at climb speed costs 72 stamina, within a full bar)"
+    },
+    {
+     "Key": "bogSoftRain",
+     "Value": "0.8",
+     "Notes": "Speed factor on the bog's soft ground while it rains, on top of the mode's speed"
+    },
+    {
+     "Key": "climbFallFloor",
+     "Value": "10 vitality",
+     "Notes": "A slide down a marked climb (climbEmpty) never leaves the climber below this: on Skarvholm's egg ledges a fall costs vitality, not life (Book 9 section 03)"
     }
    ],
    "staminaCapacity": [
@@ -8560,6 +8690,148 @@
     {
      "Key": "weirClosed",
      "Value": "The otter-cave is closed while the Ford is in spate (section 14)"
+    }
+   ],
+   "stoppingPoints": [
+    {
+     "Key": "stopWithin",
+     "Value": "7 tiles",
+     "Notes": "A stopping point counts once it is on screen and within this distance of the walker on the path"
+    },
+    {
+     "Key": "stopKinds",
+     "Value": "Finds, points of interest, resource nodes in season, anchored life and view points",
+     "Notes": "A find is a Chapter 1 find or a collectible not yet taken; a point of interest is Book 9's (a secret's place, a landing, a building); a resource node only while it exists (its season and tide); anchored life is wildlife that keeps to a place (a seal on its rock, a gull on its stand, a hare's form, the eagle on its stack), not wildlife passing; a view point is a place the plan marks for its view (Rook Hill's summit, the Hag's Seat, the cliff top over the eagle stack)"
+    },
+    {
+     "Key": "stopIntervalWalk",
+     "Value": "40 to 60 tiles",
+     "Notes": "stopInterval at the walk speed (section 02): the walker's gap between stops is measured in tiles along the path"
+    }
+   ],
+   "skarvholmCollectibles": [
+    {
+     "Kind": "shells",
+     "On Skarvholm": "6",
+     "Notes": "The strand's cowries (a Chapter 1 find) count as the first"
+    },
+    {
+     "Kind": "carvedStones",
+     "On Skarvholm": "6",
+     "Notes": "The machair's carved slab and the cairn's kerbstone (Chapter 1 finds) count as two"
+    },
+    {
+     "Kind": "psalterPages",
+     "On Skarvholm": "5",
+     "Notes": "The rest of the hermit's book is at Kilbrecc, in a later stage"
+    },
+    {
+     "Kind": "namesOfTheDead",
+     "On Skarvholm": "Up to 5",
+     "Notes": "One each time the spring tides come round, on the Skerry of the Drowned (namesPerSpring, below)"
+    },
+    {
+     "Kind": "songs",
+     "On Skarvholm": "0",
+     "Notes": "None is learned on Skarvholm in Stage 14"
+    },
+    {
+     "Kind": "lore",
+     "On Skarvholm": "6",
+     "Notes": "One for each power: Rán (the Skerry), the Cailleach (the Hag's Seat), the hill-folk (the cairn), the seal-kin (Seal Cave), the Bog King (the bog), Manannán (the deep passage)"
+    },
+    {
+     "Kind": "offPath",
+     "On Skarvholm": "4 tiles",
+     "Notes": "Each lies at least this far from the shortest ways between its scene's links, landings and waking place"
+    }
+   ],
+   "greyMenAlignment": [
+    {
+     "Key": "alignmentWindow",
+     "Value": "30 game minutes from first light",
+     "Notes": "First light is the season's \"Light from\" (section 02, Daylight)"
+    },
+    {
+     "Key": "festivalMornings",
+     "Value": "Days 31, 61, 91 and 105 in Year 1",
+     "Notes": "Bealtaine, Lúnasa, Samhain and Yule (Book 4 section 04); Imbolc from Year 2. First light: 04:30 on day 31 (before dayStart, so out of reach), 07:00 on day 61, 08:30 on days 91 and 105"
+    },
+    {
+     "Key": "doorWaitTiles",
+     "Value": "3 tiles",
+     "Notes": "Someone stands within this distance of the cairn's east door in the window"
+    },
+    {
+     "Key": "alignmentFog",
+     "Value": "Fog hides the sun: no alignment that morning",
+     "Notes": "Any other weather lets it through"
+    }
+   ],
+   "deepPassage": [
+    {
+     "Key": "passageOpen",
+     "Value": "Spring-tide days only, inside tidalGroundWindow",
+     "Notes": "springLowExtra (section 02)"
+    },
+    {
+     "Key": "lowestPointCloses",
+     "Value": "At the window's close",
+     "Notes": "The v tiles turn deep"
+    },
+    {
+     "Key": "poolRises",
+     "Value": "Waist at 15 game minutes after the window's close, deep at 30",
+     "Notes": "The k tiles"
+    },
+    {
+     "Key": "floorCloses",
+     "Value": "30 game minutes after the window's close",
+     "Notes": "The banks and the floor"
+    },
+    {
+     "Key": "turningWake",
+     "Value": "The waking hour, on the cairn mound, with the Cold reason",
+     "Notes": "The hill-folk's turning: for whoever sleeps or collapses on the cairn side of the lowest point once it is deep (section 02, dayStart and collapsePenalty; section 06, Stamina capacity)"
+    }
+   ],
+   "skerryOfTheDrowned": [
+    {
+     "Key": "causewayOpen",
+     "Value": "Spring-tide days only, inside tidalGroundWindow",
+     "Notes": "springLowExtra (section 02)"
+    },
+    {
+     "Key": "namesPerSpring",
+     "Value": "1",
+     "Notes": "One of the drowned comes forward each time the spring tides come round (the three spring-tide days); 5 in all, in Book 9's order"
+    }
+   ],
+   "year1Secrets": [
+    {
+     "Key": "bogOfferingShows",
+     "Value": "Summer, once 2 loads of peat are cut from the bank at (33, 13)",
+     "Notes": "The bronze cauldron's rim shows in the cut face"
+    },
+    {
+     "Key": "bogOfferingLeft",
+     "Value": "Nothing but its story",
+     "Notes": "Left in the bank: the fact bog.offering.left; Faith-minded residents approve (a fact for later)"
+    },
+    {
+     "Key": "bogOfferingTaken",
+     "Value": "A bronze cauldron, worth 8 oz of silver in trade",
+     "Notes": "Taken: SACRED_TAKEN (Book 6 section 01) and the fact bog.keeper.offended; what the keeper does comes later"
+    },
+    {
+     "Key": "behindTheFalls",
+     "Value": "A carved stone",
+     "Notes": "A knee-deep wade at the pool's edge"
+    },
+    {
+     "Key": "oldNaust",
+     "Value": "A carved stone",
+     "Notes": "Found by walking the line of stones to its end"
     }
    ]
   },

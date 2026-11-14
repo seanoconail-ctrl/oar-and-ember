@@ -360,12 +360,22 @@ interface RegionDef { id: Id; scenes: SceneRef[]; links: FootLink[]; zones: Zone
 interface FootLink { from: Id; to: Id; exit: Rect; entry: Vec2; known: boolean;
   conditions?: Condition[] /* tide, season, key, puzzle */ }
 interface ResourceNode { id: Id; kind: Id; pos: Vec2; seasons: Season[]; respawnDays: number;
-  yield: Yield; toolRequired?: Id }
+  yield: Yield; toolRequired?: Id;
+  days?: [number, number] /* a day window instead of whole seasons (the eggs) */; tide?: 'ANY'|'LOW' }
+interface AreaDef { id: Id /* ZONE_ */; scene: Id; rect: Rect; nameKey: string; ambience?: string }
+interface CollectibleDef { key: string; kind: 'SHELL'|'CARVED_STONE'|'PSALTER_PAGE'|'NAME_OF_THE_DEAD'|'SONG'|'LORE';
+  power?: string /* lore: the power it tells of */; scene: Id; pos: Vec2; use: 'LOOK'|'TAKE'|'TALK';
+  conditions?: Condition[] /* tide, season, puzzle state, spring tides */; sheet: string; frame: string;
+  sound: string; captionKey: string; journalKey: string }
+interface ViewPoint { scene: Id; at: Rect; reveals: Id[] /* scenes and areas drawn onto the region map */ }
 interface PuzzleDef { id: Id; states: string[]; transitions: { from: string; to: string;
   when: Condition[]; effects: Effect[] }[]; hints: HintDef[]; solvedFact: string }
 ```
 - **Scenes** are tilemaps from Book 9's layouts (ground, collision, objects, triggers, spawns, navigation layers). Adjacent scenes stream in at link edges without a loading screen.
-- **Discovery:** places and links start unknown unless content marks them known. Walking a link, reading a chart, hearing testimony or seeing from a height reveals them on the region map.
+- **Skarvholm's scenes** partition the island grid into windows (Book 9 section 03, "The scene partition"); the interiors (the Seal Cave's deep passage, the Hollow Cairn) are scenes with grids of their own, joined by `FootLink`s whose conditions are the tide, the spring tides and a puzzle's state. An **area** (`AreaDef`) is a named part of a scene (the Kelda, the Grey Men) with its own place name, ambience and discovery and no tilemap (decision S14-1).
+- **Discovery:** places and links start unknown unless content marks them known. Walking a link, reading a chart, hearing testimony or seeing from a height reveals them on the region map. On Skarvholm (decision S14-23) walking a link draws the scene it leads into; a `ViewPoint` (Rook Hill's summit) draws every scene and area its `reveals` names; Gull Geo, Seal Cave and the interiors are drawn only by walking into them. The region map is a page of the journal (Book 7 section 10, "The region map"), presentation of `RegionState.discoveredZones`.
+- **Collectibles** (`CollectibleDef`, decision S14-17): shells, carved stones, the hermit's psalter pages, the names of the dead, songs and lore for each power (Book 1 section 11). Interact with one in reach looks, takes or talks (`use`); it is kept in `RegionState.collected` and shown in the journal with its words, plays its sound and shows its information caption; a taken one leaves its taken frame. A collectible adds no collision. Book 9 section 03 places them; Book 10 section 20 counts them.
+- **The current aim** stays one line in the journal (decision DE-23). A Year 1 secret's aim, once given in speech, is listed in the journal under the current aim as a side aim, with its two hints (Book 8 section 13); the current aim is never replaced by one.
 - **Resource nodes** respawn by season and days; seasonal nodes exist only in their seasons.
 - **Puzzles** are state machines over world conditions (tide, time, season, objects, words spoken). Every puzzle has at least one in-world hint and a solved fact; none uses abstract tile-sliding.
 - **Territory:** every on-foot tile belongs to a faction territory or wilderness. A faction's `hostility` decides whether its guards greet, warn, watch or **attack on sight**. Recognition uses faces (leaders, witnesses), sail and shields nearby, and known gear.
@@ -424,7 +434,8 @@ interface MainlandPlaceState { known: boolean; visited: boolean; poisFound: Id[]
   route?: { cleared: boolean; waymarked: boolean; heldBy?: Id /* FAC_ */; shortcutsFound: Id[];
     waystation?: Id /* BLD_ */; crossings: number } }
 interface RegionState { discoveredZones: Id[]; places: Record<Id, MainlandPlaceState>; blocksCleared: Id[];
-  resourceNodes: Record<Id, ResourceNodeState>; puzzles: Record<Id, string>; bodies: Id[] }
+  resourceNodes: Record<Id, ResourceNodeState>; puzzles: Record<Id, string>; bodies: Id[];
+  collected: string[] /* CollectibleDef keys, in the order found */; pushed: Record<string, Vec2> /* heavy objects moved */ }
 ```
 - **One map for everyone.** The mainland is one region with `MAIN_` IDs (Book 4; plans in Book 9), the same in every campaign. It has two kinds of playable place: **sites**, destinations explored in full on foot (villages, forts, the monastery, farms, dungeons, the bog village, the mountain), and **wilderness routes**, long playable places *between* sites (the Black Wood path, the plank road, the High Pass, the Ridge Road, the river path and the Ford, the moor road). It holds both home sites. Glen Arra, Inis Rón and Crowwick stay separate places across the sea, each with its own small region.
 - **Road legs** join sites and route ends. They are never walked on screen: a leg costs game time (Book 10 section 14, "Network") and is run through the world step (section 25), so the world goes on exactly as if the time had passed in play.
@@ -449,6 +460,14 @@ interface RegionState { discoveredZones: Id[]; places: Record<Id, MainlandPlaceS
 
 ### Movement verbs and hazards
 - On foot the steerer can walk, run, sneak, carry, climb marked routes, wade, swim where allowed, jump short gaps, crawl through gaps, push and pull heavy objects, and ride the water-horse where the kelpie bridle allows. Each verb is a movement state with its Book 10 section 02 speed and its own collision rules; climbing, swimming, waist-deep wading, running and heavy carrying drain stamina (section 24).
+- **How each verb works** (Stage 14, decision S14-14; numbers in Book 10 section 06, "Movement verbs", "Stamina in traversal" and "Running out of stamina"). A verb starts only where the plan marks it, so ordinary ground never jumps, climbs or crawls by accident; Interact (or walking into the marked edge, for a climb or a crawl) starts it, with its prompt (Book 8 section 10). Each is a simulation state reached by commands, saved and replayed like any other.
+  - **Climb:** only on a marked route (hand-holds drawn, Book 7 section 13), at climb speed, up or down the route's line; no weapon, no carrying, no fighting. Stamina drains as Book 10 gives and does not refill until the climber stands on a ledge or at either end. Each route has a ledge at least every `climbLedgeEvery`. At empty stamina the climber slides down at Book 10's rate to the last ledge or the route's foot (`climbEmpty`), and the slide's cost never leaves them below `climbFallFloor`.
+  - **Wade:** in water of a depth band, at the band's speed factor (section 10, "Water depth bands"); waist water drains stamina, and at empty the wader slows (`waistWadeEmpty`) but never sinks. A wading stretch that must be crossed has a bank or a shallower step within what a full bar allows (Book 9 section 12).
+  - **Swim:** only in deep water the scene marks as swimming water; nothing carried and no weapon in hand. At empty stamina the swimmer starts to sink (`swimEmpty`) and must reach water no deeper than the waist within its time, or drowns. A swim is never needed on a required route.
+  - **Jump:** across a marked gap no wider than `jumpGap`, from its take-off to its landing; the far side is in view from the take-off. It costs `jumpStamina`, refused with less; never while carrying, and it cannot fall short: refused, the steerer stays on the take-off.
+  - **Crawl:** through a marked crawl only, at `crawlSpeed`, low and unseen as a sneak is; nothing carried passes (`crawlCarry`), so a load is set down at the mouth and every carrying route goes round (Book 9 section 12). A crawl is never a trap: it can be backed out of at any point.
+  - **Push and pull:** a heavy object moves only along its marked line of tiles, one tile at a time at `pushSpeed`, draining `pushStamina` while it moves. Facing it and moving towards it pushes; holding Interact and moving away pulls. It never leaves its line, never moves onto anyone, and can always be moved back to where it started, so no puzzle is left unsolvable (Book 9 section 12). Its place is saved (`RegionState.pushed`).
+  - **Soft ground:** the bog's soft ground slows every walker by `bogSoftRain` while it rains; peat banks hide a sneaking actor as dunes do.
 - **Hazards** are state machines over world conditions and declare `sign, rule, response, consequence` like any dangerous mechanic (section 17): bog holes (slow, then sink unless pulled out), spate rivers (swept downstream), cliffs and scree (falls), cold at night (the cold reason of section 24), fog (sight and getting turned round), wolves, boar, outlaw ambushes and roadblocks, landslides after rain, lightning on high ground and the hill-folk's rules. Numbers are in Book 10 section 15. Every hazard shows its sign before it can hurt.
 
 ### Camping and companions

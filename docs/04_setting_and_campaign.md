@@ -69,16 +69,19 @@ Skarvholm is 384 x 256 tiles: about a minute's run straight across, several minu
 |---|---|---|---|
 | `ZONE_SK_STRAND` | Shingle, tidal flats, skerries | Driftwood after storms; shellfish and seaweed at low tide; wreck salvage | Scavengers; Thorkel's draugr at low tide if unburied |
 | `ZONE_SK_MACHAIR` | Grass, plots, the steading | Barley, kale, grazing; lambs in spring | Raiders landing on the strand |
-| `ZONE_SK_KELDA` | Spring and stream | Water; watercress in spring and summer | The spring's slow failure |
-| `ZONE_SK_ROOK` | Heather, high ground | Heather for thatch and bedding; hares | The lookout's blind spots |
+| `ZONE_SK_KELDA` | Spring and stream; an area of the machair, not a scene of its own (decision S14-1) | Water; watercress in spring and summer | The spring's slow failure |
+| `ZONE_SK_ROOK` | Heather, high ground; Kelda's upper stream and its waterfall | Heather for thatch and bedding; hares; watercress in the upper stream | The lookout's blind spots; behind the falls |
 | `ZONE_SK_BOG` | Peat bog | Peat cut in spring and summer; bog cotton | Soft ground in rain; an old offering in the peat |
-| `ZONE_SK_GREYMEN` | Stone ring | None | A sunrise alignment on festival mornings |
+| `ZONE_SK_GREYMEN` | Stone ring; an area of the bog, not a scene of its own (decision S14-1) | None | A sunrise alignment on festival mornings |
 | `ZONE_SK_CAIRN` | Mound and sheepfold | Sheep | The cairn's passages and its keepers |
 | `ZONE_SK_CLIFFS` | Cliffs and eagle stack | Seabird eggs (days 10 to 40), birds in summer | Falls; the eagle |
-| `ZONE_SK_GEO` | Hidden cove and cell | Kelp | A landing raiders can use unseen; the hermit's hidden niche |
+| `ZONE_SK_GEO` | Hidden cove and the hermit's cell | Kelp | A landing raiders can use unseen; the hermit's hidden niche |
 | `ZONE_SK_SEALCAVE` | North-east horn and cave | Seals (pups days 65 to 85) | The tide puzzle; killing seals angers the seal-kin |
 | `ZONE_SK_HAGSEAT` | West headland | Kelp, wind | The Cailleach's stone |
-| `ZONE_SK_NAUST` | Cove, causeway, skerry | Fish from the rocks | The drowned on the skerry at spring low tides |
+| `ZONE_SK_NAUST` | Cove and boatshed plot | Fish from the rocks | The old naust under the turf |
+| `ZONE_SK_SKERRY` | East shore, causeway, skerry | Fish from the rocks | The drowned on the skerry at spring low tides |
+| `ZONE_SK_SEALCAVE_DEEP` | The Seal Cave's deep passage, an interior | None | Open only at spring lows; floods as the tide turns |
+| `ZONE_SK_CAIRN_IN` | The Hollow Cairn's inside, an interior | The spring under the cairn | Opened by the Grey Men alignment; the Door of Three Truths, closed and silent in Year 1 |
 
 ### Through the year
 Spring brings lambs, eggs on the cliffs and the first peat cutting. Summer brings long light, birds and the best fishing. Autumn brings seal pups and storms that throw wreckage onto the strand. Winter freezes the bog pools, darkens the afternoons and brings the dead closer at Samhain and Yule. Every zone changes with season and tide, so the island repays walking it again.

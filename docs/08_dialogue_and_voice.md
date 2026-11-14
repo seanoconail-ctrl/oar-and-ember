@@ -357,6 +357,85 @@ The user's fourth playtest (decision DH-15): the fold remembers who took the shi
 - **The washer at the ford** answers only what she is asked, without emotion. "This one is Kolla's. This one is yours, if you sail by the north channel."
 - **The Door of Three Truths** in the Hollow Cairn does not speak. It listens. Its silence is the response.
 
+### The drowned on the Skerry
+*Stage 14 (decision S14-18; Book 9 section 03, "The Skerry of the Drowned"). **Flagged** for the user's review: the five dead are new minor characters, named here.*
+- **Voice:** low and slow, in short whole sentences in the present tense. Each says their own name first, then where the sea took them, then one thing they still want said. They never answer a question, never threaten, never ask for help and never name the living, except the one person they want told. Not the draugr's fragments: these were received by the sea and are at rest, only not forgotten.
+- Until the name is spoken the speaker shows as "Drowned:" (section 10, unmet speakers), then by the name. Each speaks two lines, in order, and the name goes into the journal with them. The steerer says nothing back; the information line is *Dripping, though the tide is out*.
+
+| The drowned | Comes forward | Lines |
+|---|---|---|
+| Sigrid of Hvitness | The first spring tides she can be met | `Sigrid: Sigrid. Hvitness. I went into the sea when the roofs caught.` / `Sigrid: I kept my ring. The sea was kind to me for it.` |
+| Cellach of Skarvholm | The next | `Cellach: Cellach. My people kept this island before yours.` / `Cellach: Our cauldron is in the peat, in the bank that faces the sun. Let it lie.` |
+| Gunnar of Saltvik | The next | `Gunnar: Gunnar. Saltvik. The sea came higher than the moon allows.` / `Gunnar: It took me off a rock I fished all my life.` |
+| Bergljót, a hostage | The next | `Bergljót: Bergljót. A hostage. My father paid three days late.` / `Bergljót: The sea king's men tied my hands first. Say my name to the sea king.` |
+| Donngal of the *Faoileán* | The next, once the wreck on Sgeir Dhubh has been met | `Donngal: Donngal. The Faoileán. I let go of the rope in the dark.` / `Donngal: Tell Fínán I kept quiet so he would not come after me.` (`REFERS:c_finan`) |
+| Thorkel | Only if his rites were never given: the first spring low after the launch, apart from the five | `Thorkel: Cold. I bought your passage south, and paid with a ship.` / `Thorkel: Not all of it is paid. The sea keeps count.` |
+
+Cellach's second line is the bog offering's hint (Book 9 section 03); Gunnar's is a sign of Rán's reach growing; Bergljót's and Thorkel's are Orm's bargain and Thorkel's debt seen from below (Book 4 section 12). No child is among the drowned, or spoken of.
+
+### The hermit's pages
+*Stage 14 (decision S14-18).* The psalter pages are Latin psalms in a small Irish hand; what the journal shows of each is the note the hermit wrote in its margin, in English like any other line (section 02). His voice: plain, wry, devout, writing to himself about the cold, the ink, the birds and God, a century ago. The first page carries **the clue to Brecc**.
+
+| Page | Margin note |
+|---|---|
+| In the niche | "The bell of Brecc is rung over the whirlpool each Lúnasa. The brothers say it is for God. Brecc said it was for his brother." |
+| Under the corbel | "Cold hand, thin ink, loud gulls. Christ keep this page drier than me." |
+| In the sea cave | "The seal came again and watched me pray. I prayed for it too, to be safe." |
+| On the cliff path | "Sails in the west, striped. I have hidden the book in the island's dry places, a gathering in each." |
+| Under the prayer stone | "From this stone the sun comes up over the old ones' door on the feast mornings. I do not watch for it. Mostly." |
+
+The hermit's cross, by the cell's doorway, has one line cut under its arms, read as its journal words: "Under the stone the Word keeps dry."
+
+### Lore of the powers
+*Stage 14 (decision S14-17).* Each lore find's journal words: one or two plain sentences, in the journal's voice (interface English), saying what is seen and what folk say of it.
+
+| Lore | Journal words |
+|---|---|
+| Rán: a gold ring in the rock | A gold ring pushed into a crack where the causeway starts. Sailors carry gold so that, if they drown, Rán welcomes them. |
+| The Cailleach: the wet stone | The Hag's Seat stone is wet when nothing else is. They say she rests here between washing the winter in and washing it out. |
+| The hill-folk: the listening carvings | Carvings round the grave cells that seem to listen. The hill-folk keep what was laid here, and keep count of it. |
+| The seal-kin: the seal with a face | A seal cut in the rock above the weed line, with a person's face. The seal-kin come ashore as people, and go back. |
+| The Bog King: the wooden man in the peat | A wooden figure in the cut bank, black with the peat, older than the island's name. The bog keeps its offerings, and its keeper. |
+| Manannán: the man on the waves | A cloaked figure carved walking on the waves, mist round his feet and a cup in his hands. Whoever cut it knew the sea from below. |
+
+### Collectible captions
+Information lines (section 10: under eight words, present tense, plain), one for each Skarvholm collectible (Book 9 section 03), shown as it is found; its sound plays with it.
+
+| Collectible | Caption |
+|---|---|
+| A scallop shell | *A scallop shell, ribbed and pale* |
+| A whelk dropped by gulls | *A whelk shell the gulls dropped* |
+| A pelican's-foot shell | *A pelican's-foot shell in the weed* |
+| A sea urchin's shell | *An empty sea urchin, faded green* |
+| A tower shell | *A tower shell on a dry shelf* |
+| The cup-and-ring stone | *Rings and rays cut in the stone* |
+| The hermit's cross | *A cross cut beside the doorway* |
+| The spiral behind the falls | *A spiral cut behind the water* |
+| The ship on the naust's lintel | *A ship cut in the old lintel* |
+| The page in the niche | *A page behind the stone, still dry* |
+| The page under the corbel | *A page under the fallen stone* |
+| The page in the sea cave | *A page in oiled leather* |
+| The page on the cliff path | *A page wedged in the rock* |
+| The page under the prayer stone | *A page in the stone box* |
+| A name of the dead | *Dripping, though the tide is out* |
+| A gold ring in the rock | *A gold ring pushed into the rock* |
+| The wet stone | *The stone is wet, the grass dry* |
+| The listening carvings | *Carvings that seem to listen* |
+| The seal with a face | *A seal carved with a person's face* |
+| The wooden man in the peat | *A wooden figure dark with peat* |
+| The man on the waves | *A cloaked figure carved on waves* |
+
+### The cairn and the deep passage in Year 1
+| Moment | Line |
+|---|---|
+| Interact at the Door of Three Truths, closed and silent (Book 9 section 09) | *The stone door is cold and silent* |
+| The deep passage as the tide turns (a sound out of sight, Book 9 section 16) | *The passage grows loud* |
+| The deep passage flooding | *Water rising in the passage* |
+| The Cup on its stone, Interact (it will not lift) | *An old cup, fast to its stone* |
+| Waking on the mound after the hill-folk's turning | *Woken on the cairn mound, cold* |
+| Then, the first resident met | `Runa: The hill-folk put you out. Be glad they did.` (or `Hild: A night in the mound? Don't tell Runa. Runa will want to leave it gifts.`) |
+| A foggy feast morning at the cairn's door | `Bran: No sun this feast. The door keeps its own counsel.` (or the nearest resident in their words) |
+
 ## 08 / Barks
 *Short, unblocking lines that make the world feel alive. Most under eight words.*
 
@@ -636,6 +715,18 @@ The fire and shelter hints come as distant calls while Hild is still on the stra
 **Nudges and advice** (the user's fourth playtest, decisions DH-53 to DH-58; content/guidance.json; Book 10 section 08). Besides the two hints, each aim has a line for each resident who can be home while it is open (`<speaker>.nudge.<aim>`), saying what to do next in their own voice, as a remark rather than a hint: whoever is nearest says theirs, unprompted, now and then, and the nearest with no line for the current aim speaks of the next open one (the next person to find). The same line answers "Ask for advice", after the advisor's opening line (`<speaker>.advice.intro`: Hild "You're asking me? All right."), for the current aim and the next. Hild has a line for every aim from the old tower on; Oddi, Bran and Runa for each from the second day on. Samples: Hild (finding Oddi): "Oddi first, I'd say. He was by the stern when we broke." Oddi (Runa): "Runa? Chasing lights at the Hag's Seat. West. Mad as a gull." Bran (the oar): "The oar is in their skiff. Ask for it before you take it." Runa (the stores): "Fish on the mast. One arrow. Don't miss and sulk." Later chapters' aims gain lines in the same file. **A later stage of an aim** has lines of its own (`stages` in content/guidance.json, decision DH-164): once its conditions hold, its lines are said in place of the aim's, and its nudges start afresh. Chapter 1's is the stores cut down from the mast, to carry home (`<speaker>.nudge.stores_home`: Bran "The fish is down. Carry it to the fire and we eat."). The two hints an aim has stay two.
 - A revenge quest words every other way out as plainly as the killing: "Kill him." / "Offer him a duel." / "Make him leave the coast." / "Ask his kin for the blood-price." / "Tell Áine who ordered it."
 - The one who asked speaks the ending by their values. Áine, after an exile: "He's gone. It's not what I wanted. It's something."
+
+### Year 1 secrets on Skarvholm (Stage 14)
+*Decision S14-25.* The current aim stays the journal's one line (decision DE-23). Each of the island's secrets is a **side aim**: given in speech by the resident in brackets when the moment comes, then listed in the journal under the current aim, with two hints on the Chapter 1 rules (a nearby person after a spell with no progress, then a clearer one; Book 10 section 25, "Guidance"), never in a fight, a scene or a talk. A side aim is never shown as the current aim, and the stuck-help clock runs for it only while the steerer is in its scene. Hints with the speaker away come from the nearest resident who knows of it, in their own words. The household of Year 1 speaks them: Hild, Oddi, Bran and Runa.
+
+| Side aim | Given (when) | Journal | First hint | Second hint |
+|---|---|---|---|---|
+| The deep passage | (Runa) "That cave goes back further than any cave should. Spring lows, it shows." (at Seal Cave, the first spring low after the launch) | Find where Seal Cave's back passage goes, at a spring low. | (Runa) "Go in at the bottom of a spring tide. Out before it turns." | (Runa) "Something low to crawl under, I'd bet. Shift what's in the way from the far side." |
+| The Grey Men | (Bran) "The Irish say the old ones built their doors for the sun." (at the fire, once the ring has been seen) | Be at the cairn's east door at first light on a feast morning. | (Bran) "On the feast mornings, first light walks straight in. The door knows it." | (Bran) "Stand at the mound's east door at first light on the feast day. Don't knock. They hate knocking." |
+| The hermit's niche | (Bran) "Whoever cut that cross meant it to be read." (at the cell, on first seeing the cross) | Read the cross at the hermit's cell above Gull Geo. | (Bran) "Read the cross. Monks hide things where the cross says." | (Bran) "Behind the altar. One stone sits proud of the rest." |
+| The bog offering | (Oddi) "Peat-cutters always find something. Pots, butter, worse." (at the first peat cutting) | Find what lies in the peat bank that faces the sun. | (Oddi) "The sunny bank, in summer. Cut it back and look." | (Oddi) "East end of the bog, the bank facing the morning. Keep cutting." |
+| The egg ledges | (Hild) "Eggs on the west cliffs, if someone climbs for them." (from day 10, at a meal) | Climb down to the egg ledges on the west cliffs. | (Hild) "The marked holds go down. Rest on the ledges." | (Hild) "West cliffs, above the eagle's stack. Don't look down. Do look at the eagle." |
+| The Skerry of the Drowned | (Hild) "The rock off the east shore. Folk say the drowned stand there." (at Naust Cove, the first spring tides after the launch) | Cross to the Skerry of the Drowned at a spring low. | (Hild) "The stones show at the spring lows. Walk out then." | (Hild) "Spring tides, low water, from the shore past Naust Cove. Back before it turns." |
 
 ## 14 / Companions on the road
 *Two residents walking with the steerer talk about what they see, to the steerer and to each other.*

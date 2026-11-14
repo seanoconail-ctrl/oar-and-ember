@@ -341,6 +341,21 @@ Example, day 90 with 15 mouths, 2 houses, 3 cows, 12 sheep:
 food 563 rd   fuel 75 loads   hay 25 loads
 ```
 
+### Island resource nodes
+*Stage 14 (decision S14-15): the nodes on Skarvholm that the steerer gathers from directly, by scene (Book 9 section 03, "Tide, season, secrets and resources"; Book 2 section 10, `ResourceNode`). A node exists only in its seasons (or days) and at its tide; taken, it shows as taken and comes again after its respawn, never out of season. A resident's day of the same work keeps the rates above. **First-pass values, flagged for tuning after the playtest.***
+
+| Node | Scenes | Seasons | Tide | Respawn | Yield | Notes |
+|---|---|---|---|---|---|---|
+| watercress | ZONE_SK_MACHAIR (the Kelda), ZONE_SK_ROOK (the upper stream's pools) | Spring, summer | Any | 3 days | 0.25 rd of fresh greens, keeping 2 days | 5 game minutes, no stamina, no tool; 2 beds at the Kelda, 3 in the upper stream |
+| heather | ZONE_SK_ROOK | Summer, autumn | Any | 10 days | 1 bundle of heather, for thatch and bedding | 30 game minutes and 2 stamina; 4 patches on the slopes |
+| hares | ZONE_SK_ROOK | Spring, summer, autumn, winter | Any | 4 days | 1.5 rd of fresh meat, keeping 2 days | A hare starts from its form when the steerer comes within 4 tiles and runs; taken with the bow (section 06). 3 forms in the heather |
+| bogCotton | ZONE_SK_BOG | Summer | Any | 30 days | 1 bundle of bog cotton, for wicks and stuffing | 10 game minutes, no stamina; 3 stands by the pools |
+| kelp | ZONE_SK_GEO, ZONE_SK_HAGSEAT | Spring, summer, autumn, winter | Low water | 2 days, and again at the dawn after a storm (afterStorm, "Driftwood finds") | 1 load of kelp, for the plots | 20 game minutes and 1 stamina; 2 beds in the geo, 1 under the Hag's Seat. What kelp does for the plots comes with their rules |
+| seals | ZONE_SK_SEALCAVE | Days 65 to 85 (the pups) | Low water | Once a year: at most 3 taken in a season | 20 rd of fresh meat and 1 hide | Taken with a spear or an axe at the haul-out in the cove. Killing a seal angers the seal-kin (Book 4 section 02): counted as the fact `sealsKilled`; what the anger does is deferred (decision S14-20) |
+| eggs | ZONE_SK_CLIFFS | Days 10 to 40 | Any | 3 days a ledge | Eggs, 4 rd a climb (Food items) | 3 ledges, each by its marked climb (Book 9 section 03) |
+| peat | ZONE_SK_BOG | Spring, summer | Any | A bank gives 10 loads a season, then is cut back until the next spring | 1 load of wet peat a cut, at peatCut's rate (90 game minutes and 4 stamina) | Dries over peatDry (Fuel and hay) before use; needs a peat spade; 4 banks on the bog's south |
+| rockFish | ZONE_SK_NAUST, ZONE_SK_SKERRY | Spring, summer, autumn, winter (winter on calm days only) | Any | A rock gives the season's "Fishing from shore" catch a day | 1 fresh fish a catch (Food items) | The shore-fishing timed task (section 21, timedTasks) from a fishing rock; 2 rocks in the cove, 2 on the east shore |
+
 ## 04 / Cargo, trade and silver
 ### Cargo values (oz of silver at a fair market)
 | Lot or item | Value | Slots |
@@ -536,6 +551,21 @@ food 563 rd   fuel 75 loads   hay 25 loads
 | climbEmpty | Slides down 1 tile per second to the last ledge or the foot of the route; a slide of more than 2 tiles costs 10 vitality per tile beyond 2 |  |
 | swimEmpty | Starts to sink: 6 s to reach water no deeper than the waist band, then drowning at 10 vitality per second; reaching the shallows ends it |  |
 | waistWadeEmpty | Speed factor x0.5 again until 25 stamina is regained |  |
+
+### Movement verbs
+*Stage 14 (decision S14-13): the verbs Book 2 section 10 describes ("Movement verbs"), with the climb, swim, slide and sink numbers in the two tables above. Starting values, for tuning after playtests.*
+
+| Key | Value | Notes |
+|---|---|---|
+| jumpGap | 1.5 tiles | The widest gap jumped, from a marked take-off to a marked landing (Book 9 section 12) |
+| jumpStamina | 6 | Spent at the take-off; with less, the jump is refused |
+| crawlSpeed | 0.6 tiles per second | Through a marked crawl only |
+| crawlCarry | Nothing | No load and no carried person passes a crawl; the steerer sets a load down at its mouth |
+| pushSpeed | 0.8 tiles per second | Pushing or pulling a heavy object along its line |
+| pushStamina | 2 per second | While the object moves |
+| climbLedgeEvery | 12 tiles or fewer | Climbing distance between rests on a marked route (12 tiles at climb speed costs 72 stamina, within a full bar) |
+| bogSoftRain | 0.8 | Speed factor on the bog's soft ground while it rains, on top of the mode's speed |
+| climbFallFloor | 10 vitality | A slide down a marked climb (climbEmpty) never leaves the climber below this: on Skarvholm's egg ledges a fall costs vitality, not life (Book 9 section 03) |
 
 ### Stamina capacity
 *The bar's maximum, shown as its length, with each reason named on screen (Book 8 section 10 wording).*
@@ -2272,6 +2302,66 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | keenEyedNotice | A keen-eyed companion within 4 tiles remarks on the entrance (section 08, Traits) |
 | iceCurtain | The cave behind the falls in winter: 6 axe blows (90 game minutes, noise 10 tiles) or one blow of the Cailleach's maul |
 | weirClosed | The otter-cave is closed while the Ford is in spate (section 14) |
+
+### Stopping points
+*Stage 14 (decision S14-19): what the density walker counts (Book 9 section 13). A stop counts when it comes on screen within the stopping distance of the walker.*
+
+| Key | Value | Notes |
+|---|---|---|
+| stopWithin | 7 tiles | A stopping point counts once it is on screen and within this distance of the walker on the path |
+| stopKinds | Finds, points of interest, resource nodes in season, anchored life and view points | A find is a Chapter 1 find or a collectible not yet taken; a point of interest is Book 9's (a secret's place, a landing, a building); a resource node only while it exists (its season and tide); anchored life is wildlife that keeps to a place (a seal on its rock, a gull on its stand, a hare's form, the eagle on its stack), not wildlife passing; a view point is a place the plan marks for its view (Rook Hill's summit, the Hag's Seat, the cliff top over the eagle stack) |
+| stopIntervalWalk | 40 to 60 tiles | stopInterval at the walk speed (section 02): the walker's gap between stops is measured in tiles along the path |
+
+### Skarvholm collectibles
+*Stage 14 (decision S14-16): how many of each of Book 1 section 11's collectibles lie on Skarvholm (Book 9 section 03, "Collectibles on Skarvholm"). **Flagged** for the user's review.*
+
+| Kind | On Skarvholm | Notes |
+|---|---|---|
+| shells | 6 | The strand's cowries (a Chapter 1 find) count as the first |
+| carvedStones | 6 | The machair's carved slab and the cairn's kerbstone (Chapter 1 finds) count as two |
+| psalterPages | 5 | The rest of the hermit's book is at Kilbrecc, in a later stage |
+| namesOfTheDead | Up to 5 | One each time the spring tides come round, on the Skerry of the Drowned (namesPerSpring, below) |
+| songs | 0 | None is learned on Skarvholm in Stage 14 |
+| lore | 6 | One for each power: Rán (the Skerry), the Cailleach (the Hag's Seat), the hill-folk (the cairn), the seal-kin (Seal Cave), the Bog King (the bog), Manannán (the deep passage) |
+| offPath | 4 tiles | Each lies at least this far from the shortest ways between its scene's links, landings and waking place |
+
+### Grey Men alignment
+*Stage 14 (decision S14-12; Book 9 section 03, "The Grey Men alignment"). **Flagged.***
+
+| Key | Value | Notes |
+|---|---|---|
+| alignmentWindow | 30 game minutes from first light | First light is the season's "Light from" (section 02, Daylight) |
+| festivalMornings | Days 31, 61, 91 and 105 in Year 1 | Bealtaine, Lúnasa, Samhain and Yule (Book 4 section 04); Imbolc from Year 2. First light: 04:30 on day 31 (before dayStart, so out of reach), 07:00 on day 61, 08:30 on days 91 and 105 |
+| doorWaitTiles | 3 tiles | Someone stands within this distance of the cairn's east door in the window |
+| alignmentFog | Fog hides the sun: no alignment that morning | Any other weather lets it through |
+
+### Deep passage
+*Stage 14 (decision S14-9): the Seal Cave's deep passage (Book 9 section 16). Starting values, for tuning after the playtest.*
+
+| Key | Value | Notes |
+|---|---|---|
+| passageOpen | Spring-tide days only, inside tidalGroundWindow | springLowExtra (section 02) |
+| lowestPointCloses | At the window's close | The `v` tiles turn deep |
+| poolRises | Waist at 15 game minutes after the window's close, deep at 30 | The `k` tiles |
+| floorCloses | 30 game minutes after the window's close | The banks and the floor |
+| turningWake | The waking hour, on the cairn mound, with the Cold reason | The hill-folk's turning: for whoever sleeps or collapses on the cairn side of the lowest point once it is deep (section 02, dayStart and collapsePenalty; section 06, Stamina capacity) |
+
+### Skerry of the Drowned
+| Key | Value | Notes |
+|---|---|---|
+| causewayOpen | Spring-tide days only, inside tidalGroundWindow | springLowExtra (section 02) |
+| namesPerSpring | 1 | One of the drowned comes forward each time the spring tides come round (the three spring-tide days); 5 in all, in Book 9's order |
+
+### Year 1 secrets
+*Stage 14 (decision S14-26): what the island's other secrets give (Book 9 section 03). **First-pass values, flagged.***
+
+| Key | Value | Notes |
+|---|---|---|
+| bogOfferingShows | Summer, once 2 loads of peat are cut from the bank at (33, 13) | The bronze cauldron's rim shows in the cut face |
+| bogOfferingLeft | Nothing but its story | Left in the bank: the fact `bog.offering.left`; Faith-minded residents approve (a fact for later) |
+| bogOfferingTaken | A bronze cauldron, worth 8 oz of silver in trade | Taken: `SACRED_TAKEN` (Book 6 section 01) and the fact `bog.keeper.offended`; what the keeper does comes later |
+| behindTheFalls | A carved stone | A knee-deep wade at the pool's edge |
+| oldNaust | A carved stone | Found by walking the line of stones to its end |
 
 ## 21 / Controls and camera
 *Mouse-first controls in the style of a farming RPG, with keyboard-only and gamepad play kept whole (Book 2 section 21; Book 7 section 14, Camera feel). The logical viewport, tiles and sight ranges are unchanged.*
