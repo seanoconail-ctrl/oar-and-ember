@@ -16,6 +16,7 @@ import { describe, expect, it } from 'vitest';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import { campHooks } from '../../src/scenes/camp.ts';
 import { zoneScene } from '../../src/scenes/zoneScene.ts';
+import { sceneSprites } from '../../src/render/scene.ts';
 import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { tileBlocks, tileOf } from '../../src/sim/land/zoneMap.ts';
@@ -72,7 +73,8 @@ function drawable(world: ReturnType<typeof start>['world']): string[] {
     highlight: null,
   });
   const missing: string[] = [];
-  for (const s of scene.sprites) {
+  // Every sprite drawn, the plants' batch among them (decision DH-161).
+  for (const s of sceneSprites(scene)) {
     const sheet = sheets.get(s.sheet);
     if (sheet === undefined) missing.push(`${s.sheet} (no sheet)`);
     else if (sheet.frames.get(s.frame) === undefined) missing.push(`${s.sheet} ${s.frame}`);

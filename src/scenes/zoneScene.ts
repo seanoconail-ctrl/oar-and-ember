@@ -12,9 +12,11 @@ import type { Id } from '../core/ids.ts';
 import { phaseOf, TILE, tileState, visualCorners } from '../render/autotile.ts';
 import { hash01 } from '../render/noise.ts';
 import type { Anim } from '../render/sheet.ts';
+import { plantSprite } from '../render/scene.ts';
 import type {
   LightPool,
   Phase,
+  PlantBatch,
   Scene,
   SceneEffects,
   SceneSprite,
@@ -22,7 +24,16 @@ import type {
   Wade,
 } from '../render/scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
-import { gustGrid, plantLean, STRAND_WIND, SWAY_CALM, SWAY_PERIOD } from '../render/wind.ts';
+import {
+  gustCell,
+  gustGridSize,
+  gustSampled,
+  gustValues,
+  plantLean,
+  STRAND_WIND,
+  SWAY_CALM,
+  SWAY_PERIOD,
+} from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import { itemShown } from '../sim/land/onFoot.ts';
 import type { FactView, OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
@@ -145,12 +156,36 @@ interface IndexedPlant {
   readonly c2: number;
   /** Frame names for leans -3..3. */
   readonly frames: readonly string[];
-  /** The line it sorts on, if not its foot: turf on a raised thing (the cairn) sorts with it. */
-  readonly sort?: number;
+  /**
+   * The line it sorts on, if not its foot: turf on a raised thing (the cairn) sorts with it.
+   * Always present (undefined when it sorts on its foot), so every plant has one shape.
+   */
+  readonly sort: number | undefined;
+}
+/**
+ * Every plant of the zone in one set of typed arrays, row after row in the rows' order
+ * (decision DH-161): plant i of row r is at rowStart[r] + i. `sort` is NaN for a plant that sorts
+ * on its foot.
+ */
+interface FlatPlants {
+  readonly x: Float64Array;
+  readonly y: Float64Array;
+  readonly phase: Float64Array;
+  readonly s1: Float64Array;
+  readonly c1: Float64Array;
+  readonly s2: Float64Array;
+  readonly c2: Float64Array;
+  readonly tall: Uint8Array;
+  readonly sort: Float64Array;
+  /** Each plant's frames for leans -3..3, as the first of seven ids in `names`. */
+  readonly frame0: Uint16Array;
+  readonly names: readonly string[];
+  readonly rowStart: Int32Array;
 }
 interface ZoneIndex {
   readonly decals: readonly (readonly (readonly [number, number, number])[])[];
   readonly plants: readonly (readonly IndexedPlant[])[];
+  readonly flat: FlatPlants;
 }
 const indexCache = new WeakMap<ZoneMap, ZoneIndex>();
 function zoneIndex(map: ZoneMap): ZoneIndex {
@@ -179,13 +214,139 @@ function zoneIndex(map: ZoneMap): ZoneIndex {
       tall: kind === 'marram' || kind === 'tussock',
       frames,
       // Just after the band it grows on (Stage 10: the turf on the Hollow Cairn).
-      ...(sort === undefined ? {} : { sort: sort + 0.5 }),
+      sort: sort === undefined ? undefined : sort + 0.5,
     });
   }
-  for (const row of plants) row.sort((a, b) => a.y - b.y || a.x - b.x);
-  const index = { decals, plants };
+  // Each row in the order the draw list sorts plants on (decision DH-161): the rounded foot line,
+  // then the rounded x, then the exact position. The camera is always whole pixels (clampCamera),
+  // so this is the drawn order and the draw list's sort meets one long run; plants that tie on
+  // both rounded keys keep their exact (y, x) order, as before, so nothing is drawn differently.
+  for (const row of plants)
+    row.sort(
+      (a, b) =>
+        Math.round(a.y) - Math.round(b.y) ||
+        Math.round(a.x) - Math.round(b.x) ||
+        a.y - b.y ||
+        a.x - b.x,
+    );
+  const total = plants.reduce((n, row) => n + row.length, 0);
+  const flat: FlatPlants = {
+    x: new Float64Array(total),
+    y: new Float64Array(total),
+    phase: new Float64Array(total),
+    s1: new Float64Array(total),
+    c1: new Float64Array(total),
+    s2: new Float64Array(total),
+    c2: new Float64Array(total),
+    tall: new Uint8Array(total),
+    sort: new Float64Array(total),
+    frame0: new Uint16Array(total),
+    names: [...names.values()].flat(),
+    rowStart: new Int32Array(plants.length + 1),
+  };
+  // Each kind's seven frames lie together in `names`, in the order the kinds were first met.
+  const first = new Map<readonly string[], number>();
+  [...names.values()].forEach((frames, k) => first.set(frames, k * 7));
+  let i = 0;
+  plants.forEach((row, r) => {
+    flat.rowStart[r] = i;
+    for (const p of row) {
+      flat.x[i] = p.x;
+      flat.y[i] = p.y;
+      flat.phase[i] = p.phase;
+      flat.s1[i] = p.s1;
+      flat.c1[i] = p.c1;
+      flat.s2[i] = p.s2;
+      flat.c2[i] = p.c2;
+      flat.tall[i] = p.tall ? 1 : 0;
+      flat.sort[i] = p.sort ?? Number.NaN;
+      flat.frame0[i] = first.get(p.frames) ?? 0;
+      i++;
+    }
+  });
+  flat.rowStart[plants.length] = i;
+  const index = { decals, plants, flat };
   indexCache.set(map, index);
   return index;
+}
+
+/**
+ * The plants in view for a camera (decision DH-161): which plants, and where they are drawn and
+ * sorted. These depend only on the camera, the share drawn and the cleared floor, so they are
+ * kept while those stay the same (the camera often stands still); only the leans change a frame.
+ */
+interface PlantsInView {
+  readonly key: string;
+  readonly ids: Int32Array;
+  /** Each plant's gust cell and weights on the view's gust grid (`gustCell`). */
+  readonly cell: Int32Array;
+  readonly tx: Float64Array;
+  readonly ty: Float64Array;
+  readonly x: Float64Array;
+  readonly y: Float64Array;
+  readonly sort: Float64Array;
+}
+const inViewCache = new WeakMap<ZoneIndex, PlantsInView>();
+/** The plants' gust grid: the view and a margin (as plantBatch samples it). */
+const { cols: GUST_COLS, rows: GUST_ROWS } = gustGridSize(LOGICAL_WIDTH + 32, LOGICAL_HEIGHT + 48);
+function plantsInView(
+  index: ZoneIndex,
+  camera: { x: number; y: number },
+  share: number,
+  cleared: { readonly x: number; readonly y: number; readonly r: number } | null,
+): PlantsInView {
+  const key = `${camera.x},${camera.y},${share},${
+    cleared === null ? '' : `${cleared.x},${cleared.y},${cleared.r}`
+  }`;
+  const hit = inViewCache.get(index);
+  if (hit?.key === key) return hit;
+  const f = index.flat;
+  const r0 = Math.max(0, Math.floor(camera.y / TILE) - 1);
+  const r1 = Math.min(f.rowStart.length - 2, Math.floor((camera.y + LOGICAL_HEIGHT + 16) / TILE) + 1);
+  const from = f.rowStart[r0] ?? 0;
+  const to = f.rowStart[r1 + 1] ?? from;
+  const ids = new Int32Array(Math.max(0, to - from));
+  const r2 = cleared === null ? 0 : cleared.r * cleared.r;
+  let n = 0;
+  for (let i = from; i < to; i++) {
+    const x = f.x[i] ?? 0;
+    const y = f.y[i] ?? 0;
+    if (x < camera.x - 10 || x > camera.x + LOGICAL_WIDTH + 10) continue;
+    if (share < 1 && (f.phase[i] ?? 0) >= share) continue;
+    // Inside the cleared floor (squared, not Math.hypot).
+    if (cleared !== null) {
+      const cx = x - cleared.x;
+      const cy = y - cleared.y;
+      if (cx * cx + cy * cy < r2) continue;
+    }
+    ids[n++] = i;
+  }
+  const view: PlantsInView = {
+    key,
+    ids: ids.slice(0, n),
+    cell: new Int32Array(n),
+    tx: new Float64Array(n),
+    ty: new Float64Array(n),
+    x: new Float64Array(n),
+    y: new Float64Array(n),
+    sort: new Float64Array(n),
+  };
+  for (let k = 0; k < n; k++) {
+    const i = view.ids[k] ?? 0;
+    const x = f.x[i] ?? 0;
+    const y = f.y[i] ?? 0;
+    const sort = f.sort[i] ?? Number.NaN;
+    view.x[k] = x - camera.x;
+    view.y[k] = y - camera.y;
+    const g = gustCell(GUST_COLS, GUST_ROWS, camera.x - 16, camera.y - 16, x, y);
+    view.cell[k] = g.cell;
+    view.tx[k] = g.tx;
+    view.ty[k] = g.ty;
+    // The draw list sorts an actor without its own sort by its rounded foot line: the same.
+    view.sort[k] = Number.isNaN(sort) ? Math.round(y - camera.y) : sort - camera.y;
+  }
+  inViewCache.set(index, view);
+  return view;
 }
 
 export interface Walker {
@@ -211,8 +372,11 @@ export function decalSprites(map: ZoneMap, camera: { x: number; y: number }): Sc
   return out;
 }
 
-/** Plants in view, each leaning with the wind, its own sway and anyone walking through it. */
-export function plantSprites(
+/**
+ * Plants in view as one batch (decision DH-161), each leaning with the wind, its own sway and
+ * anyone walking through it; `at` is where they stand among the scene's other sprites.
+ */
+export function plantBatch(
   map: ZoneMap,
   camera: { x: number; y: number },
   seconds: number,
@@ -223,13 +387,15 @@ export function plantSprites(
   share = 1,
   /** A circle of the world (px) where no plant grows: a cleared floor (Stage 7's S1 court). */
   cleared: { readonly x: number; readonly y: number; readonly r: number } | null = null,
-): SceneSprite[] {
-  const out: SceneSprite[] = [];
+  at = 0,
+): PlantBatch {
   const index = zoneIndex(map);
-  const r0 = Math.max(0, Math.floor(camera.y / TILE) - 1);
-  const r1 = Math.floor((camera.y + LOGICAL_HEIGHT + 16) / TILE) + 1;
-  const near: Walker[] = [];
-  const gust = gustGrid(
+  const f = index.flat;
+  const view = plantsInView(index, camera, share, cleared);
+  const n = view.ids.length;
+  const frameId = new Uint16Array(n);
+  // The gust grid over the view, read at each plant's cell (as gustGrid's sampler does).
+  const gv = gustValues(
     wind,
     camera.x - 16,
     camera.y - 16,
@@ -243,40 +409,63 @@ export function plantSprites(
   const ca1 = Math.cos(a1);
   const sa2 = Math.sin(a2);
   const ca2 = Math.cos(a2);
-  for (let r = r0; r <= r1; r++) {
-    for (const plant of index.plants[r] ?? []) {
-      const { x, y } = plant;
-      if (x < camera.x - 10 || x > camera.x + LOGICAL_WIDTH + 10) continue;
-      if (share < 1 && plant.phase >= share) continue;
-      if (cleared !== null && Math.hypot(x - cleared.x, y - cleared.y) < cleared.r) continue;
-      near.length = 0;
-      for (const w of walkers) if (Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8) near.push(w);
-      // The same lean as plantLean (render/wind.ts), inlined for the thousands of plants a
-      // frame: the sway's sines by angle addition from the frame's own sin and cos.
-      const g = gust(x, y);
-      const push = wind.dirX * wind.strength * (0.6 + (plant.tall ? 2.6 : 1.9) * g);
-      const sw = (sa1 * plant.c1 + ca1 * plant.s1) * 0.7 + (sa2 * plant.c2 + ca2 * plant.s2) * 0.3;
-      let lean = push + sw * (reducedMotion ? 0.35 : SWAY_CALM + 0.6 * g);
-      for (const w of near) {
+  // Only plants within a walker's reach of someone can be pushed: the band of lines they span.
+  let wy0 = Infinity;
+  let wy1 = -Infinity;
+  for (const w of walkers) {
+    wy0 = Math.min(wy0, w.y - 8);
+    wy1 = Math.max(wy1, w.y + 8);
+  }
+  const calm = reducedMotion ? 0.35 : SWAY_CALM;
+  const gusted = reducedMotion ? 0 : 0.6;
+  for (let k = 0; k < n; k++) {
+    const i = view.ids[k] ?? 0;
+    const x = f.x[i] ?? 0;
+    const y = f.y[i] ?? 0;
+    // The same lean as plantLean (render/wind.ts), inlined for the thousands of plants a
+    // frame: the sway's sines by angle addition from the frame's own sin and cos.
+    const g = gustSampled(gv, GUST_COLS, view.cell[k] ?? 0, view.tx[k] ?? 0, view.ty[k] ?? 0);
+    const push = wind.dirX * wind.strength * (0.6 + ((f.tall[i] ?? 0) === 1 ? 2.6 : 1.9) * g);
+    const sw =
+      (sa1 * (f.c1[i] ?? 0) + ca1 * (f.s1[i] ?? 0)) * 0.7 +
+      (sa2 * (f.c2[i] ?? 0) + ca2 * (f.s2[i] ?? 0)) * 0.3;
+    let lean = push + sw * (calm + gusted * g);
+    if (y > wy0 && y < wy1)
+      for (const w of walkers) {
+        if (!(Math.abs(w.x - x) < 12 && Math.abs(w.y - y) < 8)) continue;
         const dx = x - w.x;
         const dy = (y - w.y) * 1.6;
         const d = Math.hypot(dx, dy);
         if (d < 11) lean += Math.sign(Math.abs(dx) > 0.5 ? dx : 1) * ((11 - d) / 11) * 4.5;
       }
-      lean = Math.max(-3, Math.min(3, Math.round(lean)));
-      // Built without a spread: thousands a frame, and one shape for all of them.
-      out.push({
-        sheet: PLANT_SHEET,
-        frame: plant.frames[UPRIGHT + lean] ?? '',
-        x: x - camera.x,
-        y: y - camera.y,
-        layer: 'actor',
-        // The draw list sorts an actor without its own sort by its rounded foot line: the same.
-        sort: plant.sort === undefined ? Math.round(y - camera.y) : plant.sort - camera.y,
-      });
-    }
+    lean = Math.max(-3, Math.min(3, Math.round(lean)));
+    frameId[k] = (f.frame0[i] ?? 0) + UPRIGHT + lean;
   }
-  return out;
+  return {
+    sheet: PLANT_SHEET,
+    count: n,
+    frames: f.names,
+    frameId,
+    x: view.x,
+    y: view.y,
+    sort: view.sort,
+    at,
+  };
+}
+
+/** Plants in view as sprites (the batch, one sprite a plant). */
+export function plantSprites(
+  map: ZoneMap,
+  camera: { x: number; y: number },
+  seconds: number,
+  wind: Wind,
+  walkers: readonly Walker[],
+  reducedMotion: boolean,
+  share = 1,
+  cleared: { readonly x: number; readonly y: number; readonly r: number } | null = null,
+): SceneSprite[] {
+  const b = plantBatch(map, camera, seconds, wind, walkers, reducedMotion, share, cleared);
+  return Array.from({ length: b.count }, (_, j) => plantSprite(b, j));
 }
 
 /** A sprite of the wildlife and its shadow, at a moment of the visual clock. */
@@ -1763,20 +1952,20 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     sprites.push({ sheet: MISSILE_SHEET, frame: 'shadow/-/0', x, y, layer: 'decal' });
   }
   const detail = visual?.effects?.detail ?? 2;
-  sprites.push(
-    ...plantSprites(
-      map,
-      camera,
-      seconds,
-      wind,
-      walkers,
-      reduced,
-      detail === 0 ? 0.45 : 1,
-      // At S1 the court is cleared to its old flagged floor.
-      map.broch !== undefined && camp !== undefined && camp.stage !== 'S0'
-        ? { x: map.broch.x * map.tile, y: map.broch.y * map.tile, r: map.broch.inner * map.tile }
-        : null,
-    ),
+  // The plants as one batch, placed here in the scene's order (decision DH-161).
+  const plants = plantBatch(
+    map,
+    camera,
+    seconds,
+    wind,
+    walkers,
+    reduced,
+    detail === 0 ? 0.45 : 1,
+    // At S1 the court is cleared to its old flagged floor.
+    map.broch !== undefined && camp !== undefined && camp.stage !== 'S0'
+      ? { x: map.broch.x * map.tile, y: map.broch.y * map.tile, r: map.broch.inner * map.tile }
+      : null,
+    sprites.length,
   );
   for (const m of visual?.marks ?? []) {
     const x = m.x - camera.x;
@@ -1795,5 +1984,6 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     phase: input.phase,
     pools,
     ...(effects === undefined ? {} : { effects }),
+    ...(plants.count === 0 ? {} : { plants }),
   };
 }

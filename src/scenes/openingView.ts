@@ -16,6 +16,7 @@
  *
  * No `Math.random`: particles draw from a seeded generator; nothing here changes the simulation.
  */
+import { withSprites } from '../render/scene.ts';
 import type { Scene, SceneSprite } from '../render/scene.ts';
 import type { CampDef } from '../content/registry.ts';
 import { doorsHere } from '../sim/land/doors.ts';
@@ -353,6 +354,9 @@ const H = 360;
 export function decorate(scene: Scene, input: DecorateInput): Scene {
   const { world, ctx, map, onFoot, camera, seconds, tick } = input;
   const sprites: SceneSprite[] = [...scene.sprites];
+  // How many of the sprites come before the plants (decision DH-161): a sprite taken out before
+  // them moves them up one, as it did when they were in this list.
+  let plantsAt = scene.plants?.at ?? 0;
   let effects = scene.effects;
   const pools = [...scene.pools];
   const scr = (x: number, y: number) => ({ x: x - camera.x, y: y - camera.y });
@@ -485,9 +489,15 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
   for (let i = sprites.length - 1; i >= 0; i--) {
     const s = sprites[i];
     if (s === undefined) continue;
+    // Only the seal and the gulls care how near the steerer is (a hypot for every sprite cost a
+    // millisecond a frame among the machair's thousands of plants: decision DH-161).
+    const bird = s.sheet === 'actor_gull' || s.sheet === 'actor_cormorant';
+    if (s.sheet !== 'actor_seal' && !bird) continue;
     const d = Math.hypot(s.x - pa.x, s.y - pa.y);
-    if (s.sheet === 'actor_seal' && d < sink && map.zone === ctx.def.zone && s.y > pa.y + 40)
+    if (s.sheet === 'actor_seal' && d < sink && map.zone === ctx.def.zone && s.y > pa.y + 40) {
       sprites.splice(i, 1);
+      if (i < plantsAt) plantsAt--;
+    }
     else if (s.sheet === 'actor_gull' && s.frame.startsWith('stand') && d < lift) {
       const facing = s.x >= pa.x ? 'e' : 'w';
       sprites[i] = {
@@ -496,8 +506,10 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
         y: s.y - 10 - (seconds % 1) * 4,
         sort: s.y + 40,
       };
-    } else if (quiet && (s.sheet === 'actor_gull' || s.sheet === 'actor_cormorant'))
+    } else if (quiet && (s.sheet === 'actor_gull' || s.sheet === 'actor_cormorant')) {
       sprites.splice(i, 1);
+      if (i < plantsAt) plantsAt--;
+    }
   }
   // The pale light at the Hag's Seat on the first evening, seen far off in the west.
   if (
@@ -586,7 +598,7 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
       });
     }
   }
-  drawSeaBurial(sprites, input);
+  plantsAt = drawSeaBurial(sprites, input, plantsAt);
   sprites.push(...input.fx.sprites(camera));
   // The first rain: a light overlay slanting downwind that never hides a threat (Book 7 section 08).
   const rain = input.rain;
@@ -604,7 +616,14 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
         sort: 1e6,
       });
     }
-  return { ...scene, sprites, pools, ...(effects === undefined ? {} : { effects }) };
+  const plants = scene.plants;
+  return {
+    ...scene,
+    sprites,
+    pools,
+    ...(effects === undefined ? {} : { effects }),
+    ...(plants === undefined || plants.at === plantsAt ? {} : { plants: { ...plants, at: plantsAt } }),
+  };
 }
 
 // ------------------------------------------------------------------------- the sea burial
@@ -719,18 +738,23 @@ export function seaBurialView(
  * riding lower, sinking under the water's mask (never faded), the waves' foam bands up the
  * shingle, the trail, the bubbles and the ring of foam where it went, and the gulls after.
  */
-function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput): void {
+/** Returns how many sprites come before the plants once his drawn body has given way. */
+function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput, plantsAt: number): number {
   const { world, ctx, map, camera, seconds } = input;
   const v = seaBurialView(world, ctx, map, seconds);
   const sea = ctx.sea;
-  if (v === null || sea === null) return;
+  if (v === null || sea === null) return plantsAt;
+  let at = plantsAt;
   const sx = Math.round(v.x - camera.x);
   const sy = Math.round(v.y - camera.y);
   // His drawn body (its sheet and layers) gives way to the bier.
   for (let i = sprites.length - 1; i >= 0; i--) {
     const sp = sprites[i];
     if (sp?.sheet.includes('thorkel') !== true) continue;
-    if (Math.abs(sp.x - sx) <= 1.5 && Math.abs(sp.y - sy) <= 1.5) sprites.splice(i, 1);
+    if (Math.abs(sp.x - sx) <= 1.5 && Math.abs(sp.y - sy) <= 1.5) {
+      sprites.splice(i, 1);
+      if (i < at) at--;
+    }
   }
   const ramp = input.seaRamp ?? SEA_FALLBACK;
   const deep = v.phase === 'SINK' || v.phase === 'GONE' ? 4 : v.phase === 'DRIFT' ? 5 : 6;
@@ -748,9 +772,9 @@ function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput): void {
     sort: sy,
     ...(v.mask > 0 ? { wade: { mask: v.mask, colour } } : {}),
   });
-  if (v.phase === 'LAID') return;
+  if (v.phase === 'LAID') return at;
   const ss = seaBurialState(world);
-  if (ss === null) return;
+  if (ss === null) return at;
   const tl = seaTimeline(seaBalanceFor(ss, sea));
   const T = map.tile;
   // The three waves' foam bands rushing up the shingle and drawing back, each further up.
@@ -832,6 +856,7 @@ function drawSeaBurial(sprites: SceneSprite[], input: DecorateInput): void {
         sort: sy + 100,
       });
     }
+  return at;
 }
 
 /**
@@ -1010,7 +1035,8 @@ export function coldOpenScene(
   return {
     drawing,
     scene: {
-      ...scene,
+      // Black: nothing drawn, the plants neither.
+      ...(black >= 1 ? withSprites(scene, []) : scene),
       sprites: black >= 1 ? [] : sprites,
       pools: [...scene.pools, ...(black >= 1 ? [] : drawing.pools)],
       phase: flashing ? 'day' : 'night',

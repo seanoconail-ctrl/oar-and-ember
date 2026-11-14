@@ -9,8 +9,14 @@ import type { Manifest } from '../render/atlas.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
-import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
-import { ART_TEST_CASES, artTestScene, sheetPreviewScene } from './artTest.ts';
+import { buildDrawPlan, parseRenderStyle } from '../render/scene.ts';
+import {
+  ART_TEST_CASES,
+  artTestScene,
+  PLANT_TEST_CASE,
+  plantTestScene,
+  sheetPreviewScene,
+} from './artTest.ts';
 import type { ArtTestCase } from './artTest.ts';
 
 const manifests = import.meta.glob<Manifest>('../../assets/atlases/*.json', {
@@ -66,11 +72,13 @@ export async function showArtView(
   } else {
     const which = params.get('case') ?? 'front';
     const known = ART_TEST_CASES.find((c) => c === which);
-    if (known === undefined) throw new Error(`No art test case "${which}"`);
-    scene = artTestScene(known satisfies ArtTestCase);
-    label = `art test ${known}`;
+    if (which === PLANT_TEST_CASE) scene = plantTestScene();
+    else if (known === undefined) throw new Error(`No art test case "${which}"`);
+    else scene = artTestScene(known satisfies ArtTestCase);
+    label = `art test ${which}`;
   }
-  const list = buildDrawList(scene, byName, parseRenderStyle(renderJson).cutawayFade);
+  // Drawn as play draws (the plan: the plants merged in, decision DH-161).
+  const list = buildDrawPlan(scene, byName, parseRenderStyle(renderJson).cutawayFade);
   renderer.render(scene, list);
   // Drawn again every frame, as play is: the canvas keeps no drawing buffer between frames, and a
   // compositor may read it again later (WebKit's screenshots of a frame drawn once came out black).

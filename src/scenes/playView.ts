@@ -36,7 +36,7 @@ import { createSceneRenderer } from '../render/glRenderer.ts';
 import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
-import { buildDrawList, parseRenderStyle } from '../render/scene.ts';
+import { buildDrawPlan, parseRenderStyle, withSprites } from '../render/scene.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
 import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
@@ -329,7 +329,7 @@ export function* preparePlay(
         steererSheet: look.steerer.body,
       }),
     });
-    prepared.renderer.render(scene, buildDrawList(scene, prepared.geometry, style.cutawayFade));
+    prepared.renderer.render(scene, buildDrawPlan(scene, prepared.geometry, style.cutawayFade));
     finish();
     yield `draw${body}`;
     // Design addendum 2.5: the cold open's storm sheets, drawn once so their textures are on the
@@ -342,13 +342,13 @@ export function* preparePlay(
         ['fx_storm_drops', 'rain/-/0'],
         ['fx_storm_mist', 'low/-/0'],
       ] as const;
-      const warm = {
-        ...scene,
-        sprites: storm
+      const warm = withSprites(
+        scene,
+        storm
           .filter(([sheet]) => prepared.geometry.has(sheet))
           .map(([sheet, frame]) => ({ sheet, frame, x: -200, y: -200, layer: 'actor' as const })),
-      };
-      prepared.renderer.render(warm, buildDrawList(warm, prepared.geometry, style.cutawayFade));
+      );
+      prepared.renderer.render(warm, buildDrawPlan(warm, prepared.geometry, style.cutawayFade));
       finish();
       yield 'storm';
     }
@@ -3423,7 +3423,7 @@ export function startPlay(
                     : null,
               });
       if (drawThis) {
-        renderer.render(drawn, buildDrawList(drawn, geometry, style.cutawayFade));
+        renderer.render(drawn, buildDrawPlan(drawn, geometry, style.cutawayFade));
         // The last frame before the pause menu opened: its backdrop and the save's thumbnail.
         pauseView.afterRender(presenter.gl, presenter.viewport, session.menus.timeStopped);
         // An autosave, checkpoint or day-start written since the last frame: its screenshot.

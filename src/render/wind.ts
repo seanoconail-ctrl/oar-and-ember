@@ -84,6 +84,64 @@ export function plantLean(
 
 /** The gust sampled every GRID pixels over a view, for many plants at once. */
 export const GUST_GRID = 16;
+
+/** The grid's size for a view: its columns and rows. */
+export function gustGridSize(width: number, height: number): { cols: number; rows: number } {
+  return { cols: Math.ceil(width / GUST_GRID) + 2, rows: Math.ceil(height / GUST_GRID) + 2 };
+}
+
+/**
+ * Where a point falls on a gust grid at (x0, y0): its cell's index and the weights across and
+ * down. They depend only on the grid's place, so a frame's many plants can keep them while the
+ * view stays put (decision DH-161); `gustSampled` then gives exactly what `gustGrid`'s sampler does.
+ */
+export function gustCell(
+  cols: number,
+  rows: number,
+  x0: number,
+  y0: number,
+  x: number,
+  y: number,
+): { cell: number; tx: number; ty: number } {
+  const fx = Math.max(0, Math.min(cols - 1.001, (x - x0) / GUST_GRID));
+  const fy = Math.max(0, Math.min(rows - 1.001, (y - y0) / GUST_GRID));
+  const i = Math.floor(fx);
+  const j = Math.floor(fy);
+  return { cell: j * cols + i, tx: fx - i, ty: fy - j };
+}
+
+/** The gust grid's values over a view at time t (row by row, `gustGridSize` across). */
+export function gustValues(
+  wind: Wind,
+  x0: number,
+  y0: number,
+  width: number,
+  height: number,
+  t: number,
+): Float32Array {
+  const { cols, rows } = gustGridSize(width, height);
+  const v = new Float32Array(cols * rows);
+  for (let j = 0; j < rows; j++)
+    for (let i = 0; i < cols; i++)
+      v[j * cols + i] = gustAt(wind, x0 + i * GUST_GRID, y0 + j * GUST_GRID, t);
+  return v;
+}
+
+/** The gust at a cell and weights, from a grid's values (the sampler's own arithmetic). */
+export function gustSampled(
+  v: Float32Array,
+  cols: number,
+  cell: number,
+  tx: number,
+  ty: number,
+): number {
+  const a = v[cell] ?? 0;
+  const b = v[cell + 1] ?? 0;
+  const c = v[cell + cols] ?? 0;
+  const d = v[cell + cols + 1] ?? 0;
+  return a + (b - a) * tx + (c - a + (d - c - b + a) * tx) * ty;
+}
+
 export function gustGrid(
   wind: Wind,
   x0: number,
@@ -92,23 +150,10 @@ export function gustGrid(
   height: number,
   t: number,
 ): (x: number, y: number) => number {
-  const cols = Math.ceil(width / GUST_GRID) + 2;
-  const rows = Math.ceil(height / GUST_GRID) + 2;
-  const v = new Float32Array(cols * rows);
-  for (let j = 0; j < rows; j++)
-    for (let i = 0; i < cols; i++)
-      v[j * cols + i] = gustAt(wind, x0 + i * GUST_GRID, y0 + j * GUST_GRID, t);
+  const { cols, rows } = gustGridSize(width, height);
+  const v = gustValues(wind, x0, y0, width, height, t);
   return (x, y) => {
-    const fx = Math.max(0, Math.min(cols - 1.001, (x - x0) / GUST_GRID));
-    const fy = Math.max(0, Math.min(rows - 1.001, (y - y0) / GUST_GRID));
-    const i = Math.floor(fx);
-    const j = Math.floor(fy);
-    const tx = fx - i;
-    const ty = fy - j;
-    const a = v[j * cols + i] ?? 0;
-    const b = v[j * cols + i + 1] ?? 0;
-    const c = v[(j + 1) * cols + i] ?? 0;
-    const d = v[(j + 1) * cols + i + 1] ?? 0;
-    return a + (b - a) * tx + (c - a + (d - c - b + a) * tx) * ty;
+    const { cell, tx, ty } = gustCell(cols, rows, x0, y0, x, y);
+    return gustSampled(v, cols, cell, tx, ty);
   };
 }

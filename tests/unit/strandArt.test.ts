@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { parsePeopleBasics, parseTimeBalance } from '../../src/content/balance.ts';
 import { zoneScene } from '../../src/scenes/zoneScene.ts';
+import { sceneSprites } from '../../src/render/scene.ts';
 import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { FACINGS } from '../../src/sim/land/zoneMap.ts';
@@ -220,7 +221,8 @@ describe('the strand scene', () => {
                     anims,
                     highlight: 'C_HILD',
                   });
-                  for (const s of scene.sprites) {
+                  // The plants' batch included (decision DH-161).
+                  for (const s of sceneSprites(scene)) {
                     if (sheets.get(s.sheet)?.frames.has(s.frame) !== true)
                       missing.add(`${s.sheet} ${s.frame}`);
                   }

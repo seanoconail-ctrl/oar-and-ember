@@ -394,10 +394,27 @@ export function chooseExchange(
 ): ExchangeDef | null {
   const cs = companyState(world, cc.b, view.ticksPerSecond);
   const repeat = cc.b.exchange.repeatSeconds * view.ticksPerSecond;
+  // Each speaker's activity and distance, read once for all the exchanges (they only read the
+  // world, which nothing changes meanwhile): with none fitting, this runs every tick (DH-161).
+  const acts = new Map<Id, ActivityKind>();
+  const away = new Map<Id, number>();
+  const once: CompanyView = {
+    ...view,
+    activity: (id) => {
+      let a = acts.get(id);
+      if (a === undefined) acts.set(id, (a = view.activity(id)));
+      return a;
+    },
+    fromSteerer: (id) => {
+      let d = away.get(id);
+      if (d === undefined) away.set(id, (d = view.fromSteerer(id)));
+      return d;
+    },
+  };
   const fit = cc.def.exchanges.filter((e) => {
     const last = cs.heard[e.id];
     if (last !== undefined && world.tick - last < repeat) return false;
-    return exchangeFits(world, cc, e, view, tile);
+    return exchangeFits(world, cc, e, once, tile);
   });
   if (fit.length === 0) return null;
   const heardAt = (e: ExchangeDef): number => cs.heard[e.id] ?? NEVER;

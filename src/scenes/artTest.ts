@@ -7,7 +7,7 @@
  * - behind: the steerer stands behind the stone, which is cut away;
  * - dusk and night: the front case under dusk and night light, with a lantern pool at night.
  */
-import type { Scene, SceneSprite } from '../render/scene.ts';
+import type { PlantBatch, Scene, SceneSprite } from '../render/scene.ts';
 
 export const ART_TEST_CASES = ['front', 'behind', 'dusk', 'night'] as const;
 export type ArtTestCase = (typeof ART_TEST_CASES)[number];
@@ -63,6 +63,66 @@ export function artTestScene(which: ArtTestCase): Scene {
     sprites,
     phase: which === 'dusk' ? 'dusk' : which === 'night' ? 'night' : 'day',
     pools: which === 'night' ? [{ x: 296, y: 226, radius: 72, colour: [150, 110, 60] }] : [],
+  };
+}
+
+/**
+ * The plants drawn as one batch (decision DH-161): a field of grass, thrift and marram on the
+ * machair ground, round three people, one wading, one standing exactly on a tuft's spot before
+ * the plants in the scene's order and one after them, and the stone cut away in front of the
+ * steerer. The WebGL renderer draws the plan (the batch merged in, by instances); the CPU
+ * reference draws the same plants as plain items: the two must match to the pixel.
+ */
+export const PLANT_TEST_CASE = 'plants';
+export function plantTestScene(): Scene {
+  const kinds = ['grass0', 'grass1', 'grass2', 'grass3', 'thrift0', 'marram0', 'tussock1'];
+  const frames = kinds.flatMap((k) => Array.from({ length: 7 }, (_, i) => `${k}/-/${i}`));
+  const x: number[] = [];
+  const y: number[] = [];
+  const frameId: number[] = [];
+  // A field in rows, fractional and overlapping, in the order zoneScene places them.
+  for (let r = 0; r < 26; r++)
+    for (let c = 0; c < 40; c++) {
+      x.push(120 + c * 10.3 + ((r * 7) % 5) * 0.9);
+      y.push(80 + r * 9.6 + ((c * 3) % 4) * 0.7);
+      frameId.push(((r * 11 + c * 5) % kinds.length) * 7 + ((r + c) % 7));
+    }
+  const plants: PlantBatch = {
+    sheet: 'plant_strand',
+    count: x.length,
+    frames,
+    frameId: Uint16Array.from(frameId),
+    x: Float64Array.from(x),
+    y: Float64Array.from(y),
+    sort: Float64Array.from(y.map((v) => Math.round(v))),
+    at: 0,
+  };
+  const before: SceneSprite[] = [
+    ...ground(),
+    { sheet: 'prop_greymen_stone', frame: 'stand/-/0', x: 320.3, y: 222.4, layer: 'actor', tall: true },
+    { sheet: 'actor_p_steerer_a', frame: 'idle/n/0', x: 324.6, y: 206.7, layer: 'actor', focus: true },
+    // On a tuft's spot (its rounded foot and x), before the plants: drawn under the tuft.
+    { sheet: 'actor_p_steerer_a', frame: 'idle/s/0', x: Math.round(x[205] ?? 0), y: Math.round(y[205] ?? 0), layer: 'actor' },
+  ];
+  const after: SceneSprite[] = [
+    // On another tuft's spot, after the plants: drawn over it.
+    { sheet: 'actor_p_steerer_a', frame: 'idle/s/1', x: Math.round(x[612] ?? 0), y: Math.round(y[612] ?? 0), layer: 'actor' },
+    {
+      sheet: 'actor_p_steerer_a',
+      frame: 'idle/s/2',
+      x: 470.2,
+      y: 300.4,
+      layer: 'actor',
+      wade: { mask: 9, colour: [60, 110, 120] },
+      dark: 0.4,
+    },
+  ];
+  return {
+    background: 'g',
+    sprites: [...before, ...after],
+    phase: 'day',
+    pools: [],
+    plants: { ...plants, at: before.length },
   };
 }
 

@@ -125,6 +125,64 @@ export interface Scene {
   readonly phase: Phase;
   readonly pools: readonly LightPool[];
   readonly effects?: SceneEffects;
+  /**
+   * The plants in view as one batch (decision DH-161), drawn in the actor layer exactly as if they
+   * were sprites placed in `sprites` before index `plants.at`. `sceneSprites` gives the whole list.
+   */
+  readonly plants?: PlantBatch;
+}
+
+/**
+ * Plants as one batch (the user's fourth playtest, decision DH-161): the machair's view holds
+ * about 7,500 tufts of grass, and an object for each in three stages cost about 5 ms of a frame.
+ * Each plant is an actor-layer sprite of `sheet` at (x[j], y[j]), sorted on sort[j], with its own
+ * frame; they come in the order they were placed. Drawn exactly as the same plants placed as
+ * sprites into the scene's list before index `at`.
+ */
+export interface PlantBatch {
+  readonly sheet: string;
+  readonly count: number;
+  /** The frames' names; plant j's frame is frames[frameId[j]]. */
+  readonly frames: readonly string[];
+  readonly frameId: Uint16Array;
+  /** The pivot, in camera-relative logical pixels (a SceneSprite's x and y). */
+  readonly x: Float64Array;
+  readonly y: Float64Array;
+  /** The sort line within the actor layer (a SceneSprite's sort). */
+  readonly sort: Float64Array;
+  /** How many of the scene's sprites come before the plants, for ties in the sort. */
+  readonly at: number;
+}
+
+/** Plant j of a batch as the sprite it stands for. */
+export function plantSprite(b: PlantBatch, j: number): SceneSprite {
+  return {
+    sheet: b.sheet,
+    frame: b.frames[b.frameId[j] ?? 0] ?? '',
+    x: b.x[j] ?? 0,
+    y: b.y[j] ?? 0,
+    layer: 'actor',
+    sort: b.sort[j] ?? 0,
+  };
+}
+
+/** The scene with these sprites in place of its own, and no plants. */
+export function withSprites(scene: Scene, sprites: readonly SceneSprite[]): Scene {
+  return {
+    background: scene.background,
+    sprites,
+    phase: scene.phase,
+    pools: scene.pools,
+    ...(scene.effects === undefined ? {} : { effects: scene.effects }),
+  };
+}
+
+/** Every sprite of the scene, the plants among them where they stand in its order. */
+export function sceneSprites(scene: Scene): SceneSprite[] {
+  const b = scene.plants;
+  if (b === undefined || b.count === 0) return [...scene.sprites];
+  const plants = Array.from({ length: b.count }, (_, j) => plantSprite(b, j));
+  return [...scene.sprites.slice(0, b.at), ...plants, ...scene.sprites.slice(b.at)];
 }
 
 export interface SheetGeometry {
@@ -173,25 +231,61 @@ function overlaps(a: DrawItem, b: DrawItem): boolean {
   return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 }
 
-export function buildDrawList(
+/**
+ * The plants of a draw plan, in draw order (decision DH-161): their canvases' top-left corners
+ * and frames, and where they fall among the other items: the plants from before[k - 1] (0 for the
+ * first) to before[k] are drawn just before items[k], and those from before[items.length] to the
+ * end after the last item.
+ */
+export interface PlantRun {
+  readonly sheet: string;
+  readonly width: number;
+  readonly height: number;
+  readonly count: number;
+  /** The frames' names (the batch's, the same array a frame), and each plant's, in draw order. */
+  readonly frames: readonly string[];
+  readonly frameId: Uint16Array;
+  readonly x: Int32Array;
+  readonly y: Int32Array;
+  readonly before: Uint32Array;
+}
+
+/** What to draw, in order: the items, with the plants' run merged among them. */
+export interface DrawPlan {
+  readonly items: readonly DrawItem[];
+  readonly plants: PlantRun | null;
+}
+
+/**
+ * The draw plan (decision DH-161): the scene's sprites sorted into the draw order (layer, foot
+ * line, x, then their order in the scene), and the plants merged among them by the same order
+ * without an object for each. `buildDrawList` is the same plan as a plain list.
+ */
+export function buildDrawPlan(
   scene: Scene,
   sheets: ReadonlyMap<string, SheetGeometry>,
   cutawayFade: number,
-): DrawItem[] {
+): DrawPlan {
   const sprites = scene.sprites;
   const n = sprites.length;
   const items = new Array<DrawItem>(n);
-  // Sort keys in typed arrays (thousands of plants a frame): layer, foot line, x, then order.
-  // The plants arrive already in foot-line order, so the sort finds long runs.
+  // Sort keys in typed arrays: layer, foot line, x, then order.
   const layerKey = new Uint8Array(n);
   const sortKey = new Float64Array(n);
   const xKey = new Float64Array(n);
   const order = new Array<number>(n);
   let focusIndex = -1;
+  // The last sheet looked up: runs of one sheet are common.
+  let lastName = '';
+  let lastSheet: SheetGeometry | undefined;
   for (let i = 0; i < n; i++) {
     const sprite = sprites[i];
     if (sprite === undefined) continue;
-    const sheet = sheets.get(sprite.sheet);
+    if (sprite.sheet !== lastName) {
+      lastName = sprite.sheet;
+      lastSheet = sheets.get(sprite.sheet);
+    }
+    const sheet = lastSheet;
     if (sheet === undefined) throw new Error(`Scene uses unknown sheet "${sprite.sheet}"`);
     const footY = Math.round(sprite.y);
     const anchorX = Math.round(sprite.x);
@@ -235,11 +329,14 @@ export function buildDrawList(
   );
   const focusAt = order.indexOf(focusIndex);
   const focus = focusIndex < 0 ? undefined : items[focusIndex];
-  return order.map((i, k) => {
+  const list = new Array<DrawItem>(n);
+  for (let k = 0; k < n; k++) {
+    const i = order[k] ?? 0;
     const item = items[i];
     if (item === undefined) throw new Error('draw list: lost an item');
     const sprite = sprites[i];
-    if (
+    // Plants are never tall, so a cutaway is decided among the other items alone.
+    list[k] =
       focus !== undefined &&
       k > focusAt &&
       sprite?.tall === true &&
@@ -248,10 +345,146 @@ export function buildDrawList(
         sprite.boxes.some(([bx, by, bw, bh]) =>
           overlaps({ ...item, x: item.x + bx, y: item.y + by, width: bw, height: bh }, focus),
         ))
-    )
-      return { ...item, fade: cutawayFade };
-    return item;
+        ? { ...item, fade: cutawayFade }
+        : item;
+  }
+  const b = scene.plants;
+  if (b === undefined || b.count === 0) return { items: list, plants: null };
+  const geo = sheets.get(b.sheet);
+  if (geo === undefined) throw new Error(`Scene uses unknown sheet "${b.sheet}"`);
+  const m = b.count;
+  const place = plantPlaces(b, geo);
+  const frameId = new Uint16Array(m);
+  for (let k = 0; k < m; k++) frameId[k] = b.frameId[place.perm[k] ?? 0] ?? 0;
+  const { x, y, ps, pxs } = place;
+  // Merge: a plant is drawn before item k when it sorts before it; on a tie of line and x, the
+  // item first if it came before the plants in the scene's order.
+  const before = new Uint32Array(n + 1);
+  let p = 0;
+  for (let k = 0; k < n; k++) {
+    const i = order[k] ?? 0;
+    if ((layerKey[i] ?? 0) === LAYER_ORDER.actor) {
+      const si = sortKey[i] ?? 0;
+      const xi = xKey[i] ?? 0;
+      const itemFirst = i < b.at;
+      while (p < m) {
+        const ds = (ps[p] ?? 0) - si;
+        const dx = (pxs[p] ?? 0) - xi;
+        if (ds < 0 || (ds === 0 && (dx < 0 || (dx === 0 && !itemFirst)))) p++;
+        else break;
+      }
+    }
+    before[k] = p;
+  }
+  before[n] = p;
+  return {
+    items: list,
+    plants: {
+      sheet: b.sheet,
+      width: geo.width,
+      height: geo.height,
+      count: m,
+      frames: b.frames,
+      frameId,
+      x,
+      y,
+      before,
+    },
+  };
+}
+
+/** The plants of a batch in draw order among themselves, and their canvases' corners. */
+interface PlantPlaces {
+  readonly geo: SheetGeometry;
+  /** The batch arrays these were made from. */
+  readonly from: readonly [Float64Array, Float64Array, Float64Array];
+  readonly perm: readonly number[];
+  readonly x: Int32Array;
+  readonly y: Int32Array;
+  /** Sort line and rounded x, in draw order. */
+  readonly ps: Float64Array;
+  readonly pxs: Float64Array;
+}
+/** Kept by the batch's position arrays: a batch for a camera that has not moved shares them. */
+const placesCache = new WeakMap<Float64Array, PlantPlaces>();
+function plantPlaces(b: PlantBatch, geo: SheetGeometry): PlantPlaces {
+  const hit = placesCache.get(b.x);
+  if (
+    hit !== undefined &&
+    hit.from[0] === b.x &&
+    hit.from[1] === b.y &&
+    hit.from[2] === b.sort &&
+    hit.perm.length === b.count &&
+    hit.geo.width === geo.width &&
+    hit.geo.height === geo.height &&
+    hit.geo.pivot.x === geo.pivot.x &&
+    hit.geo.pivot.y === geo.pivot.y
+  )
+    return hit;
+  // By sort line, then x, then their own order; placed in that order already (zoneScene), so
+  // this is usually one check.
+  const m = b.count;
+  const px = new Float64Array(m);
+  for (let j = 0; j < m; j++) px[j] = Math.round(b.x[j] ?? 0);
+  const perm = Array.from({ length: m }, (_, j) => j);
+  let sorted = true;
+  for (let j = 1; j < m && sorted; j++) {
+    const ds = (b.sort[j] ?? 0) - (b.sort[j - 1] ?? 0);
+    sorted = ds > 0 || (ds === 0 && (px[j] ?? 0) >= (px[j - 1] ?? 0));
+  }
+  if (!sorted)
+    perm.sort(
+      (a, c) => (b.sort[a] ?? 0) - (b.sort[c] ?? 0) || (px[a] ?? 0) - (px[c] ?? 0) || a - c,
+    );
+  const x = new Int32Array(m);
+  const y = new Int32Array(m);
+  const ps = new Float64Array(m);
+  const pxs = new Float64Array(m);
+  for (let k = 0; k < m; k++) {
+    const j = perm[k] ?? 0;
+    x[k] = (px[j] ?? 0) - geo.pivot.x;
+    y[k] = Math.round(b.y[j] ?? 0) - geo.pivot.y;
+    ps[k] = b.sort[j] ?? 0;
+    pxs[k] = px[j] ?? 0;
+  }
+  const places: PlantPlaces = { geo, from: [b.x, b.y, b.sort], perm, x, y, ps, pxs };
+  placesCache.set(b.x, places);
+  return places;
+}
+
+/** The draw plan as one plain list, the plants as items among the rest (the CPU renderer's). */
+export function planItems(plan: DrawPlan): DrawItem[] {
+  const run = plan.plants;
+  if (run === null) return [...plan.items];
+  const out: DrawItem[] = [];
+  let p = 0;
+  const plantsTo = (to: number): void => {
+    for (; p < to; p++)
+      out.push({
+        sheet: run.sheet,
+        frame: run.frames[run.frameId[p] ?? 0] ?? '',
+        x: run.x[p] ?? 0,
+        y: run.y[p] ?? 0,
+        width: run.width,
+        height: run.height,
+        fade: 0,
+        layer: 'actor',
+      });
+  };
+  plan.items.forEach((item, k) => {
+    plantsTo(run.before[k] ?? 0);
+    out.push(item);
   });
+  plantsTo(run.count);
+  return out;
+}
+
+export function buildDrawList(
+  scene: Scene,
+  sheets: ReadonlyMap<string, SheetGeometry>,
+  cutawayFade: number,
+): DrawItem[] {
+  return planItems(buildDrawPlan(scene, sheets, cutawayFade));
 }
 
 /** 4 x 4 Bayer thresholds, shared with the backdrop and the WebGL shader. */

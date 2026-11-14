@@ -34,7 +34,7 @@ import { frameTexture, linkProgram } from './presenter.ts';
 import type { Presenter } from './presenter.ts';
 import { rimColour } from './cpuRenderer.ts';
 import { BAYER4, RIM_MIX, STREAK_MIX, WET_DARKEN } from './scene.ts';
-import type { DrawItem, RenderStyle, Scene, SceneEffects } from './scene.ts';
+import type { DrawItem, DrawPlan, PlantRun, RenderStyle, Scene, SceneEffects } from './scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from './viewport.ts';
 
 export { MAX_POOLS };
@@ -42,6 +42,31 @@ export { MAX_POOLS };
 /** Floats a sprite vertex: x, y, u, v, fade, cut, water r g b, dark. */
 const STRIDE = 10;
 const NO_WATER = [0, 0, 0] as const;
+
+/** One corner of a sprite's quad: position, atlas texel, fade, the waterline, its colour, dark. */
+function corner(
+  v: Float32Array,
+  i: number,
+  px: number,
+  py: number,
+  u: number,
+  w2: number,
+  fade: number,
+  cut: number,
+  water: readonly [number, number, number],
+  dark: number,
+): void {
+  v[i] = px;
+  v[i + 1] = py;
+  v[i + 2] = u;
+  v[i + 3] = w2;
+  v[i + 4] = fade;
+  v[i + 5] = cut;
+  v[i + 6] = water[0];
+  v[i + 7] = water[1];
+  v[i + 8] = water[2];
+  v[i + 9] = dark;
+}
 
 const VERTEX = `#version 300 es
 in vec2 a_pos;      // logical pixels, y down
@@ -64,6 +89,38 @@ void main() {
   // y down maps to clip -1 at the top, so the target's row 0 is the frame's top row.
   gl_Position = vec4(a_pos.x / ${LOGICAL_WIDTH / 2}.0 - 1.0, a_pos.y / ${LOGICAL_HEIGHT / 2}.0 - 1.0, 0.0, 1.0);
 }`;
+
+/**
+ * The same sprite drawn as one instance (decision DH-161): its rectangle, its atlas texel at the
+ * top-left and the rest once a sprite, the six corners from a static buffer. Each corner's
+ * position and texel are the rectangle's whole numbers plus 0 or its size, exact in float, so
+ * every sprite covers the same pixels with the same texels as the six-vertex quad.
+ */
+const INSTANCED_VERTEX = `#version 300 es
+layout(location = 0) in vec2 a_corner; // 0 or 1 on each axis
+in vec4 a_rect;     // x, y, w, h: logical pixels, y down
+in vec2 a_uv;       // atlas texel at the top-left corner
+in float a_fade;
+in float a_cut;
+in vec3 a_water;
+in float a_dark;
+out vec2 v_texel;
+flat out float v_fade;
+flat out float v_cut;
+flat out vec3 v_water;
+flat out float v_dark;
+void main() {
+  vec2 size = a_corner * a_rect.zw;
+  vec2 pos = a_rect.xy + size;
+  v_texel = a_uv + size;
+  v_fade = a_fade;
+  v_cut = a_cut;
+  v_water = a_water;
+  v_dark = a_dark;
+  gl_Position = vec4(pos.x / ${LOGICAL_WIDTH / 2}.0 - 1.0, pos.y / ${LOGICAL_HEIGHT / 2}.0 - 1.0, 0.0, 1.0);
+}`;
+/** Floats an instance: the rectangle (4), the texel (2), fade, cut, water (3), dark. */
+const INSTANCE = 12;
 
 const FRAGMENT = `#version 300 es
 precision highp float;
@@ -127,8 +184,11 @@ export interface SceneRenderer {
   addAtlas(manifest: Manifest, image: TexImageSource): void;
   /** Registers a zone's height field for its water and open-ground effects. */
   addElevation(zone: string, elevation: Elevation): void;
-  /** Draws `items` over `scene.background` under the scene's light, and presents the frame. */
-  render(scene: Scene, items: readonly DrawItem[]): void;
+  /**
+   * Draws `items` (or a draw plan: its items with its plants among them, decision DH-161) over
+   * `scene.background` under the scene's light, and presents the frame.
+   */
+  render(scene: Scene, items: readonly DrawItem[] | DrawPlan): void;
   /** Links the water and post programs a scene at `detail` draws with, ahead of the first frame. */
   compile(detail: number, pass: 'water' | 'post'): void;
 }
@@ -165,6 +225,12 @@ export function createSceneRenderer(
   const colours = waterColours(palette);
   const rim = rimColour(palette);
   let sprite!: WebGLProgram;
+  /** The sprite program drawn by instances (decision DH-161), for the sprites' own pass. */
+  let spriteInst!: WebGLProgram;
+  let instVao!: WebGLVertexArrayObject;
+  let instBuffer!: WebGLBuffer;
+  /** The instance attributes' locations, sizes and offsets in an instance (bytes). */
+  let instAttrs: { at: number; size: number; offset: number }[] = [];
   let ellipse!: WebGLProgram;
   let shade!: WebGLProgram;
   // The water and post programs, compiled on first use: a software renderer takes seconds to
@@ -244,6 +310,7 @@ export function createSceneRenderer(
 
   const build = (): void => {
     sprite = linkProgram(gl, VERTEX, FRAGMENT);
+    spriteInst = linkProgram(gl, INSTANCED_VERTEX, FRAGMENT);
     ellipse = linkProgram(gl, ELLIPSE_VERTEX, ELLIPSE_FRAGMENT);
     shade = linkProgram(gl, FULLSCREEN_VERTEX, SHADOW_FRAGMENT);
     lazy.clear();
@@ -264,6 +331,36 @@ export function createSceneRenderer(
     attr(sprite, 'a_cut', 1, 20, STRIDE * 4);
     attr(sprite, 'a_water', 3, 24, STRIDE * 4);
     attr(sprite, 'a_dark', 1, 36, STRIDE * 4);
+
+    // The instanced sprites: the six corners once, then one instance a sprite.
+    instVao = gl.createVertexArray();
+    gl.bindVertexArray(instVao);
+    const corners = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, corners);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]),
+      gl.STATIC_DRAW,
+    );
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    instBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, instBuffer);
+    instAttrs = [];
+    const per = (name: string, size: number, offset: number): void => {
+      const at = gl.getAttribLocation(spriteInst, name);
+      if (at < 0) return;
+      gl.enableVertexAttribArray(at);
+      gl.vertexAttribPointer(at, size, gl.FLOAT, false, INSTANCE * 4, offset);
+      gl.vertexAttribDivisor(at, 1);
+      instAttrs.push({ at, size, offset });
+    };
+    per('a_rect', 4, 0);
+    per('a_uv', 2, 16);
+    per('a_fade', 1, 24);
+    per('a_cut', 1, 28);
+    per('a_water', 3, 32);
+    per('a_dark', 1, 44);
 
     ellipseVao = gl.createVertexArray();
     ellipseBuffer = gl.createBuffer();
@@ -325,65 +422,166 @@ export function createSceneRenderer(
       bigger.set(scratch);
       scratch = bigger;
     }
-    const v = scratch;
-    let i = at;
     const cut = item?.cutY ?? -1;
     const water = item?.water ?? NO_WATER;
     const dark = item?.dark ?? 0;
-    const put = (px: number, py: number, u: number, w2: number): void => {
-      v[i] = px;
-      v[i + 1] = py;
-      v[i + 2] = u;
-      v[i + 3] = w2;
-      v[i + 4] = fade;
-      v[i + 5] = cut;
-      v[i + 6] = water[0];
-      v[i + 7] = water[1];
-      v[i + 8] = water[2];
-      v[i + 9] = dark;
-      i += STRIDE;
-    };
-    put(x, y, tx, ty);
-    put(x + w, y, tx + w, ty);
-    put(x, y + h, tx, ty + h);
-    put(x, y + h, tx, ty + h);
-    put(x + w, y, tx + w, ty);
-    put(x + w, y + h, tx + w, ty + h);
-    return i;
+    // The six corners written straight in (no closure a sprite: thousands a frame, DH-161).
+    corner(scratch, at, x, y, tx, ty, fade, cut, water, dark);
+    corner(scratch, at + STRIDE, x + w, y, tx + w, ty, fade, cut, water, dark);
+    corner(scratch, at + 2 * STRIDE, x, y + h, tx, ty + h, fade, cut, water, dark);
+    corner(scratch, at + 3 * STRIDE, x, y + h, tx, ty + h, fade, cut, water, dark);
+    corner(scratch, at + 4 * STRIDE, x + w, y, tx + w, ty, fade, cut, water, dark);
+    corner(scratch, at + 5 * STRIDE, x + w, y + h, tx + w, ty + h, fade, cut, water, dark);
+    return at + 6 * STRIDE;
+  };
+
+  /** Instance scratch, reused every frame: INSTANCE floats a sprite. */
+  let instScratch = new Float32Array(INSTANCE * 2048);
+  const instance = (
+    at: number,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    tx: number,
+    ty: number,
+    fade: number,
+    item?: DrawItem,
+  ): number => {
+    if (at + INSTANCE > instScratch.length) {
+      const bigger = new Float32Array(instScratch.length * 2);
+      bigger.set(instScratch);
+      instScratch = bigger;
+    }
+    const v = instScratch;
+    const water = item?.water ?? NO_WATER;
+    v[at] = x;
+    v[at + 1] = y;
+    v[at + 2] = w;
+    v[at + 3] = h;
+    v[at + 4] = tx;
+    v[at + 5] = ty;
+    v[at + 6] = fade;
+    v[at + 7] = item?.cutY ?? -1;
+    v[at + 8] = water[0];
+    v[at + 9] = water[1];
+    v[at + 10] = water[2];
+    v[at + 11] = item?.dark ?? 0;
+    return at + INSTANCE;
   };
 
   const uniform = (p: WebGLProgram, name: string): WebGLUniformLocation | null =>
     gl.getUniformLocation(p, name);
 
-  /** Draws sprite items in order, batched while they share an atlas. */
-  const drawSprites = (items: readonly DrawItem[], seconds = 0): void => {
-    gl.useProgram(sprite);
-    gl.bindVertexArray(spriteVao);
-    gl.uniform1iv(uniform(sprite, 'u_bayer'), Int32Array.from(BAYER4));
-    gl.uniform1i(uniform(sprite, 'u_atlas'), 0);
-    gl.uniform1i(uniform(sprite, 'u_solid'), 0);
-    gl.uniform1f(uniform(sprite, 'u_mask'), 0);
-    gl.uniform1f(uniform(sprite, 'u_t'), seconds);
-    gl.uniform3f(uniform(sprite, 'u_rim'), rim[0], rim[1], rim[2]);
+  /** Each plant frame name's atlas texel (u, v), NaN where the atlas lacks it: once a table. */
+  const texelCache = new WeakMap<readonly string[], { atlas: Atlas; uv: Float64Array }>();
+  const plantTexels = (atlas: Atlas, run: PlantRun): Float64Array => {
+    const hit = texelCache.get(run.frames);
+    if (hit?.atlas === atlas) return hit.uv;
+    const uv = new Float64Array(run.frames.length * 2).fill(Number.NaN);
+    run.frames.forEach((name, id) => {
+      const at = atlas.manifest.frames[name];
+      if (at === undefined) return;
+      uv[2 * id] = at[0];
+      uv[2 * id + 1] = at[1];
+    });
+    texelCache.set(run.frames, { atlas, uv });
+    return uv;
+  };
+
+  /**
+   * Draws items[from..to) in order, batched while they share an atlas, with a plant run's plants
+   * among them where the plan puts them (decision DH-161): the same draw calls as the plants drawn
+   * as items. With `last`, the run's plants after the last item are drawn too.
+   */
+  const drawSprites = (
+    items: readonly DrawItem[],
+    from: number,
+    to: number,
+    run: PlantRun | null,
+    last: boolean,
+    seconds = 0,
+  ): void => {
+    // Both sprite programs get the pass's uniforms: the six-vertex one keeps the state the shadow
+    // pass and the next frame's background have always found it in.
+    for (const prog of [sprite, spriteInst]) {
+      gl.useProgram(prog);
+      gl.uniform1iv(uniform(prog, 'u_bayer'), Int32Array.from(BAYER4));
+      gl.uniform1i(uniform(prog, 'u_atlas'), 0);
+      gl.uniform1i(uniform(prog, 'u_solid'), 0);
+      gl.uniform1f(uniform(prog, 'u_mask'), 0);
+      gl.uniform1f(uniform(prog, 'u_t'), seconds);
+      gl.uniform3f(uniform(prog, 'u_rim'), rim[0], rim[1], rim[2]);
+    }
+    gl.bindVertexArray(instVao);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, spriteBuffer);
-    let i = 0;
-    while (i < items.length) {
-      const sheet = items[i]?.sheet ?? '';
-      const atlas = atlases.get(sheet);
-      if (atlas?.texture == null) throw new Error(`No atlas loaded for sheet "${sheet}"`);
-      let n = 0;
-      while (i < items.length && items[i]?.sheet === sheet) {
-        const item = items[i];
-        i++;
-        if (item === undefined) continue;
-        const at = atlas.manifest.frames[item.frame];
-        if (at === undefined) throw new Error(`Atlas ${sheet} has no frame ${item.frame}`);
-        n = quad(n, item.x, item.y, item.width, item.height, at[0], at[1], item.fade, item);
+    gl.bindBuffer(gl.ARRAY_BUFFER, instBuffer);
+    let sheet = '';
+    let atlas: Atlas | undefined;
+    let n = 0;
+    // The pass's instances go up in one upload; each run of one atlas is drawn from its place in
+    // it (decision DH-161: a hundred and more small uploads a frame cost more than the drawing).
+    const batches: { texture: WebGLTexture; from: number; to: number }[] = [];
+    let begun = 0;
+    const flush = (): void => {
+      if (n > begun && atlas?.texture != null)
+        batches.push({ texture: atlas.texture, from: begun, to: n });
+      begun = n;
+    };
+    const use = (name: string): Atlas => {
+      if (name !== sheet || atlas === undefined) {
+        flush();
+        sheet = name;
+        atlas = atlases.get(name);
+        if (atlas?.texture == null) throw new Error(`No atlas loaded for sheet "${name}"`);
       }
-      gl.bindTexture(gl.TEXTURE_2D, atlas.texture);
-      gl.bufferData(gl.ARRAY_BUFFER, scratch.subarray(0, n), gl.STREAM_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, n / STRIDE);
+      return atlas;
+    };
+    let p = run === null || from === 0 ? 0 : (run.before[from - 1] ?? 0);
+    const plantsTo = (end: number): void => {
+      if (run === null || p >= end) return;
+      const uv = plantTexels(use(run.sheet), run);
+      for (; p < end; p++) {
+        const id = run.frameId[p] ?? 0;
+        const u = uv[2 * id] ?? Number.NaN;
+        if (Number.isNaN(u))
+          throw new Error(`Atlas ${run.sheet} has no frame ${run.frames[id] ?? String(id)}`);
+        n = instance(
+          n,
+          run.x[p] ?? 0,
+          run.y[p] ?? 0,
+          run.width,
+          run.height,
+          u,
+          uv[2 * id + 1] ?? 0,
+          0,
+        );
+      }
+    };
+    for (let k = from; k < to; k++) {
+      if (run !== null) plantsTo(run.before[k] ?? 0);
+      const item = items[k];
+      if (item === undefined) continue;
+      const at = use(item.sheet).manifest.frames[item.frame];
+      if (at === undefined) throw new Error(`Atlas ${item.sheet} has no frame ${item.frame}`);
+      n = instance(n, item.x, item.y, item.width, item.height, at[0], at[1], item.fade, item);
+    }
+    if (last && run !== null) plantsTo(run.count);
+    flush();
+    if (batches.length === 0) return;
+    gl.bufferData(gl.ARRAY_BUFFER, instScratch.subarray(0, n), gl.STREAM_DRAW);
+    for (const batch of batches) {
+      for (const a of instAttrs)
+        gl.vertexAttribPointer(
+          a.at,
+          a.size,
+          gl.FLOAT,
+          false,
+          INSTANCE * 4,
+          batch.from * 4 + a.offset,
+        );
+      gl.bindTexture(gl.TEXTURE_2D, batch.texture);
+      gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, (batch.to - batch.from) / INSTANCE);
     }
   };
 
@@ -587,7 +785,11 @@ export function createSceneRenderer(
       elevations.set(zone, e);
       uploadElevation(e);
     },
-    render(scene, items) {
+    render(scene, list) {
+      const plan: DrawPlan = Array.isArray(list)
+        ? { items: list as readonly DrawItem[], plants: null }
+        : (list as DrawPlan);
+      const items = plan.items;
       gl.bindFramebuffer(gl.FRAMEBUFFER, sceneFbo);
       // The last present left the output texture bound; let go of every texture first, so no
       // pass draws into a texture it is also reading.
@@ -609,10 +811,11 @@ export function createSceneRenderer(
       gl.bufferData(gl.ARRAY_BUFFER, scratch.subarray(0, fullN), gl.STREAM_DRAW);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-      const split = items.findIndex((d) => d.layer === 'actor');
-      const lower = split < 0 ? items : items.slice(0, split);
-      const upper = split < 0 ? [] : items.slice(split);
-      drawSprites(lower);
+      // Below the actors (the ground and decals), then the water and shadows, then the actors with
+      // the plants among them (every plant is an actor, so none falls below the split).
+      const found = items.findIndex((d) => d.layer === 'actor');
+      const split = found < 0 ? items.length : found;
+      drawSprites(items, 0, split, null, false);
       const fx = scene.effects;
       const elev =
         fx?.water === undefined || fx.water === null ? undefined : elevations.get(fx.water.zone);
@@ -622,7 +825,7 @@ export function createSceneRenderer(
         if ((fx.detail ?? 2) > 0) drawShadows(fx);
         gl.bindFramebuffer(gl.FRAMEBUFFER, sceneFbo);
       }
-      drawSprites(upper, fx?.seconds ?? 0);
+      drawSprites(items, split, items.length, plan.plants, true, fx?.seconds ?? 0);
       drawPost(scene, elev);
       gl.bindVertexArray(null);
       presenter.presentTexture(outTarget);

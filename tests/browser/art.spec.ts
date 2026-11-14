@@ -8,7 +8,13 @@ import type { Page } from '@playwright/test';
 import { packSheet } from '../../src/render/atlas.ts';
 import { renderSceneCpu } from '../../src/render/cpuRenderer.ts';
 import { computeViewport } from '../../src/render/viewport.ts';
-import { ART_TEST_CASES, artTestScene, sheetPreviewScene } from '../../src/scenes/artTest.ts';
+import {
+  ART_TEST_CASES,
+  artTestScene,
+  PLANT_TEST_CASE,
+  plantTestScene,
+  sheetPreviewScene,
+} from '../../src/scenes/artTest.ts';
 import { loadPalette, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { loadRenderStyle, previewSize } from '../../src/tools/art/render-check.ts';
 import { decodePng } from '../../src/tools/art/png.ts';
@@ -99,6 +105,16 @@ for (const which of ART_TEST_CASES) {
     expect(result.blocksUniform).toBe(true);
   });
 }
+
+test('the WebGL renderer draws plants batched among people as the CPU reference does (DH-161)', async ({
+  page,
+}) => {
+  const shot = await open(page, `view=art-test&case=${PLANT_TEST_CASE}`, 1280, 720);
+  const reference = renderSceneCpu(plantTestScene(), sheets, palette, style);
+  const result = compare(shot, reference, 640, 360, 0);
+  expect(result.mismatched, `first difference ${result.first}`).toBe(0);
+  expect(result.blocksUniform).toBe(true);
+});
 
 for (const [width, height] of [
   [640, 360],
