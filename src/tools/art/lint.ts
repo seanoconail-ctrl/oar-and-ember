@@ -20,15 +20,9 @@ import {
 } from './standard.ts';
 import type { StandardProblem } from './standard.ts';
 
-/** The ground sheet each zone is drawn with. */
-export const ZONE_GROUND: Readonly<Record<string, string>> = {
-  ZONE_SK_STRAND: 'tile_strand',
-  ZONE_SK_MACHAIR: 'tile_strand',
-  ZONE_SK_HAGSEAT: 'tile_strand',
-  ZONE_SK_CAIRN: 'tile_strand',
-  ZONE_SK_SEALCAVE: 'tile_strand',
-  ZONE_SEA_WRECK: 'tile_strand',
-};
+/** The ground sheet each zone is drawn with (Stage 14: src/tools/art/grounds.ts). */
+export { ZONE_GROUND } from './grounds.ts';
+import { ZONE_GROUND } from './grounds.ts';
 
 /** Every generated zone map in content/zones. */
 export function loadZoneMaps(): ZoneMap[] {

@@ -26,6 +26,8 @@ import launch from '../../content/launch.json';
 import company from '../../content/company.json';
 import guidance from '../../content/guidance.json';
 import finds from '../../content/finds.json';
+import puzzles from '../../content/puzzles.json';
+import island from '../../content/island.json';
 import raid from '../../content/raid.json';
 import sea from '../../content/sea.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
@@ -63,6 +65,8 @@ export const BUNDLED_FILES: ContentFiles = {
   company,
   guidance,
   finds,
+  puzzles,
+  island,
   raid,
   sea,
   wreck,

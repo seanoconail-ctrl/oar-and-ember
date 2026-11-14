@@ -183,7 +183,31 @@
       "book": 4,
       "section": "02",
       "origin": "stated",
-      "note": "Holds SK_NAUST and SK_SKERRY."
+      "note": "Holds SK_NAUST. From Stage 14 the Skerry of the Drowned is its own scene, ZONE_SK_SKERRY (decision S14-1)."
+    },
+    {
+      "id": "ZONE_SK_SKERRY",
+      "ref": "ZONE_SK_SKERRY",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-1 and S14-3): the east shore below Seal Cave, the causeway and the Skerry of the Drowned (blocks 36 to 47 by 18 to 31, Book 9 section 03). Holds SK_SKERRY."
+    },
+    {
+      "id": "ZONE_SK_SEALCAVE_DEEP",
+      "ref": "ZONE_SK_SEALCAVE_DEEP",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-3 and S14-8): the Seal Cave's deep passage, an interior of 48 x 20 tiles read from docs/levels/sealcave_passage_tiles.txt (Book 9 section 16)."
+    },
+    {
+      "id": "ZONE_SK_CAIRN_IN",
+      "ref": "ZONE_SK_CAIRN_IN",
+      "book": 4,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-3 and S14-22): the Hollow Cairn's inside in its Year 1 state, an interior of 48 x 30 tiles read from docs/levels/hollow_cairn_tiles.txt (Book 9 section 09)."
     },
     {
       "id": "SK_WRECK_STRAND",
@@ -1638,6 +1662,14 @@
       "note": "Valuable good; takes no cargo slot."
     },
     {
+      "id": "ITEM_BRONZE_CAULDRON",
+      "ref": "A bronze cauldron, worth 8 oz of silver in trade",
+      "book": 10,
+      "section": "20",
+      "origin": "assigned",
+      "note": "The bog offering's cauldron, taken from the peat bank at (33, 13) (Book 10 section 20, Year 1 secrets; decision S14-26): SACRED_TAKEN and the keeper offended. Stage 14 work package C."
+    },
+    {
       "id": "CROP_BARLEY",
       "ref": "Barley and kale",
       "book": 10,
@@ -2147,6 +2179,62 @@
       "section": "10",
       "origin": "assigned",
       "note": "The puzzle whose state is the words spoken (Book 2 section 10). Book 2 section 16 also treats it as ledger-truth dialogue. The joined token is THREETRUTHS, because PUZ_DOOR would clash with the sealed east door."
+    },
+    {
+      "id": "PUZ_DEEP_STONE",
+      "ref": "The fallen stone",
+      "book": 9,
+      "section": "16",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_SKERRY",
+      "ref": "The Skerry of the Drowned",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_CAIRN_CUP",
+      "ref": "The Cup on its stone",
+      "book": 8,
+      "section": "07",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_FALLS",
+      "ref": "Behind the falls",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_OLD_NAUST",
+      "ref": "The old naust",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_EGG_LEDGES",
+      "ref": "The egg ledges",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
+    },
+    {
+      "id": "PUZ_PRAYER_STONE",
+      "ref": "The page under the prayer stone",
+      "book": 9,
+      "section": "03",
+      "origin": "assigned",
+      "note": "Stage 14, work package C (decision S14-71): a puzzle of content/puzzles.json, a state machine over world conditions with an in-world hint and a solved fact (Book 2 section 10)."
     },
     {
       "id": "POWER_RAN",
@@ -3411,6 +3499,86 @@
       "section": "07",
       "origin": "stated",
       "note": "Stage 13 (decision S13-71): the wreck's skerry, src/audio/synth/sea.ts WreckAmbience."
+    },
+    {
+      "id": "AMB_WIND_HIGH",
+      "ref": "the wind over the high ground",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_BIRD_COLONY",
+      "ref": "the cliff colony",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_SKYLARK",
+      "ref": "the skylark over the moor",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_CURLEW",
+      "ref": "the curlew on the bog",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_STREAM",
+      "ref": "the stream over its stones",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_WATERFALL",
+      "ref": "the waterfall",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_CAVE_DRIP",
+      "ref": "the cave's drip and echo",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "AMB_PASSAGE_ROAR",
+      "ref": "the deep passage's roar",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
+    },
+    {
+      "id": "SFX_TELL_DROWNED",
+      "ref": "the drowned's tell",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decision S14-105): the supernatural tell on the Skerry of the Drowned at the spring lows."
+    },
+    {
+      "id": "AMB_BOG_QUIET",
+      "ref": "the bog's quiet",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 14 (decisions S14-100 to S14-109): a layer of the island's ambience."
     },
     {
       "id": "SFX_WRECK_BREAK",

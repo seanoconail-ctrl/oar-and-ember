@@ -85,6 +85,8 @@ export interface SceneEffects {
     readonly tide: number;
     /** The highest the water has been drawn recently: sand below it is still drying. */
     readonly wetTo: number;
+    /** Stage 14: the land by season (snow, frozen pools, a summer's shrunk stream; calm flow). */
+    readonly land?: LandLook;
   } | null;
   readonly wind: { readonly dirX: number; readonly dirY: number; readonly strength: number };
   readonly shadows: readonly ShadowCaster[];
@@ -118,6 +120,29 @@ export interface SceneEffects {
   readonly detail?: 0 | 1 | 2;
 }
 
+/**
+ * Stage 14 (decisions S14-94 to S14-99): how the season lies on the land in the water pass. Snow
+ * on high ground (0 none to 1 deep), the still pools frozen, the running stretches shrunk to their
+ * pools in a dry summer, and reduced motion's calmer flow.
+ */
+export interface LandLook {
+  readonly snow: number;
+  readonly freeze: boolean;
+  readonly shrink: boolean;
+  readonly calm: boolean;
+}
+
+/**
+ * Stage 14: some sheets drawn in the season's colours (Book 7 section 13), palette index to
+ * palette index along the ramps (never an off-palette colour). `key` names the recolouring, so a
+ * renderer can keep what it made for it.
+ */
+export interface Recolour {
+  readonly key: string;
+  readonly sheets: ReadonlySet<string>;
+  readonly index: Uint8Array;
+}
+
 export interface Scene {
   /** Palette code behind everything. */
   readonly background: string;
@@ -130,6 +155,8 @@ export interface Scene {
    * were sprites placed in `sprites` before index `plants.at`. `sceneSprites` gives the whole list.
    */
   readonly plants?: PlantBatch;
+  /** Stage 14: the season's colours on the ground and plants (absent: as drawn). */
+  readonly recolour?: Recolour;
 }
 
 /**

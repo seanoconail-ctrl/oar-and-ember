@@ -1,0 +1,466 @@
+{
+  "about": "Stage 14, work package C (decisions S14-15, S14-23, S14-70 to S14-89): Skarvholm's resource nodes (Book 10 section 03, \"Island resource nodes\": each node's kind names its row, which gives its seasons, tide, respawn and yield; positions in tiles of its scene, at the foot, drawn from prop_island_nodes by `frame`), the discovery marks used until the zone plans carry their own (areas and view points, Book 2 section 10; the zone file's `areas` and `viewPoints` win where present), and the region map's layout (Book 7 section 10: each scene's window of the island grid in blocks, for inking it in).",
+  "nodes": [
+    {
+      "key": "kelda_cress_1",
+      "kind": "watercress",
+      "scene": "ZONE_SK_MACHAIR",
+      "x": 54.5,
+      "y": 14.7,
+      "frame": "cress",
+      "about": "A bed in the Kelda's outflow below the spring"
+    },
+    {
+      "key": "kelda_cress_2",
+      "kind": "watercress",
+      "scene": "ZONE_SK_MACHAIR",
+      "x": 60.5,
+      "y": 12.7,
+      "frame": "cress",
+      "about": "A bed at the spring pool's lip"
+    },
+    {
+      "key": "rook_cress_1",
+      "kind": "watercress",
+      "scene": "ZONE_SK_ROOK",
+      "x": 46.5,
+      "y": 99.5,
+      "frame": "cress",
+      "about": "A pool of the upper stream below the falls"
+    },
+    {
+      "key": "rook_cress_2",
+      "kind": "watercress",
+      "scene": "ZONE_SK_ROOK",
+      "x": 46.5,
+      "y": 108.5,
+      "frame": "cress",
+      "about": "A pool of the upper stream on the grass"
+    },
+    {
+      "key": "rook_cress_3",
+      "kind": "watercress",
+      "scene": "ZONE_SK_ROOK",
+      "x": 45.5,
+      "y": 115.5,
+      "frame": "cress",
+      "about": "A pool of the upper stream near the machair"
+    },
+    {
+      "key": "rook_heather_1",
+      "kind": "heather",
+      "scene": "ZONE_SK_ROOK",
+      "x": 28.0,
+      "y": 28.0,
+      "frame": "heather",
+      "about": "A patch of long heather on the slopes"
+    },
+    {
+      "key": "rook_heather_2",
+      "kind": "heather",
+      "scene": "ZONE_SK_ROOK",
+      "x": 76.0,
+      "y": 36.0,
+      "frame": "heather",
+      "about": "A patch of long heather on the slopes"
+    },
+    {
+      "key": "rook_heather_3",
+      "kind": "heather",
+      "scene": "ZONE_SK_ROOK",
+      "x": 36.0,
+      "y": 76.0,
+      "frame": "heather",
+      "about": "A patch of long heather on the slopes"
+    },
+    {
+      "key": "rook_heather_4",
+      "kind": "heather",
+      "scene": "ZONE_SK_ROOK",
+      "x": 84.0,
+      "y": 84.0,
+      "frame": "heather",
+      "about": "A patch of long heather on the slopes"
+    },
+    {
+      "key": "rook_hare_1",
+      "kind": "hares",
+      "scene": "ZONE_SK_ROOK",
+      "x": 20.0,
+      "y": 60.0,
+      "frame": "hare_form",
+      "about": "A hare's form in the heather"
+    },
+    {
+      "key": "rook_hare_2",
+      "kind": "hares",
+      "scene": "ZONE_SK_ROOK",
+      "x": 84.0,
+      "y": 44.0,
+      "frame": "hare_form",
+      "about": "A hare's form in the heather"
+    },
+    {
+      "key": "rook_hare_3",
+      "kind": "hares",
+      "scene": "ZONE_SK_ROOK",
+      "x": 68.0,
+      "y": 100.0,
+      "frame": "hare_form",
+      "about": "A hare's form in the heather"
+    },
+    {
+      "key": "bog_cotton_1",
+      "kind": "bogCotton",
+      "scene": "ZONE_SK_BOG",
+      "x": 20.0,
+      "y": 60.0,
+      "frame": "cotton",
+      "about": "A stand of bog cotton by a pool"
+    },
+    {
+      "key": "bog_cotton_2",
+      "kind": "bogCotton",
+      "scene": "ZONE_SK_BOG",
+      "x": 36.0,
+      "y": 76.0,
+      "frame": "cotton",
+      "about": "A stand of bog cotton by a pool"
+    },
+    {
+      "key": "bog_cotton_3",
+      "kind": "bogCotton",
+      "scene": "ZONE_SK_BOG",
+      "x": 52.0,
+      "y": 52.0,
+      "frame": "cotton",
+      "about": "A stand of bog cotton by a pool"
+    },
+    {
+      "key": "geo_kelp_1",
+      "kind": "kelp",
+      "scene": "ZONE_SK_GEO",
+      "x": 66.5,
+      "y": 28.5,
+      "frame": "kelp",
+      "about": "Kelp on the geo's shingle, bare at low water"
+    },
+    {
+      "key": "geo_kelp_2",
+      "kind": "kelp",
+      "scene": "ZONE_SK_GEO",
+      "x": 69.5,
+      "y": 34.5,
+      "frame": "kelp",
+      "about": "Kelp at the geo's mouth, bare at low water"
+    },
+    {
+      "key": "hagseat_kelp",
+      "kind": "kelp",
+      "scene": "ZONE_SK_HAGSEAT",
+      "x": 55.5,
+      "y": 33.6,
+      "frame": "kelp",
+      "about": "Kelp on the foreshore under the Hag's Seat, bare at low water"
+    },
+    {
+      "key": "sealcave_seals",
+      "kind": "seals",
+      "scene": "ZONE_SK_SEALCAVE",
+      "x": 63.5,
+      "y": 33.5,
+      "frame": "seal_haulout",
+      "about": "The haul-out on the cove's flats, at low water in the pupping days"
+    },
+    {
+      "key": "cliffs_eggs_1",
+      "kind": "eggs",
+      "scene": "ZONE_SK_CLIFFS",
+      "x": 36.5,
+      "y": 22.5,
+      "frame": "eggs_ledge",
+      "about": "An egg ledge, by its marked climb"
+    },
+    {
+      "key": "cliffs_eggs_2",
+      "kind": "eggs",
+      "scene": "ZONE_SK_CLIFFS",
+      "x": 41.5,
+      "y": 22.5,
+      "frame": "eggs_ledge",
+      "about": "An egg ledge, by its marked climb"
+    },
+    {
+      "key": "cliffs_eggs_3",
+      "kind": "eggs",
+      "scene": "ZONE_SK_CLIFFS",
+      "x": 52.5,
+      "y": 22.5,
+      "frame": "eggs_ledge",
+      "about": "An egg ledge, by its marked climb"
+    },
+    {
+      "key": "bog_peat_east",
+      "kind": "peat",
+      "scene": "ZONE_SK_BOG",
+      "x": 59.5,
+      "y": 84.0,
+      "frame": "peat_bank",
+      "about": "The bank that faces the morning, at (33, 13): the offering lies in it (Book 10 year1Secrets)"
+    },
+    {
+      "key": "bog_peat_1",
+      "kind": "peat",
+      "scene": "ZONE_SK_BOG",
+      "x": 12.0,
+      "y": 108.0,
+      "frame": "peat_bank",
+      "about": "A peat bank on the bog's south"
+    },
+    {
+      "key": "bog_peat_2",
+      "kind": "peat",
+      "scene": "ZONE_SK_BOG",
+      "x": 28.0,
+      "y": 116.0,
+      "frame": "peat_bank",
+      "about": "A peat bank on the bog's south"
+    },
+    {
+      "key": "bog_peat_3",
+      "kind": "peat",
+      "scene": "ZONE_SK_BOG",
+      "x": 44.0,
+      "y": 108.0,
+      "frame": "peat_bank",
+      "about": "A peat bank on the bog's south"
+    },
+    {
+      "key": "naust_rock_west",
+      "kind": "rockFish",
+      "scene": "ZONE_SK_NAUST",
+      "x": 50.5,
+      "y": 3.5,
+      "frame": "fish_rock",
+      "about": "The fishing rock on the cove's west point"
+    },
+    {
+      "key": "naust_rock_east",
+      "kind": "rockFish",
+      "scene": "ZONE_SK_NAUST",
+      "x": 92.5,
+      "y": 10.5,
+      "frame": "fish_rock",
+      "about": "The fishing rock on the cove's east point"
+    },
+    {
+      "key": "skerry_rock_north",
+      "kind": "rockFish",
+      "scene": "ZONE_SK_SKERRY",
+      "x": 36.5,
+      "y": 12.5,
+      "frame": "fish_rock",
+      "about": "A fishing rock on the east shore below Seal Cave"
+    },
+    {
+      "key": "skerry_rock_south",
+      "kind": "rockFish",
+      "scene": "ZONE_SK_SKERRY",
+      "x": 36.5,
+      "y": 44.5,
+      "frame": "fish_rock",
+      "about": "A fishing rock on the east shore above the causeway"
+    }
+  ],
+  "areas": [
+    {
+      "id": "ZONE_SK_KELDA",
+      "scene": "ZONE_SK_MACHAIR",
+      "rect": {
+        "x": 48,
+        "y": 5,
+        "w": 18,
+        "h": 13
+      },
+      "nameKey": "place.name.sk_kelda"
+    },
+    {
+      "id": "ZONE_SK_GREYMEN",
+      "scene": "ZONE_SK_BOG",
+      "rect": {
+        "x": 0,
+        "y": 72,
+        "w": 32,
+        "h": 40
+      },
+      "nameKey": "place.name.sk_greymen"
+    }
+  ],
+  "viewPoints": [
+    {
+      "scene": "ZONE_SK_ROOK",
+      "at": {
+        "x": 64,
+        "y": 48,
+        "w": 8,
+        "h": 8
+      },
+      "reveals": [
+        "ZONE_SK_STRAND",
+        "ZONE_SK_MACHAIR",
+        "ZONE_SK_KELDA",
+        "ZONE_SK_NAUST",
+        "ZONE_SK_CAIRN",
+        "ZONE_SK_SKERRY"
+      ]
+    }
+  ],
+  "regionMap": {
+    "windows": {
+      "ZONE_SK_STRAND": {
+        "x": 12,
+        "y": 23,
+        "w": 12,
+        "h": 8
+      },
+      "ZONE_SK_MACHAIR": {
+        "x": 12,
+        "y": 18,
+        "w": 12,
+        "h": 5
+      },
+      "ZONE_SK_HAGSEAT": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 7
+      },
+      "ZONE_SK_CAIRN": {
+        "x": 24,
+        "y": 18,
+        "w": 12,
+        "h": 6
+      },
+      "ZONE_SK_SEALCAVE": {
+        "x": 34,
+        "y": 8,
+        "w": 12,
+        "h": 10
+      },
+      "ZONE_SK_GEO": {
+        "x": 4,
+        "y": 2,
+        "w": 10,
+        "h": 9
+      },
+      "ZONE_SK_CLIFFS": {
+        "x": 2,
+        "y": 11,
+        "w": 12,
+        "h": 5
+      },
+      "ZONE_SK_ROOK": {
+        "x": 14,
+        "y": 3,
+        "w": 12,
+        "h": 15
+      },
+      "ZONE_SK_BOG": {
+        "x": 26,
+        "y": 3,
+        "w": 8,
+        "h": 15
+      },
+      "ZONE_SK_NAUST": {
+        "x": 24,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "ZONE_SK_SKERRY": {
+        "x": 36,
+        "y": 18,
+        "w": 12,
+        "h": 14
+      }
+    },
+    "insets": {
+      "ZONE_SK_SEALCAVE_DEEP": {
+        "x": 37,
+        "y": 3,
+        "w": 6,
+        "h": 3,
+        "from": "ZONE_SK_SEALCAVE"
+      },
+      "ZONE_SK_CAIRN_IN": {
+        "x": 29,
+        "y": 26,
+        "w": 6,
+        "h": 4,
+        "from": "ZONE_SK_CAIRN"
+      }
+    },
+    "labels": {
+      "ZONE_SK_STRAND": {
+        "x": 17,
+        "y": 27
+      },
+      "ZONE_SK_MACHAIR": {
+        "x": 15,
+        "y": 20
+      },
+      "ZONE_SK_HAGSEAT": {
+        "x": 5,
+        "y": 19
+      },
+      "ZONE_SK_CAIRN": {
+        "x": 30,
+        "y": 21
+      },
+      "ZONE_SK_SEALCAVE": {
+        "x": 41,
+        "y": 11
+      },
+      "ZONE_SK_GEO": {
+        "x": 9,
+        "y": 5
+      },
+      "ZONE_SK_CLIFFS": {
+        "x": 7,
+        "y": 13
+      },
+      "ZONE_SK_ROOK": {
+        "x": 21,
+        "y": 9
+      },
+      "ZONE_SK_BOG": {
+        "x": 31,
+        "y": 12
+      },
+      "ZONE_SK_NAUST": {
+        "x": 31,
+        "y": 26
+      },
+      "ZONE_SK_SKERRY": {
+        "x": 41,
+        "y": 24
+      },
+      "ZONE_SK_KELDA": {
+        "x": 19,
+        "y": 19
+      },
+      "ZONE_SK_GREYMEN": {
+        "x": 27,
+        "y": 14
+      },
+      "ZONE_SK_SEALCAVE_DEEP": {
+        "x": 40,
+        "y": 4
+      },
+      "ZONE_SK_CAIRN_IN": {
+        "x": 32,
+        "y": 28
+      }
+    }
+  }
+}

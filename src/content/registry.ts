@@ -12,6 +12,9 @@ import { steererWordingProblems } from './steererWords.ts';
 import { aimCondition } from './aimSchema.ts';
 import { parseCompany, parseGuidance } from './companySchema.ts';
 import { parseFinds } from './findsSchema.ts';
+import { islandAudioCheck } from './islandAudioSchema.ts';
+import { islandProblems, parseIsland, parsePuzzles } from './islandSchema.ts';
+import type { IslandDef, PuzzlesDef } from './islandSchema.ts';
 import type { FindsDef } from './findsSchema.ts';
 import type { CompanyDef, GuidanceDef } from './companySchema.ts';
 import { parseRaid, RAID_ACTIONS, RAID_WHEN } from './raidSchema.ts';
@@ -54,6 +57,9 @@ export const CONTENT_FILES = {
   finds: 'content/finds.json',
   /** A reason for the first raid (DH-130 to DH-159): needs, the skin boat, asking, the council. */
   raid: 'content/raid.json',
+  /** Stage 14, work package C: the island's puzzles and secrets, and its nodes, marks and map. */
+  puzzles: 'content/puzzles.json',
+  island: 'content/island.json',
   /** Stage 13: the sea map's nodes, routes, encounter tables and landings (Book 2 section 09). */
   sea: 'content/sea.json',
   /** Stage 13, work package C: the wreck on Sgeir Dhubh (Book 6 section 19). */
@@ -370,8 +376,10 @@ const audioCheck = object(
       tellLeast: int(2, 120),
       tellMost: int(2, 120),
     }),
+    /** Stage 14: the island's ambience by zone, area, season and hour (islandAudioSchema.ts). */
+    island: islandAudioCheck,
   },
-  ['home', 'south'],
+  ['home', 'south', 'island'],
 );
 
 const fraction =
@@ -1484,6 +1492,10 @@ export interface Content {
   readonly company: CompanyDef | null;
   /** The user's fourth playtest: Chapter 1's small finds off the paths (DH-115). */
   readonly finds: FindsDef | null;
+  /** Stage 14: the island's puzzles, secrets, the drowned and the side aims (content/puzzles.json). */
+  readonly puzzles: PuzzlesDef | null;
+  /** Stage 14: the resource nodes, discovery marks and the region map's layout (content/island.json). */
+  readonly island: IslandDef | null;
   readonly guidance: GuidanceDef | null;
   /** A reason for the first raid (DH-130 to DH-159). */
   readonly raid: RaidDef | null;
@@ -1649,6 +1661,15 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const launch = launchCheck(files.launch, '', ctx(CONTENT_FILES.launch));
   const company = parseCompany(files.company, '', ctx(CONTENT_FILES.company));
   const finds = parseFinds(files.finds, '', ctx(CONTENT_FILES.finds));
+  const puzzles = parsePuzzles(files.puzzles, '', ctx(CONTENT_FILES.puzzles));
+  const island = parseIsland(files.island, '', ctx(CONTENT_FILES.island));
+  // Stage 14: every puzzle state, collectible and find a condition names is defined.
+  for (const p of islandProblems(
+    puzzles,
+    finds?.collectibles ?? [],
+    new Set((finds?.finds ?? []).map((f) => f.key)),
+  ))
+    issues.push({ file: CONTENT_FILES.puzzles, ...p });
   const guidance = parseGuidance(files.guidance, '', ctx(CONTENT_FILES.guidance));
   const raid = parseRaid(files.raid, '', ctx(CONTENT_FILES.raid));
   const sea = parseSea(files.sea, '', ctx(CONTENT_FILES.sea));
@@ -1940,6 +1961,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       company,
       guidance,
       finds,
+      puzzles,
+      island,
       raid,
       sea,
       wreck,

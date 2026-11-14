@@ -444,7 +444,7 @@
     {
       "id": "AMB_SURF_SHINGLE",
       "kind": "ambience",
-      "zones": ["ZONE_SK_STRAND", "ZONE_SK_NAUST"],
+      "zones": ["ZONE_SK_STRAND", "ZONE_SK_NAUST", "ZONE_SK_GEO", "ZONE_SK_SKERRY"],
       "temporary": false
     },
     {
@@ -883,6 +883,70 @@
       "id": "AMB_SEA_WRECK",
       "kind": "ambience",
       "zones": ["ZONE_SEA_WRECK"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_WIND_HIGH",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_ROOK", "ZONE_SK_CLIFFS", "ZONE_SK_GEO"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_BIRD_COLONY",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_CLIFFS", "ZONE_SK_GEO", "ZONE_SK_HAGSEAT"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_SKYLARK",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_ROOK", "ZONE_SK_MACHAIR", "ZONE_SK_CAIRN"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_CURLEW",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_BOG"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_STREAM",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_MACHAIR", "ZONE_SK_ROOK", "ZONE_SK_STRAND"],
+      "captionKey": "caption.water.stream",
+      "temporary": false
+    },
+    {
+      "id": "AMB_WATERFALL",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_ROOK"],
+      "captionKey": "caption.water.falls",
+      "temporary": false
+    },
+    {
+      "id": "AMB_CAVE_DRIP",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_SEALCAVE_DEEP", "ZONE_SK_CAIRN_IN"],
+      "temporary": false
+    },
+    {
+      "id": "AMB_PASSAGE_ROAR",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_SEALCAVE_DEEP"],
+      "captionKey": "caption.island.passage_loud",
+      "temporary": false
+    },
+    {
+      "id": "AMB_BOG_QUIET",
+      "kind": "ambience",
+      "zones": ["ZONE_SK_BOG"],
+      "temporary": false
+    },
+    {
+      "id": "SFX_TELL_DROWNED",
+      "kind": "sfx",
+      "bus": "tells",
+      "captionKey": "caption.tell.drowned",
       "temporary": false
     },
     {
@@ -1327,6 +1391,69 @@
       "bus": "tells",
       "temporary": false,
       "drawn": "The axe's beard drawn along the shield rim, and the red glint along its edge"
+    },
+    {
+      "id": "SFX_CLIMB_HOLD",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.climb_hold",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CLIMB_STRAIN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.climb_strain",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CLIMB_SLIDE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.climb_slide",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SWIM_STROKE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.swim_stroke",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SINK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sink",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SINK_GASP",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sink_gasp",
+      "temporary": false
+    },
+    {
+      "id": "SFX_CRAWL",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.crawl",
+      "temporary": false
+    },
+    {
+      "id": "SFX_STONE_SCRAPE",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.stone_scrape",
+      "temporary": false
+    },
+    {
+      "id": "SFX_JUMP_LAND",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.jump_land",
+      "temporary": false
     }
   ],
   "events": {
@@ -1468,7 +1595,18 @@
     "FINISHER": "SFX_FINISHER",
     "SPARE": "SFX_SPARE",
     "GUARD_TURN": "SFX_GUARD_TURN",
-    "RED_SCRAPE": "SFX_RED_SCRAPE"
+    "RED_SCRAPE": "SFX_RED_SCRAPE",
+    "CLIMB_HOLD": "SFX_CLIMB_HOLD",
+    "CLIMB_STRAIN": "SFX_CLIMB_STRAIN",
+    "CLIMB_SLIPPED": "SFX_CLIMB_SLIDE",
+    "CLIMB_SLID": "SFX_JUMP_LAND",
+    "SWIM_STROKE": "SFX_SWIM_STROKE",
+    "SINKING": "SFX_SINK",
+    "DROWNING": "SFX_SINK",
+    "SINK_ENDED": "SFX_SINK_GASP",
+    "CRAWL_SHUFFLE": "SFX_CRAWL",
+    "STONE_SCRAPE": "SFX_STONE_SCRAPE",
+    "JUMP_LANDED": "SFX_JUMP_LAND"
   },
   "home": {
     "restSeconds": 90,
@@ -1486,5 +1624,191 @@
     },
     "tellLeast": 14,
     "tellMost": 26
+  },
+  "island": {
+    "about": "Stage 14 (Book 11 sections 07 and 12; decisions S14-100 to S14-109): the island's ambience by rule, read by src/audio/islandAmbience.ts four times a second (presentation, like `home` and `south`). Each zone's rule over `default`, an area's over its zone's; a layer the rule does not name comes from the zone's own tiles (the sea's distance over the whole island, the stream, the falls), so a new scene is heard at once. `wind` scales the place's wind against the strand's; `surf` the sea, never below `surfFloor` anywhere in the zone; `gulls` the strand's gulls; `birds` the colony, the skylark and the curlew by season (`day`: by day only); `stream` and `falls` their loudness; `dry` the seasons the stream shrinks to its pools; `frozen` the seasons its still water freezes; `cave` the drips and their echo; `quiet` the bog's quiet; `roar` and `drowned` the deep passage's roar and the drowned's tell, from a point (zone `tiles`, or an island `block` of Book 9's grid). `reach` gives each source's distance heard full and unheard, in tiles; `seasons` and `night` scale the rest. An unseen stream or fall is captioned with its direction once per `captionAgainSeconds`; the roar once past `roarCaptionAt`; the tell each time it sounds, every `tellLeastSeconds` to `tellMostSeconds`.",
+    "reach": {
+      "sea": {
+        "fullTiles": 8,
+        "silentTiles": 60
+      },
+      "stream": {
+        "fullTiles": 2,
+        "silentTiles": 14
+      },
+      "falls": {
+        "fullTiles": 4,
+        "silentTiles": 36
+      },
+      "tell": {
+        "fullTiles": 6,
+        "silentTiles": 34
+      }
+    },
+    "captionAgainSeconds": 60,
+    "tellLeastSeconds": 16,
+    "tellMostSeconds": 30,
+    "roarCaptionAt": 0.35,
+    "default": {
+      "surfFloor": 0.25,
+      "gulls": 0.8
+    },
+    "zones": {
+      "ZONE_SK_STRAND": {
+        "surf": 1,
+        "surfFloor": 0.5,
+        "gulls": 1
+      },
+      "ZONE_SK_MACHAIR": {
+        "gulls": 0.6,
+        "birds": [
+          {
+            "kind": "skylark",
+            "rate": 0.5,
+            "seasons": ["Spring", "Summer"],
+            "day": true
+          }
+        ]
+      },
+      "ZONE_SK_HAGSEAT": {
+        "wind": 1.7,
+        "gulls": 0.9,
+        "surfFloor": 0.45,
+        "birds": [
+          {
+            "kind": "colony",
+            "rate": 0.35,
+            "seasons": ["Spring", "Summer"]
+          }
+        ]
+      },
+      "ZONE_SK_CAIRN": {
+        "gulls": 0.5,
+        "birds": [
+          {
+            "kind": "skylark",
+            "rate": 0.4,
+            "seasons": ["Spring", "Summer"],
+            "day": true
+          }
+        ]
+      },
+      "ZONE_SK_SEALCAVE": {
+        "gulls": 0.8
+      },
+      "ZONE_SK_GEO": {
+        "wind": 1.25,
+        "gulls": 1.2,
+        "surfFloor": 0.5,
+        "birds": [
+          {
+            "kind": "colony",
+            "rate": 0.8,
+            "seasons": ["Spring", "Summer"]
+          }
+        ]
+      },
+      "ZONE_SK_CLIFFS": {
+        "wind": 1.5,
+        "gulls": 1.2,
+        "surfFloor": 0.55,
+        "birds": [
+          {
+            "kind": "colony",
+            "rate": 1,
+            "seasons": ["Spring", "Summer"]
+          }
+        ]
+      },
+      "ZONE_SK_ROOK": {
+        "wind": 1.4,
+        "gulls": 0.3,
+        "dry": ["Summer"],
+        "frozen": ["Winter"],
+        "birds": [
+          {
+            "kind": "skylark",
+            "rate": 1,
+            "seasons": ["Spring", "Summer"],
+            "day": true
+          }
+        ]
+      },
+      "ZONE_SK_BOG": {
+        "wind": 0.6,
+        "surf": 0.6,
+        "gulls": 0.15,
+        "quiet": 1,
+        "frozen": ["Winter"],
+        "birds": [
+          {
+            "kind": "curlew",
+            "rate": 0.7,
+            "seasons": ["Spring", "Summer", "Autumn"]
+          }
+        ]
+      },
+      "ZONE_SK_NAUST": {
+        "gulls": 1,
+        "surfFloor": 0.4
+      },
+      "ZONE_SK_SKERRY": {
+        "gulls": 0.8,
+        "surfFloor": 0.45,
+        "drowned": {
+          "block": [42, 28.5]
+        }
+      },
+      "ZONE_SK_SEALCAVE_DEEP": {
+        "wind": 0,
+        "surf": 0.35,
+        "surfFloor": 1,
+        "gulls": 0,
+        "cave": 1,
+        "roar": {
+          "tiles": [10, 15.5]
+        }
+      },
+      "ZONE_SK_CAIRN_IN": {
+        "wind": 0,
+        "surf": 0,
+        "surfFloor": 0,
+        "gulls": 0,
+        "cave": 0.6
+      }
+    },
+    "areas": {
+      "ZONE_SK_KELDA": {
+        "wind": 0.8,
+        "gulls": 0.4
+      },
+      "ZONE_SK_GREYMEN": {
+        "wind": 0.4,
+        "gulls": 0,
+        "quiet": 1.4,
+        "birds": []
+      }
+    },
+    "seasons": {
+      "Spring": {},
+      "Summer": {
+        "wind": 0.85,
+        "birds": 1.2
+      },
+      "Autumn": {
+        "wind": 1.15,
+        "gulls": 0.8,
+        "birds": 0.6
+      },
+      "Winter": {
+        "wind": 1.3,
+        "gulls": 0.5,
+        "birds": 0.3
+      }
+    },
+    "night": {
+      "gulls": 0.25,
+      "birds": 0.35
+    }
   }
 }

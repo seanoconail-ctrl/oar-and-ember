@@ -51,6 +51,13 @@ export type { PeopleLook, PersonLook } from './people.ts';
 
 export const GROUND_SHEET = 'tile_strand';
 export const PLANT_SHEET = 'plant_strand';
+/** Stage 14 (decision S14-32): a zone's own ground and plant sheets (the moor's, the caves'). */
+export function groundSheetOf(map: ZoneMap): string {
+  return map.ground ?? GROUND_SHEET;
+}
+export function plantSheetOf(map: ZoneMap): string {
+  return map.plantSheet ?? PLANT_SHEET;
+}
 export const FX_SHEET = 'fx_strand';
 /** People's own particles and prints: dust, splashes, ripple rings, drips, surf spray (Book 7 07). */
 export const PEOPLE_FX_SHEET = 'fx_people';
@@ -74,6 +81,8 @@ export const HAGSTONE_SHEET = 'prop_hagstone';
 /** Stage 11: Seal Cave's cliff face (strips) and the dark inside its arch. */
 export const SEALCAVE_SHEET = 'bld_sealcave';
 export const SEALCAVE_FX_SHEET = 'fx_sealcave';
+/** Stage 14: water, light and cut marks drawn flat on the ground or a face (no shadow, never tall). */
+export const ISLAND_FX_SHEET = 'fx_island';
 export const FIRE_SHEET = 'fx_fire';
 /** Seconds between glints on something lying to be picked up. */
 const GLINT_EVERY = 2.6;
@@ -128,7 +137,7 @@ export function groundSprites(map: ZoneMap, camera: { x: number; y: number }): S
     for (let i = i0; i <= i0 + Math.ceil(LOGICAL_WIDTH / TILE); i++) {
       if (i < 0 || j < 0 || i > map.width || j > map.height) continue;
       out.push({
-        sheet: GROUND_SHEET,
+        sheet: groundSheetOf(map),
         frame: names[j * (map.width + 1) + i] ?? '',
         x: i * TILE - TILE / 2 - camera.x,
         y: j * TILE - TILE / 2 - camera.y,
@@ -445,7 +454,7 @@ export function plantBatch(
     frameId[k] = (f.frame0[i] ?? 0) + UPRIGHT + lean;
   }
   return {
-    sheet: PLANT_SHEET,
+    sheet: plantSheetOf(map),
     count: n,
     frames: f.names,
     frameId,
@@ -723,6 +732,8 @@ export interface ZoneSceneInput {
    * fighter's eased speed picks its walk start and stop frames (rampFrame).
    */
   readonly walkPerTick?: number;
+  /** Stage 14: the wildlife present this season (src/scenes/islandLook.ts); absent: all of it. */
+  readonly life?: readonly ZoneLife[];
 }
 
 /**
@@ -1204,6 +1215,9 @@ const ANIMATED_PROPS: ReadonlySet<string> = new Set([
   'fx_sea_wreck',
   'ship_t1_launch',
   'ship_t1_crew',
+  // Stage 14: the eagle on its eyrie, the falls, the passages' haze and the light off water.
+  'prop_island',
+  ISLAND_FX_SHEET,
 ]);
 
 /** The animation state a pose is drawn with (a person calling waves and shouts: `call`). */
@@ -1283,14 +1297,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       const phase = Math.floor(prop.x * 37 + prop.y * 11);
       frame = `${state}/${facing}/${frameIndex(anims, prop.sheet, state, reduced ? 0 : tick + phase)}`;
     }
-    const built = prop.sheet === SEALCAVE_SHEET || prop.sheet === SEALCAVE_FX_SHEET;
+    const flat = prop.sheet === SEALCAVE_FX_SHEET || prop.sheet === ISLAND_FX_SHEET;
+    const built = prop.sheet === SEALCAVE_SHEET || flat;
     const sprite: SceneSprite = {
       sheet: prop.sheet,
       frame,
       x,
       y,
       layer: 'actor',
-      tall: prop.sheet !== SEALCAVE_FX_SHEET,
+      tall: !flat,
       ...(prop.sort === undefined ? {} : { sort: prop.sort * map.tile - camera.y }),
     };
     sprites.push(sprite);
@@ -1318,7 +1333,8 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       });
     }
   }
-  for (const { sprite, lift } of lifeSprites(map.life, camera, seconds, input.phase === 'night')) {
+  const life = input.life ?? map.life;
+  for (const { sprite, lift } of lifeSprites(life, camera, seconds, input.phase === 'night')) {
     if (!inView(sprite.x, sprite.y + lift)) continue;
     sprites.push(sprite);
     cast(sprite, lift);

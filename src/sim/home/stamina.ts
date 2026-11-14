@@ -14,6 +14,9 @@
  *   simulation's fighter keeps the flag, decision DF-3), sets a carried load down and halves a
  *   waist-deep wade until Book 10's heavyCarryEmpty stamina is regained.
  * - Homestead tasks cost only their small stamina, which never empties the bar on its own.
+ * - Stage 14 (decision S14-52): climbing off a ledge and swimming drain their Book 10 rates and
+ *   never refill (the Regeneration row's 0); a heavy object moving drains pushStamina. Empty on a
+ *   climb's face or in deep water is returned for src/sim/land/traverse.ts (the slide, the sink).
  */
 import type { StaminaBalance } from '../../content/homeBalance.ts';
 import type { Stamina, StaminaReason, StaminaReduction, WorldState } from '../world.ts';
@@ -120,6 +123,15 @@ export interface TraversalNow {
    * bar reached 0, at this rate a second.
    */
   readonly exhausted?: { readonly delay: number; readonly rate: number };
+  /**
+   * Stage 14 (Book 10 "Stamina in traversal"; src/sim/land/traverse.ts): on a climb's face, in
+   * marked deep water, a heavy object moving (its drain a second), and no regeneration (climbing
+   * off a ledge or swimming: the Regeneration row's 0).
+   */
+  readonly climbing?: boolean;
+  readonly swimming?: boolean;
+  readonly pushPerSecond?: number;
+  readonly noRegen?: boolean;
 }
 
 /** Which traversals ran the bar empty and wait for Book 10's recoverAt. */
@@ -127,6 +139,9 @@ export interface Winded {
   run?: boolean;
   carry?: boolean;
   wade?: boolean;
+  /** Stage 14: the bar ran empty on a climb's face or in deep water (returned, never kept). */
+  climb?: boolean;
+  swim?: boolean;
 }
 
 /** One tick of traversal drains and regeneration. Returns what ran empty this tick. */
@@ -141,6 +156,9 @@ export function traversalTick(
   if (now.running) drain += now.inCombat === true ? sb.drain.runCombat : sb.drain.run;
   if (now.carrying) drain += sb.drain.heavyCarry;
   if (now.wadingWaist) drain += sb.drain.waistWade;
+  if (now.climbing === true) drain += sb.drain.climb;
+  if (now.swimming === true) drain += sb.drain.swim;
+  if (now.pushPerSecond !== undefined) drain += now.pushPerSecond;
   const emptied: Winded = {};
   if (drain > 0) {
     st.current = Math.max(0, st.current - drain / 60);
@@ -149,8 +167,11 @@ export function traversalTick(
       if (now.running) emptied.run = true;
       if (now.carrying) emptied.carry = true;
       if (now.wadingWaist) emptied.wade = true;
+      if (now.climbing === true) emptied.climb = true;
+      if (now.swimming === true) emptied.swim = true;
     }
   } else if (
+    now.noRegen !== true &&
     tick - st.spentTick >= (now.exhausted?.delay ?? sb.regenDelayTicks) &&
     st.current < st.max
   ) {

@@ -17,10 +17,14 @@ import type { LandContext } from './onFoot.ts';
 import { entryPoint, linkOf } from './zoneLinks.ts';
 import type { Edge } from './zoneLinks.ts';
 import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
+import type { TraverseMarks } from '../../content/traverseMarks.ts';
 import type { ZoneMap } from './zoneMap.ts';
 
-/** Book 2 section 10: which caption an edge gives. */
-export type EdgeKindName = 'NOTHING' | 'DEEP' | 'STEEP';
+/**
+ * Book 2 section 10: which caption an edge gives. Stage 14 adds LOW: a crawl's mouth walked into
+ * carrying something, which does not pass a crawl (Book 10 crawlCarry; decision S14-55).
+ */
+export type EdgeKindName = 'NOTHING' | 'DEEP' | 'STEEP' | 'LOW';
 export interface EdgeKind {
   readonly kind: EdgeKindName;
 }
@@ -105,12 +109,21 @@ export function edgeKindAt(
   press: EdgePress,
   maps?: ReadonlyMap<Id, ZoneMap>,
   tidalGroundOpen = false,
+  /** Stage 14: the zone's movement marks, and whether the steerer carries something. */
+  verbs?: { readonly marks: TraverseMarks; readonly carrying: boolean },
 ): EdgeKindName | 'LINK' {
   if (press.boundary !== null) {
     const to = linkOf(map, press.boundary, press.at, maps);
     return to !== null ? 'LINK' : 'NOTHING';
   }
   if (press.deep) return 'DEEP';
+  if (verbs?.carrying === true) {
+    const at = tileOf(map, press.at.x + press.x * 6, press.at.y - 0.001 + press.y * 6);
+    const crawl = verbs.marks.crawls.some((c) =>
+      c.tiles.some((t) => t[0] === at.tx && t[1] === at.ty),
+    );
+    if (crawl) return 'LOW';
+  }
   // What lies just ahead of the feet, a little past the refused step.
   const ahead = { x: press.at.x + press.x * 6, y: press.at.y + press.y * 6 };
   const { tx, ty } = tileOf(map, ahead.x, ahead.y);
@@ -125,6 +138,7 @@ export const EDGE_CAPTIONS: Readonly<Record<EdgeKindName, string>> = {
   NOTHING: 'caption.edge.nothing',
   DEEP: 'caption.edge.deep',
   STEEP: 'caption.edge.steep',
+  LOW: 'caption.edge.low',
 };
 
 export interface EdgeEvent {

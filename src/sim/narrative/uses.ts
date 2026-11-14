@@ -12,6 +12,8 @@ import { campUses } from '../home/camp.ts';
 import type { ZoneMap } from '../land/zoneMap.ts';
 import type { WorldState } from '../world.ts';
 import { findPlacedUses } from './finds.ts';
+import { islandUses } from '../land/island.ts';
+import type { IslandContext } from '../land/island.ts';
 import type { FindsContext } from './finds.ts';
 import { bodyRemarkUses } from './remarks.ts';
 import type { RemarksContext } from './remarks.ts';
@@ -33,6 +35,8 @@ export interface UseSources {
   readonly remarks?: RemarksContext | null | undefined;
   /** The small finds off the paths (the user's fourth playtest, DH-115). */
   readonly finds?: FindsContext | null | undefined;
+  /** Stage 14: the island's collectibles, puzzle places, resource nodes and the drowned. */
+  readonly island?: IslandContext | null | undefined;
   /** A reason for the first raid (DH-130 to DH-159): the skin boat, asking, the council's call. */
   readonly raid?: RaidContext | null;
 }
@@ -59,6 +63,8 @@ export function placedUsesHere(world: WorldState, src: UseSources, map: ZoneMap)
   if (src.repairs != null) uses.push(...repairPlacedUses(world, src.repairs, map));
   // The user's fourth playtest: the small finds off the paths (DH-115).
   if (src.finds != null) uses.push(...findPlacedUses(world, src.finds, map));
+  // Stage 14: the island's collectibles, puzzle places, resource nodes and the drowned.
+  if (src.island != null) uses.push(...islandUses(world, src.island, map));
   // A reason for the first raid: the skin boat, a beaten scavenger to ask, the council's call.
   if (src.raid != null) uses.push(...raidPlacedUses(world, src.raid, map, campFire(camp)));
   return uses;

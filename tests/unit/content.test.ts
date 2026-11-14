@@ -32,8 +32,9 @@ describe('the seed data from Books 4, 5, 7 and 10', () => {
     // 27 since design addendum 2.2 dropped Arra Foot as a home site (decision DA-3).
     expect(content.places.size).toBe(27);
     expect(content.hazards.size).toBe(4);
-    // 13 since Stage 13: the reef of the wreck on Sgeir Dhubh, in Rán's Reach (decision S13-48).
-    expect(content.zones.size).toBe(13);
+    // 13 since Stage 13: the reef of the wreck on Sgeir Dhubh, in Rán's Reach (decision S13-48);
+    // 16 since Stage 14: the Skerry, the deep passage and the cairn's inside (decision S14-3).
+    expect(content.zones.size).toBe(16);
     expect([...content.people.values()].filter((p) => p.kind === 'RESIDENT')).toHaveLength(17);
     expect(content.factions.size).toBe(8);
     expect(content.hulls.size).toBe(4);

@@ -6,6 +6,7 @@
  * information caption shows, and what it gives (eggs for the stores, silver, a collectible, or only
  * its story) is Book 10's (section 20, "Chapter 1 finds"), read by src/content/findsBalance.ts.
  */
+import { parseCollectibles } from './islandSchema.ts';
 import { arrayOf, bool, object, oneOf, ref, text } from './schema.ts';
 import type { Check } from './schema.ts';
 
@@ -45,11 +46,17 @@ const findCheck = object(
   ['takenFrame', 'glint'],
 );
 
-const findsCheck = object({
-  about: text,
-  sheet: text,
-  finds: arrayOf(findCheck),
-});
+const findsCheck = object(
+  {
+    about: text,
+    sheet: text,
+    finds: arrayOf(findCheck),
+    /** Stage 14: Skarvholm's collectibles (Book 2 section 10, CollectibleDef; src/content/islandSchema.ts). */
+    collectiblesAbout: text,
+    collectibles: parseCollectibles,
+  },
+  ['collectiblesAbout', 'collectibles'],
+);
 
 export type FindDef = Out<typeof findCheck>;
 export type FindsDef = Out<typeof findsCheck>;

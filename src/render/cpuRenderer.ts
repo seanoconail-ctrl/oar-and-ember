@@ -34,17 +34,20 @@ export function renderSceneCpu(
   const mixed = new Map<number, readonly [number, number, number]>();
   const t = scene.effects?.seconds ?? 0;
   const rim = rimColour(palette);
+  const recolour = scene.recolour;
   for (const item of buildDrawList(scene, sheets, style.cutawayFade)) {
     const image = sheets.get(item.sheet)?.frames.get(item.frame);
     if (image === undefined) throw new Error(`No frame ${item.sheet} ${item.frame}`);
+    const seasonal = recolour?.sheets.has(item.sheet) === true ? recolour.index : null;
     for (let sy = 0; sy < image.height; sy++) {
       const y = item.y + sy;
       if (y < 0 || y >= height) continue;
       for (let sx = 0; sx < image.width; sx++) {
         const x = item.x + sx;
         if (x < 0 || x >= width) continue;
-        const value = image.pixels[sy * image.width + sx] ?? NO_PIXEL;
-        if (value === NO_PIXEL || (item.fade > 0 && fadeDrops(x, y, item.fade))) continue;
+        const raw = image.pixels[sy * image.width + sx] ?? NO_PIXEL;
+        if (raw === NO_PIXEL || (item.fade > 0 && fadeDrops(x, y, item.fade))) continue;
+        const value = seasonal === null ? raw : (seasonal[raw] ?? raw);
         frame.pixels[y * width + x] = value;
         mixed.delete(y * width + x);
         const rgb = palette.entries[value]?.rgb ?? [0, 0, 0];

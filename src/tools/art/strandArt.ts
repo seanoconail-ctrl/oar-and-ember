@@ -37,6 +37,14 @@ type Grid = Code[][];
 /** Pixels from the boundary above (a higher layer starting) or from its own lower edge. */
 const PX = 20;
 
+/**
+ * Which ground sheet a tile is painted for (Stage 14, decision S14-32): the strand's and the
+ * moor's paint every shared terrain alike (rock, shingle, sea, foam), so the moor's scenes meet the
+ * strand's without a seam; the caves paint rock as a passage's wet walls and the earth floor as
+ * the cairn's.
+ */
+export type GroundSet = 'strand' | 'moor' | 'cave';
+
 function paint(
   palette: Palette,
   corners: readonly Layer[],
@@ -44,6 +52,7 @@ function paint(
   ly: number,
   wx: number,
   wy: number,
+  set: GroundSet = 'strand',
 ): Code {
   const c = (ramp: string, step: number): Code => rampCode(palette, ramp, step);
   const px = pixelInfo(corners, lx, ly, wx, wy);
@@ -53,7 +62,13 @@ function paint(
   const inside = (px.margins[px.layer] ?? 1) * PX; // px inside its own lower edge
   const nearAbove = (L: number): number => -(px.margins[L] ?? -1) * PX; // px to where L begins
   const underCode = LAYERS[px.under] ?? '~';
-  const wetBelow = underCode === '~' || underCode === '-' || underCode === '_' || underCode === 'w';
+  const wetBelow =
+    underCode === '~' ||
+    underCode === '-' ||
+    underCode === '_' ||
+    underCode === 'w' ||
+    underCode === 'o' ||
+    underCode === '=';
   switch (layer) {
     case ',': {
       // Machair: cool grey-green with calm tonal patches; a lit grass lip over the bank's edge.
@@ -117,7 +132,101 @@ function paint(
       const st = valueNoise(wx, wy, 4, 17, P);
       return st > 0.62 ? c('stone', 3 + (st > 0.75 ? 1 : 0)) : c('sand_wet', 1.4);
     }
+    case 'h': {
+      // Heather moor (Stage 14): a dark peaty floor between cushions of heather, olive and brown,
+      // in clumps with calm patches; the odd drift of purple tips; grass where it meets the turf.
+      const cushion = valueNoise(wx, wy, 5, 40, P);
+      const clump = fbm(wx, wy, 24, 41, 2, P);
+      if (inside < 1.4 && (underCode === ',' || underCode === '.'))
+        return c('weld', 1.2 + detail * 0.6);
+      if (cushion < 0.3) return c('earth', 1.3 + tone * 0.8);
+      const brown = valueNoise(wx, wy, 14, 42, P) > 0.68;
+      if (brown) return c('bracken', 1.4 + cushion * 1.4);
+      const bloom = clump > 0.62 && hash01(wx, wy, 43) < 0.35 && cushion > 0.55;
+      if (bloom) return c('violet', 1.4 + detail * 1.4);
+      return c('weld', 1.8 + (cushion - 0.5) * 2.2 + (tone - 0.5) * 1.0);
+    }
+    case 'p': {
+      // Peat (Stage 14): black-brown, crumbling, wet in its hollows where the sky shows; dark at
+      // the foot of a bank and round a pool.
+      const crumb = hash01(wx, wy, 44);
+      if (inside < 1.8 && underCode === 'o') return c('tar', 0.8);
+      if (valueNoise(wx, wy, 8, 45, P) > 0.74 && detail > 0.5) return c('sky', 0.6);
+      if (crumb < 0.05) return c('tar', 3 + (crumb < 0.02 ? 1 : 0));
+      return c('earth', 1.3 + (tone - 0.5) * 1.6 + (detail - 0.5) * 0.9);
+    }
+    case 'o': {
+      // A bog pool's bed (Stage 14), seen through still peat-dark water (drawn by the water
+      // shader): black peat with drowned sphagnum and a pale stem or two.
+      if (inside < 2) return c('moss', 2.2);
+      if (valueNoise(wx, wy, 5, 46, P) > 0.7) return c('moss', 1.4);
+      return c('tar', 0.8 + tone * 1.2);
+    }
+    case 'c': {
+      // A cliff face (Stage 14): strata in bands, lit ledges and dark cracks, lichen on the upper
+      // courses, the turf's lip and its undercut at the top, the foot dark, wet and weedy where
+      // the sea reaches it; peat where a bank is cut in the bog.
+      const peaty = underCode === 'p' || underCode === 'o';
+      if (inside < 2.4) {
+        if (wetBelow) return hash01(wx, wy >> 1, 47) < 0.45 ? c('kelp', 1 + detail * 3) : c('stone', 1);
+        if (underCode === 'h' || underCode === ',') return inside < 1.2 ? c('weld', 1.6) : c('earth', 0.6);
+        return c(peaty ? 'tar' : 'stone', 1);
+      }
+      const strata = fbm(wx, wy, 10, 48, 2, P);
+      const band = Math.floor((wy + strata * 5) / 4);
+      if (peaty) {
+        // The cut face of a peat bank: spade marks, roots.
+        if ((wx + Math.floor(strata * 4)) % 6 === 0) return c('tar', 0.6);
+        if (hash01(wx, wy, 49) < 0.06) return c('bracken', 2.4);
+        return c('tar', 1.8 + (band % 2) * 0.6 + (tone - 0.5));
+      }
+      const ledge = (wy + strata * 5) % 4 < 0.9 && band % 2 === 1;
+      if (ledge) return hash01(wx, wy, 50) < 0.3 ? c('wool', 5.5) : c('stone', 6.6);
+      if (valueNoise(wx, wy, 2, 51, P) > 0.84) return c('stone', 1.1);
+      if (valueNoise(wx, wy, 3, 52, P) > 0.78 && tone > 0.5) return c('trefoil', 1.3);
+      return c('stone', 3.2 + (band % 2) * 0.8 - (band % 3 === 0 ? 0.6 : 0) + (tone - 0.5) * 0.8);
+    }
+    case '=': {
+      // The causeway (Stage 14): weed-hung boulders laid close, wrack between them, barnacles.
+      if (inside < 1.6) return c('kelp', 1.2);
+      const b = boulderShade(c, wx, wy);
+      const weed = valueNoise(wx, wy, 4, 53, P);
+      if (weed > 0.52) return c('kelp', 1.6 + detail * 3.2);
+      if (hash01(wx >> 1, wy >> 1, 54) < 0.08) return c('wool', 3.4);
+      return b;
+    }
+    case 'n': {
+      // A cave's wet rock floor (Stage 14): dark, worn smooth, a film of water catching the light
+      // in streaks, weed and small pools in its hollows; darker at the walls' foot.
+      if (inside < 2.4) return c('kelp', 1.4);
+      if (valueNoise(wx, wy, 7, 55, P) > 0.72) return c('sea', 2 + detail);
+      const sheen = Math.sin((TAU * (wx * 3 + wy * 5)) / P + detail * 5) > 0.9 && tone > 0.5;
+      if (sheen) return c('stone', 4.4);
+      return c('stone', 2.2 + (tone - 0.5) * 1.4 + (detail - 0.5) * 1.0);
+    }
+    case 'd': {
+      // Drystone walling (Stage 14, the Hollow Cairn): flat stones in courses of uneven height
+      // and length, each its own tone, the joints dark; lit along the top of each course.
+      const row = Math.floor((wy + fbm(wx, wy, 9, 56, 1, P) * 2) / 4);
+      const h = hash01(row, 57);
+      const width = 5 + Math.floor(h * 6);
+      const off = Math.floor(h * 13);
+      const k = Math.floor((wx + off) / width);
+      const inRow = (wy + fbm(wx, wy, 9, 56, 1, P) * 2) % 4;
+      if (inRow < 0.9 || (wx + off) % width === 0) return c('stone', 0.6);
+      const t = hash01(row, k, 58);
+      return c('stone_warm', 2.2 + t * 2.4 + (inRow < 1.9 ? 0.9 : 0));
+    }
     case ':': {
+      if (set === 'cave') {
+        // A cave's dry earth floor (Stage 14, the cairn): packed and dusty, grit and small
+        // stones, dark along the walls' foot.
+        const wall = Math.min(nearAbove(layerIndex('r')), nearAbove(layerIndex('d')));
+        if (wall < 3) return c('earth', 1.0 + wall * 0.3);
+        const grit = hash01(wx, wy, 59);
+        if (grit < 0.03) return c('stone', 3.6);
+        return c('earth', 2.4 + (tone - 0.5) * 1.4 + (detail - 0.5) * 0.7);
+      }
       // The broch's court (Stage 7): trodden earth, darker and mossy in the damp ring of shade
       // at the wall's foot, with small stones and grit; calm patches where people walk most.
       const wall = nearAbove(layerIndex('r'));
@@ -130,6 +239,14 @@ function paint(
       return c('earth', 2.6 + (tone - 0.5) * 1.6 + (detail - 0.5) * 0.7 + (wall < 9 ? -0.5 : 0));
     }
     case 'r': {
+      if (set === 'cave') {
+        // A passage's wet rock wall seen from above (Stage 14): dark, rough, glistening; a weed
+        // line at its foot where the sea reaches.
+        if (inside < 2.4) return wetBelow ? c('kelp', 1.6 + detail * 2) : c('stone', 0.6);
+        const glint = hash01(wx, wy, 60) < 0.02;
+        if (glint) return c('stone', 5);
+        return c('stone', 0.6 + (tone - 0.5) * 1.0 + (detail > 0.72 ? 0.9 : 0));
+      }
       // Rock: a jumble of faceted boulders lit from the upper left; wet and weedy where the
       // water reaches it, dark at its foot elsewhere; lichen on lit faces.
       if (inside < 2.2) {
@@ -200,6 +317,20 @@ function header(name: string, kind: string, w: number, h: number, pivot: string)
  * away from the strand's, so a tile's place in the pattern is the same in either zone.
  */
 export function strandTiles(palette: Palette, zones: readonly (readonly string[])[]): string {
+  return groundTiles(palette, zones, 'tile_strand', 'strand');
+}
+
+/**
+ * A ground sheet (Stage 14, decision S14-32): every visual tile its zones use, painted for its
+ * set. tile_strand for the strand's zones, tile_moor for the moor's and the coast's new scenes,
+ * tile_cave for the interiors.
+ */
+export function groundTiles(
+  palette: Palette,
+  zones: readonly (readonly string[])[],
+  name: string,
+  set: GroundSet,
+): string {
   const states = new Map<string, { corners: Layer[]; phase: number }>();
   for (const rows of zones) {
     const width = rows[0]?.length ?? 0;
@@ -212,7 +343,7 @@ export function strandTiles(palette: Palette, zones: readonly (readonly string[]
       }
     }
   }
-  const lines = header('tile_strand', 'tile', TILE, TILE, '0,0');
+  const lines = header(name, 'tile', TILE, TILE, '0,0');
   lines.push('# Dual-grid autotiles: g_<corners TL TR BL BR>_<place in the 5 x 5 pattern>.');
   const blocks: string[] = [];
   for (const [state, { corners, phase }] of [...states].sort(([a], [b]) => (a < b ? -1 : 1))) {
@@ -225,7 +356,7 @@ export function strandTiles(palette: Palette, zones: readonly (readonly string[]
       for (let lx = 0; lx < TILE; lx++) {
         const wx = (((pi * TILE - TILE / 2 + lx) % P) + P) % P;
         const wy = (((pj * TILE - TILE / 2 + ly) % P) + P) % P;
-        row += paint(palette, corners, lx, ly, wx, wy);
+        row += paint(palette, corners, lx, ly, wx, wy, set);
       }
       rowsOut.push(row);
     }
@@ -392,6 +523,65 @@ function plantFrame(palette: Palette, kind: string, variant: number, lean: numbe
     }
     return g;
   }
+  if (kind === 'heather') {
+    // Stage 14: a heather bush, a low dome of olive-brown sprigs, its tips purple in some
+    // variants; the top bends with the lean, the woody foot stays put.
+    const w = 2 + (variant % 2);
+    const tall = 4 + (variant >> 1);
+    const bloom = variant >= 2;
+    put(g, x0, y0 + 1, c('earth', 0));
+    for (let dy = 0; dy < tall; dy++) {
+      const span = w * Math.sqrt(Math.max(0, 1 - (dy / tall) ** 2)) + 0.5;
+      const bend = lean * (dy / tall) ** 1.2;
+      for (let dx = -Math.floor(span); dx <= Math.floor(span); dx++) {
+        if (hash01(variant, dx + 9, dy, 61) < 0.16) continue;
+        const top = dy >= tall - 2 || Math.abs(dx) >= span - 1;
+        let code = c('weld', 1.5 + (dy / tall) * 2.6 + (dx < 0 ? 0.6 : 0));
+        if (bloom && top && hash01(variant, dx + 9, dy, 62) < 0.55)
+          code = hash01(variant, dx + 9, dy, 63) < 0.7 ? c('violet', 2 + hash01(dx, dy) * 2) : c('thrift', 2.5);
+        put(g, x0 + dx + bend, y0 - dy, code);
+      }
+    }
+    return g;
+  }
+  if (kind === 'cotton') {
+    // Stage 14: bog cotton, thin stalks with white tufted heads that nod in the wind.
+    for (let k = 0; k < 2 + (variant % 2); k++) {
+      const sx = x0 + (k - 1) * 2;
+      const hgt = 6 + ((k * 2 + variant) % 4);
+      for (let s = 0; s < hgt; s++) {
+        const f = s / hgt;
+        put(g, sx + lean * f * f, y0 - s, c('grass', 3 + f * 3));
+      }
+      const hx = sx + lean;
+      put(g, hx, y0 - hgt, c('wool', 6));
+      put(g, hx + 1, y0 - hgt, c('wool', 5));
+      put(g, hx, y0 - hgt - 1, c('wool', 6));
+    }
+    put(g, x0 - 1, y0, c('grass', 3));
+    put(g, x0 + 1, y0, c('grass', 4));
+    return g;
+  }
+  if (kind === 'bracken') {
+    // Stage 14: a bracken frond, a stem with paired pinnae, its tip curling over with the lean;
+    // the browner variants for the dying fronds.
+    const ramp = variant >= 3 ? 'bracken' : 'fern';
+    const n = 9 + (variant % 2) * 2;
+    for (let j = 0; j < n; j++) {
+      const f = j / n;
+      const px = x0 + lean * f * f;
+      const py = y0 - j;
+      put(g, px, py, c(ramp, 1.5 + f * 2.5));
+      if (j > 2 && j % 2 === 0) {
+        const span = Math.floor(3 * (1 - f) + 1);
+        for (let s = 1; s <= span; s++) {
+          put(g, px - s, py + s * 0.4, c(ramp, 2 + f * 2));
+          put(g, px + s, py + s * 0.4, c(ramp, 1 + f * 2));
+        }
+      }
+    }
+    return g;
+  }
   if (kind === 'clover' || kind === 'trefoil') {
     const ramp = kind === 'clover' ? 'clover_white' : 'trefoil';
     const n = kind === 'clover' ? 4 : 5;
@@ -437,13 +627,29 @@ function plantFrame(palette: Palette, kind: string, variant: number, lean: numbe
 
 export const PLANT_LEANS = [-3, -2, -1, 0, 1, 2, 3] as const;
 
+/** The plants of a sheet: the strand's six, and from Stage 14 the moor's three after them. */
+export const STRAND_PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'];
+export const MOOR_PLANT_KINDS = [...STRAND_PLANT_KINDS, 'heather', 'cotton', 'bracken'];
+
 export function strandPlants(palette: Palette): string {
+  return plantSheet(palette, 'plant_strand', STRAND_PLANT_KINDS);
+}
+
+/**
+ * Stage 14 (decision S14-33): plant_moor holds the strand's plants and the moor's (heather, bog
+ * cotton and bracken), drawn by the same hand, so a moor scene draws all its plants in one batch.
+ */
+export function moorPlants(palette: Palette): string {
+  return plantSheet(palette, 'plant_moor', MOOR_PLANT_KINDS);
+}
+
+function plantSheet(palette: Palette, name: string, kinds: readonly string[]): string {
   const lines = [
     '# Generated by src/tools/art/strandArt.ts. Do not edit by hand: change the generator and run',
     '# npm run art:sheets.',
     '# Each state is one plant variant; its seven frames lean it from -3 to +3 pixels (frame 3 is',
     '# upright), so the renderer can bend it in the wind and part it round walkers.',
-    'sheet: plant_strand',
+    `sheet: ${name}`,
     'kind: plant',
     'palette: book07',
     'size: 16x16',
@@ -453,7 +659,7 @@ export function strandPlants(palette: Palette): string {
     'placeholder: false',
   ];
   const out: string[] = [];
-  for (const kind of ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil']) {
+  for (const kind of kinds) {
     for (let v = 0; v < 4; v++) {
       lines.push(`anim.${kind}${v}: frames 7, ticks 1`);
       PLANT_LEANS.forEach((lean, i) =>

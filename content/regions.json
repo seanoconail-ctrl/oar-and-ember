@@ -13,7 +13,7 @@
       },
       {
         "id": "ZONE_SK_KELDA",
-        "terrain": "Spring and stream"
+        "terrain": "Spring and stream; an area of the machair"
       },
       {
         "id": "ZONE_SK_ROOK",
@@ -25,7 +25,7 @@
       },
       {
         "id": "ZONE_SK_GREYMEN",
-        "terrain": "Stone ring"
+        "terrain": "Stone ring; an area of the bog"
       },
       {
         "id": "ZONE_SK_CAIRN",
@@ -49,7 +49,19 @@
       },
       {
         "id": "ZONE_SK_NAUST",
-        "terrain": "Cove, causeway, skerry"
+        "terrain": "Cove and boatshed plot"
+      },
+      {
+        "id": "ZONE_SK_SKERRY",
+        "terrain": "East shore, causeway, skerry"
+      },
+      {
+        "id": "ZONE_SK_SEALCAVE_DEEP",
+        "terrain": "The Seal Cave's deep passage, an interior"
+      },
+      {
+        "id": "ZONE_SK_CAIRN_IN",
+        "terrain": "The Hollow Cairn's inside, an interior"
       },
       {
         "id": "ZONE_SEA_WRECK",

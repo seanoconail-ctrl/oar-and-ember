@@ -8,6 +8,8 @@
  */
 import type { CueDef } from '../content/registry.ts';
 import { StrandAmbience } from './synth/ambience.ts';
+import { IslandLayers } from './synth/island.ts';
+import type { IslandMix } from './islandAmbience.ts';
 import { CaveAmbience } from './synth/repairs.ts';
 import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
 import { HomeAmbience } from './synth/home.ts';
@@ -45,6 +47,9 @@ export class WebAudioEngine implements AudioSink {
   #paused = false;
   readonly #players = new Map<string, PiecePlayer>();
   #strand: StrandAmbience | null = null;
+  /** Stage 14: the island's layers over the strand's bed, and the rule's mix for now. */
+  #island: IslandLayers | null = null;
+  #islandMix: IslandMix | null = null;
   #hearth: HearthAmbience | null = null;
   #hearthLevel = 0;
   #home: HomeAmbience | null = null;
@@ -129,6 +134,7 @@ export class WebAudioEngine implements AudioSink {
       if (player.stopped) this.#players.delete(id);
     }
     this.#strand?.schedule(until);
+    this.#island?.schedule(until);
     this.#hearth?.schedule(until);
     this.#home?.schedule(until);
     this.#spring?.schedule(until);
@@ -299,13 +305,50 @@ export class WebAudioEngine implements AudioSink {
   /** The game's wind at the listener (Book 7 section 14): strength 0..1, gust 0..1, side -1..1. */
   setWind(strength: number, gust: number, from: number): void {
     this.#wind = { strength, gust, from };
-    this.#strand?.setWind(this.#gale ? Math.min(1, strength * GALE_WIND) : strength, gust, from);
+    this.#strand?.setWind(this.#coreWind(strength), gust, from);
+  }
+
+  /** The bed's wind: the island's rule for the place (Stage 14), else the Hag's Seat's gale. */
+  #coreWind(strength: number): number {
+    const mix = this.#islandMix;
+    if (mix !== null) return Math.min(1, strength * mix.wind * (1 - 0.4 * mix.quiet));
+    return this.#gale ? Math.min(1, strength * GALE_WIND) : strength;
   }
 
   /** The tide's height 0 (low) to 1 (high). */
   setTide(height: number): void {
     this.#tide = height;
-    this.#strand?.setTide(height);
+    this.#strand?.setTide(this.#islandMix === null ? height : height * this.#islandMix.surfNear);
+  }
+
+  /**
+   * Stage 14 (decisions S14-100 to S14-109): the island's ambience for now, from its rules
+   * (islandAmbience.ts `islandMix`), four times a second; null leaves the zone's beds as they were.
+   * The strand's bed plays the sea as loud as its distance, from its side, with the place's wind
+   * and gulls; the island's layers play the birds, the water, the cave, the roar and the quiet.
+   */
+  setIsland(mix: IslandMix | null): void {
+    this.#islandMix = mix;
+    const e = this.#e;
+    if (e === null) return;
+    const t = e.ctx.currentTime;
+    if (mix === null) {
+      this.#island?.stop(t);
+      this.#island = null;
+      return;
+    }
+    if (this.#island === null) {
+      this.#island = new IslandLayers(e);
+      this.#island.start(t);
+    }
+    this.#island.set(mix, t);
+    const core = this.#strand;
+    if (core !== null) {
+      core.setSurf(mix.surf.level, mix.surf.pan, t);
+      core.setGulls(mix.gulls);
+      core.setTide(this.#tide * mix.surfNear, t);
+      core.setWind(this.#coreWind(this.#wind.strength), this.#wind.gust, this.#wind.from, t);
+    }
   }
 
   music(action: MusicAction): void {
@@ -390,14 +433,27 @@ export class WebAudioEngine implements AudioSink {
     // Stage 10: the Hag's Seat's gale is the strand's bed with the wind up and the surf below.
     this.#gale = kinds.has('gale');
     const cave = kinds.has('cave');
-    const wantStrand = kinds.has('strand') || kinds.has('heath') || this.#gale || cave;
+    const wantStrand =
+      kinds.has('strand') || kinds.has('heath') || kinds.has('island') || this.#gale || cave;
     if (wantStrand && this.#strand === null) {
       this.#strand = new StrandAmbience(e);
-      const strength = this.#gale
-        ? Math.min(1, this.#wind.strength * GALE_WIND)
-        : this.#wind.strength;
+      const strength = this.#coreWind(this.#wind.strength);
       this.#strand.setWind(strength, this.#wind.gust, this.#wind.from, t);
-      this.#strand.setTide(kinds.has('strand') || cave ? this.#tide : this.#gale ? 0.45 : 0, t);
+      const mix = this.#islandMix;
+      this.#strand.setTide(
+        mix !== null
+          ? this.#tide * mix.surfNear
+          : kinds.has('strand') || cave
+            ? this.#tide
+            : this.#gale
+              ? 0.45
+              : 0,
+        t,
+      );
+      if (mix !== null) {
+        this.#strand.setSurf(mix.surf.level, mix.surf.pan, t);
+        this.#strand.setGulls(mix.gulls);
+      }
       this.#strand.start(t);
     } else if (!wantStrand && this.#strand !== null) {
       this.#strand.stop(t);

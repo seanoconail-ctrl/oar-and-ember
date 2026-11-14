@@ -1,0 +1,34 @@
+{
+  "bog": {
+    "continuousMotion": 0.9462,
+    "frames": 80
+  },
+  "cairn_in": {
+    "continuousMotion": 0.9705,
+    "frames": 80
+  },
+  "cliffs": {
+    "continuousMotion": 0.934,
+    "frames": 80
+  },
+  "deep": {
+    "continuousMotion": 0.9097,
+    "frames": 80
+  },
+  "geo": {
+    "continuousMotion": 0.9618,
+    "frames": 80
+  },
+  "naust": {
+    "continuousMotion": 0.8438,
+    "frames": 80
+  },
+  "rook": {
+    "continuousMotion": 0.9444,
+    "frames": 80
+  },
+  "skerry": {
+    "continuousMotion": 0.842,
+    "frames": 80
+  }
+}

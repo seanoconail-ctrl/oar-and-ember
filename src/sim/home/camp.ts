@@ -307,8 +307,10 @@ export function washUpDriftwood(world: WorldState, ctx: CampContext, storm = fal
   const nodes = driftwoodNodes(world, ctx);
   const day = world.calendar.day;
   const want = ctx.driftwood.perDawn[seasonOf(day)] * (storm ? ctx.driftwood.afterStorm : 1);
+  // Only the strand's driftwood spots: the island's resource nodes share the record (Stage 14).
+  const spots = new Set(ctx.def.sites.filter((s) => s.kind === 'DRIFTWOOD').map((s) => s.key));
   const bare = Object.entries(nodes)
-    .filter(([, n]) => n.nextDay <= day)
+    .filter(([key, n]) => spots.has(key) && n.nextDay <= day)
     .map(([key]) => key)
     .sort(
       (a, b) =>
@@ -361,6 +363,11 @@ export type SiteUse =
       readonly site: string;
       readonly take: boolean;
       readonly nameKey: string;
+      /**
+       * Stage 14 (src/sim/land/island.ts): the drowned spoken with, or a resource node gathered;
+       * absent for a find looked at or taken.
+       */
+      readonly verb?: 'TALK' | 'GATHER';
     }
   | {
       readonly kind: 'REFUSE';
@@ -933,7 +940,10 @@ export function startDay(
     // season's pieces at the dawn after a storm.
     washUpDriftwood(world, ctx, opts.storm === true);
     // Spoilage: fresh fish keeps Book 10's days; none spoils before tutorialComplete.
-    if (!guard) home.fresh = home.fresh.filter((f) => day - f.day < ctx.work.freshFish.keepsDays);
+    if (!guard)
+      home.fresh = home.fresh.filter(
+        (f) => day - f.day < (f.keeps ?? ctx.work.freshFish.keepsDays),
+      );
     // The day's ration for every mouth: the oldest fresh fish first, then the salt fish.
     const mouths = opts.mouths ?? 1 + world.household.residents.length;
     let need = mouths * ctx.work.foodPerPersonPerDay;

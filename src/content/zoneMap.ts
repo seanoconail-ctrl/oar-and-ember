@@ -14,8 +14,21 @@ export const TERRAIN = {
   b: 'bank',
   w: 'stream',
   r: 'rock',
-  /** The broch's court: trodden earth inside its wall (Stage 7). */
+  /** The broch's court: trodden earth inside its wall (Stage 7); a cave's dry earth floor. */
   ':': 'floor',
+  /** Stage 14 (decision S14-31): the moor's and the caves' ground. */
+  h: 'heather',
+  p: 'peat',
+  /** A bog pool: fresh water, waded (knee deep by the plan's markup); ice in winter. */
+  o: 'pool',
+  /** A cliff face or a peat bank's cut face: blocks, and is climbed only on a marked route. */
+  c: 'cliff',
+  /** The Skerry's causeway: open only on spring-tide days inside the tidal ground window. */
+  '=': 'causeway',
+  /** A cave's wet rock floor, under the sea except on spring-tide days inside the window. */
+  n: 'springfloor',
+  /** The Hollow Cairn's drystone walling: blocks. */
+  d: 'drystone',
 } as const;
 export type TerrainCode = keyof typeof TERRAIN;
 export type Terrain = (typeof TERRAIN)[TerrainCode];
@@ -41,7 +54,18 @@ export interface ZoneLife {
   readonly r?: number;
 }
 
-export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
+export const PLANT_KINDS = [
+  'grass',
+  'tussock',
+  'marram',
+  'thrift',
+  'clover',
+  'trefoil',
+  // Stage 14 (plant_moor, decision S14-33): heather, bog cotton and bracken.
+  'heather',
+  'cotton',
+  'bracken',
+] as const;
 export type PlantKind = (typeof PLANT_KINDS)[number];
 
 export interface ZoneMap {
@@ -86,6 +110,49 @@ export interface ZoneMap {
   readonly wind?: number;
   /** Design addendum 2.4 (decision DE-26; Book 9 section 04): the zone's doors and hide flaps. */
   readonly doors?: readonly DoorDef[];
+  /** Stage 14 (decision S14-32): the zone's ground and plant sheets (tile_strand, plant_strand). */
+  readonly ground?: string;
+  readonly plantSheet?: string;
+  /**
+   * Stage 14 (decisions S14-34 to S14-36): the zone's markup, written by its plan
+   * (src/tools/levels/zones.ts, ZoneMarkup): the movement verbs' marks (`traverse`, read by
+   * src/content/traverseMarks.ts), its areas and view points (Book 2 section 10, AreaDef and
+   * ViewPoint), its waterfalls (content/terrain/flow.ts) and the links that are not edges.
+   */
+  readonly traverse?: unknown;
+  readonly areas?: readonly {
+    readonly id: Id;
+    readonly scene: Id;
+    readonly rect: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly nameKey: string;
+    readonly ambience?: string;
+  }[];
+  readonly viewPoints?: readonly {
+    readonly scene: Id;
+    readonly at: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly reveals: readonly Id[];
+  }[];
+  readonly falls?: readonly {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly drop: number;
+  }[];
+  readonly portals?: readonly ZonePortal[];
+}
+
+/**
+ * Stage 14 (decision S14-36): a link that is not a whole edge (Book 2 section 10, FootLink): the
+ * back wall of Seal Cave's inner chamber into the deep passage, the cairn's east door. Walking
+ * into `exit` (tiles of this zone) leads to `to`, arriving at `entry` (tiles of `to`), while
+ * `when` holds: SPRING_LOW, a spring-tide day inside the tidal ground window; or a fact.
+ */
+export interface ZonePortal {
+  readonly id: string;
+  readonly exit: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+  readonly to: Id;
+  readonly entry: { readonly x: number; readonly y: number };
+  readonly when?: { readonly tide: 'SPRING_LOW' } | { readonly fact: string };
 }
 
 /** Book 2 section 10, DoorDef (positions in tiles of its zone; `fact` a fact it waits for). */

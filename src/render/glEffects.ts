@@ -64,31 +64,115 @@ uniform vec3 u_glint;
 uniform vec3 u_kelp;
 uniform int u_detail;   // 2 full, 1 lite, 0 low (slow machines)
 uniform int u_bayer[16];
+// Stage 14 (decisions S14-90 to S14-99): the stream's flow (R, G its way, B its speed, A foam,
+// a fall's lip and sheet), and the land by season: x snow cover on high ground, y the still
+// pools frozen, z the stream shrunk to its pools, w reduced motion (a calmer flow).
+uniform sampler2D u_flow;
+uniform vec4 u_land;
+uniform vec3 u_snow[3];
 out vec4 outColour;
 ${NOISE}
 vec3 seaStep(float i) { return u_sea[int(clamp(i, 0.0, 10.0))]; }
 void main() {
   ivec2 p = ivec2(gl_FragCoord.xy);
   vec2 w = vec2(p) + u_cam + 0.5;
-  vec4 E = texture(u_elev, w / (${ELEVATION_CELL.toFixed(1)} * u_elevSize));
+  vec2 uv = w / (${ELEVATION_CELL.toFixed(1)} * u_elevSize);
+  vec4 E = texture(u_elev, uv);
   float e = E.r * 3.0 - 1.0;
   bool stream = E.g > 0.5;
-  if (e > 1.1 && !stream) discard;
   float b = float(u_bayer[(p.y & 3) * 4 + (p.x & 3)]) / 16.0;
+  if (e > 1.1 && !stream) {
+    // Snow lying in patches on the high ground in winter, thickest highest (Book 7 section 13).
+    if (u_land.x <= 0.0) discard;
+    float lie = vnoise(w / 46.0) * 0.62 + vnoise(w / 15.0) * 0.28 + vnoise(w / 4.0) * 0.1;
+    float high = clamp((e - 1.1) / 0.8, 0.0, 1.0);
+    float edge = u_land.x * (0.3 + 0.7 * high) - lie;
+    if (edge < 0.0) discard;
+    vec3 sbed = texelFetch(u_bed, p, 0).rgb * 255.0;
+    // Thin at its edge, the ground showing through in a dither; shaded by the ground under it.
+    if (edge < 0.05 && b > edge * 18.0) discard;
+    float lum = dot(sbed, vec3(0.3, 0.5, 0.2)) / 255.0;
+    vec3 sc = lum < 0.25 ? u_snow[0] : lum < 0.4 && b > 0.5 ? u_snow[1] : u_snow[2];
+    outColour = vec4(sc / 255.0, 1.0);
+    return;
+  }
   // A ragged waterline: the height field plus fine noise on whole world pixels.
   e += (vnoise(w / 9.0) - 0.5) * 0.035 + (vnoise(w / 3.0) - 0.5) * 0.014;
   vec3 bed = texelFetch(u_bed, p, 0).rgb * 255.0;
   float level = u_tide + swash(w.x, u_t);
   float depth = level - e;
   if (stream && depth <= 0.0) {
-    // Running water over stones: streaks drifting downstream, foam along the banks.
-    float flow = vnoise(vec2(w.x / 3.0, (w.y - u_t * 26.0) / 7.0));
-    float flow2 = vnoise(vec2(w.x / 5.0 + 9.0, (w.y - u_t * 17.0) / 4.0));
-    vec3 c = mix(bed * 0.55, seaStep(4.0), 0.62);
-    if (flow > 0.66) c = seaStep(6.0);
-    if (flow2 > 0.78) c = seaStep(7.0);
+    // Running water over stones (Book 9 section 01): streaks drifting down the stream's own way,
+    // fastest at the narrows, foam along the banks, at rocks and below a fall; pools lie still.
+    vec4 F = texture(u_flow, uv);
+    vec2 dir = F.rg * 2.0 - 1.0;
+    float len = length(dir);
+    dir = len > 0.05 ? dir / len : vec2(0.0, 1.0);
+    float spd = F.b * min(1.0, len * 1.6);
+    float code = F.a;
+    float tt = u_t * (1.0 - 0.6 * u_land.w);
+    vec2 across = vec2(-dir.y, dir.x);
+    float al = dot(w, dir);
+    float ac = dot(w, across);
     float bank = E.b * 255.0 / 40.0;
-    if (bank < 1.1 + vnoise(vec2(w.x / 2.0, (w.y - u_t * 20.0) / 3.0)) * 0.9) c = u_foam[1];
+    if (code > 0.9) {
+      // The falling sheet: white water pouring down the face, ropes of it racing past each other.
+      if (u_land.z > 0.5 && abs(fract(w.x / 11.0) - 0.5) > 0.16) {
+        // A dry summer: only a thread falls; the rest is wet rock.
+        vec3 rock = texelFetch(u_bed, p, 0).rgb * 255.0 * 0.62;
+        outColour = vec4(rock / 255.0, 1.0);
+        return;
+      }
+      float rope = vnoise(vec2(w.x / 1.7, 0.5)) * 0.7 + vnoise(vec2(w.x / 5.0, 3.0)) * 0.3;
+      float pour = vnoise(vec2(w.x / 1.5 + 7.0, (w.y - tt * 96.0 * (0.8 + 0.4 * rope)) / 9.0));
+      vec3 c = pour > 0.62 ? u_foam[2] : pour > 0.4 ? u_foam[1] : rope > 0.55 ? u_foam[0] : seaStep(7.0);
+      if (u_land.y > 0.5) {
+        // Winter: the sheet hung with ice, a thin core still running in it.
+        float icicle = vnoise(vec2(w.x / 2.2, w.y / 30.0));
+        c = abs(fract(w.x / 13.0) - 0.5) < 0.12 ? c : icicle > 0.55 ? seaStep(10.0) : icicle > 0.3 ? seaStep(9.0) : seaStep(7.0);
+      }
+      outColour = vec4(c / 255.0, 1.0);
+      return;
+    }
+    vec3 c = mix(bed * 0.55, seaStep(4.0), 0.62);
+    if (u_land.y > 0.5 && spd < 0.3) {
+      // Winter: the still pools frozen over, grey-white ice with cracks and a frosted rim.
+      float crack = abs(vnoise(w / 7.0) - 0.5);
+      c = mix(bed, seaStep(8.0), 0.55);
+      if (crack < 0.03) c = seaStep(5.0);
+      if (bank < 1.4 + vnoise(w / 3.0) * 0.8) c = u_snow[2];
+      if (u_sun > 0.2 && hash2(floor(w / 2.0) + floor(u_t * 2.0) * vec2(5.0, 9.0)) > 0.996) c = u_glint;
+      outColour = vec4(c / 255.0, 1.0);
+      return;
+    }
+    if (u_land.z > 0.5 && spd >= 0.3 && code < 0.7) {
+      // A dry summer: the running stretches shrink to their pools, leaving damp stones.
+      vec3 damp = bed * mix(0.7, 0.86, floor(vnoise(w / 3.0) * 3.0 + b) / 3.0);
+      if (u_sun > 0.2 && hash2(floor(w / 2.0) + floor(u_t * 3.0) * vec2(11.0, 3.0)) > 0.995) damp = mix(damp, u_glint, 0.5);
+      outColour = vec4(damp / 255.0, 1.0);
+      return;
+    }
+    float v = (6.0 + 34.0 * spd) * (1.0 - 0.5 * u_land.w);
+    float flow = vnoise(vec2(ac / 3.0, (al - tt * v) / 7.0));
+    float flow2 = vnoise(vec2(ac / 5.0 + 9.0, (al - tt * v * 0.65) / 4.0));
+    // A pool turns slowly on itself instead.
+    float still = 1.0 - smoothstep(0.15, 0.35, spd);
+    flow = mix(flow, vnoise(w / 6.0 + vec2(sin(tt * 0.31), cos(tt * 0.27)) * 1.6), still);
+    if (flow > 0.66) c = seaStep(6.0);
+    if (flow2 > 0.78 - 0.1 * spd) c = seaStep(7.0);
+    float churn = vnoise(vec2(ac / 2.0, (al - tt * (10.0 + 24.0 * spd)) / 3.0));
+    if (bank < (1.1 + churn * 0.9) * (0.5 + spd)) c = u_foam[1];
+    // Foam where the plan puts rocks and narrows, racing with the water; spray over a fall's pool.
+    float foam = min(code, 0.6) / 0.6;
+    if (foam > 0.04) {
+      float lace = vnoise(vec2(ac / 2.5, (al - tt * v * 1.2) / 2.5));
+      if (lace < foam * 0.75) c = lace < foam * 0.35 ? u_foam[2] : u_foam[1];
+      if (foam > 0.55 && hash2(floor(w / 1.5) + floor(tt * 9.0) * vec2(3.0, 17.0)) > 0.72) c = u_foam[2];
+    }
+    if (code > 0.7) {
+      // A fall's lip: the water glassy and bright as it tips over.
+      c = fract(w.x / 4.0 + tt * 0.7) < 0.5 ? u_foam[0] : seaStep(9.0);
+    }
     if (u_sun > 0.2 && hash2(w + floor(u_t * 4.0) * vec2(13.0, 7.0)) > 0.994) c = u_glint;
     outColour = vec4(c / 255.0, 1.0);
     return;

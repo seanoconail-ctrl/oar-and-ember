@@ -1,0 +1,1201 @@
+{
+  "about": "Stage 14, work package C: Skarvholm's puzzles and secrets (Book 2 section 10 PuzzleDef: state machines over world conditions, each with in-world hints and a solved fact; Book 9 sections 03, 09 and 16; Book 10 section 20; decisions S14-8 to S14-12, S14-18, S14-22, S14-25, S14-26 and S14-70 to S14-89). `uses` are the places Interact looks at or takes something that is not a collectible; `drowned` the Skerry's dead in their order; `turning` the hill-folk's rule (S14-9); `alignment` the cairn's east door; `sideAims` the Year 1 secrets as side aims (S14-25); `secrets` what each scene's secret or small puzzle is (Book 3 Stage 14, check 4). Positions are in tiles of their scene.",
+  "puzzles": [
+    {
+      "id": "PUZ_SEALCAVE_TIDES",
+      "scenes": ["ZONE_SK_SEALCAVE", "ZONE_SK_SEALCAVE_DEEP", "ZONE_SK_CAIRN_IN"],
+      "states": ["UNKNOWN", "ENTERED", "FOUND"],
+      "transitions": [
+        {
+          "from": "UNKNOWN",
+          "to": "ENTERED",
+          "when": [
+            {
+              "zone": "ZONE_SK_SEALCAVE_DEEP"
+            }
+          ],
+          "effects": [
+            {
+              "set": "sealcave.passage.entered"
+            }
+          ]
+        },
+        {
+          "from": "ENTERED",
+          "to": "FOUND",
+          "when": [
+            {
+              "near": {
+                "zone": "ZONE_SK_CAIRN_IN",
+                "x": 7.5,
+                "y": 21.6,
+                "r": 2.5
+              }
+            }
+          ],
+          "effects": [
+            {
+              "set": "sealcave.passage.found"
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "SIGN",
+          "ref": "caption.puzzle.passage_loud",
+          "about": "The passage grows loud as the tide turns (its sound, captioned)"
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the weed line",
+          "about": "A weed line along both walls at the height the water comes to, seen from the way in"
+        },
+        {
+          "kind": "LINE",
+          "ref": "c_runa.side.deep.given",
+          "about": "Runa's aim, and its two hints"
+        }
+      ],
+      "solvedFact": "sealcave.passage.found",
+      "about": "Book 9 sections 03 and 16: be at the back wall at a spring-tide low, crawl through, reach the cairn's spring room"
+    },
+    {
+      "id": "PUZ_DEEP_STONE",
+      "scenes": ["ZONE_SK_SEALCAVE_DEEP"],
+      "states": ["FALLEN", "SLOTTED"],
+      "transitions": [
+        {
+          "from": "FALLEN",
+          "to": "SLOTTED",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_SEALCAVE_DEEP",
+                "id": "stone"
+              },
+              "moved": true
+            }
+          ],
+          "effects": [
+            {
+              "set": "sealcave.stone.moved",
+              "value": true
+            }
+          ]
+        },
+        {
+          "from": "SLOTTED",
+          "to": "FALLEN",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_SEALCAVE_DEEP",
+                "id": "stone"
+              },
+              "moved": false
+            }
+          ],
+          "effects": [
+            {
+              "set": "sealcave.stone.moved",
+              "value": false
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "LINE",
+          "ref": "c_runa.hint.side.deep.2",
+          "about": "Runa: shift what's in the way from the far side"
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the fallen stone",
+          "about": "The stone lies across the wide way, its slot open beside it"
+        }
+      ],
+      "solvedFact": "sealcave.stone.moved",
+      "about": "Book 9 section 16: the fallen stone slid north into its slot from behind, after the crawl; it slides back"
+    },
+    {
+      "id": "PUZ_GREYMEN",
+      "scenes": ["ZONE_SK_BOG", "ZONE_SK_CAIRN", "ZONE_SK_CAIRN_IN"],
+      "states": ["CLOSED", "OPEN"],
+      "transitions": [
+        {
+          "from": "CLOSED",
+          "to": "OPEN",
+          "when": [
+            {
+              "festivalDawn": true
+            },
+            {
+              "not": {
+                "weather": "FOG"
+              }
+            },
+            {
+              "atDoor": true
+            }
+          ],
+          "effects": [
+            {
+              "set": "cairn.door.open"
+            },
+            {
+              "info": "caption.puzzle.door_turns"
+            },
+            {
+              "sound": "CAIRN_DOOR_TURNS"
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "bog_cup_ring",
+          "about": "Rings and rays into a door, four suns for the feasts"
+        },
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "cairn_kerbstone",
+          "about": "The kerbstone's rings, with a sun over the door"
+        },
+        {
+          "kind": "LINE",
+          "ref": "c_bran.side.greymen.given",
+          "about": "Bran's tale at the fire"
+        },
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "rook_page",
+          "about": "The hermit's fifth page, unneeded"
+        }
+      ],
+      "solvedFact": "cairn.door.open",
+      "about": "Book 9 section 03 (decision S14-11): on a festival morning within alignmentWindow of first light, someone within doorWaitTiles of the cairn's east door, no fog"
+    },
+    {
+      "id": "PUZ_SKERRY",
+      "scenes": ["ZONE_SK_SKERRY"],
+      "states": ["WAITING", "MET"],
+      "transitions": [
+        {
+          "from": "WAITING",
+          "to": "MET",
+          "when": [
+            {
+              "fact": "skerry.drowned.met"
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "hints": [
+        {
+          "kind": "LINE",
+          "ref": "c_hild.side.skerry.given",
+          "about": "Hild: folk say the drowned stand there"
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the causeway",
+          "about": "The causeway's boulders show at the spring lows"
+        }
+      ],
+      "solvedFact": "skerry.drowned.met",
+      "about": "Book 9 section 03: the causeway at a spring low; one of the drowned comes forward each spring tides"
+    },
+    {
+      "id": "PUZ_CAIRN_CUP",
+      "scenes": ["ZONE_SK_CAIRN_IN"],
+      "states": ["UNSEEN", "SEEN"],
+      "transitions": [
+        {
+          "from": "UNSEEN",
+          "to": "SEEN",
+          "when": [
+            {
+              "fact": "cairn.cup.seen"
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "hints": [
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "deep_manannan",
+          "about": "The man on the waves carries a cup in his hands"
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the spring room",
+          "about": "The spring room opens into the inner chamber"
+        }
+      ],
+      "solvedFact": "cairn.cup.seen",
+      "about": "Book 9 section 09, In Year 1 (decision S14-22): the Cup seen on its stone, and it will not lift"
+    },
+    {
+      "id": "PUZ_HERMIT_NICHE",
+      "scenes": ["ZONE_SK_GEO"],
+      "states": ["SEALED", "READ", "OPEN"],
+      "transitions": [
+        {
+          "from": "SEALED",
+          "to": "READ",
+          "when": [
+            {
+              "collected": "geo_cross"
+            }
+          ],
+          "effects": [
+            {
+              "set": "geo.cross.read"
+            }
+          ]
+        },
+        {
+          "from": "READ",
+          "to": "OPEN",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_GEO",
+                "id": "niche_stone"
+              },
+              "moved": true
+            }
+          ],
+          "effects": [
+            {
+              "set": "geo.niche.open"
+            }
+          ]
+        },
+        {
+          "from": "OPEN",
+          "to": "READ",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_GEO",
+                "id": "niche_stone"
+              },
+              "moved": false
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "hints": [
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "geo_cross",
+          "about": "\"Under the stone the Word keeps dry.\""
+        },
+        {
+          "kind": "LINE",
+          "ref": "c_bran.side.niche.given",
+          "about": "Bran: whoever cut that cross meant it to be read"
+        }
+      ],
+      "solvedFact": "geo.niche.open",
+      "about": "Book 9 section 03: read the cross, then pull the proud stone behind the altar (a pull of one tile; it pushes back)"
+    },
+    {
+      "id": "PUZ_BOG_OFFERING",
+      "scenes": ["ZONE_SK_BOG"],
+      "states": ["BURIED", "SHOWING", "SEEN", "LEFT", "TAKEN"],
+      "transitions": [
+        {
+          "from": "BURIED",
+          "to": "SHOWING",
+          "when": [
+            {
+              "offeringShows": true
+            }
+          ],
+          "effects": []
+        },
+        {
+          "from": "SHOWING",
+          "to": "SEEN",
+          "when": [
+            {
+              "fact": "bog.offering.seen"
+            }
+          ],
+          "effects": [
+            {
+              "set": "bog.offering.found"
+            }
+          ]
+        },
+        {
+          "from": "SEEN",
+          "to": "LEFT",
+          "when": [
+            {
+              "not": {
+                "zone": "ZONE_SK_BOG"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "set": "bog.offering.left"
+            }
+          ]
+        },
+        {
+          "from": "SEEN",
+          "to": "TAKEN",
+          "when": [
+            {
+              "fact": "bog.offering.taken"
+            }
+          ],
+          "effects": []
+        },
+        {
+          "from": "LEFT",
+          "to": "TAKEN",
+          "when": [
+            {
+              "fact": "bog.offering.taken"
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "hints": [
+        {
+          "kind": "LINE",
+          "ref": "c_drowned.cellach.2",
+          "about": "Cellach: our cauldron is in the peat, in the bank that faces the sun"
+        },
+        {
+          "kind": "LINE",
+          "ref": "c_oddi.side.offering.given",
+          "about": "Oddi: peat-cutters always find something"
+        }
+      ],
+      "solvedFact": "bog.offering.found",
+      "about": "Book 10 section 20, Year 1 secrets (decision S14-26): in summer, once 2 loads are cut from the bank at (33, 13), the cauldron's rim shows; left, or taken"
+    },
+    {
+      "id": "PUZ_FALLS",
+      "scenes": ["ZONE_SK_ROOK"],
+      "states": ["HIDDEN", "FOUND"],
+      "transitions": [
+        {
+          "from": "HIDDEN",
+          "to": "FOUND",
+          "when": [
+            {
+              "collected": "rook_spiral"
+            }
+          ],
+          "effects": [
+            {
+              "set": "rook.falls.found"
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "SIGHT",
+          "ref": "the ledge behind the sheet",
+          "about": "A dark, dry ledge shows through the falling sheet from the pool"
+        }
+      ],
+      "solvedFact": "rook.falls.found",
+      "about": "Book 9 section 03: the dry ledge behind the waterfall's sheet, reached by wading the pool's edge"
+    },
+    {
+      "id": "PUZ_OLD_NAUST",
+      "scenes": ["ZONE_SK_NAUST"],
+      "states": ["UNWALKED", "FIRST", "SECOND", "END"],
+      "transitions": [
+        {
+          "from": "UNWALKED",
+          "to": "FIRST",
+          "when": [
+            {
+              "near": {
+                "zone": "ZONE_SK_NAUST",
+                "x": 46.5,
+                "y": 21.5,
+                "r": 2.5
+              }
+            }
+          ],
+          "effects": []
+        },
+        {
+          "from": "FIRST",
+          "to": "SECOND",
+          "when": [
+            {
+              "near": {
+                "zone": "ZONE_SK_NAUST",
+                "x": 38.5,
+                "y": 14.5,
+                "r": 2.5
+              }
+            }
+          ],
+          "effects": []
+        },
+        {
+          "from": "SECOND",
+          "to": "END",
+          "when": [
+            {
+              "near": {
+                "zone": "ZONE_SK_NAUST",
+                "x": 29.5,
+                "y": 8.5,
+                "r": 3
+              }
+            }
+          ],
+          "effects": [
+            {
+              "set": "naust.old.found"
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "SIGHT",
+          "ref": "the line of stones",
+          "about": "A line of old stones in the turf above the cove, leading off the beach path"
+        }
+      ],
+      "solvedFact": "naust.old.found",
+      "marks": [
+        {
+          "x": 46.5,
+          "y": 21.5
+        },
+        {
+          "x": 42.5,
+          "y": 18.0
+        },
+        {
+          "x": 38.5,
+          "y": 14.5
+        },
+        {
+          "x": 34.0,
+          "y": 11.5
+        },
+        {
+          "x": 29.5,
+          "y": 8.5
+        }
+      ],
+      "about": "Book 9 section 03: the line of stones walked to its end, the fallen boat-hollow and its carved lintel"
+    },
+    {
+      "id": "PUZ_EGG_LEDGES",
+      "scenes": ["ZONE_SK_CLIFFS"],
+      "states": ["UNCLIMBED", "REACHED"],
+      "transitions": [
+        {
+          "from": "UNCLIMBED",
+          "to": "REACHED",
+          "when": [
+            {
+              "near": {
+                "zone": "ZONE_SK_CLIFFS",
+                "x": 41.5,
+                "y": 22.5,
+                "r": 3
+              }
+            }
+          ],
+          "effects": [
+            {
+              "set": "cliffs.ledges.reached"
+            }
+          ]
+        }
+      ],
+      "hints": [
+        {
+          "kind": "LINE",
+          "ref": "c_hild.side.eggs.given",
+          "about": "Hild: eggs on the west cliffs, if someone climbs for them"
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the seabirds",
+          "about": "Seabirds lift off the ledges below the cliff top"
+        }
+      ],
+      "solvedFact": "cliffs.ledges.reached",
+      "about": "Book 9 section 03: the marked climbs down to the egg ledges; a fall costs vitality, not life"
+    },
+    {
+      "id": "PUZ_PRAYER_STONE",
+      "scenes": ["ZONE_SK_ROOK"],
+      "states": ["CLOSED", "OPEN"],
+      "transitions": [
+        {
+          "from": "CLOSED",
+          "to": "OPEN",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_ROOK",
+                "id": "capstone"
+              },
+              "moved": true
+            }
+          ],
+          "effects": [
+            {
+              "set": "rook.cist.open"
+            }
+          ]
+        },
+        {
+          "from": "OPEN",
+          "to": "CLOSED",
+          "when": [
+            {
+              "pushed": {
+                "zone": "ZONE_SK_ROOK",
+                "id": "capstone"
+              },
+              "moved": false
+            }
+          ],
+          "effects": []
+        }
+      ],
+      "hints": [
+        {
+          "kind": "COLLECTIBLE",
+          "ref": "cliffs_page",
+          "about": "\"I have hidden the book in the island's dry places\""
+        },
+        {
+          "kind": "SIGHT",
+          "ref": "the capstone",
+          "about": "A capstone over a small cist beside the prayer stone, off its seat"
+        }
+      ],
+      "solvedFact": "rook.cist.open",
+      "about": "Book 9 section 03: the capstone over the cist on the summit's lee, pulled (it pushes back)"
+    }
+  ],
+  "uses": [
+    {
+      "key": "bog_cauldron_look",
+      "scene": "ZONE_SK_BOG",
+      "x": 59.5,
+      "y": 82.6,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.cauldron",
+      "when": [
+        {
+          "puzzle": "PUZ_BOG_OFFERING",
+          "in": ["SHOWING"]
+        }
+      ],
+      "effects": [
+        {
+          "set": "bog.offering.seen"
+        },
+        {
+          "info": "caption.find.cauldron"
+        },
+        {
+          "sound": "FIND_CAULDRON"
+        }
+      ],
+      "frame": "cauldron_rim/-/0",
+      "about": "The cauldron's rim in the cut face"
+    },
+    {
+      "key": "bog_cauldron_take",
+      "scene": "ZONE_SK_BOG",
+      "x": 59.5,
+      "y": 82.6,
+      "verb": "TAKE",
+      "nameKey": "island.use.name.cauldron",
+      "when": [
+        {
+          "puzzle": "PUZ_BOG_OFFERING",
+          "in": ["SEEN", "LEFT"]
+        }
+      ],
+      "effects": [
+        {
+          "set": "bog.offering.taken"
+        },
+        {
+          "deed": "SACRED_TAKEN"
+        },
+        {
+          "set": "bog.keeper.offended"
+        },
+        {
+          "item": "ITEM_BRONZE_CAULDRON"
+        },
+        {
+          "info": "caption.find.cauldron_taken"
+        },
+        {
+          "sound": "FIND_CAULDRON"
+        }
+      ],
+      "frame": "cauldron_rim/-/0",
+      "frameAfter": "cauldron_hollow/-/0",
+      "about": "Taken: the keeper offended"
+    },
+    {
+      "key": "cairn_in_door_west",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 11.5,
+      "y": 14.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.door_truths",
+      "when": [],
+      "effects": [
+        {
+          "info": "caption.puzzle.door_silent"
+        }
+      ],
+      "about": "The Door of Three Truths, from the inner chamber"
+    },
+    {
+      "key": "cairn_in_door_east",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 13.5,
+      "y": 14.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.door_truths",
+      "when": [],
+      "effects": [
+        {
+          "info": "caption.puzzle.door_silent"
+        }
+      ],
+      "about": "The Door of Three Truths, from the great chamber"
+    },
+    {
+      "key": "cairn_in_cup",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 7.5,
+      "y": 14.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.old_cup",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.cup.seen"
+        },
+        {
+          "info": "caption.puzzle.old_cup"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "The Cup on its stone: it will not lift (decision S14-22)"
+    },
+    {
+      "key": "cairn_in_goods_1",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 26.5,
+      "y": 6.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.grave_goods",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.goods.seen"
+        },
+        {
+          "info": "caption.puzzle.grave_goods"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "Grave goods in their cell: looked at, not taken, in Year 1 (decision S14-22)"
+    },
+    {
+      "key": "cairn_in_goods_2",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 33.5,
+      "y": 8.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.grave_goods",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.goods.seen"
+        },
+        {
+          "info": "caption.puzzle.grave_goods"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "Grave goods in their cell: looked at, not taken, in Year 1 (decision S14-22)"
+    },
+    {
+      "key": "cairn_in_goods_3",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 34.5,
+      "y": 9.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.grave_goods",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.goods.seen"
+        },
+        {
+          "info": "caption.puzzle.grave_goods"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "Grave goods in their cell: looked at, not taken, in Year 1 (decision S14-22)"
+    },
+    {
+      "key": "cairn_in_goods_4",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 33.5,
+      "y": 19.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.grave_goods",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.goods.seen"
+        },
+        {
+          "info": "caption.puzzle.grave_goods"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "Grave goods in their cell: looked at, not taken, in Year 1 (decision S14-22)"
+    },
+    {
+      "key": "cairn_in_goods_5",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "x": 34.5,
+      "y": 20.9,
+      "verb": "LOOK",
+      "nameKey": "island.use.name.grave_goods",
+      "when": [],
+      "effects": [
+        {
+          "set": "cairn.goods.seen"
+        },
+        {
+          "info": "caption.puzzle.grave_goods"
+        },
+        {
+          "sound": "FIND_LORE"
+        }
+      ],
+      "about": "Grave goods in their cell: looked at, not taken, in Year 1 (decision S14-22)"
+    }
+  ],
+  "drowned": {
+    "scene": "ZONE_SK_SKERRY",
+    "order": [
+      {
+        "key": "sigrid",
+        "shortKey": "island.drowned.short.sigrid",
+        "lines": ["c_drowned.sigrid.1", "c_drowned.sigrid.2"],
+        "requires": []
+      },
+      {
+        "key": "cellach",
+        "shortKey": "island.drowned.short.cellach",
+        "lines": ["c_drowned.cellach.1", "c_drowned.cellach.2"],
+        "requires": []
+      },
+      {
+        "key": "gunnar",
+        "shortKey": "island.drowned.short.gunnar",
+        "lines": ["c_drowned.gunnar.1", "c_drowned.gunnar.2"],
+        "requires": []
+      },
+      {
+        "key": "bergljot",
+        "shortKey": "island.drowned.short.bergljot",
+        "lines": ["c_drowned.bergljot.1", "c_drowned.bergljot.2"],
+        "requires": []
+      },
+      {
+        "key": "donngal",
+        "shortKey": "island.drowned.short.donngal",
+        "lines": ["c_drowned.donngal.1", "c_drowned.donngal.2"],
+        "requires": [
+          {
+            "fact": "sea.wreck.met"
+          }
+        ]
+      }
+    ],
+    "unmetKey": "island.drowned.unmet",
+    "thorkel": {
+      "x": 49.5,
+      "y": 86.0,
+      "shortKey": "person.short.c_thorkel",
+      "lines": ["c_drowned.thorkel.1", "c_drowned.thorkel.2"],
+      "requires": [
+        {
+          "deed": "RITES_DENIED"
+        },
+        {
+          "fact": "ch1.launched"
+        }
+      ],
+      "nameKey": "island.use.name.thorkel_drowned"
+    }
+  },
+  "turning": {
+    "wake": {
+      "zone": "ZONE_SK_CAIRN",
+      "x": 70.5,
+      "y": 21.5,
+      "facing": "e"
+    },
+    "cutOff": [
+      {
+        "zone": "ZONE_SK_SEALCAVE_DEEP",
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 20
+      },
+      {
+        "zone": "ZONE_SK_CAIRN_IN",
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 30
+      },
+      {
+        "zone": "ZONE_SK_CAIRN_IN",
+        "x": 0,
+        "y": 20,
+        "w": 48,
+        "h": 10
+      }
+    ],
+    "captionKey": "caption.puzzle.turned_out",
+    "lines": {
+      "C_RUNA": "c_runa.island.turned_out",
+      "C_HILD": "c_hild.island.turned_out"
+    }
+  },
+  "alignment": {
+    "door": {
+      "zone": "ZONE_SK_CAIRN",
+      "x": 68.0,
+      "y": 19.5
+    },
+    "fogLines": {
+      "C_BRAN": "c_bran.island.fog_feast",
+      "C_HILD": "c_hild.island.fog_feast",
+      "C_ODDI": "c_oddi.island.fog_feast",
+      "C_RUNA": "c_runa.island.fog_feast"
+    }
+  },
+  "passage": {
+    "zone": "ZONE_SK_SEALCAVE_DEEP",
+    "from": "ZONE_SK_SEALCAVE",
+    "loudKey": "caption.puzzle.passage_loud",
+    "risingKey": "caption.puzzle.water_rising",
+    "sound": "PASSAGE_LOUD"
+  },
+  "sideAims": [
+    {
+      "id": "deep",
+      "speaker": "C_RUNA",
+      "scene": "ZONE_SK_SEALCAVE",
+      "givenWhen": [
+        {
+          "zone": "ZONE_SK_SEALCAVE"
+        },
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "fact": "ch1.launched"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "sealcave.passage.found"
+        }
+      ],
+      "givenKey": "c_runa.side.deep.given",
+      "journalKey": "ui.journal.side.deep",
+      "hints": [
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.side.deep.1"
+        },
+        {
+          "speaker": "C_RUNA",
+          "textKey": "c_runa.hint.side.deep.2"
+        }
+      ]
+    },
+    {
+      "id": "greymen",
+      "speaker": "C_BRAN",
+      "scene": "ZONE_SK_CAIRN",
+      "givenWhen": [
+        {
+          "discovered": "ZONE_SK_GREYMEN"
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR"
+        },
+        {
+          "watch": "Evening"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "cairn.door.open"
+        }
+      ],
+      "givenKey": "c_bran.side.greymen.given",
+      "journalKey": "ui.journal.side.greymen",
+      "hints": [
+        {
+          "speaker": "C_BRAN",
+          "textKey": "c_bran.hint.side.greymen.1"
+        },
+        {
+          "speaker": "C_BRAN",
+          "textKey": "c_bran.hint.side.greymen.2"
+        }
+      ]
+    },
+    {
+      "id": "niche",
+      "speaker": "C_BRAN",
+      "scene": "ZONE_SK_GEO",
+      "givenWhen": [
+        {
+          "near": {
+            "zone": "ZONE_SK_GEO",
+            "x": 63.5,
+            "y": 52.6,
+            "r": 6
+          }
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "geo.niche.open"
+        }
+      ],
+      "givenKey": "c_bran.side.niche.given",
+      "journalKey": "ui.journal.side.niche",
+      "hints": [
+        {
+          "speaker": "C_BRAN",
+          "textKey": "c_bran.hint.side.niche.1"
+        },
+        {
+          "speaker": "C_BRAN",
+          "textKey": "c_bran.hint.side.niche.2"
+        }
+      ]
+    },
+    {
+      "id": "offering",
+      "speaker": "C_ODDI",
+      "scene": "ZONE_SK_BOG",
+      "givenWhen": [
+        {
+          "fact": "bog.peat.cut"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "bog.offering.found"
+        }
+      ],
+      "givenKey": "c_oddi.side.offering.given",
+      "journalKey": "ui.journal.side.offering",
+      "hints": [
+        {
+          "speaker": "C_ODDI",
+          "textKey": "c_oddi.hint.side.offering.1"
+        },
+        {
+          "speaker": "C_ODDI",
+          "textKey": "c_oddi.hint.side.offering.2"
+        }
+      ]
+    },
+    {
+      "id": "eggs",
+      "speaker": "C_HILD",
+      "scene": "ZONE_SK_CLIFFS",
+      "givenWhen": [
+        {
+          "days": [10, 40]
+        },
+        {
+          "zone": "ZONE_SK_MACHAIR"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "cliffs.ledges.reached"
+        }
+      ],
+      "givenKey": "c_hild.side.eggs.given",
+      "journalKey": "ui.journal.side.eggs",
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.side.eggs.1"
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.side.eggs.2"
+        }
+      ]
+    },
+    {
+      "id": "skerry",
+      "speaker": "C_HILD",
+      "scene": "ZONE_SK_SKERRY",
+      "givenWhen": [
+        {
+          "zone": "ZONE_SK_NAUST"
+        },
+        {
+          "fact": "ch1.launched"
+        },
+        {
+          "springDay": true
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "skerry.drowned.met"
+        }
+      ],
+      "givenKey": "c_hild.side.skerry.given",
+      "journalKey": "ui.journal.side.skerry",
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.side.skerry.1"
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.side.skerry.2"
+        }
+      ]
+    }
+  ],
+  "secrets": {
+    "ZONE_SK_STRAND": [
+      {
+        "find": "strand_cowries"
+      },
+      {
+        "about": "the rock pool and the stores on the mast (Chapter 1)"
+      }
+    ],
+    "ZONE_SK_MACHAIR": [
+      {
+        "find": "machair_carved_stone"
+      }
+    ],
+    "ZONE_SK_HAGSEAT": [
+      {
+        "find": "hagseat_old_offering"
+      }
+    ],
+    "ZONE_SK_CAIRN": [
+      {
+        "puzzle": "PUZ_GREYMEN"
+      }
+    ],
+    "ZONE_SK_SEALCAVE": [
+      {
+        "puzzle": "PUZ_SEALCAVE_TIDES"
+      }
+    ],
+    "ZONE_SK_GEO": [
+      {
+        "puzzle": "PUZ_HERMIT_NICHE"
+      }
+    ],
+    "ZONE_SK_CLIFFS": [
+      {
+        "puzzle": "PUZ_EGG_LEDGES"
+      }
+    ],
+    "ZONE_SK_ROOK": [
+      {
+        "puzzle": "PUZ_FALLS"
+      },
+      {
+        "puzzle": "PUZ_PRAYER_STONE"
+      }
+    ],
+    "ZONE_SK_BOG": [
+      {
+        "puzzle": "PUZ_BOG_OFFERING"
+      }
+    ],
+    "ZONE_SK_NAUST": [
+      {
+        "puzzle": "PUZ_OLD_NAUST"
+      }
+    ],
+    "ZONE_SK_SKERRY": [
+      {
+        "puzzle": "PUZ_SKERRY"
+      }
+    ],
+    "ZONE_SK_SEALCAVE_DEEP": [
+      {
+        "puzzle": "PUZ_DEEP_STONE"
+      },
+      {
+        "puzzle": "PUZ_SEALCAVE_TIDES"
+      }
+    ],
+    "ZONE_SK_CAIRN_IN": [
+      {
+        "puzzle": "PUZ_CAIRN_CUP"
+      }
+    ]
+  }
+}

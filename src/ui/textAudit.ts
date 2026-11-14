@@ -79,6 +79,8 @@ const EXACT: Readonly<Record<string, Verdict>> = {
 /** Then prefixes, longest first. */
 const PREFIX: readonly (readonly [string, Verdict])[] = [
   ['caption.edge.', keep('SAFETY')],
+  // Stage 14 (decision S14-58): going under in deep water, and what to do about it.
+  ['caption.traverse.', keep('SAFETY')],
   ['caption.tell.', keep('SAFETY')],
   ['caption.search.', keep('STORY')],
   ['info.boat.', keep('STORY')],

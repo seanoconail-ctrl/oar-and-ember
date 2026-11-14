@@ -30,6 +30,7 @@ import { doorOverlap } from './doors.ts';
 import type { DoorState } from './doors.ts';
 import { edgePressAt, edgeStep } from './edges.ts';
 import type { EdgePress } from './edges.ts';
+import type { TraverseState } from './traverse.ts';
 
 export type Gait = 'walk' | 'run' | 'sneak' | 'carry';
 /**
@@ -110,6 +111,27 @@ export interface OnFootPlayer {
    */
   vel?: { x: number; y: number };
   motion?: AccelMode;
+  /**
+   * Stage 14 (decision S14-14; src/sim/land/traverse.ts): the movement verb under way (a climb, a
+   * swim, a jump, a crawl, a push or pull), and the heavy object held with Interact.
+   */
+  traverse?: TraverseState | null;
+  grip?: string | null;
+}
+
+/**
+ * Stage 14: how the movement verbs change a step of ordinary movement (src/sim/land/traverse.ts,
+ * moveExtras): ground they open (marked swimming water) and close (a heavy object, a crawl), deep
+ * water that may be entered, the swim speed and the soft ground's factor.
+ */
+export interface MoveExtras {
+  readonly passable?: (x: number, y: number) => boolean;
+  readonly blocked?: (x: number, y: number) => boolean;
+  readonly deepOk?: (x: number, y: number) => boolean;
+  /** Tiles a second while swimming (Book 10 Swim), in place of the band's wading pace. */
+  readonly swimSpeed?: number;
+  /** A factor on the speed (Book 10 bogSoftRain). */
+  readonly factor?: number;
 }
 
 /**
@@ -553,6 +575,7 @@ export function stepMovement(
   >,
   tide: TideNow,
   tick?: number,
+  extras: MoveExtras = {},
 ): EdgePress | null {
   const p = state.player;
   p.gait = gaitFor(state);
@@ -589,7 +612,8 @@ export function stepMovement(
     (stance?.speed ?? 1) *
     (exhausted && cm !== undefined ? cm.accel.exhaustedSpeed : 1) *
     (blocking && cm !== undefined ? cm.accel.blockingSpeed : 1);
-  const full = (speedAt(state, map, ctx, tide.level) * map.tile * share) / TICKS_PER_SECOND;
+  const pace = extras.swimSpeed ?? speedAt(state, map, ctx, tide.level);
+  const full = (pace * (extras.factor ?? 1) * map.tile * share) / TICKS_PER_SECOND;
   let ix: number;
   let iy: number;
   let perTick: number;
@@ -637,6 +661,8 @@ export function stepMovement(
     if (elevation === undefined) return true;
     const to = bandAt(ctx.water, elevation, x, y, tide.level);
     if (!isDeep(to)) return true;
+    // Stage 14: marked swimming water, nothing carried (src/sim/land/traverse.ts).
+    if (extras.deepOk?.(x, y) === true) return true;
     if (isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level))) return true;
     return caught && onTidalGround(map, ctx.rules, x, y);
   };
@@ -646,7 +672,10 @@ export function stepMovement(
   const doorArea = (x: number, y: number): number =>
     doorOverlap(state, map, x, y, ctx.rules.footprint);
   const clear = (x: number, y: number): boolean =>
-    stepClear(map, ctx.rules, before, x, y, tide.open, doorArea) && depthOk(x, y);
+    (stepClear(map, ctx.rules, before, x, y, tide.open, doorArea) ||
+      (extras.passable?.(x, y) === true && doorArea(x, y) <= 0)) &&
+    depthOk(x, y) &&
+    extras.blocked?.(x, y) !== true;
   let press: EdgePress | null = null;
   if (ctx.edgeStopDegrees === undefined) {
     if (dx !== 0 && clear(p.x + dx, p.y)) p.x += dx;
@@ -1021,15 +1050,25 @@ export function applyInteraction(state: OnFootState, interaction: Interaction): 
   actor.facing = OPPOSITE[state.player.facing];
 }
 
-/** Actions the steerer cannot take right now, with the reason (Book 10: carrying disables attacks). */
-export function disabledActions(state: OnFootState): ReadonlyMap<string, 'CARRYING'> {
-  if (state.carrying === null) return new Map();
-  return new Map(
-    (['useItem', 'finisher', 'shove', 'parry', 'block'] as const).map((a) => [
-      a,
-      'CARRYING' as const,
-    ]),
-  );
+/**
+ * Actions the steerer cannot take right now, with the reason (Book 10: carrying disables attacks;
+ * Book 2 section 10: no weapon and no fighting in a movement verb, Stage 14).
+ */
+export function disabledActions(
+  state: OnFootState,
+): ReadonlyMap<string, 'CARRYING' | 'TRAVERSING'> {
+  const reason =
+    state.carrying !== null
+      ? ('CARRYING' as const)
+      : state.player.traverse != null || state.player.grip != null
+        ? ('TRAVERSING' as const)
+        : null;
+  if (reason === null) return new Map();
+  const actions =
+    reason === 'CARRYING'
+      ? (['useItem', 'finisher', 'shove', 'parry', 'block'] as const)
+      : (['useItem', 'finisher', 'shove', 'parry', 'block', 'dodge', 'heal'] as const);
+  return new Map(actions.map((a) => [a, reason]));
 }
 
 /** Eight-way compass direction from one point to another (y runs south, Book 9 section 01). */

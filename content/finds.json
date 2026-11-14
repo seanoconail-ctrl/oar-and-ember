@@ -112,5 +112,628 @@
       "glint": true,
       "about": "Wedged in the rocks at the cove's southern end, the far end of the shingle from the cave"
     }
+  ],
+  "collectiblesAbout": "Stage 14 (decisions S14-16, S14-17; Book 2 section 10 CollectibleDef; Book 9 section 03, \"Collectibles on Skarvholm\"; Book 10 section 20): Skarvholm's 28 collectibles in 24 places (the five names of the dead share the skerry). Each is drawn from prop_collectibles at its position (tiles of its scene, at the foot) and found with Interact: LOOK reads it, TAKE takes it, TALK speaks with the drowned. `conditions` say when it is there (tide, puzzle, the drowned's turn); `reach` the movement verbs its way needs; `find` names a Chapter 1 find that counts as it (drawn and used as that find). Positions in the new scenes are Book 9's blocks set by its rule.",
+  "collectibles": [
+    {
+      "key": "strand_cowries",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_STRAND",
+      "pos": {
+        "x": 6.5,
+        "y": 9.4
+      },
+      "use": "TAKE",
+      "sheet": "prop_collectibles",
+      "frame": "cowries/-/0",
+      "sound": "FIND_SHELLS",
+      "nameKey": "find.name.cowries",
+      "captionKey": "caption.find.cowries",
+      "journalKey": "journal.find.cowries",
+      "find": "strand_cowries",
+      "about": "The Chapter 1 find; it now counts as the first shell"
+    },
+    {
+      "key": "geo_scallop",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_GEO",
+      "pos": {
+        "x": 57.5,
+        "y": 36.5
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "tide": "LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "scallop/-/0",
+      "takenFrame": "shingle_bare/-/0",
+      "sound": "FIND_SHELL",
+      "nameKey": "find.name.scallop",
+      "captionKey": "caption.find.scallop",
+      "journalKey": "journal.find.scallop",
+      "block": [11, 6],
+      "about": "Below the path's foot, across the shingle from it, at the west end of the geo's head"
+    },
+    {
+      "key": "cliffs_whelk",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_CLIFFS",
+      "pos": {
+        "x": 44.5,
+        "y": 19.5
+      },
+      "use": "TAKE",
+      "sheet": "prop_collectibles",
+      "frame": "whelk/-/0",
+      "takenFrame": "ledge_bare/-/0",
+      "sound": "FIND_SHELL",
+      "nameKey": "find.name.whelk",
+      "captionKey": "caption.find.whelk",
+      "journalKey": "journal.find.whelk",
+      "reach": ["CLIMB"],
+      "block": [7, 13],
+      "about": "At the back of the middle egg ledge, down the cliff face"
+    },
+    {
+      "key": "naust_pelican",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_NAUST",
+      "pos": {
+        "x": 28.5,
+        "y": 36.5
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "tide": "LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "pelican/-/0",
+      "takenFrame": "weed_bare/-/0",
+      "sound": "FIND_SHELL",
+      "nameKey": "find.name.pelican",
+      "captionKey": "caption.find.pelican",
+      "journalKey": "journal.find.pelican",
+      "block": [27, 28],
+      "about": "In the pocket under the cove's west rocks, round the rocks from the beach"
+    },
+    {
+      "key": "skerry_urchin",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 53.5,
+        "y": 92.5
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "urchin/-/0",
+      "takenFrame": "rock_bare/-/0",
+      "sound": "FIND_SHELL",
+      "nameKey": "find.name.urchin",
+      "captionKey": "caption.find.urchin",
+      "journalKey": "journal.find.urchin",
+      "block": [42, 29],
+      "about": "On the skerry's crown, out along the causeway"
+    },
+    {
+      "key": "deep_tower",
+      "kind": "SHELL",
+      "scene": "ZONE_SK_SEALCAVE_DEEP",
+      "pos": {
+        "x": 43.5,
+        "y": 5.7
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "passage": "OPEN"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "tower/-/0",
+      "takenFrame": "shelf_bare/-/0",
+      "sound": "FIND_SHELL",
+      "nameKey": "find.name.tower",
+      "captionKey": "caption.find.tower",
+      "journalKey": "journal.find.tower",
+      "about": "On the dry shelf at the head of the side pocket north of the passage"
+    },
+    {
+      "key": "machair_carved_stone",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_MACHAIR",
+      "pos": {
+        "x": 16.5,
+        "y": 9.5
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "carved_stone/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.carved_stone",
+      "captionKey": "caption.find.carved_stone",
+      "journalKey": "journal.find.carved_stone",
+      "find": "machair_carved_stone",
+      "about": "The Chapter 1 find"
+    },
+    {
+      "key": "cairn_kerbstone",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_CAIRN",
+      "pos": {
+        "x": 68.9,
+        "y": 19.8
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "kerbstone/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.kerbstone",
+      "captionKey": "caption.find.kerbstone",
+      "journalKey": "journal.find.kerbstone",
+      "find": "cairn_kerbstone",
+      "about": "The Chapter 1 find; an alignment hint (its rings show a sun over the door)"
+    },
+    {
+      "key": "bog_cup_ring",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_BOG",
+      "pos": {
+        "x": 3.5,
+        "y": 82.5
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "cup_ring/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.cup_ring",
+      "captionKey": "caption.find.cup_ring",
+      "journalKey": "journal.find.cup_ring",
+      "block": [26, 13],
+      "about": "The Grey Men's north-west stone, the ring's far side from the path through it; an alignment hint"
+    },
+    {
+      "key": "geo_cross",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_GEO",
+      "pos": {
+        "x": 63.5,
+        "y": 52.6
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "cross/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.cross",
+      "captionKey": "caption.find.cross",
+      "journalKey": "journal.find.cross",
+      "block": [11, 8],
+      "about": "The slab by the cell's east doorway, up the steep path; the niche's hint"
+    },
+    {
+      "key": "rook_spiral",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_ROOK",
+      "pos": {
+        "x": 52.5,
+        "y": 90.6
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "spiral/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.spiral",
+      "captionKey": "caption.find.spiral",
+      "journalKey": "journal.find.spiral",
+      "reach": ["WADE"],
+      "block": [20, 14],
+      "about": "On the dry ledge behind the waterfall's sheet, reached by wading the pool's edge"
+    },
+    {
+      "key": "naust_lintel",
+      "kind": "CARVED_STONE",
+      "scene": "ZONE_SK_NAUST",
+      "pos": {
+        "x": 28.5,
+        "y": 5.5
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "lintel/-/0",
+      "sound": "FIND_STONE",
+      "nameKey": "find.name.lintel",
+      "captionKey": "caption.find.lintel",
+      "journalKey": "journal.find.lintel",
+      "block": [27, 24],
+      "about": "At the end of the line of old stones in the turf above the cove"
+    },
+    {
+      "key": "geo_page_niche",
+      "kind": "PSALTER_PAGE",
+      "scene": "ZONE_SK_GEO",
+      "pos": {
+        "x": 57.5,
+        "y": 52.6
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "puzzle": "PUZ_HERMIT_NICHE",
+          "in": ["OPEN"]
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "page_niche/-/0",
+      "takenFrame": "niche_empty/-/0",
+      "sound": "FIND_PAGE",
+      "nameKey": "find.name.page",
+      "captionKey": "caption.find.page_niche",
+      "journalKey": "journal.find.page_niche",
+      "reach": ["PULL"],
+      "block": [11, 8],
+      "about": "Behind the burned altar, in the niche; the clue to Brecc"
+    },
+    {
+      "key": "geo_page_corbel",
+      "kind": "PSALTER_PAGE",
+      "scene": "ZONE_SK_GEO",
+      "pos": {
+        "x": 60.0,
+        "y": 48.8
+      },
+      "use": "TAKE",
+      "sheet": "prop_collectibles",
+      "frame": "page_corbel/-/0",
+      "takenFrame": "corbel_empty/-/0",
+      "sound": "FIND_PAGE",
+      "nameKey": "find.name.page",
+      "captionKey": "caption.find.page_corbel",
+      "journalKey": "journal.find.page_corbel",
+      "reach": ["CRAWL"],
+      "block": [11, 8],
+      "about": "Under the corbel fallen across the north wall's foot, in the low gap"
+    },
+    {
+      "key": "geo_page_seacave",
+      "kind": "PSALTER_PAGE",
+      "scene": "ZONE_SK_GEO",
+      "pos": {
+        "x": 44.5,
+        "y": 20.5
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "tide": "LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "page_leather/-/0",
+      "takenFrame": "cleft_empty/-/0",
+      "sound": "FIND_PAGE",
+      "nameKey": "find.name.page",
+      "captionKey": "caption.find.page_seacave",
+      "journalKey": "journal.find.page_seacave",
+      "reach": ["JUMP"],
+      "block": [9, 4],
+      "about": "In the dry cleft of the sea cave in the geo's west wall, above the storm line, across the gully"
+    },
+    {
+      "key": "cliffs_page",
+      "kind": "PSALTER_PAGE",
+      "scene": "ZONE_SK_CLIFFS",
+      "pos": {
+        "x": 60.5,
+        "y": 20.5
+      },
+      "use": "TAKE",
+      "sheet": "prop_collectibles",
+      "frame": "page_wedged/-/0",
+      "takenFrame": "cleft_empty/-/0",
+      "sound": "FIND_PAGE",
+      "nameKey": "find.name.page",
+      "captionKey": "caption.find.page_cliff",
+      "journalKey": "journal.find.page_cliff",
+      "reach": ["CLIMB"],
+      "block": [9, 13],
+      "about": "In the cleft on the cliff path's halfway ledge, by a short marked climb"
+    },
+    {
+      "key": "rook_page",
+      "kind": "PSALTER_PAGE",
+      "scene": "ZONE_SK_ROOK",
+      "pos": {
+        "x": 60.5,
+        "y": 60.5
+      },
+      "use": "TAKE",
+      "conditions": [
+        {
+          "puzzle": "PUZ_PRAYER_STONE",
+          "in": ["OPEN"]
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "page_cist/-/0",
+      "takenFrame": "cist_empty/-/0",
+      "sound": "FIND_PAGE",
+      "nameKey": "find.name.page",
+      "captionKey": "caption.find.page_cist",
+      "journalKey": "journal.find.page_cist",
+      "reach": ["PULL"],
+      "block": [21, 10],
+      "about": "In the cist under the prayer stone on the summit's lee, once its capstone is pulled"
+    },
+    {
+      "key": "skerry_name_sigrid",
+      "kind": "NAME_OF_THE_DEAD",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 52.5,
+        "y": 84.0
+      },
+      "use": "TALK",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "drowned": "sigrid"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "drowned_wet/-/0",
+      "sound": "FIND_DROWNED",
+      "nameKey": "find.name.drowned",
+      "captionKey": "caption.find.drowned",
+      "journalKey": "journal.find.name_sigrid",
+      "block": [42, 28],
+      "about": "The drowned on the skerry, out along the causeway: the first to come forward"
+    },
+    {
+      "key": "skerry_name_cellach",
+      "kind": "NAME_OF_THE_DEAD",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 52.5,
+        "y": 84.0
+      },
+      "use": "TALK",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "drowned": "cellach"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "drowned_wet/-/0",
+      "sound": "FIND_DROWNED",
+      "nameKey": "find.name.drowned",
+      "captionKey": "caption.find.drowned",
+      "journalKey": "journal.find.name_cellach",
+      "block": [42, 28],
+      "about": "The drowned on the skerry, out along the causeway: the second to come forward"
+    },
+    {
+      "key": "skerry_name_gunnar",
+      "kind": "NAME_OF_THE_DEAD",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 52.5,
+        "y": 84.0
+      },
+      "use": "TALK",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "drowned": "gunnar"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "drowned_wet/-/0",
+      "sound": "FIND_DROWNED",
+      "nameKey": "find.name.drowned",
+      "captionKey": "caption.find.drowned",
+      "journalKey": "journal.find.name_gunnar",
+      "block": [42, 28],
+      "about": "The drowned on the skerry, out along the causeway: the third to come forward"
+    },
+    {
+      "key": "skerry_name_bergljot",
+      "kind": "NAME_OF_THE_DEAD",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 52.5,
+        "y": 84.0
+      },
+      "use": "TALK",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "drowned": "bergljot"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "drowned_wet/-/0",
+      "sound": "FIND_DROWNED",
+      "nameKey": "find.name.drowned",
+      "captionKey": "caption.find.drowned",
+      "journalKey": "journal.find.name_bergljot",
+      "block": [42, 28],
+      "about": "The drowned on the skerry, out along the causeway: the fourth to come forward"
+    },
+    {
+      "key": "skerry_name_donngal",
+      "kind": "NAME_OF_THE_DEAD",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 52.5,
+        "y": 84.0
+      },
+      "use": "TALK",
+      "conditions": [
+        {
+          "tide": "SPRING_LOW"
+        },
+        {
+          "drowned": "donngal"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "drowned_wet/-/0",
+      "sound": "FIND_DROWNED",
+      "nameKey": "find.name.drowned",
+      "captionKey": "caption.find.drowned",
+      "journalKey": "journal.find.name_donngal",
+      "block": [42, 28],
+      "about": "The drowned on the skerry, out along the causeway: the fifth to come forward"
+    },
+    {
+      "key": "skerry_ran_ring",
+      "kind": "LORE",
+      "power": "ran",
+      "scene": "ZONE_SK_SKERRY",
+      "pos": {
+        "x": 18.5,
+        "y": 58.5
+      },
+      "use": "LOOK",
+      "conditions": [
+        {
+          "tide": "LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "gold_ring/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.gold_ring",
+      "captionKey": "caption.find.gold_ring",
+      "journalKey": "journal.find.lore_ran",
+      "block": [38, 25],
+      "about": "Beside the causeway's start, in a crack, not on it"
+    },
+    {
+      "key": "hagseat_wet_stone",
+      "kind": "LORE",
+      "power": "cailleach",
+      "scene": "ZONE_SK_HAGSEAT",
+      "pos": {
+        "x": 46.2,
+        "y": 20.5
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "wet_stone/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.wet_stone",
+      "captionKey": "caption.find.wet_stone",
+      "journalKey": "journal.find.lore_cailleach",
+      "block": [5, 18],
+      "about": "The Cailleach's stone itself, at the headland's end; its seaward foot"
+    },
+    {
+      "key": "cairn_in_listening",
+      "kind": "LORE",
+      "power": "hill_folk",
+      "scene": "ZONE_SK_CAIRN_IN",
+      "pos": {
+        "x": 38.5,
+        "y": 13.9
+      },
+      "use": "LOOK",
+      "conditions": [
+        {
+          "fact": "cairn.door.open"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "listening/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.listening",
+      "captionKey": "caption.find.listening",
+      "journalKey": "journal.find.lore_hillfolk",
+      "about": "In the outer passage by the grave cells, inside the cairn"
+    },
+    {
+      "key": "sealcave_seal_face",
+      "kind": "LORE",
+      "power": "seal_kin",
+      "scene": "ZONE_SK_SEALCAVE",
+      "pos": {
+        "x": 56.5,
+        "y": 17.95
+      },
+      "use": "LOOK",
+      "conditions": [
+        {
+          "tide": "LOW"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "seal_face/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.seal_face",
+      "captionKey": "caption.find.seal_face",
+      "journalKey": "journal.find.lore_sealkin",
+      "about": "Cut above the weed line on the inner chamber's far wall from the skiff"
+    },
+    {
+      "key": "bog_wooden_man",
+      "kind": "LORE",
+      "power": "bog_king",
+      "scene": "ZONE_SK_BOG",
+      "pos": {
+        "x": 44.5,
+        "y": 100.5
+      },
+      "use": "LOOK",
+      "sheet": "prop_collectibles",
+      "frame": "wooden_man/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.wooden_man",
+      "captionKey": "caption.find.wooden_man",
+      "journalKey": "journal.find.lore_bogking",
+      "block": [31, 15],
+      "about": "In a cut bank of the peat, off the way across"
+    },
+    {
+      "key": "deep_manannan",
+      "kind": "LORE",
+      "power": "manannan",
+      "scene": "ZONE_SK_SEALCAVE_DEEP",
+      "pos": {
+        "x": 27.5,
+        "y": 4.9
+      },
+      "use": "LOOK",
+      "conditions": [
+        {
+          "passage": "OPEN"
+        }
+      ],
+      "sheet": "prop_collectibles",
+      "frame": "man_on_waves/-/0",
+      "sound": "FIND_LORE",
+      "nameKey": "find.name.man_on_waves",
+      "captionKey": "caption.find.man_on_waves",
+      "journalKey": "journal.find.lore_manannan",
+      "about": "The alcove's carving, north of the mid chamber"
+    }
   ]
 }

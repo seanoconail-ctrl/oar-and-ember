@@ -584,8 +584,11 @@ export interface HomeState {
   buildings: Id[];
   /** RES_ id to amount: ration-days of food, loads of fuel (version 5: never below zero). */
   stores: Record<string, number>;
-  /** Fresh fish by the day it was caught, in ration-days (it spoils after Book 10's days). */
-  fresh: { rd: number; day: number }[];
+  /**
+   * Fresh fish by the day it was caught, in ration-days (it spoils after Book 10's days). Stage 14
+   * (decision S14-73): fresh food from the island's nodes keeps its own `keeps` days (the eggs' 5).
+   */
+  fresh: { rd: number; day: number; keeps?: number }[];
   /** The camp fire: lit, and the loads of fuel left in it. */
   fire: { lit: boolean; fuel: number };
   /** A building going up: worker-minutes of labour done. */
@@ -616,8 +619,26 @@ export interface MorningReport {
 
 export interface RegionState {
   discoveredZones: Id[];
-  resourceNodes: Record<Id, { readonly nextDay: number }>;
+  /**
+   * Picked nodes, by key: the day each comes again (driftwood spots and, from Stage 14, the island's
+   * resource nodes). Stage 14 (decision S14-72): `taken` counts a limited node's takes since `since`
+   * (the day its season or day began), for the seals' and a peat bank's limits.
+   */
+  resourceNodes: Record<
+    Id,
+    { readonly nextDay: number; readonly taken?: number; readonly since?: number }
+  >;
   puzzles: Record<Id, string>;
+  /**
+   * Stage 14 (Book 2 section 10, RegionState.collected; decision S14-70): the collectibles found, by
+   * CollectibleDef key, in the order found; absent until the first.
+   */
+  collected?: string[];
+  /**
+   * Stage 14 (Book 2 section 10, RegionState.pushed; decision S14-56): each heavy object moved,
+   * by "<zone>/<key>", at its tile; absent until one is first moved.
+   */
+  pushed?: Record<string, { readonly x: number; readonly y: number }>;
 }
 
 export interface PlaceState {

@@ -7812,5 +7812,764 @@
   },
   "sea.wreck.done.leave": {
     "text": "The reef falls astern, and the voices with it."
+  },
+  "find.name.scallop": {
+    "text": "the scallop shell"
+  },
+  "find.name.whelk": {
+    "text": "the whelk shell"
+  },
+  "find.name.pelican": {
+    "text": "the pelican's-foot shell"
+  },
+  "find.name.urchin": {
+    "text": "the sea urchin's shell"
+  },
+  "find.name.tower": {
+    "text": "the tower shell"
+  },
+  "find.name.cup_ring": {
+    "text": "the ringed stone"
+  },
+  "find.name.cross": {
+    "text": "the cross on the slab"
+  },
+  "find.name.spiral": {
+    "text": "the spiral in the rock"
+  },
+  "find.name.lintel": {
+    "text": "the carved lintel"
+  },
+  "find.name.page": {
+    "text": "the page"
+  },
+  "find.name.drowned": {
+    "text": "the drowned"
+  },
+  "find.name.gold_ring": {
+    "text": "the ring in the rock"
+  },
+  "find.name.wet_stone": {
+    "text": "the wet stone"
+  },
+  "find.name.listening": {
+    "text": "the carvings"
+  },
+  "find.name.seal_face": {
+    "text": "the carved seal"
+  },
+  "find.name.wooden_man": {
+    "text": "the figure in the peat"
+  },
+  "find.name.man_on_waves": {
+    "text": "the carving"
+  },
+  "caption.find.scallop": {
+    "text": "A scallop shell, ribbed and pale",
+    "tags": ["INFO"]
+  },
+  "caption.find.whelk": {
+    "text": "A whelk shell the gulls dropped",
+    "tags": ["INFO"]
+  },
+  "caption.find.pelican": {
+    "text": "A pelican's-foot shell in the weed",
+    "tags": ["INFO"]
+  },
+  "caption.find.urchin": {
+    "text": "An empty sea urchin, faded green",
+    "tags": ["INFO"]
+  },
+  "caption.find.tower": {
+    "text": "A tower shell on a dry shelf",
+    "tags": ["INFO"]
+  },
+  "caption.find.cup_ring": {
+    "text": "Rings and rays cut in the stone",
+    "tags": ["INFO"]
+  },
+  "caption.find.cross": {
+    "text": "A cross cut beside the doorway",
+    "tags": ["INFO"]
+  },
+  "caption.find.spiral": {
+    "text": "A spiral cut behind the water",
+    "tags": ["INFO"]
+  },
+  "caption.find.lintel": {
+    "text": "A ship cut in the old lintel",
+    "tags": ["INFO"]
+  },
+  "caption.find.page_niche": {
+    "text": "A page behind the stone, still dry",
+    "tags": ["INFO"]
+  },
+  "caption.find.page_corbel": {
+    "text": "A page under the fallen stone",
+    "tags": ["INFO"]
+  },
+  "caption.find.page_seacave": {
+    "text": "A page in oiled leather",
+    "tags": ["INFO"]
+  },
+  "caption.find.page_cliff": {
+    "text": "A page wedged in the rock",
+    "tags": ["INFO"]
+  },
+  "caption.find.page_cist": {
+    "text": "A page in the stone box",
+    "tags": ["INFO"]
+  },
+  "caption.find.drowned": {
+    "text": "Dripping, though the tide is out",
+    "tags": ["INFO"]
+  },
+  "caption.find.gold_ring": {
+    "text": "A gold ring pushed into the rock",
+    "tags": ["INFO"]
+  },
+  "caption.find.wet_stone": {
+    "text": "The stone is wet, the grass dry",
+    "tags": ["INFO"]
+  },
+  "caption.find.listening": {
+    "text": "Carvings that seem to listen",
+    "tags": ["INFO"]
+  },
+  "caption.find.seal_face": {
+    "text": "A seal carved with a person's face",
+    "tags": ["INFO"]
+  },
+  "caption.find.wooden_man": {
+    "text": "A wooden figure dark with peat",
+    "tags": ["INFO"]
+  },
+  "caption.find.man_on_waves": {
+    "text": "A cloaked figure carved on waves",
+    "tags": ["INFO"]
+  },
+  "caption.find.cauldron": {
+    "text": "A bronze rim in the cut peat",
+    "tags": ["INFO"]
+  },
+  "caption.find.cauldron_taken": {
+    "text": "The cauldron comes up from the peat",
+    "tags": ["INFO"]
+  },
+  "island.node.name.watercress": {
+    "text": "the watercress"
+  },
+  "caption.find.node.watercress": {
+    "text": "Watercress, cold from the stream",
+    "tags": ["INFO"]
+  },
+  "island.node.name.heather": {
+    "text": "the heather"
+  },
+  "caption.find.node.heather": {
+    "text": "An armful of heather, cut",
+    "tags": ["INFO"]
+  },
+  "island.node.name.hares": {
+    "text": "the hare"
+  },
+  "caption.find.node.hares": {
+    "text": "A hare, taken from its form",
+    "tags": ["INFO"]
+  },
+  "island.node.name.bog_cotton": {
+    "text": "the bog cotton"
+  },
+  "caption.find.node.bog_cotton": {
+    "text": "A bundle of bog cotton",
+    "tags": ["INFO"]
+  },
+  "island.node.name.kelp": {
+    "text": "the kelp"
+  },
+  "caption.find.node.kelp": {
+    "text": "A load of kelp, wet and heavy",
+    "tags": ["INFO"]
+  },
+  "island.node.name.seals": {
+    "text": "the seals"
+  },
+  "caption.find.node.seals": {
+    "text": "A seal taken at the haul-out",
+    "tags": ["INFO"]
+  },
+  "island.node.name.eggs": {
+    "text": "the eggs"
+  },
+  "caption.find.node.eggs": {
+    "text": "Eggs from the ledge",
+    "tags": ["INFO"]
+  },
+  "island.node.name.peat": {
+    "text": "the peat bank"
+  },
+  "caption.find.node.peat": {
+    "text": "A load of wet peat, cut",
+    "tags": ["INFO"]
+  },
+  "island.node.name.rock_fish": {
+    "text": "the fishing rock"
+  },
+  "caption.find.node.rock_fish": {
+    "text": "A fish off the rocks",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.gather": {
+    "text": "{key}  Gather {name}"
+  },
+  "ui.prompt.gather_click": {
+    "text": "Right-click  Gather {name}"
+  },
+  "ui.refusal.no_tool": {
+    "text": "Not with bare hands"
+  },
+  "journal.find.cowries": {
+    "text": "Cowrie shells from the wrack of the strand's far west beach."
+  },
+  "journal.find.scallop": {
+    "text": "A scallop shell from the head of the shingle in Gull Geo, bare at low water."
+  },
+  "journal.find.whelk": {
+    "text": "A whelk shell the gulls dropped on the middle egg ledge of the west cliffs."
+  },
+  "journal.find.pelican": {
+    "text": "A pelican's-foot shell from the pocket under Naust Cove's west rocks."
+  },
+  "journal.find.urchin": {
+    "text": "A sea urchin's empty shell from the crown of the Skerry of the Drowned."
+  },
+  "journal.find.tower": {
+    "text": "A tower shell from a dry shelf off the Seal Cave's deep passage."
+  },
+  "journal.find.carved_stone": {
+    "text": "A fallen slab on the machair: a ship cut long ago, and a cross cut over it later."
+  },
+  "journal.find.kerbstone": {
+    "text": "Cups and rings on a kerbstone of the Hollow Cairn, by its east door, and a sun over the door."
+  },
+  "journal.find.cup_ring": {
+    "text": "Rings round a hollow, lines running into a door-shaped mark, and four small suns along the edge: the Grey Men's stone."
+  },
+  "journal.find.cross": {
+    "text": "A cross cut on the slab by the hermit's doorway. Under its arms: \"Under the stone the Word keeps dry.\""
+  },
+  "journal.find.spiral": {
+    "text": "A spiral cut in the back wall of the dry ledge behind the falls on Rook Hill."
+  },
+  "journal.find.lintel": {
+    "text": "A ship cut in the lintel of the old naust, the fallen boat-hollow above Naust Cove."
+  },
+  "journal.find.page_niche": {
+    "text": "\"The bell of Brecc is rung over the whirlpool each Lúnasa. The brothers say it is for God. Brecc said it was for his brother.\""
+  },
+  "journal.find.page_corbel": {
+    "text": "\"Cold hand, thin ink, loud gulls. Christ keep this page drier than me.\""
+  },
+  "journal.find.page_seacave": {
+    "text": "\"The seal came again and watched me pray. I prayed for it too, to be safe.\""
+  },
+  "journal.find.page_cliff": {
+    "text": "\"Sails in the west, striped. I have hidden the book in the island's dry places, a gathering in each.\""
+  },
+  "journal.find.page_cist": {
+    "text": "\"From this stone the sun comes up over the old ones' door on the feast mornings. I do not watch for it. Mostly.\""
+  },
+  "journal.find.name_sigrid": {
+    "text": "Sigrid of Hvitness. She went into the sea when the roofs caught, and kept her ring."
+  },
+  "journal.find.name_cellach": {
+    "text": "Cellach of Skarvholm. His people kept this island before. Their cauldron is in the peat; let it lie."
+  },
+  "journal.find.name_gunnar": {
+    "text": "Gunnar of Saltvik. The sea came higher than the moon allows and took him off his fishing rock."
+  },
+  "journal.find.name_bergljot": {
+    "text": "Bergljót, a hostage. Her father paid three days late. Say her name to the sea king."
+  },
+  "journal.find.name_donngal": {
+    "text": "Donngal of the Faoileán. He let go of the rope in the dark, and kept quiet so Fínán would not follow."
+  },
+  "journal.find.lore_ran": {
+    "text": "A gold ring pushed into a crack where the causeway starts. Sailors carry gold so that, if they drown, Rán welcomes them."
+  },
+  "journal.find.lore_cailleach": {
+    "text": "The Hag's Seat stone is wet when nothing else is. They say she rests here between washing the winter in and washing it out."
+  },
+  "journal.find.lore_hillfolk": {
+    "text": "Carvings round the grave cells that seem to listen. The hill-folk keep what was laid here, and keep count of it."
+  },
+  "journal.find.lore_sealkin": {
+    "text": "A seal cut in the rock above the weed line, with a person's face. The seal-kin come ashore as people, and go back."
+  },
+  "journal.find.lore_bogking": {
+    "text": "A wooden figure in the cut bank, black with the peat, older than the island's name. The bog keeps its offerings, and its keeper."
+  },
+  "journal.find.lore_manannan": {
+    "text": "A cloaked figure carved walking on the waves, mist round his feet and a cup in his hands. Whoever cut it knew the sea from below."
+  },
+  "island.use.name.cauldron": {
+    "text": "the bronze rim"
+  },
+  "island.use.name.door_truths": {
+    "text": "the stone door"
+  },
+  "island.use.name.old_cup": {
+    "text": "the old cup"
+  },
+  "island.use.name.grave_goods": {
+    "text": "the grave goods"
+  },
+  "island.use.name.thorkel_drowned": {
+    "text": "Thorkel"
+  },
+  "caption.puzzle.door_silent": {
+    "text": "The stone door is cold and silent",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.old_cup": {
+    "text": "An old cup, fast to its stone",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.passage_loud": {
+    "text": "The passage grows loud",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.water_rising": {
+    "text": "Water rising in the passage",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.turned_out": {
+    "text": "Woken on the cairn mound, cold",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.door_turns": {
+    "text": "The door stone turns in the light",
+    "tags": ["INFO"]
+  },
+  "caption.puzzle.grave_goods": {
+    "text": "Grave goods, laid here long ago",
+    "tags": ["INFO"]
+  },
+  "island.drowned.unmet": {
+    "text": "Drowned"
+  },
+  "island.drowned.short.sigrid": {
+    "text": "Sigrid"
+  },
+  "island.drowned.short.cellach": {
+    "text": "Cellach"
+  },
+  "island.drowned.short.gunnar": {
+    "text": "Gunnar"
+  },
+  "island.drowned.short.bergljot": {
+    "text": "Bergljót"
+  },
+  "island.drowned.short.donngal": {
+    "text": "Donngal"
+  },
+  "c_drowned.sigrid.1": {
+    "text": "Sigrid. Hvitness. I went into the sea when the roofs caught.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.sigrid.2": {
+    "text": "I kept my ring. The sea was kind to me for it.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.cellach.1": {
+    "text": "Cellach. My people kept this island before yours.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.cellach.2": {
+    "text": "Our cauldron is in the peat, in the bank that faces the sun. Let it lie.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.gunnar.1": {
+    "text": "Gunnar. Saltvik. The sea came higher than the moon allows.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.gunnar.2": {
+    "text": "It took me off a rock I fished all my life.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.bergljot.1": {
+    "text": "Bergljót. A hostage. My father paid three days late.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.bergljot.2": {
+    "text": "The sea king's men tied my hands first. Say my name to the sea king.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.donngal.1": {
+    "text": "Donngal. The Faoileán. I let go of the rope in the dark.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.donngal.2": {
+    "text": "Tell Fínán I kept quiet so he would not come after me.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.thorkel.1": {
+    "text": "Cold. I bought your passage south, and paid with a ship.",
+    "tags": ["VOICED"]
+  },
+  "c_drowned.thorkel.2": {
+    "text": "Not all of it is paid. The sea keeps count.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.island.turned_out": {
+    "text": "The hill-folk put you out. Be glad they did.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.island.turned_out": {
+    "text": "A night in the mound? Don't tell Runa. Runa will want to leave it gifts.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.island.fog_feast": {
+    "text": "No sun this feast. The door keeps its own counsel.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.island.fog_feast": {
+    "text": "Fog on the feast morning. No sun for the old door today.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.island.fog_feast": {
+    "text": "Can't see my own feet. The door won't see the sun either.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.island.fog_feast": {
+    "text": "Fog. The sun won't find the door today. Next feast, then.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.side.deep.given": {
+    "text": "That cave goes back further than any cave should. Spring lows, it shows.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.deep": {
+    "text": "Find where Seal Cave's back passage goes, at a spring low."
+  },
+  "c_runa.hint.side.deep.1": {
+    "text": "Go in at the bottom of a spring tide. Out before it turns.",
+    "tags": ["VOICED"]
+  },
+  "c_runa.hint.side.deep.2": {
+    "text": "Something low to crawl under, I'd bet. Shift what's in the way from the far side.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.side.greymen.given": {
+    "text": "The Irish say the old ones built their doors for the sun.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.greymen": {
+    "text": "Be at the cairn's east door at first light on a feast morning."
+  },
+  "c_bran.hint.side.greymen.1": {
+    "text": "On the feast mornings, first light walks straight in. The door knows it.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.hint.side.greymen.2": {
+    "text": "Stand at the mound's east door at first light on the feast day. Don't knock. They hate knocking.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.side.niche.given": {
+    "text": "Whoever cut that cross meant it to be read.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.niche": {
+    "text": "Read the cross at the hermit's cell above Gull Geo."
+  },
+  "c_bran.hint.side.niche.1": {
+    "text": "Read the cross. Monks hide things where the cross says.",
+    "tags": ["VOICED"]
+  },
+  "c_bran.hint.side.niche.2": {
+    "text": "Behind the altar. One stone sits proud of the rest.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.side.offering.given": {
+    "text": "Peat-cutters always find something. Pots, butter, worse.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.offering": {
+    "text": "Find what lies in the peat bank that faces the sun."
+  },
+  "c_oddi.hint.side.offering.1": {
+    "text": "The sunny bank, in summer. Cut it back and look.",
+    "tags": ["VOICED"]
+  },
+  "c_oddi.hint.side.offering.2": {
+    "text": "East end of the bog, the bank facing the morning. Keep cutting.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.side.eggs.given": {
+    "text": "Eggs on the west cliffs, if someone climbs for them.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.eggs": {
+    "text": "Climb down to the egg ledges on the west cliffs."
+  },
+  "c_hild.hint.side.eggs.1": {
+    "text": "The marked holds go down. Rest on the ledges.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.hint.side.eggs.2": {
+    "text": "West cliffs, above the eagle's stack. Don't look down. Do look at the eagle.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.side.skerry.given": {
+    "text": "The rock off the east shore. Folk say the drowned stand there.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.side.skerry": {
+    "text": "Cross to the Skerry of the Drowned at a spring low."
+  },
+  "c_hild.hint.side.skerry.1": {
+    "text": "The stones show at the spring lows. Walk out then.",
+    "tags": ["VOICED"]
+  },
+  "c_hild.hint.side.skerry.2": {
+    "text": "Spring tides, low water, from the shore past Naust Cove. Back before it turns.",
+    "tags": ["VOICED"]
+  },
+  "ui.journal.tab.aim": {
+    "text": "Aims"
+  },
+  "ui.journal.tab.finds": {
+    "text": "Finds"
+  },
+  "ui.journal.tab.map": {
+    "text": "Map"
+  },
+  "ui.journal.tabs": {
+    "text": "{prev} and {next} to turn the page"
+  },
+  "ui.journal.side.title": {
+    "text": "Also"
+  },
+  "ui.journal.finds.title": {
+    "text": "Finds"
+  },
+  "ui.journal.finds.count": {
+    "text": "{kind}: {n} of {total}"
+  },
+  "ui.journal.finds.count_open": {
+    "text": "{kind}: {n}"
+  },
+  "ui.journal.finds.none": {
+    "text": "Nothing found yet."
+  },
+  "ui.journal.map.title": {
+    "text": "Skarvholm, as the household knows it"
+  },
+  "ui.journal.kind.shell": {
+    "text": "Shells"
+  },
+  "ui.journal.kind.carved_stone": {
+    "text": "Carved stones"
+  },
+  "ui.journal.kind.psalter_page": {
+    "text": "The hermit's pages"
+  },
+  "ui.journal.kind.name_of_the_dead": {
+    "text": "The names of the dead"
+  },
+  "ui.journal.kind.song": {
+    "text": "Songs"
+  },
+  "ui.journal.kind.lore": {
+    "text": "Lore"
+  },
+  "item.name.bronze_cauldron": {
+    "text": "the bronze cauldron"
+  },
+  "caption.sfx.climb_hold": {
+    "text": "Fingers biting into rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.climb_strain": {
+    "text": "A hard breath through the teeth",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.climb_slide": {
+    "text": "Grit rattling down the rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.swim_stroke": {
+    "text": "Arms pulling through the water",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sink": {
+    "text": "Water closing over, and bubbles",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sink_gasp": {
+    "text": "A ragged gasp for air",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.crawl": {
+    "text": "Knees and hands on damp rock",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.stone_scrape": {
+    "text": "Stone grinding on stone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.jump_land": {
+    "text": "A landing, feet together",
+    "tags": ["INFO"]
+  },
+  "caption.edge.low": {
+    "text": "Too low to get through with a load",
+    "tags": ["INFO"]
+  },
+  "caption.traverse.sinking": {
+    "text": "Going under. Make for the shallows.",
+    "tags": ["INFO"]
+  },
+  "caption.traverse.drowning": {
+    "text": "Drowning. The shallows, now.",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.climb": {
+    "text": "{key}  Climb"
+  },
+  "ui.prompt.climb_click": {
+    "text": "Right-click  Climb"
+  },
+  "ui.prompt.climb_down": {
+    "text": "{key}  Climb down"
+  },
+  "ui.prompt.climb_down_click": {
+    "text": "Right-click  Climb down"
+  },
+  "ui.prompt.jump": {
+    "text": "{key}  Jump across"
+  },
+  "ui.prompt.jump_click": {
+    "text": "Right-click  Jump across"
+  },
+  "ui.prompt.crawl": {
+    "text": "{key}  Crawl through"
+  },
+  "ui.prompt.crawl_click": {
+    "text": "Right-click  Crawl through"
+  },
+  "ui.prompt.grip": {
+    "text": "Hold {key}  Take hold   Walk into it to push"
+  },
+  "ui.prompt.grip_click": {
+    "text": "Hold right-click  Take hold   Walk into it to push"
+  },
+  "ui.prompt.gripping": {
+    "text": "Step back to pull   Let go of {key} to leave it"
+  },
+  "ui.prompt.gripping_click": {
+    "text": "Step back to pull   Let go to leave it"
+  },
+  "caption.water.stream": {
+    "text": "Running water",
+    "tags": ["INFO"]
+  },
+  "caption.water.falls": {
+    "text": "Water falling",
+    "tags": ["INFO"]
+  },
+  "caption.tell.drowned": {
+    "text": "Slow dripping",
+    "tags": ["INFO"]
+  },
+  "caption.amb.wind_high": {
+    "text": "Wind over the high ground",
+    "tags": ["INFO"]
+  },
+  "caption.amb.colony": {
+    "text": "Seabirds crying on the cliffs",
+    "tags": ["INFO"]
+  },
+  "caption.amb.skylark": {
+    "text": "A skylark singing high up",
+    "tags": ["INFO"]
+  },
+  "caption.amb.curlew": {
+    "text": "A curlew calling over the bog",
+    "tags": ["INFO"]
+  },
+  "caption.amb.stream": {
+    "text": "A stream running over stones",
+    "tags": ["INFO"]
+  },
+  "caption.amb.waterfall": {
+    "text": "A waterfall roaring",
+    "tags": ["INFO"]
+  },
+  "caption.amb.cave_drip": {
+    "text": "Drips echoing in the dark",
+    "tags": ["INFO"]
+  },
+  "caption.amb.passage_roar": {
+    "text": "The sea surging under the rock",
+    "tags": ["INFO"]
+  },
+  "caption.amb.bog_quiet": {
+    "text": "The bog's quiet",
+    "tags": ["INFO"]
+  },
+  "ui.sound.island": {
+    "text": "Stage 14: the island's ambience"
+  },
+  "ui.sound.island.strand": {
+    "text": "Wreck Strand, spring day"
+  },
+  "ui.sound.island.machair": {
+    "text": "The machair and the Kelda, spring day"
+  },
+  "ui.sound.island.rook_falls": {
+    "text": "Rook Hill by the falls, spring day"
+  },
+  "ui.sound.island.rook_winter": {
+    "text": "Rook Hill by the falls, winter"
+  },
+  "ui.sound.island.rook_summer": {
+    "text": "Rook Hill, summer: the stream in pools"
+  },
+  "ui.sound.island.cliffs": {
+    "text": "The west cliffs, summer: the colony"
+  },
+  "ui.sound.island.geo": {
+    "text": "Gull Geo, summer"
+  },
+  "ui.sound.island.hagseat": {
+    "text": "The Hag's Seat, spring"
+  },
+  "ui.sound.island.bog": {
+    "text": "The bog, spring: curlews and the quiet"
+  },
+  "ui.sound.island.greymen": {
+    "text": "The Grey Men at night"
+  },
+  "ui.sound.island.cairn": {
+    "text": "The cairn's ground, spring day"
+  },
+  "ui.sound.island.naust": {
+    "text": "Naust Cove, autumn"
+  },
+  "ui.sound.island.skerry": {
+    "text": "The Skerry at a spring low"
+  },
+  "ui.sound.island.passage": {
+    "text": "The deep passage as the tide turns"
+  },
+  "ui.sound.island.cairn_in": {
+    "text": "Inside the Hollow Cairn"
+  },
+  "ui.sound.island.sealcave": {
+    "text": "Seal Cave's cove, spring"
+  },
+  "ui.sound.call.tell_drowned": {
+    "text": "The drowned's tell"
   }
 }

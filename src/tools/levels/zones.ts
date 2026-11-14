@@ -30,7 +30,26 @@
 import { cyrb53 } from '../../core/hash.ts';
 import type { DoorDef } from '../../content/zoneMap.ts';
 
-export const TILE_CODES = ['~', '-', '_', '.', ',', 'b', 'w', 'r', ':'] as const;
+export const TILE_CODES = [
+  '~',
+  '-',
+  '_',
+  '.',
+  ',',
+  'b',
+  'w',
+  'r',
+  ':',
+  // Stage 14 (decision S14-31): heather, peat, a bog pool, a cliff face, the causeway, a cave's
+  // wet rock floor (open on spring lows) and drystone walling.
+  'h',
+  'p',
+  'o',
+  'c',
+  '=',
+  'n',
+  'd',
+] as const;
 export type TileCode = (typeof TILE_CODES)[number];
 
 export interface ZonePlan {
@@ -63,6 +82,38 @@ export interface ZonePlan {
    */
   readonly tileGrid?: string;
   readonly origin?: { readonly x: number; readonly y: number };
+  /**
+   * Stage 14 (decision S14-32): the zone's ground sheet (tile_strand by default) and plant sheet
+   * (plant_strand by default).
+   */
+  readonly ground?: string;
+  readonly plantSheet?: string;
+  /**
+   * Stage 14: a cliff face (`c`) more than this many tiles from the land above it falls to the sea
+   * below, so Book 9's cliff blocks become a face a few tiles high over the water.
+   */
+  readonly faceTiles?: number;
+  /**
+   * Stage 14: pools in the peat (the bog): where the noise of `cell` tiles rises above `above`,
+   * peat (`p`) becomes a pool (`o`), inside the given rectangle of tiles if one is given.
+   */
+  readonly pools?: {
+    readonly cell: number;
+    readonly above: number;
+    readonly within?: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+  };
+  /**
+   * Stage 14: the plants of the moor: the share of heather places that grow a bush, and where
+   * bracken grows in clumps (the clump noise above this).
+   */
+  readonly heather?: number;
+  readonly bracken?: number;
+  /** Stage 14: the zone's markup, copied into its map for the runtime (see ZoneMarkup). */
+  readonly traverse?: ZoneMarkup['traverse'];
+  readonly areas?: ZoneMarkup['areas'];
+  readonly viewPoints?: ZoneMarkup['viewPoints'];
+  readonly falls?: ZoneMarkup['falls'];
+  readonly portals?: ZoneMarkup['portals'];
   /** The window of the block grid, in blocks. */
   readonly blocks: {
     readonly x: number;
@@ -191,6 +242,84 @@ export interface ZoneLink {
   readonly to: string;
 }
 
+/**
+ * Stage 14 (decisions S14-34 to S14-36): what a zone's plan marks for the movement verbs, the
+ * areas and view points, the waterfalls and the links that are not edges. Every position is in
+ * tiles of the zone. The shapes of `traverse` are src/content/traverseMarks.ts's (read by the
+ * movement verbs); `areas` and `viewPoints` are Book 2 section 10's AreaDef and ViewPoint (read
+ * by discovery, the region map and the ambience); `falls` is content/terrain/flow.ts's FallDef.
+ */
+export interface ZoneMarkup {
+  readonly traverse?: {
+    readonly climbs?: readonly {
+      readonly id: string;
+      readonly x: number;
+      readonly foot: number;
+      readonly head: number;
+      readonly ledges: readonly number[];
+    }[];
+    readonly swims?: readonly { readonly x: number; readonly y: number; readonly w: number; readonly h: number }[];
+    readonly jumps?: readonly {
+      readonly id: string;
+      readonly from: { readonly x: number; readonly y: number };
+      readonly to: { readonly x: number; readonly y: number };
+      readonly oneWay?: boolean;
+    }[];
+    readonly crawls?: readonly {
+      readonly id: string;
+      readonly tiles: readonly (readonly [number, number])[];
+      readonly mouths?: readonly [readonly [number, number], readonly [number, number]];
+    }[];
+    readonly pushes?: readonly {
+      readonly id: string;
+      readonly line: readonly (readonly [number, number])[];
+      readonly start: number;
+      readonly fact?: string;
+      readonly sheet: string;
+      readonly frame: string;
+    }[];
+    readonly soft?: readonly { readonly x: number; readonly y: number; readonly w: number; readonly h: number }[];
+    /** Water a person wades at a band the height field does not give (a pool in a passage). */
+    readonly wades?: readonly {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+      readonly band: 'ANKLE' | 'KNEE' | 'WAIST';
+    }[];
+  };
+  readonly areas?: readonly {
+    readonly id: string;
+    readonly scene: string;
+    readonly rect: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly nameKey: string;
+    readonly ambience?: string;
+  }[];
+  readonly viewPoints?: readonly {
+    readonly scene: string;
+    readonly at: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly reveals: readonly string[];
+  }[];
+  readonly falls?: readonly {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly drop: number;
+  }[];
+  /**
+   * Links that are not a whole edge (Book 2 section 10, FootLink): walking into `exit` leads to
+   * `to`, arriving at `entry` (tiles of `to`), when `when` holds: SPRING_LOW (a spring-tide day
+   * inside the tidal ground window) or a fact.
+   */
+  readonly portals?: readonly {
+    readonly id: string;
+    readonly exit: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly to: string;
+    readonly entry: { readonly x: number; readonly y: number };
+    readonly when?: { readonly tide: 'SPRING_LOW' } | { readonly fact: string };
+  }[];
+}
+
 export interface ZoneLife {
   readonly kind: 'gull' | 'gull_standing' | 'cormorant' | 'seal' | 'crab' | 'sheep' | 'spring';
   /** In tiles. */
@@ -205,7 +334,18 @@ export type DecalPlacement = readonly [number, number, number];
 /** Plant placements: [kind index into PLANT_KINDS, x, y, variant] in pixels, and a sort y. */
 export type PlantPlacement =
   readonly [number, number, number, number] | readonly [number, number, number, number, number];
-export const PLANT_KINDS = ['grass', 'tussock', 'marram', 'thrift', 'clover', 'trefoil'] as const;
+export const PLANT_KINDS = [
+  'grass',
+  'tussock',
+  'marram',
+  'thrift',
+  'clover',
+  'trefoil',
+  // Stage 14 (plant_moor): heather, bog cotton and bracken.
+  'heather',
+  'cotton',
+  'bracken',
+] as const;
 
 export interface ZoneProp {
   readonly sheet: string;
@@ -238,6 +378,13 @@ export interface ZoneMap {
   readonly plants: readonly PlantPlacement[];
   readonly solid?: readonly (readonly [number, number])[];
   readonly wind?: number;
+  readonly ground?: string;
+  readonly plantSheet?: string;
+  readonly traverse?: ZoneMarkup['traverse'];
+  readonly areas?: ZoneMarkup['areas'];
+  readonly viewPoints?: ZoneMarkup['viewPoints'];
+  readonly falls?: ZoneMarkup['falls'];
+  readonly portals?: ZoneMarkup['portals'];
 }
 
 const BLOCK = 8;
@@ -308,7 +455,9 @@ export function expandZone(
         // A tile grid (Stage 13): its codes as written, read through the same warp.
         const gx = Math.floor(tx + 0.5 + wx);
         const gy = Math.floor(ty + 0.5 + wy);
-        const ch = tileGrid[gy]?.[gx] ?? '~';
+        const raw = tileGrid[gy]?.[gx] ?? '~';
+        // Stage 14: an interior's grid reads its own characters through the plan's codes.
+        const ch = plan.codes?.[raw] ?? raw;
         row.push((TILE_CODES as readonly string[]).includes(ch) ? (ch as TileCode) : '~');
         continue;
       }
@@ -397,6 +546,50 @@ export function expandZone(
       for (let tx = 0; tx < width; tx++) if (hit(tx, ty)) set(tx, ty, c.code);
   }
 
+  // Stage 14: a cliff face stands a few tiles high over the water; the rest of a cliff block
+  // falls to the sea (or the flats) below it.
+  if (plan.faceTiles !== undefined) {
+    const land = (c: TileCode | undefined): boolean =>
+      c !== undefined && c !== 'c' && c !== '~' && c !== '-' && c !== '_' && c !== 'r';
+    const dist = new Map<string, number>();
+    const queue: [number, number][] = [];
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++)
+        if (land(at(tx, ty))) {
+          dist.set(`${tx},${ty}`, 0);
+          queue.push([tx, ty]);
+        }
+    for (let q = 0; q < queue.length; q++) {
+      const [x, y] = queue[q] ?? [0, 0];
+      const d = dist.get(`${x},${y}`) ?? 0;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if (at(nx, ny) !== 'c' || dist.has(`${nx},${ny}`)) continue;
+        dist.set(`${nx},${ny}`, d + 1);
+        queue.push([nx, ny]);
+      }
+    }
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++)
+        if (at(tx, ty) === 'c' && (dist.get(`${tx},${ty}`) ?? 99) > plan.faceTiles) set(tx, ty, '~');
+  }
+  // Stage 14: the bog's pools in the peat.
+  if (plan.pools !== undefined) {
+    const p = plan.pools;
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++) {
+        const w = p.within;
+        if (w !== undefined && (tx < w.x || ty < w.y || tx >= w.x + w.w || ty >= w.y + w.h)) continue;
+        if (at(tx, ty) === 'p' && noise(seed + 12, ox + tx, oy + ty, p.cell) > p.above) set(tx, ty, 'o');
+      }
+  }
+
   // The high-tide line: shingle near the flats or the sea is foreshore, under water at high tide.
   const reach = plan.tideLineTiles;
   const wet: [number, number][] = [];
@@ -444,6 +637,8 @@ export function expandZone(
     solidSet,
     plan.crevices ?? 0,
     plan.tussock ?? 0.55,
+    plan.heather ?? 0.5,
+    plan.bracken ?? 0.68,
   );
   // Grass grown on built things, sorted with them (the turf on the cairn's mound).
   const raised: PlantPlacement[] = [];
@@ -479,6 +674,13 @@ export function expandZone(
     plants: [...furnished.plants, ...raised, ...(plan.plantsExtra ?? [])],
     ...(solid.length === 0 ? {} : { solid }),
     ...(plan.wind === undefined ? {} : { wind: plan.wind }),
+    ...(plan.ground === undefined ? {} : { ground: plan.ground }),
+    ...(plan.plantSheet === undefined ? {} : { plantSheet: plan.plantSheet }),
+    ...(plan.traverse === undefined ? {} : { traverse: plan.traverse }),
+    ...(plan.areas === undefined ? {} : { areas: plan.areas }),
+    ...(plan.viewPoints === undefined ? {} : { viewPoints: plan.viewPoints }),
+    ...(plan.falls === undefined ? {} : { falls: plan.falls }),
+    ...(plan.portals === undefined ? {} : { portals: plan.portals }),
   };
 }
 
@@ -551,6 +753,8 @@ function furnish(
   solid: ReadonlySet<string> = new Set(),
   crevices = 0,
   tussockAt = 0.55,
+  heatherShare = 0.5,
+  brackenAt = 0.68,
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -608,7 +812,7 @@ function furnish(
   for (const [x, y] of trail) {
     const px = Math.round(x);
     const py = Math.round(y);
-    if (code(px, py) !== ',') continue;
+    if (code(px, py) !== ',' && code(px, py) !== 'h') continue;
     decals.push([DECAL_START.path + Math.floor(r(14, px, py) * 4), px, py]);
   }
   // Pebble clusters on the beach: one cluster per few tiles where the cluster noise is high.
@@ -623,7 +827,7 @@ function furnish(
         decals.push([DECAL_START.pebbles + Math.floor(r(4, x, y) * 10), px, py]);
       } else if ((c === '_' || c === '-') && r(5, x, y) < 0.012) {
         decals.push([DECAL_START.shells + Math.floor(r(6, x, y) * 4), px, py]);
-      } else if (c === ',' && r(7, x, y) < 0.006) {
+      } else if ((c === ',' || c === 'h') && r(7, x, y) < (c === 'h' ? 0.012 : 0.006)) {
         decals.push([DECAL_START.stones + Math.floor(r(8, x, y) * 4), px, py]);
       }
       if (tideLine(px, py) && r(9, x, y) < 0.75) {
@@ -662,6 +866,25 @@ function furnish(
         if (clump > 0.5 && r(27, x, y) < (clump - 0.45) * 1.6) plants.push([2, px, py, v]);
       } else if (c === '.' && r(28, x, y) < 0.02) {
         plants.push([2, px, py, v]);
+      } else if (c === 'h' && onPath(px, py, 6)) {
+        // Stage 14: a path through the heather is worn to the peat, with grass at its edge.
+        if (!onPath(px, py, 4) && r(29, x, y) < 0.3) plants.push([0, px, py, v]);
+      } else if (c === 'h') {
+        // Stage 14: heather in bushes everywhere, bracken in clumps, grass tufts between.
+        const clump = noise(seed + 33, px / T, py / T, 2.6);
+        const lip = code(px, py + T) === 'c' || code(px, py + T) === '.';
+        if (lip && r(23, x, y) < 0.3) plants.push([3, px, py, v]);
+        else if (clump > brackenAt && r(34, x, y) < (clump - brackenAt + 0.1) * 2.5)
+          plants.push([8, px, py, v]);
+        else if (r(35, x, y) < heatherShare) plants.push([6, px, py, v]);
+        else if (r(36, x, y) < 0.45) plants.push([0, px, py, v]);
+      } else if (c === 'p') {
+        // Stage 14: the bog's peat: bog cotton by its pools, grass and the odd heather hummock.
+        const wet = [code(px + T, py), code(px - T, py), code(px, py + T), code(px, py - T)].includes('o');
+        if (wet && r(37, x, y) < 0.55) plants.push([7, px, py, v]);
+        else if (noise(seed + 34, px / T, py / T, 2) > 0.62 && r(38, x, y) < 0.5)
+          plants.push([6, px, py, v]);
+        else if (r(39, x, y) < 0.28) plants.push([r(40, x, y) < 0.3 ? 7 : 0, px, py, v]);
       } else if (c === 'r' && crevices > 0 && r(32, x, y) < crevices) {
         // Sea pinks and grass in the crevices of the cliff-top rock, more thrift than grass.
         plants.push([r(33, x, y) < 0.6 ? 3 : 0, px, py, v]);

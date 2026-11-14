@@ -123,6 +123,11 @@ export function campUseLabel(
       };
     }
     case 'FIND':
+      // Stage 14: the drowned are spoken with; a resource node is gathered (src/sim/land/island.ts).
+      if (use.verb === 'TALK')
+        return { text: click('ui.prompt.talk', { name: t(use.nameKey) }), kind: 'talk' };
+      if (use.verb === 'GATHER')
+        return { text: click('ui.prompt.gather', { name: t(use.nameKey) }), kind: 'gather' };
       // The user's fourth playtest (DH-115): a find off the path, named from its string.
       return {
         text: click(use.take ? 'ui.prompt.find_take' : 'ui.prompt.find_look', {

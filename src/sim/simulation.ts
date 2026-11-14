@@ -58,6 +58,20 @@ import type {
 } from './land/onFoot.ts';
 import { stepArcher } from './land/archer.ts';
 import {
+  afterMove,
+  moveExtras,
+  ownsMovement,
+  setGrip,
+  stepTraverse,
+  traverseDrains,
+  traverseEmptied,
+  traverseInteract,
+  traversing,
+  FACT_RAINING,
+} from './land/traverse.ts';
+import type { TraverseContext, TraverseEvent } from './land/traverse.ts';
+import { marksOf } from '../content/traverseMarks.ts';
+import {
   broughtTo,
   campReached,
   duskBargain,
@@ -170,6 +184,10 @@ import {
 } from './narrative/repairs.ts';
 import type { RepairEvent, RepairsContext } from './narrative/repairs.ts';
 import { useFind } from './narrative/finds.ts';
+import { isIslandSite, stepIsland, useIsland } from './land/island.ts';
+import type { IslandContext, IslandEvent } from './land/island.ts';
+import { turnedOutLine, turningWake } from './land/puzzles.ts';
+import { stormDawnNodes } from './land/resources.ts';
 import type { FindEvent, FindsContext } from './narrative/finds.ts';
 import {
   closeSeaMap,
@@ -291,6 +309,11 @@ export type Command =
       readonly sneak: boolean;
     }
   | { readonly type: 'INTERACT' }
+  /**
+   * Stage 14 (Book 2 section 10, "Push and pull"): Interact held on a heavy object, or let go. The
+   * press itself is INTERACT; the input layer sends the let-go.
+   */
+  | { readonly type: 'GRIP'; readonly on: boolean }
   /**
    * Book 2 section 21: the input layer turns the pointer, the stick or the facing into a target
    * tile and sends these; the simulation never sees a pointer or the screen.
@@ -468,6 +491,10 @@ export type SimEvent =
   | AimEvent
   | EdgeEvent
   | DoorEvent
+  /** Stage 14: the movement verbs (src/sim/land/traverse.ts). */
+  | TraverseEvent
+  /** Stage 14, work package C: collectibles, puzzles, nodes, discovery and side aims. */
+  | IslandEvent
   /** The held finisher has begun on someone (Book 10 finisherHold). */
   | { readonly type: 'FINISHER_STARTED'; readonly target: Id }
   /** The steerer walked on into another zone. */
@@ -562,6 +589,10 @@ export interface SimWorldContext extends LandContext {
   /** Stage 13: the wreck with survivors, a voyage's on-foot interruption (decision S13-80). */
   readonly seaWreck?: SeaWreckContext | null;
   readonly edgeCaption?: { readonly afterSeconds: number; readonly cooldownSeconds: number } | null;
+  /** Stage 14: the movement verbs' numbers (src/sim/land/traverse.ts). */
+  readonly traverse?: TraverseContext | null;
+  /** Stage 14, work package C: the island's collectibles, puzzles and nodes (src/sim/land/island.ts). */
+  readonly island?: IslandContext | null;
 }
 
 export function createSimulation(
@@ -586,9 +617,14 @@ export function createSimulation(
   const camp = land?.camp ?? null;
   const people = land?.people ?? null;
   const fightCtx = land?.fight ?? null;
+  const traverseCtx = land?.traverse ?? null;
   const searchCtx = land?.searches ?? null;
   const repairCtx = land?.repairs ?? null;
   const findsCtx = land?.finds ?? null;
+  const islandCtx = land?.island ?? null;
+  const emitIsland = (e: IslandEvent): void => {
+    events.emit(e);
+  };
   const raidCtx = land?.raid ?? null;
   const launchCtx = land?.launch ?? null;
   const wreckCtx = land?.wreck ?? null;
@@ -714,6 +750,8 @@ export function createSimulation(
     const day = state.calendar.day;
     if (camp !== null) {
       startDay(state, camp, { storm: stormYesterday() });
+      // Stage 14: the kelp comes again at the dawn after a storm (Book 10 "Island resource nodes").
+      if (islandCtx !== null && stormYesterday()) stormDawnNodes(state, islandCtx);
       const plans = people === null ? [] : peopleDawn(state, people, camp, emitPeople);
       state.report = morningReport(state, camp, night, (id) => id, plans);
       // The grain counted down and what ran low (DH-132), after the household's plans.
@@ -724,6 +762,29 @@ export function createSimulation(
         };
     }
     events.emit({ type: 'WOKE', day, at: clockText(state.calendar.minuteOfDay), cause });
+    // Stage 14 (decision S14-9): asleep behind the flooded passage, the hill-folk put them out.
+    const turned = islandCtx === null ? null : turningWake(state, islandCtx);
+    if (turned !== null && islandCtx !== null && state.onFoot !== null) {
+      const onFoot = state.onFoot;
+      const toMap = land?.maps.get(turned.zone);
+      if (toMap !== undefined) {
+        // Their load stays where they slept.
+        const load = onFoot.carrying;
+        if (load !== null) {
+          onFoot.carrying = null;
+          const a = onFoot.actors[load];
+          if (a !== undefined) a.pose = 'down';
+        }
+        switchZone(onFoot, turned.zone, { x: turned.x * toMap.tile, y: turned.y * toMap.tile });
+        onFoot.player.facing = turned.facing;
+        addReason('COLD', 'turned out');
+        events.emit({ type: 'TURNED_OUT', zone: turned.zone, x: turned.x, y: turned.y });
+        events.emit({ type: 'ISLAND_INFO', key: islandCtx.puzzles.turning.captionKey });
+        state.facts['island.turnedOut'] = day;
+        const said = turnedOutLine(islandCtx, residents(state));
+        if (said !== null) state.facts['island.turnedOut.line'] = said.lineKey;
+      }
+    }
     // The scheduler's daily entry for the spared (decision DG-6; src/sim/land/fight.ts).
     if (fightCtx !== null) {
       if (state.facts[FACT_LAUNCHED] === true && state.facts['spared.launchDay'] === undefined)
@@ -1091,7 +1152,7 @@ export function createSimulation(
         if (command.ransMercy !== undefined) state.options.ransMercy = command.ransMercy;
         return;
       case 'MELEE':
-        if (fightCtx === null || fallen() || busy()) return;
+        if (fightCtx === null || fallen() || busy() || inVerb()) return;
         if (state.onFoot?.player.aim != null) return;
         meleePress(state, fightCtx, command.facing, emitFight, tileSize());
         return;
@@ -1113,7 +1174,7 @@ export function createSimulation(
         steererSneak(state);
         return;
       case 'HEAL':
-        if (fightCtx === null || fallen() || busy()) return;
+        if (fightCtx === null || fallen() || busy() || inVerb()) return;
         steererHeal(state, fightCtx, emitFight);
         return;
       case 'MELEE_RELEASE':
@@ -1121,7 +1182,7 @@ export function createSimulation(
         meleeRelease(state, fightCtx, emitFight);
         return;
       case 'PARRY':
-        if (fightCtx === null || fallen() || busy()) return;
+        if (fightCtx === null || fallen() || busy() || inVerb()) return;
         steererParry(
           state,
           fightCtx,
@@ -1134,13 +1195,19 @@ export function createSimulation(
         return;
       case 'BLOCK':
         if (fightCtx === null || fallen()) return;
-        if (command.on && busy()) return;
+        if (command.on && (busy() || inVerb())) return;
         steererBlock(state, fightCtx, command.on, emitFight);
         return;
       case 'DODGE': {
         if (fightCtx === null || fallen()) return;
         const p = state.onFoot?.player;
-        if (p == null || p.work != null || p.sleep != null || state.onFoot?.carrying != null)
+        if (
+          p == null ||
+          p.work != null ||
+          p.sleep != null ||
+          state.onFoot?.carrying != null ||
+          inVerb()
+        )
           return;
         const len = Math.hypot(command.x, command.y);
         steererDodge(
@@ -1237,11 +1304,21 @@ export function createSimulation(
           applyUse(command, use.use, use);
           return;
         }
+        // Stage 14: a climb, a jump, a crawl or a heavy object marked here (decision S14-57).
+        if (interaction === null && traverseHere(command)) return;
         if (interaction === null) {
           refuse(command, 'NOTHING_IN_REACH');
           return;
         }
         carryOut(command, interaction);
+        return;
+      }
+      case 'GRIP': {
+        const onFoot = state.onFoot;
+        const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+        if (onFoot === null || map === undefined || land === null || traverseCtx === null) return;
+        if (command.on && fallen()) return;
+        setGrip(state, map, land, traverseCtx, command.on, emitTraverse);
         return;
       }
       case 'INTERACT_AT': {
@@ -1281,6 +1358,8 @@ export function createSimulation(
             applyUse(command, use.use, use);
             return;
           }
+          // Stage 14: a climb, a jump, a crawl or a heavy object marked here.
+          if (traverseHere(command)) return;
           // A door clicked opens (decision DE-26).
           const door = doorAt(doorsNow(map), map.tile, command.tile);
           const ds = door === null ? undefined : onFoot.doors?.find((d) => d.id === door.id);
@@ -1363,7 +1442,7 @@ export function createSimulation(
         const item = state.player.hotbar.slots[state.player.hotbar.selected] ?? null;
         const rules = item === null ? undefined : land.rules.items[item];
         const aims = rules?.use === 'AIM';
-        if (command.dir === null || !aims || item === null || onFoot.carrying !== null) {
+        if (command.dir === null || !aims || item === null || onFoot.carrying !== null || inVerb()) {
           if (p.aim !== null && item !== null && rules !== undefined) loose(item, rules, p.aim);
           p.aim = null;
           return;
@@ -1471,7 +1550,7 @@ export function createSimulation(
           return;
         }
         const p = onFoot.player;
-        if (onFoot.carrying !== null) {
+        if (onFoot.carrying !== null || inVerb()) {
           refuse(command, 'HANDS_FULL');
           return;
         }
@@ -1509,6 +1588,24 @@ export function createSimulation(
     events.emit(e);
   };
   /** A search's events (Stage 10): onto the bus, and a resolved search is remembered. */
+  const emitTraverse = (e: TraverseEvent): void => {
+    events.emit(e);
+  };
+  /** Stage 14: whether it rains on foot (decision S14-60: a fact until the weather has rain). */
+  const rainingNow = (): boolean => state.facts[FACT_RAINING] === true;
+  /**
+   * Stage 14: Interact at a movement mark (a climb's end, a jump's take-off, a crawl's mouth, a
+   * heavy object): starts it, or says why not. False when nothing is marked within reach.
+   */
+  const traverseHere = (command: Command): boolean => {
+    const onFoot = state.onFoot;
+    const map = onFoot === null ? undefined : land?.maps.get(onFoot.zone);
+    if (onFoot === null || map === undefined || land === null || traverseCtx === null) return false;
+    const done = traverseInteract(state, map, land, traverseCtx, emitTraverse);
+    if (done === null) return false;
+    if (done.refusal !== null) refuse(command, done.refusal);
+    return true;
+  };
   const emitSearch = (e: SearchEvent): void => {
     events.emit(e);
     // An offering laid at the Hag's Stone: its effect plays (decision DE-28).
@@ -1918,6 +2015,7 @@ export function createSimulation(
         repairs: repairCtx,
         remarks: story4?.remarks ?? null,
         finds: findsCtx,
+        island: islandCtx,
         raid: raidCtx,
       },
       map,
@@ -1951,7 +2049,22 @@ export function createSimulation(
   /** Hands busy with a task or lying down: other actions wait (the press is WORK_PRESS). */
   const busy = (): boolean => {
     const p = state.onFoot?.player;
-    return p?.work != null || p?.sleep != null || state.talk !== null || fallen();
+    // Stage 14: a jump in the air, a heavy object moving or held (decision S14-57).
+    const verb = p?.traverse?.verb;
+    return (
+      p?.work != null ||
+      p?.sleep != null ||
+      state.talk !== null ||
+      fallen() ||
+      verb === 'jump' ||
+      verb === 'push' ||
+      p?.grip != null
+    );
+  };
+  /** Stage 14 (Book 2 section 10): no weapon and no fighting in a movement verb. */
+  const inVerb = (): boolean => {
+    const p = state.onFoot?.player;
+    return p != null && traversing(p);
   };
 
   /** Begins a hands-on action: the feet planted, the work loop playing (Book 2 section 07). */
@@ -2006,6 +2119,11 @@ export function createSimulation(
       // Thorkel's key taken from his body: his first line with it (DH-25).
       if (use.site === 'take_key' && remarks !== null)
         remark(state, remarks, use.target, emitRemark);
+      return;
+    }
+    if (use.kind === 'FIND' && isIslandSite(use.site)) {
+      // Stage 14: a collectible, a puzzle's place, a resource node or the drowned.
+      if (islandCtx !== null) useIsland(state, islandCtx, use.site, { advance: advanceBy }, emitIsland);
       return;
     }
     if (use.kind === 'FIND') {
@@ -2144,6 +2262,11 @@ export function createSimulation(
         onTideRefusal(land.opening, interaction.target, events.emit.bind(events));
       return;
     }
+    // Stage 14: nothing is lifted on a climb, in deep water or in a crawl (Book 2 section 10).
+    if (interaction.kind === 'LIFT' && onFoot.player.traverse != null) {
+      refuse(command, 'HANDS_FULL', interaction.target);
+      return;
+    }
     // A bar run empty carrying: no lifting until it recovers (Book 10 heavyCarryEmpty).
     if (interaction.kind === 'LIFT' && onFoot.player.winded?.carry === true) {
       refuse(command, 'TOO_TIRED', interaction.target);
@@ -2256,14 +2379,39 @@ export function createSimulation(
     const waking = wreckCtx !== null && wreckPhase(state) !== 'PLAY';
     if (waking) p.intent = { ...p.intent, x: 0, y: 0 };
     // The launch scene moves the steerer itself (Stage 12).
+    const tideNow = { open: tide.tidalGroundOpen, level };
+    const scripted = launchActive(state) || seaBurialActive(state) || snatchHolds(state, story4);
+    // Stage 14: a verb under way moves the steerer itself; else ordinary movement, with the
+    // verbs' ground (swimming water, heavy objects, crawls, soft ground in rain).
+    const verbMoved =
+      !scripted &&
+      traverseCtx !== null &&
+      stepTraverse(state, map, land, traverseCtx, tideNow, emitTraverse);
     const press =
-      launchActive(state) || seaBurialActive(state) || snatchHolds(state, story4)
+      scripted || verbMoved
         ? null
-        : stepMovement(onFoot, map, land, { open: tide.tidalGroundOpen, level }, state.tick);
+        : stepMovement(
+            onFoot,
+            map,
+            land,
+            tideNow,
+            state.tick,
+            traverseCtx === null
+              ? {}
+              : moveExtras(state, map, land, traverseCtx, tideNow, rainingNow()),
+          );
+    if (traverseCtx !== null && !scripted)
+      afterMove(state, map, land, traverseCtx, tideNow, press, emitTraverse);
     if (held || waking) p.intent = wanted;
     // "Nothing that way" (decision DE-25): pressing against an edge gives its caption.
     if (land.edgeCaption != null) {
-      const kind = press === null ? null : edgeKindAt(map, press, land.maps, tide.tidalGroundOpen);
+      const kind =
+        press === null || ownsMovement(p)
+          ? null
+          : edgeKindAt(map, press, land.maps, tide.tidalGroundOpen, {
+              marks: marksOf(map),
+              carrying: onFoot.carrying !== null,
+            });
       stepEdges(
         state,
         kind === null || kind === 'LINK' ? null : kind,
@@ -2296,14 +2444,28 @@ export function createSimulation(
       const st = state.player.stamina;
       updateMax(st, sb);
       p.winded ??= {};
+      // Stage 14: climbing, swimming and a heavy object moving (Book 10 "Stamina in traversal").
+      const verbs =
+        traverseCtx === null
+          ? null
+          : traverseDrains(state, map, land, traverseCtx);
+      const swimming = verbs?.swimming === true;
       const emptied = traversalTick(
         st,
         sb,
         {
-          running: p.moving && p.gait === 'run',
+          running: p.moving && p.gait === 'run' && !ownsMovement(p),
           carrying: onFoot.carrying !== null,
-          wadingWaist: waist && p.moving,
+          wadingWaist: waist && p.moving && !swimming && !ownsMovement(p),
           inWaist: waist,
+          ...(verbs === null
+            ? {}
+            : {
+                climbing: verbs.climbing,
+                swimming,
+                noRegen: verbs.noRegen,
+                ...(verbs.pushPerSecond > 0 ? { pushPerSecond: verbs.pushPerSecond } : {}),
+              }),
           inCombat: hostilesAware(onFoot) > 0,
           blocking: p.blocking === true,
           // Design addendum 2.5 (Book 10 "Exhausted"): the longer pause and slower refill.
@@ -2320,6 +2482,8 @@ export function createSimulation(
         p.winded,
       );
       if (Object.keys(p.winded).length === 0) delete p.winded;
+      // Stage 14: empty on a climb's face, the slide; in deep water, the sinking (Book 10).
+      if (traverseCtx !== null) traverseEmptied(state, map, land, emptied, emitTraverse);
       // Any cost that empties the bar exhausts (Book 10 "Exhausted", DF-3): running included.
       if (st.current <= 0 && fightCtx !== null) {
         const sf = steererFighter(state, fightCtx);
@@ -2352,6 +2516,31 @@ export function createSimulation(
     if (seaWreckCtx !== null && inWreck(state, seaWreckCtx))
       stepSeaWreck(state, seaWreckCtx, map.tile);
     if (aimsCtx !== null) stepAims(state, aimsCtx, land.maps, emitWreck);
+    // Stage 14: the island's finds counted, discovery, puzzles, the passage and the side aims.
+    if (islandCtx !== null) {
+      const earshot = islandCtx.earshotTiles;
+      const heard = (id: Id): number =>
+        residents(state).includes(id) ? tilesFromSteerer(state, id, map.tile) : Infinity;
+      stepIsland(
+        state,
+        islandCtx,
+        {
+          nearestResident: (ids) =>
+            [...ids]
+              .filter((id) => heard(id) <= earshot)
+              .sort((a, c) => heard(a) - heard(c) || (a < c ? -1 : 1))[0] ?? null,
+          sideAims: {
+            inEarshot: (id) => heard(id) <= earshot,
+            quiet:
+              state.talk !== null ||
+              hostilesAware(onFoot) > 0 ||
+              seaBurialActive(state) ||
+              launchActive(state),
+          },
+        },
+        emitIsland,
+      );
+    }
     if (land.opening !== null) {
       stepOpening(state, land.opening, map, land, level, emit);
       if (camp !== null) stepBroch(state, camp, land.opening, land, tide.tidalGroundOpen, emit);

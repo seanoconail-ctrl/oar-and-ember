@@ -17,6 +17,7 @@
  */
 import type { Manifest } from './atlas.ts';
 import type { Elevation } from './elevation.ts';
+import type { Flow } from '../content/terrain/flow.ts';
 import {
   ELLIPSE_FRAGMENT,
   ELLIPSE_VERTEX,
@@ -34,7 +35,15 @@ import { frameTexture, linkProgram } from './presenter.ts';
 import type { Presenter } from './presenter.ts';
 import { rimColour } from './cpuRenderer.ts';
 import { BAYER4, RIM_MIX, STREAK_MIX, WET_DARKEN } from './scene.ts';
-import type { DrawItem, DrawPlan, PlantRun, RenderStyle, Scene, SceneEffects } from './scene.ts';
+import type {
+  DrawItem,
+  DrawPlan,
+  PlantRun,
+  Recolour,
+  RenderStyle,
+  Scene,
+  SceneEffects,
+} from './scene.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from './viewport.ts';
 
 export { MAX_POOLS };
@@ -172,18 +181,24 @@ interface Atlas {
   readonly manifest: Manifest;
   readonly image: TexImageSource;
   texture: WebGLTexture | null;
+  /** The texture as drawn, and its season's recolourings by key (Stage 14). */
+  base: WebGLTexture | null;
+  readonly seasons: Map<string, WebGLTexture>;
 }
 
 interface ElevationTexture {
   readonly elevation: Elevation;
   texture: WebGLTexture | null;
+  /** Stage 14: the stream's flow (decision S14-91), and its texture. */
+  readonly flow: Flow | null;
+  flowTexture: WebGLTexture | null;
 }
 
 export interface SceneRenderer {
   /** Registers a compiled atlas (its manifest and decoded image). */
   addAtlas(manifest: Manifest, image: TexImageSource): void;
-  /** Registers a zone's height field for its water and open-ground effects. */
-  addElevation(zone: string, elevation: Elevation): void;
+  /** Registers a zone's height field for its water and open-ground effects (and its flow). */
+  addElevation(zone: string, elevation: Elevation, flow?: Flow): void;
   /**
    * Draws `items` (or a draw plan: its items with its plants among them, decision DH-161) over
    * `scene.background` under the scene's light, and presents the frame.
@@ -199,6 +214,7 @@ function waterColours(palette: Palette): {
   foam: number[];
   glint: number[];
   kelp: number[];
+  snow: number[];
 } {
   const ramp = (name: string): number[][] =>
     (palette.ramps.get(name) ?? []).map((i) => [...(palette.entries[i]?.rgb ?? [0, 0, 0])]);
@@ -211,7 +227,43 @@ function waterColours(palette: Palette): {
     foam: [pick(sea, 8), pick(sea, 9), pick(sea, 10)].flat(),
     glint: [...pick(wool, 6).map((v) => Math.min(255, v + 8)), ...pick(sky, 5)].slice(0, 3),
     kelp: pick(ramp('kelp'), 1),
+    // Snow in shadow, in half light and lit (Stage 14): the sky's pale steps and the sea's foam.
+    snow: [pick(sky, 3), pick(sky, 5), pick(sea, 10)].flat(),
   };
+}
+
+/** Recolours an atlas image's pixels by the palette's index map (Stage 14, the seasons). */
+function recolourImage(
+  image: TexImageSource,
+  palette: Palette,
+  index: Uint8Array,
+): ImageData | null {
+  const w = (image as { width?: number }).width ?? 0;
+  const h = (image as { height?: number }).height ?? 0;
+  if (w === 0 || h === 0 || typeof OffscreenCanvas === 'undefined') return null;
+  const canvas = new OffscreenCanvas(w, h);
+  const ctx = canvas.getContext('2d');
+  if (ctx === null) return null;
+  ctx.drawImage(image as CanvasImageSource, 0, 0);
+  const data = ctx.getImageData(0, 0, w, h);
+  const to = new Map<number, number>();
+  palette.entries.forEach((e, i) => {
+    const j = index[i] ?? i;
+    if (j === i) return;
+    const f = palette.entries[j]?.rgb;
+    if (f === undefined) return;
+    to.set((e.rgb[0] << 16) | (e.rgb[1] << 8) | e.rgb[2], (f[0] << 16) | (f[1] << 8) | f[2]);
+  });
+  const px = data.data;
+  for (let i = 0; i < px.length; i += 4) {
+    if ((px[i + 3] ?? 0) === 0) continue;
+    const v = to.get(((px[i] ?? 0) << 16) | ((px[i + 1] ?? 0) << 8) | (px[i + 2] ?? 0));
+    if (v === undefined) continue;
+    px[i] = (v >> 16) & 0xff;
+    px[i + 1] = (v >> 8) & 0xff;
+    px[i + 2] = v & 0xff;
+  }
+  return data;
 }
 
 export function createSceneRenderer(
@@ -264,6 +316,8 @@ export function createSceneRenderer(
   let maskFbo!: WebGLFramebuffer;
   let outFbo!: WebGLFramebuffer;
   let blankElevation!: WebGLTexture;
+  /** No flow: the stream runs south, as it did before Stage 14. */
+  let blankFlow!: WebGLTexture;
 
   const upload = (atlas: Atlas): void => {
     const texture = gl.createTexture();
@@ -275,6 +329,37 @@ export function createSceneRenderer(
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     atlas.texture = texture;
+    atlas.base = texture;
+    atlas.seasons.clear();
+  };
+
+  /** The season's colours on its sheets (Stage 14): made once per recolouring, then kept. */
+  let recoloured = '';
+  const applyRecolour = (r: Recolour | undefined): void => {
+    const key = r?.key ?? '';
+    if (key === recoloured) return;
+    recoloured = key;
+    for (const atlas of atlases.values()) {
+      if (r === undefined || !r.sheets.has(atlas.manifest.sheet)) {
+        atlas.texture = atlas.base;
+        continue;
+      }
+      let t = atlas.seasons.get(key);
+      if (t === undefined) {
+        const data = recolourImage(atlas.image, palette, r.index);
+        if (data === null) continue;
+        t = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, t);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+        gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, data);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        atlas.seasons.set(key, t);
+      }
+      atlas.texture = t;
+    }
   };
 
   const uploadElevation = (e: ElevationTexture): void => {
@@ -290,7 +375,7 @@ export function createSceneRenderer(
       0,
       gl.RGBA,
       gl.UNSIGNED_BYTE,
-      e.elevation.rgba,
+      e.flow?.elevationRgba ?? e.elevation.rgba,
     );
     // Linear: the height field is smooth between samples, so the waterline is too.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -298,6 +383,27 @@ export function createSceneRenderer(
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     e.texture = texture;
+    // The stream's flow, smooth between samples like the heights (Stage 14).
+    e.flowTexture = null;
+    if (e.flow === null) return;
+    const ft = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, ft);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA8,
+      e.flow.width,
+      e.flow.height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      e.flow.rgba,
+    );
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    e.flowTexture = ft;
   };
 
   const fbo = (texture: WebGLTexture): WebGLFramebuffer => {
@@ -398,6 +504,20 @@ export function createSceneRenderer(
       gl.UNSIGNED_BYTE,
       new Uint8Array([255, 0, 0, 255]),
     );
+    blankFlow = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, blankFlow);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA8,
+      1,
+      1,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      new Uint8Array([128, 255, 166, 0]),
+    );
+    recoloured = '';
     for (const atlas of atlases.values()) upload(atlas);
     for (const e of elevations.values()) uploadElevation(e);
   };
@@ -611,7 +731,21 @@ export function createSceneRenderer(
     gl.uniform3fv(uniform(water, 'u_kelp'), colours.kelp);
     gl.uniform1i(uniform(water, 'u_detail'), fx.detail ?? 2);
     gl.uniform1iv(uniform(water, 'u_bayer'), Int32Array.from(BAYER4));
+    // Stage 14: the stream's flow and the land by season.
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, elev.flowTexture ?? blankFlow);
+    gl.uniform1i(uniform(water, 'u_flow'), 2);
+    const land = fx.water.land;
+    gl.uniform4f(
+      uniform(water, 'u_land'),
+      land?.snow ?? 0,
+      land?.freeze === true ? 1 : 0,
+      land?.shrink === true ? 1 : 0,
+      land?.calm === true ? 1 : 0,
+    );
+    gl.uniform3fv(uniform(water, 'u_snow'), colours.snow);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bindTexture(gl.TEXTURE_2D, null);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.activeTexture(gl.TEXTURE0);
@@ -776,12 +910,17 @@ export function createSceneRenderer(
       program(detail === 0 ? `${pass}-low` : pass);
     },
     addAtlas(manifest, image) {
-      const atlas: Atlas = { manifest, image, texture: null };
+      const atlas: Atlas = { manifest, image, texture: null, base: null, seasons: new Map() };
       atlases.set(manifest.sheet, atlas);
       upload(atlas);
     },
-    addElevation(zone, elevation) {
-      const e: ElevationTexture = { elevation, texture: null };
+    addElevation(zone, elevation, flow) {
+      const e: ElevationTexture = {
+        elevation,
+        texture: null,
+        flow: flow ?? null,
+        flowTexture: null,
+      };
       elevations.set(zone, e);
       uploadElevation(e);
     },
@@ -799,6 +938,7 @@ export function createSceneRenderer(
       }
       gl.viewport(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
       gl.disable(gl.BLEND);
+      applyRecolour(scene.recolour);
 
       // The background.
       gl.useProgram(sprite);

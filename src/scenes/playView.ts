@@ -33,6 +33,7 @@ import { saveFor } from '../persist/checkpoints.ts';
 import { bakeElevation } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
+import { islandFrame, zoneFlow } from './islandLook.ts';
 import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
@@ -239,7 +240,8 @@ function playRenderer(
     geometry.set(manifest.sheet, manifest);
   }
   const elevation = bakeElevation(map.rows);
-  renderer.addElevation(map.zone, elevation);
+  // Stage 14: the zone's streams run their own way, with foam and falls (decision S14-91).
+  renderer.addElevation(map.zone, elevation, zoneFlow(map, elevation));
   return { zone: map.zone, renderer, geometry, elevation };
 }
 
@@ -503,7 +505,7 @@ export function startPlay(
     let e = elevations.get(zone.zone);
     if (e === undefined) {
       e = bakeElevation(zone.rows);
-      renderer.addElevation(zone.zone, e);
+      renderer.addElevation(zone.zone, e, zoneFlow(zone, e));
       elevations.set(zone.zone, e);
     }
     return e;
@@ -3053,7 +3055,16 @@ export function startPlay(
     };
     openingFx.update(Math.min(0.1, frameInput.dt));
     const camp = campScene();
-    const scene = zoneScene({
+    // Stage 14: the season on the land, its wildlife and its colours (decisions S14-94 to S14-99).
+    const island = islandFrame(
+      view,
+      map,
+      sim.state.calendar.day,
+      display.reducedMotion,
+      palette,
+      geometry.keys(),
+    );
+    const scene0 = zoneScene({
       map,
       onFoot,
       tick: sim.state.tick,
@@ -3063,7 +3074,8 @@ export function startPlay(
       anims,
       shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
-      visual: view,
+      visual: island.view,
+      life: island.life,
       hidePeople: hidePeople || coldBoatAt !== null,
       facts: sim.state.facts,
       stoneWeeps: stoneWeeps(sim.state),
@@ -3112,6 +3124,7 @@ export function startPlay(
             },
           }),
     });
+    const scene = island.recolour === undefined ? scene0 : { ...scene0, recolour: island.recolour };
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
     viewCamera = view.camera;
     const lead = visuals.lead;

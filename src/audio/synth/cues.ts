@@ -34,6 +34,9 @@ import { COMBAT2_SOUNDS } from './combat2.ts';
 import { COMBAT3_SOUNDS } from './combat3.ts';
 import type { SoundDef } from './sfx.ts';
 import { SEA_SOUNDS } from './sea.ts';
+import { ISLAND_FIND_SOUNDS } from './islandFinds.ts';
+import { ISLAND_SOUNDS } from './island.ts';
+import { TRAVERSE_SOUNDS } from './traverse.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
   hearth: hearthJson,
@@ -168,6 +171,9 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...STORY4_SOUNDS,
     ...INTERFACE_SOUNDS,
     ...SEA_SOUNDS,
+    ...ISLAND_FIND_SOUNDS,
+    ...ISLAND_SOUNDS,
+    ...TRAVERSE_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 
@@ -267,6 +273,7 @@ export const AMBIENCES: Readonly<
     | 'sea'
     | 'fog'
     | 'wreck'
+    | 'island'
   >
 > = {
   AMB_SURF_SHINGLE: 'strand',
@@ -292,6 +299,17 @@ export const AMBIENCES: Readonly<
   AMB_WIND_RIGGING: 'sea',
   AMB_FOG_QUIET: 'fog',
   AMB_SEA_WRECK: 'wreck',
+  // Stage 14 (decisions S14-100 to S14-109): the island's layers over the strand's bed, played by
+  // rule (src/audio/islandAmbience.ts) through setIsland (island.ts).
+  AMB_WIND_HIGH: 'island',
+  AMB_BIRD_COLONY: 'island',
+  AMB_SKYLARK: 'island',
+  AMB_CURLEW: 'island',
+  AMB_STREAM: 'island',
+  AMB_WATERFALL: 'island',
+  AMB_CAVE_DRIP: 'island',
+  AMB_PASSAGE_ROAR: 'island',
+  AMB_BOG_QUIET: 'island',
 };
 
 /** The part of the day each home-life ambience is for (Stage 7). */

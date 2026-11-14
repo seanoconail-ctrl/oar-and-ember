@@ -7,6 +7,9 @@
  *   The tide sets how close they are: at high water they break near and the backwash rattles
  *   the shingle; at low water they are far off over the flats, softer and duller.
  * - Gulls call now and then, from either side.
+ * - Stage 14 (decision S14-100): the island's ambience plays this bed in every zone, the sea as
+ *   loud as its distance and from its side (`setSurf`), the gulls as many as the place has
+ *   (`setGulls`); on the strand both stay as they were.
  *
  * Everything is scheduled ahead of the audio clock and uses a seeded random stream.
  */
@@ -28,6 +31,7 @@ export class StrandAmbience {
   readonly #whistleGain: GainNode;
   readonly #seaTone: BiquadFilterNode;
   readonly #seaGain: GainNode;
+  readonly #seaPan: StereoPannerNode;
   readonly #sources: AudioScheduledSourceNode[] = [];
   #strength = 0.55;
   #gust = 0;
@@ -35,6 +39,10 @@ export class StrandAmbience {
   #nextWave = 0;
   #nextGull = 0;
   #running = false;
+  /** Stage 14: the sea's loudness (1 on the strand) and side, and how many gulls (1 the strand's). */
+  #surf = 1;
+  #surfPan = 0;
+  #gulls = 1;
 
   constructor(engine: SynthEngine) {
     this.#e = engine;
@@ -55,7 +63,8 @@ export class StrandAmbience {
     this.#seaTone = c.createBiquadFilter();
     this.#seaTone.type = 'lowpass';
     this.#seaGain = c.createGain();
-    this.#seaTone.connect(this.#seaGain).connect(this.#out);
+    this.#seaPan = c.createStereoPanner();
+    this.#seaTone.connect(this.#seaGain).connect(this.#seaPan).connect(this.#out);
   }
 
   start(at: number): void {
@@ -96,6 +105,19 @@ export class StrandAmbience {
     this.#apply(at);
   }
 
+  /** Stage 14: the sea's loudness, 0 (unheard) to 1 (the strand's), and its side, -1 .. 1. */
+  setSurf(level: number, pan: number, at = this.#e.ctx.currentTime): void {
+    this.#surf = Math.max(0, level);
+    this.#surfPan = Math.max(-0.8, Math.min(0.8, pan));
+    this.#seaPan.pan.setTargetAtTime(this.#surfPan * 0.6, at, 1);
+    this.#apply(at);
+  }
+
+  /** Stage 14: how many gulls call, against the strand's (1); 0 for none. */
+  setGulls(rate: number): void {
+    this.#gulls = Math.max(0, rate);
+  }
+
   #apply(at: number): void {
     const s = this.#strength;
     const g = this.#gust;
@@ -106,19 +128,19 @@ export class StrandAmbience {
     this.#whistleBand.frequency.setTargetAtTime(900 + 700 * g * s, at, 0.6);
     const h = this.#tide;
     this.#seaTone.frequency.setTargetAtTime(180 + 420 * h, at, 1);
-    this.#seaGain.gain.setTargetAtTime(0.1 + 0.14 * h, at, 1);
+    this.#seaGain.gain.setTargetAtTime((0.1 + 0.14 * h) * this.#surf, at, 1);
   }
 
   /** Schedules waves and gulls that start before `until`. */
   schedule(until: number): void {
     if (!this.#running) return;
     while (this.#nextWave < until) {
-      this.#wave(this.#nextWave);
+      if (this.#surf > 0.01) this.#wave(this.#nextWave);
       this.#nextWave += WAVE_PERIOD * (0.85 + this.#r() * 0.3);
     }
     while (this.#nextGull < until) {
-      this.#gull(this.#nextGull);
-      this.#nextGull += 4 + this.#r() * 8;
+      if (this.#gulls > 0.01) this.#gull(this.#nextGull);
+      this.#nextGull += (4 + this.#r() * 8) / Math.max(0.2, Math.min(3, this.#gulls));
     }
   }
 
@@ -127,7 +149,8 @@ export class StrandAmbience {
     const c = e.ctx;
     const h = this.#tide;
     const near = 0.25 + 0.75 * h;
-    const pan = (this.#r() - 0.5) * 0.8;
+    const pan = Math.max(-1, Math.min(1, this.#surfPan + (this.#r() - 0.5) * 0.8));
+    const surf = this.#surf;
     const p = c.createStereoPanner();
     p.pan.value = pan;
     p.connect(this.#out);
@@ -144,7 +167,7 @@ export class StrandAmbience {
       [4.6, 300],
     ]);
     const g = c.createGain();
-    const peak = 0.16 + 0.42 * near;
+    const peak = (0.16 + 0.42 * near) * surf;
     envelope(g.gain, at, [
       [0, 0],
       [1.5, peak * 0.45],
@@ -162,7 +185,7 @@ export class StrandAmbience {
     const sg = c.createGain();
     envelope(sg.gain, at + 1.75, [
       [0, 0],
-      [0.12, 0.12 * near],
+      [0.12, 0.12 * near * surf],
       [0.9, 0],
     ]);
     spray.connect(hp).connect(sg).connect(p);
@@ -177,7 +200,7 @@ export class StrandAmbience {
       bp.frequency.value = 2500 + this.#r() * 4000;
       bp.Q.value = 3;
       const gg = c.createGain();
-      const a = 0.18 * h * (1 - i / stones) * (0.5 + this.#r() * 0.5);
+      const a = 0.18 * h * (1 - i / stones) * (0.5 + this.#r() * 0.5) * surf;
       envelope(gg.gain, t, [
         [0, a],
         [0.008 + this.#r() * 0.01, 0],
@@ -194,7 +217,7 @@ export class StrandAmbience {
       const hg = c.createGain();
       envelope(hg.gain, at + 2, [
         [0, 0],
-        [0.4, 0.04 * (1 - h)],
+        [0.4, 0.04 * (1 - h) * surf],
         [2.6, 0],
       ]);
       hiss.connect(bp).connect(hg).connect(p);

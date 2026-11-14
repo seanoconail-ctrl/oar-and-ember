@@ -53,7 +53,10 @@ export interface FrameResult {
   readonly menuResults: readonly OpenResult[];
   readonly alpha: number;
   /** Actions pressed this frame that were refused, with the reason (none yet but CARRYING). */
-  readonly refusedActions: readonly { readonly action: string; readonly reason: 'CARRYING' }[];
+  readonly refusedActions: readonly {
+    readonly action: string;
+    readonly reason: 'CARRYING' | 'TRAVERSING';
+  }[];
   /** The target tile and the hand, for the cursor and the hotbar (null off foot or in a menu). */
   readonly target: TargetView | null;
   /** The right stick this frame (the camera leads towards it with a gamepad). */
@@ -190,7 +193,7 @@ export class Session {
 
     // On foot: the movement wanted and Interact, applied at the start of the very next tick, so
     // a key pressed before this frame moves the steerer in this frame (no added latency).
-    const refusedActions: { action: string; reason: 'CARRYING' }[] = [];
+    const refusedActions: { action: string; reason: 'CARRYING' | 'TRAVERSING' }[] = [];
     const onFoot = this.sim.state.onFoot;
     let target: TargetView | null = null;
     const p = onFoot?.player;
@@ -340,6 +343,10 @@ export class Session {
     // it stops and keeps what is cut (Book 10 section 25, cutHold).
     if (input.released.has('interact') && onFoot.player.work?.task === 'TASK_CUT_NET')
       this.sim.submit({ type: 'CANCEL_WORK' });
+    // Stage 14 (Book 2 section 10, "Push and pull"): a heavy object is held while Interact is held;
+    // let go, the hold ends.
+    if (!input.held.has('interact') && onFoot.player.grip != null)
+      this.sim.submit({ type: 'GRIP', on: false });
     // Interact: right-click at the cursor's tile; the key and the pad at the nearest in reach.
     if (input.pressed.has('interact')) {
       if (input.byMouse.has('interact') && pointing.pointer !== null) {

@@ -93,11 +93,14 @@ export function bakeElevation(rows: readonly string[]): Elevation {
   }
   const is = (cs: string) => (i: number) => cs.includes(code[i] ?? '');
   const dSea = distanceFrom(w, h, is('~'));
-  const dNotSea = distanceFrom(w, h, (i) => code[i] !== '~' && code[i] !== 'w');
+  // Stage 14 (decision S14-31): a bog pool is still fresh water, drawn as the stream is (its
+  // flow, content/terrain/flow.ts, finds it has no way out); the causeway's stones lie awash.
+  const wet = (c: string | undefined): boolean => c === 'w' || c === 'o';
+  const dNotSea = distanceFrom(w, h, (i) => code[i] !== '~' && !wet(code[i]));
   const dLow = distanceFrom(w, h, is('~-'));
   const dForeshore = distanceFrom(w, h, is('_'));
-  const dLand = distanceFrom(w, h, is('.b,:r'));
-  const dDry = distanceFrom(w, h, (i) => code[i] !== 'w');
+  const dLand = distanceFrom(w, h, is('.b,:rhpcnd'));
+  const dDry = distanceFrom(w, h, (i) => !wet(code[i]));
   const e = new Float32Array(w * h);
   const filled = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) {
@@ -110,10 +113,11 @@ export function bakeElevation(rows: readonly string[]): Elevation {
     } else if (c === '_') {
       const lo = dLow[i] ?? 0;
       v = 0.15 + (0.85 * lo) / Math.max(1, lo + (dLand[i] ?? 0));
-    } else if (c === 'r') v = 1.4;
-    else if (c !== 'w') v = 1.05 + Math.min(0.9, (dForeshore[i] ?? 0) / 40);
+    } else if (c === 'r' || c === 'c' || c === 'd') v = 1.4;
+    else if (c === '=') v = -0.04;
+    else if (!wet(c)) v = 1.05 + Math.min(0.9, (dForeshore[i] ?? 0) / 40);
     e[i] = v;
-    filled[i] = c === 'w' ? 0 : 1;
+    filled[i] = wet(c) ? 0 : 1;
   }
   // The stream takes the height of the ground it runs through, filled in from its banks.
   for (let pass = 0; pass < 64; pass++) {
@@ -154,7 +158,7 @@ export function bakeElevation(rows: readonly string[]): Elevation {
   const stream = new Uint8Array(w * h);
   const rgba = new Uint8Array(w * h * 4);
   for (let i = 0; i < w * h; i++) {
-    const s = code[i] === 'w' ? 1 : 0;
+    const s = wet(code[i]) ? 1 : 0;
     stream[i] = s;
     rgba[i * 4] = Math.max(0, Math.min(255, Math.round((((e[i] ?? 0) + 1) / 3) * 255)));
     rgba[i * 4 + 1] = s * 255;

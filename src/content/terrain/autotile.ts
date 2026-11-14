@@ -17,8 +17,31 @@ export const TILE = 24;
 /** The world pattern of boundary noise and texture repeats every PERIOD tiles. */
 export const PERIOD = 5;
 
-/** Visual priority, low to high: a terrain laps over every terrain before it. */
-export const LAYERS = ['~', '-', '_', 'w', '.', 'b', ',', ':', 'r'] as const;
+/**
+ * Visual priority, low to high: a terrain laps over every terrain before it. Stage 14 (decision
+ * S14-31) appends the moor's and the caves' terrains after the strand's nine, so every tile the
+ * strand's zones use is drawn as before: heather, peat, the bog's pools, the cliff face, the
+ * causeway's stones, the caves' wet rock floor and drystone walling. The height field's shader
+ * reads a layer's index in four bits, so there are at most sixteen.
+ */
+export const LAYERS = [
+  '~',
+  '-',
+  '_',
+  'w',
+  '.',
+  'b',
+  ',',
+  ':',
+  'r',
+  'h',
+  'p',
+  'o',
+  'c',
+  '=',
+  'n',
+  'd',
+] as const;
 export type Layer = (typeof LAYERS)[number];
 
 /** Short letters for frame names. */
@@ -32,6 +55,13 @@ export const LETTER: Readonly<Record<Layer, string>> = {
   ',': 'm',
   ':': 'e',
   r: 'r',
+  h: 'a',
+  p: 'p',
+  o: 'q',
+  c: 'c',
+  '=': 'y',
+  n: 'n',
+  d: 'd',
 };
 
 /** How far the boundary may wander from the blend, by the terrain lapping over (0..0.5). */
@@ -45,6 +75,13 @@ const ROUGHNESS: Readonly<Record<Layer, number>> = {
   ',': 0.34,
   ':': 0.3,
   r: 0.38,
+  h: 0.36,
+  p: 0.32,
+  o: 0.26,
+  c: 0.3,
+  '=': 0.36,
+  n: 0.3,
+  d: 0.2,
 };
 
 export function layerIndex(code: string): number {

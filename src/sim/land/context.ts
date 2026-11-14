@@ -13,6 +13,7 @@ import {
   parseWaterBalance,
 } from '../../content/balance.ts';
 import { parseStaminaBalance } from '../../content/homeBalance.ts';
+import { parseTraverseBalance } from '../../content/traverseBalance.ts';
 import type { Content } from '../../content/registry.ts';
 import { campContext } from '../home/camp.ts';
 import { parseCombatBalance } from '../../content/combatBalance.ts';
@@ -22,6 +23,7 @@ import { searchContext } from '../narrative/searches.ts';
 import { hasRaidBalance, raidContext, raidWhen, withNeedTopics } from '../narrative/raid.ts';
 import { repairsContext } from '../narrative/repairs.ts';
 import { findsContext } from '../narrative/finds.ts';
+import { islandContext } from './island.ts';
 import { parseSeaBurialBalance } from '../narrative/seaBurial.ts';
 import { FACT_LAUNCHED, launchContext } from '../narrative/launch.ts';
 import { seaContext } from '../sea/context.ts';
@@ -39,6 +41,12 @@ import type { SimWorldContext } from '../simulation.ts';
 function hasTable(balance: unknown, section: string): boolean {
   const t = (balance as { tables?: Record<string, unknown> } | null)?.tables;
   return t?.[section] !== undefined;
+}
+
+/** Whether balance.json has Stage 14's movement verbs (tests may give a trimmed balance). */
+function hasMovementVerbs(balance: unknown): boolean {
+  const t = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  return t?.['combatTimings']?.['movementVerbs'] !== undefined;
 }
 
 /** Whether balance.json has Stage 13's sea tables (tests may give a trimmed balance). */
@@ -67,9 +75,12 @@ export function landContext(
         | 'company'
         | 'guidance'
         | 'finds'
+        | 'puzzles'
+        | 'island'
         | 'raid'
         | 'sea'
         | 'wreck'
+        | 'regions'
       >
     >,
   balance: unknown,
@@ -129,6 +140,17 @@ export function landContext(
           },
         }),
     stamina: parseStaminaBalance(balance),
+    // Stage 14: the movement verbs (Book 10 section 06, "Movement verbs"; decision S14-50).
+    traverse: !hasMovementVerbs(balance)
+      ? null
+      : {
+          tb: parseTraverseBalance(balance),
+          regionOf: (zone: Id): Id | null => {
+            for (const r of content.regions?.values() ?? [])
+              if (r.zones.some((z) => z.id === zone)) return r.id;
+            return null;
+          },
+        },
     camp: content.camp === undefined ? null : campContext({ camp: content.camp, balance }),
     searches:
       content.searches == null
@@ -162,6 +184,8 @@ export function landContext(
             launchedFact: FACT_LAUNCHED,
           }),
     // The user's fourth playtest: the small finds off the paths (DH-115).
+    // Stage 14, work package C: the island's collectibles, puzzles, nodes and discovery.
+    island: islandContext(content, balance),
     finds:
       content.finds == null || !hasTable(balance, 'explorationDensity')
         ? null
