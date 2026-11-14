@@ -73,7 +73,14 @@
  *   the grain, the Carrick clues and the council at the fire before the launch. It is reproduced
  *   exactly by its scenario.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-12.json
+ *
+ *   Frozen at schema 14 when Stage 13 raised the world state to 15 (decision S13-16).
+ * - Golden save 13 (schema 15, Stage 13): golden 12's chapter end, then the sea map: a course
+ *   plotted to Carrick Landing, the boat set out (the Carrick raid gate started) and its first watch
+ *   resolved, so a voyage under way is saved with its weather, stores, governor and the home's scene
+ *   kept. It is reproduced exactly by its scenario.
+ *
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-13.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -106,6 +113,7 @@ export const GOLDEN_09 = 'tests/golden-saves/golden-09.json';
 export const GOLDEN_10 = 'tests/golden-saves/golden-10.json';
 export const GOLDEN_11 = 'tests/golden-saves/golden-11.json';
 export const GOLDEN_12 = 'tests/golden-saves/golden-12.json';
+export const GOLDEN_13 = 'tests/golden-saves/golden-13.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -233,6 +241,34 @@ export function goldenSave12(): SaveFile {
   });
 }
 
+/**
+ * Golden save 13 (Stage 13, decision S13-16): the chapter run's end, then a course to Carrick
+ * Landing plotted, the boat set out and one watch resolved.
+ */
+export function goldenWorld13(): WorldState {
+  const world = playChapter('chapter-1', BOT_PACE).world;
+  const { content } = loadContentFromDisk();
+  const sim = createSimulation(parseTimeBalance(content.balance), world, landContext(content, content.balance));
+  sim.submit({ type: 'SEA_PLOT', to: 'SITE_CARRICK' });
+  sim.step();
+  sim.submit({ type: 'SEA_DEPART' });
+  sim.step();
+  sim.submit({ type: 'SEA_WATCH' });
+  sim.step();
+  return sim.state;
+}
+
+export function goldenSave13(): SaveFile {
+  return writeSave(goldenWorld13(), {
+    build: 'golden',
+    kind: 'checkpoint',
+    slot: 'checkpoint:golden-13',
+    label: 'golden-13',
+    sequence: 1,
+    savedAt: '2026-11-14T18:00:00.000Z',
+  });
+}
+
 export function goldenSave10(): SaveFile {
   return writeSave(goldenWorld10(), {
     build: 'golden',
@@ -354,7 +390,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  // Golden saves 1 to 11 are frozen (Book 2 section 20): only the newest is written.
-  writeFileSync(join(REPO_ROOT, GOLDEN_12), `${JSON.stringify(goldenSave12(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_12}`);
+  // Golden saves 1 to 12 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_13), `${JSON.stringify(goldenSave13(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_13}`);
 }

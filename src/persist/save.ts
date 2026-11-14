@@ -15,6 +15,7 @@ import { seasonOf } from '../sim/calendar/calendar.ts';
 import type { Season } from '../content/balance.ts';
 import type { Id } from '../core/ids.ts';
 import { FACT_DEV as FACT_DEV_USED } from '../sim/dev.ts';
+import { newSeaState } from '../sim/sea/state.ts';
 import { joinPerson, newPerson } from '../sim/people/person.ts';
 import { parsePeopleBalance } from '../content/peopleBalance.ts';
 import type { HouseholdDef, PersonDef } from '../content/registry.ts';
@@ -548,6 +549,22 @@ export const MIGRATIONS: readonly Migration[] = [
     // into the stores once, as for a new campaign, and sets the needs' facts. The step is here so
     // that a version 13 build refuses these saves rather than load them without what they hold.
     up: (state) => state,
+  },
+  {
+    from: 14,
+    describe: 'Stage 13: the sea (weather, the governor, the voyage) and the routes known',
+    // Decision S13-16. A version 14 save was made ashore: its sea is at rest, with no weather
+    // drawn yet (the next day's start draws it on the weather stream, as a new campaign's first
+    // day does), a fresh governor, no course and no voyage; it knows no routes beyond those
+    // content marks known.
+    up: (state) => {
+      const knowledge = (state['knowledge'] ?? {}) as Record<string, unknown>;
+      return {
+        ...state,
+        knowledge: { ...knowledge, routes: (knowledge['routes'] as object | undefined) ?? {} },
+        sea: newSeaState(),
+      };
+    },
   },
 ];
 

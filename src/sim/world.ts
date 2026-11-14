@@ -37,6 +37,8 @@ import { beginOpening } from './narrative/wreck.ts';
 import { shipDefsOf, wreckedBoat, FLAGSHIP } from './ship/ship.ts';
 import type { ShipInstance } from './ship/ship.ts';
 import type { GroundItem, OnFootState } from './land/onFoot.ts';
+import { newSeaState } from './sea/state.ts';
+import type { RouteKnowledge, SeaState } from './sea/types.ts';
 
 /**
  * Version 2 (Stage 6) adds `onFoot`: where the steerer and the people nearby stand in a zone.
@@ -87,8 +89,11 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * (`back`, `chaseUntil`, `waiting`, `runOff` on its mind) and a battle's blows lately (`harm`),
  * the way the steerer fell (`gameOver.from`), and the first raid's stores and facts (the meal-sack,
  * nails and net, the clues, the council). Each is absent in an older save until first needed.
+ * Version 15 (Stage 13, decision S13-16) adds the sea (`sea`: the weather and forecast, the
+ * encounter governor, the course plotted, the voyage under way and the home's scene kept while the
+ * steerer is at sea) and the routes known (`knowledge.routes`).
  */
-export const WORLD_STATE_VERSION = 14;
+export const WORLD_STATE_VERSION = 15;
 
 /** Book 2 section 16. */
 export interface GateState {
@@ -651,7 +656,13 @@ export interface WorldState {
   ledger: Deed[];
   /** Append-only (see ledger.ts). */
   evidence: Evidence[];
-  knowledge: { places: Record<Id, 'RUMOURED' | 'KNOWN'> };
+  knowledge: {
+    places: Record<Id, 'RUMOURED' | 'KNOWN'>;
+    /** Stage 13 (version 15): the sea map's routes rumoured or sailed, by SEA_ edge. */
+    routes: Record<Id, RouteKnowledge>;
+  };
+  /** Stage 13 (version 15; Book 2 section 09): the weather, the governor and the voyage. */
+  sea: SeaState;
   bargains: Record<Id, Bargain>;
   powers: Record<Id, unknown>;
   chapters: Record<Id, ChapterState>;
@@ -754,7 +765,8 @@ export function emptyWorld(seed: string, b: TimeBalance): WorldState {
     factions: {},
     ledger: [],
     evidence: [],
-    knowledge: { places: {} },
+    knowledge: { places: {}, routes: {} },
+    sea: newSeaState(),
     bargains: {},
     powers: {},
     chapters: {},

@@ -241,6 +241,21 @@ import {
   talkTick,
 } from './people/talk.ts';
 import type { JobKind } from './world.ts';
+import { fireMinute } from './home/camp.ts';
+import type { SeaContext } from './sea/context.ts';
+import { plotCourse } from './sea/plot.ts';
+import {
+  choose as seaChoose,
+  depart as seaDepart,
+  resolveWatch,
+  returnFromHandoff,
+  seaWeather,
+  turnBack as seaTurnBack,
+} from './sea/voyage.ts';
+import type { VoyageHooks } from './sea/voyage.ts';
+import { forecastTomorrow, isStormDay, weatherToday } from './sea/weather.ts';
+import { chartAll } from './sea/chart.ts';
+import type { SeaCommand, SeaEvent, SeaRefusal } from './sea/types.ts';
 
 /** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
 export type SimState = WorldState;
@@ -323,6 +338,8 @@ export type Command =
   | { readonly type: 'CLOSE_SEA_MAP' }
   /** Real milliseconds a menu held the game (time stopped), for the telemetry. */
   | { readonly type: 'TIME_HELD'; readonly ms: number }
+  /** Stage 13: the sea map's commands (Book 2 section 09; src/sim/sea/types.ts). */
+  | SeaCommand
   /** The developer menu's commands (decision DG-21; src/sim/dev.ts), recorded like any other. */
   | DevCommand;
 
@@ -345,6 +362,10 @@ export type RefusalReason =
   | 'NO_ARROWS'
   /** Stage 12: the launch cannot start (detail: why). */
   | 'GATE_REFUSED'
+  /** Stage 13: the sea map refused (detail: the string key of its words, SEA_REFUSED has more). */
+  | 'SEA_REFUSED'
+  /** Stage 13: an on-foot command while the steerer is at sea. */
+  | 'AT_SEA'
   | 'HOTBAR_FULL'
   | 'QUIVER_FULL'
   | 'HANDS_FULL'
@@ -421,6 +442,8 @@ export type SimEvent =
   | RepairEvent
   | FindEvent
   | LaunchEvent
+  /** Stage 13: the sea map, the voyage and the weather (src/sim/sea/types.ts). */
+  | SeaEvent
   /** A reason for the first raid: clues, the mainland pointed out, the goods, the council. */
   | RaidEvent
   /** The user's fourth playtest: the strongbox taken in sight, the steerer's word over a body. */
@@ -520,6 +543,8 @@ export interface SimWorldContext extends LandContext {
   readonly story4?: Story4Context | null;
   /** Book 10 section 25's doors and edge captions (decisions DE-25 and DE-26). */
   readonly doors?: DoorTimings | null;
+  /** Stage 13: the sea map (Book 2 section 09). */
+  readonly sea?: SeaContext | null;
   readonly edgeCaption?: { readonly afterSeconds: number; readonly cooldownSeconds: number } | null;
 }
 
@@ -554,6 +579,12 @@ export function createSimulation(
   const story4 = land?.story4 ?? null;
   const aimsCtx = land?.aims ?? null;
   const sb = land?.stamina ?? null;
+  const seaCtx = land?.sea ?? null;
+  // Stage 13: today's weather and tomorrow's are drawn before anything reads them.
+  if (seaCtx !== null) seaWeather(state, seaCtx);
+  /** Whether yesterday was a storm (Book 10 stormFrom): twice the driftwood at dawn. */
+  const stormYesterday = (): boolean =>
+    seaCtx !== null && isStormDay(state.sea, seaCtx.b, state.calendar.day - 1);
   const emitPeople = (e: PeopleEvent | CampEvent): void => {
     events.emit(e);
     if (people === null || camp === null) return;
@@ -665,7 +696,7 @@ export function createSimulation(
     c.workedMinutes = 0;
     const day = state.calendar.day;
     if (camp !== null) {
-      startDay(state, camp);
+      startDay(state, camp, { storm: stormYesterday() });
       const plans = people === null ? [] : peopleDawn(state, people, camp, emitPeople);
       state.report = morningReport(state, camp, night, (id) => id, plans);
       // The grain counted down and what ran low (DH-132), after the household's plans.
@@ -759,6 +790,92 @@ export function createSimulation(
   /** Earliest minute into the day a bed ends the day (18:00 is 720 after 06:00). */
   const sleepFrom = (b.sleepAfter - b.dayStart + 1440) % 1440;
 
+  /** What a voyage asks of the simulation (src/sim/sea/voyage.ts). */
+  const seaHooks: VoyageHooks = {
+    advance: (minutes) => {
+      advanceBy(minutes);
+    },
+    emit: (e) => {
+      events.emit(e);
+    },
+    gateStarted: (gate, checkpoint) => {
+      events.emit({ type: 'GATE_STARTED', gate });
+      if (checkpoint !== null) events.emit({ type: 'CHECKPOINT', label: checkpoint });
+    },
+    home: () => {
+      // Back on the strand by the boat, and everyone where their own day has them.
+      const onFoot = state.onFoot;
+      const ship = state.ships['flagship'];
+      const spot = launchCtx?.def.drawnUp.steerer;
+      if (onFoot !== null && ship !== undefined && spot !== undefined && onFoot.zone === ship.lies.zone) {
+        const tile = land?.maps.get(onFoot.zone)?.tile ?? 24;
+        onFoot.player.x = spot.x * tile;
+        onFoot.player.y = spot.y * tile;
+        onFoot.player.facing = spot.facing;
+        onFoot.player.moving = false;
+      }
+      settleAfterSkip();
+    },
+  };
+
+  /** Stage 13: the sea map's commands (Book 2 section 09). */
+  const applySea = (command: Command): void => {
+    if (seaCtx === null) return;
+    switch (command.type) {
+      case 'DEV_SEA_CHART':
+        chartAll(state, seaCtx);
+        return;
+      case 'SEA_PLOT': {
+        seaWeather(state, seaCtx);
+        const plot = plotCourse(state, seaCtx, command.to);
+        if (plot.ok) {
+          state.sea.plan = plot.plan;
+          events.emit({ type: 'SEA_PLOTTED', plan: plot.plan });
+        } else {
+          events.emit({ type: 'SEA_REFUSED', reason: plot.reason, textKey: plot.textKey, vars: plot.vars });
+          refuse(command, 'SEA_REFUSED', plot.textKey);
+        }
+        return;
+      }
+      case 'SEA_DEPART': {
+        // Setting out from home is under the safe rule (Book 2 section 20: an autosave is due).
+        if (
+          state.sea.voyage === null &&
+          (hostilesAware(state.onFoot) > 0 || state.talk !== null || launchActive(state))
+        ) {
+          const key = seaCtx.words.NOT_SAFE;
+          events.emit({ type: 'SEA_REFUSED', reason: 'NOT_SAFE', textKey: key, vars: {} });
+          refuse(command, 'SEA_REFUSED', key);
+          return;
+        }
+        if (state.sea.voyage === null && state.onFoot !== null) {
+          state.onFoot.player.work = null;
+          state.onFoot.player.aim = null;
+        }
+        seaRefused(command, seaDepart(state, seaCtx, seaHooks, command.crew));
+        return;
+      }
+      case 'SEA_WATCH':
+        seaRefused(command, resolveWatch(state, seaCtx, seaHooks));
+        return;
+      case 'SEA_CHOOSE':
+        seaRefused(command, seaChoose(state, seaCtx, seaHooks, command.option));
+        return;
+      case 'SEA_TURN_BACK':
+        seaRefused(command, seaTurnBack(state, seaCtx, seaHooks));
+        return;
+      case 'SEA_HANDOFF_RETURN':
+        seaRefused(command, returnFromHandoff(state, seaCtx, seaHooks, command.result));
+        return;
+      default:
+        return;
+    }
+  };
+  /** A sea command refused (its SEA_REFUSED event already said why in words). */
+  const seaRefused = (command: Command, reason: SeaRefusal | null): void => {
+    if (reason !== null && seaCtx !== null) refuse(command, 'SEA_REFUSED', seaCtx.words[reason]);
+  };
+
   const apply = (command: Command): void => {
     // The sea taking Thorkel (DG-14) is a scene that takes control: only the options and the
     // telemetry are taken until it ends.
@@ -781,6 +898,25 @@ export function createSimulation(
       ].includes(command.type)
     )
       return;
+    // Stage 13: at sea the steerer is on the sea map: only its commands, the options and the
+    // telemetry are taken (an on-foot scene handed off from the voyage takes on-foot commands, but
+    // never sleep or a skip).
+    if (state.sea.voyage !== null) {
+      const always = ['TIME_HELD', 'SET_OPTIONS', 'SET_DAY_LENGTH', 'DEV_SEA_CHART'];
+      const seaCommand = command.type.startsWith('SEA_');
+      if (
+        (state.onFoot === null && !seaCommand && !always.includes(command.type)) ||
+        command.type === 'SLEEP' ||
+        command.type === 'DEV_SKIP'
+      ) {
+        refuse(command, 'AT_SEA');
+        return;
+      }
+    }
+    if (command.type.startsWith('SEA_') || command.type === 'DEV_SEA_CHART') {
+      applySea(command);
+      return;
+    }
     // Design addendum 2.4: in the cold open MOVE steers the oar; waking, any input gets up.
     if (wreckCtx !== null && wreckCommand(state, command)) return;
     switch (command.type) {
@@ -2285,6 +2421,27 @@ export function createSimulation(
       if (tide !== tideAt(before, b).phase)
         events.emit({ type: 'TIDE_TURNED', day: after.day, phase: tide });
     }
+    // Stage 13: each day's weather is drawn as the day begins (and tomorrow's with its forecast).
+    if (after.day !== before.day && seaCtx !== null) {
+      seaWeather(state, seaCtx);
+      const today = weatherToday(state);
+      if (today !== null)
+        events.emit({ type: 'WEATHER_DAY', weather: today, forecast: forecastTomorrow(state) });
+    }
+    // While the ship is away, the home passes the time through the low-detail away step
+    // (decision S13-13): the fire burns, and at each dawn the driftwood, spoilage, the ration for
+    // those at home and wounds mending. The steerer, at sea, neither collapses nor is reported to.
+    if (state.sea.voyage !== null) {
+      if (camp !== null) {
+        fireMinute(state, camp, emitCamp);
+        if (after.day !== before.day) {
+          const aboard = state.sea.voyage.aboard;
+          const mouths = state.household.residents.filter((id) => !aboard.includes(id)).length;
+          startDay(state, camp, { storm: stormYesterday(), mouths });
+        }
+      }
+      return;
+    }
     if (camp !== null) homeMinute(state, camp, steererAt(), emitCamp);
     if (camp !== null && people !== null) {
       const at = steererAt();
@@ -2352,6 +2509,12 @@ export function createSimulation(
       for (const command of pending) apply(command);
       // The played cold open (decision DE-30): the land waits and the calendar does not run.
       if (wreckCtx !== null && stepWreckPhase(state, wreckCtx, emitWreck) === 'COLD') {
+        stepTelemetry(state);
+        state.tick++;
+        return;
+      }
+      // Stage 13: on the sea map the watches pass by command (SEA_WATCH), not by the clock.
+      if (state.sea.voyage !== null && state.onFoot === null) {
         stepTelemetry(state);
         state.tick++;
         return;

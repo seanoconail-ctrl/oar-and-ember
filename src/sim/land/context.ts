@@ -23,7 +23,8 @@ import { hasRaidBalance, raidContext, raidWhen, withNeedTopics } from '../narrat
 import { repairsContext } from '../narrative/repairs.ts';
 import { findsContext } from '../narrative/finds.ts';
 import { parseSeaBurialBalance } from '../narrative/seaBurial.ts';
-import { launchContext } from '../narrative/launch.ts';
+import { FACT_LAUNCHED, launchContext } from '../narrative/launch.ts';
+import { seaContext } from '../sea/context.ts';
 import { parseLaunchBalance } from '../../content/launchBalance.ts';
 import { shipDefsOf } from '../ship/ship.ts';
 import { parseWorkBalance } from '../../content/homeBalance.ts';
@@ -36,6 +37,12 @@ import type { SimWorldContext } from '../simulation.ts';
 function hasTable(balance: unknown, section: string): boolean {
   const t = (balance as { tables?: Record<string, unknown> } | null)?.tables;
   return t?.[section] !== undefined;
+}
+
+/** Whether balance.json has Stage 13's sea tables (tests may give a trimmed balance). */
+function hasRoutes(balance: unknown): boolean {
+  const t = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  return t?.['timeAndTravel']?.['encounterWeights'] !== undefined;
 }
 
 export function landContext(
@@ -59,6 +66,7 @@ export function landContext(
         | 'guidance'
         | 'finds'
         | 'raid'
+        | 'sea'
       >
     >,
   balance: unknown,
@@ -134,6 +142,22 @@ export function landContext(
     raid,
     repairs,
     launch,
+    // Stage 13: the sea map, on the chart's positions (content/launch.json seaMap).
+    sea:
+      content.sea == null ||
+      content.launch == null ||
+      content.hulls === undefined ||
+      content.fittings === undefined ||
+      !hasRoutes(balance)
+        ? null
+        : seaContext({
+            sea: content.sea,
+            chart: content.launch.seaMap,
+            balance,
+            time: parseTimeBalance(balance),
+            ship: shipDefsOf({ hulls: content.hulls, fittings: content.fittings, balance }),
+            launchedFact: FACT_LAUNCHED,
+          }),
     // The user's fourth playtest: the small finds off the paths (DH-115).
     finds:
       content.finds == null || !hasTable(balance, 'explorationDensity')

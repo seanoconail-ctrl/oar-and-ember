@@ -98,6 +98,11 @@
      "Key": "springLowExtra",
      "Value": "Causeways and deep caves open only on spring tide days",
      "Notes": ""
+    },
+    {
+     "Key": "slackWindow",
+     "Value": "60 game minutes either side of a tide turn",
+     "Notes": "Slack water (Stage 13, decision S13-1): the tide turns at each watch boundary where flood gives way to ebb or ebb to flood; the Cailleach's Cauldron is entered only within this window, tested when the boat reaches the hazard"
     }
    ],
    "movementOnFoot": [
@@ -216,125 +221,480 @@
    "seaTravel": [
     {
      "Key": "watchesFormula",
-     "Value": "baseWatches x 3 / effectiveSpeed"
+     "Value": "baseWatches x 3 / effectiveSpeed",
+     "Notes": "The reference speed is 3: a route's base watches are its watches at speed 3. Minutes are watches x 6 game hours, rounded to the nearest whole game minute"
     },
     {
      "Key": "windFactorRunning",
-     "Value": "1.2"
+     "Value": "1.2",
+     "Notes": "Wind from astern (the point of sail is the leg's bearing between chart positions, rounded to eight points, against the wind's \"from\" point: 4 points off)"
     },
     {
      "Key": "windFactorBroadReach",
-     "Value": "1.0"
+     "Value": "1.0",
+     "Notes": "3 points off the wind"
     },
     {
      "Key": "windFactorBeam",
-     "Value": "0.8"
+     "Value": "0.8",
+     "Notes": "2 points off the wind"
     },
     {
      "Key": "windFactorCloseHauled",
-     "Value": "0.5"
+     "Value": "0.5",
+     "Notes": "1 point off the wind; a fitting's close-hauled factor replaces it (the better sail and rigging's 0.65, section 05)"
     },
     {
      "Key": "windFactorAgainst",
-     "Value": "0 (row)"
+     "Value": "0 (row)",
+     "Notes": "Heading into the wind, and in a calm (wind strength 0): the boat rows"
     },
     {
      "Key": "rowingFactor",
-     "Value": "oarSpeed x rowersPresent / rowingCrew x 0.8"
+     "Value": "oarSpeed x rowersPresent / rowingCrew x 0.8",
+     "Notes": "The ship's oar speed already counts the rowers present against its rowing crew (Book 2 section 08, deriveStats), so only the 0.8 is applied at sea. Rowing costs no more stores than sailing (decision S13-4)"
     },
     {
      "Key": "storesPerPersonPerWatch",
-     "Value": "0.25 rd"
+     "Value": "0.25 rd",
+     "Notes": "Each watch at sea costs everyone aboard this from the ship's stores; a watch the stores cannot cover is a shortage, said in words"
     },
     {
      "Key": "forecastAccuracy",
-     "Value": "0.8"
+     "Value": "0.8",
+     "Notes": "The household's one-day forecast is right this often (a gilt weather-vane's forecast replaces it, section 05)"
+    },
+    {
+     "Key": "choiceExposure",
+     "Value": "2",
+     "Notes": "Weather rising: before a planned leg of this exposure or more, the sea map asks whether to press on or shelter"
+    },
+    {
+     "Key": "risingStrength",
+     "Value": "3",
+     "Notes": "The wind strength, now or forecast for tomorrow, that counts as weather rising"
+    },
+    {
+     "Key": "shelterUntil",
+     "Value": "06:00",
+     "Notes": "Sheltering from rising weather waits at the place until this hour, then the leg is asked about again"
+    },
+    {
+     "Key": "fiercerStorms",
+     "Value": "1.5",
+     "Notes": "Storm damage on a leg through Rán's Reach is multiplied by this (Book 4 section 01: storms there are fiercer)"
+    }
+   ],
+   "shipStores": [
+    {
+     "Hull": "T1 Coastal boat",
+     "Days of stores": "4"
+    },
+    {
+     "Hull": "T2 Karvi",
+     "Days of stores": "6"
+    },
+    {
+     "Hull": "T3a Snekkja",
+     "Days of stores": "5"
+    },
+    {
+     "Hull": "T3b Knarr",
+     "Days of stores": "10"
     }
    ],
    "routes": [
     {
      "Route": "Skarvholm to Carrick",
+     "ID": "SEA_SKARV_CARRICK",
      "Base watches": "2",
      "Exposure": "2",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Skarvholm to Saltvik",
+     "ID": "SEA_SKARV_SALTVIK",
      "Base watches": "3",
      "Exposure": "2",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Skarvholm to Kilbrecc",
+     "ID": "SEA_SKARV_KILBRECC",
      "Base watches": "3",
      "Exposure": "2",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Skarvholm to Crowwick",
+     "ID": "SEA_SKARV_CROWWICK",
      "Base watches": "2",
      "Exposure": "1",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Skarvholm to the Cauldron",
+     "ID": "SEA_SKARV_CAULDRON",
      "Base watches": "1",
      "Exposure": "3",
+     "Winter": "Calm windows",
      "Notes": "Tide gate: slack only"
     },
     {
      "Route": "Cauldron to Glen Arra",
+     "ID": "SEA_CAULDRON_ARRA",
      "Base watches": "1",
      "Exposure": "2",
+     "Winter": "Calm windows",
      "Notes": "Saves about two watches"
     },
     {
      "Route": "Crowwick to Glen Arra",
+     "ID": "SEA_CROWWICK_ARRA",
      "Base watches": "2",
      "Exposure": "1",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Crowwick to Inis Rón",
+     "ID": "SEA_CROWWICK_INISRON",
      "Base watches": "2",
      "Exposure": "1",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Carrick to Kilbrecc",
+     "ID": "SEA_CARRICK_KILBRECC",
      "Base watches": "1",
      "Exposure": "1",
+     "Winter": "Open",
      "Notes": "Coastal"
     },
     {
      "Route": "Kilbrecc to Dún Fiach",
+     "ID": "SEA_KILBRECC_DUNFIACH",
      "Base watches": "2",
      "Exposure": "1",
+     "Winter": "Open",
      "Notes": "Coastal"
     },
     {
      "Route": "Carrick to Saltvik",
+     "ID": "SEA_CARRICK_SALTVIK",
      "Base watches": "2",
      "Exposure": "1",
+     "Winter": "Open",
      "Notes": "Coastal"
     },
     {
      "Route": "Saltvik to Crowwick",
+     "ID": "SEA_SALTVIK_CROWWICK",
      "Base watches": "2",
      "Exposure": "2",
+     "Winter": "Calm windows",
      "Notes": ""
     },
     {
      "Route": "Skarvholm to Blue Men's Sound",
+     "ID": "SEA_SKARV_BLUEMEN",
      "Base watches": "3",
      "Exposure": "3",
+     "Winter": "Closed",
      "Notes": "Winter closed"
     },
     {
      "Route": "Blue Men's Sound to Kaldness",
+     "ID": "SEA_BLUEMEN_KALDNESS",
      "Base watches": "3",
      "Exposure": "3",
+     "Winter": "Closed",
      "Notes": "Winter closed"
+    }
+   ],
+   "weather": [
+    {
+     "Season": "Spring",
+     "N": "8",
+     "NE": "10",
+     "E": "10",
+     "SE": "8",
+     "S": "12",
+     "SW": "22",
+     "W": "18",
+     "NW": "12"
+    },
+    {
+     "Season": "Summer",
+     "N": "8",
+     "NE": "8",
+     "E": "6",
+     "SE": "6",
+     "S": "12",
+     "SW": "26",
+     "W": "22",
+     "NW": "12"
+    },
+    {
+     "Season": "Autumn",
+     "N": "6",
+     "NE": "6",
+     "E": "6",
+     "SE": "8",
+     "S": "14",
+     "SW": "26",
+     "W": "22",
+     "NW": "12"
+    },
+    {
+     "Season": "Winter",
+     "N": "10",
+     "NE": "8",
+     "E": "6",
+     "SE": "6",
+     "S": "12",
+     "SW": "22",
+     "W": "20",
+     "NW": "16"
+    }
+   ],
+   "windStrength": [
+    {
+     "0": "8",
+     "1": "32",
+     "2": "36",
+     "3": "24",
+     "4": "0",
+     "Season": "Spring"
+    },
+    {
+     "0": "12",
+     "1": "38",
+     "2": "36",
+     "3": "14",
+     "4": "0",
+     "Season": "Summer"
+    },
+    {
+     "0": "6",
+     "1": "22",
+     "2": "32",
+     "3": "26",
+     "4": "14",
+     "Season": "Autumn"
+    },
+    {
+     "0": "4",
+     "1": "16",
+     "2": "30",
+     "3": "28",
+     "4": "22",
+     "Season": "Winter"
+    }
+   ],
+   "visibility": [
+    {
+     "Season": "Spring",
+     "Clear": "60",
+     "Haze": "25",
+     "Fog": "15"
+    },
+    {
+     "Season": "Summer",
+     "Clear": "65",
+     "Haze": "25",
+     "Fog": "10"
+    },
+    {
+     "Season": "Autumn",
+     "Clear": "50",
+     "Haze": "28",
+     "Fog": "22"
+    },
+    {
+     "Season": "Winter",
+     "Clear": "45",
+     "Haze": "30",
+     "Fog": "25"
+    }
+   ],
+   "stormsAndCalmWindows": [
+    {
+     "Key": "stormFrom",
+     "Value": "4",
+     "Notes": "A day of this wind strength is a storm: storm damage at sea (section 05, stormDamage), the dawn's driftwood after it (section 03, afterStorm) and the storm music"
+    },
+    {
+     "Key": "firstStorm",
+     "Value": "One day in days 8 to 14 of each year",
+     "Notes": "Book 10 section 11: the first storm, strength 4; always forecast the day before (\"sky and swell a day ahead\")"
+    },
+    {
+     "Key": "autumnStorms",
+     "Value": "1 to 3 days in days 61 to 85",
+     "Notes": "Book 10 section 11: \"up to three\", strength 4, on different days; always forecast"
+    },
+    {
+     "Key": "cailleachWashing",
+     "Value": "One day in days 86 to 94 of each year",
+     "Notes": "Book 4 section 04: the storm that marks winter's arrival, strength 4; always forecast. Winter closure begins on its day"
+    },
+    {
+     "Key": "calmWindowChance",
+     "Value": "0.15",
+     "Notes": "Each day from the washing to the year's end that is not already in a calm window starts one with this chance"
+    },
+    {
+     "Key": "calmWindowDays",
+     "Value": "1 to 3",
+     "Notes": "A calm window's length in days, drawn evenly; its wind strength is 0 or 1, evenly"
+    },
+    {
+     "Key": "calmStrengthMax",
+     "Value": "1",
+     "Notes": "The strongest wind in a calm window"
+    }
+   ],
+   "encounters": [
+    {
+     "Key": "eventfulShare",
+     "Value": "1 in 3",
+     "Notes": "Two quiet legs for each eventful one, on average"
+    },
+    {
+     "Key": "eventfulBand",
+     "Value": "0.30 to 0.36",
+     "Notes": "The share of eventful legs over 200 seeded voyages (Book 3 Stage 13, check 3)"
+    },
+    {
+     "Key": "supernaturalEvery",
+     "Value": "3.5 voyages",
+     "Notes": "About once in 3 to 4 voyages"
+    },
+    {
+     "Key": "supernaturalBand",
+     "Value": "3 to 4 voyages",
+     "Notes": "Voyages per supernatural encounter over 200 seeded voyages, with every table offering one"
+    }
+   ],
+   "exposure": [
+    {
+     "Exposure": "0",
+     "Encounter factor": "0.5"
+    },
+    {
+     "Exposure": "1",
+     "Encounter factor": "0.75"
+    },
+    {
+     "Exposure": "2",
+     "Encounter factor": "1.0"
+    },
+    {
+     "Exposure": "3",
+     "Encounter factor": "1.5"
+    }
+   ],
+   "encounterWeights": [
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "sail",
+     "Weight": "3"
+    },
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "gannets",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "whales",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "flotsam",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "wreck",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_OPEN",
+     "Encounter": "follower",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_COAST",
+     "Encounter": "curragh",
+     "Weight": "3"
+    },
+    {
+     "Table": "ENC_COAST",
+     "Encounter": "sail",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_COAST",
+     "Encounter": "smoke",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_COAST",
+     "Encounter": "flotsam",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_COAST",
+     "Encounter": "seal_kin",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_CAULDRON",
+     "Encounter": "spin",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_CAULDRON",
+     "Encounter": "seals",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_CAULDRON",
+     "Encounter": "sail",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_CAULDRON",
+     "Encounter": "hag_cloud",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_NORTH",
+     "Encounter": "sail",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_NORTH",
+     "Encounter": "gannets",
+     "Weight": "2"
+    },
+    {
+     "Table": "ENC_NORTH",
+     "Encounter": "ice_birds",
+     "Weight": "1"
+    },
+    {
+     "Table": "ENC_NORTH",
+     "Encounter": "blue_men",
+     "Weight": "1"
     }
    ]
   },
@@ -522,7 +882,7 @@
     {
      "Key": "afterStorm",
      "Value": "2 times the season's pieces",
-     "Notes": "At the dawn after a storm. Storms come with the weather (Stage 13); until then every dawn is a calm one"
+     "Notes": "At the dawn after a storm: a day whose wind reached section 02's stormFrom (Stage 13, decision S13-15), at sea or at home"
     },
     {
      "Key": "loadsPerPiece",

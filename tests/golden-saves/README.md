@@ -19,9 +19,10 @@ tests are in `tests/unit/saves.test.ts`; the scenarios and the writer are in
 | golden-09.json | 9      | Stage 11         | The repairs, the oar and a fitting                          | Frozen: loads through the migration chain                   |
 | golden-10.json | 10     | Stage 12         | The rites and the launch: the chapter-end save              | Frozen from addendum 2.4: loads through the migration chain |
 | golden-11.json | 13     | Third playtest   | Chapter 1 as the third playtest plays it (the chapter run)  | Frozen from the fourth playtest: loads through the chain    |
-| golden-12.json | 14     | Fourth playtest  | Chapter 1 as the fourth playtest plays it (the chapter run) | Reproduced exactly by its scenario                          |
+| golden-12.json | 14     | Fourth playtest  | Chapter 1 as the fourth playtest plays it (the chapter run) | Frozen from Stage 13: loads through the chain               |
+| golden-13.json | 15     | Stage 13         | Golden 12's chapter end, then a voyage to Carrick set out   | Reproduced exactly by its scenario                          |
 
-Only the newest is written: `npm run golden` rewrites `golden-12.json` and nothing else. A frozen
+Only the newest is written: `npm run golden` rewrites `golden-13.json` and nothing else. A frozen
 file is never rewritten; when the world state's version goes up, the new version's migration must
 load every frozen file, and the newest golden save is frozen in turn.
 
@@ -45,3 +46,11 @@ own life, guarding and pursuit, the steerer's fall and the first raid's stores a
 golden save 11 was frozen at schema 13, as this file's rule says, rather than regenerated: it is the
 chapter-end save a player of the third playtest's build holds, and it now loads through the step
 from 13 to 14 and plays on. The new chapter-end save is golden save 12, at schema 14.
+
+Stage 13 raised the world state to version 15 (decision S13-16): the sea (the weather and its
+forecast, the encounter governor, the course plotted and the voyage under way, with the home's
+on-foot scene kept while the steerer is at sea) and the routes known. Golden save 12 was frozen at
+schema 14 and loads through the step to 15, which gives it a sea at rest. Golden save 13 is the
+chapter run's end at schema 15, then a course plotted to Carrick Landing, the boat set out (the
+Carrick raid gate started) and the first watch resolved, so a voyage under way is held in a golden
+save.

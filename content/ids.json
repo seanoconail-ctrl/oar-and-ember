@@ -338,6 +338,150 @@
       "origin": "stated"
     },
     {
+      "id": "SEA_SKARV_CARRICK",
+      "ref": "Skarvholm to Carrick",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SKARV_SALTVIK",
+      "ref": "Skarvholm to Saltvik",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SKARV_KILBRECC",
+      "ref": "Skarvholm to Kilbrecc",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SKARV_CROWWICK",
+      "ref": "Skarvholm to Crowwick",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SKARV_CAULDRON",
+      "ref": "Skarvholm to the Cauldron",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_CAULDRON_ARRA",
+      "ref": "Cauldron to Glen Arra",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_CROWWICK_ARRA",
+      "ref": "Crowwick to Glen Arra",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_CROWWICK_INISRON",
+      "ref": "Crowwick to Inis Rón",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_CARRICK_KILBRECC",
+      "ref": "Carrick to Kilbrecc",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_KILBRECC_DUNFIACH",
+      "ref": "Kilbrecc to Dún Fiach",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_CARRICK_SALTVIK",
+      "ref": "Carrick to Saltvik",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SALTVIK_CROWWICK",
+      "ref": "Saltvik to Crowwick",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_SKARV_BLUEMEN",
+      "ref": "Skarvholm to Blue Men's Sound",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "SEA_BLUEMEN_KALDNESS",
+      "ref": "Blue Men's Sound to Kaldness",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "A charted route of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "ENC_OPEN",
+      "ref": "ENC_OPEN",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "An encounter table of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "ENC_COAST",
+      "ref": "ENC_COAST",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "An encounter table of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "ENC_CAULDRON",
+      "ref": "ENC_CAULDRON",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "An encounter table of the sea map (Stage 13, decision S13-9)."
+    },
+    {
+      "id": "ENC_NORTH",
+      "ref": "ENC_NORTH",
+      "book": 10,
+      "section": "02",
+      "origin": "stated",
+      "note": "An encounter table of the sea map (Stage 13, decision S13-9)."
+    },
+    {
       "id": "P_STEERER",
       "ref": "the steerer",
       "book": 5,
@@ -3622,6 +3766,18 @@
       "note": "Stage 10: the third search; its outcome is the fact search.runa."
     },
     {
+      "id": "BEAT_2_RAID",
+      "ref": "Setting out for Carrick Landing is the Carrick raid gate",
+      "book": 4,
+      "section": "08",
+      "origin": "stated",
+      "statedIn": {
+        "book": 2,
+        "section": "09"
+      },
+      "note": "The Carrick raid gate (Book 10 section 22); started by setting out for Carrick Landing on the sea map (decision S13-11)."
+    },
+    {
       "id": "C_THORKEL",
       "ref": "Thorkel Ketilsson",
       "book": 5,
@@ -3716,6 +3872,18 @@
       "section": "18",
       "origin": "assigned",
       "note": "Design addendum 2.4 (decisions DE-14 and DE-15): Svart and Conn strip the wreck's stern on Wreck Strand at the first dusk; Chapter 1's first fight."
+    },
+    {
+      "id": "SCN_SEA_WRECK",
+      "ref": "a wreck with survivors",
+      "book": 1,
+      "section": "08",
+      "origin": "stated",
+      "statedIn": {
+        "book": 2,
+        "section": "09"
+      },
+      "note": "Stage 13's playable interruption at sea, on the Skarvholm to Carrick edge (decision S13-10)."
     },
     {
       "id": "SFX_WORK_REPAIR",

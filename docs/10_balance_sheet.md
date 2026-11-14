@@ -47,6 +47,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | springTideDays | 1, 2, 3 and 16, 17, 18 of each season | |
 | tidalGroundWindow | 3 game hours around low water | 2.5 real minutes |
 | springLowExtra | Causeways and deep caves open only on spring tide days | |
+| slackWindow | 60 game minutes either side of a tide turn | Slack water (Stage 13, decision S13-1): the tide turns at each watch boundary where flood gives way to ebb or ebb to flood; the Cailleach's Cauldron is entered only within this window, tested when the boat reaches the hazard |
 
 ### Movement on foot (tiles per second)
 | Mode | Speed | Notes |
@@ -83,35 +84,135 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | streamBand | Ankle: a stream crossing open ground is ankle deep unless the tide over it is deeper |
 
 ### Sea travel
-| Key | Value |
+*Stage 13 (decisions S13-1 to S13-7): a leg is one edge crossed. Its speed is the larger of the sail at the point of sail and rowing, and its time is in whole game minutes. Starting values, for tuning after the playtest.*
+
+| Key | Value | Notes |
+|---|---|---|
+| watchesFormula | baseWatches x 3 / effectiveSpeed | The reference speed is 3: a route's base watches are its watches at speed 3. Minutes are watches x 6 game hours, rounded to the nearest whole game minute |
+| windFactorRunning | 1.2 | Wind from astern (the point of sail is the leg's bearing between chart positions, rounded to eight points, against the wind's "from" point: 4 points off) |
+| windFactorBroadReach | 1.0 | 3 points off the wind |
+| windFactorBeam | 0.8 | 2 points off the wind |
+| windFactorCloseHauled | 0.5 | 1 point off the wind; a fitting's close-hauled factor replaces it (the better sail and rigging's 0.65, section 05) |
+| windFactorAgainst | 0 (row) | Heading into the wind, and in a calm (wind strength 0): the boat rows |
+| rowingFactor | oarSpeed x rowersPresent / rowingCrew x 0.8 | The ship's oar speed already counts the rowers present against its rowing crew (Book 2 section 08, deriveStats), so only the 0.8 is applied at sea. Rowing costs no more stores than sailing (decision S13-4) |
+| storesPerPersonPerWatch | 0.25 rd | Each watch at sea costs everyone aboard this from the ship's stores; a watch the stores cannot cover is a shortage, said in words |
+| forecastAccuracy | 0.8 | The household's one-day forecast is right this often (a gilt weather-vane's forecast replaces it, section 05) |
+| choiceExposure | 2 | Weather rising: before a planned leg of this exposure or more, the sea map asks whether to press on or shelter |
+| risingStrength | 3 | The wind strength, now or forecast for tomorrow, that counts as weather rising |
+| shelterUntil | 06:00 | Sheltering from rising weather waits at the place until this hour, then the leg is asked about again |
+| fiercerStorms | 1.5 | Storm damage on a leg through Rán's Reach is multiplied by this (Book 4 section 01: storms there are fiercer) |
+
+### Ship stores
+*Stage 13 (decision S13-5): the days of food a hull carries for everyone aboard, loaded from the home's salt fish and grain at departure (fresh fish stays home), with a fitting's stores added (the awning and stores' +4 days, section 05). What is left comes home again.*
+
+| Hull | Days of stores |
 |---|---|
-| watchesFormula | baseWatches x 3 / effectiveSpeed |
-| windFactorRunning | 1.2 |
-| windFactorBroadReach | 1.0 |
-| windFactorBeam | 0.8 |
-| windFactorCloseHauled | 0.5 |
-| windFactorAgainst | 0 (row) |
-| rowingFactor | oarSpeed x rowersPresent / rowingCrew x 0.8 |
-| storesPerPersonPerWatch | 0.25 rd |
-| forecastAccuracy | 0.8 |
+| T1 Coastal boat | 4 |
+| T2 Karvi | 6 |
+| T3a Snekkja | 5 |
+| T3b Knarr | 10 |
 
 ### Routes (base watches at speed 3)
-| Route | Base watches | Exposure | Notes |
+*The Book 4 sea map's charted routes (Book 2 section 09). Winter: "calm windows" closes the route from the Cailleach's washing to the end of the year except in calm windows; "closed" closes it then whatever the weather; "open" never closes (decision S13-6).*
+
+| Route | ID | Base watches | Exposure | Winter | Notes |
+|---|---|---|---|---|---|
+| Skarvholm to Carrick | SEA_SKARV_CARRICK | 2 | 2 | Calm windows | |
+| Skarvholm to Saltvik | SEA_SKARV_SALTVIK | 3 | 2 | Calm windows | |
+| Skarvholm to Kilbrecc | SEA_SKARV_KILBRECC | 3 | 2 | Calm windows | |
+| Skarvholm to Crowwick | SEA_SKARV_CROWWICK | 2 | 1 | Calm windows | |
+| Skarvholm to the Cauldron | SEA_SKARV_CAULDRON | 1 | 3 | Calm windows | Tide gate: slack only |
+| Cauldron to Glen Arra | SEA_CAULDRON_ARRA | 1 | 2 | Calm windows | Saves about two watches |
+| Crowwick to Glen Arra | SEA_CROWWICK_ARRA | 2 | 1 | Calm windows | |
+| Crowwick to Inis Rón | SEA_CROWWICK_INISRON | 2 | 1 | Calm windows | |
+| Carrick to Kilbrecc | SEA_CARRICK_KILBRECC | 1 | 1 | Open | Coastal |
+| Kilbrecc to Dún Fiach | SEA_KILBRECC_DUNFIACH | 2 | 1 | Open | Coastal |
+| Carrick to Saltvik | SEA_CARRICK_SALTVIK | 2 | 1 | Open | Coastal |
+| Saltvik to Crowwick | SEA_SALTVIK_CROWWICK | 2 | 2 | Calm windows | |
+| Skarvholm to Blue Men's Sound | SEA_SKARV_BLUEMEN | 3 | 3 | Closed | Winter closed |
+| Blue Men's Sound to Kaldness | SEA_BLUEMEN_KALDNESS | 3 | 3 | Closed | Winter closed |
+
+### Weather
+*Stage 13 (decision S13-2): each day's weather is drawn on the weather stream at the day's start, with tomorrow's forecast. First-pass Hebridean odds (the prevailing wind from the south-west and west; strength 4, a storm, comes in spring and summer only on the named storm's day), for tuning after the playtest. Odds are in percent and each row sums to 100.*
+
+| Season | N | NE | E | SE | S | SW | W | NW |
+|---|---|---|---|---|---|---|---|---|
+| Spring | 8 | 10 | 10 | 8 | 12 | 22 | 18 | 12 |
+| Summer | 8 | 8 | 6 | 6 | 12 | 26 | 22 | 12 |
+| Autumn | 6 | 6 | 6 | 8 | 14 | 26 | 22 | 12 |
+| Winter | 10 | 8 | 6 | 6 | 12 | 22 | 20 | 16 |
+
+### Wind strength
+| Season | 0 | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|---|
+| Spring | 8 | 32 | 36 | 24 | 0 |
+| Summer | 12 | 38 | 36 | 14 | 0 |
+| Autumn | 6 | 22 | 32 | 26 | 14 |
+| Winter | 4 | 16 | 30 | 28 | 22 |
+
+### Visibility
+*Night is not drawn: between the season's dark and light (Daylight above) the visibility is night.*
+
+| Season | Clear | Haze | Fog |
 |---|---|---|---|
-| Skarvholm to Carrick | 2 | 2 | |
-| Skarvholm to Saltvik | 3 | 2 | |
-| Skarvholm to Kilbrecc | 3 | 2 | |
-| Skarvholm to Crowwick | 2 | 1 | |
-| Skarvholm to the Cauldron | 1 | 3 | Tide gate: slack only |
-| Cauldron to Glen Arra | 1 | 2 | Saves about two watches |
-| Crowwick to Glen Arra | 2 | 1 | |
-| Crowwick to Inis Rón | 2 | 1 | |
-| Carrick to Kilbrecc | 1 | 1 | Coastal |
-| Kilbrecc to Dún Fiach | 2 | 1 | Coastal |
-| Carrick to Saltvik | 2 | 1 | Coastal |
-| Saltvik to Crowwick | 2 | 2 | |
-| Skarvholm to Blue Men's Sound | 3 | 3 | Winter closed |
-| Blue Men's Sound to Kaldness | 3 | 3 | Winter closed |
+| Spring | 60 | 25 | 15 |
+| Summer | 65 | 25 | 10 |
+| Autumn | 50 | 28 | 22 |
+| Winter | 45 | 30 | 25 |
+
+### Storms and calm windows
+| Key | Value | Notes |
+|---|---|---|
+| stormFrom | 4 | A day of this wind strength is a storm: storm damage at sea (section 05, stormDamage), the dawn's driftwood after it (section 03, afterStorm) and the storm music |
+| firstStorm | One day in days 8 to 14 of each year | Book 10 section 11: the first storm, strength 4; always forecast the day before ("sky and swell a day ahead") |
+| autumnStorms | 1 to 3 days in days 61 to 85 | Book 10 section 11: "up to three", strength 4, on different days; always forecast |
+| cailleachWashing | One day in days 86 to 94 of each year | Book 4 section 04: the storm that marks winter's arrival, strength 4; always forecast. Winter closure begins on its day |
+| calmWindowChance | 0.15 | Each day from the washing to the year's end that is not already in a calm window starts one with this chance |
+| calmWindowDays | 1 to 3 | A calm window's length in days, drawn evenly; its wind strength is 0 or 1, evenly |
+| calmStrengthMax | 1 | The strongest wind in a calm window |
+
+### Encounters
+*Stage 13 (decision S13-3): the governor. Each leg (one edge crossed) adds the eventful share to a credit; the leg is eventful with the chance credit x the exposure's factor (at most 1), and an eventful leg takes 1 from the credit, so over many legs two are quiet for each eventful one. A story encounter placed on an edge (the wreck) comes first when it applies and is counted the same way. Supernatural encounters come only when the voyage credit allows: each voyage (each course set and sailed) adds 1 / supernaturalEvery, and an eventful leg with a credit of 1 or more takes its encounter from the table's supernatural entries if one applies, taking 1.*
+
+| Key | Value | Notes |
+|---|---|---|
+| eventfulShare | 1 in 3 | Two quiet legs for each eventful one, on average |
+| eventfulBand | 0.30 to 0.36 | The share of eventful legs over 200 seeded voyages (Book 3 Stage 13, check 3) |
+| supernaturalEvery | 3.5 voyages | About once in 3 to 4 voyages |
+| supernaturalBand | 3 to 4 voyages | Voyages per supernatural encounter over 200 seeded voyages, with every table offering one |
+
+### Exposure
+| Exposure | Encounter factor |
+|---|---|
+| 0 | 0.5 |
+| 1 | 0.75 |
+| 2 | 1.0 |
+| 3 | 1.5 |
+
+### Encounter weights
+*Each table's entries and their weights; content (`content/sea.json`) gives each entry's words, what it needs and whether it is supernatural. A supernatural entry is drawn only by the supernatural credit, by its weight among the table's supernatural entries.*
+
+| Table | Encounter | Weight |
+|---|---|---|
+| ENC_OPEN | sail | 3 |
+| ENC_OPEN | gannets | 2 |
+| ENC_OPEN | whales | 2 |
+| ENC_OPEN | flotsam | 2 |
+| ENC_OPEN | wreck | 1 |
+| ENC_OPEN | follower | 1 |
+| ENC_COAST | curragh | 3 |
+| ENC_COAST | sail | 2 |
+| ENC_COAST | smoke | 2 |
+| ENC_COAST | flotsam | 2 |
+| ENC_COAST | seal_kin | 1 |
+| ENC_CAULDRON | spin | 2 |
+| ENC_CAULDRON | seals | 2 |
+| ENC_CAULDRON | sail | 1 |
+| ENC_CAULDRON | hag_cloud | 1 |
+| ENC_NORTH | sail | 2 |
+| ENC_NORTH | gannets | 2 |
+| ENC_NORTH | ice_birds | 1 |
+| ENC_NORTH | blue_men | 1 |
 
 ## 03 / Food, fuel and seasons
 ### Consumption
@@ -169,7 +270,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | spots | 12 spots on Wreck Strand | Along the high-tide line at both ends, under the bank, among the rocks of both outcrops and by the wreck's stern (content/camp.json, the DRIFTWOOD sites) |
 | firstDawn | A piece at every spot | The storm that wrecked the ship left the strand strewn: 6 loads, enough to light the first fire (fireLight) once 2 pieces are fetched up to the broch |
 | piecesPerDawn | Spring 2, summer 2, autumn 3, winter 4 | Washed up again at dawn at spots picked bare, never more than the spots picked bare (1, 1, 1.5 and 2 loads a day against the fire's 0.5, 0.2, 0.5 and 1.0) |
-| afterStorm | 2 times the season's pieces | At the dawn after a storm. Storms come with the weather (Stage 13); until then every dawn is a calm one |
+| afterStorm | 2 times the season's pieces | At the dawn after a storm: a day whose wind reached section 02's stormFrom (Stage 13, decision S13-15), at sea or at home |
 | loadsPerPiece | 0.5 loads | Added to the camp's store of driftwood as soon as it is picked up |
 | pickUp | 5 game minutes and 0 stamina; the steerer stoops for 0.8 real seconds | No timing ring and no press: one gather loop, then the minutes pass |
 

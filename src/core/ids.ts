@@ -20,6 +20,9 @@ export const ID_PREFIXES = {
   ZONE: 'zone of a region',
   SK: 'place on Skarvholm',
   HAZ: 'sea hazard',
+  /** Stage 13 (decision S13-9): the sea map's charted routes and its encounter tables. */
+  SEA: 'sea-map edge',
+  ENC: 'encounter table',
   C: 'resident',
   L: 'leader',
   R: 'rival captain',

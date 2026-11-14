@@ -7209,5 +7209,137 @@
   "c_oddi.council.no_chart": {
     "text": "Thorkel had a chart in that chest. Open it, and we'll know where.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "sea.enc.open.sail": {
+    "text": "A sail far off to the south, holding its course. It does not turn towards you."
+  },
+  "sea.enc.open.gannets": {
+    "text": "Gannets fold their wings and drop into the swell ahead. The fish are running."
+  },
+  "sea.enc.open.whales": {
+    "text": "Whales blow off the bow, slow and grey, and go down again."
+  },
+  "sea.enc.open.flotsam": {
+    "text": "A broken cask rolls past in the swell, its staves black with tar."
+  },
+  "sea.enc.open.wreck": {
+    "text": "Wreckage in the water, and voices calling from a skerry."
+  },
+  "sea.enc.open.follower": {
+    "text": "Something long and dark keeps pace under the water, a boat's length astern."
+  },
+  "sea.enc.coast.curragh": {
+    "text": "A hide curragh of fishermen pulls hard for the shore at the sight of your sail."
+  },
+  "sea.enc.coast.sail": {
+    "text": "A trader's sail beats along the coast, keeping well out from you."
+  },
+  "sea.enc.coast.smoke": {
+    "text": "Smoke from cooking fires drifts out over the water from the shore."
+  },
+  "sea.enc.coast.flotsam": {
+    "text": "A tangle of net and cork floats by, torn from someone's stakes."
+  },
+  "sea.enc.coast.seal_kin": {
+    "text": "A seal keeps pace with the boat, watching with eyes too knowing for a seal."
+  },
+  "sea.enc.cauldron.spin": {
+    "text": "The water heaves and the boat is turned half round before the oars bite."
+  },
+  "sea.enc.cauldron.seals": {
+    "text": "Seals lie out on the rocks by the race, watching the boat go by."
+  },
+  "sea.enc.cauldron.sail": {
+    "text": "A boat waits in the lee of the island for the race to slacken."
+  },
+  "sea.enc.cauldron.hag_cloud": {
+    "text": "A grey cloud stands over the Cauldron like breath on cold air, and does not move with the wind."
+  },
+  "sea.enc.north.sail": {
+    "text": "A grey sail far to the north, then gone in the murk."
+  },
+  "sea.enc.north.gannets": {
+    "text": "Gannets wheel and cry over the Sound."
+  },
+  "sea.enc.north.ice_birds": {
+    "text": "Small white birds blow south over the boat, ahead of the cold."
+  },
+  "sea.enc.north.blue_men": {
+    "text": "Blue faces rise in the troughs, and a voice under the hull begins a verse."
+  },
+  "sea.refuse.unknown_place": {
+    "text": "You know of no such place to steer for."
+  },
+  "sea.refuse.here": {
+    "text": "The boat is there already."
+  },
+  "sea.refuse.inland": {
+    "text": "That place lies inland, out of reach of any boat."
+  },
+  "sea.refuse.no_known_route": {
+    "text": "No route you know leads there. A chart, a pilot or a voyage past it would show the way."
+  },
+  "sea.refuse.winter": {
+    "text": "Winter has closed the open crossings. Wait for a calm window."
+  },
+  "sea.refuse.no_way": {
+    "text": "With no wind to sail by and no one to row, the boat cannot move."
+  },
+  "sea.refuse.not_ready": {
+    "text": "The boat is not ready to put to sea."
+  },
+  "sea.refuse.at_sea": {
+    "text": "The boat is already under way."
+  },
+  "sea.refuse.not_at_sea": {
+    "text": "The boat is not at sea."
+  },
+  "sea.refuse.fixed_night": {
+    "text": "The attack comes before you could be home."
+  },
+  "sea.refuse.no_plan": {
+    "text": "No course is set."
+  },
+  "sea.refuse.no_crew": {
+    "text": "No one is aboard to sail the boat."
+  },
+  "sea.refuse.not_safe": {
+    "text": "Not while someone hostile is close and watching."
+  },
+  "sea.refuse.busy": {
+    "text": "Not now: something else needs answering first."
+  },
+  "sea.hold.tide": {
+    "text": "The Cauldron is running. The boat holds off until slack water, about {time}."
+  },
+  "sea.hold.winter": {
+    "text": "The crossing is closed by winter weather. The boat waits for a calm."
+  },
+  "sea.hold.shelter": {
+    "text": "The boat shelters here until morning."
+  },
+  "sea.choice.rising": {
+    "text": "The weather is rising. Press on across open water, or shelter here?"
+  },
+  "sea.choice.press_on": {
+    "text": "Press on"
+  },
+  "sea.choice.shelter": {
+    "text": "Shelter"
+  },
+  "sea.stores.short": {
+    "text": "The stores ran out this watch, and everyone aboard went hungry."
+  },
+  "sea.storm.damage": {
+    "text": "The storm works at the boat's seams."
+  },
+  "sea.arrive.place": {
+    "text": "The boat comes in to the shore."
+  },
+  "sea.arrive.home": {
+    "text": "Home to Skarvholm."
+  },
+  "sea.landing.carrick": {
+    "text": "Carrick Landing lies ahead: the storehouse roof, the boats drawn up, smoke from the hall."
   }
 }

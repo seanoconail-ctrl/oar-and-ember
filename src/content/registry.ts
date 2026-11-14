@@ -15,6 +15,8 @@ import { parseFinds } from './findsSchema.ts';
 import type { FindsDef } from './findsSchema.ts';
 import type { CompanyDef, GuidanceDef } from './companySchema.ts';
 import { parseRaid, RAID_ACTIONS, RAID_WHEN } from './raidSchema.ts';
+import { parseSea, seaProblems } from './seaSchema.ts';
+import type { SeaDef } from './seaSchema.ts';
 import type { RaidDef } from './raidSchema.ts';
 import { captionProblems, isDialogueKey, modernMoralWordsIn, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
@@ -50,6 +52,8 @@ export const CONTENT_FILES = {
   finds: 'content/finds.json',
   /** A reason for the first raid (DH-130 to DH-159): needs, the skin boat, asking, the council. */
   raid: 'content/raid.json',
+  /** Stage 13: the sea map's nodes, routes, encounter tables and landings (Book 2 section 09). */
+  sea: 'content/sea.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
   zoneHagseat: 'content/zones/zone_sk_hagseat.json',
@@ -1478,6 +1482,8 @@ export interface Content {
   readonly guidance: GuidanceDef | null;
   /** A reason for the first raid (DH-130 to DH-159). */
   readonly raid: RaidDef | null;
+  /** Stage 13: the sea map (Book 2 section 09). */
+  readonly sea: SeaDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -1491,6 +1497,12 @@ function balanceRows(
   const rows = tables?.[section]?.[table];
   if (!Array.isArray(rows)) return new Set();
   return new Set(rows.map((r) => String((r as Record<string, unknown>)[column])));
+}
+
+function balanceTable(balance: unknown, section: string, table: string): Record<string, unknown>[] {
+  const tables = (balance as { tables?: Record<string, Record<string, unknown>> } | null)?.tables;
+  const rows = tables?.[section]?.[table];
+  return Array.isArray(rows) ? (rows as Record<string, unknown>[]) : [];
 }
 
 function toMap<T extends { id: Id }>(
@@ -1632,6 +1644,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const finds = parseFinds(files.finds, '', ctx(CONTENT_FILES.finds));
   const guidance = parseGuidance(files.guidance, '', ctx(CONTENT_FILES.guidance));
   const raid = parseRaid(files.raid, '', ctx(CONTENT_FILES.raid));
+  const sea = parseSea(files.sea, '', ctx(CONTENT_FILES.sea));
   issues.push(...companyProblems(company, guidance, opening, talk));
   // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
   searches?.omens.forEach((o, i) => {
@@ -1809,6 +1822,30 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       issues.push({ file: r.file, path: r.path, reason: `unknown ${noun[r.kind]} "${r.id}"` });
   }
 
+  // Stage 13: the sea map agrees with Book 10's routes and weights, the chart and the registry.
+  if (sea !== null) {
+    const routeRows = new Map<string, { tideGateSlack: boolean }>();
+    for (const r of balanceTable(files.balance, 'timeAndTravel', 'routes'))
+      routeRows.set(String(r['ID']), { tideGateSlack: r['Notes'] === 'Tide gate: slack only' });
+    const weights = new Map<string, Set<string>>();
+    for (const r of balanceTable(files.balance, 'timeAndTravel', 'encounterWeights')) {
+      const t = String(r['Table']);
+      weights.set(t, (weights.get(t) ?? new Set<string>()).add(String(r['Encounter'])));
+    }
+    for (const p of seaProblems(sea, {
+      places: new Set(places.keys()),
+      hazards: new Set(hazards.keys()),
+      chart: {
+        places: new Set(Object.keys(launch?.seaMap.places ?? {})),
+        hazards: new Set(Object.keys(launch?.seaMap.hazards ?? {})),
+      },
+      registered: (x) => ids.byId.has(x),
+      routes: routeRows,
+      weights,
+    }))
+      issues.push({ file: CONTENT_FILES.sea, path: p.path, reason: p.reason });
+  }
+
   // Every content ID is a registered, stable ID.
   const defined: [string, Map<Id, { id: Id }>][] = [
     [CONTENT_FILES.places, places],
@@ -1884,6 +1921,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       guidance,
       finds,
       raid,
+      sea,
       zoneMaps,
     },
     issues,

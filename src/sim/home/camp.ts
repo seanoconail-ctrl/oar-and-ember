@@ -835,6 +835,13 @@ export function homeMinute(
   at: SteererAt | null,
   emit: (e: CampEvent) => void,
 ): void {
+  if (homeOf(world, ctx) === undefined) return;
+  fireMinute(world, ctx, emit);
+  conditionMinute(world, ctx, at, emit);
+}
+
+/** One game minute of the home's fire: it burns the season's fuel and goes out when it is spent. */
+export function fireMinute(world: WorldState, ctx: CampContext, emit: (e: CampEvent) => void): void {
   const home = homeOf(world, ctx);
   if (home === undefined) return;
   const season = seasonOf(world.calendar.day);
@@ -845,7 +852,6 @@ export function homeMinute(
       emit({ type: 'FIRE_OUT' });
     }
   }
-  conditionMinute(world, ctx, at, emit);
 }
 
 /** The steerer's condition, recomputed once a game minute (Book 2 section 24). */
@@ -905,17 +911,27 @@ export function conditionMinute(
  * The start of a day, on waking: spoilage and the day's ration (never before tutorialComplete:
  * the tutorial guard), wounds mending from the day they were tended, and the report.
  */
-export function startDay(world: WorldState, ctx: CampContext): void {
+export function startDay(
+  world: WorldState,
+  ctx: CampContext,
+  /**
+   * Stage 13: `storm`, yesterday was a storm (twice the driftwood, Book 10 afterStorm; decision
+   * S13-15); `mouths`, the mouths fed from the home's stores (the steerer and the crew at sea eat
+   * from the ship's, decision S13-13). By default, the steerer and every resident.
+   */
+  opts: { readonly storm?: boolean; readonly mouths?: number } = {},
+): void {
   const home = homeOf(world, ctx);
   const day = world.calendar.day;
   const guard = world.facts[FACT_TUTORIAL_COMPLETE] !== true;
   if (home !== undefined && home.rationDay < day) {
-    // The sea leaves driftwood at spots picked bare (Book 10 "Driftwood finds"; no storms yet).
-    washUpDriftwood(world, ctx);
+    // The sea leaves driftwood at spots picked bare (Book 10 "Driftwood finds"), twice the
+    // season's pieces at the dawn after a storm.
+    washUpDriftwood(world, ctx, opts.storm === true);
     // Spoilage: fresh fish keeps Book 10's days; none spoils before tutorialComplete.
     if (!guard) home.fresh = home.fresh.filter((f) => day - f.day < ctx.work.freshFish.keepsDays);
     // The day's ration for every mouth: the oldest fresh fish first, then the salt fish.
-    const mouths = 1 + world.household.residents.length;
+    const mouths = opts.mouths ?? 1 + world.household.residents.length;
     let need = mouths * ctx.work.foodPerPersonPerDay;
     // The morning porridge first, from the grain while any is left (decision DH-131).
     const grain = home.stores['RES_GRAIN'] ?? 0;

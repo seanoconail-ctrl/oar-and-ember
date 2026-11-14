@@ -1,0 +1,318 @@
+{
+  "about": "The sea map (Book 2 section 09; Book 4 section 01; Stage 13, decisions S13-1 to S13-17): the places and hazard nodes at their chart positions (content/launch.json seaMap), the fourteen charted routes of Book 10 section 02 by their SEA_ IDs (base watches, exposure and winter closure are Book 10's), the encounter tables with each entry's words and needs (weights are Book 10's), the landings, and the words the sea map says. Rán's Reach and Manannán's Mist are areas, listed on the edges that pass them. Carrick Landing's arrival hands off to SCN_CARRICK, a stub until Stage 16; the wreck with survivors on the Skarvholm to Carrick edge hands off to SCN_SEA_WRECK, built beside this.",
+  "home": "ISLE_SKARV",
+  "nodes": [
+    {
+      "id": "ISLE_SKARV",
+      "kind": "PLACE"
+    },
+    {
+      "id": "SITE_CARRICK",
+      "kind": "PLACE"
+    },
+    {
+      "id": "TOWN_ARDCARN",
+      "kind": "PLACE"
+    },
+    {
+      "id": "ABBEY_KILBRECC",
+      "kind": "PLACE"
+    },
+    {
+      "id": "FORT_DUNFIACH",
+      "kind": "PLACE"
+    },
+    {
+      "id": "TOWN_SALTVIK",
+      "kind": "PLACE"
+    },
+    {
+      "id": "GLEN_ARRA",
+      "kind": "PLACE"
+    },
+    {
+      "id": "CAMP_CROWWICK",
+      "kind": "PLACE"
+    },
+    {
+      "id": "ISLE_INISRON",
+      "kind": "PLACE"
+    },
+    {
+      "id": "ISLE_KALDNESS",
+      "kind": "PLACE"
+    },
+    {
+      "id": "HAZ_CAULDRON",
+      "kind": "HAZARD"
+    },
+    {
+      "id": "HAZ_BLUEMEN",
+      "kind": "HAZARD"
+    }
+  ],
+  "edges": [
+    {
+      "id": "SEA_SKARV_CARRICK",
+      "a": "ISLE_SKARV",
+      "b": "SITE_CARRICK",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": true,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_SKARV_SALTVIK",
+      "a": "ISLE_SKARV",
+      "b": "TOWN_SALTVIK",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_SKARV_KILBRECC",
+      "a": "ISLE_SKARV",
+      "b": "ABBEY_KILBRECC",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_SKARV_CROWWICK",
+      "a": "ISLE_SKARV",
+      "b": "CAMP_CROWWICK",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_SKARV_CAULDRON",
+      "a": "ISLE_SKARV",
+      "b": "HAZ_CAULDRON",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": false,
+      "encounterTable": "ENC_CAULDRON",
+      "tideGate": {
+        "passableAt": "SLACK",
+        "at": "HAZ_CAULDRON"
+      }
+    },
+    {
+      "id": "SEA_CAULDRON_ARRA",
+      "a": "HAZ_CAULDRON",
+      "b": "GLEN_ARRA",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_CAULDRON"
+    },
+    {
+      "id": "SEA_CROWWICK_ARRA",
+      "a": "CAMP_CROWWICK",
+      "b": "GLEN_ARRA",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_CROWWICK_INISRON",
+      "a": "CAMP_CROWWICK",
+      "b": "ISLE_INISRON",
+      "hazards": ["HAZ_MIST"],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_CARRICK_KILBRECC",
+      "a": "SITE_CARRICK",
+      "b": "ABBEY_KILBRECC",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_COAST"
+    },
+    {
+      "id": "SEA_KILBRECC_DUNFIACH",
+      "a": "ABBEY_KILBRECC",
+      "b": "FORT_DUNFIACH",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_COAST"
+    },
+    {
+      "id": "SEA_CARRICK_SALTVIK",
+      "a": "SITE_CARRICK",
+      "b": "TOWN_SALTVIK",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_COAST"
+    },
+    {
+      "id": "SEA_SALTVIK_CROWWICK",
+      "a": "TOWN_SALTVIK",
+      "b": "CAMP_CROWWICK",
+      "hazards": ["HAZ_MIST"],
+      "known": false,
+      "encounterTable": "ENC_OPEN"
+    },
+    {
+      "id": "SEA_SKARV_BLUEMEN",
+      "a": "ISLE_SKARV",
+      "b": "HAZ_BLUEMEN",
+      "hazards": ["HAZ_RANSREACH"],
+      "known": false,
+      "encounterTable": "ENC_NORTH"
+    },
+    {
+      "id": "SEA_BLUEMEN_KALDNESS",
+      "a": "HAZ_BLUEMEN",
+      "b": "ISLE_KALDNESS",
+      "hazards": [],
+      "known": false,
+      "encounterTable": "ENC_NORTH"
+    }
+  ],
+  "tables": {
+    "ENC_OPEN": {
+      "entries": [
+        {
+          "key": "sail",
+          "textKey": "sea.enc.open.sail"
+        },
+        {
+          "key": "gannets",
+          "textKey": "sea.enc.open.gannets"
+        },
+        {
+          "key": "whales",
+          "textKey": "sea.enc.open.whales",
+          "seasons": ["Spring", "Summer", "Autumn"]
+        },
+        {
+          "key": "flotsam",
+          "textKey": "sea.enc.open.flotsam"
+        },
+        {
+          "key": "wreck",
+          "textKey": "sea.enc.open.wreck",
+          "story": true,
+          "oneShot": true,
+          "edges": ["SEA_SKARV_CARRICK"],
+          "scene": {
+            "kind": "ON_FOOT",
+            "scenario": "SCN_SEA_WRECK"
+          }
+        },
+        {
+          "key": "follower",
+          "textKey": "sea.enc.open.follower",
+          "supernatural": true
+        }
+      ]
+    },
+    "ENC_COAST": {
+      "entries": [
+        {
+          "key": "curragh",
+          "textKey": "sea.enc.coast.curragh",
+          "visibility": ["CLEAR", "HAZE"]
+        },
+        {
+          "key": "sail",
+          "textKey": "sea.enc.coast.sail"
+        },
+        {
+          "key": "smoke",
+          "textKey": "sea.enc.coast.smoke"
+        },
+        {
+          "key": "flotsam",
+          "textKey": "sea.enc.coast.flotsam"
+        },
+        {
+          "key": "seal_kin",
+          "textKey": "sea.enc.coast.seal_kin",
+          "supernatural": true
+        }
+      ]
+    },
+    "ENC_CAULDRON": {
+      "entries": [
+        {
+          "key": "spin",
+          "textKey": "sea.enc.cauldron.spin"
+        },
+        {
+          "key": "seals",
+          "textKey": "sea.enc.cauldron.seals"
+        },
+        {
+          "key": "sail",
+          "textKey": "sea.enc.cauldron.sail"
+        },
+        {
+          "key": "hag_cloud",
+          "textKey": "sea.enc.cauldron.hag_cloud",
+          "supernatural": true
+        }
+      ]
+    },
+    "ENC_NORTH": {
+      "entries": [
+        {
+          "key": "sail",
+          "textKey": "sea.enc.north.sail"
+        },
+        {
+          "key": "gannets",
+          "textKey": "sea.enc.north.gannets"
+        },
+        {
+          "key": "ice_birds",
+          "textKey": "sea.enc.north.ice_birds",
+          "seasons": ["Autumn", "Winter"]
+        },
+        {
+          "key": "blue_men",
+          "textKey": "sea.enc.north.blue_men",
+          "supernatural": true,
+          "minStrength": 3
+        }
+      ]
+    }
+  },
+  "landings": [
+    {
+      "place": "SITE_CARRICK",
+      "scenario": "SCN_CARRICK",
+      "gate": "BEAT_2_RAID",
+      "chapter": "CH_2_FIRST_RAID",
+      "checkpoint": "carrick",
+      "textKey": "sea.landing.carrick",
+      "stubUntilStage": 16
+    }
+  ],
+  "words": {
+    "UNKNOWN_PLACE": "sea.refuse.unknown_place",
+    "HERE": "sea.refuse.here",
+    "INLAND": "sea.refuse.inland",
+    "NO_KNOWN_ROUTE": "sea.refuse.no_known_route",
+    "WINTER": "sea.refuse.winter",
+    "NO_WAY": "sea.refuse.no_way",
+    "NOT_READY": "sea.refuse.not_ready",
+    "AT_SEA": "sea.refuse.at_sea",
+    "NOT_AT_SEA": "sea.refuse.not_at_sea",
+    "FIXED_NIGHT": "sea.refuse.fixed_night",
+    "NO_PLAN": "sea.refuse.no_plan",
+    "NO_CREW": "sea.refuse.no_crew",
+    "NOT_SAFE": "sea.refuse.not_safe",
+    "BUSY": "sea.refuse.busy",
+    "HOLD_TIDE": "sea.hold.tide",
+    "HOLD_WINTER": "sea.hold.winter",
+    "HOLD_SHELTER": "sea.hold.shelter",
+    "CHOICE_RISING": "sea.choice.rising",
+    "PRESS_ON": "sea.choice.press_on",
+    "SHELTER": "sea.choice.shelter",
+    "STORES_SHORT": "sea.stores.short",
+    "STORM": "sea.storm.damage",
+    "ARRIVED": "sea.arrive.place",
+    "HOME": "sea.arrive.home"
+  }
+}

@@ -27,6 +27,7 @@ import company from '../../content/company.json';
 import guidance from '../../content/guidance.json';
 import finds from '../../content/finds.json';
 import raid from '../../content/raid.json';
+import sea from '../../content/sea.json';
 import zoneStrand from '../../content/zones/zone_sk_strand.json';
 import zoneMachair from '../../content/zones/zone_sk_machair.json';
 import zoneHagseat from '../../content/zones/zone_sk_hagseat.json';
@@ -61,6 +62,7 @@ export const BUNDLED_FILES: ContentFiles = {
   guidance,
   finds,
   raid,
+  sea,
   zoneStrand,
   zoneMachair,
   zoneHagseat,

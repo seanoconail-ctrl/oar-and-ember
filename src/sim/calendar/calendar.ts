@@ -131,3 +131,41 @@ export function isDaylight(cal: CalendarState, b: TimeBalance): boolean {
   const { lightFrom, darkFrom } = b.daylight[seasonOf(cal.day)];
   return cal.minuteOfDay >= lightFrom && cal.minuteOfDay < darkFrom;
 }
+
+/** The global watch (0 is day 1, Morning) and the minutes into it. */
+function globalWatch(cal: CalendarState, b: TimeBalance): { g: number; into: number } {
+  return {
+    g: (cal.day - 1) * WATCHES.length + watchIndex(cal, b),
+    into: minutesIntoDay(cal, b) % watchMinutes(b),
+  };
+}
+
+/** Whether the tide turns at the start of global watch `g` (flood to ebb, or ebb to flood). */
+function turnsAt(g: number, b: TimeBalance): boolean {
+  return g >= 1 && phaseOfWatch(g - 1, b) !== phaseOfWatch(g, b);
+}
+
+/**
+ * Slack water (Book 2 section 03; Book 10 slackWindow, decision S13-1): within `windowMinutes` of a
+ * tide turn, before or after it. The tide turns at a watch boundary where the phase changes, so
+ * slack is the last `windowMinutes` of a watch that ends in a turn and the first of one that
+ * begins with one.
+ */
+export function isSlack(cal: CalendarState, b: TimeBalance, windowMinutes: number): boolean {
+  const { g, into } = globalWatch(cal, b);
+  return (
+    (turnsAt(g, b) && into < windowMinutes) ||
+    (turnsAt(g + 1, b) && into >= watchMinutes(b) - windowMinutes)
+  );
+}
+
+/** Game minutes until slack water begins (0 at slack). */
+export function minutesToSlack(cal: CalendarState, b: TimeBalance, windowMinutes: number): number {
+  if (isSlack(cal, b, windowMinutes)) return 0;
+  const { g, into } = globalWatch(cal, b);
+  const span = watchMinutes(b);
+  for (let k = 1; k < 64; k++) {
+    if (turnsAt(g + k, b)) return Math.max(0, span * k - into - windowMinutes);
+  }
+  throw new Error('no tide turn within 64 watches');
+}

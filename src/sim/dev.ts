@@ -26,7 +26,9 @@ export type DevCommand =
       readonly within: number;
     }
   /** Kill a hostile at once; no deed is written (Book 10 devKill). */
-  | { readonly type: 'DEV_KILL'; readonly target: Id };
+  | { readonly type: 'DEV_KILL'; readonly target: Id }
+  /** Stage 13: every sea route and place known (src/sim/sea/chart.ts), so every edge is reachable. */
+  | { readonly type: 'DEV_SEA_CHART' };
 
 export type DevResult = 'DONE' | 'BUSY' | 'NOTHING_THERE';
 
@@ -101,5 +103,8 @@ export function applyDev(world: WorldState, command: DevCommand, hooks: DevHooks
       });
       return 'DONE';
     }
+    // The sea's chart is applied by the simulation's sea commands (src/sim/sea/chart.ts).
+    case 'DEV_SEA_CHART':
+      return 'NOTHING_THERE';
   }
 }
