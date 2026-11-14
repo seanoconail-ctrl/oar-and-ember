@@ -1320,6 +1320,42 @@
       ]
     },
     {
+      "id": "council",
+      "journalKey": "ui.journal.aim.council",
+      "opensWhen": [
+        {
+          "fact": "council.open"
+        }
+      ],
+      "doneWhen": [
+        {
+          "fact": "ch1.council"
+        }
+      ],
+      "progress": [
+        {
+          "near": {
+            "zone": "ZONE_SK_MACHAIR",
+            "x": 35.4,
+            "y": 31.6,
+            "r": 4
+          }
+        }
+      ],
+      "hints": [
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.council.1",
+          "canCall": false
+        },
+        {
+          "speaker": "C_HILD",
+          "textKey": "c_hild.hint.council.2",
+          "canCall": false
+        }
+      ]
+    },
+    {
       "id": "rites",
       "journalKey": "ui.journal.aim.rites",
       "opensWhen": [
@@ -1356,42 +1392,6 @@
         {
           "speaker": "C_HILD",
           "textKey": "c_hild.hint.rites.2",
-          "canCall": false
-        }
-      ]
-    },
-    {
-      "id": "council",
-      "journalKey": "ui.journal.aim.council",
-      "opensWhen": [
-        {
-          "fact": "council.open"
-        }
-      ],
-      "doneWhen": [
-        {
-          "fact": "ch1.council"
-        }
-      ],
-      "progress": [
-        {
-          "near": {
-            "zone": "ZONE_SK_MACHAIR",
-            "x": 35.4,
-            "y": 31.6,
-            "r": 4
-          }
-        }
-      ],
-      "hints": [
-        {
-          "speaker": "C_HILD",
-          "textKey": "c_hild.hint.council.1",
-          "canCall": false
-        },
-        {
-          "speaker": "C_HILD",
-          "textKey": "c_hild.hint.council.2",
           "canCall": false
         }
       ]

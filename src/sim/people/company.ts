@@ -189,7 +189,18 @@ export function openAims(world: WorldState, cc: CompanyContext): AimDef[] {
 }
 
 /** A speaker's line for an aim (their nudge, and their advice). */
-export function aimLine(cc: CompanyContext, aim: string, who: Id): string | null {
+export function aimLine(
+  cc: CompanyContext,
+  aim: string,
+  who: Id,
+  world?: WorldState,
+): string | null {
+  // A later stage of the aim whose conditions hold speaks in its place (DH-164).
+  const stage =
+    world === undefined
+      ? undefined
+      : cc.guidance?.stages?.[aim]?.find((s) => s.when.every((c) => holds(world, c)));
+  if (stage !== undefined) return stage.nudges[who]?.[0] ?? null;
   return cc.guidance?.nudges[aim]?.[who]?.[0] ?? null;
 }
 
@@ -207,7 +218,7 @@ export function adviceLines(world: WorldState, cc: CompanyContext, who: Id): str
   const lines: string[] = [];
   for (const aim of openAims(world, cc)) {
     if (lines.length >= cc.b.nudge.adviceAims) break;
-    const line = aimLine(cc, aim.id, who);
+    const line = aimLine(cc, aim.id, who, world);
     if (line !== null && !lines.includes(line)) lines.push(line);
   }
   return lines.length === 0 ? [a.none] : [a.intro, ...lines];
@@ -499,8 +510,15 @@ function nudgeTick(
   const tps = view.ticksPerSecond;
   const n = cc.b.nudge;
   const current = world.aims?.current ?? null;
-  if (cs.nudge.aim !== current)
-    cs.nudge = { aim: current, opened: world.tick, given: 0, last: cs.nudge.last };
+  // A later stage of the aim (DH-164) counts as an aim of its own: its nudges start afresh.
+  const stage =
+    current === null
+      ? -1
+      : (cc.guidance?.stages?.[current]?.findIndex((s) => s.when.every((c) => holds(world, c))) ??
+        -1);
+  const key = current === null || stage < 0 ? current : `${current}#${String(stage)}`;
+  if (cs.nudge.aim !== key)
+    cs.nudge = { aim: key, opened: world.tick, given: 0, last: cs.nudge.last };
   if (current === null || cs.nudge.given >= n.maxPerAim) return false;
   if (world.tick - cs.nudge.opened < n.firstSeconds * tps) return false;
   if (world.tick - cs.nudge.last < n.everySeconds * tps) return false;
@@ -512,7 +530,7 @@ function nudgeTick(
   for (const aim of order) {
     let best: { id: Id; d: number; key: string } | null = null;
     for (const id of view.residents) {
-      const key = aimLine(cc, aim.id, id);
+      const key = aimLine(cc, aim.id, id, world);
       if (key === null || !AWAKE.has(view.activity(id))) continue;
       const d = view.fromSteerer(id);
       if (d > view.earshotTiles) continue;

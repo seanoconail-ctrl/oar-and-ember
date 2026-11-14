@@ -82,6 +82,8 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'bld_sealcave',
       'decal_blood_01',
       'decal_broch',
+      // The user's fourth playtest (DH-123): the broch's worn floor.
+      'decal_broch_floor',
       'decal_strand',
       'fx_combat',
       'fx_fire',
@@ -89,6 +91,8 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'fx_gore',
       'fx_hag',
       'fx_hag_mist',
+      // The user's fourth playtest (DH-125): the hearth's smoke.
+      'fx_hearth_smoke',
       'fx_missile',
       'fx_net',
       'fx_opening',
@@ -151,8 +155,12 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'layer_weapon_seax_oddi',
       'layer_weapon_spear_svart',
       'plant_strand',
+      // The user's fourth playtest (DH-103): the steerer's own bed.
+      'prop_bed_steerer',
       'prop_boards',
       'prop_boulder',
+      // The user's fourth playtest (DH-126): the household's things in the broch.
+      'prop_broch_clutter',
       'prop_camp',
       // A reason for the first raid (DH-146): the skin boat's Carrick goods as a load.
       'prop_carrick_goods',
@@ -164,6 +172,8 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'prop_debris',
       'prop_door_broch',
       'prop_driftwood',
+      // The user's fourth playtest (DH-115, DH-120): Chapter 1's finds.
+      'prop_finds',
       'prop_flap_sail',
       'prop_greymen_stone',
       'prop_hagstone',
@@ -179,8 +189,12 @@ describe('art lint (Book 7 section 11) — Stage 4 acceptance check 1', () => {
       'prop_sail_roof',
       'prop_shelter_frame',
       'prop_shelter_inside',
+      // The user's fourth playtest (DH-11): where the shelter's stage is worked.
+      'prop_shelter_mark',
       'prop_shipsetting',
       'prop_skiff',
+      // The user's fourth playtest (DH-105): sleepers under their blankets.
+      'prop_sleepers',
       'prop_steering_oar',
       'prop_stones',
       'prop_stores_bundle',

@@ -22,6 +22,7 @@ import { landContext } from '../../src/sim/land/context.ts';
 import { newCampaign } from '../../src/sim/world.ts';
 import type { WorldState } from '../../src/sim/world.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
+import { FACT_COUNCIL } from '../../src/sim/narrative/raid.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 import {
   GOLDEN_01,
@@ -35,7 +36,8 @@ import {
   GOLDEN_09,
   GOLDEN_10,
   GOLDEN_11,
-  goldenSave11,
+  GOLDEN_12,
+  goldenSave12,
 } from '../../src/tools/saves/golden.ts';
 import { repoFile } from './books.ts';
 
@@ -122,7 +124,7 @@ describe('save files', () => {
       day: 1,
       chapter: 'CH_1_WRECK',
       seed: 'save-test',
-      schemaVersion: 13,
+      schemaVersion: 14,
     });
     const resumed = createSimulation(b, state);
     for (let i = 0; i < 50_000; i++) {
@@ -133,8 +135,8 @@ describe('save files', () => {
   });
 
   it('migrate a save through the chain', () => {
-    const v14: Migration = {
-      from: 13,
+    const v15: Migration = {
+      from: 14,
       describe: 'test: move player.name into player.identity.name',
       up: (s) => {
         const player = s['player'] as Record<string, unknown>;
@@ -145,11 +147,11 @@ describe('save files', () => {
     const world = campaign();
     world.player.name = 'Ingrid';
     const { state, migratedFrom } = readSave(writeSave(world, meta), {
-      migrations: [v14],
-      currentVersion: 14,
+      migrations: [v15],
+      currentVersion: 15,
     });
-    expect(migratedFrom).toBe(13);
-    expect(state.version).toBe(14);
+    expect(migratedFrom).toBe(14);
+    expect(state.version).toBe(15);
     expect((state.player as unknown as { identity: { name: string } }).identity.name).toBe(
       'Ingrid',
     );
@@ -171,7 +173,7 @@ describe('save files', () => {
       () => readSave({ ...file, header: { ...file.header, schemaVersion: 15 } }),
       'FUTURE_VERSION',
     );
-    expectReason(() => readSave(file, { migrations: [], currentVersion: 14 }), 'NO_MIGRATION');
+    expectReason(() => readSave(file, { migrations: [], currentVersion: 15 }), 'NO_MIGRATION');
     // Schema 3 to 4 needs balance.json: without it the load says so rather than guessing.
     expectReason(() => readSave(JSON.parse(repoFile(GOLDEN_03)) as SaveFile), 'NO_MIGRATION');
     expectReason(
@@ -253,7 +255,7 @@ describe('golden save 1 (schema 1, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(1);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(1);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.onFoot).toBeNull();
     expect(state.player.hotbar).toEqual({ slots: [], selected: 0 });
     expect(state.player.inventory).toEqual({});
@@ -276,7 +278,7 @@ describe('golden save 2 (schema 2, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(2);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(2);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.onFoot?.items).toEqual([]);
     expect(state.onFoot?.projectiles).toEqual([]);
     expect(state.onFoot?.stuck).toEqual([]);
@@ -297,7 +299,7 @@ describe('golden save 3 (schema 3, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(3);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(3);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_BOW', 'ITEM_SEAX', null]);
     expect(state.player.inventory).toEqual({
@@ -328,7 +330,7 @@ describe('golden save 4 (schema 4, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(4);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(4);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.player).toMatchObject({ name: 'Ash', bodyModel: 'B' });
     expect(state.player.hotbar.slots.slice(0, 3)).toEqual(['ITEM_SEAX', 'ITEM_BOW', null]);
     expect(state.player.inventory).toEqual({
@@ -386,7 +388,7 @@ describe('golden save 5 (schema 5, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(5);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(5);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.homes['ISLE_SKARV']?.building?.id).toBe('BLD_SAIL_SHELTER');
     expect(state.oneShots['BEAT_1_BROCH']).toBe(1);
@@ -424,7 +426,7 @@ describe('golden save 6 (schema 6, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(6);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(6);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.facts).toMatchObject({
       'ch1.at_broch': true,
@@ -470,7 +472,7 @@ describe('golden save 7 (schema 7, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(7);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(7);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.calendar).toEqual({ day: 2, minuteOfDay: 15 * 60 });
     expect(state.options.secondWind).toBe(true);
     expect(state.gameOver).toBeNull();
@@ -498,7 +500,7 @@ describe('golden save 8 (schema 8, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(8);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(8);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.facts['search.oddi']).toBe('CHEST_FIRST');
     expect(state.facts['search.runa']).toBe('OFFERING');
     expect(state.facts['search.bran']).toBe('BARGAIN');
@@ -530,7 +532,7 @@ describe('golden save 9 (schema 9, frozen)', () => {
     expect(golden.header.schemaVersion).toBe(9);
     const { state, migratedFrom } = readSave(golden, { context });
     expect(migratedFrom).toBe(9);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(state.facts['repair.oar']).toBe('TRADE');
     expect(state.facts['ch1.boat_ready']).toBe(true);
     const ship = state.ships['flagship'];
@@ -568,7 +570,7 @@ describe('golden save 10 (schema 10, frozen)', () => {
     // Frozen from design addendum 2.4 (decision DE-80): it loads through combat v2's step and the
     // opening's (decisions DE-1 to DE-79).
     expect(migratedFrom).toBe(10);
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(golden.header.chapter).toBe('CH_2_FIRST_RAID');
     expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
     expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');
@@ -595,16 +597,46 @@ describe('golden save 10 (schema 10, frozen)', () => {
   });
 });
 
-describe('golden save 11 (schema 13): the chapter-end save, regenerated for the user’s third playtest', () => {
+describe('golden save 11 (schema 13, frozen): the chapter-end save of the user’s third playtest', () => {
   const golden = JSON.parse(repoFile(GOLDEN_11)) as SaveFile;
 
-  it('loads, matches its hash and holds Chapter 1 as the third playtest plays it, ended', () => {
-    const { state, migratedFrom } = readSave(golden);
-    // Regenerated once the third playtest's three parts were in (DG-94): written at version 13,
-    // no migration.
+  it('loads through the step to version 14 and holds Chapter 1 as the third playtest played it, ended', () => {
+    // Frozen when the fourth playtest raised the world state to 14 (DH-160): the save a player of
+    // the third playtest's build holds at the chapter's end.
     expect(golden.header.schemaVersion).toBe(13);
+    const { state, migratedFrom } = readSave(golden, { context });
+    expect(migratedFrom).toBe(13);
+    expect(state.version).toBe(14);
+    expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
+    expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');
+    expect(state.ships['flagship']).toMatchObject({ name: 'Grey Seal' });
+    expect(state.facts['ch1.rites']).toBe('SEA_BURIAL');
+    // Version 14's state is absent until first needed (DH-65, DH-160).
+    expect(state.company).toBeUndefined();
+  });
+
+  it('plays on after the step: the household’s own life and the first raid’s stores set up', () => {
+    const { state } = readSave(golden, { context });
+    const { content: c } = loadContentFromDisk();
+    const sim = createSimulation(b, state, landContext(c, balance));
+    const tick = state.tick;
+    for (let i = 0; i < 600; i++) sim.step();
+    expect(sim.state.tick).toBe(tick + 600);
+    expect(sim.state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
+    expect(sim.state.company).toBeDefined();
+    expect(sim.state.facts['need.meal_sack']).toBe(true);
+  });
+});
+
+describe('golden save 12 (schema 14): the chapter-end save of the user’s fourth playtest', () => {
+  const golden = JSON.parse(repoFile(GOLDEN_12)) as SaveFile;
+
+  it('loads, matches its hash and holds Chapter 1 as the fourth playtest plays it, ended', () => {
+    const { state, migratedFrom } = readSave(golden);
+    // Written at version 14 (DH-160), no migration.
+    expect(golden.header.schemaVersion).toBe(14);
     expect(migratedFrom).toBeNull();
-    expect(state.version).toBe(13);
+    expect(state.version).toBe(14);
     expect(golden.header).toMatchObject({ seed: 'chapter-1', chapter: 'CH_2_FIRST_RAID' });
     expect(state.chapters['CH_1_WRECK']).toMatchObject({ status: 'RESOLVED' });
     expect(state.gates['BEAT_1_LAUNCH']?.status).toBe('PASSED');
@@ -644,6 +676,13 @@ describe('golden save 11 (schema 13): the chapter-end save, regenerated for the 
     for (const mark of ['first_combat', 'bow', 'stores', 'chapter_end'])
       expect(state.telemetry.marks[mark], mark).toBeDefined();
     expect(state.telemetry.marks['shelter_finished']?.day).toBe(2);
+    // The fourth playtest (DH-130 to DH-152, DH-160): the meal-sack in the stores, Thorkel's chart
+    // read as a Carrick clue, the council held at the fire before the launch, and the household's
+    // own life kept.
+    expect(state.facts['need.meal_sack']).toBe(true);
+    expect(state.facts['carrick.clue.CHART']).toBeDefined();
+    expect(state.facts[FACT_COUNCIL]).toBe('QUIET');
+    expect(state.company).toBeDefined();
     // The fights were the third playtest's: the prompts counted, the spared (if any) recorded.
     expect(state.player.teaching).toBeDefined();
     expect(Array.isArray(state.spared)).toBe(true);
@@ -662,6 +701,6 @@ describe('golden save 11 (schema 13): the chapter-end save, regenerated for the 
   });
 
   it('is reproduced exactly by its scenario', () => {
-    expect(goldenSave11()).toEqual(golden);
+    expect(goldenSave12()).toEqual(golden);
   }, 120_000);
 });

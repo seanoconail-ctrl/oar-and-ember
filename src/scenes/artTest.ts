@@ -99,14 +99,40 @@ export function plantTestScene(): Scene {
   };
   const before: SceneSprite[] = [
     ...ground(),
-    { sheet: 'prop_greymen_stone', frame: 'stand/-/0', x: 320.3, y: 222.4, layer: 'actor', tall: true },
-    { sheet: 'actor_p_steerer_a', frame: 'idle/n/0', x: 324.6, y: 206.7, layer: 'actor', focus: true },
+    {
+      sheet: 'prop_greymen_stone',
+      frame: 'stand/-/0',
+      x: 320.3,
+      y: 222.4,
+      layer: 'actor',
+      tall: true,
+    },
+    {
+      sheet: 'actor_p_steerer_a',
+      frame: 'idle/n/0',
+      x: 324.6,
+      y: 206.7,
+      layer: 'actor',
+      focus: true,
+    },
     // On a tuft's spot (its rounded foot and x), before the plants: drawn under the tuft.
-    { sheet: 'actor_p_steerer_a', frame: 'idle/s/0', x: Math.round(x[205] ?? 0), y: Math.round(y[205] ?? 0), layer: 'actor' },
+    {
+      sheet: 'actor_p_steerer_a',
+      frame: 'idle/s/0',
+      x: Math.round(x[205] ?? 0),
+      y: Math.round(y[205] ?? 0),
+      layer: 'actor',
+    },
   ];
   const after: SceneSprite[] = [
     // On another tuft's spot, after the plants: drawn over it.
-    { sheet: 'actor_p_steerer_a', frame: 'idle/s/1', x: Math.round(x[612] ?? 0), y: Math.round(y[612] ?? 0), layer: 'actor' },
+    {
+      sheet: 'actor_p_steerer_a',
+      frame: 'idle/s/1',
+      x: Math.round(x[612] ?? 0),
+      y: Math.round(y[612] ?? 0),
+      layer: 'actor',
+    },
     {
       sheet: 'actor_p_steerer_a',
       frame: 'idle/s/2',

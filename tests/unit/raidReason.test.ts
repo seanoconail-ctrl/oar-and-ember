@@ -642,9 +642,13 @@ describe('the council at the fire before the launch (request 5)', () => {
       expect(w.facts['council.stage']).toBeUndefined();
     });
 
-  it('the council is the aim between the boat ready and the launch', () => {
+  it('the council is the aim once the boat is ready, before the rites and the launch (DH-163)', () => {
     const aims = (content.opening?.aims ?? []).map((a) => a.id);
-    expect(aims.indexOf('council')).toBe(aims.indexOf('launch') - 1);
+    // Called while the household waits for the evening's rites, so the launch can still take the
+    // night's high water (the final pass, DH-163); it opens only with the launch's gate.
+    expect(aims.indexOf('council')).toBe(aims.indexOf('oar') + 1);
+    expect(aims.indexOf('council')).toBe(aims.indexOf('rites') - 1);
+    expect(aims.indexOf('rites')).toBe(aims.indexOf('launch') - 1);
   });
 });
 

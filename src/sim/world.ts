@@ -80,8 +80,15 @@ import type { GroundItem, OnFootState } from './land/onFoot.ts';
  * fighter's move in play, its weight, its miss, its step, its telegraph's flash and whether it
  * plays by the enemies' floors (the attack-turn origin goes); each fighter's mind (the fight state
  * machine), an archer's hop and sidearm, and an eased velocity; the steerer's velocity and motion.
+ * Version 13 (the user's third playtest, decision DG-23) adds what the campaign has taught
+ * (`player.teaching`), the spared (`spared`) and the shelter's stage.
+ * Version 14 (the user's fourth playtest, decision DH-160) adds the household's own life
+ * (`company`: talk among them, nudges, refused bindings), a fighter's guarding and pursuit
+ * (`back`, `chaseUntil`, `waiting`, `runOff` on its mind) and a battle's blows lately (`harm`),
+ * the way the steerer fell (`gameOver.from`), and the first raid's stores and facts (the meal-sack,
+ * nails and net, the clues, the council). Each is absent in an older save until first needed.
  */
-export const WORLD_STATE_VERSION = 13;
+export const WORLD_STATE_VERSION = 14;
 
 /** Book 2 section 16. */
 export interface GateState {

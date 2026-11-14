@@ -535,6 +535,20 @@ export const MIGRATIONS: readonly Migration[] = [
     // (src/persist/openingMigration.ts): a raised lean-to is SAIL, or FINISHED at S1.
     up: (state) => migrateShelter13(migrateCombat13(state)),
   },
+  {
+    from: 13,
+    describe:
+      "the user's fourth playtest: the household's own life, guarding and pursuit, the steerer's fall, the first raid",
+    // Decision DH-160. Nothing in a version 13 save changes: every new field is absent until first
+    // needed, and absent reads as at rest. The household's own life (`company`) is set up on the
+    // first tick after the load (DH-65: an exchange no sooner than exchangeFirst after it); a
+    // fighter's mind with no `back`, `chaseUntil`, `waiting` or `runOff` holds no post, chases no
+    // one and waits for no one; a battle with no `harm` has seen no blows lately; a game over
+    // with no `from` fell the plain way. The first raid's step puts the meal-sack and Runa's nails
+    // into the stores once, as for a new campaign, and sets the needs' facts. The step is here so
+    // that a version 13 build refuses these saves rather than load them without what they hold.
+    up: (state) => state,
+  },
 ];
 
 function migrateFighter25(f: Record<string, unknown>, enemy: boolean): Record<string, unknown> {

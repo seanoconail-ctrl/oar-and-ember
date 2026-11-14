@@ -1,5 +1,13 @@
 # STAGE 12 REPORT: the launch and the Build 1 gate
 
+> **The user's fourth playtest's rework is in, and Stage 12 is finished.** The Build 1 gate now
+> covers the fourth playtest too (the story and scenes, the people, combat and AI, the world and art)
+> and the user's request for a reason for the first raid (the household's needs, the Carrick clues,
+> the council at the fire before the launch): see [playtest-4.md](playtest-4.md) for what it
+> changed in Stages 7 to 12, the checks run again, the timing, the frame budget, the captures and the
+> choices flagged for review. The playtest script `docs/playtest/build-1.md` and the walkthrough
+> `docs/chapter-1-guide.md` describe the game as it now plays. The world state is at version 14.
+
 > **The user's third playtest came after the 2.5 rework.** The Build 1 gate now covers the third
 > playtest too (finish or let go, the early combat prompts, the two teaching foes, first-sight
 > words, Hild's lead, the shelter in three stages, Thorkel taken by the sea, the pause menu and save

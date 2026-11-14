@@ -120,15 +120,28 @@ const companyCheck = object({
   }),
 });
 
-const guidanceCheck = object({
-  about: text,
-  /** Who answers "Ask for advice" always; others answer when trusted (Book 10 adviceTrust). */
-  advisors: object({ always: arrayOf(ref('person')) }),
-  /** By aim, by speaker: the lines they nudge with (and answer advice with). */
-  nudges: recordOf(text, recordOf(text, arrayOf(ref('string')))),
-  /** By advisor: the line that opens their advice, and the one when nothing is pressing. */
-  advice: recordOf(text, object({ intro: ref('string'), none: ref('string') })),
-});
+const guidanceCheck = object(
+  {
+    about: text,
+    /** Who answers "Ask for advice" always; others answer when trusted (Book 10 adviceTrust). */
+    advisors: object({ always: arrayOf(ref('person')) }),
+    /** By aim, by speaker: the lines they nudge with (and answer advice with). */
+    nudges: recordOf(text, recordOf(text, arrayOf(ref('string')))),
+    /**
+     * By aim, a later stage of it (the final pass, DH-164): once its conditions hold, its lines
+     * are said in place of the aim's own (the stores cut down from the mast: carry them home).
+     */
+    stages: recordOf(
+      text,
+      arrayOf(
+        object({ when: arrayOf(aimCondition), nudges: recordOf(text, arrayOf(ref('string'))) }),
+      ),
+    ),
+    /** By advisor: the line that opens their advice, and the one when nothing is pressing. */
+    advice: recordOf(text, object({ intro: ref('string'), none: ref('string') })),
+  },
+  ['stages'],
+);
 
 export const parseCompany = companyCheck;
 export const parseGuidance = guidanceCheck;

@@ -98,6 +98,23 @@
       "C_RUNA": ["c_runa.nudge.launch"]
     }
   },
+  "stages": {
+    "stores": [
+      {
+        "when": [
+          {
+            "fact": "ch1.lashing_cut"
+          }
+        ],
+        "nudges": {
+          "C_HILD": ["c_hild.nudge.stores_home"],
+          "C_ODDI": ["c_oddi.nudge.stores_home"],
+          "C_BRAN": ["c_bran.nudge.stores_home"],
+          "C_RUNA": ["c_runa.nudge.stores_home"]
+        }
+      }
+    ]
+  },
   "advice": {
     "C_HILD": {
       "intro": "c_hild.advice.intro",

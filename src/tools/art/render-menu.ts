@@ -67,7 +67,7 @@ const thumb = (f: Rgba): string => {
 };
 
 const header = (over: Partial<SaveHeader>): SaveHeader => ({
-  schemaVersion: 13,
+  schemaVersion: 14,
   build: 'render',
   seed: 'render',
   day: 1,

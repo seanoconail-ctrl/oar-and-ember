@@ -32,7 +32,7 @@ import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts
 const sheetList = loadSheets(loadPalette());
 const anims: SheetAnims = new Map(sheetList.map((s) => [s.name, s.anims]));
 const shadows = new Map(sheetList.map((s) => [s.name, s.shadow]));
-const geometry: Map<string, SheetGeometry> = new Map(
+const geometry = new Map<string, SheetGeometry>(
   sheetList.map((s) => [s.name, { width: s.width, height: s.height, pivot: s.pivot }]),
 );
 const balance = loadBalanceJson();
@@ -91,7 +91,8 @@ function referenceList(
   const focusAt = order.indexOf(focusIndex);
   const focus = focusIndex < 0 ? undefined : items[focusIndex];
   return order.map((i, k) => {
-    const item = items[i] as DrawItem;
+    const item = items[i];
+    if (item === undefined) throw new Error('lost an item');
     const sprite = sprites[i];
     if (
       focus !== undefined &&

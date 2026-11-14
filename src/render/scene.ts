@@ -410,8 +410,7 @@ const placesCache = new WeakMap<Float64Array, PlantPlaces>();
 function plantPlaces(b: PlantBatch, geo: SheetGeometry): PlantPlaces {
   const hit = placesCache.get(b.x);
   if (
-    hit !== undefined &&
-    hit.from[0] === b.x &&
+    hit?.from[0] === b.x &&
     hit.from[1] === b.y &&
     hit.from[2] === b.sort &&
     hit.perm.length === b.count &&

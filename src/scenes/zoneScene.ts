@@ -302,7 +302,10 @@ function plantsInView(
   if (hit?.key === key) return hit;
   const f = index.flat;
   const r0 = Math.max(0, Math.floor(camera.y / TILE) - 1);
-  const r1 = Math.min(f.rowStart.length - 2, Math.floor((camera.y + LOGICAL_HEIGHT + 16) / TILE) + 1);
+  const r1 = Math.min(
+    f.rowStart.length - 2,
+    Math.floor((camera.y + LOGICAL_HEIGHT + 16) / TILE) + 1,
+  );
   const from = f.rowStart[r0] ?? 0;
   const to = f.rowStart[r1 + 1] ?? from;
   const ids = new Int32Array(Math.max(0, to - from));
@@ -1486,7 +1489,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     x: number,
     y: number,
     water: PersonWater | undefined,
-    opts: { focus?: boolean; shadow?: boolean },
+    opts: { focus?: boolean; shadow?: boolean; sort?: number },
   ): SceneSprite | null => {
     let bodySprite: SceneSprite | null = null;
     for (const sheet of who.layers[facing] ?? [who.body]) {
@@ -1496,6 +1499,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
         x,
         y,
         layer: 'actor',
+        ...(opts.sort === undefined ? {} : { sort: opts.sort }),
         ...(opts.focus === true && sheet === who.body ? { focus: true } : {}),
         ...(water?.wade === undefined ? {} : { wade: water.wade }),
         ...(water === undefined || water.dark <= 0 ? {} : { dark: water.dark }),
@@ -1741,7 +1745,10 @@ export function zoneScene(input: ZoneSceneInput): Scene {
           x,
           y + 0.5,
           undefined,
-          { shadow: false },
+          // Just in front of the carrier on its own line (the final pass, DH-165): half a pixel
+          // lower alone tied with the carrier's rounded foot line whenever its y ran past a half,
+          // and the tie went by their order (the strongbox behind Conn's back, facing north).
+          { shadow: false, sort: Math.round(y) + 0.5 },
         );
       } else if (actor.pose === 'carried') {
         // Carried across the shoulders, in step with the carry walk; drawn just in front.
@@ -1753,7 +1760,8 @@ export function zoneScene(input: ZoneSceneInput): Scene {
           x,
           y + 0.5,
           visual?.water['P_STEERER'],
-          { shadow: false },
+          // Just in front of the steerer, never tied with them (DH-165).
+          { shadow: false, sort: Math.round(y) + 0.5 },
         );
       } else {
         // A wader stepping to keep their footing walks; otherwise the pose's own animation.

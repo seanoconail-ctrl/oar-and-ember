@@ -65,8 +65,15 @@
  *   raven, the sea map closed. It is reproduced exactly by its scenario. Regenerated at schema 12
  *   for design addendum 2.5 (DF-86) and at schema 13 for the user's third playtest (DG-94): the
  *   shelter in three stages and finished on day 2, the teaching foes at the fold, the sea burial.
+ *   Frozen at schema 13 when the user's fourth playtest raised the world state to 14 (DH-160): it is
+ *   the save a player of the third playtest's build holds at the chapter's end, and it must load
+ *   through the chain and play on.
+ * - Golden save 12 (schema 14, the user's fourth playtest): the chapter-end save again, the same
+ *   chapter run, now with the household's own hours and talk, the bed, Hild's word on the rites,
+ *   the grain, the Carrick clues and the council at the fire before the launch. It is reproduced
+ *   exactly by its scenario.
  *
- *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-11.json
+ *   node src/tools/saves/golden.ts        rewrites tests/golden-saves/golden-12.json
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -98,6 +105,7 @@ export const GOLDEN_08 = 'tests/golden-saves/golden-08.json';
 export const GOLDEN_09 = 'tests/golden-saves/golden-09.json';
 export const GOLDEN_10 = 'tests/golden-saves/golden-10.json';
 export const GOLDEN_11 = 'tests/golden-saves/golden-11.json';
+export const GOLDEN_12 = 'tests/golden-saves/golden-12.json';
 
 export function goldenWorld06(): WorldState {
   return goldenDay('golden-06', null);
@@ -206,21 +214,22 @@ export function goldenWorld10(): WorldState {
 }
 
 /**
- * Golden save 11 (design addendum 2.4): Chapter 1 played to its end by the chapter run, the same
- * world whose telemetry the rework report gives (decision DE-80).
+ * Golden save 12 (the user's fourth playtest, DH-160): Chapter 1 played to its end by the chapter
+ * run, the same world whose telemetry the report gives. (Golden save 11, the same run at schema
+ * 13, is frozen.)
  */
-export function goldenWorld11(): WorldState {
+export function goldenWorld12(): WorldState {
   return playChapter('chapter-1', BOT_PACE).world;
 }
 
-export function goldenSave11(): SaveFile {
-  return writeSave(goldenWorld11(), {
+export function goldenSave12(): SaveFile {
+  return writeSave(goldenWorld12(), {
     build: 'golden',
     kind: 'checkpoint',
-    slot: 'checkpoint:golden-11',
-    label: 'golden-11',
+    slot: 'checkpoint:golden-12',
+    label: 'golden-12',
     sequence: 1,
-    savedAt: '2026-11-12T18:00:00.000Z',
+    savedAt: '2026-11-14T12:00:00.000Z',
   });
 }
 
@@ -345,7 +354,7 @@ export function goldenSave07(): SaveFile {
 }
 
 if (import.meta.filename === process.argv[1]) {
-  // Golden saves 1 to 10 are frozen (Book 2 section 20): only the newest is written.
-  writeFileSync(join(REPO_ROOT, GOLDEN_11), `${JSON.stringify(goldenSave11(), null, 2)}\n`);
-  console.log(`wrote ${GOLDEN_11}`);
+  // Golden saves 1 to 11 are frozen (Book 2 section 20): only the newest is written.
+  writeFileSync(join(REPO_ROOT, GOLDEN_12), `${JSON.stringify(goldenSave12(), null, 2)}\n`);
+  console.log(`wrote ${GOLDEN_12}`);
 }

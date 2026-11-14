@@ -6,21 +6,22 @@ Each file is a whole save, made by a fixed scenario played through the simulatio
 tests are in `tests/unit/saves.test.ts`; the scenarios and the writer are in
 `src/tools/saves/golden.ts`.
 
-| File           | Schema | Made at          | Scenario                                                   | Test                                                        |
-| -------------- | ------ | ---------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
-| golden-01.json | 1      | Stage 3          | A new campaign, two days on foot                           | Frozen: loads through the migration chain                   |
-| golden-02.json | 2      | Stage 6          | The steerer named, Hild carried up, two days               | Frozen: loads through the migration chain                   |
-| golden-03.json | 3      | Stage 6 rework   | The hotbar, Hild in the shallows                           | Frozen: loads through the migration chain                   |
-| golden-04.json | 4      | Starting weapons | The seax, Hild, the bow, one arrow                         | Frozen: loads through the migration chain                   |
-| golden-05.json | 5      | Stage 7          | The camp's first day and the second                        | Frozen: loads through the migration chain                   |
-| golden-06.json | 6      | Stage 8          | The same day with Hild's talk and job                      | Frozen: loads through the migration chain                   |
-| golden-07.json | 7      | Stage 9          | The same day with Second wind and a few blows              | Frozen: loads through the migration chain                   |
-| golden-08.json | 8      | Stage 10         | The opening and the three searches                         | Frozen: loads through the migration chain                   |
-| golden-09.json | 9      | Stage 11         | The repairs, the oar and a fitting                         | Frozen: loads through the migration chain                   |
-| golden-10.json | 10     | Stage 12         | The rites and the launch: the chapter-end save             | Frozen from addendum 2.4: loads through the migration chain |
-| golden-11.json | 13     | Third playtest   | Chapter 1 as the third playtest plays it (the chapter run) | Reproduced exactly by its scenario                          |
+| File           | Schema | Made at          | Scenario                                                    | Test                                                        |
+| -------------- | ------ | ---------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| golden-01.json | 1      | Stage 3          | A new campaign, two days on foot                            | Frozen: loads through the migration chain                   |
+| golden-02.json | 2      | Stage 6          | The steerer named, Hild carried up, two days                | Frozen: loads through the migration chain                   |
+| golden-03.json | 3      | Stage 6 rework   | The hotbar, Hild in the shallows                            | Frozen: loads through the migration chain                   |
+| golden-04.json | 4      | Starting weapons | The seax, Hild, the bow, one arrow                          | Frozen: loads through the migration chain                   |
+| golden-05.json | 5      | Stage 7          | The camp's first day and the second                         | Frozen: loads through the migration chain                   |
+| golden-06.json | 6      | Stage 8          | The same day with Hild's talk and job                       | Frozen: loads through the migration chain                   |
+| golden-07.json | 7      | Stage 9          | The same day with Second wind and a few blows               | Frozen: loads through the migration chain                   |
+| golden-08.json | 8      | Stage 10         | The opening and the three searches                          | Frozen: loads through the migration chain                   |
+| golden-09.json | 9      | Stage 11         | The repairs, the oar and a fitting                          | Frozen: loads through the migration chain                   |
+| golden-10.json | 10     | Stage 12         | The rites and the launch: the chapter-end save              | Frozen from addendum 2.4: loads through the migration chain |
+| golden-11.json | 13     | Third playtest   | Chapter 1 as the third playtest plays it (the chapter run)  | Frozen from the fourth playtest: loads through the chain    |
+| golden-12.json | 14     | Fourth playtest  | Chapter 1 as the fourth playtest plays it (the chapter run) | Reproduced exactly by its scenario                          |
 
-Only the newest is written: `npm run golden` rewrites `golden-11.json` and nothing else. A frozen
+Only the newest is written: `npm run golden` rewrites `golden-12.json` and nothing else. A frozen
 file is never rewritten; when the world state's version goes up, the new version's migration must
 load every frozen file, and the newest golden save is frozen in turn.
 
@@ -38,3 +39,9 @@ The user's third playtest raised the world state to version 13 (decision DG-23) 
 parts were built; once all three were in, golden save 11 was regenerated at schema 13 (decision
 DG-94). Goldens 1 to 10 stay frozen and load through the migration chain to version 13; the step
 from 12 to 13 is exercised by them, and the step from 11 to 12 too.
+
+The user's fourth playtest raised the world state to version 14 (decision DH-160): the household's
+own life, guarding and pursuit, the steerer's fall and the first raid's stores and facts. This time
+golden save 11 was frozen at schema 13, as this file's rule says, rather than regenerated: it is the
+chapter-end save a player of the third playtest's build holds, and it now loads through the step
+from 13 to 14 and plays on. The new chapter-end save is golden save 12, at schema 14.

@@ -5979,6 +5979,22 @@
     "text": "You've the key. Open Father's chest. I can't. Not yet.",
     "tags": ["ADDRESS_STEERER", "VOICED"]
   },
+  "c_hild.nudge.stores_home": {
+    "text": "The fish is in the shallows now. Bring it up before the gulls find it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.nudge.stores_home": {
+    "text": "That bundle won't walk up the bank by itself.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.nudge.stores_home": {
+    "text": "The fish is down. Carry it to the fire and we eat.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_runa.nudge.stores_home": {
+    "text": "Fish in the shallows. Up to the camp with it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
   "c_hild.nudge.stores": {
     "text": "Our salt fish is still up that mast. The bow will fetch it down.",
     "tags": ["ADDRESS_STEERER", "VOICED"]

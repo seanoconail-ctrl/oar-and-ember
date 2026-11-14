@@ -1,6 +1,7 @@
 # Chapter 1: map and walkthrough
 
-A plain guide to Chapter 1 as built at the Build 1 gate (third playtest). The game shows the key
+A plain guide to Chapter 1 as built at the Build 1 gate (the fourth playtest, with a reason for the
+first raid). The game shows the key
 for each action as you go, so this says what to do, not which key to press.
 
 ## Map
@@ -14,7 +15,7 @@ off its edge to cross to the next. Only the lines marked "path" connect.
                                               ┌────────────────────┐
                                               │ 5. SEAL CAVE       │
                                               │ cove, cave mouth,  │
-                                              │ scavengers' skiff  │
+                                              │ the skin boat      │
                                               │ (inner cave dry    │
                                               │  only at low tide) │
                                               └─────────┬──────────┘
@@ -64,27 +65,30 @@ off its edge to cross to the next. Only the lines marked "path" connect.
    is marked at the camp.
 6. Back on the strand, pick up **driftwood**. It lies by the rocks and under the bank. Carry it to
    the broch and **light the fire**.
-7. Hild walks up to the camp. **Stand up the oars** for the shelter's frame, then **lash the sail
-   over**.
+7. Hild walks up to the camp. Where the stake and cord mark the ground beside your bed, **stand up
+   the oars** for the shelter's frame, then **lash the sail over**.
 8. **Tend Hild's leg**.
 9. At dusk there are scavengers at the ship's stern. Leave them alone: at dark they go to the
    sheepfold. If you sneak close, you'll hear the hint about the sneak key.
-10. Sit at the fire with Hild that evening. She tells you the next day's aims. Then **sleep**.
+10. Sit at the fire with Hild that evening. She tells you the next day's aims. Then **sleep** in
+    your bed by the west wall (the stone kerb and the red blanket).
 
 ### Day 2: the three searches (in any order)
 
-11. In the morning, help Hild **finish the shelter** when she asks. The others finish it during
-    the day.
-12. **Oddi** is hurt on the strand near the wreck, and Thorkel's chest lies nearby.
-    - Carry the chest home first and it's saved.
-    - Take Oddi home first and the scavengers take the chest.
+11. In the morning the report counts the grain down. Help Hild **finish the shelter** when she asks
+    (a turf spade marks the spot). The others finish it during the day.
+12. **Oddi** is hurt on the strand near the wreck, with the ship's silver in a strongbox nearby.
+    - Carry the box home first and it's saved.
+    - Carry Oddi first and a scavenger dashes in and grabs the box. Set Oddi down and chase him:
+      catch him and he drops it. Let him go and the silver is lost.
 13. **Runa** is hurt below the standing stone at **Hag's Seat**. A gale blocks the way. **Leave an
     offering at the stone** to calm it, then talk to Runa and bring her home.
 14. **Bran** guards Thorkel's body in the **sheepfold** at the Hollow Cairn, with three scavengers
     at the gate. They speak before they attack. You have three choices:
     - **Fight**, with Bran beside you. Svart (the spear) can only be beaten by **parrying** as he
       thrusts. Ketill's red-glinting blow must be **dodged**. When a foe is beaten, hold **V** to
-      finish them or press **G** to let them go.
+      finish them or press **G** to let them go. Before you decide, Interact asks them where they
+      came from: **Carrick**, across the water.
     - **Sneak** round to the fold's back wall, unseen.
     - **Bargain** with Ketill, using Thorkel's silver from the saved chest.
 15. Bran brings Thorkel's body home. Take **Thorkel's key** (from Bran, or from the body) and open
@@ -93,18 +97,21 @@ off its edge to cross to the next. Only the lines marked "path" connect.
 ### The boat
 
 16. On the strand, **shoot the lashing** on the broken mast with the bow. The stores fall into the
-    shallows; carry them home.
+    shallows; carry them home. Oddi keeps Thorkel's chart from the chest: it marks Carrick.
 17. **Boards:** lift them from the debris and lay them by the wrecked boat under the bank.
 18. **Rigging:** at low water, cross the flats to the skerry and **cut the rigging free**.
-19. **Steering oar:** it's in the scavengers' skiff in the **Seal Cave**. Take it quietly, trade
-    for it, or take it after beating them.
+19. **Steering oar:** it's in the scavengers' skin boat in the **Seal Cave**. Take it quietly,
+    trade for it, or take it after beating them. The boat also holds **Carrick grain, nails and a
+    net** with the storehouse's mark: carry them home to the fire and they go into the stores.
 20. **Look the boat over** and choose a **fitting**.
 
-### The launch
+### The council and the launch
 
-21. In the evening at the broch, **speak with Hild about her father** and choose Thorkel's rites,
-    such as giving him to the sea.
-22. At high water on the strand, **launch**: name the boat, choose its mark, and look at the sea
+21. With the boat ready and everyone found, **sit in council at the fire**: stand by the fire in
+    the broch and Interact. The household argue it out, and you choose how the first raid on
+    Carrick will go: quietly by night, a show of force, trade goods first, or an assault.
+22. In the evening, **speak with Hild about her father's rites** and choose the stones or the sea.
+23. At high water on the strand, **launch**: name the boat, choose its mark, and look at the sea
     map. That ends Chapter 1.
 
 ### Tips
@@ -113,4 +120,7 @@ off its edge to cross to the next. Only the lines marked "path" connect.
 - If you lose the fight at the fold, you go back to the checkpoint before it.
 - The tide matters: the skerry and rigging are reachable only at low water, and the launch needs
   high water.
-- Expect about 50 to 70 minutes.
+- **Finds:** eight small things lie off the paths, one or two in each place. Interact looks at
+  them or takes them.
+- **Stuck?** Talk to Hild and choose "Ask for advice".
+- Expect about 50 to 60 minutes.

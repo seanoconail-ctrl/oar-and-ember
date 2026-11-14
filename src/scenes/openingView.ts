@@ -497,8 +497,7 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
     if (s.sheet === 'actor_seal' && d < sink && map.zone === ctx.def.zone && s.y > pa.y + 40) {
       sprites.splice(i, 1);
       if (i < plantsAt) plantsAt--;
-    }
-    else if (s.sheet === 'actor_gull' && s.frame.startsWith('stand') && d < lift) {
+    } else if (s.sheet === 'actor_gull' && s.frame.startsWith('stand') && d < lift) {
       const facing = s.x >= pa.x ? 'e' : 'w';
       sprites[i] = {
         ...s,
@@ -622,7 +621,9 @@ export function decorate(scene: Scene, input: DecorateInput): Scene {
     sprites,
     pools,
     ...(effects === undefined ? {} : { effects }),
-    ...(plants === undefined || plants.at === plantsAt ? {} : { plants: { ...plants, at: plantsAt } }),
+    ...(plants === undefined || plants.at === plantsAt
+      ? {}
+      : { plants: { ...plants, at: plantsAt } }),
   };
 }
 

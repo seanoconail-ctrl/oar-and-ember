@@ -211,14 +211,15 @@ export function playChapter(seed: string, pace: Pace = BOT_PACE): ChapterRun {
   trace('ready');
   bot.fit('HOLD');
   bot.goToZone('ZONE_SK_MACHAIR');
+  // A reason for the first raid (DH-140): the household sits in council at the fire before the
+  // launch, and the steerer chooses the household's intent. Hild's aim once the boat is ready
+  // (DH-163), so it is held while the household waits for the evening's rites.
+  bot.council('QUIET');
   if (sim.state.calendar.minuteOfDay > 18 * 60 + 30) {
     bot.waitUntil(5 * 60);
   }
   bot.waitUntil(18 * 60 + 30);
   bot.rites('SEA');
-  // A reason for the first raid (DH-140): the household sits in council at the fire before the
-  // launch, and the steerer chooses the household's intent.
-  bot.council('QUIET');
   bot.goToZone('ZONE_SK_STRAND');
   bot.waitForWater();
   bot.askToLaunch();

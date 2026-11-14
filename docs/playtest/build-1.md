@@ -1,10 +1,10 @@
 # Build 1 playtest: The Wreck
 
 Thank you for playing. This is the whole of Chapter 1, from the storm at sea to launching the
-boat, as design addendum 2.5 rebuilt it: committed, methodical combat, far less text on screen, a
-rougher storm at the start, and Oddi's rescue fixed. It should take about 45 minutes to an hour.
-Play it the way you would play any game: there is no wrong way, and getting lost or stuck is useful
-to know about.
+boat, with everything from your third and fourth playtests in it, and a reason for the first raid:
+the household's needs, the Carrick clues and a council at the fire before the launch. It should
+take about 45 minutes to an hour. Play it the way you would play any game: there is no wrong way,
+and getting lost or stuck is useful to know about.
 
 ## Before you start
 
@@ -16,128 +16,158 @@ to know about.
   - Mac: **Cmd + Shift + R**
 - **Note the build number** shown at the bottom of the title screen (it looks like `0.12.0+abc1234`).
   Please put it at the top of your notes, so your notes match the exact code you played.
-- Your progress saves in the browser by itself (each morning, before danger, and at the end of the
-  chapter). If the steerer dies, you can reload the last save.
+- **Saves:** the game saves by itself each morning, before each big fight and at the chapter's end,
+  and you can save to one of three slots from the pause menu (Esc). If the steerer dies, you can
+  load the last save.
+- **The intro** can be skipped once you have seen it (hold any key, or the Skip button), or left out
+  from the title screen's settings. Fullscreen is on the title screen and in the pause menu.
 
-## Controls (all can be changed later)
+## Controls (all can be changed in the pause menu's Controls page)
 
 | Do this | Keyboard and mouse | Gamepad |
 |---|---|---|
 | Walk / run / sneak (sneak is a toggle) | W A S D or arrow keys / hold Shift / C | Left stick / L3 / d-pad down |
-| Interact (talk, pick up, carry, work) | E, or right-click | A |
+| Interact (talk, pick up, carry, work, look at, sleep) | E, or right-click | A |
 | Use what is in hand (strike, draw the bow) | Left-click, or F | RT |
 | Choose a hotbar slot | 1 to 0, - and =, or the mouse wheel | LB / RB |
 | Parry / block / dodge / shove | Q / left Ctrl / Space / R | Y / LT / B / X |
 | Lock on to an enemy (press again to switch, hold to let go) | Z, or the middle mouse button | R3 |
+| A beaten enemy: finish them / let them go | Hold V / G | Y / A |
 | Bind a wound or eat a ration | H | Let the command ring go at its centre |
 | Crew orders (hold to open the ring) | Tab | D-pad up |
 | Journal (the current aim, and the morning report) | J | |
 | Sea map (after the launch) | M | Back |
-| System menu | Esc | Start |
+| Pause menu | Esc | Start |
 
-In the system menu: **H** shows the help (every item's controls), **T** shows your **timings**,
-**G** changes the gore setting, **K** turns Second wind on or off, **I** turns sound captions on or
-off (sounds in a fight are never captioned: you see and hear them), **M** reduces motion, **A**
-turns the "?" and "!" marks over enemies on (they are off at first).
+**The pause menu (Esc):** resume, save (three slots; each shows the day, the time, the place and a
+small picture), load (the slots and the newest autosave), settings, fullscreen, **reset to the start
+of this day**, controls, and quit to the title. It stops time only when no enemy is aware of you;
+with an enemy aware it opens over the running world and saving waits until it is safe. While it is
+open, **T** shows your timings (or turn "Chapter timings" on under Settings).
 
-There is no pause in a fight. Menus and the report stop time only when no enemy has seen you.
+**For testing only:** add `?dev` to the address to get a developer menu on F3 (jump to a day, an
+hour or a place, and similar). Saves made after using it are marked, and its runs are not timed.
+Please play the real playtest without it.
 
 ## Fighting
 
 Every action commits: once you start a swing, a parry, a dodge or raising the shield, you cannot
 move, turn or do anything else until it has finished. A swing that misses leaves you stumbling
 forward and open, and so does an enemy's: that is the moment to strike. Read your enemies, not the
-screen: there are no words or numbers in a fight.
+screen: there are no words or numbers in a fight, apart from short prompts at the right edge in your
+first three fights.
 
-- **Watch the wind-up.** Every enemy blow is drawn back first, with a brief glint on the weapon and
-  a sound (a sharp breath, steel scraping, a grunt and a creak); heavier blows are drawn back
-  further and held longer.
-- **Parry early.** A parry takes a moment to come up, so press it during the enemy's wind-up, a
-  little after the glint, not when the blow lands. A good parry leaves them reeling for a riposte.
-- **Block** holds the shield up and halves your speed; each blow on it costs stamina, and if it
-  empties, your guard breaks.
-- **Dodge** is a short, costly dash with a moment of safety in the middle and a slow recovery.
-- **Stamina** pays for everything. Run it to nothing and you are spent: no attack, parry, dodge or
-  block, at half speed, until you have your breath back. Step away to recover, then go in again.
-- **Enemies** keep their distance and wait for you to make a mistake; archers stand still to shoot
-  and back away if you close in.
+- **Enemies speak first.** Every Chapter 1 enemy warns you off or taunts you before attacking:
+  that pause is your moment to back off, bargain or strike first.
+- **Watch the wind-up.** Every enemy blow is drawn back first, with a brief glint and a sound;
+  heavier blows are drawn back further. **A red glint** along an axe's edge is a blow no shield or
+  parry stops: dodge it.
+- **Parry early**, during the wind-up, not when the blow lands. A good parry leaves them reeling
+  for a riposte. **Svart** (the spearman) can only be beaten by parrying him; **Ketill** (the big
+  axeman) only by dodging his red blow and striking while he recovers. Bran shouts the right advice
+  at the fold as their blows come.
+- **Block**, **dodge** and **stamina** work as before: the block halves your speed and costs stamina
+  a blow; the dodge is short and costly; empty the bar and you are spent until you get your breath.
+- **A beaten enemy** (down, begging, or reeling and nearly spent): hold **V** to finish them with
+  one blow, or press **G** to let them go with a shout; they drop their weapon and run off out of
+  sight, and the spared are remembered. Standing over one when the fight is over, **E** asks them
+  where they have come from.
+- **Enemies fight with sense:** they hold just outside your reach and wait for a mistake; those
+  guarding something (the fold's gate, their boat) run back to it if you draw them away; a band
+  turns on whoever hurt them, usually you. Sneak up behind an unaware enemy for a heavy backstab.
+- **The steerer's death** is game over: you fall, the sound drains away, and you can reload.
 
 ## What to do, with rough times
 
-There are no quest markers. People tell you what to do next, and if you are stuck for a while
-someone nearby gives a hint; the journal (J) always holds the current aim in one sentence. This
-list is only here so you can tell if you are badly stuck.
+There are no quest markers. People tell you what to do next: when you have been stuck a while,
+someone nearby gives a hint, the household now and then says what they think should be done next,
+and you can talk to Hild (or anyone who trusts you) and choose **"Ask for advice"**. The journal (J)
+always holds the current aim in one sentence. This list is only here so you can tell if you are
+badly stuck.
 
-1. **The storm (under a minute).** The game opens at night at sea, with you at the steering oar
-   (A and D, or the arrow keys) as the boat breaks on the rocks.
-2. **Wake in the surf (about 5 minutes).** Press any movement key to get up. Someone is calling:
-   Hild is caught in a net in the shallows among the rocks. A short blade (a seax) lies in the
-   wreckage on the way; pick it up, then hold E (or right-click) beside her to cut her free, and
-   carry her up the beach. Carry Thorkel's chest (it washed up near her) up to the camp above the
-   beach, where its outline shows. Pick up driftwood on the beach, light a fire at the camp; Hild
-   sees the smoke and walks up, and asks you to raise the sail between the oars as a shelter.
-   See to her leg (talk to her).
-3. **The first dusk (about 10 to 12 minutes in).** Two scavengers strip the stern of the wreck at
-   the east end of the beach. You can fight them (the big one's slow, heavy blow, with its long
-   wind-up, is there to be parried), walk away (they leave at dark), offer them salt fish from the
-   camp, or creep through the dune grass for a strike from behind. A pale light shows at the Hag's Seat. That night by the
-   fire Hild names the searches.
-4. **The three searches, in any order (15 to 25 minutes).** Oddi is hurt on the beach near the
-   wreck, with the ship's silver in a strongbox; Bran guards Thorkel's body at the sheepfold by the
-   Hollow Cairn (east), with the scavengers at the gate; Runa is at the Hag's Seat (west), where a
-   standing stone is doing something strange. Each can be done more than one way: fight, sneak,
-   bargain, leave an offering, take the long way round. Thorkel's key comes to you whichever way
-   Bran's search ends: it opens his chest at the camp, and his hunting bow is inside. Its first use
-   is the stores lashed to the broken mast on the western rocks; they drop into the shallows, where
-   you can wade out for them at any tide. Anyone you rescue can be set down anywhere above the tide
-   line: they get up and make their own way to the camp.
-5. **Nights.** After 6 in the evening you can sleep under the sail shelter. Each morning a
-   short report tells you how the household is doing (J opens it again).
-6. **The boat (15 to 30 minutes).** An old boat lies under the bank on the beach. Look it over (E):
-   it needs its hull patched (the boards are close by), its rigging (out on the wreck on the rocks,
-   only reachable at low tide) and a steering oar (the scavengers have one in their skiff at Seal
-   Cave, north past the cairn; Runa can also carve one, slowly). Runa works on the boat if she has
-   nothing else to do, and you can work on it yourself at the boat. You can also choose one fitting.
-7. **Thorkel's rites (optional, 3 to 5 minutes).** When his body is home, Hild will ask about her
-   father's rites near his bier. It cannot be done after the launch.
-8. **The launch (3 to 5 minutes).** When the boat is ready and everyone is found, look the boat over
-   and choose to launch it. A screen shows what the household has and warns that there is no going
-   back. Then name the boat (type a name or pick one), choose the mark on its sail, and watch. The
-   boat needs the tide in to float; if it is out, the screen says when it will be in.
-9. **The end of the chapter.** The sea map shows the coast and smoke on the Irish shore. Close it
-   (E) and the chapter ends: its save is made and a card says so. You can keep walking the island
-   afterwards, but nothing new happens yet.
+1. **The storm (under a minute).** Night at sea, at the steering oar, as the boat breaks.
+2. **Wake in the surf (about 5 minutes).** Hild is caught in a net in the shallows. Pick up the
+   seax in the wreckage, hold E beside her to cut her free, and carry her up the beach; she points
+   to the old tower (the broch) to the north. Carry Thorkel's chest up to the camp in the broch,
+   where its outline shows. Bring driftwood and light a fire; Hild sees the smoke and walks up.
+   Raise the shelter where she says: **a stake and a cord on the ground mark the spot**, and the
+   prompt shows there (the frame of oars, then the sail over it). See to her leg (talk to her).
+3. **The first dusk (about 10 to 12 minutes in).** Two scavengers strip the wreck's stern. Fight,
+   walk away, bargain, or creep through the dune grass (a hint names the sneak key) for a strike
+   from behind. That night at the fire Hild names the searches.
+4. **The three searches, in any order (15 to 25 minutes).** On the second morning Hild asks for a
+   hand finishing the shelter (a turf spade marks where); the others finish it during the day.
+   - **Oddi** is hurt on the strand with the ship's silver in a strongbox. Carry him home first and
+     one of the scavengers breaks from the dune grass and grabs the box in front of you: set Oddi
+     down and run the thief down, and he drops it. Or carry the box home first.
+   - **Runa** is at the Hag's Seat (west), where a standing stone does something strange.
+   - **Bran** guards Thorkel's body at the sheepfold by the Hollow Cairn (east), with the scavengers
+     at the gate. Fight, sneak round, or bargain with Ketill. Thorkel's key comes to you whichever
+     way it ends: it opens his chest at the camp, and his hunting bow is inside.
+   - The bow's first use: the stores lashed to the broken mast on the western rocks. Stand still
+     and aim at the rope; they drop into the shallows, and the household will tell you to carry
+     them home.
+5. **Nights.** After 6 in the evening you can sleep in **your own bed by the west wall of the broch**
+   (a stone kerb, bracken and a madder-red blanket); it stays in the same place once the shelter is
+   finished. The household keep their own hours: some rise early, Hild stays up by the fire, one
+   keeps the watch. Each morning a short report tells you how the household is doing, **counts the
+   grain down** and says what ran short.
+6. **The boat (15 to 30 minutes).** An old boat lies under the bank on the beach. It needs its hull
+   patched (the boards are close by), its rigging (out on the skerry, only at low tide) and a
+   steering oar (in the scavengers' **skin boat** in Seal Cave, north past the cairn; Runa can also
+   carve one, slowly). The household work on it at their own places round it, and you can see the
+   patch and the mast go up stage by stage; ask a boat-hand about "The boat" to hear what it needs
+   next. Choose one fitting.
+7. **The council (2 to 3 minutes).** Once the boat is seaworthy and everyone is found, Hild asks
+   you to **sit in council at the fire**: stand by the fire in the broch and press E. The household
+   gather and argue, then you choose what the first raid will be: **quietly by night**, **a show of
+   force by day**, **trade goods first**, or **an assault in force**. Everyone remembers what was
+   said, and some will like your choice better than others.
+8. **Thorkel's rites (optional, 3 to 5 minutes).** Ask Hild about "Your father's rites" and choose
+   the stones or the sea. The rites have their own music.
+9. **The launch (3 to 5 minutes).** Look the boat over and choose to launch. A screen shows what the
+   household has (including what was agreed at the fire) and warns that there is no going back.
+   Name the boat, choose its sail mark, and watch. It needs the tide in to float.
+10. **The end of the chapter.** The sea map shows the coast. Close it (E) and the chapter ends: its
+    save is made and a card says so.
+
+**Along the way, worth finding:** eight small things lie off the paths, one or two in each place
+(something on the strand, two on the machair, one at the Hag's Seat, one at the cairn, two in Seal
+Cave). E looks at them or takes them. Looking at Thorkel's body, or a fallen foe, gives the steerer
+a short word.
 
 ## What to look for
 
 Please note anything, but these questions matter most:
 
-- **Did you want to launch the boat?** Did the end feel like an ending, and did you want to see
-  what is across the water?
+- **Did you want to launch the boat?** And did you have a reason to raid Carrick by the end: did the
+  grain running down, the household's grumbles about iron, salt and cloth, the smoke on the Irish
+  coast from the Hag's Seat, the Carrick goods in the scavengers' boat and what a scavenger said
+  (or Oddi's chart) add up to "we have to go there"?
+- **The council:** did it feel like your household arguing it out? Was the choice a real one? Who
+  did you agree with?
+- **The people:** did they talk among themselves (and did it sound like them)? Did their nudges and
+  "Ask for advice" help without nagging? Did they keep their own hours (early risers, the fire, the
+  watch)? Runa may refuse to have a wound bound: how did that go?
+- **The bed and the broch at night:** could you always find and use your bed? Do the sleepers, the
+  firelight, the smoke and the household's things make the broch feel lived in?
 - **Was the next thing to do always clear?** Where did you get lost or stuck, and for how long?
-- **The fighting:** did it feel heavy, deliberate and fair rather than stiff? Could you read an
-  enemy's wind-up by sight and sound, and time a parry from it? Did a miss (yours or theirs) feel
-  punished? Did running out of stamina push you to back off and come again? Did enemies wait for
-  an opening rather than crowd you?
-- **Text on screen:** was there ever too much, or something you missed because it was gone?
-- **The first five minutes:** did the storm (the lightning, the mist, the sea and the pitching
-  boat), the net and the camp pull you in? Did you always know what to do next without markers?
-- **Oddi and the others you rescue:** did each one get up, walk to the camp, work, eat, sleep under
-  the shelter and talk to you?
-- **The people:** can you name one of the household you care about? Did anyone's words land?
-- **The searches and repairs:** did the different ways feel like real choices? Did any task feel like
-  a chore?
+  Did "Nothing that way" ever point you the right way?
+- **The fighting:** heavy, deliberate and fair? Could you read the wind-ups? Did Svart and Ketill
+  teach you the parry and the dodge? Did enemies go for you rather than Bran when you struck them,
+  and did guards stop pacing at an invisible line? Did hits land where the weapons looked?
+- **The silver snatch:** did the thief's dash for the box read clearly, and could you catch him?
+- **Text on screen:** too much ever, or something missed? Did you ever see an internal name such as
+  `ITEM_RIGGING` (there should be none now)?
 - **Look and sound:** anything ugly, broken, too still, too loud or too quiet; anything you liked.
-- **The launch:** the readiness screen, naming the boat, the sail marks (do the choices look good and
-  read well?), the scene of the boat going into the water, the music, the sea map.
 - **Time:** was the chapter too long, too short, or about right? Where did time drag?
 
 ## How to report
 
-1. When you finish (or stop), press **Esc** then **T** and copy the timings shown (how long you
-   played, when the first fight came, and when each part was done). A screenshot is fine.
+1. When you finish (or stop), press **Esc** then **T** and copy the timings shown. A screenshot is
+   fine.
 2. Write a few lines against the questions above. Rough notes are best: what you felt at the time.
-3. Add screenshots of anything wrong (a picture is worth a paragraph), and the build number.
+3. Add screenshots of anything wrong, and the build number.
 4. Say which browser and computer you used, and whether you played with a mouse, keyboard only or a
    gamepad.
 
@@ -146,24 +176,21 @@ before the next stage is built.
 
 ## Choices made for you to judge
 
-These were decided while building Stages 7 to 12 and the addendum 2.4 and 2.5 reworks without
-waiting for you; the reports (`docs/stage-reports/stage-12.md`, `rework-2.4.md` and
-`rework-2.5.md`) list them all. The ones you will meet in this playtest:
+These were decided without waiting for you; the reports (`docs/stage-reports/playtest-4.md`,
+`playtest-3.md`, `stage-12.md`) list them all with their reasons. The ones you will meet:
 
-- The boat that is repaired is an old boat under the bank, not Thorkel's wreck.
-- The launch waits for the tide, and for everyone to be found.
-- Thorkel's rites cannot be given after the launch, and the household remembers if they were not.
-- The boat's name suggestions and the 28 sail marks.
-- The sail is drawn face-on on the side-on boat so its mark can be seen.
-- After the chapter ends you stay on the island (Chapter 2's voyage is the next build).
-- The scavengers at dusk are Svart and Conn, with Ketill at the fold; Svart's first heavy blows are
-  slow, to teach the parry.
-- Oddi's choice is over the ship's silver in a strongbox; Thorkel's own chest holds the bow.
-- The mast stores drop into shallows you can wade at any tide (your choice, DF-82).
-- Healing is on H; rations are packed from the camp's salt fish when you reach camp. Healing is a
-  committed action too: only a blow stops it.
-- Exhaustion lasts until stamina is back to 30%; an enemy that waits too long attacks anyway.
-- The parry's glint always comes the same time before the blow, so a parry can be learned by
-  rhythm; enemy blows are slower to come than yours.
-- Oddi is rescued wherever you set him down above the tide line, but the scavengers then take the
-  ship's silver if it is still on the beach.
+- The scavengers are Carrick folk who came for the wreck in a skin boat, as the coast's custom has
+  it: neighbours, not villains. Their boat holds Carrick grain, nails and a net, which you can carry
+  home.
+- The council is held at the fire once the boat is ready, before Thorkel's rites, and the launch
+  waits for it. Four intents, each pleasing someone and troubling someone.
+- The mainland's smoke is spoken of from the Hag's Seat (the top-down view has no horizon to draw).
+- Catching the silver thief makes him drop the box; if he gets away the silver is lost for now
+  (getting it back later in the chapter is not built).
+- Your bed is by the west wall at both stages of the shelter, marked with a stone kerb and the
+  steerer's madder-red blanket.
+- Runa is the one who refuses another's hand on her wound, out of superstition; she gives way if you
+  let her bind it herself, or on a later day.
+- Hild offers advice always; others do once they trust you.
+- The boat that is repaired is an old boat under the bank, not Thorkel's wreck; the launch waits
+  for the tide and for everyone to be found; Thorkel's rites cannot be given after the launch.
