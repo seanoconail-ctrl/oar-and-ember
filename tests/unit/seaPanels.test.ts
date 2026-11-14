@@ -110,7 +110,7 @@ describe('the sea map in words (Book 7 section 10; Book 8 section 10)', () => {
     expect(lines).toEqual([
       'Skarvholm to Carrick Landing.',
       'At sea about 2 watches; landfall about 18:00 on day 5.',
-      'Stores aboard: 4 days for 5. The course eats about 0.5 days.',
+      'Stores aboard: 4 days for 5. The course eats about half a day.',
       'Setting out on this course begins the raid on Carrick Landing.',
     ]);
     const short = courseLines(
@@ -250,7 +250,7 @@ const SK = places['ISLE_SKARV'] ?? { x: 0, y: 0 };
 const CARRICK = places['SITE_CARRICK'] ?? { x: 0, y: 0 };
 const course = routePath(SK, CARRICK, (x, y) => chart.isLand(x, y), 7);
 
-const WEATHER: Record<string, ChartWeather> = {
+const WEATHER = {
   day: {
     windTo: { x: 0.7, y: -0.7 },
     strength: 2,
@@ -292,7 +292,7 @@ const WEATHER: Record<string, ChartWeather> = {
     fog: false,
   },
   calm: { windTo: null, strength: 0, visibility: 'CLEAR', storm: false, rain: false, fog: false },
-};
+} satisfies Record<string, ChartWeather>;
 
 /** 41 frames over 6.4 s with the camera still, as the capture measures (Book 7 section 14). */
 function motionOf(w: ChartWeather, reduced: boolean): number {
@@ -370,11 +370,9 @@ describe('the chart in the voyage’s light (Book 7 section 14)', () => {
         s += (f.rgba[i] ?? 0) + (f.rgba[i + 1] ?? 0) + (f.rgba[i + 2] ?? 0);
       return s;
     };
-    const day = lum(WEATHER['day']!);
-    expect(
-      lum({ ...(WEATHER['storm']!), rain: false, visibility: 'CLEAR' }),
-    ).toBeLessThan(day * 0.85);
-    expect(lum(WEATHER['night']!)).toBeLessThan(day * 0.8);
+    const day = lum(WEATHER.day);
+    expect(lum({ ...WEATHER.storm, rain: false, visibility: 'CLEAR' })).toBeLessThan(day * 0.85);
+    expect(lum(WEATHER.night)).toBeLessThan(day * 0.8);
   });
 
   it('paints routes round the coast by open water, end to end', () => {

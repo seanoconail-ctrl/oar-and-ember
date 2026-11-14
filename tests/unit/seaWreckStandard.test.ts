@@ -16,12 +16,14 @@ import type { SheetAnims } from '../../src/scenes/zoneScene.ts';
 import { visualTuning, ZoneVisuals } from '../../src/scenes/zoneVisuals.ts';
 import { landContext } from '../../src/sim/land/context.ts';
 import { seaWreckContext, wreckScene } from '../../src/sim/sea/wreck.ts';
+import type { SeaWreckContext } from '../../src/sim/sea/wreck.ts';
 import { loadPalette, loadPeopleLook, loadSheets } from '../../src/tools/art/artFiles.ts';
 import { standardProblems } from '../../src/tools/art/lint.ts';
 import { needsShadow } from '../../src/tools/art/standard.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 import { PERSON_LOOKS } from '../../src/scenes/people.ts';
+import type { ZoneMap } from '../../src/content/zoneMap.ts';
 
 const palette = loadPalette();
 const sheetList = loadSheets(palette);
@@ -32,10 +34,12 @@ parseTimeBalance(balance);
 parsePeopleBasics(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
-const ctx = seaWreckContext(content);
-if (ctx === null) throw new Error('no wreck content');
-const map = land.maps.get(ctx.def.zone);
-if (map === undefined) throw new Error('no reef zone');
+const maybeCtx = seaWreckContext(content);
+if (maybeCtx === null) throw new Error('no wreck content');
+const ctx: SeaWreckContext = maybeCtx;
+const maybeMap = land.maps.get(ctx.def.zone);
+if (maybeMap === undefined) throw new Error('no reef zone');
+const map: ZoneMap = maybeMap;
 const tuning = visualTuning(balance, palette);
 const WRECK_SHEETS = [
   'actor_c_finan',
@@ -50,10 +54,10 @@ const WRECK_SHEETS = [
 ];
 
 function sceneAt(x: number, y: number, tick: number, minutesToLowWater = 200) {
-  const onFoot = wreckScene(ctx!, map!);
-  onFoot.player.x = x * map!.tile;
-  onFoot.player.y = y * map!.tile;
-  const visuals = new ZoneVisuals(map!, bakeElevation(map!.rows), false, tuning);
+  const onFoot = wreckScene(ctx, map);
+  onFoot.player.x = x * map.tile;
+  onFoot.player.y = y * map.tile;
+  const visuals = new ZoneVisuals(map, bakeElevation(map.rows), false, tuning);
   const frame = {
     dt: 1 / 60,
     tick,
@@ -72,7 +76,7 @@ function sceneAt(x: number, y: number, tick: number, minutesToLowWater = 200) {
   return {
     view,
     scene: zoneScene({
-      map: map!,
+      map: map,
       onFoot,
       tick,
       tideOpen: false,

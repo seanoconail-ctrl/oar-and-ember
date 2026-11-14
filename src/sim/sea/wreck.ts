@@ -283,7 +283,7 @@ export function chooseWreck(
     return null;
   }
   if (!FINAL.includes(what)) return null;
-  const final = what as WreckChoice;
+  const final = what;
   setFact(world, WRECK_FACTS.choice, final);
   const rescued = final === 'ABOARD' || final === 'ASHORE';
   // Fínán pays for a passage with what his boat carried (decision S13-51).
@@ -457,7 +457,7 @@ export function stepWreck(world: WorldState, ctx: SeaWreckContext, tile: number)
   for (const s of ctx.def.survivors) {
     const a = onFoot.actors[s.id];
     // Fínán keeps hold of the hull; the carried are turned by their carrier.
-    if (a === undefined || a.pose !== 'watch') continue;
+    if (a?.pose !== 'watch') continue;
     const dx = p.x - a.x;
     const dy = p.y - a.y;
     if (Math.hypot(dx, dy) > 6 * tile) {

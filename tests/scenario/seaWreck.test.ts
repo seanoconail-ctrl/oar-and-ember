@@ -27,10 +27,11 @@ import {
   wreckResult,
   wreckUses,
 } from '../../src/sim/sea/wreck.ts';
-import type { WreckChoice } from '../../src/sim/sea/wreck.ts';
+import type { SeaWreckContext, WreckChoice } from '../../src/sim/sea/wreck.ts';
 import { createSimulation, stateHash } from '../../src/sim/simulation.ts';
 import type { SimEvent, Simulation } from '../../src/sim/simulation.ts';
 import type { WorldState } from '../../src/sim/world.ts';
+import type { ZoneMap } from '../../src/content/zoneMap.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 import { GOLDEN_12 } from '../../src/tools/saves/golden.ts';
@@ -41,10 +42,12 @@ const b = parseTimeBalance(balance);
 const wb = parseWreckBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
-const ctx = seaWreckContext(content, land.people ?? null);
-if (ctx === null) throw new Error('content/wreck.json did not load');
-const map = land.maps.get(ctx.def.zone);
-if (map === undefined) throw new Error('no reef zone');
+const maybeCtx = seaWreckContext(content, land.people ?? null);
+if (maybeCtx === null) throw new Error('content/wreck.json did not load');
+const ctx: SeaWreckContext = maybeCtx;
+const maybeMap = land.maps.get(ctx.def.zone);
+if (maybeMap === undefined) throw new Error('no reef zone');
+const map: ZoneMap = maybeMap;
 const T = map.tile;
 const CHOICES: readonly WreckChoice[] = ['ABOARD', 'ASHORE', 'SALVAGE', 'LEAVE'];
 

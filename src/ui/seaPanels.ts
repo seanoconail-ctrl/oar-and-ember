@@ -593,6 +593,7 @@ export function landingPanel(
   on: { readonly stay: () => void; readonly home: () => void },
 ): HTMLDivElement {
   const p = seaPanelFrame(doc, 'landing', m.side);
+  p.dataset['landing'] = String(m.landing);
   p.append(el(doc, 'h2', w.t(m.landing ? 'ui.sea.land.title' : 'ui.sea.meet.title')));
   for (const line of m.lines) p.append(el(doc, 'p', line, 'lead'));
   p.append(button(doc, m.stay, 'stay', on.stay, 'primary'));

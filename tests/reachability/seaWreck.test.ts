@@ -11,6 +11,7 @@ import { landContext } from '../../src/sim/land/context.ts';
 import { bandAt, isDeep } from '../../src/sim/land/water.ts';
 import { tileBlocks } from '../../src/sim/land/zoneMap.ts';
 import { seaWreckContext } from '../../src/sim/sea/wreck.ts';
+import type { SeaWreckContext } from '../../src/sim/sea/wreck.ts';
 import { loadBalanceJson } from '../../src/tools/content/loadBalance.ts';
 import { loadContentFromDisk } from '../../src/tools/content/loadContentFiles.ts';
 
@@ -18,8 +19,9 @@ const balance = loadBalanceJson();
 const wb = parseWreckBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
-const ctx = seaWreckContext(content);
-if (ctx === null) throw new Error('no wreck content');
+const maybeCtx = seaWreckContext(content);
+if (maybeCtx === null) throw new Error('no wreck content');
+const ctx: SeaWreckContext = maybeCtx;
 const map = land.maps.get(ctx.def.zone);
 const el = land.elevations.get(ctx.def.zone);
 if (map === undefined || el === undefined) throw new Error('no reef zone');
@@ -29,7 +31,10 @@ const TIDES = [
   { name: 'low water', level: 0, open: true },
 ] as const;
 
-type Tile = { tx: number; ty: number };
+interface Tile {
+  tx: number;
+  ty: number;
+}
 
 function open(t: Tile, tide: (typeof TIDES)[number]): boolean {
   if (map === undefined || el === undefined) return false;

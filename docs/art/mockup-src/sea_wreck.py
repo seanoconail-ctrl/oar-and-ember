@@ -57,10 +57,10 @@ def faoilean(k=0):
         body = math.sin(math.pi * t) ** 0.35
         tilt = (0.5 - t) * 14                     # the bow lifted on the reef, the stern settled
         sag = 5 * math.exp(-((t - 0.52) / 0.08) ** 2)   # her broken back sags
-        rise = 10 * (1 - math.sin(math.pi * t)) ** 3
+        rise = 18 * (1 - math.sin(math.pi * t)) ** 2.2
         near = 30 - rise + sag - tilt * 0.6 + 2
         far = near - 8 * body
-        keel = near + 3 + 12 * body - rise * 0.3
+        keel = near + 1 + 13 * body ** 1.4
         broken = brk0 < t < brk1
         for y in range(int(far), int(keel) + 1):
             if broken and y > near + 1:
@@ -72,7 +72,7 @@ def faoilean(k=0):
                     continue
             if y < near:
                 depth = (y - far) / max(1, near - far)
-                col = C('driftwood', 2.0 + depth * 0.4 + (nz[y, x] - 0.5) * 0.6)
+                col = C('earth', 1.2 + depth * 0.4 + (nz[y, x] - 0.5) * 0.6)
                 if (x - x0) % 11 in (0, 1) and 0.08 < t < 0.92:
                     col = C('driftwood', 4.5 if (x - x0) % 11 == 0 else 3.2)    # a rib
                 if broken:
@@ -81,8 +81,8 @@ def faoilean(k=0):
                 v = (y - near) / max(1, keel - near)
                 strake = min(3, int(v * 4))
                 within = v * 4 - strake
-                col = C('driftwood', 4.6 - strake * 0.5 - (1.5 if within > 0.78 else 0)
-                        + (0.8 if within < 0.2 else 0) + (nz[y, x] - 0.5) * 0.7)
+                col = C('earth', 3.9 - strake * 0.45 - (1.4 if within > 0.78 else 0)
+                        + (0.7 if within < 0.2 else 0) + (nz[y, x] - 0.5) * 0.7)
                 if within > 0.8 and (x * 7 + strake * 3) % 13 == 0:
                     col = C('stone', 4)                               # a rivet head, rusted
                 if v > 0.82:
@@ -96,9 +96,9 @@ def faoilean(k=0):
         if math.sin(x * 0.45 - k * TAU / 4) > 0.4:
             s.px(x, wl, C('sea', 10))
     # Stem and stern posts; the mast snapped to a jagged stump, the stay hanging slack.
-    for j in range(10):
-        s.px(x0 - 1 + j // 5, 18 - j + 4, C('driftwood', 3))
-        s.px(x1 - j // 6, 30 - j, C('driftwood', 3))
+    for j in range(9):
+        s.px(x0 + 1 + j // 4, 15 - j + 4, C('earth', 2))
+        s.px(x1 - 2 - j // 4, 24 - j, C('earth', 2))
     mx = 38
     for y in range(8, 24):
         s.px(mx, y, C('driftwood', 4))

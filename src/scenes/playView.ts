@@ -1433,6 +1433,24 @@ export function startPlay(
             present: (rgba) => {
               presenter.present(rgba);
             },
+            sound:
+              audio === null
+                ? null
+                : {
+                    now: () => engine.now,
+                    play: (cue, now) => {
+                      if (engine.unlocked) audio.play(cue, now);
+                    },
+                    silence: (now) => {
+                      audio.silence(now);
+                    },
+                    setSea: (bed) => {
+                      engine.setSea(bed);
+                    },
+                    event: (name, now) => {
+                      if (engine.unlocked) audio.event(name, now);
+                    },
+                  },
           },
           seaCtx,
         );

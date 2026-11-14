@@ -291,6 +291,9 @@ export function campHooks(
   // Stage 13 (tests and captures): today's weather at sea (`weather=clear|rising|fog|storm|calm`).
   const weather = params.get('weather');
   if (weather !== null) seedWeather(world, content, weather);
+  // An encounter that comes once already met (`seamet=ENC_OPEN:wreck`), to sail past it.
+  for (const key of (params.get('seamet') ?? '').split(',').filter((k) => k !== ''))
+    world.sea.once[key] = world.calendar.day;
   // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
   const zone = params.get('zone');
   const zoneTo = zone === null ? undefined : land.maps.get(zone);

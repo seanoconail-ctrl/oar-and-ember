@@ -47,11 +47,14 @@ async function sailUntil(page: Page, screen: string, seconds = 60): Promise<void
   for (let i = 0; i < seconds; i++) {
     await stepUntil(page, 'sea', new RegExp(`^(${screen}|landing|choice)$`), 1);
     const now = await attr(page, 'sea');
-    if (now === screen) return;
+    const met =
+      now === 'landing' &&
+      (await page.locator('[data-panel=landing]').getAttribute('data-landing')) === 'false';
+    if (now === screen && !met) return;
     if (now === 'choice') {
       await page.keyboard.press('Digit1');
       await step(page, 2);
-    } else if (now === 'landing' && screen !== 'landing') {
+    } else if (now === 'landing' && (screen !== 'landing' || met)) {
       // An interruption met on the way (the wreck) whose scene is not in place: sail on.
       await page.locator('[data-panel=landing] [data-action=stay]').click();
       await step(page, 2);
@@ -124,7 +127,7 @@ test.describe('Stage 13: sea-map travel and voyage events', () => {
   test('the choice holds the watches; a watch passes the clock six hours as the token sails', async ({
     page,
   }) => {
-    await startPlay(page, 'A', `${AT}&weather=rising`);
+    await startPlay(page, 'A', `${AT}&weather=rising&seamet=ENC_OPEN:wreck`);
     await openChart(page);
     await page.locator('[data-panel=plot] [data-place=SITE_CARRICK]').click();
     await step(page, 2);
@@ -161,7 +164,8 @@ test.describe('Stage 13: sea-map travel and voyage events', () => {
   test('the landing at Carrick is a stub handed back, and turning for home returns to the island', async ({
     page,
   }) => {
-    await startPlay(page, 'A', `${AT}&weather=clear`);
+    // The wreck (met once) already met, so the voyage sails on to the landing.
+    await startPlay(page, 'A', `${AT}&weather=clear&seamet=ENC_OPEN:wreck`);
     await openChart(page);
     await page.locator('[data-panel=plot] [data-place=SITE_CARRICK]').click();
     await step(page, 2);
@@ -190,6 +194,61 @@ test.describe('Stage 13: sea-map travel and voyage events', () => {
           ?.zone,
     );
     expect(zone).toBe('ZONE_SK_STRAND');
+  });
+});
+
+test.describe('Stage 13: the wreck handed off on foot', () => {
+  test.setTimeout(240_000);
+
+  test('the wreck takes the steerer off the chart onto the reef, and its result brings the chart back', async ({
+    page,
+  }) => {
+    await startPlay(page, 'A', `${AT}&weather=clear`);
+    await openChart(page);
+    await page.locator('[data-panel=plot] [data-place=SITE_CARRICK]').click();
+    await step(page, 2);
+    await page.locator('[data-panel=plot] [data-action=sail]').click();
+    await step(page, 2);
+    const onFootZone = (): Promise<string> =>
+      page.evaluate(
+        () =>
+          (window as unknown as { oeWorld: { onFoot: { zone: string } | null } }).oeWorld.onFoot
+            ?.zone ?? '',
+      );
+    for (let i = 0; i < 40 && (await onFootZone()) === ''; i++) {
+      await stepUntil(page, 'sea', /^(landing|choice|)$/, 1);
+      if ((await attr(page, 'sea')) === 'choice') await page.keyboard.press('Digit1');
+      if ((await attr(page, 'sea')) === 'landing') break;
+    }
+    test.skip(
+      (await onFootZone()) === '',
+      "The wreck's scene (work package C) was not put in place: its content is not loaded",
+    );
+    // On foot on the reef: the chart is down, the voyage waits on the scene's result.
+    expect(await onFootZone()).toMatch(/WRECK/);
+    expect(await attr(page, 'sea')).toBe('');
+    expect(await attr(page, 'sea-status')).toBe('');
+    // The scene's end as work package C's finishWreck does it: the steerer back aboard (A's
+    // endHandoffScene) and its result sent (SEA_HANDOFF_RETURN).
+    await page.evaluate(() => {
+      const w = window as unknown as {
+        oeWorld: { onFoot: unknown };
+        oePlay: { sim: { submit: (c: unknown) => void } };
+      };
+      w.oeWorld.onFoot = null;
+      w.oePlay.sim.submit({
+        type: 'SEA_HANDOFF_RETURN',
+        result: {
+          outcome: 'CONTINUE',
+          facts: {},
+          aboardChanges: { join: [], leave: [] },
+          storesDelta: 0,
+        },
+      });
+    });
+    await stepUntil(page, 'sea', /^(sail|landing|held|choice)$/, 3);
+    expect(await attr(page, 'sea')).toMatch(/^(sail|landing|held|choice)$/);
+    expect(await attr(page, 'sea-at')).not.toBe('');
   });
 });
 

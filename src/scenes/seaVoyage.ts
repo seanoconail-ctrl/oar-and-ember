@@ -30,9 +30,7 @@ import { parseStormBalance } from '../content/presentationBalance.ts';
 import { clockText, minutesToSlack, tideAt } from '../sim/calendar/calendar.ts';
 import type { Command, SimEvent, Simulation, SimWorldContext } from '../sim/simulation.ts';
 import type { WorldState } from '../sim/world.ts';
-import type { OnFootState } from '../sim/land/onFoot.ts';
 import {
-  beginHandoffScene,
   boatAt,
   calendarAt,
   currentHandoff,
@@ -49,6 +47,7 @@ import {
   storesRd,
   visibilityNow,
   weatherToday,
+  windToday,
   isStormDay,
   SEA_STORES,
 } from '../sim/sea/index.ts';
@@ -90,19 +89,34 @@ import type {
   PixelAtlas,
 } from './seaChart.ts';
 import type { LoadedAtlas } from './atlases.ts';
+import { seaBed, seaEventSounds, seaMusic, seaSoundRules } from '../audio/seaAudio.ts';
+import type { SeaSoundRules } from '../audio/seaAudio.ts';
+import type { SeaBedState } from '../audio/synth/sea.ts';
+import { beginWreck, seaWreckContext } from '../sim/sea/wreck.ts';
 
 /**
- * Builders for the on-foot scenes a voyage hands off to, by scenario (the wreck, SCN_SEA_WRECK, is
- * work package C's). A builder returns the scene to put in place, or null if it cannot yet.
- * Adapter (decision S13-29): the sea's simulation has no command to begin a handed-off scene, so the
- * screen puts it in place between ticks with `beginHandoffScene`.
+ * The on-foot scenes a voyage hands off to, by scenario: each puts its scene in place (A's
+ * `beginHandoffScene`, here through the scene's own begin) and says whether it did. Adapter
+ * (decision S13-29): the sea's simulation has no command to begin a handed-off scene, so the screen
+ * begins it between ticks, as the scene's own test hook does.
  */
-export type HandoffSceneBuilder = (
+export type HandoffSceneBegin = (
   world: WorldState,
   land: SimWorldContext,
+  content: Content,
   request: HandoffRequest,
-) => OnFootState | null;
-export const HANDOFF_SCENES = new Map<Id, HandoffSceneBuilder>();
+) => boolean;
+export const HANDOFF_SCENES = new Map<Id, HandoffSceneBegin>([
+  [
+    // The wreck with survivors (work package C, src/sim/sea/wreck.ts).
+    'SCN_SEA_WRECK',
+    (world, land, content) => {
+      const ctx = seaWreckContext(content, land.people ?? null);
+      const map = ctx === null ? undefined : land.maps.get(ctx.def.zone);
+      return ctx !== null && map !== undefined && beginWreck(world, ctx, map);
+    },
+  ],
+]);
 
 /** Which pictogram each place is drawn with (Book 4 section 01: what kind of place it is). */
 const PICTOGRAM: Readonly<Record<string, string>> = {
@@ -179,6 +193,14 @@ export interface SeaVoyageHost {
   readonly devMode: boolean;
   readonly autosave: (reason: 'DEPARTURE' | 'LANDING') => void;
   readonly present: (rgba: Uint8Array) => void;
+  /** The sea's sound (src/audio/seaAudio.ts, work package D), or null with no audio. */
+  readonly sound: {
+    readonly now: () => number;
+    readonly play: (cue: string, now: number) => void;
+    readonly silence: (now: number) => void;
+    readonly setSea: (bed: SeaBedState | null) => void;
+    readonly event: (name: string, now: number) => void;
+  } | null;
 }
 
 interface Shown {
@@ -222,6 +244,10 @@ export class SeaVoyage {
   #labelsKey = '';
   #started = -1;
   #landingSaved = false;
+  /** The sea's events since the last frame, for its sounds; whether the bed is playing. */
+  #heard: SeaEvent[] = [];
+  #bed = false;
+  #soundRules: SeaSoundRules | null = null;
 
   constructor(host: SeaVoyageHost, ctx: SeaContext) {
     this.#h = host;
@@ -313,6 +339,7 @@ export class SeaVoyage {
   #event(e: SimEvent): void {
     if (!('type' in e) || typeof e.type !== 'string' || !e.type.startsWith('SEA_')) return;
     const ev = e as SeaEvent;
+    if (this.#heard.length < 32) this.#heard.push(ev);
     const w = this.#words();
     switch (ev.type) {
       case 'SEA_REFUSED':
@@ -550,9 +577,7 @@ export class SeaVoyage {
       const req = currentHandoff(w);
       const build = req === null ? undefined : HANDOFF_SCENES.get(req.scenarioId);
       if (req !== null && build !== undefined && !req.landing) {
-        const scene = build(w, this.#h.land, req);
-        if (scene !== null) {
-          beginHandoffScene(w, scene);
+        if (build(w, this.#h.land, this.#h.content, req)) {
           this.#labelsKey = '';
           return;
         }
@@ -566,6 +591,7 @@ export class SeaVoyage {
     if (v !== null && this.#h.menus.open === 'map') this.#h.menus.close();
     this.#tickWatches(now);
     this.#animate(now);
+    this.#sound();
     const seconds = (now - this.#started) / 1000;
     const weather = this.#weatherModel(now);
     const scene = this.#scene(now, seconds, plotting, weather);
@@ -576,6 +602,7 @@ export class SeaVoyage {
     this.#panels(plotting, weather, scene);
     const root = this.#h.root;
     root.dataset['sea'] = this.#screen(plotting);
+    root.dataset['menu'] = this.#h.menus.open ?? '';
     root.dataset['seaWatches'] = String(this.watches);
     root.dataset['seaAt'] = v?.at ?? '';
     root.dataset['seaStatus'] = v?.status ?? '';
@@ -586,6 +613,41 @@ export class SeaVoyage {
         : `${Math.round(scene.token.x)},${Math.round(scene.token.y)},${scene.token.heading},${scene.token.state}`;
     root.dataset['seaWeather'] =
       `${scene.weather.visibility}:${scene.weather.strength}:${scene.weather.storm ? 1 : 0}:${scene.weather.rain ? 1 : 0}`;
+  }
+
+  /**
+   * The sea's music, bed and event sounds (Book 11; work package D's rules), every frame while a
+   * voyage exists. Before departure the launch's music still carries the chart (no silence).
+   */
+  #sound(): void {
+    const snd = this.#h.sound;
+    const heard = this.#heard;
+    this.#heard = [];
+    if (snd === null) return;
+    const w = this.#world;
+    const v = w.sea.voyage;
+    if (v === null) {
+      if (this.#bed) snd.setSea(null);
+      this.#bed = false;
+      return;
+    }
+    this.#soundRules ??= seaSoundRules(this.#h.content.balance);
+    const rules = this.#soundRules;
+    const input = {
+      strength: windToday(w)?.strength ?? 0,
+      visibility: visibilityNow(w, this.#time),
+      status: v.status,
+      rowing: v.leg?.rowing ?? false,
+    };
+    const now = snd.now();
+    const cue = seaMusic(input, rules);
+    if (cue === null) snd.silence(now);
+    else snd.play(cue, now);
+    const bed = seaBed(input, rules);
+    snd.setSea(bed);
+    this.#bed = bed !== null;
+    for (const ev of heard)
+      for (const s of seaEventSounds(ev, input, rules)) snd.event(s.event, now);
   }
 
   /** Clears the screen's words when the chart goes down. */

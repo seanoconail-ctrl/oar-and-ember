@@ -51,7 +51,13 @@ import { stormCapture } from './captureStorm.ts';
 import { STORY_PORT, storyCapture } from './captureStory.ts';
 import { WORLD_PORT, worldCapture } from './captureWorld.ts';
 import { RAID_PORT, raidCapture } from './captureRaid.ts';
-import { continuousMotion, MOTION_CELL, MOTION_THRESHOLD } from './motion.ts';
+import {
+  continuousMotion,
+  MOTION_CELL,
+  MOTION_THRESHOLD,
+  REDUCED_MOTION_THRESHOLD,
+} from './motion.ts';
+import { seaCapture, seaReadme } from './captureSea.ts';
 import { decodePng, encodePng } from './png.ts';
 import type { RgbaImage } from './png.ts';
 
@@ -223,6 +229,20 @@ export async function capture(label: string): Promise<string> {
       return `${out}: strand motion ${pct(motion.share)}, ${c.views
         .map((v) => `${v.view.name} ${pct(v.share)}`)
         .join(', ')}; sea map ${pct(c.map)}; clip ${(c.clipFrames / FPS).toFixed(1)} s`;
+    }
+    if (label === 'stage-13') {
+      // Stage 13: the sea map's chart in every weather, its screens, a voyage and the wreck.
+      await page.close();
+      const c = await seaCapture(browser, out, 5287);
+      writeFileSync(
+        join(out, 'README.md'),
+        seaReadme(label, motion.share, c, MOTION_THRESHOLD, REDUCED_MOTION_THRESHOLD),
+      );
+      return `${out}: strand motion ${pct(motion.share)}, ${c.views
+        .map((v) => `${v.name} ${pct(v.share)}`)
+        .join(
+          ', ',
+        )}${c.wreck === null ? '' : `, wreck ${pct(c.wreck.share)}`}; clip ${c.clipSeconds.toFixed(1)} s; chart frame ${c.frameMs.toFixed(2)} ms`;
     }
     if (STAGE11_LABELS.has(label)) {
       await page.close();
