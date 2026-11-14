@@ -31,17 +31,23 @@ import { loadZoneMaps } from '../../src/tools/art/lint.ts';
 import { REPO_ROOT } from '../../src/tools/art/loadTitleArt.ts';
 import { readContentFiles } from '../../src/tools/content/loadContentFiles.ts';
 
+/** The value, or a thrown error naming what was missing. */
+function must<T>(v: T | null | undefined, what = 'value'): T {
+  if (v === null || v === undefined) throw new Error(`no ${what}`);
+  return v;
+}
+
 const { content, issues } = loadContent(readContentFiles());
-const table = content.audio;
-const rules = table?.island as IslandRules;
+const table = must(content.audio, 'audio table');
+const rules = table.island as IslandRules;
 const maps = loadZoneMaps();
 const mapOf = (zone: string) => maps.find((m) => m.zone === zone);
 
 const ISLAND_SCENES = [...content.zones.values()]
-  .filter((z) => z.id.startsWith('ZONE_SK_') && !/an area of/.test(z.terrain))
+  .filter((z) => z.id.startsWith('ZONE_SK_') && !z.terrain.includes('an area of'))
   .map((z) => z.id);
 const AREAS = [...content.zones.values()]
-  .filter((z) => z.id.startsWith('ZONE_SK_') && /an area of/.test(z.terrain))
+  .filter((z) => z.id.startsWith('ZONE_SK_') && z.terrain.includes('an area of'))
   .map((z) => z.id);
 
 const at = (tiles: number, pan = 0) => ({ tiles, pan, x: 0, y: 0 });
@@ -80,7 +86,7 @@ describe("the island's ambience (Stage 14)", () => {
 
   it('gives every scene of the island an ambience, from its cues and its rule', () => {
     expect(ISLAND_SCENES.length).toBeGreaterThanOrEqual(13);
-    const router = new AudioRouter(table!, content.strings, new RecordingSink());
+    const router = new AudioRouter(table, content.strings, new RecordingSink());
     for (const zone of ISLAND_SCENES) {
       expect(islandZone(rules, zone), zone).toBe(true);
       for (const phase of ['day', 'night'] as const)
@@ -92,7 +98,7 @@ describe("the island's ambience (Stage 14)", () => {
   });
 
   it('plays each layer only in a scene whose cues include it', () => {
-    const cueOf = (id: string) => table!.cues.find((c) => c.id === id);
+    const cueOf = (id: string) => table.cues.find((c) => c.id === id);
     const listed = (id: string, zone: string) => cueOf(id)?.zones?.includes(zone) === true;
     for (const zone of ISLAND_SCENES)
       for (const season of SEASONS)
@@ -232,18 +238,18 @@ describe("the island's ambience (Stage 14)", () => {
     expect(alone.sea(50, 38, 60)).toBeNull();
     const sea = all.sea(50, 38, 60);
     expect(sea).not.toBeNull();
-    expect(sea!.tiles).toBeGreaterThan(5);
+    expect(must(sea).tiles).toBeGreaterThan(5);
     const stream = all.stream(56, 20, 14);
     expect(stream).not.toBeNull();
-    expect(stream!.tiles).toBeLessThan(4);
+    expect(must(stream).tiles).toBeLessThan(4);
     expect(all.falls(56, 20, 36)).toBeNull();
     expect(directionOf(0, -5)).toBe('n');
     expect(directionOf(5, 5)).toBe('se');
   });
 
   it('captions an unseen stream once, with its direction, and plays the tell with its caption', () => {
-    const router = new AudioRouter(table!, content.strings, new RecordingSink());
-    const machair = mapOf('ZONE_SK_MACHAIR')!;
+    const router = new AudioRouter(table, content.strings, new RecordingSink());
+    const machair = must(mapOf('ZONE_SK_MACHAIR'));
     const flow = zoneFlow(machair, bakeElevation(machair.rows));
     const ia = new IslandAudio(rules, maps, content.island?.areas ?? []);
     const hear = (now: number, view: { x: number; y: number }) =>
@@ -302,7 +308,7 @@ describe("the island's ambience (Stage 14)", () => {
     }
     // The birds, wind, drips and the quiet are not gameplay information: no caption in play.
     for (const id of ['AMB_BIRD_COLONY', 'AMB_SKYLARK', 'AMB_CURLEW', 'AMB_BOG_QUIET'])
-      expect(table!.cues.find((c) => c.id === id)?.captionKey, id).toBeUndefined();
+      expect(table.cues.find((c) => c.id === id)?.captionKey, id).toBeUndefined();
   });
 
   it('renders every listen for listening back (npm run audio:render)', () => {

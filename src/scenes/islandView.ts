@@ -20,6 +20,9 @@ import { MAP_H, MAP_W, RegionMap } from './regionMap.ts';
 import type { PixelAtlas } from './seaChart.ts';
 import { pixelAtlas } from './seaVoyage.ts';
 
+/** The map's names in its own brown ink: the palette's earth ramp (Book 7 section 03). */
+const INK = '#40322B';
+
 export const JOURNAL_PAGES = ['aim', 'finds', 'map'] as const;
 export type JournalPage = (typeof JOURNAL_PAGES)[number];
 
@@ -97,7 +100,10 @@ export class IslandView {
   }
 
   /** The island's things drawn in a scene now (recomputed once a tick, not every frame). */
-  props(world: WorldState, zone: Id): readonly { sheet: string; frame: string; x: number; y: number }[] {
+  props(
+    world: WorldState,
+    zone: Id,
+  ): readonly { sheet: string; frame: string; x: number; y: number }[] {
     if (this.#propsAt.tick !== world.tick || this.#propsAt.zone !== zone) {
       this.#props = islandProps(world, this.#h.ctx, zone);
       this.#propsAt = { tick: world.tick, zone };
@@ -111,7 +117,10 @@ export class IslandView {
     const ev = e as IslandEvent;
     switch (ev.type) {
       case 'ISLAND_SPOKE':
-        h.say(h.t('caption.format.subtitle', { speaker: h.t(ev.speakerKey), line: h.t(ev.lineKey) }), now);
+        h.say(
+          h.t('caption.format.subtitle', { speaker: h.t(ev.speakerKey), line: h.t(ev.lineKey) }),
+          now,
+        );
         return;
       case 'ISLAND_INFO':
         h.inform(ev.key, h.t(ev.key), now);
@@ -151,6 +160,8 @@ export class IslandView {
       tab.className = page === this.#page ? 'oe-journal-tab on' : 'oe-journal-tab';
       tab.dataset['page'] = page;
       tab.textContent = h.t(`ui.journal.tab.${page}`);
+      // The interface's style (Book 7 section 10): plain words, the open page underlined.
+      tab.style.cssText = `background:none;border:none;color:inherit;font:inherit;cursor:pointer;margin-right:1em;padding:0;text-decoration:${page === this.#page ? 'underline' : 'none'};opacity:${page === this.#page ? '1' : '0.7'}`;
       tab.addEventListener('click', () => {
         this.#page = page;
       });
@@ -159,7 +170,12 @@ export class IslandView {
     const foot = doc.createElement('p');
     foot.className = 'oe-journal-turn';
     foot.textContent = h.t('ui.journal.tabs', { prev: '←', next: '→' });
-    const body = this.#page === 'aim' ? this.#aimPage(world, aim) : this.#page === 'finds' ? this.#findsPage(world) : this.#mapPage(world);
+    const body =
+      this.#page === 'aim'
+        ? this.#aimPage(world, aim)
+        : this.#page === 'finds'
+          ? this.#findsPage(world)
+          : this.#mapPage(world);
     return [tabs, ...body, foot];
   }
 
@@ -261,6 +277,12 @@ export class IslandView {
       label.style.left = `${(at.x / MAP_W) * 100}%`;
       label.style.top = `${(at.y / MAP_H) * 100}%`;
       label.style.transform = 'translate(-50%, -50%)';
+      // Brown ink on the vellum, the caption font, no glow (Book 7 section 10).
+      label.style.color = INK;
+      label.style.textShadow = 'none';
+      label.style.fontSize = '0.8em';
+      label.style.whiteSpace = 'nowrap';
+      label.style.pointerEvents = 'none';
       wrap.append(label);
     }
     this.frame(world, performance.now());
@@ -270,14 +292,17 @@ export class IslandView {
   /** Each frame the journal is open on the map: the pen strokes and the pin. */
   frame(world: WorldState, now: number): void {
     const canvas = this.#canvas;
-    if (!this.#open || this.#page !== 'map' || canvas === null || !canvas.isConnected) return;
+    if (!this.#open || this.#page !== 'map' || !canvas?.isConnected) return;
     const onFoot = world.onFoot;
     const tile = onFoot === null ? 24 : (this.#h.ctx.maps.get(onFoot.zone)?.tile ?? 24);
     const seconds = now / 1000;
     for (const [z, since] of this.#inking) if (seconds - since > 5) this.#inking.delete(z);
     const rgba = this.#regionMap().compose({
       discovered: world.regions[this.#h.ctx.region]?.discoveredZones ?? [],
-      here: onFoot === null ? null : { zone: onFoot.zone, x: onFoot.player.x / tile, y: onFoot.player.y / tile },
+      here:
+        onFoot === null
+          ? null
+          : { zone: onFoot.zone, x: onFoot.player.x / tile, y: onFoot.player.y / tile },
       inking: this.#inking,
       seconds,
       reduced: this.#h.reducedMotion(),

@@ -2808,6 +2808,7 @@ export function startPlay(
         repairs: land.repairs ?? null,
         remarks: land.story4?.remarks ?? null,
         finds: land.finds ?? null,
+        island: land.island ?? null,
         raid: land.raid ?? null,
       },
       map,

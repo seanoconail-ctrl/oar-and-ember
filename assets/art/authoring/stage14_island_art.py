@@ -81,18 +81,10 @@ def prop_cell():
     size, pivot = (160, 116), (80, 112)
     back, front = I.cell_ring()
     frames = []
-    # The back half sorts at the ring's middle; its canvas is lifted so its floor lies above it.
-    rgb, m = np.zeros((116, 160, 3), np.float32), np.zeros((116, 160), bool)
-    for spr, key in ((back, 'back'), (front, 'front')):
-        rgb = np.zeros((116, 160, 3), np.float32)
-        m = np.zeros((116, 160), bool)
-        dx, dy = pivot[0] - spr.ax, pivot[1] - (spr.h - 6)
-        for y, x in zip(*np.nonzero(spr.mask)):
-            X, Y = x + dx, y + dy
-            if 0 <= X < 160 and 0 <= Y < 116:
-                rgb[Y, X] = spr.rgb[y, x]
-                m[Y, X] = True
-        frames.append(((key, 0), codes(rgb, m)))
+    # Each half stands on its own feet (art lint); the plan places the back half 5 px above
+    # the front so the two meet as drawn (zone_sk_geo.plan.json).
+    put(frames, 'back', 0, back, size, pivot)
+    put(frames, 'front', 0, front, size, pivot)
     put(frames, 'altar', 0, I.altar().padded(1), size, pivot)
     put(frames, 'cross', 0, I.cross_slab().padded(1), size, pivot)
     put(frames, 'cross_lit', 0, I.cross_slab(lit_edge=True).padded(1), size, pivot)
@@ -187,11 +179,11 @@ def door():
 
 
 def stake():
-    s = Sprite(6, 14, 3, 13)
-    for y in range(1, 13):
-        s.px(3, y, C('driftwood', 4 - (y > 10) * 2))
-        s.px(2, y, C('driftwood', 3))
-    s.px(3, 0, C('driftwood', 5))
+    s = Sprite(8, 16, 4, 15)
+    for y in range(2, 15):
+        s.px(4, y, C('driftwood', 4 - (y > 12) * 2))
+        s.px(3, y, C('driftwood', 3))
+    s.px(4, 1, C('driftwood', 5))
     return s.outline()
 
 
@@ -227,14 +219,15 @@ def turves():
 def waymark(k):
     """A waymark: a small cairn of stones piled by passers-by beside a way, each adding one
     (Chapter 1's waymark on the machair; Stage 14's along the island's ways, decision S14-45)."""
-    s = Sprite(26, 26, 13, 24)
+    s = Sprite(46, 28, 23, 25)
     layers = [(4, 9.5, 3.4), (3, 7.5, 3.0), (2, 5.6, 2.6), (1, 4.0, 2.2)][: 3 + (k % 2)]
     y = 21
     for row, (n, rx, ry) in enumerate(layers):
         for j in range(n):
-            cx = 13 + (j - (n - 1) / 2) * rx * 0.9 + (hash01(k, row, j) - 0.5) * 2
+            cx = 23 + (j - (n - 1) / 2) * rx * 0.9 + (hash01(k, row, j) - 0.5) * 2
             I.stone(s, cx, y, rx * 0.55, ry * 0.6, 'stone', 4.4 + hash01(k, row, j, 1) * 1.4, seed=k * 31 + row * 7 + j)
         y -= ry * 1.1
+    s.ay = 23
     for yy, xx in zip(*np.nonzero(s.mask)):
         if hash01(xx, yy, k + 5) < 0.06:
             s.rgb[yy, xx] = C('trefoil', 1.4)               # lichen

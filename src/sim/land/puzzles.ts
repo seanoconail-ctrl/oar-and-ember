@@ -27,14 +27,29 @@ import {
 import type { IslandContext, PassageState } from './islandConditions.ts';
 
 export type PuzzleEvent =
-  | { readonly type: 'PUZZLE_STATE'; readonly puzzle: Id; readonly from: string; readonly to: string }
+  | {
+      readonly type: 'PUZZLE_STATE';
+      readonly puzzle: Id;
+      readonly from: string;
+      readonly to: string;
+    }
   | { readonly type: 'PUZZLE_SOLVED'; readonly puzzle: Id; readonly fact: string }
   /** An information line (its string key) and the sound event played with it, if any. */
   | { readonly type: 'ISLAND_INFO'; readonly key: string; readonly sound?: string }
   /** A line spoken by someone who is not a person of the household (the drowned). */
-  | { readonly type: 'ISLAND_SPOKE'; readonly speakerKey: string; readonly lineKey: string; readonly order: number }
+  | {
+      readonly type: 'ISLAND_SPOKE';
+      readonly speakerKey: string;
+      readonly lineKey: string;
+      readonly order: number;
+    }
   /** A resident's line (as aims' PERSON_SPOKE). */
-  | { readonly type: 'PERSON_SPOKE'; readonly person: Id; readonly lineKey: string; readonly bark?: string }
+  | {
+      readonly type: 'PERSON_SPOKE';
+      readonly person: Id;
+      readonly lineKey: string;
+      readonly bark?: string;
+    }
   | { readonly type: 'TURNED_OUT'; readonly zone: Id; readonly x: number; readonly y: number };
 
 export type PuzzleEmit = (e: PuzzleEvent) => void;
@@ -52,7 +67,8 @@ export function applyEffects(
     if ('set' in e) world.facts[e.set] = e.value ?? true;
     else if ('info' in e) info = e.info;
     else if ('sound' in e) sound = e.sound;
-    else if ('item' in e) world.player.inventory[e.item] = (world.player.inventory[e.item] ?? 0) + 1;
+    else if ('item' in e)
+      world.player.inventory[e.item] = (world.player.inventory[e.item] ?? 0) + 1;
     else if ('deed' in e)
       appendDeed(world, {
         id: `DEED_${world.ledger.length + 1}`,
@@ -67,7 +83,8 @@ export function applyEffects(
         marksSeen: [],
       });
   }
-  if (info !== null) emit({ type: 'ISLAND_INFO', key: info, ...(sound === undefined ? {} : { sound }) });
+  if (info !== null)
+    emit({ type: 'ISLAND_INFO', key: info, ...(sound === undefined ? {} : { sound }) });
 }
 
 /** Runs each puzzle's transitions that hold now, one step each tick; solved facts once. */
@@ -75,7 +92,9 @@ export function stepPuzzles(world: WorldState, ctx: IslandContext, emit: PuzzleE
   const region = regionOf(world, ctx);
   for (const p of ctx.puzzles.puzzles) {
     const now = puzzleState(world, ctx, p.id);
-    const t = p.transitions.find((x) => x.from === now && x.when.every((c) => holds(world, ctx, c)));
+    const t = p.transitions.find(
+      (x) => x.from === now && x.when.every((c) => holds(world, ctx, c)),
+    );
     if (t === undefined) continue;
     region.puzzles[p.id] = t.to;
     emit({ type: 'PUZZLE_STATE', puzzle: p.id, from: t.from, to: t.to });
@@ -89,13 +108,20 @@ export function stepPuzzles(world: WorldState, ctx: IslandContext, emit: PuzzleE
 
 /** The puzzle uses that can be used now in a scene (their conditions hold). */
 export function puzzleUsesIn(world: WorldState, ctx: IslandContext, zone: Id): PuzzleUse[] {
-  return ctx.puzzles.uses.filter((u) => u.scene === zone && u.when.every((c) => holds(world, ctx, c)));
+  return ctx.puzzles.uses.filter(
+    (u) => u.scene === zone && u.when.every((c) => holds(world, ctx, c)),
+  );
 }
 
 /** Uses a puzzle place: its effects (a fact, its information line and sound, a deed, an item). */
-export function usePuzzle(world: WorldState, ctx: IslandContext, key: string, emit: PuzzleEmit): boolean {
+export function usePuzzle(
+  world: WorldState,
+  ctx: IslandContext,
+  key: string,
+  emit: PuzzleEmit,
+): boolean {
   const u = ctx.puzzles.uses.find((x) => x.key === key);
-  if (u === undefined || !u.when.every((c) => holds(world, ctx, c))) return false;
+  if (!u?.when.every((c) => holds(world, ctx, c))) return false;
   applyEffects(world, u.effects, emit, u.scene);
   if (u.verb === 'TAKE') world.facts[`use.${u.key}`] = true;
   return true;
@@ -137,15 +163,23 @@ export function speakDrowned(
   const who = d.order.find((x) => x.key === key);
   if (who === undefined) return false;
   const period = springTidesOf(world.calendar.day, ctx.b) ?? '';
-  const inPeriod = world.facts['skerry.drowned.period'] === period ? Number(world.facts['skerry.drowned.inPeriod'] ?? 0) : 0;
+  const inPeriod =
+    world.facts['skerry.drowned.period'] === period
+      ? Number(world.facts['skerry.drowned.inPeriod'] ?? 0)
+      : 0;
   world.facts['skerry.drowned.period'] = period;
   world.facts['skerry.drowned.inPeriod'] = inPeriod + 1;
   world.facts['skerry.drowned.count'] = Number(world.facts['skerry.drowned.count'] ?? 0) + 1;
   world.facts[`skerry.drowned.${key}`] = world.calendar.day;
   world.facts['skerry.drowned.met'] = true;
-  who.lines.forEach((lineKey, i) =>
-    emit({ type: 'ISLAND_SPOKE', speakerKey: i === 0 ? d.unmetKey : who.shortKey, lineKey, order: i }),
-  );
+  who.lines.forEach((lineKey, i) => {
+    emit({
+      type: 'ISLAND_SPOKE',
+      speakerKey: i === 0 ? d.unmetKey : who.shortKey,
+      lineKey,
+      order: i,
+    });
+  });
   return true;
 }
 
@@ -163,7 +197,9 @@ export function speakThorkel(world: WorldState, ctx: IslandContext, emit: Puzzle
   if (!thorkelHere(world, ctx)) return false;
   const t = ctx.puzzles.drowned.thorkel;
   world.facts['skerry.thorkel.spoken'] = world.calendar.day;
-  t.lines.forEach((lineKey, i) => emit({ type: 'ISLAND_SPOKE', speakerKey: t.shortKey, lineKey, order: i }));
+  t.lines.forEach((lineKey, i) => {
+    emit({ type: 'ISLAND_SPOKE', speakerKey: t.shortKey, lineKey, order: i });
+  });
   return true;
 }
 
@@ -237,7 +273,10 @@ export function turningWake(
 }
 
 /** The line the first resident met says after the turning (Runa's, else Hild's). */
-export function turnedOutLine(ctx: IslandContext, residents: readonly Id[]): { person: Id; lineKey: string } | null {
+export function turnedOutLine(
+  ctx: IslandContext,
+  residents: readonly Id[],
+): { person: Id; lineKey: string } | null {
   for (const [person, lineKey] of Object.entries(ctx.puzzles.turning.lines))
     if (residents.includes(person)) return { person, lineKey };
   return null;

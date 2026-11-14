@@ -150,8 +150,7 @@ export function bakeFlow(
     const id = pieces.length;
     const members = [start];
     piece[start] = id;
-    for (let q = 0; q < members.length; q++) {
-      const k = members[q] ?? 0;
+    for (const k of members) {
       const i = k % w;
       const j = (k - i) / w;
       for (const [dx, dy] of NEIGHBOURS) {
@@ -230,8 +229,7 @@ export function bakeFlow(
   }
   // The way down the channel: distance to the mouth through the water (a simple label-correcting
   // pass; streams are a few thousand samples).
-  for (let q = 0; q < queue.length; q++) {
-    const k = queue[q] ?? 0;
+  for (const k of queue) {
     const i = k % w;
     const j = (k - i) / w;
     const d = dist[k] ?? 0;

@@ -103,7 +103,13 @@ export function passageWater(
 ): PassageWater {
   const tide = tideAt(cal, b);
   const half = b.tide.tidalGroundWindowMinutes / 2;
-  const closed: PassageWater = { state: 'CLOSED', lowest: 'DEEP', pool: 'DEEP', floorOpen: false, sinceClose: null };
+  const closed: PassageWater = {
+    state: 'CLOSED',
+    lowest: 'DEEP',
+    pool: 'DEEP',
+    floorOpen: false,
+    sinceClose: null,
+  };
   if (!tide.springTide) return closed;
   if (tide.tidalGroundOpen)
     return {
@@ -148,18 +154,25 @@ export function pushedMoved(
   for (const r of Object.values(world.regions)) {
     const at = r.pushed?.[`${zone}/${id}`];
     if (at === undefined) continue;
-    return start === undefined || at.x !== start[0] || at.y !== start[1];
+    return at.x !== start?.[0] || at.y !== start[1];
   }
   return false;
 }
 
 /** The island's collectibles found, in the order found. */
-export function collectedList(world: WorldState, ctx: Pick<IslandContext, 'region'>): readonly string[] {
+export function collectedList(
+  world: WorldState,
+  ctx: Pick<IslandContext, 'region'>,
+): readonly string[] {
   return world.regions[ctx.region]?.collected ?? [];
 }
 
 /** How many loads a node has given since its count was last reset (a peat bank's season). */
-export function nodeTaken(world: WorldState, ctx: Pick<IslandContext, 'region'>, key: string): number {
+export function nodeTaken(
+  world: WorldState,
+  ctx: Pick<IslandContext, 'region'>,
+  key: string,
+): number {
   return world.regions[ctx.region]?.resourceNodes[key]?.taken ?? 0;
 }
 
@@ -171,7 +184,7 @@ function someoneNear(
   anyone: boolean,
 ): boolean {
   const onFoot = world.onFoot;
-  if (onFoot === null || onFoot.zone !== n.zone) return false;
+  if (onFoot?.zone !== n.zone) return false;
   const t = maps.get(n.zone)?.tile ?? 24;
   const close = (x: number, y: number): boolean => Math.hypot(x / t - n.x, y / t - n.y) <= n.r;
   if (close(onFoot.player.x, onFoot.player.y)) return true;
@@ -184,7 +197,10 @@ export function drownedDue(world: WorldState, ctx: IslandContext): string | null
   const period = springTidesOf(world.calendar.day, ctx.b);
   if (period === null) return null;
   const met = Number(world.facts['skerry.drowned.count'] ?? 0);
-  const inPeriod = world.facts['skerry.drowned.period'] === period ? Number(world.facts['skerry.drowned.inPeriod'] ?? 0) : 0;
+  const inPeriod =
+    world.facts['skerry.drowned.period'] === period
+      ? Number(world.facts['skerry.drowned.inPeriod'] ?? 0)
+      : 0;
   if (inPeriod >= ctx.ib.skerry.namesPerSpring) return null;
   const next = ctx.puzzles.drowned.order[met];
   if (next === undefined) return null;
@@ -207,7 +223,7 @@ export function holds(world: WorldState, ctx: IslandContext, c: IslandCondition)
     if (c.tide === 'LOW') return tide.tidalGroundOpen;
     return tide.tidalGroundOpen && tide.springTide;
   }
-  if ('season' in c) return (c.season as readonly Season[]).includes(seasonOf(world.calendar.day));
+  if ('season' in c) return c.season.includes(seasonOf(world.calendar.day));
   if ('days' in c) {
     const d = dayOfYear(world.calendar.day);
     return d >= c.days[0] && d <= c.days[1];
@@ -237,12 +253,17 @@ export function holds(world: WorldState, ctx: IslandContext, c: IslandCondition)
   if ('passage' in c) return passageWater(world.calendar, ctx.b, ctx.ib).state === c.passage;
   if ('drowned' in c) return drownedDue(world, ctx) === c.drowned;
   if ('deed' in c) return world.ledger.some((d) => d.tag === c.deed);
-  if ('discovered' in c) return world.regions[ctx.region]?.discoveredZones.includes(c.discovered) === true;
+  if ('discovered' in c)
+    return world.regions[ctx.region]?.discoveredZones.includes(c.discovered) === true;
   return false;
 }
 
 /** A puzzle's state now (its first state until it has moved). */
-export function puzzleState(world: WorldState, ctx: Pick<IslandContext, 'region' | 'puzzles'>, id: string): string {
+export function puzzleState(
+  world: WorldState,
+  ctx: Pick<IslandContext, 'region' | 'puzzles'>,
+  id: string,
+): string {
   const saved = world.regions[ctx.region]?.puzzles[id];
   if (saved !== undefined) return saved;
   return ctx.puzzles.puzzles.find((p) => p.id === id)?.states[0] ?? '';
@@ -250,5 +271,7 @@ export function puzzleState(world: WorldState, ctx: Pick<IslandContext, 'region'
 
 /** The seasons a day window touches (for the density walker's "in every season"). */
 export function seasonsOfDays(days: readonly [number, number]): Season[] {
-  return SEASONS.filter((_, i) => days[0] <= (i + 1) * DAYS_PER_SEASON && days[1] > i * DAYS_PER_SEASON);
+  return SEASONS.filter(
+    (_, i) => days[0] <= (i + 1) * DAYS_PER_SEASON && days[1] > i * DAYS_PER_SEASON,
+  );
 }

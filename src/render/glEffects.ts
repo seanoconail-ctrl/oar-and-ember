@@ -70,6 +70,7 @@ uniform int u_bayer[16];
 uniform sampler2D u_flow;
 uniform vec4 u_land;
 uniform vec3 u_snow[3];
+uniform vec3 u_stone[3];
 out vec4 outColour;
 ${NOISE}
 vec3 seaStep(float i) { return u_sea[int(clamp(i, 0.0, 10.0))]; }
@@ -146,8 +147,11 @@ void main() {
       return;
     }
     if (u_land.z > 0.5 && spd >= 0.3 && code < 0.7) {
-      // A dry summer: the running stretches shrink to their pools, leaving damp stones.
-      vec3 damp = bed * mix(0.7, 0.86, floor(vnoise(w / 3.0) * 3.0 + b) / 3.0);
+      // A dry summer: the running stretches shrink to their pools, leaving a bed of stones, damp
+      // and darker down its middle.
+      float stone = vnoise(w / 2.6) * 0.75 + vnoise(w / 7.0) * 0.25;
+      vec3 damp = stone < 0.42 ? u_stone[0] : stone < 0.62 ? u_stone[1] : u_stone[2];
+      if (bank > 2.2 && b < 0.5) damp = u_stone[0];
       if (u_sun > 0.2 && hash2(floor(w / 2.0) + floor(u_t * 3.0) * vec2(11.0, 3.0)) > 0.995) damp = mix(damp, u_glint, 0.5);
       outColour = vec4(damp / 255.0, 1.0);
       return;

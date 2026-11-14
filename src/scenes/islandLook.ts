@@ -63,7 +63,7 @@ export interface SeasonArt {
   readonly seasonless: Readonly<Record<string, string>>;
 }
 
-export const SEASON_ART: SeasonArt = seasonsJson as unknown as SeasonArt;
+export const SEASON_ART: SeasonArt = seasonsJson;
 
 /** The season of a calendar day and its day within the season (1 to 30). */
 export function seasonOfDay(day: number): { season: Season; day: number } {

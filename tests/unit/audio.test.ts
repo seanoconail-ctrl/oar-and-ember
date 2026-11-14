@@ -131,7 +131,8 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
 
   it('chooses ambience layers by zone and time of day', () => {
     const router = new AudioRouter(table, content.strings, new RecordingSink());
-    expect(router.setPlace('ZONE_SK_STRAND', 'day', 0)).toEqual(['AMB_SURF_SHINGLE']);
+    // Stage 14 (S14-100 to S14-104): the island's layers join each zone's beds.
+    expect(router.setPlace('ZONE_SK_STRAND', 'day', 0)).toEqual(['AMB_SURF_SHINGLE', 'AMB_STREAM']);
     // Stage 7: the steading's life by the part of the day; the hearth's crackle at any hour (its
     // level follows the distance to a lit fire).
     // Stage 10: the Kelda Spring is on the machair (its level follows the distance to its pool).
@@ -140,18 +141,26 @@ describe('cues and captions (Book 11 sections 07, 09 and 10)', () => {
       'AMB_HEARTH',
       'AMB_HOME_NIGHT',
       'AMB_KELDA_SPRING',
+      'AMB_SKYLARK',
+      'AMB_STREAM',
     ]);
     expect(router.setPlace('ZONE_SK_MACHAIR', 'dawn', 0)).toEqual([
       'AMB_WIND_HEATHER',
       'AMB_HEARTH',
       'AMB_HOME_DAWN',
       'AMB_KELDA_SPRING',
+      'AMB_SKYLARK',
+      'AMB_STREAM',
     ]);
     // Stage 10: each southern zone has its ambience (Book 11 section 12).
-    expect(router.setPlace('ZONE_SK_HAGSEAT', 'day', 0)).toEqual(['AMB_HAGSEAT_GALE']);
+    expect(router.setPlace('ZONE_SK_HAGSEAT', 'day', 0)).toEqual([
+      'AMB_HAGSEAT_GALE',
+      'AMB_BIRD_COLONY',
+    ]);
     expect(router.setPlace('ZONE_SK_CAIRN', 'day', 0)).toEqual([
       'AMB_WIND_HEATHER',
       'AMB_CAIRN_FOLD',
+      'AMB_SKYLARK',
     ]);
     expect(router.setPlace('ZONE_SK_MACHAIR', 'day', 0)).toContain('AMB_HOME_DAY');
     expect(router.setPlace('ZONE_SK_MACHAIR', 'dusk', 0)).toContain('AMB_HOME_DUSK');

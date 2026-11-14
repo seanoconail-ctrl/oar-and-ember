@@ -36,7 +36,7 @@ test.describe("the journal's finds and region map (Stage 14)", () => {
     await expect.poll(() => attr(page, 'journal-page'), { timeout: 10_000 }).toBe('finds');
     const report = page.locator('.oe-overlay [data-region=report]');
     await expect(report.locator('.oe-finds-kind[data-kind=LORE]')).toContainText('1 of 6');
-    await expect(report).toContainText('The Hag\'s Seat stone is wet when nothing else is.');
+    await expect(report).toContainText("The Hag's Seat stone is wet when nothing else is.");
     await expect(report).not.toContainText(/[A-Z]+_[A-Z_]+|[a-z]+\.[a-z_]+\.[a-z_]+/);
     mkdirSync('docs/art/stage-14', { recursive: true });
     writeFileSync('docs/art/stage-14/journal-finds.png', await page.screenshot());
@@ -49,7 +49,8 @@ test.describe("the journal's finds and region map (Stage 14)", () => {
     await page.waitForTimeout(1600);
     // Inked where found: the Hag's Seat's window is not the blank page; Gull Geo's still is.
     const inked = await page.evaluate(() => {
-      const c = document.querySelector('.oe-region-map canvas') as HTMLCanvasElement;
+      const c = document.querySelector<HTMLCanvasElement>('.oe-region-map canvas');
+      if (c === null) return null;
       const ctx = c.getContext('2d');
       if (ctx === null) return null;
       const at = (bx: number, by: number, bw: number, bh: number): number[] =>

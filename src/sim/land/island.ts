@@ -42,11 +42,13 @@ import type { ZoneMap } from './zoneMap.ts';
 
 export type { IslandContext } from './islandConditions.ts';
 
-export type IslandEvent = PuzzleEvent | DiscoveryEvent | NodeEvent | FindEvent | SideAimEvent | SideAimSpeech;
+export type IslandEvent =
+  PuzzleEvent | DiscoveryEvent | NodeEvent | FindEvent | SideAimEvent | SideAimSpeech;
 
 /** The island's context, or null where content or balance.json lacks Stage 14's parts. */
 export function islandContext(
-  content: Pick<Content, 'zoneMaps'> & Partial<Pick<Content, 'puzzles' | 'island' | 'finds' | 'opening'>>,
+  content: Pick<Content, 'zoneMaps'> &
+    Partial<Pick<Content, 'puzzles' | 'island' | 'finds' | 'opening'>>,
   balance: unknown,
 ): IslandContext | null {
   if (content.puzzles == null || content.island == null || !hasIslandBalance(balance)) return null;
@@ -73,13 +75,14 @@ export function islandContext(
 
 /** Everything Interact can do with the island's things in the scene in view. */
 export function islandUses(world: WorldState, ctx: IslandContext, map: ZoneMap): PlacedUse[] {
-  if (world.onFoot === null || world.onFoot.carrying !== null || world.talk !== null) return [];
+  if (world.onFoot?.carrying !== null || world.talk !== null) return [];
   const t = map.tile;
   const out: PlacedUse[] = [];
   for (const c of ctx.collectibles) {
     if (c.scene !== map.zone || !collectibleHere(world, ctx, c)) continue;
     // The drowned: only the one whose turn it is answers (all five share the skerry's place).
-    if (c.use === 'TALK' && out.some((u) => u.use.kind === 'FIND' && u.use.verb === 'TALK')) continue;
+    if (c.use === 'TALK' && out.some((u) => u.use.kind === 'FIND' && u.use.verb === 'TALK'))
+      continue;
     out.push({
       use: {
         kind: 'FIND',
@@ -101,7 +104,13 @@ export function islandUses(world: WorldState, ctx: IslandContext, map: ZoneMap):
   const d = ctx.puzzles.drowned;
   if (map.zone === d.scene && thorkelHere(world, ctx))
     out.push({
-      use: { kind: 'FIND', site: 'drowned:thorkel', take: false, nameKey: d.thorkel.nameKey, verb: 'TALK' },
+      use: {
+        kind: 'FIND',
+        site: 'drowned:thorkel',
+        take: false,
+        nameKey: d.thorkel.nameKey,
+        verb: 'TALK',
+      },
       x: d.thorkel.x * t,
       y: d.thorkel.y * t,
     });
@@ -208,6 +217,11 @@ export function islandProps(
   return [
     ...collectibleProps(world, ctx, zone),
     ...puzzleProps(world, ctx, zone).map((p) => ({ sheet: 'prop_collectibles', ...p })),
-    ...nodeProps(world, ctx, zone).map((p) => ({ sheet: 'prop_island_nodes', frame: p.frame, x: p.x, y: p.y })),
+    ...nodeProps(world, ctx, zone).map((p) => ({
+      sheet: 'prop_island_nodes',
+      frame: p.frame,
+      x: p.x,
+      y: p.y,
+    })),
   ];
 }

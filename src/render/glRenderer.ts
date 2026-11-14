@@ -215,6 +215,7 @@ function waterColours(palette: Palette): {
   glint: number[];
   kelp: number[];
   snow: number[];
+  stone: number[];
 } {
   const ramp = (name: string): number[][] =>
     (palette.ramps.get(name) ?? []).map((i) => [...(palette.entries[i]?.rgb ?? [0, 0, 0])]);
@@ -229,6 +230,8 @@ function waterColours(palette: Palette): {
     kelp: pick(ramp('kelp'), 1),
     // Snow in shadow, in half light and lit (Stage 14): the sky's pale steps and the sea's foam.
     snow: [pick(sky, 3), pick(sky, 5), pick(sea, 10)].flat(),
+    // A dry stream bed's stones (Stage 14): shadowed, middle and lit steps of the stone ramp.
+    stone: [pick(ramp('stone'), 3), pick(ramp('stone'), 5), pick(ramp('stone'), 6)].flat(),
   };
 }
 
@@ -340,7 +343,7 @@ export function createSceneRenderer(
     if (key === recoloured) return;
     recoloured = key;
     for (const atlas of atlases.values()) {
-      if (r === undefined || !r.sheets.has(atlas.manifest.sheet)) {
+      if (r?.sheets.has(atlas.manifest.sheet) !== true) {
         atlas.texture = atlas.base;
         continue;
       }
@@ -744,6 +747,7 @@ export function createSceneRenderer(
       land?.calm === true ? 1 : 0,
     );
     gl.uniform3fv(uniform(water, 'u_snow'), colours.snow);
+    gl.uniform3fv(uniform(water, 'u_stone'), colours.stone);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.activeTexture(gl.TEXTURE1);

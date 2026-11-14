@@ -138,6 +138,14 @@ describe('people sprites (Book 7 sections 01 and 07)', () => {
       fin_dane_l: 8,
       fin_club_s: 8,
       fin_club_l: 8,
+      // Stage 14 (decision S14-62): the movement verbs.
+      climb: 4,
+      swim: 4,
+      sink: 4,
+      crawl: 4,
+      push: 4,
+      pull: 4,
+      jump: 3,
     });
     expect(sheets.get('actor_c_hild')?.anims['down']?.frames).toBe(2);
     expect(sheets.get('actor_c_hild')?.anims['carried']?.frames).toBe(6);

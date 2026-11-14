@@ -34,7 +34,12 @@ export type IslandCondition =
     }
   | { readonly collected: string }
   | {
-      readonly near: { readonly zone: string; readonly x: number; readonly y: number; readonly r: number };
+      readonly near: {
+        readonly zone: string;
+        readonly x: number;
+        readonly y: number;
+        readonly r: number;
+      };
       readonly who?: 'STEERER' | 'ANYONE';
     }
   | { readonly zone: string }
@@ -111,25 +116,50 @@ export const islandCondition: Check<IslandCondition> = (value, path, ctx) => {
       if (!Array.isArray(v) || v.length === 0) return bad('"any" needs a list of conditions');
       return v.every((c, i) => islandCondition(c, `${path}.any[${i}]`, ctx) !== null) ? ok : null;
     case 'tide':
-      return v === 'LOW' || v === 'HIGH' || v === 'SPRING_LOW' ? ok : bad('"tide" is LOW, HIGH or SPRING_LOW');
+      return v === 'LOW' || v === 'HIGH' || v === 'SPRING_LOW'
+        ? ok
+        : bad('"tide" is LOW, HIGH or SPRING_LOW');
     case 'season':
-      return Array.isArray(v) && v.length > 0 && v.every((s) => (SEASONS as readonly unknown[]).includes(s))
+      return Array.isArray(v) &&
+        v.length > 0 &&
+        v.every((s) => (SEASONS as readonly unknown[]).includes(s))
         ? ok
         : bad('"season" needs a list of seasons');
     case 'days':
-      return Array.isArray(v) && v.length === 2 && v.every(isNum) ? ok : bad('"days" needs [from, to]');
+      return Array.isArray(v) && v.length === 2 && v.every(isNum)
+        ? ok
+        : bad('"days" needs [from, to]');
     case 'watch':
-      return ['Morning', 'Day', 'Evening', 'Night'].includes(v as string) ? ok : bad('"watch" needs a watch');
+      return ['Morning', 'Day', 'Evening', 'Night'].includes(v as string)
+        ? ok
+        : bad('"watch" needs a watch');
     case 'puzzle':
-      return typeof v === 'string' && Array.isArray(value['in']) && value['in'].every((s) => typeof s === 'string')
+      return typeof v === 'string' &&
+        Array.isArray(value['in']) &&
+        value['in'].every((s) => typeof s === 'string')
         ? ok
         : bad('"puzzle" needs an id and the states it may be "in"');
     case 'pushed':
-      return isRecord(v) && typeof v['zone'] === 'string' && typeof v['id'] === 'string' && typeof value['moved'] === 'boolean'
-        ? (ctx.refs.push({ kind: 'zone', id: v['zone'], file: ctx.file, path: `${path}.pushed.zone` }), ok)
+      return isRecord(v) &&
+        typeof v['zone'] === 'string' &&
+        typeof v['id'] === 'string' &&
+        typeof value['moved'] === 'boolean'
+        ? (ctx.refs.push({
+            kind: 'zone',
+            id: v['zone'],
+            file: ctx.file,
+            path: `${path}.pushed.zone`,
+          }),
+          ok)
         : bad('"pushed" needs {zone, id} and "moved"');
     case 'near':
-      if (!isRecord(v) || typeof v['zone'] !== 'string' || !isNum(v['x']) || !isNum(v['y']) || !isNum(v['r']))
+      if (
+        !isRecord(v) ||
+        typeof v['zone'] !== 'string' ||
+        !isNum(v['x']) ||
+        !isNum(v['y']) ||
+        !isNum(v['r'])
+      )
         return bad('"near" needs zone, x, y and r');
       ctx.refs.push({ kind: 'zone', id: v['zone'], file: ctx.file, path: `${path}.near.zone` });
       return ok;
@@ -140,7 +170,9 @@ export const islandCondition: Check<IslandCondition> = (value, path, ctx) => {
     case 'weather':
       return v === 'FOG' ? ok : bad('"weather" is FOG');
     case 'passage':
-      return v === 'OPEN' || v === 'FLOODING' || v === 'CLOSED' ? ok : bad('"passage" is OPEN, FLOODING or CLOSED');
+      return v === 'OPEN' || v === 'FLOODING' || v === 'CLOSED'
+        ? ok
+        : bad('"passage" is OPEN, FLOODING or CLOSED');
     case 'springDay':
     case 'festivalDawn':
     case 'atDoor':
@@ -168,8 +200,12 @@ export const islandEffect: Check<IslandEffect> = (value, path, ctx) => {
     ctx.refs.push({ kind: 'string', id: value['info'], file: ctx.file, path: `${path}.info` });
     return value as IslandEffect;
   }
-  if (typeof value['sound'] === 'string' || typeof value['deed'] === 'string') return value as IslandEffect;
-  if (typeof value['item'] === 'string') return id(['ITEM'])(value['item'], `${path}.item`, ctx) === null ? null : (value as IslandEffect);
+  if (typeof value['sound'] === 'string' || typeof value['deed'] === 'string')
+    return value as IslandEffect;
+  if (typeof value['item'] === 'string')
+    return id(['ITEM'])(value['item'], `${path}.item`, ctx) === null
+      ? null
+      : (value as IslandEffect);
   return bad('an effect is one of set, info, sound, deed, item');
 };
 
@@ -313,7 +349,12 @@ const puzzlesCheck = object({
     }),
   }),
   turning: object({
-    wake: object({ zone: ref('zone'), x: tiles, y: tiles, facing: oneOf(['n', 's', 'e', 'w'] as const) }),
+    wake: object({
+      zone: ref('zone'),
+      x: tiles,
+      y: tiles,
+      facing: oneOf(['n', 's', 'e', 'w'] as const),
+    }),
     cutOff: arrayOf(zoneRect),
     captionKey: ref('string'),
     lines: recordOf(id(['C']), ref('string')),
@@ -384,28 +425,46 @@ export function islandProblems(
     if ('puzzle' in c) {
       const s = states.get(c.puzzle);
       if (s === undefined) out.push({ path, reason: `unknown puzzle "${c.puzzle}"` });
-      else for (const st of c.in) if (!s.has(st)) out.push({ path, reason: `${c.puzzle} has no state "${st}"` });
+      else
+        for (const st of c.in)
+          if (!s.has(st)) out.push({ path, reason: `${c.puzzle} has no state "${st}"` });
     }
-    if ('collected' in c && !keys.has(c.collected)) out.push({ path, reason: `unknown collectible "${c.collected}"` });
+    if ('collected' in c && !keys.has(c.collected))
+      out.push({ path, reason: `unknown collectible "${c.collected}"` });
     if ('not' in c) check(c.not, `${path}.not`);
-    if ('any' in c) c.any.forEach((x, i) => check(x, `${path}.any[${i}]`));
+    if ('any' in c)
+      c.any.forEach((x, i) => {
+        check(x, `${path}.any[${i}]`);
+      });
   };
   puzzles.puzzles.forEach((p, i) => {
     const s = new Set(p.states);
     p.transitions.forEach((t, j) => {
       if (!s.has(t.from) || !s.has(t.to))
-        out.push({ path: `puzzles[${i}].transitions[${j}]`, reason: `a state not in ${p.id}'s states` });
-      t.when.forEach((c, k) => check(c, `puzzles[${i}].transitions[${j}].when[${k}]`));
+        out.push({
+          path: `puzzles[${i}].transitions[${j}]`,
+          reason: `a state not in ${p.id}'s states`,
+        });
+      t.when.forEach((c, k) => {
+        check(c, `puzzles[${i}].transitions[${j}].when[${k}]`);
+      });
     });
-    if (p.hints.length === 0) out.push({ path: `puzzles[${i}].hints`, reason: 'every puzzle has an in-world hint' });
+    if (p.hints.length === 0)
+      out.push({ path: `puzzles[${i}].hints`, reason: 'every puzzle has an in-world hint' });
     p.hints.forEach((h, j) => {
       if (h.kind === 'COLLECTIBLE' && !keys.has(h.ref))
         out.push({ path: `puzzles[${i}].hints[${j}]`, reason: `unknown collectible "${h.ref}"` });
     });
   });
-  puzzles.uses.forEach((u, i) => u.when.forEach((c, k) => check(c, `uses[${i}].when[${k}]`)));
+  puzzles.uses.forEach((u, i) => {
+    u.when.forEach((c, k) => {
+      check(c, `uses[${i}].when[${k}]`);
+    });
+  });
   collectibles.forEach((c, i) => {
-    (c.conditions ?? []).forEach((x, k) => check(x, `collectibles[${i}].conditions[${k}]`));
+    (c.conditions ?? []).forEach((x, k) => {
+      check(x, `collectibles[${i}].conditions[${k}]`);
+    });
     if (c.find !== undefined && !findKeys.has(c.find))
       out.push({ path: `collectibles[${i}].find`, reason: `unknown find "${c.find}"` });
   });

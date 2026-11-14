@@ -41,7 +41,9 @@ const fact = (a: SideAimDef, part = ''): string => `aim.side.${a.id}${part}`;
 
 /** The side aims given and not done, to list under the current aim (their journal keys). */
 export function openSideAims(world: WorldState, ctx: Pick<IslandContext, 'puzzles'>): string[] {
-  return ctx.puzzles.sideAims.filter((a) => world.facts[fact(a)] === 'GIVEN').map((a) => a.journalKey);
+  return ctx.puzzles.sideAims
+    .filter((a) => world.facts[fact(a)] === 'GIVEN')
+    .map((a) => a.journalKey);
 }
 
 /** One game minute of the side aims: done ones closed, due ones given, stuck ones hinted. */
@@ -56,7 +58,8 @@ export function sideAimsMinute(
     if (state === 'DONE') continue;
     if (a.doneWhen.every((c) => holds(world, ctx, c))) {
       world.facts[fact(a)] = 'DONE';
-      if (state === 'GIVEN') emit({ type: 'SIDE_AIM', aim: a.id, state: 'DONE', journalKey: a.journalKey });
+      if (state === 'GIVEN')
+        emit({ type: 'SIDE_AIM', aim: a.id, state: 'DONE', journalKey: a.journalKey });
       continue;
     }
     if (hooks.quiet) continue;

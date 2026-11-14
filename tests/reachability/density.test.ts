@@ -42,12 +42,16 @@ const { stopWithin, intervalTiles } = island.ib.density;
 const scenes = [...land.maps.keys()].filter((z) => z.startsWith('ZONE_SK_')).sort();
 
 /** Landmarks a plan draws that are worth stopping for (Book 9's points of interest). */
-const LANDMARK_SHEETS = /^(bld_|prop_cell|prop_greymen|prop_hagstone|prop_island|prop_finds|prop_broch|prop_boat|prop_sea_wreck|prop_skiff|prop_waymark)/;
+const LANDMARK_SHEETS =
+  /^(bld_|prop_cell|prop_greymen|prop_hagstone|prop_island|prop_finds|prop_broch|prop_boat|prop_sea_wreck|prop_skiff|prop_waymark)/;
 /** Wildlife that keeps to a place (stopKinds' anchored life). */
 const ANCHORED = new Set(['seal', 'gull_standing', 'cormorant', 'crab', 'spring']);
 
 function worldAt(day: number, low: boolean): WorldState {
-  const w = newCampaign('density', b, parsePeopleBasics(balance), content, { name: 'Ash', bodyModel: 'A' });
+  const w = newCampaign('density', b, parsePeopleBasics(balance), content, {
+    name: 'Ash',
+    bodyModel: 'A',
+  });
   for (let m = 0; m < 1440; m += 10) {
     const minute = (b.dayStart + m) % 1440;
     const t = tideAt({ day, minuteOfDay: minute }, b);
@@ -64,19 +68,31 @@ function worldAt(day: number, low: boolean): WorldState {
 function stops(w: WorldState, map: ZoneMap): { x: number; y: number; what: string }[] {
   const out: { x: number; y: number; what: string }[] = [];
   const zone = map.zone;
-  for (const f of content.finds?.finds ?? []) if (f.zone === zone) out.push({ x: f.x, y: f.y, what: `find ${f.key}` });
+  for (const f of content.finds?.finds ?? [])
+    if (f.zone === zone) out.push({ x: f.x, y: f.y, what: `find ${f.key}` });
   for (const c of island.collectibles)
-    if (c.scene === zone && c.find === undefined && (c.conditions ?? []).every((k) => holds(w, island, k)))
+    if (
+      c.scene === zone &&
+      c.find === undefined &&
+      (c.conditions ?? []).every((k) => holds(w, island, k))
+    )
       out.push({ x: c.pos.x, y: c.pos.y, what: `collectible ${c.key}` });
-  for (const u of island.puzzles.uses) if (u.scene === zone) out.push({ x: u.x, y: u.y, what: `puzzle ${u.key}` });
+  for (const u of island.puzzles.uses)
+    if (u.scene === zone) out.push({ x: u.x, y: u.y, what: `puzzle ${u.key}` });
   for (const p of island.puzzles.puzzles)
-    for (const m of p.marks ?? []) if (p.scenes.includes(zone)) out.push({ x: m.x, y: m.y, what: `${p.id} mark` });
+    for (const m of p.marks ?? [])
+      if (p.scenes.includes(zone)) out.push({ x: m.x, y: m.y, what: `${p.id} mark` });
   for (const n of island.island.nodes)
-    if (n.scene === zone && nodeExists(w, island, n)) out.push({ x: n.x, y: n.y, what: `node ${n.key}` });
-  for (const l of map.life) if (ANCHORED.has(l.kind)) out.push({ x: l.x, y: l.y, what: `life ${l.kind}` });
-  for (const p of map.props) if (LANDMARK_SHEETS.test(p.sheet)) out.push({ x: p.x, y: p.y, what: `landmark ${p.sheet}` });
-  for (const v of viewPointsOf(island, zone)) out.push({ x: v.at.x + v.at.w / 2, y: v.at.y + v.at.h / 2, what: 'view point' });
-  for (const s of content.camp?.sites ?? []) if (s.zone === zone) out.push({ x: s.x, y: s.y, what: `camp ${s.kind}` });
+    if (n.scene === zone && nodeExists(w, island, n))
+      out.push({ x: n.x, y: n.y, what: `node ${n.key}` });
+  for (const l of map.life)
+    if (ANCHORED.has(l.kind)) out.push({ x: l.x, y: l.y, what: `life ${l.kind}` });
+  for (const p of map.props)
+    if (LANDMARK_SHEETS.test(p.sheet)) out.push({ x: p.x, y: p.y, what: `landmark ${p.sheet}` });
+  for (const v of viewPointsOf(island, zone))
+    out.push({ x: v.at.x + v.at.w / 2, y: v.at.y + v.at.h / 2, what: 'view point' });
+  for (const s of content.camp?.sites ?? [])
+    if (s.zone === zone) out.push({ x: s.x, y: s.y, what: `camp ${s.kind}` });
   return out;
 }
 
@@ -88,7 +104,8 @@ function objectives(map: ZoneMap, tide: Tide): Tile[] {
     if (standable(map, t, tide)) out.push(t);
   };
   for (const u of island.puzzles.uses) if (u.scene === map.zone) add(u.x, u.y);
-  for (const p of island.puzzles.puzzles) if (p.scenes.includes(map.zone)) for (const m of p.marks ?? []) add(m.x, m.y);
+  for (const p of island.puzzles.puzzles)
+    if (p.scenes.includes(map.zone)) for (const m of p.marks ?? []) add(m.x, m.y);
   return out;
 }
 
@@ -97,7 +114,9 @@ function longestGap(path: readonly Tile[], points: readonly { x: number; y: numb
   let gap = 0;
   let worst = 0;
   for (const t of path) {
-    const seen = points.some((p) => Math.hypot(p.x - (t.tx + 0.5), p.y - (t.ty + 0.5)) <= stopWithin);
+    const seen = points.some(
+      (p) => Math.hypot(p.x - (t.tx + 0.5), p.y - (t.ty + 0.5)) <= stopWithin,
+    );
     gap = seen ? 0 : gap + 1;
     worst = Math.max(worst, gap);
   }
@@ -129,7 +148,9 @@ describe(`exploration density (Book 10 section 20): scenes walked: ${scenes.join
               if (path === null) continue;
               const gap = longestGap(path, points);
               if (gap > intervalTiles[1])
-                worst.push(`(${from.tx},${from.ty})->(${to.tx},${to.ty}): ${gap} tiles with nothing`);
+                worst.push(
+                  `(${from.tx},${from.ty})->(${to.tx},${to.ty}): ${gap} tiles with nothing`,
+                );
             }
           expect(worst).toEqual([]);
         });

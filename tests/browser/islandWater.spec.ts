@@ -143,10 +143,10 @@ test.describe('the island’s water and seasons (Stage 14)', () => {
     console.log(`Kelda's stream: continuous motion ${(m.share * 100).toFixed(1)}%`);
     expect(m.share).toBeGreaterThanOrEqual(MOTION_THRESHOLD);
     // Foam on the stream: pale foam steps (the sea ramp's top three) along its banks and stones.
-    const first = shots[0]!;
+    const first = shots[0] ?? new Uint8Array();
     let foam = 0;
     for (let i = 0; i < first.length; i += 4) {
-      const [r, g, bl] = [first[i]!, first[i + 1]!, first[i + 2]!];
+      const [r, g, bl] = [first[i], first[i + 1], first[i + 2]];
       if (
         (r === 0x93 && g === 0xb5 && bl === 0xb3) ||
         (r === 0xbf && g === 0xd4 && bl === 0xcd) ||
@@ -182,7 +182,7 @@ test.describe('the island’s water and seasons (Stage 14)', () => {
       const names = Object.keys(DAYS);
       for (let a = 0; a < frames.length; a++)
         for (let c = a + 1; c < frames.length; c++) {
-          const share = differ(frames[a]!, frames[c]!);
+          const share = differ(frames[a] ?? new Uint8Array(), frames[c] ?? new Uint8Array());
           console.log(`${z.zone} ${names[a]}-${names[c]}: ${(share * 100).toFixed(1)}%`);
           expect(share, `${z.zone} ${names[a]}-${names[c]}`).toBeGreaterThan(0.02);
         }

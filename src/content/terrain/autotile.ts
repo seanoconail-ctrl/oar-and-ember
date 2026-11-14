@@ -81,7 +81,7 @@ const ROUGHNESS: Readonly<Record<Layer, number>> = {
   c: 0.3,
   '=': 0.36,
   n: 0.3,
-  d: 0.2,
+  d: 0.24,
 };
 
 export function layerIndex(code: string): number {

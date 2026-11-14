@@ -374,13 +374,15 @@ describe('atlases', () => {
       (2 + 2 + 6 + 6 + 6 + 2) +
       // The user's third playtest (DG-2 to DG-10): the reel, a guard turned, the let-go gesture,
       // the red blow and its miss, and twelve finishers of eight frames (1348 frames).
-      (3 + 3 + 4 + 4 + 4 + 12 * 8);
+      (3 + 3 + 4 + 4 + 4 + 12 * 8) +
+      // Stage 14 (S14-62): climb, swim, sink, crawl, push, pull and jump (1456 frames).
+      (4 + 4 + 4 + 4 + 4 + 4 + 3);
     expect(Object.keys(manifest.frames)).toHaveLength(4 * perFacing);
     expect(new Set(Object.values(manifest.frames).map((p) => p.join())).size).toBe(4 * perFacing);
-    expect([image.width, image.height]).toEqual([37 * 32, 37 * 48]);
+    expect([image.width, image.height]).toEqual([39 * 32, 38 * 48]);
     expect(image.height).toBeLessThanOrEqual(MAX_ATLAS);
     expect(manifest.frames['idle/w/3']).toEqual([15 * 32, 0]);
-    expect(manifest.frames['run/s/7']).toEqual([21 * 32, 2 * 48]);
+    expect(manifest.frames['run/s/7']).toEqual([17 * 32, 2 * 48]);
   });
 });
 

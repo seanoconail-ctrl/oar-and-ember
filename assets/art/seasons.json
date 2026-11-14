@@ -118,7 +118,7 @@
       "snow": 0.3
     },
     "ZONE_SK_ROOK": {
-      "snow": 0.75,
+      "snow": 0.5,
       "shrink": ["Summer"]
     },
     "ZONE_SK_BOG": {

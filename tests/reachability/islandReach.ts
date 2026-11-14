@@ -19,11 +19,17 @@ export const HIGH: Tide = { low: false, spring: false };
 export const LOW: Tide = { low: true, spring: false };
 export const SPRING_LOW: Tide = { low: true, spring: true };
 
-export type Tile = { readonly tx: number; readonly ty: number };
+export interface Tile {
+  readonly tx: number;
+  readonly ty: number;
+}
 const key = (x: number, y: number): number => y * 4096 + x;
 
 /** Extra edges and open tiles the plan's marks give (a verb's way). */
-function verbGraph(map: ZoneMap, verbs: boolean): { open: Set<number>; edges: Map<number, number[]> } {
+function verbGraph(
+  map: ZoneMap,
+  verbs: boolean,
+): { open: Set<number>; edges: Map<number, number[]> } {
   const open = new Set<number>();
   const edges = new Map<number, number[]>();
   if (!verbs) return { open, edges };
@@ -42,7 +48,11 @@ function verbGraph(map: ZoneMap, verbs: boolean): { open: Set<number>; edges: Ma
 
 /** Whether a tile can be stood on under the tide (no verb). */
 export const standable = (map: ZoneMap, t: Tile, tide: Tide): boolean =>
-  t.tx >= 0 && t.ty >= 0 && t.tx < map.width && t.ty < map.height && !tileBlocks(map, t.tx, t.ty, tide.low, tide.spring);
+  t.tx >= 0 &&
+  t.ty >= 0 &&
+  t.tx < map.width &&
+  t.ty < map.height &&
+  !tileBlocks(map, t.tx, t.ty, tide.low, tide.spring);
 
 /** Every tile reached from `from` on foot under the tide, with the marked verbs if `verbs`. */
 export function reach(map: ZoneMap, from: readonly Tile[], tide: Tide, verbs = true): Set<number> {
@@ -60,7 +70,13 @@ export function reach(map: ZoneMap, from: readonly Tile[], tide: Tide, verbs = t
     const k = queue.pop() ?? 0;
     const x = k % 4096;
     const y = Math.floor(k / 4096);
-    const next = [key(x + 1, y), key(x - 1, y), key(x, y + 1), key(x, y - 1), ...(g.edges.get(k) ?? [])];
+    const next = [
+      key(x + 1, y),
+      key(x - 1, y),
+      key(x, y + 1),
+      key(x, y - 1),
+      ...(g.edges.get(k) ?? []),
+    ];
     for (const n of next) {
       if (seen.has(n)) continue;
       const t = { tx: n % 4096, ty: Math.floor(n / 4096) };
@@ -128,7 +144,8 @@ export function shortest(map: ZoneMap, a: Tile, b: Tile, tide: Tide = HIGH): Til
   }
   if (!prev.has(goal)) return null;
   const out: Tile[] = [];
-  for (let k = goal; k !== -1; k = prev.get(k) ?? -1) out.push({ tx: k % 4096, ty: Math.floor(k / 4096) });
+  for (let k = goal; k !== -1; k = prev.get(k) ?? -1)
+    out.push({ tx: k % 4096, ty: Math.floor(k / 4096) });
   return out.reverse();
 }
 
@@ -154,7 +171,14 @@ export function distanceTo(path: readonly Tile[], x: number, y: number): number 
 }
 
 /** Whether a point (tiles, at the foot) can be reached within `radius` tiles under the tide. */
-export function reachable(map: ZoneMap, x: number, y: number, radius: number, tide: Tide, verbs = true): boolean {
+export function reachable(
+  map: ZoneMap,
+  x: number,
+  y: number,
+  radius: number,
+  tide: Tide,
+  verbs = true,
+): boolean {
   const seen = reach(map, entries(map, tide), tide, verbs);
   for (let ty = Math.floor(y - radius - 1); ty <= y + radius + 1; ty++)
     for (let tx = Math.floor(x - radius - 1); tx <= x + radius + 1; tx++)

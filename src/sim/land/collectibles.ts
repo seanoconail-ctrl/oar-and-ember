@@ -21,7 +21,10 @@ import type { IslandContext } from './islandConditions.ts';
 import { speakDrowned, thorkelHere } from './puzzles.ts';
 import type { PuzzleEmit } from './puzzles.ts';
 
-export function collectible(ctx: Pick<IslandContext, 'collectibles'>, key: string): CollectibleDef | undefined {
+export function collectible(
+  ctx: Pick<IslandContext, 'collectibles'>,
+  key: string,
+): CollectibleDef | undefined {
   return ctx.collectibles.find((c) => c.key === key);
 }
 

@@ -55,16 +55,22 @@ function at(w: WorldState, day: number, low: boolean): void {
 }
 
 /** Days of the first year to look at: every fifth day and each season's first and last. */
-const DAYS = [...new Set([...Array.from({ length: 24 }, (_, i) => i * 5 + 1), 30, 31, 60, 61, 90, 91, 120])];
+const DAYS = [
+  ...new Set([...Array.from({ length: 24 }, (_, i) => i * 5 + 1), 30, 31, 60, 61, 90, 91, 120]),
+];
 
 describe('island resource nodes (Book 10 section 03; S14-15)', () => {
-  it('lie in each scene in Book 10\'s numbers', () => {
+  it("lie in each scene in Book 10's numbers", () => {
     const rows = parseNodeBalance(balance);
     for (const nb of rows.values()) {
       for (const [scene, n] of Object.entries(nb.perScene))
-        expect(nodes.filter((x) => x.kind === nb.kind && x.scene === scene).length, `${nb.kind} ${scene}`).toBe(n);
+        expect(
+          nodes.filter((x) => x.kind === nb.kind && x.scene === scene).length,
+          `${nb.kind} ${scene}`,
+        ).toBe(n);
       expect(nodes.filter((x) => x.kind === nb.kind).length, nb.kind).toBe(nb.count);
-      for (const x of nodes.filter((y) => y.kind === nb.kind)) expect(nb.scenes, x.key).toContain(x.scene);
+      for (const x of nodes.filter((y) => y.kind === nb.kind))
+        expect(nb.scenes, x.key).toContain(x.scene);
     }
   });
 
@@ -77,7 +83,8 @@ describe('island resource nodes (Book 10 section 03; S14-15)', () => {
           at(w, day, low);
           const season: Season = seasonOf(day);
           let expected = nb.seasons.includes(season);
-          if (nb.days !== undefined) expected &&= dayOfYear(day) >= nb.days[0] && dayOfYear(day) <= nb.days[1];
+          if (nb.days !== undefined)
+            expected &&= dayOfYear(day) >= nb.days[0] && dayOfYear(day) <= nb.days[1];
           if (nb.tide === 'LOW') expected &&= low;
           // A fishing rock in winter only on a calm day; no weather drawn here: not calm.
           if (nb.winterCalmOnly && season === 'Winter') expected = false;
@@ -90,8 +97,12 @@ describe('island resource nodes (Book 10 section 03; S14-15)', () => {
       const w = world();
       const nb = nodeBalance(ctx, n);
       const first = DAYS.find((d) => {
-        const ok = nb.seasons.includes(seasonOf(d)) && !(nb.winterCalmOnly && seasonOf(d) === 'Winter');
-        return ok && (nb.days === undefined || (dayOfYear(d) >= nb.days[0] && dayOfYear(d) <= nb.days[1]));
+        const ok =
+          nb.seasons.includes(seasonOf(d)) && !(nb.winterCalmOnly && seasonOf(d) === 'Winter');
+        return (
+          ok &&
+          (nb.days === undefined || (dayOfYear(d) >= nb.days[0] && dayOfYear(d) <= nb.days[1]))
+        );
       });
       expect(first).toBeDefined();
       const day = first ?? 1;
@@ -102,7 +113,9 @@ describe('island resource nodes (Book 10 section 03; S14-15)', () => {
       const stores = { ...home.stores };
       let minutes = 0;
       const events: string[] = [];
-      expect(gatherNode(w, ctx, n.key, { advance: (m) => (minutes += m) }, (e) => events.push(e.key))).toBe(true);
+      expect(
+        gatherNode(w, ctx, n.key, { advance: (m) => (minutes += m) }, (e) => events.push(e.key)),
+      ).toBe(true);
       expect(events).toEqual([n.key]);
       expect(minutes).toBe(nb.minutes);
       expect(home.fresh.reduce((s, f) => s + f.rd, 0)).toBeCloseTo(fresh + nb.yield.freshRd);
@@ -168,7 +181,7 @@ describe('island resource nodes (Book 10 section 03; S14-15)', () => {
     expect(nodeAvailable(w, ctx, kelp)).toBe(true);
   });
 
-  it('leaves the strand\'s driftwood to the dawn and the dawn to the driftwood (no shared keys)', () => {
+  it("leaves the strand's driftwood to the dawn and the dawn to the driftwood (no shared keys)", () => {
     const keys = new Set((content.camp?.sites ?? []).map((s) => s.key));
     for (const n of nodes) expect(keys.has(n.key), n.key).toBe(false);
   });

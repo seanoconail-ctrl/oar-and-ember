@@ -118,8 +118,9 @@ function parseSeasons(
   where: string,
   v: string,
 ): { seasons: Season[]; days?: [number, number]; winterCalmOnly: boolean } {
-  if (v.startsWith('Days ')) return { seasons: [...SEASONS], days: dayWindow(where, v), winterCalmOnly: false };
-  const calm = / \(winter on calm days only\)$/.test(v);
+  if (v.startsWith('Days '))
+    return { seasons: [...SEASONS], days: dayWindow(where, v), winterCalmOnly: false };
+  const calm = v.endsWith(' (winter on calm days only)');
   const list = v.replace(/ \(.*\)$/, '');
   const seasons = list.split(',').map((w) => seasonWord(where, w));
   return { seasons, winterCalmOnly: calm };
@@ -133,28 +134,47 @@ const RES_BY_WORD: Readonly<Record<string, string>> = {
   hide: 'RES_HIDE',
 };
 
-function parseYield(where: string, v: string, eggsKeep: number, fishKeep: number, fishRd: number): NodeYield {
+function parseYield(
+  where: string,
+  v: string,
+  eggsKeep: number,
+  fishKeep: number,
+  fishRd: number,
+): NodeYield {
   let m = /^(\d+(?:\.\d+)?) rd of fresh (?:greens|meat), keeping (\d+) days$/.exec(v);
   if (m !== null) return { freshRd: Number(m[1]), keepsDays: Number(m[2]), stores: {} };
   m = /^(\d+(?:\.\d+)?) rd of fresh meat and (\d+) hide$/.exec(v);
   // The seals' meat keeps as fresh meat does (the hares' 2 days, the only fresh meat in the table).
-  if (m !== null) return { freshRd: Number(m[1]), keepsDays: fishKeep, stores: { RES_HIDE: Number(m[2]) } };
+  if (m !== null)
+    return { freshRd: Number(m[1]), keepsDays: fishKeep, stores: { RES_HIDE: Number(m[2]) } };
   m = /^Eggs, (\d+(?:\.\d+)?) rd a climb \(Food items\)$/.exec(v);
   if (m !== null) return { freshRd: Number(m[1]), keepsDays: eggsKeep, stores: {} };
   m = /^(\d+) fresh fish a catch \(Food items\)$/.exec(v);
   if (m !== null) return { freshRd: Number(m[1]) * fishRd, keepsDays: fishKeep, stores: {} };
-  m = /^(\d+(?:\.\d+)?) (bundle of heather|bundle of bog cotton|load of kelp|load of wet peat)\b/.exec(v);
+  m =
+    /^(\d+(?:\.\d+)?) (bundle of heather|bundle of bog cotton|load of kelp|load of wet peat)\b/.exec(
+      v,
+    );
   if (m !== null) {
     const res = RES_BY_WORD[m[2] ?? ''];
     if (res !== undefined) return { freshRd: 0, keepsDays: 0, stores: { [res]: Number(m[1]) } };
   }
-  return fail(where, v, 'a yield Book 10 writes ("N rd of fresh greens, keeping N days", "N bundle of ...", ...)');
+  return fail(
+    where,
+    v,
+    'a yield Book 10 writes ("N rd of fresh greens, keeping N days", "N bundle of ...", ...)',
+  );
 }
 
 /** Book 10 "Driftwood finds" pickUp: the plain gathering a node with no minutes of its own takes. */
 function pickUp(json: unknown): { minutes: number; stamina: number } {
   const v = keyed(json, 'foodFuelAndSeasons', 'driftwoodFinds')('pickUp');
-  const m = match('driftwoodFinds.pickUp', v, /^(\d+) game minutes and (\d+) stamina/, '"N game minutes and N stamina"');
+  const m = match(
+    'driftwoodFinds.pickUp',
+    v,
+    /^(\d+) game minutes and (\d+) stamina/,
+    '"N game minutes and N stamina"',
+  );
   return { minutes: Number(m[1]), stamina: Number(m[2]) };
 }
 
@@ -166,9 +186,13 @@ function foodKeeps(json: unknown, item: string): number {
 }
 
 function fishRd(json: unknown): number {
-  const row = table(json, 'foodFuelAndSeasons', 'foodItems').find((r) => r['Item'] === 'Fresh fish');
+  const row = table(json, 'foodFuelAndSeasons', 'foodItems').find(
+    (r) => r['Item'] === 'Fresh fish',
+  );
   const v = row?.['Food value'] ?? '';
-  return Number(match('foodItems.Fresh fish', v, /^(\d+(?:\.\d+)?) rd per fish$/, '"N rd per fish"')[1]);
+  return Number(
+    match('foodItems.Fresh fish', v, /^(\d+(?:\.\d+)?) rd per fish$/, '"N rd per fish"')[1],
+  );
 }
 
 function shoreCatch(json: unknown): Record<Season, number> {
@@ -178,7 +202,9 @@ function shoreCatch(json: unknown): Record<Season, number> {
   const out = {} as Record<Season, number>;
   for (const s of SEASONS) {
     const v = row?.[s] ?? '';
-    out[s] = Number(match(`gatheringAndFishing.Fishing from shore.${s}`, v, /^(\d+)/, 'a number')[1]);
+    out[s] = Number(
+      match(`gatheringAndFishing.Fishing from shore.${s}`, v, /^(\d+)/, 'a number')[1],
+    );
   }
   return out;
 }
@@ -191,7 +217,8 @@ function minutesAndStamina(text: string): { minutes: number; stamina: number } |
 }
 
 /** "2 beds at the Kelda, 3 in the upper stream": a count with its noun, then counts that share it. */
-const COUNT_RE = /(\d+) (?:beds?|patches|forms|stands|ledges|banks|rocks)\b|, (\d+) (?:in|on|under|at)\b/g;
+const COUNT_RE =
+  /(\d+) (?:beds?|patches|forms|stands|ledges|banks|rocks)\b|, (\d+) (?:in|on|under|at)\b/g;
 
 export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalance> {
   const rows = table(json, 'foodFuelAndSeasons', 'islandResourceNodes');
@@ -202,7 +229,8 @@ export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalan
   const out = new Map<NodeKind, NodeBalance>();
   for (const r of rows) {
     const kind = r['Node'] as NodeKind;
-    if (!NODE_KINDS.includes(kind)) fail('islandResourceNodes.Node', r['Node'] ?? '', 'a known node');
+    if (!NODE_KINDS.includes(kind))
+      fail('islandResourceNodes.Node', r['Node'] ?? '', 'a known node');
     const where = `islandResourceNodes.${kind}`;
     const scenes = (r['Scenes'] ?? '')
       .split(',')
@@ -211,7 +239,12 @@ export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalan
     if (scenes.length === 0) fail(`${where}.Scenes`, r['Scenes'] ?? '', 'ZONE_ ids');
     const { seasons, days, winterCalmOnly } = parseSeasons(`${where}.Seasons`, r['Seasons'] ?? '');
     const tideText = r['Tide'] ?? '';
-    const tide = tideText === 'Any' ? 'ANY' : tideText === 'Low water' ? 'LOW' : fail(`${where}.Tide`, tideText, '"Any" or "Low water"');
+    const tide =
+      tideText === 'Any'
+        ? 'ANY'
+        : tideText === 'Low water'
+          ? 'LOW'
+          : fail(`${where}.Tide`, tideText, '"Any" or "Low water"');
     const respawn = r['Respawn'] ?? '';
     let respawnDays = 0;
     let afterStorm = false;
@@ -226,7 +259,9 @@ export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalan
       perSeason = Number(m[1]);
       respawnDays = 0;
     } else if (
-      (m = /^A bank gives (\d+) loads a season, then is cut back until the next (\w+)$/.exec(respawn)) !== null
+      (m = /^A bank gives (\d+) loads a season, then is cut back until the next (\w+)$/.exec(
+        respawn,
+      )) !== null
     ) {
       perSeason = Number(m[1]);
       resetSeason = seasonWord(`${where}.Respawn`, m[2] ?? '');
@@ -237,14 +272,16 @@ export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalan
     const yieldText = r['Yield'] ?? '';
     const cost = minutesAndStamina(notes) ?? minutesAndStamina(yieldText) ?? plain;
     const tools: string[] = [];
-    if (/taken with the bow/.test(notes)) tools.push('ITEM_BOW');
-    if (/Taken with a spear or an axe/.test(notes)) tools.push('ITEM_SPEAR', 'ITEM_AXE', 'ITEM_DANE_AXE');
-    if (/needs a peat spade/.test(notes)) tools.push('ITEM_SPADE');
-    if (/shore-fishing timed task/.test(notes)) tools.push('ITEM_LINE');
+    if (notes.includes('taken with the bow')) tools.push('ITEM_BOW');
+    if (notes.includes('Taken with a spear or an axe'))
+      tools.push('ITEM_SPEAR', 'ITEM_AXE', 'ITEM_DANE_AXE');
+    if (notes.includes('needs a peat spade')) tools.push('ITEM_SPADE');
+    if (notes.includes('shore-fishing timed task')) tools.push('ITEM_LINE');
     const counts = [...notes.matchAll(COUNT_RE)].map((c) => Number(c[1] ?? c[2]));
     // The seals have one place: the haul-out in the cove.
-    if (counts.length === 0 && /at the haul-out/.test(notes)) counts.push(1);
-    if (counts.length === 0) fail(`${where}.Notes`, notes, 'how many lie ("N beds", "N ledges", ...)');
+    if (counts.length === 0 && notes.includes('at the haul-out')) counts.push(1);
+    if (counts.length === 0)
+      fail(`${where}.Notes`, notes, 'how many lie ("N beds", "N ledges", ...)');
     const count = counts.reduce((a, b) => a + b, 0);
     // By scene where the notes give one count for each of its scenes, in their order.
     const perScene: Record<string, number> = {};
@@ -270,7 +307,8 @@ export function parseNodeBalance(json: unknown): ReadonlyMap<NodeKind, NodeBalan
       perScene,
     });
   }
-  for (const k of NODE_KINDS) if (!out.has(k)) throw new Error(`balance.json: islandResourceNodes has no ${k}`);
+  for (const k of NODE_KINDS)
+    if (!out.has(k)) throw new Error(`balance.json: islandResourceNodes has no ${k}`);
   return out;
 }
 
@@ -286,7 +324,12 @@ export interface DensityBalance {
 export function parseDensityBalance(json: unknown): DensityBalance {
   const k = keyed(json, 'explorationDensity', 'stoppingPoints');
   const within = match('stoppingPoints.stopWithin', k('stopWithin'), /^(\d+) tiles$/, '"N tiles"');
-  const gap = match('stoppingPoints.stopIntervalWalk', k('stopIntervalWalk'), /^(\d+) to (\d+) tiles$/, '"a to b tiles"');
+  const gap = match(
+    'stoppingPoints.stopIntervalWalk',
+    k('stopIntervalWalk'),
+    /^(\d+) to (\d+) tiles$/,
+    '"a to b tiles"',
+  );
   return { stopWithin: Number(within[1]), intervalTiles: [Number(gap[1]), Number(gap[2])] };
 }
 
@@ -307,7 +350,10 @@ export function parseCollectibleCounts(json: unknown): CollectibleCounts {
     if (v === undefined) throw new Error(`balance.json: skarvholmCollectibles has no ${k}`);
     return v;
   };
-  const n = (k: string): number => Number(match(`skarvholmCollectibles.${k}`, get(k), /^(?:Up to )?(\d+)$/, '"N" or "Up to N"')[1]);
+  const n = (k: string): number =>
+    Number(
+      match(`skarvholmCollectibles.${k}`, get(k), /^(?:Up to )?(\d+)$/, '"N" or "Up to N"')[1],
+    );
   return {
     shells: n('shells'),
     carvedStones: n('carvedStones'),
@@ -315,7 +361,9 @@ export function parseCollectibleCounts(json: unknown): CollectibleCounts {
     namesOfTheDead: n('namesOfTheDead'),
     songs: n('songs'),
     lore: n('lore'),
-    offPathTiles: Number(match('skarvholmCollectibles.offPath', get('offPath'), /^(\d+) tiles$/, '"N tiles"')[1]),
+    offPathTiles: Number(
+      match('skarvholmCollectibles.offPath', get('offPath'), /^(\d+) tiles$/, '"N tiles"')[1],
+    ),
   };
 }
 
@@ -331,11 +379,27 @@ export interface AlignmentBalance {
 
 export function parseAlignmentBalance(json: unknown): AlignmentBalance {
   const k = keyed(json, 'explorationDensity', 'greyMenAlignment');
-  const w = match('greyMenAlignment.alignmentWindow', k('alignmentWindow'), /^(\d+) game minutes from first light$/, '"N game minutes from first light"');
-  const days = match('greyMenAlignment.festivalMornings', k('festivalMornings'), /^Days ([\d, ]+) and (\d+) in Year 1$/, '"Days a, b, c and d in Year 1"');
-  const d = match('greyMenAlignment.doorWaitTiles', k('doorWaitTiles'), /^(\d+) tiles$/, '"N tiles"');
+  const w = match(
+    'greyMenAlignment.alignmentWindow',
+    k('alignmentWindow'),
+    /^(\d+) game minutes from first light$/,
+    '"N game minutes from first light"',
+  );
+  const days = match(
+    'greyMenAlignment.festivalMornings',
+    k('festivalMornings'),
+    /^Days ([\d, ]+) and (\d+) in Year 1$/,
+    '"Days a, b, c and d in Year 1"',
+  );
+  const d = match(
+    'greyMenAlignment.doorWaitTiles',
+    k('doorWaitTiles'),
+    /^(\d+) tiles$/,
+    '"N tiles"',
+  );
   const fog = k('alignmentFog');
-  if (!/^Fog hides the sun/.test(fog)) fail('greyMenAlignment.alignmentFog', fog, '"Fog hides the sun: ..."');
+  if (!fog.startsWith('Fog hides the sun'))
+    fail('greyMenAlignment.alignmentFog', fog, '"Fog hides the sun: ..."');
   return {
     windowMinutes: Number(w[1]),
     mornings: [...(days[1] ?? '').split(',').map((x) => Number(x.trim())), Number(days[2])],
@@ -355,12 +419,30 @@ export interface DeepPassageBalance {
 export function parseDeepPassageBalance(json: unknown): DeepPassageBalance {
   const k = keyed(json, 'explorationDensity', 'deepPassage');
   if (k('passageOpen') !== 'Spring-tide days only, inside tidalGroundWindow')
-    fail('deepPassage.passageOpen', k('passageOpen'), '"Spring-tide days only, inside tidalGroundWindow"');
+    fail(
+      'deepPassage.passageOpen',
+      k('passageOpen'),
+      '"Spring-tide days only, inside tidalGroundWindow"',
+    );
   if (k('lowestPointCloses') !== "At the window's close")
     fail('deepPassage.lowestPointCloses', k('lowestPointCloses'), `"At the window's close"`);
-  const pool = match('deepPassage.poolRises', k('poolRises'), /^Waist at (\d+) game minutes after the window's close, deep at (\d+)$/, '"Waist at N game minutes after the window\'s close, deep at N"');
-  const floor = match('deepPassage.floorCloses', k('floorCloses'), /^(\d+) game minutes after the window's close$/, '"N game minutes after the window\'s close"');
-  return { poolWaistAfter: Number(pool[1]), poolDeepAfter: Number(pool[2]), floorClosesAfter: Number(floor[1]) };
+  const pool = match(
+    'deepPassage.poolRises',
+    k('poolRises'),
+    /^Waist at (\d+) game minutes after the window's close, deep at (\d+)$/,
+    '"Waist at N game minutes after the window\'s close, deep at N"',
+  );
+  const floor = match(
+    'deepPassage.floorCloses',
+    k('floorCloses'),
+    /^(\d+) game minutes after the window's close$/,
+    '"N game minutes after the window\'s close"',
+  );
+  return {
+    poolWaistAfter: Number(pool[1]),
+    poolDeepAfter: Number(pool[2]),
+    floorClosesAfter: Number(floor[1]),
+  };
 }
 
 export interface SkerryBalance {
@@ -370,8 +452,16 @@ export interface SkerryBalance {
 export function parseSkerryBalance(json: unknown): SkerryBalance {
   const k = keyed(json, 'explorationDensity', 'skerryOfTheDrowned');
   if (k('causewayOpen') !== 'Spring-tide days only, inside tidalGroundWindow')
-    fail('skerryOfTheDrowned.causewayOpen', k('causewayOpen'), '"Spring-tide days only, inside tidalGroundWindow"');
-  return { namesPerSpring: Number(match('skerryOfTheDrowned.namesPerSpring', k('namesPerSpring'), /^(\d+)$/, 'a number')[1]) };
+    fail(
+      'skerryOfTheDrowned.causewayOpen',
+      k('causewayOpen'),
+      '"Spring-tide days only, inside tidalGroundWindow"',
+    );
+  return {
+    namesPerSpring: Number(
+      match('skerryOfTheDrowned.namesPerSpring', k('namesPerSpring'), /^(\d+)$/, 'a number')[1],
+    ),
+  };
 }
 
 export interface SecretsBalance {
@@ -387,9 +477,20 @@ export interface SecretsBalance {
 
 export function parseSecretsBalance(json: unknown): SecretsBalance {
   const k = keyed(json, 'explorationDensity', 'year1Secrets');
-  const shows = match('year1Secrets.bogOfferingShows', k('bogOfferingShows'), /^(\w+), once (\d+) loads of peat are cut from the bank at \(33, 13\)$/, '"<Season>, once N loads of peat are cut from the bank at (33, 13)"');
-  if (k('bogOfferingLeft') !== 'Nothing but its story') fail('year1Secrets.bogOfferingLeft', k('bogOfferingLeft'), '"Nothing but its story"');
-  const taken = match('year1Secrets.bogOfferingTaken', k('bogOfferingTaken'), /^A bronze cauldron, worth (\d+) oz of silver in trade$/, '"A bronze cauldron, worth N oz of silver in trade"');
+  const shows = match(
+    'year1Secrets.bogOfferingShows',
+    k('bogOfferingShows'),
+    /^(\w+), once (\d+) loads of peat are cut from the bank at \(33, 13\)$/,
+    '"<Season>, once N loads of peat are cut from the bank at (33, 13)"',
+  );
+  if (k('bogOfferingLeft') !== 'Nothing but its story')
+    fail('year1Secrets.bogOfferingLeft', k('bogOfferingLeft'), '"Nothing but its story"');
+  const taken = match(
+    'year1Secrets.bogOfferingTaken',
+    k('bogOfferingTaken'),
+    /^A bronze cauldron, worth (\d+) oz of silver in trade$/,
+    '"A bronze cauldron, worth N oz of silver in trade"',
+  );
   for (const key of ['behindTheFalls', 'oldNaust'])
     if (k(key) !== 'A carved stone') fail(`year1Secrets.${key}`, k(key), '"A carved stone"');
   return {

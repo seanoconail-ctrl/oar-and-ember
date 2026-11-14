@@ -31,7 +31,13 @@ const scenes = [...land.maps.keys()].filter((z) => z.startsWith('ZONE_SK_')).sor
  * No tide reaches them: Rook Hill and the bog (Book 9 section 03, "No tide"), the machair and the
  * cairn's ground inland, and the west cliffs, whose foot "is surf at every tide" (decision S14-83).
  */
-const TIDELESS = new Set(['ZONE_SK_ROOK', 'ZONE_SK_BOG', 'ZONE_SK_MACHAIR', 'ZONE_SK_CAIRN', 'ZONE_SK_CLIFFS']);
+const TIDELESS = new Set([
+  'ZONE_SK_ROOK',
+  'ZONE_SK_BOG',
+  'ZONE_SK_MACHAIR',
+  'ZONE_SK_CAIRN',
+  'ZONE_SK_CLIFFS',
+]);
 const TIDAL = new Set(['flats', 'causeway', 'springfloor', 'foreshore']);
 
 describe(`every scene changes with season and tide (scenes: ${scenes.join(', ')})`, () => {
@@ -41,11 +47,15 @@ describe(`every scene changes with season and tide (scenes: ${scenes.join(', ')}
     it(`${zone}: changes with the tide${TIDELESS.has(zone) ? ' (Book 9: no tide)' : ''}`, () => {
       if (TIDELESS.has(zone)) return;
       const ground = map.rows.some((r) =>
-        Array.from(r).some((c) => TIDAL.has(TERRAIN[c as keyof typeof TERRAIN] ?? '')),
+        Array.from(r).some((c) => TIDAL.has(TERRAIN[c as keyof typeof TERRAIN])),
       );
       const tideThings =
-        island.island.nodes.some((n) => n.scene === zone && island.ib.nodes.get(n.kind)?.tide === 'LOW') ||
-        island.collectibles.some((c) => c.scene === zone && JSON.stringify(c.conditions ?? []).includes('"tide"')) ||
+        island.island.nodes.some(
+          (n) => n.scene === zone && island.ib.nodes.get(n.kind)?.tide === 'LOW',
+        ) ||
+        island.collectibles.some(
+          (c) => c.scene === zone && JSON.stringify(c.conditions ?? []).includes('"tide"'),
+        ) ||
         zone === island.puzzles.passage.zone ||
         island.puzzles.turning.cutOff.some((r) => r.zone === zone);
       expect(ground || tideThings).toBe(true);
@@ -53,13 +63,23 @@ describe(`every scene changes with season and tide (scenes: ${scenes.join(', ')}
     it(`${zone}: changes with the season`, () => {
       const seasonal = island.island.nodes.some((n) => {
         const nb = island.ib.nodes.get(n.kind);
-        return n.scene === zone && nb !== undefined && (nb.seasons.length < SEASONS.length || nb.days !== undefined);
+        return (
+          n.scene === zone &&
+          nb !== undefined &&
+          (nb.seasons.length < SEASONS.length || nb.days !== undefined)
+        );
       });
       const drawn = seasons.zones[zone] !== undefined || seasons.default !== undefined;
       const exception = seasons.seasonless?.[zone];
       // The cairn's inside: no season but the festival sun through its east door (the alignment).
       if (exception !== undefined) {
-        expect(island.puzzles.puzzles.some((p) => p.scenes.includes(zone) && p.transitions.some((t) => t.when.some((c) => 'festivalDawn' in c)))).toBe(true);
+        expect(
+          island.puzzles.puzzles.some(
+            (p) =>
+              p.scenes.includes(zone) &&
+              p.transitions.some((t) => t.when.some((c) => 'festivalDawn' in c)),
+          ),
+        ).toBe(true);
         return;
       }
       expect(seasonal || drawn).toBe(true);

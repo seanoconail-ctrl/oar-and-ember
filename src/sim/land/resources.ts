@@ -142,7 +142,8 @@ export function gatherNode(
   // A node with no respawn (the seals, a peat bank, a rock) waits only for its limits.
   const nextDay = nb.respawnDays > 0 ? day + nb.respawnDays : day;
   region.resourceNodes[n.key] = { nextDay, taken, since };
-  if (nb.yield.freshRd > 0) home.fresh.push({ rd: nb.yield.freshRd, day, keeps: nb.yield.keepsDays });
+  if (nb.yield.freshRd > 0)
+    home.fresh.push({ rd: nb.yield.freshRd, day, keeps: nb.yield.keepsDays });
   for (const [res, amount] of Object.entries(nb.yield.stores))
     home.stores[res] = (home.stores[res] ?? 0) + amount;
   if (n.kind === 'seals') world.facts['sealsKilled'] = Number(world.facts['sealsKilled'] ?? 0) + 1;

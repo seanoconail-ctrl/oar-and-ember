@@ -3,38 +3,178 @@
   "about": "Naust Cove (Book 4 section 02; Book 9 sections 03 and 05; Stage 14, decisions S14-1, S14-5, S14-21 and S14-37): blocks 24 to 35 by 24 to 31, south of the Hollow Cairn's ground and east of Wreck Strand, expanded by src/tools/levels/zones.ts. The cove's beach of shingle and sand at its north-east with landing N2 at block (32, 24); the boatshed plot pegged out on the turf west of the beach; the line of old stones in the turf leading west to the old naust, its fallen boat-hollow and its lintel cut with a ship; the flats bare at low water and under the sea at high; the fishing rocks on the cove's two points and the west rocks with the low-water pocket under them. Edit this plan, not the generated map, then run npm run zones.",
   "seed": "zone_sk_naust",
   "terrainSeed": "zone_sk_strand",
-  "blocks": { "x": 24, "y": 24, "w": 12, "h": 8 },
+  "blocks": {
+    "x": 24,
+    "y": 24,
+    "w": 12,
+    "h": 8
+  },
   "warpTiles": 3,
   "tideLineTiles": 3,
   "sward": 0.62,
   "tussock": 0.45,
   "crevices": 0.3,
   "carve": [
-    { "code": "~", "ellipse": { "x": 84, "y": 30, "rx": 9, "ry": 10 }, "rough": 0.5 },
-    { "code": "-", "ellipse": { "x": 80, "y": 20, "rx": 13, "ry": 6 }, "rough": 0.5 },
-    { "code": "r", "ellipse": { "x": 66.5, "y": 21.5, "rx": 3.2, "ry": 2.2 }, "rough": 0.45 },
-    { "code": "r", "ellipse": { "x": 93, "y": 21, "rx": 3, "ry": 2.4 }, "rough": 0.45 },
-    { "code": "r", "ellipse": { "x": 26, "y": 37.5, "rx": 4.5, "ry": 2.0 }, "rough": 0.5 },
-    { "code": ".", "ellipse": { "x": 28.5, "y": 35.0, "rx": 3.5, "ry": 1.2 }, "rough": 0.2 }
+    {
+      "code": "~",
+      "ellipse": {
+        "x": 84,
+        "y": 30,
+        "rx": 9,
+        "ry": 10
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "-",
+      "ellipse": {
+        "x": 80,
+        "y": 20,
+        "rx": 13,
+        "ry": 6
+      },
+      "rough": 0.5
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 66.5,
+        "y": 21.5,
+        "rx": 3.2,
+        "ry": 2.2
+      },
+      "rough": 0.45
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 93,
+        "y": 21,
+        "rx": 3,
+        "ry": 2.4
+      },
+      "rough": 0.45
+    },
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 27.6,
+        "y": 37.0,
+        "rx": 4.6,
+        "ry": 2.5
+      },
+      "rough": 0.5
+    },
+    {
+      "code": ".",
+      "ellipse": {
+        "x": 28.5,
+        "y": 35.0,
+        "rx": 3.5,
+        "ry": 1.2
+      },
+      "rough": 0.2
+    }
   ],
   "outcrops": [],
-  "spawns": { "P_STEERER": { "x": 40.5, "y": 4.5, "facing": "s" } },
+  "spawns": {
+    "P_STEERER": {
+      "x": 40.5,
+      "y": 4.5,
+      "facing": "s"
+    }
+  },
   "props": [
-    { "sheet": "prop_island", "frame": "stake/-/0", "x": 40.0, "y": 3.2 },
-    { "sheet": "prop_island", "frame": "stake/-/0", "x": 49.0, "y": 3.2 },
-    { "sheet": "prop_island", "frame": "stake/-/0", "x": 40.0, "y": 8.6 },
-    { "sheet": "prop_island", "frame": "stake/-/0", "x": 49.0, "y": 8.6 },
-    { "sheet": "prop_island", "frame": "timbers/-/0", "x": 44.6, "y": 10.6 },
-    { "sheet": "prop_island", "frame": "naust0/-/0", "x": 37.2, "y": 6.2 },
-    { "sheet": "prop_island", "frame": "naust1/-/0", "x": 35.4, "y": 5.4 },
-    { "sheet": "prop_island", "frame": "naust2/-/0", "x": 33.5, "y": 4.9 },
-    { "sheet": "prop_island", "frame": "naust3/-/0", "x": 31.6, "y": 4.6 },
-    { "sheet": "prop_island", "frame": "naust1/-/0", "x": 29.8, "y": 4.4 },
-    { "sheet": "prop_island", "frame": "naust0/-/0", "x": 25.0, "y": 2.4 },
-    { "sheet": "prop_island", "frame": "naust2/-/0", "x": 23.6, "y": 3.4 },
-    { "sheet": "prop_island", "frame": "naust3/-/0", "x": 25.2, "y": 6.0 },
-    { "sheet": "prop_island", "frame": "naust1/-/0", "x": 28.2, "y": 6.2 },
-    { "sheet": "prop_island", "frame": "lintel/-/0", "x": 27.0, "y": 4.9 }
+    {
+      "sheet": "prop_island",
+      "frame": "stake/-/0",
+      "x": 40.0,
+      "y": 3.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "stake/-/0",
+      "x": 49.0,
+      "y": 3.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "stake/-/0",
+      "x": 40.0,
+      "y": 8.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "stake/-/0",
+      "x": 49.0,
+      "y": 8.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "timbers/-/0",
+      "x": 44.6,
+      "y": 10.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust0/-/0",
+      "x": 37.2,
+      "y": 6.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 35.4,
+      "y": 5.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust2/-/0",
+      "x": 33.5,
+      "y": 4.9
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust3/-/0",
+      "x": 31.6,
+      "y": 4.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 29.8,
+      "y": 4.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust0/-/0",
+      "x": 25.0,
+      "y": 2.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust2/-/0",
+      "x": 23.6,
+      "y": 3.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust3/-/0",
+      "x": 25.2,
+      "y": 6.0
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "naust1/-/0",
+      "x": 28.2,
+      "y": 6.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "lintel/-/0",
+      "x": 27.0,
+      "y": 4.9
+    }
   ],
   "cuts": [[56, 63]],
   "paths": [
@@ -46,22 +186,78 @@
     ]
   ],
   "links": [
-    { "edge": "w", "to": "ZONE_SK_STRAND" },
-    { "edge": "n", "to": "ZONE_SK_CAIRN" },
-    { "edge": "e", "to": "ZONE_SK_SKERRY" }
+    {
+      "edge": "w",
+      "to": "ZONE_SK_STRAND"
+    },
+    {
+      "edge": "n",
+      "to": "ZONE_SK_CAIRN"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_SKERRY"
+    }
   ],
   "life": [
-    { "kind": "gull", "x": 72, "y": 22, "r": 4 },
-    { "kind": "gull", "x": 40, "y": 30, "r": 5 },
-    { "kind": "gull", "x": 20, "y": 44, "r": 4 },
-    { "kind": "gull_standing", "x": 66.4, "y": 20.6 },
-    { "kind": "gull_standing", "x": 93.2, "y": 20.2 },
-    { "kind": "gull_standing", "x": 24.8, "y": 36.6 },
-    { "kind": "cormorant", "x": 27.6, "y": 37.2 },
-    { "kind": "seal", "x": 84, "y": 31 },
-    { "kind": "seal", "x": 52, "y": 50 },
-    { "kind": "crab", "x": 30.4, "y": 33.8 },
-    { "kind": "crab", "x": 70.2, "y": 23.6 }
+    {
+      "kind": "gull",
+      "x": 72,
+      "y": 22,
+      "r": 4
+    },
+    {
+      "kind": "gull",
+      "x": 40,
+      "y": 30,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 20,
+      "y": 44,
+      "r": 4
+    },
+    {
+      "kind": "gull_standing",
+      "x": 66.4,
+      "y": 20.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 93.2,
+      "y": 20.2
+    },
+    {
+      "kind": "gull_standing",
+      "x": 24.8,
+      "y": 36.6
+    },
+    {
+      "kind": "cormorant",
+      "x": 27.6,
+      "y": 37.2
+    },
+    {
+      "kind": "seal",
+      "x": 84,
+      "y": 31
+    },
+    {
+      "kind": "seal",
+      "x": 52,
+      "y": 50
+    },
+    {
+      "kind": "crab",
+      "x": 30.4,
+      "y": 33.8
+    },
+    {
+      "kind": "crab",
+      "x": 70.2,
+      "y": 23.6
+    }
   ],
   "areas": [],
   "viewPoints": []

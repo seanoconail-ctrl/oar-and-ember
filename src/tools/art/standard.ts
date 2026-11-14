@@ -166,7 +166,11 @@ export function grassDensity(map: ZoneMap): { perTile: number; barestBlock: numb
   for (const [, x, y] of map.decals) add(x, y);
   let grass = 0;
   let plantsOnGrass = 0;
-  const isGrass = (tx: number, ty: number): boolean => map.rows[ty]?.[tx] === ',';
+  // Stage 14 (decision S14-46): the moor's heather is held to the grass's numbers too.
+  const isGrass = (tx: number, ty: number): boolean => {
+    const c = map.rows[ty]?.[tx];
+    return c === ',' || c === 'h';
+  };
   for (const [, x, y] of map.plants)
     if (isGrass(Math.floor(x / T), Math.floor(y / T))) plantsOnGrass++;
   for (let ty = 0; ty < map.height; ty++)
@@ -192,7 +196,11 @@ export function grassDensity(map: ZoneMap): { perTile: number; barestBlock: numb
       barest = Math.min(barest, n);
     }
   }
-  return { perTile: grass === 0 ? 0 : plantsOnGrass / grass, barestBlock: barest };
+  // A place with no grass or heather at all (a cave) has nothing for the rule to hold to.
+  return {
+    perTile: grass === 0 ? Number.POSITIVE_INFINITY : plantsOnGrass / grass,
+    barestBlock: barest,
+  };
 }
 
 export function densityProblems(map: ZoneMap): StandardProblem[] {

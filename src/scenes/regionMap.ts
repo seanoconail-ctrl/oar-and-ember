@@ -81,7 +81,10 @@ export class RegionMap {
       if (a === undefined || at === undefined) return out;
       const src = new Uint32Array(a.rgba.buffer, a.rgba.byteOffset, a.rgba.byteLength >> 2);
       for (let y = 0; y < MAP_H; y++)
-        out.set(src.subarray((at[1] + y) * a.width + at[0], (at[1] + y) * a.width + at[0] + MAP_W), y * MAP_W);
+        out.set(
+          src.subarray((at[1] + y) * a.width + at[0], (at[1] + y) * a.width + at[0] + MAP_W),
+          y * MAP_W,
+        );
       return out;
     };
     this.#vellum = read('vellum');
@@ -94,7 +97,10 @@ export class RegionMap {
       const src = new Uint32Array(p.rgba.buffer, p.rgba.byteOffset, p.rgba.byteLength >> 2);
       const data = new Uint32Array(m.width * m.height);
       for (let y = 0; y < m.height; y++)
-        data.set(src.subarray((pat[1] + y) * p.width + pat[0], (pat[1] + y) * p.width + pat[0] + m.width), y * m.width);
+        data.set(
+          src.subarray((pat[1] + y) * p.width + pat[0], (pat[1] + y) * p.width + pat[0] + m.width),
+          y * m.width,
+        );
       this.#pin = { w: m.width, h: m.height, px: m.pivot.x, py: m.pivot.y, data };
     }
     const own = (id: Id, r: Rect): number => {
@@ -147,7 +153,9 @@ export class RegionMap {
   /** Where a name is written on the page (null if not discovered or no place for it). */
   labelAt(id: Id): { x: number; y: number } | null {
     const l = this.#layout.labels[id];
-    return l === undefined ? null : { x: MAP_OX + (l.x + 0.5) * BLOCK_PX, y: MAP_OY + (l.y + 0.5) * BLOCK_PX };
+    return l === undefined
+      ? null
+      : { x: MAP_OX + (l.x + 0.5) * BLOCK_PX, y: MAP_OY + (l.y + 0.5) * BLOCK_PX };
   }
 
   /** How far a scene's stroke has come, 0..1 (1: inked; reduced motion: at once). */
@@ -185,7 +193,8 @@ export class RegionMap {
       }
     }
     const pin = this.#pin;
-    const at = scene.here === null ? null : this.pagePoint(scene.here.zone, scene.here.x, scene.here.y);
+    const at =
+      scene.here === null ? null : this.pagePoint(scene.here.zone, scene.here.x, scene.here.y);
     if (pin !== null && at !== null && found.has(scene.here?.zone ?? '')) {
       const ox = Math.round(at.x) - pin.px;
       const oy = Math.round(at.y) - pin.py;

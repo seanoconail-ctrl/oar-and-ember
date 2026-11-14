@@ -43,6 +43,12 @@ const anims: SheetAnims = new Map(sheetList.map((s) => [s.name, s.anims]));
 const maps = loadZoneMaps().filter((m) => m.zone.startsWith('ZONE_SK_'));
 const balance = loadBalanceJson();
 const { content } = loadContentFromDisk();
+/** The value, or a thrown error naming what was missing. */
+function must<T>(v: T | null | undefined, what = 'value'): T {
+  if (v === null || v === undefined) throw new Error(`no ${what}`);
+  return v;
+}
+
 /** A day in each season (the calendar's 30-day seasons): mid-season, outside the bloom. */
 const DAY: Readonly<Record<(typeof SEASONS)[number], number>> = {
   Spring: 10,
@@ -86,8 +92,8 @@ describe('the streams’ flow (Book 9 section 01; S14-90 to S14-93)', () => {
     const f = bakeFlow(m.rows, e, {});
     const run = flowAt(f, 12.9 * 24, 18 * 24);
     expect(run).not.toBeNull();
-    expect(run!.dy).toBeGreaterThan(0.8);
-    expect(run!.speed).toBeGreaterThan(POOL_SPEED);
+    expect(must(run).dy).toBeGreaterThan(0.8);
+    expect(must(run).speed).toBeGreaterThan(POOL_SPEED);
     const pool = flowAt(f, 12.5 * 24, 4.5 * 24);
     expect(pool?.speed ?? 0).toBeLessThan(POOL_SPEED);
     // Foam beside the rock in the water.
@@ -102,7 +108,7 @@ describe('the streams’ flow (Book 9 section 01; S14-90 to S14-93)', () => {
     const e = bakeElevation(m.rows);
     const f = bakeFlow(m.rows, e, { falls: [{ x: 11, y: 15, width: 2, drop: 2 }] });
     expect(f.falls).toHaveLength(1);
-    const fall = f.falls[0]!;
+    const fall = must(f.falls[0]);
     expect(fall.x / 24).toBeGreaterThan(12);
     expect(fall.x / 24).toBeLessThan(14);
     expect(fall.footY).toBeGreaterThan(fall.lipY);
@@ -124,7 +130,7 @@ describe('the streams’ flow (Book 9 section 01; S14-90 to S14-93)', () => {
     const rows = m.rows.map((r, y) => (y < 26 ? r : `${','.repeat(12)}ww${','.repeat(10)}`));
     const e = bakeElevation(rows);
     const down = flowAt(bakeFlow(rows, e, { mouth: 's' }), 12.9 * 24, 18 * 24);
-    expect(down!.dy).toBeGreaterThan(0.8);
+    expect(must(down).dy).toBeGreaterThan(0.8);
   });
 
   it('runs Kelda’s stream in the machair south to the strand, and the strand’s to the sea', () => {
@@ -175,13 +181,13 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
     const names = sheetList.map((s) => s.name);
     expect(seasonRecolour(palette, DAY.Spring, names)).toBeUndefined();
     for (const s of ['Summer', 'Autumn', 'Winter'] as const) {
-      const r = seasonRecolour(palette, DAY[s], names);
+      const r = must(seasonRecolour(palette, DAY[s], names));
       expect(r, s).toBeDefined();
-      expect(r!.sheets.has('tile_strand')).toBe(true);
-      expect(r!.sheets.has('plant_strand')).toBe(true);
-      expect(r!.sheets.has('actor_gull')).toBe(false);
+      expect(r.sheets.has('tile_strand')).toBe(true);
+      expect(r.sheets.has('plant_strand')).toBe(true);
+      expect(r.sheets.has('actor_gull')).toBe(false);
       for (let i = 0; i < palette.entries.length; i++)
-        expect(palette.entries[r!.index[i] ?? 0], `${s} ${i}`).toBeDefined();
+        expect(palette.entries[r.index[i] ?? 0], `${s} ${i}`).toBeDefined();
     }
   });
 
@@ -205,7 +211,7 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
   });
 
   it('keeps fewer gulls in winter and no crabs, the same ones each time', () => {
-    const strand = maps.find((m) => m.zone === 'ZONE_SK_STRAND')!;
+    const strand = must(maps.find((m) => m.zone === 'ZONE_SK_STRAND'));
     const winter = seasonalLife(strand.zone, strand.life, DAY.Winter);
     const spring = seasonalLife(strand.zone, strand.life, DAY.Spring);
     expect(spring.length).toBe(strand.life.length);
@@ -221,7 +227,7 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
       name: 'Ash',
       bodyModel: 'A',
     });
-    const base = world.onFoot!;
+    const base = must(world.onFoot);
     const names = sheetList.map((s) => s.name);
     expect(maps.length).toBeGreaterThanOrEqual(7);
     for (const map of maps) {
@@ -258,8 +264,8 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
       for (let a = 0; a < frames.length; a++)
         for (let c = a + 1; c < frames.length; c++) {
           let changed = 0;
-          const fa = frames[a]!;
-          const fc = frames[c]!;
+          const fa = must(frames[a]);
+          const fc = must(frames[c]);
           for (let i = 0; i < fa.length; i += 4)
             if (fa[i] !== fc[i] || fa[i + 1] !== fc[i + 1] || fa[i + 2] !== fc[i + 2]) changed++;
           // Outdoors at least 2% of the frame changes between any two seasons. Inside (a cave's
@@ -272,7 +278,8 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
           else
             expect(
               share > 0 ||
-                seasonFog(map.zone, DAY[SEASONS[a]!]) !== seasonFog(map.zone, DAY[SEASONS[c]!]),
+                seasonFog(map.zone, DAY[must(SEASONS[a])]) !==
+                  seasonFog(map.zone, DAY[must(SEASONS[c])]),
               label,
             ).toBe(true);
         }

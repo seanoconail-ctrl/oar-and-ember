@@ -446,12 +446,14 @@ def cross_slab(lit_edge=False):
         s.px(x, 11, C('stone', 3.0))
     for x in range(4, 12, 2):
         s.px(x, 22, C('stone', 2.6))
-    s.outline()
     if lit_edge:
-        for y, x in zip(*np.nonzero(s.mask)):
-            if not s.mask[max(0, y - 1), x] or not s.mask[y, max(0, x - 1)]:
+        # The interactive highlight (Book 7 section 13): a one-pixel bright edge just inside the
+        # ink outline, all round.
+        m = s.mask.copy()
+        for y, x in zip(*np.nonzero(m)):
+            if not (m[y - 1, x] and m[y + 1, x] and m[y, x - 1] and m[y, x + 1]):
                 s.rgb[y, x] = C('wool', 6)
-    return s
+    return s.outline()
 
 
 def standing_stone(k, tall=False, cup=False):
@@ -460,7 +462,7 @@ def standing_stone(k, tall=False, cup=False):
     (cup=True) is low and carries its carving."""
     h = 46 if tall else (20 if cup else 30 + int(hash01(k, 1) * 10))
     w = 12 + int(hash01(k, 2) * 5) + (6 if cup else 0)
-    s = Sprite(w + 4, h + 4, (w + 4) // 2, h + 2)
+    s = Sprite(w + 10, h + 4, (w + 10) // 2, h + 2)
     lean = (hash01(k, 3) - 0.5) * 4
     for y in range(h):
         f = y / h
