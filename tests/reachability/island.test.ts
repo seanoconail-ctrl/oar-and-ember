@@ -284,7 +284,6 @@ describe('the whole island on foot (Book 9 section 13)', () => {
         ).toBe(true);
       }
       for (const p of markup(map).portals ?? []) {
-        const back = maps.get(p.to);
         expect(
           markup(mapOf(p.to)).portals?.some((q) => q.to === zone),
           `${p.to} has a way back to ${zone}`,

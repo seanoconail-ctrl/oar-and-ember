@@ -70,6 +70,9 @@ const EXACT: Readonly<Record<string, Verdict>> = {
   // direction (the island's ambience says when it is out of view, as the wreck's scene does).
   'caption.water.stream': { show: true, cls: 'SOUND', unseenOnly: true },
   'caption.water.falls': { show: true, cls: 'SOUND', unseenOnly: true },
+  // Stage 14 (Book 8 section 07; S14-77): the deep passage growing loud as the tide turns, a
+  // warning that the way back will flood (package D's roar carries it).
+  'caption.island.passage_loud': keep('SAFETY'),
   // Cut: seen in the world.
   'caption.voice.approach': CUT,
   'caption.info.surrender': CUT,
