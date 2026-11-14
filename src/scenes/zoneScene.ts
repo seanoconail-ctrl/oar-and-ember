@@ -37,6 +37,7 @@ import {
 import type { Wind } from '../render/wind.ts';
 import { itemShown } from '../sim/land/onFoot.ts';
 import { traverseAnim } from '../sim/land/traverse.ts';
+import { marksOf } from '../content/traverseMarks.ts';
 import type { FactView, OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
 import { direction16, drawnHeight, MISSILE_DIRECTIONS } from '../sim/land/missiles.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
@@ -1663,6 +1664,9 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     state === 'sleep' &&
     input.hidePeople !== true &&
     sleeper(steererLook, p.facing, p.x - camera.x, p.y - camera.y);
+  const climbing = p.traverse?.verb === 'climb' ? p.traverse.route : null;
+  const route = climbing === null ? undefined : marksOf(map).climbs.find((c) => c.id === climbing);
+  const climbSort = route === undefined ? null : (route.foot + 1) * map.tile - camera.y;
   if (input.hidePeople !== true && input.launch?.steererHidden !== true && !steererAsleep)
     person(
       steererLook,
@@ -1671,10 +1675,13 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       p.x - camera.x + kick('P_STEERER').dx,
       p.y - camera.y + kick('P_STEERER').dy - (visual?.steererLift ?? 0),
       visual?.water['P_STEERER'],
-      // Lifted on the jump's arc, sorted where the feet are over the ground (Stage 14).
-      (visual?.steererLift ?? 0) > 0
-        ? { focus: true, sort: p.y - camera.y + kick('P_STEERER').dy }
-        : { focus: true },
+      // Lifted on the jump's arc, sorted where the feet are over the ground; on a climb, in
+      // front of the face it climbs, sorted at the route's foot (Stage 14).
+      climbSort !== null
+        ? { focus: true, sort: climbSort }
+        : (visual?.steererLift ?? 0) > 0
+          ? { focus: true, sort: p.y - camera.y + kick('P_STEERER').dy }
+          : { focus: true },
     );
   /** The charged heavy's two tells over the raised weapon (Book 2 section 12). */
   const chargeTell = (f: Fighter, x: number, y: number): void => {

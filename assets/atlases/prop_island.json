@@ -145,6 +145,21 @@
       "frames": 1,
       "ticks": 1,
       "loop": false
+    },
+    "waymark0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "waymark1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "waymark2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
     }
   },
   "events": {},
@@ -261,6 +276,18 @@
     "door/-/0": [
       0,
       1650
+    ],
+    "waymark0/-/0": [
+      0,
+      1716
+    ],
+    "waymark1/-/0": [
+      0,
+      1782
+    ],
+    "waymark2/-/0": [
+      0,
+      1848
     ]
   }
 }

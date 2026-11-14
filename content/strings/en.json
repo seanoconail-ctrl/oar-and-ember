@@ -8633,5 +8633,9 @@
   },
   "ui.journal.map.cairn_in": {
     "text": "Inside the cairn"
+  },
+  "caption.island.passage_loud": {
+    "text": "The passage grows loud",
+    "tags": ["INFO"]
   }
 }
