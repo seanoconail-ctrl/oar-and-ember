@@ -200,7 +200,7 @@ test.describe('Stage 13: sea-map travel and voyage events', () => {
 test.describe('Stage 13: the wreck handed off on foot', () => {
   test.setTimeout(240_000);
 
-  test('the wreck takes the steerer off the chart onto the reef, and its result brings the chart back', async ({
+  test('sailing from the chart to the wreck: on the reef, Hild’s question answered, and back to the chart', async ({
     page,
   }) => {
     await startPlay(page, 'A', `${AT}&weather=clear`);
@@ -220,35 +220,41 @@ test.describe('Stage 13: the wreck handed off on foot', () => {
       if ((await attr(page, 'sea')) === 'choice') await page.keyboard.press('Digit1');
       if ((await attr(page, 'sea')) === 'landing') break;
     }
-    test.skip(
-      (await onFootZone()) === '',
-      "The wreck's scene (work package C) was not put in place: its content is not loaded",
-    );
     // On foot on the reef: the chart is down, the voyage waits on the scene's result.
-    expect(await onFootZone()).toMatch(/WRECK/);
+    expect(await onFootZone()).toBe('ZONE_SEA_WRECK');
     expect(await attr(page, 'sea')).toBe('');
-    expect(await attr(page, 'sea-status')).toBe('');
-    // The scene's end as work package C's finishWreck does it: the steerer back aboard (A's
-    // endHandoffScene) and its result sent (SEA_HANDOFF_RETURN).
+    // At the boat's side Hild asks what is to be done (content/wreck.json: board, ask).
     await page.evaluate(() => {
-      const w = window as unknown as {
-        oeWorld: { onFoot: unknown };
-        oePlay: { sim: { submit: (c: unknown) => void } };
-      };
-      w.oeWorld.onFoot = null;
-      w.oePlay.sim.submit({
-        type: 'SEA_HANDOFF_RETURN',
-        result: {
-          outcome: 'CONTINUE',
-          facts: {},
-          aboardChanges: { join: [], leave: [] },
-          storesDelta: 0,
-        },
-      });
+      const w = window as unknown as { oeWorld: { onFoot: { player: { x: number; y: number } } } };
+      w.oeWorld.onFoot.player.x = 39.8 * 24;
+      w.oeWorld.onFoot.player.y = 20.2 * 24;
     });
-    await stepUntil(page, 'sea', /^(sail|landing|held|choice)$/, 3);
+    await step(page, 2);
+    await page.keyboard.press('KeyE');
+    await step(page, 2);
+    expect(await attr(page, 'talk-kind')).toBe('SEARCH');
+    await stepUntil(page, 'talk-options', /p_steerer\.wreck\.ashore/, 15);
+    const options = (await attr(page, 'talk-options')).split('|');
+    expect(options).toEqual(
+      expect.arrayContaining([
+        'p_steerer.wreck.aboard',
+        'p_steerer.wreck.ashore',
+        'p_steerer.wreck.salvage',
+        'p_steerer.wreck.leave',
+      ]),
+    );
+    // Take them ashore: the answer's words play, the scene ends and the voyage goes on.
+    await page.keyboard.press(`Digit${options.indexOf('p_steerer.wreck.ashore') + 1}`);
+    await stepUntil(page, 'sea', /^(sail|landing|held|choice)$/, 60);
     expect(await attr(page, 'sea')).toMatch(/^(sail|landing|held|choice)$/);
-    expect(await attr(page, 'sea-at')).not.toBe('');
+    expect(await onFootZone()).toBe('');
+    const facts = await page.evaluate(
+      () =>
+        (window as unknown as { oeWorld: { facts: Record<string, unknown> } }).oeWorld.facts[
+          'sea.wreck.choice'
+        ],
+    );
+    expect(facts).toBe('ASHORE');
   });
 });
 

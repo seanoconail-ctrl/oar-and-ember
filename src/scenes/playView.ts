@@ -192,6 +192,7 @@ import {
 import type { PanelWords } from './launchPanels.ts';
 import { SeaMapView } from './seaMap.ts';
 import { SeaVoyage } from './seaVoyage.ts';
+import { SeaWreckPlay } from './seaWreckPlay.ts';
 import type { BodyModel, WorldState } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
@@ -1455,6 +1456,21 @@ export function startPlay(
           seaCtx,
         );
   let seaUp = false;
+  // Stage 13: the wreck on its reef, played on foot from a voyage (src/scenes/seaWreckPlay.ts).
+  const wreckPlay = new SeaWreckPlay({
+    sim,
+    land,
+    content,
+    sound: (event, direction) => {
+      if (audio !== null && engine.unlocked) audio.event(event, engine.now, { direction });
+    },
+    unseenCaption: (key) => {
+      inform(key, t(key), frameNow, 'SOUND');
+    },
+    setWreckSide: (side) => {
+      engine.setWreckSide(side);
+    },
+  });
   /** The token's state for the household's mark (Book 7 section 05: a sail in its colours). */
   const markState = (): string =>
     (sim.state.ships['flagship']?.marks.sail ?? 'plain').replace(':', '_');
@@ -2098,8 +2114,12 @@ export function startPlay(
       root.dataset['talkOptions'] = '';
       return;
     }
-    const options = talkOptions(sim.state, peopleCtx, land.searches ?? null);
-    const cursor = Math.min(session.talkCursor, Math.max(0, options.length - 1));
+    const wreckOptions = wreckPlay.options();
+    const options = wreckOptions ?? talkOptions(sim.state, peopleCtx, land.searches ?? null);
+    const cursor = Math.min(
+      wreckOptions === null ? session.talkCursor : wreckPlay.cursor,
+      Math.max(0, options.length - 1),
+    );
     const lineKey = talk.line?.key ?? '';
     // A refused job's reason, merged into the talk panel under the line it answers (the audit).
     const note = talkNote !== null && talkNote.line === lineKey ? talkNote.text : '';
@@ -2609,6 +2629,8 @@ export function startPlay(
       if (!manual) requestAnimationFrame(frame);
       return;
     }
+    if (wreckPlay.on())
+      wreckPlay.frame(result.input, map, viewCamera, { w: LOGICAL_WIDTH, h: LOGICAL_HEIGHT });
     // Book 10 promptDone: the move prompt is done once the steerer has walked 2 tiles.
     const step =
       walkedFrom === null
