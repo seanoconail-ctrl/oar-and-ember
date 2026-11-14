@@ -37,6 +37,8 @@ export interface WreckBalance {
   readonly boardReachTiles: number;
   /** How near a survivor the steerer stands to speak with them, in tiles. */
   readonly talkReachTiles: number;
+  /** How near the steerer comes before a standing survivor turns to look, in tiles (S13-82). */
+  readonly lookTiles: number;
 }
 
 export function parseWreckBalance(json: unknown): WreckBalance {
@@ -57,6 +59,7 @@ export function parseWreckBalance(json: unknown): WreckBalance {
     wordDays: n('wordDays'),
     boardReachTiles: n('boardReachTiles'),
     talkReachTiles: n('talkReachTiles'),
+    lookTiles: n('lookTiles'),
   };
 }
 

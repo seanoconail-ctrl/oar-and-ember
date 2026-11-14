@@ -227,6 +227,7 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | wordDays | 2 | Days until what the survivors tell of the household reaches Ardcarn (set ashore, or left and taken off) |
 | boardReachTiles | 2.5 | How near the boat's side the steerer stands for Hild's question |
 | talkReachTiles | 2 | How near a survivor the steerer stands to speak with them |
+| lookTiles | 6 | How near the steerer comes before a survivor standing on the reef turns to look at them (decision S13-82) |
 
 ## 03 / Food, fuel and seasons
 ### Consumption

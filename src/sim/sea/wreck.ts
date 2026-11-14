@@ -18,6 +18,12 @@
  *   aboard become people of the world, the scene ends (`endHandoffScene`) and the result is
  *   returned to send as `SEA_HANDOFF_RETURN`.
  * - `stepWreck`: each tick, survivors who can turn their heads look at the steerer near them.
+ *
+ * The simulation runs all of it (decision S13-80, superseding S13-29 and S13-36): it begins the
+ * scene when the wreck's handoff waits, takes `INTERACT`, `INTERACT_AT` and `TALK_CHOOSE` on the
+ * reef through `wreckUseNow`, `wreckUseAt` and `chooseWreck`, steps `stepWreck` each tick, and
+ * once `wreckReady` finishes the scene and hands the result back to the voyage itself, so a replay
+ * of commands reproduces a wreck. The scene layer only draws it and plays its sounds.
  */
 import type { Id } from '../../core/ids.ts';
 import type { Content, PersonDef } from '../../content/registry.ts';
@@ -56,6 +62,8 @@ export const WRECK_FACTS = {
   overloaded: 'sea.wreck.overloaded',
   /** The day the result was handed back (the scene is over). */
   done: 'sea.wreck.done',
+  /** A survivor's words heard on the reef (`sea.wreck.heard.<id>`; decision S13-81). */
+  heard: 'sea.wreck.heard',
 } as const;
 
 /** The talk site of Hild's question at the boat's side; a survivor's is `wreck.<id>`. */
@@ -225,9 +233,106 @@ export function openWreckTalk(
     since: world.tick,
   };
   world.talk = talk;
+  if (site !== ASK_SITE) setFact(world, `${WRECK_FACTS.heard}.${t.with}`, true);
   emit({ type: 'TALK_STARTED', person: t.with, kind: 'SEARCH' });
   emit({ type: 'PERSON_SPOKE', person: t.with, lineKey: t.talk.open });
   return true;
+}
+
+/** What Interact would otherwise do on the reef: lift someone, set them down, or pick up. */
+export type ReefInteraction =
+  | { readonly kind: 'LIFT'; readonly target: Id }
+  | { readonly kind: 'SET_DOWN' | 'PICK_UP' }
+  | null;
+
+/**
+ * Whether the wreck's use `use` comes before the game's own lift or set-down (decision S13-81): a
+ * load carried is set down first; a survivor's words come before lifting them until they have been
+ * heard once on the reef (Ívar asks to be moved with care; Fínán holds the hull), then the lift
+ * wins as everywhere (a tie goes to the lift); the boat's side, or another survivor, wins when
+ * nearer than the one to lift.
+ */
+function wreckBeforeLift(
+  world: WorldState,
+  use: WreckUse,
+  interaction: ReefInteraction,
+  useDistance: number,
+): boolean {
+  const onFoot = world.onFoot;
+  if (onFoot === null || onFoot.carrying !== null) return false;
+  if (interaction === null || interaction.kind === 'PICK_UP') return true;
+  if (interaction.kind !== 'LIFT') return false;
+  if (use.target === interaction.target)
+    return world.facts[`${WRECK_FACTS.heard}.${use.target}`] !== true;
+  const lifted = onFoot.actors[interaction.target];
+  if (lifted === undefined) return true;
+  const p = onFoot.player;
+  return useDistance < Math.hypot(lifted.x - p.x, lifted.y - p.y);
+}
+
+/**
+ * What Interact does on the reef now: the wreck's use it opens, or null when it does the game's own
+ * lift or set-down instead (or nothing is in reach). The simulation acts on this and the play view
+ * names it as its prompt, so the prompt always says what the key will do (Book 2 section 21).
+ */
+export function wreckUseNow(
+  world: WorldState,
+  ctx: SeaWreckContext,
+  tile: number,
+  interaction: ReefInteraction,
+): WreckUse | null {
+  const p = world.onFoot?.player;
+  const use = nearestWreckUse(world, ctx, tile);
+  if (use === null || p === undefined) return null;
+  return wreckBeforeLift(world, use, interaction, Math.hypot(use.x - p.x, use.y - p.y))
+    ? use
+    : null;
+}
+
+/**
+ * The wreck's use clicked on a tile, within its reach of the steerer, when it comes before the
+ * click's lift (as `wreckUseNow`); else null. A survivor is clicked on their tile or the tile below
+ * them (as a camp use is found); the boat's side is ground (Book 9 section 15: within Book 10
+ * `boardReachTiles` of its point), so any tile whose centre lies on it is the boat's side.
+ */
+export function wreckUseAt(
+  world: WorldState,
+  ctx: SeaWreckContext,
+  tile: number,
+  at: { readonly tx: number; readonly ty: number },
+  interaction: ReefInteraction,
+): WreckUse | null {
+  const p = world.onFoot?.player;
+  if (p === undefined) return null;
+  for (const u of wreckUses(world, ctx, tile)) {
+    if (u.site === ASK_SITE) {
+      const cx = (at.tx + 0.5) * tile;
+      const cy = (at.ty + 0.5) * tile;
+      if (Math.hypot(cx - u.x, cy - u.y) > u.reach) continue;
+    } else {
+      const tx = Math.floor(u.x / tile);
+      const ty = Math.floor((u.y - 0.001) / tile);
+      if (tx !== at.tx || (ty !== at.ty && ty !== at.ty + 1)) continue;
+    }
+    const d = Math.hypot(u.x - p.x, u.y - p.y);
+    if (d <= u.reach && wreckBeforeLift(world, u, interaction, d)) return u;
+  }
+  return null;
+}
+
+/** Whether the words open now are the wreck's (a survivor's, or Hild's question). */
+export function isWreckTalk(world: WorldState, ctx: SeaWreckContext): boolean {
+  const talk = world.talk;
+  return talk?.kind === 'SEARCH' && inWreck(world, ctx) && talkOf(ctx, talk.scene ?? '') !== null;
+}
+
+/** The wreck's answers as the talk panel offers them, or null when the words are not the wreck's. */
+export function wreckTalkOptions(
+  world: WorldState,
+  ctx: SeaWreckContext | null,
+): { key: string; kind: 'CHOICE' }[] | null {
+  if (ctx === null || !isWreckTalk(world, ctx)) return null;
+  return wreckOptions(world, ctx).map((o) => ({ key: o.key, kind: 'CHOICE' as const }));
 }
 
 /** Interact on the reef: opens the nearest use's words. Returns the site opened, or null. */
@@ -460,7 +565,7 @@ export function stepWreck(world: WorldState, ctx: SeaWreckContext, tile: number)
     if (a?.pose !== 'watch') continue;
     const dx = p.x - a.x;
     const dy = p.y - a.y;
-    if (Math.hypot(dx, dy) > 6 * tile) {
+    if (Math.hypot(dx, dy) > ctx.b.lookTiles * tile) {
       a.facing = s.at.facing;
       continue;
     }

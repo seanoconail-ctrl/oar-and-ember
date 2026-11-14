@@ -17,8 +17,8 @@
  *   (decision S13-21).
  * - **Handoffs**: a landing whose scene is a stub (Carrick, until Stage 16) says in words that the
  *   boat beaches at the landing, with a developer's note; an interruption with an on-foot scene
- *   (the wreck) is put in place by its builder (`HANDOFF_SCENES`) and the play view runs it on foot;
- *   when the scene hands its result back the chart returns.
+ *   (the wreck) is put in place by the simulation itself (decision S13-80) and the play view draws
+ *   it on foot; when the simulation hands its result back the chart returns.
  *
  * Nothing here is drawn while the steerer is on foot: the play view asks `active()` once a frame.
  */
@@ -52,7 +52,6 @@ import {
   SEA_STORES,
 } from '../sim/sea/index.ts';
 import type {
-  HandoffRequest,
   PlotResult,
   SeaContext,
   SeaEdge,
@@ -92,31 +91,6 @@ import type { LoadedAtlas } from './atlases.ts';
 import { seaBed, seaEventSounds, seaMusic, seaSoundRules } from '../audio/seaAudio.ts';
 import type { SeaSoundRules } from '../audio/seaAudio.ts';
 import type { SeaBedState } from '../audio/synth/sea.ts';
-import { beginWreck, seaWreckContext } from '../sim/sea/wreck.ts';
-
-/**
- * The on-foot scenes a voyage hands off to, by scenario: each puts its scene in place (A's
- * `beginHandoffScene`, here through the scene's own begin) and says whether it did. Adapter
- * (decision S13-29): the sea's simulation has no command to begin a handed-off scene, so the screen
- * begins it between ticks, as the scene's own test hook does.
- */
-export type HandoffSceneBegin = (
-  world: WorldState,
-  land: SimWorldContext,
-  content: Content,
-  request: HandoffRequest,
-) => boolean;
-export const HANDOFF_SCENES = new Map<Id, HandoffSceneBegin>([
-  [
-    // The wreck with survivors (work package C, src/sim/sea/wreck.ts).
-    'SCN_SEA_WRECK',
-    (world, land, content) => {
-      const ctx = seaWreckContext(content, land.people ?? null);
-      const map = ctx === null ? undefined : land.maps.get(ctx.def.zone);
-      return ctx !== null && map !== undefined && beginWreck(world, ctx, map);
-    },
-  ],
-]);
 
 /** Which pictogram each place is drawn with (Book 4 section 01: what kind of place it is). */
 const PICTOGRAM: Readonly<Record<string, string>> = {
@@ -567,7 +541,8 @@ export class SeaVoyage {
     if (this.#started < 0) this.#started = now;
     const w = this.#world;
     const v = w.sea.voyage;
-    // A handed-off on-foot scene waiting to be put in place.
+    // A landing handed off: its autosave (an interruption's on-foot scene, the wreck, is put in
+    // place by the simulation itself, decision S13-80, and the play view draws it on foot).
     if (
       v !== null &&
       w.onFoot === null &&
@@ -575,13 +550,6 @@ export class SeaVoyage {
       v.handoff?.kind === 'ON_FOOT'
     ) {
       const req = currentHandoff(w);
-      const build = req === null ? undefined : HANDOFF_SCENES.get(req.scenarioId);
-      if (req !== null && build !== undefined && !req.landing) {
-        if (build(w, this.#h.land, this.#h.content, req)) {
-          this.#labelsKey = '';
-          return;
-        }
-      }
       if (req !== null && req.landing && !this.#landingSaved) {
         this.#landingSaved = true;
         this.#h.autosave('LANDING');

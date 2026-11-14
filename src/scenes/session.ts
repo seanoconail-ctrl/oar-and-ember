@@ -28,6 +28,8 @@ import { AIM_DIRECTIONS } from '../sim/simulation.ts';
 import type { Simulation } from '../sim/simulation.ts';
 import type { PeopleContext } from '../sim/people/context.ts';
 import { talkOptions } from '../sim/people/talk.ts';
+import { wreckTalkOptions } from '../sim/sea/wreck.ts';
+import type { SeaWreckContext } from '../sim/sea/wreck.ts';
 import type { SearchContext } from '../sim/narrative/searches.ts';
 import { MenuController } from '../ui/menus.ts';
 import type { MenuId, OpenResult, ThreatView } from '../ui/menus.ts';
@@ -118,6 +120,8 @@ export class Session {
   people: PeopleContext | null = null;
   /** Stage 10: the searches' words (their options come from here). */
   searches: SearchContext | null = null;
+  /** Stage 13: the wreck's words on the reef (their answers come from here; decision S13-80). */
+  seaWreck: SeaWreckContext | null = null;
   /** The option highlighted in a conversation (the wheel and the pad move it). */
   talkCursor = 0;
   /**
@@ -195,7 +199,9 @@ export class Session {
       // A conversation or scene (Book 8 section 09): a number chooses, the wheel or the pad moves
       // the highlight and use or interact takes it; Escape or dodge leaves a conversation (a
       // scene waits for its judgement). Time goes on; walking away ends a conversation.
-      const options = talkOptions(this.sim.state, this.people, this.searches);
+      const options =
+        wreckTalkOptions(this.sim.state, this.seaWreck) ??
+        talkOptions(this.sim.state, this.people, this.searches);
       const n = options.length;
       if (n > 0) {
         this.talkCursor = Math.min(this.talkCursor, n - 1);

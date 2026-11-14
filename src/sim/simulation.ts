@@ -256,6 +256,20 @@ import type { VoyageHooks } from './sea/voyage.ts';
 import { forecastTomorrow, isStormDay, weatherToday } from './sea/weather.ts';
 import { chartAll } from './sea/chart.ts';
 import type { SeaCommand, SeaEvent, SeaRefusal } from './sea/types.ts';
+import {
+  beginWreck,
+  chooseWreck,
+  finishWreck,
+  inWreck,
+  isWreckTalk,
+  openWreckTalk,
+  stepWreck as stepSeaWreck,
+  wreckReady,
+  wreckUseAt,
+  wreckUseNow,
+  wreckWaiting,
+} from './sea/wreck.ts';
+import type { SeaWreckContext } from './sea/wreck.ts';
 
 /** The simulation runs on the world state of Book 2 section 05 (src/sim/world.ts). */
 export type SimState = WorldState;
@@ -545,6 +559,8 @@ export interface SimWorldContext extends LandContext {
   readonly doors?: DoorTimings | null;
   /** Stage 13: the sea map (Book 2 section 09). */
   readonly sea?: SeaContext | null;
+  /** Stage 13: the wreck with survivors, a voyage's on-foot interruption (decision S13-80). */
+  readonly seaWreck?: SeaWreckContext | null;
   readonly edgeCaption?: { readonly afterSeconds: number; readonly cooldownSeconds: number } | null;
 }
 
@@ -580,6 +596,7 @@ export function createSimulation(
   const aimsCtx = land?.aims ?? null;
   const sb = land?.stamina ?? null;
   const seaCtx = land?.sea ?? null;
+  const seaWreckCtx = land?.seaWreck ?? null;
   // Stage 13: today's weather and tomorrow's are drawn before anything reads them.
   if (seaCtx !== null) seaWeather(state, seaCtx);
   /** Whether yesterday was a storm (Book 10 stormFrom): twice the driftwood at dawn. */
@@ -886,6 +903,33 @@ export function createSimulation(
     if (reason !== null && seaCtx !== null) refuse(command, 'SEA_REFUSED', seaCtx.words[reason]);
   };
 
+  /**
+   * Stage 13 (decision S13-80): a voyage's on-foot handoff run inside the simulation, each tick
+   * after the commands, so a replay of commands reproduces it. When the wreck's handoff waits with
+   * the steerer aboard, its scene is put in place (`beginWreck`); once an answer is taken and its
+   * words have played, the scene ends (`finishWreck`: the deeds, the survivors aboard, the steerer
+   * back aboard) and its result goes to the voyage as `SEA_HANDOFF_RETURN` would take it.
+   */
+  const stepHandoff = (): void => {
+    if (seaWreckCtx === null || seaCtx === null || land === null) return;
+    if (state.onFoot === null && wreckWaiting(state, seaWreckCtx)) {
+      const map = land.maps.get(seaWreckCtx.def.zone);
+      if (map !== undefined) beginWreck(state, seaWreckCtx, map);
+      return;
+    }
+    if (!wreckReady(state, seaWreckCtx)) return;
+    const outcome = finishWreck(state, seaWreckCtx, emitPeople);
+    if (outcome === null) return;
+    const why = returnFromHandoff(state, seaCtx, seaHooks, outcome.result);
+    if (why !== null)
+      events.emit({
+        type: 'COMMAND_REFUSED',
+        command: 'SEA_HANDOFF_RETURN',
+        reason: 'SEA_REFUSED',
+        detail: seaCtx.words[why],
+      });
+  };
+
   const apply = (command: Command): void => {
     // The sea taking Thorkel (DG-14) is a scene that takes control: only the options and the
     // telemetry are taken until it ends.
@@ -1178,6 +1222,14 @@ export function createSimulation(
           state.facts,
           interactFirst(state, wreckCtx),
         );
+        // Stage 13: on the reef a survivor's words or Hild's question, as the prompt names them
+        // (decisions S13-80 and S13-81).
+        const wreckUse =
+          seaWreckCtx === null ? null : wreckUseNow(state, seaWreckCtx, map.tile, interaction);
+        if (seaWreckCtx !== null && wreckUse !== null) {
+          openWreckTalk(state, seaWreckCtx, wreckUse.site, events.emit.bind(events));
+          return;
+        }
         const reach = land.rules.interactRadiusTiles * map.tile;
         const use = onFoot.carrying === null ? campUseNear(usesHere(), onFoot.player, reach) : null;
         // The nearer of a lift or pickup and a camp use (carrying, only setting down).
@@ -1214,6 +1266,15 @@ export function createSimulation(
           command.tile,
           state.facts,
         );
+        // Stage 13: a survivor or the boat's side clicked on the reef (decision S13-81).
+        const wreckUse =
+          seaWreckCtx === null
+            ? null
+            : wreckUseAt(state, seaWreckCtx, map.tile, command.tile, interaction);
+        if (seaWreckCtx !== null && wreckUse !== null) {
+          openWreckTalk(state, seaWreckCtx, wreckUse.site, events.emit.bind(events));
+          return;
+        }
         if (interaction === null) {
           const use = onFoot.carrying === null ? campUseAt(usesHere(), map, command.tile) : null;
           if (use !== null) {
@@ -1360,6 +1421,11 @@ export function createSimulation(
         return;
       }
       case 'TALK_CHOOSE': {
+        // Stage 13: the wreck's words (decision S13-80).
+        if (seaWreckCtx !== null && isWreckTalk(state, seaWreckCtx)) {
+          chooseWreck(state, seaWreckCtx, command.index);
+          return;
+        }
         if (state.talk?.kind === 'SEARCH') {
           if (searchCtx !== null)
             chooseSearch(state, searchCtx, command.index, searchHooks, emitSearch);
@@ -2282,6 +2348,9 @@ export function createSimulation(
     }
     // Design addendum 2.4: the opening's beats and Chapter 1's aims.
     if (wreckCtx !== null) stepWreck(state, wreckCtx, land, tide.tidalGroundOpen, emitWreck);
+    // Stage 13: on the reef the survivors turn to look at the steerer near them (S13-80).
+    if (seaWreckCtx !== null && inWreck(state, seaWreckCtx))
+      stepSeaWreck(state, seaWreckCtx, map.tile);
     if (aimsCtx !== null) stepAims(state, aimsCtx, land.maps, emitWreck);
     if (land.opening !== null) {
       stepOpening(state, land.opening, map, land, level, emit);
@@ -2517,6 +2586,8 @@ export function createSimulation(
       const pending = queue;
       queue = [];
       for (const command of pending) apply(command);
+      // Stage 13: a voyage's handed-off scene begins and ends here (decision S13-80).
+      stepHandoff();
       // The played cold open (decision DE-30): the land waits and the calendar does not run.
       if (wreckCtx !== null && stepWreckPhase(state, wreckCtx, emitWreck) === 'COLD') {
         stepTelemetry(state);

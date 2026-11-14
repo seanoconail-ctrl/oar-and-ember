@@ -1,10 +1,12 @@
 /**
- * Stage 13, work package C (Book 6 section 19; decisions S13-40 to S13-59): the wreck on Sgeir
- * Dhubh, played through the whole simulation. From the chapter's end (golden save 12) the course to
- * Carrick is plotted and sailed until the wreck's handoff; the scene is put in place, the steerer
- * walks the reef, speaks with the survivors (the reveal), lifts Ívar, and answers Hild at the
- * boat's side; the result goes back with `SEA_HANDOFF_RETURN` and the voyage sails on to Carrick.
- * Every one of the four answers is completed; the result is deterministic.
+ * Stage 13, work package C (Book 6 section 19; decisions S13-40 to S13-59), run by the simulation
+ * (decisions S13-80 and S13-81): the wreck on Sgeir Dhubh, played through the whole simulation by
+ * commands. From the chapter's end (golden save 12) the course to Carrick is plotted and sailed
+ * until the wreck's handoff, where the simulation puts the scene in place; the steerer walks the
+ * reef, speaks with the survivors by Interact (the reveal), hears Ívar before lifting him, and
+ * answers Hild at the boat's side by the talk's choice; the simulation then ends the scene and hands
+ * its result to the voyage, which sails on to Carrick. Every one of the four answers is completed;
+ * the result is deterministic.
  */
 import { describe, expect, it } from 'vitest';
 import { parseTimeBalance } from '../../src/content/balance.ts';
@@ -16,15 +18,12 @@ import {
   ASK_SITE,
   WRECK_FACTS,
   beginWreck,
-  chooseWreck,
-  finishWreck,
   freeBerths,
   inWreck,
-  seaWreckContext,
-  wreckInteract,
   wreckOptions,
   wreckReady,
   wreckResult,
+  wreckUseNow,
   wreckUses,
 } from '../../src/sim/sea/wreck.ts';
 import type { SeaWreckContext, WreckChoice } from '../../src/sim/sea/wreck.ts';
@@ -42,7 +41,7 @@ const b = parseTimeBalance(balance);
 const wb = parseWreckBalance(balance);
 const { content } = loadContentFromDisk();
 const land = landContext(content, balance);
-const maybeCtx = seaWreckContext(content, land.people ?? null);
+const maybeCtx = land.seaWreck ?? null;
 if (maybeCtx === null) throw new Error('content/wreck.json did not load');
 const ctx: SeaWreckContext = maybeCtx;
 const maybeMap = land.maps.get(ctx.def.zone);
@@ -56,7 +55,7 @@ function run(sim: Simulation, command: Parameters<Simulation['submit']>[0]): voi
   sim.step();
 }
 
-/** The chapter's end, sailed to the wreck's handoff (the scene not yet in place). */
+/** The chapter's end, sailed to the wreck's handoff (the simulation puts the scene in place). */
 function atTheWreck(): { sim: Simulation; events: SimEvent[] } {
   const world = readSave(JSON.parse(repoFile(GOLDEN_12))).state;
   const sim = createSimulation(b, world, land);
@@ -84,42 +83,60 @@ function standAt(world: WorldState, x: number, y: number): void {
   p.y = y * T;
 }
 
-/** Plays the scene to the answer `choice` and returns the result sent back. */
+/** Steps until the open words have no line left to play (or `max` ticks). */
+function untilAsked(sim: Simulation, max = 1000): void {
+  for (let i = 0; i < max && (sim.state.talk?.queue.length ?? 0) > 0; i++) sim.step();
+}
+
+/** Chooses the option `key` of the open words by the talk's command. */
+function choose(sim: Simulation, key: string): void {
+  const index = wreckOptions(sim.state, ctx).findIndex((o) => o.key === key);
+  expect(index).toBeGreaterThanOrEqual(0);
+  run(sim, { type: 'TALK_CHOOSE', index });
+}
+
+/** Plays the scene to the answer `choice` by commands and returns the result handed back. */
 function play(choice: WreckChoice, sim: Simulation) {
   const w = sim.state;
-  expect(beginWreck(w, ctx, map)).toBe(true);
   expect(inWreck(w, ctx)).toBe(true);
   for (let i = 0; i < 120; i++) sim.step();
-  // Derbáil's words, and the reveal.
+  // Derbáil's words, and the reveal, by Interact and the talk's choice.
   const d = ctx.def.survivors.find((s) => s.id === 'C_DERBAIL');
   if (d === undefined) throw new Error('no Derbáil');
   standAt(w, d.at.x + 1, d.at.y + 0.4);
-  expect(wreckInteract(w, ctx, T, () => undefined)).toBe('wreck.C_DERBAIL');
-  const reveal = wreckOptions(w, ctx).findIndex((o) => o.key === 'p_steerer.wreck.ask_sail');
-  expect(reveal).toBeGreaterThanOrEqual(0);
-  chooseWreck(w, ctx, reveal);
+  run(sim, { type: 'INTERACT' });
+  expect(w.talk?.scene).toBe('wreck.C_DERBAIL');
+  choose(sim, 'p_steerer.wreck.ask_sail');
   expect(w.facts[WRECK_FACTS.askedConn]).toBe(true);
-  for (let i = 0; i < 400 && (w.talk?.queue.length ?? 0) > 0; i++) sim.step();
-  chooseWreck(
-    w,
-    ctx,
-    wreckOptions(w, ctx).findIndex((o) => o.key === 'ui.talk.leave'),
-  );
+  untilAsked(sim);
+  choose(sim, 'ui.talk.leave');
   untilQuiet(sim);
   expect(w.talk).toBeNull();
-  // Lift Ívar where he lies (the game's own lift) and carry him a few steps towards the boat.
+  // Ívar where he lies: his words come first (S13-81), then Interact lifts him (the game's own
+  // lift), carries him a few steps and sets him down again.
   const ivar = w.onFoot?.actors['C_IVAR'];
   if (ivar === undefined) throw new Error('no Ívar');
   standAt(w, ivar.x / T + 0.6, ivar.y / T);
+  run(sim, { type: 'INTERACT' });
+  expect(w.talk?.scene).toBe('wreck.C_IVAR');
+  expect(w.onFoot?.carrying).toBeNull();
+  untilAsked(sim);
+  choose(sim, 'ui.talk.leave');
+  untilQuiet(sim);
   run(sim, { type: 'INTERACT' });
   expect(w.onFoot?.carrying).toBe('C_IVAR');
   run(sim, { type: 'MOVE', x: 1, y: 0, run: false, sneak: false });
   for (let i = 0; i < 90; i++) sim.step();
   run(sim, { type: 'MOVE', x: 0, y: 0, run: false, sneak: false });
+  for (let i = 0; i < 30; i++) sim.step();
+  run(sim, { type: 'INTERACT' });
+  expect(w.onFoot?.carrying).toBeNull();
   // Hild's question at the boat's side.
   standAt(w, ctx.def.board.x, ctx.def.board.y);
   expect(wreckUses(w, ctx, T).some((u) => u.site === ASK_SITE)).toBe(true);
-  expect(wreckInteract(w, ctx, T, () => undefined)).toBe(ASK_SITE);
+  expect(wreckUseNow(w, ctx, T, null)?.site).toBe(ASK_SITE);
+  run(sim, { type: 'INTERACT' });
+  expect(w.talk?.scene).toBe(ASK_SITE);
   const keys = wreckOptions(w, ctx).map((o) => o.key);
   expect(keys).toEqual([
     'p_steerer.wreck.aboard',
@@ -128,17 +145,17 @@ function play(choice: WreckChoice, sim: Simulation) {
     'p_steerer.wreck.leave',
     'p_steerer.wreck.not_yet',
   ]);
-  const index = CHOICES.indexOf(choice);
-  expect(chooseWreck(w, ctx, index)).toBe(choice);
-  expect(wreckReady(w, ctx)).toBe(false);
-  untilQuiet(sim);
-  expect(wreckReady(w, ctx)).toBe(true);
   const crew = [...(w.sea.voyage?.aboard ?? [])];
   const stores = Object.values(w.sea.voyage?.stores ?? {}).reduce((a, n) => a + n, 0);
-  const outcome = finishWreck(w, ctx);
-  if (outcome === null) throw new Error('not finished');
+  run(sim, { type: 'TALK_CHOOSE', index: CHOICES.indexOf(choice) });
+  expect(w.facts[WRECK_FACTS.choice]).toBe(choice);
+  expect(wreckReady(w, ctx)).toBe(false);
+  // What the answer gives the voyage (pure), then the simulation ends the scene by itself once the
+  // answer's words have played, and hands the result back.
+  const outcome = wreckResult(w, ctx, choice);
+  for (let i = 0; i < 4000 && w.sea.voyage?.handoff !== null; i++) sim.step();
   expect(w.onFoot).toBeNull();
-  run(sim, { type: 'SEA_HANDOFF_RETURN', result: outcome.result });
+  expect(w.sea.voyage?.handoff).toBeNull();
   return { outcome, crew, stores };
 }
 
@@ -151,8 +168,9 @@ describe('the wreck on Sgeir Dhubh (Book 6 section 19)', () => {
       scenarioId: 'SCN_SEA_WRECK',
       edgeId: 'SEA_SKARV_CARRICK',
     });
-    // The scene: the steerer ashore by the boat, the three survivors in their poses; adults only.
-    expect(beginWreck(sim.state, ctx, map)).toBe(true);
+    // The scene, put in place by the simulation at the handoff (S13-80): the steerer ashore by
+    // the boat, the three survivors in their poses; adults only.
+    expect(inWreck(sim.state, ctx)).toBe(true);
     const onFoot = sim.state.onFoot;
     expect(onFoot?.zone).toBe('ZONE_SEA_WRECK');
     expect(Object.keys(onFoot?.actors ?? {}).sort()).toEqual(['C_DERBAIL', 'C_FINAN', 'C_IVAR']);
@@ -253,13 +271,15 @@ describe('the wreck on Sgeir Dhubh (Book 6 section 19)', () => {
   it('“Not yet” closes the question without an answer, and it can be asked again', () => {
     const { sim } = atTheWreck();
     const w = sim.state;
-    beginWreck(w, ctx, map);
     standAt(w, ctx.def.board.x, ctx.def.board.y);
-    expect(wreckInteract(w, ctx, T, () => undefined)).toBe(ASK_SITE);
-    expect(chooseWreck(w, ctx, 4)).toBeNull();
+    run(sim, { type: 'INTERACT' });
+    expect(w.talk?.scene).toBe(ASK_SITE);
+    choose(sim, 'p_steerer.wreck.not_yet');
     untilQuiet(sim);
     expect(w.facts[WRECK_FACTS.choice]).toBeUndefined();
     expect(wreckReady(w, ctx)).toBe(false);
-    expect(wreckInteract(w, ctx, T, () => undefined)).toBe(ASK_SITE);
+    expect(inWreck(w, ctx)).toBe(true);
+    run(sim, { type: 'INTERACT' });
+    expect(w.talk?.scene).toBe(ASK_SITE);
   });
 });

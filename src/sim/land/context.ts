@@ -25,6 +25,8 @@ import { findsContext } from '../narrative/finds.ts';
 import { parseSeaBurialBalance } from '../narrative/seaBurial.ts';
 import { FACT_LAUNCHED, launchContext } from '../narrative/launch.ts';
 import { seaContext } from '../sea/context.ts';
+import { seaWreckContext } from '../sea/wreck.ts';
+import { hasWreckBalance } from '../../content/wreckBalance.ts';
 import { parseLaunchBalance } from '../../content/launchBalance.ts';
 import { shipDefsOf } from '../ship/ship.ts';
 import { parseWorkBalance } from '../../content/homeBalance.ts';
@@ -67,6 +69,7 @@ export function landContext(
         | 'finds'
         | 'raid'
         | 'sea'
+        | 'wreck'
       >
     >,
   balance: unknown,
@@ -104,7 +107,7 @@ export function landContext(
           repairs.ship,
           parseWorkBalance(balance).foodPerPersonPerDay,
         );
-  return {
+  const built: SimWorldContext = {
     maps: content.zoneMaps,
     movement: parseMovementBalance(balance),
     water: parseWaterBalance(balance),
@@ -204,4 +207,16 @@ export function landContext(
             opening: content.opening ?? null,
           }),
   };
+  // Stage 13: the wreck with survivors, run by the simulation (decision S13-80).
+  const seaWreck =
+    content.wreck == null ||
+    content.hulls === undefined ||
+    content.fittings === undefined ||
+    !hasWreckBalance(balance)
+      ? null
+      : seaWreckContext(
+          { wreck: content.wreck, hulls: content.hulls, fittings: content.fittings, balance },
+          built.people ?? null,
+        );
+  return { ...built, seaWreck };
 }

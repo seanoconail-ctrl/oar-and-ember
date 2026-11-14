@@ -192,7 +192,8 @@ import {
 import type { PanelWords } from './launchPanels.ts';
 import { SeaMapView } from './seaMap.ts';
 import { SeaVoyage } from './seaVoyage.ts';
-import { SeaWreckPlay } from './seaWreckPlay.ts';
+import { SeaWreckPlay, wreckUseLabel } from './seaWreckPlay.ts';
+import { wreckTalkOptions, wreckUseNow } from '../sim/sea/wreck.ts';
 import type { BodyModel, WorldState } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
@@ -467,6 +468,7 @@ export function startPlay(
   );
   session.people = land.people ?? null;
   session.searches = land.searches ?? null;
+  session.seaWreck = land.seaWreck ?? null;
   const style = parseRenderStyle(renderJson);
   const missileLook = {
     releaseHeight: land.rules.releaseHeightPx,
@@ -1459,8 +1461,7 @@ export function startPlay(
   // Stage 13: the wreck on its reef, played on foot from a voyage (src/scenes/seaWreckPlay.ts).
   const wreckPlay = new SeaWreckPlay({
     sim,
-    land,
-    content,
+    ctx: land.seaWreck ?? null,
     sound: (event, direction) => {
       if (audio !== null && engine.unlocked) audio.event(event, engine.now, { direction });
     },
@@ -2114,12 +2115,10 @@ export function startPlay(
       root.dataset['talkOptions'] = '';
       return;
     }
-    const wreckOptions = wreckPlay.options();
-    const options = wreckOptions ?? talkOptions(sim.state, peopleCtx, land.searches ?? null);
-    const cursor = Math.min(
-      wreckOptions === null ? session.talkCursor : wreckPlay.cursor,
-      Math.max(0, options.length - 1),
-    );
+    const options =
+      wreckTalkOptions(sim.state, land.seaWreck ?? null) ??
+      talkOptions(sim.state, peopleCtx, land.searches ?? null);
+    const cursor = Math.min(session.talkCursor, Math.max(0, options.length - 1));
     const lineKey = talk.line?.key ?? '';
     // A refused job's reason, merged into the talk panel under the line it answers (the audit).
     const note = talkNote !== null && talkNote.line === lineKey ? talkNote.text : '';
@@ -2629,8 +2628,7 @@ export function startPlay(
       if (!manual) requestAnimationFrame(frame);
       return;
     }
-    if (wreckPlay.on())
-      wreckPlay.frame(result.input, map, viewCamera, { w: LOGICAL_WIDTH, h: LOGICAL_HEIGHT });
+    if (wreckPlay.on()) wreckPlay.frame(map, viewCamera, { w: LOGICAL_WIDTH, h: LOGICAL_HEIGHT });
     // Book 10 promptDone: the move prompt is done once the steerer has walked 2 tiles.
     const step =
       walkedFrom === null
@@ -2774,6 +2772,16 @@ export function startPlay(
     const at = interaction === null ? null : interactionPoint(onFoot, interaction, map.tile);
     if (use !== null && useWins(use, interaction, at, onFoot.player)) {
       const label = campUseLabel(use.use, content, t, nameOf, interactKey, device === 'mouse');
+      prompt = label.text;
+      promptKind = label.kind;
+    }
+    // Stage 13: on the reef, a survivor's words or Hild's question, by the very rule the
+    // simulation acts on (decision S13-81).
+    const seaWreck = land.seaWreck ?? null;
+    const reefUse =
+      seaWreck === null ? null : wreckUseNow(sim.state, seaWreck, map.tile, interaction);
+    if (reefUse !== null) {
+      const label = wreckUseLabel(reefUse, nameOf, t, interactKey, device === 'mouse');
       prompt = label.text;
       promptKind = label.kind;
     }

@@ -737,6 +737,11 @@
      "Key": "talkReachTiles",
      "Value": "2",
      "Notes": "How near a survivor the steerer stands to speak with them"
+    },
+    {
+     "Key": "lookTiles",
+     "Value": "6",
+     "Notes": "How near the steerer comes before a survivor standing on the reef turns to look at them (decision S13-82)"
     }
    ]
   },
