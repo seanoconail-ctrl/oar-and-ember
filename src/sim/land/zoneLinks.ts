@@ -108,11 +108,13 @@ export function entryPoint(
   y: number,
   ctx: Pick<LandContext, 'rules'>,
   tidalGroundOpen: boolean,
+  /** Stage 14: a spring low opens the causeway and the caves' floors (S14-110). */
+  springOpen = false,
 ): { x: number; y: number } | null {
   // Only where the next zone runs on beyond the edge (zones of different extents meet).
   if (!beyond(from, to, { x, y })) return null;
   const p = inside(to, translate(from, to, x, y), ctx.rules.footprint);
-  return footprintClear(to, ctx.rules, p.x, p.y, tidalGroundOpen) ? p : null;
+  return footprintClear(to, ctx.rules, p.x, p.y, tidalGroundOpen, springOpen) ? p : null;
 }
 
 /** The rest of a zone not in view: who is there, what lies there, what is stuck there. */

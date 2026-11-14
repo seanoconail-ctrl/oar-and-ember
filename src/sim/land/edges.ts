@@ -16,7 +16,7 @@ import { compass, footprintClear, TICKS_PER_SECOND } from './onFoot.ts';
 import type { LandContext } from './onFoot.ts';
 import { entryPoint, linkOf } from './zoneLinks.ts';
 import type { Edge } from './zoneLinks.ts';
-import { solidAt, terrainAt, tileOf } from './zoneMap.ts';
+import { solidAt, springGround, terrainAt, tileOf } from './zoneMap.ts';
 import type { TraverseMarks } from '../../content/traverseMarks.ts';
 import type { ZoneMap } from './zoneMap.ts';
 
@@ -111,6 +111,8 @@ export function edgeKindAt(
   tidalGroundOpen = false,
   /** Stage 14: the zone's movement marks, and whether the steerer carries something. */
   verbs?: { readonly marks: TraverseMarks; readonly carrying: boolean },
+  /** Stage 14: a spring low has opened the causeway and the caves' floors (S14-110). */
+  springOpen = false,
 ): EdgeKindName | 'LINK' {
   if (press.boundary !== null) {
     const to = linkOf(map, press.boundary, press.at, maps);
@@ -131,6 +133,9 @@ export function edgeKindAt(
   const t = terrainAt(map, tx, ty);
   if (t === 'rock' || t === 'bank') return 'STEEP';
   if (t === 'sea' || (t === 'flats' && !tidalGroundOpen) || t === 'stream') return 'DEEP';
+  // The causeway and a cave's floor under the sea but at a spring low (Stage 14).
+  if (springGround(t) && !(tidalGroundOpen && springOpen)) return 'DEEP';
+  if (t === 'cliff' || t === 'drystone') return 'STEEP';
   return 'NOTHING';
 }
 
@@ -167,6 +172,8 @@ export function openWayFrom(
   p: { readonly x: number; readonly y: number },
   rules: LandContext['rules'],
   tidalGroundOpen: boolean,
+  /** Stage 14: a spring low has opened the causeway and the caves' floors (S14-110). */
+  springOpen = false,
 ): OpenWay | null {
   const T = map.tile;
   const W = map.width * T;
@@ -187,7 +194,7 @@ export function openWayFrom(
               ? { x: f.w / 2 + 2, y: (k + 0.6) * T }
               : { x: W - f.w / 2 - 2, y: (k + 0.6) * T };
       if (linkOf(map, link.edge, at, maps) !== link.to) continue;
-      if (!footprintClear(map, rules, at.x, at.y, tidalGroundOpen)) continue;
+      if (!footprintClear(map, rules, at.x, at.y, tidalGroundOpen, springOpen)) continue;
       const out =
         link.edge === 'n'
           ? { x: at.x, y: -T * 0.5 }
@@ -196,7 +203,8 @@ export function openWayFrom(
             : link.edge === 'w'
               ? { x: -T * 0.5, y: at.y }
               : { x: W + T * 0.5, y: at.y };
-      if (entryPoint(map, to, out.x, out.y, { rules }, tidalGroundOpen) === null) continue;
+      if (entryPoint(map, to, out.x, out.y, { rules }, tidalGroundOpen, springOpen) === null)
+        continue;
       const d = Math.hypot(at.x - p.x, at.y - p.y);
       if (best === null || d < best.d) best = { to: link.to, at, d };
     }

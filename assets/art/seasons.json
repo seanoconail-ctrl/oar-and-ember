@@ -1,6 +1,16 @@
 {
-  "about": "Stage 14 (decisions S14-94 to S14-99; Book 7 sections 13 and 14, Book 9 section 03): how every island scene changes with the season, for the renderer only. `ramps` recolours the ground, decal and plant sheets (any sheet whose name starts with one of `sheets`) palette step to palette step along Book 7's ramps, never to an ad-hoc colour; spring is the look as drawn (the approved art, the game's first days). `bloom` is the heather in flower, late summer into early autumn. `zones` gives each scene snow on its high ground in winter (0 to 1), whether its still pools freeze, the seasons its upper stream shrinks to its pools (S14-5), mist, and the seasons anemones open in its pools; `default` covers a scene not listed, so a new scene changes with the seasons from the start. `life` keeps a share of each kind of wildlife by season (birds come and go), and `zoneLife` overrides it for a scene. `falls` puts Book 9's waterfalls on the zone's stream (a block of the island grid, snapped to the stream at the lip), and `mouths` names the edge a stream leaves by where it meets no sea. `seasonless` lists the scenes the book keeps unchanged by season, with the reason.",
-  "sheets": ["tile_", "plant_", "decal_strand", "prop_heather", "prop_bracken"],
+  "about": "Stage 14 (decisions S14-94 to S14-99; Book 7 sections 13 and 14, Book 9 section 03): how every island scene changes with the season, for the renderer only. `ramps` recolours the ground, decal and plant sheets (the sheets `sheets` names; a name ending in `_` is a prefix) palette step to palette step along Book 7's ramps, never to an ad-hoc colour; spring is the look as drawn (the approved art, the game's first days). `bloom` is the heather in flower, late summer into early autumn. `zones` gives each scene snow on its high ground in winter (0 to 1), whether its still pools freeze, the seasons its upper stream shrinks to its pools (S14-5), mist, and the seasons anemones open in its pools; `default` covers a scene not listed, so a new scene changes with the seasons from the start. `life` keeps a share of each kind of wildlife by season (birds come and go), and `zoneLife` overrides it for a scene. `falls` puts Book 9's waterfalls on the zone's stream (a block of the island grid, snapped to the stream at the lip), and `mouths` names the edge a stream leaves by where it meets no sea. `seasonless` lists the scenes the book keeps unchanged by season, with the reason. `zones.<zone>.ramps` adds a scene's own steps for a season (the deep passage's spring slime, decision S14-143), and `seeps` the seasons its walls run with meltwater. `interiors` gives the two interiors their own light in place of the outdoor grade (decision S14-144): no cloud shadows, shafts or sun shadows, the phase whose ambient they start from, a grade, a damp haze, the light off their water drifting in patches, and pools of light from their openings (tiles; with a fact, only while it holds). `sheets` names every sheet the seasons recolour (decision S14-146); a scene in `seasonless` is never recoloured.",
+  "sheets": [
+    "tile_strand",
+    "tile_machair_01",
+    "tile_moor",
+    "tile_cave",
+    "plant_strand",
+    "plant_moor",
+    "decal_strand",
+    "prop_heather",
+    "prop_bracken"
+  ],
   "ramps": {
     "Spring": {},
     "Summer": {
@@ -136,7 +146,14 @@
       "fog": {
         "Winter": 0.16
       },
-      "anemones": ["Summer", "Autumn"]
+      "anemones": ["Summer", "Autumn"],
+      "ramps": {
+        "Spring": {
+          "stone_warm 0": "moss 3",
+          "stone_warm 1": "moss 5"
+        }
+      },
+      "seeps": ["Spring"]
     },
     "ZONE_SK_CAIRN_IN": {
       "snow": 0,
@@ -206,5 +223,50 @@
   },
   "seasonless": {
     "ZONE_SK_CAIRN_IN": "Book 9 section 03: seasons do not reach inside the cairn, except the festival sun through its east door"
+  },
+  "interiors": {
+    "ZONE_SK_SEALCAVE_DEEP": {
+      "about": "Under the bog: blue-dark, lit by the light off its pools and a grey daylight from the way in at Seal Cave's back wall; a damp haze",
+      "phase": "night",
+      "gain": [1.08, 1.12, 1.06],
+      "lift": [4, 7, 9],
+      "haze": 0.12,
+      "waterLight": {
+        "share": 0.07,
+        "size": 22,
+        "vx": 6,
+        "vy": -2
+      },
+      "openings": [
+        {
+          "x": 47.5,
+          "y": 9.9,
+          "radius": 150,
+          "colour": [64, 74, 70]
+        }
+      ]
+    },
+    "ZONE_SK_CAIRN_IN": {
+      "about": "The cairn's dark: dim and still, a little warmer than the passage; the east door's daylight once it stands open, and the spring's water light",
+      "phase": "night",
+      "gain": [1.12, 1.08, 1.0],
+      "lift": [6, 6, 6],
+      "haze": 0.08,
+      "waterLight": {
+        "share": 0.05,
+        "size": 18,
+        "vx": 3,
+        "vy": -1
+      },
+      "openings": [
+        {
+          "x": 47.5,
+          "y": 14.5,
+          "radius": 190,
+          "colour": [96, 88, 70],
+          "fact": "cairn.door.open"
+        }
+      ]
+    }
   }
 }

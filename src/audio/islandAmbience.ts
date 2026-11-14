@@ -123,17 +123,19 @@ export function reachLevel(reach: Reach, tiles: number): number {
 
 /**
  * The deep passage's roar, 0 to 1 (Book 9 section 16: "the passage grows loud as the tide turns";
- * Book 10 tidalGroundWindow): on a spring-tide day it is quiet before low water and rises from the
- * turn to the window's close, when the lowest point goes deep; then it is the flood, full.
+ * Book 10 tidalGroundWindow): on a spring-tide day it is quiet before low water; at the turn it
+ * comes in at `atTurn` (the moment the simulation captions it, PASSAGE_LOUD, decision S14-115) and
+ * rises to the window's close, when the lowest point goes deep; then it is the flood, full.
  */
-export function roarLevel(tide: IslandQuery['tide']): number {
+export function roarLevel(tide: IslandQuery['tide'], atTurn = 0): number {
   // Off the spring tides the passage lies under the sea: only the sea's slop in the cleft.
   if (!tide.springTide) return 0.3;
   const half = tide.windowMinutes / 2;
   if (!tide.tidalGroundOpen) return tide.minutesSinceLowWater < tide.minutesToLowWater ? 1 : 0.2;
   if (tide.minutesToLowWater <= half && tide.minutesToLowWater < tide.minutesSinceLowWater)
     return 0;
-  return Math.max(0, Math.min(1, tide.minutesSinceLowWater / Math.max(1, half)));
+  const k = Math.max(0, Math.min(1, tide.minutesSinceLowWater / Math.max(1, half)));
+  return atTurn + (1 - atTurn) * k;
 }
 
 /** The island's ambience for a moment (see the module comment). */
@@ -172,7 +174,7 @@ export function islandMix(rules: IslandRules, q: IslandQuery): IslandMix {
     rule.roar === undefined || q.roarAt === null
       ? SILENT
       : {
-          level: roarLevel(q.tide) * (0.55 + 0.45 * reachLevel(rules.reach.falls, q.roarAt.tiles)),
+          level: roarLevel(q.tide, rules.roarCaptionAt) * (0.55 + 0.45 * reachLevel(rules.reach.falls, q.roarAt.tiles)),
           pan: q.roarAt.pan,
         };
   // The drowned stand on the Skerry at the spring lows only (Book 4 section 02).

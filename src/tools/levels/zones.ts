@@ -313,6 +313,12 @@ export interface ZoneMarkup {
       readonly w: number;
       readonly h: number;
       readonly band: 'ANKLE' | 'KNEE' | 'WAIST';
+      /**
+       * Stage 14 (decision S14-111): in the deep passage, the pool or the lowest point, whose band
+       * then follows the passage's water by the tide (src/sim/land/zoneWater.ts); `band` is its
+       * band at low water.
+       */
+      readonly passage?: 'POOL' | 'LOWEST';
     }[];
   };
   readonly areas?: readonly {

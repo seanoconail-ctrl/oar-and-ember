@@ -24,7 +24,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else f'{REPO}/docs/art/stage-14/people'
 stage09_people.ATLAS = f'{REPO}/assets/atlases'
 LAYERS = f'{REPO}/assets/art/layers'
 WHO = ['steerer_a', 'steerer_b', 'heavy']
-VERBS = ['climb', 'swim', 'sink', 'crawl', 'push', 'pull', 'jump']
+VERBS = ['climb', 'slide', 'swim', 'sink', 'crawl', 'push', 'pull', 'jump']
 
 
 def contact(layers, cache, anims, path):
@@ -56,7 +56,7 @@ def state_gif(layers, cache, anims, state, path):
 def verbs_gif(layers, cache, anims, path):
     frames = []
     for s in VERBS:
-        facing = 'n' if s == 'climb' else 'e'
+        facing = 'n' if s in ('climb', 'slide') else 'e'
         a = anims[s]
         for k in range(a['frames'] * 2):
             i = k % a['frames']

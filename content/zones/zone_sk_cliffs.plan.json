@@ -485,29 +485,29 @@
       {
         "id": "cliffs.egg.south",
         "x": 34,
-        "foot": 23,
-        "head": 13,
+        "foot": 22,
+        "head": 14,
         "ledges": []
       },
       {
         "id": "cliffs.egg.middle",
         "x": 41,
-        "foot": 24,
-        "head": 13,
+        "foot": 23,
+        "head": 14,
         "ledges": []
       },
       {
         "id": "cliffs.egg.north",
         "x": 48,
-        "foot": 23,
-        "head": 13,
+        "foot": 22,
+        "head": 14,
         "ledges": []
       },
       {
         "id": "cliffs.cleft",
         "x": 57,
         "foot": 19,
-        "head": 13,
+        "head": 14,
         "ledges": []
       }
     ]

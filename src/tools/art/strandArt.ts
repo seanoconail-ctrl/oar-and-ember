@@ -217,6 +217,11 @@ function paint(
       // in streaks, weed and small pools in its hollows; darker at the walls' foot.
       if (inside < 2.4) return c('kelp', 1.4);
       if (valueNoise(wx, wy, 7, 55, P) > 0.72) return c('sea', 2 + detail);
+      // A film of slime on the wet rock where seep water runs over it (decision S14-143): dark and
+      // old most of the year; the deep passage's spring recolours it to a fresh green bloom
+      // (assets/art/seasons.json). Clumps with ragged edges, the shadow step at their heart.
+      const film = valueNoise(wx, wy, 6, 66, P) + (detail - 0.5) * 0.18;
+      if (film > 0.6) return c('stone_warm', film > 0.7 ? 0.4 : 1.2);
       const sheen = Math.sin((TAU * (wx * 3 + wy * 5)) / P + detail * 5) > 0.9 && tone > 0.5;
       if (sheen) return c('stone', 4.4);
       return c('stone', 2.2 + (tone - 0.5) * 1.4 + (detail - 0.5) * 1.0);
@@ -260,6 +265,13 @@ function paint(
         // A passage's wet rock wall seen from above (Stage 14): dark, rough, glistening; a weed
         // line at its foot where the sea reaches.
         if (inside < 2.4) return realWet ? c('kelp', 1.6 + detail * 2) : c('stone', 0.6);
+        // Seep runnels down the wall from the bog above, slimed (decision S14-143): streaks that
+        // run down the face to its foot, broken along their length.
+        if (inside < 18) {
+          const lane = valueNoise(wx, 0, 5, 67, P) - inside * 0.006;
+          const run = valueNoise(wx, wy, 3, 68, P);
+          if (lane > 0.66 && run > 0.35) return c('stone_warm', run > 0.62 ? 0.4 : 1.2);
+        }
         const glint = hash01(wx, wy, 60) < 0.02;
         if (glint) return c('stone', 5);
         return c('stone', 0.6 + (tone - 0.5) * 1.0 + (detail > 0.72 ? 0.9 : 0));

@@ -151,6 +151,8 @@ export interface FrameInput {
     readonly minutesToLowWater: number;
     readonly minutesSinceLowWater: number;
     readonly tidalGroundOpen: boolean;
+    /** A spring-tide day (with the window open, the causeway's stones stand clear; S14-145). */
+    readonly springTide?: boolean;
   };
   readonly sky: SkyInput;
   readonly anims: SheetAnims;
@@ -194,6 +196,20 @@ const STRAIN_EVERY = 4;
 const JUMP_TAKEOFF = 0.25;
 const JUMP_LANDING = 0.8;
 const JUMP_ARC = 0.25;
+
+/**
+ * The jump's frame `k` of the way through its flight (0 to 1), by the sheet's own frame count: the
+ * take-off's frame for the first quarter, the landing's for the last fifth, and the frames between
+ * spread over the flight (Book 7 section 01's jump 4: crouch, spring, stride, landing).
+ */
+export function jumpFrame(k: number, frames: number): number {
+  if (frames <= 1) return 0;
+  if (k < JUMP_TAKEOFF) return 0;
+  if (k >= JUMP_LANDING) return frames - 1;
+  const between = Math.max(1, frames - 2);
+  const u = (k - JUMP_TAKEOFF) / (JUMP_LANDING - JUMP_TAKEOFF);
+  return Math.min(frames - 1, 1 + Math.min(between - 1, Math.floor(u * between)));
+}
 
 /** One person's water: their band now and before, and the dripping after they leave it. */
 interface Wetness {
@@ -296,6 +312,8 @@ export class ZoneVisuals {
   #verbHolds = 0;
   #pushSince = -1;
   #lift = 0;
+  /** A spring low inside the window (the causeway's stones stand clear). */
+  #springOpen = false;
 
   constructor(map: ZoneMap, elevation: Elevation, reducedMotion: boolean, tuning: VisualTuning) {
     this.map = map;
@@ -447,6 +465,11 @@ export class ZoneVisuals {
 
   /** The band at a point under the simulation's still water level (what movement obeys). */
   #band(x: number, y: number, level: number): { band: DepthBand | null; depth: number } {
+    // The causeway at a spring low is dry stone underfoot, as it is drawn (decision S14-145).
+    if (this.#springOpen) {
+      const row = this.map.rows[Math.floor(y / this.map.tile)];
+      if (row?.[Math.floor(x / this.map.tile)] === '=') return { band: null, depth: 0 };
+    }
     const b = bandAt(this.tuning.water, this.elevation, x, y, level);
     return { band: b?.band ?? null, depth: level - heightAt(this.elevation, x, y) };
   }
@@ -560,6 +583,7 @@ export class ZoneVisuals {
       this.#tide < 0 ? goal : this.#tide + (goal - this.#tide) * (1 - Math.exp(-dt * 0.6));
     // Sand stays wet where the water has been, drying over a couple of minutes.
     this.#wetTo = Math.max(this.#tide, this.#wetTo - dt * 0.0015);
+    this.#springOpen = input.tide.tidalGroundOpen && input.tide.springTide === true;
     const level = stillWaterLevel(input.tide);
 
     // Distance since the last frame, measured before the last position is replaced.
@@ -1014,8 +1038,17 @@ export class ZoneVisuals {
     this.#frame = -1;
     const t = p.traverse;
     let frame: number;
+    const sliding = verb === 'climb' && t?.verb === 'climb' && t.slide !== undefined;
+    const slide = sliding ? input.anims.get(input.steererSheet)?.['slide'] : undefined;
+    if (slide !== undefined) {
+      // Book 7 section 01's slide (2 frames): the bar ran out on the face; it loops in time, the
+      // hands clawing and the feet scrabbling, until the slide ends (decision S14-140).
+      frame = Math.floor(input.tick / slide.ticks) % slide.frames;
+      this.#verbFrame = frame;
+      this.#anim = { state: 'slide', frame };
+      return;
+    }
     if (verb === 'climb' || verb === 'crawl') {
-      const sliding = t?.verb === 'climb' && t.slide !== undefined;
       if (!sliding) this.#verbDist = (this.#verbDist + moved) % TILE;
       frame = sliding ? 0 : Math.floor((this.#verbDist / TILE) * va.frames) % va.frames;
       const beat = frame !== this.#verbFrame && frame % (va.frames / 2) === 0 && p.moving;
@@ -1027,7 +1060,7 @@ export class ZoneVisuals {
       }
     } else if (verb === 'jump' && t?.verb === 'jump') {
       const k = Math.min(1, Math.max(0, (input.tick - t.since) / t.ticks));
-      frame = k < JUMP_TAKEOFF ? 0 : k < JUMP_LANDING ? 1 : Math.min(2, va.frames - 1);
+      frame = jumpFrame(k, va.frames);
       const length = Math.hypot(t.to.x - t.from.x, t.to.y - t.from.y);
       this.#lift = Math.round(JUMP_ARC * length * Math.sin(Math.PI * k));
     } else {

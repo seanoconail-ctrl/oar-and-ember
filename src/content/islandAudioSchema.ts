@@ -68,7 +68,10 @@ export interface IslandRules {
   readonly captionAgainSeconds: number;
   readonly tellLeastSeconds: number;
   readonly tellMostSeconds: number;
-  /** The roar's level at which its caption shows (*The passage grows loud*). */
+  /**
+   * The roar's level as it comes in at the spring tide's turn, when the simulation says *The
+   * passage grows loud* (PASSAGE_LOUD, decision S14-115).
+   */
   readonly roarCaptionAt: number;
   readonly default: IslandRule;
   readonly zones: Readonly<Record<string, IslandRule>>;
@@ -139,7 +142,7 @@ const scale = object({ wind: amount(3), gulls: amount(3), birds: amount(3), surf
 ]);
 const reach = object({ fullTiles: amount(200), silentTiles: amount(400) });
 
-export const islandAudioCheck: Check<IslandRules & { readonly about: string }> = object({
+export const islandAudioCheck = object({
   about: text,
   reach: object({ sea: reach, stream: reach, falls: reach, tell: reach }),
   captionAgainSeconds: amount(600),

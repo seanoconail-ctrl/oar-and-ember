@@ -6,16 +6,23 @@ shading, outline, layers and loose-cloth lag as every person in the game):
 - climb (4 frames): facing the rock, a hand reaching up to the next hold while the other grips and
   a foot steps up onto a hold; then the other side. A climber always faces the rock (north), so
   every facing holds the north frames.
-- swim (4 frames x 4 facings): treading and stroking, arms sweeping at the shoulders; drawn whole,
-  and masked by the renderer to the head and shoulders at the waterline (Book 10 Deep: swimming).
-- sink (4 frames x 4 facings): out of breath and going under, the head tipped back, the arms
-  thrashing up out of the water, the mouth open for air; masked deeper than the swim.
+- slide (2 frames): the bar empty on the face, sliding down it, hands clawing high at the rock and
+  the feet scrabbling, one then the other; north in every facing, as the climb.
+- swim (6 frames x 4 facings): treading and stroking, a whole stroke from the glide through the
+  sweep and the pull to the push; drawn whole, and masked by the renderer to the head and
+  shoulders at the waterline (Book 10 Deep: swimming).
+- sink (2 frames x 4 facings, laboured): out of breath and going under, the head tipped back, one
+  arm thrashing up out of the water and then the other, the mouth open for air; masked deeper.
 - crawl (4 frames x 4 facings): bent double under a low roof, low on folded knees, a hand out
-  ahead feeling the way, creeping (a seated pose for the art lint: not a standing figure).
+  ahead feeling the way, creeping (a seated pose for the art lint: not a standing figure). Book 7
+  asks for "a crawl or stoop" under a low roof (section 01, Doorway), so the creep stands.
 - push and pull (4 frames x 4 facings each): leaning into a heavy stone with both hands on it,
   short driving steps; and leaning back from it, hands gripping, stepping back.
-- jump (3 frames x 4 facings): the crouch and spring at the take-off, the stride in the air (the
-  renderer lifts the frame on the jump's arc), the landing on bent knees.
+- jump (4 frames x 4 facings): the crouch at the take-off, the spring off the back foot, the stride
+  in the air (the renderer lifts the frame on the jump's arc), the landing on bent knees.
+
+The frame counts are Book 7 section 01's (decision S14-140, replacing S14-62's swim 4, sink 4,
+jump 3 and the slide held on the climb's first frame).
 
     python3 assets/art/authoring/stage14_people.py [--preview out.png]
     npm run art:sheets && npm run art:compile
@@ -64,19 +71,24 @@ def anim_climb():
 
 
 def anim_swim():
-    """Treading water and stroking: the arms reach forward at the shoulders, sweep out and round,
-    draw in to the chest and push forward again; the legs kick below (hidden under the water)."""
+    """Treading water and stroking (Book 7 section 01: swim 6): the arms glide forward together at
+    the shoulders, sweep out and round, draw in under the chin and push forward again; the legs
+    kick in time below (hidden under the water). The head lifts a little on the pull for air."""
     arms = [
-        ((0.4, 8.0, -1.4), (0.4, 8.0, -1.4)),
-        ((1.4, 6.6, -1.0), (1.4, 6.6, -1.0)),
-        ((0.8, 3.8, -3.4), (0.8, 3.8, -3.4)),
-        ((0.5, 6.2, -2.2), (0.5, 6.2, -2.2)),
+        ((0.4, 8.2, -1.2), (0.4, 8.2, -1.2)),    # the glide, reaching forward
+        ((1.6, 7.4, -0.8), (1.6, 7.4, -0.8)),    # the catch, the hands parting
+        ((2.6, 5.0, -1.4), (2.6, 5.0, -1.4)),    # the sweep, out wide
+        ((1.4, 3.0, -2.8), (1.4, 3.0, -2.8)),    # the pull, round and in
+        ((0.6, 3.2, -4.0), (0.6, 3.2, -4.0)),    # the hands under the chin
+        ((0.4, 5.8, -2.4), (0.4, 5.8, -2.4)),    # the push forward again
     ]
-    kicks = [((1.5, 0), (-1.5, 2)), ((0.5, 0), (-0.5, 1)), ((-1.5, 2), (1.5, 0)), ((-0.5, 1), (0.5, 0))]
+    kicks = [((1.5, 0), (-1.5, 2)), ((1.0, 0), (-1.0, 1)), ((0.0, 1), (0.0, 1)),
+             ((-1.5, 2), (1.5, 0)), ((-1.0, 1), (1.0, 0)), ((0.0, 1), (0.0, 1))]
+    head = [0.0, 0.0, 0.2, 0.4, 0.4, 0.2]
     out = []
     for i, ((r, l), (kr, kl)) in enumerate(zip(arms, kicks)):
-        p = P.Pose(pel=(0.0, 0.0, -1.0), lean=(0.0, 1.2), head=(0.0, 0.8, 0.0),
-                   breath=-1 if i % 2 else 0)
+        p = P.Pose(pel=(0.0, 0.0, -1.0), lean=(0.0, 1.2), head=(0.0, 0.8, head[i]),
+                   breath=-1 if i in (1, 2) else 0)
         p.hands = {'R': r, 'L': l}
         p.elbow = {'R': (0.2, 0.0, -1.0), 'L': (0.2, 0.0, -1.0)}
         p.grip = {'R': 'open', 'L': 'open'}
@@ -88,17 +100,16 @@ def anim_swim():
 
 
 def anim_sink():
-    """Spent and going under: the head tipped back for air, the mouth open, the arms thrashing up
-    out of the water one after the other, the shoulders dropping."""
+    """Spent and going under (Book 7 section 01: sink 2, laboured): the head tipped back for air
+    with the mouth open, one arm thrashing up out of the water while the other claws down, then
+    the other way, the shoulders a pixel lower on the second beat."""
     spec = [
-        ((0.6, 1.4, 7.6), (0.8, 2.4, 1.4), 1, 0.0),
-        ((0.8, 2.0, 3.4), (0.6, 1.6, 6.4), 0, -1.0),
-        ((0.8, 2.4, 1.4), (0.6, 1.4, 7.6), 1, 0.0),
-        ((0.6, 1.6, 6.4), (0.8, 2.0, 3.4), 0, -1.0),
+        ((0.6, 1.4, 7.6), (0.8, 2.6, 1.0), 1, 0.0, -2.0),
+        ((0.8, 2.6, 1.0), (0.6, 1.4, 7.6), 1, -1.0, -3.0),
     ]
     out = []
-    for i, (r, l, mouth, b) in enumerate(spec):
-        p = P.Pose(pel=(0.0, 0.0, -2.0), lean=(0.0, -0.6), head=(0.0, -0.8, 0.4),
+    for i, (r, l, mouth, b, pu) in enumerate(spec):
+        p = P.Pose(pel=(0.0, 0.0, pu), lean=(0.0, -0.6), head=(0.0, -0.8, 0.4),
                    mouth=mouth, breath=b)
         p.hands = {'R': r, 'L': l}
         p.elbow = {'R': (0.4, 0.6, -0.4), 'L': (0.4, 0.6, -0.4)}
@@ -178,15 +189,24 @@ def anim_pull():
 
 
 def anim_jump():
-    """The take-off (crouched, arms swung back, springing off the toes), the stride in the air
-    (front knee driven up, arms forward; the renderer lifts the frame on the arc), and the
-    landing (both feet down, knees bent, arms out for balance)."""
+    """Book 7 section 01: jump 4. The crouch at the take-off (knees bent, arms swung back), the
+    spring (the back leg driving straight off its toe, the arms thrown forward and up), the stride
+    in the air (the front knee driven high, the back leg trailing; the renderer lifts the frame on
+    the jump's arc) and the landing (both feet down, knees bent, arms out for balance). One foot
+    stays on the pivot row in every frame: the renderer, not the frame, carries the flight."""
     a = P.Pose(pel=(0.0, 0.6, -4.0), lean=(0.0, 2.4), head=(0.0, 0.8, 0.0))
     a.hands = {'R': (0.8, -4.4, -8.6), 'L': (0.8, -4.4, -8.6)}
     a.feet = {'R': (1.0, 0), 'L': (-2.0, 0)}
     a.toe = {'R': 1, 'L': 1}
     a.cloth = (-0.6, 0.0)
     a.hair = a.cloth
+    s = P.Pose(pel=(0.0, 1.0, 0.0), lean=(0.0, 2.0), head=(0.0, 0.8, 0.2))
+    s.hands = {'R': (0.6, 5.6, -1.6), 'L': (0.6, 5.0, -0.6)}
+    s.grip = {'R': 'fist', 'L': 'fist'}
+    s.feet = {'R': (3.4, 3), 'L': (-3.0, 0)}
+    s.toe = {'R': 0, 'L': 1}
+    s.cloth = (-1.2, -0.4)
+    s.hair = s.cloth
     b = P.Pose(pel=(0.0, 0.0, -1.0), lean=(0.0, 1.6), head=(0.0, 0.6, 0.0))
     b.hands = {'R': (-1.0, 4.4, -4.0), 'L': (0.6, -2.6, -8.4)}
     b.grip = {'R': 'fist', 'L': 'fist'}
@@ -199,22 +219,49 @@ def anim_jump():
     c.feet = {'R': (2.0, 0), 'L': (-1.0, 0)}
     c.cloth = (0.8, 0.6)
     c.hair = c.cloth
-    return [a, b, c]
+    return [a, s, b, c]
 
 
-# state, poses, ticks a frame, loop (Book 7 section 01: 4-frame loops; the jump plays once)
+def anim_slide():
+    """Book 7 sections 01 and 07: slide 2. The bar empty on the face, the climber slides down it,
+    facing the rock: both hands high and clawing at it, the elbows wide, the body hanging off
+    them, the feet scrabbling for a hold, one then the other; the cloth and hair thrown up by the
+    drop. A climber faces the rock (north) in every facing."""
+    spec = [
+        # R hand (o, f, u), L hand, R foot (f, lift), L foot
+        ((0.6, 2.0, 7.4), (0.8, 2.0, 6.4), (0.6, 3), (0.0, 0)),
+        ((0.8, 2.0, 6.4), (0.6, 2.0, 7.4), (0.0, 0), (0.6, 3)),
+    ]
+    out = []
+    for i, (rh, lh, rf, lf) in enumerate(spec):
+        p = P.Pose(pel=(0.0, 1.0, 0.5 * i), lean=(0.0, 1.0), head=(0.0, 0.2, -0.4),
+                   mouth=1 if i == 0 else 0)
+        p.hands = {'R': rh, 'L': lh}
+        p.elbow = {'R': (1.0, 0.6, -0.4), 'L': (1.0, 0.6, -0.4)}
+        p.grip = {'R': 'open', 'L': 'open'}
+        p.feet = {'R': rf, 'L': lf}
+        p.toe = {'R': 1 if rf[1] > 0 else 0, 'L': 1 if lf[1] > 0 else 0}
+        p.cloth = (0.0, -1.2)
+        p.hair = (0.0, -1.0)
+        out.append(p)
+    return out
+
+
+# state, poses, ticks a frame, loop (Book 7 section 01's targets: climb 4, slide 2, swim 6, sink 2,
+# jump 4, crawl 4, push and pull 4; the jump plays once; decision S14-140)
 STATES = [
     ('climb', anim_climb, 12, True),
-    ('swim', anim_swim, 12, True),
-    ('sink', anim_sink, 9, True),
+    ('slide', anim_slide, 6, True),
+    ('swim', anim_swim, 9, True),
+    ('sink', anim_sink, 14, True),
     ('crawl', anim_crawl, 14, True),
     ('push', anim_push, 14, True),
     ('pull', anim_pull, 14, True),
-    ('jump', anim_jump, 8, False),
+    ('jump', anim_jump, 6, False),
 ]
 POSES = {'crawl': 'seated'}
-# A climber faces the rock: every facing holds the north frames.
-NORTH_ONLY = ('climb',)
+# A climber faces the rock, sliding or not: every facing holds the north frames.
+NORTH_ONLY = ('climb', 'slide')
 
 
 def adopted(text):

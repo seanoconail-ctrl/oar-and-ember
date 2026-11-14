@@ -33,7 +33,8 @@ import { saveFor } from '../persist/checkpoints.ts';
 import { bakeElevation } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
-import { islandFrame, zoneFlow } from './islandLook.ts';
+import { interiorPools, islandFrame, seepSprites, zoneFlow } from './islandLook.ts';
+import { SmallStaminaBar, smallBarSprites } from './smallBar.ts';
 import { IslandAudio } from './islandAmbAudio.ts';
 import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
@@ -128,7 +129,7 @@ import type { ColdStorm } from './openingView.ts';
 import { firstRainDrops, swayAt } from './storm.ts';
 import { heightAt } from '../content/terrain/elevation.ts';
 import { stillWaterLevel } from '../sim/land/water.ts';
-import { objectsView, traverseOffer } from '../sim/land/traverse.ts';
+import { objectsView, traverseAnim, traverseOffer } from '../sim/land/traverse.ts';
 import { verbPrompt } from './traversePrompt.ts';
 import type { WreckWhat } from '../sim/narrative/wreck.ts';
 
@@ -987,6 +988,10 @@ export function startPlay(
   let hintsHeard = 0;
   let edgeCaptions = 0;
   const openingFx = new OpeningFx();
+  /** Stage 14: the small stamina bar beside a climber or a swimmer (decision S14-142). */
+  /** How far up the causeway's boulders the sea stands at an ordinary low water (art layout). */
+  const CAUSEWAY_AWASH_PX = 5;
+  const smallBar = new SmallStaminaBar();
   const wreckCtx = land.wreck ?? null;
   // Design addendum 2.5 section 3: the storm of the cold open, its strikes, waves and green water
   // fixed from Book 10 and the script; swells are drawn only over the strand's open sea.
@@ -3141,6 +3146,7 @@ export function startPlay(
     openingFx.update(Math.min(0.1, frameInput.dt));
     const camp = campScene();
     // Stage 14: the season on the land, its wildlife and its colours (decisions S14-94 to S14-99).
+    const tideNow = tideAt(sim.state.calendar, b);
     const island = islandFrame(
       view,
       map,
@@ -3148,13 +3154,25 @@ export function startPlay(
       display.reducedMotion,
       palette,
       geometry.keys(),
+      undefined,
+      { springOpen: tideNow.tidalGroundOpen && tideNow.springTide },
     );
     const scene0 = zoneScene({
       map,
       onFoot,
       tick: sim.state.tick,
       tideOpen,
-      phase: lightPhase(sim.state.calendar, b),
+      // Stage 14 (decision S14-144): an interior keeps its own light, whatever the hour outside.
+      phase: island.phase ?? lightPhase(sim.state.calendar, b),
+      causeway: {
+        state: !tideNow.tidalGroundOpen
+          ? 'under'
+          : tideNow.springTide
+            ? 'dry'
+            : 'awash',
+        mask: CAUSEWAY_AWASH_PX,
+        colour: visuals.tuning.sea[5] ?? [53, 104, 119],
+      },
       look: currentLook(),
       anims,
       shadows,
@@ -3210,7 +3228,62 @@ export function startPlay(
             },
           }),
     });
-    const scene = island.recolour === undefined ? scene0 : { ...scene0, recolour: island.recolour };
+    // Stage 14: an interior's openings throw their light in (S14-144); meltwater seeps down the
+    // deep passage's walls in spring (S14-143); the small stamina bar beside a climber, a
+    // swimmer or a wader waist deep, its frame flashing once before a slide or a sink (S14-142).
+    const pools = interiorPools(
+      map,
+      view.camera,
+      sim.state.facts,
+      view.seconds,
+      display.reducedMotion,
+    );
+    const seeps = seepSprites(
+      map,
+      sim.state.calendar.day,
+      view.camera,
+      view.seconds,
+      display.reducedMotion,
+    );
+    const verbNow = traverseAnim(onFoot.player);
+    const stNow = sim.state.player.stamina;
+    const bar = smallBar.update({
+      shown:
+        verbNow === 'climb' ||
+        verbNow === 'swim' ||
+        verbNow === 'sink' ||
+        view.water['P_STEERER']?.band === 'WAIST',
+      current: stNow.current,
+      max: stNow.max,
+      base: stNow.base,
+      failing:
+        onFoot.player.traverse?.verb === 'climb'
+          ? onFoot.player.traverse.slide !== undefined
+          : onFoot.player.traverse?.verb === 'swim' && onFoot.player.traverse.sink !== undefined,
+      tick: sim.state.tick,
+      reducedFlashes: display.reducedMotion,
+    });
+    root.dataset['smallBar'] =
+      bar === null ? '' : `${bar.filled}/${bar.columns}${bar.flash ? ' flash' : ''}`;
+    const extraSprites = [
+      ...seeps,
+      ...(bar === null || hidePeople
+        ? []
+        : smallBarSprites(
+            bar,
+            onFoot.player.x - view.camera.x,
+            onFoot.player.y - view.camera.y,
+          )),
+    ];
+    const scene1 =
+      pools.length === 0 && extraSprites.length === 0
+        ? scene0
+        : {
+            ...scene0,
+            pools: [...scene0.pools, ...pools],
+            sprites: [...scene0.sprites, ...extraSprites],
+          };
+    const scene = island.recolour === undefined ? scene1 : { ...scene1, recolour: island.recolour };
     root.dataset['camera'] = `${view.camera.x},${view.camera.y}`;
     viewCamera = view.camera;
     const lead = visuals.lead;

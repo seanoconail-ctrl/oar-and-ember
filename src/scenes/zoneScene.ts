@@ -720,6 +720,16 @@ export interface ZoneSceneInput {
   /** The user's third playtest (DG-4): the tick the steerer let a foe go (the gesture's start). */
   readonly steererSpare?: number;
   /**
+   * Stage 14 (decision S14-145): how the causeway's boulders lie: clear at a spring low, awash
+   * (masked `mask` px up from their foot in the sea's `colour`) at other low waters, under the sea
+   * at high water. Absent: as drawn.
+   */
+  readonly causeway?: {
+    readonly state: 'dry' | 'awash' | 'under';
+    readonly mask: number;
+    readonly colour: readonly [number, number, number];
+  };
+  /**
    * The user's fourth playtest (Book 10 "The steerer's death", DH-71): the steerer's collapse, from
    * the killing blow's way (0 to 15, or null), with its buckle, its fall's frames and their ticks.
    */
@@ -1326,6 +1336,13 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     }
     const flat = prop.sheet === SEALCAVE_FX_SHEET || prop.sheet === ISLAND_FX_SHEET;
     const built = prop.sheet === SEALCAVE_SHEET || flat;
+    // Stage 14 (decision S14-145): the causeway's boulders stand clear at a spring low, awash at
+    // other low waters, and under the sea at high water, as the simulation lets them be walked.
+    const causeway =
+      input.causeway !== undefined && prop.frame.startsWith('causeway')
+        ? input.causeway
+        : undefined;
+    if (causeway?.state === 'under') continue;
     const sprite: SceneSprite = {
       sheet: prop.sheet,
       frame,
@@ -1334,6 +1351,9 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       layer: 'actor',
       tall: !flat,
       ...(prop.sort === undefined ? {} : { sort: prop.sort * map.tile - camera.y }),
+      ...(causeway?.state === 'awash'
+        ? { wade: { mask: causeway.mask, colour: causeway.colour } }
+        : {}),
     };
     sprites.push(sprite);
     // A cliff face and the dark in its mouth cast no shadow of their own on the cove.

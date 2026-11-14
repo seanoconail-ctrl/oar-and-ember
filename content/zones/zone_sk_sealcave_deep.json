@@ -1650,14 +1650,16 @@
         "y": 9,
         "w": 11,
         "h": 2,
-        "band": "KNEE"
+        "band": "KNEE",
+        "passage": "POOL"
       },
       {
         "x": 4,
         "y": 15,
         "w": 12,
         "h": 2,
-        "band": "WAIST"
+        "band": "WAIST",
+        "passage": "LOWEST"
       }
     ]
   },

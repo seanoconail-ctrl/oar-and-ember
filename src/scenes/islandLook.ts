@@ -21,7 +21,7 @@ import { bakeFlow } from '../content/terrain/flow.ts';
 import type { FallDef, Flow, FlowOptions } from '../content/terrain/flow.ts';
 import type { Elevation } from '../content/terrain/elevation.ts';
 import type { Palette } from '../render/palette.ts';
-import type { LandLook, Recolour } from '../render/scene.ts';
+import type { LandLook, LightPool, Phase, Recolour, SceneSprite } from '../render/scene.ts';
 import { hash01 } from '../render/noise.ts';
 
 const SEASON_ORDER: readonly Season[] = SEASONS;
@@ -34,6 +34,35 @@ interface ZoneRule {
   readonly shrink?: readonly string[];
   readonly fog?: Readonly<Partial<Record<string, number>>>;
   readonly anemones?: readonly string[];
+  /** The scene's own steps for a season, over the island's (decision S14-143). */
+  readonly ramps?: Readonly<Partial<Record<string, Readonly<Record<string, string>>>>>;
+  /** The seasons its walls run with meltwater (the deep passage's spring, S14-143). */
+  readonly seeps?: readonly string[];
+}
+
+/**
+ * An interior's own light (decision S14-144): no cloud shadows, shafts or long sun shadows; the
+ * phase whose ambient it starts from, a grade, a damp haze, the light off its water drifting in
+ * patches, and pools of light from its openings (tiles; with a fact, only while it holds).
+ */
+export interface InteriorLight {
+  readonly phase: Phase;
+  readonly gain: readonly [number, number, number];
+  readonly lift: readonly [number, number, number];
+  readonly haze: number;
+  readonly waterLight: {
+    readonly share: number;
+    readonly size: number;
+    readonly vx: number;
+    readonly vy: number;
+  };
+  readonly openings: readonly {
+    readonly x: number;
+    readonly y: number;
+    readonly radius: number;
+    readonly colour: readonly [number, number, number];
+    readonly fact?: string;
+  }[];
 }
 
 export interface SeasonArt {
@@ -62,9 +91,45 @@ export interface SeasonArt {
   >;
   readonly mouths: Readonly<Record<string, string>>;
   readonly seasonless: Readonly<Record<string, string>>;
+  readonly interiors?: Readonly<Record<string, InteriorLight>>;
 }
 
-export const SEASON_ART: SeasonArt = seasonsJson;
+/** An interior's light from the art data, checked (a phase, three-channel grades and colours). */
+function parseInteriors(raw: unknown): Record<string, InteriorLight> {
+  const out: Record<string, InteriorLight> = {};
+  const three = (v: unknown, what: string): [number, number, number] => {
+    if (!Array.isArray(v) || v.length !== 3 || !v.every((n) => typeof n === 'number'))
+      throw new Error(`seasons.json: ${what} must be [r, g, b]`);
+    return [v[0] as number, v[1] as number, v[2] as number];
+  };
+  for (const [zone, value] of Object.entries((raw ?? {}) as Record<string, unknown>)) {
+    const v = value as Record<string, unknown>;
+    const phase = v['phase'];
+    if (phase !== 'day' && phase !== 'dusk' && phase !== 'night')
+      throw new Error(`seasons.json: interiors.${zone}.phase must be day, dusk or night`);
+    const w = v['waterLight'] as InteriorLight['waterLight'];
+    out[zone] = {
+      phase,
+      gain: three(v['gain'], `interiors.${zone}.gain`),
+      lift: three(v['lift'], `interiors.${zone}.lift`),
+      haze: Number(v['haze'] ?? 0),
+      waterLight: { share: w.share, size: w.size, vx: w.vx, vy: w.vy },
+      openings: ((v['openings'] ?? []) as Record<string, unknown>[]).map((o, i) => ({
+        x: Number(o['x']),
+        y: Number(o['y']),
+        radius: Number(o['radius']),
+        colour: three(o['colour'], `interiors.${zone}.openings[${i}].colour`),
+        ...(typeof o['fact'] === 'string' ? { fact: o['fact'] } : {}),
+      })),
+    };
+  }
+  return out;
+}
+
+export const SEASON_ART: SeasonArt = {
+  ...(seasonsJson as unknown as Omit<SeasonArt, 'interiors'>),
+  interiors: parseInteriors((seasonsJson as { interiors?: unknown }).interiors),
+};
 
 /** The season of a calendar day and its day within the season (1 to 30). */
 export function seasonOfDay(day: number): { season: Season; day: number } {
@@ -96,7 +161,12 @@ function stepIndex(palette: Palette, step: string): number {
 
 /** Every ramp step the season data names, checked against the palette (for the tests). */
 export function seasonSteps(art: SeasonArt = SEASON_ART): string[] {
-  const all = [...Object.values(art.ramps), art.bloom.ramps].flatMap((m) =>
+  const own = Object.values(art.zones).flatMap((z) =>
+    Object.values(z.ramps ?? {}).filter(
+      (m): m is Readonly<Record<string, string>> => m !== undefined,
+    ),
+  );
+  const all = [...Object.values(art.ramps), art.bloom.ramps, ...own].flatMap((m) =>
     Object.entries(m).flat(),
   );
   return [...new Set(all)];
@@ -104,17 +174,24 @@ export function seasonSteps(art: SeasonArt = SEASON_ART): string[] {
 
 const recolours = new Map<string, Recolour>();
 
-/** The season's recolouring for these sheets, or undefined in spring outside the bloom. */
+/**
+ * The season's recolouring for these sheets, or undefined in spring outside the bloom. With a
+ * zone: never in a scene the books keep the same in every season (the cairn's inside), and the
+ * scene's own steps for the season over the island's (the deep passage's spring slime).
+ */
 export function seasonRecolour(
   palette: Palette,
   day: number,
   sheetNames: Iterable<string>,
   art: SeasonArt = SEASON_ART,
+  zone?: string,
 ): Recolour | undefined {
+  if (zone !== undefined && art.seasonless[zone] !== undefined) return undefined;
   const { season } = seasonOfDay(day);
   const bloom = inBloom(day, art);
-  const key = `${season}${bloom ? '+bloom' : ''}`;
-  const map = { ...(art.ramps[season] ?? {}), ...(bloom ? art.bloom.ramps : {}) };
+  const own = zone === undefined ? undefined : art.zones[zone]?.ramps?.[season];
+  const key = `${season}${bloom ? '+bloom' : ''}${own === undefined ? '' : `@${zone ?? ''}`}`;
+  const map = { ...(art.ramps[season] ?? {}), ...(bloom ? art.bloom.ramps : {}), ...(own ?? {}) };
   if (Object.keys(map).length === 0) return undefined;
   const hit = recolours.get(key);
   if (hit !== undefined) return hit;
@@ -213,6 +290,8 @@ export interface IslandFrame<V> {
   readonly view: V;
   readonly life: readonly ZoneLife[];
   readonly recolour: Recolour | undefined;
+  /** An interior's phase of light, in place of the time of day's (decision S14-144). */
+  readonly phase?: Phase;
 }
 
 /**
@@ -238,10 +317,14 @@ export function islandFrame<
   palette: Palette,
   sheetNames: Iterable<string>,
   art: SeasonArt = SEASON_ART,
+  tide: { readonly springOpen?: boolean } = {},
 ): IslandFrame<V> {
   const fx = view.effects;
-  const land = landLook(map.zone, day, reducedMotion, art);
+  // The causeway stands clear only at a spring low inside the window, as the simulation's
+  // spring ground opens (decision S14-145).
+  const land = { ...landLook(map.zone, day, reducedMotion, art), causeway: tide.springOpen === true };
   const fog = seasonFog(map.zone, day, art);
+  const inside = interiorOf(map.zone, art);
   const out =
     fx === null
       ? view
@@ -250,12 +333,117 @@ export function islandFrame<
           effects: {
             ...fx,
             water: fx.water === null ? null : { ...fx.water, land },
-            fog: Math.max(fx.fog, fog),
+            fog: Math.max(fx.fog, fog, inside?.haze ?? 0),
+            // An interior (decision S14-144): its own light in place of the sky's, no cloud
+            // shadows, shafts or long sun shadows; its water's light drifting over the walls.
+            ...(inside === null
+              ? {}
+              : {
+                  clouds: 0,
+                  shafts: 0,
+                  sun: { x: 0, y: 0, strength: 0 },
+                  grade: { gain: inside.gain, lift: inside.lift },
+                  patches: reducedMotion
+                    ? { ...inside.waterLight, vx: inside.waterLight.vx / 2 }
+                    : inside.waterLight,
+                }),
           },
         };
   return {
     view: out,
     life: seasonalLife(map.zone, map.life, day, art),
-    recolour: seasonRecolour(palette, day, sheetNames, art),
+    recolour: seasonRecolour(palette, day, sheetNames, art, map.zone),
+    ...(inside === null ? {} : { phase: inside.phase }),
   };
 }
+
+/** A zone's interior light, or null for a scene under the sky. */
+export function interiorOf(zone: string, art: SeasonArt = SEASON_ART): InteriorLight | null {
+  return art.interiors?.[zone] ?? null;
+}
+
+/**
+ * The pools of light an interior's openings throw (screen pixels): the way in at Seal Cave's
+ * back wall; the cairn's east door once it stands open. A pool breathes a little with the light
+ * outside moving (never with reduced motion).
+ */
+export function interiorPools(
+  map: ZoneMap,
+  camera: { readonly x: number; readonly y: number },
+  facts: Readonly<Record<string, unknown>>,
+  seconds: number,
+  reducedMotion: boolean,
+  art: SeasonArt = SEASON_ART,
+): LightPool[] {
+  const inside = interiorOf(map.zone, art);
+  if (inside === null) return [];
+  const out: LightPool[] = [];
+  for (const o of inside.openings) {
+    if (o.fact !== undefined && facts[o.fact] !== true) continue;
+    const breathe = reducedMotion ? 1 : 1 + 0.04 * Math.sin(seconds * 0.7 + o.x);
+    out.push({
+      x: o.x * map.tile - camera.x,
+      y: o.y * map.tile - camera.y,
+      radius: o.radius * breathe,
+      colour: o.colour,
+    });
+  }
+  return out;
+}
+
+const seepCache = new Map<string, readonly { x: number; y: number; kind: number }[]>();
+
+/**
+ * Where meltwater seeps down a scene's walls (decision S14-143): the foot of a rock face over
+ * open floor, about one face tile in three (chosen by its place, the same every time), each with
+ * one of fx_seep's four lengths. World pixels, the wall's foot.
+ */
+export function seepPlaces(map: ZoneMap): readonly { x: number; y: number; kind: number }[] {
+  const hit = seepCache.get(map.zone);
+  if (hit !== undefined) return hit;
+  const out: { x: number; y: number; kind: number }[] = [];
+  const t = map.tile;
+  for (let y = 1; y < map.height; y++)
+    for (let x = 0; x < map.width; x++) {
+      const above = map.rows[y - 1]?.[x];
+      const here = map.rows[y]?.[x];
+      if (above !== 'r' || here === undefined || here === 'r' || here === '#') continue;
+      for (let k = 0; k < 2; k++) {
+        if (hash01(x * 2 + k, y, 71) > 0.34) continue;
+        out.push({
+          x: x * t + 5 + k * 12 + Math.floor(hash01(x, y, 72 + k) * 6),
+          y: y * t + 1,
+          kind: Math.floor(hash01(x, y, 73 + k) * 4),
+        });
+      }
+    }
+  seepCache.set(map.zone, out);
+  return out;
+}
+
+/** The seeps drawn this frame (screen pixels, the decal layer), in their season only. */
+export function seepSprites(
+  map: ZoneMap,
+  day: number,
+  camera: { readonly x: number; readonly y: number },
+  seconds: number,
+  reducedMotion: boolean,
+  art: SeasonArt = SEASON_ART,
+): SceneSprite[] {
+  const { season } = seasonOfDay(day);
+  if (ruleOf(map.zone, art).seeps?.includes(season) !== true) return [];
+  const out: SceneSprite[] = [];
+  // Eight frames at 7 ticks each; slower with reduced motion; each seep on its own phase.
+  const rate = (60 / 7) * (reducedMotion ? 0.5 : 1);
+  for (const s of seepPlaces(map)) {
+    const x = s.x - camera.x;
+    const y = s.y - camera.y;
+    if (x < -10 || y < -32 || x > 650 || y > 370) continue;
+    const frame = Math.floor(seconds * rate + hash01(s.x, s.y, 74) * 8) % 8;
+    out.push({ sheet: SEEP_SHEET, frame: `seep${s.kind}/-/${frame}`, x, y, layer: 'decal' });
+  }
+  return out;
+}
+
+/** The sheet of the spring seeps (assets/art/authoring/stage14_integration_art.py). */
+export const SEEP_SHEET = 'fx_seep';

@@ -6,6 +6,10 @@
  */
 import { GUST_SPACING, GUST_SPEED } from './wind.ts';
 import { ELEVATION_CELL, SWASH, SWASH_PERIOD } from './elevation.ts';
+import { LAYERS } from '../content/terrain/autotile.ts';
+
+/** The causeway's layer in the height field's alpha (Stage 14, S14-145). */
+const CAUSEWAY_LAYER = (LAYERS as readonly string[]).indexOf('=');
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from './viewport.ts';
 
 export const MAX_POOLS = 8;
@@ -72,6 +76,8 @@ uniform vec4 u_land;
 uniform vec3 u_snow[3];
 uniform vec3 u_stone[3];
 uniform float u_anemones;
+// Stage 14 (decision S14-145): the causeway's stones stand clear at a spring low, awash otherwise.
+uniform float u_causeway;
 uniform vec3 u_anemone[2];
 out vec4 outColour;
 ${NOISE}
@@ -84,6 +90,10 @@ void main() {
   float e = E.r * 3.0 - 1.0;
   bool stream = E.g > 0.5;
   float b = float(u_bayer[(p.y & 3) * 4 + (p.x & 3)]) / 16.0;
+  // The causeway's stones (Stage 14, decision S14-145): under the sea's edge at every tide but a
+  // spring low inside the window, when they stand just clear of the swash, wet and walkable, as
+  // the simulation lets them be walked.
+  if (u_causeway > 0.5 && int(texelFetch(u_elev, ivec2(w / ${ELEVATION_CELL.toFixed(1)}), 0).a * 255.0) / 16 == ${CAUSEWAY_LAYER}) e = max(e, 0.1);
   if (e > 1.1 && !stream) {
     // Snow lying in patches on the high ground in winter, thickest highest (Book 7 section 13).
     if (u_land.x <= 0.0) discard;

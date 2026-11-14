@@ -5,7 +5,7 @@
  * ground is the stream band unless the tide over it is deeper. Nothing is stored per frame.
  */
 import { bandForDepth } from '../../content/balance.ts';
-import type { DepthBandBalance, WaterBalance } from '../../content/balance.ts';
+import type { DepthBand, DepthBandBalance, WaterBalance } from '../../content/balance.ts';
 import { heightAt, streamAt, tideHeight } from '../../content/terrain/elevation.ts';
 import type { Elevation } from '../../content/terrain/elevation.ts';
 
@@ -20,6 +20,13 @@ export function stillWaterLevel(tide: TideView): number {
   return tideHeight(tide.minutesToLowWater, tide.minutesSinceLowWater, tide.tidalGroundOpen);
 }
 
+/**
+ * Stage 14 (decision S14-110): the band a zone's plan sets at world pixel (x, y) where the height
+ * field gives none (a pool in a cave, the deep passage's water by the tide: src/sim/land/zoneWater.ts),
+ * or null where the height field decides.
+ */
+export type WadeAt = (x: number, y: number) => DepthBand | null;
+
 /** The depth band at world pixel (x, y) under the still water `level`, or null when dry. */
 export function bandAt(
   water: WaterBalance,
@@ -27,7 +34,10 @@ export function bandAt(
   x: number,
   y: number,
   level: number,
+  wade?: WadeAt,
 ): DepthBandBalance | null {
+  const set = wade?.(x, y) ?? null;
+  if (set !== null) return water.bands.find((b) => b.band === set) ?? null;
   const tidal = bandForDepth(water, level - heightAt(elevation, x, y));
   if (!streamAt(elevation, x, y)) return tidal;
   const stream = water.bands.find((b) => b.band === water.streamBand) ?? null;

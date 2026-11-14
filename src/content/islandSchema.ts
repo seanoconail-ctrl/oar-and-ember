@@ -367,6 +367,10 @@ const puzzlesCheck = object({
     zone: ref('zone'),
     from: ref('zone'),
     risingKey: ref('string'),
+    // Stage 14 (decision S14-115): "The passage grows loud", said as the spring tide turns.
+    loudKey: ref('string'),
+    // Stage 14 (decision S14-111): the zones whose spring floor follows the passage's water.
+    floors: arrayOf(ref('zone')),
   }),
   sideAims: arrayOf(sideAimCheck),
   secrets: recordOf(

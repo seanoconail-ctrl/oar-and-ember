@@ -132,6 +132,8 @@ export interface LandLook {
   readonly calm: boolean;
   /** Anemones open in the still pools (the deep passage in summer and autumn, Book 9). */
   readonly anemones?: boolean;
+  /** A spring low inside the window: the causeway's stones stand clear (decision S14-145). */
+  readonly causeway?: boolean;
 }
 
 /**

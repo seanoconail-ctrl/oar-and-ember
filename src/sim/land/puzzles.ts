@@ -25,6 +25,7 @@ import {
   springTidesOf,
 } from './islandConditions.ts';
 import type { IslandContext, PassageState } from './islandConditions.ts';
+import { tideAt } from '../calendar/calendar.ts';
 
 export type PuzzleEvent =
   | {
@@ -217,7 +218,19 @@ export function stepPassage(world: WorldState, ctx: IslandContext, emit: PuzzleE
   const was = (world.facts['passage.state'] as PassageState | undefined) ?? 'CLOSED';
   if (was !== water.state) world.facts['passage.state'] = water.state;
   if (zone !== p.zone && zone !== p.from) return;
-  // The turn itself is heard as the passage's roar (AMB_PASSAGE_ROAR, package D's ambience).
+  // The turn itself (decision S14-115): as the spring tide turns at low water, the passage grows
+  // loud, once each spring low, for whoever is in it or the chamber: the caption, and the event
+  // PASSAGE_LOUD that names the passage's roar (AMB_PASSAGE_ROAR), whose ambience rises from it.
+  const tide = tideAt(world.calendar, ctx.b);
+  const turned =
+    water.state === 'OPEN' && tide.minutesSinceLowWater < tide.minutesToLowWater;
+  // Which low water: the day and the hour it fell at.
+  const lowAt = (world.calendar.minuteOfDay - tide.minutesSinceLowWater + 1440) % 1440;
+  const turnKey = `${world.calendar.day}:${String(Math.round(lowAt / 60))}`;
+  if (turned && world.facts['passage.loud'] !== turnKey && p.loudKey !== undefined) {
+    world.facts['passage.loud'] = turnKey;
+    emit({ type: 'ISLAND_INFO', key: p.loudKey, sound: 'PASSAGE_LOUD' });
+  }
   const rising = water.state === 'FLOODING' && water.pool !== 'KNEE';
   if (rising && world.facts['passage.rising'] !== world.calendar.day && zone === p.zone) {
     world.facts['passage.rising'] = world.calendar.day;

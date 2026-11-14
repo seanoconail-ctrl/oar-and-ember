@@ -20,7 +20,8 @@ import type { Id } from '../../core/ids.ts';
 import { heightAt } from '../../content/terrain/elevation.ts';
 import type { WalkGoal } from './path.ts';
 import { bandAt, isDeep } from './water.ts';
-import { aboveTideLine, terrainAt, tileBlocks, tileOf } from './zoneMap.ts';
+import type { WadeAt } from './water.ts';
+import { aboveTideLine, solidAt, springGround, terrainAt, tileBlocks, tileOf } from './zoneMap.ts';
 import type { Facing, Terrain, ZoneMap } from './zoneMap.ts';
 import { dashStep, facingLocked, facingOfAngle, locked } from '../combat/fighter.ts';
 import type { AccelMode, CombatBalance } from '../../content/combatBalance.ts';
@@ -367,6 +368,12 @@ export interface LandContext {
 export interface TideNow {
   readonly open: boolean;
   readonly level: number;
+  /**
+   * Stage 14 (decision S14-110): a spring-tide day, so the causeway and the caves' floors open with
+   * the window (`springOpen`); and the bands the zone's plan sets (src/sim/land/zoneWater.ts).
+   */
+  readonly spring?: boolean;
+  readonly wade?: WadeAt;
 }
 
 export const TICKS_PER_SECOND = 60;
@@ -430,13 +437,35 @@ export function speedTilesPerSecond(gait: Gait, movement: MovementBalance): numb
   return movement[gait];
 }
 
-/** Whether a footprint centred on foot (x, y) is clear of blocking terrain. */
-export function footprintClear(
+/**
+ * The ground as a step reads it (Stage 14, decision S14-110): whether the tidal ground is open,
+ * whether a spring low has opened the causeway and the caves' floors, and the ground the closing
+ * tide has caught someone on, which stays wading water for them until they leave it (Book 10 "No
+ * trap", tideClosing): the flats, or spring ground, each on its own, so standing on the flats never
+ * opens the causeway.
+ */
+interface Ground {
+  readonly open: boolean;
+  readonly spring: boolean;
+  readonly caughtFlats?: boolean;
+  readonly caughtSpring?: boolean;
+}
+
+function groundBlocks(map: ZoneMap, tx: number, ty: number, g: Ground): boolean {
+  if (g.caughtFlats === true || g.caughtSpring === true) {
+    const t = terrainAt(map, tx, ty);
+    if ((g.caughtFlats === true && t === 'flats') || (g.caughtSpring === true && springGround(t)))
+      return solidAt(map, tx, ty);
+  }
+  return tileBlocks(map, tx, ty, g.open, g.spring);
+}
+
+function footClear(
   map: ZoneMap,
   rules: Pick<OnFootRules, 'footprint'>,
   x: number,
   y: number,
-  tidalGroundOpen: boolean,
+  g: Ground,
 ): boolean {
   const left = x - rules.footprint.w / 2;
   const right = x + rules.footprint.w / 2 - 0.001;
@@ -451,9 +480,47 @@ export function footprintClear(
     [right, bottom],
   ] as const) {
     const { tx, ty } = tileOf(map, cx, cy);
-    if (tileBlocks(map, tx, ty, tidalGroundOpen)) return false;
+    if (groundBlocks(map, tx, ty, g)) return false;
   }
   return true;
+}
+
+function areaBlocked(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+  g: Ground,
+): number {
+  const left = x - rules.footprint.w / 2;
+  const right = x + rules.footprint.w / 2;
+  const top = y - rules.footprint.h;
+  const t = map.tile;
+  let area = 0;
+  for (let ty = Math.floor(top / t); ty <= Math.floor((y - 0.001) / t); ty++)
+    for (let tx = Math.floor(left / t); tx <= Math.floor((right - 0.001) / t); tx++) {
+      const out = tx < 0 || ty < 0 || tx >= map.width || ty >= map.height;
+      if (!out && !groundBlocks(map, tx, ty, g)) continue;
+      const w = Math.min(right, (tx + 1) * t) - Math.max(left, tx * t);
+      const h = Math.min(y, (ty + 1) * t) - Math.max(top, ty * t);
+      if (w > 0 && h > 0) area += w * h;
+    }
+  return area;
+}
+
+/**
+ * Whether a footprint centred on foot (x, y) is clear of blocking terrain, under the tide (and,
+ * from Stage 14, a spring low's opening of the causeway and the caves' floors).
+ */
+export function footprintClear(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+  tidalGroundOpen: boolean,
+  springOpen = false,
+): boolean {
+  return footClear(map, rules, x, y, { open: tidalGroundOpen, spring: springOpen });
 }
 
 /**
@@ -467,29 +534,18 @@ export function blockedArea(
   x: number,
   y: number,
   tidalGroundOpen: boolean,
+  springOpen = false,
 ): number {
-  const left = x - rules.footprint.w / 2;
-  const right = x + rules.footprint.w / 2;
-  const top = y - rules.footprint.h;
-  const t = map.tile;
-  let area = 0;
-  for (let ty = Math.floor(top / t); ty <= Math.floor((y - 0.001) / t); ty++)
-    for (let tx = Math.floor(left / t); tx <= Math.floor((right - 0.001) / t); tx++) {
-      const out = tx < 0 || ty < 0 || tx >= map.width || ty >= map.height;
-      if (!out && !tileBlocks(map, tx, ty, tidalGroundOpen)) continue;
-      const w = Math.min(right, (tx + 1) * t) - Math.max(left, tx * t);
-      const h = Math.min(y, (ty + 1) * t) - Math.max(top, ty * t);
-      if (w > 0 && h > 0) area += w * h;
-    }
-  return area;
+  return areaBlocked(map, rules, x, y, { open: tidalGroundOpen, spring: springOpen });
 }
 
-/** Whether any of a footprint stands on the tidal flats (the corners footprintClear reads). */
-export function onTidalGround(
+/** Whether any corner of a footprint (those footprintClear reads) stands on ground that holds. */
+function footOn(
   map: ZoneMap,
   rules: Pick<OnFootRules, 'footprint'>,
   x: number,
   y: number,
+  on: (t: Terrain) => boolean,
 ): boolean {
   const left = x - rules.footprint.w / 2;
   const right = x + rules.footprint.w / 2 - 0.001;
@@ -502,9 +558,32 @@ export function onTidalGround(
     [right, bottom],
   ] as const) {
     const { tx, ty } = tileOf(map, cx, cy);
-    if (terrainAt(map, tx, ty) === 'flats') return true;
+    if (on(terrainAt(map, tx, ty))) return true;
   }
   return false;
+}
+
+/** Whether any of a footprint stands on the tidal flats (the corners footprintClear reads). */
+export function onTidalGround(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+): boolean {
+  return footOn(map, rules, x, y, (t) => t === 'flats');
+}
+
+/**
+ * Stage 14: whether any of a footprint stands on ground only a spring low opens (the causeway, a
+ * cave's wet floor), which the closing tide catches people on as it does the flats.
+ */
+export function onSpringGround(
+  map: ZoneMap,
+  rules: Pick<OnFootRules, 'footprint'>,
+  x: number,
+  y: number,
+): boolean {
+  return footOn(map, rules, x, y, springGround);
 }
 
 /**
@@ -512,7 +591,7 @@ export function onTidalGround(
  * section 25, "No trap"; decision DG-20). The footprint must be clear there, as ever, except that
  *
  * - **tideClosing**: tidal ground that closed under someone counts for them as wading water (it
- *   is open to them) until their footprint has left it; and
+ *   is open to them) until their footprint has left it (from Stage 14, the spring ground too); and
  * - **neverFrozen**: a body already overlapping blocking ground (and closed doorways, through
  *   `doorArea`) may move any way that does not deepen the overlap.
  *
@@ -527,13 +606,19 @@ export function stepClear(
   y: number,
   tidalGroundOpen: boolean,
   doorArea?: (x: number, y: number) => number,
+  springOpen = false,
 ): boolean {
-  const open = tidalGroundOpen || onTidalGround(map, rules, from.x, from.y);
+  const g: Ground = {
+    open: tidalGroundOpen,
+    spring: springOpen,
+    caughtFlats: !tidalGroundOpen && onTidalGround(map, rules, from.x, from.y),
+    caughtSpring: !(tidalGroundOpen && springOpen) && onSpringGround(map, rules, from.x, from.y),
+  };
   const doors = doorArea ?? ((): number => 0);
-  if (footprintClear(map, rules, x, y, open) && doors(x, y) <= 0) return true;
-  const was = blockedArea(map, rules, from.x, from.y, open) + doors(from.x, from.y);
+  if (footClear(map, rules, x, y, g) && doors(x, y) <= 0) return true;
+  const was = areaBlocked(map, rules, from.x, from.y, g) + doors(from.x, from.y);
   if (was <= 0) return false;
-  return blockedArea(map, rules, x, y, open) + doors(x, y) <= was + 1e-6;
+  return areaBlocked(map, rules, x, y, g) + doors(x, y) <= was + 1e-6;
 }
 
 /** The nearest of the four facings to a direction (melee and aim facing, Book 10 section 21). */
@@ -549,10 +634,12 @@ export function speedAt(
   map: ZoneMap,
   ctx: Pick<LandContext, 'movement' | 'water' | 'elevations'>,
   level: number,
+  wade?: WadeAt,
 ): number {
   const p = state.player;
   const elevation = ctx.elevations.get(map.zone);
-  const band = elevation === undefined ? null : bandAt(ctx.water, elevation, p.x, p.y, level);
+  const band =
+    elevation === undefined ? null : bandAt(ctx.water, elevation, p.x, p.y, level, wade);
   const inWater = band !== null && band.band !== 'WET';
   const base = p.gait === 'walk' && inWater ? ctx.movement.wade : ctx.movement[p.gait];
   // Deep water has no wading pace of its own: whoever is in it (risen round them, decision
@@ -612,7 +699,7 @@ export function stepMovement(
     (stance?.speed ?? 1) *
     (exhausted && cm !== undefined ? cm.accel.exhaustedSpeed : 1) *
     (blocking && cm !== undefined ? cm.accel.blockingSpeed : 1);
-  const pace = extras.swimSpeed ?? speedAt(state, map, ctx, tide.level);
+  const pace = extras.swimSpeed ?? speedAt(state, map, ctx, tide.level, tide.wade);
   const full = (pace * (extras.factor ?? 1) * map.tile * share) / TICKS_PER_SECOND;
   let ix: number;
   let iy: number;
@@ -656,15 +743,19 @@ export function stepMovement(
   // in it may still move towards the shallows. Caught on tidal ground by the closing tide, its
   // water is wading water for them until they leave it, however deep the flood has risen round
   // them (Book 10 "No trap", tideClosing; decision DG-20).
-  const caught = !tide.open && onTidalGround(map, ctx.rules, p.x, p.y);
+  const springOpen = tide.open && tide.spring === true;
+  const caughtOn = (x: number, y: number): boolean =>
+    (!tide.open && onTidalGround(map, ctx.rules, x, y)) ||
+    (!springOpen && onSpringGround(map, ctx.rules, x, y));
+  const caught = caughtOn(p.x, p.y);
   const depthOk = (x: number, y: number): boolean => {
     if (elevation === undefined) return true;
-    const to = bandAt(ctx.water, elevation, x, y, tide.level);
+    const to = bandAt(ctx.water, elevation, x, y, tide.level, tide.wade);
     if (!isDeep(to)) return true;
     // Stage 14: marked swimming water, nothing carried (src/sim/land/traverse.ts).
     if (extras.deepOk?.(x, y) === true) return true;
-    if (isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level))) return true;
-    return caught && onTidalGround(map, ctx.rules, x, y);
+    if (isDeep(bandAt(ctx.water, elevation, p.x, p.y, tide.level, tide.wade))) return true;
+    return caught && caughtOn(x, y);
   };
   // Design addendum 2.4: a closed door's doorway blocks like a wall (decision DE-26). No shape
   // ever traps the steerer (decision DG-20): ground that closed under them, or a door shut on
@@ -672,7 +763,7 @@ export function stepMovement(
   const doorArea = (x: number, y: number): number =>
     doorOverlap(state, map, x, y, ctx.rules.footprint);
   const clear = (x: number, y: number): boolean =>
-    (stepClear(map, ctx.rules, before, x, y, tide.open, doorArea) ||
+    (stepClear(map, ctx.rules, before, x, y, tide.open, doorArea, tide.spring === true) ||
       (extras.passable?.(x, y) === true && doorArea(x, y) <= 0)) &&
     depthOk(x, y) &&
     extras.blocked?.(x, y) !== true;

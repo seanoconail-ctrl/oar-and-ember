@@ -928,7 +928,9 @@
   "passage": {
     "zone": "ZONE_SK_SEALCAVE_DEEP",
     "from": "ZONE_SK_SEALCAVE",
-    "risingKey": "caption.puzzle.water_rising"
+    "risingKey": "caption.puzzle.water_rising",
+    "loudKey": "caption.island.passage_loud",
+    "floors": ["ZONE_SK_SEALCAVE_DEEP", "ZONE_SK_CAIRN_IN"]
   },
   "sideAims": [
     {

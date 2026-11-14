@@ -107,6 +107,7 @@ import {
   RATION,
 } from './land/fight.ts';
 import { aboveTideLine, terrainAt, tileOf } from './land/zoneMap.ts';
+import type { ZoneMap } from './land/zoneMap.ts';
 import type { FightContext, FightEvent, FightWorld } from './land/fight.ts';
 import { expireStuck, gameMinute, launch, STEERER, stepProjectiles } from './land/missiles.ts';
 import { updateExhausted } from './combat/fighter.ts';
@@ -160,6 +161,9 @@ import {
 import type { CampContext, CampEvent, NightRecord, PlacedUse, SiteUse } from './home/camp.ts';
 import { clearReasons, hasReason, setReason, traversalTick, updateMax } from './home/stamina.ts';
 import { edgeAt, entryPoint, linkOf, switchZone } from './land/zoneLinks.ts';
+import { portalOpen, portalWalkedInto, zoneTide } from './land/zoneWater.ts';
+import type { PassageNow } from './land/zoneWater.ts';
+import { passageWater } from './land/islandConditions.ts';
 import { stepBroch } from './narrative/broch.ts';
 import {
   chooseSearch,
@@ -2304,6 +2308,22 @@ export function createSimulation(
     }
   };
 
+  /**
+   * Stage 14 (decisions S14-110 to S14-112): the deep passage's water now, for the zones that open
+   * with it; and the tide as a zone's ground feels it (its spring ground, its wades).
+   */
+  const passageNow = (): PassageNow | null =>
+    islandCtx === null
+      ? null
+      : {
+          water: passageWater(state.calendar, b, islandCtx.ib),
+          floors: islandCtx.puzzles.passage.floors ?? [],
+        };
+  const tideIn = (m: ZoneMap): ReturnType<typeof zoneTide> => {
+    const t = tideAt(state.calendar, b);
+    return zoneTide(m, t, stillWaterLevel(t), passageNow());
+  };
+
   const stepLand = (): void => {
     const onFoot = state.onFoot;
     if (land === null || onFoot === null) return;
@@ -2311,6 +2331,8 @@ export function createSimulation(
     if (map === undefined) return;
     const tide = tideAt(state.calendar, b);
     const level = stillWaterLevel(tide);
+    const passage = passageNow();
+    const tideNow = zoneTide(map, tide, level, passage);
     const p = onFoot.player;
     // The opening's own hands-on actions (the cut, the sail raised) end (design addendum 2.4).
     if (
@@ -2386,7 +2408,6 @@ export function createSimulation(
     const waking = wreckCtx !== null && wreckPhase(state) !== 'PLAY';
     if (waking) p.intent = { ...p.intent, x: 0, y: 0 };
     // The launch scene moves the steerer itself (Stage 12).
-    const tideNow = { open: tide.tidalGroundOpen, level };
     const scripted = launchActive(state) || seaBurialActive(state) || snatchHolds(state, story4);
     // Stage 14: a verb under way moves the steerer itself; else ordinary movement, with the
     // verbs' ground (swimming water, heavy objects, crawls, soft ground in rain).
@@ -2415,17 +2436,21 @@ export function createSimulation(
       const kind =
         press === null || ownsMovement(p)
           ? null
-          : edgeKindAt(map, press, land.maps, tide.tidalGroundOpen, {
-              marks: marksOf(map),
-              carrying: onFoot.carrying !== null,
-            });
+          : edgeKindAt(
+              map,
+              press,
+              land.maps,
+              tideNow.open,
+              { marks: marksOf(map), carrying: onFoot.carrying !== null },
+              tideNow.spring,
+            );
       stepEdges(
         state,
         kind === null || kind === 'LINK' ? null : kind,
         land.edgeCaption,
         emitWreck,
         // The user's fourth playtest (DH-36): "Nothing that way" names a real, open way.
-        () => openWayFrom(map, land.maps, p, land.rules, tide.tidalGroundOpen),
+        () => openWayFrom(map, land.maps, p, land.rules, tideNow.open, tideNow.spring),
       );
     }
     if (fw !== null) {
@@ -2446,7 +2471,10 @@ export function createSimulation(
     // Stamina in traversal (Book 10 section 06): sprinting, carrying a person, wading waist deep.
     if (sb !== null) {
       const elevation = land.elevations.get(map.zone);
-      const band = elevation === undefined ? null : bandAt(land.water, elevation, p.x, p.y, level);
+      const band =
+        elevation === undefined
+          ? null
+          : bandAt(land.water, elevation, p.x, p.y, level, tideNow.wade);
       const waist = band?.band === 'WAIST' || band?.band === 'DEEP';
       const st = state.player.stamina;
       updateMax(st, sb);
@@ -2667,13 +2695,43 @@ export function createSimulation(
       const edge = edgeAt(map, p.x, p.y, land.rules.footprint, p.intent);
       const to = edge === null ? null : linkOf(map, edge, p, land.maps);
       const toMap = to === null ? undefined : land.maps.get(to);
+      let crossed = false;
       if (to !== null && toMap !== undefined) {
-        const at = entryPoint(map, toMap, p.x, p.y, land, tide.tidalGroundOpen);
+        const there = tideIn(toMap);
+        const at = entryPoint(map, toMap, p.x, p.y, land, there.open, there.spring);
         if (at !== null) {
           const from = onFoot.zone;
           if (fw !== null) leaveZone(fw);
           switchZone(onFoot, to, at);
           events.emit({ type: 'ZONE_ENTERED', zone: to, from });
+          crossed = true;
+        }
+      }
+      // Stage 14 (decision S14-112): a link that is not an edge, walked into while it holds.
+      const portal =
+        crossed || ownsMovement(p) || p.grip != null
+          ? null
+          : portalWalkedInto(map, p, p.intent);
+      const portalTo = portal === null ? undefined : land.maps.get(portal.to);
+      if (
+        portal !== null &&
+        portalTo !== undefined &&
+        portalOpen(portal, onFoot.zone, tide, passage, state.facts)
+      ) {
+        const there = tideIn(portalTo);
+        const at = { x: portal.entry.x * portalTo.tile, y: portal.entry.y * portalTo.tile };
+        // Out of the passage as it floods, the tidal ground beyond is wading water for whoever
+        // comes out onto it (Book 2 section 10, "No trap").
+        const leaving = passage !== null && passage.floors.includes(onFoot.zone);
+        if (
+          leaving ||
+          footprintClear(portalTo, land.rules, at.x, at.y, there.open, there.spring)
+        ) {
+          const from = onFoot.zone;
+          if (fw !== null) leaveZone(fw);
+          switchZone(onFoot, portal.to, at);
+          p.vel = { x: 0, y: 0 };
+          events.emit({ type: 'ZONE_ENTERED', zone: portal.to, from });
         }
       }
     }

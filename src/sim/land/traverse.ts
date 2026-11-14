@@ -393,7 +393,7 @@ export function moveExtras(
     !carrying &&
     elevation !== undefined &&
     swimTile(marks, ft.tx, ft.ty) &&
-    bandAt(land.water, elevation, p.x, p.y, tide.level)?.band === 'DEEP';
+    bandAt(land.water, elevation, p.x, p.y, tide.level, tide.wade)?.band === 'DEEP';
   const soft = raining && marks.soft.some((s) => inRect(s, ft.tx, ft.ty));
   const overlaps = (x: number, y: number): boolean =>
     corners(land, x, y).some(([cx, cy]) => {
@@ -413,7 +413,7 @@ export function moveExtras(
             corners(land, x, y).every(([cx, cy]) => {
               const { tx, ty } = tileOf(map, cx, cy);
               if (tx < 0 || ty < 0 || tx >= map.width || ty >= map.height) return false;
-              if (!tileBlocks(map, tx, ty, tide.open)) return true;
+              if (!tileBlocks(map, tx, ty, tide.open, tide.spring === true)) return true;
               const ground = terrainAt(map, tx, ty);
               return swimTile(marks, tx, ty) && (ground === 'sea' || ground === 'flats');
             }),
@@ -438,7 +438,7 @@ function inSwimWater(world: WorldState, map: ZoneMap, land: Land, tide: TideNow)
   const ft = feetTile(map, p);
   return (
     swimTile(marksOf(map), ft.tx, ft.ty) &&
-    bandAt(land.water, elevation, p.x, p.y, tide.level)?.band === 'DEEP'
+    bandAt(land.water, elevation, p.x, p.y, tide.level, tide.wade)?.band === 'DEEP'
   );
 }
 
@@ -486,7 +486,7 @@ export function stepTraverse(
   const tick = world.tick;
   const marks = marksOf(map);
   if (t == null || t.verb === 'swim') {
-    if (p.grip != null) return holdObject(world, map, land, tctx, tide.open, emit);
+    if (p.grip != null) return holdObject(world, map, land, tctx, tide, emit);
     return false;
   }
   emptyBand(world);
@@ -579,7 +579,10 @@ export function stepTraverse(
           here.behind !== null &&
           p.intent.x * here.behind.x + p.intent.y * here.behind.y > 0.2);
       // Out only onto ground that can be stood on now (a mouth the tide has closed waits).
-      if (out && footprintClear(map, land.rules, here.at.x, here.at.y, tide.open)) {
+      if (
+        out &&
+        footprintClear(map, land.rules, here.at.x, here.at.y, tide.open, tide.spring === true)
+      ) {
         p.traverse = null;
         p.gait = 'walk';
         p.moving = false;
@@ -635,7 +638,7 @@ function holdObject(
   map: ZoneMap,
   land: Land,
   tctx: TraverseContext,
-  tideOpen: boolean,
+  tide: TideNow,
   emit: (e: TraverseEvent) => void,
 ): boolean {
   const onFoot = world.onFoot;
@@ -655,9 +658,9 @@ function holdObject(
   emptyBand(world);
   const want = axisOf(p.intent.x, p.intent.y);
   if (want !== null && want[0] === -near.d[0] && want[1] === -near.d[1])
-    startMove(world, map, land, tctx, m, near.o, near.d, true, tideOpen);
+    startMove(world, map, land, tctx, m, near.o, near.d, true, tide);
   else if (want !== null && want[0] === near.d[0] && want[1] === near.d[1])
-    startMove(world, map, land, tctx, m, near.o, near.d, false, tideOpen);
+    startMove(world, map, land, tctx, m, near.o, near.d, false, tide);
   return true;
 }
 
@@ -704,7 +707,7 @@ function startMove(
   o: Tile,
   d: Tile,
   pull: boolean,
-  tideOpen: boolean,
+  tide: TideNow,
 ): boolean {
   const onFoot = world.onFoot;
   if (onFoot?.carrying !== null) return false;
@@ -720,8 +723,8 @@ function startMove(
     // The steerer steps back a tile: that ground must be clear (and not another object's).
     const x = p.x - d[0] * T;
     const y = p.y - d[1] * T;
-    if (!footprintClear(map, land.rules, x, y, tideOpen)) return false;
-    const ex = moveExtras(world, map, land, tctx, { open: tideOpen, level: 0 }, false);
+    if (!footprintClear(map, land.rules, x, y, tide.open, tide.spring === true)) return false;
+    const ex = moveExtras(world, map, land, tctx, tide, false);
     if (ex.blocked?.(x, y) === true) return false;
   } else {
     if (!tileFree(onFoot, map, land, to)) return false;
@@ -785,7 +788,7 @@ export function afterMove(
             const o = objectTile(world, tctx, map.zone, r);
             return o[0] === ahead[0] && o[1] === ahead[1];
           });
-          if (m !== undefined) startMove(world, map, land, tctx, m, ahead, d, false, tide.open);
+          if (m !== undefined) startMove(world, map, land, tctx, m, ahead, d, false, tide);
         }
       }
     }

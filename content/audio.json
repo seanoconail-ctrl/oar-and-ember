@@ -1718,6 +1718,7 @@
     "FIND_LORE": "SFX_FIND_LORE",
     "FIND_CAULDRON": "SFX_FIND_CAULDRON",
     "CAIRN_DOOR_TURNS": "SFX_CAIRN_DOOR",
+    "PASSAGE_LOUD": "AMB_PASSAGE_ROAR",
     "GATHER_WATERCRESS": "SFX_GATHER_CRESS",
     "GATHER_HEATHER": "SFX_GATHER_HEATHER",
     "GATHER_HARES": "SFX_GATHER_HARE",
@@ -1746,7 +1747,7 @@
     "tellMost": 26
   },
   "island": {
-    "about": "Stage 14 (Book 11 sections 07 and 12; decisions S14-100 to S14-109): the island's ambience by rule, read by src/audio/islandAmbience.ts four times a second (presentation, like `home` and `south`). Each zone's rule over `default`, an area's over its zone's; a layer the rule does not name comes from the zone's own tiles (the sea's distance over the whole island, the stream, the falls), so a new scene is heard at once. `wind` scales the place's wind against the strand's; `surf` the sea, never below `surfFloor` anywhere in the zone; `gulls` the strand's gulls; `birds` the colony, the skylark and the curlew by season (`day`: by day only); `stream` and `falls` their loudness; `dry` the seasons the stream shrinks to its pools; `frozen` the seasons its still water freezes; `cave` the drips and their echo; `quiet` the bog's quiet; `roar` and `drowned` the deep passage's roar and the drowned's tell, from a point (zone `tiles`, or an island `block` of Book 9's grid). `reach` gives each source's distance heard full and unheard, in tiles; `seasons` and `night` scale the rest. An unseen stream or fall is captioned with its direction once per `captionAgainSeconds`; the roar once past `roarCaptionAt`; the tell each time it sounds, every `tellLeastSeconds` to `tellMostSeconds`.",
+    "about": "Stage 14 (Book 11 sections 07 and 12; decisions S14-100 to S14-109): the island's ambience by rule, read by src/audio/islandAmbience.ts four times a second (presentation, like `home` and `south`). Each zone's rule over `default`, an area's over its zone's; a layer the rule does not name comes from the zone's own tiles (the sea's distance over the whole island, the stream, the falls), so a new scene is heard at once. `wind` scales the place's wind against the strand's; `surf` the sea, never below `surfFloor` anywhere in the zone; `gulls` the strand's gulls; `birds` the colony, the skylark and the curlew by season (`day`: by day only); `stream` and `falls` their loudness; `dry` the seasons the stream shrinks to its pools; `frozen` the seasons its still water freezes; `cave` the drips and their echo; `quiet` the bog's quiet; `roar` and `drowned` the deep passage's roar and the drowned's tell, from a point (zone `tiles`, or an island `block` of Book 9's grid). `reach` gives each source's distance heard full and unheard, in tiles; `seasons` and `night` scale the rest. An unseen stream or fall is captioned with its direction once per `captionAgainSeconds`; the roar by the simulation as the spring tide turns (the event `PASSAGE_LOUD`, decision S14-115), when the roar comes in at `roarCaptionAt` of its full level and rises to the window's close; the tell each time it sounds, every `tellLeastSeconds` to `tellMostSeconds`.",
     "reach": {
       "sea": {
         "fullTiles": 8,

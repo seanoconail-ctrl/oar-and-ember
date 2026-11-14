@@ -16,6 +16,7 @@ import type { IslandContext, IslandEvent } from '../sim/land/island.ts';
 import { openSideAims } from '../sim/narrative/sideAims.ts';
 import type { WorldState } from '../sim/world.ts';
 import type { LoadedAtlas } from './atlases.ts';
+import { DrownedView } from './drownedView.ts';
 import { MAP_H, MAP_W, RegionMap } from './regionMap.ts';
 import type { PixelAtlas } from './seaChart.ts';
 import { pixelAtlas } from './seaVoyage.ts';
@@ -72,7 +73,9 @@ export class IslandView {
   /** Scenes found since the map was last looked at: inked with a stroke when it next is. */
   readonly #pending = new Set<Id>();
   #propsAt = { tick: -1, zone: '' };
-  #props: { sheet: string; frame: string; x: number; y: number }[] = [];
+  #props: { sheet: string; frame: string; x: number; y: number; fixed?: boolean }[] = [];
+  /** The drowned on the Skerry, drawn standing, appearing and fading (decision S14-147). */
+  readonly #drowned = new DrownedView();
 
   constructor(h: IslandViewHooks) {
     this.#h = h;
@@ -105,9 +108,12 @@ export class IslandView {
   props(
     world: WorldState,
     zone: Id,
-  ): readonly { sheet: string; frame: string; x: number; y: number }[] {
+  ): readonly { sheet: string; frame: string; x: number; y: number; fixed?: boolean }[] {
     if (this.#propsAt.tick !== world.tick || this.#propsAt.zone !== zone) {
-      this.#props = islandProps(world, this.#h.ctx, zone);
+      this.#props = [
+        ...islandProps(world, this.#h.ctx, zone),
+        ...this.#drowned.props(world, this.#h.ctx, zone),
+      ];
       this.#propsAt = { tick: world.tick, zone };
     }
     return this.#props;
@@ -119,6 +125,7 @@ export class IslandView {
     const ev = e as IslandEvent;
     switch (ev.type) {
       case 'ISLAND_SPOKE':
+        this.#drowned.spoke(ev.lineKey, this.#propsAt.tick);
         h.say(
           h.t('caption.format.subtitle', { speaker: h.t(ev.speakerKey), line: h.t(ev.lineKey) }),
           now,

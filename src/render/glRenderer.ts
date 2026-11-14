@@ -752,6 +752,7 @@ export function createSceneRenderer(
     gl.uniform3fv(uniform(water, 'u_snow'), colours.snow);
     gl.uniform3fv(uniform(water, 'u_stone'), colours.stone);
     gl.uniform1f(uniform(water, 'u_anemones'), land?.anemones === true ? 1 : 0);
+    gl.uniform1f(uniform(water, 'u_causeway'), land?.causeway === true ? 1 : 0);
     gl.uniform3fv(uniform(water, 'u_anemone'), colours.anemone);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindTexture(gl.TEXTURE_2D, null);
