@@ -282,8 +282,14 @@ the sea map".
   - cries you can place.
 
 ## CI results
-To be filled in by the main session after the push: the run, its commit, Chromium and WebKit, the
-publish, and the published-address smoke tests.
+Run [43594987515](https://github.com/seanoconail-ctrl/oar-and-ember/actions/runs/43594987515) on
+commit `0427335` (14 Nov 2026), all green and published to
+https://seanoconail-ctrl.github.io/oar-and-ember/:
+- Lint, test, build and Chromium: passed (browser main pass 125 passed; the budget pass 3 passed:
+  the broch at night 3.91 ms, Wreck Strand 2.25 ms, the cold open 1.84 ms, against 5.5 ms).
+- WebKit (Linux): passed.
+- Publish to GitHub Pages: passed.
+- Smoke tests on the published address, Chromium and WebKit: passed.
 
 ## Next stage ready
 YES, once CI is green on both browsers. Every Stage 13 acceptance check passes here. Stage 14
