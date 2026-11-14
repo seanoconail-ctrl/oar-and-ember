@@ -465,12 +465,23 @@ where the fourth playtest did not replace them.
 
 **The final pass**
 - Golden save 11 frozen at schema 13, golden 12 the new chapter-end save (DH-160).
-- The plants drawn as one batch, by instances; the broch's budget still over in some runs (DH-161).
+- The plants drawn as one batch, by instances; the broch's budget within the limit on CI (3.57 ms) but close to it on a slow machine (DH-161).
 - The council as Hild's aim once the boat is ready, before the rites (DH-163).
 - The stores' carry-home lines and aim stages in the guidance (DH-164).
 
 ## CI results
-See the end of this report: the main session fills this in after the push.
+Run [43575970583](https://github.com/seanoconail-ctrl/oar-and-ember/actions/runs/43575970583) on
+commit `cbcc97b` (14 Nov 2026), all green and published to
+https://seanoconail-ctrl.github.io/oar-and-ember/:
+- Lint, test, build and Chromium smoke test: passed.
+- WebKit smoke test (Linux): passed.
+- Publish to GitHub Pages: passed.
+- Smoke tests on the published address, Chromium and WebKit: passed.
+
+The frame-budget pass on CI's runner (the run before, a36bfa5): the broch at night 3.57 ms, Wreck
+Strand 2.48 ms and the cold open 2.00 ms, against the unchanged 5.5 ms limit. The broch read 5.2 to
+5.9 ms on this session's slower software-rendered machine, so it is the measure closest to its limit
+and is watched in every later stage.
 
 ## Next stage ready
 No. Stage 12 is finished and the fourth playtest's build covers the Build 1 gate; the user asked for
