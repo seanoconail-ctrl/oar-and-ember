@@ -142,23 +142,81 @@ export function bakeFlow(
 
   const cells: number[] = [];
   for (let k = 0; k < n; k++) if (wet(k)) cells.push(k);
-  // The mouth: stream samples touching the sea, the flats or the foreshore.
+  // The water in connected pieces: each finds its own mouth (a stream cut by a fall, a bog pool).
+  const piece = new Int32Array(n).fill(-1);
+  const pieces: number[][] = [];
+  for (const start of cells) {
+    if ((piece[start] ?? -1) >= 0) continue;
+    const id = pieces.length;
+    const members = [start];
+    piece[start] = id;
+    for (let q = 0; q < members.length; q++) {
+      const k = members[q] ?? 0;
+      const i = k % w;
+      const j = (k - i) / w;
+      for (const [dx, dy] of NEIGHBOURS) {
+        const x = i + dx;
+        const y = j + dy;
+        if (x < 0 || y < 0 || x >= w || y >= h) continue;
+        const m = y * w + x;
+        if (!wet(m) || (piece[m] ?? -1) >= 0) continue;
+        piece[m] = id;
+        members.push(m);
+      }
+    }
+    pieces.push(members);
+  }
+  // Where each fall's lip lies, snapped across to the stream near it (a plan's block is coarser).
+  const lips = (options.falls ?? []).map((f) => {
+    const cy = Math.round((f.y * TILE) / ELEVATION_CELL);
+    let cx = Math.round((f.x * TILE) / ELEVATION_CELL);
+    let best = Infinity;
+    for (let v = -per * 2; v <= per * 2; v++)
+      for (let u = -per * 4; u <= per * 4; u++) {
+        const x = cx + u;
+        const y = cy + v;
+        if (x < 0 || y < 0 || x >= w || y >= h || !wet(y * w + x)) continue;
+        const d = Math.hypot(u, v * 2);
+        if (d < best) {
+          best = d;
+          cx = x;
+        }
+      }
+    return { f, cx, cy, found: Number.isFinite(best) };
+  });
+  // Each piece's mouth: where it meets the sea, the flats or the foreshore; else a fall's lip it
+  // runs over; else the edge it leaves by (the named mouth, then south, east, west and north).
+  // A piece with none of these is still water: a pool.
   const dist = new Float32Array(n).fill(Infinity);
   const queue: number[] = [];
-  for (const k of cells) {
-    const i = k % w;
-    const j = (k - i) / w;
-    for (const [dx, dy] of NEIGHBOURS)
-      if (tileAt(i + dx, j + dy) === 1) {
-        dist[k] = 0;
-        queue.push(k);
-        break;
-      }
-  }
-  if (queue.length === 0) {
-    // Else the edge it leaves by: the named mouth, then south, east, west and north.
+  const open = (k: number): void => {
+    dist[k] = 0;
+    queue.push(k);
+  };
+  for (const members of pieces) {
+    const sea = members.filter((k) => {
+      const i = k % w;
+      const j = (k - i) / w;
+      return NEIGHBOURS.some(([dx, dy]) => tileAt(i + dx, j + dy) === 1);
+    });
+    if (sea.length > 0) {
+      sea.forEach(open);
+      continue;
+    }
+    const lip = members.filter((k) =>
+      lips.some((l) => {
+        if (!l.found) return false;
+        const i = k % w;
+        const j = (k - i) / w;
+        return Math.abs(i - l.cx) <= per * 2 && j >= l.cy - 1 && j <= l.cy + 1;
+      }),
+    );
+    if (lip.length > 0) {
+      lip.forEach(open);
+      continue;
+    }
     const edges: Record<'n' | 's' | 'e' | 'w', number[]> = { n: [], s: [], e: [], w: [] };
-    for (const k of cells) {
+    for (const k of members) {
       const i = k % w;
       const j = (k - i) / w;
       if (j === h - 1) edges.s.push(k);
@@ -167,11 +225,8 @@ export function bakeFlow(
       if (i === 0) edges.w.push(k);
     }
     const order = [options.mouth, 's', 'e', 'w', 'n'] as const;
-    const side = order.find((s) => s !== undefined && edges[s].length > 0);
-    for (const k of side === undefined ? [] : edges[side]) {
-      dist[k] = 0;
-      queue.push(k);
-    }
+    const side = order.find((d) => d !== undefined && edges[d].length > 0);
+    if (side !== undefined) edges[side].forEach(open);
   }
   // The way down the channel: distance to the mouth through the water (a simple label-correcting
   // pass; streams are a few thousand samples).
@@ -277,24 +332,9 @@ export function bakeFlow(
   // Waterfalls: the lip across the stream, the sheet below it, the churned pool at the foot.
   const fall = new Uint8Array(n);
   const falls: Fall[] = [];
-  for (const f of options.falls ?? []) {
-    const cy = Math.round((f.y * TILE) / ELEVATION_CELL);
-    let cx = Math.round((f.x * TILE) / ELEVATION_CELL);
-    // Snap across to the stream near the lip (a plan's block is coarser than the stream).
-    let best = Infinity;
-    for (let v = -per * 2; v <= per * 2; v++)
-      for (let u = -per * 4; u <= per * 4; u++) {
-        const x = cx + u;
-        const y = cy + v;
-        if (x < 0 || y < 0 || x >= w || y >= h || !wet(y * w + x)) continue;
-        const d = Math.hypot(u, v * 2);
-        if (d < best) {
-          best = d;
-          cx = x;
-        }
-      }
+  for (const { f, cx, cy, found } of lips) {
     // No stream near: the plan has none there yet, so no fall is drawn.
-    if (!Number.isFinite(best)) continue;
+    if (!found) continue;
     const half = Math.max(1, Math.round((f.width * per) / 2));
     const drop = Math.max(1, Math.round(f.drop * per));
     for (let v = 0; v <= drop; v++)

@@ -130,6 +130,18 @@
       "y": 14
     },
     {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 67.5,
+      "y": 1.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 29.5,
+      "y": 1.8
+    },
+    {
       "sheet": "prop_stones",
       "frame": "small/-/2",
       "x": 41.5,

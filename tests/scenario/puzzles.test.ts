@@ -295,8 +295,9 @@ describe('the deep passage floods in order, and the hill-folk put out whoever is
   });
 
   it.skipIf(!land.maps.has('ZONE_SK_CAIRN_IN'))(`wakes whoever sleeps behind the flooded passage on the cairn mound, cold${missing(['ZONE_SK_CAIRN_IN'])}`, () => {
-    const r = start('zone=ZONE_SK_CAIRN_IN&at=7.5,21.6&day=5&time=23:30');
-    r.send({ type: 'SLEEP' }, 400);
+    // Still in the spring room as the night ends: the 02:00 collapse, then the waking.
+    const r = start('zone=ZONE_SK_CAIRN_IN&at=7.5,21.6&day=5&time=01:50');
+    r.send({ type: 'DEV_SKIP', minutes: 20 }, 2);
     expect(r.events).toContainEqual(expect.objectContaining({ type: 'TURNED_OUT' }));
     expect(r.sim.state.onFoot?.zone).toBe(island.puzzles.turning.wake.zone);
   });

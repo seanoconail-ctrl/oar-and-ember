@@ -1630,7 +1630,7 @@
       "to": "ZONE_SK_SEALCAVE",
       "entry": {
         "x": 56.5,
-        "y": 18.5
+        "y": 20.5
       },
       "when": {
         "tide": "SPRING_LOW"

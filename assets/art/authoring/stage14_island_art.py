@@ -224,6 +224,23 @@ def turves():
     return s.outline()
 
 
+def waymark(k):
+    """A waymark: a small cairn of stones piled by passers-by beside a way, each adding one
+    (Chapter 1's waymark on the machair; Stage 14's along the island's ways, decision S14-45)."""
+    s = Sprite(26, 26, 13, 24)
+    layers = [(4, 9.5, 3.4), (3, 7.5, 3.0), (2, 5.6, 2.6), (1, 4.0, 2.2)][: 3 + (k % 2)]
+    y = 21
+    for row, (n, rx, ry) in enumerate(layers):
+        for j in range(n):
+            cx = 13 + (j - (n - 1) / 2) * rx * 0.9 + (hash01(k, row, j) - 0.5) * 2
+            I.stone(s, cx, y, rx * 0.55, ry * 0.6, 'stone', 4.4 + hash01(k, row, j, 1) * 1.4, seed=k * 31 + row * 7 + j)
+        y -= ry * 1.1
+    for yy, xx in zip(*np.nonzero(s.mask)):
+        if hash01(xx, yy, k + 5) < 0.06:
+            s.rgb[yy, xx] = C('trefoil', 1.4)               # lichen
+    return s.outline()
+
+
 def prop_island():
     size, pivot = (76, 66), (38, 63)
     frames = []
@@ -252,6 +269,8 @@ def prop_island():
     for k in range(4):
         add(f'goods{k}', [goods(k)])
     add('door', [door()])
+    for k in range(3):
+        add(f'waymark{k}', [waymark(k)])
     write('prop_island', sheet_text(
         'prop_island', 'prop', size, pivot, frames, anims,
         ['Skarvholm\'s new scenes\' props (Book 9 sections 03, 09 and 16): the eyrie and the sea',

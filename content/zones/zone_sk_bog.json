@@ -99,6 +99,42 @@
       "frame": "turves/-/0",
       "x": 44,
       "y": 109.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 1.5,
+      "y": 57.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 42.5,
+      "y": 42.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark2/-/0",
+      "x": 12.5,
+      "y": 32.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 17.5,
+      "y": 77.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 19.5,
+      "y": 54.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 28.5,
+      "y": 109.8
     }
   ],
   "life": [
@@ -128,6 +164,11 @@
       "kind": "gull_standing",
       "x": 19.6,
       "y": 92
+    },
+    {
+      "kind": "gull_standing",
+      "x": 40.5,
+      "y": 26.6
     }
   ],
   "links": [

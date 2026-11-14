@@ -66,7 +66,7 @@ export class IslandAudio {
     const ty = h.y / map.tile;
     // The zone file's own areas win over the island's marks (content/island.json).
     const own = (map as { readonly areas?: readonly AreaMark[] }).areas;
-    const area = areaAt(own ?? this.#areas, map.zone, tx, ty);
+    const area = areaAt([...(own ?? []), ...this.#areas], map.zone, tx, ty);
     const rule = { ...rules.zones[map.zone], ...(area === null ? {} : rules.areas[area]) };
     const mix = islandMix(rules, {
       zone: map.zone,

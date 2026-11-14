@@ -1,7 +1,7 @@
 /**
  * Stage 14 in the browser: the movement verbs (Book 2 section 10, "Movement verbs and hazards";
  * Book 3 Stage 14, acceptance check 5). Wreck Strand is given a test zone's marks for the run (a
- * climb up its rock outcrop, a crawl through it, a jump over the outcrop on the flats' edge, a
+ * climb up its rock outcrop, a crawl through it, a jump over the machair's bank, a
  * heavy stone on the shingle and swimming water in the western sea), by the zone file's own
  * `traverse` shape (src/content/traverseMarks.ts), and each verb is played with the keys: the
  * steerer climbs facing the rock and comes out at the head, crawls through and out the far side,
@@ -18,11 +18,11 @@ import { attr, startPlay, step, stepUntil } from './strand.ts';
 const T = 24;
 const ZONE = 'ZONE_SK_STRAND';
 
-/** The test marks on Wreck Strand's outcrop (rows 35 to 37), shingle and western sea. */
+/** The test marks on Wreck Strand's outcrop (rows 35 to 37), bank, shingle and western sea. */
 const MARKS: TraverseMarks = {
   climbs: [{ id: 'test.outcrop', x: 38, foot: 38, head: 34, ledges: [] }],
   swims: [{ x: 0, y: 23, w: 21, h: 24 }],
-  jumps: [{ id: 'test.rock', from: { x: 62, y: 35 }, to: { x: 64, y: 35 } }],
+  jumps: [{ id: 'test.bank', from: { x: 24, y: 8 }, to: { x: 24, y: 6 } }],
   crawls: [
     {
       id: 'test.cleft',
@@ -118,22 +118,22 @@ test.describe('Stage 14: the movement verbs', () => {
   test('traverse: Interact at the take-off jumps the gap, and the stone moves a tile when walked into', async ({
     page,
   }) => {
-    await open(page, 62.5, 35.6);
+    await open(page, 24.5, 8.6);
     await stepUntil(page, 'prompt', 'jump', 3);
     expect(await attr(page, 'prompt')).toBe('jump');
     await page.keyboard.press('KeyE');
     await stepUntil(page, 'verb', 'jump', 2);
-    expect(await attr(page, 'steerer-frame')).toMatch(/^jump\/e\/\d$/);
+    expect(await attr(page, 'steerer-frame')).toMatch(/^jump\/n\/\d$/);
     await stepUntil(page, 'verb', '', 3);
-    expect(Math.floor(Number(await attr(page, 'px')) / T)).toBe(64);
+    expect(Math.floor(Number(await attr(page, 'py')) / T)).toBe(6);
     // The stone on the shingle: walking into it pushes it along its line.
     await open(page, 29.4, 26.6);
     await page.keyboard.down('KeyD');
     await stepUntil(page, 'verb', 'push', 5);
     expect(await attr(page, 'steerer-frame')).toMatch(/^push\/e\/\d$/);
-    await stepUntil(page, 'verb', '', 5);
+    // Let go once it moves: one step of its line, at pushSpeed.
     await page.keyboard.up('KeyD');
-    await step(page, 1);
+    await stepUntil(page, 'verb', '', 5);
     const at = await page.evaluate((zone) => {
       const w = window as unknown as {
         oePlay: {

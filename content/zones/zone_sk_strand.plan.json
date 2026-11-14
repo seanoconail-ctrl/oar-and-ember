@@ -144,6 +144,18 @@
       "frame": "clump/-/0",
       "x": 88,
       "y": 14
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 67.5,
+      "y": 1.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 29.5,
+      "y": 1.8
     }
   ],
   "cuts": [
@@ -238,7 +250,13 @@
       "edge": "n",
       "to": "ZONE_SK_MACHAIR"
     },
-    { "edge": "e", "to": "ZONE_SK_NAUST" },
-    { "edge": "e", "to": "ZONE_SK_CAIRN" }
+    {
+      "edge": "e",
+      "to": "ZONE_SK_NAUST"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_CAIRN"
+    }
   ]
 }

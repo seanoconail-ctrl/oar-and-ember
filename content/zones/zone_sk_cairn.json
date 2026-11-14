@@ -357,6 +357,36 @@
       "frame": "small/-/3",
       "x": 56.4,
       "y": 24.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 94.5,
+      "y": 29.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 3.5,
+      "y": 6.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark2/-/0",
+      "x": 72.5,
+      "y": 45.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 64.5,
+      "y": 1.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 35.5,
+      "y": 46.8
     }
   ],
   "life": [

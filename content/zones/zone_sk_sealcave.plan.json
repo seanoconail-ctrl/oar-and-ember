@@ -302,6 +302,18 @@
       "x": 56.4,
       "y": 22.0,
       "sort": 17.0
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 8.5,
+      "y": 46.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark2/-/0",
+      "x": 1.5,
+      "y": 29.8
     }
   ],
   "cuts": [],
@@ -2014,10 +2026,10 @@
     {
       "id": "sealcave.back",
       "exit": {
-        "x": 55,
+        "x": 53,
         "y": 17,
-        "w": 3,
-        "h": 1
+        "w": 7,
+        "h": 3
       },
       "to": "ZONE_SK_SEALCAVE_DEEP",
       "entry": {

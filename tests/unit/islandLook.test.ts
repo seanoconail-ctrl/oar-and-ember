@@ -153,14 +153,14 @@ describe('the streams’ flow (Book 9 section 01; S14-90 to S14-93)', () => {
   });
 });
 
-/** The world pixel at the middle of the view that holds the most grass (the season shows on it). */
+/** The world pixel at the middle of the view that holds the most grass, heather and peat. */
 function landiest(map: ZoneMap): { x: number; y: number } {
   let best = { n: -1, x: 0, y: 0 };
   for (let y = 7; y < map.height - 7; y += 2)
     for (let x = 13; x < map.width - 13; x += 2) {
       let n = 0;
       for (let v = -7; v <= 7; v++)
-        for (let u = -13; u <= 13; u++) if (map.rows[y + v]?.[x + u] === ',') n++;
+        for (let u = -13; u <= 13; u++) if (',hp'.includes(map.rows[y + v]?.[x + u] ?? '~')) n++;
       if (n > best.n) best = { n, x, y };
     }
   return { x: best.x * 24, y: best.y * 24 };
@@ -262,11 +262,19 @@ describe('the seasons on the land (Book 7 sections 13 and 14; S14-94 to S14-99)'
           const fc = frames[c]!;
           for (let i = 0; i < fa.length; i += 4)
             if (fa[i] !== fc[i] || fa[i + 1] !== fc[i + 1] || fa[i + 2] !== fc[i + 2]) changed++;
-          // At least 2% of the frame changes between any two seasons.
-          expect(
-            changed / (fa.length / 4),
-            `${map.zone} ${SEASONS[a]}-${SEASONS[c]}`,
-          ).toBeGreaterThan(0.02);
+          // Outdoors at least 2% of the frame changes between any two seasons. Inside (a cave's
+          // ground has no season's colours) the season is its life and its mist, which the
+          // WebGL frame draws (tests/browser/island.spec.ts measures it).
+          const share = changed / (fa.length / 4);
+          const label = `${map.zone} ${SEASONS[a]}-${SEASONS[c]}`;
+          const inside = (map as { ground?: string }).ground === 'tile_cave';
+          if (!inside) expect(share, label).toBeGreaterThan(0.02);
+          else
+            expect(
+              share > 0 ||
+                seasonFog(map.zone, DAY[SEASONS[a]!]) !== seasonFog(map.zone, DAY[SEASONS[c]!]),
+              label,
+            ).toBe(true);
         }
     }
   });

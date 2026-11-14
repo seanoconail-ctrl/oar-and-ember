@@ -73,8 +73,8 @@ export class IslandView {
     this.#h = h;
     h.doc.addEventListener('keydown', (ev) => {
       if (!this.#open) return;
-      // The journal's pages turn with the arrow keys (and Q and E), as its foot says.
-      const step = ev.key === 'ArrowRight' || ev.key === 'e' ? 1 : ev.key === 'ArrowLeft' || ev.key === 'q' ? -1 : 0;
+      // The journal's pages turn with the arrow keys, as its foot says (or a click on a tab).
+      const step = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0;
       if (step === 0) return;
       this.turn(step);
       ev.preventDefault();
