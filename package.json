@@ -1,0 +1,48 @@
+{
+  "name": "oar-and-ember",
+  "version": "0.12.0",
+  "private": true,
+  "description": "A pixel-art Viking settlement RPG for desktop browsers.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run && OE_BUDGET=1 vitest run tests/unit/standard.test.ts -t \"Book 2 budget\"",
+    "test:watch": "vitest",
+    "test:browser": "node src/tools/test/browser.ts",
+    "lint": "eslint . && prettier --check . && node src/tools/content/lint.ts && node src/tools/art/lint.ts",
+    "format": "prettier --write .",
+    "art:check": "node src/tools/art/render-title-check.ts && node src/tools/art/render-check.ts",
+    "content:lint": "node src/tools/content/lint.ts",
+    "balance": "node src/tools/content/generate-balance.ts",
+    "golden": "node src/tools/saves/golden.ts",
+    "art:sheets": "node src/tools/art/generate-sheets.ts",
+    "art:compile": "node src/tools/art/compile.ts",
+    "art:adopt": "node src/tools/art/adopt.ts",
+    "art:lint": "node src/tools/art/lint.ts",
+    "zones": "node src/tools/levels/generate-zones.ts",
+    "capture": "node src/tools/art/capture.ts",
+    "audio:render": "node src/tools/audio/render.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "22.20.5",
+    "eslint": "10.13.0",
+    "eslint-config-prettier": "10.1.8",
+    "fast-check": "4.10.2",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  },
+  "dependencies": {
+    "fflate": "0.8.3"
+  }
+}

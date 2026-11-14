@@ -1,0 +1,381 @@
+{
+  "zone": "ZONE_SK_BOG",
+  "about": "The peat bog, the Grey Men and the bog offering (Book 4 section 02; Book 9 sections 03 and 05; Stage 14, decisions S14-1, S14-5, S14-11, S14-21 and S14-42): blocks 26 to 33 by 3 to 17, between Rook Hill and Seal Cave, expanded by src/tools/levels/zones.ts. Heather moor on the north, cliff over the sea at its top; the bog's peat on the south, cut in four banks (their faces block, with gaps to walk through) that hide a sneaking actor, knee-deep pools between them (frozen and walked on in winter), soft ground slower in rain; the Grey Men area on the drier ground of its south-west, nine stones round block (27, 14), the tallest on the ring's east side, the cup-and-ring stone on its north-west; the old offering in the bank at block (33, 13). The way from the Grey Men to Seal Cave runs along the bog's northern edge. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_bog",
+  "terrainSeed": "zone_sk_strand",
+  "ground": "tile_moor",
+  "plantSheet": "plant_moor",
+  "blocks": {
+    "x": 26,
+    "y": 3,
+    "w": 8,
+    "h": 15
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 2,
+  "faceTiles": 4,
+  "cliffRim": 2,
+  "heather": 0.58,
+  "bracken": 0.7,
+  "sward": 0.62,
+  "tussock": 0.45,
+  "crevices": 0.4,
+  "wind": 1.1,
+  "codes": {
+    "\"": "h",
+    "^": "h",
+    "b": "p",
+    "#": "c",
+    "o": ","
+  },
+  "carve": [
+    {
+      "code": "p",
+      "ellipse": {
+        "x": 44,
+        "y": 96,
+        "rx": 21,
+        "ry": 26
+      },
+      "rough": 0.5
+    },
+    {
+      "code": ",",
+      "ellipse": {
+        "x": 12.5,
+        "y": 92.5,
+        "rx": 9.5,
+        "ry": 8.5
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "c",
+      "line": [
+        [27, 74.5],
+        [38, 74.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [44, 74.5],
+        [64, 74.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [27, 86.5],
+        [48, 86.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [52, 86.5],
+        [64, 86.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [27, 98.5],
+        [36, 98.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [40, 98.5],
+        [64, 98.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [27, 110.5],
+        [50, 110.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    },
+    {
+      "code": "c",
+      "line": [
+        [54, 110.5],
+        [64, 110.5]
+      ],
+      "width": 1.4,
+      "rough": 0.25
+    }
+  ],
+  "pools": {
+    "cell": 3.2,
+    "above": 0.71,
+    "within": {
+      "x": 22,
+      "y": 66,
+      "w": 42,
+      "h": 54
+    }
+  },
+  "solid": [
+    {
+      "tiles": [
+        [18, 92],
+        [16, 95],
+        [13, 97],
+        [9, 96],
+        [7, 94],
+        [7, 90],
+        [9, 88],
+        [13, 87],
+        [16, 89]
+      ]
+    }
+  ],
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 18.5,
+      "y": 116.5,
+      "facing": "n"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone0/-/0",
+      "x": 18.1,
+      "y": 92.9
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone1/-/0",
+      "x": 16.79,
+      "y": 96.14
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone2/-/0",
+      "x": 13.47,
+      "y": 97.86
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone3/-/0",
+      "x": 9.7,
+      "y": 97.26
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone4/-/0",
+      "x": 7.24,
+      "y": 94.62
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone5/-/0",
+      "x": 7.24,
+      "y": 91.18
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "cup/-/0",
+      "x": 9.7,
+      "y": 88.54
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone7/-/0",
+      "x": 13.47,
+      "y": 87.94
+    },
+    {
+      "sheet": "prop_greymen",
+      "frame": "stone8/-/0",
+      "x": 16.79,
+      "y": 89.66
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 32,
+      "y": 73.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 46,
+      "y": 85.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 58,
+      "y": 73.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 30,
+      "y": 97.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 44,
+      "y": 109.4
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 1.5,
+      "y": 57.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 42.5,
+      "y": 42.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark2/-/0",
+      "x": 12.5,
+      "y": 32.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 17.5,
+      "y": 77.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 19.5,
+      "y": 54.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "turves/-/0",
+      "x": 28.5,
+      "y": 109.8
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [0.1, 60],
+      [8, 76],
+      [12, 86]
+    ],
+    [
+      [12, 99],
+      [16, 108],
+      [20, 119.9]
+    ],
+    [
+      [12, 86],
+      [20, 70],
+      [40, 56],
+      [63.9, 50]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "w",
+      "to": "ZONE_SK_ROOK"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_SEALCAVE"
+    },
+    {
+      "edge": "s",
+      "to": "ZONE_SK_CAIRN"
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 20,
+      "r": 7
+    },
+    {
+      "kind": "gull",
+      "x": 45,
+      "y": 90,
+      "r": 6
+    },
+    {
+      "kind": "sheep",
+      "x": 20,
+      "y": 50
+    },
+    {
+      "kind": "sheep",
+      "x": 44,
+      "y": 40
+    },
+    {
+      "kind": "gull_standing",
+      "x": 19.6,
+      "y": 92.0
+    },
+    {
+      "kind": "gull_standing",
+      "x": 40.5,
+      "y": 26.6
+    }
+  ],
+  "traverse": {
+    "soft": [
+      {
+        "x": 22,
+        "y": 64,
+        "w": 42,
+        "h": 56
+      }
+    ],
+    "wades": [
+      {
+        "x": 22,
+        "y": 64,
+        "w": 42,
+        "h": 56,
+        "band": "KNEE"
+      }
+    ]
+  },
+  "areas": [
+    {
+      "id": "ZONE_SK_GREYMEN",
+      "scene": "ZONE_SK_BOG",
+      "rect": {
+        "x": 0,
+        "y": 72,
+        "w": 32,
+        "h": 40
+      },
+      "nameKey": "place.name.sk_greymen"
+    }
+  ],
+  "viewPoints": [],
+  "faceCrevices": 0.3
+}

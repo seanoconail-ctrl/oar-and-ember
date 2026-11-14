@@ -1,0 +1,91 @@
+{
+  "sheet": "ui_aim",
+  "kind": "decal",
+  "image": "ui_aim.png",
+  "width": 11,
+  "height": 11,
+  "pivot": {
+    "x": 5,
+    "y": 5
+  },
+  "footprint": {
+    "w": 11,
+    "h": 11
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "dot": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    },
+    "cross": {
+      "frames": 2,
+      "ticks": 12,
+      "loop": true
+    },
+    "facing_s": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "facing_n": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "facing_e": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "facing_w": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "dot/-/0": [
+      0,
+      0
+    ],
+    "dot/-/1": [
+      11,
+      0
+    ],
+    "dot/-/2": [
+      22,
+      0
+    ],
+    "cross/-/0": [
+      0,
+      11
+    ],
+    "cross/-/1": [
+      11,
+      11
+    ],
+    "facing_s/-/0": [
+      0,
+      22
+    ],
+    "facing_n/-/0": [
+      0,
+      33
+    ],
+    "facing_e/-/0": [
+      0,
+      44
+    ],
+    "facing_w/-/0": [
+      0,
+      55
+    ]
+  }
+}

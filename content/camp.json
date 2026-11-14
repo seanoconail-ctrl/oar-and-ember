@@ -1,0 +1,482 @@
+{
+  "about": "The first camp at home (Book 4 Chapter 1 beat 2; Book 7 section 06, S0 and S1; decision DD-19): the tasks of Stage 7's task system v0 (Book 2 section 07; each names its Book 10 section 09 row, never a number; the driftwood pick-up names section 03's \"Driftwood finds\"), the places in the zones where they are done (the DRIFTWOOD sites are the pieces of driftwood lying on Wreck Strand, each drawn with its prop_driftwood frame; decision PT-2), the camp's props by stage, and where Hild sits, sleeps and fishes. Positions are in tiles of their zone, at the foot.",
+  "home": "ISLE_SKARV",
+  "zone": "ZONE_SK_MACHAIR",
+  "beat": "BEAT_1_BROCH",
+  "shelter": {
+    "building": "BLD_SAIL_SHELTER",
+    "balanceRow": "Sail shelter in the broch"
+  },
+  "sleepSeconds": 3,
+  "region": "REG_SK",
+  "tasks": {
+    "TASK_GATHER_DRIFTWOOD": {
+      "nameKey": "task.name.driftwood",
+      "balanceRow": "Driftwood finds",
+      "skill": "gathering",
+      "workLoop": "gather",
+      "sound": "DRIFTWOOD_PICKED_UP",
+      "output": "RES_DRIFTWOOD"
+    },
+    "TASK_FISH_SHORE": {
+      "nameKey": "task.name.fish",
+      "balanceRow": "Fish from the shore",
+      "skill": "fishing",
+      "workLoop": "fish",
+      "sound": "TASK_FISH",
+      "output": "RES_FRESH_FISH",
+      "tool": "ITEM_LINE"
+    },
+    "TASK_CARE": {
+      "nameKey": "task.name.tend",
+      "balanceRow": "Tend wounds",
+      "skill": "care",
+      "workLoop": "kneel",
+      "sound": "TASK_TEND"
+    },
+    "TASK_LIGHT_FIRE": {
+      "nameKey": "task.name.light_fire",
+      "balanceRow": "Light a fire",
+      "skill": "gathering",
+      "workLoop": "kneel",
+      "sound": "FIRE_LIT"
+    },
+    "TASK_COOK": {
+      "nameKey": "task.name.cook",
+      "balanceRow": "Cook",
+      "skill": "cooking",
+      "workLoop": "kneel",
+      "sound": "TASK_COOK"
+    },
+    "TASK_BUILD": {
+      "nameKey": "task.name.build_shelter",
+      "balanceRow": "Build (hammer, raise a beam, thatch)",
+      "skill": "building",
+      "workLoop": "build",
+      "sound": "TASK_BUILD"
+    },
+    "TASK_REPAIR_SHIP": {
+      "nameKey": "task.name.repair_ship",
+      "balanceRow": "Repair the ship",
+      "skill": "shipRepair",
+      "workLoop": "build",
+      "sound": "TASK_REPAIR"
+    }
+  },
+  "sites": [
+    {
+      "key": "fire",
+      "zone": "ZONE_SK_MACHAIR",
+      "kind": "FIRE",
+      "x": 35.4,
+      "y": 31.6
+    },
+    {
+      "key": "bed_s0",
+      "zone": "ZONE_SK_MACHAIR",
+      "kind": "BED",
+      "x": 33.3,
+      "y": 29.7,
+      "stages": ["S0"],
+      "area": { "x0": 32.3, "y0": 29.0, "x1": 34.25, "y1": 30.0 }
+    },
+    {
+      "key": "bed_s1",
+      "zone": "ZONE_SK_MACHAIR",
+      "kind": "BED",
+      "x": 33.3,
+      "y": 29.7,
+      "stages": ["S1"],
+      "area": { "x0": 32.3, "y0": 29.0, "x1": 34.25, "y1": 30.0 }
+    },
+    {
+      "key": "shelter",
+      "zone": "ZONE_SK_MACHAIR",
+      "kind": "BUILD",
+      "x": 32.4,
+      "y": 30.4,
+      "stages": ["S0"]
+    },
+    {
+      "key": "stores",
+      "zone": "ZONE_SK_MACHAIR",
+      "kind": "STORES",
+      "x": 38.6,
+      "y": 30.5
+    },
+    {
+      "key": "drift_west_tide",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 22.4,
+      "y": 35.2,
+      "frame": "branch/-/0"
+    },
+    {
+      "key": "drift_west_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 28.6,
+      "y": 34.2,
+      "frame": "spar_r/-/0"
+    },
+    {
+      "key": "drift_west_rocks",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 36.3,
+      "y": 35.2,
+      "frame": "log/-/0"
+    },
+    {
+      "key": "drift_cove_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 34.5,
+      "y": 27.6,
+      "frame": "log_r/-/0"
+    },
+    {
+      "key": "drift_east_rocks",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 65.4,
+      "y": 35.6,
+      "frame": "branch_r/-/0"
+    },
+    {
+      "key": "drift_east_tide",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 71.6,
+      "y": 37.6,
+      "frame": "spar/-/0"
+    },
+    {
+      "key": "drift_east_shingle",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 80.5,
+      "y": 38.6,
+      "frame": "log/-/0"
+    },
+    {
+      "key": "drift_east_point",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 82.5,
+      "y": 42.0,
+      "frame": "branch/-/0"
+    },
+    {
+      "key": "drift_east_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 77.5,
+      "y": 31.5,
+      "frame": "spar_r/-/0"
+    },
+    {
+      "key": "drift_bank_corner",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 86.2,
+      "y": 34.2,
+      "frame": "log_r/-/0"
+    },
+    {
+      "key": "drift_stern",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 89.2,
+      "y": 35.5,
+      "frame": "branch_r/-/0"
+    },
+    {
+      "key": "drift_stern_bank",
+      "zone": "ZONE_SK_STRAND",
+      "kind": "DRIFTWOOD",
+      "x": 93.4,
+      "y": 31.2,
+      "frame": "spar/-/0"
+    }
+  ],
+  "props": {
+    "S0": [
+      {
+        "sheet": "decal_broch_floor",
+        "frame": "s0/-/0",
+        "x": 35.5,
+        "y": 37.0,
+        "flat": true
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "net/-/0",
+        "x": 37.7,
+        "y": 28.75
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "creel/-/0",
+        "x": 36.9,
+        "y": 33.0
+      },
+      {
+        "sheet": "prop_sail_leanto",
+        "frame": "s0/-/0",
+        "x": 33.13,
+        "y": 29.29
+      },
+      {
+        "sheet": "prop_bed_steerer",
+        "frame": "s0/-/0",
+        "x": 33.3,
+        "y": 29.95,
+        "flat": true
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "oar/-/0",
+        "x": 37.3,
+        "y": 28.5
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "cask/-/0",
+        "x": 38.3,
+        "y": 29.7
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "cask/-/0",
+        "x": 39.0,
+        "y": 30.6
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bags/-/0",
+        "x": 38.7,
+        "y": 31.9
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "firering/-/0",
+        "x": 35.4,
+        "y": 31.75,
+        "flat": true
+      }
+    ],
+    "S1": [
+      {
+        "sheet": "decal_broch_floor",
+        "frame": "s1/-/0",
+        "x": 35.5,
+        "y": 37.0,
+        "flat": true
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "lamp/-/0",
+        "x": 33.9,
+        "y": 27.95
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "net/-/0",
+        "x": 37.7,
+        "y": 28.75
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "fish/-/0",
+        "x": 35.4,
+        "y": 30.95
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "casks/-/0",
+        "x": 38.4,
+        "y": 32.3
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "creel/-/0",
+        "x": 36.9,
+        "y": 33.0
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "shellfish/-/0",
+        "x": 34.1,
+        "y": 33.6
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "quern/-/0",
+        "x": 33.2,
+        "y": 34.4
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "block/-/0",
+        "x": 38.3,
+        "y": 34.6
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "hide/-/0",
+        "x": 36.9,
+        "y": 35.3
+      },
+      {
+        "sheet": "prop_broch_clutter",
+        "frame": "spars/-/0",
+        "x": 32.2,
+        "y": 33.0
+      },
+      {
+        "sheet": "prop_sail_roof",
+        "frame": "s1/-/0",
+        "x": 35.58,
+        "y": 29.92
+      },
+      {
+        "sheet": "prop_bed_steerer",
+        "frame": "s1/-/0",
+        "x": 33.3,
+        "y": 29.95,
+        "flat": true
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bed/-/0",
+        "x": 35.1,
+        "y": 28.8
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bed/-/1",
+        "x": 36.5,
+        "y": 28.75
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bed/-/2",
+        "x": 37.6,
+        "y": 30.75
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bed/-/0",
+        "x": 37.4,
+        "y": 33.25
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "cask/-/0",
+        "x": 32.6,
+        "y": 32.3
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "skin/-/0",
+        "x": 34.0,
+        "y": 35.0
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "oar/-/0",
+        "x": 32.4,
+        "y": 33.2
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "bags/-/0",
+        "x": 38.6,
+        "y": 30.7
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "hearth/-/0",
+        "x": 35.4,
+        "y": 31.85,
+        "flat": true
+      },
+      {
+        "sheet": "prop_camp",
+        "frame": "pot/-/0",
+        "x": 36.25,
+        "y": 31.35
+      }
+    ]
+  },
+  "woodpile": {
+    "x": 38.3,
+    "y": 33.5
+  },
+  "people": {
+    "C_HILD": {
+      "camp": {
+        "x": 34.1,
+        "y": 31.9,
+        "facing": "e"
+      },
+      "sleep": {
+        "S0": {
+          "x": 35.9,
+          "y": 33.0,
+          "facing": "e"
+        },
+        "S1": {
+          "x": 35.1,
+          "y": 28.85,
+          "facing": "e"
+        }
+      },
+      "work": {
+        "task": "TASK_FISH_SHORE",
+        "zone": "ZONE_SK_STRAND",
+        "x": 66.4,
+        "y": 34.6,
+        "facing": "s"
+      },
+      "leadWaitTiles": 7
+    }
+  },
+  "lines": {
+    "lead": "c_hild.bark.broch.01",
+    "wait": "c_hild.bark.broch.02",
+    "arrived": "c_hild.bark.broch.03",
+    "fireLit": "c_hild.bark.fire.01",
+    "tended": "c_hild.bark.tended.01",
+    "meal": "c_hild.bark.meal.01",
+    "fishing": "c_hild.bark.fishing.01",
+    "firstFish": "c_hild.bark.fish.01",
+    "shelter": "c_hild.bark.shelter.01",
+    "evening": "c_hild.bark.evening.01"
+  },
+  "leadAfterSeconds": 6,
+  "shelterBeds": [
+    {
+      "x": 31.9,
+      "y": 30.15,
+      "facing": "e"
+    },
+    {
+      "x": 32.75,
+      "y": 30.3,
+      "facing": "e"
+    },
+    {
+      "x": 33.6,
+      "y": 30.15,
+      "facing": "w"
+    },
+    {
+      "x": 34.45,
+      "y": 30.3,
+      "facing": "w"
+    }
+  ]
+}

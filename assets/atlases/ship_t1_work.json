@@ -1,0 +1,91 @@
+{
+  "sheet": "ship_t1_work",
+  "kind": "prop",
+  "image": "ship_t1_work.png",
+  "width": 208,
+  "height": 196,
+  "pivot": {
+    "x": 104,
+    "y": 186
+  },
+  "footprint": {
+    "w": 168,
+    "h": 40
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "hull_trim": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "hull_boards": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "hull_rivets": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 170,
+    "h": 16
+  },
+  "placeholder": false,
+  "frames": {
+    "hull_trim/-/0": [
+      0,
+      0
+    ],
+    "hull_trim/-/1": [
+      208,
+      0
+    ],
+    "hull_trim/-/2": [
+      416,
+      0
+    ],
+    "hull_trim/-/3": [
+      624,
+      0
+    ],
+    "hull_boards/-/0": [
+      0,
+      196
+    ],
+    "hull_boards/-/1": [
+      208,
+      196
+    ],
+    "hull_boards/-/2": [
+      416,
+      196
+    ],
+    "hull_boards/-/3": [
+      624,
+      196
+    ],
+    "hull_rivets/-/0": [
+      0,
+      392
+    ],
+    "hull_rivets/-/1": [
+      208,
+      392
+    ],
+    "hull_rivets/-/2": [
+      416,
+      392
+    ],
+    "hull_rivets/-/3": [
+      624,
+      392
+    ]
+  }
+}

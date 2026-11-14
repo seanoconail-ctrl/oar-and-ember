@@ -1,0 +1,38 @@
+{
+  "sheet": "fx_seabolt",
+  "kind": "decal",
+  "image": "fx_seabolt.png",
+  "width": 24,
+  "height": 64,
+  "pivot": {
+    "x": 12,
+    "y": 63
+  },
+  "footprint": {
+    "w": 24,
+    "h": 64
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "bolt": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "bolt/-/0": [
+      0,
+      0
+    ],
+    "bolt/-/1": [
+      24,
+      0
+    ]
+  }
+}

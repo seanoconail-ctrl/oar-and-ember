@@ -1,0 +1,38 @@
+{
+  "sheet": "ui_marker",
+  "kind": "prop",
+  "image": "ui_marker.png",
+  "width": 9,
+  "height": 48,
+  "pivot": {
+    "x": 4,
+    "y": 47
+  },
+  "footprint": {
+    "w": 1,
+    "h": 1
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "bob": {
+      "frames": 2,
+      "ticks": 20,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "bob/-/0": [
+      0,
+      0
+    ],
+    "bob/-/1": [
+      9,
+      0
+    ]
+  }
+}

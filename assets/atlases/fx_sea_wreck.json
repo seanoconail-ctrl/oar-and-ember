@@ -1,0 +1,96 @@
+{
+  "sheet": "fx_sea_wreck",
+  "kind": "decal",
+  "image": "fx_sea_wreck.png",
+  "width": 44,
+  "height": 30,
+  "pivot": {
+    "x": 22,
+    "y": 27
+  },
+  "footprint": {
+    "w": 44,
+    "h": 30
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "spray": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "kelp": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "sail": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "spray/-/0": [
+      0,
+      0
+    ],
+    "spray/-/1": [
+      44,
+      0
+    ],
+    "spray/-/2": [
+      88,
+      0
+    ],
+    "spray/-/3": [
+      132,
+      0
+    ],
+    "spray/-/4": [
+      176,
+      0
+    ],
+    "spray/-/5": [
+      220,
+      0
+    ],
+    "kelp/-/0": [
+      0,
+      30
+    ],
+    "kelp/-/1": [
+      44,
+      30
+    ],
+    "kelp/-/2": [
+      88,
+      30
+    ],
+    "kelp/-/3": [
+      132,
+      30
+    ],
+    "sail/-/0": [
+      0,
+      60
+    ],
+    "sail/-/1": [
+      44,
+      60
+    ],
+    "sail/-/2": [
+      88,
+      60
+    ],
+    "sail/-/3": [
+      132,
+      60
+    ]
+  }
+}

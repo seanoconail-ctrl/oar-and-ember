@@ -1,0 +1,293 @@
+{
+  "sheet": "prop_island",
+  "kind": "prop",
+  "image": "prop_island.png",
+  "width": 76,
+  "height": 66,
+  "pivot": {
+    "x": 38,
+    "y": 63
+  },
+  "footprint": {
+    "w": 16,
+    "h": 6
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "eyrie": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "eagle": {
+      "frames": 2,
+      "ticks": 50,
+      "loop": true
+    },
+    "turves": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stake": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "timbers": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "lintel": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "naust0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "naust1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "naust2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "naust3": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway3": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway4": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "causeway5": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "pushstone": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "niche": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "capstone": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "slab": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "shoring": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "goods0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "goods1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "goods2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "goods3": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "door": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "waymark0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "waymark1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "waymark2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 20,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "eyrie/-/0": [
+      0,
+      0
+    ],
+    "eagle/-/0": [
+      0,
+      66
+    ],
+    "eagle/-/1": [
+      76,
+      66
+    ],
+    "turves/-/0": [
+      0,
+      132
+    ],
+    "stake/-/0": [
+      0,
+      198
+    ],
+    "timbers/-/0": [
+      0,
+      264
+    ],
+    "lintel/-/0": [
+      0,
+      330
+    ],
+    "naust0/-/0": [
+      0,
+      396
+    ],
+    "naust1/-/0": [
+      0,
+      462
+    ],
+    "naust2/-/0": [
+      0,
+      528
+    ],
+    "naust3/-/0": [
+      0,
+      594
+    ],
+    "causeway0/-/0": [
+      0,
+      660
+    ],
+    "causeway1/-/0": [
+      0,
+      726
+    ],
+    "causeway2/-/0": [
+      0,
+      792
+    ],
+    "causeway3/-/0": [
+      0,
+      858
+    ],
+    "causeway4/-/0": [
+      0,
+      924
+    ],
+    "causeway5/-/0": [
+      0,
+      990
+    ],
+    "pushstone/-/0": [
+      0,
+      1056
+    ],
+    "niche/-/0": [
+      0,
+      1122
+    ],
+    "capstone/-/0": [
+      0,
+      1188
+    ],
+    "slab/-/0": [
+      0,
+      1254
+    ],
+    "shoring/-/0": [
+      0,
+      1320
+    ],
+    "goods0/-/0": [
+      0,
+      1386
+    ],
+    "goods1/-/0": [
+      0,
+      1452
+    ],
+    "goods2/-/0": [
+      0,
+      1518
+    ],
+    "goods3/-/0": [
+      0,
+      1584
+    ],
+    "door/-/0": [
+      0,
+      1650
+    ],
+    "waymark0/-/0": [
+      0,
+      1716
+    ],
+    "waymark1/-/0": [
+      0,
+      1782
+    ],
+    "waymark2/-/0": [
+      0,
+      1848
+    ]
+  }
+}

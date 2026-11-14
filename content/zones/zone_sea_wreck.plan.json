@@ -1,0 +1,285 @@
+{
+  "zone": "ZONE_SEA_WRECK",
+  "about": "The wreck on Sgeir Dhubh, a reef in R\u00e1n's Reach on the Skarvholm to Carrick crossing (Book 6 section 19; Book 9 section 15; Stage 13, decisions S13-40 to S13-59), read tile for tile from docs/levels/sea_wreck_tiles.txt by src/tools/levels/zones.ts. Edit this plan or the grid, not the generated map, then run npm run zones.",
+  "seed": "zone_sea_wreck",
+  "tileGrid": "docs/levels/sea_wreck_tiles.txt",
+  "origin": {
+    "x": 0,
+    "y": 0
+  },
+  "blocks": {
+    "x": 100,
+    "y": 100,
+    "w": 6,
+    "h": 4
+  },
+  "warpTiles": 0,
+  "tideLineTiles": 1,
+  "sward": 0.7,
+  "tussock": 0.45,
+  "crevices": 0.35,
+  "wind": 1.5,
+  "outcrops": [],
+  "cuts": [[0, 47]],
+  "spawns": {
+    "P_STEERER": {
+      "x": 38.6,
+      "y": 19.4,
+      "facing": "w"
+    }
+  },
+  "props": [
+    {
+      "sheet": "prop_sea_wreck",
+      "frame": "broken/-/0",
+      "x": 10.2,
+      "y": 21.6
+    },
+    {
+      "sheet": "prop_sea_wreck",
+      "frame": "cask/-/0",
+      "x": 14.2,
+      "y": 21.4
+    },
+    {
+      "sheet": "prop_sea_wreck",
+      "frame": "iron/-/0",
+      "x": 13.2,
+      "y": 22.1
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "planks/-/0",
+      "x": 15.2,
+      "y": 21.8
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "rope/-/0",
+      "x": 5.6,
+      "y": 20.4
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "net/-/0",
+      "x": 18.6,
+      "y": 22.4
+    },
+    {
+      "sheet": "prop_debris",
+      "frame": "log_short/-/0",
+      "x": 24.5,
+      "y": 21.9
+    },
+    {
+      "sheet": "prop_rock_strand",
+      "frame": "small/-/0",
+      "x": 3.4,
+      "y": 23.4
+    },
+    {
+      "sheet": "prop_rock_strand",
+      "frame": "small/-/0",
+      "x": 34.6,
+      "y": 21.6
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/1",
+      "x": 22.4,
+      "y": 17.4
+    },
+    {
+      "sheet": "prop_boulder",
+      "frame": "lichen/-/3",
+      "x": 31.6,
+      "y": 16.6
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/0",
+      "x": 16.3,
+      "y": 17.6
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/2",
+      "x": 27.8,
+      "y": 18.7
+    },
+    {
+      "sheet": "prop_stones",
+      "frame": "small/-/3",
+      "x": 36.4,
+      "y": 17.2
+    },
+    {
+      "sheet": "ship_t1_launch",
+      "frame": "afloat/-/0",
+      "x": 42.6,
+      "y": 22.4
+    },
+    {
+      "sheet": "ship_t1_launch",
+      "frame": "mast/-/0",
+      "x": 42.6,
+      "y": 22.4,
+      "sort": 22.45
+    },
+    {
+      "sheet": "ship_t1_crew",
+      "frame": "hild_1/-/0",
+      "x": 41.1,
+      "y": 22.15,
+      "sort": 22.5
+    },
+    {
+      "sheet": "ship_t1_crew",
+      "frame": "oddi_2/-/0",
+      "x": 42.1,
+      "y": 22.15,
+      "sort": 22.5
+    },
+    {
+      "sheet": "ship_t1_crew",
+      "frame": "bran_0/-/0",
+      "x": 43.1,
+      "y": 22.15,
+      "sort": 22.5
+    },
+    {
+      "sheet": "ship_t1_crew",
+      "frame": "runa_3/-/0",
+      "x": 44.017,
+      "y": 22.15,
+      "sort": 22.5
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "spray/-/0",
+      "x": 8.4,
+      "y": 20.2
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "spray/-/0",
+      "x": 5.9,
+      "y": 24.3
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "spray/-/0",
+      "x": 44.6,
+      "y": 21.2
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "spray/-/0",
+      "x": 30.2,
+      "y": 7.8
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "spray/-/0",
+      "x": 13.2,
+      "y": 14.2
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 4.2,
+      "y": 21.8
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 20.6,
+      "y": 23.3
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 28.4,
+      "y": 22.6
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 24.0,
+      "y": 10.6
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 33.4,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "kelp/-/0",
+      "x": 7.2,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_sea_wreck",
+      "frame": "sail/-/0",
+      "x": 5.2,
+      "y": 22.6
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 10,
+      "y": 18,
+      "r": 4
+    },
+    {
+      "kind": "gull",
+      "x": 30,
+      "y": 12,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 40,
+      "y": 24,
+      "r": 3
+    },
+    {
+      "kind": "gull_standing",
+      "x": 19.0,
+      "y": 15.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 35.2,
+      "y": 15.2
+    },
+    {
+      "kind": "cormorant",
+      "x": 30.0,
+      "y": 8.1
+    },
+    {
+      "kind": "seal",
+      "x": 21.5,
+      "y": 23.4
+    },
+    {
+      "kind": "seal",
+      "x": 31.5,
+      "y": 10.4
+    },
+    {
+      "kind": "crab",
+      "x": 17.0,
+      "y": 19.6
+    },
+    {
+      "kind": "crab",
+      "x": 28.0,
+      "y": 20.4
+    }
+  ]
+}

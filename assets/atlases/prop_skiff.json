@@ -1,0 +1,64 @@
+{
+  "sheet": "prop_skiff",
+  "kind": "prop",
+  "image": "prop_skiff.png",
+  "width": 124,
+  "height": 64,
+  "pivot": {
+    "x": 62,
+    "y": 58
+  },
+  "footprint": {
+    "w": 110,
+    "h": 12
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "oar": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "oar_goods": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "bare_goods": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 110,
+    "h": 10
+  },
+  "placeholder": false,
+  "frames": {
+    "oar/-/0": [
+      0,
+      0
+    ],
+    "bare/-/0": [
+      0,
+      64
+    ],
+    "oar_goods/-/0": [
+      0,
+      128
+    ],
+    "bare_goods/-/0": [
+      0,
+      192
+    ]
+  }
+}

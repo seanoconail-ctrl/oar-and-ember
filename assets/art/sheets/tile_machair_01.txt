@@ -1,0 +1,38 @@
+# Machair grass ground tile (Book 7 section 13: machair grass and flowers), spring.
+# Authored by Claude, Stage 4. Terrain has no ink outline (Book 7 section 11).
+sheet: tile_machair_01
+kind: tile
+palette: book07
+size: 24x24
+pivot: 0,0
+footprint: 24x24
+facings: -
+placeholder: false
+anim.tile: frames 1, ticks 1
+
+frame tile - 0
+gggggggggggggggggggggggg
+gggggggggGgggggggggggggg
+ggggggggGGhgggggggggGggg
+ggGggggggggggggggggGGhgg
+gGGhggggggglgggGgggggggg
+ggggggssggggggGGhggggggg
+gggggggggggggggggggggggg
+gggggggggggggggggggsgggg
+ggggggggggggGggggggggggg
+gggggGgggggGGhgggggggggg
+ggggGGhgggggggggggGggggg
+ggggggggggsggggggGGhgggg
+gggggglggggggggggggggggo
+ggggggggggggggGggggggggg
+gGgggggggggggGGhgggggggg
+GGhgggggGgggggggggglgggg
+gggggggGGhgggggggggggGgg
+gggsggggggggggggggggGGhg
+gggggggggggggssggggggggg
+gggggggggggggggggGgggggg
+ggggGgggggggggggGGhggggg
+gggGGhgggggGgggggggggggg
+ggggggggggGGhgggogggggGg
+gggggggggggggggggggggGGh
+end

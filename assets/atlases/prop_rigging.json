@@ -1,0 +1,153 @@
+{
+  "sheet": "prop_rigging",
+  "kind": "prop",
+  "image": "prop_rigging.png",
+  "width": 40,
+  "height": 48,
+  "pivot": {
+    "x": 20,
+    "y": 47
+  },
+  "footprint": {
+    "w": 24,
+    "h": 6
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "down": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "carried": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 24,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "down/s/0": [
+      0,
+      0
+    ],
+    "down/n/0": [
+      0,
+      48
+    ],
+    "down/e/0": [
+      0,
+      96
+    ],
+    "down/w/0": [
+      0,
+      144
+    ],
+    "carried/s/0": [
+      0,
+      192
+    ],
+    "carried/s/1": [
+      40,
+      192
+    ],
+    "carried/s/2": [
+      80,
+      192
+    ],
+    "carried/s/3": [
+      120,
+      192
+    ],
+    "carried/s/4": [
+      160,
+      192
+    ],
+    "carried/s/5": [
+      200,
+      192
+    ],
+    "carried/n/0": [
+      0,
+      240
+    ],
+    "carried/n/1": [
+      40,
+      240
+    ],
+    "carried/n/2": [
+      80,
+      240
+    ],
+    "carried/n/3": [
+      120,
+      240
+    ],
+    "carried/n/4": [
+      160,
+      240
+    ],
+    "carried/n/5": [
+      200,
+      240
+    ],
+    "carried/e/0": [
+      0,
+      288
+    ],
+    "carried/e/1": [
+      40,
+      288
+    ],
+    "carried/e/2": [
+      80,
+      288
+    ],
+    "carried/e/3": [
+      120,
+      288
+    ],
+    "carried/e/4": [
+      160,
+      288
+    ],
+    "carried/e/5": [
+      200,
+      288
+    ],
+    "carried/w/0": [
+      0,
+      336
+    ],
+    "carried/w/1": [
+      40,
+      336
+    ],
+    "carried/w/2": [
+      80,
+      336
+    ],
+    "carried/w/3": [
+      120,
+      336
+    ],
+    "carried/w/4": [
+      160,
+      336
+    ],
+    "carried/w/5": [
+      200,
+      336
+    ]
+  }
+}

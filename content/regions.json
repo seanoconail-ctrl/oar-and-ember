@@ -1,0 +1,78 @@
+[
+  {
+    "id": "REG_SK",
+    "nameKey": "region.name.reg_sk",
+    "zones": [
+      {
+        "id": "ZONE_SK_STRAND",
+        "terrain": "Shingle, tidal flats, skerries"
+      },
+      {
+        "id": "ZONE_SK_MACHAIR",
+        "terrain": "Grass, plots, the steading"
+      },
+      {
+        "id": "ZONE_SK_KELDA",
+        "terrain": "Spring and stream; an area of the machair"
+      },
+      {
+        "id": "ZONE_SK_ROOK",
+        "terrain": "Heather, high ground"
+      },
+      {
+        "id": "ZONE_SK_BOG",
+        "terrain": "Peat bog"
+      },
+      {
+        "id": "ZONE_SK_GREYMEN",
+        "terrain": "Stone ring; an area of the bog"
+      },
+      {
+        "id": "ZONE_SK_CAIRN",
+        "terrain": "Mound and sheepfold"
+      },
+      {
+        "id": "ZONE_SK_CLIFFS",
+        "terrain": "Cliffs and eagle stack"
+      },
+      {
+        "id": "ZONE_SK_GEO",
+        "terrain": "Hidden cove and cell"
+      },
+      {
+        "id": "ZONE_SK_SEALCAVE",
+        "terrain": "North-east horn and cave"
+      },
+      {
+        "id": "ZONE_SK_HAGSEAT",
+        "terrain": "West headland"
+      },
+      {
+        "id": "ZONE_SK_NAUST",
+        "terrain": "Cove and boatshed plot"
+      },
+      {
+        "id": "ZONE_SK_SKERRY",
+        "terrain": "East shore, causeway, skerry"
+      },
+      {
+        "id": "ZONE_SK_SEALCAVE_DEEP",
+        "terrain": "The Seal Cave's deep passage, an interior"
+      },
+      {
+        "id": "ZONE_SK_CAIRN_IN",
+        "terrain": "The Hollow Cairn's inside, an interior"
+      },
+      {
+        "id": "ZONE_SEA_WRECK",
+        "terrain": "A reef in Rán's Reach: rock stacks, shingle, salt turf, a weed shelf"
+      }
+    ]
+  },
+  {
+    "id": "REG_MAINLAND",
+    "nameKey": "region.name.reg_mainland",
+    "homeSites": ["SITE_CARRICK_STRAND", "SITE_SALTNESS"],
+    "zones": []
+  }
+]

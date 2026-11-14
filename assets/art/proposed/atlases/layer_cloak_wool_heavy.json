@@ -1,0 +1,5852 @@
+{
+  "sheet": "layer_cloak_wool_heavy",
+  "kind": "sprite",
+  "image": "layer_cloak_wool_heavy.png",
+  "width": 32,
+  "height": 48,
+  "pivot": {
+    "x": 16,
+    "y": 47
+  },
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "idle": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "shift": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "glance": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "idlewind": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "run": {
+      "frames": 8,
+      "ticks": 3,
+      "loop": true
+    },
+    "runstart": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "runstop": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "walkstart": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "walkstop": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "sneak": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "carry": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "draw": {
+      "frames": 4,
+      "ticks": 8,
+      "loop": false
+    },
+    "gather": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "fish": {
+      "frames": 6,
+      "ticks": 10,
+      "loop": true
+    },
+    "kneel": {
+      "frames": 6,
+      "ticks": 9,
+      "loop": true
+    },
+    "build": {
+      "frames": 6,
+      "ticks": 7,
+      "loop": true
+    },
+    "sleep": {
+      "frames": 2,
+      "ticks": 36,
+      "loop": true
+    },
+    "windup": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "light1": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light2": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light3": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "charge": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": true
+    },
+    "chargewalk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "heavy": {
+      "frames": 3,
+      "ticks": 8,
+      "loop": false
+    },
+    "block": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "parry": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "dodge": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "shove": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "stagger": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "riposte": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "backstab": {
+      "frames": 3,
+      "ticks": 9,
+      "loop": false
+    },
+    "lunge": {
+      "frames": 2,
+      "ticks": 8,
+      "loop": false
+    },
+    "parried": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "getup": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "finish": {
+      "frames": 1,
+      "ticks": 30,
+      "loop": false
+    },
+    "surrender": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "downed": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "dead": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "windup_l": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_h": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_c": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "parry_windup": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "block_raise": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "guard_break": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": false
+    },
+    "exhausted": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "exhausted_walk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "dodge_recover": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "block_backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "overbalance": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "flinch": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "knockdown": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "sidestep": {
+      "frames": 3,
+      "ticks": 5,
+      "loop": false
+    },
+    "hop": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "bind": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "eat_ration": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "fall_fwd": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_back": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_crumple": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "reel": {
+      "frames": 3,
+      "ticks": 12,
+      "loop": true
+    },
+    "guard_turn": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "spare": {
+      "frames": 4,
+      "ticks": 6,
+      "loop": false
+    },
+    "red": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": false
+    },
+    "red_miss": {
+      "frames": 4,
+      "ticks": 11,
+      "loop": false
+    },
+    "fin_seax_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_seax_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    }
+  },
+  "events": {
+    "footstep": "walk 0, walk 3, run 0, run 4, sneak 0, sneak 3, carry 0, carry 3"
+  },
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "idle/s/0": [
+      0,
+      0
+    ],
+    "idle/s/1": [
+      32,
+      0
+    ],
+    "idle/s/2": [
+      64,
+      0
+    ],
+    "idle/s/3": [
+      96,
+      0
+    ],
+    "idle/n/0": [
+      128,
+      0
+    ],
+    "idle/n/1": [
+      160,
+      0
+    ],
+    "idle/n/2": [
+      192,
+      0
+    ],
+    "idle/n/3": [
+      224,
+      0
+    ],
+    "idle/e/0": [
+      256,
+      0
+    ],
+    "idle/e/1": [
+      288,
+      0
+    ],
+    "idle/e/2": [
+      320,
+      0
+    ],
+    "idle/e/3": [
+      352,
+      0
+    ],
+    "idle/w/0": [
+      384,
+      0
+    ],
+    "idle/w/1": [
+      416,
+      0
+    ],
+    "idle/w/2": [
+      448,
+      0
+    ],
+    "idle/w/3": [
+      480,
+      0
+    ],
+    "shift/s/0": [
+      512,
+      0
+    ],
+    "shift/s/1": [
+      544,
+      0
+    ],
+    "shift/s/2": [
+      576,
+      0
+    ],
+    "shift/s/3": [
+      608,
+      0
+    ],
+    "shift/n/0": [
+      640,
+      0
+    ],
+    "shift/n/1": [
+      672,
+      0
+    ],
+    "shift/n/2": [
+      704,
+      0
+    ],
+    "shift/n/3": [
+      736,
+      0
+    ],
+    "shift/e/0": [
+      768,
+      0
+    ],
+    "shift/e/1": [
+      800,
+      0
+    ],
+    "shift/e/2": [
+      832,
+      0
+    ],
+    "shift/e/3": [
+      864,
+      0
+    ],
+    "shift/w/0": [
+      896,
+      0
+    ],
+    "shift/w/1": [
+      928,
+      0
+    ],
+    "shift/w/2": [
+      960,
+      0
+    ],
+    "shift/w/3": [
+      992,
+      0
+    ],
+    "glance/s/0": [
+      1024,
+      0
+    ],
+    "glance/s/1": [
+      1056,
+      0
+    ],
+    "glance/s/2": [
+      1088,
+      0
+    ],
+    "glance/s/3": [
+      1120,
+      0
+    ],
+    "glance/n/0": [
+      1152,
+      0
+    ],
+    "glance/n/1": [
+      0,
+      48
+    ],
+    "glance/n/2": [
+      32,
+      48
+    ],
+    "glance/n/3": [
+      64,
+      48
+    ],
+    "glance/e/0": [
+      96,
+      48
+    ],
+    "glance/e/1": [
+      128,
+      48
+    ],
+    "glance/e/2": [
+      160,
+      48
+    ],
+    "glance/e/3": [
+      192,
+      48
+    ],
+    "glance/w/0": [
+      224,
+      48
+    ],
+    "glance/w/1": [
+      256,
+      48
+    ],
+    "glance/w/2": [
+      288,
+      48
+    ],
+    "glance/w/3": [
+      320,
+      48
+    ],
+    "idlewind/s/0": [
+      352,
+      48
+    ],
+    "idlewind/s/1": [
+      384,
+      48
+    ],
+    "idlewind/s/2": [
+      416,
+      48
+    ],
+    "idlewind/s/3": [
+      448,
+      48
+    ],
+    "idlewind/n/0": [
+      480,
+      48
+    ],
+    "idlewind/n/1": [
+      512,
+      48
+    ],
+    "idlewind/n/2": [
+      544,
+      48
+    ],
+    "idlewind/n/3": [
+      576,
+      48
+    ],
+    "idlewind/e/0": [
+      608,
+      48
+    ],
+    "idlewind/e/1": [
+      640,
+      48
+    ],
+    "idlewind/e/2": [
+      672,
+      48
+    ],
+    "idlewind/e/3": [
+      704,
+      48
+    ],
+    "idlewind/w/0": [
+      736,
+      48
+    ],
+    "idlewind/w/1": [
+      768,
+      48
+    ],
+    "idlewind/w/2": [
+      800,
+      48
+    ],
+    "idlewind/w/3": [
+      832,
+      48
+    ],
+    "walk/s/0": [
+      864,
+      48
+    ],
+    "walk/s/1": [
+      896,
+      48
+    ],
+    "walk/s/2": [
+      928,
+      48
+    ],
+    "walk/s/3": [
+      960,
+      48
+    ],
+    "walk/s/4": [
+      992,
+      48
+    ],
+    "walk/s/5": [
+      1024,
+      48
+    ],
+    "walk/n/0": [
+      1056,
+      48
+    ],
+    "walk/n/1": [
+      1088,
+      48
+    ],
+    "walk/n/2": [
+      1120,
+      48
+    ],
+    "walk/n/3": [
+      1152,
+      48
+    ],
+    "walk/n/4": [
+      0,
+      96
+    ],
+    "walk/n/5": [
+      32,
+      96
+    ],
+    "walk/e/0": [
+      64,
+      96
+    ],
+    "walk/e/1": [
+      96,
+      96
+    ],
+    "walk/e/2": [
+      128,
+      96
+    ],
+    "walk/e/3": [
+      160,
+      96
+    ],
+    "walk/e/4": [
+      192,
+      96
+    ],
+    "walk/e/5": [
+      224,
+      96
+    ],
+    "walk/w/0": [
+      256,
+      96
+    ],
+    "walk/w/1": [
+      288,
+      96
+    ],
+    "walk/w/2": [
+      320,
+      96
+    ],
+    "walk/w/3": [
+      352,
+      96
+    ],
+    "walk/w/4": [
+      384,
+      96
+    ],
+    "walk/w/5": [
+      416,
+      96
+    ],
+    "run/s/0": [
+      448,
+      96
+    ],
+    "run/s/1": [
+      480,
+      96
+    ],
+    "run/s/2": [
+      512,
+      96
+    ],
+    "run/s/3": [
+      544,
+      96
+    ],
+    "run/s/4": [
+      576,
+      96
+    ],
+    "run/s/5": [
+      608,
+      96
+    ],
+    "run/s/6": [
+      640,
+      96
+    ],
+    "run/s/7": [
+      672,
+      96
+    ],
+    "run/n/0": [
+      704,
+      96
+    ],
+    "run/n/1": [
+      736,
+      96
+    ],
+    "run/n/2": [
+      768,
+      96
+    ],
+    "run/n/3": [
+      800,
+      96
+    ],
+    "run/n/4": [
+      832,
+      96
+    ],
+    "run/n/5": [
+      864,
+      96
+    ],
+    "run/n/6": [
+      896,
+      96
+    ],
+    "run/n/7": [
+      928,
+      96
+    ],
+    "run/e/0": [
+      960,
+      96
+    ],
+    "run/e/1": [
+      992,
+      96
+    ],
+    "run/e/2": [
+      1024,
+      96
+    ],
+    "run/e/3": [
+      1056,
+      96
+    ],
+    "run/e/4": [
+      1088,
+      96
+    ],
+    "run/e/5": [
+      1120,
+      96
+    ],
+    "run/e/6": [
+      1152,
+      96
+    ],
+    "run/e/7": [
+      0,
+      144
+    ],
+    "run/w/0": [
+      32,
+      144
+    ],
+    "run/w/1": [
+      64,
+      144
+    ],
+    "run/w/2": [
+      96,
+      144
+    ],
+    "run/w/3": [
+      128,
+      144
+    ],
+    "run/w/4": [
+      160,
+      144
+    ],
+    "run/w/5": [
+      192,
+      144
+    ],
+    "run/w/6": [
+      224,
+      144
+    ],
+    "run/w/7": [
+      256,
+      144
+    ],
+    "runstart/s/0": [
+      288,
+      144
+    ],
+    "runstart/s/1": [
+      320,
+      144
+    ],
+    "runstart/n/0": [
+      352,
+      144
+    ],
+    "runstart/n/1": [
+      384,
+      144
+    ],
+    "runstart/e/0": [
+      416,
+      144
+    ],
+    "runstart/e/1": [
+      448,
+      144
+    ],
+    "runstart/w/0": [
+      480,
+      144
+    ],
+    "runstart/w/1": [
+      512,
+      144
+    ],
+    "runstop/s/0": [
+      544,
+      144
+    ],
+    "runstop/s/1": [
+      576,
+      144
+    ],
+    "runstop/n/0": [
+      608,
+      144
+    ],
+    "runstop/n/1": [
+      640,
+      144
+    ],
+    "runstop/e/0": [
+      672,
+      144
+    ],
+    "runstop/e/1": [
+      704,
+      144
+    ],
+    "runstop/w/0": [
+      736,
+      144
+    ],
+    "runstop/w/1": [
+      768,
+      144
+    ],
+    "walkstart/s/0": [
+      800,
+      144
+    ],
+    "walkstart/s/1": [
+      832,
+      144
+    ],
+    "walkstart/n/0": [
+      864,
+      144
+    ],
+    "walkstart/n/1": [
+      896,
+      144
+    ],
+    "walkstart/e/0": [
+      928,
+      144
+    ],
+    "walkstart/e/1": [
+      960,
+      144
+    ],
+    "walkstart/w/0": [
+      992,
+      144
+    ],
+    "walkstart/w/1": [
+      1024,
+      144
+    ],
+    "walkstop/s/0": [
+      1056,
+      144
+    ],
+    "walkstop/s/1": [
+      1088,
+      144
+    ],
+    "walkstop/n/0": [
+      1120,
+      144
+    ],
+    "walkstop/n/1": [
+      1152,
+      144
+    ],
+    "walkstop/e/0": [
+      0,
+      192
+    ],
+    "walkstop/e/1": [
+      32,
+      192
+    ],
+    "walkstop/w/0": [
+      64,
+      192
+    ],
+    "walkstop/w/1": [
+      96,
+      192
+    ],
+    "sneak/s/0": [
+      128,
+      192
+    ],
+    "sneak/s/1": [
+      160,
+      192
+    ],
+    "sneak/s/2": [
+      192,
+      192
+    ],
+    "sneak/s/3": [
+      224,
+      192
+    ],
+    "sneak/s/4": [
+      256,
+      192
+    ],
+    "sneak/s/5": [
+      288,
+      192
+    ],
+    "sneak/n/0": [
+      320,
+      192
+    ],
+    "sneak/n/1": [
+      352,
+      192
+    ],
+    "sneak/n/2": [
+      384,
+      192
+    ],
+    "sneak/n/3": [
+      416,
+      192
+    ],
+    "sneak/n/4": [
+      448,
+      192
+    ],
+    "sneak/n/5": [
+      480,
+      192
+    ],
+    "sneak/e/0": [
+      512,
+      192
+    ],
+    "sneak/e/1": [
+      544,
+      192
+    ],
+    "sneak/e/2": [
+      576,
+      192
+    ],
+    "sneak/e/3": [
+      608,
+      192
+    ],
+    "sneak/e/4": [
+      640,
+      192
+    ],
+    "sneak/e/5": [
+      672,
+      192
+    ],
+    "sneak/w/0": [
+      704,
+      192
+    ],
+    "sneak/w/1": [
+      736,
+      192
+    ],
+    "sneak/w/2": [
+      768,
+      192
+    ],
+    "sneak/w/3": [
+      800,
+      192
+    ],
+    "sneak/w/4": [
+      832,
+      192
+    ],
+    "sneak/w/5": [
+      864,
+      192
+    ],
+    "carry/s/0": [
+      896,
+      192
+    ],
+    "carry/s/1": [
+      928,
+      192
+    ],
+    "carry/s/2": [
+      960,
+      192
+    ],
+    "carry/s/3": [
+      992,
+      192
+    ],
+    "carry/s/4": [
+      1024,
+      192
+    ],
+    "carry/s/5": [
+      1056,
+      192
+    ],
+    "carry/n/0": [
+      1088,
+      192
+    ],
+    "carry/n/1": [
+      1120,
+      192
+    ],
+    "carry/n/2": [
+      1152,
+      192
+    ],
+    "carry/n/3": [
+      0,
+      240
+    ],
+    "carry/n/4": [
+      32,
+      240
+    ],
+    "carry/n/5": [
+      64,
+      240
+    ],
+    "carry/e/0": [
+      96,
+      240
+    ],
+    "carry/e/1": [
+      128,
+      240
+    ],
+    "carry/e/2": [
+      160,
+      240
+    ],
+    "carry/e/3": [
+      192,
+      240
+    ],
+    "carry/e/4": [
+      224,
+      240
+    ],
+    "carry/e/5": [
+      256,
+      240
+    ],
+    "carry/w/0": [
+      288,
+      240
+    ],
+    "carry/w/1": [
+      320,
+      240
+    ],
+    "carry/w/2": [
+      352,
+      240
+    ],
+    "carry/w/3": [
+      384,
+      240
+    ],
+    "carry/w/4": [
+      416,
+      240
+    ],
+    "carry/w/5": [
+      448,
+      240
+    ],
+    "draw/s/0": [
+      480,
+      240
+    ],
+    "draw/s/1": [
+      512,
+      240
+    ],
+    "draw/s/2": [
+      544,
+      240
+    ],
+    "draw/s/3": [
+      576,
+      240
+    ],
+    "draw/n/0": [
+      608,
+      240
+    ],
+    "draw/n/1": [
+      640,
+      240
+    ],
+    "draw/n/2": [
+      672,
+      240
+    ],
+    "draw/n/3": [
+      704,
+      240
+    ],
+    "draw/e/0": [
+      736,
+      240
+    ],
+    "draw/e/1": [
+      768,
+      240
+    ],
+    "draw/e/2": [
+      800,
+      240
+    ],
+    "draw/e/3": [
+      832,
+      240
+    ],
+    "draw/w/0": [
+      864,
+      240
+    ],
+    "draw/w/1": [
+      896,
+      240
+    ],
+    "draw/w/2": [
+      928,
+      240
+    ],
+    "draw/w/3": [
+      960,
+      240
+    ],
+    "gather/s/0": [
+      992,
+      240
+    ],
+    "gather/s/1": [
+      1024,
+      240
+    ],
+    "gather/s/2": [
+      1056,
+      240
+    ],
+    "gather/s/3": [
+      1088,
+      240
+    ],
+    "gather/s/4": [
+      1120,
+      240
+    ],
+    "gather/s/5": [
+      1152,
+      240
+    ],
+    "gather/n/0": [
+      0,
+      288
+    ],
+    "gather/n/1": [
+      32,
+      288
+    ],
+    "gather/n/2": [
+      64,
+      288
+    ],
+    "gather/n/3": [
+      96,
+      288
+    ],
+    "gather/n/4": [
+      128,
+      288
+    ],
+    "gather/n/5": [
+      160,
+      288
+    ],
+    "gather/e/0": [
+      192,
+      288
+    ],
+    "gather/e/1": [
+      224,
+      288
+    ],
+    "gather/e/2": [
+      256,
+      288
+    ],
+    "gather/e/3": [
+      288,
+      288
+    ],
+    "gather/e/4": [
+      320,
+      288
+    ],
+    "gather/e/5": [
+      352,
+      288
+    ],
+    "gather/w/0": [
+      384,
+      288
+    ],
+    "gather/w/1": [
+      416,
+      288
+    ],
+    "gather/w/2": [
+      448,
+      288
+    ],
+    "gather/w/3": [
+      480,
+      288
+    ],
+    "gather/w/4": [
+      512,
+      288
+    ],
+    "gather/w/5": [
+      544,
+      288
+    ],
+    "fish/s/0": [
+      576,
+      288
+    ],
+    "fish/s/1": [
+      608,
+      288
+    ],
+    "fish/s/2": [
+      640,
+      288
+    ],
+    "fish/s/3": [
+      672,
+      288
+    ],
+    "fish/s/4": [
+      704,
+      288
+    ],
+    "fish/s/5": [
+      736,
+      288
+    ],
+    "fish/n/0": [
+      768,
+      288
+    ],
+    "fish/n/1": [
+      800,
+      288
+    ],
+    "fish/n/2": [
+      832,
+      288
+    ],
+    "fish/n/3": [
+      864,
+      288
+    ],
+    "fish/n/4": [
+      896,
+      288
+    ],
+    "fish/n/5": [
+      928,
+      288
+    ],
+    "fish/e/0": [
+      960,
+      288
+    ],
+    "fish/e/1": [
+      992,
+      288
+    ],
+    "fish/e/2": [
+      1024,
+      288
+    ],
+    "fish/e/3": [
+      1056,
+      288
+    ],
+    "fish/e/4": [
+      1088,
+      288
+    ],
+    "fish/e/5": [
+      1120,
+      288
+    ],
+    "fish/w/0": [
+      1152,
+      288
+    ],
+    "fish/w/1": [
+      0,
+      336
+    ],
+    "fish/w/2": [
+      32,
+      336
+    ],
+    "fish/w/3": [
+      64,
+      336
+    ],
+    "fish/w/4": [
+      96,
+      336
+    ],
+    "fish/w/5": [
+      128,
+      336
+    ],
+    "kneel/s/0": [
+      160,
+      336
+    ],
+    "kneel/s/1": [
+      192,
+      336
+    ],
+    "kneel/s/2": [
+      224,
+      336
+    ],
+    "kneel/s/3": [
+      256,
+      336
+    ],
+    "kneel/s/4": [
+      288,
+      336
+    ],
+    "kneel/s/5": [
+      320,
+      336
+    ],
+    "kneel/n/0": [
+      352,
+      336
+    ],
+    "kneel/n/1": [
+      384,
+      336
+    ],
+    "kneel/n/2": [
+      416,
+      336
+    ],
+    "kneel/n/3": [
+      448,
+      336
+    ],
+    "kneel/n/4": [
+      480,
+      336
+    ],
+    "kneel/n/5": [
+      512,
+      336
+    ],
+    "kneel/e/0": [
+      544,
+      336
+    ],
+    "kneel/e/1": [
+      576,
+      336
+    ],
+    "kneel/e/2": [
+      608,
+      336
+    ],
+    "kneel/e/3": [
+      640,
+      336
+    ],
+    "kneel/e/4": [
+      672,
+      336
+    ],
+    "kneel/e/5": [
+      704,
+      336
+    ],
+    "kneel/w/0": [
+      736,
+      336
+    ],
+    "kneel/w/1": [
+      768,
+      336
+    ],
+    "kneel/w/2": [
+      800,
+      336
+    ],
+    "kneel/w/3": [
+      832,
+      336
+    ],
+    "kneel/w/4": [
+      864,
+      336
+    ],
+    "kneel/w/5": [
+      896,
+      336
+    ],
+    "build/s/0": [
+      928,
+      336
+    ],
+    "build/s/1": [
+      960,
+      336
+    ],
+    "build/s/2": [
+      992,
+      336
+    ],
+    "build/s/3": [
+      1024,
+      336
+    ],
+    "build/s/4": [
+      1056,
+      336
+    ],
+    "build/s/5": [
+      1088,
+      336
+    ],
+    "build/n/0": [
+      1120,
+      336
+    ],
+    "build/n/1": [
+      1152,
+      336
+    ],
+    "build/n/2": [
+      0,
+      384
+    ],
+    "build/n/3": [
+      32,
+      384
+    ],
+    "build/n/4": [
+      64,
+      384
+    ],
+    "build/n/5": [
+      96,
+      384
+    ],
+    "build/e/0": [
+      128,
+      384
+    ],
+    "build/e/1": [
+      160,
+      384
+    ],
+    "build/e/2": [
+      192,
+      384
+    ],
+    "build/e/3": [
+      224,
+      384
+    ],
+    "build/e/4": [
+      256,
+      384
+    ],
+    "build/e/5": [
+      288,
+      384
+    ],
+    "build/w/0": [
+      320,
+      384
+    ],
+    "build/w/1": [
+      352,
+      384
+    ],
+    "build/w/2": [
+      384,
+      384
+    ],
+    "build/w/3": [
+      416,
+      384
+    ],
+    "build/w/4": [
+      448,
+      384
+    ],
+    "build/w/5": [
+      480,
+      384
+    ],
+    "sleep/s/0": [
+      512,
+      384
+    ],
+    "sleep/s/1": [
+      544,
+      384
+    ],
+    "sleep/n/0": [
+      576,
+      384
+    ],
+    "sleep/n/1": [
+      608,
+      384
+    ],
+    "sleep/e/0": [
+      640,
+      384
+    ],
+    "sleep/e/1": [
+      672,
+      384
+    ],
+    "sleep/w/0": [
+      704,
+      384
+    ],
+    "sleep/w/1": [
+      736,
+      384
+    ],
+    "windup/s/0": [
+      768,
+      384
+    ],
+    "windup/s/1": [
+      800,
+      384
+    ],
+    "windup/n/0": [
+      832,
+      384
+    ],
+    "windup/n/1": [
+      864,
+      384
+    ],
+    "windup/e/0": [
+      896,
+      384
+    ],
+    "windup/e/1": [
+      928,
+      384
+    ],
+    "windup/w/0": [
+      960,
+      384
+    ],
+    "windup/w/1": [
+      992,
+      384
+    ],
+    "light1/s/0": [
+      1024,
+      384
+    ],
+    "light1/s/1": [
+      1056,
+      384
+    ],
+    "light1/s/2": [
+      1088,
+      384
+    ],
+    "light1/n/0": [
+      1120,
+      384
+    ],
+    "light1/n/1": [
+      1152,
+      384
+    ],
+    "light1/n/2": [
+      0,
+      432
+    ],
+    "light1/e/0": [
+      32,
+      432
+    ],
+    "light1/e/1": [
+      64,
+      432
+    ],
+    "light1/e/2": [
+      96,
+      432
+    ],
+    "light1/w/0": [
+      128,
+      432
+    ],
+    "light1/w/1": [
+      160,
+      432
+    ],
+    "light1/w/2": [
+      192,
+      432
+    ],
+    "light2/s/0": [
+      224,
+      432
+    ],
+    "light2/s/1": [
+      256,
+      432
+    ],
+    "light2/s/2": [
+      288,
+      432
+    ],
+    "light2/n/0": [
+      320,
+      432
+    ],
+    "light2/n/1": [
+      352,
+      432
+    ],
+    "light2/n/2": [
+      384,
+      432
+    ],
+    "light2/e/0": [
+      416,
+      432
+    ],
+    "light2/e/1": [
+      448,
+      432
+    ],
+    "light2/e/2": [
+      480,
+      432
+    ],
+    "light2/w/0": [
+      512,
+      432
+    ],
+    "light2/w/1": [
+      544,
+      432
+    ],
+    "light2/w/2": [
+      576,
+      432
+    ],
+    "light3/s/0": [
+      608,
+      432
+    ],
+    "light3/s/1": [
+      640,
+      432
+    ],
+    "light3/s/2": [
+      672,
+      432
+    ],
+    "light3/n/0": [
+      704,
+      432
+    ],
+    "light3/n/1": [
+      736,
+      432
+    ],
+    "light3/n/2": [
+      768,
+      432
+    ],
+    "light3/e/0": [
+      800,
+      432
+    ],
+    "light3/e/1": [
+      832,
+      432
+    ],
+    "light3/e/2": [
+      864,
+      432
+    ],
+    "light3/w/0": [
+      896,
+      432
+    ],
+    "light3/w/1": [
+      928,
+      432
+    ],
+    "light3/w/2": [
+      960,
+      432
+    ],
+    "charge/s/0": [
+      992,
+      432
+    ],
+    "charge/s/1": [
+      1024,
+      432
+    ],
+    "charge/n/0": [
+      1056,
+      432
+    ],
+    "charge/n/1": [
+      1088,
+      432
+    ],
+    "charge/e/0": [
+      1120,
+      432
+    ],
+    "charge/e/1": [
+      1152,
+      432
+    ],
+    "charge/w/0": [
+      0,
+      480
+    ],
+    "charge/w/1": [
+      32,
+      480
+    ],
+    "chargewalk/s/0": [
+      64,
+      480
+    ],
+    "chargewalk/s/1": [
+      96,
+      480
+    ],
+    "chargewalk/s/2": [
+      128,
+      480
+    ],
+    "chargewalk/s/3": [
+      160,
+      480
+    ],
+    "chargewalk/s/4": [
+      192,
+      480
+    ],
+    "chargewalk/s/5": [
+      224,
+      480
+    ],
+    "chargewalk/n/0": [
+      256,
+      480
+    ],
+    "chargewalk/n/1": [
+      288,
+      480
+    ],
+    "chargewalk/n/2": [
+      320,
+      480
+    ],
+    "chargewalk/n/3": [
+      352,
+      480
+    ],
+    "chargewalk/n/4": [
+      384,
+      480
+    ],
+    "chargewalk/n/5": [
+      416,
+      480
+    ],
+    "chargewalk/e/0": [
+      448,
+      480
+    ],
+    "chargewalk/e/1": [
+      480,
+      480
+    ],
+    "chargewalk/e/2": [
+      512,
+      480
+    ],
+    "chargewalk/e/3": [
+      544,
+      480
+    ],
+    "chargewalk/e/4": [
+      576,
+      480
+    ],
+    "chargewalk/e/5": [
+      608,
+      480
+    ],
+    "chargewalk/w/0": [
+      640,
+      480
+    ],
+    "chargewalk/w/1": [
+      672,
+      480
+    ],
+    "chargewalk/w/2": [
+      704,
+      480
+    ],
+    "chargewalk/w/3": [
+      736,
+      480
+    ],
+    "chargewalk/w/4": [
+      768,
+      480
+    ],
+    "chargewalk/w/5": [
+      800,
+      480
+    ],
+    "heavy/s/0": [
+      832,
+      480
+    ],
+    "heavy/s/1": [
+      864,
+      480
+    ],
+    "heavy/s/2": [
+      896,
+      480
+    ],
+    "heavy/n/0": [
+      928,
+      480
+    ],
+    "heavy/n/1": [
+      960,
+      480
+    ],
+    "heavy/n/2": [
+      992,
+      480
+    ],
+    "heavy/e/0": [
+      1024,
+      480
+    ],
+    "heavy/e/1": [
+      1056,
+      480
+    ],
+    "heavy/e/2": [
+      1088,
+      480
+    ],
+    "heavy/w/0": [
+      1120,
+      480
+    ],
+    "heavy/w/1": [
+      1152,
+      480
+    ],
+    "heavy/w/2": [
+      0,
+      528
+    ],
+    "block/s/0": [
+      32,
+      528
+    ],
+    "block/s/1": [
+      64,
+      528
+    ],
+    "block/n/0": [
+      96,
+      528
+    ],
+    "block/n/1": [
+      128,
+      528
+    ],
+    "block/e/0": [
+      160,
+      528
+    ],
+    "block/e/1": [
+      192,
+      528
+    ],
+    "block/w/0": [
+      224,
+      528
+    ],
+    "block/w/1": [
+      256,
+      528
+    ],
+    "parry/s/0": [
+      288,
+      528
+    ],
+    "parry/s/1": [
+      320,
+      528
+    ],
+    "parry/n/0": [
+      352,
+      528
+    ],
+    "parry/n/1": [
+      384,
+      528
+    ],
+    "parry/e/0": [
+      416,
+      528
+    ],
+    "parry/e/1": [
+      448,
+      528
+    ],
+    "parry/w/0": [
+      480,
+      528
+    ],
+    "parry/w/1": [
+      512,
+      528
+    ],
+    "dodge/s/0": [
+      544,
+      528
+    ],
+    "dodge/s/1": [
+      576,
+      528
+    ],
+    "dodge/s/2": [
+      608,
+      528
+    ],
+    "dodge/n/0": [
+      640,
+      528
+    ],
+    "dodge/n/1": [
+      672,
+      528
+    ],
+    "dodge/n/2": [
+      704,
+      528
+    ],
+    "dodge/e/0": [
+      736,
+      528
+    ],
+    "dodge/e/1": [
+      768,
+      528
+    ],
+    "dodge/e/2": [
+      800,
+      528
+    ],
+    "dodge/w/0": [
+      832,
+      528
+    ],
+    "dodge/w/1": [
+      864,
+      528
+    ],
+    "dodge/w/2": [
+      896,
+      528
+    ],
+    "shove/s/0": [
+      928,
+      528
+    ],
+    "shove/s/1": [
+      960,
+      528
+    ],
+    "shove/s/2": [
+      992,
+      528
+    ],
+    "shove/n/0": [
+      1024,
+      528
+    ],
+    "shove/n/1": [
+      1056,
+      528
+    ],
+    "shove/n/2": [
+      1088,
+      528
+    ],
+    "shove/e/0": [
+      1120,
+      528
+    ],
+    "shove/e/1": [
+      1152,
+      528
+    ],
+    "shove/e/2": [
+      0,
+      576
+    ],
+    "shove/w/0": [
+      32,
+      576
+    ],
+    "shove/w/1": [
+      64,
+      576
+    ],
+    "shove/w/2": [
+      96,
+      576
+    ],
+    "stagger/s/0": [
+      128,
+      576
+    ],
+    "stagger/s/1": [
+      160,
+      576
+    ],
+    "stagger/n/0": [
+      192,
+      576
+    ],
+    "stagger/n/1": [
+      224,
+      576
+    ],
+    "stagger/e/0": [
+      256,
+      576
+    ],
+    "stagger/e/1": [
+      288,
+      576
+    ],
+    "stagger/w/0": [
+      320,
+      576
+    ],
+    "stagger/w/1": [
+      352,
+      576
+    ],
+    "riposte/s/0": [
+      384,
+      576
+    ],
+    "riposte/s/1": [
+      416,
+      576
+    ],
+    "riposte/s/2": [
+      448,
+      576
+    ],
+    "riposte/n/0": [
+      480,
+      576
+    ],
+    "riposte/n/1": [
+      512,
+      576
+    ],
+    "riposte/n/2": [
+      544,
+      576
+    ],
+    "riposte/e/0": [
+      576,
+      576
+    ],
+    "riposte/e/1": [
+      608,
+      576
+    ],
+    "riposte/e/2": [
+      640,
+      576
+    ],
+    "riposte/w/0": [
+      672,
+      576
+    ],
+    "riposte/w/1": [
+      704,
+      576
+    ],
+    "riposte/w/2": [
+      736,
+      576
+    ],
+    "backstab/s/0": [
+      768,
+      576
+    ],
+    "backstab/s/1": [
+      800,
+      576
+    ],
+    "backstab/s/2": [
+      832,
+      576
+    ],
+    "backstab/n/0": [
+      864,
+      576
+    ],
+    "backstab/n/1": [
+      896,
+      576
+    ],
+    "backstab/n/2": [
+      928,
+      576
+    ],
+    "backstab/e/0": [
+      960,
+      576
+    ],
+    "backstab/e/1": [
+      992,
+      576
+    ],
+    "backstab/e/2": [
+      1024,
+      576
+    ],
+    "backstab/w/0": [
+      1056,
+      576
+    ],
+    "backstab/w/1": [
+      1088,
+      576
+    ],
+    "backstab/w/2": [
+      1120,
+      576
+    ],
+    "lunge/s/0": [
+      1152,
+      576
+    ],
+    "lunge/s/1": [
+      0,
+      624
+    ],
+    "lunge/n/0": [
+      32,
+      624
+    ],
+    "lunge/n/1": [
+      64,
+      624
+    ],
+    "lunge/e/0": [
+      96,
+      624
+    ],
+    "lunge/e/1": [
+      128,
+      624
+    ],
+    "lunge/w/0": [
+      160,
+      624
+    ],
+    "lunge/w/1": [
+      192,
+      624
+    ],
+    "parried/s/0": [
+      224,
+      624
+    ],
+    "parried/s/1": [
+      256,
+      624
+    ],
+    "parried/n/0": [
+      288,
+      624
+    ],
+    "parried/n/1": [
+      320,
+      624
+    ],
+    "parried/e/0": [
+      352,
+      624
+    ],
+    "parried/e/1": [
+      384,
+      624
+    ],
+    "parried/w/0": [
+      416,
+      624
+    ],
+    "parried/w/1": [
+      448,
+      624
+    ],
+    "getup/s/0": [
+      480,
+      624
+    ],
+    "getup/s/1": [
+      512,
+      624
+    ],
+    "getup/n/0": [
+      544,
+      624
+    ],
+    "getup/n/1": [
+      576,
+      624
+    ],
+    "getup/e/0": [
+      608,
+      624
+    ],
+    "getup/e/1": [
+      640,
+      624
+    ],
+    "getup/w/0": [
+      672,
+      624
+    ],
+    "getup/w/1": [
+      704,
+      624
+    ],
+    "finish/s/0": [
+      736,
+      624
+    ],
+    "finish/n/0": [
+      768,
+      624
+    ],
+    "finish/e/0": [
+      800,
+      624
+    ],
+    "finish/w/0": [
+      832,
+      624
+    ],
+    "surrender/s/0": [
+      864,
+      624
+    ],
+    "surrender/s/1": [
+      896,
+      624
+    ],
+    "surrender/n/0": [
+      928,
+      624
+    ],
+    "surrender/n/1": [
+      960,
+      624
+    ],
+    "surrender/e/0": [
+      992,
+      624
+    ],
+    "surrender/e/1": [
+      1024,
+      624
+    ],
+    "surrender/w/0": [
+      1056,
+      624
+    ],
+    "surrender/w/1": [
+      1088,
+      624
+    ],
+    "downed/s/0": [
+      1120,
+      624
+    ],
+    "downed/s/1": [
+      1152,
+      624
+    ],
+    "downed/n/0": [
+      0,
+      672
+    ],
+    "downed/n/1": [
+      32,
+      672
+    ],
+    "downed/e/0": [
+      64,
+      672
+    ],
+    "downed/e/1": [
+      96,
+      672
+    ],
+    "downed/w/0": [
+      128,
+      672
+    ],
+    "downed/w/1": [
+      160,
+      672
+    ],
+    "dead/s/0": [
+      192,
+      672
+    ],
+    "dead/n/0": [
+      224,
+      672
+    ],
+    "dead/e/0": [
+      256,
+      672
+    ],
+    "dead/w/0": [
+      288,
+      672
+    ],
+    "dead_head/s/0": [
+      320,
+      672
+    ],
+    "dead_head/n/0": [
+      352,
+      672
+    ],
+    "dead_head/e/0": [
+      384,
+      672
+    ],
+    "dead_head/w/0": [
+      416,
+      672
+    ],
+    "dead_arm/s/0": [
+      448,
+      672
+    ],
+    "dead_arm/n/0": [
+      480,
+      672
+    ],
+    "dead_arm/e/0": [
+      512,
+      672
+    ],
+    "dead_arm/w/0": [
+      544,
+      672
+    ],
+    "dead_leg/s/0": [
+      576,
+      672
+    ],
+    "dead_leg/n/0": [
+      608,
+      672
+    ],
+    "dead_leg/e/0": [
+      640,
+      672
+    ],
+    "dead_leg/w/0": [
+      672,
+      672
+    ],
+    "piece_head/s/0": [
+      704,
+      672
+    ],
+    "piece_head/n/0": [
+      736,
+      672
+    ],
+    "piece_head/e/0": [
+      768,
+      672
+    ],
+    "piece_head/w/0": [
+      800,
+      672
+    ],
+    "piece_arm/s/0": [
+      832,
+      672
+    ],
+    "piece_arm/n/0": [
+      864,
+      672
+    ],
+    "piece_arm/e/0": [
+      896,
+      672
+    ],
+    "piece_arm/w/0": [
+      928,
+      672
+    ],
+    "piece_leg/s/0": [
+      960,
+      672
+    ],
+    "piece_leg/n/0": [
+      992,
+      672
+    ],
+    "piece_leg/e/0": [
+      1024,
+      672
+    ],
+    "piece_leg/w/0": [
+      1056,
+      672
+    ],
+    "windup_l/s/0": [
+      1088,
+      672
+    ],
+    "windup_l/s/1": [
+      1120,
+      672
+    ],
+    "windup_l/n/0": [
+      1152,
+      672
+    ],
+    "windup_l/n/1": [
+      0,
+      720
+    ],
+    "windup_l/e/0": [
+      32,
+      720
+    ],
+    "windup_l/e/1": [
+      64,
+      720
+    ],
+    "windup_l/w/0": [
+      96,
+      720
+    ],
+    "windup_l/w/1": [
+      128,
+      720
+    ],
+    "windup_h/s/0": [
+      160,
+      720
+    ],
+    "windup_h/s/1": [
+      192,
+      720
+    ],
+    "windup_h/n/0": [
+      224,
+      720
+    ],
+    "windup_h/n/1": [
+      256,
+      720
+    ],
+    "windup_h/e/0": [
+      288,
+      720
+    ],
+    "windup_h/e/1": [
+      320,
+      720
+    ],
+    "windup_h/w/0": [
+      352,
+      720
+    ],
+    "windup_h/w/1": [
+      384,
+      720
+    ],
+    "windup_c/s/0": [
+      416,
+      720
+    ],
+    "windup_c/s/1": [
+      448,
+      720
+    ],
+    "windup_c/n/0": [
+      480,
+      720
+    ],
+    "windup_c/n/1": [
+      512,
+      720
+    ],
+    "windup_c/e/0": [
+      544,
+      720
+    ],
+    "windup_c/e/1": [
+      576,
+      720
+    ],
+    "windup_c/w/0": [
+      608,
+      720
+    ],
+    "windup_c/w/1": [
+      640,
+      720
+    ],
+    "parry_windup/s/0": [
+      672,
+      720
+    ],
+    "parry_windup/s/1": [
+      704,
+      720
+    ],
+    "parry_windup/n/0": [
+      736,
+      720
+    ],
+    "parry_windup/n/1": [
+      768,
+      720
+    ],
+    "parry_windup/e/0": [
+      800,
+      720
+    ],
+    "parry_windup/e/1": [
+      832,
+      720
+    ],
+    "parry_windup/w/0": [
+      864,
+      720
+    ],
+    "parry_windup/w/1": [
+      896,
+      720
+    ],
+    "block_raise/s/0": [
+      928,
+      720
+    ],
+    "block_raise/s/1": [
+      960,
+      720
+    ],
+    "block_raise/n/0": [
+      992,
+      720
+    ],
+    "block_raise/n/1": [
+      1024,
+      720
+    ],
+    "block_raise/e/0": [
+      1056,
+      720
+    ],
+    "block_raise/e/1": [
+      1088,
+      720
+    ],
+    "block_raise/w/0": [
+      1120,
+      720
+    ],
+    "block_raise/w/1": [
+      1152,
+      720
+    ],
+    "guard_break/s/0": [
+      0,
+      768
+    ],
+    "guard_break/s/1": [
+      32,
+      768
+    ],
+    "guard_break/s/2": [
+      64,
+      768
+    ],
+    "guard_break/s/3": [
+      96,
+      768
+    ],
+    "guard_break/n/0": [
+      128,
+      768
+    ],
+    "guard_break/n/1": [
+      160,
+      768
+    ],
+    "guard_break/n/2": [
+      192,
+      768
+    ],
+    "guard_break/n/3": [
+      224,
+      768
+    ],
+    "guard_break/e/0": [
+      256,
+      768
+    ],
+    "guard_break/e/1": [
+      288,
+      768
+    ],
+    "guard_break/e/2": [
+      320,
+      768
+    ],
+    "guard_break/e/3": [
+      352,
+      768
+    ],
+    "guard_break/w/0": [
+      384,
+      768
+    ],
+    "guard_break/w/1": [
+      416,
+      768
+    ],
+    "guard_break/w/2": [
+      448,
+      768
+    ],
+    "guard_break/w/3": [
+      480,
+      768
+    ],
+    "exhausted/s/0": [
+      512,
+      768
+    ],
+    "exhausted/s/1": [
+      544,
+      768
+    ],
+    "exhausted/s/2": [
+      576,
+      768
+    ],
+    "exhausted/s/3": [
+      608,
+      768
+    ],
+    "exhausted/n/0": [
+      640,
+      768
+    ],
+    "exhausted/n/1": [
+      672,
+      768
+    ],
+    "exhausted/n/2": [
+      704,
+      768
+    ],
+    "exhausted/n/3": [
+      736,
+      768
+    ],
+    "exhausted/e/0": [
+      768,
+      768
+    ],
+    "exhausted/e/1": [
+      800,
+      768
+    ],
+    "exhausted/e/2": [
+      832,
+      768
+    ],
+    "exhausted/e/3": [
+      864,
+      768
+    ],
+    "exhausted/w/0": [
+      896,
+      768
+    ],
+    "exhausted/w/1": [
+      928,
+      768
+    ],
+    "exhausted/w/2": [
+      960,
+      768
+    ],
+    "exhausted/w/3": [
+      992,
+      768
+    ],
+    "exhausted_walk/s/0": [
+      1024,
+      768
+    ],
+    "exhausted_walk/s/1": [
+      1056,
+      768
+    ],
+    "exhausted_walk/s/2": [
+      1088,
+      768
+    ],
+    "exhausted_walk/s/3": [
+      1120,
+      768
+    ],
+    "exhausted_walk/s/4": [
+      1152,
+      768
+    ],
+    "exhausted_walk/s/5": [
+      0,
+      816
+    ],
+    "exhausted_walk/n/0": [
+      32,
+      816
+    ],
+    "exhausted_walk/n/1": [
+      64,
+      816
+    ],
+    "exhausted_walk/n/2": [
+      96,
+      816
+    ],
+    "exhausted_walk/n/3": [
+      128,
+      816
+    ],
+    "exhausted_walk/n/4": [
+      160,
+      816
+    ],
+    "exhausted_walk/n/5": [
+      192,
+      816
+    ],
+    "exhausted_walk/e/0": [
+      224,
+      816
+    ],
+    "exhausted_walk/e/1": [
+      256,
+      816
+    ],
+    "exhausted_walk/e/2": [
+      288,
+      816
+    ],
+    "exhausted_walk/e/3": [
+      320,
+      816
+    ],
+    "exhausted_walk/e/4": [
+      352,
+      816
+    ],
+    "exhausted_walk/e/5": [
+      384,
+      816
+    ],
+    "exhausted_walk/w/0": [
+      416,
+      816
+    ],
+    "exhausted_walk/w/1": [
+      448,
+      816
+    ],
+    "exhausted_walk/w/2": [
+      480,
+      816
+    ],
+    "exhausted_walk/w/3": [
+      512,
+      816
+    ],
+    "exhausted_walk/w/4": [
+      544,
+      816
+    ],
+    "exhausted_walk/w/5": [
+      576,
+      816
+    ],
+    "dodge_recover/s/0": [
+      608,
+      816
+    ],
+    "dodge_recover/s/1": [
+      640,
+      816
+    ],
+    "dodge_recover/n/0": [
+      672,
+      816
+    ],
+    "dodge_recover/n/1": [
+      704,
+      816
+    ],
+    "dodge_recover/e/0": [
+      736,
+      816
+    ],
+    "dodge_recover/e/1": [
+      768,
+      816
+    ],
+    "dodge_recover/w/0": [
+      800,
+      816
+    ],
+    "dodge_recover/w/1": [
+      832,
+      816
+    ],
+    "backoff/s/0": [
+      864,
+      816
+    ],
+    "backoff/s/1": [
+      896,
+      816
+    ],
+    "backoff/s/2": [
+      928,
+      816
+    ],
+    "backoff/s/3": [
+      960,
+      816
+    ],
+    "backoff/s/4": [
+      992,
+      816
+    ],
+    "backoff/s/5": [
+      1024,
+      816
+    ],
+    "backoff/n/0": [
+      1056,
+      816
+    ],
+    "backoff/n/1": [
+      1088,
+      816
+    ],
+    "backoff/n/2": [
+      1120,
+      816
+    ],
+    "backoff/n/3": [
+      1152,
+      816
+    ],
+    "backoff/n/4": [
+      0,
+      864
+    ],
+    "backoff/n/5": [
+      32,
+      864
+    ],
+    "backoff/e/0": [
+      64,
+      864
+    ],
+    "backoff/e/1": [
+      96,
+      864
+    ],
+    "backoff/e/2": [
+      128,
+      864
+    ],
+    "backoff/e/3": [
+      160,
+      864
+    ],
+    "backoff/e/4": [
+      192,
+      864
+    ],
+    "backoff/e/5": [
+      224,
+      864
+    ],
+    "backoff/w/0": [
+      256,
+      864
+    ],
+    "backoff/w/1": [
+      288,
+      864
+    ],
+    "backoff/w/2": [
+      320,
+      864
+    ],
+    "backoff/w/3": [
+      352,
+      864
+    ],
+    "backoff/w/4": [
+      384,
+      864
+    ],
+    "backoff/w/5": [
+      416,
+      864
+    ],
+    "strafe/s/0": [
+      448,
+      864
+    ],
+    "strafe/s/1": [
+      480,
+      864
+    ],
+    "strafe/s/2": [
+      512,
+      864
+    ],
+    "strafe/s/3": [
+      544,
+      864
+    ],
+    "strafe/s/4": [
+      576,
+      864
+    ],
+    "strafe/s/5": [
+      608,
+      864
+    ],
+    "strafe/n/0": [
+      640,
+      864
+    ],
+    "strafe/n/1": [
+      672,
+      864
+    ],
+    "strafe/n/2": [
+      704,
+      864
+    ],
+    "strafe/n/3": [
+      736,
+      864
+    ],
+    "strafe/n/4": [
+      768,
+      864
+    ],
+    "strafe/n/5": [
+      800,
+      864
+    ],
+    "strafe/e/0": [
+      832,
+      864
+    ],
+    "strafe/e/1": [
+      864,
+      864
+    ],
+    "strafe/e/2": [
+      896,
+      864
+    ],
+    "strafe/e/3": [
+      928,
+      864
+    ],
+    "strafe/e/4": [
+      960,
+      864
+    ],
+    "strafe/e/5": [
+      992,
+      864
+    ],
+    "strafe/w/0": [
+      1024,
+      864
+    ],
+    "strafe/w/1": [
+      1056,
+      864
+    ],
+    "strafe/w/2": [
+      1088,
+      864
+    ],
+    "strafe/w/3": [
+      1120,
+      864
+    ],
+    "strafe/w/4": [
+      1152,
+      864
+    ],
+    "strafe/w/5": [
+      0,
+      912
+    ],
+    "block_walk/s/0": [
+      32,
+      912
+    ],
+    "block_walk/s/1": [
+      64,
+      912
+    ],
+    "block_walk/s/2": [
+      96,
+      912
+    ],
+    "block_walk/s/3": [
+      128,
+      912
+    ],
+    "block_walk/s/4": [
+      160,
+      912
+    ],
+    "block_walk/s/5": [
+      192,
+      912
+    ],
+    "block_walk/n/0": [
+      224,
+      912
+    ],
+    "block_walk/n/1": [
+      256,
+      912
+    ],
+    "block_walk/n/2": [
+      288,
+      912
+    ],
+    "block_walk/n/3": [
+      320,
+      912
+    ],
+    "block_walk/n/4": [
+      352,
+      912
+    ],
+    "block_walk/n/5": [
+      384,
+      912
+    ],
+    "block_walk/e/0": [
+      416,
+      912
+    ],
+    "block_walk/e/1": [
+      448,
+      912
+    ],
+    "block_walk/e/2": [
+      480,
+      912
+    ],
+    "block_walk/e/3": [
+      512,
+      912
+    ],
+    "block_walk/e/4": [
+      544,
+      912
+    ],
+    "block_walk/e/5": [
+      576,
+      912
+    ],
+    "block_walk/w/0": [
+      608,
+      912
+    ],
+    "block_walk/w/1": [
+      640,
+      912
+    ],
+    "block_walk/w/2": [
+      672,
+      912
+    ],
+    "block_walk/w/3": [
+      704,
+      912
+    ],
+    "block_walk/w/4": [
+      736,
+      912
+    ],
+    "block_walk/w/5": [
+      768,
+      912
+    ],
+    "block_backoff/s/0": [
+      800,
+      912
+    ],
+    "block_backoff/s/1": [
+      832,
+      912
+    ],
+    "block_backoff/s/2": [
+      864,
+      912
+    ],
+    "block_backoff/s/3": [
+      896,
+      912
+    ],
+    "block_backoff/s/4": [
+      928,
+      912
+    ],
+    "block_backoff/s/5": [
+      960,
+      912
+    ],
+    "block_backoff/n/0": [
+      992,
+      912
+    ],
+    "block_backoff/n/1": [
+      1024,
+      912
+    ],
+    "block_backoff/n/2": [
+      1056,
+      912
+    ],
+    "block_backoff/n/3": [
+      1088,
+      912
+    ],
+    "block_backoff/n/4": [
+      1120,
+      912
+    ],
+    "block_backoff/n/5": [
+      1152,
+      912
+    ],
+    "block_backoff/e/0": [
+      0,
+      960
+    ],
+    "block_backoff/e/1": [
+      32,
+      960
+    ],
+    "block_backoff/e/2": [
+      64,
+      960
+    ],
+    "block_backoff/e/3": [
+      96,
+      960
+    ],
+    "block_backoff/e/4": [
+      128,
+      960
+    ],
+    "block_backoff/e/5": [
+      160,
+      960
+    ],
+    "block_backoff/w/0": [
+      192,
+      960
+    ],
+    "block_backoff/w/1": [
+      224,
+      960
+    ],
+    "block_backoff/w/2": [
+      256,
+      960
+    ],
+    "block_backoff/w/3": [
+      288,
+      960
+    ],
+    "block_backoff/w/4": [
+      320,
+      960
+    ],
+    "block_backoff/w/5": [
+      352,
+      960
+    ],
+    "block_strafe/s/0": [
+      384,
+      960
+    ],
+    "block_strafe/s/1": [
+      416,
+      960
+    ],
+    "block_strafe/s/2": [
+      448,
+      960
+    ],
+    "block_strafe/s/3": [
+      480,
+      960
+    ],
+    "block_strafe/s/4": [
+      512,
+      960
+    ],
+    "block_strafe/s/5": [
+      544,
+      960
+    ],
+    "block_strafe/n/0": [
+      576,
+      960
+    ],
+    "block_strafe/n/1": [
+      608,
+      960
+    ],
+    "block_strafe/n/2": [
+      640,
+      960
+    ],
+    "block_strafe/n/3": [
+      672,
+      960
+    ],
+    "block_strafe/n/4": [
+      704,
+      960
+    ],
+    "block_strafe/n/5": [
+      736,
+      960
+    ],
+    "block_strafe/e/0": [
+      768,
+      960
+    ],
+    "block_strafe/e/1": [
+      800,
+      960
+    ],
+    "block_strafe/e/2": [
+      832,
+      960
+    ],
+    "block_strafe/e/3": [
+      864,
+      960
+    ],
+    "block_strafe/e/4": [
+      896,
+      960
+    ],
+    "block_strafe/e/5": [
+      928,
+      960
+    ],
+    "block_strafe/w/0": [
+      960,
+      960
+    ],
+    "block_strafe/w/1": [
+      992,
+      960
+    ],
+    "block_strafe/w/2": [
+      1024,
+      960
+    ],
+    "block_strafe/w/3": [
+      1056,
+      960
+    ],
+    "block_strafe/w/4": [
+      1088,
+      960
+    ],
+    "block_strafe/w/5": [
+      1120,
+      960
+    ],
+    "overbalance/s/0": [
+      1152,
+      960
+    ],
+    "overbalance/s/1": [
+      0,
+      1008
+    ],
+    "overbalance/n/0": [
+      32,
+      1008
+    ],
+    "overbalance/n/1": [
+      64,
+      1008
+    ],
+    "overbalance/e/0": [
+      96,
+      1008
+    ],
+    "overbalance/e/1": [
+      128,
+      1008
+    ],
+    "overbalance/w/0": [
+      160,
+      1008
+    ],
+    "overbalance/w/1": [
+      192,
+      1008
+    ],
+    "flinch/s/0": [
+      224,
+      1008
+    ],
+    "flinch/s/1": [
+      256,
+      1008
+    ],
+    "flinch/n/0": [
+      288,
+      1008
+    ],
+    "flinch/n/1": [
+      320,
+      1008
+    ],
+    "flinch/e/0": [
+      352,
+      1008
+    ],
+    "flinch/e/1": [
+      384,
+      1008
+    ],
+    "flinch/w/0": [
+      416,
+      1008
+    ],
+    "flinch/w/1": [
+      448,
+      1008
+    ],
+    "knockdown/s/0": [
+      480,
+      1008
+    ],
+    "knockdown/s/1": [
+      512,
+      1008
+    ],
+    "knockdown/s/2": [
+      544,
+      1008
+    ],
+    "knockdown/n/0": [
+      576,
+      1008
+    ],
+    "knockdown/n/1": [
+      608,
+      1008
+    ],
+    "knockdown/n/2": [
+      640,
+      1008
+    ],
+    "knockdown/e/0": [
+      672,
+      1008
+    ],
+    "knockdown/e/1": [
+      704,
+      1008
+    ],
+    "knockdown/e/2": [
+      736,
+      1008
+    ],
+    "knockdown/w/0": [
+      768,
+      1008
+    ],
+    "knockdown/w/1": [
+      800,
+      1008
+    ],
+    "knockdown/w/2": [
+      832,
+      1008
+    ],
+    "sidestep/s/0": [
+      864,
+      1008
+    ],
+    "sidestep/s/1": [
+      896,
+      1008
+    ],
+    "sidestep/s/2": [
+      928,
+      1008
+    ],
+    "sidestep/n/0": [
+      960,
+      1008
+    ],
+    "sidestep/n/1": [
+      992,
+      1008
+    ],
+    "sidestep/n/2": [
+      1024,
+      1008
+    ],
+    "sidestep/e/0": [
+      1056,
+      1008
+    ],
+    "sidestep/e/1": [
+      1088,
+      1008
+    ],
+    "sidestep/e/2": [
+      1120,
+      1008
+    ],
+    "sidestep/w/0": [
+      1152,
+      1008
+    ],
+    "sidestep/w/1": [
+      0,
+      1056
+    ],
+    "sidestep/w/2": [
+      32,
+      1056
+    ],
+    "hop/s/0": [
+      64,
+      1056
+    ],
+    "hop/s/1": [
+      96,
+      1056
+    ],
+    "hop/s/2": [
+      128,
+      1056
+    ],
+    "hop/n/0": [
+      160,
+      1056
+    ],
+    "hop/n/1": [
+      192,
+      1056
+    ],
+    "hop/n/2": [
+      224,
+      1056
+    ],
+    "hop/e/0": [
+      256,
+      1056
+    ],
+    "hop/e/1": [
+      288,
+      1056
+    ],
+    "hop/e/2": [
+      320,
+      1056
+    ],
+    "hop/w/0": [
+      352,
+      1056
+    ],
+    "hop/w/1": [
+      384,
+      1056
+    ],
+    "hop/w/2": [
+      416,
+      1056
+    ],
+    "bind/s/0": [
+      448,
+      1056
+    ],
+    "bind/s/1": [
+      480,
+      1056
+    ],
+    "bind/s/2": [
+      512,
+      1056
+    ],
+    "bind/s/3": [
+      544,
+      1056
+    ],
+    "bind/s/4": [
+      576,
+      1056
+    ],
+    "bind/s/5": [
+      608,
+      1056
+    ],
+    "bind/n/0": [
+      640,
+      1056
+    ],
+    "bind/n/1": [
+      672,
+      1056
+    ],
+    "bind/n/2": [
+      704,
+      1056
+    ],
+    "bind/n/3": [
+      736,
+      1056
+    ],
+    "bind/n/4": [
+      768,
+      1056
+    ],
+    "bind/n/5": [
+      800,
+      1056
+    ],
+    "bind/e/0": [
+      832,
+      1056
+    ],
+    "bind/e/1": [
+      864,
+      1056
+    ],
+    "bind/e/2": [
+      896,
+      1056
+    ],
+    "bind/e/3": [
+      928,
+      1056
+    ],
+    "bind/e/4": [
+      960,
+      1056
+    ],
+    "bind/e/5": [
+      992,
+      1056
+    ],
+    "bind/w/0": [
+      1024,
+      1056
+    ],
+    "bind/w/1": [
+      1056,
+      1056
+    ],
+    "bind/w/2": [
+      1088,
+      1056
+    ],
+    "bind/w/3": [
+      1120,
+      1056
+    ],
+    "bind/w/4": [
+      1152,
+      1056
+    ],
+    "bind/w/5": [
+      0,
+      1104
+    ],
+    "eat_ration/s/0": [
+      32,
+      1104
+    ],
+    "eat_ration/s/1": [
+      64,
+      1104
+    ],
+    "eat_ration/s/2": [
+      96,
+      1104
+    ],
+    "eat_ration/s/3": [
+      128,
+      1104
+    ],
+    "eat_ration/n/0": [
+      160,
+      1104
+    ],
+    "eat_ration/n/1": [
+      192,
+      1104
+    ],
+    "eat_ration/n/2": [
+      224,
+      1104
+    ],
+    "eat_ration/n/3": [
+      256,
+      1104
+    ],
+    "eat_ration/e/0": [
+      288,
+      1104
+    ],
+    "eat_ration/e/1": [
+      320,
+      1104
+    ],
+    "eat_ration/e/2": [
+      352,
+      1104
+    ],
+    "eat_ration/e/3": [
+      384,
+      1104
+    ],
+    "eat_ration/w/0": [
+      416,
+      1104
+    ],
+    "eat_ration/w/1": [
+      448,
+      1104
+    ],
+    "eat_ration/w/2": [
+      480,
+      1104
+    ],
+    "eat_ration/w/3": [
+      512,
+      1104
+    ],
+    "fall_fwd/s/0": [
+      544,
+      1104
+    ],
+    "fall_fwd/s/1": [
+      576,
+      1104
+    ],
+    "fall_fwd/n/0": [
+      608,
+      1104
+    ],
+    "fall_fwd/n/1": [
+      640,
+      1104
+    ],
+    "fall_fwd/e/0": [
+      672,
+      1104
+    ],
+    "fall_fwd/e/1": [
+      704,
+      1104
+    ],
+    "fall_fwd/w/0": [
+      736,
+      1104
+    ],
+    "fall_fwd/w/1": [
+      768,
+      1104
+    ],
+    "fall_back/s/0": [
+      800,
+      1104
+    ],
+    "fall_back/s/1": [
+      832,
+      1104
+    ],
+    "fall_back/n/0": [
+      864,
+      1104
+    ],
+    "fall_back/n/1": [
+      896,
+      1104
+    ],
+    "fall_back/e/0": [
+      928,
+      1104
+    ],
+    "fall_back/e/1": [
+      960,
+      1104
+    ],
+    "fall_back/w/0": [
+      992,
+      1104
+    ],
+    "fall_back/w/1": [
+      1024,
+      1104
+    ],
+    "fall_crumple/s/0": [
+      1056,
+      1104
+    ],
+    "fall_crumple/s/1": [
+      1088,
+      1104
+    ],
+    "fall_crumple/n/0": [
+      1120,
+      1104
+    ],
+    "fall_crumple/n/1": [
+      1152,
+      1104
+    ],
+    "fall_crumple/e/0": [
+      0,
+      1152
+    ],
+    "fall_crumple/e/1": [
+      32,
+      1152
+    ],
+    "fall_crumple/w/0": [
+      64,
+      1152
+    ],
+    "fall_crumple/w/1": [
+      96,
+      1152
+    ],
+    "reel/s/0": [
+      128,
+      1152
+    ],
+    "reel/s/1": [
+      160,
+      1152
+    ],
+    "reel/s/2": [
+      192,
+      1152
+    ],
+    "reel/n/0": [
+      224,
+      1152
+    ],
+    "reel/n/1": [
+      256,
+      1152
+    ],
+    "reel/n/2": [
+      288,
+      1152
+    ],
+    "reel/e/0": [
+      320,
+      1152
+    ],
+    "reel/e/1": [
+      352,
+      1152
+    ],
+    "reel/e/2": [
+      384,
+      1152
+    ],
+    "reel/w/0": [
+      416,
+      1152
+    ],
+    "reel/w/1": [
+      448,
+      1152
+    ],
+    "reel/w/2": [
+      480,
+      1152
+    ],
+    "guard_turn/s/0": [
+      512,
+      1152
+    ],
+    "guard_turn/s/1": [
+      544,
+      1152
+    ],
+    "guard_turn/s/2": [
+      576,
+      1152
+    ],
+    "guard_turn/n/0": [
+      608,
+      1152
+    ],
+    "guard_turn/n/1": [
+      640,
+      1152
+    ],
+    "guard_turn/n/2": [
+      672,
+      1152
+    ],
+    "guard_turn/e/0": [
+      704,
+      1152
+    ],
+    "guard_turn/e/1": [
+      736,
+      1152
+    ],
+    "guard_turn/e/2": [
+      768,
+      1152
+    ],
+    "guard_turn/w/0": [
+      800,
+      1152
+    ],
+    "guard_turn/w/1": [
+      832,
+      1152
+    ],
+    "guard_turn/w/2": [
+      864,
+      1152
+    ],
+    "spare/s/0": [
+      896,
+      1152
+    ],
+    "spare/s/1": [
+      928,
+      1152
+    ],
+    "spare/s/2": [
+      960,
+      1152
+    ],
+    "spare/s/3": [
+      992,
+      1152
+    ],
+    "spare/n/0": [
+      1024,
+      1152
+    ],
+    "spare/n/1": [
+      1056,
+      1152
+    ],
+    "spare/n/2": [
+      1088,
+      1152
+    ],
+    "spare/n/3": [
+      1120,
+      1152
+    ],
+    "spare/e/0": [
+      1152,
+      1152
+    ],
+    "spare/e/1": [
+      0,
+      1200
+    ],
+    "spare/e/2": [
+      32,
+      1200
+    ],
+    "spare/e/3": [
+      64,
+      1200
+    ],
+    "spare/w/0": [
+      96,
+      1200
+    ],
+    "spare/w/1": [
+      128,
+      1200
+    ],
+    "spare/w/2": [
+      160,
+      1200
+    ],
+    "spare/w/3": [
+      192,
+      1200
+    ],
+    "red/s/0": [
+      224,
+      1200
+    ],
+    "red/s/1": [
+      256,
+      1200
+    ],
+    "red/s/2": [
+      288,
+      1200
+    ],
+    "red/s/3": [
+      320,
+      1200
+    ],
+    "red/n/0": [
+      352,
+      1200
+    ],
+    "red/n/1": [
+      384,
+      1200
+    ],
+    "red/n/2": [
+      416,
+      1200
+    ],
+    "red/n/3": [
+      448,
+      1200
+    ],
+    "red/e/0": [
+      480,
+      1200
+    ],
+    "red/e/1": [
+      512,
+      1200
+    ],
+    "red/e/2": [
+      544,
+      1200
+    ],
+    "red/e/3": [
+      576,
+      1200
+    ],
+    "red/w/0": [
+      608,
+      1200
+    ],
+    "red/w/1": [
+      640,
+      1200
+    ],
+    "red/w/2": [
+      672,
+      1200
+    ],
+    "red/w/3": [
+      704,
+      1200
+    ],
+    "red_miss/s/0": [
+      736,
+      1200
+    ],
+    "red_miss/s/1": [
+      768,
+      1200
+    ],
+    "red_miss/s/2": [
+      800,
+      1200
+    ],
+    "red_miss/s/3": [
+      832,
+      1200
+    ],
+    "red_miss/n/0": [
+      864,
+      1200
+    ],
+    "red_miss/n/1": [
+      896,
+      1200
+    ],
+    "red_miss/n/2": [
+      928,
+      1200
+    ],
+    "red_miss/n/3": [
+      960,
+      1200
+    ],
+    "red_miss/e/0": [
+      992,
+      1200
+    ],
+    "red_miss/e/1": [
+      1024,
+      1200
+    ],
+    "red_miss/e/2": [
+      1056,
+      1200
+    ],
+    "red_miss/e/3": [
+      1088,
+      1200
+    ],
+    "red_miss/w/0": [
+      1120,
+      1200
+    ],
+    "red_miss/w/1": [
+      1152,
+      1200
+    ],
+    "red_miss/w/2": [
+      0,
+      1248
+    ],
+    "red_miss/w/3": [
+      32,
+      1248
+    ],
+    "fin_seax_s/s/0": [
+      64,
+      1248
+    ],
+    "fin_seax_s/s/1": [
+      96,
+      1248
+    ],
+    "fin_seax_s/s/2": [
+      128,
+      1248
+    ],
+    "fin_seax_s/s/3": [
+      160,
+      1248
+    ],
+    "fin_seax_s/s/4": [
+      192,
+      1248
+    ],
+    "fin_seax_s/s/5": [
+      224,
+      1248
+    ],
+    "fin_seax_s/s/6": [
+      256,
+      1248
+    ],
+    "fin_seax_s/s/7": [
+      288,
+      1248
+    ],
+    "fin_seax_s/n/0": [
+      320,
+      1248
+    ],
+    "fin_seax_s/n/1": [
+      352,
+      1248
+    ],
+    "fin_seax_s/n/2": [
+      384,
+      1248
+    ],
+    "fin_seax_s/n/3": [
+      416,
+      1248
+    ],
+    "fin_seax_s/n/4": [
+      448,
+      1248
+    ],
+    "fin_seax_s/n/5": [
+      480,
+      1248
+    ],
+    "fin_seax_s/n/6": [
+      512,
+      1248
+    ],
+    "fin_seax_s/n/7": [
+      544,
+      1248
+    ],
+    "fin_seax_s/e/0": [
+      576,
+      1248
+    ],
+    "fin_seax_s/e/1": [
+      608,
+      1248
+    ],
+    "fin_seax_s/e/2": [
+      640,
+      1248
+    ],
+    "fin_seax_s/e/3": [
+      672,
+      1248
+    ],
+    "fin_seax_s/e/4": [
+      704,
+      1248
+    ],
+    "fin_seax_s/e/5": [
+      736,
+      1248
+    ],
+    "fin_seax_s/e/6": [
+      768,
+      1248
+    ],
+    "fin_seax_s/e/7": [
+      800,
+      1248
+    ],
+    "fin_seax_s/w/0": [
+      832,
+      1248
+    ],
+    "fin_seax_s/w/1": [
+      864,
+      1248
+    ],
+    "fin_seax_s/w/2": [
+      896,
+      1248
+    ],
+    "fin_seax_s/w/3": [
+      928,
+      1248
+    ],
+    "fin_seax_s/w/4": [
+      960,
+      1248
+    ],
+    "fin_seax_s/w/5": [
+      992,
+      1248
+    ],
+    "fin_seax_s/w/6": [
+      1024,
+      1248
+    ],
+    "fin_seax_s/w/7": [
+      1056,
+      1248
+    ],
+    "fin_seax_l/s/0": [
+      1088,
+      1248
+    ],
+    "fin_seax_l/s/1": [
+      1120,
+      1248
+    ],
+    "fin_seax_l/s/2": [
+      1152,
+      1248
+    ],
+    "fin_seax_l/s/3": [
+      0,
+      1296
+    ],
+    "fin_seax_l/s/4": [
+      32,
+      1296
+    ],
+    "fin_seax_l/s/5": [
+      64,
+      1296
+    ],
+    "fin_seax_l/s/6": [
+      96,
+      1296
+    ],
+    "fin_seax_l/s/7": [
+      128,
+      1296
+    ],
+    "fin_seax_l/n/0": [
+      160,
+      1296
+    ],
+    "fin_seax_l/n/1": [
+      192,
+      1296
+    ],
+    "fin_seax_l/n/2": [
+      224,
+      1296
+    ],
+    "fin_seax_l/n/3": [
+      256,
+      1296
+    ],
+    "fin_seax_l/n/4": [
+      288,
+      1296
+    ],
+    "fin_seax_l/n/5": [
+      320,
+      1296
+    ],
+    "fin_seax_l/n/6": [
+      352,
+      1296
+    ],
+    "fin_seax_l/n/7": [
+      384,
+      1296
+    ],
+    "fin_seax_l/e/0": [
+      416,
+      1296
+    ],
+    "fin_seax_l/e/1": [
+      448,
+      1296
+    ],
+    "fin_seax_l/e/2": [
+      480,
+      1296
+    ],
+    "fin_seax_l/e/3": [
+      512,
+      1296
+    ],
+    "fin_seax_l/e/4": [
+      544,
+      1296
+    ],
+    "fin_seax_l/e/5": [
+      576,
+      1296
+    ],
+    "fin_seax_l/e/6": [
+      608,
+      1296
+    ],
+    "fin_seax_l/e/7": [
+      640,
+      1296
+    ],
+    "fin_seax_l/w/0": [
+      672,
+      1296
+    ],
+    "fin_seax_l/w/1": [
+      704,
+      1296
+    ],
+    "fin_seax_l/w/2": [
+      736,
+      1296
+    ],
+    "fin_seax_l/w/3": [
+      768,
+      1296
+    ],
+    "fin_seax_l/w/4": [
+      800,
+      1296
+    ],
+    "fin_seax_l/w/5": [
+      832,
+      1296
+    ],
+    "fin_seax_l/w/6": [
+      864,
+      1296
+    ],
+    "fin_seax_l/w/7": [
+      896,
+      1296
+    ],
+    "fin_axe_s/s/0": [
+      928,
+      1296
+    ],
+    "fin_axe_s/s/1": [
+      960,
+      1296
+    ],
+    "fin_axe_s/s/2": [
+      992,
+      1296
+    ],
+    "fin_axe_s/s/3": [
+      1024,
+      1296
+    ],
+    "fin_axe_s/s/4": [
+      1056,
+      1296
+    ],
+    "fin_axe_s/s/5": [
+      1088,
+      1296
+    ],
+    "fin_axe_s/s/6": [
+      1120,
+      1296
+    ],
+    "fin_axe_s/s/7": [
+      1152,
+      1296
+    ],
+    "fin_axe_s/n/0": [
+      0,
+      1344
+    ],
+    "fin_axe_s/n/1": [
+      32,
+      1344
+    ],
+    "fin_axe_s/n/2": [
+      64,
+      1344
+    ],
+    "fin_axe_s/n/3": [
+      96,
+      1344
+    ],
+    "fin_axe_s/n/4": [
+      128,
+      1344
+    ],
+    "fin_axe_s/n/5": [
+      160,
+      1344
+    ],
+    "fin_axe_s/n/6": [
+      192,
+      1344
+    ],
+    "fin_axe_s/n/7": [
+      224,
+      1344
+    ],
+    "fin_axe_s/e/0": [
+      256,
+      1344
+    ],
+    "fin_axe_s/e/1": [
+      288,
+      1344
+    ],
+    "fin_axe_s/e/2": [
+      320,
+      1344
+    ],
+    "fin_axe_s/e/3": [
+      352,
+      1344
+    ],
+    "fin_axe_s/e/4": [
+      384,
+      1344
+    ],
+    "fin_axe_s/e/5": [
+      416,
+      1344
+    ],
+    "fin_axe_s/e/6": [
+      448,
+      1344
+    ],
+    "fin_axe_s/e/7": [
+      480,
+      1344
+    ],
+    "fin_axe_s/w/0": [
+      512,
+      1344
+    ],
+    "fin_axe_s/w/1": [
+      544,
+      1344
+    ],
+    "fin_axe_s/w/2": [
+      576,
+      1344
+    ],
+    "fin_axe_s/w/3": [
+      608,
+      1344
+    ],
+    "fin_axe_s/w/4": [
+      640,
+      1344
+    ],
+    "fin_axe_s/w/5": [
+      672,
+      1344
+    ],
+    "fin_axe_s/w/6": [
+      704,
+      1344
+    ],
+    "fin_axe_s/w/7": [
+      736,
+      1344
+    ],
+    "fin_axe_l/s/0": [
+      768,
+      1344
+    ],
+    "fin_axe_l/s/1": [
+      800,
+      1344
+    ],
+    "fin_axe_l/s/2": [
+      832,
+      1344
+    ],
+    "fin_axe_l/s/3": [
+      864,
+      1344
+    ],
+    "fin_axe_l/s/4": [
+      896,
+      1344
+    ],
+    "fin_axe_l/s/5": [
+      928,
+      1344
+    ],
+    "fin_axe_l/s/6": [
+      960,
+      1344
+    ],
+    "fin_axe_l/s/7": [
+      992,
+      1344
+    ],
+    "fin_axe_l/n/0": [
+      1024,
+      1344
+    ],
+    "fin_axe_l/n/1": [
+      1056,
+      1344
+    ],
+    "fin_axe_l/n/2": [
+      1088,
+      1344
+    ],
+    "fin_axe_l/n/3": [
+      1120,
+      1344
+    ],
+    "fin_axe_l/n/4": [
+      1152,
+      1344
+    ],
+    "fin_axe_l/n/5": [
+      0,
+      1392
+    ],
+    "fin_axe_l/n/6": [
+      32,
+      1392
+    ],
+    "fin_axe_l/n/7": [
+      64,
+      1392
+    ],
+    "fin_axe_l/e/0": [
+      96,
+      1392
+    ],
+    "fin_axe_l/e/1": [
+      128,
+      1392
+    ],
+    "fin_axe_l/e/2": [
+      160,
+      1392
+    ],
+    "fin_axe_l/e/3": [
+      192,
+      1392
+    ],
+    "fin_axe_l/e/4": [
+      224,
+      1392
+    ],
+    "fin_axe_l/e/5": [
+      256,
+      1392
+    ],
+    "fin_axe_l/e/6": [
+      288,
+      1392
+    ],
+    "fin_axe_l/e/7": [
+      320,
+      1392
+    ],
+    "fin_axe_l/w/0": [
+      352,
+      1392
+    ],
+    "fin_axe_l/w/1": [
+      384,
+      1392
+    ],
+    "fin_axe_l/w/2": [
+      416,
+      1392
+    ],
+    "fin_axe_l/w/3": [
+      448,
+      1392
+    ],
+    "fin_axe_l/w/4": [
+      480,
+      1392
+    ],
+    "fin_axe_l/w/5": [
+      512,
+      1392
+    ],
+    "fin_axe_l/w/6": [
+      544,
+      1392
+    ],
+    "fin_axe_l/w/7": [
+      576,
+      1392
+    ],
+    "fin_spear_s/s/0": [
+      608,
+      1392
+    ],
+    "fin_spear_s/s/1": [
+      640,
+      1392
+    ],
+    "fin_spear_s/s/2": [
+      672,
+      1392
+    ],
+    "fin_spear_s/s/3": [
+      704,
+      1392
+    ],
+    "fin_spear_s/s/4": [
+      736,
+      1392
+    ],
+    "fin_spear_s/s/5": [
+      768,
+      1392
+    ],
+    "fin_spear_s/s/6": [
+      800,
+      1392
+    ],
+    "fin_spear_s/s/7": [
+      832,
+      1392
+    ],
+    "fin_spear_s/n/0": [
+      864,
+      1392
+    ],
+    "fin_spear_s/n/1": [
+      896,
+      1392
+    ],
+    "fin_spear_s/n/2": [
+      928,
+      1392
+    ],
+    "fin_spear_s/n/3": [
+      960,
+      1392
+    ],
+    "fin_spear_s/n/4": [
+      992,
+      1392
+    ],
+    "fin_spear_s/n/5": [
+      1024,
+      1392
+    ],
+    "fin_spear_s/n/6": [
+      1056,
+      1392
+    ],
+    "fin_spear_s/n/7": [
+      1088,
+      1392
+    ],
+    "fin_spear_s/e/0": [
+      1120,
+      1392
+    ],
+    "fin_spear_s/e/1": [
+      1152,
+      1392
+    ],
+    "fin_spear_s/e/2": [
+      0,
+      1440
+    ],
+    "fin_spear_s/e/3": [
+      32,
+      1440
+    ],
+    "fin_spear_s/e/4": [
+      64,
+      1440
+    ],
+    "fin_spear_s/e/5": [
+      96,
+      1440
+    ],
+    "fin_spear_s/e/6": [
+      128,
+      1440
+    ],
+    "fin_spear_s/e/7": [
+      160,
+      1440
+    ],
+    "fin_spear_s/w/0": [
+      192,
+      1440
+    ],
+    "fin_spear_s/w/1": [
+      224,
+      1440
+    ],
+    "fin_spear_s/w/2": [
+      256,
+      1440
+    ],
+    "fin_spear_s/w/3": [
+      288,
+      1440
+    ],
+    "fin_spear_s/w/4": [
+      320,
+      1440
+    ],
+    "fin_spear_s/w/5": [
+      352,
+      1440
+    ],
+    "fin_spear_s/w/6": [
+      384,
+      1440
+    ],
+    "fin_spear_s/w/7": [
+      416,
+      1440
+    ],
+    "fin_spear_l/s/0": [
+      448,
+      1440
+    ],
+    "fin_spear_l/s/1": [
+      480,
+      1440
+    ],
+    "fin_spear_l/s/2": [
+      512,
+      1440
+    ],
+    "fin_spear_l/s/3": [
+      544,
+      1440
+    ],
+    "fin_spear_l/s/4": [
+      576,
+      1440
+    ],
+    "fin_spear_l/s/5": [
+      608,
+      1440
+    ],
+    "fin_spear_l/s/6": [
+      640,
+      1440
+    ],
+    "fin_spear_l/s/7": [
+      672,
+      1440
+    ],
+    "fin_spear_l/n/0": [
+      704,
+      1440
+    ],
+    "fin_spear_l/n/1": [
+      736,
+      1440
+    ],
+    "fin_spear_l/n/2": [
+      768,
+      1440
+    ],
+    "fin_spear_l/n/3": [
+      800,
+      1440
+    ],
+    "fin_spear_l/n/4": [
+      832,
+      1440
+    ],
+    "fin_spear_l/n/5": [
+      864,
+      1440
+    ],
+    "fin_spear_l/n/6": [
+      896,
+      1440
+    ],
+    "fin_spear_l/n/7": [
+      928,
+      1440
+    ],
+    "fin_spear_l/e/0": [
+      960,
+      1440
+    ],
+    "fin_spear_l/e/1": [
+      992,
+      1440
+    ],
+    "fin_spear_l/e/2": [
+      1024,
+      1440
+    ],
+    "fin_spear_l/e/3": [
+      1056,
+      1440
+    ],
+    "fin_spear_l/e/4": [
+      1088,
+      1440
+    ],
+    "fin_spear_l/e/5": [
+      1120,
+      1440
+    ],
+    "fin_spear_l/e/6": [
+      1152,
+      1440
+    ],
+    "fin_spear_l/e/7": [
+      0,
+      1488
+    ],
+    "fin_spear_l/w/0": [
+      32,
+      1488
+    ],
+    "fin_spear_l/w/1": [
+      64,
+      1488
+    ],
+    "fin_spear_l/w/2": [
+      96,
+      1488
+    ],
+    "fin_spear_l/w/3": [
+      128,
+      1488
+    ],
+    "fin_spear_l/w/4": [
+      160,
+      1488
+    ],
+    "fin_spear_l/w/5": [
+      192,
+      1488
+    ],
+    "fin_spear_l/w/6": [
+      224,
+      1488
+    ],
+    "fin_spear_l/w/7": [
+      256,
+      1488
+    ],
+    "fin_sword_s/s/0": [
+      288,
+      1488
+    ],
+    "fin_sword_s/s/1": [
+      320,
+      1488
+    ],
+    "fin_sword_s/s/2": [
+      352,
+      1488
+    ],
+    "fin_sword_s/s/3": [
+      384,
+      1488
+    ],
+    "fin_sword_s/s/4": [
+      416,
+      1488
+    ],
+    "fin_sword_s/s/5": [
+      448,
+      1488
+    ],
+    "fin_sword_s/s/6": [
+      480,
+      1488
+    ],
+    "fin_sword_s/s/7": [
+      512,
+      1488
+    ],
+    "fin_sword_s/n/0": [
+      544,
+      1488
+    ],
+    "fin_sword_s/n/1": [
+      576,
+      1488
+    ],
+    "fin_sword_s/n/2": [
+      608,
+      1488
+    ],
+    "fin_sword_s/n/3": [
+      640,
+      1488
+    ],
+    "fin_sword_s/n/4": [
+      672,
+      1488
+    ],
+    "fin_sword_s/n/5": [
+      704,
+      1488
+    ],
+    "fin_sword_s/n/6": [
+      736,
+      1488
+    ],
+    "fin_sword_s/n/7": [
+      768,
+      1488
+    ],
+    "fin_sword_s/e/0": [
+      800,
+      1488
+    ],
+    "fin_sword_s/e/1": [
+      832,
+      1488
+    ],
+    "fin_sword_s/e/2": [
+      864,
+      1488
+    ],
+    "fin_sword_s/e/3": [
+      896,
+      1488
+    ],
+    "fin_sword_s/e/4": [
+      928,
+      1488
+    ],
+    "fin_sword_s/e/5": [
+      960,
+      1488
+    ],
+    "fin_sword_s/e/6": [
+      992,
+      1488
+    ],
+    "fin_sword_s/e/7": [
+      1024,
+      1488
+    ],
+    "fin_sword_s/w/0": [
+      1056,
+      1488
+    ],
+    "fin_sword_s/w/1": [
+      1088,
+      1488
+    ],
+    "fin_sword_s/w/2": [
+      1120,
+      1488
+    ],
+    "fin_sword_s/w/3": [
+      1152,
+      1488
+    ],
+    "fin_sword_s/w/4": [
+      0,
+      1536
+    ],
+    "fin_sword_s/w/5": [
+      32,
+      1536
+    ],
+    "fin_sword_s/w/6": [
+      64,
+      1536
+    ],
+    "fin_sword_s/w/7": [
+      96,
+      1536
+    ],
+    "fin_sword_l/s/0": [
+      128,
+      1536
+    ],
+    "fin_sword_l/s/1": [
+      160,
+      1536
+    ],
+    "fin_sword_l/s/2": [
+      192,
+      1536
+    ],
+    "fin_sword_l/s/3": [
+      224,
+      1536
+    ],
+    "fin_sword_l/s/4": [
+      256,
+      1536
+    ],
+    "fin_sword_l/s/5": [
+      288,
+      1536
+    ],
+    "fin_sword_l/s/6": [
+      320,
+      1536
+    ],
+    "fin_sword_l/s/7": [
+      352,
+      1536
+    ],
+    "fin_sword_l/n/0": [
+      384,
+      1536
+    ],
+    "fin_sword_l/n/1": [
+      416,
+      1536
+    ],
+    "fin_sword_l/n/2": [
+      448,
+      1536
+    ],
+    "fin_sword_l/n/3": [
+      480,
+      1536
+    ],
+    "fin_sword_l/n/4": [
+      512,
+      1536
+    ],
+    "fin_sword_l/n/5": [
+      544,
+      1536
+    ],
+    "fin_sword_l/n/6": [
+      576,
+      1536
+    ],
+    "fin_sword_l/n/7": [
+      608,
+      1536
+    ],
+    "fin_sword_l/e/0": [
+      640,
+      1536
+    ],
+    "fin_sword_l/e/1": [
+      672,
+      1536
+    ],
+    "fin_sword_l/e/2": [
+      704,
+      1536
+    ],
+    "fin_sword_l/e/3": [
+      736,
+      1536
+    ],
+    "fin_sword_l/e/4": [
+      768,
+      1536
+    ],
+    "fin_sword_l/e/5": [
+      800,
+      1536
+    ],
+    "fin_sword_l/e/6": [
+      832,
+      1536
+    ],
+    "fin_sword_l/e/7": [
+      864,
+      1536
+    ],
+    "fin_sword_l/w/0": [
+      896,
+      1536
+    ],
+    "fin_sword_l/w/1": [
+      928,
+      1536
+    ],
+    "fin_sword_l/w/2": [
+      960,
+      1536
+    ],
+    "fin_sword_l/w/3": [
+      992,
+      1536
+    ],
+    "fin_sword_l/w/4": [
+      1024,
+      1536
+    ],
+    "fin_sword_l/w/5": [
+      1056,
+      1536
+    ],
+    "fin_sword_l/w/6": [
+      1088,
+      1536
+    ],
+    "fin_sword_l/w/7": [
+      1120,
+      1536
+    ],
+    "fin_dane_s/s/0": [
+      1152,
+      1536
+    ],
+    "fin_dane_s/s/1": [
+      0,
+      1584
+    ],
+    "fin_dane_s/s/2": [
+      32,
+      1584
+    ],
+    "fin_dane_s/s/3": [
+      64,
+      1584
+    ],
+    "fin_dane_s/s/4": [
+      96,
+      1584
+    ],
+    "fin_dane_s/s/5": [
+      128,
+      1584
+    ],
+    "fin_dane_s/s/6": [
+      160,
+      1584
+    ],
+    "fin_dane_s/s/7": [
+      192,
+      1584
+    ],
+    "fin_dane_s/n/0": [
+      224,
+      1584
+    ],
+    "fin_dane_s/n/1": [
+      256,
+      1584
+    ],
+    "fin_dane_s/n/2": [
+      288,
+      1584
+    ],
+    "fin_dane_s/n/3": [
+      320,
+      1584
+    ],
+    "fin_dane_s/n/4": [
+      352,
+      1584
+    ],
+    "fin_dane_s/n/5": [
+      384,
+      1584
+    ],
+    "fin_dane_s/n/6": [
+      416,
+      1584
+    ],
+    "fin_dane_s/n/7": [
+      448,
+      1584
+    ],
+    "fin_dane_s/e/0": [
+      480,
+      1584
+    ],
+    "fin_dane_s/e/1": [
+      512,
+      1584
+    ],
+    "fin_dane_s/e/2": [
+      544,
+      1584
+    ],
+    "fin_dane_s/e/3": [
+      576,
+      1584
+    ],
+    "fin_dane_s/e/4": [
+      608,
+      1584
+    ],
+    "fin_dane_s/e/5": [
+      640,
+      1584
+    ],
+    "fin_dane_s/e/6": [
+      672,
+      1584
+    ],
+    "fin_dane_s/e/7": [
+      704,
+      1584
+    ],
+    "fin_dane_s/w/0": [
+      736,
+      1584
+    ],
+    "fin_dane_s/w/1": [
+      768,
+      1584
+    ],
+    "fin_dane_s/w/2": [
+      800,
+      1584
+    ],
+    "fin_dane_s/w/3": [
+      832,
+      1584
+    ],
+    "fin_dane_s/w/4": [
+      864,
+      1584
+    ],
+    "fin_dane_s/w/5": [
+      896,
+      1584
+    ],
+    "fin_dane_s/w/6": [
+      928,
+      1584
+    ],
+    "fin_dane_s/w/7": [
+      960,
+      1584
+    ],
+    "fin_dane_l/s/0": [
+      992,
+      1584
+    ],
+    "fin_dane_l/s/1": [
+      1024,
+      1584
+    ],
+    "fin_dane_l/s/2": [
+      1056,
+      1584
+    ],
+    "fin_dane_l/s/3": [
+      1088,
+      1584
+    ],
+    "fin_dane_l/s/4": [
+      1120,
+      1584
+    ],
+    "fin_dane_l/s/5": [
+      1152,
+      1584
+    ],
+    "fin_dane_l/s/6": [
+      0,
+      1632
+    ],
+    "fin_dane_l/s/7": [
+      32,
+      1632
+    ],
+    "fin_dane_l/n/0": [
+      64,
+      1632
+    ],
+    "fin_dane_l/n/1": [
+      96,
+      1632
+    ],
+    "fin_dane_l/n/2": [
+      128,
+      1632
+    ],
+    "fin_dane_l/n/3": [
+      160,
+      1632
+    ],
+    "fin_dane_l/n/4": [
+      192,
+      1632
+    ],
+    "fin_dane_l/n/5": [
+      224,
+      1632
+    ],
+    "fin_dane_l/n/6": [
+      256,
+      1632
+    ],
+    "fin_dane_l/n/7": [
+      288,
+      1632
+    ],
+    "fin_dane_l/e/0": [
+      320,
+      1632
+    ],
+    "fin_dane_l/e/1": [
+      352,
+      1632
+    ],
+    "fin_dane_l/e/2": [
+      384,
+      1632
+    ],
+    "fin_dane_l/e/3": [
+      416,
+      1632
+    ],
+    "fin_dane_l/e/4": [
+      448,
+      1632
+    ],
+    "fin_dane_l/e/5": [
+      480,
+      1632
+    ],
+    "fin_dane_l/e/6": [
+      512,
+      1632
+    ],
+    "fin_dane_l/e/7": [
+      544,
+      1632
+    ],
+    "fin_dane_l/w/0": [
+      576,
+      1632
+    ],
+    "fin_dane_l/w/1": [
+      608,
+      1632
+    ],
+    "fin_dane_l/w/2": [
+      640,
+      1632
+    ],
+    "fin_dane_l/w/3": [
+      672,
+      1632
+    ],
+    "fin_dane_l/w/4": [
+      704,
+      1632
+    ],
+    "fin_dane_l/w/5": [
+      736,
+      1632
+    ],
+    "fin_dane_l/w/6": [
+      768,
+      1632
+    ],
+    "fin_dane_l/w/7": [
+      800,
+      1632
+    ],
+    "fin_club_s/s/0": [
+      832,
+      1632
+    ],
+    "fin_club_s/s/1": [
+      864,
+      1632
+    ],
+    "fin_club_s/s/2": [
+      896,
+      1632
+    ],
+    "fin_club_s/s/3": [
+      928,
+      1632
+    ],
+    "fin_club_s/s/4": [
+      960,
+      1632
+    ],
+    "fin_club_s/s/5": [
+      992,
+      1632
+    ],
+    "fin_club_s/s/6": [
+      1024,
+      1632
+    ],
+    "fin_club_s/s/7": [
+      1056,
+      1632
+    ],
+    "fin_club_s/n/0": [
+      1088,
+      1632
+    ],
+    "fin_club_s/n/1": [
+      1120,
+      1632
+    ],
+    "fin_club_s/n/2": [
+      1152,
+      1632
+    ],
+    "fin_club_s/n/3": [
+      0,
+      1680
+    ],
+    "fin_club_s/n/4": [
+      32,
+      1680
+    ],
+    "fin_club_s/n/5": [
+      64,
+      1680
+    ],
+    "fin_club_s/n/6": [
+      96,
+      1680
+    ],
+    "fin_club_s/n/7": [
+      128,
+      1680
+    ],
+    "fin_club_s/e/0": [
+      160,
+      1680
+    ],
+    "fin_club_s/e/1": [
+      192,
+      1680
+    ],
+    "fin_club_s/e/2": [
+      224,
+      1680
+    ],
+    "fin_club_s/e/3": [
+      256,
+      1680
+    ],
+    "fin_club_s/e/4": [
+      288,
+      1680
+    ],
+    "fin_club_s/e/5": [
+      320,
+      1680
+    ],
+    "fin_club_s/e/6": [
+      352,
+      1680
+    ],
+    "fin_club_s/e/7": [
+      384,
+      1680
+    ],
+    "fin_club_s/w/0": [
+      416,
+      1680
+    ],
+    "fin_club_s/w/1": [
+      448,
+      1680
+    ],
+    "fin_club_s/w/2": [
+      480,
+      1680
+    ],
+    "fin_club_s/w/3": [
+      512,
+      1680
+    ],
+    "fin_club_s/w/4": [
+      544,
+      1680
+    ],
+    "fin_club_s/w/5": [
+      576,
+      1680
+    ],
+    "fin_club_s/w/6": [
+      608,
+      1680
+    ],
+    "fin_club_s/w/7": [
+      640,
+      1680
+    ],
+    "fin_club_l/s/0": [
+      672,
+      1680
+    ],
+    "fin_club_l/s/1": [
+      704,
+      1680
+    ],
+    "fin_club_l/s/2": [
+      736,
+      1680
+    ],
+    "fin_club_l/s/3": [
+      768,
+      1680
+    ],
+    "fin_club_l/s/4": [
+      800,
+      1680
+    ],
+    "fin_club_l/s/5": [
+      832,
+      1680
+    ],
+    "fin_club_l/s/6": [
+      864,
+      1680
+    ],
+    "fin_club_l/s/7": [
+      896,
+      1680
+    ],
+    "fin_club_l/n/0": [
+      928,
+      1680
+    ],
+    "fin_club_l/n/1": [
+      960,
+      1680
+    ],
+    "fin_club_l/n/2": [
+      992,
+      1680
+    ],
+    "fin_club_l/n/3": [
+      1024,
+      1680
+    ],
+    "fin_club_l/n/4": [
+      1056,
+      1680
+    ],
+    "fin_club_l/n/5": [
+      1088,
+      1680
+    ],
+    "fin_club_l/n/6": [
+      1120,
+      1680
+    ],
+    "fin_club_l/n/7": [
+      1152,
+      1680
+    ],
+    "fin_club_l/e/0": [
+      0,
+      1728
+    ],
+    "fin_club_l/e/1": [
+      32,
+      1728
+    ],
+    "fin_club_l/e/2": [
+      64,
+      1728
+    ],
+    "fin_club_l/e/3": [
+      96,
+      1728
+    ],
+    "fin_club_l/e/4": [
+      128,
+      1728
+    ],
+    "fin_club_l/e/5": [
+      160,
+      1728
+    ],
+    "fin_club_l/e/6": [
+      192,
+      1728
+    ],
+    "fin_club_l/e/7": [
+      224,
+      1728
+    ],
+    "fin_club_l/w/0": [
+      256,
+      1728
+    ],
+    "fin_club_l/w/1": [
+      288,
+      1728
+    ],
+    "fin_club_l/w/2": [
+      320,
+      1728
+    ],
+    "fin_club_l/w/3": [
+      352,
+      1728
+    ],
+    "fin_club_l/w/4": [
+      384,
+      1728
+    ],
+    "fin_club_l/w/5": [
+      416,
+      1728
+    ],
+    "fin_club_l/w/6": [
+      448,
+      1728
+    ],
+    "fin_club_l/w/7": [
+      480,
+      1728
+    ]
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "sheet": "prop_broch_clutter",
+  "kind": "prop",
+  "image": "prop_broch_clutter.png",
+  "width": 64,
+  "height": 56,
+  "pivot": {
+    "x": 32,
+    "y": 54
+  },
+  "footprint": {
+    "w": 64,
+    "h": 56
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "net": {
+      "frames": 4,
+      "ticks": 30,
+      "loop": true
+    },
+    "fish": {
+      "frames": 4,
+      "ticks": 40,
+      "loop": true
+    },
+    "casks": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "creel": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "shellfish": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "quern": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "block": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "spars": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hide": {
+      "frames": 4,
+      "ticks": 34,
+      "loop": true
+    },
+    "lamp": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 24,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "net/-/0": [
+      0,
+      0
+    ],
+    "net/-/1": [
+      64,
+      0
+    ],
+    "net/-/2": [
+      128,
+      0
+    ],
+    "net/-/3": [
+      192,
+      0
+    ],
+    "fish/-/0": [
+      0,
+      56
+    ],
+    "fish/-/1": [
+      64,
+      56
+    ],
+    "fish/-/2": [
+      128,
+      56
+    ],
+    "fish/-/3": [
+      192,
+      56
+    ],
+    "casks/-/0": [
+      0,
+      112
+    ],
+    "creel/-/0": [
+      0,
+      168
+    ],
+    "shellfish/-/0": [
+      0,
+      224
+    ],
+    "quern/-/0": [
+      0,
+      280
+    ],
+    "block/-/0": [
+      0,
+      336
+    ],
+    "spars/-/0": [
+      0,
+      392
+    ],
+    "hide/-/0": [
+      0,
+      448
+    ],
+    "hide/-/1": [
+      64,
+      448
+    ],
+    "hide/-/2": [
+      128,
+      448
+    ],
+    "hide/-/3": [
+      192,
+      448
+    ],
+    "lamp/-/0": [
+      0,
+      504
+    ],
+    "lamp/-/1": [
+      64,
+      504
+    ],
+    "lamp/-/2": [
+      128,
+      504
+    ],
+    "lamp/-/3": [
+      192,
+      504
+    ]
+  }
+}

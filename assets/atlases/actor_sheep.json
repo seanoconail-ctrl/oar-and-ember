@@ -1,0 +1,137 @@
+{
+  "sheet": "actor_sheep",
+  "kind": "sprite",
+  "image": "actor_sheep.png",
+  "width": 28,
+  "height": 22,
+  "pivot": {
+    "x": 14,
+    "y": 19
+  },
+  "footprint": {
+    "w": 28,
+    "h": 22
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "graze": {
+      "frames": 4,
+      "ticks": 36,
+      "loop": true
+    },
+    "lie": {
+      "frames": 2,
+      "ticks": 48,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 16,
+    "h": 4
+  },
+  "placeholder": false,
+  "frames": {
+    "graze/s/0": [
+      0,
+      0
+    ],
+    "graze/s/1": [
+      28,
+      0
+    ],
+    "graze/s/2": [
+      56,
+      0
+    ],
+    "graze/s/3": [
+      84,
+      0
+    ],
+    "graze/n/0": [
+      0,
+      22
+    ],
+    "graze/n/1": [
+      28,
+      22
+    ],
+    "graze/n/2": [
+      56,
+      22
+    ],
+    "graze/n/3": [
+      84,
+      22
+    ],
+    "graze/e/0": [
+      0,
+      44
+    ],
+    "graze/e/1": [
+      28,
+      44
+    ],
+    "graze/e/2": [
+      56,
+      44
+    ],
+    "graze/e/3": [
+      84,
+      44
+    ],
+    "graze/w/0": [
+      0,
+      66
+    ],
+    "graze/w/1": [
+      28,
+      66
+    ],
+    "graze/w/2": [
+      56,
+      66
+    ],
+    "graze/w/3": [
+      84,
+      66
+    ],
+    "lie/s/0": [
+      0,
+      88
+    ],
+    "lie/s/1": [
+      28,
+      88
+    ],
+    "lie/n/0": [
+      0,
+      110
+    ],
+    "lie/n/1": [
+      28,
+      110
+    ],
+    "lie/e/0": [
+      0,
+      132
+    ],
+    "lie/e/1": [
+      28,
+      132
+    ],
+    "lie/w/0": [
+      0,
+      154
+    ],
+    "lie/w/1": [
+      28,
+      154
+    ]
+  }
+}

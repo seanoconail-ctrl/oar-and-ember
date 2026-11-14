@@ -1,0 +1,127 @@
+{
+  "sheet": "ui_combat",
+  "kind": "decal",
+  "image": "ui_combat.png",
+  "width": 12,
+  "height": 12,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 12,
+    "h": 12
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "hfill": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hend": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "mark_q": {
+      "frames": 2,
+      "ticks": 12,
+      "loop": true
+    },
+    "mark_x": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": true
+    },
+    "ebar_fill": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ebar_empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ebar_end": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "lock": {
+      "frames": 2,
+      "ticks": 20,
+      "loop": true
+    },
+    "binding": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ration": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "hfill/-/0": [
+      0,
+      0
+    ],
+    "hend/-/0": [
+      0,
+      12
+    ],
+    "mark_q/-/0": [
+      0,
+      24
+    ],
+    "mark_q/-/1": [
+      12,
+      24
+    ],
+    "mark_x/-/0": [
+      0,
+      36
+    ],
+    "mark_x/-/1": [
+      12,
+      36
+    ],
+    "ebar_fill/-/0": [
+      0,
+      48
+    ],
+    "ebar_empty/-/0": [
+      0,
+      60
+    ],
+    "ebar_end/-/0": [
+      0,
+      72
+    ],
+    "lock/-/0": [
+      0,
+      84
+    ],
+    "lock/-/1": [
+      12,
+      84
+    ],
+    "binding/-/0": [
+      0,
+      96
+    ],
+    "ration/-/0": [
+      0,
+      108
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "sheet": "ui_regionmap",
+  "kind": "decal",
+  "image": "ui_regionmap.png",
+  "width": 640,
+  "height": 360,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 640,
+    "h": 360
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "vellum": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "ink": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "vellum/-/0": [
+      0,
+      0
+    ],
+    "ink/-/0": [
+      0,
+      360
+    ]
+  }
+}

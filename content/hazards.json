@@ -1,0 +1,18 @@
+[
+  {
+    "id": "HAZ_CAULDRON",
+    "nameKey": "hazard.name.haz_cauldron"
+  },
+  {
+    "id": "HAZ_BLUEMEN",
+    "nameKey": "hazard.name.haz_bluemen"
+  },
+  {
+    "id": "HAZ_MIST",
+    "nameKey": "hazard.name.haz_mist"
+  },
+  {
+    "id": "HAZ_RANSREACH",
+    "nameKey": "hazard.name.haz_ransreach"
+  }
+]

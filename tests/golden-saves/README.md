@@ -1,0 +1,56 @@
+# tests/golden-saves
+
+Golden saves and their migration tests (Book 2 section 20). From Stage 3.
+
+Each file is a whole save, made by a fixed scenario played through the simulation's commands. The
+tests are in `tests/unit/saves.test.ts`; the scenarios and the writer are in
+`src/tools/saves/golden.ts`.
+
+| File           | Schema | Made at          | Scenario                                                    | Test                                                        |
+| -------------- | ------ | ---------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| golden-01.json | 1      | Stage 3          | A new campaign, two days on foot                            | Frozen: loads through the migration chain                   |
+| golden-02.json | 2      | Stage 6          | The steerer named, Hild carried up, two days                | Frozen: loads through the migration chain                   |
+| golden-03.json | 3      | Stage 6 rework   | The hotbar, Hild in the shallows                            | Frozen: loads through the migration chain                   |
+| golden-04.json | 4      | Starting weapons | The seax, Hild, the bow, one arrow                          | Frozen: loads through the migration chain                   |
+| golden-05.json | 5      | Stage 7          | The camp's first day and the second                         | Frozen: loads through the migration chain                   |
+| golden-06.json | 6      | Stage 8          | The same day with Hild's talk and job                       | Frozen: loads through the migration chain                   |
+| golden-07.json | 7      | Stage 9          | The same day with Second wind and a few blows               | Frozen: loads through the migration chain                   |
+| golden-08.json | 8      | Stage 10         | The opening and the three searches                          | Frozen: loads through the migration chain                   |
+| golden-09.json | 9      | Stage 11         | The repairs, the oar and a fitting                          | Frozen: loads through the migration chain                   |
+| golden-10.json | 10     | Stage 12         | The rites and the launch: the chapter-end save              | Frozen from addendum 2.4: loads through the migration chain |
+| golden-11.json | 13     | Third playtest   | Chapter 1 as the third playtest plays it (the chapter run)  | Frozen from the fourth playtest: loads through the chain    |
+| golden-12.json | 14     | Fourth playtest  | Chapter 1 as the fourth playtest plays it (the chapter run) | Frozen from Stage 13: loads through the chain               |
+| golden-13.json | 15     | Stage 13         | Golden 12's chapter end, then a voyage to Carrick set out   | Reproduced exactly by its scenario                          |
+
+Only the newest is written: `npm run golden` rewrites `golden-13.json` and nothing else. A frozen
+file is never rewritten; when the world state's version goes up, the new version's migration must
+load every frozen file, and the newest golden save is frozen in turn.
+
+Golden save 10 was frozen early, by design addendum 2.4 (decision DE-80): its scenario began with
+the opening that 2.4 replaced, so it could no longer be made again. Golden save 11 is the new
+chapter-end save: the world of `playChapter('chapter-1')` in `src/tools/play/chapterRun.ts` at the
+scripted pace, the same run whose telemetry the rework report gives.
+
+Design addendum 2.5 raised the world state to version 12 (decision DF-46) without freezing golden
+save 11: the 2.5 rework was still in progress, and the chapter run plays differently under it.
+Once 2.5 was complete, golden save 11 was regenerated at schema 12 (decision DF-86), so its file
+name no longer matches its schema. The step from 11 to 12 is still exercised by goldens 1 to 10.
+
+The user's third playtest raised the world state to version 13 (decision DG-23) while its three
+parts were built; once all three were in, golden save 11 was regenerated at schema 13 (decision
+DG-94). Goldens 1 to 10 stay frozen and load through the migration chain to version 13; the step
+from 12 to 13 is exercised by them, and the step from 11 to 12 too.
+
+The user's fourth playtest raised the world state to version 14 (decision DH-160): the household's
+own life, guarding and pursuit, the steerer's fall and the first raid's stores and facts. This time
+golden save 11 was frozen at schema 13, as this file's rule says, rather than regenerated: it is the
+chapter-end save a player of the third playtest's build holds, and it now loads through the step
+from 13 to 14 and plays on. The new chapter-end save is golden save 12, at schema 14.
+
+Stage 13 raised the world state to version 15 (decision S13-16): the sea (the weather and its
+forecast, the encounter governor, the course plotted and the voyage under way, with the home's
+on-foot scene kept while the steerer is at sea) and the routes known. Golden save 12 was frozen at
+schema 14 and loads through the step to 15, which gives it a sea at rest. Golden save 13 is the
+chapter run's end at schema 15, then a course plotted to Carrick Landing, the boat set out (the
+Carrick raid gate started) and the first watch resolved, so a voyage under way is held in a golden
+save.

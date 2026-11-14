@@ -1,0 +1,87 @@
+{
+  "sheet": "prop_shelter_inside",
+  "kind": "prop",
+  "image": "prop_shelter_inside.png",
+  "width": 40,
+  "height": 32,
+  "pivot": {
+    "x": 20,
+    "y": 30
+  },
+  "footprint": {
+    "w": 30,
+    "h": 5
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "furs": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    },
+    "gear": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "drying": {
+      "frames": 6,
+      "ticks": 9,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 30,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "furs/-/0": [
+      0,
+      0
+    ],
+    "furs/-/1": [
+      40,
+      0
+    ],
+    "furs/-/2": [
+      80,
+      0
+    ],
+    "furs/-/3": [
+      120,
+      0
+    ],
+    "gear/-/0": [
+      0,
+      32
+    ],
+    "drying/-/0": [
+      0,
+      64
+    ],
+    "drying/-/1": [
+      40,
+      64
+    ],
+    "drying/-/2": [
+      80,
+      64
+    ],
+    "drying/-/3": [
+      120,
+      64
+    ],
+    "drying/-/4": [
+      160,
+      64
+    ],
+    "drying/-/5": [
+      200,
+      64
+    ]
+  }
+}

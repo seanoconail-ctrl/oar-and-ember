@@ -1,0 +1,50 @@
+{
+  "sheet": "fx_glint",
+  "kind": "decal",
+  "image": "fx_glint.png",
+  "width": 9,
+  "height": 9,
+  "pivot": {
+    "x": 4,
+    "y": 4
+  },
+  "footprint": {
+    "w": 9,
+    "h": 9
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "glint": {
+      "frames": 5,
+      "ticks": 4,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "glint/-/0": [
+      0,
+      0
+    ],
+    "glint/-/1": [
+      9,
+      0
+    ],
+    "glint/-/2": [
+      18,
+      0
+    ],
+    "glint/-/3": [
+      27,
+      0
+    ],
+    "glint/-/4": [
+      36,
+      0
+    ]
+  }
+}

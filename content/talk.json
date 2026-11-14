@@ -1,0 +1,1667 @@
+{
+  "about": "What residents say (Book 8 sections 05, 08, 09 and 11; Book 2 sections 06 and 16; Stage 8): each speaker's greetings by time of day, activity and voice; barks by category with what they need; the warning-flow lines (remark, complaint, refusal, request to leave; Book 8 section 11), the fear and devotion lines and the rising steps; the job replies; and the conversation topics drawn from memories, each a small tree of nodes (a line and the steerer's replies, each reply a kind from Book 10 section 08, \"Conversation replies\"). The steerer's replies are period voices; the steerer has no voice blip. Lines for the residents who join from Chapter 3 come with the stages that bring them (decision S8-20).",
+  "people": {
+    "C_HILD": {
+      "greetings": [
+        {
+          "key": "c_hild.greet.morning.01",
+          "watch": "MORNING"
+        },
+        {
+          "key": "c_hild.greet.day.01",
+          "watch": "DAY",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_hild.greet.day.02",
+          "watch": "DAY"
+        },
+        {
+          "key": "c_hild.greet.evening.01",
+          "watch": "EVENING"
+        },
+        {
+          "key": "c_hild.greet.evening.02",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_hild.greet.evening.03",
+          "activity": "TENDENCY"
+        },
+        {
+          "key": "c_hild.greet.night.01",
+          "watch": "NIGHT"
+        },
+        {
+          "key": "c_hild.greet.wound.01",
+          "wounded": true
+        },
+        {
+          "key": "c_hild.greet.warm.01",
+          "voice": "WARM"
+        },
+        {
+          "key": "c_hild.greet.cold.01",
+          "voice": "COLD"
+        },
+        {
+          "key": "c_hild.greet.afraid.01",
+          "voice": "AFRAID"
+        },
+        {
+          "key": "c_hild.greet.devoted.01",
+          "voice": "DEVOTED"
+        }
+      ],
+      "barks": [
+        {
+          "key": "c_hild.bark.work.01",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_hild.bark.work.02",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_hild.bark.work.03",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_hild.bark.idle.01",
+          "category": "IDLE",
+          "activity": "EVENING"
+        },
+        {
+          "key": "c_hild.bark.idle.02",
+          "category": "IDLE",
+          "activity": "EVENING"
+        },
+        {
+          "key": "c_hild.bark.supper.01",
+          "category": "IDLE",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_hild.bark.wound.01",
+          "category": "WOUND",
+          "wounded": true
+        },
+        {
+          "key": "c_hild.bark.wound.02",
+          "category": "WOUND",
+          "wounded": true
+        },
+        {
+          "key": "c_hild.bark.weather.01",
+          "category": "WEATHER",
+          "watch": "DAY"
+        },
+        {
+          "key": "c_hild.bark.weather.02",
+          "category": "WEATHER",
+          "season": "Spring"
+        },
+        {
+          "key": "c_hild.bark.shore.01",
+          "category": "IDLE",
+          "activity": "TENDENCY"
+        },
+        {
+          "key": "c_hild.bark.shore.02",
+          "category": "IDLE",
+          "activity": "TENDENCY",
+          "when": [{ "not": { "fact": "ch1.thorkel_body" } }]
+        },
+        {
+          "key": "c_hild.bark.shore.03",
+          "category": "IDLE",
+          "activity": "TENDENCY",
+          "when": [{ "fact": "ch1.thorkel_body" }]
+        },
+        {
+          "key": "c_hild.bark.grief.01",
+          "category": "WOUND",
+          "grief": true
+        }
+      ],
+      "warnings": {
+        "FRIENDSHIP": [
+          "c_hild.warn.friendship.01",
+          "c_hild.warn.friendship.02",
+          "c_hild.warn.friendship.03",
+          "c_hild.warn.friendship.04"
+        ],
+        "HAPPINESS": [
+          "c_hild.warn.happiness.01",
+          "c_hild.warn.happiness.02",
+          "c_hild.warn.happiness.03",
+          "c_hild.warn.happiness.04"
+        ],
+        "FEAR": "c_hild.warn.fear.01",
+        "DEVOTION": "c_hild.warn.devoted.01",
+        "RISING": ["c_hild.warn.rising.01", "c_hild.warn.rising.02", "c_hild.warn.rising.03"]
+      },
+      "jobs": {
+        "ACCEPT": "c_hild.job.accept.01",
+        "REFUSE": "c_hild.job.refuse.01",
+        "REST": "c_hild.job.rest.01",
+        "UNABLE": "c_hild.job.unable.01"
+      },
+      "exit": "c_hild.talk.exit.01"
+    },
+    "C_ODDI": {
+      "greetings": [
+        {
+          "key": "c_oddi.greet.morning.01",
+          "watch": "MORNING"
+        },
+        {
+          "key": "c_oddi.greet.day.01",
+          "watch": "DAY"
+        },
+        {
+          "key": "c_oddi.greet.evening.01",
+          "watch": "EVENING"
+        },
+        {
+          "key": "c_oddi.greet.night.01",
+          "watch": "NIGHT"
+        },
+        {
+          "key": "c_oddi.greet.meal.01",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_oddi.greet.warm.01",
+          "voice": "WARM"
+        },
+        {
+          "key": "c_oddi.greet.cold.01",
+          "voice": "COLD"
+        },
+        {
+          "key": "c_oddi.greet.afraid.01",
+          "voice": "AFRAID"
+        },
+        {
+          "key": "c_oddi.greet.devoted.01",
+          "voice": "DEVOTED"
+        }
+      ],
+      "barks": [
+        {
+          "key": "c_oddi.bark.idle.01",
+          "category": "IDLE"
+        },
+        {
+          "key": "c_oddi.bark.idle.02",
+          "category": "IDLE"
+        },
+        {
+          "key": "c_oddi.bark.work.01",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_oddi.bark.idle.03",
+          "category": "IDLE",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_oddi.bark.wound.01",
+          "category": "WOUND",
+          "wounded": true
+        },
+        {
+          "key": "c_oddi.bark.weather.01",
+          "category": "WEATHER",
+          "watch": "DAY"
+        }
+      ],
+      "warnings": {
+        "FRIENDSHIP": [
+          "c_oddi.warn.friendship.01",
+          "c_oddi.warn.friendship.02",
+          "c_oddi.warn.friendship.03",
+          "c_oddi.warn.friendship.04"
+        ],
+        "HAPPINESS": [
+          "c_oddi.warn.happiness.01",
+          "c_oddi.warn.happiness.02",
+          "c_oddi.warn.happiness.03",
+          "c_oddi.warn.happiness.04"
+        ],
+        "FEAR": "c_oddi.warn.fear.01",
+        "DEVOTION": "c_oddi.warn.devoted.01",
+        "RISING": ["c_oddi.warn.rising.01", "c_oddi.warn.rising.02", "c_oddi.warn.rising.03"]
+      },
+      "jobs": {
+        "ACCEPT": "c_oddi.job.accept.01",
+        "REFUSE": "c_oddi.job.refuse.01",
+        "REST": "c_oddi.job.rest.01",
+        "UNABLE": "c_oddi.job.unable.01"
+      },
+      "exit": "c_oddi.talk.exit.01"
+    },
+    "C_BRAN": {
+      "greetings": [
+        {
+          "key": "c_bran.greet.morning.01",
+          "watch": "MORNING"
+        },
+        {
+          "key": "c_bran.greet.day.01",
+          "watch": "DAY"
+        },
+        {
+          "key": "c_bran.greet.evening.01",
+          "watch": "EVENING"
+        },
+        {
+          "key": "c_bran.greet.night.01",
+          "watch": "NIGHT"
+        },
+        {
+          "key": "c_bran.greet.warm.01",
+          "voice": "WARM"
+        },
+        {
+          "key": "c_bran.greet.cold.01",
+          "voice": "COLD"
+        },
+        {
+          "key": "c_bran.greet.afraid.01",
+          "voice": "AFRAID"
+        },
+        {
+          "key": "c_bran.greet.devoted.01",
+          "voice": "DEVOTED"
+        }
+      ],
+      "barks": [
+        {
+          "key": "c_bran.bark.idle.01",
+          "category": "IDLE",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_bran.bark.idle.02",
+          "category": "IDLE",
+          "activity": "MEAL"
+        },
+        {
+          "key": "c_bran.bark.work.01",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_bran.bark.wound.01",
+          "category": "WOUND",
+          "wounded": true
+        },
+        {
+          "key": "c_bran.bark.weather.01",
+          "category": "WEATHER",
+          "watch": "MORNING"
+        }
+      ],
+      "warnings": {
+        "FRIENDSHIP": [
+          "c_bran.warn.friendship.01",
+          "c_bran.warn.friendship.02",
+          "c_bran.warn.friendship.03",
+          "c_bran.warn.friendship.04"
+        ],
+        "HAPPINESS": [
+          "c_bran.warn.happiness.01",
+          "c_bran.warn.happiness.02",
+          "c_bran.warn.happiness.03",
+          "c_bran.warn.happiness.04"
+        ],
+        "FEAR": "c_bran.warn.fear.01",
+        "DEVOTION": "c_bran.warn.devoted.01",
+        "RISING": ["c_bran.warn.rising.01", "c_bran.warn.rising.02", "c_bran.warn.rising.03"]
+      },
+      "jobs": {
+        "ACCEPT": "c_bran.job.accept.01",
+        "REFUSE": "c_bran.job.refuse.01",
+        "REST": "c_bran.job.rest.01",
+        "UNABLE": "c_bran.job.unable.01"
+      },
+      "exit": "c_bran.talk.exit.01"
+    },
+    "C_RUNA": {
+      "greetings": [
+        {
+          "key": "c_runa.greet.morning.01",
+          "watch": "MORNING"
+        },
+        {
+          "key": "c_runa.greet.day.01",
+          "watch": "DAY"
+        },
+        {
+          "key": "c_runa.greet.evening.01",
+          "watch": "EVENING"
+        },
+        {
+          "key": "c_runa.greet.night.01",
+          "watch": "NIGHT"
+        },
+        {
+          "key": "c_runa.greet.warm.01",
+          "voice": "WARM"
+        },
+        {
+          "key": "c_runa.greet.cold.01",
+          "voice": "COLD"
+        },
+        {
+          "key": "c_runa.greet.afraid.01",
+          "voice": "AFRAID"
+        },
+        {
+          "key": "c_runa.greet.devoted.01",
+          "voice": "DEVOTED"
+        }
+      ],
+      "barks": [
+        {
+          "key": "c_runa.bark.idle.01",
+          "category": "IDLE"
+        },
+        {
+          "key": "c_runa.bark.work.01",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_runa.bark.work.02",
+          "category": "WORK",
+          "activity": "WORK"
+        },
+        {
+          "key": "c_runa.bark.idle.02",
+          "category": "IDLE",
+          "activity": "EVENING"
+        },
+        {
+          "key": "c_runa.bark.wound.01",
+          "category": "WOUND",
+          "wounded": true
+        }
+      ],
+      "warnings": {
+        "FRIENDSHIP": [
+          "c_runa.warn.friendship.01",
+          "c_runa.warn.friendship.02",
+          "c_runa.warn.friendship.03",
+          "c_runa.warn.friendship.04"
+        ],
+        "HAPPINESS": [
+          "c_runa.warn.happiness.01",
+          "c_runa.warn.happiness.02",
+          "c_runa.warn.happiness.03",
+          "c_runa.warn.happiness.04"
+        ],
+        "FEAR": "c_runa.warn.fear.01",
+        "DEVOTION": "c_runa.warn.devoted.01",
+        "RISING": ["c_runa.warn.rising.01", "c_runa.warn.rising.02", "c_runa.warn.rising.03"]
+      },
+      "jobs": {
+        "ACCEPT": "c_runa.job.accept.01",
+        "REFUSE": "c_runa.job.refuse.01",
+        "REST": "c_runa.job.rest.01",
+        "UNABLE": "c_runa.job.unable.01"
+      },
+      "exit": "c_runa.talk.exit.01"
+    }
+  },
+  "topics": [
+    {
+      "id": "c_hild.wound.untended",
+      "speaker": "C_HILD",
+      "memory": "WOUND",
+      "state": "UNTENDED",
+      "priority": 9,
+      "pressing": true,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_hild_wound_untended"
+    },
+    {
+      "id": "c_hild.wound.tended",
+      "speaker": "C_HILD",
+      "memory": "WOUND",
+      "state": "TENDED",
+      "priority": 7,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_hild_wound_tended"
+    },
+    {
+      "id": "c_hild.job",
+      "speaker": "C_HILD",
+      "memory": "JOB",
+      "priority": 2,
+      "labelKey": "ui.talk.topic.job",
+      "root": "c_hild_job",
+      "always": true
+    },
+    {
+      "id": "c_hild.season.spring",
+      "speaker": "C_HILD",
+      "memory": "SEASON",
+      "season": "Spring",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_hild_season_spring",
+      "always": true
+    },
+    {
+      "id": "c_hild.season.summer",
+      "speaker": "C_HILD",
+      "memory": "SEASON",
+      "season": "Summer",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_hild_season_summer",
+      "always": true
+    },
+    {
+      "id": "c_hild.season.autumn",
+      "speaker": "C_HILD",
+      "memory": "SEASON",
+      "season": "Autumn",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_hild_season_autumn",
+      "always": true
+    },
+    {
+      "id": "c_hild.season.winter",
+      "speaker": "C_HILD",
+      "memory": "SEASON",
+      "season": "Winter",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_hild_season_winter",
+      "always": true
+    },
+    {
+      "id": "c_hild.father",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "pressing": true,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father",
+      "when": [{ "not": { "fact": "ch1.thorkel_body" } }]
+    },
+    {
+      "id": "c_hild.father_lost",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_lost",
+      "when": [{ "fact": "ch1.thorkel_body", "is": "LOST" }]
+    },
+    {
+      "id": "c_hild.father_rites",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 9,
+      "always": true,
+      "labelKey": "ui.talk.topic.rites",
+      "root": "c_hild_father_found",
+      "opens": "hild.rites",
+      "when": [
+        { "fact": "ch1.thorkel_body", "is": "CAMP" },
+        { "not": { "fact": "ch1.rites" } },
+        { "not": { "fact": "rites.pending" } },
+        { "not": { "gateStarted": "BEAT_1_LAUNCH" } }
+      ]
+    },
+    {
+      "id": "c_hild.father_found",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_found",
+      "when": [
+        { "fact": "ch1.thorkel_body", "is": "CAMP" },
+        {
+          "any": [
+            { "fact": "rites.pending" },
+            { "fact": "ch1.rites", "is": "DENIED" },
+            { "gateStarted": "BEAT_1_LAUNCH" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c_hild.father_sea",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_sea",
+      "when": [{ "fact": "ch1.rites", "is": "SEA_BURIAL" }, { "not": { "fact": "rites.pending" } }]
+    },
+    {
+      "id": "c_hild.father_stones",
+      "speaker": "C_HILD",
+      "memory": "DEATH",
+      "about": "THORKEL",
+      "priority": 8,
+      "labelKey": "ui.talk.topic.father",
+      "root": "c_hild_father_stones",
+      "when": [
+        { "fact": "ch1.rites", "is": "SHIP_SETTING" },
+        { "not": { "fact": "rites.pending" } }
+      ]
+    },
+    {
+      "id": "c_hild.rescue",
+      "speaker": "C_HILD",
+      "memory": "DEED",
+      "about": "RESCUE",
+      "priority": 6,
+      "labelKey": "ui.talk.topic.rescue",
+      "root": "c_hild_rescue"
+    },
+    {
+      "id": "c_hild.fire",
+      "speaker": "C_HILD",
+      "memory": "EVENT",
+      "about": "FIRE_LIT",
+      "priority": 4,
+      "labelKey": "ui.talk.topic.fire",
+      "root": "c_hild_fire"
+    },
+    {
+      "id": "c_hild.shelter",
+      "speaker": "C_HILD",
+      "memory": "EVENT",
+      "about": "SHELTER",
+      "priority": 4,
+      "labelKey": "ui.talk.topic.shelter",
+      "root": "c_hild_shelter"
+    },
+    {
+      "id": "c_hild.fish",
+      "speaker": "C_HILD",
+      "memory": "EVENT",
+      "about": "FIRST_FISH",
+      "priority": 3,
+      "labelKey": "ui.talk.topic.fish",
+      "root": "c_hild_fish"
+    },
+    {
+      "id": "c_hild.oddi",
+      "speaker": "C_HILD",
+      "memory": "EVENT",
+      "about": "WRECK",
+      "missing": "C_ODDI",
+      "priority": 5,
+      "labelKey": "ui.talk.topic.oddi",
+      "root": "c_hild_oddi"
+    },
+    {
+      "id": "c_oddi.wound.untended",
+      "speaker": "C_ODDI",
+      "memory": "WOUND",
+      "state": "UNTENDED",
+      "priority": 9,
+      "pressing": true,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_oddi_wound_untended"
+    },
+    {
+      "id": "c_oddi.wound.tended",
+      "speaker": "C_ODDI",
+      "memory": "WOUND",
+      "state": "TENDED",
+      "priority": 7,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_oddi_wound_tended"
+    },
+    {
+      "id": "c_oddi.job",
+      "speaker": "C_ODDI",
+      "memory": "JOB",
+      "priority": 2,
+      "labelKey": "ui.talk.topic.job",
+      "root": "c_oddi_job",
+      "always": true
+    },
+    {
+      "id": "c_oddi.season.spring",
+      "speaker": "C_ODDI",
+      "memory": "SEASON",
+      "season": "Spring",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_oddi_season_spring",
+      "always": true
+    },
+    {
+      "id": "c_oddi.season.summer",
+      "speaker": "C_ODDI",
+      "memory": "SEASON",
+      "season": "Summer",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_oddi_season_summer",
+      "always": true
+    },
+    {
+      "id": "c_oddi.season.autumn",
+      "speaker": "C_ODDI",
+      "memory": "SEASON",
+      "season": "Autumn",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_oddi_season_autumn",
+      "always": true
+    },
+    {
+      "id": "c_oddi.season.winter",
+      "speaker": "C_ODDI",
+      "memory": "SEASON",
+      "season": "Winter",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_oddi_season_winter",
+      "always": true
+    },
+    {
+      "id": "c_bran.wound.untended",
+      "speaker": "C_BRAN",
+      "memory": "WOUND",
+      "state": "UNTENDED",
+      "priority": 9,
+      "pressing": true,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_bran_wound_untended"
+    },
+    {
+      "id": "c_bran.wound.tended",
+      "speaker": "C_BRAN",
+      "memory": "WOUND",
+      "state": "TENDED",
+      "priority": 7,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_bran_wound_tended"
+    },
+    {
+      "id": "c_bran.job",
+      "speaker": "C_BRAN",
+      "memory": "JOB",
+      "priority": 2,
+      "labelKey": "ui.talk.topic.job",
+      "root": "c_bran_job",
+      "always": true
+    },
+    {
+      "id": "c_bran.season.spring",
+      "speaker": "C_BRAN",
+      "memory": "SEASON",
+      "season": "Spring",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_bran_season_spring",
+      "always": true
+    },
+    {
+      "id": "c_bran.season.summer",
+      "speaker": "C_BRAN",
+      "memory": "SEASON",
+      "season": "Summer",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_bran_season_summer",
+      "always": true
+    },
+    {
+      "id": "c_bran.season.autumn",
+      "speaker": "C_BRAN",
+      "memory": "SEASON",
+      "season": "Autumn",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_bran_season_autumn",
+      "always": true
+    },
+    {
+      "id": "c_bran.season.winter",
+      "speaker": "C_BRAN",
+      "memory": "SEASON",
+      "season": "Winter",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_bran_season_winter",
+      "always": true
+    },
+    {
+      "id": "c_runa.wound.untended",
+      "speaker": "C_RUNA",
+      "memory": "WOUND",
+      "state": "UNTENDED",
+      "priority": 9,
+      "pressing": true,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_runa_wound_untended"
+    },
+    {
+      "id": "c_runa.wound.tended",
+      "speaker": "C_RUNA",
+      "memory": "WOUND",
+      "state": "TENDED",
+      "priority": 7,
+      "labelKey": "ui.talk.topic.wound",
+      "root": "c_runa_wound_tended"
+    },
+    {
+      "id": "c_runa.job",
+      "speaker": "C_RUNA",
+      "memory": "JOB",
+      "priority": 2,
+      "labelKey": "ui.talk.topic.job",
+      "root": "c_runa_job",
+      "always": true
+    },
+    {
+      "id": "c_runa.season.spring",
+      "speaker": "C_RUNA",
+      "memory": "SEASON",
+      "season": "Spring",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_runa_season_spring",
+      "always": true
+    },
+    {
+      "id": "c_runa.season.summer",
+      "speaker": "C_RUNA",
+      "memory": "SEASON",
+      "season": "Summer",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_runa_season_summer",
+      "always": true
+    },
+    {
+      "id": "c_runa.season.autumn",
+      "speaker": "C_RUNA",
+      "memory": "SEASON",
+      "season": "Autumn",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_runa_season_autumn",
+      "always": true
+    },
+    {
+      "id": "c_runa.season.winter",
+      "speaker": "C_RUNA",
+      "memory": "SEASON",
+      "season": "Winter",
+      "priority": 1,
+      "labelKey": "ui.talk.topic.season",
+      "root": "c_runa_season_winter",
+      "always": true
+    }
+  ],
+  "nodes": {
+    "c_hild_wound_untended": {
+      "line": "c_hild.talk.wound.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        },
+        {
+          "key": "p_steerer.talk.work_on_it",
+          "reply": "Talk",
+          "next": "c_hild_wound_work"
+        },
+        {
+          "key": "p_steerer.talk.later",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_wound_work": {
+      "line": "c_hild.talk.wound.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        }
+      ]
+    },
+    "c_hild_wound_tended": {
+      "line": "c_hild.talk.wound.03",
+      "choices": [
+        {
+          "key": "p_steerer.talk.show_me",
+          "reply": "Warm",
+          "next": "c_hild_wound_inspect"
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_wound_inspect": {
+      "line": "c_hild.talk.wound.04",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_job": {
+      "line": "c_hild.talk.job.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.job.fisher",
+          "reply": "Talk",
+          "act": "JOB:FISHER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.camp",
+          "reply": "Talk",
+          "act": "JOB:CAMP",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.builder",
+          "reply": "Talk",
+          "act": "JOB:BUILDER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.rest",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.none",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_season_spring": {
+      "line": "c_hild.talk.season.spring",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_season_summer": {
+      "line": "c_hild.talk.season.summer",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_season_autumn": {
+      "line": "c_hild.talk.season.autumn",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_season_winter": {
+      "line": "c_hild.talk.season.winter",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father": {
+      "line": "c_hild.talk.father.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.sorry",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more"
+        },
+        {
+          "key": "p_steerer.talk.say_no_more",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_lost": {
+      "line": "c_hild.talk.father.lost",
+      "choices": [
+        {
+          "key": "p_steerer.talk.sorry",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.say_no_more",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_found": {
+      "line": "c_hild.talk.father.found",
+      "choices": [
+        {
+          "key": "p_steerer.talk.sorry",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        },
+        {
+          "key": "p_steerer.talk.say_no_more",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_sea": {
+      "line": "c_hild.talk.father.sea",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        }
+      ]
+    },
+    "c_hild_father_stones": {
+      "line": "c_hild.talk.father.stones",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.what_like",
+          "reply": "Talk",
+          "next": "c_hild_father_more_found"
+        }
+      ]
+    },
+    "c_hild_father_more_found": {
+      "line": "c_hild.talk.father.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.he_was",
+          "reply": "Glad",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.enough",
+          "reply": "Cold",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_father_more": {
+      "line": "c_hild.talk.father.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.we_look",
+          "reply": "Glad",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.enough",
+          "reply": "Cold",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_rescue": {
+      "line": "c_hild.talk.rescue.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.you_would",
+          "reply": "Warm",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.heavy",
+          "reply": "Glad",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_fire": {
+      "line": "c_hild.talk.fire.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.it_is",
+          "reply": "Warm",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_shelter": {
+      "line": "c_hild.talk.shelter.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Warm",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_fish": {
+      "line": "c_hild.talk.fish.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_hild_oddi": {
+      "line": "c_hild.talk.oddi.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.oddi_find",
+          "reply": "Glad",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.oddi_sea",
+          "reply": "Cold",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_wound_untended": {
+      "line": "c_oddi.talk.wound.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        },
+        {
+          "key": "p_steerer.talk.work_on_it",
+          "reply": "Talk",
+          "next": "c_oddi_wound_work"
+        },
+        {
+          "key": "p_steerer.talk.later",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_wound_work": {
+      "line": "c_oddi.talk.wound.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        }
+      ]
+    },
+    "c_oddi_wound_tended": {
+      "line": "c_oddi.talk.wound.03",
+      "choices": [
+        {
+          "key": "p_steerer.talk.show_me",
+          "reply": "Warm",
+          "next": "c_oddi_wound_inspect"
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_wound_inspect": {
+      "line": "c_oddi.talk.wound.04",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_job": {
+      "line": "c_oddi.talk.job.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.job.fisher",
+          "reply": "Talk",
+          "act": "JOB:FISHER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.camp",
+          "reply": "Talk",
+          "act": "JOB:CAMP",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.builder",
+          "reply": "Talk",
+          "act": "JOB:BUILDER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.rest",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.none",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_season_spring": {
+      "line": "c_oddi.talk.season.spring",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_season_summer": {
+      "line": "c_oddi.talk.season.summer",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_season_autumn": {
+      "line": "c_oddi.talk.season.autumn",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_oddi_season_winter": {
+      "line": "c_oddi.talk.season.winter",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_wound_untended": {
+      "line": "c_bran.talk.wound.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        },
+        {
+          "key": "p_steerer.talk.work_on_it",
+          "reply": "Talk",
+          "next": "c_bran_wound_work"
+        },
+        {
+          "key": "p_steerer.talk.later",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_wound_work": {
+      "line": "c_bran.talk.wound.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        }
+      ]
+    },
+    "c_bran_wound_tended": {
+      "line": "c_bran.talk.wound.03",
+      "choices": [
+        {
+          "key": "p_steerer.talk.show_me",
+          "reply": "Warm",
+          "next": "c_bran_wound_inspect"
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_wound_inspect": {
+      "line": "c_bran.talk.wound.04",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_job": {
+      "line": "c_bran.talk.job.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.job.fisher",
+          "reply": "Talk",
+          "act": "JOB:FISHER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.camp",
+          "reply": "Talk",
+          "act": "JOB:CAMP",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.builder",
+          "reply": "Talk",
+          "act": "JOB:BUILDER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.rest",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.none",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_season_spring": {
+      "line": "c_bran.talk.season.spring",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_season_summer": {
+      "line": "c_bran.talk.season.summer",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_season_autumn": {
+      "line": "c_bran.talk.season.autumn",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_bran_season_winter": {
+      "line": "c_bran.talk.season.winter",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_untended": {
+      "line": "c_runa.talk.wound.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        },
+        {
+          "key": "p_steerer.talk.work_on_it",
+          "reply": "Talk",
+          "next": "c_runa_wound_work"
+        },
+        {
+          "key": "p_steerer.talk.later",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_work": {
+      "line": "c_runa.talk.wound.02",
+      "choices": [
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.tend",
+          "reply": "Warm",
+          "act": "TEND"
+        }
+      ]
+    },
+    "c_runa_wound_tended": {
+      "line": "c_runa.talk.wound.03",
+      "choices": [
+        {
+          "key": "p_steerer.talk.show_me",
+          "reply": "Warm",
+          "next": "c_runa_wound_inspect"
+        },
+        {
+          "key": "p_steerer.talk.rest_it",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.carry_on",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_inspect": {
+      "line": "c_runa.talk.wound.04",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_job": {
+      "line": "c_runa.talk.job.01",
+      "choices": [
+        {
+          "key": "p_steerer.talk.job.fisher",
+          "reply": "Talk",
+          "act": "JOB:FISHER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.camp",
+          "reply": "Talk",
+          "act": "JOB:CAMP",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.driftwood",
+          "reply": "Talk",
+          "act": "JOB:DRIFTWOOD",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.builder",
+          "reply": "Talk",
+          "act": "JOB:BUILDER",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.shipwright",
+          "reply": "Talk",
+          "act": "JOB:SHIPWRIGHT",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.rest",
+          "reply": "Talk",
+          "act": "JOB:REST",
+          "end": true
+        },
+        {
+          "key": "p_steerer.talk.job.none",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_season_spring": {
+      "line": "c_runa.talk.season.spring",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_season_summer": {
+      "line": "c_runa.talk.season.summer",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_season_autumn": {
+      "line": "c_runa.talk.season.autumn",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_season_winter": {
+      "line": "c_runa.talk.season.winter",
+      "choices": [
+        {
+          "key": "p_steerer.talk.good",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_refused": {
+      "line": "c_runa.care.refuse",
+      "choices": [
+        {
+          "key": "p_steerer.talk.care.hold_end",
+          "reply": "Warm",
+          "act": "TEND_PERSUADED"
+        },
+        {
+          "key": "p_steerer.talk.care.boat_needs",
+          "reply": "Talk",
+          "next": "c_runa_wound_still"
+        },
+        {
+          "key": "p_steerer.talk.care.suit",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    },
+    "c_runa_wound_still": {
+      "line": "c_runa.care.still",
+      "choices": [
+        {
+          "key": "p_steerer.talk.care.hold_end",
+          "reply": "Warm",
+          "act": "TEND_PERSUADED"
+        },
+        {
+          "key": "p_steerer.talk.care.suit",
+          "reply": "Talk",
+          "end": true
+        }
+      ]
+    }
+  }
+}

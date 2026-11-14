@@ -1,0 +1,70 @@
+{
+  "sheet": "prop_mast_broken",
+  "kind": "prop",
+  "image": "prop_mast_broken.png",
+  "width": 48,
+  "height": 66,
+  "pivot": {
+    "x": 10,
+    "y": 63
+  },
+  "footprint": {
+    "w": 10,
+    "h": 3
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "lashed": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "cut": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 10,
+    "h": 3
+  },
+  "placeholder": false,
+  "frames": {
+    "lashed/-/0": [
+      0,
+      0
+    ],
+    "lashed/-/1": [
+      48,
+      0
+    ],
+    "lashed/-/2": [
+      96,
+      0
+    ],
+    "lashed/-/3": [
+      144,
+      0
+    ],
+    "cut/-/0": [
+      0,
+      66
+    ],
+    "cut/-/1": [
+      48,
+      66
+    ],
+    "cut/-/2": [
+      96,
+      66
+    ],
+    "cut/-/3": [
+      144,
+      66
+    ]
+  }
+}

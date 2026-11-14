@@ -1,0 +1,1644 @@
+{
+  "zone": "ZONE_SK_SEALCAVE_DEEP",
+  "about": "The Seal Cave's deep passage (Book 9 sections 11 and 16; Stage 14, decisions S14-3, S14-8, S14-9 and S14-43): an interior of 48 x 20 tiles read tile for tile from docs/levels/sealcave_passage_tiles.txt by src/tools/levels/zones.ts, with no warp. Rock walls (`r`); the passage floor is wet rock open only on spring-tide days inside the tidal ground window (`n`); the knee-deep pool and the waist-deep lowest point are water (`w`, their bands marked as wades); the crawl's tiles are rock crawled through (marked); the fallen stone lies at P and slides north into its slot (marked, deep.stone). Its way in from Seal Cave's back wall and its way on into the Hollow Cairn are links: the cairn's tidal passage meets its west edge (the two interiors are placed side by side off the island grid by their origins), Seal Cave's back wall is a portal at A. The damp haze and the light off the water are fx props. Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_sealcave_deep",
+  "ground": "tile_cave",
+  "plantSheet": "plant_moor",
+  "tileGrid": "docs/levels/sealcave_passage_tiles.txt",
+  "origin": {
+    "x": 448,
+    "y": 13
+  },
+  "blocks": {
+    "x": 56,
+    "y": 0,
+    "w": 6,
+    "h": 2.5
+  },
+  "warpTiles": 0,
+  "tideLineTiles": 0,
+  "codes": {
+    "#": "r",
+    ".": "n",
+    "k": "w",
+    "v": "w",
+    "c": "r",
+    "P": "n",
+    "p": "n",
+    "A": "n",
+    "B": "n",
+    "L": "n",
+    "S": "n"
+  },
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 45.5,
+      "y": 10.4,
+      "facing": "w"
+    }
+  },
+  "props": [
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 1.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 3.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 5.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 7.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 11.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 13.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 1.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 3.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 5.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 7.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 9.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 11.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 13.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 15.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 17.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 19.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 21.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 23.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 25.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 27.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 29.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 31.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 33.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 35.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 37.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 39.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 41.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 43.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 45.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "haze/-/0",
+      "x": 47.0,
+      "y": 19.0
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "slab/-/0",
+      "x": 22.5,
+      "y": 9.0
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "pushstone/-/0",
+      "x": 23.5,
+      "y": 12.9
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "shoring/-/0",
+      "x": 30.5,
+      "y": 8.1
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "shoring/-/0",
+      "x": 19.5,
+      "y": 13.1
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 31.5,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 34.5,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 37.5,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 40.5,
+      "y": 9.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 5.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 8.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 11.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "caustic/-/0",
+      "x": 14.5,
+      "y": 15.0
+    }
+  ],
+  "cuts": [],
+  "links": [
+    {
+      "edge": "w",
+      "to": "ZONE_SK_CAIRN_IN"
+    }
+  ],
+  "life": [
+    {
+      "kind": "crab",
+      "x": 43.4,
+      "y": 9.6
+    },
+    {
+      "kind": "crab",
+      "x": 27.2,
+      "y": 10.6
+    }
+  ],
+  "traverse": {
+    "crawls": [
+      {
+        "id": "deep.crawl",
+        "tiles": [
+          [24, 8],
+          [23, 8],
+          [22, 8],
+          [21, 8],
+          [20, 8]
+        ],
+        "mouths": [
+          [25, 8],
+          [19, 8]
+        ]
+      }
+    ],
+    "pushes": [
+      {
+        "id": "deep.stone",
+        "line": [
+          [23, 12],
+          [23, 11],
+          [23, 10]
+        ],
+        "start": 0,
+        "sheet": "prop_island",
+        "frame": "pushstone/-/0"
+      }
+    ],
+    "wades": [
+      {
+        "x": 31,
+        "y": 9,
+        "w": 11,
+        "h": 2,
+        "band": "KNEE",
+        "passage": "POOL"
+      },
+      {
+        "x": 4,
+        "y": 15,
+        "w": 12,
+        "h": 2,
+        "band": "WAIST",
+        "passage": "LOWEST"
+      }
+    ]
+  },
+  "portals": [
+    {
+      "id": "deep.a",
+      "exit": {
+        "x": 47,
+        "y": 9,
+        "w": 1,
+        "h": 2
+      },
+      "to": "ZONE_SK_SEALCAVE",
+      "entry": {
+        "x": 56.5,
+        "y": 20.5
+      },
+      "when": {
+        "tide": "SPRING_LOW"
+      }
+    }
+  ],
+  "areas": [],
+  "viewPoints": []
+}

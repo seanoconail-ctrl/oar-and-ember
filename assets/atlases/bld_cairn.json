@@ -1,0 +1,78 @@
+{
+  "sheet": "bld_cairn",
+  "kind": "building",
+  "image": "bld_cairn.png",
+  "width": 267,
+  "height": 338,
+  "pivot": {
+    "x": 134,
+    "y": 207
+  },
+  "footprint": {
+    "w": 267,
+    "h": 338
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "mound": {
+      "frames": 12,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "mound/-/0": [
+      0,
+      0
+    ],
+    "mound/-/1": [
+      267,
+      0
+    ],
+    "mound/-/2": [
+      534,
+      0
+    ],
+    "mound/-/3": [
+      801,
+      0
+    ],
+    "mound/-/4": [
+      1068,
+      0
+    ],
+    "mound/-/5": [
+      1335,
+      0
+    ],
+    "mound/-/6": [
+      1602,
+      0
+    ],
+    "mound/-/7": [
+      1869,
+      0
+    ],
+    "mound/-/8": [
+      2136,
+      0
+    ],
+    "mound/-/9": [
+      2403,
+      0
+    ],
+    "mound/-/10": [
+      2670,
+      0
+    ],
+    "mound/-/11": [
+      2937,
+      0
+    ]
+  }
+}

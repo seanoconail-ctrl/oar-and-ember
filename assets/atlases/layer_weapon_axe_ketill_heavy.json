@@ -1,0 +1,5783 @@
+{
+  "sheet": "layer_weapon_axe_ketill_heavy",
+  "kind": "sprite",
+  "image": "layer_weapon_axe_ketill_heavy.png",
+  "width": 90,
+  "height": 108,
+  "pivot": {
+    "x": 45,
+    "y": 76
+  },
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "idle": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "shift": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "glance": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "idlewind": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "run": {
+      "frames": 8,
+      "ticks": 3,
+      "loop": true
+    },
+    "runstart": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "runstop": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "walkstart": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "walkstop": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "sneak": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "carry": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "gather": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "fish": {
+      "frames": 6,
+      "ticks": 10,
+      "loop": true
+    },
+    "kneel": {
+      "frames": 6,
+      "ticks": 9,
+      "loop": true
+    },
+    "build": {
+      "frames": 6,
+      "ticks": 7,
+      "loop": true
+    },
+    "sleep": {
+      "frames": 2,
+      "ticks": 36,
+      "loop": true
+    },
+    "windup": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "light1": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light2": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light3": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "charge": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": true
+    },
+    "chargewalk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "heavy": {
+      "frames": 3,
+      "ticks": 8,
+      "loop": false
+    },
+    "block": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "parry": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "dodge": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "shove": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "stagger": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "riposte": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "backstab": {
+      "frames": 3,
+      "ticks": 9,
+      "loop": false
+    },
+    "lunge": {
+      "frames": 2,
+      "ticks": 8,
+      "loop": false
+    },
+    "parried": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "getup": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "finish": {
+      "frames": 1,
+      "ticks": 30,
+      "loop": false
+    },
+    "surrender": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "downed": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "dead": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "windup_l": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_h": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_c": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "parry_windup": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "block_raise": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "guard_break": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": false
+    },
+    "exhausted": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "exhausted_walk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "dodge_recover": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "block_backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "overbalance": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "flinch": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "knockdown": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "sidestep": {
+      "frames": 3,
+      "ticks": 5,
+      "loop": false
+    },
+    "hop": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "bind": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "eat_ration": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "fall_fwd": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_back": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_crumple": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "reel": {
+      "frames": 3,
+      "ticks": 12,
+      "loop": true
+    },
+    "guard_turn": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "spare": {
+      "frames": 4,
+      "ticks": 6,
+      "loop": false
+    },
+    "red": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": false
+    },
+    "red_miss": {
+      "frames": 4,
+      "ticks": 11,
+      "loop": false
+    },
+    "fin_seax_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_seax_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    }
+  },
+  "events": {
+    "footstep": "walk 0, walk 3, run 0, run 4, sneak 0, sneak 3, carry 0, carry 3"
+  },
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "idle/s/0": [
+      0,
+      0
+    ],
+    "idle/s/1": [
+      90,
+      0
+    ],
+    "idle/s/2": [
+      180,
+      0
+    ],
+    "idle/s/3": [
+      270,
+      0
+    ],
+    "idle/n/0": [
+      360,
+      0
+    ],
+    "idle/n/1": [
+      450,
+      0
+    ],
+    "idle/n/2": [
+      540,
+      0
+    ],
+    "idle/n/3": [
+      630,
+      0
+    ],
+    "idle/e/0": [
+      720,
+      0
+    ],
+    "idle/e/1": [
+      810,
+      0
+    ],
+    "idle/e/2": [
+      900,
+      0
+    ],
+    "idle/e/3": [
+      990,
+      0
+    ],
+    "idle/w/0": [
+      1080,
+      0
+    ],
+    "idle/w/1": [
+      1170,
+      0
+    ],
+    "idle/w/2": [
+      1260,
+      0
+    ],
+    "idle/w/3": [
+      1350,
+      0
+    ],
+    "shift/s/0": [
+      1440,
+      0
+    ],
+    "shift/s/1": [
+      1530,
+      0
+    ],
+    "shift/s/2": [
+      1620,
+      0
+    ],
+    "shift/s/3": [
+      1710,
+      0
+    ],
+    "shift/n/0": [
+      1800,
+      0
+    ],
+    "shift/n/1": [
+      1890,
+      0
+    ],
+    "shift/n/2": [
+      1980,
+      0
+    ],
+    "shift/n/3": [
+      2070,
+      0
+    ],
+    "shift/e/0": [
+      2160,
+      0
+    ],
+    "shift/e/1": [
+      2250,
+      0
+    ],
+    "shift/e/2": [
+      2340,
+      0
+    ],
+    "shift/e/3": [
+      2430,
+      0
+    ],
+    "shift/w/0": [
+      2520,
+      0
+    ],
+    "shift/w/1": [
+      2610,
+      0
+    ],
+    "shift/w/2": [
+      2700,
+      0
+    ],
+    "shift/w/3": [
+      2790,
+      0
+    ],
+    "glance/s/0": [
+      2880,
+      0
+    ],
+    "glance/s/1": [
+      2970,
+      0
+    ],
+    "glance/s/2": [
+      3060,
+      0
+    ],
+    "glance/s/3": [
+      3150,
+      0
+    ],
+    "glance/n/0": [
+      3240,
+      0
+    ],
+    "glance/n/1": [
+      0,
+      108
+    ],
+    "glance/n/2": [
+      90,
+      108
+    ],
+    "glance/n/3": [
+      180,
+      108
+    ],
+    "glance/e/0": [
+      270,
+      108
+    ],
+    "glance/e/1": [
+      360,
+      108
+    ],
+    "glance/e/2": [
+      450,
+      108
+    ],
+    "glance/e/3": [
+      540,
+      108
+    ],
+    "glance/w/0": [
+      630,
+      108
+    ],
+    "glance/w/1": [
+      720,
+      108
+    ],
+    "glance/w/2": [
+      810,
+      108
+    ],
+    "glance/w/3": [
+      900,
+      108
+    ],
+    "idlewind/s/0": [
+      990,
+      108
+    ],
+    "idlewind/s/1": [
+      1080,
+      108
+    ],
+    "idlewind/s/2": [
+      1170,
+      108
+    ],
+    "idlewind/s/3": [
+      1260,
+      108
+    ],
+    "idlewind/n/0": [
+      1350,
+      108
+    ],
+    "idlewind/n/1": [
+      1440,
+      108
+    ],
+    "idlewind/n/2": [
+      1530,
+      108
+    ],
+    "idlewind/n/3": [
+      1620,
+      108
+    ],
+    "idlewind/e/0": [
+      1710,
+      108
+    ],
+    "idlewind/e/1": [
+      1800,
+      108
+    ],
+    "idlewind/e/2": [
+      1890,
+      108
+    ],
+    "idlewind/e/3": [
+      1980,
+      108
+    ],
+    "idlewind/w/0": [
+      2070,
+      108
+    ],
+    "idlewind/w/1": [
+      2160,
+      108
+    ],
+    "idlewind/w/2": [
+      2250,
+      108
+    ],
+    "idlewind/w/3": [
+      2340,
+      108
+    ],
+    "walk/s/0": [
+      2430,
+      108
+    ],
+    "walk/s/1": [
+      2520,
+      108
+    ],
+    "walk/s/2": [
+      2610,
+      108
+    ],
+    "walk/s/3": [
+      2700,
+      108
+    ],
+    "walk/s/4": [
+      2790,
+      108
+    ],
+    "walk/s/5": [
+      2880,
+      108
+    ],
+    "walk/n/0": [
+      2970,
+      108
+    ],
+    "walk/n/1": [
+      3060,
+      108
+    ],
+    "walk/n/2": [
+      3150,
+      108
+    ],
+    "walk/n/3": [
+      3240,
+      108
+    ],
+    "walk/n/4": [
+      0,
+      216
+    ],
+    "walk/n/5": [
+      90,
+      216
+    ],
+    "walk/e/0": [
+      180,
+      216
+    ],
+    "walk/e/1": [
+      270,
+      216
+    ],
+    "walk/e/2": [
+      360,
+      216
+    ],
+    "walk/e/3": [
+      450,
+      216
+    ],
+    "walk/e/4": [
+      540,
+      216
+    ],
+    "walk/e/5": [
+      630,
+      216
+    ],
+    "walk/w/0": [
+      720,
+      216
+    ],
+    "walk/w/1": [
+      810,
+      216
+    ],
+    "walk/w/2": [
+      900,
+      216
+    ],
+    "walk/w/3": [
+      990,
+      216
+    ],
+    "walk/w/4": [
+      1080,
+      216
+    ],
+    "walk/w/5": [
+      1170,
+      216
+    ],
+    "run/s/0": [
+      1260,
+      216
+    ],
+    "run/s/1": [
+      1350,
+      216
+    ],
+    "run/s/2": [
+      1440,
+      216
+    ],
+    "run/s/3": [
+      1530,
+      216
+    ],
+    "run/s/4": [
+      1620,
+      216
+    ],
+    "run/s/5": [
+      1710,
+      216
+    ],
+    "run/s/6": [
+      1800,
+      216
+    ],
+    "run/s/7": [
+      1890,
+      216
+    ],
+    "run/n/0": [
+      1980,
+      216
+    ],
+    "run/n/1": [
+      2070,
+      216
+    ],
+    "run/n/2": [
+      2160,
+      216
+    ],
+    "run/n/3": [
+      2250,
+      216
+    ],
+    "run/n/4": [
+      2340,
+      216
+    ],
+    "run/n/5": [
+      2430,
+      216
+    ],
+    "run/n/6": [
+      2520,
+      216
+    ],
+    "run/n/7": [
+      2610,
+      216
+    ],
+    "run/e/0": [
+      2700,
+      216
+    ],
+    "run/e/1": [
+      2790,
+      216
+    ],
+    "run/e/2": [
+      2880,
+      216
+    ],
+    "run/e/3": [
+      2970,
+      216
+    ],
+    "run/e/4": [
+      3060,
+      216
+    ],
+    "run/e/5": [
+      3150,
+      216
+    ],
+    "run/e/6": [
+      3240,
+      216
+    ],
+    "run/e/7": [
+      0,
+      324
+    ],
+    "run/w/0": [
+      90,
+      324
+    ],
+    "run/w/1": [
+      180,
+      324
+    ],
+    "run/w/2": [
+      270,
+      324
+    ],
+    "run/w/3": [
+      360,
+      324
+    ],
+    "run/w/4": [
+      450,
+      324
+    ],
+    "run/w/5": [
+      540,
+      324
+    ],
+    "run/w/6": [
+      630,
+      324
+    ],
+    "run/w/7": [
+      720,
+      324
+    ],
+    "runstart/s/0": [
+      810,
+      324
+    ],
+    "runstart/s/1": [
+      900,
+      324
+    ],
+    "runstart/n/0": [
+      990,
+      324
+    ],
+    "runstart/n/1": [
+      1080,
+      324
+    ],
+    "runstart/e/0": [
+      1170,
+      324
+    ],
+    "runstart/e/1": [
+      1260,
+      324
+    ],
+    "runstart/w/0": [
+      1350,
+      324
+    ],
+    "runstart/w/1": [
+      1440,
+      324
+    ],
+    "runstop/s/0": [
+      1530,
+      324
+    ],
+    "runstop/s/1": [
+      1620,
+      324
+    ],
+    "runstop/n/0": [
+      1710,
+      324
+    ],
+    "runstop/n/1": [
+      1800,
+      324
+    ],
+    "runstop/e/0": [
+      1890,
+      324
+    ],
+    "runstop/e/1": [
+      1980,
+      324
+    ],
+    "runstop/w/0": [
+      2070,
+      324
+    ],
+    "runstop/w/1": [
+      2160,
+      324
+    ],
+    "walkstart/s/0": [
+      2250,
+      324
+    ],
+    "walkstart/s/1": [
+      2340,
+      324
+    ],
+    "walkstart/n/0": [
+      2430,
+      324
+    ],
+    "walkstart/n/1": [
+      2520,
+      324
+    ],
+    "walkstart/e/0": [
+      2610,
+      324
+    ],
+    "walkstart/e/1": [
+      2700,
+      324
+    ],
+    "walkstart/w/0": [
+      2790,
+      324
+    ],
+    "walkstart/w/1": [
+      2880,
+      324
+    ],
+    "walkstop/s/0": [
+      2970,
+      324
+    ],
+    "walkstop/s/1": [
+      3060,
+      324
+    ],
+    "walkstop/n/0": [
+      3150,
+      324
+    ],
+    "walkstop/n/1": [
+      3240,
+      324
+    ],
+    "walkstop/e/0": [
+      0,
+      432
+    ],
+    "walkstop/e/1": [
+      90,
+      432
+    ],
+    "walkstop/w/0": [
+      180,
+      432
+    ],
+    "walkstop/w/1": [
+      270,
+      432
+    ],
+    "sneak/s/0": [
+      360,
+      432
+    ],
+    "sneak/s/1": [
+      450,
+      432
+    ],
+    "sneak/s/2": [
+      540,
+      432
+    ],
+    "sneak/s/3": [
+      630,
+      432
+    ],
+    "sneak/s/4": [
+      720,
+      432
+    ],
+    "sneak/s/5": [
+      810,
+      432
+    ],
+    "sneak/n/0": [
+      900,
+      432
+    ],
+    "sneak/n/1": [
+      990,
+      432
+    ],
+    "sneak/n/2": [
+      1080,
+      432
+    ],
+    "sneak/n/3": [
+      1170,
+      432
+    ],
+    "sneak/n/4": [
+      1260,
+      432
+    ],
+    "sneak/n/5": [
+      1350,
+      432
+    ],
+    "sneak/e/0": [
+      1440,
+      432
+    ],
+    "sneak/e/1": [
+      1530,
+      432
+    ],
+    "sneak/e/2": [
+      1620,
+      432
+    ],
+    "sneak/e/3": [
+      1710,
+      432
+    ],
+    "sneak/e/4": [
+      1800,
+      432
+    ],
+    "sneak/e/5": [
+      1890,
+      432
+    ],
+    "sneak/w/0": [
+      1980,
+      432
+    ],
+    "sneak/w/1": [
+      2070,
+      432
+    ],
+    "sneak/w/2": [
+      2160,
+      432
+    ],
+    "sneak/w/3": [
+      2250,
+      432
+    ],
+    "sneak/w/4": [
+      2340,
+      432
+    ],
+    "sneak/w/5": [
+      2430,
+      432
+    ],
+    "carry/s/0": [
+      2520,
+      432
+    ],
+    "carry/s/1": [
+      2610,
+      432
+    ],
+    "carry/s/2": [
+      2700,
+      432
+    ],
+    "carry/s/3": [
+      2790,
+      432
+    ],
+    "carry/s/4": [
+      2880,
+      432
+    ],
+    "carry/s/5": [
+      2970,
+      432
+    ],
+    "carry/n/0": [
+      3060,
+      432
+    ],
+    "carry/n/1": [
+      3150,
+      432
+    ],
+    "carry/n/2": [
+      3240,
+      432
+    ],
+    "carry/n/3": [
+      0,
+      540
+    ],
+    "carry/n/4": [
+      90,
+      540
+    ],
+    "carry/n/5": [
+      180,
+      540
+    ],
+    "carry/e/0": [
+      270,
+      540
+    ],
+    "carry/e/1": [
+      360,
+      540
+    ],
+    "carry/e/2": [
+      450,
+      540
+    ],
+    "carry/e/3": [
+      540,
+      540
+    ],
+    "carry/e/4": [
+      630,
+      540
+    ],
+    "carry/e/5": [
+      720,
+      540
+    ],
+    "carry/w/0": [
+      810,
+      540
+    ],
+    "carry/w/1": [
+      900,
+      540
+    ],
+    "carry/w/2": [
+      990,
+      540
+    ],
+    "carry/w/3": [
+      1080,
+      540
+    ],
+    "carry/w/4": [
+      1170,
+      540
+    ],
+    "carry/w/5": [
+      1260,
+      540
+    ],
+    "gather/s/0": [
+      1350,
+      540
+    ],
+    "gather/s/1": [
+      1440,
+      540
+    ],
+    "gather/s/2": [
+      1530,
+      540
+    ],
+    "gather/s/3": [
+      1620,
+      540
+    ],
+    "gather/s/4": [
+      1710,
+      540
+    ],
+    "gather/s/5": [
+      1800,
+      540
+    ],
+    "gather/n/0": [
+      1890,
+      540
+    ],
+    "gather/n/1": [
+      1980,
+      540
+    ],
+    "gather/n/2": [
+      2070,
+      540
+    ],
+    "gather/n/3": [
+      2160,
+      540
+    ],
+    "gather/n/4": [
+      2250,
+      540
+    ],
+    "gather/n/5": [
+      2340,
+      540
+    ],
+    "gather/e/0": [
+      2430,
+      540
+    ],
+    "gather/e/1": [
+      2520,
+      540
+    ],
+    "gather/e/2": [
+      2610,
+      540
+    ],
+    "gather/e/3": [
+      2700,
+      540
+    ],
+    "gather/e/4": [
+      2790,
+      540
+    ],
+    "gather/e/5": [
+      2880,
+      540
+    ],
+    "gather/w/0": [
+      2970,
+      540
+    ],
+    "gather/w/1": [
+      3060,
+      540
+    ],
+    "gather/w/2": [
+      3150,
+      540
+    ],
+    "gather/w/3": [
+      3240,
+      540
+    ],
+    "gather/w/4": [
+      0,
+      648
+    ],
+    "gather/w/5": [
+      90,
+      648
+    ],
+    "fish/s/0": [
+      180,
+      648
+    ],
+    "fish/s/1": [
+      270,
+      648
+    ],
+    "fish/s/2": [
+      360,
+      648
+    ],
+    "fish/s/3": [
+      450,
+      648
+    ],
+    "fish/s/4": [
+      540,
+      648
+    ],
+    "fish/s/5": [
+      630,
+      648
+    ],
+    "fish/n/0": [
+      720,
+      648
+    ],
+    "fish/n/1": [
+      810,
+      648
+    ],
+    "fish/n/2": [
+      900,
+      648
+    ],
+    "fish/n/3": [
+      990,
+      648
+    ],
+    "fish/n/4": [
+      1080,
+      648
+    ],
+    "fish/n/5": [
+      1170,
+      648
+    ],
+    "fish/e/0": [
+      1260,
+      648
+    ],
+    "fish/e/1": [
+      1350,
+      648
+    ],
+    "fish/e/2": [
+      1440,
+      648
+    ],
+    "fish/e/3": [
+      1530,
+      648
+    ],
+    "fish/e/4": [
+      1620,
+      648
+    ],
+    "fish/e/5": [
+      1710,
+      648
+    ],
+    "fish/w/0": [
+      1800,
+      648
+    ],
+    "fish/w/1": [
+      1890,
+      648
+    ],
+    "fish/w/2": [
+      1980,
+      648
+    ],
+    "fish/w/3": [
+      2070,
+      648
+    ],
+    "fish/w/4": [
+      2160,
+      648
+    ],
+    "fish/w/5": [
+      2250,
+      648
+    ],
+    "kneel/s/0": [
+      2340,
+      648
+    ],
+    "kneel/s/1": [
+      2430,
+      648
+    ],
+    "kneel/s/2": [
+      2520,
+      648
+    ],
+    "kneel/s/3": [
+      2610,
+      648
+    ],
+    "kneel/s/4": [
+      2700,
+      648
+    ],
+    "kneel/s/5": [
+      2790,
+      648
+    ],
+    "kneel/n/0": [
+      2880,
+      648
+    ],
+    "kneel/n/1": [
+      2970,
+      648
+    ],
+    "kneel/n/2": [
+      3060,
+      648
+    ],
+    "kneel/n/3": [
+      3150,
+      648
+    ],
+    "kneel/n/4": [
+      3240,
+      648
+    ],
+    "kneel/n/5": [
+      0,
+      756
+    ],
+    "kneel/e/0": [
+      90,
+      756
+    ],
+    "kneel/e/1": [
+      180,
+      756
+    ],
+    "kneel/e/2": [
+      270,
+      756
+    ],
+    "kneel/e/3": [
+      360,
+      756
+    ],
+    "kneel/e/4": [
+      450,
+      756
+    ],
+    "kneel/e/5": [
+      540,
+      756
+    ],
+    "kneel/w/0": [
+      630,
+      756
+    ],
+    "kneel/w/1": [
+      720,
+      756
+    ],
+    "kneel/w/2": [
+      810,
+      756
+    ],
+    "kneel/w/3": [
+      900,
+      756
+    ],
+    "kneel/w/4": [
+      990,
+      756
+    ],
+    "kneel/w/5": [
+      1080,
+      756
+    ],
+    "build/s/0": [
+      1170,
+      756
+    ],
+    "build/s/1": [
+      1260,
+      756
+    ],
+    "build/s/2": [
+      1350,
+      756
+    ],
+    "build/s/3": [
+      1440,
+      756
+    ],
+    "build/s/4": [
+      1530,
+      756
+    ],
+    "build/s/5": [
+      1620,
+      756
+    ],
+    "build/n/0": [
+      1710,
+      756
+    ],
+    "build/n/1": [
+      1800,
+      756
+    ],
+    "build/n/2": [
+      1890,
+      756
+    ],
+    "build/n/3": [
+      1980,
+      756
+    ],
+    "build/n/4": [
+      2070,
+      756
+    ],
+    "build/n/5": [
+      2160,
+      756
+    ],
+    "build/e/0": [
+      2250,
+      756
+    ],
+    "build/e/1": [
+      2340,
+      756
+    ],
+    "build/e/2": [
+      2430,
+      756
+    ],
+    "build/e/3": [
+      2520,
+      756
+    ],
+    "build/e/4": [
+      2610,
+      756
+    ],
+    "build/e/5": [
+      2700,
+      756
+    ],
+    "build/w/0": [
+      2790,
+      756
+    ],
+    "build/w/1": [
+      2880,
+      756
+    ],
+    "build/w/2": [
+      2970,
+      756
+    ],
+    "build/w/3": [
+      3060,
+      756
+    ],
+    "build/w/4": [
+      3150,
+      756
+    ],
+    "build/w/5": [
+      3240,
+      756
+    ],
+    "sleep/s/0": [
+      0,
+      864
+    ],
+    "sleep/s/1": [
+      90,
+      864
+    ],
+    "sleep/n/0": [
+      180,
+      864
+    ],
+    "sleep/n/1": [
+      270,
+      864
+    ],
+    "sleep/e/0": [
+      360,
+      864
+    ],
+    "sleep/e/1": [
+      450,
+      864
+    ],
+    "sleep/w/0": [
+      540,
+      864
+    ],
+    "sleep/w/1": [
+      630,
+      864
+    ],
+    "windup/s/0": [
+      720,
+      864
+    ],
+    "windup/s/1": [
+      810,
+      864
+    ],
+    "windup/n/0": [
+      900,
+      864
+    ],
+    "windup/n/1": [
+      990,
+      864
+    ],
+    "windup/e/0": [
+      1080,
+      864
+    ],
+    "windup/e/1": [
+      1170,
+      864
+    ],
+    "windup/w/0": [
+      1260,
+      864
+    ],
+    "windup/w/1": [
+      1350,
+      864
+    ],
+    "light1/s/0": [
+      1440,
+      864
+    ],
+    "light1/s/1": [
+      1530,
+      864
+    ],
+    "light1/s/2": [
+      1620,
+      864
+    ],
+    "light1/n/0": [
+      1710,
+      864
+    ],
+    "light1/n/1": [
+      1800,
+      864
+    ],
+    "light1/n/2": [
+      1890,
+      864
+    ],
+    "light1/e/0": [
+      1980,
+      864
+    ],
+    "light1/e/1": [
+      2070,
+      864
+    ],
+    "light1/e/2": [
+      2160,
+      864
+    ],
+    "light1/w/0": [
+      2250,
+      864
+    ],
+    "light1/w/1": [
+      2340,
+      864
+    ],
+    "light1/w/2": [
+      2430,
+      864
+    ],
+    "light2/s/0": [
+      2520,
+      864
+    ],
+    "light2/s/1": [
+      2610,
+      864
+    ],
+    "light2/s/2": [
+      2700,
+      864
+    ],
+    "light2/n/0": [
+      2790,
+      864
+    ],
+    "light2/n/1": [
+      2880,
+      864
+    ],
+    "light2/n/2": [
+      2970,
+      864
+    ],
+    "light2/e/0": [
+      3060,
+      864
+    ],
+    "light2/e/1": [
+      3150,
+      864
+    ],
+    "light2/e/2": [
+      3240,
+      864
+    ],
+    "light2/w/0": [
+      0,
+      972
+    ],
+    "light2/w/1": [
+      90,
+      972
+    ],
+    "light2/w/2": [
+      180,
+      972
+    ],
+    "light3/s/0": [
+      270,
+      972
+    ],
+    "light3/s/1": [
+      360,
+      972
+    ],
+    "light3/s/2": [
+      450,
+      972
+    ],
+    "light3/n/0": [
+      540,
+      972
+    ],
+    "light3/n/1": [
+      630,
+      972
+    ],
+    "light3/n/2": [
+      720,
+      972
+    ],
+    "light3/e/0": [
+      810,
+      972
+    ],
+    "light3/e/1": [
+      900,
+      972
+    ],
+    "light3/e/2": [
+      990,
+      972
+    ],
+    "light3/w/0": [
+      1080,
+      972
+    ],
+    "light3/w/1": [
+      1170,
+      972
+    ],
+    "light3/w/2": [
+      1260,
+      972
+    ],
+    "charge/s/0": [
+      1350,
+      972
+    ],
+    "charge/s/1": [
+      1440,
+      972
+    ],
+    "charge/n/0": [
+      1530,
+      972
+    ],
+    "charge/n/1": [
+      1620,
+      972
+    ],
+    "charge/e/0": [
+      1710,
+      972
+    ],
+    "charge/e/1": [
+      1800,
+      972
+    ],
+    "charge/w/0": [
+      1890,
+      972
+    ],
+    "charge/w/1": [
+      1980,
+      972
+    ],
+    "chargewalk/s/0": [
+      2070,
+      972
+    ],
+    "chargewalk/s/1": [
+      2160,
+      972
+    ],
+    "chargewalk/s/2": [
+      2250,
+      972
+    ],
+    "chargewalk/s/3": [
+      2340,
+      972
+    ],
+    "chargewalk/s/4": [
+      2430,
+      972
+    ],
+    "chargewalk/s/5": [
+      2520,
+      972
+    ],
+    "chargewalk/n/0": [
+      2610,
+      972
+    ],
+    "chargewalk/n/1": [
+      2700,
+      972
+    ],
+    "chargewalk/n/2": [
+      2790,
+      972
+    ],
+    "chargewalk/n/3": [
+      2880,
+      972
+    ],
+    "chargewalk/n/4": [
+      2970,
+      972
+    ],
+    "chargewalk/n/5": [
+      3060,
+      972
+    ],
+    "chargewalk/e/0": [
+      3150,
+      972
+    ],
+    "chargewalk/e/1": [
+      3240,
+      972
+    ],
+    "chargewalk/e/2": [
+      0,
+      1080
+    ],
+    "chargewalk/e/3": [
+      90,
+      1080
+    ],
+    "chargewalk/e/4": [
+      180,
+      1080
+    ],
+    "chargewalk/e/5": [
+      270,
+      1080
+    ],
+    "chargewalk/w/0": [
+      360,
+      1080
+    ],
+    "chargewalk/w/1": [
+      450,
+      1080
+    ],
+    "chargewalk/w/2": [
+      540,
+      1080
+    ],
+    "chargewalk/w/3": [
+      630,
+      1080
+    ],
+    "chargewalk/w/4": [
+      720,
+      1080
+    ],
+    "chargewalk/w/5": [
+      810,
+      1080
+    ],
+    "heavy/s/0": [
+      900,
+      1080
+    ],
+    "heavy/s/1": [
+      990,
+      1080
+    ],
+    "heavy/s/2": [
+      1080,
+      1080
+    ],
+    "heavy/n/0": [
+      1170,
+      1080
+    ],
+    "heavy/n/1": [
+      1260,
+      1080
+    ],
+    "heavy/n/2": [
+      1350,
+      1080
+    ],
+    "heavy/e/0": [
+      1440,
+      1080
+    ],
+    "heavy/e/1": [
+      1530,
+      1080
+    ],
+    "heavy/e/2": [
+      1620,
+      1080
+    ],
+    "heavy/w/0": [
+      1710,
+      1080
+    ],
+    "heavy/w/1": [
+      1800,
+      1080
+    ],
+    "heavy/w/2": [
+      1890,
+      1080
+    ],
+    "block/s/0": [
+      1980,
+      1080
+    ],
+    "block/s/1": [
+      2070,
+      1080
+    ],
+    "block/n/0": [
+      2160,
+      1080
+    ],
+    "block/n/1": [
+      2250,
+      1080
+    ],
+    "block/e/0": [
+      2340,
+      1080
+    ],
+    "block/e/1": [
+      2430,
+      1080
+    ],
+    "block/w/0": [
+      2520,
+      1080
+    ],
+    "block/w/1": [
+      2610,
+      1080
+    ],
+    "parry/s/0": [
+      2700,
+      1080
+    ],
+    "parry/s/1": [
+      2790,
+      1080
+    ],
+    "parry/n/0": [
+      2880,
+      1080
+    ],
+    "parry/n/1": [
+      2970,
+      1080
+    ],
+    "parry/e/0": [
+      3060,
+      1080
+    ],
+    "parry/e/1": [
+      3150,
+      1080
+    ],
+    "parry/w/0": [
+      3240,
+      1080
+    ],
+    "parry/w/1": [
+      0,
+      1188
+    ],
+    "dodge/s/0": [
+      90,
+      1188
+    ],
+    "dodge/s/1": [
+      180,
+      1188
+    ],
+    "dodge/s/2": [
+      270,
+      1188
+    ],
+    "dodge/n/0": [
+      360,
+      1188
+    ],
+    "dodge/n/1": [
+      450,
+      1188
+    ],
+    "dodge/n/2": [
+      540,
+      1188
+    ],
+    "dodge/e/0": [
+      630,
+      1188
+    ],
+    "dodge/e/1": [
+      720,
+      1188
+    ],
+    "dodge/e/2": [
+      810,
+      1188
+    ],
+    "dodge/w/0": [
+      900,
+      1188
+    ],
+    "dodge/w/1": [
+      990,
+      1188
+    ],
+    "dodge/w/2": [
+      1080,
+      1188
+    ],
+    "shove/s/0": [
+      1170,
+      1188
+    ],
+    "shove/s/1": [
+      1260,
+      1188
+    ],
+    "shove/s/2": [
+      1350,
+      1188
+    ],
+    "shove/n/0": [
+      1440,
+      1188
+    ],
+    "shove/n/1": [
+      1530,
+      1188
+    ],
+    "shove/n/2": [
+      1620,
+      1188
+    ],
+    "shove/e/0": [
+      1710,
+      1188
+    ],
+    "shove/e/1": [
+      1800,
+      1188
+    ],
+    "shove/e/2": [
+      1890,
+      1188
+    ],
+    "shove/w/0": [
+      1980,
+      1188
+    ],
+    "shove/w/1": [
+      2070,
+      1188
+    ],
+    "shove/w/2": [
+      2160,
+      1188
+    ],
+    "stagger/s/0": [
+      2250,
+      1188
+    ],
+    "stagger/s/1": [
+      2340,
+      1188
+    ],
+    "stagger/n/0": [
+      2430,
+      1188
+    ],
+    "stagger/n/1": [
+      2520,
+      1188
+    ],
+    "stagger/e/0": [
+      2610,
+      1188
+    ],
+    "stagger/e/1": [
+      2700,
+      1188
+    ],
+    "stagger/w/0": [
+      2790,
+      1188
+    ],
+    "stagger/w/1": [
+      2880,
+      1188
+    ],
+    "riposte/s/0": [
+      2970,
+      1188
+    ],
+    "riposte/s/1": [
+      3060,
+      1188
+    ],
+    "riposte/s/2": [
+      3150,
+      1188
+    ],
+    "riposte/n/0": [
+      3240,
+      1188
+    ],
+    "riposte/n/1": [
+      0,
+      1296
+    ],
+    "riposte/n/2": [
+      90,
+      1296
+    ],
+    "riposte/e/0": [
+      180,
+      1296
+    ],
+    "riposte/e/1": [
+      270,
+      1296
+    ],
+    "riposte/e/2": [
+      360,
+      1296
+    ],
+    "riposte/w/0": [
+      450,
+      1296
+    ],
+    "riposte/w/1": [
+      540,
+      1296
+    ],
+    "riposte/w/2": [
+      630,
+      1296
+    ],
+    "backstab/s/0": [
+      720,
+      1296
+    ],
+    "backstab/s/1": [
+      810,
+      1296
+    ],
+    "backstab/s/2": [
+      900,
+      1296
+    ],
+    "backstab/n/0": [
+      990,
+      1296
+    ],
+    "backstab/n/1": [
+      1080,
+      1296
+    ],
+    "backstab/n/2": [
+      1170,
+      1296
+    ],
+    "backstab/e/0": [
+      1260,
+      1296
+    ],
+    "backstab/e/1": [
+      1350,
+      1296
+    ],
+    "backstab/e/2": [
+      1440,
+      1296
+    ],
+    "backstab/w/0": [
+      1530,
+      1296
+    ],
+    "backstab/w/1": [
+      1620,
+      1296
+    ],
+    "backstab/w/2": [
+      1710,
+      1296
+    ],
+    "lunge/s/0": [
+      1800,
+      1296
+    ],
+    "lunge/s/1": [
+      1890,
+      1296
+    ],
+    "lunge/n/0": [
+      1980,
+      1296
+    ],
+    "lunge/n/1": [
+      2070,
+      1296
+    ],
+    "lunge/e/0": [
+      2160,
+      1296
+    ],
+    "lunge/e/1": [
+      2250,
+      1296
+    ],
+    "lunge/w/0": [
+      2340,
+      1296
+    ],
+    "lunge/w/1": [
+      2430,
+      1296
+    ],
+    "parried/s/0": [
+      2520,
+      1296
+    ],
+    "parried/s/1": [
+      2610,
+      1296
+    ],
+    "parried/n/0": [
+      2700,
+      1296
+    ],
+    "parried/n/1": [
+      2790,
+      1296
+    ],
+    "parried/e/0": [
+      2880,
+      1296
+    ],
+    "parried/e/1": [
+      2970,
+      1296
+    ],
+    "parried/w/0": [
+      3060,
+      1296
+    ],
+    "parried/w/1": [
+      3150,
+      1296
+    ],
+    "getup/s/0": [
+      3240,
+      1296
+    ],
+    "getup/s/1": [
+      0,
+      1404
+    ],
+    "getup/n/0": [
+      90,
+      1404
+    ],
+    "getup/n/1": [
+      180,
+      1404
+    ],
+    "getup/e/0": [
+      270,
+      1404
+    ],
+    "getup/e/1": [
+      360,
+      1404
+    ],
+    "getup/w/0": [
+      450,
+      1404
+    ],
+    "getup/w/1": [
+      540,
+      1404
+    ],
+    "finish/s/0": [
+      630,
+      1404
+    ],
+    "finish/n/0": [
+      720,
+      1404
+    ],
+    "finish/e/0": [
+      810,
+      1404
+    ],
+    "finish/w/0": [
+      900,
+      1404
+    ],
+    "surrender/s/0": [
+      990,
+      1404
+    ],
+    "surrender/s/1": [
+      1080,
+      1404
+    ],
+    "surrender/n/0": [
+      1170,
+      1404
+    ],
+    "surrender/n/1": [
+      1260,
+      1404
+    ],
+    "surrender/e/0": [
+      1350,
+      1404
+    ],
+    "surrender/e/1": [
+      1440,
+      1404
+    ],
+    "surrender/w/0": [
+      1530,
+      1404
+    ],
+    "surrender/w/1": [
+      1620,
+      1404
+    ],
+    "downed/s/0": [
+      1710,
+      1404
+    ],
+    "downed/s/1": [
+      1800,
+      1404
+    ],
+    "downed/n/0": [
+      1890,
+      1404
+    ],
+    "downed/n/1": [
+      1980,
+      1404
+    ],
+    "downed/e/0": [
+      2070,
+      1404
+    ],
+    "downed/e/1": [
+      2160,
+      1404
+    ],
+    "downed/w/0": [
+      2250,
+      1404
+    ],
+    "downed/w/1": [
+      2340,
+      1404
+    ],
+    "dead/s/0": [
+      2430,
+      1404
+    ],
+    "dead/n/0": [
+      2520,
+      1404
+    ],
+    "dead/e/0": [
+      2610,
+      1404
+    ],
+    "dead/w/0": [
+      2700,
+      1404
+    ],
+    "dead_head/s/0": [
+      2790,
+      1404
+    ],
+    "dead_head/n/0": [
+      2880,
+      1404
+    ],
+    "dead_head/e/0": [
+      2970,
+      1404
+    ],
+    "dead_head/w/0": [
+      3060,
+      1404
+    ],
+    "dead_arm/s/0": [
+      3150,
+      1404
+    ],
+    "dead_arm/n/0": [
+      3240,
+      1404
+    ],
+    "dead_arm/e/0": [
+      0,
+      1512
+    ],
+    "dead_arm/w/0": [
+      90,
+      1512
+    ],
+    "dead_leg/s/0": [
+      180,
+      1512
+    ],
+    "dead_leg/n/0": [
+      270,
+      1512
+    ],
+    "dead_leg/e/0": [
+      360,
+      1512
+    ],
+    "dead_leg/w/0": [
+      450,
+      1512
+    ],
+    "piece_head/s/0": [
+      540,
+      1512
+    ],
+    "piece_head/n/0": [
+      630,
+      1512
+    ],
+    "piece_head/e/0": [
+      720,
+      1512
+    ],
+    "piece_head/w/0": [
+      810,
+      1512
+    ],
+    "piece_arm/s/0": [
+      900,
+      1512
+    ],
+    "piece_arm/n/0": [
+      990,
+      1512
+    ],
+    "piece_arm/e/0": [
+      1080,
+      1512
+    ],
+    "piece_arm/w/0": [
+      1170,
+      1512
+    ],
+    "piece_leg/s/0": [
+      1260,
+      1512
+    ],
+    "piece_leg/n/0": [
+      1350,
+      1512
+    ],
+    "piece_leg/e/0": [
+      1440,
+      1512
+    ],
+    "piece_leg/w/0": [
+      1530,
+      1512
+    ],
+    "windup_l/s/0": [
+      1620,
+      1512
+    ],
+    "windup_l/s/1": [
+      1710,
+      1512
+    ],
+    "windup_l/n/0": [
+      1800,
+      1512
+    ],
+    "windup_l/n/1": [
+      1890,
+      1512
+    ],
+    "windup_l/e/0": [
+      1980,
+      1512
+    ],
+    "windup_l/e/1": [
+      2070,
+      1512
+    ],
+    "windup_l/w/0": [
+      2160,
+      1512
+    ],
+    "windup_l/w/1": [
+      2250,
+      1512
+    ],
+    "windup_h/s/0": [
+      2340,
+      1512
+    ],
+    "windup_h/s/1": [
+      2430,
+      1512
+    ],
+    "windup_h/n/0": [
+      2520,
+      1512
+    ],
+    "windup_h/n/1": [
+      2610,
+      1512
+    ],
+    "windup_h/e/0": [
+      2700,
+      1512
+    ],
+    "windup_h/e/1": [
+      2790,
+      1512
+    ],
+    "windup_h/w/0": [
+      2880,
+      1512
+    ],
+    "windup_h/w/1": [
+      2970,
+      1512
+    ],
+    "windup_c/s/0": [
+      3060,
+      1512
+    ],
+    "windup_c/s/1": [
+      3150,
+      1512
+    ],
+    "windup_c/n/0": [
+      3240,
+      1512
+    ],
+    "windup_c/n/1": [
+      0,
+      1620
+    ],
+    "windup_c/e/0": [
+      90,
+      1620
+    ],
+    "windup_c/e/1": [
+      180,
+      1620
+    ],
+    "windup_c/w/0": [
+      270,
+      1620
+    ],
+    "windup_c/w/1": [
+      360,
+      1620
+    ],
+    "parry_windup/s/0": [
+      450,
+      1620
+    ],
+    "parry_windup/s/1": [
+      540,
+      1620
+    ],
+    "parry_windup/n/0": [
+      630,
+      1620
+    ],
+    "parry_windup/n/1": [
+      720,
+      1620
+    ],
+    "parry_windup/e/0": [
+      810,
+      1620
+    ],
+    "parry_windup/e/1": [
+      900,
+      1620
+    ],
+    "parry_windup/w/0": [
+      990,
+      1620
+    ],
+    "parry_windup/w/1": [
+      1080,
+      1620
+    ],
+    "block_raise/s/0": [
+      1170,
+      1620
+    ],
+    "block_raise/s/1": [
+      1260,
+      1620
+    ],
+    "block_raise/n/0": [
+      1350,
+      1620
+    ],
+    "block_raise/n/1": [
+      1440,
+      1620
+    ],
+    "block_raise/e/0": [
+      1530,
+      1620
+    ],
+    "block_raise/e/1": [
+      1620,
+      1620
+    ],
+    "block_raise/w/0": [
+      1710,
+      1620
+    ],
+    "block_raise/w/1": [
+      1800,
+      1620
+    ],
+    "guard_break/s/0": [
+      1890,
+      1620
+    ],
+    "guard_break/s/1": [
+      1980,
+      1620
+    ],
+    "guard_break/s/2": [
+      2070,
+      1620
+    ],
+    "guard_break/s/3": [
+      2160,
+      1620
+    ],
+    "guard_break/n/0": [
+      2250,
+      1620
+    ],
+    "guard_break/n/1": [
+      2340,
+      1620
+    ],
+    "guard_break/n/2": [
+      2430,
+      1620
+    ],
+    "guard_break/n/3": [
+      2520,
+      1620
+    ],
+    "guard_break/e/0": [
+      2610,
+      1620
+    ],
+    "guard_break/e/1": [
+      2700,
+      1620
+    ],
+    "guard_break/e/2": [
+      2790,
+      1620
+    ],
+    "guard_break/e/3": [
+      2880,
+      1620
+    ],
+    "guard_break/w/0": [
+      2970,
+      1620
+    ],
+    "guard_break/w/1": [
+      3060,
+      1620
+    ],
+    "guard_break/w/2": [
+      3150,
+      1620
+    ],
+    "guard_break/w/3": [
+      3240,
+      1620
+    ],
+    "exhausted/s/0": [
+      0,
+      1728
+    ],
+    "exhausted/s/1": [
+      90,
+      1728
+    ],
+    "exhausted/s/2": [
+      180,
+      1728
+    ],
+    "exhausted/s/3": [
+      270,
+      1728
+    ],
+    "exhausted/n/0": [
+      360,
+      1728
+    ],
+    "exhausted/n/1": [
+      450,
+      1728
+    ],
+    "exhausted/n/2": [
+      540,
+      1728
+    ],
+    "exhausted/n/3": [
+      630,
+      1728
+    ],
+    "exhausted/e/0": [
+      720,
+      1728
+    ],
+    "exhausted/e/1": [
+      810,
+      1728
+    ],
+    "exhausted/e/2": [
+      900,
+      1728
+    ],
+    "exhausted/e/3": [
+      990,
+      1728
+    ],
+    "exhausted/w/0": [
+      1080,
+      1728
+    ],
+    "exhausted/w/1": [
+      1170,
+      1728
+    ],
+    "exhausted/w/2": [
+      1260,
+      1728
+    ],
+    "exhausted/w/3": [
+      1350,
+      1728
+    ],
+    "exhausted_walk/s/0": [
+      1440,
+      1728
+    ],
+    "exhausted_walk/s/1": [
+      1530,
+      1728
+    ],
+    "exhausted_walk/s/2": [
+      1620,
+      1728
+    ],
+    "exhausted_walk/s/3": [
+      1710,
+      1728
+    ],
+    "exhausted_walk/s/4": [
+      1800,
+      1728
+    ],
+    "exhausted_walk/s/5": [
+      1890,
+      1728
+    ],
+    "exhausted_walk/n/0": [
+      1980,
+      1728
+    ],
+    "exhausted_walk/n/1": [
+      2070,
+      1728
+    ],
+    "exhausted_walk/n/2": [
+      2160,
+      1728
+    ],
+    "exhausted_walk/n/3": [
+      2250,
+      1728
+    ],
+    "exhausted_walk/n/4": [
+      2340,
+      1728
+    ],
+    "exhausted_walk/n/5": [
+      2430,
+      1728
+    ],
+    "exhausted_walk/e/0": [
+      2520,
+      1728
+    ],
+    "exhausted_walk/e/1": [
+      2610,
+      1728
+    ],
+    "exhausted_walk/e/2": [
+      2700,
+      1728
+    ],
+    "exhausted_walk/e/3": [
+      2790,
+      1728
+    ],
+    "exhausted_walk/e/4": [
+      2880,
+      1728
+    ],
+    "exhausted_walk/e/5": [
+      2970,
+      1728
+    ],
+    "exhausted_walk/w/0": [
+      3060,
+      1728
+    ],
+    "exhausted_walk/w/1": [
+      3150,
+      1728
+    ],
+    "exhausted_walk/w/2": [
+      3240,
+      1728
+    ],
+    "exhausted_walk/w/3": [
+      0,
+      1836
+    ],
+    "exhausted_walk/w/4": [
+      90,
+      1836
+    ],
+    "exhausted_walk/w/5": [
+      180,
+      1836
+    ],
+    "dodge_recover/s/0": [
+      270,
+      1836
+    ],
+    "dodge_recover/s/1": [
+      360,
+      1836
+    ],
+    "dodge_recover/n/0": [
+      450,
+      1836
+    ],
+    "dodge_recover/n/1": [
+      540,
+      1836
+    ],
+    "dodge_recover/e/0": [
+      630,
+      1836
+    ],
+    "dodge_recover/e/1": [
+      720,
+      1836
+    ],
+    "dodge_recover/w/0": [
+      810,
+      1836
+    ],
+    "dodge_recover/w/1": [
+      900,
+      1836
+    ],
+    "backoff/s/0": [
+      990,
+      1836
+    ],
+    "backoff/s/1": [
+      1080,
+      1836
+    ],
+    "backoff/s/2": [
+      1170,
+      1836
+    ],
+    "backoff/s/3": [
+      1260,
+      1836
+    ],
+    "backoff/s/4": [
+      1350,
+      1836
+    ],
+    "backoff/s/5": [
+      1440,
+      1836
+    ],
+    "backoff/n/0": [
+      1530,
+      1836
+    ],
+    "backoff/n/1": [
+      1620,
+      1836
+    ],
+    "backoff/n/2": [
+      1710,
+      1836
+    ],
+    "backoff/n/3": [
+      1800,
+      1836
+    ],
+    "backoff/n/4": [
+      1890,
+      1836
+    ],
+    "backoff/n/5": [
+      1980,
+      1836
+    ],
+    "backoff/e/0": [
+      2070,
+      1836
+    ],
+    "backoff/e/1": [
+      2160,
+      1836
+    ],
+    "backoff/e/2": [
+      2250,
+      1836
+    ],
+    "backoff/e/3": [
+      2340,
+      1836
+    ],
+    "backoff/e/4": [
+      2430,
+      1836
+    ],
+    "backoff/e/5": [
+      2520,
+      1836
+    ],
+    "backoff/w/0": [
+      2610,
+      1836
+    ],
+    "backoff/w/1": [
+      2700,
+      1836
+    ],
+    "backoff/w/2": [
+      2790,
+      1836
+    ],
+    "backoff/w/3": [
+      2880,
+      1836
+    ],
+    "backoff/w/4": [
+      2970,
+      1836
+    ],
+    "backoff/w/5": [
+      3060,
+      1836
+    ],
+    "strafe/s/0": [
+      3150,
+      1836
+    ],
+    "strafe/s/1": [
+      3240,
+      1836
+    ],
+    "strafe/s/2": [
+      0,
+      1944
+    ],
+    "strafe/s/3": [
+      90,
+      1944
+    ],
+    "strafe/s/4": [
+      180,
+      1944
+    ],
+    "strafe/s/5": [
+      270,
+      1944
+    ],
+    "strafe/n/0": [
+      360,
+      1944
+    ],
+    "strafe/n/1": [
+      450,
+      1944
+    ],
+    "strafe/n/2": [
+      540,
+      1944
+    ],
+    "strafe/n/3": [
+      630,
+      1944
+    ],
+    "strafe/n/4": [
+      720,
+      1944
+    ],
+    "strafe/n/5": [
+      810,
+      1944
+    ],
+    "strafe/e/0": [
+      900,
+      1944
+    ],
+    "strafe/e/1": [
+      990,
+      1944
+    ],
+    "strafe/e/2": [
+      1080,
+      1944
+    ],
+    "strafe/e/3": [
+      1170,
+      1944
+    ],
+    "strafe/e/4": [
+      1260,
+      1944
+    ],
+    "strafe/e/5": [
+      1350,
+      1944
+    ],
+    "strafe/w/0": [
+      1440,
+      1944
+    ],
+    "strafe/w/1": [
+      1530,
+      1944
+    ],
+    "strafe/w/2": [
+      1620,
+      1944
+    ],
+    "strafe/w/3": [
+      1710,
+      1944
+    ],
+    "strafe/w/4": [
+      1800,
+      1944
+    ],
+    "strafe/w/5": [
+      1890,
+      1944
+    ],
+    "block_walk/s/0": [
+      1980,
+      1944
+    ],
+    "block_walk/s/1": [
+      2070,
+      1944
+    ],
+    "block_walk/s/2": [
+      2160,
+      1944
+    ],
+    "block_walk/s/3": [
+      2250,
+      1944
+    ],
+    "block_walk/s/4": [
+      2340,
+      1944
+    ],
+    "block_walk/s/5": [
+      2430,
+      1944
+    ],
+    "block_walk/n/0": [
+      2520,
+      1944
+    ],
+    "block_walk/n/1": [
+      2610,
+      1944
+    ],
+    "block_walk/n/2": [
+      2700,
+      1944
+    ],
+    "block_walk/n/3": [
+      2790,
+      1944
+    ],
+    "block_walk/n/4": [
+      2880,
+      1944
+    ],
+    "block_walk/n/5": [
+      2970,
+      1944
+    ],
+    "block_walk/e/0": [
+      3060,
+      1944
+    ],
+    "block_walk/e/1": [
+      3150,
+      1944
+    ],
+    "block_walk/e/2": [
+      3240,
+      1944
+    ],
+    "block_walk/e/3": [
+      0,
+      2052
+    ],
+    "block_walk/e/4": [
+      90,
+      2052
+    ],
+    "block_walk/e/5": [
+      180,
+      2052
+    ],
+    "block_walk/w/0": [
+      270,
+      2052
+    ],
+    "block_walk/w/1": [
+      360,
+      2052
+    ],
+    "block_walk/w/2": [
+      450,
+      2052
+    ],
+    "block_walk/w/3": [
+      540,
+      2052
+    ],
+    "block_walk/w/4": [
+      630,
+      2052
+    ],
+    "block_walk/w/5": [
+      720,
+      2052
+    ],
+    "block_backoff/s/0": [
+      810,
+      2052
+    ],
+    "block_backoff/s/1": [
+      900,
+      2052
+    ],
+    "block_backoff/s/2": [
+      990,
+      2052
+    ],
+    "block_backoff/s/3": [
+      1080,
+      2052
+    ],
+    "block_backoff/s/4": [
+      1170,
+      2052
+    ],
+    "block_backoff/s/5": [
+      1260,
+      2052
+    ],
+    "block_backoff/n/0": [
+      1350,
+      2052
+    ],
+    "block_backoff/n/1": [
+      1440,
+      2052
+    ],
+    "block_backoff/n/2": [
+      1530,
+      2052
+    ],
+    "block_backoff/n/3": [
+      1620,
+      2052
+    ],
+    "block_backoff/n/4": [
+      1710,
+      2052
+    ],
+    "block_backoff/n/5": [
+      1800,
+      2052
+    ],
+    "block_backoff/e/0": [
+      1890,
+      2052
+    ],
+    "block_backoff/e/1": [
+      1980,
+      2052
+    ],
+    "block_backoff/e/2": [
+      2070,
+      2052
+    ],
+    "block_backoff/e/3": [
+      2160,
+      2052
+    ],
+    "block_backoff/e/4": [
+      2250,
+      2052
+    ],
+    "block_backoff/e/5": [
+      2340,
+      2052
+    ],
+    "block_backoff/w/0": [
+      2430,
+      2052
+    ],
+    "block_backoff/w/1": [
+      2520,
+      2052
+    ],
+    "block_backoff/w/2": [
+      2610,
+      2052
+    ],
+    "block_backoff/w/3": [
+      2700,
+      2052
+    ],
+    "block_backoff/w/4": [
+      2790,
+      2052
+    ],
+    "block_backoff/w/5": [
+      2880,
+      2052
+    ],
+    "block_strafe/s/0": [
+      2970,
+      2052
+    ],
+    "block_strafe/s/1": [
+      3060,
+      2052
+    ],
+    "block_strafe/s/2": [
+      3150,
+      2052
+    ],
+    "block_strafe/s/3": [
+      3240,
+      2052
+    ],
+    "block_strafe/s/4": [
+      0,
+      2160
+    ],
+    "block_strafe/s/5": [
+      90,
+      2160
+    ],
+    "block_strafe/n/0": [
+      180,
+      2160
+    ],
+    "block_strafe/n/1": [
+      270,
+      2160
+    ],
+    "block_strafe/n/2": [
+      360,
+      2160
+    ],
+    "block_strafe/n/3": [
+      450,
+      2160
+    ],
+    "block_strafe/n/4": [
+      540,
+      2160
+    ],
+    "block_strafe/n/5": [
+      630,
+      2160
+    ],
+    "block_strafe/e/0": [
+      720,
+      2160
+    ],
+    "block_strafe/e/1": [
+      810,
+      2160
+    ],
+    "block_strafe/e/2": [
+      900,
+      2160
+    ],
+    "block_strafe/e/3": [
+      990,
+      2160
+    ],
+    "block_strafe/e/4": [
+      1080,
+      2160
+    ],
+    "block_strafe/e/5": [
+      1170,
+      2160
+    ],
+    "block_strafe/w/0": [
+      1260,
+      2160
+    ],
+    "block_strafe/w/1": [
+      1350,
+      2160
+    ],
+    "block_strafe/w/2": [
+      1440,
+      2160
+    ],
+    "block_strafe/w/3": [
+      1530,
+      2160
+    ],
+    "block_strafe/w/4": [
+      1620,
+      2160
+    ],
+    "block_strafe/w/5": [
+      1710,
+      2160
+    ],
+    "overbalance/s/0": [
+      1800,
+      2160
+    ],
+    "overbalance/s/1": [
+      1890,
+      2160
+    ],
+    "overbalance/n/0": [
+      1980,
+      2160
+    ],
+    "overbalance/n/1": [
+      2070,
+      2160
+    ],
+    "overbalance/e/0": [
+      2160,
+      2160
+    ],
+    "overbalance/e/1": [
+      2250,
+      2160
+    ],
+    "overbalance/w/0": [
+      2340,
+      2160
+    ],
+    "overbalance/w/1": [
+      2430,
+      2160
+    ],
+    "flinch/s/0": [
+      2520,
+      2160
+    ],
+    "flinch/s/1": [
+      2610,
+      2160
+    ],
+    "flinch/n/0": [
+      2700,
+      2160
+    ],
+    "flinch/n/1": [
+      2790,
+      2160
+    ],
+    "flinch/e/0": [
+      2880,
+      2160
+    ],
+    "flinch/e/1": [
+      2970,
+      2160
+    ],
+    "flinch/w/0": [
+      3060,
+      2160
+    ],
+    "flinch/w/1": [
+      3150,
+      2160
+    ],
+    "knockdown/s/0": [
+      3240,
+      2160
+    ],
+    "knockdown/s/1": [
+      0,
+      2268
+    ],
+    "knockdown/s/2": [
+      90,
+      2268
+    ],
+    "knockdown/n/0": [
+      180,
+      2268
+    ],
+    "knockdown/n/1": [
+      270,
+      2268
+    ],
+    "knockdown/n/2": [
+      360,
+      2268
+    ],
+    "knockdown/e/0": [
+      450,
+      2268
+    ],
+    "knockdown/e/1": [
+      540,
+      2268
+    ],
+    "knockdown/e/2": [
+      630,
+      2268
+    ],
+    "knockdown/w/0": [
+      720,
+      2268
+    ],
+    "knockdown/w/1": [
+      810,
+      2268
+    ],
+    "knockdown/w/2": [
+      900,
+      2268
+    ],
+    "sidestep/s/0": [
+      990,
+      2268
+    ],
+    "sidestep/s/1": [
+      1080,
+      2268
+    ],
+    "sidestep/s/2": [
+      1170,
+      2268
+    ],
+    "sidestep/n/0": [
+      1260,
+      2268
+    ],
+    "sidestep/n/1": [
+      1350,
+      2268
+    ],
+    "sidestep/n/2": [
+      1440,
+      2268
+    ],
+    "sidestep/e/0": [
+      1530,
+      2268
+    ],
+    "sidestep/e/1": [
+      1620,
+      2268
+    ],
+    "sidestep/e/2": [
+      1710,
+      2268
+    ],
+    "sidestep/w/0": [
+      1800,
+      2268
+    ],
+    "sidestep/w/1": [
+      1890,
+      2268
+    ],
+    "sidestep/w/2": [
+      1980,
+      2268
+    ],
+    "hop/s/0": [
+      2070,
+      2268
+    ],
+    "hop/s/1": [
+      2160,
+      2268
+    ],
+    "hop/s/2": [
+      2250,
+      2268
+    ],
+    "hop/n/0": [
+      2340,
+      2268
+    ],
+    "hop/n/1": [
+      2430,
+      2268
+    ],
+    "hop/n/2": [
+      2520,
+      2268
+    ],
+    "hop/e/0": [
+      2610,
+      2268
+    ],
+    "hop/e/1": [
+      2700,
+      2268
+    ],
+    "hop/e/2": [
+      2790,
+      2268
+    ],
+    "hop/w/0": [
+      2880,
+      2268
+    ],
+    "hop/w/1": [
+      2970,
+      2268
+    ],
+    "hop/w/2": [
+      3060,
+      2268
+    ],
+    "bind/s/0": [
+      3150,
+      2268
+    ],
+    "bind/s/1": [
+      3240,
+      2268
+    ],
+    "bind/s/2": [
+      0,
+      2376
+    ],
+    "bind/s/3": [
+      90,
+      2376
+    ],
+    "bind/s/4": [
+      180,
+      2376
+    ],
+    "bind/s/5": [
+      270,
+      2376
+    ],
+    "bind/n/0": [
+      360,
+      2376
+    ],
+    "bind/n/1": [
+      450,
+      2376
+    ],
+    "bind/n/2": [
+      540,
+      2376
+    ],
+    "bind/n/3": [
+      630,
+      2376
+    ],
+    "bind/n/4": [
+      720,
+      2376
+    ],
+    "bind/n/5": [
+      810,
+      2376
+    ],
+    "bind/e/0": [
+      900,
+      2376
+    ],
+    "bind/e/1": [
+      990,
+      2376
+    ],
+    "bind/e/2": [
+      1080,
+      2376
+    ],
+    "bind/e/3": [
+      1170,
+      2376
+    ],
+    "bind/e/4": [
+      1260,
+      2376
+    ],
+    "bind/e/5": [
+      1350,
+      2376
+    ],
+    "bind/w/0": [
+      1440,
+      2376
+    ],
+    "bind/w/1": [
+      1530,
+      2376
+    ],
+    "bind/w/2": [
+      1620,
+      2376
+    ],
+    "bind/w/3": [
+      1710,
+      2376
+    ],
+    "bind/w/4": [
+      1800,
+      2376
+    ],
+    "bind/w/5": [
+      1890,
+      2376
+    ],
+    "eat_ration/s/0": [
+      1980,
+      2376
+    ],
+    "eat_ration/s/1": [
+      2070,
+      2376
+    ],
+    "eat_ration/s/2": [
+      2160,
+      2376
+    ],
+    "eat_ration/s/3": [
+      2250,
+      2376
+    ],
+    "eat_ration/n/0": [
+      2340,
+      2376
+    ],
+    "eat_ration/n/1": [
+      2430,
+      2376
+    ],
+    "eat_ration/n/2": [
+      2520,
+      2376
+    ],
+    "eat_ration/n/3": [
+      2610,
+      2376
+    ],
+    "eat_ration/e/0": [
+      2700,
+      2376
+    ],
+    "eat_ration/e/1": [
+      2790,
+      2376
+    ],
+    "eat_ration/e/2": [
+      2880,
+      2376
+    ],
+    "eat_ration/e/3": [
+      2970,
+      2376
+    ],
+    "eat_ration/w/0": [
+      3060,
+      2376
+    ],
+    "eat_ration/w/1": [
+      3150,
+      2376
+    ],
+    "eat_ration/w/2": [
+      3240,
+      2376
+    ],
+    "eat_ration/w/3": [
+      0,
+      2484
+    ],
+    "fall_fwd/s/0": [
+      90,
+      2484
+    ],
+    "fall_fwd/s/1": [
+      180,
+      2484
+    ],
+    "fall_fwd/n/0": [
+      270,
+      2484
+    ],
+    "fall_fwd/n/1": [
+      360,
+      2484
+    ],
+    "fall_fwd/e/0": [
+      450,
+      2484
+    ],
+    "fall_fwd/e/1": [
+      540,
+      2484
+    ],
+    "fall_fwd/w/0": [
+      630,
+      2484
+    ],
+    "fall_fwd/w/1": [
+      720,
+      2484
+    ],
+    "fall_back/s/0": [
+      810,
+      2484
+    ],
+    "fall_back/s/1": [
+      900,
+      2484
+    ],
+    "fall_back/n/0": [
+      990,
+      2484
+    ],
+    "fall_back/n/1": [
+      1080,
+      2484
+    ],
+    "fall_back/e/0": [
+      1170,
+      2484
+    ],
+    "fall_back/e/1": [
+      1260,
+      2484
+    ],
+    "fall_back/w/0": [
+      1350,
+      2484
+    ],
+    "fall_back/w/1": [
+      1440,
+      2484
+    ],
+    "fall_crumple/s/0": [
+      1530,
+      2484
+    ],
+    "fall_crumple/s/1": [
+      1620,
+      2484
+    ],
+    "fall_crumple/n/0": [
+      1710,
+      2484
+    ],
+    "fall_crumple/n/1": [
+      1800,
+      2484
+    ],
+    "fall_crumple/e/0": [
+      1890,
+      2484
+    ],
+    "fall_crumple/e/1": [
+      1980,
+      2484
+    ],
+    "fall_crumple/w/0": [
+      2070,
+      2484
+    ],
+    "fall_crumple/w/1": [
+      2160,
+      2484
+    ],
+    "reel/s/0": [
+      2250,
+      2484
+    ],
+    "reel/s/1": [
+      2340,
+      2484
+    ],
+    "reel/s/2": [
+      2430,
+      2484
+    ],
+    "reel/n/0": [
+      2520,
+      2484
+    ],
+    "reel/n/1": [
+      2610,
+      2484
+    ],
+    "reel/n/2": [
+      2700,
+      2484
+    ],
+    "reel/e/0": [
+      2790,
+      2484
+    ],
+    "reel/e/1": [
+      2880,
+      2484
+    ],
+    "reel/e/2": [
+      2970,
+      2484
+    ],
+    "reel/w/0": [
+      3060,
+      2484
+    ],
+    "reel/w/1": [
+      3150,
+      2484
+    ],
+    "reel/w/2": [
+      3240,
+      2484
+    ],
+    "guard_turn/s/0": [
+      0,
+      2592
+    ],
+    "guard_turn/s/1": [
+      90,
+      2592
+    ],
+    "guard_turn/s/2": [
+      180,
+      2592
+    ],
+    "guard_turn/n/0": [
+      270,
+      2592
+    ],
+    "guard_turn/n/1": [
+      360,
+      2592
+    ],
+    "guard_turn/n/2": [
+      450,
+      2592
+    ],
+    "guard_turn/e/0": [
+      540,
+      2592
+    ],
+    "guard_turn/e/1": [
+      630,
+      2592
+    ],
+    "guard_turn/e/2": [
+      720,
+      2592
+    ],
+    "guard_turn/w/0": [
+      810,
+      2592
+    ],
+    "guard_turn/w/1": [
+      900,
+      2592
+    ],
+    "guard_turn/w/2": [
+      990,
+      2592
+    ],
+    "spare/s/0": [
+      1080,
+      2592
+    ],
+    "spare/s/1": [
+      1170,
+      2592
+    ],
+    "spare/s/2": [
+      1260,
+      2592
+    ],
+    "spare/s/3": [
+      1350,
+      2592
+    ],
+    "spare/n/0": [
+      1440,
+      2592
+    ],
+    "spare/n/1": [
+      1530,
+      2592
+    ],
+    "spare/n/2": [
+      1620,
+      2592
+    ],
+    "spare/n/3": [
+      1710,
+      2592
+    ],
+    "spare/e/0": [
+      1800,
+      2592
+    ],
+    "spare/e/1": [
+      1890,
+      2592
+    ],
+    "spare/e/2": [
+      1980,
+      2592
+    ],
+    "spare/e/3": [
+      2070,
+      2592
+    ],
+    "spare/w/0": [
+      2160,
+      2592
+    ],
+    "spare/w/1": [
+      2250,
+      2592
+    ],
+    "spare/w/2": [
+      2340,
+      2592
+    ],
+    "spare/w/3": [
+      2430,
+      2592
+    ],
+    "red/s/0": [
+      2520,
+      2592
+    ],
+    "red/s/1": [
+      2610,
+      2592
+    ],
+    "red/s/2": [
+      2700,
+      2592
+    ],
+    "red/s/3": [
+      2790,
+      2592
+    ],
+    "red/n/0": [
+      2880,
+      2592
+    ],
+    "red/n/1": [
+      2970,
+      2592
+    ],
+    "red/n/2": [
+      3060,
+      2592
+    ],
+    "red/n/3": [
+      3150,
+      2592
+    ],
+    "red/e/0": [
+      3240,
+      2592
+    ],
+    "red/e/1": [
+      0,
+      2700
+    ],
+    "red/e/2": [
+      90,
+      2700
+    ],
+    "red/e/3": [
+      180,
+      2700
+    ],
+    "red/w/0": [
+      270,
+      2700
+    ],
+    "red/w/1": [
+      360,
+      2700
+    ],
+    "red/w/2": [
+      450,
+      2700
+    ],
+    "red/w/3": [
+      540,
+      2700
+    ],
+    "red_miss/s/0": [
+      630,
+      2700
+    ],
+    "red_miss/s/1": [
+      720,
+      2700
+    ],
+    "red_miss/s/2": [
+      810,
+      2700
+    ],
+    "red_miss/s/3": [
+      900,
+      2700
+    ],
+    "red_miss/n/0": [
+      990,
+      2700
+    ],
+    "red_miss/n/1": [
+      1080,
+      2700
+    ],
+    "red_miss/n/2": [
+      1170,
+      2700
+    ],
+    "red_miss/n/3": [
+      1260,
+      2700
+    ],
+    "red_miss/e/0": [
+      1350,
+      2700
+    ],
+    "red_miss/e/1": [
+      1440,
+      2700
+    ],
+    "red_miss/e/2": [
+      1530,
+      2700
+    ],
+    "red_miss/e/3": [
+      1620,
+      2700
+    ],
+    "red_miss/w/0": [
+      1710,
+      2700
+    ],
+    "red_miss/w/1": [
+      1800,
+      2700
+    ],
+    "red_miss/w/2": [
+      1890,
+      2700
+    ],
+    "red_miss/w/3": [
+      1980,
+      2700
+    ],
+    "fin_seax_s/s/0": [
+      2070,
+      2700
+    ],
+    "fin_seax_s/s/1": [
+      2160,
+      2700
+    ],
+    "fin_seax_s/s/2": [
+      2250,
+      2700
+    ],
+    "fin_seax_s/s/3": [
+      2340,
+      2700
+    ],
+    "fin_seax_s/s/4": [
+      2430,
+      2700
+    ],
+    "fin_seax_s/s/5": [
+      2520,
+      2700
+    ],
+    "fin_seax_s/s/6": [
+      2610,
+      2700
+    ],
+    "fin_seax_s/s/7": [
+      2700,
+      2700
+    ],
+    "fin_seax_s/n/0": [
+      2790,
+      2700
+    ],
+    "fin_seax_s/n/1": [
+      2880,
+      2700
+    ],
+    "fin_seax_s/n/2": [
+      2970,
+      2700
+    ],
+    "fin_seax_s/n/3": [
+      3060,
+      2700
+    ],
+    "fin_seax_s/n/4": [
+      3150,
+      2700
+    ],
+    "fin_seax_s/n/5": [
+      3240,
+      2700
+    ],
+    "fin_seax_s/n/6": [
+      0,
+      2808
+    ],
+    "fin_seax_s/n/7": [
+      90,
+      2808
+    ],
+    "fin_seax_s/e/0": [
+      180,
+      2808
+    ],
+    "fin_seax_s/e/1": [
+      270,
+      2808
+    ],
+    "fin_seax_s/e/2": [
+      360,
+      2808
+    ],
+    "fin_seax_s/e/3": [
+      450,
+      2808
+    ],
+    "fin_seax_s/e/4": [
+      540,
+      2808
+    ],
+    "fin_seax_s/e/5": [
+      630,
+      2808
+    ],
+    "fin_seax_s/e/6": [
+      720,
+      2808
+    ],
+    "fin_seax_s/e/7": [
+      810,
+      2808
+    ],
+    "fin_seax_s/w/0": [
+      900,
+      2808
+    ],
+    "fin_seax_s/w/1": [
+      990,
+      2808
+    ],
+    "fin_seax_s/w/2": [
+      1080,
+      2808
+    ],
+    "fin_seax_s/w/3": [
+      1170,
+      2808
+    ],
+    "fin_seax_s/w/4": [
+      1260,
+      2808
+    ],
+    "fin_seax_s/w/5": [
+      1350,
+      2808
+    ],
+    "fin_seax_s/w/6": [
+      1440,
+      2808
+    ],
+    "fin_seax_s/w/7": [
+      1530,
+      2808
+    ],
+    "fin_seax_l/s/0": [
+      1620,
+      2808
+    ],
+    "fin_seax_l/s/1": [
+      1710,
+      2808
+    ],
+    "fin_seax_l/s/2": [
+      1800,
+      2808
+    ],
+    "fin_seax_l/s/3": [
+      1890,
+      2808
+    ],
+    "fin_seax_l/s/4": [
+      1980,
+      2808
+    ],
+    "fin_seax_l/s/5": [
+      2070,
+      2808
+    ],
+    "fin_seax_l/s/6": [
+      2160,
+      2808
+    ],
+    "fin_seax_l/s/7": [
+      2250,
+      2808
+    ],
+    "fin_seax_l/n/0": [
+      2340,
+      2808
+    ],
+    "fin_seax_l/n/1": [
+      2430,
+      2808
+    ],
+    "fin_seax_l/n/2": [
+      2520,
+      2808
+    ],
+    "fin_seax_l/n/3": [
+      2610,
+      2808
+    ],
+    "fin_seax_l/n/4": [
+      2700,
+      2808
+    ],
+    "fin_seax_l/n/5": [
+      2790,
+      2808
+    ],
+    "fin_seax_l/n/6": [
+      2880,
+      2808
+    ],
+    "fin_seax_l/n/7": [
+      2970,
+      2808
+    ],
+    "fin_seax_l/e/0": [
+      3060,
+      2808
+    ],
+    "fin_seax_l/e/1": [
+      3150,
+      2808
+    ],
+    "fin_seax_l/e/2": [
+      3240,
+      2808
+    ],
+    "fin_seax_l/e/3": [
+      0,
+      2916
+    ],
+    "fin_seax_l/e/4": [
+      90,
+      2916
+    ],
+    "fin_seax_l/e/5": [
+      180,
+      2916
+    ],
+    "fin_seax_l/e/6": [
+      270,
+      2916
+    ],
+    "fin_seax_l/e/7": [
+      360,
+      2916
+    ],
+    "fin_seax_l/w/0": [
+      450,
+      2916
+    ],
+    "fin_seax_l/w/1": [
+      540,
+      2916
+    ],
+    "fin_seax_l/w/2": [
+      630,
+      2916
+    ],
+    "fin_seax_l/w/3": [
+      720,
+      2916
+    ],
+    "fin_seax_l/w/4": [
+      810,
+      2916
+    ],
+    "fin_seax_l/w/5": [
+      900,
+      2916
+    ],
+    "fin_seax_l/w/6": [
+      990,
+      2916
+    ],
+    "fin_seax_l/w/7": [
+      1080,
+      2916
+    ],
+    "fin_axe_s/s/0": [
+      1170,
+      2916
+    ],
+    "fin_axe_s/s/1": [
+      1260,
+      2916
+    ],
+    "fin_axe_s/s/2": [
+      1350,
+      2916
+    ],
+    "fin_axe_s/s/3": [
+      1440,
+      2916
+    ],
+    "fin_axe_s/s/4": [
+      1530,
+      2916
+    ],
+    "fin_axe_s/s/5": [
+      1620,
+      2916
+    ],
+    "fin_axe_s/s/6": [
+      1710,
+      2916
+    ],
+    "fin_axe_s/s/7": [
+      1800,
+      2916
+    ],
+    "fin_axe_s/n/0": [
+      1890,
+      2916
+    ],
+    "fin_axe_s/n/1": [
+      1980,
+      2916
+    ],
+    "fin_axe_s/n/2": [
+      2070,
+      2916
+    ],
+    "fin_axe_s/n/3": [
+      2160,
+      2916
+    ],
+    "fin_axe_s/n/4": [
+      2250,
+      2916
+    ],
+    "fin_axe_s/n/5": [
+      2340,
+      2916
+    ],
+    "fin_axe_s/n/6": [
+      2430,
+      2916
+    ],
+    "fin_axe_s/n/7": [
+      2520,
+      2916
+    ],
+    "fin_axe_s/e/0": [
+      2610,
+      2916
+    ],
+    "fin_axe_s/e/1": [
+      2700,
+      2916
+    ],
+    "fin_axe_s/e/2": [
+      2790,
+      2916
+    ],
+    "fin_axe_s/e/3": [
+      2880,
+      2916
+    ],
+    "fin_axe_s/e/4": [
+      2970,
+      2916
+    ],
+    "fin_axe_s/e/5": [
+      3060,
+      2916
+    ],
+    "fin_axe_s/e/6": [
+      3150,
+      2916
+    ],
+    "fin_axe_s/e/7": [
+      3240,
+      2916
+    ],
+    "fin_axe_s/w/0": [
+      0,
+      3024
+    ],
+    "fin_axe_s/w/1": [
+      90,
+      3024
+    ],
+    "fin_axe_s/w/2": [
+      180,
+      3024
+    ],
+    "fin_axe_s/w/3": [
+      270,
+      3024
+    ],
+    "fin_axe_s/w/4": [
+      360,
+      3024
+    ],
+    "fin_axe_s/w/5": [
+      450,
+      3024
+    ],
+    "fin_axe_s/w/6": [
+      540,
+      3024
+    ],
+    "fin_axe_s/w/7": [
+      630,
+      3024
+    ],
+    "fin_axe_l/s/0": [
+      720,
+      3024
+    ],
+    "fin_axe_l/s/1": [
+      810,
+      3024
+    ],
+    "fin_axe_l/s/2": [
+      900,
+      3024
+    ],
+    "fin_axe_l/s/3": [
+      990,
+      3024
+    ],
+    "fin_axe_l/s/4": [
+      1080,
+      3024
+    ],
+    "fin_axe_l/s/5": [
+      1170,
+      3024
+    ],
+    "fin_axe_l/s/6": [
+      1260,
+      3024
+    ],
+    "fin_axe_l/s/7": [
+      1350,
+      3024
+    ],
+    "fin_axe_l/n/0": [
+      1440,
+      3024
+    ],
+    "fin_axe_l/n/1": [
+      1530,
+      3024
+    ],
+    "fin_axe_l/n/2": [
+      1620,
+      3024
+    ],
+    "fin_axe_l/n/3": [
+      1710,
+      3024
+    ],
+    "fin_axe_l/n/4": [
+      1800,
+      3024
+    ],
+    "fin_axe_l/n/5": [
+      1890,
+      3024
+    ],
+    "fin_axe_l/n/6": [
+      1980,
+      3024
+    ],
+    "fin_axe_l/n/7": [
+      2070,
+      3024
+    ],
+    "fin_axe_l/e/0": [
+      2160,
+      3024
+    ],
+    "fin_axe_l/e/1": [
+      2250,
+      3024
+    ],
+    "fin_axe_l/e/2": [
+      2340,
+      3024
+    ],
+    "fin_axe_l/e/3": [
+      2430,
+      3024
+    ],
+    "fin_axe_l/e/4": [
+      2520,
+      3024
+    ],
+    "fin_axe_l/e/5": [
+      2610,
+      3024
+    ],
+    "fin_axe_l/e/6": [
+      2700,
+      3024
+    ],
+    "fin_axe_l/e/7": [
+      2790,
+      3024
+    ],
+    "fin_axe_l/w/0": [
+      2880,
+      3024
+    ],
+    "fin_axe_l/w/1": [
+      2970,
+      3024
+    ],
+    "fin_axe_l/w/2": [
+      3060,
+      3024
+    ],
+    "fin_axe_l/w/3": [
+      3150,
+      3024
+    ],
+    "fin_axe_l/w/4": [
+      3240,
+      3024
+    ],
+    "fin_axe_l/w/5": [
+      0,
+      3132
+    ],
+    "fin_axe_l/w/6": [
+      90,
+      3132
+    ],
+    "fin_axe_l/w/7": [
+      180,
+      3132
+    ],
+    "fin_spear_s/s/0": [
+      270,
+      3132
+    ],
+    "fin_spear_s/s/1": [
+      360,
+      3132
+    ],
+    "fin_spear_s/s/2": [
+      450,
+      3132
+    ],
+    "fin_spear_s/s/3": [
+      540,
+      3132
+    ],
+    "fin_spear_s/s/4": [
+      630,
+      3132
+    ],
+    "fin_spear_s/s/5": [
+      720,
+      3132
+    ],
+    "fin_spear_s/s/6": [
+      810,
+      3132
+    ],
+    "fin_spear_s/s/7": [
+      900,
+      3132
+    ],
+    "fin_spear_s/n/0": [
+      990,
+      3132
+    ],
+    "fin_spear_s/n/1": [
+      1080,
+      3132
+    ],
+    "fin_spear_s/n/2": [
+      1170,
+      3132
+    ],
+    "fin_spear_s/n/3": [
+      1260,
+      3132
+    ],
+    "fin_spear_s/n/4": [
+      1350,
+      3132
+    ],
+    "fin_spear_s/n/5": [
+      1440,
+      3132
+    ],
+    "fin_spear_s/n/6": [
+      1530,
+      3132
+    ],
+    "fin_spear_s/n/7": [
+      1620,
+      3132
+    ],
+    "fin_spear_s/e/0": [
+      1710,
+      3132
+    ],
+    "fin_spear_s/e/1": [
+      1800,
+      3132
+    ],
+    "fin_spear_s/e/2": [
+      1890,
+      3132
+    ],
+    "fin_spear_s/e/3": [
+      1980,
+      3132
+    ],
+    "fin_spear_s/e/4": [
+      2070,
+      3132
+    ],
+    "fin_spear_s/e/5": [
+      2160,
+      3132
+    ],
+    "fin_spear_s/e/6": [
+      2250,
+      3132
+    ],
+    "fin_spear_s/e/7": [
+      2340,
+      3132
+    ],
+    "fin_spear_s/w/0": [
+      2430,
+      3132
+    ],
+    "fin_spear_s/w/1": [
+      2520,
+      3132
+    ],
+    "fin_spear_s/w/2": [
+      2610,
+      3132
+    ],
+    "fin_spear_s/w/3": [
+      2700,
+      3132
+    ],
+    "fin_spear_s/w/4": [
+      2790,
+      3132
+    ],
+    "fin_spear_s/w/5": [
+      2880,
+      3132
+    ],
+    "fin_spear_s/w/6": [
+      2970,
+      3132
+    ],
+    "fin_spear_s/w/7": [
+      3060,
+      3132
+    ],
+    "fin_spear_l/s/0": [
+      3150,
+      3132
+    ],
+    "fin_spear_l/s/1": [
+      3240,
+      3132
+    ],
+    "fin_spear_l/s/2": [
+      0,
+      3240
+    ],
+    "fin_spear_l/s/3": [
+      90,
+      3240
+    ],
+    "fin_spear_l/s/4": [
+      180,
+      3240
+    ],
+    "fin_spear_l/s/5": [
+      270,
+      3240
+    ],
+    "fin_spear_l/s/6": [
+      360,
+      3240
+    ],
+    "fin_spear_l/s/7": [
+      450,
+      3240
+    ],
+    "fin_spear_l/n/0": [
+      540,
+      3240
+    ],
+    "fin_spear_l/n/1": [
+      630,
+      3240
+    ],
+    "fin_spear_l/n/2": [
+      720,
+      3240
+    ],
+    "fin_spear_l/n/3": [
+      810,
+      3240
+    ],
+    "fin_spear_l/n/4": [
+      900,
+      3240
+    ],
+    "fin_spear_l/n/5": [
+      990,
+      3240
+    ],
+    "fin_spear_l/n/6": [
+      1080,
+      3240
+    ],
+    "fin_spear_l/n/7": [
+      1170,
+      3240
+    ],
+    "fin_spear_l/e/0": [
+      1260,
+      3240
+    ],
+    "fin_spear_l/e/1": [
+      1350,
+      3240
+    ],
+    "fin_spear_l/e/2": [
+      1440,
+      3240
+    ],
+    "fin_spear_l/e/3": [
+      1530,
+      3240
+    ],
+    "fin_spear_l/e/4": [
+      1620,
+      3240
+    ],
+    "fin_spear_l/e/5": [
+      1710,
+      3240
+    ],
+    "fin_spear_l/e/6": [
+      1800,
+      3240
+    ],
+    "fin_spear_l/e/7": [
+      1890,
+      3240
+    ],
+    "fin_spear_l/w/0": [
+      1980,
+      3240
+    ],
+    "fin_spear_l/w/1": [
+      2070,
+      3240
+    ],
+    "fin_spear_l/w/2": [
+      2160,
+      3240
+    ],
+    "fin_spear_l/w/3": [
+      2250,
+      3240
+    ],
+    "fin_spear_l/w/4": [
+      2340,
+      3240
+    ],
+    "fin_spear_l/w/5": [
+      2430,
+      3240
+    ],
+    "fin_spear_l/w/6": [
+      2520,
+      3240
+    ],
+    "fin_spear_l/w/7": [
+      2610,
+      3240
+    ],
+    "fin_sword_s/s/0": [
+      2700,
+      3240
+    ],
+    "fin_sword_s/s/1": [
+      2790,
+      3240
+    ],
+    "fin_sword_s/s/2": [
+      2880,
+      3240
+    ],
+    "fin_sword_s/s/3": [
+      2970,
+      3240
+    ],
+    "fin_sword_s/s/4": [
+      3060,
+      3240
+    ],
+    "fin_sword_s/s/5": [
+      3150,
+      3240
+    ],
+    "fin_sword_s/s/6": [
+      3240,
+      3240
+    ],
+    "fin_sword_s/s/7": [
+      0,
+      3348
+    ],
+    "fin_sword_s/n/0": [
+      90,
+      3348
+    ],
+    "fin_sword_s/n/1": [
+      180,
+      3348
+    ],
+    "fin_sword_s/n/2": [
+      270,
+      3348
+    ],
+    "fin_sword_s/n/3": [
+      360,
+      3348
+    ],
+    "fin_sword_s/n/4": [
+      450,
+      3348
+    ],
+    "fin_sword_s/n/5": [
+      540,
+      3348
+    ],
+    "fin_sword_s/n/6": [
+      630,
+      3348
+    ],
+    "fin_sword_s/n/7": [
+      720,
+      3348
+    ],
+    "fin_sword_s/e/0": [
+      810,
+      3348
+    ],
+    "fin_sword_s/e/1": [
+      900,
+      3348
+    ],
+    "fin_sword_s/e/2": [
+      990,
+      3348
+    ],
+    "fin_sword_s/e/3": [
+      1080,
+      3348
+    ],
+    "fin_sword_s/e/4": [
+      1170,
+      3348
+    ],
+    "fin_sword_s/e/5": [
+      1260,
+      3348
+    ],
+    "fin_sword_s/e/6": [
+      1350,
+      3348
+    ],
+    "fin_sword_s/e/7": [
+      1440,
+      3348
+    ],
+    "fin_sword_s/w/0": [
+      1530,
+      3348
+    ],
+    "fin_sword_s/w/1": [
+      1620,
+      3348
+    ],
+    "fin_sword_s/w/2": [
+      1710,
+      3348
+    ],
+    "fin_sword_s/w/3": [
+      1800,
+      3348
+    ],
+    "fin_sword_s/w/4": [
+      1890,
+      3348
+    ],
+    "fin_sword_s/w/5": [
+      1980,
+      3348
+    ],
+    "fin_sword_s/w/6": [
+      2070,
+      3348
+    ],
+    "fin_sword_s/w/7": [
+      2160,
+      3348
+    ],
+    "fin_sword_l/s/0": [
+      2250,
+      3348
+    ],
+    "fin_sword_l/s/1": [
+      2340,
+      3348
+    ],
+    "fin_sword_l/s/2": [
+      2430,
+      3348
+    ],
+    "fin_sword_l/s/3": [
+      2520,
+      3348
+    ],
+    "fin_sword_l/s/4": [
+      2610,
+      3348
+    ],
+    "fin_sword_l/s/5": [
+      2700,
+      3348
+    ],
+    "fin_sword_l/s/6": [
+      2790,
+      3348
+    ],
+    "fin_sword_l/s/7": [
+      2880,
+      3348
+    ],
+    "fin_sword_l/n/0": [
+      2970,
+      3348
+    ],
+    "fin_sword_l/n/1": [
+      3060,
+      3348
+    ],
+    "fin_sword_l/n/2": [
+      3150,
+      3348
+    ],
+    "fin_sword_l/n/3": [
+      3240,
+      3348
+    ],
+    "fin_sword_l/n/4": [
+      0,
+      3456
+    ],
+    "fin_sword_l/n/5": [
+      90,
+      3456
+    ],
+    "fin_sword_l/n/6": [
+      180,
+      3456
+    ],
+    "fin_sword_l/n/7": [
+      270,
+      3456
+    ],
+    "fin_sword_l/e/0": [
+      360,
+      3456
+    ],
+    "fin_sword_l/e/1": [
+      450,
+      3456
+    ],
+    "fin_sword_l/e/2": [
+      540,
+      3456
+    ],
+    "fin_sword_l/e/3": [
+      630,
+      3456
+    ],
+    "fin_sword_l/e/4": [
+      720,
+      3456
+    ],
+    "fin_sword_l/e/5": [
+      810,
+      3456
+    ],
+    "fin_sword_l/e/6": [
+      900,
+      3456
+    ],
+    "fin_sword_l/e/7": [
+      990,
+      3456
+    ],
+    "fin_sword_l/w/0": [
+      1080,
+      3456
+    ],
+    "fin_sword_l/w/1": [
+      1170,
+      3456
+    ],
+    "fin_sword_l/w/2": [
+      1260,
+      3456
+    ],
+    "fin_sword_l/w/3": [
+      1350,
+      3456
+    ],
+    "fin_sword_l/w/4": [
+      1440,
+      3456
+    ],
+    "fin_sword_l/w/5": [
+      1530,
+      3456
+    ],
+    "fin_sword_l/w/6": [
+      1620,
+      3456
+    ],
+    "fin_sword_l/w/7": [
+      1710,
+      3456
+    ],
+    "fin_dane_s/s/0": [
+      1800,
+      3456
+    ],
+    "fin_dane_s/s/1": [
+      1890,
+      3456
+    ],
+    "fin_dane_s/s/2": [
+      1980,
+      3456
+    ],
+    "fin_dane_s/s/3": [
+      2070,
+      3456
+    ],
+    "fin_dane_s/s/4": [
+      2160,
+      3456
+    ],
+    "fin_dane_s/s/5": [
+      2250,
+      3456
+    ],
+    "fin_dane_s/s/6": [
+      2340,
+      3456
+    ],
+    "fin_dane_s/s/7": [
+      2430,
+      3456
+    ],
+    "fin_dane_s/n/0": [
+      2520,
+      3456
+    ],
+    "fin_dane_s/n/1": [
+      2610,
+      3456
+    ],
+    "fin_dane_s/n/2": [
+      2700,
+      3456
+    ],
+    "fin_dane_s/n/3": [
+      2790,
+      3456
+    ],
+    "fin_dane_s/n/4": [
+      2880,
+      3456
+    ],
+    "fin_dane_s/n/5": [
+      2970,
+      3456
+    ],
+    "fin_dane_s/n/6": [
+      3060,
+      3456
+    ],
+    "fin_dane_s/n/7": [
+      3150,
+      3456
+    ],
+    "fin_dane_s/e/0": [
+      3240,
+      3456
+    ],
+    "fin_dane_s/e/1": [
+      0,
+      3564
+    ],
+    "fin_dane_s/e/2": [
+      90,
+      3564
+    ],
+    "fin_dane_s/e/3": [
+      180,
+      3564
+    ],
+    "fin_dane_s/e/4": [
+      270,
+      3564
+    ],
+    "fin_dane_s/e/5": [
+      360,
+      3564
+    ],
+    "fin_dane_s/e/6": [
+      450,
+      3564
+    ],
+    "fin_dane_s/e/7": [
+      540,
+      3564
+    ],
+    "fin_dane_s/w/0": [
+      630,
+      3564
+    ],
+    "fin_dane_s/w/1": [
+      720,
+      3564
+    ],
+    "fin_dane_s/w/2": [
+      810,
+      3564
+    ],
+    "fin_dane_s/w/3": [
+      900,
+      3564
+    ],
+    "fin_dane_s/w/4": [
+      990,
+      3564
+    ],
+    "fin_dane_s/w/5": [
+      1080,
+      3564
+    ],
+    "fin_dane_s/w/6": [
+      1170,
+      3564
+    ],
+    "fin_dane_s/w/7": [
+      1260,
+      3564
+    ],
+    "fin_dane_l/s/0": [
+      1350,
+      3564
+    ],
+    "fin_dane_l/s/1": [
+      1440,
+      3564
+    ],
+    "fin_dane_l/s/2": [
+      1530,
+      3564
+    ],
+    "fin_dane_l/s/3": [
+      1620,
+      3564
+    ],
+    "fin_dane_l/s/4": [
+      1710,
+      3564
+    ],
+    "fin_dane_l/s/5": [
+      1800,
+      3564
+    ],
+    "fin_dane_l/s/6": [
+      1890,
+      3564
+    ],
+    "fin_dane_l/s/7": [
+      1980,
+      3564
+    ],
+    "fin_dane_l/n/0": [
+      2070,
+      3564
+    ],
+    "fin_dane_l/n/1": [
+      2160,
+      3564
+    ],
+    "fin_dane_l/n/2": [
+      2250,
+      3564
+    ],
+    "fin_dane_l/n/3": [
+      2340,
+      3564
+    ],
+    "fin_dane_l/n/4": [
+      2430,
+      3564
+    ],
+    "fin_dane_l/n/5": [
+      2520,
+      3564
+    ],
+    "fin_dane_l/n/6": [
+      2610,
+      3564
+    ],
+    "fin_dane_l/n/7": [
+      2700,
+      3564
+    ],
+    "fin_dane_l/e/0": [
+      2790,
+      3564
+    ],
+    "fin_dane_l/e/1": [
+      2880,
+      3564
+    ],
+    "fin_dane_l/e/2": [
+      2970,
+      3564
+    ],
+    "fin_dane_l/e/3": [
+      3060,
+      3564
+    ],
+    "fin_dane_l/e/4": [
+      3150,
+      3564
+    ],
+    "fin_dane_l/e/5": [
+      3240,
+      3564
+    ],
+    "fin_dane_l/e/6": [
+      0,
+      3672
+    ],
+    "fin_dane_l/e/7": [
+      90,
+      3672
+    ],
+    "fin_dane_l/w/0": [
+      180,
+      3672
+    ],
+    "fin_dane_l/w/1": [
+      270,
+      3672
+    ],
+    "fin_dane_l/w/2": [
+      360,
+      3672
+    ],
+    "fin_dane_l/w/3": [
+      450,
+      3672
+    ],
+    "fin_dane_l/w/4": [
+      540,
+      3672
+    ],
+    "fin_dane_l/w/5": [
+      630,
+      3672
+    ],
+    "fin_dane_l/w/6": [
+      720,
+      3672
+    ],
+    "fin_dane_l/w/7": [
+      810,
+      3672
+    ],
+    "fin_club_s/s/0": [
+      900,
+      3672
+    ],
+    "fin_club_s/s/1": [
+      990,
+      3672
+    ],
+    "fin_club_s/s/2": [
+      1080,
+      3672
+    ],
+    "fin_club_s/s/3": [
+      1170,
+      3672
+    ],
+    "fin_club_s/s/4": [
+      1260,
+      3672
+    ],
+    "fin_club_s/s/5": [
+      1350,
+      3672
+    ],
+    "fin_club_s/s/6": [
+      1440,
+      3672
+    ],
+    "fin_club_s/s/7": [
+      1530,
+      3672
+    ],
+    "fin_club_s/n/0": [
+      1620,
+      3672
+    ],
+    "fin_club_s/n/1": [
+      1710,
+      3672
+    ],
+    "fin_club_s/n/2": [
+      1800,
+      3672
+    ],
+    "fin_club_s/n/3": [
+      1890,
+      3672
+    ],
+    "fin_club_s/n/4": [
+      1980,
+      3672
+    ],
+    "fin_club_s/n/5": [
+      2070,
+      3672
+    ],
+    "fin_club_s/n/6": [
+      2160,
+      3672
+    ],
+    "fin_club_s/n/7": [
+      2250,
+      3672
+    ],
+    "fin_club_s/e/0": [
+      2340,
+      3672
+    ],
+    "fin_club_s/e/1": [
+      2430,
+      3672
+    ],
+    "fin_club_s/e/2": [
+      2520,
+      3672
+    ],
+    "fin_club_s/e/3": [
+      2610,
+      3672
+    ],
+    "fin_club_s/e/4": [
+      2700,
+      3672
+    ],
+    "fin_club_s/e/5": [
+      2790,
+      3672
+    ],
+    "fin_club_s/e/6": [
+      2880,
+      3672
+    ],
+    "fin_club_s/e/7": [
+      2970,
+      3672
+    ],
+    "fin_club_s/w/0": [
+      3060,
+      3672
+    ],
+    "fin_club_s/w/1": [
+      3150,
+      3672
+    ],
+    "fin_club_s/w/2": [
+      3240,
+      3672
+    ],
+    "fin_club_s/w/3": [
+      0,
+      3780
+    ],
+    "fin_club_s/w/4": [
+      90,
+      3780
+    ],
+    "fin_club_s/w/5": [
+      180,
+      3780
+    ],
+    "fin_club_s/w/6": [
+      270,
+      3780
+    ],
+    "fin_club_s/w/7": [
+      360,
+      3780
+    ],
+    "fin_club_l/s/0": [
+      450,
+      3780
+    ],
+    "fin_club_l/s/1": [
+      540,
+      3780
+    ],
+    "fin_club_l/s/2": [
+      630,
+      3780
+    ],
+    "fin_club_l/s/3": [
+      720,
+      3780
+    ],
+    "fin_club_l/s/4": [
+      810,
+      3780
+    ],
+    "fin_club_l/s/5": [
+      900,
+      3780
+    ],
+    "fin_club_l/s/6": [
+      990,
+      3780
+    ],
+    "fin_club_l/s/7": [
+      1080,
+      3780
+    ],
+    "fin_club_l/n/0": [
+      1170,
+      3780
+    ],
+    "fin_club_l/n/1": [
+      1260,
+      3780
+    ],
+    "fin_club_l/n/2": [
+      1350,
+      3780
+    ],
+    "fin_club_l/n/3": [
+      1440,
+      3780
+    ],
+    "fin_club_l/n/4": [
+      1530,
+      3780
+    ],
+    "fin_club_l/n/5": [
+      1620,
+      3780
+    ],
+    "fin_club_l/n/6": [
+      1710,
+      3780
+    ],
+    "fin_club_l/n/7": [
+      1800,
+      3780
+    ],
+    "fin_club_l/e/0": [
+      1890,
+      3780
+    ],
+    "fin_club_l/e/1": [
+      1980,
+      3780
+    ],
+    "fin_club_l/e/2": [
+      2070,
+      3780
+    ],
+    "fin_club_l/e/3": [
+      2160,
+      3780
+    ],
+    "fin_club_l/e/4": [
+      2250,
+      3780
+    ],
+    "fin_club_l/e/5": [
+      2340,
+      3780
+    ],
+    "fin_club_l/e/6": [
+      2430,
+      3780
+    ],
+    "fin_club_l/e/7": [
+      2520,
+      3780
+    ],
+    "fin_club_l/w/0": [
+      2610,
+      3780
+    ],
+    "fin_club_l/w/1": [
+      2700,
+      3780
+    ],
+    "fin_club_l/w/2": [
+      2790,
+      3780
+    ],
+    "fin_club_l/w/3": [
+      2880,
+      3780
+    ],
+    "fin_club_l/w/4": [
+      2970,
+      3780
+    ],
+    "fin_club_l/w/5": [
+      3060,
+      3780
+    ],
+    "fin_club_l/w/6": [
+      3150,
+      3780
+    ],
+    "fin_club_l/w/7": [
+      3240,
+      3780
+    ]
+  }
+}

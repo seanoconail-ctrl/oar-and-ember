@@ -1,0 +1,130 @@
+# Lint, test and build on every push. Pushes to main, and to the working branch while Stages 1 to 6
+# are built, publish the build to GitHub Pages and check the published address in Chromium (Linux)
+# and WebKit (Linux, in Playwright's image). Publishing waits for both. Firefox is not tested, at
+# the user's request (decision BR-9: the game ships on Steam in a Chromium-based wrapper).
+#
+# Repository settings needed once:
+# - Settings > Pages > Build and deployment > Source: "GitHub Actions".
+# - Settings > Environments > github-pages > Deployment branches: allow claude/lucid-bell-kgmdfi
+#   (only while that branch is published; main is allowed by default).
+name: CI and Pages
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # Never cancel a run on a published branch part-way through publishing.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/claude/lucid-bell-kgmdfi' }}
+
+jobs:
+  check:
+    name: Lint, test, build and Chromium smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      # The system libraries come from Ubuntu's mirrors, which are sometimes unreachable from the
+      # runners; the runner image already has what Chromium needs, so fall back to the browser alone.
+      - name: Install Chromium for the smoke test
+        run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
+      - run: npm run test:browser -- --project=chromium
+      - name: Keep the built site for Pages
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  # WebKit runs on Linux inside Playwright's own image (pinned to the Playwright version in
+  # package.json), which carries every library WebKit needs. On the macOS runners WebKit's WebGL
+  # context was lost as soon as it was made (renderer "null"), headless or headed.
+  # Blocks publishing (decision BR-4, BR-7).
+  browsers-webkit:
+    name: WebKit smoke test (Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # For the log only: never fails the job.
+      - name: What WebGL2 the browser offers, and how much of the game it draws
+        run: |
+          npx vite preview --port 4174 --strictPort > /dev/null 2>&1 &
+          sleep 3
+          node tests/browser/webgl-probe.ts webkit headless http://localhost:4174/ || true
+      - run: npm run test:browser -- --project=webkit
+      - name: Keep the failed tests' screenshots and page snapshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-webkit
+          path: test-results
+          retention-days: 7
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: [check, browsers-webkit]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/lucid-bell-kgmdfi')
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  published:
+    name: Smoke-test the published address (Chromium)
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
+      - run: npm run test:browser -- --project=chromium
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page_url }}
+
+  published-webkit:
+    name: Smoke-test the published address (WebKit, Linux)
+    needs: deploy
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:browser -- --project=webkit
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.page_url }}

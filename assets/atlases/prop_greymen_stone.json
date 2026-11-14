@@ -1,0 +1,37 @@
+{
+  "sheet": "prop_greymen_stone",
+  "kind": "prop",
+  "image": "prop_greymen_stone.png",
+  "width": 16,
+  "height": 44,
+  "pivot": {
+    "x": 8,
+    "y": 42
+  },
+  "footprint": {
+    "w": 10,
+    "h": 3
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "stand": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 14,
+    "h": 4
+  },
+  "placeholder": false,
+  "frames": {
+    "stand/-/0": [
+      0,
+      0
+    ]
+  }
+}

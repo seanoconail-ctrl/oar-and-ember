@@ -1,0 +1,57 @@
+{
+  "about": "Art direction for the renderer (Book 7 sections 01 and 08). Ambient light multiplies every colour by value/255; light pools add their colour in bands. Day is cool and clear; dusk (first and last light) is a grey half-light, a little warm; night leaves the scene readable in blue shadow, with lantern and hearth pools.",
+  "phases": {
+    "day": {
+      "ambient": [255, 255, 255]
+    },
+    "dusk": {
+      "ambient": [228, 214, 204]
+    },
+    "night": {
+      "ambient": [92, 116, 164]
+    }
+  },
+  "poolBands": 3,
+  "cutawayFade": 0.5,
+  "fire": {
+    "about": "The camp fire's light (Book 7 sections 08 and 14): a warm pool added to the ambient light, wider as the light goes, flickering by this share of its radius.",
+    "radius": {
+      "day": 30,
+      "dusk": 76,
+      "night": 110
+    },
+    "colour": {
+      "day": [40, 20, 2],
+      "dusk": [132, 72, 24],
+      "night": [196, 112, 44]
+    },
+    "flicker": 0.07,
+    "core": {
+      "about": "The user's fourth playtest (request 23; DH-124): the hearth's hot core, a tighter, warmer pool inside the wide one, flickering against it.",
+      "radius": {
+        "day": 0,
+        "dusk": 34,
+        "night": 48
+      },
+      "colour": {
+        "day": [0, 0, 0],
+        "dusk": [70, 34, 8],
+        "night": [96, 46, 10]
+      }
+    },
+    "lamp": {
+      "about": "A soapstone lamp in its wall niche at S1 (DH-124): a small warm pool on the north wall.",
+      "radius": {
+        "day": 0,
+        "dusk": 22,
+        "night": 30
+      },
+      "colour": {
+        "day": [0, 0, 0],
+        "dusk": [60, 34, 10],
+        "night": [90, 52, 16]
+      },
+      "flicker": 0.08
+    }
+  }
+}

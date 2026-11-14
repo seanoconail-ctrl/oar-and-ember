@@ -1,0 +1,91 @@
+[
+  {
+    "id": "BEAT_1_ODDI_THEFT",
+    "about": "Oddi's food-theft scene (Book 5 section 02: he has already stolen food from the shared supplies; it is found in his bedding on the second night; Book 5 section 10: the household's first theft dispute; Book 8 section 12: the dispute's shape). It fires when its conditions hold: Oddi is a resident with the light-fingered trait, food is hidden in his bedding, it is his second night or later in the household, the evening has come, and the steerer is at home within earshot of the fire. Whoever of the finders is at the fire finds it; with none there, the steerer does.",
+    "kind": "THEFT",
+    "thief": "C_ODDI",
+    "trait": "LIGHT_FINGERED",
+    "nightsInHousehold": 2,
+    "from": "20:30",
+    "until": "22:00",
+    "finders": ["C_HILD", "C_BRAN", "C_RUNA"],
+    "open": {
+      "C_HILD": "c_hild.scene.theft.found",
+      "C_BRAN": "c_bran.scene.theft.found",
+      "C_RUNA": "c_runa.scene.theft.found",
+      "none": "caption.scene.theft_found"
+    },
+    "excuse": "c_oddi.scene.theft.excuse",
+    "witness": {
+      "C_HILD": "c_hild.scene.theft.witness",
+      "C_BRAN": "c_bran.scene.theft.witness",
+      "C_RUNA": "c_runa.scene.theft.witness"
+    },
+    "choices": [
+      {
+        "key": "p_steerer.scene.theft.fair",
+        "judgement": "COMPROMISE",
+        "outcome": "FAIR",
+        "returned": true,
+        "like": "TRUSTED",
+        "thief": "c_oddi.scene.theft.fair",
+        "reaction": {
+          "C_HILD": "c_hild.scene.theft.fair",
+          "C_BRAN": "c_bran.scene.theft.fair",
+          "C_RUNA": "c_runa.scene.theft.fair"
+        }
+      },
+      {
+        "key": "p_steerer.scene.theft.punish",
+        "judgement": "PUNISH",
+        "outcome": "PUNISHED",
+        "returned": true,
+        "reply": "Punished",
+        "thief": "c_oddi.scene.theft.punish",
+        "reaction": {
+          "C_HILD": "c_hild.scene.theft.punish",
+          "C_BRAN": "c_bran.scene.theft.punish",
+          "C_RUNA": "c_runa.scene.theft.punish"
+        }
+      },
+      {
+        "key": "p_steerer.scene.theft.shame",
+        "judgement": "PUNISH",
+        "outcome": "SHAMED",
+        "returned": true,
+        "reply": "Shamed",
+        "thief": "c_oddi.scene.theft.shame",
+        "reaction": {
+          "C_HILD": "c_hild.scene.theft.shame",
+          "C_BRAN": "c_bran.scene.theft.shame",
+          "C_RUNA": "c_runa.scene.theft.shame"
+        }
+      },
+      {
+        "key": "p_steerer.scene.theft.side",
+        "judgement": "TAKE_SIDE",
+        "outcome": "EXCUSED",
+        "favour": "THIEF",
+        "returned": false,
+        "thief": "c_oddi.scene.theft.side",
+        "reaction": {
+          "C_HILD": "c_hild.scene.theft.side",
+          "C_BRAN": "c_bran.scene.theft.side",
+          "C_RUNA": "c_runa.scene.theft.side"
+        }
+      },
+      {
+        "key": "p_steerer.scene.theft.ignore",
+        "judgement": "IGNORE",
+        "outcome": "IGNORED",
+        "returned": false,
+        "thief": null,
+        "reaction": {
+          "C_HILD": "c_hild.scene.theft.ignore",
+          "C_BRAN": "c_bran.scene.theft.ignore",
+          "C_RUNA": "c_runa.scene.theft.ignore"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,79 @@
+{
+  "sheet": "ui_order",
+  "kind": "prop",
+  "image": "ui_order.png",
+  "width": 9,
+  "height": 48,
+  "pivot": {
+    "x": 4,
+    "y": 47
+  },
+  "footprint": {
+    "w": 1,
+    "h": 1
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "follow": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hold": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "attack": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "protect": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "carry": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "withdraw": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "follow/-/0": [
+      0,
+      0
+    ],
+    "hold/-/0": [
+      0,
+      48
+    ],
+    "attack/-/0": [
+      0,
+      96
+    ],
+    "protect/-/0": [
+      0,
+      144
+    ],
+    "carry/-/0": [
+      0,
+      192
+    ],
+    "withdraw/-/0": [
+      0,
+      240
+    ]
+  }
+}

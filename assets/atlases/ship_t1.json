@@ -1,0 +1,70 @@
+{
+  "sheet": "ship_t1",
+  "kind": "prop",
+  "image": "ship_t1.png",
+  "width": 208,
+  "height": 196,
+  "pivot": {
+    "x": 104,
+    "y": 186
+  },
+  "footprint": {
+    "w": 168,
+    "h": 40
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "hull_wrecked": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "hull_patched": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 170,
+    "h": 16
+  },
+  "placeholder": false,
+  "frames": {
+    "hull_wrecked/-/0": [
+      0,
+      0
+    ],
+    "hull_wrecked/-/1": [
+      208,
+      0
+    ],
+    "hull_wrecked/-/2": [
+      416,
+      0
+    ],
+    "hull_wrecked/-/3": [
+      624,
+      0
+    ],
+    "hull_patched/-/0": [
+      0,
+      196
+    ],
+    "hull_patched/-/1": [
+      208,
+      196
+    ],
+    "hull_patched/-/2": [
+      416,
+      196
+    ],
+    "hull_patched/-/3": [
+      624,
+      196
+    ]
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "about": "On-foot controller settings that Book 10 does not give (decision S6-4, provisional until the user approves). Speeds, reach, missile and arrow numbers come from balance.json, never from here; these are the art's geometry (where a missile leaves the hand, the body a missile meets, the props that stop missiles) and where the starting weapons lie.",
+  "interactRadiusTiles": 1.5,
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "setDownReach": 14,
+  "hotbar": {
+    "about": "The steerer wakes with nothing in hand (Book 10 section 21, startingHotbar: Empty; decision DD-6). The seax is found in the wreckage on the way to Hild; the bow and its quiver are in Thorkel's locked chest, opened with the key from his body (decisions DE-17 and DE-18).",
+    "start": [],
+    "selected": 0
+  },
+  "items": {
+    "ITEM_BOW": {
+      "nameKey": "item.name.bow",
+      "icon": "bow",
+      "use": "AIM",
+      "missile": "arrow",
+      "ammo": "ITEM_ARROW",
+      "refusalKey": "ui.refusal.no_arrows",
+      "tipKey": "ui.tip.bow"
+    },
+    "ITEM_SEAX": {
+      "nameKey": "item.name.seax",
+      "icon": "seax",
+      "glyph": "sword",
+      "use": "MELEE",
+      "refusalKey": "ui.refusal.nothing_to_cut",
+      "tipKey": "ui.tip.seax"
+    },
+    "ITEM_ARROW": {
+      "nameKey": "item.name.arrows",
+      "icon": "arrow",
+      "use": "AMMO",
+      "refusalKey": "ui.refusal.quiver_full",
+      "tipKey": "ui.tip.arrows"
+    },
+    "ITEM_LINE": {
+      "nameKey": "item.name.line",
+      "icon": "fishing_line",
+      "glyph": "hook",
+      "use": "TOOL",
+      "refusalKey": "ui.refusal.no_water",
+      "tipKey": "ui.tip.line",
+      "cast": true
+    },
+    "ITEM_SILVER_ARM_RING": {
+      "nameKey": "item.name.arm_ring",
+      "icon": "silver_arm_ring",
+      "use": "VALUABLE",
+      "refusalKey": "ui.refusal.nothing_there"
+    }
+  },
+  "releaseHeightPx": 26,
+  "missileHitBox": {
+    "w": 12,
+    "h": 6
+  },
+  "cover": {
+    "prop_wreck_t1": {
+      "w": 64,
+      "h": 14,
+      "material": "wood",
+      "tall": true
+    },
+    "prop_wreck_stern": {
+      "w": 34,
+      "h": 10,
+      "material": "wood",
+      "tall": true
+    },
+    "prop_rock_strand": {
+      "w": 40,
+      "h": 14,
+      "material": "stone",
+      "tall": true
+    },
+    "prop_boulder": {
+      "w": 20,
+      "h": 8,
+      "material": "stone",
+      "tall": true
+    },
+    "prop_greymen_stone": {
+      "w": 14,
+      "h": 6,
+      "material": "stone",
+      "tall": true
+    },
+    "prop_debris": {
+      "w": 24,
+      "h": 4,
+      "material": "wood",
+      "tall": false
+    }
+  },
+  "pickups": [
+    {
+      "key": "wreck_seax",
+      "zone": "ZONE_SK_STRAND",
+      "item": "ITEM_SEAX",
+      "count": 1,
+      "x": 65.5,
+      "y": 34.5,
+      "glint": true
+    },
+    {
+      "key": "pool_arm_ring",
+      "zone": "ZONE_SK_STRAND",
+      "item": "ITEM_SILVER_ARM_RING",
+      "count": 1,
+      "x": 63.4,
+      "y": 35.6,
+      "glint": true
+    },
+    {
+      "key": "camp_line",
+      "zone": "ZONE_SK_MACHAIR",
+      "item": "ITEM_LINE",
+      "count": 1,
+      "x": 38.2,
+      "y": 31.5,
+      "glint": true
+    },
+    {
+      "key": "camp_bindings",
+      "zone": "ZONE_SK_MACHAIR",
+      "item": "ITEM_BINDING",
+      "count": 1,
+      "countFrom": "bindingsAtCamp",
+      "x": 37.6,
+      "y": 30.4,
+      "glint": true
+    }
+  ],
+  "tipSeconds": 12
+}

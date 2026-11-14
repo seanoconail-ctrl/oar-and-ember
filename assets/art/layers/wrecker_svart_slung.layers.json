@@ -1,0 +1,37 @@
+{
+  "name": "wrecker_svart_slung",
+  "layers": {
+    "s": [
+      "actor_e_wrecker_svart",
+      "layer_clothing_wrecker_svart",
+      "layer_blood_wound_svart",
+      "layer_cloak_wrecker_svart",
+      "layer_weapon_spear_svart",
+      "layer_shield_back_svart"
+    ],
+    "n": [
+      "actor_e_wrecker_svart",
+      "layer_clothing_wrecker_svart",
+      "layer_blood_wound_svart",
+      "layer_cloak_wrecker_svart",
+      "layer_weapon_spear_svart",
+      "layer_shield_back_svart"
+    ],
+    "e": [
+      "actor_e_wrecker_svart",
+      "layer_clothing_wrecker_svart",
+      "layer_blood_wound_svart",
+      "layer_cloak_wrecker_svart",
+      "layer_weapon_spear_svart",
+      "layer_shield_back_svart"
+    ],
+    "w": [
+      "actor_e_wrecker_svart",
+      "layer_clothing_wrecker_svart",
+      "layer_blood_wound_svart",
+      "layer_cloak_wrecker_svart",
+      "layer_weapon_spear_svart",
+      "layer_shield_back_svart"
+    ]
+  }
+}

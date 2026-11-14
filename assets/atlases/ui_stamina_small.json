@@ -1,0 +1,79 @@
+{
+  "sheet": "ui_stamina_small",
+  "kind": "decal",
+  "image": "ui_stamina_small.png",
+  "width": 1,
+  "height": 5,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 1,
+    "h": 5
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "cap": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fill": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cap_flash": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fill_flash": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "empty_flash": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "cap/-/0": [
+      0,
+      0
+    ],
+    "fill/-/0": [
+      0,
+      5
+    ],
+    "empty/-/0": [
+      0,
+      10
+    ],
+    "cap_flash/-/0": [
+      0,
+      15
+    ],
+    "fill_flash/-/0": [
+      0,
+      20
+    ],
+    "empty_flash/-/0": [
+      0,
+      25
+    ]
+  }
+}

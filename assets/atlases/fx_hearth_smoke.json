@@ -1,0 +1,54 @@
+{
+  "sheet": "fx_hearth_smoke",
+  "kind": "decal",
+  "image": "fx_hearth_smoke.png",
+  "width": 32,
+  "height": 32,
+  "pivot": {
+    "x": 16,
+    "y": 30
+  },
+  "footprint": {
+    "w": 32,
+    "h": 32
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "wisp": {
+      "frames": 6,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "wisp/-/0": [
+      0,
+      0
+    ],
+    "wisp/-/1": [
+      32,
+      0
+    ],
+    "wisp/-/2": [
+      64,
+      0
+    ],
+    "wisp/-/3": [
+      96,
+      0
+    ],
+    "wisp/-/4": [
+      128,
+      0
+    ],
+    "wisp/-/5": [
+      160,
+      0
+    ]
+  }
+}

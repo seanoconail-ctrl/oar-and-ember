@@ -1,0 +1,164 @@
+{
+  "sheet": "fx_gore",
+  "kind": "decal",
+  "image": "fx_gore.png",
+  "width": 24,
+  "height": 13,
+  "pivot": {
+    "x": 12,
+    "y": 6
+  },
+  "footprint": {
+    "w": 24,
+    "h": 13
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "spray": {
+      "frames": 3,
+      "ticks": 3,
+      "loop": false
+    },
+    "drops": {
+      "frames": 4,
+      "ticks": 4,
+      "loop": false
+    },
+    "pool": {
+      "frames": 5,
+      "ticks": 4,
+      "loop": false
+    },
+    "pool_low": {
+      "frames": 5,
+      "ticks": 4,
+      "loop": false
+    },
+    "smear": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "flash": {
+      "frames": 3,
+      "ticks": 3,
+      "loop": false
+    },
+    "tell": {
+      "frames": 4,
+      "ticks": 4,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "spray/-/0": [
+      0,
+      0
+    ],
+    "spray/-/1": [
+      24,
+      0
+    ],
+    "spray/-/2": [
+      48,
+      0
+    ],
+    "drops/-/0": [
+      0,
+      13
+    ],
+    "drops/-/1": [
+      24,
+      13
+    ],
+    "drops/-/2": [
+      48,
+      13
+    ],
+    "drops/-/3": [
+      72,
+      13
+    ],
+    "pool/-/0": [
+      0,
+      26
+    ],
+    "pool/-/1": [
+      24,
+      26
+    ],
+    "pool/-/2": [
+      48,
+      26
+    ],
+    "pool/-/3": [
+      72,
+      26
+    ],
+    "pool/-/4": [
+      96,
+      26
+    ],
+    "pool_low/-/0": [
+      0,
+      39
+    ],
+    "pool_low/-/1": [
+      24,
+      39
+    ],
+    "pool_low/-/2": [
+      48,
+      39
+    ],
+    "pool_low/-/3": [
+      72,
+      39
+    ],
+    "pool_low/-/4": [
+      96,
+      39
+    ],
+    "smear/-/0": [
+      0,
+      52
+    ],
+    "smear/-/1": [
+      24,
+      52
+    ],
+    "flash/-/0": [
+      0,
+      65
+    ],
+    "flash/-/1": [
+      24,
+      65
+    ],
+    "flash/-/2": [
+      48,
+      65
+    ],
+    "tell/-/0": [
+      0,
+      78
+    ],
+    "tell/-/1": [
+      24,
+      78
+    ],
+    "tell/-/2": [
+      48,
+      78
+    ],
+    "tell/-/3": [
+      72,
+      78
+    ]
+  }
+}

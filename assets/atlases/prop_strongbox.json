@@ -1,0 +1,153 @@
+{
+  "sheet": "prop_strongbox",
+  "kind": "prop",
+  "image": "prop_strongbox.png",
+  "width": 28,
+  "height": 48,
+  "pivot": {
+    "x": 14,
+    "y": 47
+  },
+  "footprint": {
+    "w": 14,
+    "h": 4
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "down": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "carried": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 14,
+    "h": 4
+  },
+  "placeholder": false,
+  "frames": {
+    "down/s/0": [
+      0,
+      0
+    ],
+    "down/n/0": [
+      0,
+      48
+    ],
+    "down/e/0": [
+      0,
+      96
+    ],
+    "down/w/0": [
+      0,
+      144
+    ],
+    "carried/s/0": [
+      0,
+      192
+    ],
+    "carried/s/1": [
+      28,
+      192
+    ],
+    "carried/s/2": [
+      56,
+      192
+    ],
+    "carried/s/3": [
+      84,
+      192
+    ],
+    "carried/s/4": [
+      112,
+      192
+    ],
+    "carried/s/5": [
+      140,
+      192
+    ],
+    "carried/n/0": [
+      0,
+      240
+    ],
+    "carried/n/1": [
+      28,
+      240
+    ],
+    "carried/n/2": [
+      56,
+      240
+    ],
+    "carried/n/3": [
+      84,
+      240
+    ],
+    "carried/n/4": [
+      112,
+      240
+    ],
+    "carried/n/5": [
+      140,
+      240
+    ],
+    "carried/e/0": [
+      0,
+      288
+    ],
+    "carried/e/1": [
+      28,
+      288
+    ],
+    "carried/e/2": [
+      56,
+      288
+    ],
+    "carried/e/3": [
+      84,
+      288
+    ],
+    "carried/e/4": [
+      112,
+      288
+    ],
+    "carried/e/5": [
+      140,
+      288
+    ],
+    "carried/w/0": [
+      0,
+      336
+    ],
+    "carried/w/1": [
+      28,
+      336
+    ],
+    "carried/w/2": [
+      56,
+      336
+    ],
+    "carried/w/3": [
+      84,
+      336
+    ],
+    "carried/w/4": [
+      112,
+      336
+    ],
+    "carried/w/5": [
+      140,
+      336
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "sheet": "tile_machair_01",
+  "kind": "tile",
+  "image": "tile_machair_01.png",
+  "width": 24,
+  "height": 24,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 24,
+    "h": 24
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "tile": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "tile/-/0": [
+      0,
+      0
+    ]
+  }
+}

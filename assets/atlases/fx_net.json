@@ -1,0 +1,92 @@
+{
+  "sheet": "fx_net",
+  "kind": "decal",
+  "image": "fx_net.png",
+  "width": 40,
+  "height": 44,
+  "pivot": {
+    "x": 20,
+    "y": 40
+  },
+  "footprint": {
+    "w": 40,
+    "h": 44
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "net": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "cut": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "wave": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "net/-/0": [
+      0,
+      0
+    ],
+    "net/-/1": [
+      40,
+      0
+    ],
+    "net/-/2": [
+      80,
+      0
+    ],
+    "net/-/3": [
+      120,
+      0
+    ],
+    "cut/-/0": [
+      0,
+      44
+    ],
+    "cut/-/1": [
+      40,
+      44
+    ],
+    "cut/-/2": [
+      80,
+      44
+    ],
+    "wave/-/0": [
+      0,
+      88
+    ],
+    "wave/-/1": [
+      40,
+      88
+    ],
+    "wave/-/2": [
+      80,
+      88
+    ],
+    "wave/-/3": [
+      120,
+      88
+    ],
+    "wave/-/4": [
+      160,
+      88
+    ],
+    "wave/-/5": [
+      200,
+      88
+    ]
+  }
+}

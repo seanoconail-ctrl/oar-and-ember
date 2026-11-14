@@ -1,0 +1,25 @@
+{
+  "name": "finan",
+  "layers": {
+    "s": [
+      "actor_c_finan",
+      "layer_clothing_leine_finan",
+      "layer_cloak_brat_finan"
+    ],
+    "n": [
+      "actor_c_finan",
+      "layer_clothing_leine_finan",
+      "layer_cloak_brat_finan"
+    ],
+    "e": [
+      "actor_c_finan",
+      "layer_clothing_leine_finan",
+      "layer_cloak_brat_finan"
+    ],
+    "w": [
+      "actor_c_finan",
+      "layer_clothing_leine_finan",
+      "layer_cloak_brat_finan"
+    ]
+  }
+}

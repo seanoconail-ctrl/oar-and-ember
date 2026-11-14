@@ -1,0 +1,55 @@
+{
+  "sheet": "ship_t1_rigwork",
+  "kind": "building",
+  "image": "ship_t1_rigwork.png",
+  "width": 208,
+  "height": 196,
+  "pivot": {
+    "x": 104,
+    "y": 186
+  },
+  "footprint": {
+    "w": 208,
+    "h": 196
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "lying": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stepped": {
+      "frames": 4,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "lying/-/0": [
+      0,
+      0
+    ],
+    "stepped/-/0": [
+      0,
+      196
+    ],
+    "stepped/-/1": [
+      208,
+      196
+    ],
+    "stepped/-/2": [
+      416,
+      196
+    ],
+    "stepped/-/3": [
+      624,
+      196
+    ]
+  }
+}

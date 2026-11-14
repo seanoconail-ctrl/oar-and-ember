@@ -1,0 +1,59 @@
+{
+  "sheet": "fx_hag",
+  "kind": "decal",
+  "image": "fx_hag.png",
+  "width": 34,
+  "height": 60,
+  "pivot": {
+    "x": 17,
+    "y": 58
+  },
+  "footprint": {
+    "w": 34,
+    "h": 60
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "glow": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "figure": {
+      "frames": 2,
+      "ticks": 30,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "glow/-/0": [
+      0,
+      0
+    ],
+    "glow/-/1": [
+      34,
+      0
+    ],
+    "glow/-/2": [
+      68,
+      0
+    ],
+    "glow/-/3": [
+      102,
+      0
+    ],
+    "figure/-/0": [
+      0,
+      60
+    ],
+    "figure/-/1": [
+      34,
+      60
+    ]
+  }
+}

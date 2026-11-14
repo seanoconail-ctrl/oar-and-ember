@@ -1,0 +1,529 @@
+{
+  "zone": "ZONE_SK_CLIFFS",
+  "about": "The west cliffs and the eagle stack (Book 4 section 02; Book 9 sections 03 and 05; Stage 14, decisions S14-1, S14-5 and S14-40): blocks 2 to 13 by 11 to 15, between Gull Geo and the Hag's Seat, expanded by src/tools/levels/zones.ts. The cliff path runs along the heather of the top from the geo to the Hag's Seat; the face stands on the sea to the west; in a bight of it the egg ledges lie below the top, each reached by a marked climb with drawn hand-holds (its head on the top, its foot on the ledge, ten tiles, within climbLedgeEvery), and a fourth short climb goes down to the cleft on the cliff path's halfway ledge; offshore the eagle stack, its eyrie and the eagle on its top, seen from the cliff top (a view point). Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_cliffs",
+  "terrainSeed": "zone_sk_strand",
+  "ground": "tile_moor",
+  "plantSheet": "plant_moor",
+  "blocks": {
+    "x": 2,
+    "y": 11,
+    "w": 12,
+    "h": 5
+  },
+  "warpTiles": 3,
+  "tideLineTiles": 2,
+  "faceTiles": 6,
+  "cliffRim": 2,
+  "heather": 0.62,
+  "sward": 0.62,
+  "crevices": 0.45,
+  "wind": 1.6,
+  "codes": {
+    "\"": "h",
+    "^": "h",
+    "#": "c",
+    "E": "~"
+  },
+  "carve": [
+    {
+      "code": "r",
+      "ellipse": {
+        "x": 10.5,
+        "y": 11,
+        "rx": 4.2,
+        "ry": 3.4
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 44,
+        "y": 3,
+        "rx": 17,
+        "ry": 10.5
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "h",
+      "ellipse": {
+        "x": 57,
+        "y": 8,
+        "rx": 6,
+        "ry": 6
+      },
+      "rough": 0.4
+    },
+    {
+      "code": "c",
+      "ellipse": {
+        "x": 41,
+        "y": 21,
+        "rx": 12,
+        "ry": 8.5
+      },
+      "rough": 0.35
+    },
+    {
+      "code": "c",
+      "ellipse": {
+        "x": 57,
+        "y": 18,
+        "rx": 4.6,
+        "ry": 6.2
+      },
+      "rough": 0.25
+    },
+    {
+      "code": ",",
+      "ellipse": {
+        "x": 34.5,
+        "y": 23.5,
+        "rx": 1.8,
+        "ry": 1.1
+      },
+      "rough": 0.1
+    },
+    {
+      "code": ",",
+      "ellipse": {
+        "x": 41.5,
+        "y": 24.5,
+        "rx": 2.0,
+        "ry": 1.1
+      },
+      "rough": 0.1
+    },
+    {
+      "code": ",",
+      "ellipse": {
+        "x": 48.5,
+        "y": 23.5,
+        "rx": 1.8,
+        "ry": 1.1
+      },
+      "rough": 0.1
+    },
+    {
+      "code": ",",
+      "ellipse": {
+        "x": 57.5,
+        "y": 19.5,
+        "rx": 1.6,
+        "ry": 1.0
+      },
+      "rough": 0.1
+    },
+    {
+      "code": "h",
+      "line": [
+        [34.5, 11.5],
+        [34.5, 13.6]
+      ],
+      "width": 2.2,
+      "rough": 0.05
+    },
+    {
+      "code": "h",
+      "line": [
+        [41.5, 11.5],
+        [41.5, 13.6]
+      ],
+      "width": 2.2,
+      "rough": 0.05
+    },
+    {
+      "code": "h",
+      "line": [
+        [48.5, 11.5],
+        [48.5, 13.6]
+      ],
+      "width": 2.2,
+      "rough": 0.05
+    },
+    {
+      "code": "h",
+      "line": [
+        [57.5, 11.5],
+        [57.5, 13.6]
+      ],
+      "width": 2.2,
+      "rough": 0.05
+    }
+  ],
+  "outcrops": [],
+  "spawns": {
+    "P_STEERER": {
+      "x": 70.5,
+      "y": 8.5,
+      "facing": "s"
+    }
+  },
+  "props": [
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 16.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 18.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 20.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 21.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 22.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 34.5,
+      "y": 23.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 16.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 18.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 20.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 21.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 22.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 23.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 41.5,
+      "y": 24.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 16.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 18.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 19.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 20.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 21.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 22.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 48.5,
+      "y": 23.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 57.5,
+      "y": 15.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 57.5,
+      "y": 16.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 57.5,
+      "y": 17.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 57.5,
+      "y": 18.0
+    },
+    {
+      "sheet": "fx_island",
+      "frame": "holds/-/0",
+      "x": 57.5,
+      "y": 19.0
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "eyrie/-/0",
+      "x": 10.5,
+      "y": 9.6
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "eagle/-/0",
+      "x": 10.2,
+      "y": 9.2
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark2/-/0",
+      "x": 94.5,
+      "y": 29.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark0/-/0",
+      "x": 64.5,
+      "y": 1.8
+    },
+    {
+      "sheet": "prop_island",
+      "frame": "waymark1/-/0",
+      "x": 70.5,
+      "y": 38.8
+    }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [70, 0],
+      [66, 8],
+      [60, 12],
+      [54, 12.5],
+      [46, 11],
+      [38, 11.5],
+      [34, 16],
+      [40, 24],
+      [46, 30],
+      [48, 39.9]
+    ]
+  ],
+  "links": [
+    {
+      "edge": "n",
+      "to": "ZONE_SK_GEO"
+    },
+    {
+      "edge": "s",
+      "to": "ZONE_SK_HAGSEAT"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_ROOK"
+    }
+  ],
+  "life": [
+    {
+      "kind": "gull",
+      "x": 24,
+      "y": 14,
+      "r": 6
+    },
+    {
+      "kind": "gull",
+      "x": 40,
+      "y": 26,
+      "r": 5
+    },
+    {
+      "kind": "gull",
+      "x": 14,
+      "y": 28,
+      "r": 5
+    },
+    {
+      "kind": "gull_standing",
+      "x": 33.8,
+      "y": 23.4
+    },
+    {
+      "kind": "gull_standing",
+      "x": 35.4,
+      "y": 23.8
+    },
+    {
+      "kind": "gull_standing",
+      "x": 40.6,
+      "y": 24.6
+    },
+    {
+      "kind": "gull_standing",
+      "x": 42.8,
+      "y": 24.2
+    },
+    {
+      "kind": "gull_standing",
+      "x": 47.6,
+      "y": 23.2
+    },
+    {
+      "kind": "gull_standing",
+      "x": 49.4,
+      "y": 23.6
+    },
+    {
+      "kind": "cormorant",
+      "x": 13.6,
+      "y": 12.8
+    },
+    {
+      "kind": "seal",
+      "x": 20,
+      "y": 34
+    }
+  ],
+  "traverse": {
+    "climbs": [
+      {
+        "id": "cliffs.egg.south",
+        "x": 34,
+        "foot": 22,
+        "head": 14,
+        "ledges": []
+      },
+      {
+        "id": "cliffs.egg.middle",
+        "x": 41,
+        "foot": 23,
+        "head": 14,
+        "ledges": []
+      },
+      {
+        "id": "cliffs.egg.north",
+        "x": 48,
+        "foot": 22,
+        "head": 14,
+        "ledges": []
+      },
+      {
+        "id": "cliffs.cleft",
+        "x": 57,
+        "foot": 19,
+        "head": 14,
+        "ledges": []
+      }
+    ]
+  },
+  "areas": [],
+  "viewPoints": [
+    {
+      "scene": "ZONE_SK_CLIFFS",
+      "at": {
+        "x": 28,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "reveals": ["ZONE_SK_CLIFFS"]
+    }
+  ],
+  "faceCrevices": 0.55
+}

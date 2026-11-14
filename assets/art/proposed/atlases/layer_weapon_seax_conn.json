@@ -1,0 +1,5852 @@
+{
+  "sheet": "layer_weapon_seax_conn",
+  "kind": "sprite",
+  "image": "layer_weapon_seax_conn.png",
+  "width": 78,
+  "height": 86,
+  "pivot": {
+    "x": 39,
+    "y": 66
+  },
+  "footprint": {
+    "w": 10,
+    "h": 4
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "idle": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "shift": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "glance": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "idlewind": {
+      "frames": 4,
+      "ticks": 9,
+      "loop": true
+    },
+    "walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "run": {
+      "frames": 8,
+      "ticks": 3,
+      "loop": true
+    },
+    "runstart": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "runstop": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "walkstart": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "walkstop": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "sneak": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "carry": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "draw": {
+      "frames": 4,
+      "ticks": 8,
+      "loop": false
+    },
+    "gather": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "fish": {
+      "frames": 6,
+      "ticks": 10,
+      "loop": true
+    },
+    "kneel": {
+      "frames": 6,
+      "ticks": 9,
+      "loop": true
+    },
+    "build": {
+      "frames": 6,
+      "ticks": 7,
+      "loop": true
+    },
+    "sleep": {
+      "frames": 2,
+      "ticks": 36,
+      "loop": true
+    },
+    "windup": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "light1": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light2": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "light3": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "charge": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": true
+    },
+    "chargewalk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "heavy": {
+      "frames": 3,
+      "ticks": 8,
+      "loop": false
+    },
+    "block": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "parry": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "dodge": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "shove": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "stagger": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "riposte": {
+      "frames": 3,
+      "ticks": 7,
+      "loop": false
+    },
+    "backstab": {
+      "frames": 3,
+      "ticks": 9,
+      "loop": false
+    },
+    "lunge": {
+      "frames": 2,
+      "ticks": 8,
+      "loop": false
+    },
+    "parried": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "getup": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": false
+    },
+    "finish": {
+      "frames": 1,
+      "ticks": 30,
+      "loop": false
+    },
+    "surrender": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "downed": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    },
+    "dead": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "dead_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_head": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_arm": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "piece_leg": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    },
+    "windup_l": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_h": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "windup_c": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "parry_windup": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "block_raise": {
+      "frames": 2,
+      "ticks": 3,
+      "loop": false
+    },
+    "guard_break": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": false
+    },
+    "exhausted": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "exhausted_walk": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "dodge_recover": {
+      "frames": 2,
+      "ticks": 9,
+      "loop": false
+    },
+    "backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_walk": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "block_backoff": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "block_strafe": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "overbalance": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": false
+    },
+    "flinch": {
+      "frames": 2,
+      "ticks": 4,
+      "loop": false
+    },
+    "knockdown": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "sidestep": {
+      "frames": 3,
+      "ticks": 5,
+      "loop": false
+    },
+    "hop": {
+      "frames": 3,
+      "ticks": 6,
+      "loop": false
+    },
+    "bind": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "eat_ration": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "fall_fwd": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_back": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "fall_crumple": {
+      "frames": 2,
+      "ticks": 5,
+      "loop": false
+    },
+    "reel": {
+      "frames": 3,
+      "ticks": 12,
+      "loop": true
+    },
+    "guard_turn": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "spare": {
+      "frames": 4,
+      "ticks": 6,
+      "loop": false
+    },
+    "red": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": false
+    },
+    "red_miss": {
+      "frames": 4,
+      "ticks": 11,
+      "loop": false
+    },
+    "fin_seax_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_seax_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_axe_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_spear_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_sword_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_dane_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_s": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    },
+    "fin_club_l": {
+      "frames": 8,
+      "ticks": 5,
+      "loop": false
+    }
+  },
+  "events": {
+    "footstep": "walk 0, walk 3, run 0, run 4, sneak 0, sneak 3, carry 0, carry 3"
+  },
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "idle/s/0": [
+      0,
+      0
+    ],
+    "idle/s/1": [
+      78,
+      0
+    ],
+    "idle/s/2": [
+      156,
+      0
+    ],
+    "idle/s/3": [
+      234,
+      0
+    ],
+    "idle/n/0": [
+      312,
+      0
+    ],
+    "idle/n/1": [
+      390,
+      0
+    ],
+    "idle/n/2": [
+      468,
+      0
+    ],
+    "idle/n/3": [
+      546,
+      0
+    ],
+    "idle/e/0": [
+      624,
+      0
+    ],
+    "idle/e/1": [
+      702,
+      0
+    ],
+    "idle/e/2": [
+      780,
+      0
+    ],
+    "idle/e/3": [
+      858,
+      0
+    ],
+    "idle/w/0": [
+      936,
+      0
+    ],
+    "idle/w/1": [
+      1014,
+      0
+    ],
+    "idle/w/2": [
+      1092,
+      0
+    ],
+    "idle/w/3": [
+      1170,
+      0
+    ],
+    "shift/s/0": [
+      1248,
+      0
+    ],
+    "shift/s/1": [
+      1326,
+      0
+    ],
+    "shift/s/2": [
+      1404,
+      0
+    ],
+    "shift/s/3": [
+      1482,
+      0
+    ],
+    "shift/n/0": [
+      1560,
+      0
+    ],
+    "shift/n/1": [
+      1638,
+      0
+    ],
+    "shift/n/2": [
+      1716,
+      0
+    ],
+    "shift/n/3": [
+      1794,
+      0
+    ],
+    "shift/e/0": [
+      1872,
+      0
+    ],
+    "shift/e/1": [
+      1950,
+      0
+    ],
+    "shift/e/2": [
+      2028,
+      0
+    ],
+    "shift/e/3": [
+      2106,
+      0
+    ],
+    "shift/w/0": [
+      2184,
+      0
+    ],
+    "shift/w/1": [
+      2262,
+      0
+    ],
+    "shift/w/2": [
+      2340,
+      0
+    ],
+    "shift/w/3": [
+      2418,
+      0
+    ],
+    "glance/s/0": [
+      2496,
+      0
+    ],
+    "glance/s/1": [
+      2574,
+      0
+    ],
+    "glance/s/2": [
+      2652,
+      0
+    ],
+    "glance/s/3": [
+      2730,
+      0
+    ],
+    "glance/n/0": [
+      2808,
+      0
+    ],
+    "glance/n/1": [
+      0,
+      86
+    ],
+    "glance/n/2": [
+      78,
+      86
+    ],
+    "glance/n/3": [
+      156,
+      86
+    ],
+    "glance/e/0": [
+      234,
+      86
+    ],
+    "glance/e/1": [
+      312,
+      86
+    ],
+    "glance/e/2": [
+      390,
+      86
+    ],
+    "glance/e/3": [
+      468,
+      86
+    ],
+    "glance/w/0": [
+      546,
+      86
+    ],
+    "glance/w/1": [
+      624,
+      86
+    ],
+    "glance/w/2": [
+      702,
+      86
+    ],
+    "glance/w/3": [
+      780,
+      86
+    ],
+    "idlewind/s/0": [
+      858,
+      86
+    ],
+    "idlewind/s/1": [
+      936,
+      86
+    ],
+    "idlewind/s/2": [
+      1014,
+      86
+    ],
+    "idlewind/s/3": [
+      1092,
+      86
+    ],
+    "idlewind/n/0": [
+      1170,
+      86
+    ],
+    "idlewind/n/1": [
+      1248,
+      86
+    ],
+    "idlewind/n/2": [
+      1326,
+      86
+    ],
+    "idlewind/n/3": [
+      1404,
+      86
+    ],
+    "idlewind/e/0": [
+      1482,
+      86
+    ],
+    "idlewind/e/1": [
+      1560,
+      86
+    ],
+    "idlewind/e/2": [
+      1638,
+      86
+    ],
+    "idlewind/e/3": [
+      1716,
+      86
+    ],
+    "idlewind/w/0": [
+      1794,
+      86
+    ],
+    "idlewind/w/1": [
+      1872,
+      86
+    ],
+    "idlewind/w/2": [
+      1950,
+      86
+    ],
+    "idlewind/w/3": [
+      2028,
+      86
+    ],
+    "walk/s/0": [
+      2106,
+      86
+    ],
+    "walk/s/1": [
+      2184,
+      86
+    ],
+    "walk/s/2": [
+      2262,
+      86
+    ],
+    "walk/s/3": [
+      2340,
+      86
+    ],
+    "walk/s/4": [
+      2418,
+      86
+    ],
+    "walk/s/5": [
+      2496,
+      86
+    ],
+    "walk/n/0": [
+      2574,
+      86
+    ],
+    "walk/n/1": [
+      2652,
+      86
+    ],
+    "walk/n/2": [
+      2730,
+      86
+    ],
+    "walk/n/3": [
+      2808,
+      86
+    ],
+    "walk/n/4": [
+      0,
+      172
+    ],
+    "walk/n/5": [
+      78,
+      172
+    ],
+    "walk/e/0": [
+      156,
+      172
+    ],
+    "walk/e/1": [
+      234,
+      172
+    ],
+    "walk/e/2": [
+      312,
+      172
+    ],
+    "walk/e/3": [
+      390,
+      172
+    ],
+    "walk/e/4": [
+      468,
+      172
+    ],
+    "walk/e/5": [
+      546,
+      172
+    ],
+    "walk/w/0": [
+      624,
+      172
+    ],
+    "walk/w/1": [
+      702,
+      172
+    ],
+    "walk/w/2": [
+      780,
+      172
+    ],
+    "walk/w/3": [
+      858,
+      172
+    ],
+    "walk/w/4": [
+      936,
+      172
+    ],
+    "walk/w/5": [
+      1014,
+      172
+    ],
+    "run/s/0": [
+      1092,
+      172
+    ],
+    "run/s/1": [
+      1170,
+      172
+    ],
+    "run/s/2": [
+      1248,
+      172
+    ],
+    "run/s/3": [
+      1326,
+      172
+    ],
+    "run/s/4": [
+      1404,
+      172
+    ],
+    "run/s/5": [
+      1482,
+      172
+    ],
+    "run/s/6": [
+      1560,
+      172
+    ],
+    "run/s/7": [
+      1638,
+      172
+    ],
+    "run/n/0": [
+      1716,
+      172
+    ],
+    "run/n/1": [
+      1794,
+      172
+    ],
+    "run/n/2": [
+      1872,
+      172
+    ],
+    "run/n/3": [
+      1950,
+      172
+    ],
+    "run/n/4": [
+      2028,
+      172
+    ],
+    "run/n/5": [
+      2106,
+      172
+    ],
+    "run/n/6": [
+      2184,
+      172
+    ],
+    "run/n/7": [
+      2262,
+      172
+    ],
+    "run/e/0": [
+      2340,
+      172
+    ],
+    "run/e/1": [
+      2418,
+      172
+    ],
+    "run/e/2": [
+      2496,
+      172
+    ],
+    "run/e/3": [
+      2574,
+      172
+    ],
+    "run/e/4": [
+      2652,
+      172
+    ],
+    "run/e/5": [
+      2730,
+      172
+    ],
+    "run/e/6": [
+      2808,
+      172
+    ],
+    "run/e/7": [
+      0,
+      258
+    ],
+    "run/w/0": [
+      78,
+      258
+    ],
+    "run/w/1": [
+      156,
+      258
+    ],
+    "run/w/2": [
+      234,
+      258
+    ],
+    "run/w/3": [
+      312,
+      258
+    ],
+    "run/w/4": [
+      390,
+      258
+    ],
+    "run/w/5": [
+      468,
+      258
+    ],
+    "run/w/6": [
+      546,
+      258
+    ],
+    "run/w/7": [
+      624,
+      258
+    ],
+    "runstart/s/0": [
+      702,
+      258
+    ],
+    "runstart/s/1": [
+      780,
+      258
+    ],
+    "runstart/n/0": [
+      858,
+      258
+    ],
+    "runstart/n/1": [
+      936,
+      258
+    ],
+    "runstart/e/0": [
+      1014,
+      258
+    ],
+    "runstart/e/1": [
+      1092,
+      258
+    ],
+    "runstart/w/0": [
+      1170,
+      258
+    ],
+    "runstart/w/1": [
+      1248,
+      258
+    ],
+    "runstop/s/0": [
+      1326,
+      258
+    ],
+    "runstop/s/1": [
+      1404,
+      258
+    ],
+    "runstop/n/0": [
+      1482,
+      258
+    ],
+    "runstop/n/1": [
+      1560,
+      258
+    ],
+    "runstop/e/0": [
+      1638,
+      258
+    ],
+    "runstop/e/1": [
+      1716,
+      258
+    ],
+    "runstop/w/0": [
+      1794,
+      258
+    ],
+    "runstop/w/1": [
+      1872,
+      258
+    ],
+    "walkstart/s/0": [
+      1950,
+      258
+    ],
+    "walkstart/s/1": [
+      2028,
+      258
+    ],
+    "walkstart/n/0": [
+      2106,
+      258
+    ],
+    "walkstart/n/1": [
+      2184,
+      258
+    ],
+    "walkstart/e/0": [
+      2262,
+      258
+    ],
+    "walkstart/e/1": [
+      2340,
+      258
+    ],
+    "walkstart/w/0": [
+      2418,
+      258
+    ],
+    "walkstart/w/1": [
+      2496,
+      258
+    ],
+    "walkstop/s/0": [
+      2574,
+      258
+    ],
+    "walkstop/s/1": [
+      2652,
+      258
+    ],
+    "walkstop/n/0": [
+      2730,
+      258
+    ],
+    "walkstop/n/1": [
+      2808,
+      258
+    ],
+    "walkstop/e/0": [
+      0,
+      344
+    ],
+    "walkstop/e/1": [
+      78,
+      344
+    ],
+    "walkstop/w/0": [
+      156,
+      344
+    ],
+    "walkstop/w/1": [
+      234,
+      344
+    ],
+    "sneak/s/0": [
+      312,
+      344
+    ],
+    "sneak/s/1": [
+      390,
+      344
+    ],
+    "sneak/s/2": [
+      468,
+      344
+    ],
+    "sneak/s/3": [
+      546,
+      344
+    ],
+    "sneak/s/4": [
+      624,
+      344
+    ],
+    "sneak/s/5": [
+      702,
+      344
+    ],
+    "sneak/n/0": [
+      780,
+      344
+    ],
+    "sneak/n/1": [
+      858,
+      344
+    ],
+    "sneak/n/2": [
+      936,
+      344
+    ],
+    "sneak/n/3": [
+      1014,
+      344
+    ],
+    "sneak/n/4": [
+      1092,
+      344
+    ],
+    "sneak/n/5": [
+      1170,
+      344
+    ],
+    "sneak/e/0": [
+      1248,
+      344
+    ],
+    "sneak/e/1": [
+      1326,
+      344
+    ],
+    "sneak/e/2": [
+      1404,
+      344
+    ],
+    "sneak/e/3": [
+      1482,
+      344
+    ],
+    "sneak/e/4": [
+      1560,
+      344
+    ],
+    "sneak/e/5": [
+      1638,
+      344
+    ],
+    "sneak/w/0": [
+      1716,
+      344
+    ],
+    "sneak/w/1": [
+      1794,
+      344
+    ],
+    "sneak/w/2": [
+      1872,
+      344
+    ],
+    "sneak/w/3": [
+      1950,
+      344
+    ],
+    "sneak/w/4": [
+      2028,
+      344
+    ],
+    "sneak/w/5": [
+      2106,
+      344
+    ],
+    "carry/s/0": [
+      2184,
+      344
+    ],
+    "carry/s/1": [
+      2262,
+      344
+    ],
+    "carry/s/2": [
+      2340,
+      344
+    ],
+    "carry/s/3": [
+      2418,
+      344
+    ],
+    "carry/s/4": [
+      2496,
+      344
+    ],
+    "carry/s/5": [
+      2574,
+      344
+    ],
+    "carry/n/0": [
+      2652,
+      344
+    ],
+    "carry/n/1": [
+      2730,
+      344
+    ],
+    "carry/n/2": [
+      2808,
+      344
+    ],
+    "carry/n/3": [
+      0,
+      430
+    ],
+    "carry/n/4": [
+      78,
+      430
+    ],
+    "carry/n/5": [
+      156,
+      430
+    ],
+    "carry/e/0": [
+      234,
+      430
+    ],
+    "carry/e/1": [
+      312,
+      430
+    ],
+    "carry/e/2": [
+      390,
+      430
+    ],
+    "carry/e/3": [
+      468,
+      430
+    ],
+    "carry/e/4": [
+      546,
+      430
+    ],
+    "carry/e/5": [
+      624,
+      430
+    ],
+    "carry/w/0": [
+      702,
+      430
+    ],
+    "carry/w/1": [
+      780,
+      430
+    ],
+    "carry/w/2": [
+      858,
+      430
+    ],
+    "carry/w/3": [
+      936,
+      430
+    ],
+    "carry/w/4": [
+      1014,
+      430
+    ],
+    "carry/w/5": [
+      1092,
+      430
+    ],
+    "draw/s/0": [
+      1170,
+      430
+    ],
+    "draw/s/1": [
+      1248,
+      430
+    ],
+    "draw/s/2": [
+      1326,
+      430
+    ],
+    "draw/s/3": [
+      1404,
+      430
+    ],
+    "draw/n/0": [
+      1482,
+      430
+    ],
+    "draw/n/1": [
+      1560,
+      430
+    ],
+    "draw/n/2": [
+      1638,
+      430
+    ],
+    "draw/n/3": [
+      1716,
+      430
+    ],
+    "draw/e/0": [
+      1794,
+      430
+    ],
+    "draw/e/1": [
+      1872,
+      430
+    ],
+    "draw/e/2": [
+      1950,
+      430
+    ],
+    "draw/e/3": [
+      2028,
+      430
+    ],
+    "draw/w/0": [
+      2106,
+      430
+    ],
+    "draw/w/1": [
+      2184,
+      430
+    ],
+    "draw/w/2": [
+      2262,
+      430
+    ],
+    "draw/w/3": [
+      2340,
+      430
+    ],
+    "gather/s/0": [
+      2418,
+      430
+    ],
+    "gather/s/1": [
+      2496,
+      430
+    ],
+    "gather/s/2": [
+      2574,
+      430
+    ],
+    "gather/s/3": [
+      2652,
+      430
+    ],
+    "gather/s/4": [
+      2730,
+      430
+    ],
+    "gather/s/5": [
+      2808,
+      430
+    ],
+    "gather/n/0": [
+      0,
+      516
+    ],
+    "gather/n/1": [
+      78,
+      516
+    ],
+    "gather/n/2": [
+      156,
+      516
+    ],
+    "gather/n/3": [
+      234,
+      516
+    ],
+    "gather/n/4": [
+      312,
+      516
+    ],
+    "gather/n/5": [
+      390,
+      516
+    ],
+    "gather/e/0": [
+      468,
+      516
+    ],
+    "gather/e/1": [
+      546,
+      516
+    ],
+    "gather/e/2": [
+      624,
+      516
+    ],
+    "gather/e/3": [
+      702,
+      516
+    ],
+    "gather/e/4": [
+      780,
+      516
+    ],
+    "gather/e/5": [
+      858,
+      516
+    ],
+    "gather/w/0": [
+      936,
+      516
+    ],
+    "gather/w/1": [
+      1014,
+      516
+    ],
+    "gather/w/2": [
+      1092,
+      516
+    ],
+    "gather/w/3": [
+      1170,
+      516
+    ],
+    "gather/w/4": [
+      1248,
+      516
+    ],
+    "gather/w/5": [
+      1326,
+      516
+    ],
+    "fish/s/0": [
+      1404,
+      516
+    ],
+    "fish/s/1": [
+      1482,
+      516
+    ],
+    "fish/s/2": [
+      1560,
+      516
+    ],
+    "fish/s/3": [
+      1638,
+      516
+    ],
+    "fish/s/4": [
+      1716,
+      516
+    ],
+    "fish/s/5": [
+      1794,
+      516
+    ],
+    "fish/n/0": [
+      1872,
+      516
+    ],
+    "fish/n/1": [
+      1950,
+      516
+    ],
+    "fish/n/2": [
+      2028,
+      516
+    ],
+    "fish/n/3": [
+      2106,
+      516
+    ],
+    "fish/n/4": [
+      2184,
+      516
+    ],
+    "fish/n/5": [
+      2262,
+      516
+    ],
+    "fish/e/0": [
+      2340,
+      516
+    ],
+    "fish/e/1": [
+      2418,
+      516
+    ],
+    "fish/e/2": [
+      2496,
+      516
+    ],
+    "fish/e/3": [
+      2574,
+      516
+    ],
+    "fish/e/4": [
+      2652,
+      516
+    ],
+    "fish/e/5": [
+      2730,
+      516
+    ],
+    "fish/w/0": [
+      2808,
+      516
+    ],
+    "fish/w/1": [
+      0,
+      602
+    ],
+    "fish/w/2": [
+      78,
+      602
+    ],
+    "fish/w/3": [
+      156,
+      602
+    ],
+    "fish/w/4": [
+      234,
+      602
+    ],
+    "fish/w/5": [
+      312,
+      602
+    ],
+    "kneel/s/0": [
+      390,
+      602
+    ],
+    "kneel/s/1": [
+      468,
+      602
+    ],
+    "kneel/s/2": [
+      546,
+      602
+    ],
+    "kneel/s/3": [
+      624,
+      602
+    ],
+    "kneel/s/4": [
+      702,
+      602
+    ],
+    "kneel/s/5": [
+      780,
+      602
+    ],
+    "kneel/n/0": [
+      858,
+      602
+    ],
+    "kneel/n/1": [
+      936,
+      602
+    ],
+    "kneel/n/2": [
+      1014,
+      602
+    ],
+    "kneel/n/3": [
+      1092,
+      602
+    ],
+    "kneel/n/4": [
+      1170,
+      602
+    ],
+    "kneel/n/5": [
+      1248,
+      602
+    ],
+    "kneel/e/0": [
+      1326,
+      602
+    ],
+    "kneel/e/1": [
+      1404,
+      602
+    ],
+    "kneel/e/2": [
+      1482,
+      602
+    ],
+    "kneel/e/3": [
+      1560,
+      602
+    ],
+    "kneel/e/4": [
+      1638,
+      602
+    ],
+    "kneel/e/5": [
+      1716,
+      602
+    ],
+    "kneel/w/0": [
+      1794,
+      602
+    ],
+    "kneel/w/1": [
+      1872,
+      602
+    ],
+    "kneel/w/2": [
+      1950,
+      602
+    ],
+    "kneel/w/3": [
+      2028,
+      602
+    ],
+    "kneel/w/4": [
+      2106,
+      602
+    ],
+    "kneel/w/5": [
+      2184,
+      602
+    ],
+    "build/s/0": [
+      2262,
+      602
+    ],
+    "build/s/1": [
+      2340,
+      602
+    ],
+    "build/s/2": [
+      2418,
+      602
+    ],
+    "build/s/3": [
+      2496,
+      602
+    ],
+    "build/s/4": [
+      2574,
+      602
+    ],
+    "build/s/5": [
+      2652,
+      602
+    ],
+    "build/n/0": [
+      2730,
+      602
+    ],
+    "build/n/1": [
+      2808,
+      602
+    ],
+    "build/n/2": [
+      0,
+      688
+    ],
+    "build/n/3": [
+      78,
+      688
+    ],
+    "build/n/4": [
+      156,
+      688
+    ],
+    "build/n/5": [
+      234,
+      688
+    ],
+    "build/e/0": [
+      312,
+      688
+    ],
+    "build/e/1": [
+      390,
+      688
+    ],
+    "build/e/2": [
+      468,
+      688
+    ],
+    "build/e/3": [
+      546,
+      688
+    ],
+    "build/e/4": [
+      624,
+      688
+    ],
+    "build/e/5": [
+      702,
+      688
+    ],
+    "build/w/0": [
+      780,
+      688
+    ],
+    "build/w/1": [
+      858,
+      688
+    ],
+    "build/w/2": [
+      936,
+      688
+    ],
+    "build/w/3": [
+      1014,
+      688
+    ],
+    "build/w/4": [
+      1092,
+      688
+    ],
+    "build/w/5": [
+      1170,
+      688
+    ],
+    "sleep/s/0": [
+      1248,
+      688
+    ],
+    "sleep/s/1": [
+      1326,
+      688
+    ],
+    "sleep/n/0": [
+      1404,
+      688
+    ],
+    "sleep/n/1": [
+      1482,
+      688
+    ],
+    "sleep/e/0": [
+      1560,
+      688
+    ],
+    "sleep/e/1": [
+      1638,
+      688
+    ],
+    "sleep/w/0": [
+      1716,
+      688
+    ],
+    "sleep/w/1": [
+      1794,
+      688
+    ],
+    "windup/s/0": [
+      1872,
+      688
+    ],
+    "windup/s/1": [
+      1950,
+      688
+    ],
+    "windup/n/0": [
+      2028,
+      688
+    ],
+    "windup/n/1": [
+      2106,
+      688
+    ],
+    "windup/e/0": [
+      2184,
+      688
+    ],
+    "windup/e/1": [
+      2262,
+      688
+    ],
+    "windup/w/0": [
+      2340,
+      688
+    ],
+    "windup/w/1": [
+      2418,
+      688
+    ],
+    "light1/s/0": [
+      2496,
+      688
+    ],
+    "light1/s/1": [
+      2574,
+      688
+    ],
+    "light1/s/2": [
+      2652,
+      688
+    ],
+    "light1/n/0": [
+      2730,
+      688
+    ],
+    "light1/n/1": [
+      2808,
+      688
+    ],
+    "light1/n/2": [
+      0,
+      774
+    ],
+    "light1/e/0": [
+      78,
+      774
+    ],
+    "light1/e/1": [
+      156,
+      774
+    ],
+    "light1/e/2": [
+      234,
+      774
+    ],
+    "light1/w/0": [
+      312,
+      774
+    ],
+    "light1/w/1": [
+      390,
+      774
+    ],
+    "light1/w/2": [
+      468,
+      774
+    ],
+    "light2/s/0": [
+      546,
+      774
+    ],
+    "light2/s/1": [
+      624,
+      774
+    ],
+    "light2/s/2": [
+      702,
+      774
+    ],
+    "light2/n/0": [
+      780,
+      774
+    ],
+    "light2/n/1": [
+      858,
+      774
+    ],
+    "light2/n/2": [
+      936,
+      774
+    ],
+    "light2/e/0": [
+      1014,
+      774
+    ],
+    "light2/e/1": [
+      1092,
+      774
+    ],
+    "light2/e/2": [
+      1170,
+      774
+    ],
+    "light2/w/0": [
+      1248,
+      774
+    ],
+    "light2/w/1": [
+      1326,
+      774
+    ],
+    "light2/w/2": [
+      1404,
+      774
+    ],
+    "light3/s/0": [
+      1482,
+      774
+    ],
+    "light3/s/1": [
+      1560,
+      774
+    ],
+    "light3/s/2": [
+      1638,
+      774
+    ],
+    "light3/n/0": [
+      1716,
+      774
+    ],
+    "light3/n/1": [
+      1794,
+      774
+    ],
+    "light3/n/2": [
+      1872,
+      774
+    ],
+    "light3/e/0": [
+      1950,
+      774
+    ],
+    "light3/e/1": [
+      2028,
+      774
+    ],
+    "light3/e/2": [
+      2106,
+      774
+    ],
+    "light3/w/0": [
+      2184,
+      774
+    ],
+    "light3/w/1": [
+      2262,
+      774
+    ],
+    "light3/w/2": [
+      2340,
+      774
+    ],
+    "charge/s/0": [
+      2418,
+      774
+    ],
+    "charge/s/1": [
+      2496,
+      774
+    ],
+    "charge/n/0": [
+      2574,
+      774
+    ],
+    "charge/n/1": [
+      2652,
+      774
+    ],
+    "charge/e/0": [
+      2730,
+      774
+    ],
+    "charge/e/1": [
+      2808,
+      774
+    ],
+    "charge/w/0": [
+      0,
+      860
+    ],
+    "charge/w/1": [
+      78,
+      860
+    ],
+    "chargewalk/s/0": [
+      156,
+      860
+    ],
+    "chargewalk/s/1": [
+      234,
+      860
+    ],
+    "chargewalk/s/2": [
+      312,
+      860
+    ],
+    "chargewalk/s/3": [
+      390,
+      860
+    ],
+    "chargewalk/s/4": [
+      468,
+      860
+    ],
+    "chargewalk/s/5": [
+      546,
+      860
+    ],
+    "chargewalk/n/0": [
+      624,
+      860
+    ],
+    "chargewalk/n/1": [
+      702,
+      860
+    ],
+    "chargewalk/n/2": [
+      780,
+      860
+    ],
+    "chargewalk/n/3": [
+      858,
+      860
+    ],
+    "chargewalk/n/4": [
+      936,
+      860
+    ],
+    "chargewalk/n/5": [
+      1014,
+      860
+    ],
+    "chargewalk/e/0": [
+      1092,
+      860
+    ],
+    "chargewalk/e/1": [
+      1170,
+      860
+    ],
+    "chargewalk/e/2": [
+      1248,
+      860
+    ],
+    "chargewalk/e/3": [
+      1326,
+      860
+    ],
+    "chargewalk/e/4": [
+      1404,
+      860
+    ],
+    "chargewalk/e/5": [
+      1482,
+      860
+    ],
+    "chargewalk/w/0": [
+      1560,
+      860
+    ],
+    "chargewalk/w/1": [
+      1638,
+      860
+    ],
+    "chargewalk/w/2": [
+      1716,
+      860
+    ],
+    "chargewalk/w/3": [
+      1794,
+      860
+    ],
+    "chargewalk/w/4": [
+      1872,
+      860
+    ],
+    "chargewalk/w/5": [
+      1950,
+      860
+    ],
+    "heavy/s/0": [
+      2028,
+      860
+    ],
+    "heavy/s/1": [
+      2106,
+      860
+    ],
+    "heavy/s/2": [
+      2184,
+      860
+    ],
+    "heavy/n/0": [
+      2262,
+      860
+    ],
+    "heavy/n/1": [
+      2340,
+      860
+    ],
+    "heavy/n/2": [
+      2418,
+      860
+    ],
+    "heavy/e/0": [
+      2496,
+      860
+    ],
+    "heavy/e/1": [
+      2574,
+      860
+    ],
+    "heavy/e/2": [
+      2652,
+      860
+    ],
+    "heavy/w/0": [
+      2730,
+      860
+    ],
+    "heavy/w/1": [
+      2808,
+      860
+    ],
+    "heavy/w/2": [
+      0,
+      946
+    ],
+    "block/s/0": [
+      78,
+      946
+    ],
+    "block/s/1": [
+      156,
+      946
+    ],
+    "block/n/0": [
+      234,
+      946
+    ],
+    "block/n/1": [
+      312,
+      946
+    ],
+    "block/e/0": [
+      390,
+      946
+    ],
+    "block/e/1": [
+      468,
+      946
+    ],
+    "block/w/0": [
+      546,
+      946
+    ],
+    "block/w/1": [
+      624,
+      946
+    ],
+    "parry/s/0": [
+      702,
+      946
+    ],
+    "parry/s/1": [
+      780,
+      946
+    ],
+    "parry/n/0": [
+      858,
+      946
+    ],
+    "parry/n/1": [
+      936,
+      946
+    ],
+    "parry/e/0": [
+      1014,
+      946
+    ],
+    "parry/e/1": [
+      1092,
+      946
+    ],
+    "parry/w/0": [
+      1170,
+      946
+    ],
+    "parry/w/1": [
+      1248,
+      946
+    ],
+    "dodge/s/0": [
+      1326,
+      946
+    ],
+    "dodge/s/1": [
+      1404,
+      946
+    ],
+    "dodge/s/2": [
+      1482,
+      946
+    ],
+    "dodge/n/0": [
+      1560,
+      946
+    ],
+    "dodge/n/1": [
+      1638,
+      946
+    ],
+    "dodge/n/2": [
+      1716,
+      946
+    ],
+    "dodge/e/0": [
+      1794,
+      946
+    ],
+    "dodge/e/1": [
+      1872,
+      946
+    ],
+    "dodge/e/2": [
+      1950,
+      946
+    ],
+    "dodge/w/0": [
+      2028,
+      946
+    ],
+    "dodge/w/1": [
+      2106,
+      946
+    ],
+    "dodge/w/2": [
+      2184,
+      946
+    ],
+    "shove/s/0": [
+      2262,
+      946
+    ],
+    "shove/s/1": [
+      2340,
+      946
+    ],
+    "shove/s/2": [
+      2418,
+      946
+    ],
+    "shove/n/0": [
+      2496,
+      946
+    ],
+    "shove/n/1": [
+      2574,
+      946
+    ],
+    "shove/n/2": [
+      2652,
+      946
+    ],
+    "shove/e/0": [
+      2730,
+      946
+    ],
+    "shove/e/1": [
+      2808,
+      946
+    ],
+    "shove/e/2": [
+      0,
+      1032
+    ],
+    "shove/w/0": [
+      78,
+      1032
+    ],
+    "shove/w/1": [
+      156,
+      1032
+    ],
+    "shove/w/2": [
+      234,
+      1032
+    ],
+    "stagger/s/0": [
+      312,
+      1032
+    ],
+    "stagger/s/1": [
+      390,
+      1032
+    ],
+    "stagger/n/0": [
+      468,
+      1032
+    ],
+    "stagger/n/1": [
+      546,
+      1032
+    ],
+    "stagger/e/0": [
+      624,
+      1032
+    ],
+    "stagger/e/1": [
+      702,
+      1032
+    ],
+    "stagger/w/0": [
+      780,
+      1032
+    ],
+    "stagger/w/1": [
+      858,
+      1032
+    ],
+    "riposte/s/0": [
+      936,
+      1032
+    ],
+    "riposte/s/1": [
+      1014,
+      1032
+    ],
+    "riposte/s/2": [
+      1092,
+      1032
+    ],
+    "riposte/n/0": [
+      1170,
+      1032
+    ],
+    "riposte/n/1": [
+      1248,
+      1032
+    ],
+    "riposte/n/2": [
+      1326,
+      1032
+    ],
+    "riposte/e/0": [
+      1404,
+      1032
+    ],
+    "riposte/e/1": [
+      1482,
+      1032
+    ],
+    "riposte/e/2": [
+      1560,
+      1032
+    ],
+    "riposte/w/0": [
+      1638,
+      1032
+    ],
+    "riposte/w/1": [
+      1716,
+      1032
+    ],
+    "riposte/w/2": [
+      1794,
+      1032
+    ],
+    "backstab/s/0": [
+      1872,
+      1032
+    ],
+    "backstab/s/1": [
+      1950,
+      1032
+    ],
+    "backstab/s/2": [
+      2028,
+      1032
+    ],
+    "backstab/n/0": [
+      2106,
+      1032
+    ],
+    "backstab/n/1": [
+      2184,
+      1032
+    ],
+    "backstab/n/2": [
+      2262,
+      1032
+    ],
+    "backstab/e/0": [
+      2340,
+      1032
+    ],
+    "backstab/e/1": [
+      2418,
+      1032
+    ],
+    "backstab/e/2": [
+      2496,
+      1032
+    ],
+    "backstab/w/0": [
+      2574,
+      1032
+    ],
+    "backstab/w/1": [
+      2652,
+      1032
+    ],
+    "backstab/w/2": [
+      2730,
+      1032
+    ],
+    "lunge/s/0": [
+      2808,
+      1032
+    ],
+    "lunge/s/1": [
+      0,
+      1118
+    ],
+    "lunge/n/0": [
+      78,
+      1118
+    ],
+    "lunge/n/1": [
+      156,
+      1118
+    ],
+    "lunge/e/0": [
+      234,
+      1118
+    ],
+    "lunge/e/1": [
+      312,
+      1118
+    ],
+    "lunge/w/0": [
+      390,
+      1118
+    ],
+    "lunge/w/1": [
+      468,
+      1118
+    ],
+    "parried/s/0": [
+      546,
+      1118
+    ],
+    "parried/s/1": [
+      624,
+      1118
+    ],
+    "parried/n/0": [
+      702,
+      1118
+    ],
+    "parried/n/1": [
+      780,
+      1118
+    ],
+    "parried/e/0": [
+      858,
+      1118
+    ],
+    "parried/e/1": [
+      936,
+      1118
+    ],
+    "parried/w/0": [
+      1014,
+      1118
+    ],
+    "parried/w/1": [
+      1092,
+      1118
+    ],
+    "getup/s/0": [
+      1170,
+      1118
+    ],
+    "getup/s/1": [
+      1248,
+      1118
+    ],
+    "getup/n/0": [
+      1326,
+      1118
+    ],
+    "getup/n/1": [
+      1404,
+      1118
+    ],
+    "getup/e/0": [
+      1482,
+      1118
+    ],
+    "getup/e/1": [
+      1560,
+      1118
+    ],
+    "getup/w/0": [
+      1638,
+      1118
+    ],
+    "getup/w/1": [
+      1716,
+      1118
+    ],
+    "finish/s/0": [
+      1794,
+      1118
+    ],
+    "finish/n/0": [
+      1872,
+      1118
+    ],
+    "finish/e/0": [
+      1950,
+      1118
+    ],
+    "finish/w/0": [
+      2028,
+      1118
+    ],
+    "surrender/s/0": [
+      2106,
+      1118
+    ],
+    "surrender/s/1": [
+      2184,
+      1118
+    ],
+    "surrender/n/0": [
+      2262,
+      1118
+    ],
+    "surrender/n/1": [
+      2340,
+      1118
+    ],
+    "surrender/e/0": [
+      2418,
+      1118
+    ],
+    "surrender/e/1": [
+      2496,
+      1118
+    ],
+    "surrender/w/0": [
+      2574,
+      1118
+    ],
+    "surrender/w/1": [
+      2652,
+      1118
+    ],
+    "downed/s/0": [
+      2730,
+      1118
+    ],
+    "downed/s/1": [
+      2808,
+      1118
+    ],
+    "downed/n/0": [
+      0,
+      1204
+    ],
+    "downed/n/1": [
+      78,
+      1204
+    ],
+    "downed/e/0": [
+      156,
+      1204
+    ],
+    "downed/e/1": [
+      234,
+      1204
+    ],
+    "downed/w/0": [
+      312,
+      1204
+    ],
+    "downed/w/1": [
+      390,
+      1204
+    ],
+    "dead/s/0": [
+      468,
+      1204
+    ],
+    "dead/n/0": [
+      546,
+      1204
+    ],
+    "dead/e/0": [
+      624,
+      1204
+    ],
+    "dead/w/0": [
+      702,
+      1204
+    ],
+    "dead_head/s/0": [
+      780,
+      1204
+    ],
+    "dead_head/n/0": [
+      858,
+      1204
+    ],
+    "dead_head/e/0": [
+      936,
+      1204
+    ],
+    "dead_head/w/0": [
+      1014,
+      1204
+    ],
+    "dead_arm/s/0": [
+      1092,
+      1204
+    ],
+    "dead_arm/n/0": [
+      1170,
+      1204
+    ],
+    "dead_arm/e/0": [
+      1248,
+      1204
+    ],
+    "dead_arm/w/0": [
+      1326,
+      1204
+    ],
+    "dead_leg/s/0": [
+      1404,
+      1204
+    ],
+    "dead_leg/n/0": [
+      1482,
+      1204
+    ],
+    "dead_leg/e/0": [
+      1560,
+      1204
+    ],
+    "dead_leg/w/0": [
+      1638,
+      1204
+    ],
+    "piece_head/s/0": [
+      1716,
+      1204
+    ],
+    "piece_head/n/0": [
+      1794,
+      1204
+    ],
+    "piece_head/e/0": [
+      1872,
+      1204
+    ],
+    "piece_head/w/0": [
+      1950,
+      1204
+    ],
+    "piece_arm/s/0": [
+      2028,
+      1204
+    ],
+    "piece_arm/n/0": [
+      2106,
+      1204
+    ],
+    "piece_arm/e/0": [
+      2184,
+      1204
+    ],
+    "piece_arm/w/0": [
+      2262,
+      1204
+    ],
+    "piece_leg/s/0": [
+      2340,
+      1204
+    ],
+    "piece_leg/n/0": [
+      2418,
+      1204
+    ],
+    "piece_leg/e/0": [
+      2496,
+      1204
+    ],
+    "piece_leg/w/0": [
+      2574,
+      1204
+    ],
+    "windup_l/s/0": [
+      2652,
+      1204
+    ],
+    "windup_l/s/1": [
+      2730,
+      1204
+    ],
+    "windup_l/n/0": [
+      2808,
+      1204
+    ],
+    "windup_l/n/1": [
+      0,
+      1290
+    ],
+    "windup_l/e/0": [
+      78,
+      1290
+    ],
+    "windup_l/e/1": [
+      156,
+      1290
+    ],
+    "windup_l/w/0": [
+      234,
+      1290
+    ],
+    "windup_l/w/1": [
+      312,
+      1290
+    ],
+    "windup_h/s/0": [
+      390,
+      1290
+    ],
+    "windup_h/s/1": [
+      468,
+      1290
+    ],
+    "windup_h/n/0": [
+      546,
+      1290
+    ],
+    "windup_h/n/1": [
+      624,
+      1290
+    ],
+    "windup_h/e/0": [
+      702,
+      1290
+    ],
+    "windup_h/e/1": [
+      780,
+      1290
+    ],
+    "windup_h/w/0": [
+      858,
+      1290
+    ],
+    "windup_h/w/1": [
+      936,
+      1290
+    ],
+    "windup_c/s/0": [
+      1014,
+      1290
+    ],
+    "windup_c/s/1": [
+      1092,
+      1290
+    ],
+    "windup_c/n/0": [
+      1170,
+      1290
+    ],
+    "windup_c/n/1": [
+      1248,
+      1290
+    ],
+    "windup_c/e/0": [
+      1326,
+      1290
+    ],
+    "windup_c/e/1": [
+      1404,
+      1290
+    ],
+    "windup_c/w/0": [
+      1482,
+      1290
+    ],
+    "windup_c/w/1": [
+      1560,
+      1290
+    ],
+    "parry_windup/s/0": [
+      1638,
+      1290
+    ],
+    "parry_windup/s/1": [
+      1716,
+      1290
+    ],
+    "parry_windup/n/0": [
+      1794,
+      1290
+    ],
+    "parry_windup/n/1": [
+      1872,
+      1290
+    ],
+    "parry_windup/e/0": [
+      1950,
+      1290
+    ],
+    "parry_windup/e/1": [
+      2028,
+      1290
+    ],
+    "parry_windup/w/0": [
+      2106,
+      1290
+    ],
+    "parry_windup/w/1": [
+      2184,
+      1290
+    ],
+    "block_raise/s/0": [
+      2262,
+      1290
+    ],
+    "block_raise/s/1": [
+      2340,
+      1290
+    ],
+    "block_raise/n/0": [
+      2418,
+      1290
+    ],
+    "block_raise/n/1": [
+      2496,
+      1290
+    ],
+    "block_raise/e/0": [
+      2574,
+      1290
+    ],
+    "block_raise/e/1": [
+      2652,
+      1290
+    ],
+    "block_raise/w/0": [
+      2730,
+      1290
+    ],
+    "block_raise/w/1": [
+      2808,
+      1290
+    ],
+    "guard_break/s/0": [
+      0,
+      1376
+    ],
+    "guard_break/s/1": [
+      78,
+      1376
+    ],
+    "guard_break/s/2": [
+      156,
+      1376
+    ],
+    "guard_break/s/3": [
+      234,
+      1376
+    ],
+    "guard_break/n/0": [
+      312,
+      1376
+    ],
+    "guard_break/n/1": [
+      390,
+      1376
+    ],
+    "guard_break/n/2": [
+      468,
+      1376
+    ],
+    "guard_break/n/3": [
+      546,
+      1376
+    ],
+    "guard_break/e/0": [
+      624,
+      1376
+    ],
+    "guard_break/e/1": [
+      702,
+      1376
+    ],
+    "guard_break/e/2": [
+      780,
+      1376
+    ],
+    "guard_break/e/3": [
+      858,
+      1376
+    ],
+    "guard_break/w/0": [
+      936,
+      1376
+    ],
+    "guard_break/w/1": [
+      1014,
+      1376
+    ],
+    "guard_break/w/2": [
+      1092,
+      1376
+    ],
+    "guard_break/w/3": [
+      1170,
+      1376
+    ],
+    "exhausted/s/0": [
+      1248,
+      1376
+    ],
+    "exhausted/s/1": [
+      1326,
+      1376
+    ],
+    "exhausted/s/2": [
+      1404,
+      1376
+    ],
+    "exhausted/s/3": [
+      1482,
+      1376
+    ],
+    "exhausted/n/0": [
+      1560,
+      1376
+    ],
+    "exhausted/n/1": [
+      1638,
+      1376
+    ],
+    "exhausted/n/2": [
+      1716,
+      1376
+    ],
+    "exhausted/n/3": [
+      1794,
+      1376
+    ],
+    "exhausted/e/0": [
+      1872,
+      1376
+    ],
+    "exhausted/e/1": [
+      1950,
+      1376
+    ],
+    "exhausted/e/2": [
+      2028,
+      1376
+    ],
+    "exhausted/e/3": [
+      2106,
+      1376
+    ],
+    "exhausted/w/0": [
+      2184,
+      1376
+    ],
+    "exhausted/w/1": [
+      2262,
+      1376
+    ],
+    "exhausted/w/2": [
+      2340,
+      1376
+    ],
+    "exhausted/w/3": [
+      2418,
+      1376
+    ],
+    "exhausted_walk/s/0": [
+      2496,
+      1376
+    ],
+    "exhausted_walk/s/1": [
+      2574,
+      1376
+    ],
+    "exhausted_walk/s/2": [
+      2652,
+      1376
+    ],
+    "exhausted_walk/s/3": [
+      2730,
+      1376
+    ],
+    "exhausted_walk/s/4": [
+      2808,
+      1376
+    ],
+    "exhausted_walk/s/5": [
+      0,
+      1462
+    ],
+    "exhausted_walk/n/0": [
+      78,
+      1462
+    ],
+    "exhausted_walk/n/1": [
+      156,
+      1462
+    ],
+    "exhausted_walk/n/2": [
+      234,
+      1462
+    ],
+    "exhausted_walk/n/3": [
+      312,
+      1462
+    ],
+    "exhausted_walk/n/4": [
+      390,
+      1462
+    ],
+    "exhausted_walk/n/5": [
+      468,
+      1462
+    ],
+    "exhausted_walk/e/0": [
+      546,
+      1462
+    ],
+    "exhausted_walk/e/1": [
+      624,
+      1462
+    ],
+    "exhausted_walk/e/2": [
+      702,
+      1462
+    ],
+    "exhausted_walk/e/3": [
+      780,
+      1462
+    ],
+    "exhausted_walk/e/4": [
+      858,
+      1462
+    ],
+    "exhausted_walk/e/5": [
+      936,
+      1462
+    ],
+    "exhausted_walk/w/0": [
+      1014,
+      1462
+    ],
+    "exhausted_walk/w/1": [
+      1092,
+      1462
+    ],
+    "exhausted_walk/w/2": [
+      1170,
+      1462
+    ],
+    "exhausted_walk/w/3": [
+      1248,
+      1462
+    ],
+    "exhausted_walk/w/4": [
+      1326,
+      1462
+    ],
+    "exhausted_walk/w/5": [
+      1404,
+      1462
+    ],
+    "dodge_recover/s/0": [
+      1482,
+      1462
+    ],
+    "dodge_recover/s/1": [
+      1560,
+      1462
+    ],
+    "dodge_recover/n/0": [
+      1638,
+      1462
+    ],
+    "dodge_recover/n/1": [
+      1716,
+      1462
+    ],
+    "dodge_recover/e/0": [
+      1794,
+      1462
+    ],
+    "dodge_recover/e/1": [
+      1872,
+      1462
+    ],
+    "dodge_recover/w/0": [
+      1950,
+      1462
+    ],
+    "dodge_recover/w/1": [
+      2028,
+      1462
+    ],
+    "backoff/s/0": [
+      2106,
+      1462
+    ],
+    "backoff/s/1": [
+      2184,
+      1462
+    ],
+    "backoff/s/2": [
+      2262,
+      1462
+    ],
+    "backoff/s/3": [
+      2340,
+      1462
+    ],
+    "backoff/s/4": [
+      2418,
+      1462
+    ],
+    "backoff/s/5": [
+      2496,
+      1462
+    ],
+    "backoff/n/0": [
+      2574,
+      1462
+    ],
+    "backoff/n/1": [
+      2652,
+      1462
+    ],
+    "backoff/n/2": [
+      2730,
+      1462
+    ],
+    "backoff/n/3": [
+      2808,
+      1462
+    ],
+    "backoff/n/4": [
+      0,
+      1548
+    ],
+    "backoff/n/5": [
+      78,
+      1548
+    ],
+    "backoff/e/0": [
+      156,
+      1548
+    ],
+    "backoff/e/1": [
+      234,
+      1548
+    ],
+    "backoff/e/2": [
+      312,
+      1548
+    ],
+    "backoff/e/3": [
+      390,
+      1548
+    ],
+    "backoff/e/4": [
+      468,
+      1548
+    ],
+    "backoff/e/5": [
+      546,
+      1548
+    ],
+    "backoff/w/0": [
+      624,
+      1548
+    ],
+    "backoff/w/1": [
+      702,
+      1548
+    ],
+    "backoff/w/2": [
+      780,
+      1548
+    ],
+    "backoff/w/3": [
+      858,
+      1548
+    ],
+    "backoff/w/4": [
+      936,
+      1548
+    ],
+    "backoff/w/5": [
+      1014,
+      1548
+    ],
+    "strafe/s/0": [
+      1092,
+      1548
+    ],
+    "strafe/s/1": [
+      1170,
+      1548
+    ],
+    "strafe/s/2": [
+      1248,
+      1548
+    ],
+    "strafe/s/3": [
+      1326,
+      1548
+    ],
+    "strafe/s/4": [
+      1404,
+      1548
+    ],
+    "strafe/s/5": [
+      1482,
+      1548
+    ],
+    "strafe/n/0": [
+      1560,
+      1548
+    ],
+    "strafe/n/1": [
+      1638,
+      1548
+    ],
+    "strafe/n/2": [
+      1716,
+      1548
+    ],
+    "strafe/n/3": [
+      1794,
+      1548
+    ],
+    "strafe/n/4": [
+      1872,
+      1548
+    ],
+    "strafe/n/5": [
+      1950,
+      1548
+    ],
+    "strafe/e/0": [
+      2028,
+      1548
+    ],
+    "strafe/e/1": [
+      2106,
+      1548
+    ],
+    "strafe/e/2": [
+      2184,
+      1548
+    ],
+    "strafe/e/3": [
+      2262,
+      1548
+    ],
+    "strafe/e/4": [
+      2340,
+      1548
+    ],
+    "strafe/e/5": [
+      2418,
+      1548
+    ],
+    "strafe/w/0": [
+      2496,
+      1548
+    ],
+    "strafe/w/1": [
+      2574,
+      1548
+    ],
+    "strafe/w/2": [
+      2652,
+      1548
+    ],
+    "strafe/w/3": [
+      2730,
+      1548
+    ],
+    "strafe/w/4": [
+      2808,
+      1548
+    ],
+    "strafe/w/5": [
+      0,
+      1634
+    ],
+    "block_walk/s/0": [
+      78,
+      1634
+    ],
+    "block_walk/s/1": [
+      156,
+      1634
+    ],
+    "block_walk/s/2": [
+      234,
+      1634
+    ],
+    "block_walk/s/3": [
+      312,
+      1634
+    ],
+    "block_walk/s/4": [
+      390,
+      1634
+    ],
+    "block_walk/s/5": [
+      468,
+      1634
+    ],
+    "block_walk/n/0": [
+      546,
+      1634
+    ],
+    "block_walk/n/1": [
+      624,
+      1634
+    ],
+    "block_walk/n/2": [
+      702,
+      1634
+    ],
+    "block_walk/n/3": [
+      780,
+      1634
+    ],
+    "block_walk/n/4": [
+      858,
+      1634
+    ],
+    "block_walk/n/5": [
+      936,
+      1634
+    ],
+    "block_walk/e/0": [
+      1014,
+      1634
+    ],
+    "block_walk/e/1": [
+      1092,
+      1634
+    ],
+    "block_walk/e/2": [
+      1170,
+      1634
+    ],
+    "block_walk/e/3": [
+      1248,
+      1634
+    ],
+    "block_walk/e/4": [
+      1326,
+      1634
+    ],
+    "block_walk/e/5": [
+      1404,
+      1634
+    ],
+    "block_walk/w/0": [
+      1482,
+      1634
+    ],
+    "block_walk/w/1": [
+      1560,
+      1634
+    ],
+    "block_walk/w/2": [
+      1638,
+      1634
+    ],
+    "block_walk/w/3": [
+      1716,
+      1634
+    ],
+    "block_walk/w/4": [
+      1794,
+      1634
+    ],
+    "block_walk/w/5": [
+      1872,
+      1634
+    ],
+    "block_backoff/s/0": [
+      1950,
+      1634
+    ],
+    "block_backoff/s/1": [
+      2028,
+      1634
+    ],
+    "block_backoff/s/2": [
+      2106,
+      1634
+    ],
+    "block_backoff/s/3": [
+      2184,
+      1634
+    ],
+    "block_backoff/s/4": [
+      2262,
+      1634
+    ],
+    "block_backoff/s/5": [
+      2340,
+      1634
+    ],
+    "block_backoff/n/0": [
+      2418,
+      1634
+    ],
+    "block_backoff/n/1": [
+      2496,
+      1634
+    ],
+    "block_backoff/n/2": [
+      2574,
+      1634
+    ],
+    "block_backoff/n/3": [
+      2652,
+      1634
+    ],
+    "block_backoff/n/4": [
+      2730,
+      1634
+    ],
+    "block_backoff/n/5": [
+      2808,
+      1634
+    ],
+    "block_backoff/e/0": [
+      0,
+      1720
+    ],
+    "block_backoff/e/1": [
+      78,
+      1720
+    ],
+    "block_backoff/e/2": [
+      156,
+      1720
+    ],
+    "block_backoff/e/3": [
+      234,
+      1720
+    ],
+    "block_backoff/e/4": [
+      312,
+      1720
+    ],
+    "block_backoff/e/5": [
+      390,
+      1720
+    ],
+    "block_backoff/w/0": [
+      468,
+      1720
+    ],
+    "block_backoff/w/1": [
+      546,
+      1720
+    ],
+    "block_backoff/w/2": [
+      624,
+      1720
+    ],
+    "block_backoff/w/3": [
+      702,
+      1720
+    ],
+    "block_backoff/w/4": [
+      780,
+      1720
+    ],
+    "block_backoff/w/5": [
+      858,
+      1720
+    ],
+    "block_strafe/s/0": [
+      936,
+      1720
+    ],
+    "block_strafe/s/1": [
+      1014,
+      1720
+    ],
+    "block_strafe/s/2": [
+      1092,
+      1720
+    ],
+    "block_strafe/s/3": [
+      1170,
+      1720
+    ],
+    "block_strafe/s/4": [
+      1248,
+      1720
+    ],
+    "block_strafe/s/5": [
+      1326,
+      1720
+    ],
+    "block_strafe/n/0": [
+      1404,
+      1720
+    ],
+    "block_strafe/n/1": [
+      1482,
+      1720
+    ],
+    "block_strafe/n/2": [
+      1560,
+      1720
+    ],
+    "block_strafe/n/3": [
+      1638,
+      1720
+    ],
+    "block_strafe/n/4": [
+      1716,
+      1720
+    ],
+    "block_strafe/n/5": [
+      1794,
+      1720
+    ],
+    "block_strafe/e/0": [
+      1872,
+      1720
+    ],
+    "block_strafe/e/1": [
+      1950,
+      1720
+    ],
+    "block_strafe/e/2": [
+      2028,
+      1720
+    ],
+    "block_strafe/e/3": [
+      2106,
+      1720
+    ],
+    "block_strafe/e/4": [
+      2184,
+      1720
+    ],
+    "block_strafe/e/5": [
+      2262,
+      1720
+    ],
+    "block_strafe/w/0": [
+      2340,
+      1720
+    ],
+    "block_strafe/w/1": [
+      2418,
+      1720
+    ],
+    "block_strafe/w/2": [
+      2496,
+      1720
+    ],
+    "block_strafe/w/3": [
+      2574,
+      1720
+    ],
+    "block_strafe/w/4": [
+      2652,
+      1720
+    ],
+    "block_strafe/w/5": [
+      2730,
+      1720
+    ],
+    "overbalance/s/0": [
+      2808,
+      1720
+    ],
+    "overbalance/s/1": [
+      0,
+      1806
+    ],
+    "overbalance/n/0": [
+      78,
+      1806
+    ],
+    "overbalance/n/1": [
+      156,
+      1806
+    ],
+    "overbalance/e/0": [
+      234,
+      1806
+    ],
+    "overbalance/e/1": [
+      312,
+      1806
+    ],
+    "overbalance/w/0": [
+      390,
+      1806
+    ],
+    "overbalance/w/1": [
+      468,
+      1806
+    ],
+    "flinch/s/0": [
+      546,
+      1806
+    ],
+    "flinch/s/1": [
+      624,
+      1806
+    ],
+    "flinch/n/0": [
+      702,
+      1806
+    ],
+    "flinch/n/1": [
+      780,
+      1806
+    ],
+    "flinch/e/0": [
+      858,
+      1806
+    ],
+    "flinch/e/1": [
+      936,
+      1806
+    ],
+    "flinch/w/0": [
+      1014,
+      1806
+    ],
+    "flinch/w/1": [
+      1092,
+      1806
+    ],
+    "knockdown/s/0": [
+      1170,
+      1806
+    ],
+    "knockdown/s/1": [
+      1248,
+      1806
+    ],
+    "knockdown/s/2": [
+      1326,
+      1806
+    ],
+    "knockdown/n/0": [
+      1404,
+      1806
+    ],
+    "knockdown/n/1": [
+      1482,
+      1806
+    ],
+    "knockdown/n/2": [
+      1560,
+      1806
+    ],
+    "knockdown/e/0": [
+      1638,
+      1806
+    ],
+    "knockdown/e/1": [
+      1716,
+      1806
+    ],
+    "knockdown/e/2": [
+      1794,
+      1806
+    ],
+    "knockdown/w/0": [
+      1872,
+      1806
+    ],
+    "knockdown/w/1": [
+      1950,
+      1806
+    ],
+    "knockdown/w/2": [
+      2028,
+      1806
+    ],
+    "sidestep/s/0": [
+      2106,
+      1806
+    ],
+    "sidestep/s/1": [
+      2184,
+      1806
+    ],
+    "sidestep/s/2": [
+      2262,
+      1806
+    ],
+    "sidestep/n/0": [
+      2340,
+      1806
+    ],
+    "sidestep/n/1": [
+      2418,
+      1806
+    ],
+    "sidestep/n/2": [
+      2496,
+      1806
+    ],
+    "sidestep/e/0": [
+      2574,
+      1806
+    ],
+    "sidestep/e/1": [
+      2652,
+      1806
+    ],
+    "sidestep/e/2": [
+      2730,
+      1806
+    ],
+    "sidestep/w/0": [
+      2808,
+      1806
+    ],
+    "sidestep/w/1": [
+      0,
+      1892
+    ],
+    "sidestep/w/2": [
+      78,
+      1892
+    ],
+    "hop/s/0": [
+      156,
+      1892
+    ],
+    "hop/s/1": [
+      234,
+      1892
+    ],
+    "hop/s/2": [
+      312,
+      1892
+    ],
+    "hop/n/0": [
+      390,
+      1892
+    ],
+    "hop/n/1": [
+      468,
+      1892
+    ],
+    "hop/n/2": [
+      546,
+      1892
+    ],
+    "hop/e/0": [
+      624,
+      1892
+    ],
+    "hop/e/1": [
+      702,
+      1892
+    ],
+    "hop/e/2": [
+      780,
+      1892
+    ],
+    "hop/w/0": [
+      858,
+      1892
+    ],
+    "hop/w/1": [
+      936,
+      1892
+    ],
+    "hop/w/2": [
+      1014,
+      1892
+    ],
+    "bind/s/0": [
+      1092,
+      1892
+    ],
+    "bind/s/1": [
+      1170,
+      1892
+    ],
+    "bind/s/2": [
+      1248,
+      1892
+    ],
+    "bind/s/3": [
+      1326,
+      1892
+    ],
+    "bind/s/4": [
+      1404,
+      1892
+    ],
+    "bind/s/5": [
+      1482,
+      1892
+    ],
+    "bind/n/0": [
+      1560,
+      1892
+    ],
+    "bind/n/1": [
+      1638,
+      1892
+    ],
+    "bind/n/2": [
+      1716,
+      1892
+    ],
+    "bind/n/3": [
+      1794,
+      1892
+    ],
+    "bind/n/4": [
+      1872,
+      1892
+    ],
+    "bind/n/5": [
+      1950,
+      1892
+    ],
+    "bind/e/0": [
+      2028,
+      1892
+    ],
+    "bind/e/1": [
+      2106,
+      1892
+    ],
+    "bind/e/2": [
+      2184,
+      1892
+    ],
+    "bind/e/3": [
+      2262,
+      1892
+    ],
+    "bind/e/4": [
+      2340,
+      1892
+    ],
+    "bind/e/5": [
+      2418,
+      1892
+    ],
+    "bind/w/0": [
+      2496,
+      1892
+    ],
+    "bind/w/1": [
+      2574,
+      1892
+    ],
+    "bind/w/2": [
+      2652,
+      1892
+    ],
+    "bind/w/3": [
+      2730,
+      1892
+    ],
+    "bind/w/4": [
+      2808,
+      1892
+    ],
+    "bind/w/5": [
+      0,
+      1978
+    ],
+    "eat_ration/s/0": [
+      78,
+      1978
+    ],
+    "eat_ration/s/1": [
+      156,
+      1978
+    ],
+    "eat_ration/s/2": [
+      234,
+      1978
+    ],
+    "eat_ration/s/3": [
+      312,
+      1978
+    ],
+    "eat_ration/n/0": [
+      390,
+      1978
+    ],
+    "eat_ration/n/1": [
+      468,
+      1978
+    ],
+    "eat_ration/n/2": [
+      546,
+      1978
+    ],
+    "eat_ration/n/3": [
+      624,
+      1978
+    ],
+    "eat_ration/e/0": [
+      702,
+      1978
+    ],
+    "eat_ration/e/1": [
+      780,
+      1978
+    ],
+    "eat_ration/e/2": [
+      858,
+      1978
+    ],
+    "eat_ration/e/3": [
+      936,
+      1978
+    ],
+    "eat_ration/w/0": [
+      1014,
+      1978
+    ],
+    "eat_ration/w/1": [
+      1092,
+      1978
+    ],
+    "eat_ration/w/2": [
+      1170,
+      1978
+    ],
+    "eat_ration/w/3": [
+      1248,
+      1978
+    ],
+    "fall_fwd/s/0": [
+      1326,
+      1978
+    ],
+    "fall_fwd/s/1": [
+      1404,
+      1978
+    ],
+    "fall_fwd/n/0": [
+      1482,
+      1978
+    ],
+    "fall_fwd/n/1": [
+      1560,
+      1978
+    ],
+    "fall_fwd/e/0": [
+      1638,
+      1978
+    ],
+    "fall_fwd/e/1": [
+      1716,
+      1978
+    ],
+    "fall_fwd/w/0": [
+      1794,
+      1978
+    ],
+    "fall_fwd/w/1": [
+      1872,
+      1978
+    ],
+    "fall_back/s/0": [
+      1950,
+      1978
+    ],
+    "fall_back/s/1": [
+      2028,
+      1978
+    ],
+    "fall_back/n/0": [
+      2106,
+      1978
+    ],
+    "fall_back/n/1": [
+      2184,
+      1978
+    ],
+    "fall_back/e/0": [
+      2262,
+      1978
+    ],
+    "fall_back/e/1": [
+      2340,
+      1978
+    ],
+    "fall_back/w/0": [
+      2418,
+      1978
+    ],
+    "fall_back/w/1": [
+      2496,
+      1978
+    ],
+    "fall_crumple/s/0": [
+      2574,
+      1978
+    ],
+    "fall_crumple/s/1": [
+      2652,
+      1978
+    ],
+    "fall_crumple/n/0": [
+      2730,
+      1978
+    ],
+    "fall_crumple/n/1": [
+      2808,
+      1978
+    ],
+    "fall_crumple/e/0": [
+      0,
+      2064
+    ],
+    "fall_crumple/e/1": [
+      78,
+      2064
+    ],
+    "fall_crumple/w/0": [
+      156,
+      2064
+    ],
+    "fall_crumple/w/1": [
+      234,
+      2064
+    ],
+    "reel/s/0": [
+      312,
+      2064
+    ],
+    "reel/s/1": [
+      390,
+      2064
+    ],
+    "reel/s/2": [
+      468,
+      2064
+    ],
+    "reel/n/0": [
+      546,
+      2064
+    ],
+    "reel/n/1": [
+      624,
+      2064
+    ],
+    "reel/n/2": [
+      702,
+      2064
+    ],
+    "reel/e/0": [
+      780,
+      2064
+    ],
+    "reel/e/1": [
+      858,
+      2064
+    ],
+    "reel/e/2": [
+      936,
+      2064
+    ],
+    "reel/w/0": [
+      1014,
+      2064
+    ],
+    "reel/w/1": [
+      1092,
+      2064
+    ],
+    "reel/w/2": [
+      1170,
+      2064
+    ],
+    "guard_turn/s/0": [
+      1248,
+      2064
+    ],
+    "guard_turn/s/1": [
+      1326,
+      2064
+    ],
+    "guard_turn/s/2": [
+      1404,
+      2064
+    ],
+    "guard_turn/n/0": [
+      1482,
+      2064
+    ],
+    "guard_turn/n/1": [
+      1560,
+      2064
+    ],
+    "guard_turn/n/2": [
+      1638,
+      2064
+    ],
+    "guard_turn/e/0": [
+      1716,
+      2064
+    ],
+    "guard_turn/e/1": [
+      1794,
+      2064
+    ],
+    "guard_turn/e/2": [
+      1872,
+      2064
+    ],
+    "guard_turn/w/0": [
+      1950,
+      2064
+    ],
+    "guard_turn/w/1": [
+      2028,
+      2064
+    ],
+    "guard_turn/w/2": [
+      2106,
+      2064
+    ],
+    "spare/s/0": [
+      2184,
+      2064
+    ],
+    "spare/s/1": [
+      2262,
+      2064
+    ],
+    "spare/s/2": [
+      2340,
+      2064
+    ],
+    "spare/s/3": [
+      2418,
+      2064
+    ],
+    "spare/n/0": [
+      2496,
+      2064
+    ],
+    "spare/n/1": [
+      2574,
+      2064
+    ],
+    "spare/n/2": [
+      2652,
+      2064
+    ],
+    "spare/n/3": [
+      2730,
+      2064
+    ],
+    "spare/e/0": [
+      2808,
+      2064
+    ],
+    "spare/e/1": [
+      0,
+      2150
+    ],
+    "spare/e/2": [
+      78,
+      2150
+    ],
+    "spare/e/3": [
+      156,
+      2150
+    ],
+    "spare/w/0": [
+      234,
+      2150
+    ],
+    "spare/w/1": [
+      312,
+      2150
+    ],
+    "spare/w/2": [
+      390,
+      2150
+    ],
+    "spare/w/3": [
+      468,
+      2150
+    ],
+    "red/s/0": [
+      546,
+      2150
+    ],
+    "red/s/1": [
+      624,
+      2150
+    ],
+    "red/s/2": [
+      702,
+      2150
+    ],
+    "red/s/3": [
+      780,
+      2150
+    ],
+    "red/n/0": [
+      858,
+      2150
+    ],
+    "red/n/1": [
+      936,
+      2150
+    ],
+    "red/n/2": [
+      1014,
+      2150
+    ],
+    "red/n/3": [
+      1092,
+      2150
+    ],
+    "red/e/0": [
+      1170,
+      2150
+    ],
+    "red/e/1": [
+      1248,
+      2150
+    ],
+    "red/e/2": [
+      1326,
+      2150
+    ],
+    "red/e/3": [
+      1404,
+      2150
+    ],
+    "red/w/0": [
+      1482,
+      2150
+    ],
+    "red/w/1": [
+      1560,
+      2150
+    ],
+    "red/w/2": [
+      1638,
+      2150
+    ],
+    "red/w/3": [
+      1716,
+      2150
+    ],
+    "red_miss/s/0": [
+      1794,
+      2150
+    ],
+    "red_miss/s/1": [
+      1872,
+      2150
+    ],
+    "red_miss/s/2": [
+      1950,
+      2150
+    ],
+    "red_miss/s/3": [
+      2028,
+      2150
+    ],
+    "red_miss/n/0": [
+      2106,
+      2150
+    ],
+    "red_miss/n/1": [
+      2184,
+      2150
+    ],
+    "red_miss/n/2": [
+      2262,
+      2150
+    ],
+    "red_miss/n/3": [
+      2340,
+      2150
+    ],
+    "red_miss/e/0": [
+      2418,
+      2150
+    ],
+    "red_miss/e/1": [
+      2496,
+      2150
+    ],
+    "red_miss/e/2": [
+      2574,
+      2150
+    ],
+    "red_miss/e/3": [
+      2652,
+      2150
+    ],
+    "red_miss/w/0": [
+      2730,
+      2150
+    ],
+    "red_miss/w/1": [
+      2808,
+      2150
+    ],
+    "red_miss/w/2": [
+      0,
+      2236
+    ],
+    "red_miss/w/3": [
+      78,
+      2236
+    ],
+    "fin_seax_s/s/0": [
+      156,
+      2236
+    ],
+    "fin_seax_s/s/1": [
+      234,
+      2236
+    ],
+    "fin_seax_s/s/2": [
+      312,
+      2236
+    ],
+    "fin_seax_s/s/3": [
+      390,
+      2236
+    ],
+    "fin_seax_s/s/4": [
+      468,
+      2236
+    ],
+    "fin_seax_s/s/5": [
+      546,
+      2236
+    ],
+    "fin_seax_s/s/6": [
+      624,
+      2236
+    ],
+    "fin_seax_s/s/7": [
+      702,
+      2236
+    ],
+    "fin_seax_s/n/0": [
+      780,
+      2236
+    ],
+    "fin_seax_s/n/1": [
+      858,
+      2236
+    ],
+    "fin_seax_s/n/2": [
+      936,
+      2236
+    ],
+    "fin_seax_s/n/3": [
+      1014,
+      2236
+    ],
+    "fin_seax_s/n/4": [
+      1092,
+      2236
+    ],
+    "fin_seax_s/n/5": [
+      1170,
+      2236
+    ],
+    "fin_seax_s/n/6": [
+      1248,
+      2236
+    ],
+    "fin_seax_s/n/7": [
+      1326,
+      2236
+    ],
+    "fin_seax_s/e/0": [
+      1404,
+      2236
+    ],
+    "fin_seax_s/e/1": [
+      1482,
+      2236
+    ],
+    "fin_seax_s/e/2": [
+      1560,
+      2236
+    ],
+    "fin_seax_s/e/3": [
+      1638,
+      2236
+    ],
+    "fin_seax_s/e/4": [
+      1716,
+      2236
+    ],
+    "fin_seax_s/e/5": [
+      1794,
+      2236
+    ],
+    "fin_seax_s/e/6": [
+      1872,
+      2236
+    ],
+    "fin_seax_s/e/7": [
+      1950,
+      2236
+    ],
+    "fin_seax_s/w/0": [
+      2028,
+      2236
+    ],
+    "fin_seax_s/w/1": [
+      2106,
+      2236
+    ],
+    "fin_seax_s/w/2": [
+      2184,
+      2236
+    ],
+    "fin_seax_s/w/3": [
+      2262,
+      2236
+    ],
+    "fin_seax_s/w/4": [
+      2340,
+      2236
+    ],
+    "fin_seax_s/w/5": [
+      2418,
+      2236
+    ],
+    "fin_seax_s/w/6": [
+      2496,
+      2236
+    ],
+    "fin_seax_s/w/7": [
+      2574,
+      2236
+    ],
+    "fin_seax_l/s/0": [
+      2652,
+      2236
+    ],
+    "fin_seax_l/s/1": [
+      2730,
+      2236
+    ],
+    "fin_seax_l/s/2": [
+      2808,
+      2236
+    ],
+    "fin_seax_l/s/3": [
+      0,
+      2322
+    ],
+    "fin_seax_l/s/4": [
+      78,
+      2322
+    ],
+    "fin_seax_l/s/5": [
+      156,
+      2322
+    ],
+    "fin_seax_l/s/6": [
+      234,
+      2322
+    ],
+    "fin_seax_l/s/7": [
+      312,
+      2322
+    ],
+    "fin_seax_l/n/0": [
+      390,
+      2322
+    ],
+    "fin_seax_l/n/1": [
+      468,
+      2322
+    ],
+    "fin_seax_l/n/2": [
+      546,
+      2322
+    ],
+    "fin_seax_l/n/3": [
+      624,
+      2322
+    ],
+    "fin_seax_l/n/4": [
+      702,
+      2322
+    ],
+    "fin_seax_l/n/5": [
+      780,
+      2322
+    ],
+    "fin_seax_l/n/6": [
+      858,
+      2322
+    ],
+    "fin_seax_l/n/7": [
+      936,
+      2322
+    ],
+    "fin_seax_l/e/0": [
+      1014,
+      2322
+    ],
+    "fin_seax_l/e/1": [
+      1092,
+      2322
+    ],
+    "fin_seax_l/e/2": [
+      1170,
+      2322
+    ],
+    "fin_seax_l/e/3": [
+      1248,
+      2322
+    ],
+    "fin_seax_l/e/4": [
+      1326,
+      2322
+    ],
+    "fin_seax_l/e/5": [
+      1404,
+      2322
+    ],
+    "fin_seax_l/e/6": [
+      1482,
+      2322
+    ],
+    "fin_seax_l/e/7": [
+      1560,
+      2322
+    ],
+    "fin_seax_l/w/0": [
+      1638,
+      2322
+    ],
+    "fin_seax_l/w/1": [
+      1716,
+      2322
+    ],
+    "fin_seax_l/w/2": [
+      1794,
+      2322
+    ],
+    "fin_seax_l/w/3": [
+      1872,
+      2322
+    ],
+    "fin_seax_l/w/4": [
+      1950,
+      2322
+    ],
+    "fin_seax_l/w/5": [
+      2028,
+      2322
+    ],
+    "fin_seax_l/w/6": [
+      2106,
+      2322
+    ],
+    "fin_seax_l/w/7": [
+      2184,
+      2322
+    ],
+    "fin_axe_s/s/0": [
+      2262,
+      2322
+    ],
+    "fin_axe_s/s/1": [
+      2340,
+      2322
+    ],
+    "fin_axe_s/s/2": [
+      2418,
+      2322
+    ],
+    "fin_axe_s/s/3": [
+      2496,
+      2322
+    ],
+    "fin_axe_s/s/4": [
+      2574,
+      2322
+    ],
+    "fin_axe_s/s/5": [
+      2652,
+      2322
+    ],
+    "fin_axe_s/s/6": [
+      2730,
+      2322
+    ],
+    "fin_axe_s/s/7": [
+      2808,
+      2322
+    ],
+    "fin_axe_s/n/0": [
+      0,
+      2408
+    ],
+    "fin_axe_s/n/1": [
+      78,
+      2408
+    ],
+    "fin_axe_s/n/2": [
+      156,
+      2408
+    ],
+    "fin_axe_s/n/3": [
+      234,
+      2408
+    ],
+    "fin_axe_s/n/4": [
+      312,
+      2408
+    ],
+    "fin_axe_s/n/5": [
+      390,
+      2408
+    ],
+    "fin_axe_s/n/6": [
+      468,
+      2408
+    ],
+    "fin_axe_s/n/7": [
+      546,
+      2408
+    ],
+    "fin_axe_s/e/0": [
+      624,
+      2408
+    ],
+    "fin_axe_s/e/1": [
+      702,
+      2408
+    ],
+    "fin_axe_s/e/2": [
+      780,
+      2408
+    ],
+    "fin_axe_s/e/3": [
+      858,
+      2408
+    ],
+    "fin_axe_s/e/4": [
+      936,
+      2408
+    ],
+    "fin_axe_s/e/5": [
+      1014,
+      2408
+    ],
+    "fin_axe_s/e/6": [
+      1092,
+      2408
+    ],
+    "fin_axe_s/e/7": [
+      1170,
+      2408
+    ],
+    "fin_axe_s/w/0": [
+      1248,
+      2408
+    ],
+    "fin_axe_s/w/1": [
+      1326,
+      2408
+    ],
+    "fin_axe_s/w/2": [
+      1404,
+      2408
+    ],
+    "fin_axe_s/w/3": [
+      1482,
+      2408
+    ],
+    "fin_axe_s/w/4": [
+      1560,
+      2408
+    ],
+    "fin_axe_s/w/5": [
+      1638,
+      2408
+    ],
+    "fin_axe_s/w/6": [
+      1716,
+      2408
+    ],
+    "fin_axe_s/w/7": [
+      1794,
+      2408
+    ],
+    "fin_axe_l/s/0": [
+      1872,
+      2408
+    ],
+    "fin_axe_l/s/1": [
+      1950,
+      2408
+    ],
+    "fin_axe_l/s/2": [
+      2028,
+      2408
+    ],
+    "fin_axe_l/s/3": [
+      2106,
+      2408
+    ],
+    "fin_axe_l/s/4": [
+      2184,
+      2408
+    ],
+    "fin_axe_l/s/5": [
+      2262,
+      2408
+    ],
+    "fin_axe_l/s/6": [
+      2340,
+      2408
+    ],
+    "fin_axe_l/s/7": [
+      2418,
+      2408
+    ],
+    "fin_axe_l/n/0": [
+      2496,
+      2408
+    ],
+    "fin_axe_l/n/1": [
+      2574,
+      2408
+    ],
+    "fin_axe_l/n/2": [
+      2652,
+      2408
+    ],
+    "fin_axe_l/n/3": [
+      2730,
+      2408
+    ],
+    "fin_axe_l/n/4": [
+      2808,
+      2408
+    ],
+    "fin_axe_l/n/5": [
+      0,
+      2494
+    ],
+    "fin_axe_l/n/6": [
+      78,
+      2494
+    ],
+    "fin_axe_l/n/7": [
+      156,
+      2494
+    ],
+    "fin_axe_l/e/0": [
+      234,
+      2494
+    ],
+    "fin_axe_l/e/1": [
+      312,
+      2494
+    ],
+    "fin_axe_l/e/2": [
+      390,
+      2494
+    ],
+    "fin_axe_l/e/3": [
+      468,
+      2494
+    ],
+    "fin_axe_l/e/4": [
+      546,
+      2494
+    ],
+    "fin_axe_l/e/5": [
+      624,
+      2494
+    ],
+    "fin_axe_l/e/6": [
+      702,
+      2494
+    ],
+    "fin_axe_l/e/7": [
+      780,
+      2494
+    ],
+    "fin_axe_l/w/0": [
+      858,
+      2494
+    ],
+    "fin_axe_l/w/1": [
+      936,
+      2494
+    ],
+    "fin_axe_l/w/2": [
+      1014,
+      2494
+    ],
+    "fin_axe_l/w/3": [
+      1092,
+      2494
+    ],
+    "fin_axe_l/w/4": [
+      1170,
+      2494
+    ],
+    "fin_axe_l/w/5": [
+      1248,
+      2494
+    ],
+    "fin_axe_l/w/6": [
+      1326,
+      2494
+    ],
+    "fin_axe_l/w/7": [
+      1404,
+      2494
+    ],
+    "fin_spear_s/s/0": [
+      1482,
+      2494
+    ],
+    "fin_spear_s/s/1": [
+      1560,
+      2494
+    ],
+    "fin_spear_s/s/2": [
+      1638,
+      2494
+    ],
+    "fin_spear_s/s/3": [
+      1716,
+      2494
+    ],
+    "fin_spear_s/s/4": [
+      1794,
+      2494
+    ],
+    "fin_spear_s/s/5": [
+      1872,
+      2494
+    ],
+    "fin_spear_s/s/6": [
+      1950,
+      2494
+    ],
+    "fin_spear_s/s/7": [
+      2028,
+      2494
+    ],
+    "fin_spear_s/n/0": [
+      2106,
+      2494
+    ],
+    "fin_spear_s/n/1": [
+      2184,
+      2494
+    ],
+    "fin_spear_s/n/2": [
+      2262,
+      2494
+    ],
+    "fin_spear_s/n/3": [
+      2340,
+      2494
+    ],
+    "fin_spear_s/n/4": [
+      2418,
+      2494
+    ],
+    "fin_spear_s/n/5": [
+      2496,
+      2494
+    ],
+    "fin_spear_s/n/6": [
+      2574,
+      2494
+    ],
+    "fin_spear_s/n/7": [
+      2652,
+      2494
+    ],
+    "fin_spear_s/e/0": [
+      2730,
+      2494
+    ],
+    "fin_spear_s/e/1": [
+      2808,
+      2494
+    ],
+    "fin_spear_s/e/2": [
+      0,
+      2580
+    ],
+    "fin_spear_s/e/3": [
+      78,
+      2580
+    ],
+    "fin_spear_s/e/4": [
+      156,
+      2580
+    ],
+    "fin_spear_s/e/5": [
+      234,
+      2580
+    ],
+    "fin_spear_s/e/6": [
+      312,
+      2580
+    ],
+    "fin_spear_s/e/7": [
+      390,
+      2580
+    ],
+    "fin_spear_s/w/0": [
+      468,
+      2580
+    ],
+    "fin_spear_s/w/1": [
+      546,
+      2580
+    ],
+    "fin_spear_s/w/2": [
+      624,
+      2580
+    ],
+    "fin_spear_s/w/3": [
+      702,
+      2580
+    ],
+    "fin_spear_s/w/4": [
+      780,
+      2580
+    ],
+    "fin_spear_s/w/5": [
+      858,
+      2580
+    ],
+    "fin_spear_s/w/6": [
+      936,
+      2580
+    ],
+    "fin_spear_s/w/7": [
+      1014,
+      2580
+    ],
+    "fin_spear_l/s/0": [
+      1092,
+      2580
+    ],
+    "fin_spear_l/s/1": [
+      1170,
+      2580
+    ],
+    "fin_spear_l/s/2": [
+      1248,
+      2580
+    ],
+    "fin_spear_l/s/3": [
+      1326,
+      2580
+    ],
+    "fin_spear_l/s/4": [
+      1404,
+      2580
+    ],
+    "fin_spear_l/s/5": [
+      1482,
+      2580
+    ],
+    "fin_spear_l/s/6": [
+      1560,
+      2580
+    ],
+    "fin_spear_l/s/7": [
+      1638,
+      2580
+    ],
+    "fin_spear_l/n/0": [
+      1716,
+      2580
+    ],
+    "fin_spear_l/n/1": [
+      1794,
+      2580
+    ],
+    "fin_spear_l/n/2": [
+      1872,
+      2580
+    ],
+    "fin_spear_l/n/3": [
+      1950,
+      2580
+    ],
+    "fin_spear_l/n/4": [
+      2028,
+      2580
+    ],
+    "fin_spear_l/n/5": [
+      2106,
+      2580
+    ],
+    "fin_spear_l/n/6": [
+      2184,
+      2580
+    ],
+    "fin_spear_l/n/7": [
+      2262,
+      2580
+    ],
+    "fin_spear_l/e/0": [
+      2340,
+      2580
+    ],
+    "fin_spear_l/e/1": [
+      2418,
+      2580
+    ],
+    "fin_spear_l/e/2": [
+      2496,
+      2580
+    ],
+    "fin_spear_l/e/3": [
+      2574,
+      2580
+    ],
+    "fin_spear_l/e/4": [
+      2652,
+      2580
+    ],
+    "fin_spear_l/e/5": [
+      2730,
+      2580
+    ],
+    "fin_spear_l/e/6": [
+      2808,
+      2580
+    ],
+    "fin_spear_l/e/7": [
+      0,
+      2666
+    ],
+    "fin_spear_l/w/0": [
+      78,
+      2666
+    ],
+    "fin_spear_l/w/1": [
+      156,
+      2666
+    ],
+    "fin_spear_l/w/2": [
+      234,
+      2666
+    ],
+    "fin_spear_l/w/3": [
+      312,
+      2666
+    ],
+    "fin_spear_l/w/4": [
+      390,
+      2666
+    ],
+    "fin_spear_l/w/5": [
+      468,
+      2666
+    ],
+    "fin_spear_l/w/6": [
+      546,
+      2666
+    ],
+    "fin_spear_l/w/7": [
+      624,
+      2666
+    ],
+    "fin_sword_s/s/0": [
+      702,
+      2666
+    ],
+    "fin_sword_s/s/1": [
+      780,
+      2666
+    ],
+    "fin_sword_s/s/2": [
+      858,
+      2666
+    ],
+    "fin_sword_s/s/3": [
+      936,
+      2666
+    ],
+    "fin_sword_s/s/4": [
+      1014,
+      2666
+    ],
+    "fin_sword_s/s/5": [
+      1092,
+      2666
+    ],
+    "fin_sword_s/s/6": [
+      1170,
+      2666
+    ],
+    "fin_sword_s/s/7": [
+      1248,
+      2666
+    ],
+    "fin_sword_s/n/0": [
+      1326,
+      2666
+    ],
+    "fin_sword_s/n/1": [
+      1404,
+      2666
+    ],
+    "fin_sword_s/n/2": [
+      1482,
+      2666
+    ],
+    "fin_sword_s/n/3": [
+      1560,
+      2666
+    ],
+    "fin_sword_s/n/4": [
+      1638,
+      2666
+    ],
+    "fin_sword_s/n/5": [
+      1716,
+      2666
+    ],
+    "fin_sword_s/n/6": [
+      1794,
+      2666
+    ],
+    "fin_sword_s/n/7": [
+      1872,
+      2666
+    ],
+    "fin_sword_s/e/0": [
+      1950,
+      2666
+    ],
+    "fin_sword_s/e/1": [
+      2028,
+      2666
+    ],
+    "fin_sword_s/e/2": [
+      2106,
+      2666
+    ],
+    "fin_sword_s/e/3": [
+      2184,
+      2666
+    ],
+    "fin_sword_s/e/4": [
+      2262,
+      2666
+    ],
+    "fin_sword_s/e/5": [
+      2340,
+      2666
+    ],
+    "fin_sword_s/e/6": [
+      2418,
+      2666
+    ],
+    "fin_sword_s/e/7": [
+      2496,
+      2666
+    ],
+    "fin_sword_s/w/0": [
+      2574,
+      2666
+    ],
+    "fin_sword_s/w/1": [
+      2652,
+      2666
+    ],
+    "fin_sword_s/w/2": [
+      2730,
+      2666
+    ],
+    "fin_sword_s/w/3": [
+      2808,
+      2666
+    ],
+    "fin_sword_s/w/4": [
+      0,
+      2752
+    ],
+    "fin_sword_s/w/5": [
+      78,
+      2752
+    ],
+    "fin_sword_s/w/6": [
+      156,
+      2752
+    ],
+    "fin_sword_s/w/7": [
+      234,
+      2752
+    ],
+    "fin_sword_l/s/0": [
+      312,
+      2752
+    ],
+    "fin_sword_l/s/1": [
+      390,
+      2752
+    ],
+    "fin_sword_l/s/2": [
+      468,
+      2752
+    ],
+    "fin_sword_l/s/3": [
+      546,
+      2752
+    ],
+    "fin_sword_l/s/4": [
+      624,
+      2752
+    ],
+    "fin_sword_l/s/5": [
+      702,
+      2752
+    ],
+    "fin_sword_l/s/6": [
+      780,
+      2752
+    ],
+    "fin_sword_l/s/7": [
+      858,
+      2752
+    ],
+    "fin_sword_l/n/0": [
+      936,
+      2752
+    ],
+    "fin_sword_l/n/1": [
+      1014,
+      2752
+    ],
+    "fin_sword_l/n/2": [
+      1092,
+      2752
+    ],
+    "fin_sword_l/n/3": [
+      1170,
+      2752
+    ],
+    "fin_sword_l/n/4": [
+      1248,
+      2752
+    ],
+    "fin_sword_l/n/5": [
+      1326,
+      2752
+    ],
+    "fin_sword_l/n/6": [
+      1404,
+      2752
+    ],
+    "fin_sword_l/n/7": [
+      1482,
+      2752
+    ],
+    "fin_sword_l/e/0": [
+      1560,
+      2752
+    ],
+    "fin_sword_l/e/1": [
+      1638,
+      2752
+    ],
+    "fin_sword_l/e/2": [
+      1716,
+      2752
+    ],
+    "fin_sword_l/e/3": [
+      1794,
+      2752
+    ],
+    "fin_sword_l/e/4": [
+      1872,
+      2752
+    ],
+    "fin_sword_l/e/5": [
+      1950,
+      2752
+    ],
+    "fin_sword_l/e/6": [
+      2028,
+      2752
+    ],
+    "fin_sword_l/e/7": [
+      2106,
+      2752
+    ],
+    "fin_sword_l/w/0": [
+      2184,
+      2752
+    ],
+    "fin_sword_l/w/1": [
+      2262,
+      2752
+    ],
+    "fin_sword_l/w/2": [
+      2340,
+      2752
+    ],
+    "fin_sword_l/w/3": [
+      2418,
+      2752
+    ],
+    "fin_sword_l/w/4": [
+      2496,
+      2752
+    ],
+    "fin_sword_l/w/5": [
+      2574,
+      2752
+    ],
+    "fin_sword_l/w/6": [
+      2652,
+      2752
+    ],
+    "fin_sword_l/w/7": [
+      2730,
+      2752
+    ],
+    "fin_dane_s/s/0": [
+      2808,
+      2752
+    ],
+    "fin_dane_s/s/1": [
+      0,
+      2838
+    ],
+    "fin_dane_s/s/2": [
+      78,
+      2838
+    ],
+    "fin_dane_s/s/3": [
+      156,
+      2838
+    ],
+    "fin_dane_s/s/4": [
+      234,
+      2838
+    ],
+    "fin_dane_s/s/5": [
+      312,
+      2838
+    ],
+    "fin_dane_s/s/6": [
+      390,
+      2838
+    ],
+    "fin_dane_s/s/7": [
+      468,
+      2838
+    ],
+    "fin_dane_s/n/0": [
+      546,
+      2838
+    ],
+    "fin_dane_s/n/1": [
+      624,
+      2838
+    ],
+    "fin_dane_s/n/2": [
+      702,
+      2838
+    ],
+    "fin_dane_s/n/3": [
+      780,
+      2838
+    ],
+    "fin_dane_s/n/4": [
+      858,
+      2838
+    ],
+    "fin_dane_s/n/5": [
+      936,
+      2838
+    ],
+    "fin_dane_s/n/6": [
+      1014,
+      2838
+    ],
+    "fin_dane_s/n/7": [
+      1092,
+      2838
+    ],
+    "fin_dane_s/e/0": [
+      1170,
+      2838
+    ],
+    "fin_dane_s/e/1": [
+      1248,
+      2838
+    ],
+    "fin_dane_s/e/2": [
+      1326,
+      2838
+    ],
+    "fin_dane_s/e/3": [
+      1404,
+      2838
+    ],
+    "fin_dane_s/e/4": [
+      1482,
+      2838
+    ],
+    "fin_dane_s/e/5": [
+      1560,
+      2838
+    ],
+    "fin_dane_s/e/6": [
+      1638,
+      2838
+    ],
+    "fin_dane_s/e/7": [
+      1716,
+      2838
+    ],
+    "fin_dane_s/w/0": [
+      1794,
+      2838
+    ],
+    "fin_dane_s/w/1": [
+      1872,
+      2838
+    ],
+    "fin_dane_s/w/2": [
+      1950,
+      2838
+    ],
+    "fin_dane_s/w/3": [
+      2028,
+      2838
+    ],
+    "fin_dane_s/w/4": [
+      2106,
+      2838
+    ],
+    "fin_dane_s/w/5": [
+      2184,
+      2838
+    ],
+    "fin_dane_s/w/6": [
+      2262,
+      2838
+    ],
+    "fin_dane_s/w/7": [
+      2340,
+      2838
+    ],
+    "fin_dane_l/s/0": [
+      2418,
+      2838
+    ],
+    "fin_dane_l/s/1": [
+      2496,
+      2838
+    ],
+    "fin_dane_l/s/2": [
+      2574,
+      2838
+    ],
+    "fin_dane_l/s/3": [
+      2652,
+      2838
+    ],
+    "fin_dane_l/s/4": [
+      2730,
+      2838
+    ],
+    "fin_dane_l/s/5": [
+      2808,
+      2838
+    ],
+    "fin_dane_l/s/6": [
+      0,
+      2924
+    ],
+    "fin_dane_l/s/7": [
+      78,
+      2924
+    ],
+    "fin_dane_l/n/0": [
+      156,
+      2924
+    ],
+    "fin_dane_l/n/1": [
+      234,
+      2924
+    ],
+    "fin_dane_l/n/2": [
+      312,
+      2924
+    ],
+    "fin_dane_l/n/3": [
+      390,
+      2924
+    ],
+    "fin_dane_l/n/4": [
+      468,
+      2924
+    ],
+    "fin_dane_l/n/5": [
+      546,
+      2924
+    ],
+    "fin_dane_l/n/6": [
+      624,
+      2924
+    ],
+    "fin_dane_l/n/7": [
+      702,
+      2924
+    ],
+    "fin_dane_l/e/0": [
+      780,
+      2924
+    ],
+    "fin_dane_l/e/1": [
+      858,
+      2924
+    ],
+    "fin_dane_l/e/2": [
+      936,
+      2924
+    ],
+    "fin_dane_l/e/3": [
+      1014,
+      2924
+    ],
+    "fin_dane_l/e/4": [
+      1092,
+      2924
+    ],
+    "fin_dane_l/e/5": [
+      1170,
+      2924
+    ],
+    "fin_dane_l/e/6": [
+      1248,
+      2924
+    ],
+    "fin_dane_l/e/7": [
+      1326,
+      2924
+    ],
+    "fin_dane_l/w/0": [
+      1404,
+      2924
+    ],
+    "fin_dane_l/w/1": [
+      1482,
+      2924
+    ],
+    "fin_dane_l/w/2": [
+      1560,
+      2924
+    ],
+    "fin_dane_l/w/3": [
+      1638,
+      2924
+    ],
+    "fin_dane_l/w/4": [
+      1716,
+      2924
+    ],
+    "fin_dane_l/w/5": [
+      1794,
+      2924
+    ],
+    "fin_dane_l/w/6": [
+      1872,
+      2924
+    ],
+    "fin_dane_l/w/7": [
+      1950,
+      2924
+    ],
+    "fin_club_s/s/0": [
+      2028,
+      2924
+    ],
+    "fin_club_s/s/1": [
+      2106,
+      2924
+    ],
+    "fin_club_s/s/2": [
+      2184,
+      2924
+    ],
+    "fin_club_s/s/3": [
+      2262,
+      2924
+    ],
+    "fin_club_s/s/4": [
+      2340,
+      2924
+    ],
+    "fin_club_s/s/5": [
+      2418,
+      2924
+    ],
+    "fin_club_s/s/6": [
+      2496,
+      2924
+    ],
+    "fin_club_s/s/7": [
+      2574,
+      2924
+    ],
+    "fin_club_s/n/0": [
+      2652,
+      2924
+    ],
+    "fin_club_s/n/1": [
+      2730,
+      2924
+    ],
+    "fin_club_s/n/2": [
+      2808,
+      2924
+    ],
+    "fin_club_s/n/3": [
+      0,
+      3010
+    ],
+    "fin_club_s/n/4": [
+      78,
+      3010
+    ],
+    "fin_club_s/n/5": [
+      156,
+      3010
+    ],
+    "fin_club_s/n/6": [
+      234,
+      3010
+    ],
+    "fin_club_s/n/7": [
+      312,
+      3010
+    ],
+    "fin_club_s/e/0": [
+      390,
+      3010
+    ],
+    "fin_club_s/e/1": [
+      468,
+      3010
+    ],
+    "fin_club_s/e/2": [
+      546,
+      3010
+    ],
+    "fin_club_s/e/3": [
+      624,
+      3010
+    ],
+    "fin_club_s/e/4": [
+      702,
+      3010
+    ],
+    "fin_club_s/e/5": [
+      780,
+      3010
+    ],
+    "fin_club_s/e/6": [
+      858,
+      3010
+    ],
+    "fin_club_s/e/7": [
+      936,
+      3010
+    ],
+    "fin_club_s/w/0": [
+      1014,
+      3010
+    ],
+    "fin_club_s/w/1": [
+      1092,
+      3010
+    ],
+    "fin_club_s/w/2": [
+      1170,
+      3010
+    ],
+    "fin_club_s/w/3": [
+      1248,
+      3010
+    ],
+    "fin_club_s/w/4": [
+      1326,
+      3010
+    ],
+    "fin_club_s/w/5": [
+      1404,
+      3010
+    ],
+    "fin_club_s/w/6": [
+      1482,
+      3010
+    ],
+    "fin_club_s/w/7": [
+      1560,
+      3010
+    ],
+    "fin_club_l/s/0": [
+      1638,
+      3010
+    ],
+    "fin_club_l/s/1": [
+      1716,
+      3010
+    ],
+    "fin_club_l/s/2": [
+      1794,
+      3010
+    ],
+    "fin_club_l/s/3": [
+      1872,
+      3010
+    ],
+    "fin_club_l/s/4": [
+      1950,
+      3010
+    ],
+    "fin_club_l/s/5": [
+      2028,
+      3010
+    ],
+    "fin_club_l/s/6": [
+      2106,
+      3010
+    ],
+    "fin_club_l/s/7": [
+      2184,
+      3010
+    ],
+    "fin_club_l/n/0": [
+      2262,
+      3010
+    ],
+    "fin_club_l/n/1": [
+      2340,
+      3010
+    ],
+    "fin_club_l/n/2": [
+      2418,
+      3010
+    ],
+    "fin_club_l/n/3": [
+      2496,
+      3010
+    ],
+    "fin_club_l/n/4": [
+      2574,
+      3010
+    ],
+    "fin_club_l/n/5": [
+      2652,
+      3010
+    ],
+    "fin_club_l/n/6": [
+      2730,
+      3010
+    ],
+    "fin_club_l/n/7": [
+      2808,
+      3010
+    ],
+    "fin_club_l/e/0": [
+      0,
+      3096
+    ],
+    "fin_club_l/e/1": [
+      78,
+      3096
+    ],
+    "fin_club_l/e/2": [
+      156,
+      3096
+    ],
+    "fin_club_l/e/3": [
+      234,
+      3096
+    ],
+    "fin_club_l/e/4": [
+      312,
+      3096
+    ],
+    "fin_club_l/e/5": [
+      390,
+      3096
+    ],
+    "fin_club_l/e/6": [
+      468,
+      3096
+    ],
+    "fin_club_l/e/7": [
+      546,
+      3096
+    ],
+    "fin_club_l/w/0": [
+      624,
+      3096
+    ],
+    "fin_club_l/w/1": [
+      702,
+      3096
+    ],
+    "fin_club_l/w/2": [
+      780,
+      3096
+    ],
+    "fin_club_l/w/3": [
+      858,
+      3096
+    ],
+    "fin_club_l/w/4": [
+      936,
+      3096
+    ],
+    "fin_club_l/w/5": [
+      1014,
+      3096
+    ],
+    "fin_club_l/w/6": [
+      1092,
+      3096
+    ],
+    "fin_club_l/w/7": [
+      1170,
+      3096
+    ]
+  }
+}

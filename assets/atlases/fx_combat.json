@@ -1,0 +1,119 @@
+{
+  "sheet": "fx_combat",
+  "kind": "decal",
+  "image": "fx_combat.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "parry": {
+      "frames": 4,
+      "ticks": 3,
+      "loop": false
+    },
+    "sparks": {
+      "frames": 3,
+      "ticks": 3,
+      "loop": false
+    },
+    "splinters": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "puff": {
+      "frames": 3,
+      "ticks": 4,
+      "loop": false
+    },
+    "tell": {
+      "frames": 2,
+      "ticks": 1,
+      "loop": false
+    },
+    "shield_broken": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "parry/-/0": [
+      0,
+      0
+    ],
+    "parry/-/1": [
+      16,
+      0
+    ],
+    "parry/-/2": [
+      32,
+      0
+    ],
+    "parry/-/3": [
+      48,
+      0
+    ],
+    "sparks/-/0": [
+      0,
+      16
+    ],
+    "sparks/-/1": [
+      16,
+      16
+    ],
+    "sparks/-/2": [
+      32,
+      16
+    ],
+    "splinters/-/0": [
+      0,
+      32
+    ],
+    "splinters/-/1": [
+      16,
+      32
+    ],
+    "splinters/-/2": [
+      32,
+      32
+    ],
+    "puff/-/0": [
+      0,
+      48
+    ],
+    "puff/-/1": [
+      16,
+      48
+    ],
+    "puff/-/2": [
+      32,
+      48
+    ],
+    "tell/-/0": [
+      0,
+      64
+    ],
+    "tell/-/1": [
+      16,
+      64
+    ],
+    "shield_broken/-/0": [
+      0,
+      80
+    ]
+  }
+}

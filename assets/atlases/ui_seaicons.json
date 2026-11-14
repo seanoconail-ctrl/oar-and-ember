@@ -1,0 +1,1034 @@
+{
+  "sheet": "ui_seaicons",
+  "kind": "decal",
+  "image": "ui_seaicons.png",
+  "width": 16,
+  "height": 16,
+  "pivot": {
+    "x": 8,
+    "y": 15
+  },
+  "footprint": {
+    "w": 16,
+    "h": 16
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "wind_calm": {
+      "frames": 2,
+      "ticks": 20,
+      "loop": true
+    },
+    "wind_n_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_n_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_n_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_n_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_ne_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_ne_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_ne_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_ne_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_e_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_e_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_e_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_e_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_se_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_se_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_se_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_se_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_s_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_s_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_s_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_s_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_sw_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_sw_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_sw_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_sw_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_w_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_w_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_w_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_w_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_nw_1": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_nw_2": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_nw_3": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "wind_nw_4": {
+      "frames": 2,
+      "ticks": 10,
+      "loop": true
+    },
+    "tide_flood": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "tide_ebb": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "tide_slack": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "vis_clear": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "vis_haze": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "vis_fog": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "vis_night": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "stores": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "watch": {
+      "frames": 4,
+      "ticks": 15,
+      "loop": true
+    },
+    "place_hall": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_hall_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_landing": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_landing_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_abbey": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_abbey_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_fort": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_fort_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_harbour": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_harbour_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_camp": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_camp_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_stone": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_stone_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_seat": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "place_seat_faint": {
+      "frames": 2,
+      "ticks": 24,
+      "loop": true
+    },
+    "haz_cauldron": {
+      "frames": 6,
+      "ticks": 8,
+      "loop": true
+    },
+    "haz_bluemen": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "dab_known": {
+      "frames": 3,
+      "ticks": 60,
+      "loop": true
+    },
+    "dab_rumour": {
+      "frames": 3,
+      "ticks": 60,
+      "loop": true
+    },
+    "dab_course": {
+      "frames": 3,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_n": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_ne": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_e": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_se": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_s": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_sw": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_w": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "chev_nw": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    },
+    "pin": {
+      "frames": 2,
+      "ticks": 14,
+      "loop": true
+    },
+    "anchor": {
+      "frames": 1,
+      "ticks": 60,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "wind_calm/-/0": [
+      0,
+      0
+    ],
+    "wind_calm/-/1": [
+      16,
+      0
+    ],
+    "wind_n_1/-/0": [
+      0,
+      16
+    ],
+    "wind_n_1/-/1": [
+      16,
+      16
+    ],
+    "wind_n_2/-/0": [
+      0,
+      32
+    ],
+    "wind_n_2/-/1": [
+      16,
+      32
+    ],
+    "wind_n_3/-/0": [
+      0,
+      48
+    ],
+    "wind_n_3/-/1": [
+      16,
+      48
+    ],
+    "wind_n_4/-/0": [
+      0,
+      64
+    ],
+    "wind_n_4/-/1": [
+      16,
+      64
+    ],
+    "wind_ne_1/-/0": [
+      0,
+      80
+    ],
+    "wind_ne_1/-/1": [
+      16,
+      80
+    ],
+    "wind_ne_2/-/0": [
+      0,
+      96
+    ],
+    "wind_ne_2/-/1": [
+      16,
+      96
+    ],
+    "wind_ne_3/-/0": [
+      0,
+      112
+    ],
+    "wind_ne_3/-/1": [
+      16,
+      112
+    ],
+    "wind_ne_4/-/0": [
+      0,
+      128
+    ],
+    "wind_ne_4/-/1": [
+      16,
+      128
+    ],
+    "wind_e_1/-/0": [
+      0,
+      144
+    ],
+    "wind_e_1/-/1": [
+      16,
+      144
+    ],
+    "wind_e_2/-/0": [
+      0,
+      160
+    ],
+    "wind_e_2/-/1": [
+      16,
+      160
+    ],
+    "wind_e_3/-/0": [
+      0,
+      176
+    ],
+    "wind_e_3/-/1": [
+      16,
+      176
+    ],
+    "wind_e_4/-/0": [
+      0,
+      192
+    ],
+    "wind_e_4/-/1": [
+      16,
+      192
+    ],
+    "wind_se_1/-/0": [
+      0,
+      208
+    ],
+    "wind_se_1/-/1": [
+      16,
+      208
+    ],
+    "wind_se_2/-/0": [
+      0,
+      224
+    ],
+    "wind_se_2/-/1": [
+      16,
+      224
+    ],
+    "wind_se_3/-/0": [
+      0,
+      240
+    ],
+    "wind_se_3/-/1": [
+      16,
+      240
+    ],
+    "wind_se_4/-/0": [
+      0,
+      256
+    ],
+    "wind_se_4/-/1": [
+      16,
+      256
+    ],
+    "wind_s_1/-/0": [
+      0,
+      272
+    ],
+    "wind_s_1/-/1": [
+      16,
+      272
+    ],
+    "wind_s_2/-/0": [
+      0,
+      288
+    ],
+    "wind_s_2/-/1": [
+      16,
+      288
+    ],
+    "wind_s_3/-/0": [
+      0,
+      304
+    ],
+    "wind_s_3/-/1": [
+      16,
+      304
+    ],
+    "wind_s_4/-/0": [
+      0,
+      320
+    ],
+    "wind_s_4/-/1": [
+      16,
+      320
+    ],
+    "wind_sw_1/-/0": [
+      0,
+      336
+    ],
+    "wind_sw_1/-/1": [
+      16,
+      336
+    ],
+    "wind_sw_2/-/0": [
+      0,
+      352
+    ],
+    "wind_sw_2/-/1": [
+      16,
+      352
+    ],
+    "wind_sw_3/-/0": [
+      0,
+      368
+    ],
+    "wind_sw_3/-/1": [
+      16,
+      368
+    ],
+    "wind_sw_4/-/0": [
+      0,
+      384
+    ],
+    "wind_sw_4/-/1": [
+      16,
+      384
+    ],
+    "wind_w_1/-/0": [
+      0,
+      400
+    ],
+    "wind_w_1/-/1": [
+      16,
+      400
+    ],
+    "wind_w_2/-/0": [
+      0,
+      416
+    ],
+    "wind_w_2/-/1": [
+      16,
+      416
+    ],
+    "wind_w_3/-/0": [
+      0,
+      432
+    ],
+    "wind_w_3/-/1": [
+      16,
+      432
+    ],
+    "wind_w_4/-/0": [
+      0,
+      448
+    ],
+    "wind_w_4/-/1": [
+      16,
+      448
+    ],
+    "wind_nw_1/-/0": [
+      0,
+      464
+    ],
+    "wind_nw_1/-/1": [
+      16,
+      464
+    ],
+    "wind_nw_2/-/0": [
+      0,
+      480
+    ],
+    "wind_nw_2/-/1": [
+      16,
+      480
+    ],
+    "wind_nw_3/-/0": [
+      0,
+      496
+    ],
+    "wind_nw_3/-/1": [
+      16,
+      496
+    ],
+    "wind_nw_4/-/0": [
+      0,
+      512
+    ],
+    "wind_nw_4/-/1": [
+      16,
+      512
+    ],
+    "tide_flood/-/0": [
+      0,
+      528
+    ],
+    "tide_flood/-/1": [
+      16,
+      528
+    ],
+    "tide_flood/-/2": [
+      32,
+      528
+    ],
+    "tide_flood/-/3": [
+      48,
+      528
+    ],
+    "tide_ebb/-/0": [
+      0,
+      544
+    ],
+    "tide_ebb/-/1": [
+      16,
+      544
+    ],
+    "tide_ebb/-/2": [
+      32,
+      544
+    ],
+    "tide_ebb/-/3": [
+      48,
+      544
+    ],
+    "tide_slack/-/0": [
+      0,
+      560
+    ],
+    "tide_slack/-/1": [
+      16,
+      560
+    ],
+    "tide_slack/-/2": [
+      32,
+      560
+    ],
+    "tide_slack/-/3": [
+      48,
+      560
+    ],
+    "vis_clear/-/0": [
+      0,
+      576
+    ],
+    "vis_clear/-/1": [
+      16,
+      576
+    ],
+    "vis_clear/-/2": [
+      32,
+      576
+    ],
+    "vis_clear/-/3": [
+      48,
+      576
+    ],
+    "vis_haze/-/0": [
+      0,
+      592
+    ],
+    "vis_haze/-/1": [
+      16,
+      592
+    ],
+    "vis_haze/-/2": [
+      32,
+      592
+    ],
+    "vis_haze/-/3": [
+      48,
+      592
+    ],
+    "vis_fog/-/0": [
+      0,
+      608
+    ],
+    "vis_fog/-/1": [
+      16,
+      608
+    ],
+    "vis_fog/-/2": [
+      32,
+      608
+    ],
+    "vis_fog/-/3": [
+      48,
+      608
+    ],
+    "vis_night/-/0": [
+      0,
+      624
+    ],
+    "vis_night/-/1": [
+      16,
+      624
+    ],
+    "vis_night/-/2": [
+      32,
+      624
+    ],
+    "vis_night/-/3": [
+      48,
+      624
+    ],
+    "stores/-/0": [
+      0,
+      640
+    ],
+    "watch/-/0": [
+      0,
+      656
+    ],
+    "watch/-/1": [
+      16,
+      656
+    ],
+    "watch/-/2": [
+      32,
+      656
+    ],
+    "watch/-/3": [
+      48,
+      656
+    ],
+    "place_hall/-/0": [
+      0,
+      672
+    ],
+    "place_hall/-/1": [
+      16,
+      672
+    ],
+    "place_hall_faint/-/0": [
+      0,
+      688
+    ],
+    "place_hall_faint/-/1": [
+      16,
+      688
+    ],
+    "place_landing/-/0": [
+      0,
+      704
+    ],
+    "place_landing/-/1": [
+      16,
+      704
+    ],
+    "place_landing_faint/-/0": [
+      0,
+      720
+    ],
+    "place_landing_faint/-/1": [
+      16,
+      720
+    ],
+    "place_abbey/-/0": [
+      0,
+      736
+    ],
+    "place_abbey/-/1": [
+      16,
+      736
+    ],
+    "place_abbey_faint/-/0": [
+      0,
+      752
+    ],
+    "place_abbey_faint/-/1": [
+      16,
+      752
+    ],
+    "place_fort/-/0": [
+      0,
+      768
+    ],
+    "place_fort/-/1": [
+      16,
+      768
+    ],
+    "place_fort_faint/-/0": [
+      0,
+      784
+    ],
+    "place_fort_faint/-/1": [
+      16,
+      784
+    ],
+    "place_harbour/-/0": [
+      0,
+      800
+    ],
+    "place_harbour/-/1": [
+      16,
+      800
+    ],
+    "place_harbour_faint/-/0": [
+      0,
+      816
+    ],
+    "place_harbour_faint/-/1": [
+      16,
+      816
+    ],
+    "place_camp/-/0": [
+      0,
+      832
+    ],
+    "place_camp/-/1": [
+      16,
+      832
+    ],
+    "place_camp_faint/-/0": [
+      0,
+      848
+    ],
+    "place_camp_faint/-/1": [
+      16,
+      848
+    ],
+    "place_stone/-/0": [
+      0,
+      864
+    ],
+    "place_stone/-/1": [
+      16,
+      864
+    ],
+    "place_stone_faint/-/0": [
+      0,
+      880
+    ],
+    "place_stone_faint/-/1": [
+      16,
+      880
+    ],
+    "place_seat/-/0": [
+      0,
+      896
+    ],
+    "place_seat/-/1": [
+      16,
+      896
+    ],
+    "place_seat_faint/-/0": [
+      0,
+      912
+    ],
+    "place_seat_faint/-/1": [
+      16,
+      912
+    ],
+    "haz_cauldron/-/0": [
+      0,
+      928
+    ],
+    "haz_cauldron/-/1": [
+      16,
+      928
+    ],
+    "haz_cauldron/-/2": [
+      32,
+      928
+    ],
+    "haz_cauldron/-/3": [
+      48,
+      928
+    ],
+    "haz_cauldron/-/4": [
+      64,
+      928
+    ],
+    "haz_cauldron/-/5": [
+      80,
+      928
+    ],
+    "haz_bluemen/-/0": [
+      0,
+      944
+    ],
+    "haz_bluemen/-/1": [
+      16,
+      944
+    ],
+    "haz_bluemen/-/2": [
+      32,
+      944
+    ],
+    "haz_bluemen/-/3": [
+      48,
+      944
+    ],
+    "dab_known/-/0": [
+      0,
+      960
+    ],
+    "dab_known/-/1": [
+      16,
+      960
+    ],
+    "dab_known/-/2": [
+      32,
+      960
+    ],
+    "dab_rumour/-/0": [
+      0,
+      976
+    ],
+    "dab_rumour/-/1": [
+      16,
+      976
+    ],
+    "dab_rumour/-/2": [
+      32,
+      976
+    ],
+    "dab_course/-/0": [
+      0,
+      992
+    ],
+    "dab_course/-/1": [
+      16,
+      992
+    ],
+    "dab_course/-/2": [
+      32,
+      992
+    ],
+    "chev_n/-/0": [
+      0,
+      1008
+    ],
+    "chev_ne/-/0": [
+      0,
+      1024
+    ],
+    "chev_e/-/0": [
+      0,
+      1040
+    ],
+    "chev_se/-/0": [
+      0,
+      1056
+    ],
+    "chev_s/-/0": [
+      0,
+      1072
+    ],
+    "chev_sw/-/0": [
+      0,
+      1088
+    ],
+    "chev_w/-/0": [
+      0,
+      1104
+    ],
+    "chev_nw/-/0": [
+      0,
+      1120
+    ],
+    "pin/-/0": [
+      0,
+      1136
+    ],
+    "pin/-/1": [
+      16,
+      1136
+    ],
+    "anchor/-/0": [
+      0,
+      1152
+    ]
+  }
+}

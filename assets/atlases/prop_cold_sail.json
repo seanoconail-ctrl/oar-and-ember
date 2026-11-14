@@ -1,0 +1,49 @@
+{
+  "sheet": "prop_cold_sail",
+  "kind": "prop",
+  "image": "prop_cold_sail.png",
+  "width": 74,
+  "height": 76,
+  "pivot": {
+    "x": 37,
+    "y": 74
+  },
+  "footprint": {
+    "w": 4,
+    "h": 2
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "torn": {
+      "frames": 4,
+      "ticks": 5,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 4,
+    "h": 2
+  },
+  "placeholder": false,
+  "frames": {
+    "torn/-/0": [
+      0,
+      0
+    ],
+    "torn/-/1": [
+      74,
+      0
+    ],
+    "torn/-/2": [
+      148,
+      0
+    ],
+    "torn/-/3": [
+      222,
+      0
+    ]
+  }
+}

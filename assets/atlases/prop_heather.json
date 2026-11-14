@@ -1,0 +1,45 @@
+{
+  "sheet": "prop_heather",
+  "kind": "prop",
+  "image": "prop_heather.png",
+  "width": 26,
+  "height": 16,
+  "pivot": {
+    "x": 13,
+    "y": 14
+  },
+  "footprint": {
+    "w": 18,
+    "h": 4
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "clump": {
+      "frames": 3,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 20,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "clump/-/0": [
+      0,
+      0
+    ],
+    "clump/-/1": [
+      26,
+      0
+    ],
+    "clump/-/2": [
+      52,
+      0
+    ]
+  }
+}

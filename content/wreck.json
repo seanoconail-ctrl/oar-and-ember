@@ -1,0 +1,115 @@
+{
+  "about": "The wreck on Sgeir Dhubh (Book 6 section 19; Book 5 section 02, \"Refugees from the sea\"; Book 8 section 06; Book 9 section 15; Stage 13, work package C, decisions S13-40 to S13-59): the voyage interruption on the Skarvholm to Carrick crossing, played on foot. Three adult survivors of an Ardcarn boat, each placed in the zone with their pose and words; Hild's question at the boat's side and the steerer's four answers; who reacts to each, and what the sea map says after. The survivors are kept here, not in content/people.json (decision S13-44); every number is Book 10's (section 02, \"The wreck with survivors\").",
+  "scenario": "SCN_SEA_WRECK",
+  "zone": "ZONE_SEA_WRECK",
+  "edge": "SEA_SKARV_CARRICK",
+  "asker": "C_HILD",
+  "board": { "x": 39.8, "y": 20.2 },
+  "survivors": [
+    {
+      "id": "C_FINAN",
+      "nameKey": "person.name.c_finan",
+      "at": { "x": 12.0, "y": 20.3, "facing": "w" },
+      "pose": "call",
+      "origin": "GAELIC",
+      "codes": ["GAELIC", "CHURCH"],
+      "codeStance": "CONVENTIONAL",
+      "values": { "KIN": 2, "FAITH": 2 },
+      "traits": [
+        { "trait": "PIOUS", "known": true },
+        { "trait": "GRUDGE_HOLDER", "known": false }
+      ],
+      "ties": [{ "to": "C_DERBAIL", "kind": "SPOUSE" }],
+      "talk": {
+        "open": "c_finan.wreck.open",
+        "choices": [
+          { "key": "p_steerer.wreck.ask_cargo", "reply": ["c_finan.wreck.cargo"] },
+          { "key": "p_steerer.wreck.let_go", "reply": ["c_finan.wreck.hull"] },
+          { "key": "ui.talk.leave", "do": "TALK_LEAVE" }
+        ]
+      }
+    },
+    {
+      "id": "C_DERBAIL",
+      "nameKey": "person.name.c_derbail",
+      "at": { "x": 13.6, "y": 18.4, "facing": "e" },
+      "pose": "watch",
+      "origin": "GAELIC",
+      "codes": ["GAELIC", "CHURCH"],
+      "codeStance": "CONVENTIONAL",
+      "values": { "WORD": 2, "KIN": 2, "MERCY": 1 },
+      "traits": [
+        { "trait": "KEEN_EYED", "known": true },
+        { "trait": "STORYTELLER", "known": false }
+      ],
+      "ties": [{ "to": "C_FINAN", "kind": "SPOUSE" }],
+      "talk": {
+        "open": "c_derbail.wreck.open",
+        "choices": [
+          { "key": "p_steerer.wreck.ask_who", "reply": ["c_derbail.wreck.who"] },
+          {
+            "key": "p_steerer.wreck.ask_sail",
+            "reply": ["c_derbail.wreck.conn", "c_derbail.wreck.conn_after"],
+            "fact": "sea.wreck.asked_conn"
+          },
+          { "key": "ui.talk.leave", "do": "TALK_LEAVE" }
+        ]
+      }
+    },
+    {
+      "id": "C_IVAR",
+      "nameKey": "person.name.c_ivar",
+      "at": { "x": 16.4, "y": 19.6, "facing": "n" },
+      "pose": "down",
+      "origin": "NORSE_GAELIC",
+      "codes": ["SALTVIK", "NORSE"],
+      "codeStance": "CYNICAL",
+      "values": { "GAIN": 2, "GLORY": 1 },
+      "traits": [
+        { "trait": "BRAVE", "known": true },
+        { "trait": "DRINKER", "known": false }
+      ],
+      "wound": { "severity": "SERIOUS", "where": "leg" },
+      "talk": {
+        "open": "c_ivar.wreck.open",
+        "choices": [
+          { "key": "p_steerer.wreck.ask_moved", "reply": ["c_ivar.wreck.bargain"] },
+          { "key": "ui.talk.leave", "do": "TALK_LEAVE" }
+        ]
+      }
+    }
+  ],
+  "ask": {
+    "open": "c_hild.wreck.ask",
+    "choices": [
+      { "key": "p_steerer.wreck.aboard", "reply": ["c_hild.wreck.aboard"], "do": "ABOARD" },
+      { "key": "p_steerer.wreck.ashore", "reply": ["c_hild.wreck.ashore"], "do": "ASHORE" },
+      { "key": "p_steerer.wreck.salvage", "reply": ["c_hild.wreck.salvage"], "do": "SALVAGE" },
+      { "key": "p_steerer.wreck.leave", "reply": ["c_hild.wreck.leave"], "do": "LEAVE" },
+      { "key": "p_steerer.wreck.not_yet", "do": "NOT_YET" }
+    ]
+  },
+  "reactions": {
+    "GIFT": [{ "person": "C_FINAN", "key": "c_finan.wreck.gift" }],
+    "ABOARD": [
+      { "person": "C_FINAN", "key": "c_finan.wreck.thanks" },
+      { "person": "C_IVAR", "key": "c_ivar.wreck.aboard" }
+    ],
+    "ASHORE": [
+      { "person": "C_FINAN", "key": "c_finan.wreck.thanks" },
+      { "person": "C_IVAR", "key": "c_ivar.wreck.aboard" }
+    ],
+    "SALVAGE": [
+      { "person": "C_DERBAIL", "key": "c_derbail.wreck.robbed" },
+      { "person": "C_ODDI", "key": "c_oddi.wreck.iron" }
+    ],
+    "LEAVE": [{ "person": "C_DERBAIL", "key": "c_derbail.wreck.left" }]
+  },
+  "done": {
+    "ABOARD": "sea.wreck.done.aboard",
+    "ASHORE": "sea.wreck.done.ashore",
+    "SALVAGE": "sea.wreck.done.salvage",
+    "LEAVE": "sea.wreck.done.leave"
+  },
+  "wordPlace": "TOWN_ARDCARN"
+}

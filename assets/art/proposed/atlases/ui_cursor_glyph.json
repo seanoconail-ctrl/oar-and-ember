@@ -1,0 +1,88 @@
+{
+  "sheet": "ui_cursor_glyph",
+  "kind": "decal",
+  "image": "ui_cursor_glyph.png",
+  "width": 8,
+  "height": 8,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 8,
+    "h": 8
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "axe": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "spade": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "seed": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "pail": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hammer": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "hook": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "sword": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "axe/-/0": [
+      0,
+      0
+    ],
+    "spade/-/0": [
+      0,
+      8
+    ],
+    "seed/-/0": [
+      0,
+      16
+    ],
+    "pail/-/0": [
+      0,
+      24
+    ],
+    "hammer/-/0": [
+      0,
+      32
+    ],
+    "hook/-/0": [
+      0,
+      40
+    ],
+    "sword/-/0": [
+      0,
+      48
+    ]
+  }
+}

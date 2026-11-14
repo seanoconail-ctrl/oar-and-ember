@@ -1,0 +1,68 @@
+{
+  "sheet": "actor_cormorant",
+  "kind": "sprite",
+  "image": "actor_cormorant.png",
+  "width": 18,
+  "height": 14,
+  "pivot": {
+    "x": 9,
+    "y": 13
+  },
+  "footprint": {
+    "w": 4,
+    "h": 2
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "dry": {
+      "frames": 2,
+      "ticks": 40,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 8,
+    "h": 2
+  },
+  "placeholder": false,
+  "frames": {
+    "dry/s/0": [
+      0,
+      0
+    ],
+    "dry/s/1": [
+      18,
+      0
+    ],
+    "dry/n/0": [
+      0,
+      14
+    ],
+    "dry/n/1": [
+      18,
+      14
+    ],
+    "dry/e/0": [
+      0,
+      28
+    ],
+    "dry/e/1": [
+      18,
+      28
+    ],
+    "dry/w/0": [
+      0,
+      42
+    ],
+    "dry/w/1": [
+      18,
+      42
+    ]
+  }
+}

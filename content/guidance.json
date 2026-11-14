@@ -1,0 +1,136 @@
+{
+  "about": "The fourth playtest's guidance (requests 11 and 12; decisions DH-40 onwards): the household nudges the steerer towards the current aim, in their own voices, and an advisor answers 'Ask for advice' with the next aim or two. Lines are by aim and speaker: an aim of any chapter gains lines here as it is written. Every number is Book 10's (section 08, 'Nudges and advice').",
+  "advisors": {
+    "always": ["C_HILD"]
+  },
+  "nudges": {
+    "see_tower": {
+      "C_HILD": ["c_hild.nudge.see_tower"]
+    },
+    "chest_to_camp": {
+      "C_HILD": ["c_hild.nudge.chest_to_camp"]
+    },
+    "light_fire": {
+      "C_HILD": ["c_hild.nudge.light_fire"]
+    },
+    "shelter_frame": {
+      "C_HILD": ["c_hild.nudge.shelter_frame"]
+    },
+    "shelter_sail": {
+      "C_HILD": ["c_hild.nudge.shelter_sail"]
+    },
+    "hild_leg": {
+      "C_HILD": ["c_hild.nudge.hild_leg"]
+    },
+    "scavengers": {
+      "C_HILD": ["c_hild.nudge.scavengers"]
+    },
+    "sit_fire": {
+      "C_HILD": ["c_hild.nudge.sit_fire"]
+    },
+    "find_oddi": {
+      "C_HILD": ["c_hild.nudge.find_oddi"],
+      "C_BRAN": ["c_bran.nudge.find_oddi"],
+      "C_RUNA": ["c_runa.nudge.find_oddi"]
+    },
+    "find_bran": {
+      "C_HILD": ["c_hild.nudge.find_bran"],
+      "C_ODDI": ["c_oddi.nudge.find_bran"],
+      "C_RUNA": ["c_runa.nudge.find_bran"]
+    },
+    "find_runa": {
+      "C_HILD": ["c_hild.nudge.find_runa"],
+      "C_ODDI": ["c_oddi.nudge.find_runa"],
+      "C_BRAN": ["c_bran.nudge.find_runa"]
+    },
+    "open_chest": {
+      "C_HILD": ["c_hild.nudge.open_chest"],
+      "C_ODDI": ["c_oddi.nudge.open_chest"],
+      "C_BRAN": ["c_bran.nudge.open_chest"],
+      "C_RUNA": ["c_runa.nudge.open_chest"]
+    },
+    "stores": {
+      "C_HILD": ["c_hild.nudge.stores"],
+      "C_ODDI": ["c_oddi.nudge.stores"],
+      "C_BRAN": ["c_bran.nudge.stores"],
+      "C_RUNA": ["c_runa.nudge.stores"]
+    },
+    "shelter_finish": {
+      "C_HILD": ["c_hild.nudge.shelter_finish"],
+      "C_ODDI": ["c_oddi.nudge.shelter_finish"],
+      "C_BRAN": ["c_bran.nudge.shelter_finish"],
+      "C_RUNA": ["c_runa.nudge.shelter_finish"]
+    },
+    "hull": {
+      "C_HILD": ["c_hild.nudge.hull"],
+      "C_ODDI": ["c_oddi.nudge.hull"],
+      "C_BRAN": ["c_bran.nudge.hull"],
+      "C_RUNA": ["c_runa.nudge.hull"]
+    },
+    "rigging": {
+      "C_HILD": ["c_hild.nudge.rigging"],
+      "C_ODDI": ["c_oddi.nudge.rigging"],
+      "C_BRAN": ["c_bran.nudge.rigging"],
+      "C_RUNA": ["c_runa.nudge.rigging"]
+    },
+    "oar": {
+      "C_HILD": ["c_hild.nudge.oar"],
+      "C_ODDI": ["c_oddi.nudge.oar"],
+      "C_BRAN": ["c_bran.nudge.oar"],
+      "C_RUNA": ["c_runa.nudge.oar"]
+    },
+    "rites": {
+      "C_HILD": ["c_hild.nudge.rites"],
+      "C_ODDI": ["c_oddi.nudge.rites"],
+      "C_BRAN": ["c_bran.nudge.rites"],
+      "C_RUNA": ["c_runa.nudge.rites"]
+    },
+    "council": {
+      "C_HILD": ["c_hild.nudge.council"],
+      "C_ODDI": ["c_oddi.nudge.council"],
+      "C_BRAN": ["c_bran.nudge.council"],
+      "C_RUNA": ["c_runa.nudge.council"]
+    },
+    "launch": {
+      "C_HILD": ["c_hild.nudge.launch"],
+      "C_ODDI": ["c_oddi.nudge.launch"],
+      "C_BRAN": ["c_bran.nudge.launch"],
+      "C_RUNA": ["c_runa.nudge.launch"]
+    }
+  },
+  "stages": {
+    "stores": [
+      {
+        "when": [
+          {
+            "fact": "ch1.lashing_cut"
+          }
+        ],
+        "nudges": {
+          "C_HILD": ["c_hild.nudge.stores_home"],
+          "C_ODDI": ["c_oddi.nudge.stores_home"],
+          "C_BRAN": ["c_bran.nudge.stores_home"],
+          "C_RUNA": ["c_runa.nudge.stores_home"]
+        }
+      }
+    ]
+  },
+  "advice": {
+    "C_HILD": {
+      "intro": "c_hild.advice.intro",
+      "none": "c_hild.advice.none"
+    },
+    "C_ODDI": {
+      "intro": "c_oddi.advice.intro",
+      "none": "c_oddi.advice.none"
+    },
+    "C_BRAN": {
+      "intro": "c_bran.advice.intro",
+      "none": "c_bran.advice.none"
+    },
+    "C_RUNA": {
+      "intro": "c_runa.advice.intro",
+      "none": "c_runa.advice.none"
+    }
+  }
+}

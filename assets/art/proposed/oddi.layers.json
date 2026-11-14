@@ -1,0 +1,29 @@
+{
+  "name": "oddi",
+  "layers": {
+    "s": [
+      "actor_c_oddi",
+      "layer_clothing_tunic_oddi",
+      "layer_blood_wound_oddi",
+      "layer_weapon_seax_oddi"
+    ],
+    "n": [
+      "actor_c_oddi",
+      "layer_clothing_tunic_oddi",
+      "layer_blood_wound_oddi",
+      "layer_weapon_seax_oddi"
+    ],
+    "e": [
+      "actor_c_oddi",
+      "layer_clothing_tunic_oddi",
+      "layer_blood_wound_oddi",
+      "layer_weapon_seax_oddi"
+    ],
+    "w": [
+      "actor_c_oddi",
+      "layer_clothing_tunic_oddi",
+      "layer_blood_wound_oddi",
+      "layer_weapon_seax_oddi"
+    ]
+  }
+}

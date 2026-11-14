@@ -1,0 +1,533 @@
+{
+  "about": "Combat content (Stage 9; Book 2 sections 12 and 13). Numbers come from balance.json (Book 10 sections 06 and 07), never from here: this file says which Book 10 weapon row each item is, who fights with what, where the three wreck-scavengers stand (at the sheepfold under the Hollow Cairn since Stage 10, decision S10-5; on the strand at Stage 9, S9-11), which places are safe for a downed ally, the ground that hides a sneaker (combat v2, Book 10 Sneaking), the scavengers at the first dusk (decisions DE-14 and DE-15), and the lines people shout.",
+  "weapons": {
+    "ITEM_SEAX": {
+      "row": "Seax",
+      "layer": "seax"
+    },
+    "ITEM_AXE": {
+      "row": "Hand axe",
+      "layer": "axe",
+      "dismember": "HEAVY"
+    },
+    "ITEM_SPEAR": {
+      "row": "Spear",
+      "layer": "spear"
+    },
+    "ITEM_SWORD": {
+      "row": "Sword",
+      "layer": "sword",
+      "dismember": "ANY"
+    },
+    "ITEM_DANE_AXE": {
+      "row": "Dane axe",
+      "layer": "dane_axe",
+      "dismember": "ANY"
+    }
+  },
+  "fighters": [
+    {
+      "person": "E_WRECKER_KETILL",
+      "archetype": "Outlaw",
+      "weapon": "ITEM_AXE",
+      "shield": true,
+      "heavy": true,
+      "leader": true,
+      "look": "wrecker_ketill",
+      "teaching": "RED",
+      "voice": "NORSE"
+    },
+    {
+      "person": "E_WRECKER_SVART",
+      "archetype": "Outlaw",
+      "weapon": "ITEM_SPEAR",
+      "shield": true,
+      "look": "wrecker_svart",
+      "teaching": "PARRY",
+      "voice": "NORSE"
+    },
+    {
+      "person": "E_WRECKER_CONN",
+      "archetype": "Archer",
+      "weapon": "ITEM_SEAX",
+      "bow": true,
+      "look": "wrecker_conn",
+      "voice": "GAELIC"
+    }
+  ],
+  "crew": {
+    "C_HILD": {},
+    "C_ODDI": {
+      "weapon": "ITEM_SEAX"
+    },
+    "C_BRAN": {
+      "weapon": "ITEM_AXE",
+      "shield": true,
+      "heavy": true
+    },
+    "C_RUNA": {
+      "weapon": "ITEM_SEAX"
+    },
+    "C_KARI": {
+      "weapon": "ITEM_AXE",
+      "shield": true
+    },
+    "C_AINE": {
+      "weapon": "ITEM_SEAX",
+      "bow": true
+    }
+  },
+  "encounters": [
+    {
+      "id": "SCN_SK_DUSK",
+      "zone": "ZONE_SK_STRAND",
+      "takesCaptives": false,
+      "checkpoint": "dusk",
+      "warns": true,
+      "dusk": true,
+      "shieldOnBack": ["E_WRECKER_SVART"],
+      "teaches": "E_WRECKER_SVART",
+      "runsWhenFriendFalls": "E_WRECKER_CONN",
+      "members": [
+        {
+          "person": "E_WRECKER_SVART",
+          "x": 93.8,
+          "y": 35.2,
+          "facing": "w",
+          "task": "TASK_GATHER_DRIFTWOOD"
+        },
+        {
+          "person": "E_WRECKER_CONN",
+          "x": 90.2,
+          "y": 34.8,
+          "facing": "e",
+          "task": "TASK_GATHER_DRIFTWOOD"
+        }
+      ]
+    },
+    {
+      "id": "SCN_SK_WRECKERS",
+      "post": { "x": 30.5, "y": 35.8 },
+      "zone": "ZONE_SK_CAIRN",
+      "after": "ch1.at_broch",
+      "takesCaptives": false,
+      "checkpoint": "wreckers",
+      "parley": true,
+      "allies": ["C_BRAN"],
+      "members": [
+        {
+          "person": "E_WRECKER_KETILL",
+          "x": 28.4,
+          "y": 35.7,
+          "facing": "e"
+        },
+        {
+          "person": "E_WRECKER_SVART",
+          "x": 27.6,
+          "y": 37.4,
+          "facing": "e"
+        },
+        {
+          "person": "E_WRECKER_CONN",
+          "x": 27.0,
+          "y": 33.9,
+          "facing": "e"
+        }
+      ],
+      "warns": false
+    },
+    {
+      "id": "SCN_SK_SEALCAVE",
+      "post": { "x": 44.8, "y": 24.8 },
+      "zone": "ZONE_SK_SEALCAVE",
+      "after": "ch1.wreckers_cave",
+      "takesCaptives": false,
+      "checkpoint": "sealcave",
+      "parley": true,
+      "members": [
+        {
+          "person": "E_WRECKER_KETILL",
+          "x": 43.3,
+          "y": 24.6,
+          "facing": "w"
+        },
+        {
+          "person": "E_WRECKER_SVART",
+          "x": 45.7,
+          "y": 23.5,
+          "facing": "w"
+        },
+        {
+          "person": "E_WRECKER_CONN",
+          "x": 45.5,
+          "y": 26.4,
+          "facing": "s",
+          "task": "TASK_GATHER_DRIFTWOOD"
+        }
+      ],
+      "warns": false
+    }
+  ],
+  "safePlaces": [
+    {
+      "key": "camp",
+      "about": "On Skarvholm the camp at the broch is the household's village (Book 10 section 06, safePlaces; decision S9-13).",
+      "zone": "ZONE_SK_MACHAIR",
+      "x": 35.5,
+      "y": 31.6,
+      "r": 4.6
+    }
+  ],
+  "hides": [
+    {
+      "zone": "ZONE_SK_STRAND",
+      "kind": "dune grass",
+      "x0": 84,
+      "y0": 29,
+      "x1": 90,
+      "y1": 33
+    }
+  ],
+  "barks": {
+    "E_WRECKER_KETILL": {
+      "alarm": ["e_wrecker_ketill.bark.alarm.01", "e_wrecker_ketill.bark.alarm.02"],
+      "taunt": ["e_wrecker_ketill.bark.taunt.01", "e_wrecker_ketill.bark.taunt.02"],
+      "hurt": ["e_wrecker_ketill.bark.hurt.01"],
+      "plead": ["e_wrecker_ketill.bark.plead.01"],
+      "flee": ["e_wrecker_ketill.bark.flee.01"],
+      "fallen": ["e_wrecker_ketill.bark.fallen.01"],
+      "parley": ["e_wrecker_ketill.bark.parley.01"],
+      "suspicious": ["e_wrecker_ketill.bark.suspicious.01"],
+      "help": ["e_wrecker_ketill.bark.help.01"],
+      "lost": ["e_wrecker_ketill.bark.lost.01"]
+    },
+    "E_WRECKER_SVART": {
+      "alarm": ["e_wrecker_svart.bark.alarm.01"],
+      "taunt": ["e_wrecker_svart.bark.taunt.01", "e_wrecker_svart.bark.taunt.02"],
+      "hurt": ["e_wrecker_svart.bark.hurt.01"],
+      "plead": ["e_wrecker_svart.bark.plead.01"],
+      "flee": ["e_wrecker_svart.bark.flee.01"],
+      "fallen": ["e_wrecker_svart.bark.fallen.01"],
+      "warn": [
+        "e_wrecker_svart.bark.warn.01",
+        "e_wrecker_svart.bark.warn.02",
+        "e_wrecker_svart.bark.warn.03"
+      ],
+      "suspicious": ["e_wrecker_svart.bark.suspicious.01"],
+      "help": ["e_wrecker_svart.bark.help.01"],
+      "lost": ["e_wrecker_svart.bark.lost.01"],
+      "bargain": ["e_wrecker_svart.bark.bargain.01"],
+      "leave": ["e_wrecker_svart.bark.leave.01"]
+    },
+    "E_WRECKER_CONN": {
+      "alarm": ["e_wrecker_conn.bark.alarm.01"],
+      "taunt": ["e_wrecker_conn.bark.taunt.01"],
+      "hurt": ["e_wrecker_conn.bark.hurt.01"],
+      "plead": ["e_wrecker_conn.bark.plead.01", "e_wrecker_conn.bark.plead.02"],
+      "flee": ["e_wrecker_conn.bark.flee.01"],
+      "fallen": ["e_wrecker_conn.bark.fallen.01"],
+      "suspicious": ["e_wrecker_conn.bark.suspicious.01"],
+      "help": ["e_wrecker_conn.bark.help.01"],
+      "lost": ["e_wrecker_conn.bark.lost.01"],
+      "bargain": ["e_wrecker_conn.bark.bargain.01"],
+      "runs": ["e_wrecker_conn.bark.runs.01"]
+    },
+    "C_HILD": {
+      "danger": ["c_hild.bark.combat.danger.01"],
+      "downed": ["c_hild.bark.combat.downed.01"],
+      "safe": ["c_hild.bark.combat.safe.01"],
+      "FOLLOW": ["c_hild.bark.order.follow.01"],
+      "HOLD": ["c_hild.bark.order.hold.01"],
+      "WITHDRAW": ["c_hild.bark.order.withdraw.01"],
+      "ATTACK": ["c_hild.bark.order.attack.01"],
+      "PROTECT": ["c_hild.bark.order.protect.01"],
+      "CARRY": ["c_hild.bark.order.carry.01"],
+      "refuse": ["c_hild.bark.order.refuse.01"],
+      "lift": ["c_hild.bark.combat.lift.01"]
+    },
+    "C_BRAN": {
+      "danger": ["c_bran.bark.combat.danger.01"]
+    }
+  },
+  "gore": {
+    "about": "Presentation only (Book 7 section 12, the gore setting): how long a corpse stays drawn with the setting low (Book 7: a minute) and off, and how long blood stains last on the ground at low and full. The simulation never reads these.",
+    "corpseFadeSeconds": {
+      "low": 60,
+      "off": 2
+    },
+    "stainSeconds": {
+      "low": 60,
+      "full": 600
+    }
+  },
+  "sight": {
+    "about": "First-sight lines (the user's third playtest, decision DG-8; Book 8 section 07): every enemy speaks on first turning alert to the steerer, a warning if alone, wounded or outnumbered, else a taunt. Named enemies have their own pools; everyone else speaks from their voice's.",
+    "people": {
+      "E_WRECKER_SVART": {
+        "warn": [
+          "e_wrecker_svart.sight.warn.01",
+          "e_wrecker_svart.sight.warn.02",
+          "e_wrecker_svart.sight.warn.03",
+          "e_wrecker_svart.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_svart.sight.taunt.01",
+          "e_wrecker_svart.sight.taunt.02",
+          "e_wrecker_svart.sight.taunt.03",
+          "e_wrecker_svart.sight.taunt.04"
+        ]
+      },
+      "E_WRECKER_CONN": {
+        "warn": [
+          "e_wrecker_conn.sight.warn.01",
+          "e_wrecker_conn.sight.warn.02",
+          "e_wrecker_conn.sight.warn.03",
+          "e_wrecker_conn.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_conn.sight.taunt.01",
+          "e_wrecker_conn.sight.taunt.02",
+          "e_wrecker_conn.sight.taunt.03",
+          "e_wrecker_conn.sight.taunt.04"
+        ]
+      },
+      "E_WRECKER_KETILL": {
+        "warn": [
+          "e_wrecker_ketill.sight.warn.01",
+          "e_wrecker_ketill.sight.warn.02",
+          "e_wrecker_ketill.sight.warn.03",
+          "e_wrecker_ketill.sight.warn.04"
+        ],
+        "taunt": [
+          "e_wrecker_ketill.sight.taunt.01",
+          "e_wrecker_ketill.sight.taunt.02",
+          "e_wrecker_ketill.sight.taunt.03",
+          "e_wrecker_ketill.sight.taunt.04"
+        ]
+      }
+    },
+    "voices": {
+      "NORSE": {
+        "warn": [
+          "e_generic_norse.sight.warn.01",
+          "e_generic_norse.sight.warn.02",
+          "e_generic_norse.sight.warn.03",
+          "e_generic_norse.sight.warn.04",
+          "e_generic_norse.sight.warn.05"
+        ],
+        "taunt": [
+          "e_generic_norse.sight.taunt.01",
+          "e_generic_norse.sight.taunt.02",
+          "e_generic_norse.sight.taunt.03",
+          "e_generic_norse.sight.taunt.04",
+          "e_generic_norse.sight.taunt.05"
+        ]
+      },
+      "GAELIC": {
+        "warn": [
+          "e_generic_gael.sight.warn.01",
+          "e_generic_gael.sight.warn.02",
+          "e_generic_gael.sight.warn.03",
+          "e_generic_gael.sight.warn.04",
+          "e_generic_gael.sight.warn.05"
+        ],
+        "taunt": [
+          "e_generic_gael.sight.taunt.01",
+          "e_generic_gael.sight.taunt.02",
+          "e_generic_gael.sight.taunt.03",
+          "e_generic_gael.sight.taunt.04",
+          "e_generic_gael.sight.taunt.05"
+        ]
+      }
+    }
+  },
+  "talk": {
+    "about": "Bran and the scavengers at the fold (the user's third playtest, decision DG-26; Book 8 section 07; Book 10 \"At the fold\"): exchanges played while none of them is aware of the steerer, overheard within Book 10's range, stopping for good when any of them notices the steerer. `needs`: who must be there besides the speakers.",
+    "encounter": "SCN_SK_WRECKERS",
+    "exchanges": [
+      {
+        "id": "key",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.key.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.key.2"
+          }
+        ]
+      },
+      {
+        "id": "wound",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.wound.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.wound.2"
+          }
+        ]
+      },
+      {
+        "id": "silver",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.silver.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.silver.2"
+          }
+        ],
+        "unless": "ch1.silver_taken_by"
+      },
+      {
+        "id": "stolen",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_CONN",
+        "needs": ["E_WRECKER_CONN"]
+      },
+      {
+        "id": "stolen_svart",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen_svart.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_SVART",
+        "needs": ["E_WRECKER_SVART"]
+      },
+      {
+        "id": "stolen_ketill",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.stolen_ketill.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.stolen.2"
+          }
+        ],
+        "fact": "ch1.silver_taken_by",
+        "is": "E_WRECKER_KETILL"
+      },
+      {
+        "id": "posts",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.posts.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.posts.2"
+          }
+        ],
+        "needs": ["E_WRECKER_CONN", "E_WRECKER_SVART"]
+      },
+      {
+        "id": "gate",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.gate.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.gate.2"
+          }
+        ]
+      },
+      {
+        "id": "skiff",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.skiff.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.skiff.2"
+          }
+        ]
+      },
+      {
+        "id": "kin",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.kin.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.kin.2"
+          }
+        ]
+      },
+      {
+        "id": "finish",
+        "lines": [
+          {
+            "person": "E_WRECKER_SVART",
+            "key": "e_wrecker_svart.fold.finish.1"
+          },
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.finish.2"
+          }
+        ]
+      },
+      {
+        "id": "prayer",
+        "lines": [
+          {
+            "person": "E_WRECKER_CONN",
+            "key": "e_wrecker_conn.fold.prayer.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.prayer.2"
+          },
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.prayer.3"
+          }
+        ]
+      },
+      {
+        "id": "ring",
+        "lines": [
+          {
+            "person": "E_WRECKER_KETILL",
+            "key": "e_wrecker_ketill.fold.ring.1"
+          },
+          {
+            "person": "C_BRAN",
+            "key": "c_bran.fold.ring.2"
+          }
+        ]
+      }
+    ]
+  }
+}

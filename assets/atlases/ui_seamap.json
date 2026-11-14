@@ -1,0 +1,61 @@
+{
+  "sheet": "ui_seamap",
+  "kind": "decal",
+  "image": "ui_seamap.png",
+  "width": 640,
+  "height": 360,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 640,
+    "h": 360
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "chart": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "shade": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fog": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "chart/-/0": [
+      0,
+      0
+    ],
+    "lit/-/0": [
+      0,
+      360
+    ],
+    "shade/-/0": [
+      0,
+      720
+    ],
+    "fog/-/0": [
+      0,
+      1080
+    ]
+  }
+}

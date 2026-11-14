@@ -1,0 +1,73 @@
+{
+  "sheet": "prop_cell",
+  "kind": "prop",
+  "image": "prop_cell.png",
+  "width": 160,
+  "height": 116,
+  "pivot": {
+    "x": 80,
+    "y": 112
+  },
+  "footprint": {
+    "w": 136,
+    "h": 40
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "back": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "front": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "altar": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cross": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cross_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 120,
+    "h": 16
+  },
+  "placeholder": false,
+  "frames": {
+    "back/-/0": [
+      0,
+      0
+    ],
+    "front/-/0": [
+      0,
+      116
+    ],
+    "altar/-/0": [
+      0,
+      232
+    ],
+    "cross/-/0": [
+      0,
+      348
+    ],
+    "cross_lit/-/0": [
+      0,
+      464
+    ]
+  }
+}

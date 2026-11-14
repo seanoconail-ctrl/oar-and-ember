@@ -1,0 +1,99 @@
+{
+  "id": "MUS_LAUNCH",
+  "title": "The Ship (at the launch)",
+  "about": "The Ship theme (Book 11 section 04: frame drum, a men's chorus, the oar-creak rhythm) as the boat goes into the water: D Dorian in 4/4 at 120 beats a minute, so the frame drum's accent falls on every stroke of the oars (one a second, the launch's strokeSeconds) and the creak of the oars on the recovery between. The chorus is the low voice pad in two-part chords; the lyre carries the rowing tune. Written for the game; no borrowed tune.",
+  "mode": "D dorian",
+  "tempo": 120,
+  "beatsPerBar": 4,
+  "stepsPerBeat": 2,
+  "bars": 8,
+  "echo": {
+    "delay": 0.25,
+    "feedback": 0.26,
+    "mix": 0.18,
+    "tone": 2400
+  },
+  "layers": [
+    {
+      "id": "drone",
+      "name": "Drone",
+      "instrument": "drone",
+      "gain": 0.5,
+      "pan": 0,
+      "echo": 0.12,
+      "bars": ["D2:64", "-", "-", "-", "-", "-", "-", "-"]
+    },
+    {
+      "id": "drums",
+      "name": "Frame drum (the stroke)",
+      "instrument": "drum",
+      "gain": 0.72,
+      "pan": 0.1,
+      "echo": 0.06,
+      "bars": [
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1, D2:1,",
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1, r:1",
+        "D2:2! D2:1, r:1 D2:2! D2:1! D2:1!"
+      ]
+    },
+    {
+      "id": "creak",
+      "name": "Oar creak (the recovery)",
+      "instrument": "knock",
+      "gain": 0.5,
+      "pan": -0.15,
+      "echo": 0.04,
+      "bars": [
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,",
+        "r:3 A3:1, r:3 A3:1,"
+      ]
+    },
+    {
+      "id": "chorus_low",
+      "name": "Men's chorus, low (voice pad)",
+      "instrument": "pad",
+      "gain": 0.62,
+      "pan": 0,
+      "echo": 0.25,
+      "bars": ["D3:8", "C3:8", "D3:8", "A2:8", "F3:8", "C3:8", "G2:8", "D3:8"]
+    },
+    {
+      "id": "chorus_high",
+      "name": "Men's chorus, high (voice pad)",
+      "instrument": "pad",
+      "gain": 0.5,
+      "pan": 0,
+      "echo": 0.25,
+      "bars": ["A3:8", "G3:8", "A3:8", "E3:8", "C4:8", "G3:8", "D3:8", "A3:8"]
+    },
+    {
+      "id": "tune",
+      "name": "Lyre (the rowing tune)",
+      "instrument": "lyre",
+      "gain": 0.5,
+      "pan": -0.2,
+      "echo": 0.18,
+      "bars": [
+        "D4:2! F4 A4:2 G4 F4 E4",
+        "D4:2! C4 D4:2 E4 F4:2",
+        "A4:2! G4 F4:2 E4 D4:2",
+        "E4:3 D4 C4:2 D4:2",
+        "A4:2! B4 C5:2 B4 A4 G4",
+        "A4:2! F4 G4:2 A4 F4:2",
+        "D5:2! C5 A4:2 G4 F4 E4",
+        "D4:6 r:2"
+      ]
+    }
+  ]
+}

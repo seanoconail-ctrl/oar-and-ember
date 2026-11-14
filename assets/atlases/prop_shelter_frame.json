@@ -1,0 +1,153 @@
+{
+  "sheet": "prop_shelter_frame",
+  "kind": "prop",
+  "image": "prop_shelter_frame.png",
+  "width": 78,
+  "height": 91,
+  "pivot": {
+    "x": 39,
+    "y": 90
+  },
+  "footprint": {
+    "w": 78,
+    "h": 91
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "folded": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "raise": {
+      "frames": 8,
+      "ticks": 38,
+      "loop": false
+    },
+    "frame": {
+      "frames": 4,
+      "ticks": 12,
+      "loop": true
+    },
+    "haul": {
+      "frames": 8,
+      "ticks": 38,
+      "loop": false
+    },
+    "turf": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 39,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "folded/-/0": [
+      0,
+      0
+    ],
+    "raise/-/0": [
+      0,
+      91
+    ],
+    "raise/-/1": [
+      78,
+      91
+    ],
+    "raise/-/2": [
+      156,
+      91
+    ],
+    "raise/-/3": [
+      234,
+      91
+    ],
+    "raise/-/4": [
+      312,
+      91
+    ],
+    "raise/-/5": [
+      390,
+      91
+    ],
+    "raise/-/6": [
+      468,
+      91
+    ],
+    "raise/-/7": [
+      546,
+      91
+    ],
+    "frame/-/0": [
+      0,
+      182
+    ],
+    "frame/-/1": [
+      78,
+      182
+    ],
+    "frame/-/2": [
+      156,
+      182
+    ],
+    "frame/-/3": [
+      234,
+      182
+    ],
+    "haul/-/0": [
+      0,
+      273
+    ],
+    "haul/-/1": [
+      78,
+      273
+    ],
+    "haul/-/2": [
+      156,
+      273
+    ],
+    "haul/-/3": [
+      234,
+      273
+    ],
+    "haul/-/4": [
+      312,
+      273
+    ],
+    "haul/-/5": [
+      390,
+      273
+    ],
+    "haul/-/6": [
+      468,
+      273
+    ],
+    "haul/-/7": [
+      546,
+      273
+    ],
+    "turf/-/0": [
+      0,
+      364
+    ],
+    "turf/-/1": [
+      78,
+      364
+    ],
+    "turf/-/2": [
+      156,
+      364
+    ],
+    "turf/-/3": [
+      234,
+      364
+    ]
+  }
+}

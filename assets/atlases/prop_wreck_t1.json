@@ -1,0 +1,37 @@
+{
+  "sheet": "prop_wreck_t1",
+  "kind": "prop",
+  "image": "prop_wreck_t1.png",
+  "width": 80,
+  "height": 44,
+  "pivot": {
+    "x": 40,
+    "y": 32
+  },
+  "footprint": {
+    "w": 64,
+    "h": 14
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "wrecked": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 70,
+    "h": 10
+  },
+  "placeholder": false,
+  "frames": {
+    "wrecked/-/0": [
+      0,
+      0
+    ]
+  }
+}

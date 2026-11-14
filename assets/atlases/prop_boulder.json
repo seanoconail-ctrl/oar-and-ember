@@ -1,0 +1,49 @@
+{
+  "sheet": "prop_boulder",
+  "kind": "prop",
+  "image": "prop_boulder.png",
+  "width": 36,
+  "height": 28,
+  "pivot": {
+    "x": 18,
+    "y": 25
+  },
+  "footprint": {
+    "w": 24,
+    "h": 6
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "lichen": {
+      "frames": 4,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 26,
+    "h": 7
+  },
+  "placeholder": false,
+  "frames": {
+    "lichen/-/0": [
+      0,
+      0
+    ],
+    "lichen/-/1": [
+      36,
+      0
+    ],
+    "lichen/-/2": [
+      72,
+      0
+    ],
+    "lichen/-/3": [
+      108,
+      0
+    ]
+  }
+}

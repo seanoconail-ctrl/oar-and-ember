@@ -1,0 +1,68 @@
+{
+  "sheet": "actor_crab",
+  "kind": "sprite",
+  "image": "actor_crab.png",
+  "width": 10,
+  "height": 6,
+  "pivot": {
+    "x": 5,
+    "y": 5
+  },
+  "footprint": {
+    "w": 4,
+    "h": 2
+  },
+  "facings": [
+    "s",
+    "n",
+    "e",
+    "w"
+  ],
+  "anims": {
+    "scuttle": {
+      "frames": 2,
+      "ticks": 6,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 6,
+    "h": 2
+  },
+  "placeholder": false,
+  "frames": {
+    "scuttle/s/0": [
+      0,
+      0
+    ],
+    "scuttle/s/1": [
+      10,
+      0
+    ],
+    "scuttle/n/0": [
+      0,
+      6
+    ],
+    "scuttle/n/1": [
+      10,
+      6
+    ],
+    "scuttle/e/0": [
+      0,
+      12
+    ],
+    "scuttle/e/1": [
+      10,
+      12
+    ],
+    "scuttle/w/0": [
+      0,
+      18
+    ],
+    "scuttle/w/1": [
+      10,
+      18
+    ]
+  }
+}

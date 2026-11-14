@@ -1,0 +1,64 @@
+{
+  "sheet": "prop_bed_steerer",
+  "kind": "prop",
+  "image": "prop_bed_steerer.png",
+  "width": 64,
+  "height": 30,
+  "pivot": {
+    "x": 32,
+    "y": 29
+  },
+  "footprint": {
+    "w": 64,
+    "h": 30
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "s0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "s0_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "s1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "s1_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 40,
+    "h": 6
+  },
+  "placeholder": false,
+  "frames": {
+    "s0/-/0": [
+      0,
+      0
+    ],
+    "s0_lit/-/0": [
+      0,
+      30
+    ],
+    "s1/-/0": [
+      0,
+      60
+    ],
+    "s1_lit/-/0": [
+      0,
+      90
+    ]
+  }
+}

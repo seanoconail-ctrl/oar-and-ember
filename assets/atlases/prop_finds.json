@@ -1,0 +1,255 @@
+{
+  "sheet": "prop_finds",
+  "kind": "prop",
+  "image": "prop_finds.png",
+  "width": 40,
+  "height": 32,
+  "pivot": {
+    "x": 20,
+    "y": 30
+  },
+  "footprint": {
+    "w": 40,
+    "h": 32
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "cowries": {
+      "frames": 8,
+      "ticks": 20,
+      "loop": true
+    },
+    "cowries_taken": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "nest": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "nest_empty": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "carved_stone": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "waymark": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "offering": {
+      "frames": 4,
+      "ticks": 18,
+      "loop": true
+    },
+    "kerbstone": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "seal_skull": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "knife": {
+      "frames": 8,
+      "ticks": 20,
+      "loop": true
+    },
+    "knife_taken": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 18,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "cowries/-/0": [
+      0,
+      0
+    ],
+    "cowries/-/1": [
+      40,
+      0
+    ],
+    "cowries/-/2": [
+      80,
+      0
+    ],
+    "cowries/-/3": [
+      120,
+      0
+    ],
+    "cowries/-/4": [
+      160,
+      0
+    ],
+    "cowries/-/5": [
+      200,
+      0
+    ],
+    "cowries/-/6": [
+      240,
+      0
+    ],
+    "cowries/-/7": [
+      280,
+      0
+    ],
+    "cowries_taken/-/0": [
+      0,
+      32
+    ],
+    "nest/-/0": [
+      0,
+      64
+    ],
+    "nest/-/1": [
+      40,
+      64
+    ],
+    "nest/-/2": [
+      80,
+      64
+    ],
+    "nest/-/3": [
+      120,
+      64
+    ],
+    "nest_empty/-/0": [
+      0,
+      96
+    ],
+    "nest_empty/-/1": [
+      40,
+      96
+    ],
+    "nest_empty/-/2": [
+      80,
+      96
+    ],
+    "nest_empty/-/3": [
+      120,
+      96
+    ],
+    "carved_stone/-/0": [
+      0,
+      128
+    ],
+    "carved_stone/-/1": [
+      40,
+      128
+    ],
+    "carved_stone/-/2": [
+      80,
+      128
+    ],
+    "carved_stone/-/3": [
+      120,
+      128
+    ],
+    "waymark/-/0": [
+      0,
+      160
+    ],
+    "waymark/-/1": [
+      40,
+      160
+    ],
+    "waymark/-/2": [
+      80,
+      160
+    ],
+    "waymark/-/3": [
+      120,
+      160
+    ],
+    "offering/-/0": [
+      0,
+      192
+    ],
+    "offering/-/1": [
+      40,
+      192
+    ],
+    "offering/-/2": [
+      80,
+      192
+    ],
+    "offering/-/3": [
+      120,
+      192
+    ],
+    "kerbstone/-/0": [
+      0,
+      224
+    ],
+    "kerbstone/-/1": [
+      40,
+      224
+    ],
+    "kerbstone/-/2": [
+      80,
+      224
+    ],
+    "kerbstone/-/3": [
+      120,
+      224
+    ],
+    "seal_skull/-/0": [
+      0,
+      256
+    ],
+    "knife/-/0": [
+      0,
+      288
+    ],
+    "knife/-/1": [
+      40,
+      288
+    ],
+    "knife/-/2": [
+      80,
+      288
+    ],
+    "knife/-/3": [
+      120,
+      288
+    ],
+    "knife/-/4": [
+      160,
+      288
+    ],
+    "knife/-/5": [
+      200,
+      288
+    ],
+    "knife/-/6": [
+      240,
+      288
+    ],
+    "knife/-/7": [
+      280,
+      288
+    ],
+    "knife_taken/-/0": [
+      0,
+      320
+    ]
+  }
+}

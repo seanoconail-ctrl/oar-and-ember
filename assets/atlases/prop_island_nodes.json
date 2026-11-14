@@ -1,0 +1,406 @@
+{
+  "sheet": "prop_island_nodes",
+  "kind": "prop",
+  "image": "prop_island_nodes.png",
+  "width": 40,
+  "height": 32,
+  "pivot": {
+    "x": 20,
+    "y": 30
+  },
+  "footprint": {
+    "w": 40,
+    "h": 32
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "cress": {
+      "frames": 4,
+      "ticks": 16,
+      "loop": true
+    },
+    "cress_taken": {
+      "frames": 4,
+      "ticks": 16,
+      "loop": true
+    },
+    "heather": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "heather_taken": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "hare_form": {
+      "frames": 4,
+      "ticks": 30,
+      "loop": true
+    },
+    "hare_form_taken": {
+      "frames": 4,
+      "ticks": 30,
+      "loop": true
+    },
+    "cotton": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "cotton_taken": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "kelp": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "kelp_taken": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "seal_haulout": {
+      "frames": 4,
+      "ticks": 40,
+      "loop": true
+    },
+    "seal_haulout_taken": {
+      "frames": 4,
+      "ticks": 40,
+      "loop": true
+    },
+    "eggs_ledge": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "eggs_ledge_taken": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "peat_bank": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "peat_bank_taken": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "fish_rock": {
+      "frames": 4,
+      "ticks": 16,
+      "loop": true
+    },
+    "fish_rock_taken": {
+      "frames": 4,
+      "ticks": 16,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 18,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "cress/-/0": [
+      0,
+      0
+    ],
+    "cress/-/1": [
+      40,
+      0
+    ],
+    "cress/-/2": [
+      80,
+      0
+    ],
+    "cress/-/3": [
+      120,
+      0
+    ],
+    "cress_taken/-/0": [
+      0,
+      32
+    ],
+    "cress_taken/-/1": [
+      40,
+      32
+    ],
+    "cress_taken/-/2": [
+      80,
+      32
+    ],
+    "cress_taken/-/3": [
+      120,
+      32
+    ],
+    "heather/-/0": [
+      0,
+      64
+    ],
+    "heather/-/1": [
+      40,
+      64
+    ],
+    "heather/-/2": [
+      80,
+      64
+    ],
+    "heather/-/3": [
+      120,
+      64
+    ],
+    "heather_taken/-/0": [
+      0,
+      96
+    ],
+    "heather_taken/-/1": [
+      40,
+      96
+    ],
+    "heather_taken/-/2": [
+      80,
+      96
+    ],
+    "heather_taken/-/3": [
+      120,
+      96
+    ],
+    "hare_form/-/0": [
+      0,
+      128
+    ],
+    "hare_form/-/1": [
+      40,
+      128
+    ],
+    "hare_form/-/2": [
+      80,
+      128
+    ],
+    "hare_form/-/3": [
+      120,
+      128
+    ],
+    "hare_form_taken/-/0": [
+      0,
+      160
+    ],
+    "hare_form_taken/-/1": [
+      40,
+      160
+    ],
+    "hare_form_taken/-/2": [
+      80,
+      160
+    ],
+    "hare_form_taken/-/3": [
+      120,
+      160
+    ],
+    "cotton/-/0": [
+      0,
+      192
+    ],
+    "cotton/-/1": [
+      40,
+      192
+    ],
+    "cotton/-/2": [
+      80,
+      192
+    ],
+    "cotton/-/3": [
+      120,
+      192
+    ],
+    "cotton_taken/-/0": [
+      0,
+      224
+    ],
+    "cotton_taken/-/1": [
+      40,
+      224
+    ],
+    "cotton_taken/-/2": [
+      80,
+      224
+    ],
+    "cotton_taken/-/3": [
+      120,
+      224
+    ],
+    "kelp/-/0": [
+      0,
+      256
+    ],
+    "kelp/-/1": [
+      40,
+      256
+    ],
+    "kelp/-/2": [
+      80,
+      256
+    ],
+    "kelp/-/3": [
+      120,
+      256
+    ],
+    "kelp_taken/-/0": [
+      0,
+      288
+    ],
+    "kelp_taken/-/1": [
+      40,
+      288
+    ],
+    "kelp_taken/-/2": [
+      80,
+      288
+    ],
+    "kelp_taken/-/3": [
+      120,
+      288
+    ],
+    "seal_haulout/-/0": [
+      0,
+      320
+    ],
+    "seal_haulout/-/1": [
+      40,
+      320
+    ],
+    "seal_haulout/-/2": [
+      80,
+      320
+    ],
+    "seal_haulout/-/3": [
+      120,
+      320
+    ],
+    "seal_haulout_taken/-/0": [
+      0,
+      352
+    ],
+    "seal_haulout_taken/-/1": [
+      40,
+      352
+    ],
+    "seal_haulout_taken/-/2": [
+      80,
+      352
+    ],
+    "seal_haulout_taken/-/3": [
+      120,
+      352
+    ],
+    "eggs_ledge/-/0": [
+      0,
+      384
+    ],
+    "eggs_ledge/-/1": [
+      40,
+      384
+    ],
+    "eggs_ledge/-/2": [
+      80,
+      384
+    ],
+    "eggs_ledge/-/3": [
+      120,
+      384
+    ],
+    "eggs_ledge_taken/-/0": [
+      0,
+      416
+    ],
+    "eggs_ledge_taken/-/1": [
+      40,
+      416
+    ],
+    "eggs_ledge_taken/-/2": [
+      80,
+      416
+    ],
+    "eggs_ledge_taken/-/3": [
+      120,
+      416
+    ],
+    "peat_bank/-/0": [
+      0,
+      448
+    ],
+    "peat_bank/-/1": [
+      40,
+      448
+    ],
+    "peat_bank/-/2": [
+      80,
+      448
+    ],
+    "peat_bank/-/3": [
+      120,
+      448
+    ],
+    "peat_bank_taken/-/0": [
+      0,
+      480
+    ],
+    "peat_bank_taken/-/1": [
+      40,
+      480
+    ],
+    "peat_bank_taken/-/2": [
+      80,
+      480
+    ],
+    "peat_bank_taken/-/3": [
+      120,
+      480
+    ],
+    "fish_rock/-/0": [
+      0,
+      512
+    ],
+    "fish_rock/-/1": [
+      40,
+      512
+    ],
+    "fish_rock/-/2": [
+      80,
+      512
+    ],
+    "fish_rock/-/3": [
+      120,
+      512
+    ],
+    "fish_rock_taken/-/0": [
+      0,
+      544
+    ],
+    "fish_rock_taken/-/1": [
+      40,
+      544
+    ],
+    "fish_rock_taken/-/2": [
+      80,
+      544
+    ],
+    "fish_rock_taken/-/3": [
+      120,
+      544
+    ]
+  }
+}
