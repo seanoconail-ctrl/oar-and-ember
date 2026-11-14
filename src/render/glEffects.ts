@@ -71,6 +71,8 @@ uniform sampler2D u_flow;
 uniform vec4 u_land;
 uniform vec3 u_snow[3];
 uniform vec3 u_stone[3];
+uniform float u_anemones;
+uniform vec3 u_anemone[2];
 out vec4 outColour;
 ${NOISE}
 vec3 seaStep(float i) { return u_sea[int(clamp(i, 0.0, 10.0))]; }
@@ -179,6 +181,17 @@ void main() {
       c = fract(w.x / 4.0 + tt * 0.7) < 0.5 ? u_foam[0] : seaStep(9.0);
     }
     if (u_sun > 0.2 && hash2(w + floor(u_t * 4.0) * vec2(13.0, 7.0)) > 0.994) c = u_glint;
+    // Anemones open on the stones along the pools' edges (the deep passage in summer and
+    // autumn), their tentacles opening and closing each on its own beat.
+    if (u_anemones > 0.5 && bank < 3.5) {
+      vec2 cell = floor(w / 3.0);
+      if (hash2(cell + 41.0) > 0.6) {
+        float beat = sin(u_t * (1.2 + hash2(cell) * 1.4) + hash2(cell + 7.0) * 6.28);
+        vec2 f = fract(w / 3.0) - 0.5;
+        float r = length(f);
+        if (r < 0.32 + 0.12 * beat) c = r < 0.18 ? u_anemone[0] : u_anemone[1];
+      }
+    }
     outColour = vec4(c / 255.0, 1.0);
     return;
   }

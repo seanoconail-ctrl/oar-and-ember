@@ -325,5 +325,6 @@
     ]
   },
   "areas": [],
-  "viewPoints": []
+  "viewPoints": [],
+  "faceCrevices": 0.5
 }

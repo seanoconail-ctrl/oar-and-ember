@@ -123,7 +123,12 @@ export interface ZoneMap {
   readonly areas?: readonly {
     readonly id: Id;
     readonly scene: Id;
-    readonly rect: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly rect: {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    };
     readonly nameKey: string;
     readonly ambience?: string;
   }[];

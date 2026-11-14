@@ -182,8 +182,10 @@ function paint(
       // the sea reaches it; peat where a bank is cut in the bog.
       const peaty = realUnder === 'p' || realUnder === 'o';
       if (inside < 2.4) {
-        if (realWet) return hash01(wx, wy >> 1, 47) < 0.45 ? c('kelp', 1 + detail * 3) : c('stone', 1);
-        if (realUnder === 'h' || realUnder === ',') return inside < 1.2 ? c('weld', 1.6) : c('earth', 0.6);
+        if (realWet)
+          return hash01(wx, wy >> 1, 47) < 0.45 ? c('kelp', 1 + detail * 3) : c('stone', 1);
+        if (realUnder === 'h' || realUnder === ',')
+          return inside < 1.2 ? c('weld', 1.6) : c('earth', 0.6);
         return c(peaty ? 'tar' : 'stone', 1);
       }
       const strata = fbm(wx, wy, 10, 48, 2, P);
@@ -194,7 +196,8 @@ function paint(
         if (hash01(wx, wy, 49) < 0.06) return c('bracken', 2.4);
         return c('tar', 1.8 + (band % 2) * 0.6 + (tone - 0.5));
       }
-      const ledge = (wy + strata * 5) % 4 < 0.9 && band % 3 === 1 && valueNoise(wx, wy, 9, 65, P) > 0.4;
+      const ledge =
+        (wy + strata * 5) % 4 < 0.9 && band % 3 === 1 && valueNoise(wx, wy, 9, 65, P) > 0.4;
       if (ledge) return hash01(wx, wy, 50) < 0.25 ? c('wool', 5.0) : c('stone', 5.6);
       if (valueNoise(wx, wy, 2, 51, P) > 0.84) return c('stone', 1.1);
       if (valueNoise(wx, wy, 3, 52, P) > 0.78 && tone > 0.5) return c('trefoil', 1.3);
@@ -552,7 +555,10 @@ function plantFrame(palette: Palette, kind: string, variant: number, lean: numbe
         const top = dy >= tall - 2 || Math.abs(dx) >= span - 1;
         let code = c('weld', 1.5 + (dy / tall) * 2.6 + (dx < 0 ? 0.6 : 0));
         if (bloom && top && hash01(variant, dx + 9, dy, 62) < 0.55)
-          code = hash01(variant, dx + 9, dy, 63) < 0.7 ? c('violet', 2 + hash01(dx, dy) * 2) : c('thrift', 2.5);
+          code =
+            hash01(variant, dx + 9, dy, 63) < 0.7
+              ? c('violet', 2 + hash01(dx, dy) * 2)
+              : c('thrift', 2.5);
         put(g, x0 + dx + bend, y0 - dy, code);
       }
     }

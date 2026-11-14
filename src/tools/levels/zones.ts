@@ -110,7 +110,12 @@ export interface ZonePlan {
   readonly pools?: {
     readonly cell: number;
     readonly above: number;
-    readonly within?: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly within?: {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    };
   };
   /**
    * Stage 14: the plants of the moor: the share of heather places that grow a bush, and where
@@ -118,6 +123,8 @@ export interface ZonePlan {
    */
   readonly heather?: number;
   readonly bracken?: number;
+  /** Stage 14: the share of places on a cliff face that grow thrift or grass in a crevice. */
+  readonly faceCrevices?: number;
   /** Stage 14: the zone's markup, copied into its map for the runtime (see ZoneMarkup). */
   readonly traverse?: ZoneMarkup['traverse'];
   readonly areas?: ZoneMarkup['areas'];
@@ -268,7 +275,12 @@ export interface ZoneMarkup {
       readonly head: number;
       readonly ledges: readonly number[];
     }[];
-    readonly swims?: readonly { readonly x: number; readonly y: number; readonly w: number; readonly h: number }[];
+    readonly swims?: readonly {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    }[];
     readonly jumps?: readonly {
       readonly id: string;
       readonly from: { readonly x: number; readonly y: number };
@@ -288,7 +300,12 @@ export interface ZoneMarkup {
       readonly sheet: string;
       readonly frame: string;
     }[];
-    readonly soft?: readonly { readonly x: number; readonly y: number; readonly w: number; readonly h: number }[];
+    readonly soft?: readonly {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    }[];
     /** Water a person wades at a band the height field does not give (a pool in a passage). */
     readonly wades?: readonly {
       readonly x: number;
@@ -301,7 +318,12 @@ export interface ZoneMarkup {
   readonly areas?: readonly {
     readonly id: string;
     readonly scene: string;
-    readonly rect: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly rect: {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    };
     readonly nameKey: string;
     readonly ambience?: string;
   }[];
@@ -323,7 +345,12 @@ export interface ZoneMarkup {
    */
   readonly portals?: readonly {
     readonly id: string;
-    readonly exit: { readonly x: number; readonly y: number; readonly w: number; readonly h: number };
+    readonly exit: {
+      readonly x: number;
+      readonly y: number;
+      readonly w: number;
+      readonly h: number;
+    };
     readonly to: string;
     readonly entry: { readonly x: number; readonly y: number };
     readonly when?: { readonly tide: 'SPRING_LOW' } | { readonly fact: string };
@@ -569,8 +596,7 @@ export function expandZone(
           dist.set(`${tx},${ty}`, 0);
           queue.push([tx, ty]);
         }
-    for (let q = 0; q < queue.length; q++) {
-      const [x, y] = queue[q] ?? [0, 0];
+    for (const [x, y] of queue) {
       const d = dist.get(`${x},${y}`) ?? 0;
       for (const [dx, dy] of [
         [1, 0],
@@ -587,7 +613,8 @@ export function expandZone(
     }
     for (let ty = 0; ty < height; ty++)
       for (let tx = 0; tx < width; tx++)
-        if (at(tx, ty) === 'c' && (dist.get(`${tx},${ty}`) ?? 99) > plan.faceTiles) set(tx, ty, '~');
+        if (at(tx, ty) === 'c' && (dist.get(`${tx},${ty}`) ?? 99) > plan.faceTiles)
+          set(tx, ty, '~');
   }
   // Stage 14: headlands of heather stand on a rim of cliff over the sea.
   if (plan.cliffRim !== undefined) {
@@ -607,7 +634,8 @@ export function expandZone(
   // Stage 14: an interior's built walls along its open ground.
   if (plan.walls !== undefined) {
     const n = plan.walls.tiles;
-    const open = (c: TileCode | undefined): boolean => c !== undefined && c !== 'r' && c !== plan.walls?.code;
+    const open = (c: TileCode | undefined): boolean =>
+      c !== undefined && c !== 'r' && c !== plan.walls?.code;
     const wall: [number, number][] = [];
     for (let ty = 0; ty < height; ty++)
       for (let tx = 0; tx < width; tx++) {
@@ -625,8 +653,10 @@ export function expandZone(
     for (let ty = 0; ty < height; ty++)
       for (let tx = 0; tx < width; tx++) {
         const w = p.within;
-        if (w !== undefined && (tx < w.x || ty < w.y || tx >= w.x + w.w || ty >= w.y + w.h)) continue;
-        if (at(tx, ty) === 'p' && noise(seed + 12, ox + tx, oy + ty, p.cell) > p.above) set(tx, ty, 'o');
+        if (w !== undefined && (tx < w.x || ty < w.y || tx >= w.x + w.w || ty >= w.y + w.h))
+          continue;
+        if (at(tx, ty) === 'p' && noise(seed + 12, ox + tx, oy + ty, p.cell) > p.above)
+          set(tx, ty, 'o');
       }
   }
 
@@ -679,6 +709,7 @@ export function expandZone(
     plan.tussock ?? 0.55,
     plan.heather ?? 0.5,
     plan.bracken ?? 0.68,
+    plan.faceCrevices ?? 0,
   );
   // Grass grown on built things, sorted with them (the turf on the cairn's mound).
   const raised: PlantPlacement[] = [];
@@ -795,6 +826,7 @@ function furnish(
   tussockAt = 0.55,
   heatherShare = 0.5,
   brackenAt = 0.68,
+  faceCrevices = 0,
 ): { decals: DecalPlacement[]; plants: PlantPlacement[]; props: ZoneProp[] } {
   const T = 24;
   const code = (px: number, py: number): string =>
@@ -920,11 +952,21 @@ function furnish(
         else if (r(36, x, y) < 0.45) plants.push([0, px, py, v]);
       } else if (c === 'p') {
         // Stage 14: the bog's peat: bog cotton by its pools, grass and the odd heather hummock.
-        const wet = [code(px + T, py), code(px - T, py), code(px, py + T), code(px, py - T)].includes('o');
+        const wet = [
+          code(px + T, py),
+          code(px - T, py),
+          code(px, py + T),
+          code(px, py - T),
+        ].includes('o');
         if (wet && r(37, x, y) < 0.55) plants.push([7, px, py, v]);
         else if (noise(seed + 34, px / T, py / T, 2) > 0.62 && r(38, x, y) < 0.5)
           plants.push([6, px, py, v]);
         else if (r(39, x, y) < 0.28) plants.push([r(40, x, y) < 0.3 ? 7 : 0, px, py, v]);
+      } else if (c === 'c' && faceCrevices > 0 && r(41, x, y) < faceCrevices) {
+        // Stage 14: thrift and grass in the crevices and on the ledges of a cliff face; only
+        // grass on a peat bank's cut face.
+        const peat = [code(px, py - T), code(px, py + T)].includes('p');
+        plants.push([!peat && r(42, x, y) < 0.6 ? 3 : 0, px, py, v]);
       } else if (c === 'r' && crevices > 0 && r(32, x, y) < crevices) {
         // Sea pinks and grass in the crevices of the cliff-top rock, more thrift than grass.
         plants.push([r(33, x, y) < 0.6 ? 3 : 0, px, py, v]);

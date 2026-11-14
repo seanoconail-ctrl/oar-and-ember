@@ -48,7 +48,7 @@ describe('the whole island against the Book 7 standard (section 14)', () => {
     describe(zone, () => {
       const map = mapOf(zone);
 
-      it('meets art lint\'s standard checks', () => {
+      it("meets art lint's standard checks", () => {
         expect(standardProblems(sheetList, [map])).toEqual([]);
       });
 
@@ -66,8 +66,12 @@ describe('the whole island against the Book 7 standard (section 14)', () => {
         expect(missing.slice(0, 5)).toEqual([]);
         const plants = sheets.get(plantSheetOf(map));
         for (const [k, , , v] of map.plants)
-          expect(plants?.frames.has(`${PLANT_KINDS[k] ?? ''}${v}/-/3`), `${PLANT_KINDS[k]}${v}`).toBe(true);
-        for (const p of map.props) expect(sheets.get(p.sheet)?.frames.has(p.frame), `${p.sheet} ${p.frame}`).toBe(true);
+          expect(
+            plants?.frames.has(`${PLANT_KINDS[k] ?? ''}${v}/-/3`),
+            `${PLANT_KINDS[k]}${v}`,
+          ).toBe(true);
+        for (const p of map.props)
+          expect(sheets.get(p.sheet)?.frames.has(p.frame), `${p.sheet} ${p.frame}`).toBe(true);
         for (const f of map.decalFrames) {
           const [sheet = '', frame = ''] = f.split(' ');
           expect(sheets.get(sheet)?.frames.has(frame), f).toBe(true);

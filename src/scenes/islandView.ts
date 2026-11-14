@@ -22,6 +22,8 @@ import { pixelAtlas } from './seaVoyage.ts';
 
 /** The map's names in its own brown ink: the palette's earth ramp (Book 7 section 03). */
 const INK = '#40322B';
+/** The page's vellum under a name: the palette's undyed wool. */
+const VELLUM = '#D8CDB5';
 
 export const JOURNAL_PAGES = ['aim', 'finds', 'map'] as const;
 export type JournalPage = (typeof JOURNAL_PAGES)[number];
@@ -280,6 +282,9 @@ export class IslandView {
       // Brown ink on the vellum, the caption font, no glow (Book 7 section 10).
       label.style.color = INK;
       label.style.textShadow = 'none';
+      // On a scrap of clean vellum, so the name reads over the hatching.
+      label.style.background = VELLUM;
+      label.style.padding = '0 0.25em';
       label.style.fontSize = '0.8em';
       label.style.whiteSpace = 'nowrap';
       label.style.pointerEvents = 'none';

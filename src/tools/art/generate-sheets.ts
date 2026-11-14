@@ -23,7 +23,8 @@ export function generatedSheets(): Map<string, string> {
       .map(([zone]) => `content/zones/${zone.toLowerCase()}.json`)
       .filter((file) => existsSync(join(REPO_ROOT, file)))
       .map((file) => (JSON.parse(readRepo(file)) as { rows: string[] }).rows);
-    if (zones.length > 0) out.set(`${SHEETS_DIR}/${sheet}.txt`, groundTiles(palette, zones, sheet, set));
+    if (zones.length > 0)
+      out.set(`${SHEETS_DIR}/${sheet}.txt`, groundTiles(palette, zones, sheet, set));
   }
   out.set(`${SHEETS_DIR}/plant_moor.txt`, moorPlants(palette));
   out.set(`${SHEETS_DIR}/decal_strand.txt`, strandDecals(palette));

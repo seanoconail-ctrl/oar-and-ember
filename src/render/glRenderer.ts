@@ -216,6 +216,7 @@ function waterColours(palette: Palette): {
   kelp: number[];
   snow: number[];
   stone: number[];
+  anemone: number[];
 } {
   const ramp = (name: string): number[][] =>
     (palette.ramps.get(name) ?? []).map((i) => [...(palette.entries[i]?.rgb ?? [0, 0, 0])]);
@@ -232,6 +233,8 @@ function waterColours(palette: Palette): {
     snow: [pick(sky, 3), pick(sky, 5), pick(sea, 10)].flat(),
     // A dry stream bed's stones (Stage 14): shadowed, middle and lit steps of the stone ramp.
     stone: [pick(ramp('stone'), 3), pick(ramp('stone'), 5), pick(ramp('stone'), 6)].flat(),
+    // Anemones in the passage's pools (Stage 14): the madder ramp's deep and lit reds.
+    anemone: [pick(ramp('madder'), 3), pick(ramp('madder'), 5)].flat(),
   };
 }
 
@@ -748,6 +751,8 @@ export function createSceneRenderer(
     );
     gl.uniform3fv(uniform(water, 'u_snow'), colours.snow);
     gl.uniform3fv(uniform(water, 'u_stone'), colours.stone);
+    gl.uniform1f(uniform(water, 'u_anemones'), land?.anemones === true ? 1 : 0);
+    gl.uniform3fv(uniform(water, 'u_anemone'), colours.anemone);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.activeTexture(gl.TEXTURE1);

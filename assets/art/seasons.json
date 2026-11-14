@@ -1,5 +1,5 @@
 {
-  "about": "Stage 14 (decisions S14-94 to S14-99; Book 7 sections 13 and 14, Book 9 section 03): how every island scene changes with the season, for the renderer only. `ramps` recolours the ground, decal and plant sheets (any sheet whose name starts with one of `sheets`) palette step to palette step along Book 7's ramps, never to an ad-hoc colour; spring is the look as drawn (the approved art, the game's first days). `bloom` is the heather in flower, late summer into early autumn. `zones` gives each scene snow on its high ground in winter (0 to 1), whether its still pools freeze, the seasons its upper stream shrinks to its pools (S14-5), and mist; `default` covers a scene not listed, so a new scene changes with the seasons from the start. `life` keeps a share of each kind of wildlife by season (birds come and go), and `zoneLife` overrides it for a scene. `falls` puts Book 9's waterfalls on the zone's stream (a block of the island grid, snapped to the stream at the lip), and `mouths` names the edge a stream leaves by where it meets no sea. `seasonless` lists the scenes the book keeps unchanged by season, with the reason.",
+  "about": "Stage 14 (decisions S14-94 to S14-99; Book 7 sections 13 and 14, Book 9 section 03): how every island scene changes with the season, for the renderer only. `ramps` recolours the ground, decal and plant sheets (any sheet whose name starts with one of `sheets`) palette step to palette step along Book 7's ramps, never to an ad-hoc colour; spring is the look as drawn (the approved art, the game's first days). `bloom` is the heather in flower, late summer into early autumn. `zones` gives each scene snow on its high ground in winter (0 to 1), whether its still pools freeze, the seasons its upper stream shrinks to its pools (S14-5), mist, and the seasons anemones open in its pools; `default` covers a scene not listed, so a new scene changes with the seasons from the start. `life` keeps a share of each kind of wildlife by season (birds come and go), and `zoneLife` overrides it for a scene. `falls` puts Book 9's waterfalls on the zone's stream (a block of the island grid, snapped to the stream at the lip), and `mouths` names the edge a stream leaves by where it meets no sea. `seasonless` lists the scenes the book keeps unchanged by season, with the reason.",
   "sheets": ["tile_", "plant_", "decal_strand", "prop_heather", "prop_bracken"],
   "ramps": {
     "Spring": {},
@@ -135,7 +135,8 @@
       "freeze": false,
       "fog": {
         "Winter": 0.16
-      }
+      },
+      "anemones": ["Summer", "Autumn"]
     },
     "ZONE_SK_CAIRN_IN": {
       "snow": 0,

@@ -33,6 +33,7 @@ interface ZoneRule {
   readonly freeze?: boolean;
   readonly shrink?: readonly string[];
   readonly fog?: Readonly<Partial<Record<string, number>>>;
+  readonly anemones?: readonly string[];
 }
 
 export interface SeasonArt {
@@ -144,6 +145,7 @@ export function landLook(
     freeze: season === 'Winter' && rule.freeze === true,
     shrink: rule.shrink?.includes(season) === true,
     calm: reducedMotion,
+    anemones: rule.anemones?.includes(season) === true,
   };
 }
 

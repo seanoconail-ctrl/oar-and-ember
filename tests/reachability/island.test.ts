@@ -52,12 +52,11 @@ interface Tide {
   /** The still water level (0 low water, 1 high). */
   readonly level: number;
 }
-const TIDES: readonly Tide[] = [
-  { name: 'high water', open: false, spring: false, level: 1 },
-  { name: 'half tide', open: false, spring: false, level: 0.5 },
-  { name: 'low water', open: true, spring: false, level: 0 },
-  { name: 'a spring low', open: true, spring: true, level: 0 },
-];
+const HIGH: Tide = { name: 'high water', open: false, spring: false, level: 1 };
+const HALF: Tide = { name: 'half tide', open: false, spring: false, level: 0.5 };
+const LOW: Tide = { name: 'low water', open: true, spring: false, level: 0 };
+const SPRING: Tide = { name: 'a spring low', open: true, spring: true, level: 0 };
+const TIDES: readonly Tide[] = [HIGH, HALF, LOW, SPRING];
 
 interface Options {
   readonly tide: Tide;
@@ -74,6 +73,11 @@ interface Options {
 }
 
 const markup = (map: ZoneMap): ZoneMarkup => map as unknown as ZoneMarkup;
+function mapOf(zone: string): ZoneMap {
+  const map = maps.get(zone);
+  if (map === undefined) throw new Error(`no map for ${zone}`);
+  return map;
+}
 const key = (zone: string, x: number, y: number): string => `${zone}:${x},${y}`;
 
 /** Whether a tile is ground a person stands on under the options. */
@@ -82,7 +86,7 @@ function open(map: ZoneMap, x: number, y: number, o: Options): boolean {
   const t = markup(map).traverse;
   for (const p of t?.pushes ?? []) {
     const at = p.line[o.pushed?.get(`${map.zone}/${p.id}`) ?? p.start];
-    if (at !== undefined && at[0] === x && at[1] === y) return false;
+    if (at?.[0] === x && at[1] === y) return false;
   }
   if (!tileBlocks(map, x, y, o.tide.open, o.tide.spring)) {
     const el = land.elevations.get(map.zone);
@@ -161,8 +165,7 @@ function flood(start: { zone: string; x: number; y: number }, o: Options): Set<s
   const first = maps.get(start.zone);
   if (first !== undefined && open(first, start.x, start.y, o))
     seen.add(key(start.zone, start.x, start.y));
-  for (let q = 0; q < queue.length; q++) {
-    const [zone, x, y] = queue[q] ?? ['', 0, 0];
+  for (const [zone, x, y] of queue) {
     const map = maps.get(zone);
     if (map === undefined) continue;
     const here = onVerb(map, x, y, o) && !open(map, x, y, o);
@@ -237,19 +240,19 @@ describe('the whole island on foot (Book 9 section 13)', () => {
     }
 
   it('reaches the cairn inside by its east door once the Grey Men have opened it', () => {
-    const tide = TIDES[0] as Tide;
+    const tide = HIGH;
     expect(zonesIn(flood(START, { tide })).has('ZONE_SK_CAIRN_IN')).toBe(false);
     const got = flood(START, { tide, facts: new Set(['cairn.door.open']) });
     expect(reached(got, 'ZONE_SK_CAIRN_IN', 40, 14)).toBe(true);
     // The Door of Three Truths is closed: the inner chamber and the spring room only by the passage.
     expect(reached(got, 'ZONE_SK_CAIRN_IN', 7, 14)).toBe(false);
-    const spring = flood(START, { tide: TIDES[3] as Tide });
+    const spring = flood(START, { tide: SPRING });
     expect(reached(spring, 'ZONE_SK_CAIRN_IN', 7, 21)).toBe(true);
     expect(reached(spring, 'ZONE_SK_CAIRN_IN', 40, 14)).toBe(false);
   });
 
   it('every link leads both ways, from walkable ground to walkable ground', () => {
-    const tide = TIDES[3] as Tide;
+    const tide = SPRING;
     for (const zone of ISLAND) {
       const map = maps.get(zone);
       if (map === undefined) continue;
@@ -283,10 +286,10 @@ describe('the whole island on foot (Book 9 section 13)', () => {
       for (const p of markup(map).portals ?? []) {
         const back = maps.get(p.to);
         expect(
-          markup(back as ZoneMap).portals?.some((q) => q.to === zone),
+          markup(mapOf(p.to)).portals?.some((q) => q.to === zone),
           `${p.to} has a way back to ${zone}`,
         ).toBe(true);
-        expect(open(back as ZoneMap, Math.floor(p.entry.x), Math.floor(p.entry.y), { tide })).toBe(
+        expect(open(mapOf(p.to), Math.floor(p.entry.x), Math.floor(p.entry.y), { tide })).toBe(
           true,
         );
       }
@@ -301,7 +304,7 @@ describe('the whole island on foot (Book 9 section 13)', () => {
   });
 
   it('the deep passage: the crawl, the fallen stone and the push tile (Book 9 section 16)', () => {
-    const tide = TIDES[3] as Tide;
+    const tide = SPRING;
     const a = { zone: 'ZONE_SK_SEALCAVE_DEEP', x: 46, y: 9 };
     const viaCrawl = flood(a, { tide });
     expect(reached(viaCrawl, 'ZONE_SK_SEALCAVE_DEEP', 0, 14)).toBe(true);
@@ -316,13 +319,11 @@ describe('the whole island on foot (Book 9 section 13)', () => {
     });
     expect(reached(moved, 'ZONE_SK_SEALCAVE_DEEP', 0, 14)).toBe(true);
     // Closed: the passage is under the sea.
-    expect(reached(flood(START, { tide: TIDES[2] as Tide }), 'ZONE_SK_SEALCAVE_DEEP', 46, 9)).toBe(
-      false,
-    );
+    expect(reached(flood(START, { tide: LOW }), 'ZONE_SK_SEALCAVE_DEEP', 46, 9)).toBe(false);
   });
 
   it('the marked places need their verbs: the cleft by the jump, the egg ledges and the halfway cleft by the climbs, the corbel gap by the crawl', () => {
-    const tide = TIDES[2] as Tide;
+    const tide = LOW;
     const cases = [
       { zone: 'ZONE_SK_GEO', x: 55, y: 24, verb: 'jump' },
       { zone: 'ZONE_SK_GEO', x: 60, y: 49, verb: 'crawl' },
@@ -348,7 +349,7 @@ describe('the whole island on foot (Book 9 section 13)', () => {
     const every = 12;
     const gap = 1.5;
     for (const zone of ISLAND) {
-      const t = markup(maps.get(zone) as ZoneMap).traverse;
+      const t = markup(mapOf(zone)).traverse;
       for (const c of t?.climbs ?? []) {
         const rests = [c.head, ...c.ledges, c.foot].sort((p, q) => p - q);
         for (let i = 1; i < rests.length; i++)
@@ -362,7 +363,7 @@ describe('the whole island on foot (Book 9 section 13)', () => {
           `${zone} ${j.id}`,
         ).toBeLessThanOrEqual(gap);
       for (const p of t?.pushes ?? []) {
-        const map = maps.get(zone) as ZoneMap;
+        const map = mapOf(zone);
         // Every place on its line is open ground the object can be moved back from.
         for (const [x, y] of p.line)
           expect(solidAt(map, x, y), `${zone} ${p.id} ${x},${y}`).toBe(false);
@@ -370,13 +371,3 @@ describe('the whole island on foot (Book 9 section 13)', () => {
     }
   });
 });
-
-/** An open tile of a zone near its spawn (or anywhere), for starting a flood inside it. */
-function firstOpen(map: ZoneMap, tide: Tide): { x: number; y: number } {
-  const s = map.spawns['P_STEERER'];
-  if (s !== undefined && open(map, Math.floor(s.x), Math.floor(s.y), { tide }))
-    return { x: Math.floor(s.x), y: Math.floor(s.y) };
-  for (let y = 0; y < map.height; y++)
-    for (let x = 0; x < map.width; x++) if (open(map, x, y, { tide })) return { x, y };
-  return { x: 0, y: 0 };
-}

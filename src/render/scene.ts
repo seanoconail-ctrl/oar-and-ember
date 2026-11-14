@@ -130,6 +130,8 @@ export interface LandLook {
   readonly freeze: boolean;
   readonly shrink: boolean;
   readonly calm: boolean;
+  /** Anemones open in the still pools (the deep passage in summer and autumn, Book 9). */
+  readonly anemones?: boolean;
 }
 
 /**

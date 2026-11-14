@@ -524,5 +524,6 @@
       },
       "reveals": ["ZONE_SK_CLIFFS"]
     }
-  ]
+  ],
+  "faceCrevices": 0.55
 }

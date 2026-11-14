@@ -376,5 +376,6 @@
       "nameKey": "place.name.sk_greymen"
     }
   ],
-  "viewPoints": []
+  "viewPoints": [],
+  "faceCrevices": 0.3
 }
