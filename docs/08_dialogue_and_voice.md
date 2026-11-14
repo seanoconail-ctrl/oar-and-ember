@@ -209,6 +209,35 @@ The first night's fire scene is fire talk (section 09) with Hild alone: her grie
 | Ninnid | Anxious, kindly, counts everything; Christian | "The tithe is short, the pilgrims are early, and the poor came on time, as ever." / "God keep you. And keep your people off the barn roof." |
 | Faolán Wolf-Hand | Rough outlaw speech with a king's hall underneath; amused, then suddenly bitter | "Outlaws keep no fasts and pay no tolls. We keep our word, which surprises people." / "I was taught to pour wine for kings. Now I take it off their carts." |
 
+
+### The wreck on Sgeir Dhubh (Stage 13)
+*The voyage interruption of Book 6 section 19 (decisions S13-40 to S13-59): three survivors of an Ardcarn boat on a reef, Hild at the boat's side, and the steerer's four answers. The survivors are minor characters (Book 5 section 18); every line addressed to the steerer is tagged `ADDRESS_STEERER` and `VOICED`, and none uses a gendered word for anyone but the boat (`REFERS:ship`). Each survivor's words open when the steerer comes near and Interacts; Hild's question opens at the boat's side.*
+
+| Speaker | Voice | When | Line (string key) |
+|---|---|---|---|
+| Fínán | Gaelic, formal even half-drowned; blessings meant, debts counted | Spoken to, holding the hull | "Gaill, by your sail. God sends whatever boat comes to hand." (`c_finan.wreck.open`) |
+| Steerer | | Asks | "What was she carrying?" (`p_steerer.wreck.ask_cargo`) |
+| Fínán | | Answers | "Bar iron from Saltvik, for the smith at Ardcarn. Three years we saved for it." (`c_finan.wreck.cargo`) |
+| Steerer | | Asks | "Let go of her. She's done." (`p_steerer.wreck.let_go`) |
+| Fínán | | Answers | "She's all I have. Was. Give me a moment with her." (`c_finan.wreck.hull`) |
+| Derbáil | Precise grievance: names, numbers, days | Spoken to, on the rocks | "Four of us. Three now. Donngal went over the side in the dark and never called out." (`c_derbail.wreck.open`) |
+| Steerer | | Asks | "Who are you, and where were you bound?" (`p_steerer.wreck.ask_who`) |
+| Derbáil | | Answers | "Derbáil. That's Fínán on the hull; twenty years wed. Carrick, from Saltvik." (`c_derbail.wreck.who`) |
+| Steerer | | Asks | "You're looking hard at our sail." (`p_steerer.wreck.ask_sail`) |
+| Derbáil | | **The reveal** | "Skarvholm's? Ardcarn's men crossed there in a skin boat at the spring. Conn mac Colla. They never came home." (`c_derbail.wreck.conn`) then "If you saw them, you'll say so at the landing. Colla's still waiting." (`c_derbail.wreck.conn_after`) |
+| Ívar | Saltvik's half-and-half; everything a bargain, laughs at his own luck | Spoken to, lying on the shingle | "Leg's broken below the knee. Heard it go. Lovely sound." (`c_ivar.wreck.open`) |
+| Steerer | | Asks | "Can you be moved?" (`p_steerer.wreck.ask_moved`) |
+| Ívar | | Answers | "Dry boat, dry bread, and I'll row for you once it's knit. Fair price?" (`c_ivar.wreck.bargain`) |
+| Hild | Warm, quick, dry | At the boat's side, the question | "Well, Steerer? There's room for three, if Bran sits on the stores." (`c_hild.wreck.ask`) |
+| Steerer | Period voices (section 16) | The four answers, and not yet | Merciful: "Everyone aboard. They come with us." (`p_steerer.wreck.aboard`); hospitable and careful: "Aboard, and ashore at Carrick Strand before we go in." (`p_steerer.wreck.ashore`); pragmatic: "Take the iron and the herring. Leave them the rock." (`p_steerer.wreck.salvage`); hard: "Leave them. We've neither room nor time." (`p_steerer.wreck.leave`); "Not yet. I'll look round first." (`p_steerer.wreck.not_yet`) |
+| Hild | | To each answer | "Good. Father would have hauled them off first and argued after." (`c_hild.wreck.aboard`, `REFERS:c_thorkel`); "Ashore at the strand, then. They'll talk, mind. Everyone talks." (`c_hild.wreck.ashore`); "Iron's iron, I suppose. I'll not look at them while we load it." (`c_hild.wreck.salvage`); "Right. Cast off." (`c_hild.wreck.leave`) |
+| Fínán | | Taken aboard or ashore | "Take her iron if you take us. A debt paid is no debt." (`c_finan.wreck.gift`, `REFERS:ship`), then "A debt, then. Ardcarn pays its debts. Ask anyone." (`c_finan.wreck.thanks`) |
+| Derbáil | | Robbed, or left | "Take it, then. I'll remember your sail. Every board of it." (`c_derbail.wreck.robbed`); "Go on, then. God sees you go." (`c_derbail.wreck.left`) |
+| Ívar | | Taken aboard or ashore | "Dry bread. I'll hold you to that." (`c_ivar.wreck.aboard`) |
+| Oddi | Gain-minded | The salvage taken | "Iron's iron. Nobody asks where a nail came from." (`c_oddi.wreck.iron`) |
+| Bran | Mercy-minded | Later, if the household raids Carrick with them aboard (Stage 16) | "That's not a rescue. That's a hostage with manners." (`c_bran.wreck.hostage`) |
+
+Information captions are the sea audio's (Book 11; `INFO`, under eight words): *Cries from the wreck* (`caption.sea.wreck_cries`) as the scene opens, *A hull grinding on rock* (`caption.sea.wreck_grind`) and *Surf on the rocks, gulls overhead* (`caption.amb.sea_wreck`), the place's ambience. The reef's name on its edge caption is "Sgeir Dhubh" (`caption.edge.place.zone_sea_wreck`), and its place name the same (`place.name.zone_sea_wreck`).
 ## 07 / The enemy and the supernatural
 ### Rival captains and the enemy
 | Speaker | Voice | Sample lines |
@@ -469,6 +498,7 @@ Every kind of message the game showed when design addendum 2.5 was written (`con
 | First-sight lines, the spare shout and replies, the returned lines, the teaching foes' guidance, the fold's talk | `*.sight.*`, `p_steerer.spare.*`, `*.spared.*`, `*.returned.*`, `*.teach.*`, `*.fold.*` | Captions (speech) | Keep | One speech line; in a fight they are barks. The steerer's shout is the only speech line under the steerer's name, with no blip |
 | The pause menu, saves, the title screen and settings | `ui.pause.*`, `ui.save.*`, `ui.title.new_game` and the rest, `ui.settings.*` | Their own panels | Keep | Panels the player opens; a refused save shows its reason in the panel (`ui.save.refused`) |
 | The first raid's reasons (decisions DH-136, DH-138, DH-139) | `caption.raid.smoke_far`; `caption.raid.goods_stored`; `info.skinboat.*`; the morning report's `report.need.*` and `report.low.*` | Captions; the talk panel; the morning report | Keep | *Smoke, far off to the south-west* is direction class (the smoke is beyond the view's edge); *Grain, nails and net into the stores* is story class (a consequence off screen); the skin boat's lines are in the talk panel, as the boat's are; the report's need lines are at most two a morning (Book 10 reportNeedLines) |
+| The sea and the wreck (Stage 13, decision S13-73) | `caption.sea.wreck_cries`; `caption.sea.hull_groan`; `caption.sea.wreck_break`, `.wreck_grind`; `caption.sfx.sail_*`; `caption.music.sea_*`; `caption.amb.wind_rigging`, `.fog_quiet`, `.sea_*` | Sound captions | Keep the cries, the hull's groan and the wreck's timber; cut the rest | *Cries for help from the east* is direction class (the survivors heard before they are found); *Timber groaning* is sound class (the sea map does not draw the hull); *Timber breaking on rock* and *A hull grinding on rock* are sound class, shown only while the wreck is out of view (the scene says so). The sail, the oars, the music and the sea's bed are cut: the sea map shows the wind, the fog, the sail or the oars and the storm |
 | Skipping the intro | `ui.intro.skip`, `ui.intro.hold` | The cold open's bottom right | Keep | Only once the cold open has been seen; fades after a few seconds until a key is pressed |
 | The developer menu | `ui.dev.*` | Top left, in developer mode only | Keep out of play | Never shown in a player's game: only in a debug build or with `?dev` (Book 2 section 21) |
 | Strings never shown in play | `ui.activity.*`, `ui.work.result.*`, `ui.work.good`, `ui.play.zone.*`; `ui.play.label` (the canvas's screen-reader label only) | Nowhere on screen | Keep out | Not to be shown; the screen-reader label stays |

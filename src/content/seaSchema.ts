@@ -160,11 +160,18 @@ export function seaProblems(sea: SeaDef, x: SeaCrossCheck): { path: string; reas
     if (n.kind === 'PLACE') {
       if (!x.places.has(n.id)) out.push({ path: `nodes[${i}]`, reason: `unknown place "${n.id}"` });
       if (!x.chart.places.has(n.id))
-        out.push({ path: `nodes[${i}]`, reason: `"${n.id}" has no chart position (launch.json seaMap)` });
+        out.push({
+          path: `nodes[${i}]`,
+          reason: `"${n.id}" has no chart position (launch.json seaMap)`,
+        });
     } else if (n.kind === 'HAZARD') {
-      if (!x.hazards.has(n.id)) out.push({ path: `nodes[${i}]`, reason: `unknown hazard "${n.id}"` });
+      if (!x.hazards.has(n.id))
+        out.push({ path: `nodes[${i}]`, reason: `unknown hazard "${n.id}"` });
       if (!x.chart.hazards.has(n.id))
-        out.push({ path: `nodes[${i}]`, reason: `"${n.id}" has no chart position (launch.json seaMap)` });
+        out.push({
+          path: `nodes[${i}]`,
+          reason: `"${n.id}" has no chart position (launch.json seaMap)`,
+        });
     }
   });
   if (!nodes.has(sea.home)) out.push({ path: 'home', reason: `"${sea.home}" is not a node` });
@@ -178,7 +185,8 @@ export function seaProblems(sea: SeaDef, x: SeaCrossCheck): { path: string; reas
     if (e.a === e.b) out.push({ path: at, reason: 'an edge joins two different nodes' });
     if (!x.registered(e.id)) out.push({ path: at, reason: `"${e.id}" is not in the ID registry` });
     const row = x.routes.get(e.id);
-    if (row === undefined) out.push({ path: at, reason: `Book 10 section 02 has no route "${e.id}"` });
+    if (row === undefined)
+      out.push({ path: at, reason: `Book 10 section 02 has no route "${e.id}"` });
     else if (row.tideGateSlack !== (e.tideGate?.passableAt === 'SLACK'))
       out.push({ path: at, reason: `the tide gate does not match Book 10's route "${e.id}"` });
     if (e.tideGate !== undefined && e.tideGate.at !== e.a && e.tideGate.at !== e.b)
@@ -189,7 +197,8 @@ export function seaProblems(sea: SeaDef, x: SeaCrossCheck): { path: string; reas
   for (const id of x.routes.keys())
     if (!seen.has(id)) out.push({ path: 'edges', reason: `Book 10's route "${id}" has no edge` });
   for (const [tid, table] of Object.entries(sea.tables)) {
-    if (!x.registered(tid)) out.push({ path: `tables.${tid}`, reason: `"${tid}" is not in the ID registry` });
+    if (!x.registered(tid))
+      out.push({ path: `tables.${tid}`, reason: `"${tid}" is not in the ID registry` });
     const weights = x.weights.get(tid);
     if (weights === undefined) {
       out.push({ path: `tables.${tid}`, reason: `Book 10 has no encounter weights for "${tid}"` });
@@ -197,25 +206,33 @@ export function seaProblems(sea: SeaDef, x: SeaCrossCheck): { path: string; reas
     }
     const keys = new Set(table.entries.map((e) => e.key));
     for (const k of weights)
-      if (!keys.has(k)) out.push({ path: `tables.${tid}`, reason: `Book 10 weighs "${k}", which has no entry` });
+      if (!keys.has(k))
+        out.push({ path: `tables.${tid}`, reason: `Book 10 weighs "${k}", which has no entry` });
     table.entries.forEach((entry, j) => {
       const at = `tables.${tid}.entries[${j}]`;
-      if (!weights.has(entry.key)) out.push({ path: at, reason: `Book 10 gives "${entry.key}" no weight` });
+      if (!weights.has(entry.key))
+        out.push({ path: at, reason: `Book 10 gives "${entry.key}" no weight` });
       for (const edge of entry.edges ?? [])
         if (!seen.has(edge)) out.push({ path: `${at}.edges`, reason: `no edge "${edge}"` });
       for (const ch of entry.chapters ?? [])
-        if (!x.registered(ch)) out.push({ path: `${at}.chapters`, reason: `"${ch}" is not registered` });
+        if (!x.registered(ch))
+          out.push({ path: `${at}.chapters`, reason: `"${ch}" is not registered` });
       if (entry.scene !== undefined && !x.registered(entry.scene.scenario))
-        out.push({ path: `${at}.scene`, reason: `"${entry.scene.scenario}" is not in the ID registry` });
+        out.push({
+          path: `${at}.scene`,
+          reason: `"${entry.scene.scenario}" is not in the ID registry`,
+        });
     });
   }
   for (const t of x.weights.keys())
-    if (sea.tables[t] === undefined) out.push({ path: 'tables', reason: `Book 10's table "${t}" has no entries` });
+    if (sea.tables[t] === undefined)
+      out.push({ path: 'tables', reason: `Book 10's table "${t}" has no entries` });
   sea.landings.forEach((l, i) => {
     for (const idv of [l.scenario, l.gate, l.chapter])
       if (idv !== undefined && !x.registered(idv))
         out.push({ path: `landings[${i}]`, reason: `"${idv}" is not in the ID registry` });
-    if (!nodes.has(l.place)) out.push({ path: `landings[${i}]`, reason: `"${l.place}" is not a node` });
+    if (!nodes.has(l.place))
+      out.push({ path: `landings[${i}]`, reason: `"${l.place}" is not a node` });
   });
   return out;
 }

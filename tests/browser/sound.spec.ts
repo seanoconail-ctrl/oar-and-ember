@@ -105,6 +105,43 @@ test.describe('rendered offline', () => {
     for (const v of seam) expect(v).toBeGreaterThan(median * 0.3);
   });
 
+  // Stage 13 (decisions S13-60 to S13-74): the sea's three pieces loop without a gap at the
+  // seam (a pass is 16 bars of 4/4 at 64 beats a minute: 60 s), and every sea item sounds.
+  test('the sea music loops without a gap in each of its forms, and every sea item sounds', async ({
+    page,
+  }) => {
+    await open(page);
+    const layers = await page.evaluate(
+      () =>
+        (
+          window as unknown as {
+            oeSound: { seaPieces: [string, Record<string, boolean>][] };
+          }
+        ).oeSound.seaPieces,
+    );
+    expect(layers.map(([id]) => id)).toEqual(['MUS_SEA_CALM', 'MUS_SEA_WIND', 'MUS_SEA_STORM']);
+    for (const [id, on] of layers) {
+      const r = await render(page, 'music:sea', 64, { layers: on });
+      const body = r.perSecond.slice(4, 58);
+      const median = [...body].sort((a, b) => a - b)[Math.floor(body.length / 2)] ?? 0;
+      for (const v of r.perSecond.slice(58, 63)) expect(v, id).toBeGreaterThan(median * 0.3);
+      expect(r.peak, id).toBeLessThan(0.99);
+      // Music sits about -21 to -24 dBFS (Book 11 section 09); allow a decibel either side.
+      const db = 20 * Math.log10(r.rms);
+      expect(db, id).toBeGreaterThan(-25);
+      expect(db, id).toBeLessThan(-20);
+    }
+    const items = await page.evaluate(
+      () => (window as unknown as { oeSound: { seaItems: string[] } }).oeSound.seaItems,
+    );
+    expect(items.length).toBe(1 + 4 + 1 + 7 + 3);
+    for (const item of items.filter((i) => i !== 'music:sea')) {
+      const r = await render(page, item, item.startsWith('sea:SFX') ? 5 : 12);
+      expect(r.peak, item).toBeLessThan(0.99);
+      expect(r.rms, item).toBeGreaterThan(0.004);
+    }
+  });
+
   test('the alarm comes in on the bar line after it is raised', async ({ page }) => {
     await open(page);
     // Raised half-way through bar 4 (a bar is 2.857 s at 84 beats a minute), it lands at bar 5.

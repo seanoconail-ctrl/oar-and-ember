@@ -293,9 +293,53 @@ export const OTHER_VOICES: Readonly<Record<string, VoiceProfile>> = {
   },
 };
 
+/**
+ * Stage 13 (decision S13-70): the wreck's three survivors (Book 5 section 02, "Refugees from the
+ * sea"; content/wreck.json, kept out of the roster), each with a voice of their own from who they
+ * are (Book 11 section 08), apart from every resident's and scavenger's pitch.
+ */
+export const SEA_VOICES: Readonly<Record<string, VoiceProfile>> = {
+  // Fínán: about fifty, master of the boat, formal even half-drowned; low, measured, falling.
+  C_FINAN: {
+    pitch: 142,
+    wave: 'sawtooth',
+    size: 0.86,
+    syllable: 0.092,
+    gap: 0.05,
+    lilt: 0.16,
+    tilt: -0.1,
+    gain: 0.9,
+  },
+  // Derbáil: about forty-five, keen-eyed, a precise grievance; a clear middle voice, even and firm.
+  C_DERBAIL: {
+    pitch: 190,
+    wave: 'triangle',
+    size: 1.0,
+    syllable: 0.06,
+    gap: 0.028,
+    lilt: 0.22,
+    tilt: -0.05,
+    gain: 1.25,
+  },
+  // Ívar: about twenty-five, Saltvik's, quick to laugh at his own bad luck; light, quick, rising.
+  C_IVAR: {
+    pitch: 166,
+    wave: 'square',
+    size: 0.94,
+    syllable: 0.054,
+    gap: 0.026,
+    lilt: 0.45,
+    tilt: 0.12,
+    gain: 0.74,
+  },
+};
+
+/** The survivors who have a voice, in the order content/wreck.json lists them. */
+export const SURVIVOR_VOICE_KEYS = Object.keys(SEA_VOICES);
+
 /** A speaker's voice: a resident's, or one of the other speakers'. */
 export function voiceOf(speaker: string): VoiceProfile | undefined {
-  return VOICES[speaker] ?? OTHER_VOICES[speaker];
+  return VOICES[speaker] ?? OTHER_VOICES[speaker] ?? SEA_VOICES[speaker];
 }
 
 export function speak(

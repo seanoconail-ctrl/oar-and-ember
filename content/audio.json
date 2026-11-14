@@ -804,6 +804,137 @@
       "temporary": false
     },
     {
+      "id": "MUS_SEA_CALM",
+      "kind": "music",
+      "bpm": 64,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.sea_calm",
+      "temporary": false,
+      "piece": "sea",
+      "layers": {
+        "drone": true,
+        "deep": false,
+        "stroke": true,
+        "creak": true,
+        "drums": false,
+        "swell": false,
+        "pad": true,
+        "choir": false,
+        "harp": true,
+        "flute": false
+      }
+    },
+    {
+      "id": "MUS_SEA_WIND",
+      "kind": "music",
+      "bpm": 64,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.sea_wind",
+      "temporary": false,
+      "piece": "sea",
+      "layers": {
+        "drone": true,
+        "deep": false,
+        "stroke": true,
+        "creak": true,
+        "drums": false,
+        "swell": false,
+        "pad": true,
+        "choir": false,
+        "harp": false,
+        "flute": true
+      }
+    },
+    {
+      "id": "MUS_SEA_STORM",
+      "kind": "music",
+      "bpm": 64,
+      "beatsPerBar": 4,
+      "stems": ["bed"],
+      "captionKey": "caption.music.sea_storm",
+      "temporary": false,
+      "piece": "sea",
+      "layers": {
+        "drone": true,
+        "deep": true,
+        "stroke": false,
+        "creak": false,
+        "drums": true,
+        "swell": true,
+        "pad": false,
+        "choir": true,
+        "harp": false,
+        "flute": false
+      }
+    },
+    {
+      "id": "AMB_WIND_RIGGING",
+      "kind": "ambience",
+      "temporary": false
+    },
+    {
+      "id": "AMB_FOG_QUIET",
+      "kind": "ambience",
+      "temporary": false
+    },
+    {
+      "id": "AMB_SEA_WRECK",
+      "kind": "ambience",
+      "zones": ["ZONE_SEA_WRECK"],
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_REEF",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sail_reef",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_LUFF",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sail_luff",
+      "temporary": false
+    },
+    {
+      "id": "SFX_SAIL_STRAIN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sfx.sail_strain",
+      "temporary": false
+    },
+    {
+      "id": "SFX_HULL_GROAN",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sea.hull_groan",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WRECK_BREAK",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sea.wreck_break",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WRECK_GRIND",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sea.wreck_grind",
+      "temporary": false
+    },
+    {
+      "id": "SFX_WRECK_CRIES",
+      "kind": "sfx",
+      "bus": "effects",
+      "captionKey": "caption.sea.wreck_cries",
+      "temporary": false
+    },
+    {
       "id": "MUS_LAUNCH",
       "kind": "music",
       "bpm": 120,
@@ -1283,6 +1414,13 @@
     "SAIL_SET": "SFX_SAIL_FILL",
     "OAR_STROKE": "SFX_OAR_SPLASH",
     "OAR_CREAK": "SFX_OAR_CREAK",
+    "SAIL_REEFED": "SFX_SAIL_REEF",
+    "SAIL_LUFFING": "SFX_SAIL_LUFF",
+    "SAIL_STRAIN": "SFX_SAIL_STRAIN",
+    "HULL_GROAN": "SFX_HULL_GROAN",
+    "WRECK_BREAK": "SFX_WRECK_BREAK",
+    "WRECK_GRIND": "SFX_WRECK_GRIND",
+    "WRECK_CRIES": "SFX_WRECK_CRIES",
     "SEA_MAP_REVEALED": "MUS_STINGER_DISCOVERY",
     "CHAPTER_ENDED": "MUS_STINGER_CHAPTER_END",
     "COLD_STRIKE": "SFX_COLD_STRIKE",

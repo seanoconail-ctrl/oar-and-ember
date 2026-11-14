@@ -18,6 +18,7 @@ import raidJson from '../../../content/music/raid.json';
 import skarvholmJson from '../../../content/music/skarvholm.json';
 import shipJson from '../../../content/music/ship.json';
 import ritesJson from '../../../content/music/rites.json';
+import seaJson from '../../../content/music/sea.json';
 import { envelope } from './engine.ts';
 import type { SynthEngine } from './engine.ts';
 import type { Piece } from './notation.ts';
@@ -32,6 +33,7 @@ import { LAUNCH_SOUNDS } from './launch.ts';
 import { COMBAT2_SOUNDS } from './combat2.ts';
 import { COMBAT3_SOUNDS } from './combat3.ts';
 import type { SoundDef } from './sfx.ts';
+import { SEA_SOUNDS } from './sea.ts';
 
 export const PIECES: Readonly<Record<string, Piece>> = {
   hearth: hearthJson,
@@ -40,6 +42,7 @@ export const PIECES: Readonly<Record<string, Piece>> = {
   combat: combatJson,
   ship: shipJson,
   rites: ritesJson,
+  sea: seaJson,
 };
 
 /** The horn and the two stingers, generated from the instruments' samples. */
@@ -164,6 +167,7 @@ export const SOUNDS: ReadonlyMap<string, SoundDef> = new Map(
     ...STORY3_SOUNDS,
     ...STORY4_SOUNDS,
     ...INTERFACE_SOUNDS,
+    ...SEA_SOUNDS,
   ].map((d) => [d.id, d]),
 );
 
@@ -250,7 +254,19 @@ export class HearthAmbience {
 export const AMBIENCES: Readonly<
   Record<
     string,
-    'strand' | 'heath' | 'hearth' | 'home' | 'spring' | 'gale' | 'fold' | 'cave' | 'storm' | 'rain'
+    | 'strand'
+    | 'heath'
+    | 'hearth'
+    | 'home'
+    | 'spring'
+    | 'gale'
+    | 'fold'
+    | 'cave'
+    | 'storm'
+    | 'rain'
+    | 'sea'
+    | 'fog'
+    | 'wreck'
   >
 > = {
   AMB_SURF_SHINGLE: 'strand',
@@ -271,6 +287,11 @@ export const AMBIENCES: Readonly<
   // by the play view directly (setStorm, setRainCloth), never by a zone.
   AMB_COLD_STORM: 'storm',
   AMB_RAIN_CLOTH: 'rain',
+  // Stage 13 (sea.ts): the sea's bed under the sea map, its wind in the rigging and its fog's
+  // quiet, played by the sea map through setSea (never by a zone); and the wreck on its skerry.
+  AMB_WIND_RIGGING: 'sea',
+  AMB_FOG_QUIET: 'fog',
+  AMB_SEA_WRECK: 'wreck',
 };
 
 /** The part of the day each home-life ambience is for (Stage 7). */

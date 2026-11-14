@@ -99,6 +99,12 @@ export class PiecePlayer {
    * and begins with one layer, the others joining one at a time on bar lines over `layersJoin`.
    */
   start(at: number, fadeIn = 0, layersJoin = 0): void {
+    // Layers switched before the start (a cue's own layers) land at the start, so the one layer
+    // that begins alone and the order the rest join in are the cue's, not the whole piece's
+    // (decision S13-64).
+    const before = this.#pending;
+    this.#pending = [];
+    for (const f of before) f();
     this.#start = at;
     this.#anchorBar = 0;
     this.#anchorTime = at;

@@ -214,6 +214,20 @@ _Starting values, not tested balance. Units: game hours and days, real seconds, 
 | ENC_NORTH | ice_birds | 1 |
 | ENC_NORTH | blue_men | 1 |
 
+### The wreck with survivors
+*Stage 13, work package C (decisions S13-40 to S13-59; this table is separate from the sea simulation's above): the numbers of the wreck on Sgeir Dhubh, `SCN_SEA_WRECK` (Book 6 section 19; Book 9 section 15). Survivors aboard eat from the ship's stores at storesPerPersonPerWatch, like the crew. Starting values, for tuning after the playtest.*
+
+| Key | Value | Notes |
+|---|---|---|
+| survivors | 3 | Fínán, Derbáil and Ívar (Book 5 section 02): adults, refugees outside the roster |
+| passengerSlots | 2 | Book 6 section 01: a survivor taken aboard beyond the free berths (the hull's berths less everyone aboard, the steerer included) takes this many cargo slots |
+| caskStoresRd | 6 | The cask of salted herring: ration-days added to the ship's stores when it is taken aboard |
+| ironLots | 1 | The bundle of bar iron from Saltvik: cargo lots of iron when it is taken aboard |
+| leftTakenOffBelow | 3 | Survivors left on the reef are taken off by a Carrick curragh the next day if that day's wind strength is below this; at it or above, the sea has them |
+| wordDays | 2 | Days until what the survivors tell of the household reaches Ardcarn (set ashore, or left and taken off) |
+| boardReachTiles | 2.5 | How near the boat's side the steerer stands for Hild's question |
+| talkReachTiles | 2 | How near a survivor the steerer stands to speak with them |
+
 ## 03 / Food, fuel and seasons
 ### Consumption
 | Key | Value |
@@ -2637,6 +2651,13 @@ The four small dungeons behind the routes' secret entrances, and their rewards, 
 | fadeOut | 6 real seconds (4 to 8 by piece) | Whenever music stops |
 | crossFade | The outgoing piece's fadeOut | A change between pieces cross-fades; the new one still starts with one layer |
 | stingers | No fade | Stingers alone start and stop sharply |
+
+### Sea sound
+*The sea map's music by weather (Book 11 sections 03 and 07; Stage 13, decisions S13-60 and S13-61). The storm piece comes with section 02's stormFrom; fog silences the music unless it is a storm; the music plays only while the boat is under way.*
+
+| Key | Value | Notes |
+|---|---|---|
+| windFrom | Wind strength 2 | `MUS_SEA_WIND` from this strength; `MUS_SEA_CALM` below it; `MUS_SEA_STORM` from section 02's stormFrom. The wind in the rigging and the sea on the hull rise with the strength's share of stormFrom |
 
 ### The storm
 *The cold open made rough and alive (design addendum 2.5 section 3; decisions DF-15 to DF-17): a hidden cursor, lightning with thunder after, rolling fog and mist, light that varies, a camera that sways with the sea, foam, breaking waves, spray, and the ship pitching and rolling. Book 7 section 05 draws it and Book 11 section 07 sounds it. The cold open stays 30 to 45 seconds (coldOpen). Random choices use the presentation's own seeded stream, never the simulation's.*

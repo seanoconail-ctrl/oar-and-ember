@@ -17,6 +17,8 @@ import type { CompanyDef, GuidanceDef } from './companySchema.ts';
 import { parseRaid, RAID_ACTIONS, RAID_WHEN } from './raidSchema.ts';
 import { parseSea, seaProblems } from './seaSchema.ts';
 import type { SeaDef } from './seaSchema.ts';
+import { parseWreck, wreckProblems } from './wreckSchema.ts';
+import type { WreckDef } from './wreckSchema.ts';
 import type { RaidDef } from './raidSchema.ts';
 import { captionProblems, isDialogueKey, modernMoralWordsIn, parseStringTable } from './strings.ts';
 import { checkZoneMap } from './zoneMap.ts';
@@ -54,11 +56,14 @@ export const CONTENT_FILES = {
   raid: 'content/raid.json',
   /** Stage 13: the sea map's nodes, routes, encounter tables and landings (Book 2 section 09). */
   sea: 'content/sea.json',
+  /** Stage 13, work package C: the wreck on Sgeir Dhubh (Book 6 section 19). */
+  wreck: 'content/wreck.json',
   zoneStrand: 'content/zones/zone_sk_strand.json',
   zoneMachair: 'content/zones/zone_sk_machair.json',
   zoneHagseat: 'content/zones/zone_sk_hagseat.json',
   zoneCairn: 'content/zones/zone_sk_cairn.json',
   zoneSealcave: 'content/zones/zone_sk_sealcave.json',
+  zoneSeaWreck: 'content/zones/zone_sea_wreck.json',
 } as const;
 
 export type ContentFiles = { readonly [K in keyof typeof CONTENT_FILES]: unknown };
@@ -310,7 +315,7 @@ const cueCheck = object(
     /** Design addendum 2.5 (DF-80): a combat sound's drawn twin, in place of a caption. */
     drawn: text,
     temporary: bool,
-    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship', 'rites'] as const),
+    piece: oneOf(['hearth', 'skarvholm', 'raid', 'combat', 'ship', 'rites', 'sea'] as const),
     layers: recordOf(text, bool),
   },
   [
@@ -1484,6 +1489,8 @@ export interface Content {
   readonly raid: RaidDef | null;
   /** Stage 13: the sea map (Book 2 section 09). */
   readonly sea: SeaDef | null;
+  /** Stage 13, work package C: the wreck on Sgeir Dhubh (Book 6 section 19). */
+  readonly wreck: WreckDef | null;
   readonly zoneMaps: ReadonlyMap<Id, ZoneMap>;
 }
 
@@ -1645,6 +1652,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
   const guidance = parseGuidance(files.guidance, '', ctx(CONTENT_FILES.guidance));
   const raid = parseRaid(files.raid, '', ctx(CONTENT_FILES.raid));
   const sea = parseSea(files.sea, '', ctx(CONTENT_FILES.sea));
+  const wreck = parseWreck(files.wreck, '', ctx(CONTENT_FILES.wreck));
   issues.push(...companyProblems(company, guidance, opening, talk));
   // Stage 10: every omen declares its four parts (Book 2 section 17; Book 4 section 07).
   searches?.omens.forEach((o, i) => {
@@ -1678,6 +1686,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     [CONTENT_FILES.zoneHagseat, files.zoneHagseat],
     [CONTENT_FILES.zoneCairn, files.zoneCairn],
     [CONTENT_FILES.zoneSealcave, files.zoneSealcave],
+    [CONTENT_FILES.zoneSeaWreck, files.zoneSeaWreck],
   ] as const) {
     const checked = checkZoneMap(json);
     for (const reason of checked.problems) issues.push({ file, path: '(map)', reason });
@@ -1846,6 +1855,17 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       issues.push({ file: CONTENT_FILES.sea, path: p.path, reason: p.reason });
   }
 
+  // Stage 13, work package C: the wreck agrees with the registry and Book 10's survivors.
+  if (wreck !== null) {
+    const survivors = Number(
+      balanceTable(files.balance, 'timeAndTravel', 'theWreckWithSurvivors').find(
+        (r) => r['Key'] === 'survivors',
+      )?.['Value'] ?? NaN,
+    );
+    for (const p of wreckProblems(wreck, { registered: (x) => ids.byId.has(x), survivors }))
+      issues.push({ file: CONTENT_FILES.wreck, path: p.path, reason: p.reason });
+  }
+
   // Every content ID is a registered, stable ID.
   const defined: [string, Map<Id, { id: Id }>][] = [
     [CONTENT_FILES.places, places],
@@ -1922,6 +1942,7 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
       finds,
       raid,
       sea,
+      wreck,
       zoneMaps,
     },
     issues,

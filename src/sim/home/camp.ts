@@ -841,7 +841,11 @@ export function homeMinute(
 }
 
 /** One game minute of the home's fire: it burns the season's fuel and goes out when it is spent. */
-export function fireMinute(world: WorldState, ctx: CampContext, emit: (e: CampEvent) => void): void {
+export function fireMinute(
+  world: WorldState,
+  ctx: CampContext,
+  emit: (e: CampEvent) => void,
+): void {
   const home = homeOf(world, ctx);
   if (home === undefined) return;
   const season = seasonOf(world.calendar.day);

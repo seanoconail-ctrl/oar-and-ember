@@ -35,7 +35,11 @@ import { STORY3_SOUNDS } from '../audio/synth/story3.ts';
 import { STORY4_SOUNDS } from '../audio/synth/story4.ts';
 import { RainClothAmbience, STORM_SOUNDS, StormAmbience } from '../audio/synth/storm.ts';
 import type { SoundDef } from '../audio/synth/sfx.ts';
-import { OTHER_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
+import { SEA_SOUNDS, SeaAmbience, WreckAmbience } from '../audio/synth/sea.ts';
+import type { SeaBedState } from '../audio/synth/sea.ts';
+import { seaStrokeSeconds } from '../audio/seaAudio.ts';
+import audioJson from '../../content/audio.json';
+import { OTHER_VOICES, SEA_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
@@ -49,6 +53,21 @@ export const BLIP_LINES: readonly { speaker: string; key: string }[] = [
   { speaker: 'C_RUNA', key: 'soundtest.line.c_runa' },
   { speaker: 'C_ODDI', key: 'soundtest.line.c_oddi' },
 ];
+
+/** Stage 13: the sea's three pieces, each with the layers its cue starts (content/audio.json). */
+export const SEA_PIECES: readonly (readonly [string, Readonly<Record<string, boolean>>])[] = [
+  'MUS_SEA_CALM',
+  'MUS_SEA_WIND',
+  'MUS_SEA_STORM',
+].map((id) => [id, audioJson.cues.find((c) => c.id === id)?.layers ?? {}] as const);
+
+/** Stage 13: the sea's bed in its four kinds of weather (seaAudio.ts seaBed gives it in play). */
+export const SEA_BEDS: Readonly<Record<string, SeaBedState>> = {
+  calm: { wind: 0.25, sea: 0.25, fog: false, rowing: true, moving: true, storm: false },
+  wind: { wind: 0.75, sea: 0.75, fog: false, rowing: false, moving: true, storm: false },
+  storm: { wind: 1, sea: 1, fog: false, rowing: false, moving: true, storm: true },
+  fog: { wind: 0.25, sea: 0.25, fog: true, rowing: true, moving: true, storm: false },
+};
 
 const DEFAULT_LEVELS: Readonly<Record<Bus, number>> = {
   master: 0.8,
@@ -260,6 +279,41 @@ export function startItem(
     def.play(e, at, 0, { gore: 2 });
     return { schedule: () => undefined, stop: () => undefined };
   }
+  if (kind === 'sea') {
+    // Stage 13: the sea's bed by weather, the wreck on its skerry, and the sea's one-shots.
+    const one = SEA_SOUNDS.find((d) => d.id === id);
+    if (one !== undefined) {
+      one.play(e, at, 0, { gore: 2 });
+      return { schedule: () => undefined, stop: () => undefined };
+    }
+    if (id === 'wreck') {
+      const wreck = new WreckAmbience(e);
+      wreck.start(at);
+      return {
+        schedule: (until) => {
+          wreck.schedule(until);
+        },
+        stop: (t) => {
+          wreck.stop(t);
+        },
+      };
+    }
+    const bed = SEA_BEDS[id];
+    if (bed === undefined) throw new Error(`no sea sound ${id}`);
+    const sea = new SeaAmbience(e);
+    const tempo = PIECES['sea']?.tempo ?? 64;
+    sea.setStroke(seaStrokeSeconds(tempo), at);
+    sea.setState(bed, at);
+    sea.start(at);
+    return {
+      schedule: (until) => {
+        sea.schedule(until);
+      },
+      stop: (t) => {
+        sea.stop(t);
+      },
+    };
+  }
   if (kind === 'work') {
     const def = HOME.find((d) => d.id === id);
     if (def === undefined) throw new Error(`no work sound ${id}`);
@@ -343,7 +397,10 @@ export function startItem(
   if (kind === 'resident') {
     // Stage 8: every resident's voice, speaking the sound test's own line (decision S8-25).
     if (voiceOf(id) === undefined) throw new Error(`no voice ${id}`);
-    speak(e, at, id, formatString(strings, 'soundtest.line.resident'));
+    // Stage 13: the wreck's survivors call from the rock in their own line.
+    const key =
+      SEA_VOICES[id] === undefined ? 'soundtest.line.resident' : 'soundtest.line.survivor';
+    speak(e, at, id, formatString(strings, key));
     return { schedule: () => undefined, stop: () => undefined };
   }
   throw new Error(`unknown item ${item}`);
@@ -887,6 +944,52 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   launchStop.addEventListener('click', stopRunning);
   launch.append(launchStop);
   root.append(launch);
+  // Stage 13: the sea's music by weather, its bed, the sail and the hull, and the wreck.
+  const seaBox = el('section');
+  seaBox.append(
+    el('h2', {}, t('ui.sound.sea')),
+    el('p', { class: 'note' }, t('ui.sound.sea_note')),
+  );
+  for (const [id, layers] of SEA_PIECES) {
+    const key = `caption.music.${id.slice(4).toLowerCase()}`;
+    const b = el('button', { 'data-sea-play': id }, t(key));
+    b.addEventListener('click', () => {
+      play('music:sea', { layers }, key);
+    });
+    seaBox.append(b);
+  }
+  for (const [id, key] of [
+    ['calm', 'caption.amb.sea_calm'],
+    ['wind', 'caption.amb.wind_rigging'],
+    ['storm', 'caption.amb.sea_storm'],
+    ['fog', 'caption.amb.fog_quiet'],
+    ['wreck', 'caption.amb.sea_wreck'],
+  ] as const) {
+    const b = el('button', { 'data-sea-bed': id }, t(key));
+    b.addEventListener('click', () => {
+      play(`sea:${id}`, {}, key);
+    });
+    seaBox.append(b);
+  }
+  for (const def of SEA_SOUNDS) {
+    const b = el('button', { 'data-sea-sound': def.id }, t(def.captionKey));
+    b.addEventListener('click', () => {
+      oneShot(`sea:${def.id}`, def.captionKey);
+    });
+    seaBox.append(b);
+  }
+  for (const id of Object.keys(SEA_VOICES)) {
+    const name = `person.short.${id.toLowerCase()}`;
+    const b = el('button', { 'data-sea-voice': id }, t(name));
+    b.addEventListener('click', () => {
+      oneShot(`resident:${id}`, name);
+    });
+    seaBox.append(b);
+  }
+  const seaStop = el('button', { 'data-sea-stop': '' }, t('ui.sound.stop'));
+  seaStop.addEventListener('click', stopRunning);
+  seaBox.append(seaStop);
+  root.append(seaBox);
 
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
@@ -1038,6 +1141,16 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       'music:ship',
       ...LAUNCH_SOUNDS.map((d) => `launch:${d.id}`),
       ...Object.keys(OTHER_VOICES).map((id) => `resident:${id}`),
+    ],
+    /** Stage 13: each sea piece with its cue's layers. */
+    seaPieces: SEA_PIECES,
+    /** Stage 13: the sea's music by weather, its bed, its sounds, the wreck and the survivors. */
+    seaItems: [
+      'music:sea',
+      ...Object.keys(SEA_BEDS).map((id) => `sea:${id}`),
+      'sea:wreck',
+      ...SEA_SOUNDS.map((d) => `sea:${d.id}`),
+      ...Object.keys(SEA_VOICES).map((id) => `resident:${id}`),
     ],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [

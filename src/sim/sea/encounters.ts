@@ -41,7 +41,10 @@ export function applies(entry: EncounterEntry, table: Id, edge: Id, when: Encoun
   if (entry.oneShot === true && when.once[onceKey(table, entry.key)] !== undefined) return false;
   if (entry.edges !== undefined && !entry.edges.includes(edge)) return false;
   if (entry.seasons !== undefined && !entry.seasons.includes(when.season)) return false;
-  if (entry.chapters !== undefined && (when.chapter === null || !entry.chapters.includes(when.chapter)))
+  if (
+    entry.chapters !== undefined &&
+    (when.chapter === null || !entry.chapters.includes(when.chapter))
+  )
     return false;
   if (entry.minStrength !== undefined && when.strength < entry.minStrength) return false;
   if (entry.visibility !== undefined && !entry.visibility.includes(when.visibility)) return false;
@@ -103,7 +106,10 @@ export function offerLeg(
     g.credit -= 1;
     return refOf(table, story);
   }
-  const chance = Math.min(1, Math.max(0, g.credit * (b.governor.exposureFactor[edge.exposure] ?? 1)));
+  const chance = Math.min(
+    1,
+    Math.max(0, g.credit * (b.governor.exposureFactor[edge.exposure] ?? 1)),
+  );
   if (roll >= chance) return null;
   const supers = ok.filter((e) => e.supernatural === true);
   const plain = ok.filter((e) => e.supernatural !== true && e.story !== true);

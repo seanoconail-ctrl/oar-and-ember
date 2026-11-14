@@ -59,6 +59,13 @@ const EXACT: Readonly<Record<string, Verdict>> = {
   'caption.raid.smoke_far': keep('DIRECTION'),
   'caption.raid.goods_stored': keep('STORY'),
   'info.launch.not_yet': keep('STORY'),
+  // Stage 13, the sea and the wreck (decision S13-73): the survivors' cries, with their direction;
+  // the hull groaning in a storm, which the sea map does not draw; the wreck's timber breaking and
+  // grinding only while the wreck is out of view (the scene says so, as for the arrow above).
+  'caption.sea.wreck_cries': keep('DIRECTION'),
+  'caption.sea.hull_groan': keep('SOUND'),
+  'caption.sea.wreck_break': { show: true, cls: 'SOUND', unseenOnly: true },
+  'caption.sea.wreck_grind': { show: true, cls: 'SOUND', unseenOnly: true },
   // Cut: seen in the world.
   'caption.voice.approach': CUT,
   'caption.info.surrender': CUT,

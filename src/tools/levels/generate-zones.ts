@@ -15,9 +15,14 @@ export function generatedZones(): Map<string, string> {
   for (const file of readdirSync(join(REPO_ROOT, ZONES_DIR)).sort()) {
     if (!file.endsWith('.plan.json')) continue;
     const plan = JSON.parse(readFileSync(join(REPO_ROOT, ZONES_DIR, file), 'utf8')) as ZonePlan;
+    // A place drawn at tile scale reads its own Book 9 grid (Stage 13, decision S13-47).
+    const tiles =
+      plan.tileGrid === undefined
+        ? undefined
+        : parseBlockGrid(readFileSync(join(REPO_ROOT, plan.tileGrid), 'utf8'));
     out.set(
       `${ZONES_DIR}/${file.replace('.plan.json', '.json')}`,
-      zoneMapText(expandZone(plan, grid)),
+      zoneMapText(expandZone(plan, grid, tiles)),
     );
   }
   return out;

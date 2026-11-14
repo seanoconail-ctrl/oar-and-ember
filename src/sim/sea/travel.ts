@@ -14,7 +14,7 @@ export function bearingOf(
   b: { readonly x: number; readonly y: number },
 ): Point8 {
   const deg = (Math.atan2(b.x - a.x, a.y - b.y) * 180) / Math.PI;
-  const i = (((Math.round(deg / 45) % 8) + 8) % 8) as number;
+  const i = ((Math.round(deg / 45) % 8) + 8) % 8;
   return POINTS[i] ?? 'N';
 }
 
@@ -28,7 +28,11 @@ export function pointsApart(p: Point8, q: Point8): number {
  * The point of sail heading `heading` with the wind from `windFrom`: 0 points off is against the
  * wind, 1 close-hauled, 2 beam, 3 broad reach, 4 running; strength 0 is a calm.
  */
-export function pointOfSail(heading: Point8, windFrom: Point8, strength: WindStrength): PointOfSail {
+export function pointOfSail(
+  heading: Point8,
+  windFrom: Point8,
+  strength: WindStrength,
+): PointOfSail {
   if (strength === 0) return 'CALM';
   const off = pointsApart(heading, windFrom);
   return (['AGAINST', 'CLOSE_HAULED', 'BEAM', 'BROAD_REACH', 'RUNNING'] as const)[off] ?? 'AGAINST';

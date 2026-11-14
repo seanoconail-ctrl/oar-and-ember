@@ -6,11 +6,22 @@
  *   npm run audio:render            every item
  *   npm run audio:render -- hearth  items whose name contains "hearth"
  */
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from '@playwright/test';
 import { createServer } from 'vite';
 import { REPO_ROOT } from '../art/loadTitleArt.ts';
+
+/** Stage 13: the layers each sea cue starts with (content/audio.json). */
+const SEA_LAYERS: Readonly<Record<string, Record<string, boolean>>> = Object.fromEntries(
+  (
+    JSON.parse(readFileSync(join(REPO_ROOT, 'content/audio.json'), 'utf8')) as {
+      cues: { id: string; layers?: Record<string, boolean> }[];
+    }
+  ).cues
+    .filter((c) => c.id.startsWith('MUS_SEA_'))
+    .map((c) => [c.id, c.layers ?? {}]),
+);
 
 /** What to render: item, seconds, settings, file name. */
 export const RENDERS: readonly [string, number, Record<string, unknown>, string][] = [
@@ -222,6 +233,59 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     {},
     id.toLowerCase().replace(/_/g, '-'),
   ]),
+  // Stage 13: the sea's three pieces by weather, each with its cue's layers, over a pass and the
+  // seam into the next (a pass is 60 s); the calm built up from the drone with Book 10's fades;
+  // the sea's bed in calm, wind, storm and fog; the wreck; the sail, the hull and the wreck's
+  // sounds; and the survivors' voices.
+  ...(['MUS_SEA_CALM', 'MUS_SEA_WIND', 'MUS_SEA_STORM'] as const).map(
+    (id): [string, number, Record<string, unknown>, string] => [
+      'music:sea',
+      70,
+      { layers: SEA_LAYERS[id] ?? {} },
+      `sea-music-${id.slice(8).toLowerCase()}`,
+    ],
+  ),
+  [
+    'music:sea',
+    74,
+    {
+      layers: SEA_LAYERS['MUS_SEA_CALM'] ?? {},
+      fade: { fadeIn: 8, layersJoin: 25, stopAt: 64, fadeOut: 6 },
+    },
+    'sea-music-calm-fades',
+  ],
+  ...(['calm', 'wind', 'storm', 'fog', 'wreck'] as const).map(
+    (id): [string, number, Record<string, unknown>, string] => [
+      `sea:${id}`,
+      30,
+      {},
+      `sea-bed-${id}`,
+    ],
+  ),
+  ...(
+    [
+      ['SFX_SAIL_REEF', 3],
+      ['SFX_SAIL_LUFF', 2.2],
+      ['SFX_SAIL_STRAIN', 2.2],
+      ['SFX_HULL_GROAN', 2.6],
+      ['SFX_WRECK_BREAK', 2.6],
+      ['SFX_WRECK_GRIND', 3.5],
+      ['SFX_WRECK_CRIES', 4],
+    ] as const
+  ).map(([id, s]): [string, number, Record<string, unknown>, string] => [
+    `sea:${id}`,
+    s,
+    {},
+    `sea-${id.slice(4).toLowerCase().replaceAll('_', '-')}`,
+  ]),
+  ...(['C_FINAN', 'C_DERBAIL', 'C_IVAR'] as const).map(
+    (id): [string, number, Record<string, unknown>, string] => [
+      `resident:${id}`,
+      5,
+      {},
+      `sea-voice-${id.slice(2).toLowerCase()}`,
+    ],
+  ),
   ...(['E_WRECKER_KETILL', 'E_WRECKER_SVART', 'E_WRECKER_CONN'] as const).map(
     (id): [string, number, Record<string, unknown>, string] => [
       `resident:${id}`,

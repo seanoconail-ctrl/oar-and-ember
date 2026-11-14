@@ -1,0 +1,88 @@
+{
+  "sheet": "ui_seavoyage",
+  "kind": "decal",
+  "image": "ui_seavoyage.png",
+  "width": 640,
+  "height": 360,
+  "pivot": {
+    "x": 0,
+    "y": 0
+  },
+  "footprint": {
+    "w": 640,
+    "h": 360
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "land_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "storm": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "storm_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "flash": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "night": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "night_lit": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fog_thin": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "land_lit/-/0": [
+      0,
+      0
+    ],
+    "storm/-/0": [
+      0,
+      360
+    ],
+    "storm_lit/-/0": [
+      0,
+      720
+    ],
+    "flash/-/0": [
+      0,
+      1080
+    ],
+    "night/-/0": [
+      0,
+      1440
+    ],
+    "night_lit/-/0": [
+      0,
+      1800
+    ],
+    "fog_thin/-/0": [
+      0,
+      2160
+    ]
+  }
+}

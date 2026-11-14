@@ -94,7 +94,7 @@ export interface LegPlan {
   /** Whole game minutes under way. */
   readonly minutes: number;
   readonly exposure: 0 | 1 | 2 | 3;
-  /** Game minutes the boat must wait at the leg's end for slack water to go on (plans only). */
+  /** Game minutes the boat waits for slack water before this leg, to pass the Cauldron (plans only). */
   readonly waitMinutes: number;
   /** Campaign minute the leg is expected to start (plans only). */
   readonly startsAt: number;
@@ -308,7 +308,12 @@ export type SeaEvent =
       readonly of: number;
       readonly storm: boolean;
     }
-  | { readonly type: 'SEA_HELD'; readonly reason: HoldReason; readonly textKey: string; readonly until: number | null }
+  | {
+      readonly type: 'SEA_HELD';
+      readonly reason: HoldReason;
+      readonly textKey: string;
+      readonly until: number | null;
+    }
   | { readonly type: 'SEA_CHOICE'; readonly choice: SeaChoice }
   | { readonly type: 'SEA_CHOSEN'; readonly option: SeaOption }
   | {
@@ -320,10 +325,19 @@ export type SeaEvent =
   | { readonly type: 'SEA_HANDOFF_RETURNED'; readonly outcome: HandoffResult['outcome'] }
   | { readonly type: 'SEA_STORES_SHORT'; readonly textKey: string; readonly shortRd: number }
   | { readonly type: 'SEA_STORM_DAMAGE'; readonly textKey: string; readonly integrity: number }
-  | { readonly type: 'SEA_ARRIVED'; readonly node: Id; readonly place: boolean; readonly textKey: string | null }
+  | {
+      readonly type: 'SEA_ARRIVED';
+      readonly node: Id;
+      readonly place: boolean;
+      readonly textKey: string | null;
+    }
   | { readonly type: 'SEA_ROUTE_KNOWN'; readonly edge: Id; readonly known: RouteKnowledge }
   | { readonly type: 'SEA_HOME'; readonly textKey: string; readonly storesBack: number }
-  | { readonly type: 'WEATHER_DAY'; readonly weather: DayWeather; readonly forecast: Forecast | null };
+  | {
+      readonly type: 'WEATHER_DAY';
+      readonly weather: DayWeather;
+      readonly forecast: Forecast | null;
+    };
 
 /** The sea map's commands (part of Command). */
 export type SeaCommand =

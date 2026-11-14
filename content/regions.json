@@ -50,6 +50,10 @@
       {
         "id": "ZONE_SK_NAUST",
         "terrain": "Cove, causeway, skerry"
+      },
+      {
+        "id": "ZONE_SEA_WRECK",
+        "terrain": "A reef in Rán's Reach: rock stacks, shingle, salt turf, a weed shelf"
       }
     ]
   },

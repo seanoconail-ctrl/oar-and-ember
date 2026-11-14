@@ -730,3 +730,57 @@ Every one is announced by the scene before it can happen, and every death that f
 | **Outcome** | The clue in every outcome of the scavenger fight: **killed** (the boat and its goods are there, read against the chart; Oddi tells the council), **spared** (asked first, or the boat), **captured** (asked), **sneaked past or bargained with** (asked at the parley or the cave, or the boat). The council at the fire brings the boat's clue if no one has |
 | **Consequences** | THEFT if taken from the living band; the goods relieve the needs a little (some days of grain, thirty nails: not iron enough, a net for later fishing) and the household says so ("That sack was someone's winter. Ours now, I suppose.") |
 | **Proof tests** | The clue (Carrick named, with its sources) appears in every outcome of the scavenger fight; the goods taken with the band gone are found, with the band there a theft; set down by the fire they are in the stores |
+
+## 19 / The wreck on Sgeir Dhubh (`SCN_SEA_WRECK`)
+*Chapter 2 voyage interruption, on the first crossing from Skarvholm to Carrick (Book 3 Stage 13: one playable interruption, a wreck with survivors; decisions S13-40 to S13-59). Three people on a reef, a boat with room for about three more, and iron bound for the place the household is sailing to raid. No choice is clean.*
+
+| Part | Contents |
+|---|---|
+| **Lead** | None: met on the way. The wreck is the story entry of the open-sea table on the Skarvholm to Carrick route, once per campaign, on that crossing's first eventful leg (Book 2 section 09; decision S13-10). The sea map says "Wreckage in the water, and voices calling from a skerry", and the boat puts in under the reef's lee. |
+| **True state** | The *Faoileán* (the Gull), a fishing and trading boat of Carrick Landing under Ardcarn, three days out of Saltvik, ran onto **Sgeir Dhubh** (the Black Skerry, a reef in Rán's Reach half a day out from Carrick) in the night's wind. Her back is broken on the reef's south-western tip, her mast down and her sail in the surf. Of the four aboard, three are alive, all adults: **Fínán mac Duinn**, her master, holding to her gunwale in the wash because she is all he owns; his wife **Derbáil**, wet through and shaking on the rocks above; and **Ívar**, a Saltvik oarsman hired for the passage, on the shingle with a broken leg (Book 5 section 02, "Refugees from the sea"). The fourth, Fínán's cousin Donngal, went into the sea in the night and is not coming back: Rán's Reach keeps its drowned (Book 4 section 01). In her hold are a cask of salted herring and a bundle of bar iron from Saltvik for the smith at Ardcarn, bought with three years' savings. |
+| **Known intel** | What the survivors say when spoken to (certain): who they are, where they were bound and what is in the hold. **The reveal** is Derbáil's question: Ardcarn's men went over to Skarvholm in a skin boat at the turn of spring and never came home, Conn mac Colla among them; has the household seen them? The crew know what became of Conn (Chapter 1), and nobody says it unless the player's later choices make them. The iron is what the household lacks and means to take at Carrick (Book 5 section 02, "What the household lacks"). |
+| **Mode** | Neither raid nor assault: an interruption played on foot (an `ON_FOOT` handoff) on the reef while the voyage waits. No one here fights; the survivors have no weapons and no strength left. |
+| **Preparation** | None. What the voyage carries decides the costs: the berths free (the hull's berths less everyone aboard, the steerer included) and the ship's stores (Book 10 section 02, "The wreck with survivors"). |
+| **Approaches** | **On foot**: walk the reef from where the boat lies alongside, talk with each survivor, look at the wreck; lift Ívar and carry him to the boat, or lift Fínán off the hull. **Then, at the boat**, Hild asks what is to be done, and the steerer chooses one of four (Book 8 section 06, "The wreck on Sgeir Dhubh"): **take them aboard** and on with the household; **take them aboard and set them ashore at the nearest landing**, Carrick Strand below Carrick Landing, before the household goes on; **take only what can be salvaged**, the iron and the herring, and leave them the rock; or **leave them** and sail on. Taking them aboard is offered whatever the berths: a survivor beyond the free berths takes two cargo slots (section 01). Whoever was carried to the boat is aboard already if the choice keeps them, and is set back on the rock if it does not. Fínán pays for a passage with what his boat carried: the iron and the herring come aboard with the survivors as his gift. |
+| **Complications** | **Tomorrow's weather.** Survivors left on the reef are taken off by a Carrick curragh the next day only if tomorrow's wind falls below Book 10's `leftTakenOffBelow`; otherwise the sea has them. The household's forecast shows tomorrow's wind on the sea map, right as often as Book 10's `forecastAccuracy`. **Berths.** With more than the Chapter 2 household aboard, three more people overload the coastal boat (section 01). |
+| **Extraction** | The survivors come aboard (Ívar carried, by the steerer or by Bran); the herring goes into the ship's stores (Book 10 `caskStoresRd`) and the iron into the cargo (`ironLots`). Survivors aboard eat from the ship's stores at the crew's rate (Book 10 `storesPerPersonPerWatch`) for the rest of the voyage. |
+| **Outcome bands** | **Saved and kept**: all three aboard to the landing; nobody runs ahead of the household. **Saved and set ashore**: landed on Carrick Strand, they walk to Ardcarn ahead of the household with word of the crew that saved them. **Robbed and left**: the iron and the herring taken in their sight, the three left on the rock. **Left**: sailed past, nothing touched. In the two left bands the three live or drown by tomorrow's weather. |
+| **Evidence** | The wreck stays on the reef. What was taken from it is known to anyone who lives to tell it, with the household's sail. |
+| **Consequences** | Below ("What each choice costs and gives"; "Facts later stages read"; "Consequence chain"). |
+| **Gate** | Not a gate. Met only on this crossing; whatever is chosen, the voyage goes on to Carrick (the handoff's result is always `CONTINUE`). |
+| **Proof tests** | Every choice completes and the voyage goes on (`tests/scenario/seaWreck.test.ts`); the result is deterministic, the same world giving the same result; the berths, the stores and the cargo change as Book 10 says; the left survivors' fate follows tomorrow's weather; the reef passes the no-trap edge walk and the reachability test at every tide (Book 9 section 15); no one in the scene is a child. |
+
+### What each choice costs and gives
+| Choice | Now | At Carrick and after (Stages 15 to 18) | Among the crew |
+|---|---|---|---|
+| **Take them aboard** | Three berths and their share of the stores to the landing; the deed `RESCUE`. Fínán gives the iron and the herring for their passage ("Take her iron if you take us. A debt paid is no debt."): they come aboard as a gift, not a theft | They see the landing beside the household, and nobody runs ahead. If the household then raids Carrick in their sight, they are witnesses who know every face; if it trades or bargains, Fínán speaks for it. Fínán and Derbáil owe the household their lives (by Gaelic law a debt); Ívar asks to row for his passage (a possible recruit, Chapter 3) | The Mercy-minded approve; Bran, if the household raids with them aboard: "That's not a rescue. That's a hostage with manners." |
+| **Set them ashore** | The same berths and stores as far as Carrick Strand; the deed `RESCUE`; the iron and the herring given for the passage, as above | Their word reaches Ardcarn ahead of the household (Book 10 `wordDays`): a Norse crew saved Ardcarn's people. The landing's watch knows a sail is out (`sea.wreck.warned`), so a stealth raid is harder; Colla and Muiredach start warmer to a bargain | The Mercy- and Word-minded approve; the Gain-minded grumble at a warning given away |
+| **Take only the salvage** | The iron (one lot) and the herring aboard; the deed `THEFT` from the living, in their sight | If they live, the theft and the sail are told at Ardcarn: the watch is up and hostile, Colla's grievance grows. If they drown, nobody tells; the crew know | The Gain-minded are pleased ("Iron's iron."); the Mercy-minded remember it |
+| **Leave them** | Nothing spent, nothing taken | If they live, Ardcarn hears that a Norse sail passed its people by: the watch is up. If they drown, nobody tells | The Mercy-minded remember it; Hild says little, which is worse |
+
+Mercy costs berths, stores and secrecy here: three more mouths to the landing, witnesses aboard or a warning walking ahead, though Fínán pays for the passage with his iron. The cruel answer brings the same iron with no mouths and no witnesses, and keeps the landing unwarned if the weather turns; if it does not, Ardcarn hears who robbed its people. Leaving them costs nothing now. Neither is shown as right.
+
+### Facts later stages read
+```ts
+// facts['sea.wreck.met']: day                the wreck was met (and played)
+// facts['sea.wreck.choice']: 'ABOARD' | 'ASHORE' | 'SALVAGE' | 'LEAVE'
+// facts['sea.wreck.survivors']: 'ABOARD' | 'ASHORE' | 'TAKEN_OFF' | 'DROWNED'
+// facts['sea.wreck.iron']: number            lots of bar iron aboard from the wreck (0 or Book 10 ironLots)
+// facts['sea.wreck.cask']: boolean           the herring taken into the ship's stores
+// facts['sea.wreck.goods']: 'GIVEN' | 'TAKEN' | 'NONE'   the salvage given by Fínán, or taken from the living
+// facts['sea.wreck.word']: 'SAVED' | 'LEFT' | 'ROBBED' | 'NONE'   what Ardcarn will hear of the household
+// facts['sea.wreck.word_day']: day           the day that word reaches Ardcarn (Book 10 wordDays)
+// facts['sea.wreck.warned']: boolean         Carrick knows a Norse sail is out before the household lands
+// facts['sea.wreck.asked_conn']: boolean     Derbáil asked after Conn (the reveal was heard)
+// facts['sea.wreck.overloaded']: number      survivors beyond the free berths (each two cargo slots)
+```
+The survivors taken aboard join the voyage (`aboardChanges.join`: `C_FINAN`, `C_DERBAIL`, `C_IVAR`) and are people of the world (Book 5 section 01) from then on, outside the roster; Ívar's leg is a serious wound, to be tended.
+
+### Consequence chain
+| Choice | Carried by | Arrives as | Visible to the player |
+|---|---|---|---|
+| The wreck's people saved and set ashore | Fínán and Derbáil, walking home | Ardcarn warned of a Norse sail before the household lands, and warmer to it; Colla thanks the crew that brought them | The watch doubled at the landing; Fínán on the shore at Carrick |
+| The wreck's people kept aboard to Carrick | Fínán and Derbáil, aboard | Witnesses of whatever the household does at the landing, beside it | Their faces at the gunwale; Bran's remark |
+| The wreck robbed and its people left, and the weather fair | The three, taken off by a curragh | Ardcarn hears of the theft and the sail: the watch is up and hostile, Colla's grievance | The rumour at Carrick; Fínán's iron in the household's cargo |
+| The wreck's people left, and the weather foul | Nobody | No word; the crew remember the voices on the reef | The Mercy-minded's remarks at the fire |
+| Ívar aboard | Ívar | Asks to row for his passage, then to stay (Chapter 3) | His request at the fire |

@@ -746,7 +746,12 @@ describe('golden save 13 (schema 15): the chapter end and a voyage to Carrick un
       if (v?.status === 'HANDOFF')
         sim.submit({
           type: 'SEA_HANDOFF_RETURN',
-          result: { outcome: 'CONTINUE', facts: {}, aboardChanges: { join: [], leave: [] }, storesDelta: 0 },
+          result: {
+            outcome: 'CONTINUE',
+            facts: {},
+            aboardChanges: { join: [], leave: [] },
+            storesDelta: 0,
+          },
         });
       else if (v?.status === 'CHOICE') sim.submit({ type: 'SEA_CHOOSE', option: 'PRESS_ON' });
       else sim.submit({ type: 'SEA_WATCH' });

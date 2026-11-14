@@ -3884,7 +3884,235 @@
     "text": "Back to the island"
   },
   "ui.seamap.readonly": {
-    "text": "The coast as it looks from the boat. Sailing it comes in the next part of the game."
+    "text": "The coast as it looks from the boat. The chart opens again from the island with the map key."
+  },
+  "ui.sea.point.n": {
+    "text": "the north"
+  },
+  "ui.sea.point.ne": {
+    "text": "the north-east"
+  },
+  "ui.sea.point.e": {
+    "text": "the east"
+  },
+  "ui.sea.point.se": {
+    "text": "the south-east"
+  },
+  "ui.sea.point.s": {
+    "text": "the south"
+  },
+  "ui.sea.point.sw": {
+    "text": "the south-west"
+  },
+  "ui.sea.point.w": {
+    "text": "the west"
+  },
+  "ui.sea.point.nw": {
+    "text": "the north-west"
+  },
+  "ui.sea.wind.from": {
+    "text": "Wind from {point}, {strength}"
+  },
+  "ui.sea.wind.calm": {
+    "text": "Flat calm: no wind to sail by"
+  },
+  "ui.sea.strength.1": {
+    "text": "a light air"
+  },
+  "ui.sea.strength.2": {
+    "text": "a fair breeze"
+  },
+  "ui.sea.strength.3": {
+    "text": "a strong wind"
+  },
+  "ui.sea.strength.4": {
+    "text": "a full gale"
+  },
+  "ui.sea.tide.line": {
+    "text": "{tide}; slack water about {time}"
+  },
+  "ui.sea.tide.flood": {
+    "text": "Tide flooding"
+  },
+  "ui.sea.tide.ebb": {
+    "text": "Tide ebbing"
+  },
+  "ui.sea.tide.slack_now": {
+    "text": "Slack water now"
+  },
+  "ui.sea.vis.clear": {
+    "text": "Clear"
+  },
+  "ui.sea.vis.haze": {
+    "text": "Hazy"
+  },
+  "ui.sea.vis.fog": {
+    "text": "Fog on the water"
+  },
+  "ui.sea.vis.night": {
+    "text": "Night"
+  },
+  "ui.sea.forecast.line": {
+    "text": "Tomorrow: {wind}; {vis}"
+  },
+  "ui.sea.forecast.storm": {
+    "text": "Tomorrow: a storm, by the sky and the swell"
+  },
+  "ui.sea.forecast.calm": {
+    "text": "Tomorrow: a calm, and the crossings open"
+  },
+  "ui.sea.forecast.none": {
+    "text": "No forecast yet"
+  },
+  "ui.sea.watches.part": {
+    "text": "less than a watch"
+  },
+  "ui.sea.watches.one": {
+    "text": "about 1 watch"
+  },
+  "ui.sea.watches.many": {
+    "text": "about {count} watches"
+  },
+  "ui.sea.clock": {
+    "text": "Day {day}, {time}"
+  },
+  "ui.sea.stores": {
+    "text": "Stores aboard: {days} days"
+  },
+  "ui.sea.plot.title": {
+    "text": "Set a course"
+  },
+  "ui.sea.plot.from": {
+    "text": "The boat lies at {place}."
+  },
+  "ui.sea.plot.pick": {
+    "text": "Steer for:"
+  },
+  "ui.sea.plot.course": {
+    "text": "{from} to {to}."
+  },
+  "ui.sea.plot.via": {
+    "text": "By way of {places}."
+  },
+  "ui.sea.plot.time": {
+    "text": "At sea {watches}; landfall about {time} on day {day}."
+  },
+  "ui.sea.plot.wait": {
+    "text": "The course waits for slack water at the Cauldron."
+  },
+  "ui.sea.plot.stores": {
+    "text": "Stores aboard: {days} days for {mouths}. The course eats about {eat} days."
+  },
+  "ui.sea.plot.short": {
+    "text": "The stores will not last the course."
+  },
+  "ui.sea.plot.gate": {
+    "text": "Setting out on this course begins the raid on {place}."
+  },
+  "ui.sea.plot.sail": {
+    "text": "{key}  Set sail"
+  },
+  "ui.sea.plot.back": {
+    "text": "{key}  Back to the island"
+  },
+  "ui.sea.at.title": {
+    "text": "Under way"
+  },
+  "ui.sea.at.sailing": {
+    "text": "Under sail with {pos}, {from} to {to}."
+  },
+  "ui.sea.at.rowing": {
+    "text": "At the oars, {from} to {to}: {why}."
+  },
+  "ui.sea.at.landfall": {
+    "text": "{place} in {watches}, at about {time}."
+  },
+  "ui.sea.at.lying": {
+    "text": "The boat lies off {place}."
+  },
+  "ui.sea.at.bound": {
+    "text": "Bound for {place}."
+  },
+  "ui.sea.at.turn_back": {
+    "text": "Turn for home"
+  },
+  "ui.sea.pos.running": {
+    "text": "the wind astern"
+  },
+  "ui.sea.pos.broad_reach": {
+    "text": "the wind on the quarter"
+  },
+  "ui.sea.pos.beam": {
+    "text": "the wind on the beam"
+  },
+  "ui.sea.pos.close_hauled": {
+    "text": "the wind close ahead"
+  },
+  "ui.sea.pos.against": {
+    "text": "the wind dead ahead"
+  },
+  "ui.sea.pos.calm": {
+    "text": "no wind"
+  },
+  "ui.sea.row.calm": {
+    "text": "there is no wind"
+  },
+  "ui.sea.row.against": {
+    "text": "the wind is dead ahead"
+  },
+  "ui.sea.log.route": {
+    "text": "A route learned: {from} to {to}."
+  },
+  "ui.sea.choice.title": {
+    "text": "Weather rising"
+  },
+  "ui.sea.choice.option": {
+    "text": "{key}  {label}"
+  },
+  "ui.sea.choice.press_on_then": {
+    "text": "Cross now: {watches} of open water in {strength}. Landfall about {time}."
+  },
+  "ui.sea.choice.storm": {
+    "text": "A storm will work at the seams."
+  },
+  "ui.sea.choice.shelter_then": {
+    "text": "Wait here until {time}: {watches} more at sea, the stores feeding everyone about {days} days. Then the weather is weighed again."
+  },
+  "ui.sea.choice.clock": {
+    "text": "The watches wait while you choose."
+  },
+  "ui.sea.land.title": {
+    "text": "Landfall"
+  },
+  "ui.sea.land.beach": {
+    "text": "The boat runs up on the shingle at {place}, and the crew make it fast."
+  },
+  "ui.sea.land.stay": {
+    "text": "Lie at the landing"
+  },
+  "ui.sea.land.sail_on": {
+    "text": "Sail on"
+  },
+  "ui.dev.sea.stub": {
+    "text": "Dev: Stage {stage} builds this landing's scene; until then it is a stub."
+  },
+  "ui.dev.sea.no_scene": {
+    "text": "Dev: this interruption's scene is not built yet; Sail on hands back a plain result."
+  },
+  "ui.dev.sea.edges": {
+    "text": "Dev: sail an edge (plotted from where the boat lies)"
+  },
+  "ui.dev.sea.chart": {
+    "text": "Chart every route and place"
+  },
+  "ui.dev.sea.edge": {
+    "text": "{from} to {to}"
+  },
+  "ui.dev.sea.hazard.haz_cauldron": {
+    "text": "the Cauldron"
+  },
+  "ui.dev.sea.hazard.haz_bluemen": {
+    "text": "Blue Men's Sound"
   },
   "ui.chapter.end.title": {
     "text": "Chapter 1 ends: The Wreck"
@@ -4097,6 +4325,75 @@
   },
   "ui.sound.launch": {
     "text": "Stage 12: the launch"
+  },
+  "ui.sound.sea": {
+    "text": "Stage 13: the sea and the wreck"
+  },
+  "ui.sound.sea_note": {
+    "text": "The sea's three pieces by weather, its bed in calm, wind, storm and fog, the sail and the hull, and the wreck with its survivors."
+  },
+  "soundtest.line.survivor": {
+    "text": "Here! Over here, on the rock! Is that a boat?"
+  },
+  "caption.music.sea_calm": {
+    "text": "Oars, and a harp far off",
+    "tags": ["INFO"]
+  },
+  "caption.music.sea_wind": {
+    "text": "A flute over the rowing drum",
+    "tags": ["INFO"]
+  },
+  "caption.music.sea_storm": {
+    "text": "Drums and a low drone",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sail_reef": {
+    "text": "The sail is reefed",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sail_luff": {
+    "text": "The sail shivers and flaps",
+    "tags": ["INFO"]
+  },
+  "caption.sfx.sail_strain": {
+    "text": "The sheets creak under the strain",
+    "tags": ["INFO"]
+  },
+  "caption.sea.hull_groan": {
+    "text": "Timber groaning",
+    "tags": ["INFO"]
+  },
+  "caption.sea.wreck_break": {
+    "text": "Timber breaking on rock",
+    "tags": ["INFO"]
+  },
+  "caption.sea.wreck_grind": {
+    "text": "A hull grinding on rock",
+    "tags": ["INFO"]
+  },
+  "caption.sea.wreck_cries": {
+    "text": "Cries for help",
+    "tags": ["INFO"]
+  },
+  "caption.amb.wind_rigging": {
+    "text": "Wind in the rigging",
+    "tags": ["INFO"]
+  },
+  "caption.amb.fog_quiet": {
+    "text": "Fog, and the sea gone quiet",
+    "tags": ["INFO"]
+  },
+  "caption.amb.sea_calm": {
+    "text": "A calm sea, the crew rowing",
+    "tags": ["INFO"]
+  },
+  "caption.amb.sea_storm": {
+    "text": "A storm sea on the hull",
+    "tags": ["INFO"]
+  },
+  "caption.amb.sea_wreck": {
+    "text": "Surf on the rocks, gulls overhead",
+    "tags": ["INFO"]
   },
   "ui.gate.launch.stores.one": {
     "text": "Food for only one day in store."
@@ -7341,5 +7638,161 @@
   },
   "sea.landing.carrick": {
     "text": "Carrick Landing lies ahead: the storehouse roof, the boats drawn up, smoke from the hall."
+  },
+  "person.name.c_finan": {
+    "text": "Fínán mac Duinn"
+  },
+  "person.short.c_finan": {
+    "text": "Fínán"
+  },
+  "person.name.c_derbail": {
+    "text": "Derbáil ingen Echach"
+  },
+  "person.short.c_derbail": {
+    "text": "Derbáil"
+  },
+  "person.name.c_ivar": {
+    "text": "Ívar the Half-Gael"
+  },
+  "person.short.c_ivar": {
+    "text": "Ívar"
+  },
+  "place.name.zone_sea_wreck": {
+    "text": "Sgeir Dhubh"
+  },
+  "caption.edge.place.zone_sea_wreck": {
+    "text": "Sgeir Dhubh",
+    "tags": ["INFO"]
+  },
+  "ui.prompt.wreck_board": {
+    "text": "Back to the boat"
+  },
+  "c_finan.wreck.open": {
+    "text": "Gaill, by your sail. God sends whatever boat comes to hand.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.ask_cargo": {
+    "text": "What was she carrying?",
+    "tags": ["REFERS:ship"]
+  },
+  "c_finan.wreck.cargo": {
+    "text": "Bar iron from Saltvik, for the smith at Ardcarn. Three years we saved for it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.let_go": {
+    "text": "Let go of her. She's done.",
+    "tags": ["REFERS:ship"]
+  },
+  "c_finan.wreck.hull": {
+    "text": "She's all I have. Was. Give me a moment with her.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_derbail.wreck.open": {
+    "text": "Four of us. Three now. Donngal went over the side in the dark and never called out.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.ask_who": {
+    "text": "Who are you, and where were you bound?"
+  },
+  "c_derbail.wreck.who": {
+    "text": "Derbáil. That's Fínán on the hull; twenty years wed. Carrick, from Saltvik.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.ask_sail": {
+    "text": "You're looking hard at our sail."
+  },
+  "c_derbail.wreck.conn": {
+    "text": "Skarvholm's? Ardcarn's men crossed there in a skin boat at the spring. Conn mac Colla. They never came home.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_derbail.wreck.conn_after": {
+    "text": "If you saw them, you'll say so at the landing. Colla's still waiting.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_ivar.wreck.open": {
+    "text": "Leg's broken below the knee. Heard it go. Lovely sound.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.ask_moved": {
+    "text": "Can you be moved?"
+  },
+  "c_ivar.wreck.bargain": {
+    "text": "Dry boat, dry bread, and I'll row for you once it's knit. Fair price?",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.wreck.ask": {
+    "text": "Well, Steerer? There's room for three, if Bran sits on the stores.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "p_steerer.wreck.aboard": {
+    "text": "Everyone aboard. They come with us."
+  },
+  "p_steerer.wreck.ashore": {
+    "text": "Aboard, and ashore at Carrick Strand before we go in."
+  },
+  "p_steerer.wreck.salvage": {
+    "text": "Take the iron and the herring. Leave them the rock."
+  },
+  "p_steerer.wreck.leave": {
+    "text": "Leave them. We've neither room nor time."
+  },
+  "p_steerer.wreck.not_yet": {
+    "text": "Not yet. I'll look round first."
+  },
+  "c_hild.wreck.aboard": {
+    "text": "Good. Father would have hauled them off first and argued after.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:c_thorkel"]
+  },
+  "c_hild.wreck.ashore": {
+    "text": "Ashore at the strand, then. They'll talk, mind. Everyone talks.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.wreck.salvage": {
+    "text": "Iron's iron, I suppose. I'll not look at them while we load it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_hild.wreck.leave": {
+    "text": "Right. Cast off.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_finan.wreck.thanks": {
+    "text": "A debt, then. Ardcarn pays its debts. Ask anyone.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_finan.wreck.gift": {
+    "text": "Take her iron if you take us. A debt paid is no debt.",
+    "tags": ["ADDRESS_STEERER", "VOICED", "REFERS:ship"]
+  },
+  "c_derbail.wreck.robbed": {
+    "text": "Take it, then. I'll remember your sail. Every board of it.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_derbail.wreck.left": {
+    "text": "Go on, then. God sees you go.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_ivar.wreck.aboard": {
+    "text": "Dry bread. I'll hold you to that.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_oddi.wreck.iron": {
+    "text": "Iron's iron. Nobody asks where a nail came from.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "c_bran.wreck.hostage": {
+    "text": "That's not a rescue. That's a hostage with manners.",
+    "tags": ["ADDRESS_STEERER", "VOICED"]
+  },
+  "sea.wreck.done.aboard": {
+    "text": "Three more aboard: Fínán, Derbáil and Ívar, for Carrick."
+  },
+  "sea.wreck.done.ashore": {
+    "text": "Three more aboard, to be set ashore on Carrick Strand."
+  },
+  "sea.wreck.done.salvage": {
+    "text": "The iron and the herring are aboard. The reef falls astern, and the voices with it."
+  },
+  "sea.wreck.done.leave": {
+    "text": "The reef falls astern, and the voices with it."
   }
 }

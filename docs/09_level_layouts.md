@@ -773,3 +773,32 @@ Every mainland site and wilderness route places its points of interest to this r
 | Hazards | Wolves in winter; outlaws; the barrow-dead near the turn at night; bog holes in the burn hollows; fog |
 | Seasons | Long dark nights in winter |
 | Secret entrance | **The heather barrow**: a long, low hump in the heather beside the sheep trod shortcut, about halfway along it, with one spiral-carved kerbstone showing at its south end. Hints on the approach: the spirals, seen from the trod; wheatears going in and out between the kerbstones; a cold draught from the gap at its north end. The wrong rumour's place, the ring cairn on the low ridge, is empty. Inside: a crawl through the gap, a short passage with a sill stone and one chamber (Book 6 section 13) |
+
+## 15 / The wreck on Sgeir Dhubh (`ZONE_SEA_WRECK`)
+*The voyage interruption of Book 6 section 19 (Stage 13, decisions S13-40 to S13-59): a reef in Rán's Reach on the Skarvholm to Carrick crossing, played on foot while the voyage waits. One zone of 48 x 32 tiles, read tile for tile from its grid, `docs/levels/sea_wreck_tiles.txt`, by the zone expander (`content/zones/zone_sea_wreck.plan.json`), which adds the tide line, the decoration and the props as for every zone.*
+
+### Layout
+Sgeir Dhubh is a low reef about 40 tiles long, lying west-south-west to east-north-east in open sea. Along its north side runs a **spine of black rock stacks** (rock, blocking), broken by two narrow gaps down to a **weed-covered shelf** (tidal flats) on the north. Under the spine lies a **crown of salt turf and thrift** (about 30 tiles of grass) where the gulls stand; south of it the reef's **shingle back**, and below that the **foreshore** and a wide **shelf of flats** to the south and west, bare at low water and under the sea at high. Deep water lies all round, and is the zone's edge everywhere (there are no links: the way off is the boat).
+
+| Feature | Tiles (x, y) | Notes |
+|---|---|---|
+| The household's boat, lying alongside | foot (42.6, 22.4), hull about x 39 to 46 | The coastal boat afloat (`ship_t1_launch`), its crew at their oars aboard; Hild by the stern. The steerer comes ashore beside it at (38.6, 19.4), facing west |
+| The boat's side (where Hild asks) | within Book 10 `boardReachTiles` of (39.8, 20.2) | On the landing spit's foreshore, dry above half tide |
+| The wreck of the *Faoileán* | foot (8.4, 21.7) | Broken-backed on the south-western tip, on the flats; her sail in the surf to the west (5.2, 22.6); the cask (12.6, 21.3) and the iron (11.5, 22.1) in the wash beside her |
+| Fínán, holding the gunwale | (11.0, 20.85), facing west | On the foreshore at the tongue's end: dry at low water, waist deep at high; reached within talk range from the shingle at every tide |
+| Derbáil, on the rocks above | (13.6, 18.4), facing east | On the dry shingle under the spine's western stacks |
+| Ívar, lying hurt | (16.4, 19.6), facing north | On the dry shingle of the tongue; carried to the boat by the steerer (about 23 tiles of carrying, 13 real seconds at Book 10's carry speed) |
+| The spine | x 12 to 42, y 11 to 15 | Rock stacks; two gaps at x 27 and x 33 lead down to the north shelf at low water |
+| The turf crown | x 18 to 31, y 14 to 17 | Salt turf and thrift; two standing gulls |
+| Seals, a cormorant, crabs | (21.5, 23.4), (31.5, 10.4); the offshore stack (30, 7); the shingle | Wildlife, drawn only |
+
+### Tide and depth
+- **Low water** (the tidal window open): the flats are bare all round; the steerer can walk to the wreck's side and out along the north shelf.
+- **High water**: the flats are under the sea and blocking; the foreshore is knee to waist deep at its upper edge and deep at its foot; the walkable reef is the shingle back, the crown and the upper foreshore. Fínán stands waist deep at the wreck, within talk range of the dry shingle.
+- The boat lies in deep water at every tide; nobody wades to it: the boat's side is reached on the landing spit.
+
+### Layout tests
+- **Reachability** (section 13): from the steerer's landing place, the boat's side, every survivor's talk spot and the wreck's side are reached on foot at high and at low water (`tests/reachability/seaWreck.test.ts`).
+- **No trap** (section 13): the reef's every collision edge is walked at every tide state with the window open and closed (`tests/unit/noTrap.test.ts` walks every zone).
+- **Carrying Ívar**: from where he lies to the boat's side is carried without a swim at both tides.
+- **No child** is placed in the scene; its people are the three adults of Book 5 section 02 and the household aboard.

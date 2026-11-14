@@ -16,7 +16,15 @@ import { FLAGSHIP } from '../ship/ship.ts';
 import { otherEnd } from './context.ts';
 import type { SeaContext, SeaEdge } from './context.ts';
 import { governorVoyage, offerLeg, onceKey } from './encounters.ts';
-import { closedOn, gateAt, homeCrew, plotCourse, planLeg, shipStats, WATCH_MINUTES } from './plot.ts';
+import {
+  closedOn,
+  gateAt,
+  homeCrew,
+  plotCourse,
+  planLeg,
+  shipStats,
+  WATCH_MINUTES,
+} from './plot.ts';
 import { calendarAt, minuteOf } from './state.ts';
 import { minutesToSlack } from '../calendar/calendar.ts';
 import {
@@ -79,7 +87,8 @@ export function storesRd(v: Pick<VoyageState, 'stores'>): number {
 export function storesCapacity(world: WorldState, ctx: SeaContext, mouths: number): number {
   const ship = world.ships[FLAGSHIP];
   const row = ship === undefined ? undefined : ctx.ship.hulls.get(ship.hull)?.balanceRow;
-  const days = (row === undefined ? 0 : (ctx.b.storesDays.get(row) ?? 0)) +
+  const days =
+    (row === undefined ? 0 : (ctx.b.storesDays.get(row) ?? 0)) +
     (shipStats(world, ctx, mouths)?.storesDays ?? 0);
   const perDay = ctx.b.storesPerPersonPerWatch * (1440 / WATCH_MINUTES(ctx));
   return days * mouths * perDay;
@@ -88,7 +97,8 @@ export function storesCapacity(world: WorldState, ctx: SeaContext, mouths: numbe
 /** Every leg's weather filter for encounters. */
 function whenNow(world: WorldState, ctx: SeaContext) {
   const deeds = new Set(world.ledger.map((d) => d.tag));
-  const chapter = Object.entries(world.chapters).find(([, c]) => c.status === 'ACTIVE')?.[0] ?? null;
+  const chapter =
+    Object.entries(world.chapters).find(([, c]) => c.status === 'ACTIVE')?.[0] ?? null;
   return {
     season: seasonOf(world.calendar.day),
     chapter,
@@ -121,7 +131,12 @@ export function depart(
   const aboard = voyage?.aboard ?? [...(crew ?? homeCrew(world))];
   const plot = plotCourse(world, ctx, sea.plan.to, aboard);
   if (!plot.ok) {
-    hooks.emit({ type: 'SEA_REFUSED', reason: plot.reason, textKey: plot.textKey, vars: plot.vars });
+    hooks.emit({
+      type: 'SEA_REFUSED',
+      reason: plot.reason,
+      textKey: plot.textKey,
+      vars: plot.vars,
+    });
     return plot.reason;
   }
   const plan = plot.plan;
@@ -189,12 +204,25 @@ export function depart(
       hooks.gateStarted?.(plan.gate, ctx.landings.get(plan.to)?.checkpoint ?? null);
     }
   }
-  hooks.emit({ type: 'SEA_DEPARTED', voyage: v.id, from: plan.from, to: plan.to, autosave: 'DEPARTURE' });
+  hooks.emit({
+    type: 'SEA_DEPARTED',
+    voyage: v.id,
+    from: plan.from,
+    to: plan.to,
+    autosave: 'DEPARTURE',
+  });
   return null;
 }
 
 /** Passes `minutes` at sea: the time, the stores, storm damage and wear. */
-function sail(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: VoyageState, minutes: number, leg: ActiveLeg | null): boolean {
+function sail(
+  world: WorldState,
+  ctx: SeaContext,
+  hooks: VoyageHooks,
+  v: VoyageState,
+  minutes: number,
+  leg: ActiveLeg | null,
+): boolean {
   if (minutes <= 0) return false;
   const watch = WATCH_MINUTES(ctx);
   const share = minutes / watch;
@@ -237,15 +265,27 @@ function sail(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: VoyageS
   return storm;
 }
 
-function knowRoute(world: WorldState, hooks: VoyageHooks, edge: Id, known: 'RUMOURED' | 'KNOWN'): void {
-  const routes = (world.knowledge.routes ??= {});
+function knowRoute(
+  world: WorldState,
+  hooks: VoyageHooks,
+  edge: Id,
+  known: 'RUMOURED' | 'KNOWN',
+): void {
+  const routes = world.knowledge.routes;
   if (routes[edge] === 'KNOWN' || routes[edge] === known) return;
   routes[edge] = known;
   hooks.emit({ type: 'SEA_ROUTE_KNOWN', edge, known });
 }
 
 /** Arrived at a node: discovery, then the course's end, a tide gate to pass, or the next leg. */
-function arrive(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: VoyageState, edge: SeaEdge, node: Id): void {
+function arrive(
+  world: WorldState,
+  ctx: SeaContext,
+  hooks: VoyageHooks,
+  v: VoyageState,
+  edge: SeaEdge,
+  node: Id,
+): void {
   knowRoute(world, hooks, edge.id, 'KNOWN');
   v.at = node;
   v.arrivedBy = edge.id;
@@ -257,7 +297,8 @@ function arrive(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: Voyag
     world.knowledge.places[node] = 'KNOWN';
     // Experience: the routes on from a place are heard of there, and where they lead.
     for (const e of ctx.byNode.get(node) ?? []) {
-      if (!e.known && world.knowledge.routes?.[e.id] === undefined) knowRoute(world, hooks, e.id, 'RUMOURED');
+      if (!e.known && world.knowledge.routes[e.id] === undefined)
+        knowRoute(world, hooks, e.id, 'RUMOURED');
       const far = otherEnd(e, node);
       if (ctx.nodes.get(far)?.kind === 'PLACE') world.knowledge.places[far] ??= 'RUMOURED';
     }
@@ -268,10 +309,17 @@ function arrive(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: Voyag
     type: 'SEA_ARRIVED',
     node,
     place: isPlace,
-    textKey: !end ? null : node === ctx.home ? ctx.words.HOME : (landing?.textKey ?? ctx.words.ARRIVED),
+    textKey: !end
+      ? null
+      : node === ctx.home
+        ? ctx.words.HOME
+        : (landing?.textKey ?? ctx.words.ARRIVED),
   });
   if (end) {
-    if (node === ctx.home) return comeHome(world, ctx, hooks, v);
+    if (node === ctx.home) {
+      comeHome(world, ctx, hooks, v);
+      return;
+    }
     if (landing !== undefined) {
       v.status = 'HANDOFF';
       v.handoff = {
@@ -406,7 +454,11 @@ function startLeg(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, v: Voy
  * Resolves one watch at sea (Book 2 section 09): at most one watch, stopping at a node, an
  * encounter or a hold's end. Refused while the voyage waits on a choice or a handoff.
  */
-export function resolveWatch(world: WorldState, ctx: SeaContext, hooks: VoyageHooks): SeaRefusal | null {
+export function resolveWatch(
+  world: WorldState,
+  ctx: SeaContext,
+  hooks: VoyageHooks,
+): SeaRefusal | null {
   const v = world.sea.voyage;
   if (v === null) return refusal(ctx, hooks, 'NOT_AT_SEA');
   seaWeather(world, ctx);
@@ -453,12 +505,27 @@ export function resolveWatch(world: WorldState, ctx: SeaContext, hooks: VoyageHo
   }
   const leg = v.leg;
   if (leg === null) return null;
-  const toEvent = leg.encounter !== null && !leg.fired && leg.encounterAt !== null ? leg.encounterAt - leg.done : Infinity;
+  const toEvent =
+    leg.encounter !== null && !leg.fired && leg.encounterAt !== null
+      ? leg.encounterAt - leg.done
+      : Infinity;
   const step = Math.max(0, Math.min(watch, leg.minutes - leg.done, toEvent));
   const storm = sail(world, ctx, hooks, v, step, leg);
   leg.done += step;
-  hooks.emit({ type: 'SEA_WATCH', minutes: step, edge: leg.edge, done: leg.done, of: leg.minutes, storm });
-  if (leg.encounter !== null && !leg.fired && leg.encounterAt !== null && leg.done >= leg.encounterAt) {
+  hooks.emit({
+    type: 'SEA_WATCH',
+    minutes: step,
+    edge: leg.edge,
+    done: leg.done,
+    of: leg.minutes,
+    storm,
+  });
+  if (
+    leg.encounter !== null &&
+    !leg.fired &&
+    leg.encounterAt !== null &&
+    leg.done >= leg.encounterAt
+  ) {
     leg.fired = true;
     const enc = leg.encounter;
     const key = onceKey(enc.table, enc.key);
@@ -488,7 +555,12 @@ export function resolveWatch(world: WorldState, ctx: SeaContext, hooks: VoyageHo
 }
 
 /** The sea map's choice answered: press on (the leg starts at the next watch), or shelter. */
-export function choose(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, option: SeaOption): SeaRefusal | null {
+export function choose(
+  world: WorldState,
+  ctx: SeaContext,
+  hooks: VoyageHooks,
+  option: SeaOption,
+): SeaRefusal | null {
   const v = world.sea.voyage;
   if (v === null) return refusal(ctx, hooks, 'NOT_AT_SEA');
   if (v.status !== 'CHOICE' || v.choice === null) return refusal(ctx, hooks, 'BUSY');
@@ -508,7 +580,11 @@ export function choose(world: WorldState, ctx: SeaContext, hooks: VoyageHooks, o
 }
 
 /** Turn for home from a node (a place, an anchorage, a hold or the choice). */
-export function turnBack(world: WorldState, ctx: SeaContext, hooks: VoyageHooks): SeaRefusal | null {
+export function turnBack(
+  world: WorldState,
+  ctx: SeaContext,
+  hooks: VoyageHooks,
+): SeaRefusal | null {
   const v = world.sea.voyage;
   if (v === null) return refusal(ctx, hooks, 'NOT_AT_SEA');
   if (v.leg !== null || v.status === 'HANDOFF') return refusal(ctx, hooks, 'BUSY');
@@ -522,7 +598,12 @@ export function turnBack(world: WorldState, ctx: SeaContext, hooks: VoyageHooks)
   const plot = plotCourse(world, ctx, ctx.home, v.aboard);
   if (!plot.ok) {
     v.status = status;
-    hooks.emit({ type: 'SEA_REFUSED', reason: plot.reason, textKey: plot.textKey, vars: plot.vars });
+    hooks.emit({
+      type: 'SEA_REFUSED',
+      reason: plot.reason,
+      textKey: plot.textKey,
+      vars: plot.vars,
+    });
     return plot.reason;
   }
   v.to = ctx.home;
@@ -567,7 +648,15 @@ export function returnFromHandoff(
     if (v.leg !== null) {
       // Turned back mid-leg: back over what was sailed of it, then home from where it began.
       const leg = v.leg;
-      v.leg = { ...leg, from: leg.to, to: leg.from, minutes: leg.done, done: 0, encounter: null, encounterAt: null };
+      v.leg = {
+        ...leg,
+        from: leg.to,
+        to: leg.from,
+        minutes: leg.done,
+        done: 0,
+        encounter: null,
+        encounterAt: null,
+      };
       v.to = ctx.home;
       v.route = [leg.edge];
       if (leg.from !== ctx.home) {

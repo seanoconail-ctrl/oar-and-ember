@@ -248,7 +248,11 @@ export function goldenSave12(): SaveFile {
 export function goldenWorld13(): WorldState {
   const world = playChapter('chapter-1', BOT_PACE).world;
   const { content } = loadContentFromDisk();
-  const sim = createSimulation(parseTimeBalance(content.balance), world, landContext(content, content.balance));
+  const sim = createSimulation(
+    parseTimeBalance(content.balance),
+    world,
+    landContext(content, content.balance),
+  );
   sim.submit({ type: 'SEA_PLOT', to: 'SITE_CARRICK' });
   sim.step();
   sim.submit({ type: 'SEA_DEPART' });

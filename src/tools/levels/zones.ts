@@ -54,6 +54,15 @@ export interface ZonePlan {
    * Lower on the rough grazing of the south (Stage 10), so its long grass moves in the wind.
    */
   readonly tussock?: number;
+  /**
+   * Stage 13 (decision S13-47): a place off the island drawn at tile scale (the wreck on Sgeir
+   * Dhubh, Book 9 section 15): the repository path of its Book 9 tile grid, read tile for tile
+   * (codes as in the output, below) in place of the island's block grid; `blocks` then gives only
+   * its size in blocks, and `origin` its corner. The tide line, carves, furnishing and props apply
+   * as for any zone.
+   */
+  readonly tileGrid?: string;
+  readonly origin?: { readonly x: number; readonly y: number };
   /** The window of the block grid, in blocks. */
   readonly blocks: {
     readonly x: number;
@@ -276,12 +285,16 @@ function blockToTile(ch: string, codes?: Readonly<Record<string, TileCode>>): Ti
   }
 }
 
-export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
+export function expandZone(
+  plan: ZonePlan,
+  grid: readonly string[],
+  tileGrid?: readonly string[],
+): ZoneMap {
   const seed = cyrb53(plan.terrainSeed ?? plan.seed);
   const width = plan.blocks.w * BLOCK;
   const height = plan.blocks.h * BLOCK;
-  const ox = plan.blocks.x * BLOCK;
-  const oy = plan.blocks.y * BLOCK;
+  const ox = plan.origin?.x ?? plan.blocks.x * BLOCK;
+  const oy = plan.origin?.y ?? plan.blocks.y * BLOCK;
   const block = (bx: number, by: number): string => grid[by]?.[bx] ?? '~';
   const tiles: TileCode[][] = [];
   for (let ty = 0; ty < height; ty++) {
@@ -291,6 +304,14 @@ export function expandZone(plan: ZonePlan, grid: readonly string[]): ZoneMap {
       const y = oy + ty;
       const wx = (noise(seed, x, y, 7) - 0.5) * 2 * plan.warpTiles;
       const wy = (noise(seed + 1, x, y, 7) - 0.5) * 2 * plan.warpTiles;
+      if (tileGrid !== undefined) {
+        // A tile grid (Stage 13): its codes as written, read through the same warp.
+        const gx = Math.floor(tx + 0.5 + wx);
+        const gy = Math.floor(ty + 0.5 + wy);
+        const ch = tileGrid[gy]?.[gx] ?? '~';
+        row.push((TILE_CODES as readonly string[]).includes(ch) ? (ch as TileCode) : '~');
+        continue;
+      }
       const ch = block(Math.floor((x + 0.5 + wx) / BLOCK), Math.floor((y + 0.5 + wy) / BLOCK));
       let code = blockToTile(ch, plan.codes);
       // Skerries: rock only where a second noise rises, so they break up into stacks.

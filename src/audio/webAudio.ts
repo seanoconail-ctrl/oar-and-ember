@@ -13,6 +13,9 @@ import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cu
 import { HomeAmbience } from './synth/home.ts';
 import { GALE_WIND, SpringAmbience } from './synth/south.ts';
 import { RainClothAmbience, StormAmbience } from './synth/storm.ts';
+import { SeaAmbience, WreckAmbience } from './synth/sea.ts';
+import type { SeaBedState } from './synth/sea.ts';
+import { seaStrokeSeconds } from './seaAudio.ts';
 import { allInstrumentSamples, SynthEngine, warmSamples } from './synth/engine.ts';
 import { footstep, isSurface } from './synth/footsteps.ts';
 import type { Gait } from './synth/footsteps.ts';
@@ -54,6 +57,10 @@ export class WebAudioEngine implements AudioSink {
   #rain: RainClothAmbience | null = null;
   #stormLevel = 0;
   #rainLevel = 0;
+  /** Stage 13: the sea's bed under the sea map (setSea), and the wreck on its skerry. */
+  #sea: SeaAmbience | null = null;
+  #wreck: WreckAmbience | null = null;
+  #wreckSide = 0;
   #gale = false;
   #steps = 0;
   #winter = false;
@@ -128,6 +135,39 @@ export class WebAudioEngine implements AudioSink {
     this.#cave?.schedule(until);
     this.#storm?.schedule(until);
     this.#rain?.schedule(until);
+    if (this.#sea !== null) {
+      // The oars row in time with the sea's music: a stroke every two beats from its bar line.
+      const music = [...this.#players.values()].find((p) => p.piece.id === 'MUS_SEA');
+      if (music !== undefined)
+        this.#sea.setStroke(seaStrokeSeconds(music.piece.tempo), music.startTime);
+      this.#sea.schedule(until);
+    }
+    this.#wreck?.schedule(until);
+  }
+
+  /**
+   * Stage 13: the sea's bed under the sea map (`AMB_WIND_RIGGING` and, in fog, `AMB_FOG_QUIET`),
+   * as seaAudio.ts `seaBed` gives it from the weather and the voyage; null stops it.
+   */
+  setSea(bed: SeaBedState | null): void {
+    const e = this.#e;
+    if (e === null) return;
+    const t = e.ctx.currentTime;
+    if (bed !== null && this.#sea === null) {
+      this.#sea = new SeaAmbience(e);
+      this.#sea.setState(bed, t);
+      this.#sea.start(t);
+    } else if (bed === null && this.#sea !== null) {
+      this.#sea.stop(t);
+      this.#sea = null;
+    } else if (bed !== null) this.#sea?.setState(bed, t);
+  }
+
+  /** Where the wreck lies from the listener, -1 (left) to 1 (right), for its ambience. */
+  setWreckSide(side: number): void {
+    this.#wreckSide = side;
+    const e = this.#e;
+    if (e !== null) this.#wreck?.setSide(side, e.ctx.currentTime);
   }
 
   /**
@@ -377,6 +417,15 @@ export class WebAudioEngine implements AudioSink {
     } else if (!cave && this.#cave !== null) {
       this.#cave.stop(t);
       this.#cave = null;
+    }
+    // Stage 13: the wreck on its skerry, by its zone (AMB_SEA_WRECK).
+    if (kinds.has('wreck') && this.#wreck === null) {
+      this.#wreck = new WreckAmbience(e);
+      this.#wreck.setSide(this.#wreckSide, t);
+      this.#wreck.start(t);
+    } else if (!kinds.has('wreck') && this.#wreck !== null) {
+      this.#wreck.stop(t);
+      this.#wreck = null;
     }
     // Stage 10: the spring, by its own level.
     if (kinds.has('spring') && this.#spring === null) {

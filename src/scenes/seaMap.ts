@@ -149,8 +149,9 @@ export class SeaMapView {
       const k = Math.floor((t * 6) % 6);
       this.#sprite('fx_seamap', `smoke/-/${k}`, smoke.x, smoke.y);
     }
-    const bob = Math.floor((t * 2) % 2);
-    this.#sprite('token_t1', `${sail}/-/${bob}`, home.x, home.y + 16);
+    // The token redrawn at Stage 13 (eight headings, sail states): heading east, its sail set.
+    const bob = Math.floor((t * 4) % 4);
+    this.#sprite('token_t1', `set_${sail}/e/${bob}`, home.x, home.y + 16);
     const rgba = new Uint8Array(ctx.getImageData(0, 0, W, H).data.buffer);
     return { rgba, revealed };
   }

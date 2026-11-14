@@ -6,9 +6,21 @@ import { boatDrawing } from './repairsScene.ts';
 import type { Content } from '../content/registry.ts';
 import { parseShipBalance } from '../content/shipBalance.ts';
 import { parseTimeBalance } from '../content/balance.ts';
-import { markSail, nameShip, startLaunch } from '../sim/narrative/launch.ts';
+import {
+  FACT_LAUNCHED,
+  FACT_PHASE,
+  FACT_SMOKE,
+  markSail,
+  nameShip,
+  startLaunch,
+} from '../sim/narrative/launch.ts';
 import type { Id } from '../core/ids.ts';
-import { FACT_AT_BROCH, FACT_FIRE_LIT, FACT_HILD_TENDED } from '../sim/home/camp.ts';
+import {
+  FACT_AT_BROCH,
+  FACT_FIRE_LIT,
+  FACT_HILD_TENDED,
+  FACT_TUTORIAL_COMPLETE,
+} from '../sim/home/camp.ts';
 import type { SiteUse } from '../sim/home/camp.ts';
 import type { Interaction, OnFootState } from '../sim/land/onFoot.ts';
 import { fireOneShot } from '../sim/ledger/ledger.ts';
@@ -482,7 +494,8 @@ function seedShip(world: WorldState, content: Content, params: URLSearchParams):
   if (fit === 'bow') ship.fittings['BOW'] = 'FIT_RAISED_BOW_PLATFORM';
 }
 
-/** Stage 12 hooks: the launch open, started or under way (`launch=open|naming|scene`). */
+/** Stage 12 hooks: the launch open, started or under way (`launch=open|naming|scene`); Stage 13's
+ * `launch=done`, Chapter 1 over with the boat drawn up. */
 function seedLaunch(
   world: WorldState,
   content: Content,
@@ -522,4 +535,29 @@ function seedLaunch(
   nameShip(world, ctx, params.get('name') ?? 'Grey Seal', quiet);
   const [pattern = 'raven', dye = null] = (params.get('mark') ?? 'raven:woad').split(':');
   markSail(world, ctx, pattern, dye, quiet);
+  if (which !== 'done') return;
+  // Stage 13 (tests and captures): `launch=done`, Chapter 1 over as the sea map's closing leaves
+  // it: the gate passed, the boat launched and drawn up again at the strand, the smoke at Carrick
+  // seen, Chapter 2 open and the household on the shingle (what reveal() and closeSeaMap() set).
+  const gate = world.gates[ctx.def.gate];
+  if (gate !== undefined) gate.status = 'PASSED';
+  ship.history.push({ day: world.calendar.day, kind: 'LAUNCHED', what: ship.name ?? '' });
+  for (const place of ctx.def.seaMap.rumoured) world.knowledge.places[place] ??= 'RUMOURED';
+  world.facts[FACT_PHASE] = 'DONE';
+  world.facts['launch.aboard'] = '';
+  world.facts['launch.steerer_aboard'] = false;
+  world.facts[FACT_SMOKE] = true;
+  world.facts[FACT_LAUNCHED] = true;
+  world.facts[FACT_TUTORIAL_COMPLETE] = true;
+  const ch = world.chapters[ctx.def.chapter];
+  if (ch !== undefined) {
+    ch.status = 'RESOLVED';
+    ch.resolvedDay = world.calendar.day;
+    ch.resolvedBy = [ctx.def.gate];
+  }
+  const next = world.chapters[ctx.def.next];
+  if (next !== undefined) {
+    next.status = 'ACTIVE';
+    next.openedDay = world.calendar.day;
+  }
 }

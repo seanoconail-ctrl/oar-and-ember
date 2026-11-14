@@ -22,8 +22,9 @@ import type { HandoffRequest, HandoffResult } from './types.ts';
 /** The handoff waiting for its scene, with the voyage it interrupts; null if none. */
 export function currentHandoff(world: WorldState): HandoffRequest | null {
   const v = world.sea.voyage;
-  if (v === null || v.handoff === null) return null;
-  return { ...v.handoff, voyage: v };
+  const handoff = v?.handoff ?? null;
+  if (v === null || handoff === null) return null;
+  return { ...handoff, voyage: v };
 }
 
 /** Whether the steerer is at sea (on the sea map, not in a handed-off scene). */

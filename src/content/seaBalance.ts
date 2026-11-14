@@ -98,7 +98,10 @@ export interface SeaBalance {
     readonly visibility: Readonly<Record<Season, Odds>>;
     readonly stormFrom: number;
     readonly firstStorm: readonly [number, number];
-    readonly autumnStorms: { readonly count: readonly [number, number]; readonly days: readonly [number, number] };
+    readonly autumnStorms: {
+      readonly count: readonly [number, number];
+      readonly days: readonly [number, number];
+    };
     readonly washing: readonly [number, number];
     readonly calmWindowChance: number;
     readonly calmWindowDays: readonly [number, number];
@@ -126,11 +129,7 @@ function oddsRow(where: string, row: Row, columns: readonly string[]): number[] 
   return out;
 }
 
-function bySeason(
-  json: unknown,
-  table: string,
-  columns: readonly string[],
-): Record<Season, Odds> {
+function bySeason(json: unknown, table: string, columns: readonly string[]): Record<Season, Odds> {
   const list = rows(json, 'timeAndTravel', table);
   const out = {} as Record<Season, Odds>;
   for (const season of SEASONS) {
@@ -159,7 +158,12 @@ export function parseSeaBalance(json: unknown): SeaBalance {
     /^baseWatches x (\d+(?:\.\d+)?) \/ effectiveSpeed$/,
     '"baseWatches x N / effectiveSpeed"',
   );
-  const against = match('seaTravel.windFactorAgainst', sea('windFactorAgainst'), /^(\d+) \(row\)$/, '"0 (row)"');
+  const against = match(
+    'seaTravel.windFactorAgainst',
+    sea('windFactorAgainst'),
+    /^(\d+) \(row\)$/,
+    '"0 (row)"',
+  );
   const rowing = match(
     'seaTravel.rowingFactor',
     sea('rowingFactor'),
@@ -172,7 +176,12 @@ export function parseSeaBalance(json: unknown): SeaBalance {
     /^(\d+(?:\.\d+)?) rd$/,
     '"N rd"',
   );
-  const shelter = match('seaTravel.shelterUntil', sea('shelterUntil'), /^(\d{2}):(\d{2})$/, '"HH:MM"');
+  const shelter = match(
+    'seaTravel.shelterUntil',
+    sea('shelterUntil'),
+    /^(\d{2}):(\d{2})$/,
+    '"HH:MM"',
+  );
   const slack = match(
     'tide.slackWindow',
     tide('slackWindow'),
@@ -191,9 +200,12 @@ export function parseSeaBalance(json: unknown): SeaBalance {
     const exposure = num(`${where}.Exposure`, r['Exposure'] ?? '');
     if (![0, 1, 2, 3].includes(exposure)) fail(`${where}.Exposure`, String(exposure), '0 to 3');
     const winterText = r['Winter'] ?? '';
-    const winter: WinterRule | undefined = (
-      { Open: 'OPEN', 'Calm windows': 'CALM_WINDOWS', Closed: 'CLOSED' } as const
-    )[winterText as 'Open' | 'Calm windows' | 'Closed'];
+    const winters: Readonly<Record<string, WinterRule | undefined>> = {
+      Open: 'OPEN',
+      'Calm windows': 'CALM_WINDOWS',
+      Closed: 'CLOSED',
+    };
+    const winter = winters[winterText];
     if (winter === undefined) fail(`${where}.Winter`, winterText, 'Open, Calm windows or Closed');
     const notes = r['Notes'] ?? '';
     routes.set(id, {
@@ -292,7 +304,11 @@ export function parseSeaBalance(json: unknown): SeaBalance {
     },
     governor: {
       eventfulShare: 1 / Number(share[1]),
-      eventfulBand: range('encounters.eventfulBand', enc('eventfulBand'), /^(\d+(?:\.\d+)?) to (\d+(?:\.\d+)?)$/),
+      eventfulBand: range(
+        'encounters.eventfulBand',
+        enc('eventfulBand'),
+        /^(\d+(?:\.\d+)?) to (\d+(?:\.\d+)?)$/,
+      ),
       supernaturalEvery: Number(every[1]),
       supernaturalBand: range(
         'encounters.supernaturalBand',

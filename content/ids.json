@@ -3200,14 +3200,14 @@
       "ref": "sail flap, fill and strain",
       "book": 11,
       "section": "07",
-      "origin": "assigned"
+      "origin": "stated"
     },
     {
       "id": "SFX_HULL_GROAN",
       "ref": "hull groan in storms",
       "book": 11,
       "section": "07",
-      "origin": "assigned"
+      "origin": "stated"
     },
     {
       "id": "SFX_BEACHING",
@@ -3377,7 +3377,7 @@
       "ref": "wind in rigging",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "Ambience layer."
     },
     {
@@ -3385,8 +3385,56 @@
       "ref": "the dead quiet of fog",
       "book": 11,
       "section": "07",
-      "origin": "assigned",
+      "origin": "stated",
       "note": "Ambience layer."
+    },
+    {
+      "id": "SFX_SAIL_REEF",
+      "ref": "the sail reefed",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-67): reefing to press on into rising weather."
+    },
+    {
+      "id": "SFX_SAIL_LUFF",
+      "ref": "the sail luffing",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-67): a leg begun close-hauled."
+    },
+    {
+      "id": "AMB_SEA_WRECK",
+      "ref": "surf on the rocks and gulls over the wreck",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-71): the wreck's skerry, src/audio/synth/sea.ts WreckAmbience."
+    },
+    {
+      "id": "SFX_WRECK_BREAK",
+      "ref": "timber breaking",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-72): the wreck breaking up on the skerry."
+    },
+    {
+      "id": "SFX_WRECK_GRIND",
+      "ref": "the hull grinding on the rock",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-72): the wreck working on the rock."
+    },
+    {
+      "id": "SFX_WRECK_CRIES",
+      "ref": "cries from the wreck",
+      "book": 11,
+      "section": "07",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-72): the survivors calling, in their own voices."
     },
     {
       "id": "AMB_WRECK_OPENING",
@@ -4364,6 +4412,38 @@
       "section": "22",
       "origin": "assigned",
       "note": "Decision DH-139: the skin boat's mended fishing net, kept in the stores for the homestead's fishing (Stage 19)."
+    },
+    {
+      "id": "ZONE_SEA_WRECK",
+      "ref": "ZONE_SEA_WRECK",
+      "book": 9,
+      "section": "15",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-47): the reef Sgeir Dhubh in Rán's Reach, where the wreck with survivors (SCN_SEA_WRECK) is played on foot; listed with Skarvholm's zones (decision S13-48)."
+    },
+    {
+      "id": "C_FINAN",
+      "ref": "Fínán mac Duinn",
+      "book": 5,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-43): a survivor of the wreck on Sgeir Dhubh, a refugee outside the roster; content/wreck.json, not people.json (decision S13-44)."
+    },
+    {
+      "id": "C_DERBAIL",
+      "ref": "Derbáil ingen Echach",
+      "book": 5,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-43): a survivor of the wreck on Sgeir Dhubh, a refugee outside the roster; content/wreck.json, not people.json (decision S13-44)."
+    },
+    {
+      "id": "C_IVAR",
+      "ref": "Ívar the Half-Gael",
+      "book": 5,
+      "section": "02",
+      "origin": "stated",
+      "note": "Stage 13 (decision S13-43): a survivor of the wreck on Sgeir Dhubh, a refugee outside the roster; content/wreck.json, not people.json (decision S13-44)."
     }
   ],
   "families": [

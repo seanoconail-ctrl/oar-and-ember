@@ -12,7 +12,7 @@ import { noiseHit, out, tone } from './sfx.ts';
 import type { SoundDef } from './sfx.ts';
 
 /** A creak of wood working on wood or rope: a narrow, wavering band of noise. */
-function creak(
+export function creak(
   e: SynthEngine,
   at: number,
   to: AudioNode,
@@ -39,7 +39,7 @@ function creak(
 }
 
 /** A splash: a hiss of water with a low plop under it. */
-function splash(e: SynthEngine, at: number, to: AudioNode, level: number, size = 1): void {
+export function splash(e: SynthEngine, at: number, to: AudioNode, level: number, size = 1): void {
   noiseHit(e, at, to, 'bandpass', 2600, 0.8, [
     [0, 0],
     [0.01, level],

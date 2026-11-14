@@ -20,7 +20,7 @@ export const WATCH_MINUTES = (ctx: Pick<SeaContext, 'time'>): number => ctx.time
 
 /** Whether a route is known: marked known in content, or sailed (`knowledge.routes`). */
 export function routeKnown(world: WorldState, edge: SeaEdge): boolean {
-  return edge.known || world.knowledge.routes?.[edge.id] === 'KNOWN';
+  return edge.known || world.knowledge.routes[edge.id] === 'KNOWN';
 }
 
 /** Whether winter closes an edge on a day: `todayCalm` is the day's (or its forecast's) calm. */
@@ -39,7 +39,7 @@ export function gateAt(
   if (arrivedBy === null || arrivedBy === next) return null;
   for (const id of [arrivedBy, next]) {
     const g = ctx.edges.get(id)?.tideGate;
-    if (g !== undefined && g.at === node) return g;
+    if (g?.at === node) return g;
   }
   return null;
 }
@@ -147,7 +147,11 @@ function search(
   return null;
 }
 
-function refuse(ctx: SeaContext, reason: SeaRefusal, vars: Record<string, string | number> = {}): PlotResult {
+function refuse(
+  ctx: SeaContext,
+  reason: SeaRefusal,
+  vars: Record<string, string | number> = {},
+): PlotResult {
   return { ok: false, reason, textKey: ctx.words[reason], vars };
 }
 
@@ -169,7 +173,7 @@ export function plotCourse(
   const voyage = world.sea.voyage;
   if (voyage !== null && voyage.status !== 'ANCHORED') return refuse(ctx, 'AT_SEA');
   const node = ctx.nodes.get(to);
-  if (node === undefined || node.kind !== 'PLACE' || world.knowledge.places[to] === undefined)
+  if (node?.kind !== 'PLACE' || world.knowledge.places[to] === undefined)
     return refuse(ctx, 'UNKNOWN_PLACE');
   const from = boatAt(world, ctx);
   if (to === from) return refuse(ctx, 'HERE');

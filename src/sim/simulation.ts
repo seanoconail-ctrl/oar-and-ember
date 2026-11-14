@@ -807,7 +807,12 @@ export function createSimulation(
       const onFoot = state.onFoot;
       const ship = state.ships['flagship'];
       const spot = launchCtx?.def.drawnUp.steerer;
-      if (onFoot !== null && ship !== undefined && spot !== undefined && onFoot.zone === ship.lies.zone) {
+      if (
+        onFoot !== null &&
+        ship !== undefined &&
+        spot !== undefined &&
+        onFoot.zone === ship.lies.zone
+      ) {
         const tile = land?.maps.get(onFoot.zone)?.tile ?? 24;
         onFoot.player.x = spot.x * tile;
         onFoot.player.y = spot.y * tile;
@@ -832,7 +837,12 @@ export function createSimulation(
           state.sea.plan = plot.plan;
           events.emit({ type: 'SEA_PLOTTED', plan: plot.plan });
         } else {
-          events.emit({ type: 'SEA_REFUSED', reason: plot.reason, textKey: plot.textKey, vars: plot.vars });
+          events.emit({
+            type: 'SEA_REFUSED',
+            reason: plot.reason,
+            textKey: plot.textKey,
+            vars: plot.vars,
+          });
           refuse(command, 'SEA_REFUSED', plot.textKey);
         }
         return;

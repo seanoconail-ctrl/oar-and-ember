@@ -95,7 +95,15 @@ function rollDay(sea: SeaState, rng: RngState, b: SeaBalance, day: number, accur
     sea.weather.years[year] = rollYear(rng, b, year);
   const r = Array.from({ length: DRAWS_PER_DAY }, () => nextFloat(rng));
   const [rDir, rStr, rVis, rCalm, rLen, rRight, rWDir, rWStr, rWVis] = r as [
-    number, number, number, number, number, number, number, number, number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
   ];
   const season = seasonOf(day);
   const w = b.weather;
@@ -117,7 +125,11 @@ function rollDay(sea: SeaState, rng: RngState, b: SeaBalance, day: number, accur
       const [lo, hi] = w.calmWindowDays;
       sea.weather.calmLeft = lo + Math.min(hi - lo, Math.floor(rLen * (hi - lo + 1))) - 1;
     }
-    if (calm) strength = Math.min(w.calmStrengthMax, Math.floor(rStr * (w.calmStrengthMax + 1))) as WindStrength;
+    if (calm)
+      strength = Math.min(
+        w.calmStrengthMax,
+        Math.floor(rStr * (w.calmStrengthMax + 1)),
+      ) as WindStrength;
   } else sea.weather.calmLeft = 0;
   const actual: DayWeather = { day, windFrom, strength, visibility, named, calm };
   sea.weather.days[day] = actual;
@@ -221,8 +233,7 @@ export function expectedOn(
   day: number,
 ): { readonly windFrom: Point8; readonly strength: WindStrength; readonly calm: boolean } | null {
   if (day <= today) {
-    const w = weatherOn(sea, today);
-    return w === null ? null : w;
+    return weatherOn(sea, today);
   }
   const f = sea.weather.forecasts[today + 1] ?? null;
   if (f === null) return null;

@@ -191,6 +191,7 @@ import {
 } from './launchPanels.ts';
 import type { PanelWords } from './launchPanels.ts';
 import { SeaMapView } from './seaMap.ts';
+import { SeaVoyage } from './seaVoyage.ts';
 import type { BodyModel, WorldState } from '../sim/world.ts';
 
 /** The nearest of the four facings from the steerer towards the pointer. */
@@ -452,7 +453,7 @@ export function startPlay(
   /** The game-over sting is played once, as the screen comes (DH-71). */
   let gameOverStung = -1;
   /** Combat v2 (decision DE-12): an autosave on reaching camp, written once the frame's steps end. */
-  let autosaveDue: 'CAMP' | null = null;
+  let autosaveDue: 'CAMP' | 'DEPARTURE' | 'LANDING' | null = null;
   const steererVitality = parsePeopleBasics(content.balance).vitality;
 
   let settings = loadSettings(browserStorage());
@@ -515,8 +516,9 @@ export function startPlay(
       else if (e.code === 'KeyN') window.location.reload();
       return;
     }
-    // Stage 12: the sea map closes with interact or Enter (as with Escape).
-    if (mapMode !== null && (e.code === 'Enter' || keyCodes('interact').includes(e.code))) {
+    // Stage 12: the launch's sea map closes with interact or Enter (as with Escape); the Stage 13
+    // chart takes them for setting sail.
+    if (mapMode === 'reveal' && (e.code === 'Enter' || keyCodes('interact').includes(e.code))) {
       session.menus.close();
       return;
     }
@@ -1404,6 +1406,37 @@ export function startPlay(
     seaMap = new SeaMapView(document, atlases, { home, smoke, mist });
     return seaMap;
   };
+  // Stage 13: the sea map's plotting and voyage screen (src/scenes/seaVoyage.ts), drawn in place
+  // of the scene while it is up; the on-foot view pays one check a frame for it.
+  const seaCtx = land.sea ?? null;
+  const sea =
+    seaCtx === null
+      ? null
+      : new SeaVoyage(
+          {
+            doc: document,
+            sim,
+            land,
+            content,
+            atlases,
+            region: () => overlay.region('seamap'),
+            root,
+            t: (key, vars) => t(key, vars ?? {}),
+            interactKey: () => keys('interact'),
+            menus: session.menus,
+            reduced: () => display.reducedMotion,
+            devOpen: () => dev?.open === true,
+            devMode: devOn,
+            autosave: (reason) => {
+              autosaveDue = reason;
+            },
+            present: (rgba) => {
+              presenter.present(rgba);
+            },
+          },
+          seaCtx,
+        );
+  let seaUp = false;
   /** The token's state for the household's mark (Book 7 section 05: a sail in its colours). */
   const markState = (): string =>
     (sim.state.ships['flagship']?.marks.sail ?? 'plain').replace(':', '_');
@@ -2528,8 +2561,36 @@ export function startPlay(
     }
     // Hands full: a refusal word at the cursor, not a notice over the prompt (the audit).
     if (result.refusedActions.length > 0) refuseHere('hands_full', t('ui.refusal.hands_full'), now);
+    if (sea?.active(mapMode === 'view') === true) {
+      seaUp = true;
+      sea.frame(now, drawThis, mapMode === 'view');
+      hud.canvas.style.visibility = 'hidden';
+      if (audio !== null) {
+        audio.update(engine.now);
+        for (const c of audio.takeCaptions()) inform(c.key, c.text, now);
+      }
+      const seaCaptions = captions.update(now / 1000, false);
+      showCaptionSlots(
+        overlay.region('captions'),
+        seaCaptions.info,
+        seaCaptions.speech,
+        seaCaptions.outgoing,
+      );
+      overlay.fit(presenter.viewport, window.devicePixelRatio);
+      frameMs = frameMs * 0.95 + (performance.now() - workStart) * 0.05;
+      root.dataset['frameMs'] = frameMs.toFixed(2);
+      if (!manual) requestAnimationFrame(frame);
+      return;
+    }
+    if (seaUp) {
+      seaUp = false;
+      sea?.leave();
+    }
     const onFoot = sim.state.onFoot;
-    if (onFoot === null) return;
+    if (onFoot === null) {
+      if (!manual) requestAnimationFrame(frame);
+      return;
+    }
     // Book 10 promptDone: the move prompt is done once the steerer has walked 2 tiles.
     const step =
       walkedFrom === null

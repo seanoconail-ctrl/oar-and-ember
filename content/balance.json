@@ -696,6 +696,48 @@
      "Encounter": "blue_men",
      "Weight": "1"
     }
+   ],
+   "theWreckWithSurvivors": [
+    {
+     "Key": "survivors",
+     "Value": "3",
+     "Notes": "Fínán, Derbáil and Ívar (Book 5 section 02): adults, refugees outside the roster"
+    },
+    {
+     "Key": "passengerSlots",
+     "Value": "2",
+     "Notes": "Book 6 section 01: a survivor taken aboard beyond the free berths (the hull's berths less everyone aboard, the steerer included) takes this many cargo slots"
+    },
+    {
+     "Key": "caskStoresRd",
+     "Value": "6",
+     "Notes": "The cask of salted herring: ration-days added to the ship's stores when it is taken aboard"
+    },
+    {
+     "Key": "ironLots",
+     "Value": "1",
+     "Notes": "The bundle of bar iron from Saltvik: cargo lots of iron when it is taken aboard"
+    },
+    {
+     "Key": "leftTakenOffBelow",
+     "Value": "3",
+     "Notes": "Survivors left on the reef are taken off by a Carrick curragh the next day if that day's wind strength is below this; at it or above, the sea has them"
+    },
+    {
+     "Key": "wordDays",
+     "Value": "2",
+     "Notes": "Days until what the survivors tell of the household reaches Ardcarn (set ashore, or left and taken off)"
+    },
+    {
+     "Key": "boardReachTiles",
+     "Value": "2.5",
+     "Notes": "How near the boat's side the steerer stands for Hild's question"
+    },
+    {
+     "Key": "talkReachTiles",
+     "Value": "2",
+     "Notes": "How near a survivor the steerer stands to speak with them"
+    }
    ]
   },
   "foodFuelAndSeasons": {
@@ -9696,6 +9738,13 @@
      "Key": "stingers",
      "Value": "No fade",
      "Notes": "Stingers alone start and stop sharply"
+    }
+   ],
+   "seaSound": [
+    {
+     "Key": "windFrom",
+     "Value": "Wind strength 2",
+     "Notes": "MUS_SEA_WIND from this strength; MUS_SEA_CALM below it; MUS_SEA_STORM from section 02's stormFrom. The wind in the rigging and the sea on the hull rise with the strength's share of stormFrom"
     }
    ],
    "theStorm": [

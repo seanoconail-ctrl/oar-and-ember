@@ -21,6 +21,7 @@ export function generatedSheets(): Map<string, string> {
     'zone_sk_hagseat',
     'zone_sk_cairn',
     'zone_sk_sealcave',
+    'zone_sea_wreck',
   ].map((z) => (JSON.parse(readRepo(`content/zones/${z}.json`)) as { rows: string[] }).rows);
   out.set(`${SHEETS_DIR}/tile_strand.txt`, strandTiles(palette, zones));
   out.set(`${SHEETS_DIR}/decal_strand.txt`, strandDecals(palette));
