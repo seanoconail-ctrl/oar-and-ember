@@ -94,6 +94,11 @@ export interface ZonePlan {
    */
   readonly faceTiles?: number;
   /**
+   * Stage 14: the sea within this many tiles of heather (`h`) becomes a cliff face, so a headland
+   * carved in heather stands on cliffs over the water; shingle, flats and sand are left as beaches.
+   */
+  readonly cliffRim?: number;
+  /**
    * Stage 14: pools in the peat (the bog): where the noise of `cell` tiles rises above `above`,
    * peat (`p`) becomes a pool (`o`), inside the given rectangle of tiles if one is given.
    */
@@ -578,6 +583,21 @@ export function expandZone(
     for (let ty = 0; ty < height; ty++)
       for (let tx = 0; tx < width; tx++)
         if (at(tx, ty) === 'c' && (dist.get(`${tx},${ty}`) ?? 99) > plan.faceTiles) set(tx, ty, '~');
+  }
+  // Stage 14: headlands of heather stand on a rim of cliff over the sea.
+  if (plan.cliffRim !== undefined) {
+    const rim: [number, number][] = [];
+    const n = plan.cliffRim;
+    for (let ty = 0; ty < height; ty++)
+      for (let tx = 0; tx < width; tx++) {
+        if (at(tx, ty) !== '~') continue;
+        let near = false;
+        for (let dy = -n; dy <= n && !near; dy++)
+          for (let dx = -n; dx <= n && !near; dx++)
+            if (Math.abs(dx) + Math.abs(dy) <= n && at(tx + dx, ty + dy) === 'h') near = true;
+        if (near) rim.push([tx, ty]);
+      }
+    for (const [tx, ty] of rim) set(tx, ty, 'c');
   }
   // Stage 14: the bog's pools in the peat.
   if (plan.pools !== undefined) {

@@ -36,6 +36,7 @@ import {
 } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import { itemShown } from '../sim/land/onFoot.ts';
+import { traverseAnim } from '../sim/land/traverse.ts';
 import type { FactView, OnFootActor, OnFootState } from '../sim/land/onFoot.ts';
 import { direction16, drawnHeight, MISSILE_DIRECTIONS } from '../sim/land/missiles.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
@@ -658,6 +659,8 @@ export interface ZoneVisualView {
    * start and stop, the bow's draw and loose, or an idle (idle, shift, glance, idlewind).
    */
   readonly steerer: PersonAnim | null;
+  /** Stage 14: how high the steerer is lifted off the ground (the jump's arc), px. */
+  readonly steererLift?: number;
   /** Water and wetness per person: 'P_STEERER' and each actor's id. */
   readonly water: Readonly<Record<string, PersonWater>>;
   readonly marks: readonly VisualMark[];
@@ -677,6 +680,13 @@ export interface ZoneSceneInput {
   readonly shadows?: SheetShadows;
   /** The interaction target to mark, if any. */
   readonly highlight: Id | null;
+  /** Stage 14: heavy objects at their places now (tiles, at their foot), from the simulation. */
+  readonly objects?: readonly {
+    readonly sheet: string;
+    readonly frame: string;
+    readonly x: number;
+    readonly y: number;
+  }[];
   readonly visual?: ZoneVisualView;
   /** Capture only (`?actors=none`): leave people out, for preview backgrounds of the place. */
   readonly hidePeople?: boolean;
@@ -1274,6 +1284,15 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   sprites.push(...decalSprites(map, camera));
   const inView = (x: number, y: number): boolean =>
     x > -80 && y > -16 && x < LOGICAL_WIDTH + 80 && y < LOGICAL_HEIGHT + 100;
+  // Stage 14: the heavy objects that move along their lines, where they lie now (Book 2 section 10).
+  for (const o of input.objects ?? []) {
+    const x = o.x * map.tile - camera.x;
+    const y = o.y * map.tile - camera.y;
+    if (!inView(x, y)) continue;
+    const sprite: SceneSprite = { sheet: o.sheet, frame: o.frame, x, y, layer: 'actor', tall: true };
+    sprites.push(sprite);
+    cast(sprite);
+  }
   for (const prop of map.props) {
     const x = prop.x * map.tile - camera.x;
     const y = prop.y * map.tile - camera.y;
@@ -1583,6 +1602,12 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     state = visual.steerer.state;
     stepFrame = visual.steerer.frame;
   } else if (state === 'idle' || state === 'draw') stepFrame = frameIndex(anims, body, state, tick);
+  // Stage 14: a movement verb's own frames, in a plain render (the visuals choose them in play).
+  const verb = traverseAnim(p);
+  if (verb !== null && visual?.steerer == null && anims.get(body)?.[verb] !== undefined) {
+    state = verb;
+    stepFrame = frameIndex(anims, body, verb, tick);
+  }
   // Stage 12: heaving at the boat with the household, the stoop of the gather loop.
   const heave = input.launch?.steererLoop ?? null;
   if (heave !== null && work == null) {
@@ -1603,7 +1628,7 @@ export function zoneScene(input: ZoneSceneInput): Scene {
   // Stage 9: the steerer's fight (a blow, a defence, the downed and the dead) over the gait.
   const gore = input.gore ?? 2;
   const steererFight = p.fight ?? null;
-  if (steererFight !== null && work == null && p.sleep == null) {
+  if (steererFight !== null && work == null && p.sleep == null && verb === null) {
     const st = p.stance;
     const fa = fightAnim(steererFight, tick, p.moving, anims.get(body) ?? {}, {
       gait: st === undefined || st.speed === 1 ? null : st.backing === true ? 'backoff' : 'strafe',
@@ -1637,9 +1662,12 @@ export function zoneScene(input: ZoneSceneInput): Scene {
       `${state}/${p.facing}/${stepFrame}`,
       p.facing,
       p.x - camera.x + kick('P_STEERER').dx,
-      p.y - camera.y + kick('P_STEERER').dy,
+      p.y - camera.y + kick('P_STEERER').dy - (visual?.steererLift ?? 0),
       visual?.water['P_STEERER'],
-      { focus: true },
+      // Lifted on the jump's arc, sorted where the feet are over the ground (Stage 14).
+      (visual?.steererLift ?? 0) > 0
+        ? { focus: true, sort: p.y - camera.y + kick('P_STEERER').dy }
+        : { focus: true },
     );
   /** The charged heavy's two tells over the raised weapon (Book 2 section 12). */
   const chargeTell = (f: Fighter, x: number, y: number): void => {

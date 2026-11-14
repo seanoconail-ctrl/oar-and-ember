@@ -43,8 +43,8 @@
       "hints": [
         {
           "kind": "SIGN",
-          "ref": "caption.puzzle.passage_loud",
-          "about": "The passage grows loud as the tide turns (its sound, captioned)"
+          "ref": "AMB_PASSAGE_ROAR",
+          "about": "The passage's roar rising as the tide turns, captioned \"The passage grows loud\" (Book 11 section 07)"
         },
         {
           "kind": "SIGHT",
@@ -72,7 +72,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_SEALCAVE_DEEP",
-                "id": "stone"
+                "id": "deep.stone"
               },
               "moved": true
             }
@@ -91,7 +91,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_SEALCAVE_DEEP",
-                "id": "stone"
+                "id": "deep.stone"
               },
               "moved": false
             }
@@ -266,7 +266,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_GEO",
-                "id": "niche_stone"
+                "id": "geo.niche"
               },
               "moved": true
             }
@@ -284,7 +284,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_GEO",
-                "id": "niche_stone"
+                "id": "geo.niche"
               },
               "moved": false
             }
@@ -488,14 +488,14 @@
         },
         {
           "x": 42.5,
-          "y": 18.0
+          "y": 18
         },
         {
           "x": 38.5,
           "y": 14.5
         },
         {
-          "x": 34.0,
+          "x": 34,
           "y": 11.5
         },
         {
@@ -557,7 +557,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_ROOK",
-                "id": "capstone"
+                "id": "rook.capstone"
               },
               "moved": true
             }
@@ -575,7 +575,7 @@
             {
               "pushed": {
                 "zone": "ZONE_SK_ROOK",
-                "id": "capstone"
+                "id": "rook.capstone"
               },
               "moved": false
             }
@@ -862,7 +862,7 @@
     "unmetKey": "island.drowned.unmet",
     "thorkel": {
       "x": 49.5,
-      "y": 86.0,
+      "y": 86,
       "shortKey": "person.short.c_thorkel",
       "lines": ["c_drowned.thorkel.1", "c_drowned.thorkel.2"],
       "requires": [
@@ -915,7 +915,7 @@
   "alignment": {
     "door": {
       "zone": "ZONE_SK_CAIRN",
-      "x": 68.0,
+      "x": 68,
       "y": 19.5
     },
     "fogLines": {
@@ -928,9 +928,7 @@
   "passage": {
     "zone": "ZONE_SK_SEALCAVE_DEEP",
     "from": "ZONE_SK_SEALCAVE",
-    "loudKey": "caption.puzzle.passage_loud",
-    "risingKey": "caption.puzzle.water_rising",
-    "sound": "PASSAGE_LOUD"
+    "risingKey": "caption.puzzle.water_rising"
   },
   "sideAims": [
     {

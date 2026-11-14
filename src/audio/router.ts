@@ -104,6 +104,14 @@ export class AudioRouter {
     this.#caption(cue, now, options.direction);
   }
 
+  /**
+   * Stage 14: captions a sound the player hears but cannot see (an ambience's source out of view,
+   * Book 11 section 09), without playing anything: the ambience plays it already.
+   */
+  announce(id: string, now: number, options: { direction?: Direction } = {}): void {
+    this.#caption(this.#cue(id), now, options.direction);
+  }
+
   /** Lets the music end on its next bar line, leaving ambience only (Book 11 section 03). */
   silence(now: number): void {
     this.director.silence(now);

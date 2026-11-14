@@ -32,7 +32,7 @@ interface MarkedMap {
 /** The areas of a scene: its zone file's, else content/island.json's. */
 export function areasOf(ctx: Pick<IslandContext, 'island' | 'maps'>, zone: Id): readonly AreaDef[] {
   const own = (ctx.maps.get(zone) as MarkedMap | undefined)?.areas;
-  return own ?? ctx.island.areas.filter((a) => a.scene === zone);
+  return own !== undefined && own.length > 0 ? own : ctx.island.areas.filter((a) => a.scene === zone);
 }
 
 /** The view points of a scene: its zone file's, else content/island.json's. */
@@ -41,7 +41,9 @@ export function viewPointsOf(
   zone: Id,
 ): readonly ViewPointDef[] {
   const own = (ctx.maps.get(zone) as MarkedMap | undefined)?.viewPoints;
-  return own ?? ctx.island.viewPoints.filter((v) => v.scene === zone);
+  return own !== undefined && own.length > 0
+    ? own
+    : ctx.island.viewPoints.filter((v) => v.scene === zone);
 }
 
 const inside = (

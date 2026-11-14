@@ -2977,14 +2977,6 @@
       "note": "Stage 14, work package C (decision S14-86): stone grinding on stone, generated in code (src/audio/synth/islandFinds.ts)."
     },
     {
-      "id": "SFX_PASSAGE_LOUD",
-      "ref": "`SFX_PASSAGE_LOUD`",
-      "book": 11,
-      "section": "07",
-      "origin": "stated",
-      "note": "Stage 14, work package C (decision S14-86): the sea booming in the rock, generated in code (src/audio/synth/islandFinds.ts)."
-    },
-    {
       "id": "SFX_GATHER_CRESS",
       "ref": "`SFX_GATHER_CRESS`",
       "book": 11,

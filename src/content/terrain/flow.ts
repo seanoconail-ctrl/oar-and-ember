@@ -283,7 +283,7 @@ export function bakeFlow(
     // Snap across to the stream near the lip (a plan's block is coarser than the stream).
     let best = Infinity;
     for (let v = -per * 2; v <= per * 2; v++)
-      for (let u = -per * 8; u <= per * 8; u++) {
+      for (let u = -per * 4; u <= per * 4; u++) {
         const x = cx + u;
         const y = cy + v;
         if (x < 0 || y < 0 || x >= w || y >= h || !wet(y * w + x)) continue;

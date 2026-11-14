@@ -66,6 +66,10 @@ const EXACT: Readonly<Record<string, Verdict>> = {
   'caption.sea.hull_groan': keep('SOUND'),
   'caption.sea.wreck_break': { show: true, cls: 'SOUND', unseenOnly: true },
   'caption.sea.wreck_grind': { show: true, cls: 'SOUND', unseenOnly: true },
+  // Stage 14 (decision S14-106): a stream or a waterfall heard but out of view, with its
+  // direction (the island's ambience says when it is out of view, as the wreck's scene does).
+  'caption.water.stream': { show: true, cls: 'SOUND', unseenOnly: true },
+  'caption.water.falls': { show: true, cls: 'SOUND', unseenOnly: true },
   // Cut: seen in the world.
   'caption.voice.approach': CUT,
   'caption.info.surrender': CUT,
@@ -121,6 +125,11 @@ const PREFIX: readonly (readonly [string, Verdict])[] = [
   // The small finds off the paths (the user's fourth playtest, DH-118): what was found and its
   // story, which the picture alone cannot tell; held through a fight like the story lines.
   ['caption.find.', keep('STORY')],
+  // Stage 14, work package C: the puzzles' moments (the door's stone turning, the Cup that will
+  // not lift, the silent door, the grave goods, the turning on the mound), which the picture alone
+  // cannot tell; the passage flooding is a safety line (it can cut the way back).
+  ['caption.puzzle.water_rising', keep('SAFETY')],
+  ['caption.puzzle.', keep('STORY')],
   // Work, camp, repairs, rites and launch: seen in their loops and scenes.
   ['caption.sfx.', CUT],
   ['caption.repair.', CUT],

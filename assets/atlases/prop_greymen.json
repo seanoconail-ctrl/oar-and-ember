@@ -1,0 +1,118 @@
+{
+  "sheet": "prop_greymen",
+  "kind": "prop",
+  "image": "prop_greymen.png",
+  "width": 32,
+  "height": 54,
+  "pivot": {
+    "x": 16,
+    "y": 51
+  },
+  "footprint": {
+    "w": 12,
+    "h": 4
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "stone0": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone1": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone2": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone3": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone4": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone5": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone6": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone7": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "stone8": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "cup": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 18,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "stone0/-/0": [
+      0,
+      0
+    ],
+    "stone1/-/0": [
+      0,
+      54
+    ],
+    "stone2/-/0": [
+      0,
+      108
+    ],
+    "stone3/-/0": [
+      0,
+      162
+    ],
+    "stone4/-/0": [
+      0,
+      216
+    ],
+    "stone5/-/0": [
+      0,
+      270
+    ],
+    "stone6/-/0": [
+      0,
+      324
+    ],
+    "stone7/-/0": [
+      0,
+      378
+    ],
+    "stone8/-/0": [
+      0,
+      432
+    ],
+    "cup/-/0": [
+      0,
+      486
+    ]
+  }
+}

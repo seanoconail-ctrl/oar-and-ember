@@ -325,9 +325,7 @@ const puzzlesCheck = object({
   passage: object({
     zone: ref('zone'),
     from: ref('zone'),
-    loudKey: ref('string'),
     risingKey: ref('string'),
-    sound: text,
   }),
   sideAims: arrayOf(sideAimCheck),
   secrets: recordOf(

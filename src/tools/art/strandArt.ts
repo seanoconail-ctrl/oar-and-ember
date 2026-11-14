@@ -62,6 +62,20 @@ function paint(
   const inside = (px.margins[px.layer] ?? 1) * PX; // px inside its own lower edge
   const nearAbove = (L: number): number => -(px.margins[L] ?? -1) * PX; // px to where L begins
   const underCode = LAYERS[px.under] ?? '~';
+  // Stage 14: the terrain under the pixel among those its corners really have (pixelInfo's
+  // `under` can name a layer between two corners' that is in neither, which the strand's nine
+  // never met but the moor's do: a cliff face over the sea would read as over a bog pool).
+  let real = Math.min(...corners.map(layerIndex));
+  for (const k of corners.map(layerIndex))
+    if (k < px.layer && k > real && (px.margins[k] ?? -1) > 0) real = k;
+  const realUnder = LAYERS[real] ?? '~';
+  const realWet =
+    realUnder === '~' ||
+    realUnder === '-' ||
+    realUnder === '_' ||
+    realUnder === 'w' ||
+    realUnder === 'o' ||
+    realUnder === '=';
   const wetBelow =
     underCode === '~' ||
     underCode === '-' ||
@@ -137,7 +151,7 @@ function paint(
       // in clumps with calm patches; the odd drift of purple tips; grass where it meets the turf.
       const cushion = valueNoise(wx, wy, 5, 40, P);
       const clump = fbm(wx, wy, 24, 41, 2, P);
-      if (inside < 1.4 && (underCode === ',' || underCode === '.'))
+      if (inside < 1.4 && (realUnder === ',' || realUnder === '.'))
         return c('weld', 1.2 + detail * 0.6);
       if (cushion < 0.3) return c('earth', 1.3 + tone * 0.8);
       const brown = valueNoise(wx, wy, 14, 42, P) > 0.68;
@@ -150,7 +164,7 @@ function paint(
       // Peat (Stage 14): black-brown, crumbling, wet in its hollows where the sky shows; dark at
       // the foot of a bank and round a pool.
       const crumb = hash01(wx, wy, 44);
-      if (inside < 1.8 && underCode === 'o') return c('tar', 0.8);
+      if (inside < 1.8 && realUnder === 'o') return c('tar', 0.8);
       if (valueNoise(wx, wy, 8, 45, P) > 0.74 && detail > 0.5) return c('sky', 0.6);
       if (crumb < 0.05) return c('tar', 3 + (crumb < 0.02 ? 1 : 0));
       return c('earth', 1.3 + (tone - 0.5) * 1.6 + (detail - 0.5) * 0.9);
@@ -166,10 +180,10 @@ function paint(
       // A cliff face (Stage 14): strata in bands, lit ledges and dark cracks, lichen on the upper
       // courses, the turf's lip and its undercut at the top, the foot dark, wet and weedy where
       // the sea reaches it; peat where a bank is cut in the bog.
-      const peaty = underCode === 'p' || underCode === 'o';
+      const peaty = realUnder === 'p' || realUnder === 'o';
       if (inside < 2.4) {
-        if (wetBelow) return hash01(wx, wy >> 1, 47) < 0.45 ? c('kelp', 1 + detail * 3) : c('stone', 1);
-        if (underCode === 'h' || underCode === ',') return inside < 1.2 ? c('weld', 1.6) : c('earth', 0.6);
+        if (realWet) return hash01(wx, wy >> 1, 47) < 0.45 ? c('kelp', 1 + detail * 3) : c('stone', 1);
+        if (realUnder === 'h' || realUnder === ',') return inside < 1.2 ? c('weld', 1.6) : c('earth', 0.6);
         return c(peaty ? 'tar' : 'stone', 1);
       }
       const strata = fbm(wx, wy, 10, 48, 2, P);
@@ -189,11 +203,11 @@ function paint(
     case '=': {
       // The causeway (Stage 14): weed-hung boulders laid close, wrack between them, barnacles.
       if (inside < 1.6) return c('kelp', 1.2);
-      const b = boulderShade(c, wx, wy);
       const weed = valueNoise(wx, wy, 4, 53, P);
-      if (weed > 0.52) return c('kelp', 1.6 + detail * 3.2);
-      if (hash01(wx >> 1, wy >> 1, 54) < 0.08) return c('wool', 3.4);
-      return b;
+      if (weed > 0.5) return c('kelp', 1.4 + detail * 2.6);
+      if (hash01(wx >> 1, wy >> 1, 54) < 0.06) return c('wool', 3.2);
+      const lump = valueNoise(wx, wy, 6, 64, P);
+      return c('stone', 1.4 + lump * 2.4 + (detail > 0.7 ? 0.6 : 0));
     }
     case 'n': {
       // A cave's wet rock floor (Stage 14): dark, worn smooth, a film of water catching the light
@@ -242,7 +256,7 @@ function paint(
       if (set === 'cave') {
         // A passage's wet rock wall seen from above (Stage 14): dark, rough, glistening; a weed
         // line at its foot where the sea reaches.
-        if (inside < 2.4) return wetBelow ? c('kelp', 1.6 + detail * 2) : c('stone', 0.6);
+        if (inside < 2.4) return realWet ? c('kelp', 1.6 + detail * 2) : c('stone', 0.6);
         const glint = hash01(wx, wy, 60) < 0.02;
         if (glint) return c('stone', 5);
         return c('stone', 0.6 + (tone - 0.5) * 1.0 + (detail > 0.72 ? 0.9 : 0));

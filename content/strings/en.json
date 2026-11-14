@@ -8135,10 +8135,6 @@
     "text": "An old cup, fast to its stone",
     "tags": ["INFO"]
   },
-  "caption.puzzle.passage_loud": {
-    "text": "The passage grows loud",
-    "tags": ["INFO"]
-  },
   "caption.puzzle.water_rising": {
     "text": "Water rising in the passage",
     "tags": ["INFO"]
@@ -8596,10 +8592,6 @@
     "text": "Stone grinding on stone",
     "tags": ["INFO"]
   },
-  "caption.sfx.passage_loud": {
-    "text": "The sea booming in the rock",
-    "tags": ["INFO"]
-  },
   "caption.sfx.gather_cress": {
     "text": "Cress pulled from the water",
     "tags": ["INFO"]
@@ -8635,5 +8627,11 @@
   "caption.sfx.gather_seal": {
     "text": "Seals groaning",
     "tags": ["INFO"]
+  },
+  "ui.journal.map.deep": {
+    "text": "The deep passage"
+  },
+  "ui.journal.map.cairn_in": {
+    "text": "Inside the cairn"
   }
 }

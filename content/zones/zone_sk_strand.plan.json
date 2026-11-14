@@ -237,6 +237,8 @@
     {
       "edge": "n",
       "to": "ZONE_SK_MACHAIR"
-    }
+    },
+    { "edge": "e", "to": "ZONE_SK_NAUST" },
+    { "edge": "e", "to": "ZONE_SK_CAIRN" }
   ]
 }

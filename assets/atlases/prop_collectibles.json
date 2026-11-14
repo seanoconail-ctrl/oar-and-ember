@@ -1,0 +1,525 @@
+{
+  "sheet": "prop_collectibles",
+  "kind": "prop",
+  "image": "prop_collectibles.png",
+  "width": 40,
+  "height": 32,
+  "pivot": {
+    "x": 20,
+    "y": 30
+  },
+  "footprint": {
+    "w": 40,
+    "h": 32
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "scallop": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "shingle_bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "whelk": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "ledge_bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "pelican": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "weed_bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "urchin": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "rock_bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "tower": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "shelf_bare": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "spiral": {
+      "frames": 4,
+      "ticks": 10,
+      "loop": true
+    },
+    "page_niche": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "niche_empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "page_corbel": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "corbel_empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "page_leather": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "cleft_empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "page_wedged": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "page_cist": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "cist_empty": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "drowned_wet": {
+      "frames": 6,
+      "ticks": 14,
+      "loop": true
+    },
+    "gold_ring": {
+      "frames": 4,
+      "ticks": 24,
+      "loop": true
+    },
+    "listening": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "seal_face": {
+      "frames": 4,
+      "ticks": 18,
+      "loop": true
+    },
+    "wooden_man": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "man_on_waves": {
+      "frames": 4,
+      "ticks": 20,
+      "loop": true
+    },
+    "cauldron_rim": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "cauldron_hollow": {
+      "frames": 4,
+      "ticks": 22,
+      "loop": true
+    },
+    "old_cup": {
+      "frames": 4,
+      "ticks": 30,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 18,
+    "h": 5
+  },
+  "placeholder": false,
+  "frames": {
+    "scallop/-/0": [
+      0,
+      0
+    ],
+    "scallop/-/1": [
+      40,
+      0
+    ],
+    "scallop/-/2": [
+      80,
+      0
+    ],
+    "scallop/-/3": [
+      120,
+      0
+    ],
+    "shingle_bare/-/0": [
+      0,
+      32
+    ],
+    "whelk/-/0": [
+      0,
+      64
+    ],
+    "whelk/-/1": [
+      40,
+      64
+    ],
+    "whelk/-/2": [
+      80,
+      64
+    ],
+    "whelk/-/3": [
+      120,
+      64
+    ],
+    "ledge_bare/-/0": [
+      0,
+      96
+    ],
+    "pelican/-/0": [
+      0,
+      128
+    ],
+    "pelican/-/1": [
+      40,
+      128
+    ],
+    "pelican/-/2": [
+      80,
+      128
+    ],
+    "pelican/-/3": [
+      120,
+      128
+    ],
+    "weed_bare/-/0": [
+      0,
+      160
+    ],
+    "urchin/-/0": [
+      0,
+      192
+    ],
+    "urchin/-/1": [
+      40,
+      192
+    ],
+    "urchin/-/2": [
+      80,
+      192
+    ],
+    "urchin/-/3": [
+      120,
+      192
+    ],
+    "rock_bare/-/0": [
+      0,
+      224
+    ],
+    "tower/-/0": [
+      0,
+      256
+    ],
+    "tower/-/1": [
+      40,
+      256
+    ],
+    "tower/-/2": [
+      80,
+      256
+    ],
+    "tower/-/3": [
+      120,
+      256
+    ],
+    "shelf_bare/-/0": [
+      0,
+      288
+    ],
+    "spiral/-/0": [
+      0,
+      320
+    ],
+    "spiral/-/1": [
+      40,
+      320
+    ],
+    "spiral/-/2": [
+      80,
+      320
+    ],
+    "spiral/-/3": [
+      120,
+      320
+    ],
+    "page_niche/-/0": [
+      0,
+      352
+    ],
+    "page_niche/-/1": [
+      40,
+      352
+    ],
+    "page_niche/-/2": [
+      80,
+      352
+    ],
+    "page_niche/-/3": [
+      120,
+      352
+    ],
+    "niche_empty/-/0": [
+      0,
+      384
+    ],
+    "page_corbel/-/0": [
+      0,
+      416
+    ],
+    "page_corbel/-/1": [
+      40,
+      416
+    ],
+    "page_corbel/-/2": [
+      80,
+      416
+    ],
+    "page_corbel/-/3": [
+      120,
+      416
+    ],
+    "corbel_empty/-/0": [
+      0,
+      448
+    ],
+    "page_leather/-/0": [
+      0,
+      480
+    ],
+    "page_leather/-/1": [
+      40,
+      480
+    ],
+    "page_leather/-/2": [
+      80,
+      480
+    ],
+    "page_leather/-/3": [
+      120,
+      480
+    ],
+    "cleft_empty/-/0": [
+      0,
+      512
+    ],
+    "page_wedged/-/0": [
+      0,
+      544
+    ],
+    "page_wedged/-/1": [
+      40,
+      544
+    ],
+    "page_wedged/-/2": [
+      80,
+      544
+    ],
+    "page_wedged/-/3": [
+      120,
+      544
+    ],
+    "page_cist/-/0": [
+      0,
+      576
+    ],
+    "page_cist/-/1": [
+      40,
+      576
+    ],
+    "page_cist/-/2": [
+      80,
+      576
+    ],
+    "page_cist/-/3": [
+      120,
+      576
+    ],
+    "cist_empty/-/0": [
+      0,
+      608
+    ],
+    "drowned_wet/-/0": [
+      0,
+      640
+    ],
+    "drowned_wet/-/1": [
+      40,
+      640
+    ],
+    "drowned_wet/-/2": [
+      80,
+      640
+    ],
+    "drowned_wet/-/3": [
+      120,
+      640
+    ],
+    "drowned_wet/-/4": [
+      160,
+      640
+    ],
+    "drowned_wet/-/5": [
+      200,
+      640
+    ],
+    "gold_ring/-/0": [
+      0,
+      672
+    ],
+    "gold_ring/-/1": [
+      40,
+      672
+    ],
+    "gold_ring/-/2": [
+      80,
+      672
+    ],
+    "gold_ring/-/3": [
+      120,
+      672
+    ],
+    "listening/-/0": [
+      0,
+      704
+    ],
+    "seal_face/-/0": [
+      0,
+      736
+    ],
+    "seal_face/-/1": [
+      40,
+      736
+    ],
+    "seal_face/-/2": [
+      80,
+      736
+    ],
+    "seal_face/-/3": [
+      120,
+      736
+    ],
+    "wooden_man/-/0": [
+      0,
+      768
+    ],
+    "wooden_man/-/1": [
+      40,
+      768
+    ],
+    "wooden_man/-/2": [
+      80,
+      768
+    ],
+    "wooden_man/-/3": [
+      120,
+      768
+    ],
+    "man_on_waves/-/0": [
+      0,
+      800
+    ],
+    "man_on_waves/-/1": [
+      40,
+      800
+    ],
+    "man_on_waves/-/2": [
+      80,
+      800
+    ],
+    "man_on_waves/-/3": [
+      120,
+      800
+    ],
+    "cauldron_rim/-/0": [
+      0,
+      832
+    ],
+    "cauldron_rim/-/1": [
+      40,
+      832
+    ],
+    "cauldron_rim/-/2": [
+      80,
+      832
+    ],
+    "cauldron_rim/-/3": [
+      120,
+      832
+    ],
+    "cauldron_hollow/-/0": [
+      0,
+      864
+    ],
+    "cauldron_hollow/-/1": [
+      40,
+      864
+    ],
+    "cauldron_hollow/-/2": [
+      80,
+      864
+    ],
+    "cauldron_hollow/-/3": [
+      120,
+      864
+    ],
+    "old_cup/-/0": [
+      0,
+      896
+    ],
+    "old_cup/-/1": [
+      40,
+      896
+    ],
+    "old_cup/-/2": [
+      80,
+      896
+    ],
+    "old_cup/-/3": [
+      120,
+      896
+    ]
+  }
+}

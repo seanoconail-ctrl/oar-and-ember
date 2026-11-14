@@ -39,6 +39,8 @@ import { SEA_SOUNDS, SeaAmbience, WreckAmbience } from '../audio/synth/sea.ts';
 import type { SeaBedState } from '../audio/synth/sea.ts';
 import { seaStrokeSeconds } from '../audio/seaAudio.ts';
 import audioJson from '../../content/audio.json';
+import { ISLAND_LISTENS, startIslandItem } from './islandAmbTest.ts';
+import { ISLAND_SOUNDS } from '../audio/synth/islandAmb.ts';
 import { OTHER_VOICES, SEA_VOICES, speak, voiceOf, VOICES } from '../audio/synth/voice.ts';
 import { formatString } from '../content/strings.ts';
 import type { StringTable } from '../content/strings.ts';
@@ -340,6 +342,8 @@ export function startItem(
     def.play(e, at, 0, { gore: 2, ...(s.voice === undefined ? {} : { voice: s.voice }) });
     return { schedule: () => undefined, stop: () => undefined };
   }
+  // Stage 14: the island's ambience by scene, season and hour, and the drowned's tell.
+  if (kind === 'island') return startIslandItem(e, id, at);
   if (kind === 'ambience') {
     const amb = new StrandAmbience(e);
     amb.setTide(s.tide ?? 0.5, at);
@@ -990,6 +994,27 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
   seaStop.addEventListener('click', stopRunning);
   seaBox.append(seaStop);
   root.append(seaBox);
+  // Stage 14: the island's ambience in each scene, and the drowned's tell (S14-100 to S14-109).
+  const islandBox = el('section');
+  islandBox.append(el('h2', {}, t('ui.sound.island')));
+  for (const l of ISLAND_LISTENS) {
+    const b = el('button', { 'data-island-play': l.id }, t(l.label));
+    b.addEventListener('click', () => {
+      play(`island:${l.id}`, {}, l.caption);
+    });
+    islandBox.append(b);
+  }
+  for (const def of ISLAND_SOUNDS) {
+    const b = el('button', { 'data-island-sound': def.id }, t('ui.sound.call.tell_drowned'));
+    b.addEventListener('click', () => {
+      oneShot(`island:${def.id}`, def.captionKey);
+    });
+    islandBox.append(b);
+  }
+  const islandStop = el('button', { 'data-island-stop': '' }, t('ui.sound.stop'));
+  islandStop.addEventListener('click', stopRunning);
+  islandBox.append(islandStop);
+  root.append(islandBox);
 
   // Footsteps: compare the surfaces, walking, running, sneaking or carrying.
   const feet = el('section');
@@ -1151,6 +1176,11 @@ export function showSoundTest(root: HTMLElement, strings: StringTable): void {
       'sea:wreck',
       ...SEA_SOUNDS.map((d) => `sea:${d.id}`),
       ...Object.keys(SEA_VOICES).map((id) => `resident:${id}`),
+    ],
+    /** Stage 14: the island's ambience in each scene, and the drowned's tell. */
+    islandItems: [
+      ...ISLAND_LISTENS.map((l) => `island:${l.id}`),
+      ...ISLAND_SOUNDS.map((d) => `island:${d.id}`),
     ],
     /** Stage 7's home items, listed apart so the page's earlier item count stays as it was. */
     homeItems: [

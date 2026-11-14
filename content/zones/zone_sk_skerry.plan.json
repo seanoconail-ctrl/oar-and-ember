@@ -1,0 +1,104 @@
+{
+  "zone": "ZONE_SK_SKERRY",
+  "about": "The Skerry of the Drowned and its causeway (Book 4 section 02; Book 9 sections 03 and 05; Stage 14, decisions S14-1, S14-3, S14-5 and S14-38): blocks 36 to 47 by 18 to 31, the east shore below Seal Cave, expanded by src/tools/levels/zones.ts. Grass runs down to a rocky coast with two fishing rocks; a beach and flats at its south-west corner; the causeway of weed-covered boulders (`=`, open only on spring-tide days inside the tidal ground window) from block (38, 25) out to the skerry, a low black rock at blocks (41 to 43, 28 to 29) whose crown is wet rock (`n`, reached only by the causeway, so open with it). Edit this plan, not the generated map, then run npm run zones.",
+  "seed": "zone_sk_skerry",
+  "terrainSeed": "zone_sk_strand",
+  "ground": "tile_moor",
+  "plantSheet": "plant_moor",
+  "blocks": { "x": 36, "y": 18, "w": 12, "h": 14 },
+  "warpTiles": 3,
+  "tideLineTiles": 3,
+  "sward": 0.66,
+  "tussock": 0.45,
+  "crevices": 0.4,
+  "codes": { "=": "-" },
+  "carve": [
+    { "code": "~", "ellipse": { "x": 40, "y": 76, "rx": 26, "ry": 9 }, "rough": 0.5 },
+    {
+      "code": "~",
+      "line": [
+        [26, 62],
+        [36, 70],
+        [46, 80]
+      ],
+      "width": 16,
+      "rough": 0.5
+    },
+    {
+      "code": "-",
+      "line": [
+        [10, 56],
+        [17, 60],
+        [21, 62.5]
+      ],
+      "width": 8,
+      "rough": 0.5
+    },
+    {
+      "code": "=",
+      "line": [
+        [17, 59.5],
+        [25, 64.5],
+        [33, 71],
+        [41, 78],
+        [47, 82]
+      ],
+      "width": 3.2,
+      "rough": 0.35
+    },
+    { "code": "_", "ellipse": { "x": 55, "y": 87, "rx": 13, "ry": 8 }, "rough": 0.4 },
+    { "code": "r", "ellipse": { "x": 55, "y": 87, "rx": 10.5, "ry": 6.2 }, "rough": 0.45 },
+    { "code": "n", "ellipse": { "x": 55, "y": 86.5, "rx": 8, "ry": 4.4 }, "rough": 0.3 },
+    {
+      "code": "n",
+      "line": [
+        [46, 82],
+        [49, 84]
+      ],
+      "width": 3,
+      "rough": 0.1
+    },
+    { "code": "r", "ellipse": { "x": 46.5, "y": 30.5, "rx": 2.6, "ry": 1.8 }, "rough": 0.4 },
+    { "code": "r", "ellipse": { "x": 44, "y": 47, "rx": 2.4, "ry": 1.7 }, "rough": 0.4 }
+  ],
+  "outcrops": [],
+  "spawns": { "P_STEERER": { "x": 22.5, "y": 8.5, "facing": "s" } },
+  "props": [
+    { "sheet": "prop_island", "frame": "causeway0/-/0", "x": 19.0, "y": 61.2 },
+    { "sheet": "prop_island", "frame": "causeway3/-/0", "x": 24.6, "y": 64.8 },
+    { "sheet": "prop_island", "frame": "causeway1/-/0", "x": 29.4, "y": 68.2 },
+    { "sheet": "prop_island", "frame": "causeway4/-/0", "x": 33.8, "y": 72.0 },
+    { "sheet": "prop_island", "frame": "causeway2/-/0", "x": 37.6, "y": 75.4 },
+    { "sheet": "prop_island", "frame": "causeway5/-/0", "x": 41.2, "y": 78.8 },
+    { "sheet": "prop_island", "frame": "causeway0/-/0", "x": 44.6, "y": 81.2 }
+  ],
+  "cuts": [],
+  "paths": [
+    [
+      [22.5, 0],
+      [21, 18],
+      [18, 40],
+      [16, 54]
+    ]
+  ],
+  "links": [
+    { "edge": "n", "to": "ZONE_SK_SEALCAVE" },
+    { "edge": "w", "to": "ZONE_SK_CAIRN" },
+    { "edge": "w", "to": "ZONE_SK_NAUST" }
+  ],
+  "life": [
+    { "kind": "gull", "x": 60, "y": 40, "r": 6 },
+    { "kind": "gull", "x": 30, "y": 70, "r": 5 },
+    { "kind": "gull", "x": 70, "y": 85, "r": 4 },
+    { "kind": "gull_standing", "x": 46.6, "y": 29.6 },
+    { "kind": "gull_standing", "x": 51.2, "y": 84.6 },
+    { "kind": "cormorant", "x": 44.2, "y": 46.2 },
+    { "kind": "seal", "x": 58.5, "y": 88.6 },
+    { "kind": "seal", "x": 61, "y": 85.2 },
+    { "kind": "seal", "x": 70, "y": 60 },
+    { "kind": "crab", "x": 20.4, "y": 57.6 },
+    { "kind": "crab", "x": 14.6, "y": 56.2 }
+  ],
+  "areas": [],
+  "viewPoints": []
+}

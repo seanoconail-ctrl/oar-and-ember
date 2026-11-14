@@ -70,6 +70,8 @@ export const CONTENT_FILES = {
   zoneCairn: 'content/zones/zone_sk_cairn.json',
   zoneSealcave: 'content/zones/zone_sk_sealcave.json',
   zoneSeaWreck: 'content/zones/zone_sea_wreck.json',
+  zoneGeo: 'content/zones/zone_sk_geo.json',
+  zoneSkerry: 'content/zones/zone_sk_skerry.json',
   zoneNaust: 'content/zones/zone_sk_naust.json',
 } as const;
 
@@ -1709,6 +1711,8 @@ export function loadContent(files: ContentFiles): { content: Content; issues: Is
     [CONTENT_FILES.zoneCairn, files.zoneCairn],
     [CONTENT_FILES.zoneSealcave, files.zoneSealcave],
     [CONTENT_FILES.zoneSeaWreck, files.zoneSeaWreck],
+    [CONTENT_FILES.zoneGeo, files.zoneGeo],
+    [CONTENT_FILES.zoneSkerry, files.zoneSkerry],
     [CONTENT_FILES.zoneNaust, files.zoneNaust],
   ] as const) {
     const checked = checkZoneMap(json);

@@ -417,6 +417,34 @@ export const RENDERS: readonly [string, number, Record<string, unknown>, string]
     ]),
   ),
   ['call:MUS_STINGER_GAME_OVER', 5, {}, 'stinger-game-over'],
+  // Stage 14 (S14-100 to S14-109): the island's ambience in each scene, and the drowned's tell.
+  // (Each of src/scenes/islandAmbTest.ts ISLAND_LISTENS; tests/unit/islandAmbience.test.ts checks.)
+  ...(
+    [
+      'strand',
+      'machair',
+      'rook-falls',
+      'rook-winter',
+      'rook-summer',
+      'cliffs',
+      'geo',
+      'hagseat',
+      'bog',
+      'greymen',
+      'cairn',
+      'naust',
+      'sealcave',
+      'skerry',
+      'passage',
+      'cairn-in',
+    ] as const
+  ).map((id): [string, number, Record<string, unknown>, string] => [
+    `island:${id}`,
+    30,
+    {},
+    `island-${id}`,
+  ]),
+  ['island:SFX_TELL_DROWNED', 7, {}, 'island-tell-drowned'],
 ];
 
 if (import.meta.filename === process.argv[1]) {

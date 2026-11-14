@@ -99,17 +99,16 @@ export function marksOf(map: object): TraverseMarks {
   const hit = cache.get(map);
   if (hit !== undefined) return hit;
   const t = (map as MarkedMap).traverse;
-  const marks: TraverseMarks =
-    t === undefined
-      ? NO_MARKS
-      : {
-          climbs: t.climbs ?? [],
-          swims: t.swims ?? [],
-          jumps: t.jumps ?? [],
-          crawls: t.crawls ?? [],
-          pushes: t.pushes ?? [],
-          soft: t.soft ?? [],
-        };
+  // Nothing marked is not remembered, so marks added later are read (a test zone's).
+  if (t === undefined) return NO_MARKS;
+  const marks: TraverseMarks = {
+    climbs: t.climbs ?? [],
+    swims: t.swims ?? [],
+    jumps: t.jumps ?? [],
+    crawls: t.crawls ?? [],
+    pushes: t.pushes ?? [],
+    soft: t.soft ?? [],
+  };
   cache.set(map, marks);
   return marks;
 }

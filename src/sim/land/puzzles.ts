@@ -181,8 +181,7 @@ export function stepPassage(world: WorldState, ctx: IslandContext, emit: PuzzleE
   const was = (world.facts['passage.state'] as PassageState | undefined) ?? 'CLOSED';
   if (was !== water.state) world.facts['passage.state'] = water.state;
   if (zone !== p.zone && zone !== p.from) return;
-  if (was === 'OPEN' && water.state === 'FLOODING')
-    emit({ type: 'ISLAND_INFO', key: p.loudKey, sound: p.sound });
+  // The turn itself is heard as the passage's roar (AMB_PASSAGE_ROAR, package D's ambience).
   const rising = water.state === 'FLOODING' && water.pool !== 'KNEE';
   if (rising && world.facts['passage.rising'] !== world.calendar.day && zone === p.zone) {
     world.facts['passage.rising'] = world.calendar.day;

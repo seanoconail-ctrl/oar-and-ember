@@ -66,45 +66,128 @@
     }
   },
   "bloom": {
-    "from": { "season": "Summer", "day": 16 },
-    "to": { "season": "Autumn", "day": 10 },
+    "from": {
+      "season": "Summer",
+      "day": 16
+    },
+    "to": {
+      "season": "Autumn",
+      "day": 10
+    },
     "ramps": {
       "fern 3": "violet 3",
       "fern 0": "violet 1",
       "violet 2": "thrift 3"
     }
   },
-  "default": { "snow": 0.2, "freeze": true },
+  "default": {
+    "snow": 0.2,
+    "freeze": true
+  },
   "zones": {
-    "ZONE_SK_STRAND": { "snow": 0.12 },
-    "ZONE_SK_MACHAIR": { "snow": 0.3, "freeze": false },
-    "ZONE_SK_HAGSEAT": { "snow": 0.22 },
-    "ZONE_SK_CAIRN": { "snow": 0.32 },
-    "ZONE_SK_SEALCAVE": { "snow": 0.25 },
-    "ZONE_SK_GEO": { "snow": 0.25 },
-    "ZONE_SK_CLIFFS": { "snow": 0.3 },
-    "ZONE_SK_ROOK": { "snow": 0.75, "shrink": ["Summer"] },
-    "ZONE_SK_BOG": { "snow": 0.45 },
-    "ZONE_SK_NAUST": { "snow": 0.15 },
-    "ZONE_SK_SKERRY": { "snow": 0.15 },
-    "ZONE_SK_SEALCAVE_DEEP": { "snow": 0, "freeze": false, "fog": { "Winter": 0.16 } },
-    "ZONE_SK_CAIRN_IN": { "snow": 0, "freeze": false }
+    "ZONE_SK_STRAND": {
+      "snow": 0.12
+    },
+    "ZONE_SK_MACHAIR": {
+      "snow": 0.3,
+      "freeze": false
+    },
+    "ZONE_SK_HAGSEAT": {
+      "snow": 0.22
+    },
+    "ZONE_SK_CAIRN": {
+      "snow": 0.32
+    },
+    "ZONE_SK_SEALCAVE": {
+      "snow": 0.25
+    },
+    "ZONE_SK_GEO": {
+      "snow": 0.25
+    },
+    "ZONE_SK_CLIFFS": {
+      "snow": 0.3
+    },
+    "ZONE_SK_ROOK": {
+      "snow": 0.75,
+      "shrink": ["Summer"]
+    },
+    "ZONE_SK_BOG": {
+      "snow": 0.45
+    },
+    "ZONE_SK_NAUST": {
+      "snow": 0.15
+    },
+    "ZONE_SK_SKERRY": {
+      "snow": 0.15
+    },
+    "ZONE_SK_SEALCAVE_DEEP": {
+      "snow": 0,
+      "freeze": false,
+      "fog": {
+        "Winter": 0.16
+      }
+    },
+    "ZONE_SK_CAIRN_IN": {
+      "snow": 0,
+      "freeze": false
+    }
   },
   "life": {
-    "gull": { "Spring": 1, "Summer": 1, "Autumn": 0.75, "Winter": 0.5 },
-    "gull_standing": { "Spring": 1, "Summer": 1, "Autumn": 1, "Winter": 0.5 },
-    "cormorant": { "Spring": 1, "Summer": 1, "Autumn": 1, "Winter": 1 },
-    "crab": { "Spring": 1, "Summer": 1, "Autumn": 1, "Winter": 0 },
-    "seal": { "Spring": 0.5, "Summer": 1, "Autumn": 1, "Winter": 0.5 }
+    "gull": {
+      "Spring": 1,
+      "Summer": 1,
+      "Autumn": 0.75,
+      "Winter": 0.5
+    },
+    "gull_standing": {
+      "Spring": 1,
+      "Summer": 1,
+      "Autumn": 1,
+      "Winter": 0.5
+    },
+    "cormorant": {
+      "Spring": 1,
+      "Summer": 1,
+      "Autumn": 1,
+      "Winter": 1
+    },
+    "crab": {
+      "Spring": 1,
+      "Summer": 1,
+      "Autumn": 1,
+      "Winter": 0
+    },
+    "seal": {
+      "Spring": 1,
+      "Summer": 1,
+      "Autumn": 1,
+      "Winter": 0.5
+    }
   },
   "zoneLife": {
     "ZONE_SK_SEALCAVE_DEEP": {
-      "crab": { "Spring": 0, "Summer": 1, "Autumn": 1, "Winter": 0 },
-      "seal": { "Spring": 0, "Summer": 0, "Autumn": 1, "Winter": 0 }
+      "crab": {
+        "Spring": 0,
+        "Summer": 1,
+        "Autumn": 1,
+        "Winter": 0
+      },
+      "seal": {
+        "Spring": 0,
+        "Summer": 0,
+        "Autumn": 1,
+        "Winter": 0
+      }
     }
   },
   "falls": {
-    "ZONE_SK_ROOK": [{ "block": [20, 14], "width": 2, "drop": 2 }]
+    "ZONE_SK_ROOK": [
+      {
+        "block": [20, 14],
+        "width": 2,
+        "drop": 2
+      }
+    ]
   },
   "mouths": {
     "ZONE_SK_ROOK": "s",

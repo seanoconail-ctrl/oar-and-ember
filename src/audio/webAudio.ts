@@ -8,7 +8,7 @@
  */
 import type { CueDef } from '../content/registry.ts';
 import { StrandAmbience } from './synth/ambience.ts';
-import { IslandLayers } from './synth/island.ts';
+import { IslandLayers } from './synth/islandAmb.ts';
 import type { IslandMix } from './islandAmbience.ts';
 import { CaveAmbience } from './synth/repairs.ts';
 import { AMBIENCES, HearthAmbience, HOME_LIFE, PIECES, SOUNDS } from './synth/cues.ts';
@@ -311,7 +311,7 @@ export class WebAudioEngine implements AudioSink {
   /** The bed's wind: the island's rule for the place (Stage 14), else the Hag's Seat's gale. */
   #coreWind(strength: number): number {
     const mix = this.#islandMix;
-    if (mix !== null) return Math.min(1, strength * mix.wind * (1 - 0.4 * mix.quiet));
+    if (mix !== null) return Math.min(1, strength * mix.wind * (1 - 0.25 * mix.quiet));
     return this.#gale ? Math.min(1, strength * GALE_WIND) : strength;
   }
 

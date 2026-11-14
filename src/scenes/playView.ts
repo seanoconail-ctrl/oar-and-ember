@@ -34,13 +34,14 @@ import { bakeElevation } from '../render/elevation.ts';
 import type { Elevation } from '../render/elevation.ts';
 import { createSceneRenderer } from '../render/glRenderer.ts';
 import { islandFrame, zoneFlow } from './islandLook.ts';
+import { IslandAudio } from './islandAmbAudio.ts';
 import type { SceneRenderer } from '../render/glRenderer.ts';
 import type { Palette } from '../render/palette.ts';
 import type { Presenter } from '../render/presenter.ts';
 import { buildDrawPlan, parseRenderStyle, withSprites } from '../render/scene.ts';
 import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../render/viewport.ts';
-import { clockText, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
+import { clockText, isDaylight, seasonOf, tideAt } from '../sim/calendar/calendar.ts';
 import { landContext } from '../sim/land/context.ts';
 import { interactionNow, TICKS_PER_SECOND } from '../sim/land/onFoot.ts';
 import { parseStartingWeapons } from '../content/balance.ts';
@@ -100,6 +101,7 @@ import { PromptFade, TipLife } from '../ui/prompts.ts';
 import { parseStormBalance, parseTextBalance } from '../content/presentationBalance.ts';
 import { cinematicNow, CursorGate } from './cursor.ts';
 import type { LoadedAtlas } from './atlases.ts';
+import { IslandView } from './islandView.ts';
 import { homePhase, lightPhase } from './lightPhase.ts';
 import type { NamingChoice } from './namingView.ts';
 import { bundledLayerFiles } from './bundledLayers.ts';
@@ -126,6 +128,8 @@ import type { ColdStorm } from './openingView.ts';
 import { firstRainDrops, swayAt } from './storm.ts';
 import { heightAt } from '../content/terrain/elevation.ts';
 import { stillWaterLevel } from '../sim/land/water.ts';
+import { objectsView, traverseOffer } from '../sim/land/traverse.ts';
+import { verbPrompt } from './traversePrompt.ts';
 import type { WreckWhat } from '../sim/narrative/wreck.ts';
 
 /** How long the swell takes to carry the fallen stores into the shallows (presentation, ms). */
@@ -593,6 +597,8 @@ export function startPlay(
   const audioTable = content.audio;
   WebAudioEngine.prepare();
   const engine = new WebAudioEngine(audioTable?.cues ?? []);
+  /** Stage 14: the island's ambience in play (made when first heard). */
+  let islandAudio: IslandAudio | null = null;
   engine.setGore(display.gore);
   // Book 10 section 25's music fades (decision DE-29).
   const fades = ((): { fadeIn: number; fadeOut: number; layersJoin: number } | null => {
@@ -626,6 +632,10 @@ export function startPlay(
         audio.event('WADE_SPLASH', engine.now, {
           pan: (x - (sim.state.onFoot?.player.x ?? x)) / 200,
         });
+    };
+    // Stage 14: the movement verbs' beats (a hold, a stroke, a shuffle, a stone moving).
+    v.onVerb = (event) => {
+      if (audio !== null && engine.unlocked) audio.event(event, engine.now, { pan: 0 });
     };
   };
   wireVisuals(visuals);
@@ -717,6 +727,23 @@ export function startPlay(
     else if (verdict.show && verdict.unseenOnly !== true)
       captions.info(text, verdict.cls, now / 1000);
   };
+  // Stage 14, work package C: the island's props, the drowned's lines and the journal's pages.
+  const islandView =
+    land.island == null
+      ? null
+      : new IslandView({
+          doc: document,
+          content,
+          ctx: land.island,
+          atlases,
+          t: (k, v) => t(k, v ?? {}),
+          say,
+          inform,
+          sound: (ev) => {
+            if (audio !== null && engine.unlocked) audio.event(ev, engine.now, { pan: 0 });
+          },
+          reducedMotion: () => display.reducedMotion,
+        });
   /** A refused job's reason, shown in the talk panel under the person's line (the audit's merge). */
   let talkNote: { text: string; line: string } | null = null;
   /** When the steerer last struck or took a blow (frame clock, ms): Book 10's inFight. */
@@ -926,7 +953,10 @@ export function startPlay(
         ? []
         : repairProps(sim.state, { def: repairDef }, map.zone, content.launch, drawing);
     // The user's fourth playtest: the small finds off the paths (DH-115).
-    const findsHere = land.finds == null ? [] : findProps(sim.state, land.finds, map.zone);
+    const findsHere = [
+      ...(land.finds == null ? [] : findProps(sim.state, land.finds, map.zone)),
+      ...(islandView?.props(sim.state, map.zone) ?? []),
+    ];
     // The steerer's bed takes its in-reach highlight edge while it is the prompt (DH-103).
     const marked = (here ? stageProps : []).map((pr) =>
       bedLit && pr.sheet === 'prop_bed_steerer'
@@ -1492,6 +1522,7 @@ export function startPlay(
       const a = sim.state.onFoot?.actors[e.who];
       if (a !== undefined) combatFx.guardTurn(a.x, a.y, sim.state.tick);
     }
+    islandView?.event(e, now);
     switch (e.type) {
       case 'PERSON_CALLED': {
         // Direction class: the caller and where from; the words are the speech line.
@@ -1983,6 +2014,22 @@ export function startPlay(
       case 'STEERER_DOWNED':
         if (e.secondWind) inform('caption.info.second_wind', t('caption.info.second_wind'), now);
         fightSound('PERSON_DOWNED', 'P_STEERER');
+        return;
+      // Stage 14: the movement verbs' sounds, and going under's safety line (decision S14-58).
+      case 'SINKING':
+      case 'DROWNING':
+        inform(
+          e.type === 'SINKING' ? 'caption.traverse.sinking' : 'caption.traverse.drowning',
+          t(e.type === 'SINKING' ? 'caption.traverse.sinking' : 'caption.traverse.drowning'),
+          now,
+        );
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
+        return;
+      case 'CLIMB_SLIPPED':
+      case 'CLIMB_SLID':
+      case 'SINK_ENDED':
+      case 'JUMP_LANDED':
+        if (audio !== null && engine.unlocked) audio.event(e.type, engine.now, { pan: 0 });
         return;
       case 'STEERER_DIED':
         // The collapse (DH-71): the sound drops away now; the sting comes with the screen.
@@ -2777,6 +2824,17 @@ export function startPlay(
       prompt = label.text;
       promptKind = label.kind;
     }
+    // Stage 14: a climb, a jump, a crawl or a heavy object marked in reach, when nothing nearer
+    // is offered (the simulation's own rule, src/sim/land/traverse.ts).
+    const verbOffer =
+      land.traverse == null || interaction !== null || use !== null
+        ? null
+        : traverseOffer(sim.state, map, land, land.traverse);
+    if (verbOffer !== null) {
+      const label = verbPrompt(verbOffer, t, interactKey, device === 'mouse');
+      prompt = label.text;
+      promptKind = label.kind;
+    }
     // Stage 13: on the reef, a survivor's words or Hild's question, by the very rule the
     // simulation acts on (decision S13-81).
     const seaWreck = land.seaWreck ?? null;
@@ -2875,6 +2933,32 @@ export function startPlay(
       );
       if (visuals.tideLevel >= 0) engine.setTide(visuals.tideLevel);
       placeAudio();
+      // Stage 14: the island's ambience by zone, area, season and hour (S14-100 to S14-109).
+      const islandRules = audioTable?.island;
+      if (islandRules !== undefined && !storm) {
+        islandAudio ??= new IslandAudio(
+          islandRules,
+          land.maps.values(),
+          content.island?.areas ?? [],
+        );
+        engine.setIsland(
+          islandAudio.update(
+            {
+              map,
+              flow: zoneFlow(map, elevationFor(map)),
+              x: onFoot.player.x,
+              y: onFoot.player.y,
+              view: { x: viewCamera.x, y: viewCamera.y, w: LOGICAL_WIDTH, h: LOGICAL_HEIGHT },
+              season: seasonOf(sim.state.calendar.day),
+              daylight: isDaylight(sim.state.calendar, b),
+              tide: tideAt(sim.state.calendar, b),
+              windowMinutes: b.tide.tidalGroundWindowMinutes,
+              now: engine.now,
+            },
+            audio,
+          ),
+        );
+      } else engine.setIsland(null);
       boatWorkSounds();
     }
     // Sound captions go through the audit by key like every other line (most are cut).
@@ -3074,6 +3158,7 @@ export function startPlay(
       anims,
       shadows,
       highlight: interaction?.kind === 'LIFT' ? interaction.target : null,
+      ...(land.traverse == null ? {} : { objects: objectsView(sim.state, land.traverse, map) }),
       visual: island.view,
       life: island.life,
       hidePeople: hidePeople || coldBoatAt !== null,
@@ -3291,8 +3376,8 @@ export function startPlay(
     });
     root.dataset['dev'] = dev === null ? '' : dev.open ? 'open' : 'closed';
     const reportOpen =
-      session.menus.open === 'report' && (reportShown !== null || aimLine !== null);
-    const shownKey = `${aimLine ?? ''}|${reportShown?.join('|') ?? ''}`;
+      session.menus.open === 'report' && (reportShown !== null || aimLine !== null || islandView !== null);
+    const shownKey = `${aimLine ?? ''}|${reportShown?.join('|') ?? ''}|${reportShown === null ? (islandView?.journalKey(sim.state) ?? '') : ''}`;
     if (reportOpen && reportRegion.dataset['shown'] !== shownKey) {
       const title = document.createElement('h2');
       title.textContent =
@@ -3306,7 +3391,9 @@ export function startPlay(
       const aim = document.createElement('p');
       aim.className = 'oe-journal-aim';
       aim.textContent = aimLine ?? t('ui.journal.none');
-      const body = [aim, ...(reportShown ?? [])].map((l) => {
+      // Stage 14: the journal's pages (the aim with the side aims, the finds, the region map).
+      const pages = reportShown === null && islandView !== null ? islandView.journal(sim.state, aim, true) : null;
+      const body = (pages ?? [aim, ...(reportShown ?? [])]).map((l) => {
         if (typeof l !== 'string') return l;
         const para = document.createElement('p');
         para.textContent = l;
@@ -3316,10 +3403,14 @@ export function startPlay(
       close.textContent = t('ui.report.close', { key: keys('report') });
       reportRegion.replaceChildren(title, ...body, close);
       reportRegion.dataset['shown'] = shownKey;
+      root.dataset['journalPage'] = reportShown === null ? (islandView?.page ?? 'aim') : '';
     } else if (!reportOpen && reportRegion.childElementCount > 0) {
       reportRegion.replaceChildren();
       reportRegion.dataset['shown'] = '';
+      islandView?.close();
     }
+    // The region map's pen strokes and pin, while the journal is open on it.
+    islandView?.frame(sim.state, now);
     // Lying down: the view darkens as sleep comes; on waking and on entering a zone, it clears.
     const sleeping = onFoot.player.sleep;
     let dark = 0;
@@ -3651,6 +3742,9 @@ export function startPlay(
     root.dataset['gait'] = onFoot.player.gait;
     root.dataset['moving'] = String(onFoot.player.moving);
     root.dataset['carrying'] = onFoot.carrying ?? '';
+    // Stage 14: the movement verb under way (climb, swim, jump, crawl, push), or a hold.
+    root.dataset['verb'] =
+      onFoot.player.traverse?.verb ?? (onFoot.player.grip != null ? 'grip' : '');
     root.dataset['hild'] = onFoot.actors['C_HILD']?.pose ?? '';
     root.dataset['prompt'] = promptKind;
     root.dataset['beat'] = beat;

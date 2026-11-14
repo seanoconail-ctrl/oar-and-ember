@@ -1498,13 +1498,6 @@
       "temporary": false
     },
     {
-      "id": "SFX_PASSAGE_LOUD",
-      "kind": "sfx",
-      "bus": "tells",
-      "captionKey": "caption.sfx.passage_loud",
-      "temporary": false
-    },
-    {
       "id": "SFX_GATHER_CRESS",
       "kind": "sfx",
       "bus": "effects",
@@ -1725,7 +1718,6 @@
     "FIND_LORE": "SFX_FIND_LORE",
     "FIND_CAULDRON": "SFX_FIND_CAULDRON",
     "CAIRN_DOOR_TURNS": "SFX_CAIRN_DOOR",
-    "PASSAGE_LOUD": "SFX_PASSAGE_LOUD",
     "GATHER_WATERCRESS": "SFX_GATHER_CRESS",
     "GATHER_HEATHER": "SFX_GATHER_HEATHER",
     "GATHER_HARES": "SFX_GATHER_HARE",
@@ -1778,7 +1770,7 @@
     "tellMostSeconds": 30,
     "roarCaptionAt": 0.35,
     "default": {
-      "surfFloor": 0.25,
+      "surfFloor": 0.35,
       "gulls": 0.8
     },
     "zones": {
@@ -1863,8 +1855,8 @@
         ]
       },
       "ZONE_SK_BOG": {
-        "wind": 0.6,
-        "surf": 0.6,
+        "wind": 1.0,
+        "surf": 0.8,
         "gulls": 0.15,
         "quiet": 1,
         "frozen": ["Winter"],
@@ -1899,10 +1891,10 @@
       },
       "ZONE_SK_CAIRN_IN": {
         "wind": 0,
-        "surf": 0,
-        "surfFloor": 0,
+        "surf": 0.15,
+        "surfFloor": 1,
         "gulls": 0,
-        "cave": 0.6
+        "cave": 1
       }
     },
     "areas": {
@@ -1920,7 +1912,7 @@
     "seasons": {
       "Spring": {},
       "Summer": {
-        "wind": 0.85,
+        "wind": 0.95,
         "birds": 1.2
       },
       "Autumn": {

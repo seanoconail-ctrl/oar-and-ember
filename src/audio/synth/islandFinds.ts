@@ -9,7 +9,6 @@
  * - Lore: a palm on cold stone, and a low hum that is not quite there.
  * - The bronze cauldron: peat sucking free, and a dull bronze note.
  * - The cairn's door turning: stone grinding on its pivot, a long low rumble, then settling.
- * - The deep passage growing loud: the sea booming through rock, swelling.
  * - Gathering: cress pulled from water, heather cut, a hare taken, cotton plucked, kelp hauled,
  *   eggs lifted, a peat spade biting, a fish landed on rock, and a seal taken.
  */
@@ -256,34 +255,6 @@ export const ISLAND_FIND_SOUNDS: readonly SoundDef[] = [
         [0.3, 0],
       ]);
       return 3.1;
-    },
-  },
-  {
-    id: 'SFX_PASSAGE_LOUD',
-    captionKey: 'caption.sfx.passage_loud',
-    bus: 'tells',
-    play: (e, at, pan) => {
-      // The tide turning in the deep passage: the sea booming through rock, swelling (a warning).
-      const to = out(e, 'tells', pan, 0.6);
-      const r = rng(161);
-      for (let i = 0; i < 4; i++) {
-        const t = at + i * 0.9 + r() * 0.2;
-        noiseHit(
-          e,
-          t,
-          to,
-          'lowpass',
-          140 + i * 30,
-          1.5,
-          [
-            [0, 0],
-            [0.25, 0.18 + i * 0.05],
-            [1.2, 0],
-          ],
-          90,
-        );
-      }
-      return 4.2;
     },
   },
   {

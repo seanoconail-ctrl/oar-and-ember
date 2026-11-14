@@ -401,6 +401,18 @@
     {
       "edge": "n",
       "to": "ZONE_SK_SEALCAVE"
+    },
+    {
+      "edge": "s",
+      "to": "ZONE_SK_NAUST"
+    },
+    {
+      "edge": "w",
+      "to": "ZONE_SK_STRAND"
+    },
+    {
+      "edge": "e",
+      "to": "ZONE_SK_SKERRY"
     }
   ],
   "decalFrames": [

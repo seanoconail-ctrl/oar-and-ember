@@ -32,6 +32,7 @@ import { gustAt, STRAND_WIND } from '../render/wind.ts';
 import type { Wind } from '../render/wind.ts';
 import type { Gait, OnFootPlayer, OnFootState } from '../sim/land/onFoot.ts';
 import { bandAt, stillWaterLevel } from '../sim/land/water.ts';
+import { traverseAnim } from '../sim/land/traverse.ts';
 import type { ZoneMap } from '../sim/land/zoneMap.ts';
 import { clampCamera, FX_SHEET, PEOPLE_FX_SHEET } from './zoneScene.ts';
 import type {
@@ -180,6 +181,20 @@ const BASE = { x: -LOGICAL_WIDTH / 2, y: -20 - LOGICAL_HEIGHT / 2 };
 const HALF_LIFE_OMEGA = 1.678;
 const STEERER = 'P_STEERER';
 
+/**
+ * Stage 14's verbs as drawn (Book 7 sections 01 and 07; decision S14-63): presentation of the
+ * people frames, not tuning. A swimmer's sprite is hidden below the shoulders (the swim frames'
+ * shoulder line stands 26 px over the sole), one sinking below the chin; every fourth hand-hold
+ * strains; the jump's frames turn at a quarter and four fifths of the flight, and its arc rises a
+ * quarter of the jump's length at the top.
+ */
+const SWIM_MASK_PX = 26;
+const SINK_MASK_PX = 31;
+const STRAIN_EVERY = 4;
+const JUMP_TAKEOFF = 0.25;
+const JUMP_LANDING = 0.8;
+const JUMP_ARC = 0.25;
+
 /** One person's water: their band now and before, and the dripping after they leave it. */
 interface Wetness {
   band: DepthBand | null;
@@ -268,6 +283,19 @@ export class ZoneVisuals {
   onStep: ((surface: Surface, x: number) => void) | null = null;
   /** Called on each splash (entering knee or waist water, running in it), for its sound. */
   onSplash: ((x: number) => void) | null = null;
+  /**
+   * Stage 14: called on a movement verb's beats, with the sound event's name (content/audio.json):
+   * a hand-hold taken (and now and then the strain), a swim stroke, a crawl's shuffle, a heavy
+   * stone starting to move.
+   */
+  onVerb: ((event: string) => void) | null = null;
+  /** Stage 14: the verb being drawn, the distance it has moved, its frame and the jump's lift. */
+  #verb: string | null = null;
+  #verbDist = 0;
+  #verbFrame = -1;
+  #verbHolds = 0;
+  #pushSince = -1;
+  #lift = 0;
 
   constructor(map: ZoneMap, elevation: Elevation, reducedMotion: boolean, tuning: VisualTuning) {
     this.map = map;
@@ -494,7 +522,13 @@ export class ZoneVisuals {
     const bands = this.tuning.water.bands;
     // A person standing (not swimming) is never hidden entirely: deep water draws at the waist.
     const band = bands.find((b) => b.band === (state.band === 'DEEP' ? 'WAIST' : state.band));
-    const mask = band?.maskPx ?? 0;
+    // Stage 14: a swimmer shows only the head and shoulders; one sinking, less (decision S14-63).
+    const swimming = id === STEERER && (this.#verb === 'swim' || this.#verb === 'sink');
+    const mask = swimming
+      ? this.#verb === 'sink'
+        ? SINK_MASK_PX
+        : SWIM_MASK_PX
+      : (band?.maskPx ?? 0);
     const remaining = Math.max(0, state.dripUntil - this.seconds);
     // Darker while dripping, fading back over the last part of the time.
     const dark = remaining > 0 ? Math.min(1, remaining / (0.3 * state.dripFor)) : 0;
@@ -834,6 +868,16 @@ export class ZoneVisuals {
   #steerer(input: FrameInput, p: OnFootPlayer, level: number, moved: number): void {
     const t = this.seconds;
     const a = input.anims.get(input.steererSheet);
+    // Stage 14: a movement verb plays its own frames (Book 7 section 01; decision S14-62).
+    const verb = traverseAnim(p);
+    const va = verb === null ? undefined : a?.[verb];
+    this.#lift = 0;
+    if (verb !== null && va !== undefined) {
+      this.#verbFrames(input, p, verb, va, moved);
+      return;
+    }
+    this.#verb = null;
+    this.#pushSince = -1;
     const gait: Gait = input.onFoot.carrying !== null ? 'carry' : p.gait;
     const running = p.moving && gait === 'run';
     if (running && !this.#wasRunning && a?.['runstart'] !== undefined)
@@ -945,6 +989,58 @@ export class ZoneVisuals {
         this.#anim = { state: 'carry', frame: 0 };
       } else this.#anim = this.#idle(p, input.anims, input.steererSheet);
     }
+  }
+
+  /**
+   * A verb's frame: the climb and the crawl by the distance moved (a cycle a tile, so hands and
+   * knees do not slide), the swim, the sinking and a push or pull looping in time, the jump by how
+   * far through its flight it is, lifted on its arc. Each beat calls `onVerb` for its sound.
+   */
+  #verbFrames(
+    input: FrameInput,
+    p: OnFootPlayer,
+    verb: string,
+    va: { readonly frames: number; readonly ticks: number },
+    moved: number,
+  ): void {
+    if (verb !== this.#verb) {
+      this.#verb = verb;
+      this.#verbDist = 0;
+      this.#verbFrame = -1;
+      this.#verbHolds = 0;
+    }
+    this.#idleSince = this.seconds;
+    this.#gait = null;
+    this.#frame = -1;
+    const t = p.traverse;
+    let frame: number;
+    if (verb === 'climb' || verb === 'crawl') {
+      const sliding = t?.verb === 'climb' && t.slide !== undefined;
+      if (!sliding) this.#verbDist = (this.#verbDist + moved) % TILE;
+      frame = sliding ? 0 : Math.floor((this.#verbDist / TILE) * va.frames) % va.frames;
+      const beat = frame !== this.#verbFrame && frame % (va.frames / 2) === 0 && p.moving;
+      if (beat && !sliding) {
+        if (verb === 'climb') {
+          this.#verbHolds++;
+          this.onVerb?.(this.#verbHolds % STRAIN_EVERY === 0 ? 'CLIMB_STRAIN' : 'CLIMB_HOLD');
+        } else this.onVerb?.('CRAWL_SHUFFLE');
+      }
+    } else if (verb === 'jump' && t?.verb === 'jump') {
+      const k = Math.min(1, Math.max(0, (input.tick - t.since) / t.ticks));
+      frame = k < JUMP_TAKEOFF ? 0 : k < JUMP_LANDING ? 1 : Math.min(2, va.frames - 1);
+      const length = Math.hypot(t.to.x - t.from.x, t.to.y - t.from.y);
+      this.#lift = Math.round(JUMP_ARC * length * Math.sin(Math.PI * k));
+    } else {
+      const moving = verb === 'swim' || verb === 'sink' || p.moving;
+      frame = moving ? Math.floor(input.tick / va.ticks) % va.frames : 0;
+      if (verb === 'swim' && frame === 0 && frame !== this.#verbFrame) this.onVerb?.('SWIM_STROKE');
+      if (t?.verb === 'push' && t.since !== this.#pushSince) {
+        this.#pushSince = t.since;
+        this.onVerb?.('STONE_SCRAPE');
+      }
+    }
+    this.#verbFrame = frame;
+    this.#anim = { state: verb, frame };
   }
 
   #footfall(p: OnFootPlayer, foot: number, gait: Gait, level: number): void {
@@ -1120,6 +1216,7 @@ export class ZoneVisuals {
       wind: this.wind,
       reducedMotion: this.reducedMotion,
       steerer: this.#anim,
+      steererLift: this.#lift,
       water,
       marks,
       effects: {

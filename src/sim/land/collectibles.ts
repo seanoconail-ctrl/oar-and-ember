@@ -90,7 +90,8 @@ export function collectibleProps(
   const taken = collectedList(world, ctx);
   const seen = new Set<string>();
   for (const c of ctx.collectibles) {
-    if (c.scene !== zone || c.find !== undefined) continue;
+    // Drawn by its scene's plan (the cross on the cell's slab, the cup-and-ring stone): not again.
+    if (c.scene !== zone || c.find !== undefined || c.sheet !== 'prop_collectibles') continue;
     const at = `${c.pos.x},${c.pos.y}`;
     if (seen.has(at)) continue;
     let frame: string | undefined;

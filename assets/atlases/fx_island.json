@@ -1,0 +1,166 @@
+{
+  "sheet": "fx_island",
+  "kind": "decal",
+  "image": "fx_island.png",
+  "width": 52,
+  "height": 52,
+  "pivot": {
+    "x": 26,
+    "y": 51
+  },
+  "footprint": {
+    "w": 52,
+    "h": 52
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "holds": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "fall": {
+      "frames": 6,
+      "ticks": 5,
+      "loop": true
+    },
+    "churn": {
+      "frames": 6,
+      "ticks": 6,
+      "loop": true
+    },
+    "haze": {
+      "frames": 8,
+      "ticks": 9,
+      "loop": true
+    },
+    "caustic": {
+      "frames": 8,
+      "ticks": 7,
+      "loop": true
+    }
+  },
+  "events": {},
+  "shadow": null,
+  "placeholder": false,
+  "frames": {
+    "holds/-/0": [
+      0,
+      0
+    ],
+    "fall/-/0": [
+      0,
+      52
+    ],
+    "fall/-/1": [
+      52,
+      52
+    ],
+    "fall/-/2": [
+      104,
+      52
+    ],
+    "fall/-/3": [
+      156,
+      52
+    ],
+    "fall/-/4": [
+      208,
+      52
+    ],
+    "fall/-/5": [
+      260,
+      52
+    ],
+    "churn/-/0": [
+      0,
+      104
+    ],
+    "churn/-/1": [
+      52,
+      104
+    ],
+    "churn/-/2": [
+      104,
+      104
+    ],
+    "churn/-/3": [
+      156,
+      104
+    ],
+    "churn/-/4": [
+      208,
+      104
+    ],
+    "churn/-/5": [
+      260,
+      104
+    ],
+    "haze/-/0": [
+      0,
+      156
+    ],
+    "haze/-/1": [
+      52,
+      156
+    ],
+    "haze/-/2": [
+      104,
+      156
+    ],
+    "haze/-/3": [
+      156,
+      156
+    ],
+    "haze/-/4": [
+      208,
+      156
+    ],
+    "haze/-/5": [
+      260,
+      156
+    ],
+    "haze/-/6": [
+      312,
+      156
+    ],
+    "haze/-/7": [
+      364,
+      156
+    ],
+    "caustic/-/0": [
+      0,
+      208
+    ],
+    "caustic/-/1": [
+      52,
+      208
+    ],
+    "caustic/-/2": [
+      104,
+      208
+    ],
+    "caustic/-/3": [
+      156,
+      208
+    ],
+    "caustic/-/4": [
+      208,
+      208
+    ],
+    "caustic/-/5": [
+      260,
+      208
+    ],
+    "caustic/-/6": [
+      312,
+      208
+    ],
+    "caustic/-/7": [
+      364,
+      208
+    ]
+  }
+}

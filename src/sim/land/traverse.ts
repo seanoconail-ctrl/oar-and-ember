@@ -573,7 +573,8 @@ export function stepTraverse(
       const out =
         (atStart && here.ahead !== null && -(p.intent.x * here.ahead.x + p.intent.y * here.ahead.y) > 0.2) ||
         (atEnd && here.behind !== null && p.intent.x * here.behind.x + p.intent.y * here.behind.y > 0.2);
-      if (out) {
+      // Out only onto ground that can be stood on now (a mouth the tide has closed waits).
+      if (out && footprintClear(map, land.rules, here.at.x, here.at.y, tide.open)) {
         p.traverse = null;
         p.gait = 'walk';
         p.moving = false;
