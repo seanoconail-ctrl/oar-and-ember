@@ -4,8 +4,12 @@
  */
 import { boatDrawing } from './repairsScene.ts';
 import type { Content } from '../content/registry.ts';
+import { wreckHooks } from './seaWreck.ts';
 import { parseShipBalance } from '../content/shipBalance.ts';
 import { parseTimeBalance } from '../content/balance.ts';
+import { parseSeaBalance } from '../content/seaBalance.ts';
+import { ensureWeather } from '../sim/sea/weather.ts';
+import type { DayWeather } from '../sim/sea/types.ts';
 import {
   FACT_LAUNCHED,
   FACT_PHASE,
@@ -284,16 +288,22 @@ export function campHooks(
   // (`mark=raven:woad`), so the scene plays from the first tick. The tide must be in (`time=`).
   const launchParam = params.get('launch');
   if (launchParam !== null) seedLaunch(world, content, land, launchParam, params);
+  // Stage 13 (tests and captures): today's weather at sea (`weather=clear|rising|fog|storm|calm`).
+  const weather = params.get('weather');
+  if (weather !== null) seedWeather(world, content, weather);
   // Stage 8, captures: start in another zone than the camp's (`zone=ZONE_SK_STRAND`).
   const zone = params.get('zone');
   const zoneTo = zone === null ? undefined : land.maps.get(zone);
   if (zoneTo !== undefined && zoneTo.zone !== onFoot.zone)
     switchZone(onFoot, zoneTo.zone, { x: onFoot.player.x, y: onFoot.player.y });
+  // Stage 13 (tests and captures): the wreck on Sgeir Dhubh standalone (`wreck=1`).
+  wreckHooks(world, content, land, params);
+  const scene = world.onFoot ?? onFoot;
   const at = /^(\d+(?:\.\d+)?),(\d+(?:\.\d+)?)$/.exec(params.get('at') ?? '');
-  const map = land.maps.get(onFoot.zone);
+  const map = land.maps.get(scene.zone);
   if (at !== null && map !== undefined) {
-    onFoot.player.x = Number(at[1]) * map.tile;
-    onFoot.player.y = Number(at[2]) * map.tile;
+    scene.player.x = Number(at[1]) * map.tile;
+    scene.player.y = Number(at[2]) * map.tile;
   }
 }
 
@@ -560,4 +570,35 @@ function seedLaunch(
     next.status = 'ACTIVE';
     next.openedDay = world.calendar.day;
   }
+}
+
+/** Stage 13 hooks: today's weather and tomorrow's forecast set for the sea map's tests. */
+function seedWeather(world: WorldState, content: Content, which: string): void {
+  const sb = parseSeaBalance(content.balance);
+  ensureWeather(world, sb, sb.forecastAccuracy);
+  const day = world.calendar.day;
+  const w = world.sea.weather.days[day];
+  const f = world.sea.weather.forecasts[day + 1];
+  if (w === undefined) return;
+  const set = {
+    clear: { windFrom: 'SW', strength: 2, visibility: 'CLEAR' },
+    rising: { windFrom: 'SW', strength: sb.risingStrength, visibility: 'CLEAR' },
+    fog: { windFrom: 'SW', strength: 1, visibility: 'FOG' },
+    storm: { windFrom: 'W', strength: sb.weather.stormFrom, visibility: 'HAZE' },
+    calm: { windFrom: 'SW', strength: 0, visibility: 'CLEAR' },
+  }[which];
+  if (set === undefined) return;
+  const strength = set.strength as DayWeather['strength'];
+  const windFrom = set.windFrom as DayWeather['windFrom'];
+  const visibility = set.visibility as DayWeather['visibility'];
+  world.sea.weather.days[day] = { ...w, windFrom, strength, visibility, named: null, calm: false };
+  if (f !== undefined)
+    world.sea.weather.forecasts[day + 1] = {
+      ...f,
+      windFrom,
+      strength,
+      visibility,
+      storm: strength >= sb.weather.stormFrom,
+      calm: false,
+    };
 }

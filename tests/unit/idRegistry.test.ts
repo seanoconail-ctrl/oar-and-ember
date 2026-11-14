@@ -68,6 +68,7 @@ describe('the registry file', () => {
     for (const grid of [
       'carrick_tiles',
       'hollow_cairn_tiles',
+      'sea_wreck_tiles',
       'skarvholm_blocks',
       'skarvholm_occupied_blocks',
       'steading_tiles',

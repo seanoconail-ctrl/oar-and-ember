@@ -125,8 +125,7 @@ export function wreckScene(ctx: SeaWreckContext, map: ZoneMap): OnFootState {
  * is already in place.
  */
 export function beginWreck(world: WorldState, ctx: SeaWreckContext, map: ZoneMap): boolean {
-  if (!wreckWaiting(world, ctx) || world.onFoot !== null || map.zone !== ctx.def.zone)
-    return false;
+  if (!wreckWaiting(world, ctx) || world.onFoot !== null || map.zone !== ctx.def.zone) return false;
   if (!beginHandoffScene(world, wreckScene(ctx, map))) return false;
   setFact(world, WRECK_FACTS.met, world.calendar.day);
   return true;
@@ -151,7 +150,13 @@ export function wreckUses(world: WorldState, ctx: SeaWreckContext, tile: number)
   for (const s of ctx.def.survivors) {
     const a = onFoot.actors[s.id];
     if (a === undefined || a.pose === 'carried' || onFoot.carrying === s.id) continue;
-    out.push({ site: `wreck.${s.id}`, target: s.id, x: a.x, y: a.y, reach: ctx.b.talkReachTiles * tile });
+    out.push({
+      site: `wreck.${s.id}`,
+      target: s.id,
+      x: a.x,
+      y: a.y,
+      reach: ctx.b.talkReachTiles * tile,
+    });
   }
   out.push({
     site: ASK_SITE,
@@ -283,8 +288,10 @@ export function chooseWreck(
   const rescued = final === 'ABOARD' || final === 'ASHORE';
   // Fínán pays for a passage with what his boat carried (decision S13-51).
   if (rescued)
-    for (const r of ctx.def.reactions['GIFT'] ?? []) talk.queue.push({ speaker: r.person, key: r.key });
-  for (const r of ctx.def.reactions[final] ?? []) talk.queue.push({ speaker: r.person, key: r.key });
+    for (const r of ctx.def.reactions['GIFT'] ?? [])
+      talk.queue.push({ speaker: r.person, key: r.key });
+  for (const r of ctx.def.reactions[final] ?? [])
+    talk.queue.push({ speaker: r.person, key: r.key });
   talk.ending = true;
   return final;
 }
@@ -344,11 +351,7 @@ export function wreckResult(
   const goods = rescued || choice === 'SALVAGE';
   const ids = ctx.def.survivors.map((s) => s.id);
   const lives = windTomorrow(world) < b.leftTakenOffBelow;
-  const survivors: WreckOutcome['survivors'] = rescued
-    ? choice
-    : lives
-      ? 'TAKEN_OFF'
-      : 'DROWNED';
+  const survivors: WreckOutcome['survivors'] = rescued ? choice : lives ? 'TAKEN_OFF' : 'DROWNED';
   const word: string =
     choice === 'ASHORE'
       ? 'SAVED'
@@ -372,7 +375,8 @@ export function wreckResult(
     [WRECK_FACTS.overloaded]: overloaded,
     [WRECK_FACTS.done]: day,
   };
-  if (word !== 'NONE') facts[WRECK_FACTS.wordDay] = day + (choice === 'ASHORE' ? 0 : 1) + b.wordDays;
+  if (word !== 'NONE')
+    facts[WRECK_FACTS.wordDay] = day + (choice === 'ASHORE' ? 0 : 1) + b.wordDays;
   return {
     choice,
     survivors,
@@ -405,7 +409,8 @@ function survivorPerson(ctx: SeaWreckContext, s: WreckSurvivorDef, day: number) 
   };
   const p = newPerson(def, ctx.vitality, ctx.balance);
   p.status = s.wound === undefined ? 'alive' : 'wounded';
-  if (s.wound !== undefined) p.wounds.push({ day, severity: s.wound.severity, where: s.wound.where });
+  if (s.wound !== undefined)
+    p.wounds.push({ day, severity: s.wound.severity, where: s.wound.where });
   return p;
 }
 

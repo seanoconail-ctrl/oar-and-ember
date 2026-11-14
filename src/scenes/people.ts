@@ -44,6 +44,10 @@ export const PERSON_LOOKS: Readonly<Record<Id, string>> = {
   C_BRAN: 'bran',
   C_RUNA: 'runa',
   C_THORKEL: 'thorkel',
+  // Stage 13: the survivors of the wreck on Sgeir Dhubh (Book 5 section 02; decision S13-45).
+  C_FINAN: 'finan',
+  C_DERBAIL: 'derbail',
+  C_IVAR: 'ivar',
 };
 
 /** Things carried like people (Stage 10: the chests), drawn from one prop sheet in every facing. */

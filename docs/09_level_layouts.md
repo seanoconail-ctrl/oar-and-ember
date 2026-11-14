@@ -784,8 +784,8 @@ Sgeir Dhubh is a low reef about 40 tiles long, lying west-south-west to east-nor
 |---|---|---|
 | The household's boat, lying alongside | foot (42.6, 22.4), hull about x 39 to 46 | The coastal boat afloat (`ship_t1_launch`), its crew at their oars aboard; Hild by the stern. The steerer comes ashore beside it at (38.6, 19.4), facing west |
 | The boat's side (where Hild asks) | within Book 10 `boardReachTiles` of (39.8, 20.2) | On the landing spit's foreshore, dry above half tide |
-| The wreck of the *Faoileán* | foot (8.4, 21.7) | Broken-backed on the south-western tip, on the flats; her sail in the surf to the west (5.2, 22.6); the cask (12.6, 21.3) and the iron (11.5, 22.1) in the wash beside her |
-| Fínán, holding the gunwale | (11.0, 20.85), facing west | On the foreshore at the tongue's end: dry at low water, waist deep at high; reached within talk range from the shingle at every tide |
+| The wreck of the *Faoileán* | foot (10.2, 21.6) | Broken-backed on the south-western tip, on the flats; her sail in the surf to the west (5.2, 22.6); the cask (14.2, 21.4) and the iron (13.2, 22.1) in the wash beside her |
+| Fínán, holding the gunwale | (12.0, 20.3), facing west | On the foreshore at the tongue's end: dry at low water, waist deep at high; reached within talk range from the shingle at every tide |
 | Derbáil, on the rocks above | (13.6, 18.4), facing east | On the dry shingle under the spine's western stacks |
 | Ívar, lying hurt | (16.4, 19.6), facing north | On the dry shingle of the tongue; carried to the boat by the steerer (about 23 tiles of carrying, 13 real seconds at Book 10's carry speed) |
 | The spine | x 12 to 42, y 11 to 15 | Rock stacks; two gaps at x 27 and x 33 lead down to the north shelf at low water |

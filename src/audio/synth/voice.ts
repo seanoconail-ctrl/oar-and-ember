@@ -319,7 +319,7 @@ export const SEA_VOICES: Readonly<Record<string, VoiceProfile>> = {
     gap: 0.028,
     lilt: 0.22,
     tilt: -0.05,
-    gain: 1.25,
+    gain: 1.7,
   },
   // Ívar: about twenty-five, Saltvik's, quick to laugh at his own bad luck; light, quick, rising.
   C_IVAR: {

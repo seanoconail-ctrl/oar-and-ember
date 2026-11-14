@@ -60,7 +60,10 @@ export interface CourseModel {
   readonly gate: boolean;
 }
 
-export interface Refusal { readonly textKey: string; readonly vars: Readonly<Record<string, string>> }
+export interface Refusal {
+  readonly textKey: string;
+  readonly vars: Readonly<Record<string, string>>;
+}
 
 export interface PlaceChoice {
   readonly id: string;
@@ -122,6 +125,13 @@ export function watchesWords(watches: number, w: SeaWords): string {
   return w.t(n === 1 ? 'ui.sea.watches.one' : 'ui.sea.watches.many', { count: String(n) });
 }
 
+/** Days in words: "half a day", "1 day", "3 days", "2.5 days". */
+export function daysWords(days: number, w: SeaWords): string {
+  if (days <= 0.5) return w.t('ui.sea.days.half');
+  if (days === 1) return w.t('ui.sea.days.one');
+  return w.t('ui.sea.days.many', { count: String(days) });
+}
+
 /** Ration-days as days for everyone aboard, to the half day. */
 export function daysFor(rd: number, mouths: number, perDay: number): number {
   if (mouths <= 0 || perDay <= 0) return 0;
@@ -144,9 +154,9 @@ export function courseLines(c: CourseModel, w: SeaWords): string[] {
   const eat = Math.max(0.5, Math.ceil((c.eatRd / Math.max(1e-9, c.mouths * c.perDay)) * 2) / 2);
   lines.push(
     w.t('ui.sea.plot.stores', {
-      days: String(aboard),
+      days: daysWords(aboard, w),
       mouths: String(c.mouths),
-      eat: String(eat),
+      eat: daysWords(eat, w),
     }),
   );
   if (c.eatRd > c.aboardRd + 1e-6) lines.push(w.t('ui.sea.plot.short'));
@@ -176,7 +186,13 @@ export function legWords(
   w: SeaWords,
 ): string {
   if (leg.rowing) {
-    const why = leg.pointOfSail === 'CALM' ? 'ui.sea.row.calm' : 'ui.sea.row.against';
+    // Rowing in a calm, into the wind, or because the oars are quicker than the sail would be.
+    const why =
+      leg.pointOfSail === 'CALM'
+        ? 'ui.sea.row.calm'
+        : leg.pointOfSail === 'AGAINST'
+          ? 'ui.sea.row.against'
+          : 'ui.sea.row.quicker';
     return w.t('ui.sea.at.rowing', { why: w.t(why), from: leg.from, to: leg.to });
   }
   return w.t('ui.sea.at.sailing', {
@@ -231,7 +247,7 @@ export function choiceLines(
       then: w.t('ui.sea.choice.shelter_then', {
         time: c.shelter.untilTime,
         watches: watchesWords(c.shelter.watches, w),
-        days: String(c.shelter.eatDays),
+        days: daysWords(c.shelter.eatDays, w),
       }),
     },
     clock: w.t('ui.sea.choice.clock'),
@@ -567,6 +583,8 @@ export function landingPanel(
   w: SeaWords,
   m: {
     readonly side: 'left' | 'right';
+    /** Arriving at a landing (not met on the way). */
+    readonly landing: boolean;
     readonly lines: readonly string[];
     readonly dev: string | null;
     readonly stay: string;
@@ -575,7 +593,7 @@ export function landingPanel(
   on: { readonly stay: () => void; readonly home: () => void },
 ): HTMLDivElement {
   const p = seaPanelFrame(doc, 'landing', m.side);
-  p.append(el(doc, 'h2', w.t('ui.sea.land.title')));
+  p.append(el(doc, 'h2', w.t(m.landing ? 'ui.sea.land.title' : 'ui.sea.meet.title')));
   for (const line of m.lines) p.append(el(doc, 'p', line, 'lead'));
   p.append(button(doc, m.stay, 'stay', on.stay, 'primary'));
   if (m.home !== null) p.append(button(doc, m.home, 'home', on.home));

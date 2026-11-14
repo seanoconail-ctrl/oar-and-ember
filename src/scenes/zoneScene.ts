@@ -1198,6 +1198,14 @@ const MARKER_OVER: Record<OnFootActor['pose'], { x: number; y: number }> = {
   dead: { x: 12, y: 22 },
 };
 
+/** Scenery props whose state loops (Stage 13, decision S13-50). */
+const ANIMATED_PROPS: ReadonlySet<string> = new Set([
+  'prop_sea_wreck',
+  'fx_sea_wreck',
+  'ship_t1_launch',
+  'ship_t1_crew',
+]);
+
 /** The animation state a pose is drawn with (a person calling waves and shouts: `call`). */
 function poseState(
   actor: OnFootActor,
@@ -1266,6 +1274,14 @@ export function zoneScene(input: ZoneSceneInput): Scene {
     // Stage 11: the dark inside Seal Cave's mouth moves with light off the water.
     if (prop.sheet === SEALCAVE_FX_SHEET) {
       frame = `gloom/-/${frameIndex(anims, SEALCAVE_FX_SHEET, 'gloom', reduced ? 0 : tick)}`;
+    }
+    // Stage 13 (the wreck on Sgeir Dhubh, decision S13-50): scenery that moves loops its state,
+    // each piece on its own phase so neighbours never move in step (the boat afloat and its crew,
+    // the wreck's slopping water, spray on the rocks, kelp and the sail awash).
+    if (ANIMATED_PROPS.has(prop.sheet)) {
+      const [state = '', facing = '-'] = prop.frame.split('/');
+      const phase = Math.floor(prop.x * 37 + prop.y * 11);
+      frame = `${state}/${facing}/${frameIndex(anims, prop.sheet, state, reduced ? 0 : tick + phase)}`;
     }
     const built = prop.sheet === SEALCAVE_SHEET || prop.sheet === SEALCAVE_FX_SHEET;
     const sprite: SceneSprite = {

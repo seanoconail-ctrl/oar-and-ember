@@ -3973,11 +3973,20 @@
   "ui.sea.watches.many": {
     "text": "about {count} watches"
   },
+  "ui.sea.days.half": {
+    "text": "half a day"
+  },
+  "ui.sea.days.one": {
+    "text": "1 day"
+  },
+  "ui.sea.days.many": {
+    "text": "{count} days"
+  },
   "ui.sea.clock": {
     "text": "Day {day}, {time}"
   },
   "ui.sea.stores": {
-    "text": "Stores aboard: {days} days"
+    "text": "Stores aboard: {days}"
   },
   "ui.sea.plot.title": {
     "text": "Set a course"
@@ -4001,7 +4010,7 @@
     "text": "The course waits for slack water at the Cauldron."
   },
   "ui.sea.plot.stores": {
-    "text": "Stores aboard: {days} days for {mouths}. The course eats about {eat} days."
+    "text": "Stores aboard: {days} for {mouths}. The course eats about {eat}."
   },
   "ui.sea.plot.short": {
     "text": "The stores will not last the course."
@@ -4060,6 +4069,9 @@
   "ui.sea.row.against": {
     "text": "the wind is dead ahead"
   },
+  "ui.sea.row.quicker": {
+    "text": "the oars are quicker than the sail on this heading"
+  },
   "ui.sea.log.route": {
     "text": "A route learned: {from} to {to}."
   },
@@ -4076,10 +4088,13 @@
     "text": "A storm will work at the seams."
   },
   "ui.sea.choice.shelter_then": {
-    "text": "Wait here until {time}: {watches} more at sea, the stores feeding everyone about {days} days. Then the weather is weighed again."
+    "text": "Wait here until {time}: {watches} more at sea, the stores feeding everyone about {days}. Then the weather is weighed again."
   },
   "ui.sea.choice.clock": {
     "text": "The watches wait while you choose."
+  },
+  "ui.sea.meet.title": {
+    "text": "On the water"
   },
   "ui.sea.land.title": {
     "text": "Landfall"

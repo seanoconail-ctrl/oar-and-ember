@@ -63,6 +63,7 @@ import type {
 } from '../sim/sea/index.ts';
 import {
   cartoucheLayout,
+  daysWords,
   choicePanel,
   forecastWords,
   labelLayout,
@@ -212,6 +213,7 @@ export class SeaVoyage {
   /** Real milliseconds when the next watch is due, and whether one was sent and not yet resolved. */
   #nextAt = -1;
   #sent = false;
+  #sentTick = 0;
   /** Watches resolved since the page opened (tests). */
   watches = 0;
   /** The words of what happened at sea, newest last (encounters, holds, arrivals). */
@@ -435,12 +437,16 @@ export class SeaVoyage {
       if (this.#animAt >= 0) this.#animAt += dt;
       return;
     }
+    // A watch sent is answered on the next tick: a watch passed, or a hold, the choice or a
+    // handoff met first (no watch passed). Either way it is no longer waiting.
+    if (this.#sent && w.tick > this.#sentTick) this.#sent = false;
     const going = v.status === 'SAILING' || v.status === 'HELD';
     if (!going || this.#sent) return;
     if (this.#nextAt < 0) this.#nextAt = now;
     if (now >= this.#nextAt) {
       this.#submit({ type: 'SEA_WATCH' });
       this.#sent = true;
+      this.#sentTick = w.tick;
       this.#nextAt = now + this.#time.seaWatchAnimSeconds * 1000;
     }
   }
@@ -496,11 +502,29 @@ export class SeaVoyage {
     const ctx = this.#ctx;
     const home = ctx.nodes.get(ctx.home)?.pos ?? { x: 0, y: 0 };
     const to = this.#to;
-    if (to.edge === null || to.from === null) return { x: home.x, y: home.y + 16, heading: 'e' };
+    if (to.edge === null || to.from === null) return this.#offHome(home);
     const k = this.#animProgress(now);
     const from = this.#from.edge === to.edge && this.#from.from === to.from ? this.#from.share : 0;
     const share = from + (to.share - from) * k;
     return this.#along(to.edge, to.from, Math.min(0.96, Math.max(0.04, share)));
+  }
+
+  /** The boat lying off home: on open water beside the island, clear of its name below it. */
+  #offHome(home: { readonly x: number; readonly y: number }): {
+    x: number;
+    y: number;
+    heading: Heading;
+  } {
+    const chart = this.#chartNow();
+    for (const [dx, dy] of [
+      [20, 2],
+      [-20, 2],
+      [0, -16],
+      [22, 12],
+    ] as const)
+      if (!chart.isLand(home.x + dx, home.y + dy))
+        return { x: home.x + dx, y: home.y + dy, heading: 'e' };
+    return { x: home.x, y: home.y + 16, heading: 'e' };
   }
 
   /** The clock shown on the chart: run on with the token over the watch's seconds. */
@@ -571,7 +595,8 @@ export class SeaVoyage {
       region.replaceChildren();
       region.dataset['sea'] = '';
     }
-    this.#h.root.dataset['sea'] = '';
+    for (const k of ['sea', 'seaStatus', 'seaAt', 'seaToken', 'seaWeather', 'seaChosen'])
+      this.#h.root.dataset[k] = '';
     this.#labelsKey = '';
     this.#labelsKey = '';
     if (this.#world.sea.voyage === null) this.#chosen = null;
@@ -606,7 +631,7 @@ export class SeaVoyage {
     const tide = tideAt(cal, this.#time);
     const slackIn = minutesToSlack(cal, this.#time, this.#ctx.b.slackWindowMinutes);
     const slackAt = clockText(calendarAt(minute + slackIn, this.#time).minuteOfDay);
-    const from = (today?.windFrom ?? 'SW');
+    const from = today?.windFrom ?? 'SW';
     const strength = today?.strength ?? 0;
     const storm = today !== null && isStormDay(w.sea, this.#ctx.b, today.day);
     const vec = POINT_VEC[OPPOSITE[from]];
@@ -717,7 +742,11 @@ export class SeaVoyage {
             : weather.forecast.strength <= 0
               ? 'wind_calm'
               : `wind_${OPPOSITE[weather.forecast.windFrom].toLowerCase()}_${Math.min(4, Math.max(1, weather.forecast.strength))}`;
-      else if (m.kind === 'stores') state = 'stores';
+      else if (m.kind === 'stores') {
+        // The ship's stores are counted at sea; at home they are the household's.
+        if (v === null) continue;
+        state = 'stores';
+      }
       marks.push({ state, x: m.x, y: m.y });
     }
     // The token: lying to at home or a node, or sailing its leg.
@@ -904,7 +933,7 @@ export class SeaVoyage {
         v === null
           ? ''
           : h.t('ui.sea.stores', {
-              days: String(
+              days: daysWords(
                 Math.floor(
                   (storesRd(v) /
                     Math.max(
@@ -915,6 +944,7 @@ export class SeaVoyage {
                     )) *
                     2,
                 ) / 2,
+                words,
               ),
             }),
     };
@@ -980,7 +1010,12 @@ export class SeaVoyage {
           (n) => n.kind === 'PLACE' && n.id !== from && w.knowledge.places[n.id] !== undefined,
         )
         .map((n) => ({ id: n.id, known: w.knowledge.places[n.id] === 'KNOWN' }));
-      if (from !== ctx.home) places.unshift({ id: ctx.home, known: true });
+      // Home first when away from it.
+      if (from !== ctx.home) {
+        const rest = places.filter((p) => p.id !== ctx.home);
+        places.length = 0;
+        places.push({ id: ctx.home, known: true }, ...rest);
+      }
       const plot = this.#chosen === null ? null : this.#plot(this.#chosen);
       const refusal =
         plot !== null && !plot.ok
@@ -1068,6 +1103,7 @@ export class SeaVoyage {
           words,
           {
             side,
+            landing: req.landing,
             lines,
             dev: devNote,
             stay: h.t(req.landing ? 'ui.sea.land.stay' : 'ui.sea.land.sail_on'),

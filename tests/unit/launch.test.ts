@@ -100,6 +100,7 @@ describe('the sail marks (Book 7 section 04)', () => {
   });
 
   it('every mark is drawn on the sail, dropping and set, and on the sea-map token, each its own', () => {
+    // (The token's own states, furled and rowing, are checked in tests/unit/seaPanels.test.ts.)
     const sail = loadSheet('ship_t1_sail');
     const token = loadSheet('token_t1');
     const states: string[] = ['plain'];
@@ -109,7 +110,12 @@ describe('the sail marks (Book 7 section 04)', () => {
     for (const s of states) {
       expect(sail.anims[`set_${s}`]?.frames, s).toBe(4);
       expect(sail.anims[`drop_${s}`]?.frames, s).toBe(3);
-      expect(token.anims[s]?.frames, s).toBe(2);
+      // Stage 13 redrew the token (Book 7 section 05): its sail set and reefed in every mark, 4
+      // frames each, in eight headings.
+      expect(token.anims[`set_${s}`]?.frames, s).toBe(4);
+      expect(token.anims[`reefed_${s}`]?.frames, s).toBe(4);
+      for (const h of ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'])
+        expect(token.frames.has(`set_${s}/${h}/0`), `${s} ${h}`).toBe(true);
       const frame = sail.frames.get(`set_${s}/-/0`);
       expect(frame).toBeDefined();
       drawn.add(Array.from(frame?.pixels ?? []).join(','));

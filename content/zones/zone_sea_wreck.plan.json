@@ -32,19 +32,19 @@
     {
       "sheet": "prop_sea_wreck",
       "frame": "broken/-/0",
-      "x": 8.4,
-      "y": 21.7
+      "x": 10.2,
+      "y": 21.6
     },
     {
       "sheet": "prop_sea_wreck",
       "frame": "cask/-/0",
-      "x": 12.6,
-      "y": 21.3
+      "x": 14.2,
+      "y": 21.4
     },
     {
       "sheet": "prop_sea_wreck",
       "frame": "iron/-/0",
-      "x": 11.5,
+      "x": 13.2,
       "y": 22.1
     },
     {
@@ -157,8 +157,8 @@
     {
       "sheet": "fx_sea_wreck",
       "frame": "spray/-/0",
-      "x": 9.0,
-      "y": 19.1
+      "x": 8.4,
+      "y": 20.2
     },
     {
       "sheet": "fx_sea_wreck",

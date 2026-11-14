@@ -1,0 +1,67 @@
+{
+  "sheet": "prop_sea_wreck",
+  "kind": "prop",
+  "image": "prop_sea_wreck.png",
+  "width": 116,
+  "height": 60,
+  "pivot": {
+    "x": 58,
+    "y": 53
+  },
+  "footprint": {
+    "w": 90,
+    "h": 10
+  },
+  "facings": [
+    "-"
+  ],
+  "anims": {
+    "broken": {
+      "frames": 4,
+      "ticks": 14,
+      "loop": true
+    },
+    "cask": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    },
+    "iron": {
+      "frames": 1,
+      "ticks": 1,
+      "loop": false
+    }
+  },
+  "events": {},
+  "shadow": {
+    "w": 90,
+    "h": 12
+  },
+  "placeholder": false,
+  "frames": {
+    "broken/-/0": [
+      0,
+      0
+    ],
+    "broken/-/1": [
+      116,
+      0
+    ],
+    "broken/-/2": [
+      232,
+      0
+    ],
+    "broken/-/3": [
+      348,
+      0
+    ],
+    "cask/-/0": [
+      0,
+      60
+    ],
+    "iron/-/0": [
+      0,
+      120
+    ]
+  }
+}
